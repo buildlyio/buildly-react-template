@@ -14,5 +14,5 @@ export const store = redux.createStore(
   
 sagaMiddleware.run(rootSaga);
   
-export const dispatch = type => store.dispatch({type})
+export const dispatch = type => store.dispatch({type});
   
