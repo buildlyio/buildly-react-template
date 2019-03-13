@@ -44,7 +44,11 @@ class Login extends React.Component {
         oauthService.setAccessToken(token.data);
         httpService.makeRequest(
           'get', `http://34.76.130.48/oauthuser/`,
-        ).then(success => alert(`Logged in as ${success.data.first_name} ${success.data.last_name}`));
+        ).then(success => {
+          oauthService.setOauthUser(success);
+          const { from } = this.props.location.state || { from: { pathname: "/" } };
+          this.props.history.push(from);
+        });
       },
       error => this.setState({ error: 'Invalid credentials given', loading: false })
     );
