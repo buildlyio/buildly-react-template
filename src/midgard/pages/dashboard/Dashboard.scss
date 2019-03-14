@@ -1,0 +1,32 @@
+@import "../../../styles";
+
+.dashboard {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &__logout {
+    background-color: $primary-color;
+    border: none;
+    border-radius: rem-calc(4);
+    height: rem-calc(40);
+    padding: rem-calc(0 12);
+    transition: all 0.2s linear;
+    font-weight: 600;
+    color: $white;
+    cursor: pointer;
+    outline: none;
+
+    &:hover {
+      background-color: darken($primary-color, 5);
+    }
+
+    &:disabled {
+      background-color: $gray-light;
+      color: $gray;
+      cursor: default;
+    }
+  }
+}
