@@ -2,6 +2,7 @@ import React from 'react'
 import { oauthService } from '../../modules/oauth/oauth.service';
 import { httpService } from '../../modules/http/http.service';
 import logo from '../../../assets/midgard-logo.svg';
+import { environment } from '../../../../environment.js';
 
 import './Login.scss'
 
@@ -43,7 +44,7 @@ class Login extends React.Component {
         this.setState({ loading: false })
         oauthService.setAccessToken(token.data);
         httpService.makeRequest(
-          'get', `http://34.76.130.48/oauthuser/`,
+          'get', environment.API_URL + `oauthuser/`,
         ).then(success => {
           oauthService.setOauthUser(success);
           const { from } = this.props.location.state || { from: { pathname: "/" } };
