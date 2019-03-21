@@ -1,0 +1,49 @@
+@import "styles";
+
+.nav-bar-user {
+  position: relative;
+  display: flex;
+  height: rem-calc(54);
+  margin-bottom: rem-calc(16);
+  align-items: center;
+  color: #191919;
+  text-decoration: none;
+  &__name {
+    font-size: rem-calc(14);
+    line-height: rem-calc(18);
+  }
+  &__last-login {
+    font-size: rem-calc(10);
+    color: $gray-medium;
+  }
+  &__icon {
+    background-color: $background-secondary-color;
+    padding: rem-calc(5);
+    margin: rem-calc(5);
+    height: rem-calc(32);
+    width: rem-calc(32);
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: rem-calc(1) solid $gray-light;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    &__initials {
+      font-size: rem-calc(12);
+      color: $gray-medium;
+    }
+  }
+  &__container {
+    display: flex;
+    flex-direction: column;
+  }
+  &__menu-toggle {
+    border: solid $primary-color;
+    border-width: rem-calc(0 1 1 0);
+    display: inline-block;
+    padding: rem-calc(4);
+    margin: rem-calc(0 0 0 16);
+    transform: rotate(45deg);
+  }
+}

@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import { hot } from "react-hot-loader";
+import React, { Component } from 'react';
+import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import { PrivateRoute } from "./midgard/components/PrivateRoute";
-import { oauthService } from "./midgard/modules/oauth/oauth.service"
+import { PrivateRoute } from './midgard/routes/PrivateRoute';
+import { oauthService } from './midgard/modules/oauth/oauth.service';
 
-import "./App.scss";
-import Login from './midgard/pages/login/Login';
-import Dashboard from './midgard/pages/dashboard/Dashboard';
+import './App.scss';
+import Login from './midgard/pages/Login/Login';
+import Container from './midgard/pages/Container/Container';
 
 class App extends Component{
   render(){
@@ -15,13 +15,13 @@ class App extends Component{
         <div className="app">
           <Route exact path="/" render={() => (
             oauthService.hasValidAccessToken() ? (
-              <Redirect to="/dashboard"/>
+              <Redirect to="/profile"/>
             ) : (
               <Redirect to="/login"/>
             )
           )}/>
           <Route path="/login" component={Login} />
-          <PrivateRoute path="/dashboard" component={Dashboard} />
+          <PrivateRoute path="/profile" component={Container} />
         </div>
       </Router>
     );

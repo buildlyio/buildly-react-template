@@ -1,10 +1,10 @@
+import authSaga from "./authSaga";
+import { all } from 'redux-saga/effects';
 
 // single entry point to start all Sagas at once
 export default function* rootSaga() {
-  yield [
-    //import all sagas and call them here:
-    //helloSaga(),
-    //documentsSaga(),
-    //someOtherSaga()
-  ]
+  yield all([
+    // import all sagas and call them here:
+    authSaga()
+  ])
 }

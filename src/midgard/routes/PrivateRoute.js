@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { oauthService } from '../modules/oauth/oauth.service';
+import { oauthService } from 'midgard/modules/oauth/oauth.service';
 
 export const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => (

@@ -1,10 +1,12 @@
 import React from 'react'
-import { oauthService } from '../../modules/oauth/oauth.service';
-import { httpService } from '../../modules/http/http.service';
-import logo from '../../../assets/midgard-logo.svg';
-import { environment } from '../../../../environment.js';
+import { oauthService } from 'midgard/modules/oauth/oauth.service';
+import { httpService } from 'midgard/modules/http/http.service';
+import logo from 'assets/midgard-logo.svg';
+import { environment } from 'environment';
+import { connect } from 'react-redux';
 
 import './Login.scss'
+import { login } from 'store/actions/authActions';
 
 class Login extends React.Component {
   constructor(props) {
@@ -38,7 +40,7 @@ class Login extends React.Component {
       username: this.state.username,
       password: this.state.password
     };
-    this.setState({ error: '', loading: true })
+    // this.props.dispatch(login(loginFormValue));
     oauthService.authenticateWithPasswordFlow(loginFormValue).subscribe(
       token => {
         this.setState({ loading: false })
@@ -47,6 +49,7 @@ class Login extends React.Component {
           'get', environment.API_URL + `oauthuser/`,
         ).then(success => {
           oauthService.setOauthUser(success);
+          localStorage.setItem('last_login', Date.now());
           const { from } = this.props.location.state || { from: { pathname: "/" } };
           this.props.history.push(from);
         });
@@ -56,7 +59,8 @@ class Login extends React.Component {
   }
 
   render() {
-    const { username, password, error, loading } = this.state;
+    const { username, password, loading, error } = this.state;
+
     return (
       <div className="login">
         <div className="login__card">
@@ -110,4 +114,5 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+const mapStateToProps = (state, ownProps) => ({...ownProps, ...state.authReducer});
+export default connect(mapStateToProps)(Login);

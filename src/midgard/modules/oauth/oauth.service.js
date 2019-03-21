@@ -1,5 +1,5 @@
 import { oauth } from 'midgard-core';
-import { environment } from '../../../../environment.js';
+import { environment } from 'environment';
 
 export const oauthService = {
   authenticateWithPasswordFlow,
@@ -52,7 +52,7 @@ function setOauthUser(oauthUser) {
  * Checks, whether there is a valid access_token.
  */
 function hasValidAccessToken() {
-  if (this.getAccessToken()) {
+  if (getAccessToken()) {
     const expiresAt = localStorage.getItem('expires_at');
     const now = new Date();
     if (expiresAt && parseInt(expiresAt, 10) < now.getTime()) {
@@ -84,7 +84,7 @@ function setAccessToken(token) {
  * logs out the user by deleteing his access token from the storage
  */
 function logout() {
-  if (this.getAccessToken()) {
+  if (getAccessToken()) {
     localStorage.removeItem('token');
     localStorage.removeItem('expires_at');
     localStorage.removeItem('token_stored_at');

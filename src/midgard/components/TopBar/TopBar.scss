@@ -1,0 +1,45 @@
+@import "styles";
+
+.top-bar {
+  height: rem-calc(60);
+  display: flex;
+  background-color: $background-primary-color;
+
+  &__container {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-end;
+    margin: rem-calc(8 0);
+    border-left: rem-calc(1) solid $gray-lighter;
+  }
+
+  &__search {
+    $search-size: rem-calc(40);
+    display: flex;
+    margin: rem-calc(0 40);
+    &__input {
+      border-radius: rem-calc(4 0 0 4);
+      height: $search-size;
+      width: rem-calc(240);
+      border: none;
+      padding: rem-calc(0 10);
+      font-size: rem-calc(14);
+    }
+
+    &__submit {
+      height: $search-size;
+      width: $search-size;
+      background-color: $primary-color;
+      border: none;
+      color: $white;
+      font-weight: bold;
+      border-radius: rem-calc(0 4 4 0);
+      cursor: pointer;
+
+      &:hover {
+        background-color: darken($primary-color, 5);
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+@import "styles";
+
+.container {
+  height: 100%;
+  display: flex;
+  background-color: $background-secondary-color;
+
+  &__row {
+    display: flex;
+    flex: 1;
+  }
+
+  &__column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+}
