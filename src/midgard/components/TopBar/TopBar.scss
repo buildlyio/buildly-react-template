@@ -2,22 +2,98 @@
 
 .top-bar {
   height: rem-calc(60);
+  max-height: rem-calc(60);
   display: flex;
   background-color: $background-primary-color;
+  transition: all linear 0.3s;
+
+  &--hidden {
+    max-height: 0;
+    overflow: hidden;
+    margin-bottom: rem-calc(40);
+
+    .top-bar {
+      &__menu {
+        position: fixed;
+        top: rem-calc(12);
+        left: rem-calc(20);
+        z-index: 99;
+
+        &__icon {
+          background-color: $primary-color;
+          border-radius: rem-calc(4);
+        }
+      }
+      &__bar {
+        background-color: $white;
+      }
+    }
+  }
+
+  &__main {
+    display: flex;
+    align-items: center;
+    padding: rem-calc(0 20);
+    box-sizing: border-box;
+    width: rem-calc(220);
+    border-right: rem-calc(1) solid $gray-lighter;
+  }
+
+  &__menu {
+    height: rem-calc(32);
+    width: rem-calc(32);
+    display: flex;
+
+    &__icon {
+      position: relative;
+      flex: 1;
+      flex-direction: column;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  
+  &__bar {
+    height: rem-calc(3);
+    background-color: $primary-color;
+    width: rem-calc(20);
+
+    &:not(:last-of-type) {
+      margin-bottom: rem-calc(4);
+    }
+  }
+
+  &__menu-container {
+    height: rem-calc(32);
+    width: rem-calc(32);
+    margin-right: rem-calc(8);
+    cursor: pointer;
+  }
+
+  &__title {
+    font-size: rem-calc(14);
+    line-height: rem-calc(18);
+    text-align: center;
+  }
+
+  &__logo {
+    height: rem-calc(32);
+    margin-right: rem-calc(8);
+  }
 
   &__container {
     display: flex;
     flex: 1;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin: rem-calc(8 0);
-    border-left: rem-calc(1) solid $gray-lighter;
   }
 
   &__search {
     $search-size: rem-calc(40);
     display: flex;
-    margin: rem-calc(0 40);
+    padding: rem-calc(0 40);
     &__input {
       border-radius: rem-calc(4 0 0 4);
       height: $search-size;

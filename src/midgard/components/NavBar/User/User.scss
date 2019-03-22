@@ -6,11 +6,13 @@
   height: rem-calc(54);
   margin-bottom: rem-calc(16);
   align-items: center;
-  color: #191919;
   text-decoration: none;
+  cursor: pointer;
+
   &__name {
     font-size: rem-calc(14);
     line-height: rem-calc(18);
+    color: $text-primary-color;
   }
   &__last-login {
     font-size: rem-calc(10);
@@ -45,5 +47,25 @@
     padding: rem-calc(4);
     margin: rem-calc(0 0 0 16);
     transform: rotate(45deg);
+  }
+
+  &:hover {
+    background-color: rgba($primary-color, 0.10);
+    .nav-bar-user {
+      &__name,
+      &__last-login {
+        color: $primary-color;
+      }
+    }
+  }
+
+  &--open {
+    background-color: rgba($primary-color, 0.17);
+    .nav-bar-user {
+      &__name,
+      &__last-login {
+        color: $primary-color;
+      }
+    }
   }
 }

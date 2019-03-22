@@ -25,14 +25,14 @@ function* logout() {
 function* login(payload) {
   try {
     const token = yield call(oauthService.authenticateWithPasswordFlow, payload.credentials);
-    yield call(oauthService.setAccessToken, token);
+    yield call(oauthService.setAccessToken, token.data);
     const user = yield call(httpService.makeRequest, 'get', `${environment.API_URL}oauthuser/`);
     yield call(oauthService.setOauthUser, user);
     yield [
       yield put({ type: LOGIN_SUCCESS, user })
     ];
   } catch(error) {
-    yield put({ type: LOGIN_FAIL, error });
+    yield put({ type: LOGIN_FAIL, error: 'Invalid credentials given' });
   }
 }
 

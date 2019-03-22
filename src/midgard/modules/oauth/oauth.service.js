@@ -20,7 +20,8 @@ export const oauthService = {
 function authenticateWithPasswordFlow(credentials) {
   const oauthOptions = {
     clientId: environment.OAUTH_CLIENT_ID,
-    tokenUrl: environment.OAUTH_TOKEN_URL
+    tokenUrl: environment.OAUTH_TOKEN_URL,
+    returnPromise: true
   };
   return oauth.authenticateWithCredentials(credentials, oauthOptions);
 }

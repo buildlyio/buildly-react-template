@@ -25,17 +25,20 @@ class Profile extends React.Component {
 
   render() {
     const { user } = this.state;
+    if (!user) {
+      return <Redirect push to="/" />;
+    }
     return (
       <div className="profile">
         <div className="profile__container">
           <h3>Settings</h3>
           <div className="profile__field">
             <label className="profile__field__label">First and last name</label>
-            <div className="profile__field__value profile__field__value--bold">{`${user.first_name} ${user.last_name}`}</div>
+            <div className="profile__field__value profile__field__value--bold">{user.first_name} {user.last_name}</div>
           </div>
           <div className="profile__field">
             <label className="profile__field__label">Email</label>
-            <div className="profile__field__value">{`${user.email}`}</div>
+            <div className="profile__field__value">{user.email}</div>
           </div>
 
           <button

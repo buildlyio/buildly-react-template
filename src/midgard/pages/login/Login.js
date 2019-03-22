@@ -1,9 +1,8 @@
 import React from 'react'
 import { oauthService } from 'midgard/modules/oauth/oauth.service';
-import { httpService } from 'midgard/modules/http/http.service';
 import logo from 'assets/midgard-logo.svg';
-import { environment } from 'environment';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
 
 import './Login.scss'
 import { login } from 'store/actions/authActions';
@@ -13,10 +12,9 @@ class Login extends React.Component {
     super(props);
     this.state = {
       username: '',
-      password: '',
-      error: '',
-      loading: false
+      password: ''
     };
+    this.oauthService = oauthService;
     this.updateField = this.updateField.bind(this);
     this.submit = this.submit.bind(this);
   }
@@ -36,31 +34,20 @@ class Login extends React.Component {
    */
   submit(event) {
     event.preventDefault();
+    this.setState({ loading: true });
     const loginFormValue = {
       username: this.state.username,
       password: this.state.password
     };
-    // this.props.dispatch(login(loginFormValue));
-    oauthService.authenticateWithPasswordFlow(loginFormValue).subscribe(
-      token => {
-        this.setState({ loading: false })
-        oauthService.setAccessToken(token.data);
-        httpService.makeRequest(
-          'get', environment.API_URL + `oauthuser/`,
-        ).then(success => {
-          oauthService.setOauthUser(success);
-          localStorage.setItem('last_login', Date.now());
-          const { from } = this.props.location.state || { from: { pathname: "/" } };
-          this.props.history.push(from);
-        });
-      },
-      error => this.setState({ error: 'Invalid credentials given', loading: false })
-    );
+    this.props.dispatch(login(loginFormValue));
   }
 
   render() {
-    const { username, password, loading, error } = this.state;
-
+    const { username, password } = this.state;
+    const { loading, error } = this.props;
+    if (this.oauthService.hasValidAccessToken()) {
+      return <Redirect push to="/" />;
+    }
     return (
       <div className="login">
         <div className="login__card">
@@ -115,4 +102,5 @@ class Login extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({...ownProps, ...state.authReducer});
+
 export default connect(mapStateToProps)(Login);
