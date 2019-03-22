@@ -36,7 +36,16 @@ module.exports = {
       }
     ]
   },
-  resolve: { extensions: ["*", ".js", ".jsx"] },
+  resolve: {
+    extensions: ["*", ".js", ".jsx"],
+    modules: [path.resolve(__dirname, './src'), 'node_modules'],
+    alias: {
+      midgard: path.resolve(__dirname, './src/midgard'),
+      store: path.resolve(__dirname, './src/store'),
+      environment$: path.resolve(__dirname, './environment.js'),
+      styles$: path.resolve(__dirname, './src/styles.scss'),
+    }
+  },
   output: {
     path: path.resolve(__dirname, "dist/"),
       publicPath: "/dist/",

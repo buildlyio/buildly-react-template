@@ -1,9 +1,8 @@
 import { http } from 'midgard-core';
-import { oauthService } from '../oauth/oauth.service';
+import { oauthService } from 'midgard/modules/oauth/oauth.service';
 
 export const httpService = {
-  makeRequest,
-  handleError,
+  makeRequest
 };
 
 /**
@@ -37,20 +36,6 @@ function makeRequest(method, url, body, useJwt, contentType, responseType) {
     returnPromise: true,
     responseType: responseType ? responseType : null
   };
-  return http.request(url, options).then(
-    (success) => success,
-    (error) => this.handleError(error)
-  );
-}
-
-/**
- * handles request errors
- * @param error - request error
- * @returns observable of the error
- */
-function handleError(error) {
-  if (error) {
-    return throwError('Server error');
-  }
+  return http.request(url, options);
 }
 

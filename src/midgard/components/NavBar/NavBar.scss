@@ -1,0 +1,32 @@
+@import "styles";
+
+.nav-bar {
+  display: flex;
+  max-width: rem-calc(220);
+  width: rem-calc(220);
+  height: 100%;
+  background-color: $background-primary-color;
+  min-height: calc(100vh - #{rem-calc(50)});
+  transition: max-width 0.3s ease-in-out;
+
+  &--hidden {
+    max-width: 0;
+    overflow: hidden;
+    margin-right: rem-calc(40);
+  }
+
+  &__container {
+    display: flex;
+    margin: rem-calc(0 10);
+    flex-flow: column nowrap;
+    width: rem-calc(200);
+    height: calc(100vh - #{rem-calc(50)});
+    transition: all 0.3s ease-in-out;
+    &--hidden {
+      display: none;
+    }
+  }
+  &__elements {
+    flex: 3;
+  }
+}

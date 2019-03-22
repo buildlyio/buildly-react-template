@@ -1,18 +1,21 @@
 import { redux } from 'midgard-core';
 
-import createSagaMiddleware from 'redux-saga'
+import createSagaMiddleware from 'redux-saga';
 
-import rootReducer from './reducers/rootReducer'
-import rootSaga from './sagas/rootSaga'
+import rootReducer from './reducers/rootReducer';
+import rootSaga from './sagas/rootSaga';
 
-const sagaMiddleware = createSagaMiddleware()
+const configureStore = () => {
+  const sagaMiddleware = createSagaMiddleware();
+  return {
+    ...redux.createStore(
+      rootReducer,
+      redux.applyMiddleware(sagaMiddleware)
+    ),
+    runSaga: sagaMiddleware.run(rootSaga)
+  };
+};
 
-export const store = redux.createStore(
-  rootReducer,
-  redux.applyMiddleware(sagaMiddleware)
-  );
-  
-sagaMiddleware.run(rootSaga);
-  
 export const dispatch = type => store.dispatch({type});
-  
+
+export default configureStore;
