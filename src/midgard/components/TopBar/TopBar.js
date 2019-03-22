@@ -16,7 +16,7 @@ class TopBar extends React.Component {
       <div className={ 'top-bar ' + (this.props.navHidden ? 'top-bar--hidden' : '') }>
         <div className="top-bar__container">
           <div className="top-bar__main">
-            <div class="top-bar__menu-container">
+            <div className="top-bar__menu-container">
               <div className="top-bar__menu" onClick={this.toggleNav}>
                 <div className="top-bar__menu__icon">
                   <div className="top-bar__bar"></div>
