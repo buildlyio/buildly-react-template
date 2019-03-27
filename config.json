@@ -1,0 +1,10 @@
+{
+  "appTitle": "My App",
+  "modules": [
+    {
+      "name": "products",
+      "url": "https://github.com/Humanitec/product_client_react.git"
+    }
+  ]
+}
+

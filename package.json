@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "dependencies": {
     "gulp": "^4.0.0",
+    "gulp-git": "^2.9.0",
     "midgard-core": "0.1.3",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
@@ -39,7 +40,8 @@
     "start": "webpack-dev-server --mode development",
     "test": "jest",
     "build": "webpack --mode development",
-    "build-prod": "webpack --mode production"
+    "build-prod": "webpack --mode production",
+    "init": "gulp init --gulpfile gulpfile.js --cwd ./"
   },
   "jest": {
     "setupFiles": [
