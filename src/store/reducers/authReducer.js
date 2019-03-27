@@ -22,7 +22,7 @@ export default (state = initialState, action) => {
         loading: true,
         loaded: false,
         error: null
-      }
+      };
 
     case LOGIN_SUCCESS:
       return {
@@ -30,7 +30,7 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         user: action.user
-      }
+      };
 
     case LOGIN_FAIL:
       return {
@@ -38,12 +38,12 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         error: action.error
-      }
+      };
 
     case LOGOUT_SUCCESS:
       return {
         ...state,
-      }
+      };
 
     default:
       return state
