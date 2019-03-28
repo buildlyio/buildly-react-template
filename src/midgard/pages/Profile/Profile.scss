@@ -3,6 +3,7 @@
 .profile {
   height: 100%;
   display: flex;
+  flex: 1;
   background-color: $background-secondary-color;
 
   &__container {

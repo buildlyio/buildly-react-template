@@ -17,7 +17,6 @@
       &__menu {
         &__icon {
           background-color: $primary-color;
-          border-radius: rem-calc(4);
         }
       }
       &__bar {
@@ -51,13 +50,16 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      border-radius: rem-calc(4);
+      background-color: $white;
+      box-shadow: 0 rem-calc(2) rem-calc(3) 0 rgba($black, 0.12);
     }
   }
   
   &__bar {
-    height: rem-calc(3);
+    height: rem-calc(2);
     background-color: $primary-color;
-    width: rem-calc(20);
+    width: rem-calc(16);
 
     &:not(:last-of-type) {
       margin-bottom: rem-calc(4);
@@ -96,22 +98,33 @@
     padding: rem-calc(0 40);
     &__input {
       border-radius: rem-calc(4 0 0 4);
-      height: $search-size;
+      height: $search-size - rem-calc(2);
       width: rem-calc(240);
-      border: none;
+      border: rem-calc(1) solid transparent;
       padding: rem-calc(0 10);
-      font-size: rem-calc(14);
+      font-size: rem-calc(16);
+      outline: none;
+
+      &:focus {
+        border-color: $primary-color;
+      }
     }
 
     &__submit {
       height: $search-size;
       width: $search-size;
       background-color: $primary-color;
-      border: none;
+      border: rem-calc(1) solid transparent;
       color: $white;
       font-weight: bold;
       border-radius: rem-calc(0 4 4 0);
       cursor: pointer;
+      outline: none;
+
+      img {
+        height: rem-calc(18);
+        width: rem-calc(18);
+      }
 
       &:hover {
         background-color: darken($primary-color, 5);

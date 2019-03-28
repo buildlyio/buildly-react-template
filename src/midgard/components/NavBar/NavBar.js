@@ -10,7 +10,6 @@ class NavBar extends React.Component {
     this.state = {
       navItems: [
         { id: 'products', title: 'Products', description: 'Managing the items stock' },
-        { id: 'forms', title: 'Forms', description: 'Collecting information' }
       ],
       active: 'products'
     };

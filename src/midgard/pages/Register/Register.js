@@ -34,7 +34,7 @@ class Register extends React.Component {
   }
 
   /**
-   * Submit the form to the backend and attempts to authenticate
+   * Submit the form to the backend and attempts to create a user
    * @param {Event} event the default submit event
    */
   submit(event) {
