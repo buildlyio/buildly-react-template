@@ -6,6 +6,7 @@
   display: flex;
   background-color: $background-primary-color;
   transition: all linear 0.3s;
+  z-index: 3;
 
   &--hidden {
     max-height: 0;
@@ -14,11 +15,6 @@
 
     .top-bar {
       &__menu {
-        position: fixed;
-        top: rem-calc(12);
-        left: rem-calc(20);
-        z-index: 99;
-
         &__icon {
           background-color: $primary-color;
           border-radius: rem-calc(4);
@@ -40,6 +36,10 @@
   }
 
   &__menu {
+    position: fixed;
+    top: rem-calc(12);
+    left: rem-calc(20);
+    z-index: 99;
     height: rem-calc(32);
     width: rem-calc(32);
     display: flex;

@@ -8,6 +8,8 @@
   background-color: $background-primary-color;
   min-height: calc(100vh - #{rem-calc(60)});
   transition: max-width 0.3s ease-in-out;
+  margin-top: rem-calc(-60);
+  padding-top: rem-calc(60);
 
   &--hidden {
     max-width: 0;

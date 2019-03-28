@@ -23,6 +23,8 @@ class NavBarMenu extends React.Component {
    */
   logout() {
     this.props.dispatch(logout());
+    const { from } = this.props.location.state || { from: { pathname: "/" } };
+    this.props.history.push(from);
   }
 
   render() {

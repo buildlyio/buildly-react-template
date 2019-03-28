@@ -40,6 +40,10 @@ class Profile extends React.Component {
             <label className="profile__field__label">Email</label>
             <div className="profile__field__value">{user.email}</div>
           </div>
+          <div className="profile__field">
+            <label className="profile__field__label">Organization</label>
+            <div className="profile__field__value">{user.organization.name}</div>
+          </div>
 
           <button
             className="profile__logout"
