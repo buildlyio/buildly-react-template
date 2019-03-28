@@ -50,7 +50,7 @@ class NavBarUser extends React.Component {
       <div
         ref={this.setWrapperRef}
         className={'nav-bar-user ' + (open ? 'nav-bar-user--open' : '')} onClick={this.toggleOpen}>
-        <NavBarMenu domRef={this.childRef} open={open} location={location} history={history} />
+        <NavBarMenu open={open} location={location} history={history} />
         <div className="nav-bar-user__icon">
           <span className="nav-bar-user__icon__initials">
             {user.first_name.charAt(0)}{user.last_name.charAt(0)}

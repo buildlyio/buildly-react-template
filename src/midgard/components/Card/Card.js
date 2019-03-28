@@ -13,6 +13,8 @@ class Card extends React.Component {
       ],
       open: false
     }
+    this.setWrapperRef = this.setWrapperRef.bind(this);
+    this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
   toggleOpen() {
@@ -23,10 +25,27 @@ class Card extends React.Component {
     this.props.action(action, this.props.id);
   }
 
+  componentWillMount() {
+    document.addEventListener('mousedown', this.handleClickOutside, false);
+  }
+
+  copmonentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside, false);
+  }
+
+  handleClickOutside(event) {
+    if (this.state.open && this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+      this.toggleOpen();
+    }
+  };
+
+  setWrapperRef(node) {
+    this.wrapperRef = node;
+  }
+
   render() {
     return (
       <div className="card">
-        <Menu close={() => this.state.open = false} open={this.state.open} menuAction={this.chooseItem} menuItems={this.state.menuItems} />
         <div className="card__container">
           <div className="card__image">
             <img src={this.props.image} />
@@ -40,7 +59,10 @@ class Card extends React.Component {
             <div className="card__details__second-line">{Array.prototype.map.call(this.props.tags, tag => tag).toString()}</div>
           </div>
           <div className={'card__options' + (this.props.open ? ' card__options--open' : '')}>
-            <button className="card__menu" onClick={this.toggleOpen}>...</button>
+            <div ref={this.setWrapperRef}>
+              <Menu open={this.state.open} menuAction={this.chooseItem} menuItems={this.state.menuItems} />
+              <button className="card__menu" onClick={this.toggleOpen}>...</button>
+            </div>
           </div>
         </div>
       </div>

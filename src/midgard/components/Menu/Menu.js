@@ -21,24 +21,6 @@ class Menu extends React.Component {
     return items;
   }
 
-  componentWillMount() {
-    document.addEventListener('mousedown', this.handleClickOutside, false);
-  }
-
-  copmonentWillUnmount() {
-    document.removeEventListener('mousedown', this.handleClickOutside, false);
-  }
-
-  handleClickOutside(event) {
-    if (this.props.open && this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-      this.props.close();
-    }
-  };
-
-  setWrapperRef(node) {
-    this.wrapperRef = node;
-  }
-
   render() {
     const { open } = this.props;
     return (
