@@ -41,7 +41,8 @@
     "test": "jest",
     "build": "webpack --mode development",
     "build-prod": "webpack --mode production",
-    "init": "gulp init --gulpfile gulpfile.js --cwd ./"
+    "createFile":"gulp createFile  --gulpfile gulpfile.js --cwd ./",
+    "init": "gulp init --gulpfile gulpfile.js --cwd ./ && createFile"
   },
   "jest": {
     "setupFiles": [

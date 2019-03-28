@@ -30,7 +30,6 @@ var readFile = function readFile(fileName) {
     }
     try {
         file = JSON.parse(file);
-        console.log(file);
     } catch (e) {
         throw new Error('Error parsing application configuration: ' + e.message);
     }
@@ -159,6 +158,15 @@ var genericErrorHandler = function genericErrorHandler(err) {
     console.warn(err.message);
 };
 
+_gulp.default.task('createFile', function (done) {
+    var item = [];
+    for (var i = 0; i < config.modules.length; i++) {
+        item.push({ id: config.modules[i].name, title: config.modules[i].name, description: config.modules[i].description })
+    }
+    console.log((item));
+    _fs.writeFileSync('src/midgard/components/NavBar/NavBaritems.js', "export const NavBarItems =" +  JSON.stringify(item));
+    done();
+});
 
 _gulp.default.task('init', function (done) {
     if (!config) {
@@ -178,9 +186,6 @@ _gulp.default.task('init', function (done) {
             return clone(module).catch(genericErrorHandler).then(function () {
                 return npmInstall(module);
             }).catch(genericErrorHandler).then(function () {
-                if (module.config) {
-                    //return schematics(module);
-                }
             }).catch(genericErrorHandler).then(subTaskDone);
         });
 
@@ -205,4 +210,5 @@ _gulp.default.task('init', function (done) {
         (0, _fs.writeFileSync)("".concat(applicationPath, "/app-state.json"), JSON.stringify(appState));
         done();
     });
+
 });

@@ -3,6 +3,7 @@
   "modules": [
     {
       "name": "products",
+      "description": "Add products to inventory",
       "url": "https://github.com/Humanitec/product_client_react.git"
     }
   ]
