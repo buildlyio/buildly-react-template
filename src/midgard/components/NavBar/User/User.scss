@@ -13,11 +13,13 @@
     font-size: rem-calc(14);
     line-height: rem-calc(18);
     color: $text-primary-color;
+    white-space: nowrap;
   }
   
   &__last-login {
     font-size: rem-calc(10);
     color: $gray-medium;
+    white-space: nowrap;
   }
 
   &__icon {
@@ -54,7 +56,8 @@
     transform: rotate(45deg);
   }
 
-  &:hover {
+  &:hover,
+  &--open {
     background-color: rgba($primary-color, 0.10);
     .nav-bar-user {
       &__name,
@@ -64,7 +67,7 @@
     }
   }
 
-  &--open {
+  &--active {
     background-color: rgba($primary-color, 0.17);
     .nav-bar-user {
       &__name,

@@ -22,19 +22,19 @@ class NavBar extends React.Component {
   }
 
   createItems() {
-      const items = [];
-      if (this.state.navItems.length) {
-          for (const item of this.state.navItems) {
-              items.push(<NavBarItem
-                  key={item.id}
-                  id={item.id}
-                  title={item.title}
-                  description={item.description}
-                  active={this.props.location.pathname.includes(item.id)}
-                  action={this.setActive}/>);
-          }
-          return items;
+    const items = [];
+    if (this.state.navItems.length) {
+      for (const item of this.state.navItems) {
+        items.push(<NavBarItem
+          key={item.id}
+          id={item.id}
+          title={item.title}
+          description={item.description}
+          active={this.props.location.pathname.includes(item.id)}
+          action={this.setActive}/>);
       }
+      return items;
+    }
   }
 
   render() {

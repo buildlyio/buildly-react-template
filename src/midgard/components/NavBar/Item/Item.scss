@@ -12,10 +12,13 @@
     font-size: rem-calc(14);
     line-height: rem-calc(18);
     color: $text-primary-color;
+    white-space: nowrap;
+    text-transform: capitalize;
   }
   &__description {
     font-size: rem-calc(10);
     color: $gray-medium;
+    white-space: nowrap;
   }
   &__container {
     display: flex;

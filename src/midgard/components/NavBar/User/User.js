@@ -49,7 +49,8 @@ class NavBarUser extends React.Component {
     return (
       <div
         ref={this.setWrapperRef}
-        className={'nav-bar-user ' + (open ? 'nav-bar-user--open' : '')} onClick={this.toggleOpen}>
+        className={'nav-bar-user' + (open ? ' nav-bar-user--open' : '') + (location.pathname.includes('profile') ? ' nav-bar-user--active' : '')}
+        onClick={this.toggleOpen}>
         <NavBarMenu open={open} location={location} history={history} />
         <div className="nav-bar-user__icon">
           <span className="nav-bar-user__icon__initials">
