@@ -2,7 +2,7 @@
   "appTitle": "My App",
   "modules": [
     {
-      "name": "products",
+      "name": "Products",
       "description": "Add products to inventory",
       "url": "https://github.com/Humanitec/product_client_react.git"
     }

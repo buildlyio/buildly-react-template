@@ -160,11 +160,14 @@ var genericErrorHandler = function genericErrorHandler(err) {
 
 _gulp.default.task('createFile', function (done) {
     var item = [];
+    var imports= [];
     for (var i = 0; i < config.modules.length; i++) {
-        item.push({ id: config.modules[i].name, title: config.modules[i].name, description: config.modules[i].description })
+        item.push({ id: config.modules[i].name, title: config.modules[i].name, description: config.modules[i].description });
+        imports.push("import " + config.modules[i].name + " from '../../../clients/" + config.modules[i].name + "/src/" +config.modules[i].name + "'; \n")
     }
-    console.log((item));
     _fs.writeFileSync('src/midgard/components/NavBar/NavBaritems.js', "export const NavBarItems =" +  JSON.stringify(item));
+    var container = _fs.readFileSync('src/midgard/pages/Container/Container.js',"utf8");
+    _fs.writeFileSync('src/midgard/pages/Container/Container.js', imports + container);
     done();
 });
 
