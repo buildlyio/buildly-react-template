@@ -17,18 +17,40 @@ class NavBarUser extends React.Component {
       open: false
     };
     this.toggleOpen = this.toggleOpen.bind(this);
+    this.setWrapperRef = this.setWrapperRef.bind(this);
+    this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
   toggleOpen() {
     this.setState({open: !this.state.open});
   }
 
+  componentWillMount() {
+    document.addEventListener('mousedown', this.handleClickOutside, false);
+  }
+
+  copmonentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside, false);
+  }
+
+  handleClickOutside(event) {
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+      this.setState({open: false});
+    }
+  };
+
+  setWrapperRef(node) {
+    this.wrapperRef = node;
+  }
+
   render() {
     const { user, lastLogin, open } = this.state;
     const { location, history } = this.props;
     return (
-      <div className={'nav-bar-user ' + (open ? 'nav-bar-user--open' : '')} onClick={this.toggleOpen}>
-        <NavBarMenu open={open} location={location} history={history} />
+      <div
+        ref={this.setWrapperRef}
+        className={'nav-bar-user ' + (open ? 'nav-bar-user--open' : '')} onClick={this.toggleOpen}>
+        <NavBarMenu domRef={this.childRef} open={open} location={location} history={history} />
         <div className="nav-bar-user__icon">
           <span className="nav-bar-user__icon__initials">
             {user.first_name.charAt(0)}{user.last_name.charAt(0)}
