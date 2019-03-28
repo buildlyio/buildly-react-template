@@ -1,1 +1,1 @@
-export const NavBarItems =[ ]
+export const NavBarItems =[]
