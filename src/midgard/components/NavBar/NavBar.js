@@ -2,15 +2,14 @@ import React from 'react'
 import './NavBar.scss'
 import NavBarUser from './User/User';
 import NavBarItem from './Item/Item';
+import { NavBarItems } from './NavBarItems'
 import logo from 'assets/midgard-logo.svg';
 
 class NavBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      navItems: [
-        { id: 'products', title: 'Products', description: 'Managing the items stock' },
-      ],
+      navItems: NavBarItems,
       active: ''
     };
     this.setActive = this.setActive.bind(this);
