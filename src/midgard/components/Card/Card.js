@@ -1,6 +1,7 @@
 import React from 'react'
 import './Card.scss'
 import Menu from '../Menu/Menu';
+import EditableLabel from 'react-inline-edit';
 
 class Card extends React.Component {
   constructor(props) {
@@ -51,7 +52,7 @@ class Card extends React.Component {
             <img src={this.props.image} />
           </div>
           <div className="card__overview">
-            <div className="card__overview__first-line">{this.props.title}</div>
+            <div className="card__overview__first-line"><EditableLabel text={this.props.title} /></div>
             <div className="card__overview__second-line">{this.props.description}</div>
           </div>
           <div className="card__details">
