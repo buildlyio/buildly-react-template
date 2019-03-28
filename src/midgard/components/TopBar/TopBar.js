@@ -1,6 +1,8 @@
 import React from 'react'
 import './TopBar.scss'
 import logo from 'assets/midgard-logo.svg';
+import searchIcon from 'assets/icon-search.svg';
+
 class TopBar extends React.Component {
   constructor(props) {
     super(props);
@@ -30,7 +32,9 @@ class TopBar extends React.Component {
           </div>
           <div className="top-bar__search">
             <input className="top-bar__search__input" placeholder="Search" />
-            <button className="top-bar__search__submit" type="submit">Go</button>
+            <button className="top-bar__search__submit" type="submit">
+              <img src={searchIcon} />
+            </button>
           </div>
         </div>
       </div>

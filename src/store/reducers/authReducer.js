@@ -2,7 +2,10 @@ import {
   LOGIN,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
-  LOGOUT_SUCCESS
+  LOGOUT_SUCCESS,
+  REGISTER,
+  REGISTER_SUCCESS,
+  REGISTER_FAIL,
 } from '../actions/actionTypes';
 
 const initialState = {
@@ -45,6 +48,30 @@ export default (state = initialState, action) => {
         ...state,
       };
 
+    case REGISTER:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null
+      };
+
+    case REGISTER_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        user: action.user
+      };
+
+    case REGISTER_FAIL:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error
+      };
+      
     default:
       return state
   }
