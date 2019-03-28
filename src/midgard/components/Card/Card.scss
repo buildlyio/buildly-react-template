@@ -1,8 +1,8 @@
 @import "styles";
 
 .card {
-  margin: rem-calc(6 32);
-  width: 100%;
+  margin: rem-calc(6 16);
+  width: calc(100% - #{rem-calc(64)});
   position: relative;
 
   &__container {

@@ -7,10 +7,16 @@ class TopBar extends React.Component {
   constructor(props) {
     super(props);
     this.toggleNav = this.toggleNav.bind(this);
+    this.search = this.search.bind(this);
   }
 
   toggleNav() {
     this.props.action(!this.props.navHidden);
+  }
+
+  search() {
+    event.preventDefault();
+    alert('No');
   }
 
   render() {
@@ -30,12 +36,12 @@ class TopBar extends React.Component {
             <img className="top-bar__logo" src={logo} />
             <h1 className="top-bar__title">Demo App</h1>
           </div>
-          <div className="top-bar__search">
+          <form className="top-bar__search" onSubmit={this.search}>
             <input className="top-bar__search__input" placeholder="Search" />
             <button className="top-bar__search__submit" type="submit">
               <img src={searchIcon} />
             </button>
-          </div>
+          </form>
         </div>
       </div>
     )

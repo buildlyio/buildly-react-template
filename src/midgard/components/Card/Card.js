@@ -46,7 +46,7 @@ class Card extends React.Component {
 
   render() {
     return (
-      <div className={'card' + (this.props.cardStyle === 'tile' ? ' card--tile' : '')}>
+      <div className={'card' + (this.props.cardView === 'tile' ? ' card--tile' : '')}>
         <div className="card__container">
           <div className="card__image">
             <img src={this.props.image} />
