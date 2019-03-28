@@ -14,10 +14,12 @@
     line-height: rem-calc(18);
     color: $text-primary-color;
   }
+  
   &__last-login {
     font-size: rem-calc(10);
     color: $gray-medium;
   }
+
   &__icon {
     background-color: $background-secondary-color;
     padding: rem-calc(5);
@@ -31,15 +33,18 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     &__initials {
       font-size: rem-calc(12);
       color: $gray-medium;
     }
   }
+
   &__container {
     display: flex;
     flex-direction: column;
   }
+
   &__menu-toggle {
     border: solid $primary-color;
     border-width: rem-calc(0 1 1 0);

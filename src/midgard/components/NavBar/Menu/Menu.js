@@ -6,7 +6,16 @@ import { connect } from 'react-redux';
 class NavBarMenu extends React.Component {
   constructor(props) {
     super(props);
+    this.openProfile = this.openProfile.bind(this);
     this.logout = this.logout.bind(this);
+  }
+
+  /**
+   * Navigates to the profile screen
+   */
+  openProfile() {
+    const { from } = this.props.location.state || { from: { pathname: 'profile' } };
+    this.props.history.push(from);
   }
 
   /**
@@ -21,7 +30,7 @@ class NavBarMenu extends React.Component {
     return (
       <div className={'nav-bar-menu ' + (open ? 'nav-bar-menu--open' : '')}>
         <ul className="nav-bar-menu__list">
-          <li className="nav-bar-menu__item">Profile settings</li>
+          <li className="nav-bar-menu__item" onClick={this.openProfile}>Profile settings</li>
           <li className="nav-bar-menu__item" onClick={this.logout}>Logout</li>
         </ul>
       </div>

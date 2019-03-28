@@ -5,14 +5,14 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 
-import './Login.scss'
-import { login } from 'store/actions/authActions';
+import './Register.scss'
 
-class Login extends React.Component {
+class Register extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       username: '',
+      email: '',
       password: ''
     };
     this.oauthService = oauthService;
@@ -36,65 +36,79 @@ class Login extends React.Component {
   submit(event) {
     event.preventDefault();
     this.setState({ loading: true });
-    const loginFormValue = {
+    const registerFormValue = {
       username: this.state.username,
+      email: this.state.email,
       password: this.state.password
     };
-    this.props.dispatch(login(loginFormValue));
   }
 
   render() {
-    const { username, password } = this.state;
+    const { username, email, password } = this.state;
     const { loading, error } = this.props;
     if (this.oauthService.hasValidAccessToken()) {
       return <Redirect push to="/" />;
     }
     return (
-      <div className="login">
-        <div className="login__card">
-          <div className="login__card__content">
-            <img className="login__card__logo" src={logo} />
-            <form className="login__form" onSubmit={this.submit}>
-              <div className="login__form__field">
+      <div className="register">
+        <div className="register__card">
+          <div className="register__card__content">
+            <img className="register__card__logo" src={logo} />
+            <form className="register__form" onSubmit={this.submit}>
+              <div className="register__form__field">
                 <label
-                  className="login__form__label"
+                  className="register__form__label"
                   htmlFor="username">
                   Username
                 </label>
                 <input
-                  className="login__form__input"
+                  className="register__form__input"
                   name="username"
                   type="text"
                   placeholder="Enter username"
                   value={username}
                   onChange={this.updateField} />
               </div>
-              <div className="login__form__field">
+              <div className="register__form__field">
                 <label
-                  className="login__form__label"
+                  className="register__form__label"
+                  htmlFor="email">
+                  Email
+                </label>
+                <input
+                  className="register__form__input"
+                  name="email"
+                  type="email"
+                  placeholder="Enter email"
+                  value={email}
+                  onChange={this.updateField} />
+              </div>
+              <div className="register__form__field">
+                <label
+                  className="register__form__label"
                   htmlFor="password">
                   Password
                 </label>
                 <input
-                  className="login__form__input"
+                  className="register__form__input"
                   name="password"
                   type="password"
                   placeholder="Enter password"
                   value={password}
                   onChange={this.updateField} />
               </div>
-              <small className="login__form__spacer">
-                <span className="login__form__error">{error}</span>
+              <small className="register__form__spacer">
+                <span className="register__form__error">{error}</span>
               </small>
-              <div className="login__form__field">
+              <div className="register__form__field">
                 <button
                   disabled={loading}
-                  className="login__form__submit"
+                  className="register__form__submit"
                   type="submit">
-                  Login
+                  Register
                 </button>
               </div>
-              <Link className="login__form__link" to="/register">Register</Link>
+              <Link className="register__form__link" to="/login">Login</Link>
             </form>
           </div>
         </div>
@@ -105,4 +119,4 @@ class Login extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({...ownProps, ...state.authReducer});
 
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps)(Register);

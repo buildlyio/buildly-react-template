@@ -1,0 +1,73 @@
+@import "styles";
+
+.card {
+  margin: rem-calc(6 32);
+  position: relative;
+
+  &__container {
+    padding: rem-calc(10);
+    box-shadow: 0 rem-calc(2) rem-calc(3) 0 rgba($black, 0.12);
+    background-color: $white;
+    display: flex;
+    box-sizing: border-box;
+  }
+
+  &__image {
+    padding: rem-calc(0 10);
+    height: rem-calc(80);
+    width: rem-calc(80);
+    flex: none;
+  }
+
+  &__overview {
+    padding: rem-calc(0 10);
+    flex: 2;
+
+    &__first-line {
+      font-weight: bold;
+      height: rem-calc(36);
+    }
+
+    &__second-line {
+      color: $gray-medium-darker;
+      font-size: rem-calc(15);
+    }
+  }
+
+  &__details {
+    padding: rem-calc(0 10);
+    flex: 1;
+
+    &__first-line {
+      color: $gray-medium-darker;
+      height: rem-calc(36);
+    }
+
+    &__second-line {
+      color: $primary-color;
+    }
+  }
+
+  &__options {
+    padding: rem-calc(0 10);
+    flex: none;
+    display: flex;
+    align-items: center;
+  }
+
+  &__menu {
+    height: rem-calc(30);
+    width: rem-calc(36);
+    border: rem-calc(1) solid $primary-color;
+    border-radius: rem-calc(4);
+    color: $primary-color;
+    background-color: $white;
+    outline: none;
+    font-weight: bold;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $primary-color-lightest;
+    }
+  }
+}

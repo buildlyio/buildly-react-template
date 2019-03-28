@@ -25,9 +25,10 @@ class NavBarUser extends React.Component {
 
   render() {
     const { user, lastLogin, open } = this.state;
+    const { location, history } = this.props;
     return (
       <div className={'nav-bar-user ' + (open ? 'nav-bar-user--open' : '')} onClick={this.toggleOpen}>
-        <NavBarMenu open={open} />
+        <NavBarMenu open={open} location={location} history={history} />
         <div className="nav-bar-user__icon">
           <span className="nav-bar-user__icon__initials">
             {user.first_name.charAt(0)}{user.last_name.charAt(0)}

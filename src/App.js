@@ -7,6 +7,7 @@ import { oauthService } from './midgard/modules/oauth/oauth.service';
 import './App.scss';
 import Login from './midgard/pages/Login/Login';
 import Container from './midgard/pages/Container/Container';
+import Register from './midgard/pages/Register/Register';
 
 class App extends Component{
   render(){
@@ -15,13 +16,14 @@ class App extends Component{
         <div className="app">
           <Route exact path="/" render={() => (
             oauthService.hasValidAccessToken() ? (
-              <Redirect to="/profile"/>
+              <Redirect to="/app"/>
             ) : (
               <Redirect to="/login"/>
             )
           )}/>
           <Route path="/login" component={Login} />
-          <PrivateRoute path="/profile" component={Container} />
+          <Route path="/register" component={Register} />
+          <PrivateRoute path="/app" component={Container} />
         </div>
       </Router>
     );

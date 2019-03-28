@@ -6,7 +6,7 @@
   width: rem-calc(220);
   height: 100%;
   background-color: $background-primary-color;
-  min-height: calc(100vh - #{rem-calc(50)});
+  min-height: calc(100vh - #{rem-calc(60)});
   transition: max-width 0.3s ease-in-out;
 
   &--hidden {
@@ -20,7 +20,7 @@
     margin: rem-calc(0 10);
     flex-flow: column nowrap;
     width: rem-calc(200);
-    height: calc(100vh - #{rem-calc(50)});
+    height: calc(100vh - #{rem-calc(60)});
     transition: all 0.3s ease-in-out;
     &--hidden {
       display: none;

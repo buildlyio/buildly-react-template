@@ -7,25 +7,20 @@ import logo from 'assets/midgard-logo.svg';
 class NavBar extends React.Component {
   constructor(props) {
     super(props);
-    this.gotoProfile = this.gotoProfile.bind(this);
     this.state = {
       navItems: [
-        { id: 0, title: 'Dashboard', description: 'Monitoring the most important' },
-        { id: 1, title: 'Forms', description: 'Collecting information' }
+        { id: 'products', title: 'Products', description: 'Managing the items stock' },
+        { id: 'forms', title: 'Forms', description: 'Collecting information' }
       ],
-      active: 0
+      active: 'products'
     };
     this.setActive = this.setActive.bind(this);
     this.createItems = this.createItems.bind(this);
   }
 
-  gotoProfile() {
-    const { from } = this.props.location.state || { from: { pathname: "/" } };
-    this.props.history.push(from);
-  }
-
   setActive(active) {
-    this.setState({ active });
+    const { from } = this.props.location.state || { from: { pathname: active } };
+    this.props.history.push(from);
   }
 
   createItems() {
@@ -36,7 +31,7 @@ class NavBar extends React.Component {
         id={item.id}
         title={item.title}
         description={item.description}
-        active={this.state.active === item.id}
+        active={this.props.location.pathname.includes(item.id)}
         action={this.setActive} />);
     }
     return items;
@@ -49,7 +44,7 @@ class NavBar extends React.Component {
           <div className="nav-bar__elements">
             {this.createItems()}
           </div>
-          <NavBarUser onClick={this.gotoProfile} />
+          <NavBarUser location={this.props.location} history={this.props.history} />
         </div>
       </div>
     )
