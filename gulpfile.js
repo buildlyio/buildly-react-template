@@ -166,6 +166,7 @@ _gulp.default.task('createFile', function (done) {
         imports.push("import " + config.modules[i].name + " from '../../../clients/" + config.modules[i].name + "/src/" +config.modules[i].name + "'; \n")
     }
     _fs.writeFileSync('src/midgard/components/NavBar/NavBaritems.js', "export const NavBarItems =" +  JSON.stringify(item));
+    _fs.writeFileSync('src/midgard/pages/Container/ContainerImports.js', "export const ContainerItems =" +  JSON.stringify(item));
     var container = _fs.readFileSync('src/midgard/pages/Container/Container.js',"utf8");
     _fs.writeFileSync('src/midgard/pages/Container/Container.js', imports + container);
     done();

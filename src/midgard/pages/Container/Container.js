@@ -5,7 +5,7 @@ import NavBar from 'midgard/components/NavBar/NavBar'
 import TopBar from 'midgard/components/TopBar/TopBar'
 import Profile from './../Profile/Profile'
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-
+import {NavBarItems} from 'midgard/components/NavBar/NavBarItems';
 class Container extends React.Component {
   constructor(props) {
     super(props);
@@ -22,6 +22,11 @@ class Container extends React.Component {
   render() {
     const { navHidden } = this.state;
     const { location, history } = this.props;
+      let item
+
+    if (NavBarItems.length) {
+      item = <Route path="/app/products" component={Products} />;
+    }
     return (
       <div className="container">
         <div className="container__column">
@@ -32,7 +37,7 @@ class Container extends React.Component {
               <Redirect to="/app/profile"/>
             )} />
             <Route path="/app/profile" component={Profile} />
-            <Route path="/app/products" component={Products} />
+              {item}
           </div>
         </div>
       </div>
