@@ -11,7 +11,7 @@ class NavBar extends React.Component {
       navItems: [
         { id: 'products', title: 'Products', description: 'Managing the items stock' },
       ],
-      active: 'products'
+      active: ''
     };
     this.setActive = this.setActive.bind(this);
     this.createItems = this.createItems.bind(this);
