@@ -1,3 +1,4 @@
+import products from '../../../clients/products/src/products'; 
 import React from 'react'
 
 import './Container.scss'
@@ -5,7 +6,7 @@ import NavBar from 'midgard/components/NavBar/NavBar'
 import TopBar from 'midgard/components/TopBar/TopBar'
 import Profile from './../Profile/Profile'
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import container from './Container2';
+import Products from '../../../clients/products/src/Products';
 
 class Container extends React.Component {
   constructor(props) {
@@ -13,7 +14,6 @@ class Container extends React.Component {
     this.state = {
       navHidden: false
     };
-    console.log(container);
     this.toggleNav = this.toggleNav.bind(this);
   }
 
