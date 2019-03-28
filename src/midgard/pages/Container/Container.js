@@ -5,6 +5,7 @@ import NavBar from 'midgard/components/NavBar/NavBar'
 import TopBar from 'midgard/components/TopBar/TopBar'
 import Profile from './../Profile/Profile'
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import container from './Container2';
 
 class Container extends React.Component {
   constructor(props) {
@@ -12,6 +13,7 @@ class Container extends React.Component {
     this.state = {
       navHidden: false
     };
+    console.log(container);
     this.toggleNav = this.toggleNav.bind(this);
   }
 
