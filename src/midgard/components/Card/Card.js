@@ -1,7 +1,7 @@
 import React from 'react'
 import './Card.scss'
 import Menu from '../Menu/Menu';
-import EditableLabel from 'react-inline-edit';
+import EditableLabel from 'react-inline-editing';
 
 class Card extends React.Component {
   constructor(props) {
@@ -13,7 +13,7 @@ class Card extends React.Component {
         {id: 'delete', title: 'Delete'}
       ],
       open: false
-    }
+    };
     this.setWrapperRef = this.setWrapperRef.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
   }
@@ -46,18 +46,28 @@ class Card extends React.Component {
 
   render() {
     return (
-      <div className="card">
+      <div className={'card' + (this.props.cardStyle === 'tile' ? ' card--tile' : '')}>
         <div className="card__container">
           <div className="card__image">
             <img src={this.props.image} />
           </div>
           <div className="card__overview">
-            <div className="card__overview__first-line"><EditableLabel text={this.props.title} /></div>
-            <div className="card__overview__second-line">{this.props.description}</div>
+            <div className="card__overview__first-line">
+              <EditableLabel inputClassName="card__input" text={this.props.title} />
+            </div>
+            <div className="card__overview__second-line">
+              <EditableLabel inputClassName="card__input" text={this.props.description} />
+              </div>
           </div>
           <div className="card__details">
-            <div className="card__details__first-line">{this.props.price}</div>
-            <div className="card__details__second-line">{Array.prototype.map.call(this.props.tags, tag => tag).toString()}</div>
+            <div className="card__details__first-line">
+              <EditableLabel inputClassName="card__input" text={this.props.price} />
+            </div>
+            <div className="card__details__second-line">
+            <EditableLabel
+              inputClassName="card__input"
+              text={Array.prototype.map.call(this.props.tags, tag => tag).toString()} />
+            </div>
           </div>
           <div className={'card__options' + (this.props.open ? ' card__options--open' : '')}>
             <div ref={this.setWrapperRef}>
