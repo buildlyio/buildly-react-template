@@ -4,7 +4,10 @@ import {
   LOGIN_FAIL,
   LOGOUT,
   LOGOUT_SUCCESS,
-  LOGOUT_FAIL
+  LOGOUT_FAIL,
+  REGISTER,
+  REGISTER_SUCCESS,
+  REGISTER_FAIL
 } from '../actions/actionTypes';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
 import { oauthService } from 'midgard/modules/oauth/oauth.service';
@@ -36,6 +39,17 @@ function* login(payload) {
   }
 }
 
+function* register(payload) {
+  try {
+    const user = yield call(httpService.makeRequest, 'post', `${environment.API_URL}coreuser/`, payload.data);
+    yield [
+      yield put({ type: REGISTER_SUCCESS, user })
+    ];
+  } catch(error) {
+    yield put({ type: REGISTER_FAIL, error: 'Registration failed' });
+  }
+}
+
 function* watchLogout() {
   yield takeLatest(LOGOUT, logout)
 }
@@ -44,9 +58,14 @@ function* watchLogin() {
   yield takeLatest(LOGIN, login)
 }
 
+function* watchRegister() {
+  yield takeLatest(REGISTER, register)
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
     watchLogout(),
+    watchRegister()
   ]);
 }

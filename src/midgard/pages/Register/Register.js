@@ -6,14 +6,18 @@ import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import './Register.scss'
+import { register } from 'store/actions/authActions';
 
 class Register extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
       email: '',
-      password: ''
+      username: '',
+      password: '',
+      organization_name: '',
+      first_name: '',
+      last_name: ''
     };
     this.oauthService = oauthService;
     this.updateField = this.updateField.bind(this);
@@ -39,15 +43,23 @@ class Register extends React.Component {
     const registerFormValue = {
       username: this.state.username,
       email: this.state.email,
-      password: this.state.password
+      password: this.state.password,
+      organization_name: this.state.organization_name,
+      first_name: this.state.first_name,
+      last_name: this.state.last_name
     };
+    this.props.dispatch(register(registerFormValue));
   }
 
   render() {
-    const { username, email, password } = this.state;
-    const { loading, error } = this.props;
+    const { email, username, password, organization_name, first_name, last_name } = this.state;
+    const { loading, loaded, error } = this.props;
     if (this.oauthService.hasValidAccessToken()) {
       return <Redirect push to="/" />;
+    }
+    if (loaded) {
+      this.props.loaded = !loaded;
+      return <Redirect push to="/login" />;
     }
     return (
       <div className="register">
@@ -58,22 +70,8 @@ class Register extends React.Component {
               <div className="register__form__field">
                 <label
                   className="register__form__label"
-                  htmlFor="username">
-                  Username
-                </label>
-                <input
-                  className="register__form__input"
-                  name="username"
-                  type="text"
-                  placeholder="Enter username"
-                  value={username}
-                  onChange={this.updateField} />
-              </div>
-              <div className="register__form__field">
-                <label
-                  className="register__form__label"
                   htmlFor="email">
-                  Email
+                  Email*
                 </label>
                 <input
                   className="register__form__input"
@@ -86,8 +84,22 @@ class Register extends React.Component {
               <div className="register__form__field">
                 <label
                   className="register__form__label"
+                  htmlFor="username">
+                  Username*
+                </label>
+                <input
+                  className="register__form__input"
+                  name="username"
+                  type="text"
+                  placeholder="Enter username"
+                  value={username}
+                  onChange={this.updateField} />
+              </div>
+              <div className="register__form__field">
+                <label
+                  className="register__form__label"
                   htmlFor="password">
-                  Password
+                  Password*
                 </label>
                 <input
                   className="register__form__input"
@@ -95,6 +107,48 @@ class Register extends React.Component {
                   type="password"
                   placeholder="Enter password"
                   value={password}
+                  onChange={this.updateField} />
+              </div>
+              <div className="register__form__field">
+                <label
+                  className="register__form__label"
+                  htmlFor="organization_name">
+                  Organization name*
+                </label>
+                <input
+                  className="register__form__input"
+                  name="organization_name"
+                  type="organization_name"
+                  placeholder="Enter organization name"
+                  value={organization_name}
+                  onChange={this.updateField} />
+              </div>
+              <div className="register__form__field">
+                <label
+                  className="register__form__label"
+                  htmlFor="first_name">
+                  First name
+                </label>
+                <input
+                  className="register__form__input"
+                  name="first_name"
+                  type="first_name"
+                  placeholder="Enter first name"
+                  value={first_name}
+                  onChange={this.updateField} />
+              </div>
+              <div className="register__form__field">
+                <label
+                  className="register__form__label"
+                  htmlFor="last_name">
+                  Last name
+                </label>
+                <input
+                  className="register__form__input"
+                  name="last_name"
+                  type="last_name"
+                  placeholder="Enter last name"
+                  value={last_name}
                   onChange={this.updateField} />
               </div>
               <small className="register__form__spacer">
