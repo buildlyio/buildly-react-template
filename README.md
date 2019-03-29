@@ -49,6 +49,10 @@ Midgard-React provides the following core user interfaces:
 
 These can be found under `LOCATION`, and they have routes that are specified in `LOCATION`.
 
+### Connection to BiFrost
+
+[How does Midgard-React connect to BiFrost?]
+
 ### Store module
 
 [What is this and how is it implemented?]
