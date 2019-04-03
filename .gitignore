@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /src/clients
+/src/midgard/components/NavBar/NavBarItems.js
 
 # production
 /dist

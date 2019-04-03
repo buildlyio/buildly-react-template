@@ -22,7 +22,7 @@ class Container extends React.Component {
   render() {
     const { navHidden } = this.state;
     const { location, history } = this.props;
-      let item
+    let item;
 
     if (NavBarItems.length) {
       item = <Route path="/app/products" component={Products} />;
@@ -37,7 +37,7 @@ class Container extends React.Component {
               <Redirect to="/app/profile"/>
             )} />
             <Route path="/app/profile" component={Profile} />
-              {item}
+            {item}
           </div>
         </div>
       </div>
