@@ -1,7 +1,9 @@
 import React from 'react'
 import './User.scss'
 import { oauthService } from 'midgard/modules/oauth/oauth.service'
-import NavBarMenu from '../Menu/Menu';
+import Menu from '../../Menu/Menu'
+import { connect } from 'react-redux'
+import { logout } from 'store/actions/authActions'
 
 class NavBarUser extends React.Component {
   constructor(props) {
@@ -14,17 +16,41 @@ class NavBarUser extends React.Component {
     this.state = {
       user: oauthService.getOauthUser().data,
       lastLogin: lastLogin,
-      open: false
+      open: false,
+      menuItems: [
+        {id: 'profile', title: 'Profile settings'},
+        {id: 'logout', title: 'Logout'}
+      ],
+      action: undefined,
     };
     this.toggleOpen = this.toggleOpen.bind(this);
     this.setWrapperRef = this.setWrapperRef.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
+    this.openProfile = this.openProfile.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   toggleOpen() {
     this.setState({open: !this.state.open});
   }
 
+  /**
+   * Navigates to the profile screen
+   */
+  openProfile() {
+    const { from } = this.props.location.state || { from: { pathname: 'profile' } };
+    this.props.history.push(from);
+  }
+
+  /**
+   * Clears authentication and redirects to the login screen
+   */
+  logout() {
+    this.props.dispatch(logout());
+    const { from } = this.props.location.state || { from: { pathname: "/" } };
+    this.props.history.push(from);
+  }
+  
   componentWillMount() {
     document.addEventListener('mousedown', this.handleClickOutside, false);
   }
@@ -43,15 +69,26 @@ class NavBarUser extends React.Component {
     this.wrapperRef = node;
   }
 
+  selectAction(action, component) {
+    switch(action) {
+      case 'profile':
+        return component.openProfile();
+      case 'logout':
+        return component.logout();
+      default:
+        return;
+    }
+  }
+
   render() {
     const { user, lastLogin, open } = this.state;
-    const { location, history } = this.props;
+    const { location } = this.props;
     return (
       <div
         ref={this.setWrapperRef}
         className={'nav-bar-user' + (open ? ' nav-bar-user--open' : '') + (location.pathname.includes('profile') ? ' nav-bar-user--active' : '')}
         onClick={this.toggleOpen}>
-        <NavBarMenu open={open} location={location} history={history} />
+        <Menu xPosition="right" yPosition="top" open={open} menuAction={(e) => {this.selectAction(e, this)}} menuItems={this.state.menuItems}/>
         <div className="nav-bar-user__icon">
           <span className="nav-bar-user__icon__initials">
             {user.first_name.charAt(0)}{user.last_name.charAt(0)}
@@ -71,4 +108,4 @@ class NavBarUser extends React.Component {
   }
 }
 
-export default NavBarUser;
+export default connect()(NavBarUser);

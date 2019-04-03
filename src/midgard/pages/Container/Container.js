@@ -1,3 +1,4 @@
+import Products from '../../../clients/Products/src/Products'; 
 import React from 'react'
 
 import './Container.scss'

@@ -13,46 +13,4 @@
     align-items: flex-start;
     margin: rem-calc(0 24);
   }
-  &__field {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: rem-calc(16);
-
-    &__label {
-      font-size: rem-calc(10);
-      color: $gray-medium;
-    }
-
-    &__value {
-      line-height: rem-calc(18);
-      font-size: rem-calc(14);
-
-      &--bold {
-        font-weight: bold;
-      }
-    }
-  }
-  &__logout {
-    background-color: $primary-color;
-    border: none;
-    border-radius: rem-calc(4);
-    height: rem-calc(32);
-    padding: rem-calc(0 12);
-    transition: all 0.2s linear;
-    font-weight: 600;
-    font-size: rem-calc(12);
-    color: $white;
-    cursor: pointer;
-    outline: none;
-
-    &:hover {
-      background-color: darken($primary-color, 5);
-    }
-
-    &:disabled {
-      background-color: $gray-light;
-      color: $gray;
-      cursor: default;
-    }
-  }
 }

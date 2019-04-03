@@ -4,9 +4,11 @@ import logo from 'assets/midgard-logo.svg';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
+import { Button } from 'ui/Button/Button';
 
 import './Login.scss'
 import { login } from 'store/actions/authActions';
+import InputField from 'ui/InputField/InputField';
 
 class Login extends React.Component {
   constructor(props) {
@@ -55,45 +57,26 @@ class Login extends React.Component {
           <div className="login__card__content">
             <img className="login__card__logo" src={logo} />
             <form className="login__form" onSubmit={this.submit}>
-              <div className="login__form__field">
-                <label
-                  className="login__form__label"
-                  htmlFor="username">
-                  Username
-                </label>
-                <input
-                  className="login__form__input"
-                  name="username"
-                  type="text"
-                  placeholder="Enter username"
-                  value={username}
-                  onChange={this.updateField} />
-              </div>
-              <div className="login__form__field">
-                <label
-                  className="login__form__label"
-                  htmlFor="password">
-                  Password
-                </label>
-                <input
-                  className="login__form__input"
-                  name="password"
-                  type="password"
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={this.updateField} />
-              </div>
-              <small className="login__form__spacer">
-                <span className="login__form__error">{error}</span>
-              </small>
-              <div className="login__form__field">
-                <button
-                  disabled={loading}
-                  className="login__form__submit"
-                  type="submit">
-                  Login
-                </button>
-              </div>
+              <InputField
+                label="Username"
+                id="username"
+                type="text"
+                placeholder="Enter username"
+                value={username}
+                change={this.updateField} />
+              <InputField
+                label="Password"
+                id="password"
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                error={error}
+                change={this.updateField} />
+              <Button
+                disabled={loading}
+                type="submit">
+                Login
+              </Button>
               <Link className="login__form__link" to="/register">Register</Link>
             </form>
           </div>

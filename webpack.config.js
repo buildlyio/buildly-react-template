@@ -42,8 +42,10 @@ module.exports = {
     alias: {
       midgard: path.resolve(__dirname, './src/midgard'),
       store: path.resolve(__dirname, './src/store'),
+      ui: path.resolve(__dirname, './src/ui-components'),
       environment$: path.resolve(__dirname, './environment.js'),
       styles$: path.resolve(__dirname, './src/styles.scss'),
+      colors$: path.resolve(__dirname, './src/styles/colors.js'),
     }
   },
   output: {

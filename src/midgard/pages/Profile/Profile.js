@@ -4,6 +4,8 @@ import { oauthService } from '../../modules/oauth/oauth.service';
 import './Profile.scss';
 import { logout } from 'store/actions/authActions';
 import { connect } from 'react-redux';
+import { Button } from 'ui/Button/Button';
+import TextField from 'ui/TextField/TextField';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -32,25 +34,15 @@ class Profile extends React.Component {
       <div className="profile">
         <div className="profile__container">
           <h3>Settings</h3>
-          <div className="profile__field">
-            <label className="profile__field__label">First and last name</label>
-            <div className="profile__field__value profile__field__value--bold">{user.first_name} {user.last_name}</div>
-          </div>
-          <div className="profile__field">
-            <label className="profile__field__label">Email</label>
-            <div className="profile__field__value">{user.email}</div>
-          </div>
-          <div className="profile__field">
-            <label className="profile__field__label">Organization</label>
-            <div className="profile__field__value">{user.organization.name}</div>
-          </div>
-
-          <button
-            className="profile__logout"
+          <TextField bold label="First and last name" value={user.first_name + ' ' + user.last_name} />
+          <TextField label="Email" value={user.email} />
+          <TextField label="Organization" value={user.organization.name} />
+          <Button
+            small
             onClick={this.logout}
             type="button">
             Logout
-          </button>
+          </Button>
         </div>
       </div>
     )
