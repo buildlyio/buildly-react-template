@@ -165,9 +165,9 @@ _gulp.default.task('createFile', function (done) {
         item.push({ id: config.modules[i].name, title: config.modules[i].name, description: config.modules[i].description });
         imports.push("import " + config.modules[i].name + " from '../../../clients/" + config.modules[i].name + "/src/" +config.modules[i].name + "'; \n")
     }
-    _fs.writeFileSync('src/midgard/components/NavBar/NavBaritems.js', "export const NavBarItems =" +  JSON.stringify(item));
-    var container = _fs.readFileSync('src/midgard/pages/Container/Container.js',"utf8");
-    _fs.writeFileSync('src/midgard/pages/Container/Container.js', imports + container);
+    _fs.writeFileSync('src/midgard/layout/NavBar/NavBarItems.js', "export const NavBarItems =" +  JSON.stringify(item));
+    var container = _fs.readFileSync('src/midgard/layout/Container/Container.js',"utf8");
+    _fs.writeFileSync('src/midgard/layout/Container/Container.js', imports + container);
     done();
 });
 

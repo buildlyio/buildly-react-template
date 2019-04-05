@@ -1,9 +1,9 @@
 import React from 'react'
 import './NavBar.scss'
-import NavBarUser from './User/User';
-import NavBarItem from './Item/Item';
+import NavUser from 'midgard/components/NavUser/NavUser';
+import NavItem from 'midgard/components/NavItem/NavItem';
 import { NavBarItems } from './NavBarItems'
-import logo from 'assets/midgard-logo.svg';
+import logo from 'assets/midgard-logo.svg'
 
 class NavBar extends React.Component {
   constructor(props) {
@@ -32,7 +32,7 @@ class NavBar extends React.Component {
     const items = [];
     if (this.state.navItems.length) {
       for (const item of this.state.navItems) {
-        items.push(<NavBarItem
+        items.push(<NavItem
           key={item.id}
           id={item.id}
           title={item.title}
@@ -51,7 +51,7 @@ class NavBar extends React.Component {
           <div className="nav-bar__elements">
             {this.createItems()}
           </div>
-          <NavBarUser location={this.props.location} history={this.props.history} />
+          <NavUser location={this.props.location} history={this.props.history} />
         </div>
       </div>
     )

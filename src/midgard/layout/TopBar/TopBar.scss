@@ -11,12 +11,15 @@
   &--hidden {
     max-height: 0;
     overflow: hidden;
-    margin-bottom: rem-calc(40);
 
     .top-bar {
       &__menu {
         &__icon {
           background-color: $primary-color;
+
+          &:hover {
+            background-color: darken($primary-color, 5);
+          }
         }
       }
       &__bar {
@@ -53,6 +56,10 @@
       border-radius: rem-calc(4);
       background-color: $white;
       box-shadow: 0 rem-calc(2) rem-calc(3) 0 rgba($black, 0.12);
+
+      &:hover {
+        background-color: $primary-color-lightest;
+      }
     }
   }
   

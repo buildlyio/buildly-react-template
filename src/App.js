@@ -5,8 +5,8 @@ import { PrivateRoute } from './midgard/routes/PrivateRoute';
 import { oauthService } from './midgard/modules/oauth/oauth.service';
 
 import './App.scss';
+import Container from './midgard/layout/Container/Container';
 import Login from './midgard/pages/Login/Login';
-import Container from './midgard/pages/Container/Container';
 import Register from './midgard/pages/Register/Register';
 
 class App extends Component{

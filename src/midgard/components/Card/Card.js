@@ -15,7 +15,6 @@ const CardWrapper = styled.div`
   .card {
     margin: ${rem(6)} ${rem(16)};
     flex: 1;
-    position: relative;
     
     &__container {
       padding: ${rem(10)};

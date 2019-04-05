@@ -1,11 +1,11 @@
 import React from 'react'
-
 import './Container.scss'
-import NavBar from 'midgard/components/NavBar/NavBar'
-import TopBar from 'midgard/components/TopBar/TopBar'
-import Profile from './../Profile/Profile'
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import {NavBarItems} from 'midgard/components/NavBar/NavBarItems';
+import NavBar from 'midgard/layout/NavBar/NavBar'
+import TopBar from 'midgard/layout/TopBar/TopBar'
+import Profile from 'midgard/pages/Profile/Profile'
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
+import { NavBarItems } from 'midgard/layout/NavBar/NavBarItems'
+
 class Container extends React.Component {
   constructor(props) {
     super(props);
@@ -33,11 +33,13 @@ class Container extends React.Component {
           <TopBar navHidden={navHidden} action={this.toggleNav} />
           <div className="container__row">
             <NavBar navHidden={navHidden} location={location} history={history} />
-            <Route exact path="/app" render={() => (
-              <Redirect to="/app/profile"/>
-            )} />
-            <Route path="/app/profile" component={Profile} />
-            {item}
+            <div className="container__scroll">
+              <Route exact path="/app" render={() => (
+                <Redirect to="/app/profile"/>
+              )} />
+              <Route path="/app/profile" component={Profile} />
+              {item}
+            </div>
           </div>
         </div>
       </div>

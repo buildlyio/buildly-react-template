@@ -15,4 +15,11 @@
     flex-direction: column;
     flex: 1;
   }
+
+  &__scroll {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: scroll;
+  }
 }

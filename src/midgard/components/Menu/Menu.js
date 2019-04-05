@@ -6,23 +6,27 @@ import { rem } from 'polished'
 const menuWidth = rem(180);
 
 const MenuWrapper = styled.div`
-  right: 0;
-  top: 0;
-  width: ${menuWidth};
-  position: absolute;
-  box-shadow: 0 ${rem(2)} ${rem(8)} 0 ${colors.shadow};
-  border-radius: ${rem(4)};
-  background-color: ${colors.white};
-  cursor: pointer;
-  display: none;
-  color: ${colors.grayMediumDarker};
-  z-index: 3;
+  position: relative;
 
   .menu {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    margin: 0;
+    right: 0;
+    top: 0;
+    width: ${menuWidth};
+    position: absolute;
+    box-shadow: 0 ${rem(2)} ${rem(8)} 0 ${colors.shadow};
+    border-radius: ${rem(4)};
+    background-color: ${colors.white};
+    cursor: pointer;
+    display: none;
+    color: ${colors.grayMediumDarker};
+    z-index: 3;
+
+    &__container {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      margin: 0;
+    }
 
     &__item {
       display: flex;
@@ -37,40 +41,40 @@ const MenuWrapper = styled.div`
         background-color: ${colors.primaryLighter}
       }
     }
+
+    ${props => props.open && css`
+      display: block;
+    `}
+
+    ${props => props.xPosition === 'left' && css`
+      left: calc(-${menuWidth} / 4);
+    `}
+
+    ${props => props.xPosition === 'center' && css`
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+    `}
+
+    ${props => props.xPosition === 'right' && css`
+      right: calc(-${menuWidth} / 4);
+    `}
+
+    ${props => props.yPosition === 'top' && css`
+      bottom: 100%;
+      top: auto;
+    `}
+
+    ${props => props.yPosition === 'center' && css`
+      top: 50%;
+      transform: translateY(-50%);
+    `}
+
+    ${props => props.yPosition === 'bottom' && css`
+      top: 100%;
+      bottom: auto;
+    `}
   }
-
-  ${props => props.open && css`
-    display: block;
-  `}
-
-  ${props => props.xPosition === 'left' && css`
-    left: calc(-${menuWidth} / 4);
-  `}
-
-  ${props => props.xPosition === 'center' && css`
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-  `}
-
-  ${props => props.xPosition === 'right' && css`
-    right: calc(-${menuWidth} / 4);
-  `}
-
-  ${props => props.yPosition === 'top' && css`
-    bottom: 100%;
-    top: auto;
-  `}
-
-  ${props => props.yPosition === 'center' && css`
-    top: 50%;
-    transform: translateY(-50%);
-  `}
-
-  ${props => props.yPosition === 'bottom' && css`
-    top: 100%;
-    bottom: auto;
-  `}
 `
 
 class Menu extends React.Component {
@@ -97,9 +101,11 @@ class Menu extends React.Component {
     const { open, xPosition, yPosition } = this.props;
     return (
       <MenuWrapper open={open} xPosition={xPosition} yPosition={yPosition}>
-        <ul className="menu">
-          {this.listItems()}
-        </ul>
+        <div className="menu">
+          <ul className="menu__container">
+            {this.listItems()}
+          </ul>
+        </div>
       </MenuWrapper>
     )
   }

@@ -22,7 +22,6 @@ class TopBar extends React.Component {
    */
   search() {
     event.preventDefault();
-    alert('No');
   }
 
   render() {

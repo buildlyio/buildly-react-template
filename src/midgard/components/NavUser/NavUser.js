@@ -1,11 +1,11 @@
 import React from 'react'
-import './User.scss'
 import { oauthService } from 'midgard/modules/oauth/oauth.service'
-import Menu from '../../Menu/Menu'
+import Menu from 'midgard/components/Menu/Menu'
 import { connect } from 'react-redux'
 import { logout } from 'store/actions/authActions'
+import NavItem from 'midgard/components/NavItem/NavItem';
 
-class NavBarUser extends React.Component {
+class NavUser extends React.Component {
   constructor(props) {
     super(props);
     const lastLoginDate = Date.parse(localStorage.getItem('token_stored_at'));
@@ -102,26 +102,19 @@ class NavBarUser extends React.Component {
     return (
       <div
         ref={this.setWrapperRef}
-        className={'nav-bar-user' + (open ? ' nav-bar-user--open' : '') + (location.pathname.includes('profile') ? ' nav-bar-user--active' : '')}
         onClick={this.toggleMenu}>
+        <NavItem
+          toggle
+          defaultImage
+          title={user.first_name + ' ' + user.last_name}
+          description={'Last login ' + lastLogin}
+          active={location.pathname.includes('profile')}
+          action={() => {}}>
+        </NavItem>
         <Menu xPosition="right" yPosition="top" open={open} menuAction={(e) => {this.selectAction(e, this)}} menuItems={this.state.menuItems}/>
-        <div className="nav-bar-user__icon">
-          <span className="nav-bar-user__icon__initials">
-            {user.first_name.charAt(0)}{user.last_name.charAt(0)}
-          </span>
-        </div>
-        <div className="nav-bar-user__container">
-          <div className="nav-bar-user__name">
-            {user.first_name} {user.last_name}
-          </div>
-          <div className="nav-bar-user__last-login">
-            Last login {lastLogin}
-          </div>
-        </div>
-        <div className="nav-bar-user__menu-toggle"></div>
       </div>
     )
   }
 }
 
-export default connect()(NavBarUser);
+export default connect()(NavUser);

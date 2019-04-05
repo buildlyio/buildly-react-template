@@ -23,6 +23,8 @@
     flex-flow: column nowrap;
     width: rem-calc(200);
     height: calc(100vh - #{rem-calc(60)});
+    padding-bottom: rem-calc(16);
+    box-sizing: border-box;
     transition: all 0.3s ease-in-out;
     &--hidden {
       display: none;
