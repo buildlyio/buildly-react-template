@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { colors } from 'colors'
+import { rem } from 'polished'
 
 const TextFieldWrapper = styled.div`
   display: flex;
@@ -10,16 +11,16 @@ const TextFieldWrapper = styled.div`
   .text-field {
     display: flex;
     flex-direction: column;
-    margin-bottom: 16px;
+    margin-bottom: ${rem(16)};
 
     &__label {
-      font-size: 10px;
+      font-size: ${rem(10)};
       color: ${colors.grayMedium};
     }
 
     &__value {
-      line-height: 18px;
-      font-size: 14px;
+      line-height: ${rem(18)};
+      font-size: ${rem(14)};
       font-weight: ${props => props.bold ? 'bold' : 'normal'};
     }
   }

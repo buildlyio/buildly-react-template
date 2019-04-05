@@ -23,19 +23,22 @@ class NavBarUser extends React.Component {
       ],
       action: undefined,
     };
-    this.toggleOpen = this.toggleOpen.bind(this);
+    this.toggleMenu = this.toggleMenu.bind(this);
     this.setWrapperRef = this.setWrapperRef.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.openProfile = this.openProfile.bind(this);
     this.logout = this.logout.bind(this);
   }
 
-  toggleOpen() {
+  /**
+   * Toggles the open state of the user menu.
+   */
+  toggleMenu() {
     this.setState({open: !this.state.open});
   }
 
   /**
-   * Navigates to the profile screen
+   * Navigates to the profile screen.
    */
   openProfile() {
     const { from } = this.props.location.state || { from: { pathname: 'profile' } };
@@ -43,32 +46,37 @@ class NavBarUser extends React.Component {
   }
 
   /**
-   * Clears authentication and redirects to the login screen
+   * Clears authentication and redirects to the login screen.
    */
   logout() {
     this.props.dispatch(logout());
     const { from } = this.props.location.state || { from: { pathname: "/" } };
     this.props.history.push(from);
   }
-  
-  componentWillMount() {
-    document.addEventListener('mousedown', this.handleClickOutside, false);
-  }
 
-  copmonentWillUnmount() {
-    document.removeEventListener('mousedown', this.handleClickOutside, false);
-  }
-
+  /**
+   * Closes the menu if the user clicks outside of the specified wrapper element.
+   * @param {Event} event the click event.
+   */
   handleClickOutside(event) {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
       this.setState({open: false});
     }
   };
 
-  setWrapperRef(node) {
-    this.wrapperRef = node;
+  /**
+   * Sets the wrapper element. 
+   * @param ref the element to set.
+   */
+  setWrapperRef(ref) {
+    this.wrapperRef = ref;
   }
-
+ 
+  /**
+   * Handles the action.
+   * @param {string} action 
+   * @param {React.Component} component 
+   */
   selectAction(action, component) {
     switch(action) {
       case 'profile':
@@ -79,6 +87,14 @@ class NavBarUser extends React.Component {
         return;
     }
   }
+  
+  componentWillMount() {
+    document.addEventListener('mousedown', this.handleClickOutside, false);
+  }
+
+  copmonentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside, false);
+  }
 
   render() {
     const { user, lastLogin, open } = this.state;
@@ -87,7 +103,7 @@ class NavBarUser extends React.Component {
       <div
         ref={this.setWrapperRef}
         className={'nav-bar-user' + (open ? ' nav-bar-user--open' : '') + (location.pathname.includes('profile') ? ' nav-bar-user--active' : '')}
-        onClick={this.toggleOpen}>
+        onClick={this.toggleMenu}>
         <Menu xPosition="right" yPosition="top" open={open} menuAction={(e) => {this.selectAction(e, this)}} menuItems={this.state.menuItems}/>
         <div className="nav-bar-user__icon">
           <span className="nav-bar-user__icon__initials">

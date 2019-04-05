@@ -1,19 +1,20 @@
 import styled, { css } from 'styled-components'
 import { colors } from 'colors'
+import { rem } from 'polished'
 
 export const Button = styled.button`
   display: inline-block;
-  border-radius: 4px;
-  height: 40px;
-  padding: 0 12px;
+  border-radius: ${rem(4)};
+  height: ${rem(40)};
+  padding: 0 ${rem(12)};
   transition: all 0.2s linear;
   font-weight: 600;
   background-color: ${colors.primary};
-  border: 1px solid ${colors.primary};
+  border: ${rem(1)} solid ${colors.primary};
   color: ${colors.white};
   cursor: pointer;
   outline: none;
-  margin: 4px 0;
+  margin: ${rem(4)} 0;
 
   &:hover {
     background-color: ${colors.primaryDarker};
@@ -37,6 +38,6 @@ export const Button = styled.button`
   `}
 
   ${props => props.small && css`
-    height: 32px;
+    height: ${rem(32)};
   `}
 `

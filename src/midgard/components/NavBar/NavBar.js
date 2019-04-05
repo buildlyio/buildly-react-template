@@ -16,11 +16,18 @@ class NavBar extends React.Component {
     this.createItems = this.createItems.bind(this);
   }
 
+  /**
+   * Sets the active item.
+   * @param {string} active the active nav item
+   */
   setActive(active) {
     const { from } = this.props.location.state || { from: { pathname: active } };
     this.props.history.push(from);
   }
 
+  /**
+   * Creates the list of nav items.
+   */
   createItems() {
     const items = [];
     if (this.state.navItems.length) {

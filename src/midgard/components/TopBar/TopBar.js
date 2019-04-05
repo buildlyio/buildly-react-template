@@ -10,10 +10,16 @@ class TopBar extends React.Component {
     this.search = this.search.bind(this);
   }
 
+  /**
+   * Toggles the navigation top and side bars.
+   */
   toggleNav() {
     this.props.action(!this.props.navHidden);
   }
 
+  /**
+   * Performs the search action.
+   */
   search() {
     event.preventDefault();
     alert('No');

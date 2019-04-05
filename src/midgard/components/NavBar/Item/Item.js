@@ -7,10 +7,9 @@ class NavBarItem extends React.Component {
     this.updateActive = this.updateActive.bind(this);
   }
 
-  toggleOpen() {
-    this.setState({open: !this.state.open});
-  }
-
+  /**
+   * Updates the active state of the nav bar item.
+   */
   updateActive() {
     this.props.action(this.props.id);
   }

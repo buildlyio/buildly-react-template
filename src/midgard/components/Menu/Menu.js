@@ -1,16 +1,17 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { colors } from 'colors';
+import { colors } from 'colors'
+import { rem } from 'polished'
 
-const menuWidth = '180px';
+const menuWidth = rem(180);
 
 const MenuWrapper = styled.div`
   right: 0;
   top: 0;
   width: ${menuWidth};
   position: absolute;
-  box-shadow: 0 2px 8px 0 ${colors.shadow};
-  border-radius: 4px;
+  box-shadow: 0 ${rem(2)} ${rem(8)} 0 ${colors.shadow};
+  border-radius: ${rem(4)};
   background-color: ${colors.white};
   cursor: pointer;
   display: none;
@@ -27,10 +28,10 @@ const MenuWrapper = styled.div`
       display: flex;
       flex: 1;
       align-items: center;
-      height: 40px;
-      padding: 0 10px;
-      font-size: 16px;
-      line-height: 20px;
+      height: ${rem(40)};
+      padding: 0 ${rem(10)};
+      font-size: ${rem(16)};
+      line-height: ${rem(20)};
 
       &:hover {
         background-color: ${colors.primaryLighter}
@@ -78,7 +79,7 @@ class Menu extends React.Component {
   }
 
   /**
-   * Outputs the menu items
+   * Outputs the menu items.
    */
   listItems() {
     const items = [];

@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { colors } from 'colors'
+import { rem } from 'polished'
 
 const InputFieldWrapper = styled.div`
   display: flex;
@@ -8,12 +9,12 @@ const InputFieldWrapper = styled.div`
   flex-direction: column;
 
   .input-field {
-    margin-bottom: 8px;
+    margin-bottom: ${rem(8)};
     display: flex;
     flex-direction: column;
   
     &__label {
-      font-size: 12px;
+      font-size: ${rem(12)};
     }
 
     &__input {

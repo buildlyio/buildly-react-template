@@ -4,6 +4,7 @@ import EditableLabel from 'react-inline-editing'
 import { colors } from 'colors'
 import { Button } from 'ui/Button/Button';
 import styled, { css } from 'styled-components'
+import { rem } from 'polished'
 
 const CardWrapper = styled.div`
   display: flex;
@@ -12,13 +13,13 @@ const CardWrapper = styled.div`
   width: 100%;
 
   .card {
-    margin: 6px 16px;
+    margin: ${rem(6)} ${rem(16)};
     flex: 1;
     position: relative;
     
     &__container {
-      padding: 10px;
-      box-shadow: 0 2px 3px 0 ${colors.shadow};
+      padding: ${rem(10)};
+      box-shadow: 0 ${rem(2)} ${rem(3)} 0 ${colors.shadow};
       background-color: ${colors.white};
       display: flex;
       height: 100%;
@@ -26,15 +27,15 @@ const CardWrapper = styled.div`
     }
 
     &__input {
-      font-size: 14px;
+      font-size: ${rem(14)};
       height: 100%;
       width: 100%;
     }
 
     &__image {
-      padding: 0 10px;
-      height: 80px;
-      width: 80px;
+      padding: 0 ${rem(10)};
+      height: ${rem(80)};
+      width: ${rem(80)};
       flex: none;
 
       img {
@@ -43,27 +44,27 @@ const CardWrapper = styled.div`
     }
 
     &__overview {
-      padding: 0 10px;
+      padding: 0 ${rem(10)};
       flex: 2;
 
       &__first-line {
         font-weight: bold;
-        height: 36px;
+        height: ${rem(36)};
       }
 
       &__second-line {
         color: ${colors.grayMediumDarker};
-        font-size: 15px;
+        font-size: ${rem(15)};
       }
     }
 
     &__details {
-      padding: 0 10px;
+      padding: 0 ${rem(10)};
       flex: 1;
 
       &__first-line {
         color: ${colors.grayMediumDarker};
-        height: 36px;
+        height: ${rem(36)};
       }
 
       &__second-line {
@@ -72,7 +73,7 @@ const CardWrapper = styled.div`
     }
 
     &__options {
-      padding: 0 10px;
+      padding: 0 ${rem(10)};
       flex: none;
       display: flex;
       align-items: center;
@@ -84,7 +85,7 @@ const CardWrapper = styled.div`
   `}
 
   ${props => props.cardView === 'tile' && css`
-    max-width: 320px;
+    max-width: ${rem(320)};
 
     .card {
       &__container {
@@ -94,24 +95,24 @@ const CardWrapper = styled.div`
       }
 
       &__image {
-        height: 32px;
-        width: 32px;
+        height: ${rem(32)};
+        width: ${rem(32)};
         position: absolute;
-        top: 10px;
-        right: 10px;
+        top: ${rem(10)};
+        right: ${rem(10)};
       }
 
       &__title {
-        margin-right: 32px;
+        margin-right: ${rem(32)};
       }
 
       &__details {
         display: flex;
-        font-size: 12px;
+        font-size: ${rem(12)};
 
         > * {
           flex: 1;
-          padding: 5px 0;
+          padding: ${rem(5)} 0;
           height: initial;
         }
       }
@@ -147,15 +148,15 @@ class Card extends React.Component {
 
   /**
    * Selects an action from the options menu.
-   * @param {string} action the selected action
+   * @param {string} action the selected action.
    */
   selectAction(action) {
     this.props.action(action, this.props.id);
   }
 
   /**
-   * Hand
-   * @param {} event 
+   * Closes the menu if the user clicks outside of the specified wrapper element.
+   * @param {Event} event the click event.
    */
   handleClickOutside(event) {
     if (this.state.open && this.wrapperRef && !this.wrapperRef.contains(event.target)) {
@@ -163,6 +164,10 @@ class Card extends React.Component {
     }
   };
 
+  /**
+   * Sets the wrapper element. 
+   * @param ref the element to set.
+   */
   setWrapperRef(ref) {
     this.wrapperRef = ref;
   }
