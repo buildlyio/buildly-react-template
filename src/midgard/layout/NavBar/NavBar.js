@@ -1,9 +1,44 @@
 import React from 'react'
-import './NavBar.scss'
 import NavUser from 'midgard/components/NavUser/NavUser';
 import NavItem from 'midgard/components/NavItem/NavItem';
 import { NavBarItems } from './NavBarItems'
-import logo from 'assets/midgard-logo.svg'
+import { colors } from 'colors'
+import styled, { css } from 'styled-components'
+import { rem } from 'polished'
+
+const NavBarWrapper = styled.div`
+  display: flex;
+  max-width: ${rem(220)};
+  width: ${rem(220)};
+  height: 100%;
+  background-color: ${colors.backgroundPrimary};
+  min-height: calc(100vh - ${rem(60)});
+  transition: max-width 0.3s ease-in-out;
+  margin-top: ${rem(-60)};
+  padding-top: ${rem(60)};
+
+  .nav-bar {
+    &__container {
+      display: flex;
+      margin: 0 ${rem(10)};
+      flex-flow: column nowrap;
+      width: ${rem(200)};
+      height: calc(100vh - ${rem(60)});
+      padding-bottom: ${rem(16)};
+      box-sizing: border-box;
+      transition: all 0.3s ease-in-out;
+    }
+    &__elements {
+      flex: 3;
+    }
+  }
+
+  ${props => props.hidden && css`
+    max-width: 0;
+    overflow: hidden;
+    margin-right: ${rem(40)};
+  `}
+`
 
 class NavBar extends React.Component {
   constructor(props) {
@@ -46,14 +81,14 @@ class NavBar extends React.Component {
 
   render() {
     return (
-      <div className={ 'nav-bar ' + (this.props.navHidden ? 'nav-bar--hidden' : '') }>
+      <NavBarWrapper className="nav-bar" hidden={this.props.navHidden}>
         <div className="nav-bar__container">
           <div className="nav-bar__elements">
             {this.createItems()}
           </div>
           <NavUser location={this.props.location} history={this.props.history} />
         </div>
-      </div>
+      </NavBarWrapper>
     )
   }
 }

@@ -3,7 +3,7 @@ import { oauthService } from 'midgard/modules/oauth/oauth.service'
 import Menu from 'midgard/components/Menu/Menu'
 import { connect } from 'react-redux'
 import { logout } from 'store/actions/authActions'
-import NavItem from 'midgard/components/NavItem/NavItem';
+import NavItem from 'midgard/components/NavItem/NavItem'
 
 class NavUser extends React.Component {
   constructor(props) {

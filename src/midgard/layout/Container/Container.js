@@ -1,10 +1,37 @@
 import React from 'react'
-import './Container.scss'
 import NavBar from 'midgard/layout/NavBar/NavBar'
 import TopBar from 'midgard/layout/TopBar/TopBar'
 import Profile from 'midgard/pages/Profile/Profile'
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 import { NavBarItems } from 'midgard/layout/NavBar/NavBarItems'
+import { colors } from 'colors'
+import styled from 'styled-components'
+
+const ContainerWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  background-color: ${colors.backgroundSecondary};
+
+  .container {
+    &__row {
+      display: flex;
+      flex: 1;
+    }
+
+    &__column {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    &__scroll {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: scroll;
+    }
+  }
+`
 
 class Container extends React.Component {
   constructor(props) {
@@ -28,7 +55,7 @@ class Container extends React.Component {
       item = <Route path="/app/products" component={Products} />;
     }
     return (
-      <div className="container">
+      <ContainerWrapper className="container">
         <div className="container__column">
           <TopBar navHidden={navHidden} action={this.toggleNav} />
           <div className="container__row">
@@ -42,7 +69,7 @@ class Container extends React.Component {
             </div>
           </div>
         </div>
-      </div>
+      </ContainerWrapper>
     )
   }
 }

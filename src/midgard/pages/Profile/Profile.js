@@ -1,11 +1,29 @@
 import React from 'react'
-import { oauthService } from '../../modules/oauth/oauth.service';
+import { oauthService } from 'midgard/modules/oauth/oauth.service'
+import { logout } from 'store/actions/authActions'
+import { connect } from 'react-redux'
+import { Button } from 'ui/Button/Button'
+import TextField from 'ui/TextField/TextField'
+import { colors } from 'colors'
+import styled from 'styled-components'
+import { rem } from 'polished'
 
-import './Profile.scss';
-import { logout } from 'store/actions/authActions';
-import { connect } from 'react-redux';
-import { Button } from 'ui/Button/Button';
-import TextField from 'ui/TextField/TextField';
+const ProfileWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  flex: 1;
+  background-color: ${colors.backgroundSecondary};
+
+  .profile {
+    &__container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      align-items: flex-start;
+      margin: 0 ${rem(24)};
+    }
+  }
+`
 
 class Profile extends React.Component {
   constructor(props) {
@@ -31,7 +49,7 @@ class Profile extends React.Component {
       return <Redirect push to="/" />;
     }
     return (
-      <div className="profile">
+      <ProfileWrapper className="profile">
         <div className="profile__container">
           <h3>Settings</h3>
           <TextField bold label="First and last name" value={user.first_name + ' ' + user.last_name} />
@@ -44,7 +62,7 @@ class Profile extends React.Component {
             Logout
           </Button>
         </div>
-      </div>
+      </ProfileWrapper>
     )
   }
 }
