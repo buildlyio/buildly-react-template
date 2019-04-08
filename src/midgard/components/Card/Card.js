@@ -189,18 +189,19 @@ class Card extends React.Component {
             </div>
             <div className="card__overview">
               <div className="card__overview__first-line">
-                <EditableLabel inputClassName="card__input" text={this.props.title} />
+                <EditableLabel inputPlaceHolder="Click to add title" inputClassName="card__input" text={this.props.title} />
               </div>
               <div className="card__overview__second-line">
-                <EditableLabel inputClassName="card__input" text={this.props.description} />
+                <EditableLabel inputPlaceHolder="Click to add description" inputClassName="card__input" text={this.props.description} />
                 </div>
             </div>
             <div className="card__details">
               <div className="card__details__first-line">
-                <EditableLabel inputClassName="card__input" text={this.props.price} />
+                <EditableLabel inputPlaceHolder="Click to add price" inputClassName="card__input" text={this.props.price} />
               </div>
               <div className="card__details__second-line">
               <EditableLabel
+                inputPlaceHolder="Click to add tags" 
                 inputClassName="card__input"
                 text={Array.prototype.map.call(this.props.tags, tag => tag).toString()} />
               </div>
