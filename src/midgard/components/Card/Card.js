@@ -122,6 +122,11 @@ const CardWrapper = styled.div`
       }
     }
   `}
+
+  ${props => props.disabled && css`
+    opacity: 0.5;
+    pointer-events: none;
+  `}
 `
 
 class Card extends React.Component {
@@ -195,7 +200,7 @@ class Card extends React.Component {
     const price = this.props.price || 'Click to add price';
     const tags = this.props.tags || 'Click to add tags';
     return (
-      <CardWrapper cardView={this.props.cardView}>
+      <CardWrapper cardView={this.props.cardView} disabled={this.props.disabled}>
         <div className="card">
           <div className="card__container">
             <div className="card__image">
