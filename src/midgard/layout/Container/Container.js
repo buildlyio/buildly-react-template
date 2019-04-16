@@ -1,3 +1,4 @@
+import Products from '../../../clients/Products/src/Products'; 
 import React from 'react'
 import NavBar from 'midgard/layout/NavBar/NavBar'
 import TopBar from 'midgard/layout/TopBar/TopBar'
