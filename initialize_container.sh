@@ -15,6 +15,6 @@ done < <(printenv)
 RESULT+='"production":"true"}'
 
 PATH=`ls dist/`
-OUTPUTPATH="dist/${PATH}/environment.js"
+OUTPUTPATH="dist/environment.js"
 
 echo $RESULT > $OUTPUTPATH

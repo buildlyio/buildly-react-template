@@ -1,5 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
+const HtmlWebPackPlugin = require("html-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: ["babel-polyfill", "./src/index.js"] ,
@@ -50,7 +52,6 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, "dist/"),
-      publicPath: "/dist/",
       filename: "bundle.js"
   },
   devServer: {
@@ -60,5 +61,14 @@ module.exports = {
       historyApiFallback: true,
       hotOnly: true
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()]
+  plugins: [
+      new webpack.HotModuleReplacementPlugin(),
+      new HtmlWebPackPlugin({
+          template: "./src/index.html",
+          filename: "./index.html"
+      }),
+      new CopyPlugin([
+          { from: 'environment.js', to: '' },
+      ]),
+  ]
 };
