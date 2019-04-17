@@ -6,7 +6,7 @@ import {
   REGISTER,
   REGISTER_SUCCESS,
   REGISTER_FAIL,
-} from '../actions/actionTypes';
+} from '../actions/Auth.actions';
 
 const initialState = {
   loading: false,

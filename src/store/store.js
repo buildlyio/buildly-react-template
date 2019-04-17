@@ -2,8 +2,8 @@ import { redux } from 'midgard-core';
 
 import createSagaMiddleware from 'redux-saga';
 
-import rootReducer from './reducers/rootReducer';
-import rootSaga from './sagas/rootSaga';
+import rootReducer from './reducers';
+import rootSaga from './sagas';
 
 const configureStore = () => {
   const sagaMiddleware = createSagaMiddleware();

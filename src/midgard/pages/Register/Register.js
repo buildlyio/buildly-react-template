@@ -6,7 +6,7 @@ import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import './Register.scss'
-import { register } from 'store/actions/authActions';
+import { register } from 'store/actions/Auth.actions';
 import { Button } from 'ui/Button/Button';
 import InputField from 'ui/InputField/InputField';
 

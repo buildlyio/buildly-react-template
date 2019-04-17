@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { Button } from 'ui/Button/Button';
 
 import './Login.scss'
-import { login } from 'store/actions/authActions';
+import { login } from 'store/actions/Auth.actions';
 import InputField from 'ui/InputField/InputField';
 
 class Login extends React.Component {
