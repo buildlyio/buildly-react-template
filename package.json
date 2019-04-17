@@ -50,8 +50,9 @@
   "scripts": {
     "start": "webpack-dev-server --mode development",
     "test": "jest",
+    "serve": "./node_modules/.bin/serve -s dist",
     "build": "webpack --mode development",
-    "build-prod": "webpack --mode production",
+    "build-prod": "webpack --mode production && npm run serve",
     "createFile": "gulp createFile  --gulpfile gulpfile.js --cwd ./",
     "init": "gulp init --gulpfile gulpfile.js --cwd ./ && npm run createFile"
   },
