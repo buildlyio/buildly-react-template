@@ -57,7 +57,6 @@
     "createFile": "gulp createFile  --gulpfile gulpfile.js --cwd ./",
     "init": "gulp init --gulpfile gulpfile.js --cwd ./ && npm run createFile",
     "styleguidist": "npx styleguidist build && npx styleguidist server"
-
   },
   "jest": {
     "setupFiles": [
