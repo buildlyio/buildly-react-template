@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import { PrivateRoute } from './midgard/routes/PrivateRoute';
+import { PrivateRoute } from './midgard/routes/Private.route';
 import { oauthService } from './midgard/modules/oauth/oauth.service';
 
 import './App.scss';

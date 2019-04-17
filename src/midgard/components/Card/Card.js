@@ -80,6 +80,10 @@ const CardWrapper = styled.div`
     }
   }
 
+  label {
+    word-break: break-all;
+  }
+
   ${props => props.cardView === 'list' && css`
     min-width: 100%;
   `}
