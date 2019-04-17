@@ -220,7 +220,7 @@ class Card extends React.Component {
             <div className="card__overview">
               <div className="card__overview__first-line">
                 <EditableLabel
-                  inputPlaceHolder="Enter title"
+                  inputPlaceHolder="Enter name"
                   inputClassName="card__input"
                   text={title}
                   onFocusOut={(event) => this.update(event, 'title', this)} />

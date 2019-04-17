@@ -1,14 +1,12 @@
 import React from 'react'
-import { oauthService } from 'midgard/modules/oauth/oauth.service';
-import logo from 'assets/midgard-logo.svg';
-import { connect } from 'react-redux';
-import { Redirect } from 'react-router';
-import { Link } from 'react-router-dom';
-import { Button } from 'ui/Button/Button';
-
-import './Login.scss'
-import { login } from 'store/actions/Auth.actions';
-import InputField from 'ui/InputField/InputField';
+import { oauthService } from 'midgard/modules/oauth/oauth.service'
+import { connect } from 'react-redux'
+import { Redirect } from 'react-router'
+import { Link } from 'react-router-dom'
+import { Button } from 'ui/Button/Button'
+import { login } from 'store/actions/Auth.actions'
+import InputField from 'ui/InputField/InputField'
+import AuthForm from 'midgard/components/AuthForm/AuthForm'
 
 class Login extends React.Component {
   constructor(props) {
@@ -48,40 +46,33 @@ class Login extends React.Component {
   render() {
     const { username, password } = this.state;
     const { loading, error } = this.props;
+    const registerLink = { label: 'Register', value: '/register' };
     if (this.oauthService.hasValidAccessToken()) {
       return <Redirect push to="/" />;
     }
     return (
-      <div className="login">
-        <div className="login__card">
-          <div className="login__card__content">
-            <img className="login__card__logo" src={logo} />
-            <form className="login__form" onSubmit={this.submit}>
-              <InputField
-                label="Username"
-                id="username"
-                type="text"
-                placeholder="Enter username"
-                value={username}
-                change={this.updateField} />
-              <InputField
-                label="Password"
-                id="password"
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                error={error}
-                change={this.updateField} />
-              <Button
-                disabled={loading}
-                type="submit">
-                Login
-              </Button>
-              <Link className="login__form__link" to="/register">Register</Link>
-            </form>
-          </div>
-        </div>
-      </div>
+      <AuthForm onSubmit={this.submit} link={registerLink}>
+        <InputField
+          label="Username"
+          id="username"
+          type="text"
+          placeholder="Enter username"
+          value={username}
+          change={this.updateField} />
+        <InputField
+          label="Password"
+          id="password"
+          type="password"
+          placeholder="Enter password"
+          value={password}
+          error={error}
+          change={this.updateField} />
+        <Button
+          disabled={loading}
+          type="submit">
+          Login
+        </Button>
+      </AuthForm>
     )
   }
 }
