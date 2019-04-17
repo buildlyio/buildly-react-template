@@ -5,6 +5,7 @@ import { colors } from 'colors'
 import { Button } from 'ui/Button/Button';
 import styled, { css } from 'styled-components'
 import { rem } from 'polished'
+import logo from 'assets/midgard-logo.svg'
 
 const CardWrapper = styled.div`
   display: flex;
@@ -79,6 +80,17 @@ const CardWrapper = styled.div`
     }
   }
 
+  label {
+    word-break: break-all;
+
+    &:empty {
+      &::before {
+        content: 'Click to add text';
+        color: ${colors.grayMedium};
+      }
+    }
+  }
+
   ${props => props.cardView === 'list' && css`
     min-width: 100%;
   `}
@@ -121,6 +133,11 @@ const CardWrapper = styled.div`
       }
     }
   `}
+
+  ${props => props.disabled && css`
+    opacity: 0.5;
+    pointer-events: none;
+  `}
 `
 
 class Card extends React.Component {
@@ -130,7 +147,7 @@ class Card extends React.Component {
     this.selectAction = this.selectAction.bind(this);
     this.state = {
       menuItems: [
-        {id: 'delete', title: 'Delete'}
+        {id: 'delete', title: 'Delete'},
       ],
       open: false
     };
@@ -149,8 +166,12 @@ class Card extends React.Component {
    * Selects an action from the options menu.
    * @param {string} action the selected action.
    */
-  selectAction(action) {
-    this.props.action(action, this.props.id);
+  selectAction(action, props = this.props) {
+    const newProps = {...this.props, ...props};
+    this.props.action(action, newProps);
+    if (action === 'delete') {
+      this.toggleMenu();
+    }
   }
 
   /**
@@ -179,31 +200,53 @@ class Card extends React.Component {
     document.removeEventListener('mousedown', this.handleClickOutside, false);
   }
 
+  update(event, name, component) {
+    component.selectAction('update', { [name]: event});
+  }
+
   render() {
+    const image = logo;
+    const title = this.props.title;
+    const description = this.props.description;
+    const price = this.props.price;
+    const tags = this.props.tags;
     return (
-      <CardWrapper cardView={this.props.cardView}>
+      <CardWrapper cardView={this.props.cardView} disabled={this.props.disabled}>
         <div className="card">
           <div className="card__container">
             <div className="card__image">
-              <img src={this.props.image} />
+              <img src={image} />
             </div>
             <div className="card__overview">
               <div className="card__overview__first-line">
-                <EditableLabel inputPlaceHolder="Click to add title" inputClassName="card__input" text={this.props.title} />
+                <EditableLabel
+                  inputPlaceHolder="Enter title"
+                  inputClassName="card__input"
+                  text={title}
+                  onFocusOut={(event) => this.update(event, 'title', this)} />
               </div>
               <div className="card__overview__second-line">
-                <EditableLabel inputPlaceHolder="Click to add description" inputClassName="card__input" text={this.props.description} />
+                <EditableLabel
+                  inputPlaceHolder="Enter description"
+                  inputClassName="card__input"
+                  text={description}
+                  onFocusOut={(event) => this.update(event, 'description', this)} />
                 </div>
             </div>
             <div className="card__details">
               <div className="card__details__first-line">
-                <EditableLabel inputPlaceHolder="Click to add price" inputClassName="card__input" text={this.props.price} />
+                <EditableLabel
+                  inputPlaceHolder="Enter price"
+                  inputClassName="card__input"
+                  text={price}
+                  onFocusOut={(event) => this.update(event, 'price', this)} />
               </div>
               <div className="card__details__second-line">
               <EditableLabel
-                inputPlaceHolder="Click to add tags" 
+                inputPlaceHolder="Enter tags" 
                 inputClassName="card__input"
-                text={Array.prototype.map.call(this.props.tags, tag => tag).toString()} />
+                text={tags}
+                onFocusOut={(event) => this.update(event, 'tags', this)} />
               </div>
             </div>
             <div className={'card__options' + (this.props.open ? ' card__options--open' : '')}>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { oauthService } from 'midgard/modules/oauth/oauth.service'
-import { logout } from 'store/actions/authActions'
+import { logout } from 'store/actions/Auth.actions'
 import { connect } from 'react-redux'
 import { Button } from 'ui/Button/Button'
 import TextField from 'ui/TextField/TextField'
