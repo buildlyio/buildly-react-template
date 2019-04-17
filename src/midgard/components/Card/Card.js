@@ -82,6 +82,13 @@ const CardWrapper = styled.div`
 
   label {
     word-break: break-all;
+
+    &:empty {
+      &::before {
+        content: 'Click to add text';
+        color: ${colors.grayMedium};
+      }
+    }
   }
 
   ${props => props.cardView === 'list' && css`
@@ -199,10 +206,10 @@ class Card extends React.Component {
 
   render() {
     const image = logo;
-    const title = this.props.title || 'Click to add title';
-    const description = this.props.description || 'Click to add description';
-    const price = this.props.price || 'Click to add price';
-    const tags = this.props.tags || 'Click to add tags';
+    const title = this.props.title;
+    const description = this.props.description;
+    const price = this.props.price;
+    const tags = this.props.tags;
     return (
       <CardWrapper cardView={this.props.cardView} disabled={this.props.disabled}>
         <div className="card">
@@ -212,21 +219,34 @@ class Card extends React.Component {
             </div>
             <div className="card__overview">
               <div className="card__overview__first-line">
-                <EditableLabel inputPlaceHolder="Enter title" inputClassName="card__input" text={title} onFocusOut={(event) => this.update(event, 'title', this)} />
+                <EditableLabel
+                  inputPlaceHolder="Enter title"
+                  inputClassName="card__input"
+                  text={title}
+                  onFocusOut={(event) => this.update(event, 'title', this)} />
               </div>
               <div className="card__overview__second-line">
-                <EditableLabel inputPlaceHolder="Enter description" inputClassName="card__input" text={description} onFocusOut={(event) => this.update(event, 'description', this)} />
+                <EditableLabel
+                  inputPlaceHolder="Enter description"
+                  inputClassName="card__input"
+                  text={description}
+                  onFocusOut={(event) => this.update(event, 'description', this)} />
                 </div>
             </div>
             <div className="card__details">
               <div className="card__details__first-line">
-                <EditableLabel textPlaceHolder="Enter price" inputClassName="card__input" text={price} onFocusOut={(event) => this.update(event, 'price', this)} />
+                <EditableLabel
+                  inputPlaceHolder="Enter price"
+                  inputClassName="card__input"
+                  text={price}
+                  onFocusOut={(event) => this.update(event, 'price', this)} />
               </div>
               <div className="card__details__second-line">
               <EditableLabel
                 inputPlaceHolder="Enter tags" 
                 inputClassName="card__input"
-                text={tags} onFocusOut={(event) => this.update(event, 'tags', this)} />
+                text={tags}
+                onFocusOut={(event) => this.update(event, 'tags', this)} />
               </div>
             </div>
             <div className={'card__options' + (this.props.open ? ' card__options--open' : '')}>
