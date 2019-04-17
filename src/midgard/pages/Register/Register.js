@@ -1,14 +1,12 @@
 import React from 'react'
-import { oauthService } from 'midgard/modules/oauth/oauth.service';
-import logo from 'assets/midgard-logo.svg';
-import { connect } from 'react-redux';
-import { Redirect } from 'react-router';
-import { Link } from 'react-router-dom';
-
-import './Register.scss'
-import { register } from 'store/actions/Auth.actions';
-import { Button } from 'ui/Button/Button';
-import InputField from 'ui/InputField/InputField';
+import { oauthService } from 'midgard/modules/oauth/oauth.service'
+import { connect } from 'react-redux'
+import { Redirect } from 'react-router'
+import { Link } from 'react-router-dom'
+import { register } from 'store/actions/Auth.actions'
+import { Button } from 'ui/Button/Button'
+import InputField from 'ui/InputField/InputField'
+import AuthForm from 'midgard/components/AuthForm/AuthForm'
 
 class Register extends React.Component {
   constructor(props) {
@@ -57,76 +55,69 @@ class Register extends React.Component {
   render() {
     const { email, username, password, organization_name, first_name, last_name, button_clicked } = this.state;
     const { loading, loaded, error } = this.props;
+    const loginLink = { label: 'Login', value: '/login' };
     if (this.oauthService.hasValidAccessToken()) {
       return <Redirect push to="/" />;
     }
     if (loaded && button_clicked) {
       this.setState({button_clicked: false});
-      return <Redirect push to="/login" />;
+      return <Redirect push to={loginLink.value} />;
     }
     return (
-      <div className="register">
-        <div className="register__card">
-          <div className="register__card__content">
-            <img className="register__card__logo" src={logo} />
-            <form className="register__form" onSubmit={this.submit}>
-              <InputField
-                label="Email"
-                id="email"
-                type="text"
-                placeholder="Enter email"
-                value={email}
-                required="true"
-                change={this.updateField} />
-              <InputField
-                label="Username"
-                id="username"
-                type="text"
-                placeholder="Enter username"
-                value={username}
-                required="true"
-                change={this.updateField} />
-              <InputField
-                label="Password"
-                id="password"
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                required="true"
-                change={this.updateField} />
-              <InputField
-                label="Organization name"
-                id="organization_name"
-                type="text"
-                placeholder="Enter organization name"
-                value={organization_name}
-                required="true"
-                change={this.updateField} />
-              <InputField
-                label="First name"
-                id="first_name"
-                type="text"
-                placeholder="Enter first name"
-                value={first_name}
-                change={this.updateField} />
-              <InputField
-                label="Last name"
-                id="last_name"
-                type="text"
-                placeholder="Enter last name"
-                value={last_name}
-                change={this.updateField}
-                error={error} />
-              <Button
-                disabled={loading}
-                type="submit">
-                Register
-              </Button>
-              <Link className="register__form__link" to="/login">Login</Link>
-            </form>
-          </div>
-        </div>
-      </div>
+      <AuthForm onSubmit={this.submit} link={loginLink}>
+        <InputField
+          label="Email"
+          id="email"
+          type="text"
+          placeholder="Enter email"
+          value={email}
+          required="true"
+          change={this.updateField} />
+        <InputField
+          label="Username"
+          id="username"
+          type="text"
+          placeholder="Enter username"
+          value={username}
+          required="true"
+          change={this.updateField} />
+        <InputField
+          label="Password"
+          id="password"
+          type="password"
+          placeholder="Enter password"
+          value={password}
+          required="true"
+          change={this.updateField} />
+        <InputField
+          label="Organization name"
+          id="organization_name"
+          type="text"
+          placeholder="Enter organization name"
+          value={organization_name}
+          required="true"
+          change={this.updateField} />
+        <InputField
+          label="First name"
+          id="first_name"
+          type="text"
+          placeholder="Enter first name"
+          value={first_name}
+          change={this.updateField} />
+        <InputField
+          label="Last name"
+          id="last_name"
+          type="text"
+          placeholder="Enter last name"
+          value={last_name}
+          change={this.updateField}
+          error={error} />
+        <Button
+          disabled={loading}
+          type="submit">
+          Register
+        </Button>
+      </AuthForm>
     )
   }
 }
