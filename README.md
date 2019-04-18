@@ -71,14 +71,16 @@ These can be found under `/src/midgard/pages`.
 
 ### Connection to BiFrost
 
-A store is defined in the `/src/redux` directory and imported into the `index.js` file at the root.
+Midgard React uses the Redux-Saga middleware library to handle interactions with BiFrost.
+A store configuration is defined in the `/src/redux` directory and connected at the root level `index.js` file.
 
-Actions specified in `/src/redux/actions` can be called directly by components.
+The `/src/redux` directory contains the `/actions`, `/reducers` and `/sagas` sub-directories.
 
-Sagas are defined in `/src/redux/sagas`. All sagas must be imported into the `index.js` file within this directory.
-The services defined in `/src/midgard/modules` are called in the functions in these saga files.
+Actions are dispatched directly by components. Each client has a separate `.actions.js` file which contains actions to create, read, update and delete.
 
-The reducers in the `/src/redux/reducers` directory update the state with the responses from the server. All reducers should be imported into the `index.js` file within this directory.
+Generator functions defined in the client's `.saga.js` file watch for actions to be dispatched. When this happens, they call another function that uses the services provided in `/src/midgard/modules`. These services are responsible for commnunicating with the API. All sagas must be imported into the `index.js` file in this directory.
+
+The `.reducer.js` files update the state with the responses from the server. All reducers should be imported into the `index.js` file within this directory.
 
 ### Http module
 
