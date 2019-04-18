@@ -53,7 +53,7 @@
     "test": "jest",
     "serve": "./node_modules/.bin/serve -s dist",
     "build": "webpack --mode development",
-    "build-prod": "webpack --mode production && npm run serve",
+    "build-prod": "webpack --mode production",
     "createFile": "gulp createFile  --gulpfile gulpfile.js --cwd ./",
     "init": "gulp init --gulpfile gulpfile.js --cwd ./ && npm run createFile",
     "styleguidist": "npx styleguidist build && npx styleguidist server"
