@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import { colors } from 'colors'
 import { rem } from 'polished'
@@ -77,38 +77,58 @@ const MenuWrapper = styled.div`
   }
 `
 
-class Menu extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+function Menu({children, open, setOpen, xPosition, yPosition, onActionClicked, menuItems}) {
+  const node = useRef();
 
-  /**
-   * Outputs the menu items.
-   */
-  listItems() {
-    const items = [];
-    for (const item of this.props.menuItems) {
-      items.push(<li className="menu__item"
-        key={item.id}
-        onClick={() => {this.props.menuAction(item.id)}}>
-        {item.title}
-      </li>);
+  const handleClickOutside = event => {
+    if (node.current.contains(event.target)) {
+      // inside click
+      return;
     }
-    return items;
+    // outside click
+    setOpen(false);
+  };
+
+  const handleChange = selectedValue => {
+    onActionClicked(selectedValue);
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
+
+  const items = [];
+  for (const item of menuItems) {
+    items.push(<li className="menu__item"
+      key={item.value}
+      onClick={() => handleChange(item.value)}>
+      {item.label}
+    </li>);
   }
 
-  render() {
-    const { open, xPosition, yPosition } = this.props;
-    return (
-      <MenuWrapper open={open} xPosition={xPosition} yPosition={yPosition}>
-        <div className="menu">
-          <ul className="menu__container">
-            {this.listItems()}
-          </ul>
-        </div>
-      </MenuWrapper>
-    )
-  }
+  return (
+    <MenuWrapper
+      ref={node}
+      open={open}
+      xPosition={xPosition}
+      yPosition={yPosition}>
+      {children}
+      <div className="menu">
+        <ul className="menu__container">
+          {items}
+        </ul>
+      </div>
+    </MenuWrapper>
+  )
 }
 
 export default Menu;
