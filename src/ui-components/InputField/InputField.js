@@ -18,13 +18,13 @@ const InputFieldWrapper = styled.div`
     }
 
     &__input {
-      margin-top: 4px;
-      border: 1px solid ${colors.grayLighter};
-      border-radius: 4px;
-      height: 40px;
-      font-size: 15px;
+      margin-top: ${rem(4)};
+      border: ${rem(1)} solid ${colors.grayLighter};
+      border-radius: ${rem(4)};
+      height: ${rem(40)};
+      font-size: ${rem(15)};
       box-sizing: border-box;
-      padding: 8px 12px;
+      padding: ${rem(8)} ${rem(12)};
       transition: all 0.2s linear;
       outline: none;
 
@@ -34,48 +34,41 @@ const InputFieldWrapper = styled.div`
     }
 
     &__spacer {
-      min-height: 16px;
+      min-height: ${rem(16)};
       display: flex;
     }
 
     &__error {
       color: ${colors.danger};
-      line-height: 12px;
-      font-size: 10px;
-      padding: 2px 0;
+      line-height: ${rem(12)};
+      font-size: ${rem(10)};
+      padding: ${rem(2)} 0;
     }
   }
 `
 
-class InputField extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const required = this.props.required ? '*' : '';
-    return (
-      <InputFieldWrapper>
-        <div className="input-field">
-          <label
-            className="input-field__label"
-            htmlFor={this.props.id}>
-            {this.props.label}{required}
-          </label>
-          <input
-            className="input-field__input"
-            name={this.props.id}
-            type={this.props.type}
-            placeholder={this.props.placeholder}
-            value={this.props.username}
-            onChange={this.props.change} />
-          <div className="input-field__spacer">
-            <small className="input-field__error">{this.props.error}</small>
-          </div>
+function InputField({id, type, label, value, placeholder, change, error, required}) {
+  return (
+    <InputFieldWrapper>
+      <div className="input-field">
+        <label
+          className="input-field__label"
+          htmlFor={id}>
+          {label}{required && '*'}
+        </label>
+        <input
+          className="input-field__input"
+          name={id}
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={change} />
+        <div className="input-field__spacer">
+          <small className="input-field__error">{error}</small>
         </div>
-      </InputFieldWrapper>
-    )
-  }
+      </div>
+    </InputFieldWrapper>
+  )
 }
 
 export default InputField;

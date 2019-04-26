@@ -26,25 +26,15 @@ const TextFieldWrapper = styled.div`
   }
 `
 
-class TextField extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    let field = '';
-    if (this.props.value) {
-      field = (<TextFieldWrapper bold={this.props.bold}>
-        <div className="text-field">
-          <label className="text-field__label">{this.props.label}</label>
-          <div className="text-field__value">{this.props.value}</div>
-        </div>
-      </TextFieldWrapper>);
-    }
-    return (
-      field
-    )
-  }
+function TextField({label, value, bold}) {
+  return value ? (
+    <TextFieldWrapper bold={bold}>
+      <div className="text-field">
+        <label className="text-field__label">{label}</label>
+        <div className="text-field__value">{value}</div>
+      </div>
+    </TextFieldWrapper>
+  ) : '';
 }
 
 export default TextField;
