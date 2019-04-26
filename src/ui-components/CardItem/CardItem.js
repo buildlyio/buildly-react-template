@@ -7,6 +7,7 @@ const FjCardItemWrapper = styled.div`
   display: flex;
   flex: 1;
   margin: ${rem(4)};
+  align-items: flex-start;
   
   .card-item {
     box-shadow: 0 ${rem(2)} ${rem(3)} 0 ${colors.shadow};
@@ -14,7 +15,6 @@ const FjCardItemWrapper = styled.div`
     display: flex;
     flex: 1;
     flex-direction: column;
-    height: 100%;
     box-sizing: border-box;
     cursor: pointer;
 
