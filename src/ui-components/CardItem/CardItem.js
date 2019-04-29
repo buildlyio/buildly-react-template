@@ -40,8 +40,7 @@ const CardItemWrapper = styled.div`
     }
 
     &__small {
-      margin: ${rem(4)};
-      font-size: ${rem(12)};
+      font-size: ${rem(10)};
       color: ${colors.grayLight};
     }
 
@@ -71,12 +70,15 @@ const CardItemWrapper = styled.div`
   }
 
   label {
-    word-break: break-all;
+    &:not(.card-item__small) {
+      word-break: break-all;
 
-    &:empty {
-      &::before {
-        content: 'Click to edit';
-        color: ${colors.grayMedium};
+      &:empty {
+        &::before {
+          cursor: pointer;
+          content: 'Click to edit';
+          color: ${colors.grayMedium};
+        }
       }
     }
   }
@@ -154,12 +156,15 @@ function CardItem({
       <FjCard
         content={
         <React.Fragment>
-          <div className="card-item__small">{dateHeader1.label} {dateHeader1Formatted} | {dateHeader2.label} {dateHeader2Formatted}</div>
+          <div className="card-item__field card-item__small">
+            {dateHeader1.label} {dateHeader1Formatted} | {dateHeader2.label} {dateHeader2Formatted}
+          </div>
           <div className="card-item__row">
             <div className="card-item__column card-item__column--flex">
               <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
+                <label className="card-item__small">{details.label}</label>
                 <EditableLabel
                   inputPlaceHolder={details.label}
                   inputClassName="card-item__input"
@@ -169,6 +174,7 @@ function CardItem({
               <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
+                <label className="card-item__small">{description.label}</label>
                 <EditableLabel
                   inputPlaceHolder={description.label}
                   inputClassName="card-item__input"
@@ -180,6 +186,7 @@ function CardItem({
               <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
+                <label className="card-item__small">{tags.label}</label>
                 <EditableLabel
                   inputPlaceHolder={tags.label}
                   inputClassName="card-item__input"

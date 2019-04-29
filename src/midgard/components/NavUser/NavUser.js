@@ -1,6 +1,6 @@
 import React from 'react'
 import { oauthService } from 'midgard/modules/oauth/oauth.service'
-import Menu from 'midgard/components/Menu/Menu'
+import Menu from 'ui/Menu/Menu'
 import { connect } from 'react-redux'
 import { logout } from 'redux/actions/Auth.actions'
 import NavItem from 'midgard/components/NavItem/NavItem'
