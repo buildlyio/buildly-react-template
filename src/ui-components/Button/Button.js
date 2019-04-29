@@ -46,4 +46,18 @@ export const Button = styled.button`
   ${props => props.small && css`
     height: ${rem(32)};
   `}
+
+  ${props => props.upload && css`
+    position: relative;
+
+    input {
+      cursor: pointer;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      opacity: 0;
+    }
+  `}
 `

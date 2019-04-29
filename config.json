@@ -5,6 +5,11 @@
       "name": "Products",
       "description": "Add products to inventory",
       "url": "https://github.com/Humanitec/product_client_react.git"
+    },
+    {
+      "name": "Documents",
+      "description": "Organizing docs and images",
+      "url": "https://github.com/Humanitec/documents_client_react.git"
     }
   ]
 }
