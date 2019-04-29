@@ -157,11 +157,11 @@ function CardItem({
         content={
         <React.Fragment>
           <div className="card-item__field card-item__small">
-            {dateHeader1.label} {dateHeader1Formatted} | {dateHeader2.label} {dateHeader2Formatted}
+            {dateHeader1.label} {dateHeader1Formatted} {dateHeader1 && dateHeader2 && '|'} {dateHeader2.label} {dateHeader2Formatted}
           </div>
           <div className="card-item__row">
             <div className="card-item__column card-item__column--flex">
-              <div 
+              {details && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <label className="card-item__small">{details.label}</label>
@@ -170,8 +170,8 @@ function CardItem({
                   inputClassName="card-item__input"
                   text={details.value}
                   onFocusOut={(event) => update(id, action, details.prop, event)} />
-              </div>
-              <div 
+              </div>}
+              {description && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <label className="card-item__small">{description.label}</label>
@@ -180,10 +180,10 @@ function CardItem({
                   inputClassName="card-item__input"
                   text={description.value}
                   onFocusOut={(event) => update(id, action, description.prop, event)} />
-              </div>
+              </div>}
             </div>
             <div className="card-item__column card-item__column--flex">
-              <div 
+              {tags && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <label className="card-item__small">{tags.label}</label>
@@ -192,7 +192,7 @@ function CardItem({
                   inputClassName="card-item__input"
                   text={tags.value}
                   onFocusOut={(event) => update(id, action, tags.prop, event)} />
-              </div>
+              </div>}
             </div>
           </div>
         </React.Fragment>}>
@@ -204,7 +204,7 @@ function CardItem({
               </div>
             </div>
             <div className="card-item__column card-item__column--flex">
-              <div 
+              {title && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--primary">
                 <EditableLabel
@@ -212,8 +212,8 @@ function CardItem({
                   inputClassName="card-item__input"
                   text={title.value}
                   onFocusOut={(event) => update(id, action, title.prop, event)} />
-              </div>
-              <div 
+              </div>}
+              {subText && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <EditableLabel
@@ -221,8 +221,8 @@ function CardItem({
                   inputClassName="card-item__input"
                   text={subText.value}
                   onFocusOut={(event) => update(id, action, subText.prop, event)} />
-              </div>
-              <div 
+              </div>}
+              {subText2 && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <EditableLabel
@@ -230,10 +230,10 @@ function CardItem({
                   inputClassName="card-item__input"
                   text={subText2.value}
                   onFocusOut={(event) => update(id, action, subText2.prop, event)} />
-              </div>
+              </div>}
             </div>
             <div className="card-item__column card-item__column--flex">
-              <div 
+              {caption && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <EditableLabel
@@ -241,8 +241,8 @@ function CardItem({
                   inputClassName="card-item__input"
                   text={caption.value}
                   onFocusOut={(event) => update(id, action, caption.prop, event)} />
-              </div>
-              <div 
+              </div>}
+              {link && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <EditableLabel
@@ -250,7 +250,7 @@ function CardItem({
                   inputClassName="card-item__input"
                   text={link.value}
                   onFocusOut={(event) => update(id, action, link.prop, event)} />
-              </div>
+              </div>}
             </div>
             <div className="card-item__column">
               <div 
