@@ -181,8 +181,8 @@ _gulp.default.task('createFile', function (done) {
         routes.push("routeItems.push(<Route path=\"/app/" + smallName + "/\" component={" + name + "} />);\n");
     }
     _fs.writeFileSync('src/midgard/layout/NavBar/NavBarItems.js', "export const NavBarItems =" +  JSON.stringify(item));
-    var index = container.search("//entryPointForGulp");
     var container = _fs.readFileSync('src/midgard/layout/Container/Container.js',"utf8");
+    var index = container.search("//entryPointForGulp");
     container = container.slice(0, index - 1) + routes.join("") + container.slice(index);
     _fs.writeFileSync('src/midgard/layout/Container/Container.js', imports.join("") + container);
 
