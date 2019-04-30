@@ -118,6 +118,7 @@ function CardItem({
   layout,
   action,
   options,
+  image,
   title,
   subText,
   subText2,
@@ -200,7 +201,7 @@ function CardItem({
           <div className="card-item__row">
             <div className="card-item__column">
               <div className="card-item__image" onClick={(event) => event.stopPropagation()}>
-                <img src={defaultLogo} />
+                <img src={image || defaultLogo} />
               </div>
             </div>
             <div className="card-item__column card-item__column--flex">
