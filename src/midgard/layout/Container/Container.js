@@ -1,3 +1,5 @@
+import Products from '../../../clients/Products/src/Products'; 
+import Documents from '../../../clients/Documents/src/Documents'; 
 import React from 'react'
 import NavBar from 'midgard/layout/NavBar/NavBar'
 import TopBar from 'midgard/layout/TopBar/TopBar'
@@ -49,6 +51,8 @@ class Container extends React.Component {
     const { navHidden } = this.state;
     const { location, history } = this.props;
     const routeItems = [];
+    routeItems.push(<Route path="/app/products/" component={Products} />);
+    routeItems.push(<Route path="/app/documents/" component={Documents} />);
     //entryPointForGulp
     return (
       <ContainerWrapper className="container">

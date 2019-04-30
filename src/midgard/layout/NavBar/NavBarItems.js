@@ -1,1 +1,1 @@
-export const NavBarItems =[]
+export const NavBarItems =[{"id":"Products","title":"Products","description":"Add products to inventory"},{"id":"Documents","title":"Documents","description":"Organizing docs and images"}]
