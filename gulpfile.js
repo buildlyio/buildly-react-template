@@ -169,7 +169,7 @@ _gulp.default.task('createFile', function (done) {
     for (var i = 0; i < config.modules.length; i++) {
         var name = config.modules[i].name;
         var smallName = name.charAt(0).toLowerCase() + name.slice(1);
-        item.push({ id: name, title: name, description: config.modules[i].description });
+        item.push({ id: smallName, title: name, description: config.modules[i].description });
         imports.push("import " + name + " from '../../../clients/" + name + "/src/" + name + "'; \n");
 
         sagaRoot = sagaRoot + smallName + "Saga(),\n    ";
