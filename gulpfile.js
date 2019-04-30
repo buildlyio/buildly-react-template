@@ -178,7 +178,7 @@ _gulp.default.task('createFile', function (done) {
         reducerRoot = reducerRoot + smallName + "Reducer,\n    ";
         reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/redux/" + name + ".reducer'; \n");
 
-        routes.push("routeItems.push(<Route path=\"/app/" + smallName + "/\" component={" + name + "} />);\n    ");
+        routes.push("routeItems.push(<Route key=\"" + smallName + "\" path=\"/app/" + smallName + "/\" component={" + name + "} />);\n    ");
     }
     _fs.writeFileSync('src/midgard/layout/NavBar/NavBarItems.js', "export const NavBarItems =" +  JSON.stringify(item));
     var container = _fs.readFileSync('src/midgard/layout/Container/Container.js',"utf8");
