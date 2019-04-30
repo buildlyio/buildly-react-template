@@ -169,7 +169,7 @@ _gulp.default.task('createFile', function (done) {
         var name = config.modules[i].name;
         var smallName = name.charAt(0).toLowerCase() + name.slice(1);
         item.push({ id: name, title: name, description: config.modules[i].description });
-        imports.push("import " + name + " from '../../../clients/" + name + "/src/" +name + "'; \n");
+        imports.push("import " + name + " from 'midgard/clients/" + name + "/src/" +name + "'; \n");
 
         sagaRoot = sagaRoot + smallName +"Saga(),\n";
         sagasImports.push("import " + smallName +"Saga" + " from 'clients/" + config.modules[i].name + "/src/redux/" + name + ".saga'; \n");
