@@ -172,28 +172,28 @@ _gulp.default.task('createFile', function (done) {
         item.push({ id: name, title: name, description: config.modules[i].description });
         imports.push("import " + name + " from '../../../clients/" + name + "/src/" + name + "'; \n");
 
-        sagaRoot = sagaRoot + smallName + "Saga(),\n";
+        sagaRoot = sagaRoot + smallName + "Saga(),\n    ";
         sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + config.modules[i].name + "/src/redux/" + name + ".saga'; \n");
 
-        reducerRoot = reducerRoot + smallName + "Reducer,\n";
+        reducerRoot = reducerRoot + smallName + "Reducer,\n    ";
         reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/redux/" + name + ".reducer'; \n");
 
-        routes.push("routeItems.push(<Route path=\"/app/" + smallName + "/\" component={" + name + "} />);\n");
+        routes.push("routeItems.push(<Route path=\"/app/" + smallName + "/\" component={" + name + "} />);\n    ");
     }
     _fs.writeFileSync('src/midgard/layout/NavBar/NavBarItems.js', "export const NavBarItems =" +  JSON.stringify(item));
     var container = _fs.readFileSync('src/midgard/layout/Container/Container.js',"utf8");
     var index = container.search("//entryPointForGulp");
-    container = container.slice(0, index - 1) + routes.join("") + container.slice(index);
+    container = container.slice(0, index) + routes.join("") + container.slice(index);
     _fs.writeFileSync('src/midgard/layout/Container/Container.js', imports.join("") + container);
 
     var sagaFile = _fs.readFileSync('src/redux/sagas/index.js',"utf8");
     index = sagaFile.search("//entryPointForGulp");
-    sagaFile = sagaFile.slice(0, index - 1) + sagaRoot + sagaFile.slice(index);
+    sagaFile = sagaFile.slice(0, index) + sagaRoot + sagaFile.slice(index);
     _fs.writeFileSync('src/redux/sagas/index.js', sagasImports.join("") + sagaFile);
 
     var reducerFile = _fs.readFileSync('src/redux/reducers/index.js',"utf8");
     index = reducerFile.search("//entryPointForGulp");
-    reducerFile = reducerFile.slice(0, index - 1) + reducerRoot + reducerFile.slice(index);
+    reducerFile = reducerFile.slice(0, index) + reducerRoot + reducerFile.slice(index);
     _fs.writeFileSync('src/redux/reducers/index.js', reducerImports.join("") + reducerFile);
 
 
