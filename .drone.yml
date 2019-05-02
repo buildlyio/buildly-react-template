@@ -4,9 +4,7 @@ pipeline:
   install:
     image: node:9.9.0
     commands:
-      - npm install gulp-cli -g
       - npm install
-      - npm run build
       - npm run init
     secrets: []
     when:
