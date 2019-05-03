@@ -4,7 +4,6 @@ pipeline:
   install:
     image: node:9.9.0
     commands:
-      - rm -rf node_modules/
       - rm -rf drone/src/node_modules/
       - npm install gulp-cli -g
       - npm install
