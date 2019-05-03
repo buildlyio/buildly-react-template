@@ -3,7 +3,8 @@ import { colors } from 'colors'
 import { rem } from 'polished'
 
 export const Button = styled.button`
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   border-radius: ${rem(4)};
   height: ${rem(40)};
   padding: 0 ${rem(12)};
@@ -15,6 +16,11 @@ export const Button = styled.button`
   cursor: pointer;
   outline: none;
   margin: ${rem(4)} 0;
+
+  img {
+    max-height: ${rem(18)};
+    max-width: ${rem(18)};
+  }
 
   &:hover {
     background-color: ${colors.primaryDarker};
@@ -39,5 +45,19 @@ export const Button = styled.button`
 
   ${props => props.small && css`
     height: ${rem(32)};
+  `}
+
+  ${props => props.upload && css`
+    position: relative;
+
+    input {
+      cursor: pointer;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      opacity: 0;
+    }
   `}
 `

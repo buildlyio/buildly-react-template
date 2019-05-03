@@ -13,7 +13,7 @@ export const REGISTER_FAIL = 'AUTH/REGISTER_FAIL';
 
 /**
  * Login action
- * @param {{username: string; password: string}} credentials
+ * @param {{username, password}} credentials
  */
 export const login = (credentials) => ({ type: LOGIN, credentials });
 
