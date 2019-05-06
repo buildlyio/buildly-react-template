@@ -58,6 +58,7 @@
     "build-prod": "webpack --mode production",
     "createFile": "gulp createFile  --gulpfile gulpfile.js --cwd ./",
     "init": "gulp init --gulpfile gulpfile.js --cwd ./ && npm run createFile",
+    "delete": "gulp deleteIndex  --gulpfile gulpfile.js --cwd ./",
     "styleguidist": "npx styleguidist build && npx styleguidist server"
   },
   "jest": {
