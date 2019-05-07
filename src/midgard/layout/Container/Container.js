@@ -1,10 +1,14 @@
+// react library imports
 import React from 'react'
+import { Route, Redirect } from 'react-router-dom'
+import styled from 'styled-components'
+import { colors } from 'colors'
+
+// react user imports
 import NavBar from 'midgard/layout/NavBar/NavBar'
 import TopBar from 'midgard/layout/TopBar/TopBar'
 import Profile from 'midgard/pages/Profile/Profile'
-import { Route, Redirect } from 'react-router-dom'
-import { colors } from 'colors'
-import styled from 'styled-components'
+
 
 const ContainerWrapper = styled.div`
   height: 100%;
@@ -49,7 +53,8 @@ class Container extends React.Component {
     const { navHidden } = this.state;
     const { location, history } = this.props;
     const routeItems = [];
-    //entryPointForGulp
+    //entryPointForGulpStart
+//entryPointForGulpEnd
     return (
       <ContainerWrapper className="container">
         <div className="container__column">

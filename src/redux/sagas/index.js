@@ -1,3 +1,4 @@
+// react library imports
 import authSaga from "./Auth.saga"
 import { all } from 'redux-saga/effects'
 
@@ -5,7 +6,8 @@ import { all } from 'redux-saga/effects'
 export default function* rootSaga() {
   yield all([
     // import all sagas and call them here:
-    //entryPointForGulp
+      //entryPointForGulpStart
+//entryPointForGulpEnd
     authSaga()
   ])
 }
