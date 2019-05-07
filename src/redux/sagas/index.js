@@ -1,5 +1,4 @@
 import productsSaga from 'clients/Products/src/redux/Products.saga'; 
-import documentsSaga from 'clients/Documents/src/redux/Documents.saga'; 
 // react library imports
 import authSaga from "./Auth.saga"
 import { all } from 'redux-saga/effects'
@@ -10,7 +9,6 @@ export default function* rootSaga() {
     // import all sagas and call them here:
       //entryPointForGulpStart
 productsSaga(),
-    documentsSaga(),
     //entryPointForGulpEnd
     authSaga()
   ])
