@@ -1,3 +1,5 @@
+import Products from '../../../clients/Products/src/Products'; 
+import Documents from '../../../clients/Documents/src/Documents'; 
 // react library imports
 import React from 'react'
 import { Route, Redirect } from 'react-router-dom'
@@ -54,7 +56,9 @@ class Container extends React.Component {
     const { location, history } = this.props;
     const routeItems = [];
     //entryPointForGulpStart
-//entryPointForGulpEnd
+routeItems.push(<Route key="products" path="/app/products/" component={Products} />);
+    routeItems.push(<Route key="documents" path="/app/documents/" component={Documents} />);
+    //entryPointForGulpEnd
     return (
       <ContainerWrapper className="container">
         <div className="container__column">
