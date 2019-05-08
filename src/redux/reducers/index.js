@@ -5,11 +5,11 @@ import { combineReducers } from 'redux';
 import authReducer from './Auth.reducer';
 
 const rootReducer = combineReducers({
-    //entryPointForGulpStart
-productsReducer,
-    documentsReducer,
-    //entryPointForGulpEnd
-    authReducer
+  //entryPointForGulpStart
+  productsReducer,
+  documentsReducer,
+  //entryPointForGulpEnd
+  authReducer
 });
 
 export default rootReducer;

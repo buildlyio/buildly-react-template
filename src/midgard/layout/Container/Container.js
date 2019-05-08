@@ -56,7 +56,7 @@ class Container extends React.Component {
     const { location, history } = this.props;
     const routeItems = [];
     //entryPointForGulpStart
-routeItems.push(<Route key="products" path="/app/products/" component={Products} />);
+    routeItems.push(<Route key="products" path="/app/products/" component={Products} />);
     routeItems.push(<Route key="documents" path="/app/documents/" component={Documents} />);
     //entryPointForGulpEnd
     return (

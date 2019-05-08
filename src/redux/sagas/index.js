@@ -8,8 +8,8 @@ import { all } from 'redux-saga/effects'
 export default function* rootSaga() {
   yield all([
     // import all sagas and call them here:
-      //entryPointForGulpStart
-productsSaga(),
+    //entryPointForGulpStart
+    productsSaga(),
     documentsSaga(),
     //entryPointForGulpEnd
     authSaga()
