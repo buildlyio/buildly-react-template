@@ -191,12 +191,12 @@ _gulp.default.task('createFile', function (done) {
         var name = config.modules[i].name;
         var smallName = name.charAt(0).toLowerCase() + name.slice(1);
         item.push({ id: smallName, title: name, description: config.modules[i].description });
-        imports.push("import " + name + " from '../../../clients/" + name + "/src/" + name + "'; \n");
+        imports.push("import " + name + " from 'clients/" + name + "/src/" + name + "'; \n");
 
         sagaRoot = sagaRoot + smallName + "Saga(),\n    ";
         sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + config.modules[i].name + "/src/redux/" + name + ".saga'; \n");
 
-        reducerRoot = reducerRoot + smallName + "Reducer,\n    ";
+        reducerRoot = reducerRoot + smallName + "Reducer,\n  ";
         reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/redux/" + name + ".reducer'; \n");
 
         routes.push("routeItems.push(<Route key=\"" + smallName + "\" path=\"/app/" + smallName + "/\" component={" + name + "} />);\n    ");
@@ -205,19 +205,19 @@ _gulp.default.task('createFile', function (done) {
    var container = _fs.readFileSync('src/midgard/layout/Container/Container.js',"utf8");
     var index = container.search(start);
     var indexEnd = container.search(end);
-    container = container.slice(0, index + start.length) + "\n"  + routes.join("") + container.slice(indexEnd);
+    container = container.slice(0, index + start.length) + "\n    "  + routes.join("") + container.slice(indexEnd);
     _fs.writeFileSync('src/midgard/layout/Container/Container.js', imports.join("") + container);
 
     var sagaFile = _fs.readFileSync('src/redux/sagas/index.js',"utf8");
     index = sagaFile.search(start);
     var indexEnd = sagaFile.search(end);
-    sagaFile = sagaFile.slice(0, index+ start.length)+ "\n" + sagaRoot + sagaFile.slice(indexEnd);
+    sagaFile = sagaFile.slice(0, index+ start.length)+ "\n    " + sagaRoot + sagaFile.slice(indexEnd);
     _fs.writeFileSync('src/redux/sagas/index.js', sagasImports.join("") + sagaFile);
 
     var reducerFile = _fs.readFileSync('src/redux/reducers/index.js',"utf8");
     index = reducerFile.search(start);
     indexEnd = reducerFile.search(end);
-    reducerFile = reducerFile.slice(0, index + start.length) + "\n" + reducerRoot + reducerFile.slice(indexEnd);
+    reducerFile = reducerFile.slice(0, index + start.length) + "\n  " + reducerRoot + reducerFile.slice(indexEnd);
     _fs.writeFileSync('src/redux/reducers/index.js', reducerImports.join("") + reducerFile);
 
 

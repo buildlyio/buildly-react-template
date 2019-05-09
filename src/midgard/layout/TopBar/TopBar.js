@@ -149,54 +149,39 @@ const TopBarWrapper = styled.div`
   `}
 `
 
-class TopBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.toggleNav = this.toggleNav.bind(this);
-    this.search = this.search.bind(this);
-  }
-
-  /**
-   * Toggles the navigation top and side bars.
-   */
-  toggleNav() {
-    this.props.action(!this.props.navHidden);
-  }
-
+function TopBar({ navHidden, setNavHidden }) {
   /**
    * Performs the search action.
    */
-  search() {
+  const search = (event) => {
     event.preventDefault();
   }
 
-  render() {
-    return (
-      <TopBarWrapper className="top-bar" hidden={this.props.navHidden}>
-        <div className="top-bar__container">
-          <div className="top-bar__main">
-            <div className="top-bar__menu-container">
-              <div className="top-bar__menu" onClick={this.toggleNav}>
-                <div className="top-bar__menu__icon">
-                  <div className="top-bar__bar"></div>
-                  <div className="top-bar__bar"></div>
-                  <div className="top-bar__bar"></div>
-                </div>
+  return (
+    <TopBarWrapper className="top-bar" hidden={navHidden}>
+      <div className="top-bar__container">
+        <div className="top-bar__main">
+          <div className="top-bar__menu-container">
+            <div className="top-bar__menu" onClick={() => setNavHidden(!navHidden)}>
+              <div className="top-bar__menu__icon">
+                <div className="top-bar__bar"></div>
+                <div className="top-bar__bar"></div>
+                <div className="top-bar__bar"></div>
               </div>
             </div>
-            <img className="top-bar__logo" src={logo} />
-            <h1 className="top-bar__title">Demo App</h1>
           </div>
-          <form className="top-bar__search" onSubmit={this.search}>
-            <input className="top-bar__search__input" placeholder="Search" />
-            <button className="top-bar__search__submit" type="submit">
-              <img src={searchIcon} />
-            </button>
-          </form>
+          <img className="top-bar__logo" src={logo} />
+          <h1 className="top-bar__title">Demo App</h1>
         </div>
-      </TopBarWrapper>
-    )
-  }
+        <form className="top-bar__search" onSubmit={search}>
+          <input className="top-bar__search__input" placeholder="Search" />
+          <button className="top-bar__search__submit" type="submit">
+            <img src={searchIcon} />
+          </button>
+        </form>
+      </div>
+    </TopBarWrapper>
+  )
 }
 
 export default TopBar;
