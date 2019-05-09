@@ -41,8 +41,6 @@ const NavBarWrapper = styled.div`
 `
 
 function NavBar({navHidden, location, history}) {
-  const navItems = NavBarItems;
-
   /**
    * Sets the active item.
    * @param {string} active the active nav item
@@ -53,8 +51,8 @@ function NavBar({navHidden, location, history}) {
   }
 
   const items = [];
-  if (navItems.length) {
-    for (const item of navItems) {
+  if (NavBarItems.length) {
+    for (const item of NavBarItems) {
       items.push(<NavItem
         key={item.id}
         id={item.id}

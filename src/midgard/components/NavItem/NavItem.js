@@ -91,7 +91,7 @@ function NavItem({action, id, title, description, image, defaultImage, toggle, a
   }
 
   return (
-    <NavItemWrapper className="nav-item" active={active} onClick={updateActive()}>
+    <NavItemWrapper className="nav-item" active={active} onClick={updateActive}>
       <div className="nav-item__container">
         {image &&
           (<img src={image} alt={title} />)
