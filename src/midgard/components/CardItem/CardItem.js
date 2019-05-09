@@ -112,7 +112,9 @@ const CardItemWrapper = styled.div`
   `}
 `
 
-
+/**
+ * Generic card layout for midgard client items.
+ */
 function CardItem({
   id,
   layout,
@@ -132,6 +134,9 @@ function CardItem({
 }) {
   const [menuOpened, toggleMenu] = useState(false);
 
+  /**
+   * Calls the updates action.
+   */
   const update = (id, action, label, value) => {
     action('update', id, { [label]: value });
   }

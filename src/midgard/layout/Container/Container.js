@@ -37,11 +37,14 @@ const ContainerWrapper = styled.div`
   }
 `
 
+/**
+ * Container for the app layout when the user is authenticated. 
+ */
 function Container({ location, history }) {
   const [navHidden, setNavHidden] = useState(false);
   const routeItems = [];
     //entryPointForGulpStart
-    //entryPointForGulpEnd
+//entryPointForGulpEnd
   return (
     <ContainerWrapper className="container">
       <UserContext.Provider value={user}>

@@ -149,6 +149,9 @@ const TopBarWrapper = styled.div`
   `}
 `
 
+/**
+ * Component for the top bar header.
+ */
 function TopBar({ navHidden, setNavHidden }) {
   /**
    * Performs the search action.

@@ -29,6 +29,9 @@ const SwitcherItem = styled.button`
   `}
 `
 
+/**
+ * Component for switching the view.
+ */
 function ViewSwitcher({ options, action }) {
   const items = [];
   for (let option of options) {

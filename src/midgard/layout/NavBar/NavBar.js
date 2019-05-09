@@ -40,6 +40,9 @@ const NavBarWrapper = styled.div`
   `}
 `
 
+/**
+ * Component for the side navigation.
+ */
 function NavBar({navHidden, location, history}) {
   /**
    * Sets the active item.

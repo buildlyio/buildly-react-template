@@ -82,6 +82,9 @@ const NavItemWrapper = styled.div`
   `}
 `
 
+/**
+ * Component for an individual item that appears in the sidebar navigation.
+ */
 function NavItem({action, id, title, description, image, defaultImage, toggle, active}) {
   /**
    * Updates the active state of the nav bar item.

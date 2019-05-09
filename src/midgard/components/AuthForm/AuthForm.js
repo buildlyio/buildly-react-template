@@ -49,6 +49,9 @@ const AuthFormWrapper = styled.div`
   }
 `
 
+/**
+ * Generic component to wrap form fields on the login and registration screens.
+ */
 function AuthForm({children, onSubmit, link}) {
   return (
     <AuthFormWrapper className="auth">

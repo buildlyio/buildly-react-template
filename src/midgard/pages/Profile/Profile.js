@@ -8,6 +8,9 @@ import styled from 'styled-components'
 import { rem } from 'polished'
 import { UserContext } from 'midgard/context/User.context'
 
+/**
+ * Styled component for the profile page.
+ */
 const ProfileWrapper = styled.div`
   height: 100%;
   display: flex;
@@ -25,7 +28,13 @@ const ProfileWrapper = styled.div`
   }
 `
 
+/**
+ * Outputs the profile page for the user.
+ */
 function Profile({dispatch, history, location}) {
+  /**
+   * The current oauth user.
+   */
   const user = useContext(UserContext);
 
   if (!user) {
@@ -33,7 +42,7 @@ function Profile({dispatch, history, location}) {
   }
 
   /**
-   * Clears authentication and redirects to the login screen
+   * Clears authentication and redirects to the login screen.
    */
   const logoutUser = () => {
     dispatch(logout());
