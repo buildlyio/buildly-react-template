@@ -47,7 +47,7 @@ const InputFieldWrapper = styled.div`
   }
 `
 
-function InputField({id, type, label, value, placeholder, change, error, required}) {
+function InputField({id, type, label, value, placeholder, onChange, error, required}) {
   return (
     <InputFieldWrapper>
       <div className="input-field">
@@ -62,7 +62,7 @@ function InputField({id, type, label, value, placeholder, change, error, require
           type={type}
           placeholder={placeholder}
           value={value}
-          onChange={change} />
+          onChange={onChange} />
         <div className="input-field__spacer">
           <small className="input-field__error">{error}</small>
         </div>
