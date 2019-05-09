@@ -9,6 +9,7 @@ import NavBar from 'midgard/layout/NavBar/NavBar'
 import TopBar from 'midgard/layout/TopBar/TopBar'
 import Profile from 'midgard/pages/Profile/Profile'
 
+import { user, UserContext } from 'midgard/context/User.context'
 
 const ContainerWrapper = styled.div`
   height: 100%;
@@ -43,19 +44,21 @@ function Container({ location, history }) {
     //entryPointForGulpEnd
   return (
     <ContainerWrapper className="container">
-      <div className="container__column">
-        <TopBar navHidden={navHidden} setNavHidden={setNavHidden} />
-        <div className="container__row">
-          <NavBar navHidden={navHidden} location={location} history={history} />
-          <div className="container__scroll">
-            <Route exact path="/app" render={() => (
-              <Redirect to="/app/profile"/>
-            )} />
-            <Route path="/app/profile" component={Profile} />
-            {routeItems}
+      <UserContext.Provider value={user}>
+        <div className="container__column">
+          <TopBar navHidden={navHidden} setNavHidden={setNavHidden} />
+          <div className="container__row">
+            <NavBar navHidden={navHidden} location={location} history={history} />
+            <div className="container__scroll">
+              <Route exact path="/app" render={() => (
+                <Redirect to="/app/profile"/>
+              )} />
+              <Route path="/app/profile" component={Profile} />
+              {routeItems}
+            </div>
           </div>
         </div>
-      </div>
+      </UserContext.Provider>
     </ContainerWrapper>
   )
 }

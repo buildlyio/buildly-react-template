@@ -32,7 +32,7 @@ const MenuWrapper = styled.div`
       display: flex;
       flex: 1;
       align-items: center;
-      height: ${rem(40)};
+      min-height: ${rem(40)};
       padding: 0 ${rem(10)};
       font-size: ${rem(16)};
       line-height: ${rem(20)};
