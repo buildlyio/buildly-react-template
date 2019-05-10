@@ -7,6 +7,8 @@ import { colors } from 'colors'
 import styled from 'styled-components'
 import { rem } from 'polished'
 import { UserContext } from 'midgard/context/User.context'
+import { Redirect } from 'react-router-dom'
+
 
 const ProfileWrapper = styled.div`
   height: 100%;
@@ -26,7 +28,7 @@ const ProfileWrapper = styled.div`
 `
 
 function Profile({dispatch, history, location}) {
-  const user = useContext(UserContext);
+  const user = useContext(UserContext) ?useContext(UserContext) : JSON.parse(localStorage.getItem('oauthUser')).data;
 
   if (!user) {
     return <Redirect push to="/" />;
