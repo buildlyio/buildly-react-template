@@ -6,7 +6,10 @@ import NavItem from 'midgard/components/NavItem/NavItem'
 import { UserContext } from 'midgard/context/User.context'
 
 function NavUser({location, history, dispatch}) {
-  const user = useContext(UserContext);
+  let user = useContext(UserContext);
+  if (!user) {
+       user = JSON.parse(localStorage.getItem('oauthUser')).data;
+  }
   
   // Last login
   const lastLoginDate = Date.parse(localStorage.getItem('token_stored_at'));

@@ -1,7 +1,7 @@
 import React from 'react'
 import { oauthService } from 'midgard/modules/oauth/oauth.service'
 import { connect } from 'react-redux'
-import { Redirect } from 'react-router'
+import { Redirect } from 'react-router-dom'
 import { Button } from 'ui/Button/Button'
 import { login } from 'redux/actions/Auth.actions'
 import InputField from 'ui/InputField/InputField'
