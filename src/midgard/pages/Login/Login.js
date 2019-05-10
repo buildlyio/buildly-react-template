@@ -6,74 +6,54 @@ import { Button } from 'ui/Button/Button'
 import { login } from 'redux/actions/Auth.actions'
 import InputField from 'ui/InputField/InputField'
 import AuthForm from 'midgard/components/AuthForm/AuthForm'
+import { useInput } from 'midgard/hooks/useInput'
 
-class Login extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: '',
-      password: ''
-    };
-    this.oauthService = oauthService;
-    this.updateField = this.updateField.bind(this);
-    this.submit = this.submit.bind(this);
-  }
+/**
+ * Outputs the login form page for the application.
+ */
+function Login({dispatch, loading}) {
+  const username = useInput('', { required: true });
+  const password = useInput('', { required: true });
 
-  /**
-   * Updates the state for a field
-   * @param {Event} event the change event
-   */
-  updateField(event) {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
+  const registerLink = { label: 'Register', value: '/register' };
+  if (oauthService.hasValidAccessToken()) {
+    return <Redirect push to="/" />;
   }
 
   /**
    * Submit the form to the backend and attempts to authenticate
    * @param {Event} event the default submit event
    */
-  submit(event) {
+  const submit = (event) => {
     event.preventDefault();
-    this.setState({ loading: true });
     const loginFormValue = {
-      username: this.state.username,
-      password: this.state.password
+      username: username.value,
+      password: password.value
     };
-    this.props.dispatch(login(loginFormValue));
+    dispatch(login(loginFormValue));
   }
 
-  render() {
-    const { username, password } = this.state;
-    const { loading, error } = this.props;
-    const registerLink = { label: 'Register', value: '/register' };
-    if (this.oauthService.hasValidAccessToken()) {
-      return <Redirect push to="/" />;
-    }
-    return (
-      <AuthForm onSubmit={this.submit} link={registerLink}>
-        <InputField
-          label="Username"
-          id="username"
-          type="text"
-          placeholder="Enter username"
-          value={username}
-          change={this.updateField} />
-        <InputField
-          label="Password"
-          id="password"
-          type="password"
-          placeholder="Enter password"
-          value={password}
-          error={error}
-          change={this.updateField} />
-        <Button
-          disabled={loading}
-          type="submit">
-          Login
-        </Button>
-      </AuthForm>
-    )
-  }
+  return (
+    <AuthForm onSubmit={submit} link={registerLink}>
+      <InputField
+        label="Username"
+        id="username"
+        type="text"
+        placeholder="Enter username"
+        {...username.bind} />
+      <InputField
+        label="Password"
+        id="password"
+        type="password"
+        placeholder="Enter password"
+        {...password.bind} />
+      <Button
+        disabled={loading}
+        type="submit">
+        Login
+      </Button>
+    </AuthForm>
+  )
 }
 
 const mapStateToProps = (state, ownProps) => ({...ownProps, ...state.authReducer});

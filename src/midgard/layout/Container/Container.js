@@ -1,5 +1,5 @@
 // react library imports
-import React from 'react'
+import React, { useState } from 'react'
 import { Route, Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import { colors } from 'colors'
@@ -9,6 +9,7 @@ import NavBar from 'midgard/layout/NavBar/NavBar'
 import TopBar from 'midgard/layout/TopBar/TopBar'
 import Profile from 'midgard/pages/Profile/Profile'
 
+import { user, UserContext } from 'midgard/context/User.context'
 
 const ContainerWrapper = styled.div`
   height: 100%;
@@ -36,29 +37,16 @@ const ContainerWrapper = styled.div`
   }
 `
 
-class Container extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      navHidden: false
-    };
-    this.toggleNav = this.toggleNav.bind(this);
-  }
-
-  toggleNav(navHidden) {
-    this.setState({navHidden: navHidden});
-  }
-
-  render() {
-    const { navHidden } = this.state;
-    const { location, history } = this.props;
-    const routeItems = [];
+function Container({ location, history }) {
+  const [navHidden, setNavHidden] = useState(false);
+  const routeItems = [];
     //entryPointForGulpStart
-//entryPointForGulpEnd
-    return (
-      <ContainerWrapper className="container">
+    //entryPointForGulpEnd
+  return (
+    <ContainerWrapper className="container">
+      <UserContext.Provider value={user}>
         <div className="container__column">
-          <TopBar navHidden={navHidden} action={this.toggleNav} />
+          <TopBar navHidden={navHidden} setNavHidden={setNavHidden} />
           <div className="container__row">
             <NavBar navHidden={navHidden} location={location} history={history} />
             <div className="container__scroll">
@@ -70,9 +58,9 @@ class Container extends React.Component {
             </div>
           </div>
         </div>
-      </ContainerWrapper>
-    )
-  }
+      </UserContext.Provider>
+    </ContainerWrapper>
+  )
 }
 
 export default Container;

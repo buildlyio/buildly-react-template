@@ -40,57 +40,40 @@ const NavBarWrapper = styled.div`
   `}
 `
 
-class NavBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      navItems: NavBarItems,
-      active: ''
-    };
-    this.setActive = this.setActive.bind(this);
-    this.createItems = this.createItems.bind(this);
-  }
-
+function NavBar({navHidden, location, history}) {
   /**
    * Sets the active item.
    * @param {string} active the active nav item
    */
-  setActive(active) {
-    const { from } = this.props.location.state || { from: { pathname: active } };
-    this.props.history.push(from);
+  const setActive = (active) => {
+    const { from } = location.state || { from: { pathname: active } };
+    history.push(from);
   }
 
-  /**
-   * Creates the list of nav items.
-   */
-  createItems() {
-    const items = [];
-    if (this.state.navItems.length) {
-      for (const item of this.state.navItems) {
-        items.push(<NavItem
-          key={item.id}
-          id={item.id}
-          title={item.title}
-          description={item.description}
-          active={this.props.location.pathname.includes(item.id)}
-          action={this.setActive}/>);
-      }
-      return items;
+  const items = [];
+  if (NavBarItems.length) {
+    for (const item of NavBarItems) {
+      items.push(<NavItem
+        key={item.id}
+        id={item.id}
+        title={item.title}
+        description={item.description}
+        active={location.pathname.includes(item.id)}
+        action={(active) => setActive(active)}
+      />);
     }
   }
-
-  render() {
-    return (
-      <NavBarWrapper className="nav-bar" hidden={this.props.navHidden}>
-        <div className="nav-bar__container">
-          <div className="nav-bar__elements">
-            {this.createItems()}
-          </div>
-          <NavUser location={this.props.location} history={this.props.history} />
+  
+  return (
+    <NavBarWrapper className="nav-bar" hidden={navHidden}>
+      <div className="nav-bar__container">
+        <div className="nav-bar__elements">
+          {items}
         </div>
-      </NavBarWrapper>
-    )
-  }
+        <NavUser location={location} history={history} />
+      </div>
+    </NavBarWrapper>
+  )
 }
 
 export default NavBar;

@@ -82,43 +82,37 @@ const NavItemWrapper = styled.div`
   `}
 `
 
-class NavItem extends React.Component {
-  constructor(props) {
-    super(props);
-    this.updateActive = this.updateActive.bind(this);
-  }
-
+function NavItem({action, id, title, description, image, defaultImage, toggle, active}) {
   /**
    * Updates the active state of the nav bar item.
    */
-  updateActive() {
-    this.props.action(this.props.id);
+  const updateActive = () => {
+    action(id);
   }
 
-  render() {
-    const { title, description, image, defaultImage, toggle, active } = this.props;
-    return (
-      <NavItemWrapper className="nav-item" active={active} onClick={this.updateActive}>
-        <div className="nav-item__container">
-          { image ? <img src={image} alt={title} /> : '' }
-          { !image && defaultImage ? <div className="nav-item__icon">
-            <span className="nav-item__initials">
-              {title.charAt(0)}
-            </span>
-          </div> : ''}
-          <div className="nav-item__text-container">
-            <div className="nav-item__title">
-              {title}
-            </div>
-            <div className="nav-item__description">
-              {description}
-            </div>
+  return (
+    <NavItemWrapper className="nav-item" active={active} onClick={updateActive}>
+      <div className="nav-item__container">
+        {image &&
+          (<img src={image} alt={title} />)
+        }
+        {!image && defaultImage ? <div className="nav-item__icon">
+          <span className="nav-item__initials">
+            {title.charAt(0)}
+          </span>
+        </div> : ''}
+        <div className="nav-item__text-container">
+          <div className="nav-item__title">
+            {title}
           </div>
-          { toggle ? <div className="nav-item__toggle"></div> : '' }
+          <div className="nav-item__description">
+            {description}
+          </div>
         </div>
-      </NavItemWrapper>
-    )
-  }
+        {toggle && <div className="nav-item__toggle"></div>}
+      </div>
+    </NavItemWrapper>
+  )
 }
 
 export default NavItem;

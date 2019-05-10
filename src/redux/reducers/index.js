@@ -3,9 +3,9 @@ import { combineReducers } from 'redux';
 import authReducer from './Auth.reducer';
 
 const rootReducer = combineReducers({
-    //entryPointForGulpStart
+  //entryPointForGulpStart
 //entryPointForGulpEnd
-    authReducer
+  authReducer
 });
 
 export default rootReducer;
