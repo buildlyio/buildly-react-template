@@ -226,10 +226,12 @@ _gulp.default.task('createFile', function (done) {
 
 _gulp.default.task('init', function (done) {
     if (!config) {
-        throw new Error('Application configuration not found');
+        console.warn('Application configuration not found');
+        done();
     }
     if (!config.modules || !config.modules.length) {
-        throw new Error('No application modules found');
+        console.warn('No application modules found');
+        done();
     }
 
     var tasksToRun = [];

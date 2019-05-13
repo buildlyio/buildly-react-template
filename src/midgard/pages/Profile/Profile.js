@@ -7,6 +7,7 @@ import { colors } from 'colors'
 import styled from 'styled-components'
 import { rem } from 'polished'
 import { UserContext } from 'midgard/context/User.context'
+import { Redirect } from 'react-router-dom'
 
 /**
  * Styled component for the profile page.
@@ -35,7 +36,7 @@ function Profile({dispatch, history, location}) {
   /**
    * The current oauth user.
    */
-  const user = useContext(UserContext);
+  const user = useContext(UserContext) ? useContext(UserContext) : JSON.parse(localStorage.getItem('oauthUser')).data;
 
   if (!user) {
     return <Redirect push to="/" />;
