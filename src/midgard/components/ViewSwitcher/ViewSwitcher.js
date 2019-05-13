@@ -12,9 +12,11 @@ const SwitcherItem = styled.button`
   outline: none;
   display: inline-flex;
   align-items: center;
+  border-radius: ${rem(4)};
+  margin: ${rem(2)};
 
   &:hover {
-    text-decoration: underline;
+    background-color: ${colors.baseDarker};
   }
 
   img {
@@ -23,9 +25,8 @@ const SwitcherItem = styled.button`
     margin-right: ${rem(4)};
   }
 
-  ${props => props.active && css`  
+  ${props => props.active && css`
     background-color: ${colors.primaryOverlay};
-    border-radius: ${rem(4)};
   `}
 `
 
