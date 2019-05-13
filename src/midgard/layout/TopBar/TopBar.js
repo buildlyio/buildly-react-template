@@ -161,8 +161,6 @@ function TopBar({ navHidden, setNavHidden }) {
     event.preventDefault();
   }
 
-  console.log(colors);
-
   return (
     <TopBarWrapper className="top-bar" hidden={navHidden}>
       <div className="top-bar__container">
