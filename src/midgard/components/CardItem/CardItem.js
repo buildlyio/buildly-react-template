@@ -34,14 +34,14 @@ const CardItemWrapper = styled.div`
       }
 
       &--secondary {
-        color: ${colors.grayMediumDarker};
+        color: ${colors.gray};
         font-size: ${rem(15)};
       }
     }
 
     &__small {
       font-size: ${rem(10)};
-      color: ${colors.grayLight};
+      color: ${colors.gray};
     }
 
     &__input {
@@ -77,7 +77,7 @@ const CardItemWrapper = styled.div`
         &::before {
           cursor: pointer;
           content: 'Click to edit';
-          color: ${colors.grayMedium};
+          color: ${colors.lightGrayDarker};
         }
       }
     }

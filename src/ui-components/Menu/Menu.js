@@ -18,7 +18,7 @@ const MenuWrapper = styled.div`
     background-color: ${colors.white};
     cursor: pointer;
     display: none;
-    color: ${colors.grayMediumDarker};
+    color: ${colors.text};
     z-index: 3;
 
     &__container {
@@ -38,7 +38,7 @@ const MenuWrapper = styled.div`
       line-height: ${rem(20)};
 
       &:hover {
-        background-color: ${colors.primaryLighter}
+        background-color: ${colors.primaryOverlay}
       }
     }
 

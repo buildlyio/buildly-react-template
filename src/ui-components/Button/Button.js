@@ -27,9 +27,9 @@ export const Button = styled.button`
   }
 
   &:disabled {
-    background-color: ${colors.grayLight};
-    border-color: ${colors.grayLight};
-    color: ${colors.gray};
+    background-color: ${colors.grayLightest};
+    border-color: ${colors.grayLightest};
+    color: ${colors.grayDarkest};
     cursor: default;
   }
 
@@ -39,7 +39,7 @@ export const Button = styled.button`
     border-color: ${colors.primary};
 
     &:hover {
-      background-color: ${colors.primaryLightest};
+      background-color: ${colors.primaryOverlay};
     }
   `}
 

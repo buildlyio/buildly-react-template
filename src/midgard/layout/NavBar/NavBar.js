@@ -11,7 +11,7 @@ const NavBarWrapper = styled.div`
   max-width: ${rem(220)};
   width: ${rem(220)};
   height: 100%;
-  background-color: ${colors.backgroundPrimary};
+  background-color: ${colors.base};
   min-height: calc(100vh - ${rem(60)});
   transition: max-width 0.3s ease-in-out;
   margin-top: ${rem(-60)};

@@ -14,7 +14,7 @@ import { user, UserContext } from 'midgard/context/User.context'
 const ContainerWrapper = styled.div`
   height: 100%;
   display: flex;
-  background-color: ${colors.backgroundSecondary};
+  background-color: ${colors.baseLightest};
 
   .container {
     &__row {

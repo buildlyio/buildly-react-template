@@ -15,7 +15,7 @@ const ProfileWrapper = styled.div`
   height: 100%;
   display: flex;
   flex: 1;
-  background-color: ${colors.backgroundSecondary};
+  background-color: ${colors.baseLighter};
 
   .profile {
     &__container {

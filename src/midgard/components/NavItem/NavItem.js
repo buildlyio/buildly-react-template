@@ -16,13 +16,13 @@ const NavItemWrapper = styled.div`
     &__title {
       font-size: ${rem(14)};
       line-height: ${rem(18)};
-      color: ${colors.textPrimary};
+      color: ${colors.text};
       white-space: nowrap;
       text-transform: capitalize;
     }
     &__description {
       font-size: ${rem(10)};
-      color: ${colors.grayMedium};
+      color: ${colors.grayDarkest};
       white-space: nowrap;
     }
     &__container {
@@ -44,25 +44,25 @@ const NavItemWrapper = styled.div`
       transform: rotate(45deg);
     }
     &__icon {
-      background-color: ${colors.backgroundSecondary};
+      background-color: ${colors.baseLightest};
       padding: ${rem(5)};
       margin: ${rem(5)};
       height: ${rem(32)};
       width: ${rem(32)};
       box-sizing: border-box;
       border-radius: 50%;
-      border: ${rem(1)} solid ${colors.grayLight};
+      border: ${rem(1)} solid ${colors.grayDarkest};
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
     }
     &__initials {
-      color: ${colors.grayMedium};
+      color: ${colors.grayDarkest};
     }
   }
   &:hover {
-    background-color: ${colors.primaryLightest};
+    background-color: ${colors.baseDarker};
     .nav-item {
       &__title,
       &__description {
@@ -72,7 +72,7 @@ const NavItemWrapper = styled.div`
   }
   
   ${props => props.active && css`
-    background-color: ${colors.primaryLighter};
+    background-color: ${colors.primaryOverlay};
     .nav-item {
       &__title,
       &__description {
@@ -99,11 +99,11 @@ function NavItem({action, id, title, description, image, defaultImage, toggle, a
         {image &&
           (<img src={image} alt={title} />)
         }
-        {!image && defaultImage ? <div className="nav-item__icon">
+        {!image && defaultImage && <div className="nav-item__icon">
           <span className="nav-item__initials">
             {title.charAt(0)}
           </span>
-        </div> : ''}
+        </div>}
         <div className="nav-item__text-container">
           <div className="nav-item__title">
             {title}

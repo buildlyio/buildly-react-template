@@ -24,7 +24,7 @@ const SwitcherItem = styled.button`
   }
 
   ${props => props.active && css`  
-    background-color: ${colors.primaryLighter};
+    background-color: ${colors.primaryOverlay};
     border-radius: ${rem(4)};
   `}
 `

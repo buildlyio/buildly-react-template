@@ -12,7 +12,7 @@ const TopBarWrapper = styled.div`
   height: ${topBarHeight};
   max-height: ${topBarHeight};
   display: flex;
-  background-color: ${colors.backgroundPrimary};
+  background-color: ${colors.base};
   transition: all linear 0.3s;
   z-index: 3;
 
@@ -23,7 +23,7 @@ const TopBarWrapper = styled.div`
       padding: 0 ${rem(20)};
       box-sizing: border-box;
       width: ${rem(220)};
-      border-right: ${rem(1)} solid ${colors.grayLighter};
+      border-right: ${rem(1)} solid ${colors.baseDarker};
     }
 
     &__menu {
@@ -47,7 +47,7 @@ const TopBarWrapper = styled.div`
         box-shadow: 0 ${rem(2)} ${rem(3)} 0 ${colors.shadow};
 
         &:hover {
-          background-color: ${colors.primaryLightest};
+          background-color: ${colors.primaryOverlay};
         }
       }
     }
@@ -115,6 +115,7 @@ const TopBarWrapper = styled.div`
         border-radius: 0 ${rem(4)} ${rem(4)} 0;
         cursor: pointer;
         outline: none;
+        transition: all 0.2s linear;
 
         img {
           height: ${rem(18)};
@@ -122,7 +123,7 @@ const TopBarWrapper = styled.div`
         }
 
         &:hover {
-          background-color: ${colors.primary};
+          background-color: ${colors.primaryDarker};
         }
       }
     }
@@ -159,6 +160,8 @@ function TopBar({ navHidden, setNavHidden }) {
   const search = (event) => {
     event.preventDefault();
   }
+
+  console.log(colors);
 
   return (
     <TopBarWrapper className="top-bar" hidden={navHidden}>
