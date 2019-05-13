@@ -20,6 +20,7 @@ export const Button = styled.button`
   img {
     max-height: ${rem(18)};
     max-width: ${rem(18)};
+    margin-right: ${rem(4)};
   }
 
   &:hover {

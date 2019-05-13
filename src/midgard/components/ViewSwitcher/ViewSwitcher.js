@@ -20,8 +20,8 @@ const SwitcherItem = styled.button`
   }
 
   img {
-    height: ${rem(12)};
-    width: ${rem(12)};
+    height: ${rem(16)};
+    width: ${rem(16)};
     margin-right: ${rem(4)};
   }
 
