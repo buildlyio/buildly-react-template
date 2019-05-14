@@ -40,7 +40,7 @@ const CardItemWrapper = styled.div`
     }
 
     &__small {
-      margin: 0 ${rem(4)};
+      margin: 0 ${rem(4)} ${rem(4)};
       font-size: ${rem(10)};
       color: ${colors.gray};
     }

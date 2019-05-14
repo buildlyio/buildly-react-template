@@ -11,6 +11,10 @@ const InlineEditorWrapper = styled.div`
   .inline-editor {
     display: flex;
     flex-direction: column;
+
+    ${props => props.labelled && css`
+      margin: ${rem(6)} 0;
+    `}
   
     &__label {
       font-size: ${rem(10)};
@@ -162,9 +166,9 @@ function InlineEditor({id, tag, label, value, placeholder, onChange}) {
     default:
       tagElement = <p>{value || placeholder}{editElement}</p>;
   }
-
+  const labelled = Boolean(label);
   return (
-    <InlineEditorWrapper onClick={event => event.stopPropagation()} color={value ? 'text' : 'placeholder'} tag={tag}>
+    <InlineEditorWrapper onClick={event => event.stopPropagation()} labelled={labelled} color={value ? 'text' : 'placeholder'} tag={tag}>
       <div className="inline-editor">
         {label && <label className="inline-editor__label">{label}</label>}
         {editing ? (
