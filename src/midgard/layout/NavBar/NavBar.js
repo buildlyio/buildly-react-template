@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import NavUser from 'midgard/components/NavUser/NavUser';
 import NavItem from 'midgard/components/NavItem/NavItem';
-import { NavBarItems } from './NavBarItems'
+import { AppContext } from 'midgard/context/App.context';
 import { colors } from 'colors'
 import styled, { css } from 'styled-components'
 import { rem } from 'polished'
@@ -44,6 +44,8 @@ const NavBarWrapper = styled.div`
  * Component for the side navigation.
  */
 function NavBar({navHidden, location, history}) {
+  const app = useContext(AppContext);
+
   /**
    * Sets the active item.
    * @param {string} active the active nav item
@@ -54,8 +56,8 @@ function NavBar({navHidden, location, history}) {
   }
 
   const items = [];
-  if (NavBarItems.length) {
-    for (const item of NavBarItems) {
+  if (app.modules.length) {
+    for (const item of app.modules) {
       items.push(<NavItem
         key={item.id}
         id={item.id}
