@@ -7,7 +7,7 @@ export default function* rootSaga() {
   yield all([
     // import all sagas and call them here:
     //entryPointForGulpStart
-//entryPointForGulpEnd
+    //entryPointForGulpEnd
     authSaga()
   ])
 }

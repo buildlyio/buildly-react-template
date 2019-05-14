@@ -44,7 +44,7 @@ function Container({ location, history }) {
   const [navHidden, setNavHidden] = useState(false);
   const routeItems = [];
     //entryPointForGulpStart
-//entryPointForGulpEnd
+    //entryPointForGulpEnd
   return (
     <ContainerWrapper className="container">
       <UserContext.Provider value={user}>

@@ -4,7 +4,7 @@ import authReducer from './Auth.reducer';
 
 const rootReducer = combineReducers({
   //entryPointForGulpStart
-//entryPointForGulpEnd
+  //entryPointForGulpEnd
   authReducer
 });
 
