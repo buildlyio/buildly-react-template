@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import logo from 'assets/midgard-logo.svg'
 import searchIcon from 'assets/icon-search.svg'
 import { colors } from 'colors'
 import styled, { css } from 'styled-components'
 import { rem } from 'polished'
+import { AppContext } from 'midgard/context/App.context'
 
 const topBarHeight = rem(60);
 const searchSize = rem(40);
@@ -12,7 +13,7 @@ const TopBarWrapper = styled.div`
   height: ${topBarHeight};
   max-height: ${topBarHeight};
   display: flex;
-  background-color: ${colors.backgroundPrimary};
+  background-color: ${colors.base};
   transition: all linear 0.3s;
   z-index: 3;
 
@@ -23,7 +24,7 @@ const TopBarWrapper = styled.div`
       padding: 0 ${rem(20)};
       box-sizing: border-box;
       width: ${rem(220)};
-      border-right: ${rem(1)} solid ${colors.grayLighter};
+      border-right: ${rem(1)} solid ${colors.baseDarker};
     }
 
     &__menu {
@@ -47,7 +48,7 @@ const TopBarWrapper = styled.div`
         box-shadow: 0 ${rem(2)} ${rem(3)} 0 ${colors.shadow};
 
         &:hover {
-          background-color: ${colors.primaryLightest};
+          background-color: ${colors.primaryOverlay};
         }
       }
     }
@@ -115,6 +116,7 @@ const TopBarWrapper = styled.div`
         border-radius: 0 ${rem(4)} ${rem(4)} 0;
         cursor: pointer;
         outline: none;
+        transition: all 0.2s linear;
 
         img {
           height: ${rem(18)};
@@ -122,7 +124,7 @@ const TopBarWrapper = styled.div`
         }
 
         &:hover {
-          background-color: ${colors.primary};
+          background-color: ${colors.primaryDarker};
         }
       }
     }
@@ -149,7 +151,12 @@ const TopBarWrapper = styled.div`
   `}
 `
 
+/**
+ * Component for the top bar header.
+ */
 function TopBar({ navHidden, setNavHidden }) {
+  const app = useContext(AppContext);
+
   /**
    * Performs the search action.
    */
@@ -171,7 +178,7 @@ function TopBar({ navHidden, setNavHidden }) {
             </div>
           </div>
           <img className="top-bar__logo" src={logo} />
-          <h1 className="top-bar__title">Demo App</h1>
+          <h1 className="top-bar__title">{app.appTitle}</h1>
         </div>
         <form className="top-bar__search" onSubmit={search}>
           <input className="top-bar__search__input" placeholder="Search" />

@@ -9,12 +9,14 @@ import { rem } from 'polished'
 import { UserContext } from 'midgard/context/User.context'
 import { Redirect } from 'react-router-dom'
 
-
+/**
+ * Styled component for the profile page.
+ */
 const ProfileWrapper = styled.div`
   height: 100%;
   display: flex;
   flex: 1;
-  background-color: ${colors.backgroundSecondary};
+  background-color: ${colors.baseLighter};
 
   .profile {
     &__container {
@@ -27,15 +29,21 @@ const ProfileWrapper = styled.div`
   }
 `
 
+/**
+ * Outputs the profile page for the user.
+ */
 function Profile({dispatch, history, location}) {
-  const user = useContext(UserContext) ?useContext(UserContext) : JSON.parse(localStorage.getItem('oauthUser')).data;
+  /**
+   * The current oauth user.
+   */
+  const user = useContext(UserContext) ? useContext(UserContext) : JSON.parse(localStorage.getItem('oauthUser')).data;
 
   if (!user) {
     return <Redirect push to="/" />;
   }
 
   /**
-   * Clears authentication and redirects to the login screen
+   * Clears authentication and redirects to the login screen.
    */
   const logoutUser = () => {
     dispatch(logout());

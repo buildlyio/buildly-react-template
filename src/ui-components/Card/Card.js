@@ -33,13 +33,13 @@ const FjCardWrapper = styled.div`
 
       .card {
         &__content {
-          border-top: ${rem(1)} solid ${colors.grayLighter};
+          border-top: ${rem(1)} solid ${colors.lightGrayLighter};
         }
       }
     }
 
     &:hover {
-      background-color: ${colors.primaryLightest};
+      background-color: ${colors.lightGrayLightest};
     }
   }
 `

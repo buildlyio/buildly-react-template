@@ -4,8 +4,8 @@ import { colors } from 'colors'
 import { rem } from 'polished'
 import FjCard from 'ui-components/Card/Card'
 import { Button } from 'ui-components/Button/Button'
+import InlineEditor from 'ui-components/InlineEditor/InlineEditor'
 import Menu from 'ui/Menu/Menu'
-import EditableLabel from 'react-inline-editing'
 import defaultLogo from 'assets/midgard-logo.svg'
 
 const CardItemWrapper = styled.div`
@@ -27,21 +27,22 @@ const CardItemWrapper = styled.div`
     }
 
     &__field {
-      margin: ${rem(4)};
+      padding: 0 ${rem(4)};
 
       &--primary {
         font-weight: bold;
       }
 
       &--secondary {
-        color: ${colors.grayMediumDarker};
+        color: ${colors.gray};
         font-size: ${rem(15)};
       }
     }
 
     &__small {
+      margin: 0 ${rem(4)} ${rem(4)};
       font-size: ${rem(10)};
-      color: ${colors.grayLight};
+      color: ${colors.gray};
     }
 
     &__input {
@@ -77,7 +78,7 @@ const CardItemWrapper = styled.div`
         &::before {
           cursor: pointer;
           content: 'Click to edit';
-          color: ${colors.grayMedium};
+          color: ${colors.lightGrayDarker};
         }
       }
     }
@@ -112,7 +113,9 @@ const CardItemWrapper = styled.div`
   `}
 `
 
-
+/**
+ * Generic card layout for midgard client items.
+ */
 function CardItem({
   id,
   layout,
@@ -132,6 +135,9 @@ function CardItem({
 }) {
   const [menuOpened, toggleMenu] = useState(false);
 
+  /**
+   * Calls the updates action.
+   */
   const update = (id, action, label, value) => {
     action('update', id, { [label]: value });
   }
@@ -165,34 +171,34 @@ function CardItem({
               {details && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <label className="card-item__small">{details.label}</label>
-                <EditableLabel
-                  inputPlaceHolder={details.label}
-                  inputClassName="card-item__input"
-                  text={details.value}
-                  onFocusOut={(event) => update(id, action, details.prop, event)} />
+                <InlineEditor
+                  id={details.prop}
+                  label={details.label}
+                  placeholder={details.label}
+                  value={details.value}
+                  onChange={(event) => update(id, action, details.prop, event)} />
               </div>}
               {description && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <label className="card-item__small">{description.label}</label>
-                <EditableLabel
-                  inputPlaceHolder={description.label}
-                  inputClassName="card-item__input"
-                  text={description.value}
-                  onFocusOut={(event) => update(id, action, description.prop, event)} />
+                <InlineEditor
+                  id={description.prop}
+                  label={description.label}
+                  placeholder={description.label}
+                  value={description.value}
+                  onChange={(event) => update(id, action, description.prop, event)} />
               </div>}
             </div>
             <div className="card-item__column card-item__column--flex">
               {tags && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <label className="card-item__small">{tags.label}</label>
-                <EditableLabel
-                  inputPlaceHolder={tags.label}
-                  inputClassName="card-item__input"
-                  text={tags.value}
-                  onFocusOut={(event) => update(id, action, tags.prop, event)} />
+                <InlineEditor
+                  id={tags.prop}
+                  label={tags.label}
+                  placeholder={tags.label}
+                  value={tags.value}
+                  onChange={(event) => update(id, action, tags.prop, event)} />
               </div>}
             </div>
           </div>
@@ -208,49 +214,50 @@ function CardItem({
               {title && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--primary">
-                <EditableLabel
-                  inputPlaceHolder={title.label}
-                  inputClassName="card-item__input"
-                  text={title.value}
-                  onFocusOut={(event) => update(id, action, title.prop, event)} />
+                <InlineEditor
+                  id={title.prop}
+                  placeholder={title.label}
+                  value={title.value}
+                  tag="h4"
+                  onChange={(event) => update(id, action, title.prop, event)} />
               </div>}
               {subText && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <EditableLabel
-                  inputPlaceHolder={subText.label}
-                  inputClassName="card-item__input"
-                  text={subText.value}
-                  onFocusOut={(event) => update(id, action, subText.prop, event)} />
+                <InlineEditor
+                  id={subText.prop}
+                  placeholder={subText.label}
+                  value={subText.value}
+                  onChange={(event) => update(id, action, subText.prop, event)} />
               </div>}
               {subText2 && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <EditableLabel
-                  inputPlaceHolder={subText2.label}
-                  inputClassName="card-item__input"
-                  text={subText2.value}
-                  onFocusOut={(event) => update(id, action, subText2.prop, event)} />
+                <InlineEditor
+                  id={subText2.prop}
+                  placeholder={subText2.label}
+                  value={subText2.value}
+                  onChange={(event) => update(id, action, subText2.prop, event)} />
               </div>}
             </div>
             <div className="card-item__column card-item__column--flex">
               {caption && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <EditableLabel
-                  inputPlaceHolder={caption.label}
-                  inputClassName="card-item__input"
-                  text={caption.value}
-                  onFocusOut={(event) => update(id, action, caption.prop, event)} />
+                <InlineEditor
+                  id={caption.prop}
+                  placeholder={caption.label}
+                  value={caption.value}
+                  onChange={(event) => update(id, action, caption.prop, event)} />
               </div>}
               {link && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <EditableLabel
-                  inputPlaceHolder={link.label}
-                  inputClassName="card-item__input"
-                  text={link.value}
-                  onFocusOut={(event) => update(id, action, link.prop, event)} />
+                <InlineEditor
+                  id={link.prop}
+                  placeholder={link.label}
+                  value={link.value}
+                  onChange={(event) => update(id, action, link.prop, event)} />
               </div>}
             </div>
             <div className="card-item__column">

@@ -158,27 +158,40 @@ var genericErrorHandler = function genericErrorHandler(err) {
     console.warn(err.message);
 };
 _gulp.default.task('deleteIndex', function (done) {
-    _fs.writeFileSync('src/midgard/layout/NavBar/NavBarItems.js', "export const NavBarItems =[]");
-    var fileObject=[]
+    var imports = "// react library imports";
+    var start = "//entryPointForGulpStart";
+    var end = "//entryPointForGulpEnd";
+    var fileObject = [];
     fileObject.push('src/midgard/layout/Container/Container.js');
     fileObject.push('src/redux/reducers/index.js');
     fileObject.push('src/redux/sagas/index.js');
     for (var i=0; fileObject[i];i++) {
         var container = _fs.readFileSync(fileObject[i], "utf8");
-        var imports = "// react library imports";
         var importSearch = container.search(imports);
-        var start = "//entryPointForGulpStart";
         var startIndex = container.search(start);
-        var end = "//entryPointForGulpEnd";
-        var Endindex = container.search(end);
-        container = container.slice(importSearch, startIndex + start.length) + "\n" +  container.slice(Endindex);
+        var endIndex = container.search(end);
+        container = container.slice(importSearch, startIndex + start.length) + "\n    " +  container.slice(endIndex);
         _fs.writeFileSync(fileObject[i], container);
     }
+    var appContext = _fs.readFileSync('src/midgard/context/App.context.js', "utf8");
+    var startIndex = appContext.search(start);
+    var endIndex = appContext.search(end);
+    appContext = appContext.slice(0, startIndex + start.length) + "\n" + "export const app = {\n  appTitle: \"My App\",\n  modules: []\n};\n" + appContext.slice(endIndex);
+    _fs.writeFileSync('src/midgard/context/App.context.js', appContext);
+
+    var indexFile = _fs.readFileSync('src/index.html',"utf8");
+    start = '<title>';
+    end = '</title>';
+    startIndex = indexFile.search(start);
+    endIndex = indexFile.search(end);
+    indexFile = indexFile.slice(0, startIndex + start.length) + "My App" + indexFile.slice(endIndex);
+    _fs.writeFileSync('src/index.html', indexFile);
+
     done();
 });
 
 _gulp.default.task('createFile', function (done) {
-    var item = [];
+    var items = [];
     var imports= [];
     var sagasImports = [];
     var sagaRoot = '';
@@ -190,37 +203,49 @@ _gulp.default.task('createFile', function (done) {
     for (var i = 0; i < config.modules.length; i++) {
         var name = config.modules[i].name;
         var smallName = name.charAt(0).toLowerCase() + name.slice(1);
-        item.push({ id: smallName, title: name, description: config.modules[i].description });
+        items.push({ id: smallName, title: name, description: config.modules[i].description });
         imports.push("import " + name + " from 'clients/" + name + "/src/" + name + "'; \n");
 
         sagaRoot = sagaRoot + smallName + "Saga(),\n    ";
         sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + config.modules[i].name + "/src/redux/" + name + ".saga'; \n");
 
-        reducerRoot = reducerRoot + smallName + "Reducer,\n  ";
+        reducerRoot = reducerRoot + smallName + "Reducer,\n    ";
         reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/redux/" + name + ".reducer'; \n");
 
         routes.push("routeItems.push(<Route key=\"" + smallName + "\" path=\"/app/" + smallName + "/\" component={" + name + "} />);\n    ");
     }
-    _fs.writeFileSync('src/midgard/layout/NavBar/NavBarItems.js', "export const NavBarItems =" +  JSON.stringify(item));
-   var container = _fs.readFileSync('src/midgard/layout/Container/Container.js',"utf8");
-    var index = container.search(start);
-    var indexEnd = container.search(end);
+
+    var appContext = _fs.readFileSync('src/midgard/context/App.context.js',"utf8");
+    var index = appContext.search(start);
+    var indexEnd = appContext.search(end);
+    appContext = appContext.slice(0, index + start.length) + "\n" + "export const app = {\n  appTitle: \""  + config.appTitle + "\",\n  modules: " + JSON.stringify(items) + "\n};\n" + appContext.slice(indexEnd);
+    _fs.writeFileSync('src/midgard/context/App.context.js', appContext);
+
+    var container = _fs.readFileSync('src/midgard/layout/Container/Container.js',"utf8");
+    index = container.search(start);
+    indexEnd = container.search(end);
     container = container.slice(0, index + start.length) + "\n    "  + routes.join("") + container.slice(indexEnd);
     _fs.writeFileSync('src/midgard/layout/Container/Container.js', imports.join("") + container);
 
     var sagaFile = _fs.readFileSync('src/redux/sagas/index.js',"utf8");
     index = sagaFile.search(start);
-    var indexEnd = sagaFile.search(end);
-    sagaFile = sagaFile.slice(0, index+ start.length)+ "\n    " + sagaRoot + sagaFile.slice(indexEnd);
+    indexEnd = sagaFile.search(end);
+    sagaFile = sagaFile.slice(0, index + start.length) + "\n    " + sagaRoot + sagaFile.slice(indexEnd);
     _fs.writeFileSync('src/redux/sagas/index.js', sagasImports.join("") + sagaFile);
 
     var reducerFile = _fs.readFileSync('src/redux/reducers/index.js',"utf8");
     index = reducerFile.search(start);
     indexEnd = reducerFile.search(end);
-    reducerFile = reducerFile.slice(0, index + start.length) + "\n  " + reducerRoot + reducerFile.slice(indexEnd);
+    reducerFile = reducerFile.slice(0, index + start.length) + "\n    " + reducerRoot + reducerFile.slice(indexEnd);
     _fs.writeFileSync('src/redux/reducers/index.js', reducerImports.join("") + reducerFile);
 
-
+    var indexFile = _fs.readFileSync('src/index.html',"utf8");
+    start = '<title>';
+    end = '</title>';
+    index = indexFile.search(start);
+    indexEnd = indexFile.search(end);
+    indexFile = indexFile.slice(0, index + start.length) + config.appTitle + indexFile.slice(indexEnd);
+    _fs.writeFileSync('src/index.html', indexFile);
     done();
 });
 

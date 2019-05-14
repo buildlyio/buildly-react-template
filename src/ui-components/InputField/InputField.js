@@ -15,11 +15,12 @@ const InputFieldWrapper = styled.div`
   
     &__label {
       font-size: ${rem(12)};
+      color: ${colors.grayDarkest};
     }
 
     &__input {
       margin-top: ${rem(4)};
-      border: ${rem(1)} solid ${colors.grayLighter};
+      border: ${rem(1)} solid ${colors.lightGray};
       border-radius: ${rem(4)};
       height: ${rem(40)};
       font-size: ${rem(15)};

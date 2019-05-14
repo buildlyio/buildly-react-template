@@ -3,7 +3,6 @@
 # dependencies
 /node_modules
 /src/clients/
-/src/midgard/components/NavBar/NavBarItems.js
 package-lock.json
 
 # production

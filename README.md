@@ -47,6 +47,8 @@ Within the `/src` directory, the following structure is used:
 -  `/clients`: Contains all the clients added to the project.
 -  `/midgard`: 
     -  `/components`: Components that do not have routes assigned to them.
+    -  `/context`: React context for sharing data between components.
+    -  `/hooks`: Custom-built hooks for handling state.
     -  `/layout`: Components related to the layout of the application.
     -  `/modules`: Functions that handle data.
     -  `/pages`: Components that have routes assigned to them.

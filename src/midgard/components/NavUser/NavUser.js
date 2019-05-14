@@ -5,6 +5,9 @@ import { logout } from 'redux/actions/Auth.actions'
 import NavItem from 'midgard/components/NavItem/NavItem'
 import { UserContext } from 'midgard/context/User.context'
 
+/**
+ * Component for user that appears in the sidebar navigation.
+ */
 function NavUser({location, history, dispatch}) {
   let user = useContext(UserContext);
   if (!user) {
