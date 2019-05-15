@@ -3,6 +3,7 @@ const webpack = require("webpack");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require('copy-webpack-plugin');
 
+
 module.exports = {
   entry: ["babel-polyfill", "./src/index.js"] ,
     mode: "development",
@@ -72,4 +73,5 @@ module.exports = {
           { from: 'environment.js', to: '' },
       ]),
   ]
+
 };

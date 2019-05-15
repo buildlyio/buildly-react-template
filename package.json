@@ -7,6 +7,7 @@
     "gulp": "^4.0.0",
     "gulp-cli": "^2.2.0",
     "gulp-git": "^2.9.0",
+    "jest-styled-components": "^6.3.1",
     "polished": "^3.2.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
@@ -14,6 +15,7 @@
     "react-redux": "^6.0.1",
     "react-router-dom": "^4.3.1",
     "react-styleguidist": "^9.0.8",
+    "react-test-renderer": "^16.8.6",
     "redux-saga": "^1.0.0",
     "serve": "^11.0.0",
     "styled-components": "^4.2.0"
@@ -23,7 +25,7 @@
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
-    "babel-core": "^6.26.3",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.5",
     "babel-polyfill": "^6.26.0",
@@ -51,7 +53,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --mode development",
-    "test": "jest",
+    "test": "jest  --updateSnapshot --coverage",
     "serve": "./node_modules/.bin/serve -s dist",
     "build": "webpack --mode development",
     "build-prod": "webpack --mode production",
@@ -61,6 +63,24 @@
     "styleguidist": "npx styleguidist build && npx styleguidist server"
   },
   "jest": {
+    "moduleNameMapper": {
+      "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js",
+      "\\.(gif|ttf|eot|svg)$": "<rootDir>/__mocks__/fileMock.js",
+      "ui/Menu":"<rootDir>/src/ui-components/Menu/menu",
+      "ui/Button":"<rootDir>/src/ui-components/Button/Button",
+      "ui/TextField":"<rootDir>/src/ui-components/TextField/TextField",
+      "ui/InputField":"<rootDir>/src/ui-components/InputField/InputField"
+
+
+
+    },
+    "moduleDirectories": [
+      "node_modules",
+      "<rootDir>/src",
+      "src",
+      "<rootDir>/src/styles",
+      "<rootDir>"
+    ],
     "setupFiles": [
       "./src/setupTests.js"
     ],
