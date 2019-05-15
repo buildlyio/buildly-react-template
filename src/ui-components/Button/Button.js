@@ -16,6 +16,7 @@ export const Button = styled.button`
   cursor: pointer;
   outline: none;
   margin: ${rem(4)} 0;
+  font-size: ${rem(14)};
 
   img {
     max-height: ${rem(18)};
@@ -34,7 +35,7 @@ export const Button = styled.button`
     cursor: default;
   }
 
-  ${props => props.secondary && css`
+  ${props => props.variant === 'secondary' && css`
     background: ${colors.white};
     color: ${colors.primary};
     border-color: ${colors.primary};
@@ -44,8 +45,16 @@ export const Button = styled.button`
     }
   `}
 
-  ${props => props.small && css`
+  ${props => props.size === 'small' && css`
     height: ${rem(32)};
+    font-size: ${rem(12)};
+    padding: 0 ${rem(10)};
+  `}
+
+  ${props => props.size === 'micro' && css`
+    height: ${rem(24)};
+    font-size: ${rem(10)};
+    padding: 0 ${rem(8)};
   `}
 
   ${props => props.upload && css`

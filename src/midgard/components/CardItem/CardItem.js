@@ -265,7 +265,7 @@ function CardItem({
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__options">
                 <Menu xPosition="right" yPosition="center" open={menuOpened} setOpen={toggleMenu} onActionClicked={(event) => selectAction(id, event, action)} menuItems={options}>
-                  <Button secondary small onClick={() => toggleMenu(!menuOpened)}>...</Button>
+                  <Button variant="secondary" size="small" onClick={() => toggleMenu(!menuOpened)}>...</Button>
                 </Menu>
               </div>
             </div>

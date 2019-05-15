@@ -51,7 +51,7 @@ function NavBar({navHidden, location, history}) {
    * @param {string} active the active nav item
    */
   const setActive = (active) => {
-    const { from } = location.state || { from: { pathname: active } };
+    const { from } = location.state || { from: { pathname: `/app/${active}` } };
     history.push(from);
   }
 

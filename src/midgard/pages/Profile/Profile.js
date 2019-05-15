@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { logout } from 'redux/actions/Auth.actions'
 import { connect } from 'react-redux'
 import { Button } from 'ui/Button/Button'
@@ -59,7 +59,7 @@ function Profile({dispatch, history, location}) {
         <TextField label="Email" value={user.email} />
         <TextField label="Organization" value={user.organization.name} />
         <Button
-          small
+          size="small"
           onClick={logoutUser}
           type="button">
           Logout
