@@ -1,13 +1,14 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import logo from 'assets/midgard-logo.svg'
 import searchIcon from 'assets/icon-search.svg'
 import { colors } from 'colors'
 import styled, { css } from 'styled-components'
 import { rem } from 'polished'
 import { AppContext } from 'midgard/context/App.context'
+import FjContentSwitcher from 'ui/ContentSwitcher/ContentSwitcher'
 
 const topBarHeight = rem(60);
-const searchSize = rem(40);
+const searchSize = rem(32);
 
 const TopBarWrapper = styled.div`
   height: ${topBarHeight};
@@ -85,21 +86,33 @@ const TopBarWrapper = styled.div`
       display: flex;
       flex: 1;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       margin: ${rem(8)} 0;
+    }
+
+    &__content {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 ${rem(24)};
     }
 
     &__search {
       display: flex;
-      padding: 0 ${rem(40)};
+      padding: 0 ${rem(16)};
       &__input {
         border-radius: ${rem(4)} 0 0 ${rem(4)};
         height: ${searchSize} - ${rem(2)};
         width: ${rem(240)};
         border: ${rem(1)} solid transparent;
         padding: 0 ${rem(10)};
-        font-size: rem(16);
+        font-size: ${rem(14)};
         outline: none;
+
+        &::placeholder {
+          color: ${colors.gray};
+        }
 
         &:focus {
           border-color: ${colors.primary};
@@ -117,6 +130,7 @@ const TopBarWrapper = styled.div`
         cursor: pointer;
         outline: none;
         transition: all 0.2s linear;
+        padding: 0;
 
         img {
           height: ${rem(18)};
@@ -154,7 +168,7 @@ const TopBarWrapper = styled.div`
 /**
  * Component for the top bar header.
  */
-function TopBar({ navHidden, setNavHidden }) {
+function TopBar({ navHidden, setNavHidden, options, history, location }) {
   const app = useContext(AppContext);
 
   /**
@@ -163,6 +177,13 @@ function TopBar({ navHidden, setNavHidden }) {
   const search = (event) => {
     event.preventDefault();
   }
+
+  let viewState = useState(options && options.length ? options[0].value : '');
+
+  useEffect(() => {
+    const { from } = location.state || { from: { pathname: viewState[0] } };
+    history.push(from);
+  }, [viewState[0]]);
 
   return (
     <TopBarWrapper className="top-bar" hidden={navHidden}>
@@ -180,12 +201,15 @@ function TopBar({ navHidden, setNavHidden }) {
           <img className="top-bar__logo" src={logo} />
           <h1 className="top-bar__title">{app.appTitle}</h1>
         </div>
-        <form className="top-bar__search" onSubmit={search}>
-          <input className="top-bar__search__input" placeholder="Search" />
-          <button className="top-bar__search__submit" type="submit">
-            <img src={searchIcon} />
-          </button>
-        </form>
+        <div className="top-bar__content">
+          <FjContentSwitcher options={options} active={viewState} size="small" />
+          <form className="top-bar__search" onSubmit={search}>
+            <input className="top-bar__search__input" placeholder="Search" />
+            <button className="top-bar__search__submit" type="submit">
+              <img src={searchIcon} />
+            </button>
+          </form>
+        </div>
       </div>
     </TopBarWrapper>
   )
