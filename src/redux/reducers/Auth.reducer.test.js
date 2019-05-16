@@ -63,3 +63,23 @@ describe('logout success reducer', () => {
         )
     })
 })
+
+
+describe('Update User reducer', () => {
+    it('update user Reducer', () => {
+        expect(reducer.default(initialState,{type:actions.UPDATE_USER})).toEqual(
+            {"error": null, "loaded": false, "loading": true, "user": null}
+        )
+    })
+
+    it('update user success Reducer', () => {
+        expect(reducer.default(initialState,{type:actions.UPDATE_USER_SUCCESS})).toEqual(
+            {"error": null, "loaded": true, "loading": false, "user": undefined}
+        )
+    })
+    it('update user fail Reducer', () => {
+        expect(reducer.default(initialState,{type:actions.UPDATE_USER_FAIL})).toEqual(
+            {"error": undefined, "loaded": true, "loading": false, "user": null}
+        )
+    })
+})

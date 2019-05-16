@@ -69,10 +69,8 @@
       "ui/Menu":"<rootDir>/src/ui-components/Menu/menu",
       "ui/Button":"<rootDir>/src/ui-components/Button/Button",
       "ui/TextField":"<rootDir>/src/ui-components/TextField/TextField",
-      "ui/InputField":"<rootDir>/src/ui-components/InputField/InputField"
-
-
-
+      "ui/InputField":"<rootDir>/src/ui-components/InputField/InputField",
+      "ui/InlineEditor":"<rootDir>/src/ui-components/InlineEditor/InlineEditor"
     },
     "moduleDirectories": [
       "node_modules",
