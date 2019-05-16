@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import Menu from 'ui/Menu/Menu'
+import { FjMenu } from 'freyja-react'
 import { connect } from 'react-redux'
 import { logout } from 'redux/actions/Auth.actions'
 import NavItem from 'midgard/components/NavItem/NavItem'
@@ -60,7 +60,7 @@ function NavUser({location, history, dispatch}) {
   }
 
   return (
-    <Menu
+    <FjMenu
       xPosition="right"
       yPosition="top"
       open={open}
@@ -77,7 +77,7 @@ function NavUser({location, history, dispatch}) {
           action={(e) => {selectAction(e)}}>
         </NavItem>
       </div>
-    </Menu>
+    </FjMenu>
   )
 }
 

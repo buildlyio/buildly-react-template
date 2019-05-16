@@ -5,7 +5,7 @@ import { colors } from 'colors'
 import styled, { css } from 'styled-components'
 import { rem } from 'polished'
 import { AppContext } from 'midgard/context/App.context'
-import FjContentSwitcher from 'ui/ContentSwitcher/ContentSwitcher'
+import { FjContentSwitcher } from 'freyja-react'
 
 const topBarHeight = rem(60);
 const searchSize = rem(32);
