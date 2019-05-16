@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { logout } from 'redux/actions/Auth.actions'
+import {getUser, logout} from 'redux/actions/Auth.actions'
 import { connect } from 'react-redux'
 import { Button } from 'ui/Button/Button'
 import TextField from 'ui/TextField/TextField'
@@ -38,7 +38,7 @@ function Profile({dispatch, history, location}) {
   /**
    * The current oauth user.
    */
-  let user = useContext(UserContext) ? useContext(UserContext) : JSON.parse(localStorage.getItem('oauthUser')).data;
+  let user = JSON.parse(localStorage.getItem('currentUser'));
 
   if (!user) {
     return <Redirect push to="/" />;
@@ -55,9 +55,18 @@ function Profile({dispatch, history, location}) {
 
     const onChange = (name,type , payload, data) => {
         let nameUpdate = {};
+        let userData = {
+        contact_info: null,
+        core_groups: [],
+        core_user_uuid: "",
+        email: "",
+        first_name: "",
+        last_name: "",
+        organization: null,
+        title: null,
+        username: ""}
         nameUpdate[name] = data;
         user = {...user, ...nameUpdate};
-        console.log(user);
         dispatch(updateUser(user));
 
     }
@@ -78,7 +87,7 @@ function Profile({dispatch, history, location}) {
           />
 
         <TextField label="Email" value={user.email} />
-        <TextField label="Organization" value={user.organization.name} />
+        <TextField label="Organization" value={user.organization? user.organization.name: ''} />
         <Button
           small
           onClick={logoutUser}

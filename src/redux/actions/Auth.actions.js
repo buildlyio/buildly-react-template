@@ -48,4 +48,4 @@ export const updateUser = (data) => ({ type: UPDATE_USER, data });
  * Update user action
  * @param {{ first_name, last_name}} data
  */
-export const getUser = (data) => ({ type: GET_USER });
+export const getUser = () => ({ type: GET_USER });

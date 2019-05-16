@@ -9,7 +9,8 @@ export const oauthService = {
   getAccessToken,
   setAccessToken,
   getJwtToken,
-  logout
+  logout,
+  setCurrentCoreUser
 };
 
 /**
@@ -47,6 +48,11 @@ function setOauthUser(oauthUser) {
   if (oauthUser) {
     return oauthUser;
   }
+}
+
+function setCurrentCoreUser(user, coreUser) {
+    let currentUser = user.data.filter(data => data.id === coreUser.data.id);
+    localStorage.setItem('currentUser', JSON.stringify(currentUser[0]));
 }
 
 /**
