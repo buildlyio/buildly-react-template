@@ -55,16 +55,6 @@ function Profile({dispatch, history, location}) {
 
     const onChange = (name,type , payload, data) => {
         let nameUpdate = {};
-        let userData = {
-        contact_info: null,
-        core_groups: [],
-        core_user_uuid: "",
-        email: "",
-        first_name: "",
-        last_name: "",
-        organization: null,
-        title: null,
-        username: ""}
         nameUpdate[name] = data;
         user = {...user, ...nameUpdate};
         dispatch(updateUser(user));

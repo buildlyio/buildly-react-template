@@ -8,6 +8,7 @@
     "gulp-cli": "^2.2.0",
     "gulp-git": "^2.9.0",
     "jest-styled-components": "^6.3.1",
+    "npm": "^6.9.0",
     "polished": "^3.2.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
@@ -66,11 +67,11 @@
     "moduleNameMapper": {
       "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js",
       "\\.(gif|ttf|eot|svg)$": "<rootDir>/__mocks__/fileMock.js",
-      "ui/Menu":"<rootDir>/src/ui-components/Menu/menu",
-      "ui/Button":"<rootDir>/src/ui-components/Button/Button",
-      "ui/TextField":"<rootDir>/src/ui-components/TextField/TextField",
-      "ui/InputField":"<rootDir>/src/ui-components/InputField/InputField",
-      "ui/InlineEditor":"<rootDir>/src/ui-components/InlineEditor/InlineEditor"
+      "ui/Menu": "<rootDir>/src/ui-components/Menu/menu",
+      "ui/Button": "<rootDir>/src/ui-components/Button/Button",
+      "ui/TextField": "<rootDir>/src/ui-components/TextField/TextField",
+      "ui/InputField": "<rootDir>/src/ui-components/InputField/InputField",
+      "ui/InlineEditor": "<rootDir>/src/ui-components/InlineEditor/InlineEditor"
     },
     "moduleDirectories": [
       "node_modules",
