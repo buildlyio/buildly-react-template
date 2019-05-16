@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react'
-import { logout } from 'redux/actions/Auth.actions'
 import { connect } from 'react-redux'
 import { Button } from 'ui/Button/Button'
 import TextField from 'ui/TextField/TextField'
@@ -8,6 +7,8 @@ import styled from 'styled-components'
 import { rem } from 'polished'
 import { UserContext } from 'midgard/context/User.context'
 import { Redirect } from 'react-router-dom'
+import InlineEditor from 'ui/InlineEditor/InlineEditor'
+import { updateUser, logout } from 'redux/actions/Auth.actions'
 
 /**
  * Styled component for the profile page.
@@ -36,7 +37,7 @@ function Profile({dispatch, history, location}) {
   /**
    * The current oauth user.
    */
-  const user = useContext(UserContext) ? useContext(UserContext) : JSON.parse(localStorage.getItem('oauthUser')).data;
+  let user = JSON.parse(localStorage.getItem('currentUser'));
 
   if (!user) {
     return <Redirect push to="/" />;
@@ -51,13 +52,31 @@ function Profile({dispatch, history, location}) {
     history.push(from);
   }
 
-  return (
+    const onChange = (name,type , payload, data) => {
+        let nameUpdate = {};
+        nameUpdate[name] = data;
+        user = {...user, ...nameUpdate};
+        dispatch(updateUser(user));
+
+    }
+
+    return (
     <ProfileWrapper className="profile">
       <div className="profile__container">
         <h3>Settings</h3>
-        <TextField bold label="First and last name" value={user.first_name + ' ' + user.last_name} />
+          <InlineEditor
+              label="first name"
+              value={user.first_name}
+              onChange={(event) => onChange("first_name", 'update', user, event)}
+          />
+          <InlineEditor
+              label="first name"
+              value={user.last_name}
+              onChange={(event) => onChange("first_name", 'update', user, event)}
+          />
+
         <TextField label="Email" value={user.email} />
-        <TextField label="Organization" value={user.organization.name} />
+        <TextField label="Organization" value={user.organization? user.organization.name: ''} />
         <Button
           size="small"
           onClick={logoutUser}

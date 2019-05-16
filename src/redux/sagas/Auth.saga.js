@@ -7,7 +7,13 @@ import {
   LOGOUT_FAIL,
   REGISTER,
   REGISTER_SUCCESS,
-  REGISTER_FAIL
+  REGISTER_FAIL,
+  UPDATE_USER,
+  UPDATE_USER_FAIL,
+  UPDATE_USER_SUCCESS,
+    GET_USER,
+    GET_USER_FAIL,
+    GET_USER_SUCCESS
 } from '../actions/Auth.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
 import { oauthService } from 'midgard/modules/oauth/oauth.service';
@@ -30,7 +36,9 @@ function* login(payload) {
     const token = yield call(oauthService.authenticateWithPasswordFlow, payload.credentials);
     yield call(oauthService.setAccessToken, token.data);
     const user = yield call(httpService.makeRequest, 'get', `${environment.API_URL}oauthuser/`);
-    yield call(oauthService.setOauthUser, user);
+    yield call(oauthService.setOauthUser, user, payload);
+    const coreUser = yield call(httpService.makeRequest, 'get', `${environment.API_URL}coreuser/`);
+    yield call(oauthService.setCurrentCoreUser, coreUser, user);
     yield [
       yield put({ type: LOGIN_SUCCESS, user })
     ];
@@ -50,6 +58,30 @@ function* register(payload) {
   }
 }
 
+function* updateUser(payload) {
+    try {
+        const user = yield call(httpService.makeRequest, 'put', `${environment.API_URL}coreuser/${payload.data.id}/`, payload.data);
+        yield [
+            yield put({ type: UPDATE_USER_SUCCESS, user })
+        ];
+    } catch(error) {
+        yield put({ type: UPDATE_USER_FAIL, error: 'Updating user fields failed' });
+    }
+}
+
+function* getUser() {
+    try {
+        const user = yield call(httpService.makeRequest, 'get', `${environment.API_URL}coreuser/`);
+        yield call(oauthService.setCurrentCoreUser, user);
+        yield [
+            yield put({ type: GET_USER_SUCCESS, user })
+        ];
+    } catch(error) {
+        yield put({ type: GET_USER_FAIL, error: 'Updating user fields failed' });
+    }
+}
+
+
 function* watchLogout() {
   yield takeLatest(LOGOUT, logout)
 }
@@ -62,10 +94,20 @@ function* watchRegister() {
   yield takeLatest(REGISTER, register)
 }
 
+function* watchUpdateUser() {
+    yield takeLatest(UPDATE_USER, updateUser)
+}
+
+function* watchGetUser() {
+    yield takeLatest(GET_USER, getUser)
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
     watchLogout(),
-    watchRegister()
+    watchRegister(),
+    watchUpdateUser(),
+    watchGetUser()
   ]);
 }
