@@ -23,15 +23,15 @@ function NavUser({location, history, dispatch}) {
 
   const [open, setOpen] = useState(false);
   const menuItems = [
-    {value: 'profile', label: 'Profile settings'},
-    {value: 'logout', label: 'Logout'}
+    { value: 'profile', label: 'Profile settings' },
+    { value: 'logout', label: 'Logout' }
   ];
 
   /**
    * Navigates to the profile screen.
    */
   const openProfile = () => {
-    const { from } = location.state || { from: { pathname: 'profile' } };
+    const { from } = location.state || { from: { pathname: '/app/profile/settings' } };
     history.push(from);
   }
 
