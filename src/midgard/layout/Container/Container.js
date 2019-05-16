@@ -8,13 +8,14 @@ import { colors } from 'colors'
 import NavBar from 'midgard/layout/NavBar/NavBar'
 import TopBar from 'midgard/layout/TopBar/TopBar'
 import Profile from 'midgard/pages/Profile/Profile'
+import UserManagement from 'midgard/pages/UserManagement/UserManagement'
 
 import { user, UserContext } from 'midgard/context/User.context'
 
 const ContainerWrapper = styled.div`
   height: 100%;
   display: flex;
-  background-color: ${colors.baseLightest};
+  background-color: ${colors.baseLighter};
 
   .container {
     &__row {
@@ -45,18 +46,28 @@ function Container({ location, history }) {
   const routeItems = [];
     //entryPointForGulpStart
     //entryPointForGulpEnd
+  
+  let views = [];  
+  if (location.pathname.includes('profile')) {
+    views = [{ label: 'Profile settings', value: 'settings' }, { label: 'User management', value: 'users' }];
+  }
+
   return (
     <ContainerWrapper className="container">
       <UserContext.Provider value={user}>
         <div className="container__column">
-          <TopBar navHidden={navHidden} setNavHidden={setNavHidden} />
+          <TopBar navHidden={navHidden} setNavHidden={setNavHidden} options={views} location={location} history={history} />
           <div className="container__row">
             <NavBar navHidden={navHidden} location={location} history={history} />
             <div className="container__scroll">
               <Route exact path="/app" render={() => (
                 <Redirect to="/app/profile"/>
               )} />
-              <Route path="/app/profile" component={Profile} />
+              <Route exact path="/app/profile" render={() => (
+                <Redirect to="/app/profile/settings"/>
+              )} />
+              <Route path="/app/profile/settings" component={Profile} />
+              <Route path="/app/profile/users" component={UserManagement} />
               {routeItems}
             </div>
           </div>

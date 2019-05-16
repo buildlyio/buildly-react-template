@@ -1,7 +1,7 @@
 import { darken, lighten, rgba } from 'polished'
 
 const themeColors = {
-  primary: '#1B51A0',
+  primary: '#0573db',
   base: '#ECEFF3',
   danger: '#DD0000',
   darkGray: '#333333',
@@ -18,7 +18,7 @@ const colorVariations = {
   lightest: 0.1,
   darker: 0.1,
   darkest: 0.2,
-  overlay: 0.5,
+  overlay: 0.45,
 }
 
 export const colors = {

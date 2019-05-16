@@ -1,5 +1,4 @@
-import React, { useContext } from 'react'
-import {getUser, logout} from 'redux/actions/Auth.actions'
+import React, { useContext, useState } from 'react'
 import { connect } from 'react-redux'
 import { Button } from 'ui/Button/Button'
 import TextField from 'ui/TextField/TextField'
@@ -9,7 +8,7 @@ import { rem } from 'polished'
 import { UserContext } from 'midgard/context/User.context'
 import { Redirect } from 'react-router-dom'
 import InlineEditor from 'ui/InlineEditor/InlineEditor'
-import { updateUser } from 'redux/actions/Auth.actions'
+import { updateUser, logout } from 'redux/actions/Auth.actions'
 
 /**
  * Styled component for the profile page.
@@ -89,7 +88,7 @@ function Profile({dispatch, history, location}) {
         <TextField label="Email" value={user.email} />
         <TextField label="Organization" value={user.organization? user.organization.name: ''} />
         <Button
-          small
+          size="small"
           onClick={logoutUser}
           type="button">
           Logout

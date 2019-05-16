@@ -14,8 +14,8 @@ const NavItemWrapper = styled.div`
 
   .nav-item {
     &__title {
-      font-size: ${rem(14)};
-      line-height: ${rem(18)};
+      font-size: ${rem(16)};
+      line-height: ${rem(20)};
       color: ${colors.text};
       white-space: nowrap;
       text-transform: capitalize;
