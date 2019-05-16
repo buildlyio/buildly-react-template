@@ -19,7 +19,7 @@ const colorVariations = {
   darker: 0.1,
   darkest: 0.2,
   overlay: 0.45,
-}
+};
 
 export const colors = {
   ...makeVariations('primary', themeColors.primary, true),
@@ -46,4 +46,4 @@ function makeVariations(name, color, overlay = false) {
     variations[`${name}Overlay`] = lighten(colorVariations.overlay, color);
   }
   return variations;
-}
+};

@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { colors } from 'colors'
 import styled from 'styled-components'
 import { rem } from 'polished'
-import FjContentSwitcher from 'ui/ContentSwitcher/ContentSwitcher';
+import { FjContentSwitcher } from 'freyja-react'
 
 /**
  * Styled component for the profile page.

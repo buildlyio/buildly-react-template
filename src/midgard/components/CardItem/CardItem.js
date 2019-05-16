@@ -2,10 +2,7 @@ import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
 import { colors } from 'colors'
 import { rem } from 'polished'
-import FjCard from 'ui-components/Card/Card'
-import { Button } from 'ui-components/Button/Button'
-import InlineEditor from 'ui-components/InlineEditor/InlineEditor'
-import Menu from 'ui/Menu/Menu'
+import { FjInlineEditor, FjMenu, FjButton, FjCard } from 'freyja-react'
 import defaultLogo from 'assets/midgard-logo.svg'
 
 const CardItemWrapper = styled.div`
@@ -171,7 +168,7 @@ function CardItem({
               {details && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <InlineEditor
+                <FjInlineEditor
                   id={details.prop}
                   label={details.label}
                   placeholder={details.label}
@@ -181,7 +178,7 @@ function CardItem({
               {description && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <InlineEditor
+                <FjInlineEditor
                   id={description.prop}
                   label={description.label}
                   placeholder={description.label}
@@ -193,7 +190,7 @@ function CardItem({
               {tags && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <InlineEditor
+                <FjInlineEditor
                   id={tags.prop}
                   label={tags.label}
                   placeholder={tags.label}
@@ -214,7 +211,7 @@ function CardItem({
               {title && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--primary">
-                <InlineEditor
+                <FjInlineEditor
                   id={title.prop}
                   placeholder={title.label}
                   value={title.value}
@@ -224,7 +221,7 @@ function CardItem({
               {subText && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <InlineEditor
+                <FjInlineEditor
                   id={subText.prop}
                   placeholder={subText.label}
                   value={subText.value}
@@ -233,7 +230,7 @@ function CardItem({
               {subText2 && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <InlineEditor
+                <FjInlineEditor
                   id={subText2.prop}
                   placeholder={subText2.label}
                   value={subText2.value}
@@ -244,7 +241,7 @@ function CardItem({
               {caption && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <InlineEditor
+                <FjInlineEditor
                   id={caption.prop}
                   placeholder={caption.label}
                   value={caption.value}
@@ -253,7 +250,7 @@ function CardItem({
               {link && <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
-                <InlineEditor
+                <FjInlineEditor
                   id={link.prop}
                   placeholder={link.label}
                   value={link.value}
@@ -264,9 +261,9 @@ function CardItem({
               <div 
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__options">
-                <Menu xPosition="right" yPosition="center" open={menuOpened} setOpen={toggleMenu} onActionClicked={(event) => selectAction(id, event, action)} menuItems={options}>
-                  <Button variant="secondary" size="small" onClick={() => toggleMenu(!menuOpened)}>...</Button>
-                </Menu>
+                <FjMenu xPosition="right" yPosition="center" open={menuOpened} setOpen={toggleMenu} onActionClicked={(event) => selectAction(id, event, action)} menuItems={options}>
+                  <FjButton variant="secondary" size="small" onClick={() => toggleMenu(!menuOpened)}>...</FjButton>
+                </FjMenu>
               </div>
             </div>
           </div>

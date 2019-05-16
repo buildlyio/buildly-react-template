@@ -3,8 +3,7 @@ import { oauthService } from 'midgard/modules/oauth/oauth.service'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { register } from 'redux/actions/Auth.actions'
-import { Button } from 'ui/Button/Button'
-import InputField from 'ui/InputField/InputField'
+import { FjButton, FjInputField } from 'freyja-react'
 import AuthForm from 'midgard/components/AuthForm/AuthForm'
 import { useInput } from 'midgard/hooks/useInput';
 
@@ -52,48 +51,48 @@ function Register({dispatch, loading, loaded, error}) {
 
   return (
     <AuthForm onSubmit={submit} link={loginLink}>
-      <InputField
+      <FjInputField
         label="Email"
         id="email"
         type="text"
         placeholder="Enter email"
         {...email.bind}  />
-      <InputField
+      <FjInputField
         label="Username"
         id="username"
         type="text"
         placeholder="Enter username"
         {...username.bind} />
-      <InputField
+      <FjInputField
         label="Password"
         id="password"
         type="password"
         placeholder="Enter password"
         {...password.bind} />
-      <InputField
+      <FjInputField
         label="Organization name"
         id="organization_name"
         type="text"
         placeholder="Enter organization name"
         {...organization_name.bind} />
-      <InputField
+      <FjInputField
         label="First name"
         id="first_name"
         type="text"
         placeholder="Enter first name"
         {...first_name.bind} />
-      <InputField
+      <FjInputField
         label="Last name"
         id="last_name"
         type="text"
         placeholder="Enter last name"
         error={error}
         {...last_name.bind} />
-      <Button
+      <FjButton
         disabled={!valid || loading}
         type="submit">
         Register
-      </Button>
+      </FjButton>
     </AuthForm>
   )
 }

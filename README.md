@@ -58,7 +58,6 @@ Within the `/src` directory, the following structure is used:
     -  `/reducers`: Reducers which must imported into the `index.js` file.
     -  `/sagas`: Sagas which must imported into the `index.js` file.
 -  `/styles`: Contains styling variables.
--  `/ui-components`: Generic components related to the interface.
 
 ### Core interfaces
 

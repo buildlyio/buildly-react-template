@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { rem } from 'polished'
-import { Button } from 'ui/Button/Button'
+import { FjButton } from 'freyja-react'
 
 const FjContentSwitcherWrapper = styled.div`
   display: flex;
@@ -23,14 +23,14 @@ const FjContentSwitcherWrapper = styled.div`
 function FjContentSwitcher({options, active, size}) {
   let buttons = [];
   for (let option of options) {
-    buttons.push(<Button
+    buttons.push(<FjButton
       size={size}
       id={option.value}
       key={option.value}
       variant={active[0] === option.value ? 'light' : 'secondary'}
       onClick={() => active[1](option.value)}>
       {option.label}
-    </Button>)
+    </FjButton>)
   }
 
   return (

@@ -1,10 +1,10 @@
 import React from 'react';
+import './styles.scss';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { PrivateRoute } from 'midgard/routes/Private.route';
 import { oauthService } from 'midgard/modules/oauth/oauth.service';
 import { app, AppContext } from 'midgard/context/App.context';
-import './styles.scss';
 import Container from 'midgard/layout/Container/Container';
 import Login from 'midgard/pages/Login/Login';
 import Register from 'midgard/pages/Register/Register';

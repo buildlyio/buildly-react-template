@@ -2,9 +2,8 @@ import React from 'react'
 import { oauthService } from 'midgard/modules/oauth/oauth.service'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Button } from 'ui/Button/Button'
-import { login, getUser } from 'redux/actions/Auth.actions'
-import InputField from 'ui/InputField/InputField'
+import { FjButton, FjInputField } from 'freyja-react'
+import { login } from 'redux/actions/Auth.actions'
 import AuthForm from 'midgard/components/AuthForm/AuthForm'
 import { useInput } from 'midgard/hooks/useInput'
 
@@ -35,23 +34,23 @@ function Login({dispatch, loading}) {
 
   return (
     <AuthForm onSubmit={submit} link={registerLink}>
-      <InputField
+      <FjInputField
         label="Username"
         id="username"
         type="text"
         placeholder="Enter username"
         {...username.bind} />
-      <InputField
+      <FjInputField
         label="Password"
         id="password"
         type="password"
         placeholder="Enter password"
         {...password.bind} />
-      <Button
+      <FjButton
         disabled={loading}
         type="submit">
         Login
-      </Button>
+      </FjButton>
     </AuthForm>
   )
 }
