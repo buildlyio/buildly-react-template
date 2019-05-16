@@ -11,9 +11,12 @@ import {
   UPDATE_USER,
   UPDATE_USER_FAIL,
   UPDATE_USER_SUCCESS,
-    GET_USER,
-    GET_USER_FAIL,
-    GET_USER_SUCCESS
+  GET_USER,
+  GET_USER_FAIL,
+  GET_USER_SUCCESS,
+  INVITE,
+  INVITE_FAIL,
+  INVITE_SUCCESS
 } from '../actions/Auth.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
 import { oauthService } from 'midgard/modules/oauth/oauth.service';
@@ -58,6 +61,19 @@ function* register(payload) {
   }
 }
 
+
+function* invite(payload) {
+    try {
+        const user = yield call(httpService.makeRequest, 'post', `${environment.API_URL}coreuser/invite/`, payload.data);
+        yield [
+            yield put({ type: INVITE_SUCCESS, user })
+        ];
+    } catch(error) {
+        yield put({ type: INVITE_FAIL, error: 'invite request failed' });
+    }
+}
+
+
 function* updateUser(payload) {
     try {
         const user = yield call(httpService.makeRequest, 'put', `${environment.API_URL}coreuser/${payload.data.id}/`, payload.data);
@@ -101,6 +117,9 @@ function* watchUpdateUser() {
 function* watchGetUser() {
     yield takeLatest(GET_USER, getUser)
 }
+function* watchInvite() {
+    yield takeLatest(INVITE, invite)
+}
 
 export default function* authSaga() {
   yield all([
@@ -108,6 +127,8 @@ export default function* authSaga() {
     watchLogout(),
     watchRegister(),
     watchUpdateUser(),
-    watchGetUser()
+    watchGetUser(),
+    watchInvite()
+
   ]);
 }

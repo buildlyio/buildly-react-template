@@ -11,7 +11,10 @@ import {
     UPDATE_USER_SUCCESS,
     GET_USER,
     GET_USER_FAIL,
-    GET_USER_SUCCESS
+    GET_USER_SUCCESS,
+    INVITE,
+    INVITE_FAIL,
+    INVITE_SUCCESS
 } from '../actions/Auth.actions';
 
 const initialState = {
@@ -118,6 +121,30 @@ export default (state = initialState, action) => {
           };
 
       case GET_USER_FAIL:
+          return {
+              ...state,
+              loading: false,
+              loaded: true,
+              error: action.error
+          };
+
+      case INVITE:
+          return {
+              ...state,
+              loading: true,
+              loaded: false,
+              error: null
+          };
+
+      case INVITE_SUCCESS:
+          return {
+              ...state,
+              loading: false,
+              loaded: true,
+              user: action.user
+          };
+
+      case INVITE_FAIL:
           return {
               ...state,
               loading: false,

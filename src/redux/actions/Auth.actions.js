@@ -19,6 +19,10 @@ export const UPDATE_USER_FAIL = 'AUTH/UPDATE_USER_FAIL';
 export const GET_USER = 'AUTH/GET_USER';
 export const GET_USER_SUCCESS = 'AUTH/GET_USER_SUCCESS';
 export const GET_USER_FAIL = 'AUTH/GET_USER_FAIL';
+
+export const INVITE = 'AUTH/INVITE';
+export const INVITE_SUCCESS = 'AUTH/INVITE_SUCCESS';
+export const INVITE_FAIL = 'AUTH/INVITE_FAIL';
 /**
  * Login action
  * @param {{username, password}} credentials
@@ -49,3 +53,12 @@ export const updateUser = (data) => ({ type: UPDATE_USER, data });
  * @param {{ first_name, last_name}} data
  */
 export const getUser = () => ({ type: GET_USER });
+
+
+
+/**
+ * invite user action
+ * @param {{ first_name, last_name}} data
+ */
+export const invite = (data) => ({ type: INVITE, data });
+
