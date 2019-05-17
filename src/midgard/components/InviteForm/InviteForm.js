@@ -24,11 +24,14 @@ const InviteFormWrapper = styled.div`
 
     &__form {
       display: flex;
-      align-items: stretch;
+      align-items: flex-end;
       flex-direction: column;
         &__header {
+            width:100%
             margin-bottom: ${rem(12)}
         }
+        &__input {
+            width:100%
     }
   }
 `

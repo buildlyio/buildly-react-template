@@ -7,7 +7,7 @@ import { FjContentSwitcher, FjButton, FjInputField  } from 'freyja-react'
 import InviteForm from 'midgard/components/InviteForm/InviteForm'
 import { invite } from 'redux/actions/Auth.actions'
 import {useInput} from "midgard/hooks/useInput";
-import Modal from "react-responsive-modal";
+import Popup from 'reactjs-popup'
 import {NotificationContainer, NotificationManager } from 'react-notifications';
 
 
@@ -19,6 +19,10 @@ const UserManagementWrapper = styled.div`
   display: flex;
   flex: 1;
   background-color: ${colors.baseLighter};
+  .invite_button {
+    border: 0.0625rem solid ${colors.primary};
+    color: '#FFFFFF'
+  }
   .profile {
     &__container {
       display: flex;
@@ -53,14 +57,6 @@ function UserManagement({dispatch, history, location, loading, error, user}) {
         setinviteCall(false);
     }
 
-    const onOpenModal = () => {
-        setOpen(true);
-    };
-
-    const onCloseModal = () => {
-        setOpen(false);
-    };
-
     const submit = (event) => {
         event.preventDefault();
         const inviteFormValue = {
@@ -77,36 +73,35 @@ function UserManagement({dispatch, history, location, loading, error, user}) {
       <div className="profile__container">
        <div className="profile__header">
         <h3 className="profile__header__name">People using this system</h3>
-            <FjButton
-                size="small"
-                onClick={onOpenModal}
-                type="submit">
-                invite
-            </FjButton>
+           <Popup trigger={<FjButton size="small">Invite</FjButton>}
+               position="bottom right"
+               on="click"
+               closeOnDocumentClick
+               mouseLeaveDelay={300}
+               mouseEnterDelay={0}
+               contentStyle={{ padding: '0px', border: 'none', width:  `{rem(250)` }}
+               arrow={false}
+           >
+               <InviteForm onSubmit={submit}>
+                   <div className="invite__form__header"> Invite user to platform</div>
+                   <div className="invite__form__input">
+                       <FjInputField
+                           label="Emails"
+                           id="email"
+                           type="text"
+                           placeholder="abc@xcy.com, 123@zxc.com"
+                           error = {error}
+                           {...email.bind} />
+                   </div>
+                   <FjButton
+                       size="small"
+                       disabled={loading}
+                       type="submit">
+                       Send
+                   </FjButton>
+               </InviteForm>
+           </Popup>
       </div>
-          <Modal open={open} onClose={onCloseModal}>
-              <InviteForm onSubmit={submit}>
-                  <div className="invite__form__header"> Invite user to platform</div>
-                  <FjInputField
-                      label="Emails"
-                      id="email"
-                      type="text"
-                      placeholder="abc@xcy.com, 123@zxc.com"
-                      error = {error}
-                      {...email.bind} />
-                  <FjInputField
-                      label="Message"
-                      id="Message"
-                      type="text"
-                      placeholder="Enter message"
-                      {...message.bind} />
-                  <FjButton
-                      disabled={loading}
-                      type="submit">
-                      Invite
-                  </FjButton>
-              </InviteForm>
-          </Modal>
         <FjContentSwitcher size="small" active={useState('current')} options={[
           { label: 'Current users', value: 'current' },
           { label: 'Inactive users', value: 'inactive' },
