@@ -69,7 +69,7 @@ function* invite(payload) {
             yield put({ type: INVITE_SUCCESS, user })
         ];
     } catch(error) {
-        yield put({ type: INVITE_FAIL, error: 'invite request failed' });
+        yield put({ type: INVITE_FAIL, error: 'One or more email address is invalid' });
     }
 }
 

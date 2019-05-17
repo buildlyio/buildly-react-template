@@ -133,7 +133,8 @@ export default (state = initialState, action) => {
               ...state,
               loading: true,
               loaded: false,
-              error: null
+              user: null,
+              error: null,
           };
 
       case INVITE_SUCCESS:
@@ -141,6 +142,7 @@ export default (state = initialState, action) => {
               ...state,
               loading: false,
               loaded: true,
+              error: null,
               user: action.user
           };
 
@@ -149,6 +151,7 @@ export default (state = initialState, action) => {
               ...state,
               loading: false,
               loaded: true,
+              user: null,
               error: action.error
           };
       

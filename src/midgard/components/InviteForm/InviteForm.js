@@ -3,17 +3,16 @@ import styled from 'styled-components'
 import { colors } from 'colors'
 import { rem } from 'polished'
 
-const AuthFormWrapper = styled.div`
+const InviteFormWrapper = styled.div`
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 
-  .auth { 
+  .invite { 
     &__card {
       background-color: ${colors.baseLightest};
-      box-shadow: 0 ${rem(2)} ${rem(3)} 0 ${colors.shadow};
-      padding: 1.5rem;
+      padding: 1rem;
       width: ${rem(320)};
       
       &__content {
@@ -27,16 +26,9 @@ const AuthFormWrapper = styled.div`
       display: flex;
       align-items: stretch;
       flex-direction: column;
-
-      &__link {
-        text-decoration: none;
-        color: ${colors.primary};
-        font-size: ${rem(12)};
-
-        &:hover {
-          text-decoration: underline;
+        &__header {
+            margin-bottom: ${rem(12)}
         }
-      }
     }
   }
 `
@@ -44,17 +36,17 @@ const AuthFormWrapper = styled.div`
 /**
  * Generic component to wrap form fields on the login and registration screens.
  */
-function InviteForm({children, onSubmit, link}) {
+function InviteForm({children, onSubmit}) {
     return (
-        <AuthFormWrapper className="auth">
-            <div className="auth__card">
-                <div className="auth__card__content">
-                    <form className="auth__form" onSubmit={onSubmit}>
+        <InviteFormWrapper className="invite">
+            <div className="invite__card">
+                <div className="invite__card__content">
+                    <form className="invite__form" onSubmit={onSubmit}>
                         {children}
                     </form>
                 </div>
             </div>
-        </AuthFormWrapper>
+        </InviteFormWrapper>
     );
 }
 
