@@ -42,3 +42,14 @@ describe('actions', () => {
         expect(actions.updateUser(data)).toEqual(expectedAction)
     })
 })
+
+describe('actions', () => {
+    it('should create an action to Update User', () => {
+        const data = 'AUTH/INVITE_USER';
+        const expectedAction = {
+            data,
+            type: actions.INVITE,
+        }
+        expect(actions.invite(data)).toEqual(expectedAction)
+    })
+})
