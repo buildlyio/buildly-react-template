@@ -1,18 +1,21 @@
 import React from 'react'
-import { oauthService } from 'midgard/modules/oauth/oauth.service'
-import { logout } from 'redux/actions/Auth.actions'
 import { connect } from 'react-redux'
-import { Button } from 'ui/Button/Button'
-import TextField from 'ui/TextField/TextField'
+import { FjButton, FjInlineEditor } from 'freyja-react'
+import TextField from 'midgard/components/TextField/TextField'
 import { colors } from 'colors'
 import styled from 'styled-components'
 import { rem } from 'polished'
+import { Redirect } from 'react-router-dom'
+import { updateUser, logout } from 'redux/actions/Auth.actions'
 
+/**
+ * Styled component for the profile page.
+ */
 const ProfileWrapper = styled.div`
   height: 100%;
   display: flex;
   flex: 1;
-  background-color: ${colors.backgroundSecondary};
+  background-color: ${colors.baseLighter};
 
   .profile {
     &__container {
@@ -25,46 +28,63 @@ const ProfileWrapper = styled.div`
   }
 `
 
-class Profile extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      user: oauthService.getOauthUser().data
-    };
-    this.logout = this.logout.bind(this);
+/**
+ * The current oauth user.
+ */
+let user = JSON.parse(localStorage.getItem('currentUser'));
+
+/**
+ * Outputs the profile page for the user.
+ */
+function Profile({dispatch, history, location}) {
+  if (!user) {
+    return <Redirect push to="/" />;
   }
 
   /**
-   * Clears authentication and redirects to the login screen
+   * Clears authentication and redirects to the login screen.
    */
-  logout() {
-    this.props.dispatch(logout());
-    const { from } = this.props.location.state || { from: { pathname: "/" } };
-    this.props.history.push(from);
+  const logoutUser = () => {
+    dispatch(logout());
+    const { from } = location.state || { from: { pathname: "/" } };
+    history.push(from);
   }
 
-  render() {
-    const { user } = this.state;
-    if (!user) {
-      return <Redirect push to="/" />;
-    }
-    return (
-      <ProfileWrapper className="profile">
-        <div className="profile__container">
-          <h3>Settings</h3>
-          <TextField bold label="First and last name" value={user.first_name + ' ' + user.last_name} />
-          <TextField label="Email" value={user.email} />
-          <TextField label="Organization" value={user.organization.name} />
-          <Button
-            small
-            onClick={this.logout}
-            type="button">
-            Logout
-          </Button>
-        </div>
-      </ProfileWrapper>
-    )
+  /**
+   * Called when the inline editor value is changed.
+   * @param prop the property to update
+   * @param value the new value to set
+   */
+  const onChange = (prop, value) => {
+    let nameUpdate = {};
+    nameUpdate[prop] = value;
+    user = { ...user, ...nameUpdate };
+    dispatch(updateUser(user));
   }
+
+  return (
+    <ProfileWrapper className="profile">
+      <div className="profile__container">
+        <h3>Settings</h3>
+        <FjInlineEditor
+          label="First name"
+          value={user.first_name}
+          onChange={(event) => onChange('first_name', event)} />
+        <FjInlineEditor
+          label="Last name"
+          value={user.last_name}
+          onChange={(event) => onChange('last_name', event)} />
+        <TextField label="Email" value={user.email} />
+        <TextField label="Organization" value={user.organization ? user.organization.name: ''} />
+        <FjButton
+          size="small"
+          onClick={logoutUser}
+          type="button">
+          Logout
+        </FjButton>
+      </div>
+    </ProfileWrapper>
+  )
 }
 
 const mapStateToProps = (state, ownProps) => ({...ownProps, ...state.authReducer});

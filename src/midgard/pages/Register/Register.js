@@ -1,124 +1,100 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { oauthService } from 'midgard/modules/oauth/oauth.service'
 import { connect } from 'react-redux'
-import { Redirect } from 'react-router'
+import { Redirect } from 'react-router-dom'
 import { register } from 'redux/actions/Auth.actions'
-import { Button } from 'ui/Button/Button'
-import InputField from 'ui/InputField/InputField'
+import { FjButton, FjInputField } from 'freyja-react'
 import AuthForm from 'midgard/components/AuthForm/AuthForm'
+import { useInput } from 'midgard/hooks/useInput';
 
-class Register extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: '',
-      username: '',
-      password: '',
-      organization_name: '',
-      first_name: '',
-      last_name: '',
-      button_clicked: false
-    };
-    this.oauthService = oauthService;
-    this.updateField = this.updateField.bind(this);
-    this.submit = this.submit.bind(this);
+/**
+ * Outputs the login form page for the application.
+ */
+function Register({dispatch, loading, loaded, error}) {
+  const email = useInput('', { required: true });
+  const username = useInput('', { required: true });
+  const password = useInput('', { required: true });
+  const organization_name = useInput('', { required: true });
+  const first_name = useInput('');
+  const last_name = useInput('');
+  const [buttonClicked, setButtonClicked] = useState(false);
+
+  const loginLink = { label: 'Login', value: '/login' };
+  const valid = email.valid && username.valid && password.valid && organization_name.valid && first_name.valid && last_name.valid;
+
+  if (oauthService.hasValidAccessToken()) {
+    return <Redirect push to="/" />;
   }
-
-  /**
-   * Updates the state for a field
-   * @param {Event} event the change event
-   */
-  updateField(event) {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
+  
+  if (loaded && buttonClicked) {
+    setButtonClicked(false);
+    return <Redirect push to={loginLink.value} />;
   }
 
   /**
    * Submit the form to the backend and attempts to create a user
    * @param {Event} event the default submit event
    */
-  submit(event) {
+  const submit = (event) => {
     event.preventDefault();
-    this.setState({ button_clicked: true });
+    setButtonClicked(true);
     const registerFormValue = {
-      username: this.state.username,
-      email: this.state.email,
-      password: this.state.password,
-      organization_name: this.state.organization_name,
-      first_name: this.state.first_name,
-      last_name: this.state.last_name,
+      username: username.value,
+      email: email.value,
+      password: password.value,
+      organization_name: organization_name.value,
+      first_name: first_name.value,
+      last_name: last_name.value,
     };
-    this.props.dispatch(register(registerFormValue));
+    dispatch(register(registerFormValue));
   }
 
-  render() {
-    const { email, username, password, organization_name, first_name, last_name, button_clicked } = this.state;
-    const { loading, loaded, error } = this.props;
-    const loginLink = { label: 'Login', value: '/login' };
-    if (this.oauthService.hasValidAccessToken()) {
-      return <Redirect push to="/" />;
-    }
-    if (loaded && button_clicked) {
-      this.setState({button_clicked: false});
-      return <Redirect push to={loginLink.value} />;
-    }
-    return (
-      <AuthForm onSubmit={this.submit} link={loginLink}>
-        <InputField
-          label="Email"
-          id="email"
-          type="text"
-          placeholder="Enter email"
-          value={email}
-          required="true"
-          change={this.updateField} />
-        <InputField
-          label="Username"
-          id="username"
-          type="text"
-          placeholder="Enter username"
-          value={username}
-          required="true"
-          change={this.updateField} />
-        <InputField
-          label="Password"
-          id="password"
-          type="password"
-          placeholder="Enter password"
-          value={password}
-          required="true"
-          change={this.updateField} />
-        <InputField
-          label="Organization name"
-          id="organization_name"
-          type="text"
-          placeholder="Enter organization name"
-          value={organization_name}
-          required="true"
-          change={this.updateField} />
-        <InputField
-          label="First name"
-          id="first_name"
-          type="text"
-          placeholder="Enter first name"
-          value={first_name}
-          change={this.updateField} />
-        <InputField
-          label="Last name"
-          id="last_name"
-          type="text"
-          placeholder="Enter last name"
-          value={last_name}
-          change={this.updateField}
-          error={error} />
-        <Button
-          disabled={loading}
-          type="submit">
-          Register
-        </Button>
-      </AuthForm>
-    )
-  }
+  return (
+    <AuthForm onSubmit={submit} link={loginLink}>
+      <FjInputField
+        label="Email"
+        id="email"
+        type="text"
+        placeholder="Enter email"
+        {...email.bind}  />
+      <FjInputField
+        label="Username"
+        id="username"
+        type="text"
+        placeholder="Enter username"
+        {...username.bind} />
+      <FjInputField
+        label="Password"
+        id="password"
+        type="password"
+        placeholder="Enter password"
+        {...password.bind} />
+      <FjInputField
+        label="Organization name"
+        id="organization_name"
+        type="text"
+        placeholder="Enter organization name"
+        {...organization_name.bind} />
+      <FjInputField
+        label="First name"
+        id="first_name"
+        type="text"
+        placeholder="Enter first name"
+        {...first_name.bind} />
+      <FjInputField
+        label="Last name"
+        id="last_name"
+        type="text"
+        placeholder="Enter last name"
+        error={error}
+        {...last_name.bind} />
+      <FjButton
+        disabled={!valid || loading}
+        type="submit">
+        Register
+      </FjButton>
+    </AuthForm>
+  )
 }
 
 const mapStateToProps = (state, ownProps) => ({...ownProps, ...state.authReducer});

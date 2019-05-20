@@ -12,23 +12,27 @@ const SwitcherItem = styled.button`
   outline: none;
   display: inline-flex;
   align-items: center;
+  border-radius: ${rem(4)};
+  margin: ${rem(2)};
 
   &:hover {
-    text-decoration: underline;
+    background-color: ${colors.baseDarker};
   }
 
   img {
-    height: ${rem(12)};
-    width: ${rem(12)};
+    height: ${rem(16)};
+    width: ${rem(16)};
     margin-right: ${rem(4)};
   }
 
-  ${props => props.active && css`  
-    background-color: ${colors.primaryLighter};
-    border-radius: ${rem(4)};
+  ${props => props.active && css`
+    background-color: ${colors.primaryOverlay};
   `}
 `
 
+/**
+ * Component for switching the view.
+ */
 function ViewSwitcher({ options, action }) {
   const items = [];
   for (let option of options) {

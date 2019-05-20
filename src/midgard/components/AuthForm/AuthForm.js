@@ -13,7 +13,7 @@ const AuthFormWrapper = styled.div`
 
   .auth { 
     &__card {
-      background-color: ${colors.white};
+      background-color: ${colors.baseLightest};
       box-shadow: 0 ${rem(2)} ${rem(3)} 0 ${colors.shadow};
       padding: 1.5rem;
       width: ${rem(320)};
@@ -49,6 +49,9 @@ const AuthFormWrapper = styled.div`
   }
 `
 
+/**
+ * Generic component to wrap form fields on the login and registration screens.
+ */
 function AuthForm({children, onSubmit, link}) {
   return (
     <AuthFormWrapper className="auth">

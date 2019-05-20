@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import NavUser from 'midgard/components/NavUser/NavUser';
 import NavItem from 'midgard/components/NavItem/NavItem';
-import { NavBarItems } from './NavBarItems'
+import { AppContext } from 'midgard/context/App.context';
 import { colors } from 'colors'
 import styled, { css } from 'styled-components'
 import { rem } from 'polished'
@@ -11,7 +11,7 @@ const NavBarWrapper = styled.div`
   max-width: ${rem(220)};
   width: ${rem(220)};
   height: 100%;
-  background-color: ${colors.backgroundPrimary};
+  background-color: ${colors.base};
   min-height: calc(100vh - ${rem(60)});
   transition: max-width 0.3s ease-in-out;
   margin-top: ${rem(-60)};
@@ -40,57 +40,45 @@ const NavBarWrapper = styled.div`
   `}
 `
 
-class NavBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      navItems: NavBarItems,
-      active: ''
-    };
-    this.setActive = this.setActive.bind(this);
-    this.createItems = this.createItems.bind(this);
-  }
+/**
+ * Component for the side navigation.
+ */
+function NavBar({navHidden, location, history}) {
+  const app = useContext(AppContext);
 
   /**
    * Sets the active item.
    * @param {string} active the active nav item
    */
-  setActive(active) {
-    const { from } = this.props.location.state || { from: { pathname: active } };
-    this.props.history.push(from);
+  const setActive = (active) => {
+    const { from } = location.state || { from: { pathname: `/app/${active}` } };
+    history.push(from);
   }
 
-  /**
-   * Creates the list of nav items.
-   */
-  createItems() {
-    const items = [];
-    if (this.state.navItems.length) {
-      for (const item of this.state.navItems) {
-        items.push(<NavItem
-          key={item.id}
-          id={item.id}
-          title={item.title}
-          description={item.description}
-          active={this.props.location.pathname.includes(item.id)}
-          action={this.setActive}/>);
-      }
-      return items;
+  const items = [];
+  if (app.modules.length) {
+    for (const item of app.modules) {
+      items.push(<NavItem
+        key={item.id}
+        id={item.id}
+        title={item.title}
+        description={item.description}
+        active={location.pathname.includes(item.id)}
+        action={(active) => setActive(active)}
+      />);
     }
   }
-
-  render() {
-    return (
-      <NavBarWrapper className="nav-bar" hidden={this.props.navHidden}>
-        <div className="nav-bar__container">
-          <div className="nav-bar__elements">
-            {this.createItems()}
-          </div>
-          <NavUser location={this.props.location} history={this.props.history} />
+  
+  return (
+    <NavBarWrapper className="nav-bar" hidden={navHidden}>
+      <div className="nav-bar__container">
+        <div className="nav-bar__elements">
+          {items}
         </div>
-      </NavBarWrapper>
-    )
-  }
+        <NavUser location={location} history={history} />
+      </div>
+    </NavBarWrapper>
+  )
 }
 
 export default NavBar;

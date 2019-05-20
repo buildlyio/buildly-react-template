@@ -3,6 +3,7 @@ const webpack = require("webpack");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require('copy-webpack-plugin');
 
+
 module.exports = {
   entry: ["babel-polyfill", "./src/index.js"] ,
     mode: "development",
@@ -14,6 +15,11 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         loader: "babel-loader",
         options: { presets: ["@babel/env"] }
+      },
+      {
+        test: /\.(js|jsx)$/,
+        use: 'react-hot-loader/webpack',
+        include: /node_modules/
       },
       {
         test: /\.(css|scss)$/,
@@ -35,7 +41,17 @@ module.exports = {
             },
           },
         ],
-      }
+      },
+        {
+            test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
+            use: [{
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]',
+                    outputPath: 'fonts/'
+                }
+            }]
+        }
     ]
   },
   resolve: {
@@ -44,7 +60,6 @@ module.exports = {
     alias: {
       midgard: path.resolve(__dirname, './src/midgard'),
       store: path.resolve(__dirname, './src/store'),
-      ui: path.resolve(__dirname, './src/ui-components'),
       environment$: path.resolve(__dirname, './environment.js'),
       styles$: path.resolve(__dirname, './src/styles.scss'),
       colors$: path.resolve(__dirname, './src/styles/colors.js'),
@@ -72,4 +87,5 @@ module.exports = {
           { from: 'environment.js', to: '' },
       ]),
   ]
+
 };

@@ -47,6 +47,8 @@ Within the `/src` directory, the following structure is used:
 -  `/clients`: Contains all the clients added to the project.
 -  `/midgard`: 
     -  `/components`: Components that do not have routes assigned to them.
+    -  `/context`: React context for sharing data between components.
+    -  `/hooks`: Custom-built hooks for handling state.
     -  `/layout`: Components related to the layout of the application.
     -  `/modules`: Functions that handle data.
     -  `/pages`: Components that have routes assigned to them.
@@ -56,7 +58,6 @@ Within the `/src` directory, the following structure is used:
     -  `/reducers`: Reducers which must imported into the `index.js` file.
     -  `/sagas`: Sagas which must imported into the `index.js` file.
 -  `/styles`: Contains styling variables.
--  `/ui-components`: Generic components related to the interface.
 
 ### Core interfaces
 

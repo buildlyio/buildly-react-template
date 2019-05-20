@@ -1,97 +1,84 @@
-import React from 'react'
-import { oauthService } from 'midgard/modules/oauth/oauth.service'
-import Menu from 'ui/Menu/Menu'
+import React, { useState, useContext } from 'react'
+import { FjMenu } from 'freyja-react'
 import { connect } from 'react-redux'
 import { logout } from 'redux/actions/Auth.actions'
 import NavItem from 'midgard/components/NavItem/NavItem'
+import { UserContext } from 'midgard/context/User.context'
 
-class NavUser extends React.Component {
-  constructor(props) {
-    super(props);
-    const lastLoginDate = Date.parse(localStorage.getItem('token_stored_at'));
-    const time = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit' }).format(lastLoginDate);
-    const day = new Intl.DateTimeFormat('en-US', { day: '2-digit' }).format(lastLoginDate);
-    const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(lastLoginDate);
-    const lastLogin = `${time} ${day}, ${month}`;
-    this.state = {
-      user: oauthService.getOauthUser().data,
-      lastLogin: lastLogin,
-      open: false,
-      menuItems: [
-        {value: 'profile', label: 'Profile settings'},
-        {value: 'logout', label: 'Logout'}
-      ],
-      action: undefined,
-    };
-    this.toggleMenu = this.toggleMenu.bind(this);
-    this.openProfile = this.openProfile.bind(this);
-    this.logout = this.logout.bind(this);
+/**
+ * Component for user that appears in the sidebar navigation.
+ */
+function NavUser({location, history, dispatch}) {
+  let user = useContext(UserContext);
+  if (!user) {
+       user = JSON.parse(localStorage.getItem('oauthUser')).data;
   }
+  
+  // Last login
+  const lastLoginDate = Date.parse(localStorage.getItem('token_stored_at'));
+  const time = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit' }).format(lastLoginDate);
+  const day = new Intl.DateTimeFormat('en-US', { day: '2-digit' }).format(lastLoginDate);
+  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(lastLoginDate);
+  const lastLogin = `${time} ${day}, ${month}`;
 
-  /**
-   * Toggles the open state of the user menu.
-   */
-  toggleMenu() {
-    this.setState({open: !this.state.open});
-  }
+  const [open, setOpen] = useState(false);
+  const menuItems = [
+    { value: 'profile', label: 'Profile settings' },
+    { value: 'logout', label: 'Logout' }
+  ];
 
   /**
    * Navigates to the profile screen.
    */
-  openProfile() {
-    const { from } = this.props.location.state || { from: { pathname: 'profile' } };
-    this.props.history.push(from);
+  const openProfile = () => {
+    const { from } = location.state || { from: { pathname: '/app/profile/settings' } };
+    history.push(from);
   }
 
   /**
    * Clears authentication and redirects to the login screen.
    */
-  logout() {
-    this.props.dispatch(logout());
-    const { from } = this.props.location.state || { from: { pathname: "/" } };
-    this.props.history.push(from);
+  const userLogout = () => {
+    dispatch(logout());
+    const { from } = location.state || { from: { pathname: "/" } };
+    history.push(from);
   }
 
   /**
    * Handles the action.
-   * @param {string} action 
-   * @param {React.Component} component 
+   * @param {string} action
    */
-  selectAction(action, component) {
+  const selectAction = (action) => {
     switch(action) {
       case 'profile':
-        return component.openProfile();
+        return openProfile();
       case 'logout':
-        return component.logout();
+        return userLogout();
       default:
         return;
     }
   }
 
-  render() {
-    const { user, lastLogin, open } = this.state;
-    const { location } = this.props;
-    return (
-      <Menu
-        xPosition="right"
-        yPosition="top"
-        open={open}
-        setOpen={() => this.setState({open: !open})}
-        onActionClicked={(e) => {this.selectAction(e, this)}}
-        menuItems={this.state.menuItems}>
-        <div onClick={this.toggleMenu}>
-          <NavItem
-            toggle
-            defaultImage
-            title={user.first_name + ' ' + user.last_name}
-            description={'Last login ' + lastLogin}
-            active={location.pathname.includes('profile')}
-            action={() => {}}>
-          </NavItem>
-        </div>
-      </Menu>
-    )
-  }
+  return (
+    <FjMenu
+      xPosition="right"
+      yPosition="top"
+      open={open}
+      setOpen={() => setOpen(!open)}
+      onActionClicked={(e) => {selectAction(e)}}
+      menuItems={menuItems}>
+      <div onClick={() => setOpen(!open)}>
+        <NavItem
+          toggle
+          defaultImage
+          title={user.first_name + ' ' + user.last_name}
+          description={'Last login ' + lastLogin}
+          active={location.pathname.includes('profile')}
+          action={(e) => {selectAction(e)}}>
+        </NavItem>
+      </div>
+    </FjMenu>
+  )
 }
 
 export default connect()(NavUser);

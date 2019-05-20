@@ -6,6 +6,6 @@
     <mask id="midgard-logheziolo-b" fill="#fff">
       <use xlink:href="#midgard-logheziolo-a"/>
     </mask>
-    <polygon fill="#7596c5" points="-2.094 33.927 43.949 33.927 43.949 -2.106 -2.094 -2.106" mask="url(#midgard-logheziolo-b)"/>
+    <polygon fill="#0573db" points="-2.094 33.927 43.949 33.927 43.949 -2.106 -2.094 -2.106" mask="url(#midgard-logheziolo-b)"/>
   </g>
 </svg>

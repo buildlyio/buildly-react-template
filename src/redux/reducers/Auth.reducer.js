@@ -1,11 +1,20 @@
 import {
-  LOGIN,
-  LOGIN_SUCCESS,
-  LOGIN_FAIL,
-  LOGOUT_SUCCESS,
-  REGISTER,
-  REGISTER_SUCCESS,
-  REGISTER_FAIL,
+    LOGIN,
+    LOGIN_SUCCESS,
+    LOGIN_FAIL,
+    LOGOUT_SUCCESS,
+    REGISTER,
+    REGISTER_SUCCESS,
+    REGISTER_FAIL,
+    UPDATE_USER,
+    UPDATE_USER_FAIL,
+    UPDATE_USER_SUCCESS,
+    GET_USER,
+    GET_USER_FAIL,
+    GET_USER_SUCCESS,
+    INVITE,
+    INVITE_FAIL,
+    INVITE_SUCCESS
 } from '../actions/Auth.actions';
 
 const initialState = {
@@ -71,6 +80,80 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error
       };
+      case UPDATE_USER:
+          return {
+              ...state,
+              loading: true,
+              loaded: false,
+              error: null
+          };
+
+      case UPDATE_USER_SUCCESS:
+          return {
+              ...state,
+              loading: false,
+              loaded: true,
+              user: action.user
+          };
+
+      case UPDATE_USER_FAIL:
+          return {
+              ...state,
+              loading: false,
+              loaded: true,
+              error: action.error
+          };
+
+      case GET_USER:
+          return {
+              ...state,
+              loading: true,
+              loaded: false,
+              error: null
+          };
+
+      case GET_USER_SUCCESS:
+          return {
+              ...state,
+              loading: false,
+              loaded: true,
+              user: action.user
+          };
+
+      case GET_USER_FAIL:
+          return {
+              ...state,
+              loading: false,
+              loaded: true,
+              error: action.error
+          };
+
+      case INVITE:
+          return {
+              ...state,
+              loading: true,
+              loaded: false,
+              user: null,
+              error: null,
+          };
+
+      case INVITE_SUCCESS:
+          return {
+              ...state,
+              loading: false,
+              loaded: true,
+              error: null,
+              user: action.user
+          };
+
+      case INVITE_FAIL:
+          return {
+              ...state,
+              loading: false,
+              loaded: true,
+              user: null,
+              error: action.error
+          };
       
     default:
       return state

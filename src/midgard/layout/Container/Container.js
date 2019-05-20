@@ -1,15 +1,21 @@
-import React from 'react'
+// react library imports
+import React, { useState } from 'react'
+import { Route, Redirect } from 'react-router-dom'
+import styled from 'styled-components'
+import { colors } from 'colors'
+
+// react user imports
 import NavBar from 'midgard/layout/NavBar/NavBar'
 import TopBar from 'midgard/layout/TopBar/TopBar'
 import Profile from 'midgard/pages/Profile/Profile'
-import { Route, Redirect } from 'react-router-dom'
-import { colors } from 'colors'
-import styled from 'styled-components'
+import UserManagement from 'midgard/pages/UserManagement/UserManagement'
+
+import { user, UserContext } from 'midgard/context/User.context'
 
 const ContainerWrapper = styled.div`
   height: 100%;
   display: flex;
-  background-color: ${colors.backgroundSecondary};
+  background-color: ${colors.baseLighter};
 
   .container {
     &__row {
@@ -32,42 +38,43 @@ const ContainerWrapper = styled.div`
   }
 `
 
-class Container extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      navHidden: false
-    };
-    this.toggleNav = this.toggleNav.bind(this);
+/**
+ * Container for the app layout when the user is authenticated. 
+ */
+function Container({ location, history }) {
+  const [navHidden, setNavHidden] = useState(false);
+  const routeItems = [];
+    //entryPointForGulpStart
+    //entryPointForGulpEnd
+  
+  let views = [];  
+  if (location.pathname.includes('profile')) {
+    views = [{ label: 'Profile settings', value: 'settings' }, { label: 'User management', value: 'users' }];
   }
 
-  toggleNav(navHidden) {
-    this.setState({navHidden: navHidden});
-  }
-
-  render() {
-    const { navHidden } = this.state;
-    const { location, history } = this.props;
-    const routeItems = [];
-    //entryPointForGulp
-    return (
-      <ContainerWrapper className="container">
+  return (
+    <ContainerWrapper className="container">
+      <UserContext.Provider value={user}>
         <div className="container__column">
-          <TopBar navHidden={navHidden} action={this.toggleNav} />
+          <TopBar navHidden={navHidden} setNavHidden={setNavHidden} options={views} location={location} history={history} />
           <div className="container__row">
             <NavBar navHidden={navHidden} location={location} history={history} />
             <div className="container__scroll">
               <Route exact path="/app" render={() => (
                 <Redirect to="/app/profile"/>
               )} />
-              <Route path="/app/profile" component={Profile} />
+              <Route exact path="/app/profile" render={() => (
+                <Redirect to="/app/profile/settings"/>
+              )} />
+              <Route path="/app/profile/settings" component={Profile} />
+              <Route path="/app/profile/users" component={UserManagement} />
               {routeItems}
             </div>
           </div>
         </div>
-      </ContainerWrapper>
-    )
-  }
+      </UserContext.Provider>
+    </ContainerWrapper>
+  )
 }
 
 export default Container;

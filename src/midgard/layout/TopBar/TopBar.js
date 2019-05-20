@@ -1,18 +1,20 @@
-import React from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import logo from 'assets/midgard-logo.svg'
 import searchIcon from 'assets/icon-search.svg'
 import { colors } from 'colors'
 import styled, { css } from 'styled-components'
 import { rem } from 'polished'
+import { AppContext } from 'midgard/context/App.context'
+import { FjContentSwitcher } from 'freyja-react'
 
 const topBarHeight = rem(60);
-const searchSize = rem(40);
+const searchSize = rem(32);
 
 const TopBarWrapper = styled.div`
   height: ${topBarHeight};
   max-height: ${topBarHeight};
   display: flex;
-  background-color: ${colors.backgroundPrimary};
+  background-color: ${colors.base};
   transition: all linear 0.3s;
   z-index: 3;
 
@@ -23,7 +25,7 @@ const TopBarWrapper = styled.div`
       padding: 0 ${rem(20)};
       box-sizing: border-box;
       width: ${rem(220)};
-      border-right: ${rem(1)} solid ${colors.grayLighter};
+      border-right: ${rem(1)} solid ${colors.baseDarker};
     }
 
     &__menu {
@@ -47,7 +49,7 @@ const TopBarWrapper = styled.div`
         box-shadow: 0 ${rem(2)} ${rem(3)} 0 ${colors.shadow};
 
         &:hover {
-          background-color: ${colors.primaryLightest};
+          background-color: ${colors.primaryOverlay};
         }
       }
     }
@@ -84,21 +86,33 @@ const TopBarWrapper = styled.div`
       display: flex;
       flex: 1;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       margin: ${rem(8)} 0;
+    }
+
+    &__content {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 ${rem(24)};
     }
 
     &__search {
       display: flex;
-      padding: 0 ${rem(40)};
+      padding: 0 ${rem(16)};
       &__input {
         border-radius: ${rem(4)} 0 0 ${rem(4)};
         height: ${searchSize} - ${rem(2)};
         width: ${rem(240)};
         border: ${rem(1)} solid transparent;
         padding: 0 ${rem(10)};
-        font-size: rem(16);
+        font-size: ${rem(14)};
         outline: none;
+
+        &::placeholder {
+          color: ${colors.gray};
+        }
 
         &:focus {
           border-color: ${colors.primary};
@@ -115,6 +129,8 @@ const TopBarWrapper = styled.div`
         border-radius: 0 ${rem(4)} ${rem(4)} 0;
         cursor: pointer;
         outline: none;
+        transition: all 0.2s linear;
+        padding: 0;
 
         img {
           height: ${rem(18)};
@@ -122,7 +138,7 @@ const TopBarWrapper = styled.div`
         }
 
         &:hover {
-          background-color: ${colors.primary};
+          background-color: ${colors.primaryDarker};
         }
       }
     }
@@ -149,54 +165,54 @@ const TopBarWrapper = styled.div`
   `}
 `
 
-class TopBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.toggleNav = this.toggleNav.bind(this);
-    this.search = this.search.bind(this);
-  }
-
-  /**
-   * Toggles the navigation top and side bars.
-   */
-  toggleNav() {
-    this.props.action(!this.props.navHidden);
-  }
+/**
+ * Component for the top bar header.
+ */
+function TopBar({ navHidden, setNavHidden, options, history, location }) {
+  const app = useContext(AppContext);
 
   /**
    * Performs the search action.
    */
-  search() {
+  const search = (event) => {
     event.preventDefault();
   }
 
-  render() {
-    return (
-      <TopBarWrapper className="top-bar" hidden={this.props.navHidden}>
-        <div className="top-bar__container">
-          <div className="top-bar__main">
-            <div className="top-bar__menu-container">
-              <div className="top-bar__menu" onClick={this.toggleNav}>
-                <div className="top-bar__menu__icon">
-                  <div className="top-bar__bar"></div>
-                  <div className="top-bar__bar"></div>
-                  <div className="top-bar__bar"></div>
-                </div>
+  let viewState = useState(options && options.length ? options[0].value : '');
+
+  useEffect(() => {
+    const { from } = location.state || { from: { pathname: viewState[0] } };
+    history.push(from);
+  }, [viewState[0]]);
+
+  return (
+    <TopBarWrapper className="top-bar" hidden={navHidden}>
+      <div className="top-bar__container">
+        <div className="top-bar__main">
+          <div className="top-bar__menu-container">
+            <div className="top-bar__menu" onClick={() => setNavHidden(!navHidden)}>
+              <div className="top-bar__menu__icon">
+                <div className="top-bar__bar"></div>
+                <div className="top-bar__bar"></div>
+                <div className="top-bar__bar"></div>
               </div>
             </div>
-            <img className="top-bar__logo" src={logo} />
-            <h1 className="top-bar__title">Demo App</h1>
           </div>
-          <form className="top-bar__search" onSubmit={this.search}>
+          <img className="top-bar__logo" src={logo} />
+          <h1 className="top-bar__title">{app.appTitle}</h1>
+        </div>
+        <div className="top-bar__content">
+          <FjContentSwitcher options={options} active={viewState} size="small" />
+          <form className="top-bar__search" onSubmit={search}>
             <input className="top-bar__search__input" placeholder="Search" />
             <button className="top-bar__search__submit" type="submit">
               <img src={searchIcon} />
             </button>
           </form>
         </div>
-      </TopBarWrapper>
-    )
-  }
+      </div>
+    </TopBarWrapper>
+  )
 }
 
 export default TopBar;

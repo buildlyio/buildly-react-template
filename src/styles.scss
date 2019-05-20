@@ -1,12 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
-@import "styles/global";
-
-html, body, #root {
+html, body, #root, .app {
   height: 100%;
 }
 body {
   margin: 0;
   font-family: OpenSans, sans-serif;
   background-color: #f9fafb;
+  -webkit-font-smoothing: antialiased;
+}
+input {
+  font-family: OpenSans, sans-serif;
   -webkit-font-smoothing: antialiased;
 }

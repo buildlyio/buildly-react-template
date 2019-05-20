@@ -15,10 +15,11 @@ const TextFieldWrapper = styled.div`
 
     &__label {
       font-size: ${rem(10)};
-      color: ${colors.grayMedium};
+      color: ${colors.grayDarker};
     }
 
     &__value {
+      color: ${colors.text};
       line-height: ${rem(18)};
       font-size: ${rem(14)};
       font-weight: ${props => props.bold ? 'bold' : 'normal'};
