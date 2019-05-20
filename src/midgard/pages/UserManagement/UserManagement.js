@@ -47,13 +47,10 @@ const UserManagementWrapper = styled.div`
  */
 function UserManagement({dispatch, history, location, loading, error, user}) {
     const email = useInput('', { required: true });
-    const message = useInput('', { required: true });
-    const [open, setOpen] = useState(false);
     const [inviteCall, setinviteCall] = useState(false);
 
     if (user && user.data && user.data.detail && inviteCall && !error) {
         NotificationManager.success( user.data.detail, 'Success');
-        setOpen(false);
         setinviteCall(false);
     }
 
