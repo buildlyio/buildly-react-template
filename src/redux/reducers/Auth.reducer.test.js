@@ -83,3 +83,23 @@ describe('Update User reducer', () => {
         )
     })
 })
+
+
+describe('invite User reducer', () => {
+    it('invite user Reducer', () => {
+        expect(reducer.default(initialState,{type:actions.INVITE})).toEqual(
+            {"error": null, "loaded": false, "loading": true, "user": null}
+        )
+    })
+
+    it('invite user success Reducer', () => {
+        expect(reducer.default(initialState,{type:actions.INVITE_SUCCESS})).toEqual(
+            {"error": null, "loaded": true, "loading": false, "user": undefined}
+        )
+    })
+    it('invite user fail Reducer', () => {
+        expect(reducer.default(initialState,{type:actions.INVITE_FAIL})).toEqual(
+            {"error": undefined, "loaded": true, "loading": false, "user": null}
+        )
+    })
+})
