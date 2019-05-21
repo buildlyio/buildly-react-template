@@ -1,3 +1,5 @@
+import Products from 'clients/Products/src/Products'; 
+import Documents from 'clients/Documents/src/Documents'; 
 // react library imports
 import React, { useState } from 'react'
 import { Route, Redirect } from 'react-router-dom'
@@ -45,6 +47,8 @@ function Container({ location, history }) {
   const [navHidden, setNavHidden] = useState(false);
   const routeItems = [];
     //entryPointForGulpStart
+    routeItems.push(<Route key="products" path="/app/products/" component={Products} />);
+    routeItems.push(<Route key="documents" path="/app/documents/" component={Documents} />);
     //entryPointForGulpEnd
   
   let views = [];  
