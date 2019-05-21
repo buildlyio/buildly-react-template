@@ -20,8 +20,7 @@ import {
 const initialState = {
   loading: false,
   loaded: false,
-
-  user: null,
+  data: null,
   error: null
 }
 
@@ -41,7 +40,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        user: action.user
+        data: action.user
       };
 
     case LOGIN_FAIL:
@@ -151,10 +150,10 @@ export default (state = initialState, action) => {
               ...state,
               loading: false,
               loaded: true,
-              user: null,
+              data: null,
               error: action.error
           };
-      
+
     default:
       return state
   }

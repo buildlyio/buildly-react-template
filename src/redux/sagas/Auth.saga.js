@@ -129,6 +129,5 @@ export default function* authSaga() {
     watchUpdateUser(),
     watchGetUser(),
     watchInvite()
-
   ]);
 }
