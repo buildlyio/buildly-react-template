@@ -9,31 +9,57 @@ export interface CrudProps {
     /** action to create an item */
     createAction: string;
     updateAction: string;
-    [key: string]: string;
+    deleteAction: string;
+    itemCreated: string;
+    itemUpdated: string;
+    itemDeleted: string;
+    data: any;
+    dispatch: any;
 }
 /**
  * Crud component wrapper
- *
- * @param {object} props Component props
- * @param {bool} props.createAction action to create an item
- * @param {function} props.updateAction Form submit callback function
  */
- function Crud({children, createAction, updateAction, deleteAction, itemCreated, itemUpdated, itemDeleted, dispatch, data, loading, reducer}: CrudProps) {
-    /**
-     * Submit the form to the backend and attempts to authenticate
-     * @param {Event} event the default submit event
-     */
-    const deleteItem = (item) => {
-        console.log('crud', data, item);
-        // dispatch({type: deleteAction, item});
-        // return itemDeleted
+class Crud extends React.Component<CrudProps> {
+    constructor(props: CrudProps) {
+        super(props);
+    }
+
+    createItem(item) {
+        const {createAction, itemCreated, dispatch} = this.props;
+        dispatch({type: createAction, item});
+        return itemCreated
+    };
+    updateItem(item) {
+        const {updateAction, itemUpdated, dispatch} = this.props;
+        dispatch({type: updateAction, item});
+        return itemUpdated
     };
 
+    deleteItem(item) {
+        const {deleteAction, itemDeleted, dispatch} = this.props;
+        dispatch({type: deleteAction, item});
+        return itemDeleted
+    };
+
+    getData() {
+        return this.props.data;
+    }
+
+  render() {
+    const {children} = this.props;
     return (
-        <CrudContext.Provider value={{deleteItem}}>
-            {children}
-        </CrudContext.Provider>
+      <CrudContext.Provider value={
+        {
+          createItem: this.createItem,
+          updateItem: this.updateItem,
+          deleteItem: this.deleteItem,
+          getData: this.getData
+        }
+      }>
+        { children }
+      </CrudContext.Provider>
     );
+  };
 }
 
 const mapStateToProps = (state, ownProps) => ({...ownProps, ...state.authReducer});

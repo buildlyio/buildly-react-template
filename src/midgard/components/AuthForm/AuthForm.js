@@ -63,21 +63,21 @@ function AuthForm({children, onSubmit, link}) {
     const action = false;
     return (
       <Crud createAction={action} deleteAction="DELETE_ACTION" itemDeleted={handleItemDeleted}>
-          <CrudContext.Consumer>{crud => (
-              <AuthFormWrapper className="auth">
-                  <div className="auth__card">
-                    <div className="auth__card__content">
-                      <img className="auth__card__logo" src={logo} />
-                      <form className="auth__form" onSubmit={onSubmit}>
-                        {children}
-                        <Link className="auth__form__link" to={link.value}>{link.label}</Link>
-                      </form>
-                      <button onClick={() => crud.deleteItem({name: 'andrew'})}/>
-                    </div>
-                  </div>
-              </AuthFormWrapper>
-                  )}
-        </CrudContext.Consumer>
+        <CrudContext.Consumer>{ crud => (
+          <AuthFormWrapper className="auth">
+              <div className="auth__card">
+                <div className="auth__card__content">
+                  <img className="auth__card__logo" src={logo} />
+                  <form className="auth__form" onSubmit={onSubmit}>
+                    {children}
+                    <Link className="auth__form__link" to={link.value}>{link.label}</Link>
+                  </form>
+                  <button onClick={() => crud.deleteItem({name: 'andrew'})}/>
+                </div>
+              </div>
+          </AuthFormWrapper>
+          )}
+      </CrudContext.Consumer>
       </Crud>
     );
 }

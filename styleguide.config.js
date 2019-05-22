@@ -1,5 +1,4 @@
 module.exports = {
-  propsParser: require('react-docgen-typescript').withDefaultConfig().parse,
   sections: [
     {
       name: 'Components',
@@ -29,7 +28,7 @@ module.exports = {
     {
       name: 'Modules',
       components: [
-          'src/midgard/modules/**/*.tsx'
+        'src/midgard/modules/**/*.tsx'
       ],
     },
   ]
