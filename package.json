@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "dependencies": {
     "enzyme-adapter-react-16": "^1.13.1",
-    "freyja-react": "^0.1.14",
+    "freyja-react": "^0.1.15",
     "gulp": "^4.0.0",
     "gulp-cli": "^2.2.0",
     "gulp-git": "^2.9.0",

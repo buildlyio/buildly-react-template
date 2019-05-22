@@ -188,7 +188,7 @@ function TopBar({ navHidden, setNavHidden, history, location }) {
     if (selected) {
       setView(selected.value);
     }
-  }, [location.pathname]);
+  }, [location.pathname.substr(0, location.pathname.lastIndexOf('/'))]);
 
   useEffect(() => {
     const { from } = location.state || { from: { pathname: view } };

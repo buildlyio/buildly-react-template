@@ -14,9 +14,10 @@ const SwitcherItem = styled.button`
   align-items: center;
   border-radius: ${rem(4)};
   margin: ${rem(2)};
+  transition: background-color 0.2s linear;
 
   &:hover {
-    background-color: ${colors.baseDarker};
+    background-color: ${colors.primaryOverlayHover};
   }
 
   img {
