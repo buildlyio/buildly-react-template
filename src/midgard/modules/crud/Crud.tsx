@@ -7,6 +7,7 @@ export const CrudContext = React.createContext({});
 
 export interface CrudProps {
     /** action to create an item */
+    loadAction: string;
     createAction: string;
     updateAction: string;
     deleteAction: string;
@@ -20,30 +21,48 @@ export interface CrudProps {
  * Crud component wrapper
  */
 class Crud extends React.Component<CrudProps> {
-    constructor(props: CrudProps) {
-        super(props);
-    }
+  constructor(props: CrudProps) {
+    super(props);
+  }
 
-    createItem(item) {
-        const {createAction, itemCreated, dispatch} = this.props;
-        dispatch({type: createAction, item});
-        return itemCreated
-    };
-    updateItem(item) {
-        const {updateAction, itemUpdated, dispatch} = this.props;
-        dispatch({type: updateAction, item});
-        return itemUpdated
-    };
+  /**
+  * send a request to create an item
+  * @param item - selected item
+  */
+  createItem(item) {
+    const {createAction, itemCreated, dispatch} = this.props;
+    dispatch({type: createAction, item});
+    return itemCreated
+  };
 
-    deleteItem(item) {
-        const {deleteAction, itemDeleted, dispatch} = this.props;
-        dispatch({type: deleteAction, item});
-        return itemDeleted
-    };
+  /**
+  * send a request to update an item
+  * @param item - selected item
+  */
+  updateItem(item) {
+    const {updateAction, itemUpdated, dispatch} = this.props;
+    dispatch({type: updateAction, item});
+    return itemUpdated
+  };
 
-    getData() {
-        return this.props.data;
-    }
+  /**
+  * send a request to delete an item
+  * @param item - selected item
+  */
+  deleteItem(item) {
+    const {deleteAction, itemDeleted, dispatch} = this.props;
+    dispatch({type: deleteAction, item});
+    return itemDeleted
+  };
+
+  /**
+  * load the data to the store and returns it
+  */
+  getData() {
+    const {loadAction, data, dispatch} = this.props;
+    dispatch({type: loadAction});
+    return data;
+  }
 
   render() {
     const {children} = this.props;
