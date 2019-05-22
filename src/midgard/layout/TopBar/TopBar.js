@@ -178,12 +178,20 @@ function TopBar({ navHidden, setNavHidden, options, history, location }) {
     event.preventDefault();
   }
 
-  let viewState = useState(options && options.length ? options[0].value : '');
+  let viewState = useState(subNav && subNav.length ? subNav[0].value : '');
+  const [view, setView] = viewState;
 
   useEffect(() => {
-    const { from } = location.state || { from: { pathname: viewState[0] } };
+    const selected = subNav.find(item => location.pathname.includes(item.value));
+    if (selected) {
+      setView(selected.value);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const { from } = location.state || { from: { pathname: view } };
     history.push(from);
-  }, [viewState[0]]);
+  }, [view]);
 
   return (
     <TopBarWrapper className="top-bar" hidden={navHidden}>
