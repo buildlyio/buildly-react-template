@@ -1,8 +1,7 @@
 const path = require('path');
-const glob = require('glob');
 
 module.exports = {
-  title: 'Midgard React Api Documentation',
+  title: 'Midgard React API Documentation',
   pagePerSection: true,
   // sections: [ {
   //   name: 'Test section 1',
@@ -47,10 +46,13 @@ module.exports = {
     // },
     {
       name: 'Modules',
-       description: 'Midgard React Core Modules',
+      description: 'Midgard React Core Modules',
       components: [
         'src/midgard/modules/**/*.tsx'
       ],
     },
-  ]
+  ],
+  styleguideComponents: {
+    Wrapper: path.join(__dirname, 'styleguide/Wrapper')
+  }
 }
