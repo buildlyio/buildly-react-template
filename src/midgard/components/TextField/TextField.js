@@ -11,7 +11,7 @@ const TextFieldWrapper = styled.div`
   .text-field {
     display: flex;
     flex-direction: column;
-    margin-bottom: ${rem(16)};
+    margin: ${rem(6)} ${rem(4)};
 
     &__label {
       font-size: ${rem(10)};

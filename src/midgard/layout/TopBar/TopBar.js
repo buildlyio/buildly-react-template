@@ -5,6 +5,7 @@ import { colors } from 'colors'
 import styled, { css } from 'styled-components'
 import { rem } from 'polished'
 import { AppContext } from 'midgard/context/App.context'
+import { SubNavContext } from 'midgard/context/SubNav.context'
 import { FjContentSwitcher } from 'freyja-react'
 
 const topBarHeight = rem(60);
@@ -168,8 +169,9 @@ const TopBarWrapper = styled.div`
 /**
  * Component for the top bar header.
  */
-function TopBar({ navHidden, setNavHidden, options, history, location }) {
+function TopBar({ navHidden, setNavHidden, history, location }) {
   const app = useContext(AppContext);
+  const subNav = useContext(SubNavContext);
 
   /**
    * Performs the search action.
@@ -210,7 +212,7 @@ function TopBar({ navHidden, setNavHidden, options, history, location }) {
           <h1 className="top-bar__title">{app.appTitle}</h1>
         </div>
         <div className="top-bar__content">
-          <FjContentSwitcher options={options} active={viewState} size="small" />
+          <FjContentSwitcher options={subNav} active={viewState} size="small" />
           <form className="top-bar__search" onSubmit={search}>
             <input className="top-bar__search__input" placeholder="Search" />
             <button className="top-bar__search__submit" type="submit">
