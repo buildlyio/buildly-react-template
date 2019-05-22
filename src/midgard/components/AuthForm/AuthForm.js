@@ -60,9 +60,8 @@ function AuthForm({children, onSubmit, link}) {
         return false;
     };
 
-    const action = false;
     return (
-      <Crud createAction={action} deleteAction="DELETE_ACTION" itemDeleted={handleItemDeleted}>
+      <Crud deleteAction="DELETE_ACTION" reducer="authReducer" itemDeleted={handleItemDeleted}>
         <CrudContext.Consumer>{ crud => (
           <AuthFormWrapper className="auth">
               <div className="auth__card">

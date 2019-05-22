@@ -8,12 +8,12 @@ import { UserContext } from 'midgard/context/User.context'
 /**
  * Component for user that appears in the sidebar navigation.
  */
-function NavUser({location, history, dispatch}) {
+export function NavUser({location, history, dispatch}) {
   let user = useContext(UserContext);
   if (!user) {
        user = JSON.parse(localStorage.getItem('oauthUser')).data;
   }
-  
+
   // Last login
   const lastLoginDate = Date.parse(localStorage.getItem('token_stored_at'));
   const time = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit' }).format(lastLoginDate);

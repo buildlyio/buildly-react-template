@@ -6,23 +6,55 @@ export const CrudContext = React.createContext({});
 
 
 export interface CrudProps {
-    /** action to create an item */
-    loadAction: string;
-    createAction: string;
-    updateAction: string;
-    deleteAction: string;
-    itemCreated: string;
-    itemUpdated: string;
-    itemDeleted: string;
-    data: any;
-    dispatch: any;
+  /**
+   * action to load data
+   */
+  loadAction: string;
+  /**
+   * action to create an item
+   */
+  createAction: string;
+  /**
+   * action to update an item
+   */
+  updateAction: string;
+  /**
+   * action to delete an item
+   */
+  deleteAction: string;
+  /**
+   * function that is returned when an item is created
+   */
+  itemCreated: any;
+  /**
+   * function that is returned when an item is updated
+   */
+  itemUpdated: any;
+  /**
+   * function that is returned when an item is deleted
+   */
+  itemDeleted: any;
+  /**
+   * data from the store
+   */
+  data: any;
+  /**
+   * reducer to get data from
+   */
+  reducer: any;
+  dispatch: any;
 }
+
 /**
  * Crud component wrapper
  */
-class Crud extends React.Component<CrudProps> {
+export class Crud extends React.Component<CrudProps> {
   constructor(props: CrudProps) {
     super(props);
+    this.createItem = this.createItem.bind(this);
+    this.updateItem = this.updateItem.bind(this);
+    this.deleteItem = this.deleteItem.bind(this);
+    this.getData = this.getData.bind(this);
   }
 
   /**
@@ -81,6 +113,6 @@ class Crud extends React.Component<CrudProps> {
   };
 }
 
-const mapStateToProps = (state, ownProps) => ({...ownProps, ...state.authReducer});
+const mapStateToProps = (state, ownProps) => ({...state[ownProps.reducer], ...ownProps});
 
 export default connect(mapStateToProps)(Crud);
