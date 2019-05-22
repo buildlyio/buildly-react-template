@@ -4,6 +4,7 @@
   "description": "Main frontend module for Walhall applications built using the React framework",
   "main": "src/index.js",
   "dependencies": {
+    "enzyme-adapter-react-16": "^1.13.1",
     "freyja-react": "^0.1.11",
     "gulp": "^4.0.0",
     "gulp-cli": "^2.2.0",
