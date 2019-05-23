@@ -69,7 +69,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        user: action.user
+        data: action.user
       };
 
     case REGISTER_FAIL:
@@ -92,7 +92,7 @@ export default (state = initialState, action) => {
               ...state,
               loading: false,
               loaded: true,
-              user: action.user
+              data: action.user
           };
 
       case UPDATE_USER_FAIL:
@@ -116,7 +116,7 @@ export default (state = initialState, action) => {
               ...state,
               loading: false,
               loaded: true,
-              user: action.user
+              data: action.user
           };
 
       case GET_USER_FAIL:
@@ -132,7 +132,7 @@ export default (state = initialState, action) => {
               ...state,
               loading: true,
               loaded: false,
-              user: null,
+              data: null,
               error: null,
           };
 
@@ -142,7 +142,7 @@ export default (state = initialState, action) => {
               loading: false,
               loaded: true,
               error: null,
-              user: action.user
+              data: action.user
           };
 
       case INVITE_FAIL:
