@@ -4,6 +4,7 @@
     "outDir": "./dist/",
     "sourceMap": true,
     "noImplicitAny": false,
+    "skipLibCheck": true,
     "module": "commonjs",
     "target": "es6",
     "esModuleInterop": true,
@@ -13,6 +14,11 @@
   "include": [
     "./src/**/*"
   ],
+  "baseUrl": ".",
+  "paths": {
+    "environment": ["./environment.js"]
+  },
+  "exclude": ["node_modules"],
   "typedocOptions": {
     "hideGenerator": true,
     "ignoreCompilerErrors": true,

@@ -1,5 +1,5 @@
-import * as actions from 'midgard/redux/authuser/actions/authuser.actions'
-import * as reducer from 'midgard/redux/authuser/reducers/authuser.reducer'
+import * as actions from '../actions/authuser.actions'
+import * as reducer from './authuser.reducer'
 const initialState = {
     loading: false,
     loaded: false,
