@@ -1,6 +1,6 @@
 import React from "react";
 import { Provider } from 'react-redux';
-import configureStore from './midgard/redux/store';
+import configureStore from './midgard/redux/store-mock';
 import ReactDOM from "react-dom";
 import App from "src/App";
 const store = configureStore();
