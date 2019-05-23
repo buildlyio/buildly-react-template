@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "outDir": "./dist/",
     "sourceMap": true,
     "noImplicitAny": false,
@@ -11,5 +12,10 @@
   },
   "include": [
     "./src/**/*"
-  ]
+  ],
+  "typedocOptions": {
+    "hideGenerator": true,
+    "ignoreCompilerErrors": true,
+    "out": "./docs"
+  }
 }

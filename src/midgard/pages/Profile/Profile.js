@@ -6,7 +6,7 @@ import { colors } from 'colors'
 import styled from 'styled-components'
 import { rem } from 'polished'
 import { Redirect } from 'react-router-dom'
-import { updateUser, logout } from 'redux/actions/Auth.actions'
+import { updateUser, logout } from 'midgard/redux/authuser/actions/authuser.actions'
 
 /**
  * Styled component for the profile page.

@@ -15,7 +15,7 @@ import {
     INVITE,
     INVITE_FAIL,
     INVITE_SUCCESS
-} from '../actions/Auth.actions';
+} from '../actions/authuser.actions';
 
 const initialState = {
   loading: false,

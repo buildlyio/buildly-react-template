@@ -17,7 +17,7 @@ import {
   INVITE,
   INVITE_FAIL,
   INVITE_SUCCESS
-} from '../actions/Auth.actions';
+} from '../actions/authuser.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
 import { oauthService } from 'midgard/modules/oauth/oauth.service';
 import { httpService } from 'midgard/modules/http/http.service';

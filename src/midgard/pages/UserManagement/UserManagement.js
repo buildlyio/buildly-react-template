@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { rem } from 'polished'
 import { FjContentSwitcher, FjButton, FjInputField  } from 'freyja-react'
 import InviteForm from 'midgard/components/InviteForm/InviteForm'
-import { invite } from 'redux/actions/Auth.actions'
+import { invite } from 'midgard/redux/authuser/actions/authuser.actions'
 import {useInput} from "midgard/hooks/useInput";
 import Popup from 'reactjs-popup'
 import {NotificationContainer, NotificationManager } from 'react-notifications';

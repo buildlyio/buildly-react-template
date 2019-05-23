@@ -1,4 +1,4 @@
-import * as actions from 'redux/actions/Auth.actions'
+import * as actions from 'midgard/redux/authuser/actions/authuser.actions'
 
 describe('actions', () => {
     it('should create an action to login', () => {

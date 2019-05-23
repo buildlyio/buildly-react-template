@@ -1,5 +1,5 @@
 // react library imports
-import authSaga from "./Auth.saga"
+import authSaga from "./authuser/sagas/authuser.saga"
 import { all } from 'redux-saga/effects'
 
 // single entry point to start all Sagas at once

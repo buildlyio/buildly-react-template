@@ -61,7 +61,7 @@ export class Crud extends React.Component<CrudProps> {
   * send a request to create an item
   * @param item - selected item
   */
-  createItem(item) {
+  public createItem(item) {
     const {createAction, itemCreated, dispatch} = this.props;
     dispatch({type: createAction, item});
     return itemCreated

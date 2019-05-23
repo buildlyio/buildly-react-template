@@ -1,4 +1,4 @@
- ```js
+ ```js static
 import React from 'react'
 import Crud, { CrudContext } from './Crud';
 
@@ -6,11 +6,11 @@ import Crud, { CrudContext } from './Crud';
     console.log('the item has been deleted')
  }
  
- function CrudExample({children}) {
+ function CrudExample() {
    return (
      <Crud deleteAction="DELETE_ACTION" itemDeleted={handleItemDeleted}>
          <CrudContext.Consumer>{ crud => (
-            <button onClick={() => crud.deleteItem({name: 'user'})}/>``
+            <button onClick={() => crud.deleteItem({id: 2})}/>``
            )}
          </CrudContext.Consumer>
      </Crud>

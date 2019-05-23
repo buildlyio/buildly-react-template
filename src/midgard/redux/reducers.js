@@ -1,6 +1,6 @@
 // react library imports
 import { combineReducers } from 'redux';
-import authReducer from './Auth.reducer';
+import authReducer from './authuser/reducers/authuser.reducer';
 
 const rootReducer = combineReducers(
   {

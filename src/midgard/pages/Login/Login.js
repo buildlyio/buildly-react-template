@@ -3,7 +3,7 @@ import { oauthService } from 'midgard/modules/oauth/oauth.service'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { FjButton, FjInputField } from 'freyja-react'
-import { login } from 'redux/actions/Auth.actions'
+import { login } from 'midgard/redux/authuser/actions/authuser.actions'
 import AuthForm from 'midgard/components/AuthForm/AuthForm'
 import { useInput } from 'midgard/hooks/useInput'
 

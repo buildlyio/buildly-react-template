@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import ReactDOM from "react-dom";
 import { Provider } from 'react-redux'
-import configureStore from '../src/redux/storeMock'
+import configureStore from '../src/midgard/redux/store-mock'
 const initialState = {
   app: {
     name: 'Pizza Delivery'

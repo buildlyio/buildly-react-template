@@ -48,7 +48,8 @@ module.exports = {
       name: 'Modules',
       description: 'Midgard React Core Modules',
       components: [
-        'src/midgard/modules/**/*.tsx'
+        'src/midgard/modules/**/*.tsx',
+        'src/midgard/modules/**/*.js',
       ],
     },
   ],
