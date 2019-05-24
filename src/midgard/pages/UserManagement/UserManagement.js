@@ -6,7 +6,8 @@ import { rem } from 'polished'
 import { FjTable, FjButton, FjInputField } from 'freyja-react'
 import InviteForm from 'midgard/components/InviteForm/InviteForm'
 import { invite } from 'midgard/redux/authuser/actions/authuser.actions'
-import {useInput} from "midgard/hooks/useInput";
+import { useInput } from "midgard/hooks/useInput";
+import { FjContentSwitcher } from "freyja-react"
 import Popup from 'reactjs-popup'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
