@@ -17,8 +17,8 @@
     "react-dom": "^16.7.0",
     "react-hot-loader": "^4.6.3",
     "react-notifications": "^1.4.3",
-    "react-redux": "^6.0.1",
-    "react-router-dom": "^4.3.1",
+    "react-redux": "^7.0.3",
+    "react-router-dom": "^4.4.0-beta.8",
     "react-styleguidist": "^9.0.8",
     "react-test-renderer": "^16.8.6",
     "reactjs-popup": "^1.4.0",
@@ -54,6 +54,7 @@
     "node-sass": "^4.11.0",
     "react-docgen": "^4.1.1",
     "react-docgen-typescript": "^1.12.4",
+    "redux-mock-store": "^1.5.3",
     "sass-loader": "^7.1.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
@@ -103,7 +104,9 @@
     "setupFiles": [
       "<rootDir>/test-setup.js"
     ],
-    "collectCoverageFrom": ["src/**/*.{js,jsx,tsx}"],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,tsx}"
+    ],
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
     ]

@@ -1,11 +1,46 @@
-import {Crud} from "midgard/modules/crud/Crud";
+import { Crud } from "./Crud";
+import { shallow } from 'enzyme';
+import React from 'react';
+
+function setup() {
+  const props = {
+    dispatch: jest.fn(),
+    createAction: 'CREATE_ACTION',
+    updateAction: 'UPDATE_ACTION',
+    deleteAction: 'DELETE_ACTION',
+    loadAction: 'LOAD_ACTION',
+  };
+
+  const enzymeWrapper = shallow(<Crud {...props} />)
+
+  return {
+    props,
+    enzymeWrapper
+  }
+}
 
 describe('Crud', () => {
-  const crud = new Crud({deleteItem: "Delete_Item"});
-  it('should dispatch an action to delete an item', () => {
-    expect(1).toEqual(1);
-    // crud.deleteItem();
-    // dispatch = jest.fn()
-    // expect(dispatch).toHaveBeenCalled();
+  it('should dispatch an action to create an item', () => {
+    const { enzymeWrapper, props } = setup();
+    enzymeWrapper.instance().createItem({id:1});
+    expect(props.dispatch).toHaveBeenCalledWith({type: 'CREATE_ACTION', item: {id:1}});
   })
-});
+
+  it('should dispatch an action to update an item', () => {
+    const { enzymeWrapper, props } = setup();
+    enzymeWrapper.instance().updateItem({id:1});
+    expect(props.dispatch).toHaveBeenCalledWith({type: 'UPDATE_ACTION', item: {id:1}});
+  })
+
+  it('should dispatch an action to delete an item', () => {
+    const { enzymeWrapper, props } = setup();
+    enzymeWrapper.instance().deleteItem({id:1});
+    expect(props.dispatch).toHaveBeenCalledWith({type: 'DELETE_ACTION', item: {id:1}});
+  })
+
+  it('should dispatch an action to load the data', () => {
+    const { enzymeWrapper, props } = setup();
+    enzymeWrapper.instance().loadData();
+    expect(props.dispatch).toHaveBeenCalledWith({type: 'LOAD_ACTION'});
+  })
+})

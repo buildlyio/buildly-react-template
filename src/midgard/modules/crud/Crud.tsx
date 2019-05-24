@@ -9,40 +9,40 @@ export interface CrudProps {
   /**
    * action to load data
    */
-  loadAction: string;
+  loadAction?: string;
   /**
    * action to create an item
    */
-  createAction: string;
+  createAction?: string;
   /**
    * action to update an item
    */
-  updateAction: string;
+  updateAction?: string;
   /**
    * action to delete an item
    */
-  deleteAction: string;
+  deleteAction?: string;
   /**
    * function that is returned when an item is created
    */
-  itemCreated: any;
+  itemCreated?: any;
   /**
    * function that is returned when an item is updated
    */
-  itemUpdated: any;
+  itemUpdated?: any;
   /**
    * function that is returned when an item is deleted
    */
-  itemDeleted: any;
+  itemDeleted?: any;
   /**
    * data from the store
    */
-  data: any;
+  data?: any;
   /**
    * reducer to get data from
    */
-  reducer: any;
-  dispatch: any;
+  reducer?: any;
+  dispatch?: any;
 }
 
 /**
@@ -54,7 +54,7 @@ export class Crud extends React.Component<CrudProps> {
     this.createItem = this.createItem.bind(this);
     this.updateItem = this.updateItem.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
-    this.getData = this.getData.bind(this);
+    this.loadData = this.loadData.bind(this);
   }
 
   /**
@@ -91,7 +91,7 @@ export class Crud extends React.Component<CrudProps> {
   /**
   * load the data to the store and returns it
   */
-  getData() {
+  loadData() {
     const {loadAction, data, dispatch} = this.props;
     dispatch({type: loadAction});
     return data;
@@ -105,7 +105,7 @@ export class Crud extends React.Component<CrudProps> {
           createItem: this.createItem,
           updateItem: this.updateItem,
           deleteItem: this.deleteItem,
-          getData: this.getData
+          getData: this.loadData()
         }
       }>
         { children }
