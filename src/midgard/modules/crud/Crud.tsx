@@ -48,7 +48,7 @@ export interface CrudProps {
 /**
  * Crud component wrapper
  */
-class Crud extends React.Component<CrudProps> {
+export class Crud extends React.Component<CrudProps> {
   constructor(props: CrudProps) {
     super(props);
     this.createItem = this.createItem.bind(this);
