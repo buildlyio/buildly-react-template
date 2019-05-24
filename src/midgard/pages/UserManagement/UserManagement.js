@@ -76,7 +76,7 @@ function UserManagement({dispatch, history, location, loading, error, user}) {
                closeOnDocumentClick
                mouseLeaveDelay={300}
                mouseEnterDelay={0}
-               contentStyle={{ padding: '0px', border: 'none', width:  `{rem(250)` }}
+               contentStyle={{ padding: '0px', border: 'none', width:  `{rem(250)}` }}
                arrow={false}
            >
                <InviteForm onSubmit={submit}>
