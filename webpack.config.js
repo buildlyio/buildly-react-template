@@ -96,7 +96,7 @@ module.exports = {
           filename: "./index.html"
       }),
       new CopyPlugin([
-          { from: 'environment.js', to: '' },
+          { from: 'prod-environment.js', to: 'environment.js' },
       ]),
   ],
 };

@@ -5,6 +5,7 @@ import { colors } from 'colors'
 import styled, { css } from 'styled-components'
 import { rem } from 'polished'
 import { AppContext } from 'midgard/context/App.context'
+import { SubNavContext } from 'midgard/context/SubNav.context'
 import { FjContentSwitcher } from 'freyja-react'
 
 const topBarHeight = rem(60);
@@ -168,8 +169,9 @@ const TopBarWrapper = styled.div`
 /**
  * Component for the top bar header.
  */
-function TopBar({ navHidden, setNavHidden, options, history, location }) {
+function TopBar({ navHidden, setNavHidden, history, location }) {
   const app = useContext(AppContext);
+  const subNav = useContext(SubNavContext);
 
   /**
    * Performs the search action.
@@ -178,12 +180,20 @@ function TopBar({ navHidden, setNavHidden, options, history, location }) {
     event.preventDefault();
   }
 
-  let viewState = useState(options && options.length ? options[0].value : '');
+  let viewState = useState(subNav && subNav.length ? subNav[0].value : '');
+  const [view, setView] = viewState;
 
   useEffect(() => {
-    const { from } = location.state || { from: { pathname: viewState[0] } };
+    const selected = subNav.find(item => location.pathname.includes(item.value));
+    if (selected) {
+      setView(selected.value);
+    }
+  }, [location.pathname.substr(0, location.pathname.lastIndexOf('/'))]);
+
+  useEffect(() => {
+    const { from } = location.state || { from: { pathname: view } };
     history.push(from);
-  }, [viewState[0]]);
+  }, [view]);
 
   return (
     <TopBarWrapper className="top-bar" hidden={navHidden}>
@@ -202,7 +212,7 @@ function TopBar({ navHidden, setNavHidden, options, history, location }) {
           <h1 className="top-bar__title">{app.appTitle}</h1>
         </div>
         <div className="top-bar__content">
-          <FjContentSwitcher options={options} active={viewState} size="small" />
+          <FjContentSwitcher options={subNav} active={viewState} size="small" />
           <form className="top-bar__search" onSubmit={search}>
             <input className="top-bar__search__input" placeholder="Search" />
             <button className="top-bar__search__submit" type="submit">

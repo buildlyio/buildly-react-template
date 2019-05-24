@@ -11,6 +11,7 @@ import Profile from 'midgard/pages/Profile/Profile'
 import UserManagement from 'midgard/pages/UserManagement/UserManagement'
 
 import { user, UserContext } from 'midgard/context/User.context'
+import { subNav, SubNavContext } from 'midgard/context/SubNav.context'
 
 const ContainerWrapper = styled.div`
   height: 100%;
@@ -47,16 +48,18 @@ function Container({ location, history }) {
     //entryPointForGulpStart
     //entryPointForGulpEnd
   
-  let views = [];  
+  let subNavItems = subNav;  
   if (location.pathname.includes('profile')) {
-    views = [{ label: 'Profile settings', value: 'settings' }, { label: 'User management', value: 'users' }];
+    subNavItems = [{ label: 'Profile settings', value: 'settings' }, { label: 'User management', value: 'users' }];
   }
 
   return (
     <ContainerWrapper className="container">
       <UserContext.Provider value={user}>
         <div className="container__column">
-          <TopBar navHidden={navHidden} setNavHidden={setNavHidden} options={views} location={location} history={history} />
+          <SubNavContext.Provider value={subNavItems}>
+            <TopBar navHidden={navHidden} setNavHidden={setNavHidden} options={subNavItems} location={location} history={history} />
+          </SubNavContext.Provider>
           <div className="container__row">
             <NavBar navHidden={navHidden} location={location} history={history} />
             <div className="container__scroll">

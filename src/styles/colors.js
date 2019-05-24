@@ -19,6 +19,7 @@ const colorVariations = {
   darker: 0.1,
   darkest: 0.2,
   overlay: 0.45,
+  overlayHover: 0.5,
 };
 
 export const colors = {
@@ -44,6 +45,7 @@ function makeVariations(name, color, overlay = false) {
   variations[`${name}Darkest`] = darken(colorVariations.darkest, color);
   if (overlay) {
     variations[`${name}Overlay`] = lighten(colorVariations.overlay, color);
+    variations[`${name}OverlayHover`] = lighten(colorVariations.overlayHover, color);
   }
   return variations;
 };
