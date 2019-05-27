@@ -6,7 +6,7 @@
   "dependencies": {
     "@types/react": "^16.8.18",
     "@types/react-dom": "^16.8.4",
-    "freyja-react": "^0.1.11",
+    "freyja-react": "^0.1.16",
     "gulp": "^4.0.0",
     "gulp-cli": "^2.2.0",
     "gulp-git": "^2.9.0",
