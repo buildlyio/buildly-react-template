@@ -6,7 +6,8 @@ const rootReducer = combineReducers(
   {
     //entryPointForGulpStart
     //entryPointForGulpEnd
-    authReducer
+    authReducer,
+    coreuserReducer
   }
 );
 
