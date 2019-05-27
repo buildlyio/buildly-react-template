@@ -21,7 +21,7 @@ const initialState: CoreUserState = {
   deleted: false
 };
 
-export function coreuserReducer(state = initialState, action) {
+export default function coreuserReducer(state = initialState, action) {
   switch (action.type) {
     case LOAD_DATA_COREUSER_COMMIT:
       return addAll(state, action);
