@@ -40,17 +40,17 @@ const ContainerWrapper = styled.div`
 `
 
 /**
- * Container for the app layout when the user is authenticated. 
+ * Container for the app layout when the user is authenticated.
  */
 function Container({ location, history }) {
   const [navHidden, setNavHidden] = useState(false);
   const routeItems = [];
     //entryPointForGulpStart
     //entryPointForGulpEnd
-  
-  let subNavItems = subNav;  
+
+  let subNavItems = subNav;
   if (location.pathname.includes('profile')) {
-    subNavItems = [{ label: 'Profile settings', value: 'settings' }, { label: 'User management', value: 'users' }];
+    subNavItems = [{ label: 'Profile settings', value: 'profile/settings' }, { label: 'User management', value: 'profile/users/current-users' }];
   }
 
   return (

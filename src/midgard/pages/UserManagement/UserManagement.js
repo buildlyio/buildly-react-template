@@ -1,15 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { colors } from 'colors'
 import styled from 'styled-components'
 import { rem } from 'polished'
-import { FjTable, FjButton, FjInputField } from 'freyja-react'
+import { FjButton, FjInputField } from 'freyja-react'
 import InviteForm from 'midgard/components/InviteForm/InviteForm'
 import { invite } from 'midgard/redux/authuser/actions/authuser.actions'
 import { useInput } from "midgard/hooks/useInput";
 import { FjContentSwitcher } from "freyja-react"
 import Popup from 'reactjs-popup'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
+import Users from "./Users/Users";
+import UserGroups from "./UserGroups/UserGroups";
+import { Route, Redirect } from 'react-router-dom'
 
 /**
  * Styled component for the user management page.
@@ -34,6 +37,7 @@ const UserManagementWrapper = styled.div`
     &__header {
       display: flex;
       align-items: center;
+      margin-bottom: ${rem(30)};
       &__name {
         padding-right: ${rem(12)};
       }   
@@ -42,7 +46,19 @@ const UserManagementWrapper = styled.div`
       width: 100%;
     }
   }
-`
+  
+  .content-switcher {
+    margin-top: ${rem(-22)};
+    &__container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      border-top: 1px solid #e1e1e1;
+      margin-bottom: ${rem(30)};
+    }   
+  }
+`;
 
 /**
  * The current oauth user.
@@ -52,25 +68,37 @@ let currentUser = JSON.parse(localStorage.getItem('currentUser'));
 /**
  * Outputs the user management page.
  */
-function UserManagement({dispatch, loading, error, user}) {
+function UserManagement({dispatch, loading, error, user, history, location}) {
   const email = useInput('', { required: true });
   const [inviteCall, setinviteCall] = useState(false);
-  const columns = [{label: 'Name', prop: 'name', flex: '1'}, {label: 'Email', prop: 'email', flex: '3'}];
-  const users = [{name: currentUser.first_name + ' ' + currentUser.last_name, email: currentUser.email}];
+  const subNav = [
+    { label: 'Current users', value: 'current-users' },
+    { label: 'Inactive users', value: 'inactive' },
+    { label: 'User groups', value: 'groups' },
+  ];
+  let viewState = useState('current-users');
+  const [view, setView] = viewState;
+
+  // this will be triggered whenever the content switcher is clicked to change the view
+  useEffect(() => {
+    history.push(`/app/profile/users/${view || location.state}`);
+  }, [view]);
+
 
   if (user && user.data && user.data.detail && inviteCall && !error) {
     NotificationManager.success(user.data.detail, 'Success');
     setinviteCall(false);
   }
 
-  const submit = (event) => {
+
+  const inviteUser = (event) => {
     event.preventDefault();
     const inviteFormValue = {
       emails: [email.value],
     };
     setinviteCall(true);
     dispatch(invite(inviteFormValue));
-  }
+  };
 
 
   return (
@@ -87,7 +115,7 @@ function UserManagement({dispatch, loading, error, user}) {
                contentStyle={{ padding: '0px', border: 'none', width:  `{rem(250)}` }}
                arrow={false}
            >
-               <InviteForm onSubmit={submit}>
+               <InviteForm onSubmit={inviteUser}>
                    <div className="invite__form__header"> Invite user to platform</div>
                    <div className="invite__form__input">
                        <FjInputField
@@ -107,11 +135,13 @@ function UserManagement({dispatch, loading, error, user}) {
                </InviteForm>
            </Popup>
       </div>
-        <FjContentSwitcher size="small" active={useState('current')} options={[
-          { label: 'Current users', value: 'current' },
-          { label: 'Inactive users', value: 'inactive' },
-          { label: 'User groups', value: 'groups' },
-        ]} />
+        <div className="content-switcher__container">
+          <div className="content-switcher">
+            <FjContentSwitcher size="small" active={viewState} options={subNav} />
+          </div>
+        </div>
+        <Route path="/app/profile/users/current-users" component={Users} />
+        <Route path="/app/profile/users/groups" component={UserGroups} />
       </div>
       <NotificationContainer />
     </UserManagementWrapper>

@@ -192,7 +192,7 @@ function TopBar({ navHidden, setNavHidden, history, location }) {
 
   useEffect(() => {
     const { from } = location.state || { from: { pathname: view } };
-    history.push(from);
+    history.push(`/app/${view}`);
   }, [view]);
 
   return (
