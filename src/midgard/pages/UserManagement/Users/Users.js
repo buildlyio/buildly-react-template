@@ -51,12 +51,15 @@ function Users({ location, history }) {
     </FjMenu>
   };
 
+  const handleUserDeleted = (user) => {
+    return false;
+  }
   return (
     <UsersWrapper>
       <Crud
         deleteAction="DELETE_ACTION"
         reducer="coreuserReducer"
-        itemDeleted={handleItemDeleted}>
+        itemDeleted={handleUserDeleted}>
         <CrudContext.Consumer>{ crud => (
           <FjTable
             columns={[

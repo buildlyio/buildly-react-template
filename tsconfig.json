@@ -16,6 +16,7 @@
   ],
   "baseUrl": ".",
   "paths": {
+    "midgard": ["./src/midgard/*"],
     "environment": ["./environment.js"]
   },
   "exclude": ["node_modules"],

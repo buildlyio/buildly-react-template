@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from 'react-redux'
 import { FjButton, FjInputField } from 'freyja-react'
+import { create } from 'domain';
 
 export const CrudContext = React.createContext({});
 
@@ -64,8 +65,10 @@ export class Crud extends React.Component<CrudProps> {
   */
   public createItem(item) {
     const {createAction, itemCreated, dispatch} = this.props;
-    dispatch({type: createAction, item});
-    return itemCreated
+    if (createAction) {
+      dispatch({type: createAction, item});
+      return itemCreated
+    }
   };
 
   /**
@@ -74,8 +77,10 @@ export class Crud extends React.Component<CrudProps> {
   */
   updateItem(item) {
     const {updateAction, itemUpdated, dispatch} = this.props;
-    dispatch({type: updateAction, item});
-    return itemUpdated
+    if (updateAction) {
+      dispatch({type: updateAction, item});
+      return itemUpdated
+    }
   };
 
   /**
@@ -84,8 +89,10 @@ export class Crud extends React.Component<CrudProps> {
   */
   deleteItem(item) {
     const {deleteAction, itemDeleted, dispatch} = this.props;
-    dispatch({type: deleteAction, item});
-    return itemDeleted
+    if (deleteAction) {
+      dispatch({type: deleteAction, item});
+      return itemDeleted
+    }
   };
 
   /**
@@ -93,8 +100,10 @@ export class Crud extends React.Component<CrudProps> {
   */
   loadData() {
     const {loadAction, data, dispatch} = this.props;
-    dispatch({type: loadAction});
-    return data;
+    if (loadAction) {
+      dispatch({type: loadAction});
+      return data;
+    }
   }
 
   render() {
