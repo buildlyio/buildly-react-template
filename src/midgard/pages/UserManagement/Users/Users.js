@@ -20,12 +20,6 @@ function Users({ location, history }) {
     { label: 'Read-Only', value: 'read-only' },
   ];
 
-  // dropdown options
-  const actions = [
-    { value: 'deactivate', label: 'Deactivate' },
-    { value: 'delete', label: 'Delete' }
-  ];
-
   // table templates
   const permissionCellTemplate = (row) => {
     return <FjContentSwitcher
@@ -47,17 +41,32 @@ function Users({ location, history }) {
         reducer="coreuserReducer"
       >
         <CrudContext.Consumer>{ crud => {
+          if (crud.getData()) {
+            crud.getData().forEach(row => {
+              if(row.is_active) {
+                row.actions = [
+                  { value: 'deactivate', label: 'Deactivate' },
+                  { value: 'delete', label: 'Delete' }
+                ];
+              } else {
+                row.actions = [
+                  { value: 'activate', label: 'Activate' },
+                  { value: 'delete', label: 'Delete' }
+                ];
+              }
+            });
+          }
           return (
           <FjTable
             columns={[
-              { label: 'Full name', prop: 'name', template: (row) => {return <b>{row.first_name} {row.last_name}</b>}, flex: '1' },
-              { label: 'Email', prop: 'email', flex: '2' },
+              { label: 'Full name', prop: 'name', template: (row) => {return <b style={!row.is_active? {'color': '#aaa'}: null}>{row.first_name} {row.last_name}</b>}, flex: '1' },
+              { label: 'Email', prop: 'email', flex: '2', template: (row) => {return <span style={!row.is_active? {'color': '#aaa'}: null}> {row.email} </span>}},
               { label: 'Last activity', prop: 'activity', template: (row) => {return <small style={{'color': '#aaa'}}>Today</small>}, flex: '1' },
               { label: 'Permissions', prop: 'permission', template: permissionCellTemplate, flex: '2' },
               { label: 'Actions', prop: 'options', template: (row) => {
                   const [open, setOpen] = useState(false);
                   return <FjMenu
-                    menuItems={actions}
+                    menuItems={row.actions}
                     xPosition="right"
                     yPosition="down"
                     open={open}
@@ -65,6 +74,10 @@ function Users({ location, history }) {
                     onActionClicked={(action) => {
                       if (action === 'delete') {
                         crud.deleteItem(row)
+                      } else if (action === 'deactivate') {
+                        crud.updateItem({id: row.id, is_active: false})
+                      } else {
+                        crud.updateItem({id: row.id, is_active: true})
                       }
                     }}
                   >
