@@ -33,27 +33,10 @@ function Users({ location, history }) {
       options={permissions}
       active={
         [row.permission, (item) => {
-          row.permission = item;
+          row.permission = 'admin';
         }]}/>
   };
 
-  const actionsCellTemplate = (row) => {
-    const [open, setOpen] = useState(false);
-    return <FjMenu
-      menuItems={actions}
-      xPosition="right"
-      yPosition="down"
-      open={open}
-      setOpen={() => setOpen(!open)}
-      onActionClicked={(e) => {return false}}
-    >
-      <FjButton variant="secondary" size="small" onClick={() => setOpen(!open)}>•••</FjButton>
-    </FjMenu>
-  };
-
-  const handleUserDeleted = (user) => {
-    return false;
-  }
   return (
     <UsersWrapper>
       <Crud
@@ -62,23 +45,34 @@ function Users({ location, history }) {
         createAction="CREATE_COREUSER"
         loadAction="LOAD_DATA_COREUSER"
         reducer="coreuserReducer"
-        itemDeleted={handleUserDeleted}>
+      >
         <CrudContext.Consumer>{ crud => {
-          console.log(crud.getData())
           return (
           <FjTable
             columns={[
-              { label: 'Full name', prop: 'name', template: (row) => {return <b>{row.name}</b>}, flex: '1' },
+              { label: 'Full name', prop: 'name', template: (row) => {return <b>{row.first_name} {row.last_name}</b>}, flex: '1' },
               { label: 'Email', prop: 'email', flex: '2' },
-              { label: 'Last activity', prop: 'activity', template: (row) => {return <small style={{'color': '#aaa'}}>{row.activity}</small>}, flex: '1' },
+              { label: 'Last activity', prop: 'activity', template: (row) => {return <small style={{'color': '#aaa'}}>Today</small>}, flex: '1' },
               { label: 'Permissions', prop: 'permission', template: permissionCellTemplate, flex: '2' },
-              { label: 'Actions', prop: 'options', template: actionsCellTemplate, flex: '1' },
+              { label: 'Actions', prop: 'options', template: (row) => {
+                  const [open, setOpen] = useState(false);
+                  return <FjMenu
+                    menuItems={actions}
+                    xPosition="right"
+                    yPosition="down"
+                    open={open}
+                    setOpen={() => setOpen(!open)}
+                    onActionClicked={(action) => {
+                      if (action === 'delete') {
+                        crud.deleteItem(row)
+                      }
+                    }}
+                  >
+                    <FjButton variant="secondary" size="small" onClick={() => setOpen(!open)}>•••</FjButton>
+                  </FjMenu>
+                }, flex: '1' },
             ]}
-            rows={[
-              { name: 'Arthur Bailey', email: 'arthur-93@example.com', activity: 'Today', permission: 'admin' },
-              { name: 'Billy West', email: 'billy.west@example.com', activity: 'Yesterday', permission: 'guest' },
-              { name: 'Douglas Weaver', email: 'douglas-89@example.com', activity: '2 days ago', permission: 'guest' }
-            ]}
+            rows={crud.getData()}
           />)
         }}
         </CrudContext.Consumer>
