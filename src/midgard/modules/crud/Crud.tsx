@@ -46,16 +46,28 @@ export interface CrudProps {
   dispatch?: any;
 }
 
+export interface CrudState {
+  dataLoaded: boolean;
+}
+
 /**
  * Crud component wrapper
  */
-export class Crud extends React.Component<CrudProps> {
+export class Crud extends React.Component<CrudProps, CrudState> {
   constructor(props: CrudProps) {
     super(props);
     this.createItem = this.createItem.bind(this);
     this.updateItem = this.updateItem.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
     this.loadData = this.loadData.bind(this);
+    this.getData = this.getData.bind(this);
+    this.state = {
+      dataLoaded: false
+    };
+  }
+
+  componentDidMount() {
+    this.loadData();
   }
 
   /**
@@ -100,10 +112,19 @@ export class Crud extends React.Component<CrudProps> {
   */
   loadData() {
     const {loadAction, data, dispatch} = this.props;
-    if (loadAction) {
+    if (loadAction && !this.state.dataLoaded) {
       dispatch({type: loadAction});
+      this.setState({
+        dataLoaded: true
+      });
       return data;
     }
+  }
+  /**
+   * gets the data from the store
+   */
+  getData() {
+    return this.props.data
   }
 
   render() {
@@ -114,7 +135,8 @@ export class Crud extends React.Component<CrudProps> {
           createItem: this.createItem,
           updateItem: this.updateItem,
           deleteItem: this.deleteItem,
-          getData: this.loadData()
+          loadData: this.loadData,
+          getData: this.getData
         }
       }>
         { children }

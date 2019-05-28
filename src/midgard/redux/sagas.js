@@ -1,6 +1,7 @@
 // react library imports
 import authSaga from "./authuser/sagas/authuser.saga"
 import { all } from 'redux-saga/effects'
+import coreUserSaga from "midgard/redux/coreuser/coreuser.saga";
 
 // single entry point to start all Sagas at once
 export default function* rootSaga() {
@@ -8,6 +9,7 @@ export default function* rootSaga() {
     // import all sagas and call them here:
     //entryPointForGulpStart
     //entryPointForGulpEnd
-    authSaga()
+    authSaga(),
+    coreUserSaga()
   ])
 }

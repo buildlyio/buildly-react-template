@@ -57,10 +57,15 @@ function Users({ location, history }) {
   return (
     <UsersWrapper>
       <Crud
-        deleteAction="DELETE_ACTION"
+        deleteAction="DELETE_COREUSER"
+        updateAction="UPDATE_COREUSER"
+        createAction="CREATE_COREUSER"
+        loadAction="LOAD_DATA_COREUSER"
         reducer="coreuserReducer"
         itemDeleted={handleUserDeleted}>
-        <CrudContext.Consumer>{ crud => (
+        <CrudContext.Consumer>{ crud => {
+          console.log(crud.getData())
+          return (
           <FjTable
             columns={[
               { label: 'Full name', prop: 'name', template: (row) => {return <b>{row.name}</b>}, flex: '1' },
@@ -75,7 +80,7 @@ function Users({ location, history }) {
               { name: 'Douglas Weaver', email: 'douglas-89@example.com', activity: '2 days ago', permission: 'guest' }
             ]}
           />)
-        }
+        }}
         </CrudContext.Consumer>
       </Crud>
   </UsersWrapper>

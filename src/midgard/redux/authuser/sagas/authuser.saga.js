@@ -11,9 +11,6 @@ import {
   UPDATE_USER,
   UPDATE_USER_FAIL,
   UPDATE_USER_SUCCESS,
-  GET_USER,
-  GET_USER_FAIL,
-  GET_USER_SUCCESS,
   INVITE,
   INVITE_FAIL,
   INVITE_SUCCESS
@@ -85,19 +82,6 @@ function* updateUser(payload) {
     }
 }
 
-function* getUser() {
-    try {
-        const user = yield call(httpService.makeRequest, 'get', `${environment.API_URL}coreuser/`);
-        yield call(oauthService.setCurrentCoreUser, user);
-        yield [
-            yield put({ type: GET_USER_SUCCESS, user })
-        ];
-    } catch(error) {
-        yield put({ type: GET_USER_FAIL, error: 'Updating user fields failed' });
-    }
-}
-
-
 function* watchLogout() {
   yield takeLatest(LOGOUT, logout)
 }
@@ -114,9 +98,6 @@ function* watchUpdateUser() {
     yield takeLatest(UPDATE_USER, updateUser)
 }
 
-function* watchGetUser() {
-    yield takeLatest(GET_USER, getUser)
-}
 function* watchInvite() {
     yield takeLatest(INVITE, invite)
 }
@@ -127,7 +108,6 @@ export default function* authSaga() {
     watchLogout(),
     watchRegister(),
     watchUpdateUser(),
-    watchGetUser(),
     watchInvite()
   ]);
 }

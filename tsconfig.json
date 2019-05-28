@@ -8,6 +8,7 @@
     "module": "commonjs",
     "target": "es6",
     "esModuleInterop": true,
+    "moduleResolution": "node",
     "jsx": "react",
     "allowSyntheticDefaultImports": true
   },
@@ -16,8 +17,8 @@
   ],
   "baseUrl": ".",
   "paths": {
-    "midgard": ["./src/midgard/*"],
-    "environment": ["./environment.js"]
+    "midgard/*": ["src/midgard/*"],
+    "environment": ["environment.js"]
   },
   "exclude": ["node_modules"],
   "typedocOptions": {
