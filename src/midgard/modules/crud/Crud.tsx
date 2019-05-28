@@ -56,11 +56,6 @@ export interface CrudState {
 export class Crud extends React.Component<CrudProps, CrudState> {
   constructor(props: CrudProps) {
     super(props);
-    this.createItem = this.createItem.bind(this);
-    this.updateItem = this.updateItem.bind(this);
-    this.deleteItem = this.deleteItem.bind(this);
-    this.loadData = this.loadData.bind(this);
-    this.getData = this.getData.bind(this);
     this.state = {
       dataLoaded: false
     };
@@ -75,10 +70,10 @@ export class Crud extends React.Component<CrudProps, CrudState> {
   * @param item - selected item
   * @public
   */
-  public createItem(item) {
+  public createItem = (item) => {
     const {createAction, itemCreated, dispatch} = this.props;
     if (createAction) {
-      dispatch({type: createAction, item});
+      dispatch({type: createAction, data: item});
       return itemCreated
     }
   };
@@ -87,10 +82,10 @@ export class Crud extends React.Component<CrudProps, CrudState> {
   * send a request to update an item
   * @param item - selected item
   */
-  updateItem(item) {
+  public updateItem = (item) => {
     const {updateAction, itemUpdated, dispatch} = this.props;
     if (updateAction) {
-      dispatch({type: updateAction, item});
+      dispatch({type: updateAction, data: item});
       return itemUpdated
     }
   };
@@ -99,10 +94,10 @@ export class Crud extends React.Component<CrudProps, CrudState> {
   * send a request to delete an item
   * @param item - selected item
   */
-  deleteItem(item) {
+  public deleteItem = (item) => {
     const {deleteAction, itemDeleted, dispatch} = this.props;
     if (deleteAction) {
-      dispatch({type: deleteAction, item});
+      dispatch({type: deleteAction, data: item});
       return itemDeleted
     }
   };
@@ -110,7 +105,7 @@ export class Crud extends React.Component<CrudProps, CrudState> {
   /**
   * load the data to the store and returns it
   */
-  loadData() {
+  public loadData = () => {
     const {loadAction, data, dispatch} = this.props;
     if (loadAction && !this.state.dataLoaded) {
       dispatch({type: loadAction});
@@ -123,7 +118,7 @@ export class Crud extends React.Component<CrudProps, CrudState> {
   /**
    * gets the data from the store
    */
-  getData() {
+  public getData = () => {
     return this.props.data
   }
 

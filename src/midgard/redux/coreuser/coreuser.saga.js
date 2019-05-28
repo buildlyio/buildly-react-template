@@ -57,7 +57,7 @@ function* deleteCoreUser() {
       yield put({ type: DELETE_COREUSER_COMMIT, data: res.data})
     ];
   } catch(error) {
-    yield put({ type: DELETE_COREUSER_FAIL, error: 'delete user' });
+    yield put({ type: DELETE_COREUSER_FAIL, error: 'delete user failed' });
   }
 }
 
