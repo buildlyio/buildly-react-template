@@ -50,9 +50,9 @@ function* updateCoreUser() {
   }
 }
 
-function* deleteCoreUser() {
+function* deleteCoreUser(action) {
   try {
-    const res = yield call(httpService.makeRequest, 'delete', `${environment.API_URL}coreuser/${action.data.id}/`, {}, true);
+    const res = yield call(httpService.makeRequest, 'delete', `${environment.API_URL}coreuser/${action.data.id}/`,  action.data, true);
     yield [
       yield put({ type: DELETE_COREUSER_COMMIT, data: res.data})
     ];

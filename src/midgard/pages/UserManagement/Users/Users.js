@@ -32,7 +32,7 @@ function Users({ location, history }) {
       size="small"
       options={permissions}
       active={
-        [row.permission, (item) => {
+        ['admin', (item) => {
           row.permission = 'admin';
         }]}/>
   };
