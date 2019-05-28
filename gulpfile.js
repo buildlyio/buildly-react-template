@@ -163,8 +163,8 @@ _gulp.default.task('deleteIndex', function (done) {
     var end = "//entryPointForGulpEnd";
     var fileObject = [];
     fileObject.push('src/midgard/layout/Container/Container.js');
-    fileObject.push('src/redux/reducers.js');
-    fileObject.push('src/redux/sagas.js');
+    fileObject.push('src/midgard/redux/reducers.js');
+    fileObject.push('src/midgard/redux/sagas.js');
     for (var i=0; fileObject[i];i++) {
         var container = _fs.readFileSync(fileObject[i], "utf8");
         var importSearch = container.search(imports);
@@ -207,10 +207,10 @@ _gulp.default.task('createFile', function (done) {
         imports.push("import " + name + " from 'clients/" + name + "/src/" + name + "'; \n");
 
         sagaRoot = sagaRoot + smallName + "Saga(),\n    ";
-        sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + config.modules[i].name + "/src/redux/" + name + ".saga'; \n");
+        sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + config.modules[i].name + "/src/midgard/redux/" + name + ".saga'; \n");
 
         reducerRoot = reducerRoot + smallName + "Reducer,\n    ";
-        reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/redux/" + name + ".reducer'; \n");
+        reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/midgard/redux/" + name + ".reducer'; \n");
 
         routes.push("routeItems.push(<Route key=\"" + smallName + "\" path=\"/app/" + smallName + "/\" component={" + name + "} />);\n    ");
     }
@@ -227,17 +227,17 @@ _gulp.default.task('createFile', function (done) {
     container = container.slice(0, index + start.length) + "\n    "  + routes.join("") + container.slice(indexEnd);
     _fs.writeFileSync('src/midgard/layout/Container/Container.js', imports.join("") + container);
 
-    var sagaFile = _fs.readFileSync('src/redux/sagas.js',"utf8");
+    var sagaFile = _fs.readFileSync('src/midgard/redux/sagas.js',"utf8");
     index = sagaFile.search(start);
     indexEnd = sagaFile.search(end);
     sagaFile = sagaFile.slice(0, index + start.length) + "\n    " + sagaRoot + sagaFile.slice(indexEnd);
-    _fs.writeFileSync('src/redux/sagas.js', sagasImports.join("") + sagaFile);
+    _fs.writeFileSync('src/midgard/redux/sagas.js', sagasImports.join("") + sagaFile);
 
-    var reducerFile = _fs.readFileSync('src/redux/reducers.js',"utf8");
+    var reducerFile = _fs.readFileSync('src/midgard/redux/reducers.js',"utf8");
     index = reducerFile.search(start);
     indexEnd = reducerFile.search(end);
     reducerFile = reducerFile.slice(0, index + start.length) + "\n    " + reducerRoot + reducerFile.slice(indexEnd);
-    _fs.writeFileSync('src/redux/reducers.js', reducerImports.join("") + reducerFile);
+    _fs.writeFileSync('src/midgard/redux/reducers.js', reducerImports.join("") + reducerFile);
 
     var indexFile = _fs.readFileSync('src/index.html',"utf8");
     start = '<title>';
