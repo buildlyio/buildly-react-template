@@ -21,10 +21,10 @@ function* loadCoreGroups() {
     try {
         const group = yield call(httpService.makeRequest, 'get', `${environment.API_URL}coregroups/`);
         yield [
-            yield put({ type: LOAD_DATA_COREGROUP_COMMIT, group })
+            yield put({ type: LOAD_DATA_COREGROUP_COMMIT, data:group.data })
         ];
     } catch(error) {
-        yield put({ type: LOAD_DATA_COREGROUP_FAIL, error: 'getting core groups failed' });
+        yield put({ type: LOAD_DATA_COREGROUP_FAIL, error });
     }
 }
 
@@ -42,13 +42,29 @@ function* deleteCoreGroups(data) {
 
 function* updateCoreGroups(data) {
     try {
-        const group = yield call(httpService.makeRequest, 'put', `${environment.API_URL}coregroups/${data.item.id}`, data.item);
+        const group = yield call(httpService.makeRequest, 'put', `${environment.API_URL}coregroups/${data.data.id}/`, data.data);
         yield [
-            yield put({ type: UPDATE_COREGROUP_COMMIT, data:data.item, group })
+            yield put({ type: UPDATE_COREGROUP_COMMIT, data:data.data })
         ];
     } catch(error) {
         yield put({ type: UPDATE_COREGROUP_FAIL, error: 'failed to update group' });
     }
+}
+
+
+function* createCoreGroups(data) {
+    try {
+        const group = yield call(httpService.makeRequest, 'post', `${environment.API_URL}coregroups/`, data.data);
+        yield [
+            yield put({ type: CREATE_COREGROUP_COMMIT, data:group.data })
+        ];
+    } catch(error) {
+        yield put({ type: CREATE_COREGROUP_FAIL, error: 'failed to create group' });
+    }
+}
+
+function* watchCreateCoreGroups() {
+    yield takeLatest(CREATE_COREGROUP, createCoreGroups)
 }
 
 function* watchLoadCoreGroups() {
@@ -67,6 +83,7 @@ export default function* coreGroupSaga() {
   yield all([
       watchLoadCoreGroups(),
       watchDeleteCoreGroups(),
-      watchUpdateCoreGroups()
+      watchUpdateCoreGroups(),
+      watchCreateCoreGroups()
   ]);
 }
