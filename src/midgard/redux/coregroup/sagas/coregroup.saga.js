@@ -21,10 +21,10 @@ function* loadCoreGroups() {
     try {
         const group = yield call(httpService.makeRequest, 'get', `${environment.API_URL}coregroups/`);
         yield [
-            yield put({ type: LOAD_DATA_COREGROUP_COMMIT, group })
+            yield put({ type: LOAD_DATA_COREGROUP_COMMIT, data:group.data })
         ];
     } catch(error) {
-        yield put({ type: LOAD_DATA_COREGROUP_FAIL, error: 'getting core groups failed' });
+        yield put({ type: LOAD_DATA_COREGROUP_FAIL, error });
     }
 }
 

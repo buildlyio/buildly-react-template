@@ -16,7 +16,10 @@ const UserGroupsWrapper = styled.div`
 /**
  * Manage user groups
  */
-function UserGroups({history, location}) {
+function UserGroups() {
+
+    // state to toggle actions menus
+    const [menuState, setMenuState] = useState({opened: false, id: ''});
 
     const permissionCellTemplate = (row, crud, operation) => {
         return <FjToggle
@@ -36,10 +39,8 @@ function UserGroups({history, location}) {
             "name": "custom"
         };
         crud.createItem(item);
-    }
-    const [toggleState, setToggleState] = useState(true)
-    // state to toggle actions menus
-    const [menuState, setMenuState] = useState({opened: false, id: ''});
+    };
+
 
     const actionsTemplate = (row, crud) => {
         return <FjMenu
@@ -98,6 +99,7 @@ function UserGroups({history, location}) {
                                 },
                             ]}
                             rows={crud.getData()}
+                            {...console.log(crud.getData())}
                         />
                         </div>
                             )
