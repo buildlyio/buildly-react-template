@@ -1,16 +1,16 @@
 import {
     LOAD_DATA_COREGROUP,
     LOAD_DATA_COREGROUP_FAIL,
-    LOAD_DATA_COREGROUP_SUCCESS,
+    LOAD_DATA_COREGROUP_COMMIT,
     UPDATE_COREGROUP,
     UPDATE_COREGROUP_FAIL,
-    UPDATE_COREGROUP_SUCCESS,
+    UPDATE_COREGROUP_COMMIT,
     CREATE_COREGROUP,
     CREATE_COREGROUP_FAIL,
-    CREATE_COREGROUP_SUCCESS,
+    CREATE_COREGROUP_COMMIT,
     DELETE_COREGROUP,
     DELETE_COREGROUP_FAIL,
-    DELETE_COREGROUP_SUCCESS
+    DELETE_COREGROUP_COMMIT
 } from '../actions/coregroup.actions';
 
 const initialState = {
@@ -31,7 +31,7 @@ export default (state = initialState, action) => {
         error: null
       };
 
-    case LOAD_DATA_COREGROUP_SUCCESS:
+    case LOAD_DATA_COREGROUP_COMMIT:
       return {
         ...state,
         loading: false,
@@ -54,7 +54,7 @@ export default (state = initialState, action) => {
               error: null
           };
 
-      case UPDATE_COREGROUP_SUCCESS:
+      case UPDATE_COREGROUP_COMMIT:
           return {
               ...state,
               loading: false,
@@ -78,7 +78,7 @@ export default (state = initialState, action) => {
               error: null
           };
 
-      case CREATE_COREGROUP_SUCCESS:
+      case CREATE_COREGROUP_COMMIT:
           return {
               ...state,
               loading: false,
@@ -102,7 +102,7 @@ export default (state = initialState, action) => {
               error: null
           };
 
-      case DELETE_COREGROUP_SUCCESS: {
+      case DELETE_COREGROUP_COMMIT: {
           result = {
               ...state,
               loading: false,
