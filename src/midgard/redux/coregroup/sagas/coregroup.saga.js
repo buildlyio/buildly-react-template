@@ -51,6 +51,22 @@ function* updateCoreGroups(data) {
     }
 }
 
+
+function* createCoreGroups(data) {
+    try {
+        const group = yield call(httpService.makeRequest, 'post', `${environment.API_URL}coregroups/`, data.data);
+        yield [
+            yield put({ type: CREATE_COREGROUP_COMMIT, data:group.data })
+        ];
+    } catch(error) {
+        yield put({ type: CREATE_COREGROUP_FAIL, error: 'failed to create group' });
+    }
+}
+
+function* watchCreateCoreGroups() {
+    yield takeLatest(CREATE_COREGROUP, createCoreGroups)
+}
+
 function* watchLoadCoreGroups() {
     yield takeLatest(LOAD_DATA_COREGROUP, loadCoreGroups)
 }
@@ -67,6 +83,7 @@ export default function* coreGroupSaga() {
   yield all([
       watchLoadCoreGroups(),
       watchDeleteCoreGroups(),
-      watchUpdateCoreGroups()
+      watchUpdateCoreGroups(),
+      watchCreateCoreGroups()
   ]);
 }

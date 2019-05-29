@@ -82,7 +82,7 @@ export default (state = initialState, action) => {
               ...state,
               loading: false,
               loaded: true,
-              data: action.group
+              data:[...state.data, action.data]
           };
 
       case CREATE_COREGROUP_FAIL:

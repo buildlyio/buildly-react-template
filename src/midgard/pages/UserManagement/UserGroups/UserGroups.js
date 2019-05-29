@@ -5,6 +5,11 @@ import Crud, { CrudContext } from 'midgard/modules/crud/Crud';
 
 const UserGroupsWrapper = styled.div`
     width: 100%;
+    .create__button {
+        display: flex;
+        justify-content: flex-end
+    }
+    
   }
 `
 
@@ -16,14 +21,23 @@ function UserGroups({history, location}) {
     const permissionCellTemplate = (row, crud, operation) => {
         return <FjToggle
             size="micro"
-            onChange={() => {
+            checked={
+                [row.permissions[operation], () => {
                 row.permissions[operation] = !row.permissions[operation];
                 crud.updateItem(row)
-            }}
-            checked={useState(row.permissions[operation])}
+            }]}
         />
     };
-
+    /**
+     * Clears authentication and redirects to the login screen.
+     */
+    const addGroup = (crud) => {
+        let item = {
+            "name": "custom"
+        };
+        crud.createItem(item);
+    }
+    const [toggleState, setToggleState] = useState(true)
     // state to toggle actions menus
     const [menuState, setMenuState] = useState({opened: false, id: ''});
 
@@ -61,6 +75,10 @@ function UserGroups({history, location}) {
                     }
 
                     return (
+                        <div>
+                        <div className="create__button">
+                            <FjButton variant="secondary" size="small" onClick={() => addGroup(crud)}>Create a group</FjButton>
+                        </div>
                         <FjTable
                             columns={[
                                 {
@@ -80,7 +98,9 @@ function UserGroups({history, location}) {
                                 },
                             ]}
                             rows={crud.getData()}
-                        />)
+                        />
+                        </div>
+                            )
                 }
                }
                 </CrudContext.Consumer>
