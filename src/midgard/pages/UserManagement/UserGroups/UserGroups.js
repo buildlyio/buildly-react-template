@@ -16,7 +16,7 @@ function UserGroups({history, location}) {
     const permissionCellTemplate = (row, crud, operation) => {
         return <FjToggle
             size="micro"
-            onChange={(row) => {
+            onChange={() => {
                 row.permissions[operation] = !row.permissions[operation];
                 crud.updateItem(row)
             }}

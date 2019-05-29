@@ -59,7 +59,6 @@ export default (state = initialState, action) => {
               ...state,
               loading: false,
               loaded: true,
-              data: action.group
           };
 
       case UPDATE_COREGROUP_FAIL:

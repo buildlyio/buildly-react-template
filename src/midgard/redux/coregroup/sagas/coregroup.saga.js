@@ -42,9 +42,9 @@ function* deleteCoreGroups(data) {
 
 function* updateCoreGroups(data) {
     try {
-        const group = yield call(httpService.makeRequest, 'put', `${environment.API_URL}coregroups/${data.item.id}`, data.item);
+        const group = yield call(httpService.makeRequest, 'put', `${environment.API_URL}coregroups/${data.data.id}/`, data.data);
         yield [
-            yield put({ type: UPDATE_COREGROUP_COMMIT, data:data.item, group })
+            yield put({ type: UPDATE_COREGROUP_COMMIT, data:data.data })
         ];
     } catch(error) {
         yield put({ type: UPDATE_COREGROUP_FAIL, error: 'failed to update group' });
