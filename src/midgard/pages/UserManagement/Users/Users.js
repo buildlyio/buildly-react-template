@@ -12,7 +12,7 @@ const UsersWrapper = styled.div`
  */
 function Users({ location, history }) {
 
-  // state for actions menu
+  // state to toggle actions menus
   const [menuState, setMenuState] = useState({opened: false, id: ''});
 
   // permissions options
@@ -21,6 +21,40 @@ function Users({ location, history }) {
     { label: 'Guest', value: 'guest' },
     { label: 'Read-Only', value: 'Read-Only' },
   ];
+
+  // table templates
+  const permissionsTemplate = (row, crud) => {
+    return <FjContentSwitcher
+      size="small"
+      options={permissions}
+      active={
+        [row.core_groups.name, (item) => {
+          crud.updateItem({id: row.id, core_groups: [{id: 21}]})
+        }]}/>
+  };
+
+  const actionsTemplate = (row, crud) => {
+    return <FjMenu
+      menuItems={row.actions}
+      xPosition="right"
+      yPosition="down"
+      open={menuState.id === row.id ? menuState.opened: null}
+      setOpen={() => setMenuState({opened: !menuState.opened, id: row.id})}
+      onActionClicked={(action) => {
+        if (action === 'delete') {
+          crud.deleteItem(row)
+        } else if (action === 'deactivate') {
+          crud.updateItem({id: row.id, is_active: false})
+        } else {
+          crud.updateItem({id: row.id, is_active: true})
+        }
+      }}
+    >
+      <FjButton variant="secondary" size="small" onClick={() => setMenuState({opened: !menuState.opened, id: row.id})}>•••</FjButton>
+    </FjMenu>
+  };
+
+
 
   return (
     <UsersWrapper>
@@ -53,36 +87,8 @@ function Users({ location, history }) {
               { label: 'Full name', prop: 'name', template: (row) => {return <b style={!row.is_active? {'color': '#aaa'}: null}>{row.first_name} {row.last_name}</b>}, flex: '1' },
               { label: 'Email', prop: 'email', flex: '2', template: (row) => {return <span style={!row.is_active? {'color': '#aaa'}: null}> {row.email} </span>}},
               { label: 'Last activity', prop: 'activity', template: (row) => {return <small style={{'color': '#aaa'}}>Today</small>}, flex: '1' },
-              { label: 'Permissions', prop: 'permission', template: (row) => {
-                  return <FjContentSwitcher
-                    size="small"
-                    options={permissions}
-                    active={
-                      [row.core_groups.name, (item) => {
-                        crud.updateItem({id: row.id, core_groups: [{id: 21}]})
-                      }]}/>
-                }
-              , flex: '2' },
-              { label: 'Actions', prop: 'options', template: (row) => {
-                  return <FjMenu
-                    menuItems={row.actions}
-                    xPosition="right"
-                    yPosition="down"
-                    open={menuState.id === row.id ? menuState.opened: null}
-                    setOpen={() => setMenuState({opened: !menuState.opened, id: row.id})}
-                    onActionClicked={(action) => {
-                      if (action === 'delete') {
-                        crud.deleteItem(row)
-                      } else if (action === 'deactivate') {
-                        crud.updateItem({id: row.id, is_active: false})
-                      } else {
-                        crud.updateItem({id: row.id, is_active: true})
-                      }
-                    }}
-                  >
-                    <FjButton variant="secondary" size="small" onClick={() => setMenuState({opened: !menuState.opened, id: row.id})}>•••</FjButton>
-                  </FjMenu>
-                }, flex: '1' },
+              { label: 'Permissions', prop: 'permission', template: (row) => permissionsTemplate(row,crud), flex: '2' },
+              { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud), flex: '1' },
             ]}
             rows={crud.getData()}
           />)
