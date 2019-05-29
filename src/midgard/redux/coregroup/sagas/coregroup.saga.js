@@ -30,9 +30,9 @@ function* loadCoreGroups() {
 
 function* deleteCoreGroups(data) {
     try {
-        const group = yield call(httpService.makeRequest, 'delete', `${environment.API_URL}coregroups/${data.item.id}`);
+        const group = yield call(httpService.makeRequest, 'delete', `${environment.API_URL}coregroups/${data.data.id}`);
         yield [
-            yield put({ type: DELETE_COREGROUP_COMMIT, data:data.item, group })
+            yield put({ type: DELETE_COREGROUP_COMMIT, data:data.data, group })
         ];
     } catch(error) {
         yield put({ type: DELETE_COREGROUP_FAIL, error: 'failed deleting group' });

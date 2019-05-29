@@ -102,15 +102,13 @@ export default (state = initialState, action) => {
               error: null
           };
 
-      case DELETE_COREGROUP_COMMIT: {
-          result = {
+      case DELETE_COREGROUP_COMMIT:
+          return {
               ...state,
               loading: false,
               loaded: true,
               data: state.data.filter(item => item['id'] !== action.data['id'])
           };
-          return result;
-      }
 
       case DELETE_COREGROUP_FAIL:
           return {

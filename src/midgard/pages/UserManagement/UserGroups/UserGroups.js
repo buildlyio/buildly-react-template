@@ -13,17 +13,37 @@ const UserGroupsWrapper = styled.div`
  */
 function UserGroups({history, location}) {
 
-    // dropdown options
-    const actions = [
-        { value: 'delete', label: 'Delete' }
-    ];
-
-
-    const permissionCellTemplate = (row) => {
+    const permissionCellTemplate = (row, crud, operation) => {
         return <FjToggle
             size="micro"
-            />
+            onChange={(row) => {
+                row.permissions[operation] = !row.permissions[operation];
+                crud.updateItem(row)
+            }}
+            checked={useState(row.permissions[operation])}
+        />
     };
+
+    // state to toggle actions menus
+    const [menuState, setMenuState] = useState({opened: false, id: ''});
+
+    const actionsTemplate = (row, crud) => {
+        return <FjMenu
+            menuItems={row.actions}
+            xPosition="right"
+            yPosition="down"
+            open={menuState.id === row.id ? menuState.opened: null}
+            setOpen={() => setMenuState({opened: !menuState.opened, id: row.id})}
+            onActionClicked={(action) => {
+                if (action === 'delete') {
+                    crud.deleteItem(row)
+                }
+            }}
+        >
+            <FjButton variant="secondary" size="small" onClick={() => setMenuState({opened: !menuState.opened, id: row.id})}>•••</FjButton>
+        </FjMenu>
+    };
+
     return (
         <UserGroupsWrapper>
             <Crud
@@ -33,36 +53,36 @@ function UserGroups({history, location}) {
                 loadAction="LOAD_DATA_COREGROUP"
                 reducer="coreGroupReducer"
                >
-                <CrudContext.Consumer>{ crud => (
-                    <FjTable
-                        columns={[
-                            { label: 'Group Type', prop: 'name', flex: '1', template: (row) => {return <b>{row.name}</b>} },
-                            { label: 'Create', prop: 'Create',template: permissionCellTemplate, },
-                            { label: 'Read', prop: 'Read', template: permissionCellTemplate },
-                            { label: 'Update', prop: 'Update', template: permissionCellTemplate },
-                            { label: 'Delete', prop: 'Delete', template: permissionCellTemplate,flex: '2'},
-                            { label: 'Actions', prop: 'options', template: (row) => {
-                                    const [open, setOpen] = useState(false);
-                                    return <FjMenu
-                                        menuItems={actions}
-                                        xPosition="right"
-                                        yPosition="down"
-                                        open={open}
-                                        setOpen={() => setOpen(!open)}
-                                        onActionClicked={(action) => {
-                                            if (action === 'delete') {
-                                                crud.deleteItem(row)
-                                            }
-                                        }}
-                                    >
-                                        <FjButton variant="secondary" size="small" onClick={() => setOpen(!open)}>•••</FjButton>
-                                    </FjMenu>
-                                }, flex: '1' },
-                        ]}
-                        rows={crud.getData()}
+                <CrudContext.Consumer>{ crud => {
+                    if (crud.getData()) {
+                        crud.getData().forEach(row => {
+                            row.actions = [{value: 'delete', label: 'Delete'}];
+                        });
+                    }
 
-                    />)
+                    return (
+                        <FjTable
+                            columns={[
+                                {
+                                    label: 'Group Type', prop: 'name', flex: '1', template: (row) => {
+                                        return <b>{row.name}</b>
+                                    }
+                                },
+                                {label: 'Create', prop: 'Create', template: (row) => permissionCellTemplate(row, crud, 'create' )},
+                                {label: 'Read', prop: 'Read', template: (row) => permissionCellTemplate(row, crud, 'read')},
+                                {label: 'Update', prop: 'Update', template: (row) => permissionCellTemplate(row, crud, 'update')},
+                                {label: 'Delete', prop: 'Delete', template: (row) => permissionCellTemplate(row, crud, 'delete'), flex: '2'},
+                                {
+                                    label: 'Actions',
+                                    prop: 'options',
+                                    template: (row) => actionsTemplate(row, crud),
+                                    flex: '1'
+                                },
+                            ]}
+                            rows={crud.getData()}
+                        />)
                 }
+               }
                 </CrudContext.Consumer>
             </Crud>
         </UserGroupsWrapper>
