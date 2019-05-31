@@ -66,8 +66,6 @@ function Users({ location, history, data, dispatch }) {
     </FjMenu>
   };
 
-
-
   return (
     <UsersWrapper>
       <Crud
