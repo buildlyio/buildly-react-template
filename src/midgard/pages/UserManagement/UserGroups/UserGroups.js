@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { FjButton, FjTable, FjContentSwitcher, FjMenu, FjToggle } from 'freyja-react'
+import { FjButton, FjTable, FjContentSwitcher, FjMenu, FjToggle, FjInlineEditor } from 'freyja-react'
 import Crud, { CrudContext } from 'midgard/modules/crud/Crud';
 
 const UserGroupsWrapper = styled.div`
@@ -58,7 +58,17 @@ function UserGroups() {
             <FjButton variant="secondary" size="small" onClick={() => setMenuState({opened: !menuState.opened, id: row.id})}>•••</FjButton>
         </FjMenu>
     };
-
+    const update = (crud, row, value) => {
+        row.name = value;
+        crud.updateItem(row);
+    };
+    const nameTemplate = (row, crud) =>{
+        return <FjInlineEditor
+            tag="h4"
+            id={row.id}
+            value={row.name}
+            onChange={(event) => update(crud, row, event)} />
+    };
     return (
         <UserGroupsWrapper>
             <Crud
@@ -82,11 +92,7 @@ function UserGroups() {
                         </div>
                         <FjTable
                             columns={[
-                                {
-                                    label: 'Group Type', prop: 'name', flex: '1', template: (row) => {
-                                        return <b>{row.name}</b>
-                                    }
-                                },
+                                {label: 'Group Type', prop: 'name', flex: '1', template: (row) => nameTemplate(row, crud )},
                                 {label: 'Create', prop: 'Create', template: (row) => permissionCellTemplate(row, crud, 'create' )},
                                 {label: 'Read', prop: 'Read', template: (row) => permissionCellTemplate(row, crud, 'read')},
                                 {label: 'Update', prop: 'Update', template: (row) => permissionCellTemplate(row, crud, 'update')},
