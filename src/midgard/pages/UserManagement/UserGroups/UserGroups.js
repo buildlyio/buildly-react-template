@@ -99,7 +99,6 @@ function UserGroups() {
                                 },
                             ]}
                             rows={crud.getData()}
-                            {...console.log(crud.getData())}
                         />
                         </div>
                             )
