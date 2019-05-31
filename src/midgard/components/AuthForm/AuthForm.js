@@ -63,7 +63,11 @@ function AuthForm({children, onSubmit, link}) {
             <img className="auth__card__logo" src={logo} />
             <form className="auth__form" onSubmit={onSubmit}>
               {children}
-              <Link className="auth__form__link" to={link.value}>{link.label}</Link>
+              <Link className="auth__form__link" to={{
+                  pathname: `${link.value}`,
+                  register: false
+              }}
+              >{link.label}</Link>
             </form>
           </div>
         </div>
