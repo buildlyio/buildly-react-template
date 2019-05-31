@@ -3,7 +3,7 @@ import React from "react"
 //entryPointForGulpStart
 export const app = {
   appTitle: "My App",
-  modules: []
+  modules: [{"id":"blueprint","title":"Blueprint"}]
 };
 //entryPointForGulpEnd
 
