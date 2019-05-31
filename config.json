@@ -1,5 +1,9 @@
 {
   "appTitle": "My App",
   "modules": [
+    {
+      "name": "Blueprint",
+      "url": "https://github.com/Humanitec/blueprint_client_react"
+    }
   ]
 }

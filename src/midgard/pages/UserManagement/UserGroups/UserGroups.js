@@ -68,7 +68,7 @@ function UserGroups() {
                 loadAction="LOAD_DATA_COREGROUP"
                 reducer="coreGroupReducer"
                >
-                <CrudContext.Consumer>{ crud => {
+                { crud => {
                     if (crud.getData()) {
                         crud.getData().forEach(row => {
                             row.actions = [{value: 'delete', label: 'Delete'}];
@@ -105,7 +105,6 @@ function UserGroups() {
                             )
                 }
                }
-                </CrudContext.Consumer>
             </Crud>
         </UserGroupsWrapper>
     )

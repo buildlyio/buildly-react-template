@@ -77,7 +77,7 @@ function Users({ location, history, data, dispatch }) {
         loadAction="LOAD_DATA_COREUSER"
         reducer="coreuserReducer"
       >
-        <CrudContext.Consumer>{ crud => {
+        { crud => {
           if (crud.getData()) {
             crud.getData().forEach(row => {
               if(row.is_active) {
@@ -105,7 +105,6 @@ function Users({ location, history, data, dispatch }) {
             rows={crud.getData()}
           />)
         }}
-        </CrudContext.Consumer>
       </Crud>
   </UsersWrapper>
   )
