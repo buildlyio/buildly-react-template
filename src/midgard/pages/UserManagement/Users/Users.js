@@ -38,6 +38,7 @@ function Users({ location, history, data, dispatch }) {
       return <FjContentSwitcher
         size="small"
         options={permissions}
+        disabled={!row.is_active}
         active={
           [row.core_groups[0] && row.core_groups[0].id || row.core_groups[0], (item) => {
             crud.updateItem({id: row.id, core_groups: [item]})
