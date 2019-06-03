@@ -73,7 +73,6 @@ function UserManagement({dispatch, loading, error, user, history, location}) {
   const [inviteCall, setinviteCall] = useState(false);
   const subNav = [
     { label: 'Current users', value: 'current-users' },
-    { label: 'Inactive users', value: 'inactive' },
     { label: 'User groups', value: 'groups' },
   ];
   let viewState = useState('current-users');
