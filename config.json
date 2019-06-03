@@ -4,6 +4,10 @@
     {
       "name": "Blueprint",
       "url": "https://github.com/Humanitec/blueprint_client_react"
+    },
+    {
+      "name": "Products",
+      "url": "https://github.com/Humanitec/product_client_react"
     }
   ]
 }
