@@ -10,14 +10,13 @@ import { useInput } from 'midgard/hooks/useInput';
 /**
  * Outputs the login form page for the application.
  */
-function Register({dispatch, loading, loaded, error}) {
+function Register({dispatch, loading, loaded, error, location}) {
   const email = useInput('', { required: true });
   const username = useInput('', { required: true });
   const password = useInput('', { required: true });
   const organization_name = useInput('', { required: true });
   const first_name = useInput('');
   const last_name = useInput('');
-  const [buttonClicked, setButtonClicked] = useState(false);
 
   const loginLink = { label: 'Login', value: '/login' };
   const valid = email.valid && username.valid && password.valid && organization_name.valid && first_name.valid && last_name.valid;
@@ -26,8 +25,7 @@ function Register({dispatch, loading, loaded, error}) {
     return <Redirect push to="/" />;
   }
   
-  if (loaded && buttonClicked) {
-    setButtonClicked(false);
+  if (loaded && location.register && !error) {
     return <Redirect push to={loginLink.value} />;
   }
 
@@ -37,7 +35,7 @@ function Register({dispatch, loading, loaded, error}) {
    */
   const submit = (event) => {
     event.preventDefault();
-    setButtonClicked(true);
+      location.register = true;
     const registerFormValue = {
       username: username.value,
       email: email.value,
