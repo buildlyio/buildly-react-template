@@ -1,10 +1,6 @@
 import * as React from "react";
 import { connect } from 'react-redux'
 import { FjButton, FjInputField } from 'freyja-react'
-import { create } from 'domain';
-
-export const CrudContext = React.createContext({});
-
 
 export interface CrudProps {
   /**
@@ -44,6 +40,7 @@ export interface CrudProps {
    */
   reducer?: any;
   dispatch?: any;
+  children: any
 }
 
 export interface CrudState {
@@ -124,19 +121,13 @@ export class Crud extends React.Component<CrudProps, CrudState> {
 
   render() {
     const {children} = this.props;
-    return (
-      <CrudContext.Provider value={
-        {
-          createItem: this.createItem,
-          updateItem: this.updateItem,
-          deleteItem: this.deleteItem,
-          loadData: this.loadData,
-          getData: this.getData
-        }
-      }>
-        { children }
-      </CrudContext.Provider>
-    );
+    return children({
+        createItem: this.createItem,
+        updateItem: this.updateItem,
+        deleteItem: this.deleteItem,
+        loadData: this.loadData,
+        getData: this.getData
+      })
   };
 }
 

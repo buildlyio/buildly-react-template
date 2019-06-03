@@ -9,10 +9,9 @@ import Crud, { CrudContext } from './Crud';
  function CrudExample() {
    return (
      <Crud deleteAction="DELETE_ACTION" itemDeleted={handleItemDeleted}>
-         <CrudContext.Consumer>{ crud => (
+         { crud => (
             <button onClick={() => crud.deleteItem({id: 2})}/>``
            )}
-         </CrudContext.Consumer>
      </Crud>
    );
  }
