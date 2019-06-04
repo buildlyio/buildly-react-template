@@ -23,9 +23,9 @@ i18n
     }
   });
  // load translations
-  httpService.makeRequest('get', 'translation/main', {}, true).then(translations => {
-    i18next.addResourceBundle('en', 'blueprint', translations);
-  });
+ //  httpService.makeRequest('get', 'translation/main', {}, true).then(translations => {
+ //    i18next.addResourceBundle('en', 'blueprint', translations);
+ //  });
 
 
 export default i18n;

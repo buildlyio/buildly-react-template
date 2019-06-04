@@ -15,11 +15,14 @@ import {
 } from './coreuser.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
 import { httpService } from 'midgard/modules/http/http.service';
+
+const endpoint = `${environment.API_URL}coreuser/`;
+
 import { environment } from 'environment';
 
 function* loadCoreUsers() {
     try {
-        const res = yield call(httpService.makeRequest, 'get', `${environment.API_URL}coreuser/`);
+        const res = yield call(httpService.makeRequest, 'get', endpoint);
         yield [
             yield put({ type: LOAD_DATA_COREUSER_COMMIT, data: res.data })
         ];
@@ -30,7 +33,7 @@ function* loadCoreUsers() {
 
 function* createCoreUser(action) {
   try {
-    const res = yield call(httpService.makeRequest, 'post', `${environment.API_URL}coreuser/`, action.data);
+    const res = yield call(httpService.makeRequest, 'post', endpoint, action.data);
     yield [
       yield put({ type: CREATE_COREUSER_COMMIT, data: res.data })
     ];
@@ -41,7 +44,7 @@ function* createCoreUser(action) {
 
 function* updateCoreUser(action) {
   try {
-    const res = yield call(httpService.makeRequest, 'patch', `${environment.API_URL}coreuser/${action.data.id}/`, action.data, true);
+    const res = yield call(httpService.makeRequest, 'patch', `${endpoint}${action.data.id}/`, action.data, true);
     yield [
       yield put({ type: UPDATE_COREUSER_COMMIT, data: res.data})
     ];
@@ -52,7 +55,7 @@ function* updateCoreUser(action) {
 
 function* deleteCoreUser(action) {
   try {
-    const res = yield call(httpService.makeRequest, 'delete', `${environment.API_URL}coreuser/${action.data.id}/`,  {}, true);
+    const res = yield call(httpService.makeRequest, 'delete', `${endpoint}${action.data.id}/`,  {}, true);
     yield [
       yield put({ type: DELETE_COREUSER_COMMIT, data: res.data})
     ];
