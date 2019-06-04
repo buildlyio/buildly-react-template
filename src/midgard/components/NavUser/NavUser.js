@@ -11,7 +11,9 @@ import { UserContext } from 'midgard/context/User.context'
 export function NavUser({location, history, dispatch}) {
   let user = useContext(UserContext);
   if (!user) {
-       user = JSON.parse(localStorage.getItem('oauthUser')).data;
+    if(localStorage.getItem('oauthUser')) {
+      user = JSON.parse(localStorage.getItem('oauthUser')).data;
+    }
   }
 
   // Last login
