@@ -1,3 +1,6 @@
+import productsSaga from 'clients/products/src/redux/products.saga';
+import documentsSaga from 'clients/documents/src/redux/documents.saga';
+import blueprintSaga from 'clients/blueprint/src/redux/blueprint.saga';
 // react library imports
 import authSaga from "./authuser/sagas/authuser.saga"
 import { all } from 'redux-saga/effects'
@@ -9,6 +12,9 @@ export default function* rootSaga() {
   yield all([
     // import all sagas and call them here:
     //entryPointForGulpStart
+    productsSaga(),
+    documentsSaga(),
+    blueprintSaga(),
     //entryPointForGulpEnd
     authSaga(),
     coreUserSaga(),
