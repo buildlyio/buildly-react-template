@@ -3,11 +3,15 @@
   "modules": [
     {
       "url": "https://github.com/Humanitec/product_client_react.git",
-      "name": "products"
+      "name": "Products"
     },
     {
       "url": "https://github.com/kupfer-software/kupfer_document_client_react.git",
-      "name": "documents"
+      "name": "Documents"
+    },
+    {
+      "url": "https://github.com/Humanitec/blueprint_client_react.git",
+      "name": "Blueprint"
     }
   ]
 }
