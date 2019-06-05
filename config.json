@@ -2,7 +2,7 @@
   "appTitle": "My App",
   "modules": [
     {
-      "url": "https://github.com/Humanitec/products_client_react.git",
+      "url": "https://github.com/Humanitec/product_client_react.git",
       "name": "products"
     },
     {
@@ -10,7 +10,7 @@
       "name": "documents"
     },
     {
-      "url": "https://github.com/Humanitec/blueprint_client_react",
+      "url": "https://github.com/Humanitec/blueprint_client_react.git",
       "name": "blueprint"
     }
   ]
