@@ -1,3 +1,6 @@
+import products from 'clients/products/src/products'; 
+import documents from 'clients/documents/src/documents'; 
+import blueprint from 'clients/blueprint/src/blueprint'; 
 // react library imports
 import React, { useState } from 'react'
 import { Route, Redirect } from 'react-router-dom'
@@ -46,6 +49,9 @@ function Container({ location, history }) {
   const [navHidden, setNavHidden] = useState(false);
   const routeItems = [];
     //entryPointForGulpStart
+    routeItems.push(<Route key="products" path="/app/products/" component={products} />);
+    routeItems.push(<Route key="documents" path="/app/documents/" component={documents} />);
+    routeItems.push(<Route key="blueprint" path="/app/blueprint/" component={blueprint} />);
     //entryPointForGulpEnd
 
   let subNavItems = subNav;

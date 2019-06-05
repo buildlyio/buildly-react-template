@@ -8,10 +8,6 @@
     {
       "url": "https://github.com/kupfer-software/kupfer_document_client_react.git",
       "name": "documents"
-    },
-    {
-      "url": "https://github.com/Humanitec/blueprint_client_react.git",
-      "name": "blueprint"
     }
   ]
 }
