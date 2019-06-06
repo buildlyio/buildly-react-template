@@ -1,4 +1,17 @@
 {
   "appTitle": "My App",
-  "modules": []
+  "modules": [
+    {
+      "url": "https://github.com/Humanitec/product_client_react",
+      "name": "Products"
+    },
+    {
+      "url": "https://github.com/kupfer-software/kupfer_document_client_react",
+      "name": "Documents"
+    },
+    {
+      "url": "https://github.com/Humanitec/blueprint_client_react",
+      "name": "Blueprint"
+    }
+  ]
 }
