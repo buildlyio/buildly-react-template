@@ -3,11 +3,11 @@
   "modules": [
     {
       "url": "https://github.com/Humanitec/product_client_react",
-      "name": "products"
+      "name": "Products"
     },
     {
       "url": "https://github.com/Humanitec/blueprint_client_react",
-      "name": "blueprint"
+      "name": "Blueprint"
     }
   ]
 }
