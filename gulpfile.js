@@ -207,10 +207,10 @@ _gulp.default.task('createFile', function (done) {
         imports.push("import " + name + " from 'clients/" + name.charAt(0).toUpperCase() + name.slice(1) + "/src/" + name.charAt(0).toUpperCase() + name.slice(1) + "'; \n");
 
         sagaRoot = sagaRoot + smallName + "Saga(),\n    ";
-        sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + config.modules[i].name + "/src/redux/" + name.toString().toLowerCase() + ".saga'; \n");
+        sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + config.modules[i].name + "/src/redux/" + smallName + ".saga'; \n");
 
         reducerRoot = reducerRoot + smallName + "Reducer,\n    ";
-        reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/redux/" + name.toString().toLowerCase() + ".reducer'; \n");
+        reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/redux/" + smallName + ".reducer'; \n");
 
         routes.push("routeItems.push(<Route key=\"" + smallName + "\" path=\"/app/" + smallName + "/\" component={" + name + "} />);\n    ");
     }
