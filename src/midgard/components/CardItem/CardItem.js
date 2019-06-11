@@ -151,8 +151,13 @@ function CardItem({
     year: 'numeric', month: 'numeric', day: 'numeric',
     hour: 'numeric', minute: 'numeric', second: 'numeric',
   };
-  const dateHeader1Formatted = new Intl.DateTimeFormat('en-US', dateOptions).format(new Date(dateHeader1.value));
-  const dateHeader2Formatted = new Intl.DateTimeFormat('en-US', dateOptions).format(new Date(dateHeader2.value));
+    let dateHeader1Formatted, dateHeader2Formatted;
+  if (dateHeader1.value) {
+       dateHeader1Formatted = new Intl.DateTimeFormat('en-US', dateOptions).format(new Date(dateHeader1.value));
+  }
+  if (dateHeader2.value) {
+      dateHeader2Formatted = new Intl.DateTimeFormat('en-US', dateOptions).format(new Date(dateHeader2.value));
+  }
 
   return (
     <CardItemWrapper
