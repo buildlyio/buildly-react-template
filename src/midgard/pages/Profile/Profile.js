@@ -40,6 +40,9 @@ function Profile({dispatch, history, location}) {
   if (!user) {
     return <Redirect push to="/" />;
   }
+  if (user !== JSON.parse(localStorage.getItem('currentUser'))) {
+    user = JSON.parse(localStorage.getItem('currentUser'));
+  }
 
   /**
    * Clears authentication and redirects to the login screen.
