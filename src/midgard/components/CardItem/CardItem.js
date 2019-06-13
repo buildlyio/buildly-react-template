@@ -212,9 +212,8 @@ function CardItem({
               <div className="card-item__image" onClick={(event) => {
                 if (image || pdf) {
                     window.open(image || pdf)
-                } else {
-                  event.stopPropagation()
                 }
+                  event.stopPropagation();
               }
               }>
                 <img src={image || defaultLogo} />
