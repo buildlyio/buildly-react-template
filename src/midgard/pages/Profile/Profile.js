@@ -80,6 +80,7 @@ function Profile({dispatch, history, location}) {
         <TextField label="Email" value={user.email} />
         <TextField label="Organization" value={user.organization ? user.organization.name: ''} />
         <FjButton
+          variant="danger"
           size="small"
           onClick={logoutUser}
           type="button">
