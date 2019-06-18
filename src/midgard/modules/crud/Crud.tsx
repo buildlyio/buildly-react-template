@@ -111,13 +111,13 @@ export class Crud extends React.Component<CrudProps, CrudState> {
       });
       return data;
     }
-  }
+  };
   /**
    * gets the data from the store
    */
   public getData = () => {
     return this.props.data
-  }
+  };
 
   render() {
     const {children} = this.props;
