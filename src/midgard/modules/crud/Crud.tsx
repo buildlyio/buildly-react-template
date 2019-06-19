@@ -116,7 +116,7 @@ export class Crud extends React.Component<CrudProps, CrudState> {
   public loadData = () => {
     const {loadAction, data, dispatch, endPoint} = this.props;
     if (endPoint) {
-        dispatch(crudLoadData(endPoint));
+        dispatch(crudLoadData(endPoint, null,null));
     }
     else if (loadAction && !this.state.dataLoaded) {
       dispatch({type: loadAction});
