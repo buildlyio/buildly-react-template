@@ -1,4 +1,3 @@
-import blueprintSaga from 'clients/Blueprint/src/redux/blueprint.saga'; 
 // react library imports
 import authSaga from "./authuser/sagas/authuser.saga"
 import crudSaga from "midgard/modules/crud/redux/crud.saga"
@@ -11,7 +10,6 @@ export default function* rootSaga() {
   yield all([
     // import all sagas and call them here:
     //entryPointForGulpStart
-    blueprintSaga(),
     //entryPointForGulpEnd
     authSaga(),
     coreUserSaga(),
