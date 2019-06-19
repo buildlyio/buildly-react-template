@@ -1,5 +1,6 @@
 // react library imports
 import authSaga from "./authuser/sagas/authuser.saga"
+import crudSaga from "midgard/modules/crud/redux/crud.saga"
 import { all } from 'redux-saga/effects'
 import coreUserSaga from "midgard/redux/coreuser/coreuser.saga";
 import coreGroupSaga from "./coregroup/sagas/coregroup.saga"
@@ -12,6 +13,7 @@ export default function* rootSaga() {
     //entryPointForGulpEnd
     authSaga(),
     coreUserSaga(),
-    coreGroupSaga()
+    coreGroupSaga(),
+    crudSaga()
   ])
 }
