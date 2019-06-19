@@ -1,113 +1,88 @@
 import { put, takeLatest, all, call } from 'redux-saga/effects';
-import { oauthService } from '../../../modules/oauth/oauth.service';
 import { httpService } from '../../../modules/http/http.service';
 import { environment } from 'environment';
+
 import {
-  CRUD_CREATE, CRUD_DELETE, CRUD_LOAD_DATA, CRUD_UPDATE, crudCreateCommit, crudCreateFail, crudDeleteCommit, crudDeleteFail,
-  crudLoadDataCommit,
-  crudLoadDataFail,
-  crudUpdateCommit,
-  crudUpdateFail
-} from './crud.actions';
-import { CrudAction } from './crud.action.model';
-import {UPDATE_USER_FAIL, UPDATE_USER_SUCCESS} from "midgard/redux/authuser/actions/authuser.actions";
+    CRUD_CREATE,
+    CRUD_CREATE_COMMIT, CRUD_CREATE_FAIL,
+    CRUD_DELETE,
+    CRUD_DELETE_COMMIT,
+    CRUD_DELETE_FAIL,
+    CRUD_LOAD_DATA,
+    CRUD_LOAD_DATA_COMMIT,
+    CRUD_LOAD_DATA_FAIL, CRUD_UPDATE, CRUD_UPDATE_COMMIT, CRUD_UPDATE_FAIL
+} from "midgard/modules/crud/redux/crud.actions";
 
-
-function* updateUser(payload) {
+/**
+ * this is here to handle asynchronous actions and will be triggered when CRUD_LOAD_DATA action is dispatched
+ * @param {Observable} action - the current action
+ */
+function* crudLoadDataSaga(action) {
     try {
-        const res = yield call(httpService.makeRequest, 'get', `${environment.API_URL}${action.endpoint}/`);
+        const res = yield call(httpService.makeRequest, 'get', `${environment.API_URL}${action.endpoint}`, {}, true);
         yield [
-            yield put({ type: UPDATE_USER_SUCCESS, res: res.data })
+            yield put({ type: CRUD_LOAD_DATA_COMMIT, data: res.data, endpoint: action.endpoint, idProp: action.idProp, dataProp:action.dataProp })
         ];
     } catch(error) {
-        yield put({ type: UPDATE_USER_FAIL, error: 'Updating user fields failed' });
+        yield put({ type: CRUD_LOAD_DATA_FAIL,error });
     }
 }
 
-
-
-export class CrudEpics {
-  /**
-   * this is here to handle asynchronous actions and will be triggered when CRUD_LOAD_DATA action is dispatched
-   * @param {Observable} action$ - the current action
-   */
-  crudLoadDataEpic = action$ => {
-    return action$.pipe(
-      redux.ofType(CRUD_LOAD_DATA),
-      switchMap((action: CrudAction) => {
-        return this.httpService.makeRequest('get', `${environment.API_URL}${action.endpoint}/`).pipe(
-          // If successful, dispatch success action with result
-          map(res => crudLoadDataCommit(res.data, action.endpoint, action.idProp, action.dataProp)),
-          // If request fails, dispatch failed action
-          catchError((error) => of(crudLoadDataFail(error, action.endpoint)))
-        );
-      })
-    );
-  }
-
-  /**
-   * this is here to handle asynchronous actions and will be triggered when CRUD_CREATE action is dispatched
-   * @param {Observable} action$ - the current action
-   */
-  crudCreateEpic = action$ => {
-    return action$.pipe(
-      redux.ofType(CRUD_CREATE),
-      switchMap((action: CrudAction) => {
-        return this.httpService.makeRequest('post', `${environment.API_URL}${action.endpoint}/`, action.data).pipe(
-          // If successful, dispatch success action with result
-          map(res => crudCreateCommit(res.data, action.endpoint, action.idProp, action.dataProp)),
-          // If request fails, dispatch failed action
-          catchError((error) => of(crudCreateFail(error, action.endpoint)))
-        );
-      })
-    );
-  }
-
-  /**
-   * this is here to handle asynchronous actions and will be triggered when CRUD_UPDATE action is dispatched
-   * @param {Observable} action$ - the current action
-   */
-  crudUpdateEpic = action$ => {
-    return action$.pipe(
-      redux.ofType(CRUD_UPDATE),
-      switchMap((action: CrudAction) => {
-        return this.httpService.makeRequest('patch', `${environment.API_URL}${action.endpoint}/${action.data.id}/`, action.data, true).pipe(
-          // If successful, dispatch success action with result
-          map(res => crudUpdateCommit(res.data, action.endpoint, action.idProp, action.dataProp)),
-          // If request fails, dispatch failed action
-          catchError((error) => of(crudUpdateFail(error, action.endpoint)))
-        );
-      })
-    );
-  }
-
-  /**
-   * this is here to handle asynchronous actions and will be triggered when CRUD_DELETE action is dispatched
-   * @param {Observable} action$ - the current action
-   */
-  crudDeleteEpic = action$ => {
-    return action$.pipe(
-      redux.ofType(CRUD_DELETE),
-      switchMap((action: CrudAction) => {
-        return this.httpService.makeRequest('delete', `${environment.API_URL}${action.endpoint}/${action.data.id}/`, {}, true).pipe(
-          // If successful, dispatch success action with result
-          map(res => crudDeleteCommit(res.data, action.endpoint, action.idProp, action.dataProp)),
-          // If request fails, dispatch failed action
-          catchError((error) => of(crudDeleteFail(error, action.endpoint)))
-        );
-      })
-    );
-  }
-
-  constructor(
-    private httpService: HttpService
-  ) {
-    return reduxObservable.combineEpics(
-      this.crudLoadDataEpic,
-      this.crudCreateEpic,
-      this.crudUpdateEpic,
-      this.crudDeleteEpic,
-    );
-  }
+function* crudDeleteDataSaga(action) {
+    try {
+        const res =yield call(httpService.makeRequest, 'delete', `${environment.API_URL}${action.endpoint}${action.data[ action.idProp]}/`, {}, true);
+        yield [
+            yield put({ type: CRUD_DELETE_COMMIT, data: res.data? res.data:action.data, endpoint: action.endpoint, idProp: action.idProp, dataProp:action.dataProp })
+        ];
+    } catch(error) {
+        yield put({ type: CRUD_DELETE_FAIL,error });
+    }
 }
+
+function* crudUpdateDataSaga(action) {
+    try {
+        const res =yield call(httpService.makeRequest, 'PATCH', `${environment.API_URL}${action.endpoint}${action.data[ action.idProp]}/`, action.data, true);
+        yield [
+            yield put({ type: CRUD_UPDATE_COMMIT, data: res.data? res.data:action.data, endpoint: action.endpoint, idProp: action.idProp, dataProp:action.dataProp })
+        ];
+    } catch(error) {
+        yield put({ type: CRUD_UPDATE_FAIL,error });
+    }
+}
+function* crudCreateDataSaga(action) {
+    try {
+        const res =yield call(httpService.makeRequest, 'post', `${environment.API_URL}${action.endpoint}`, action.data, true);
+        yield [
+            yield put({ type: CRUD_CREATE_COMMIT, data: res.data? res.data:action.data, endpoint: action.endpoint, idProp: action.idProp, dataProp:action.dataProp })
+        ];
+    } catch(error) {
+        yield put({ type: CRUD_CREATE_FAIL,error });
+    }
+}
+
+function* watchCrudCreateDataSaga() {
+    yield takeLatest(CRUD_CREATE, crudCreateDataSaga)
+}
+
+function* watchCrudLoadDataSaga() {
+    yield takeLatest(CRUD_LOAD_DATA, crudLoadDataSaga)
+}
+
+function* watchCrudDeleteDataSaga() {
+    yield takeLatest(CRUD_DELETE, crudDeleteDataSaga)
+}
+
+function* watchCrudUpdateDataSaga() {
+    yield takeLatest(CRUD_UPDATE, crudUpdateDataSaga)
+}
+
+export default function* crudSaga() {
+    yield all([
+        watchCrudLoadDataSaga(),
+        watchCrudDeleteDataSaga(),
+        watchCrudUpdateDataSaga(),
+        watchCrudCreateDataSaga()
+    ]);
+}
+
 
