@@ -204,13 +204,19 @@ _gulp.default.task('createFile', function (done) {
         var name = config.modules[i].name;
         var smallName = name.charAt(0).toLowerCase() + name.slice(1);
         items.push({ id: smallName, title: name, description: config.modules[i].description });
-        imports.push("import " + name + " from 'clients/" + name + "/src/" + name + "'; \n");
+        imports.push("import " + name + " from 'clients/" + name.charAt(0).toUpperCase() + name.slice(1) + "/src/" + name.charAt(0).toUpperCase() + name.slice(1) + "'; \n");
 
-        sagaRoot = sagaRoot + smallName + "Saga(),\n    ";
-        sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + config.modules[i].name + "/src/midgard/redux/" + name + ".saga'; \n");
+        var sagaPath = "src/clients/" + config.modules[i].name + "/src/redux/" + name + ".saga.js";
+        if (_fs.existsSync(sagaPath)) {
+            sagaRoot = sagaRoot + smallName + "Saga(),\n    ";
+            sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + config.modules[i].name + "/src/redux/" + smallName + ".saga'; \n");
+        }
 
-        reducerRoot = reducerRoot + smallName + "Reducer,\n    ";
-        reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/midgard/redux/" + name + ".reducer'; \n");
+        var reducerPath = "src/clients/" + config.modules[i].name + "/src/redux/" + name + ".reducer.js";
+        if (_fs.existsSync(reducerPath)){
+            reducerRoot = reducerRoot + smallName + "Reducer,\n    ";
+            reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/redux/" + smallName + ".reducer'; \n");
+        }
 
         routes.push("routeItems.push(<Route key=\"" + smallName + "\" path=\"/app/" + smallName + "/\" component={" + name + "} />);\n    ");
     }
@@ -219,33 +225,33 @@ _gulp.default.task('createFile', function (done) {
     var index = appContext.search(start);
     var indexEnd = appContext.search(end);
     appContext = appContext.slice(0, index + start.length) + "\n" + "export const app = {\n  appTitle: \""  + config.appTitle + "\",\n  modules: " + JSON.stringify(items) + "\n};\n" + appContext.slice(indexEnd);
-    _fs.writeFileSync('src/midgard/context/App.context.js', appContext);
+    _fs.writeFileSync('./src/midgard/context/App.context.js', appContext);
 
     var container = _fs.readFileSync('src/midgard/layout/Container/Container.js',"utf8");
     index = container.search(start);
     indexEnd = container.search(end);
     container = container.slice(0, index + start.length) + "\n    "  + routes.join("") + container.slice(indexEnd);
-    _fs.writeFileSync('src/midgard/layout/Container/Container.js', imports.join("") + container);
+    _fs.writeFileSync('./src/midgard/layout/Container/Container.js', imports.join("") + container);
 
-    var sagaFile = _fs.readFileSync('src/midgard/redux/sagas.js',"utf8");
+    var sagaFile = _fs.readFileSync('./src/midgard/redux/sagas.js',"utf8");
     index = sagaFile.search(start);
     indexEnd = sagaFile.search(end);
     sagaFile = sagaFile.slice(0, index + start.length) + "\n    " + sagaRoot + sagaFile.slice(indexEnd);
-    _fs.writeFileSync('src/midgard/redux/sagas.js', sagasImports.join("") + sagaFile);
+    _fs.writeFileSync('./src/midgard/redux/sagas.js', sagasImports.join("") + sagaFile);
 
-    var reducerFile = _fs.readFileSync('src/midgard/redux/reducers.js',"utf8");
+    var reducerFile = _fs.readFileSync('./src/midgard/redux/reducers.js',"utf8");
     index = reducerFile.search(start);
     indexEnd = reducerFile.search(end);
     reducerFile = reducerFile.slice(0, index + start.length) + "\n    " + reducerRoot + reducerFile.slice(indexEnd);
-    _fs.writeFileSync('src/midgard/redux/reducers.js', reducerImports.join("") + reducerFile);
+    _fs.writeFileSync('./src/midgard/redux/reducers.js', reducerImports.join("") + reducerFile);
 
-    var indexFile = _fs.readFileSync('src/index.html',"utf8");
+    var indexFile = _fs.readFileSync('./src/index.html',"utf8");
     start = '<title>';
     end = '</title>';
     index = indexFile.search(start);
     indexEnd = indexFile.search(end);
     indexFile = indexFile.slice(0, index + start.length) + config.appTitle + indexFile.slice(indexEnd);
-    _fs.writeFileSync('src/index.html', indexFile);
+    _fs.writeFileSync('./src/index.html', indexFile);
     done();
 });
 
@@ -260,7 +266,7 @@ _gulp.default.task('init', function (done) {
     }
 
     var tasksToRun = [];
-    process.chdir('src/clients');
+    process.chdir('./src/clients');
     var _loop = function _loop(i) {
         var module = config.modules[i];
         var taskName = "init:".concat(module.name);

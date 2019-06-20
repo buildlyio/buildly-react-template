@@ -1,10 +1,7 @@
 import * as React from "react";
 import { connect } from 'react-redux'
 import { FjButton, FjInputField } from 'freyja-react'
-import { create } from 'domain';
-
-export const CrudContext = React.createContext({});
-
+import { crudCreate, crudDelete, crudLoadData, crudUpdate } from './redux/crud.actions';
 
 export interface CrudProps {
   /**
@@ -44,6 +41,8 @@ export interface CrudProps {
    */
   reducer?: any;
   dispatch?: any;
+  children: any;
+  endPoint?: any;
 }
 
 export interface CrudState {
@@ -71,8 +70,11 @@ export class Crud extends React.Component<CrudProps, CrudState> {
   * @public
   */
   public createItem = (item) => {
-    const {createAction, itemCreated, dispatch} = this.props;
-    if (createAction) {
+    const {createAction, itemCreated, dispatch, endPoint} = this.props;
+      if (endPoint) {
+          dispatch(crudCreate(item.data, endPoint, item.idProp, item.dataProp));
+      }
+    else if (createAction) {
       dispatch({type: createAction, data: item});
       return itemCreated
     }
@@ -83,8 +85,11 @@ export class Crud extends React.Component<CrudProps, CrudState> {
   * @param item - selected item
   */
   public updateItem = (item) => {
-    const {updateAction, itemUpdated, dispatch} = this.props;
-    if (updateAction) {
+      const {updateAction, itemUpdated, dispatch, endPoint} = this.props;
+      if (endPoint) {
+          dispatch(crudUpdate(item.data, endPoint, item.idProp, item.dataProp));
+      }
+    else if (updateAction) {
       dispatch({type: updateAction, data: item});
       return itemUpdated
     }
@@ -95,8 +100,11 @@ export class Crud extends React.Component<CrudProps, CrudState> {
   * @param item - selected item
   */
   public deleteItem = (item) => {
-    const {deleteAction, itemDeleted, dispatch} = this.props;
-    if (deleteAction) {
+    const {deleteAction, itemDeleted, dispatch, endPoint} = this.props;
+      if (endPoint) {
+          dispatch(crudDelete(item.data, endPoint, item.idProp, item.dataProp));
+      }
+    else if (deleteAction) {
       dispatch({type: deleteAction, data: item});
       return itemDeleted
     }
@@ -106,37 +114,38 @@ export class Crud extends React.Component<CrudProps, CrudState> {
   * load the data to the store and returns it
   */
   public loadData = () => {
-    const {loadAction, data, dispatch} = this.props;
-    if (loadAction && !this.state.dataLoaded) {
+    const {loadAction, data, dispatch, endPoint} = this.props;
+    if (endPoint) {
+        dispatch(crudLoadData(endPoint, null,null));
+    }
+    else if (loadAction && !this.state.dataLoaded) {
       dispatch({type: loadAction});
+    }
       this.setState({
-        dataLoaded: true
+          dataLoaded: true
       });
       return data;
-    }
-  }
+  };
   /**
    * gets the data from the store
    */
   public getData = () => {
-    return this.props.data
-  }
+      const { data, endPoint} = this.props;
+      if (endPoint && this.props[endPoint]) {
+        return this.props[endPoint].data;
+      }
+    return data
+  };
 
   render() {
     const {children} = this.props;
-    return (
-      <CrudContext.Provider value={
-        {
-          createItem: this.createItem,
-          updateItem: this.updateItem,
-          deleteItem: this.deleteItem,
-          loadData: this.loadData,
-          getData: this.getData
-        }
-      }>
-        { children }
-      </CrudContext.Provider>
-    );
+    return children({
+        createItem: this.createItem,
+        updateItem: this.updateItem,
+        deleteItem: this.deleteItem,
+        loadData: this.loadData,
+        getData: this.getData
+    })
   };
 }
 

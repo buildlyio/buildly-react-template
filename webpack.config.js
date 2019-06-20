@@ -93,7 +93,8 @@ module.exports = {
       new webpack.HotModuleReplacementPlugin(),
       new HtmlWebPackPlugin({
           template: "./src/index.html",
-          filename: "./index.html"
+          filename: "./index.html",
+          favicon: './src/assets/favicon.ico',
       }),
       new CopyPlugin([
           { from: 'prod-environment.js', to: 'environment.js' },

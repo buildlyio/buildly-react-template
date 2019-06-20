@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from 'react-redux';
 import App from './App';
+import './i18n';
 import configureStore from './midgard/redux/store';
 
 const store = configureStore();

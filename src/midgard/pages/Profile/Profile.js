@@ -40,6 +40,9 @@ function Profile({dispatch, history, location}) {
   if (!user) {
     return <Redirect push to="/" />;
   }
+  if (user !== JSON.parse(localStorage.getItem('currentUser'))) {
+    user = JSON.parse(localStorage.getItem('currentUser'));
+  }
 
   /**
    * Clears authentication and redirects to the login screen.
@@ -77,6 +80,7 @@ function Profile({dispatch, history, location}) {
         <TextField label="Email" value={user.email} />
         <TextField label="Organization" value={user.organization ? user.organization.name: ''} />
         <FjButton
+          variant="danger"
           size="small"
           onClick={logoutUser}
           type="button">

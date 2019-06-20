@@ -56,6 +56,7 @@ const CardItemWrapper = styled.div`
 
       img {
         max-width: 100%;
+        max-height: 100%;
       }
     }
 
@@ -119,6 +120,7 @@ function CardItem({
   action,
   options,
   image,
+  pdf,
   title,
   subText,
   subText2,
@@ -151,8 +153,13 @@ function CardItem({
     year: 'numeric', month: 'numeric', day: 'numeric',
     hour: 'numeric', minute: 'numeric', second: 'numeric',
   };
-  const dateHeader1Formatted = new Intl.DateTimeFormat('en-US', dateOptions).format(new Date(dateHeader1.value));
-  const dateHeader2Formatted = new Intl.DateTimeFormat('en-US', dateOptions).format(new Date(dateHeader2.value));
+    let dateHeader1Formatted, dateHeader2Formatted;
+  if (dateHeader1.value) {
+       dateHeader1Formatted = new Intl.DateTimeFormat('en-US', dateOptions).format(new Date(dateHeader1.value));
+  }
+  if (dateHeader2.value) {
+      dateHeader2Formatted = new Intl.DateTimeFormat('en-US', dateOptions).format(new Date(dateHeader2.value));
+  }
 
   return (
     <CardItemWrapper
@@ -165,7 +172,7 @@ function CardItem({
           </div>
           <div className="card-item__row">
             <div className="card-item__column card-item__column--flex">
-              {details && <div 
+              {details && <div
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <FjInlineEditor
@@ -175,7 +182,7 @@ function CardItem({
                   value={details.value}
                   onChange={(event) => update(id, action, details.prop, event)} />
               </div>}
-              {description && <div 
+              {description && <div
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <FjInlineEditor
@@ -187,7 +194,7 @@ function CardItem({
               </div>}
             </div>
             <div className="card-item__column card-item__column--flex">
-              {tags && <div 
+              {tags && <div
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <FjInlineEditor
@@ -203,12 +210,18 @@ function CardItem({
         <div className="card-item__header">
           <div className="card-item__row">
             <div className="card-item__column">
-              <div className="card-item__image" onClick={(event) => event.stopPropagation()}>
+              <div className="card-item__image" onClick={(event) => {
+                if (image || pdf) {
+                    window.open(image || pdf)
+                }
+                  event.stopPropagation();
+              }
+              }>
                 <img src={image || defaultLogo} />
               </div>
             </div>
             <div className="card-item__column card-item__column--flex">
-              {title && <div 
+              {title && <div
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--primary">
                 <FjInlineEditor
@@ -218,7 +231,7 @@ function CardItem({
                   tag="h4"
                   onChange={(event) => update(id, action, title.prop, event)} />
               </div>}
-              {subText && <div 
+              {subText && <div
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <FjInlineEditor
@@ -227,7 +240,7 @@ function CardItem({
                   value={subText.value}
                   onChange={(event) => update(id, action, subText.prop, event)} />
               </div>}
-              {subText2 && <div 
+              {subText2 && <div
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <FjInlineEditor
@@ -238,7 +251,7 @@ function CardItem({
               </div>}
             </div>
             <div className="card-item__column card-item__column--flex">
-              {caption && <div 
+              {caption && <div
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <FjInlineEditor
@@ -247,7 +260,7 @@ function CardItem({
                   value={caption.value}
                   onChange={(event) => update(id, action, caption.prop, event)} />
               </div>}
-              {link && <div 
+              {link && <div
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__field card-item__field--secondary">
                 <FjInlineEditor
@@ -258,11 +271,11 @@ function CardItem({
               </div>}
             </div>
             <div className="card-item__column">
-              <div 
+              <div
                 onClick={(event) => event.stopPropagation()}
                 className="card-item__options">
                 <FjMenu xPosition="right" yPosition="center" open={menuOpened} setOpen={toggleMenu} onActionClicked={(event) => selectAction(id, event, action)} menuItems={options}>
-                  <FjButton variant="secondary" size="small" onClick={() => toggleMenu(!menuOpened)}>...</FjButton>
+                  <FjButton variant="secondary" size="small" onClick={() => toggleMenu(!menuOpened)}>•••</FjButton>
                 </FjMenu>
               </div>
             </div>
