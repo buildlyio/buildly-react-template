@@ -206,11 +206,17 @@ _gulp.default.task('createFile', function (done) {
         items.push({ id: smallName, title: name, description: config.modules[i].description });
         imports.push("import " + name + " from 'clients/" + name.charAt(0).toUpperCase() + name.slice(1) + "/src/" + name.charAt(0).toUpperCase() + name.slice(1) + "'; \n");
 
-        sagaRoot = sagaRoot + smallName + "Saga(),\n    ";
-        sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + config.modules[i].name + "/src/redux/" + smallName + ".saga'; \n");
+        var sagaPath = "src/clients/" + config.modules[i].name + "/src/redux/" + name + ".saga.js";
+        if (_fs.existsSync(sagaPath)) {
+            sagaRoot = sagaRoot + smallName + "Saga(),\n    ";
+            sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + config.modules[i].name + "/src/redux/" + smallName + ".saga'; \n");
+        }
 
-        reducerRoot = reducerRoot + smallName + "Reducer,\n    ";
-        reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/redux/" + smallName + ".reducer'; \n");
+        var reducerPath = "src/clients/" + config.modules[i].name + "/src/redux/" + name + ".reducer.js";
+        if (_fs.existsSync(reducerPath)){
+            reducerRoot = reducerRoot + smallName + "Reducer,\n    ";
+            reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/redux/" + smallName + ".reducer'; \n");
+        }
 
         routes.push("routeItems.push(<Route key=\"" + smallName + "\" path=\"/app/" + smallName + "/\" component={" + name + "} />);\n    ");
     }
