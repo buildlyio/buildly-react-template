@@ -15,7 +15,7 @@ import {
 
 /**
  * this is here to handle asynchronous actions and will be triggered when CRUD_LOAD_DATA action is dispatched
- * @param {Observable} action - the current action
+ * @param {promise} action - the current action
  */
 function* crudLoadDataSaga(action) {
     try {
@@ -28,6 +28,10 @@ function* crudLoadDataSaga(action) {
     }
 }
 
+/**
+ * this is here to handle asynchronous actions and will be triggered when CRUD_DELETE action is dispatched
+ * @param {promise} action - the current action
+ */
 function* crudDeleteDataSaga(action) {
     try {
         const res =yield call(httpService.makeRequest, 'delete', `${environment.API_URL}${action.endpoint}${action.data[ action.idProp]}/`, {}, true);
@@ -39,6 +43,10 @@ function* crudDeleteDataSaga(action) {
     }
 }
 
+/**
+* this is here to handle asynchronous actions and will be triggered when CRUD_UPDATE action is dispatched
+* @param {promise} action - the current action
+*/
 function* crudUpdateDataSaga(action) {
     try {
         const res =yield call(httpService.makeRequest, 'PATCH', `${environment.API_URL}${action.endpoint}${action.data[ action.idProp]}/`, action.data, true);
@@ -49,6 +57,11 @@ function* crudUpdateDataSaga(action) {
         yield put({ type: CRUD_UPDATE_FAIL,error });
     }
 }
+
+/**
+* this is here to handle asynchronous actions and will be triggered when CRUD_CREATE action is dispatched
+* @param {promise} action - the current action
+*/
 function* crudCreateDataSaga(action) {
     try {
         const res =yield call(httpService.makeRequest, 'post', `${environment.API_URL}${action.endpoint}`, action.data, true);

@@ -14,6 +14,12 @@ export const CRUD_DELETE = 'CRUD_DELETE';
 export const CRUD_DELETE_COMMIT = 'CRUD_DELETE_COMMIT';
 export const CRUD_DELETE_FAIL = 'CRUD_DELETE_FAIL';
 
+/**
+ * function to call to load data.
+ * @param {string} endpoint - endpoint to make the call
+ * @param {string} idProp - id to get the data
+ * @param {string} dataProp - field name where the data will be in response.
+ */
 export function crudLoadData(endpoint, idProp, dataProp) {
   return {
     type: CRUD_LOAD_DATA,
@@ -23,6 +29,13 @@ export function crudLoadData(endpoint, idProp, dataProp) {
   };
 }
 
+/**
+ * function called in response to success of load data.
+ * @param {string} endpoint - endpoint to make the call
+ * @param {string} idProp - id to get the data
+ * @param {string} dataProp - field name where the data will be in response.
+ * @param {obj} data - response object
+ */
 export function crudLoadDataCommit(data, endpoint, idProp, dataProp) {
   return {
     type: CRUD_LOAD_DATA_COMMIT,
@@ -33,6 +46,11 @@ export function crudLoadDataCommit(data, endpoint, idProp, dataProp) {
   };
 }
 
+/**
+ * function to call in response of failure of load data.
+ * @param {string} endpoint - endpoint to make the call
+ * @param {object} error
+ */
 export function crudLoadDataFail(error, endpoint) {
   return {
     type: CRUD_LOAD_DATA_FAIL,
@@ -41,6 +59,12 @@ export function crudLoadDataFail(error, endpoint) {
   };
 }
 
+/**
+ * function to call to create data.
+ * @param {string} endpoint - endpoint to make the call
+ * @param {string} idProp - id to get the data
+ * @param {string} dataProp - field name where the data will be in response.
+ */
 export function crudCreate(data, endpoint, idProp, dataProp) {
   return {
     type: CRUD_CREATE,
@@ -51,6 +75,13 @@ export function crudCreate(data, endpoint, idProp, dataProp) {
   };
 }
 
+/**
+ * function called in response to success of create data.
+ * @param {string} endpoint - endpoint to make the call
+ * @param {string} idProp - id type to get the data e.g id or uuid
+ * @param {string} dataProp - field name where the data will be in response.
+ * @param {obj} data - response object
+ */
 export function crudCreateCommit(data, endpoint, idProp, dataProp) {
   return {
     type: CRUD_CREATE_COMMIT,
@@ -61,6 +92,11 @@ export function crudCreateCommit(data, endpoint, idProp, dataProp) {
   };
 }
 
+/**
+ * function to call in response of failure of create data.
+ * @param {string} endpoint - endpoint to make the call
+ * @param {object} error
+ */
 export function crudCreateFail(error, endpoint ) {
   return {
     type: CRUD_CREATE_FAIL,
@@ -69,6 +105,13 @@ export function crudCreateFail(error, endpoint ) {
   };
 }
 
+/**
+ * function to call to create data.
+ * @param {obj} data - data to update.
+ * @param {string} endpoint - endpoint to make the call
+ * @param {string} idProp - id type to get the data from object
+ * @param {string} dataProp - field name where the data will be in response.
+ */
 export function crudUpdate(data, endpoint, idProp, dataProp) {
   return {
     type: CRUD_UPDATE,
@@ -79,6 +122,13 @@ export function crudUpdate(data, endpoint, idProp, dataProp) {
   };
 }
 
+/**
+ * function called in response to success of create data.
+ * @param {string} endpoint - endpoint to make the call
+ * @param {string} idProp - id type to get the data
+ * @param {string} dataProp - field name where the data will be in response.
+ * @param {obj} data - response object
+ */
 export function crudUpdateCommit(data, endpoint, idProp, dataProp) {
   return {
     type: CRUD_UPDATE_COMMIT,
@@ -89,6 +139,11 @@ export function crudUpdateCommit(data, endpoint, idProp, dataProp) {
   };
 }
 
+/**
+ * function to call in response of failure of create data.
+ * @param {string} endpoint - endpoint to make the call
+ * @param {object} error
+ */
 export function crudUpdateFail(error, endpoint) {
   return {
     type: CRUD_UPDATE_FAIL,
@@ -97,6 +152,13 @@ export function crudUpdateFail(error, endpoint) {
   };
 }
 
+/**
+ * function to call to create data.
+ * @param {obj} data - data to update.
+ * @param {string} endpoint - endpoint to make the call
+ * @param {string} idProp - id type to get the data from object
+ * @param {string} dataProp - field name where the data will be in response.
+ */
 export function crudDelete(data, endpoint, idProp, dataProp) {
   return {
     type: CRUD_DELETE,
@@ -107,6 +169,13 @@ export function crudDelete(data, endpoint, idProp, dataProp) {
   };
 }
 
+/**
+ * function called in response to success of create data.
+ * @param {string} endpoint - endpoint to make the call
+ * @param {string} idProp - id type to get the data
+ * @param {string} dataProp - field name where the data will be in response.
+ * @param {obj} data - response object
+ */
 export function crudDeleteCommit(data, endpoint, idProp, dataProp) {
   return {
     type: CRUD_DELETE_COMMIT,
@@ -117,6 +186,11 @@ export function crudDeleteCommit(data, endpoint, idProp, dataProp) {
   };
 }
 
+/**
+ * function to call in response of failure of create data.
+ * @param {string} endpoint - endpoint to make the call
+ * @param {object} error
+ */
 export function crudDeleteFail(error, endpoint) {
   return {
     type: CRUD_DELETE_FAIL,
