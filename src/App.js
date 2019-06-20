@@ -17,7 +17,7 @@ function App() {
         <div className="app">
           <Route exact path="/" render={() => (
             oauthService.hasValidAccessToken() ? (
-              <Redirect to="/app"/>
+              <Redirect to="/app/profile/settings"/>
             ) : (
               <Redirect to="/login"/>
             )

@@ -6,6 +6,7 @@ import { register } from 'midgard/redux/authuser/actions/authuser.actions'
 import { FjButton, FjInputField } from 'freyja-react'
 import AuthForm from 'midgard/components/AuthForm/AuthForm'
 import { useInput } from 'midgard/hooks/useInput';
+import { login } from 'midgard/redux/authuser/actions/authuser.actions'
 
 /**
  * Outputs the login form page for the application.
@@ -14,18 +15,29 @@ function Register({dispatch, loading, loaded, error, location}) {
   const email = useInput('', { required: true });
   const username = useInput('', { required: true });
   const password = useInput('', { required: true });
+  const re_password = useInput('', { required: true });
   const organization_name = useInput('', { required: true });
   const first_name = useInput('');
   const last_name = useInput('');
+  let password_error = '';
+    if (re_password.value !== password.value)
+    {
+        password_error = "password mismatch";
+    }
 
   const loginLink = { label: 'Login', value: '/login' };
-  const valid = email.valid && username.valid && password.valid && organization_name.valid && first_name.valid && last_name.valid;
+  const valid = email.valid && username.valid && password.valid && organization_name.valid && first_name.valid && last_name.valid && re_password.valid && re_password.value === password.value;
 
   if (oauthService.hasValidAccessToken()) {
     return <Redirect push to="/" />;
   }
   
   if (loaded && location.register && !error) {
+      const loginFormValue = {
+          username: username.value,
+          password: password.value
+      };
+      dispatch(login(loginFormValue));
     return <Redirect push to={loginLink.value} />;
   }
 
@@ -67,6 +79,13 @@ function Register({dispatch, loading, loaded, error, location}) {
         type="password"
         placeholder="Enter password"
         {...password.bind} />
+        <FjInputField
+        label="Confirm password"
+        id="re_password"
+        type="password"
+        placeholder="Confirm password"
+        error={password_error}
+        {...re_password.bind} />
       <FjInputField
         label="Organization name"
         id="organization_name"
