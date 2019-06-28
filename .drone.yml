@@ -19,7 +19,7 @@ pipeline:
       event: [push, tag]
 
   build:
-    image: node:9.9.0
+    image: node:10.16.0
     commands:
       - yarn run build-prod
     when:
