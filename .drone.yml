@@ -11,8 +11,8 @@ pipeline:
       - yarn --version
       - yarn config set cache-folder .yarn-cache
       - yarn  global add gulp-cli
-      - yarn run init
       - yarn install
+      - yarn run init
 
     secrets: []
     when:
