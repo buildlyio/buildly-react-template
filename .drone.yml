@@ -2,7 +2,7 @@
 pipeline:
 
   install:
-    image: node:9.9.0
+    image: node:10.16.0
     commands:
       - rm -rf drone/src/node_modules/
       - node -v
