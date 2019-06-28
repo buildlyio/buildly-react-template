@@ -32,8 +32,7 @@
     "reactjs-popup": "^1.4.0",
     "redux-saga": "^1.0.0",
     "serve": "^11.0.0",
-    "styled-components": "^4.2.0",
-    "yarn": "^1.16.0"
+    "styled-components": "^4.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
