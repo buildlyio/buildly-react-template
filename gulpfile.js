@@ -99,19 +99,19 @@ var runCommand = function runCommand(command) {
 };
 
 /**
- * Creates a Promise to execute the npm install command in a module's folder
+ * Creates a Promise to execute the yarn install command in a module's folder
  *
- * @param {object} module - the module configuration for the module that needs npm install
- * @returns {Promise} A Promise that resolves if npm install succeeds, and rejects otherwise
+ * @param {object} module - the module configuration for the module that needs yarn install
+ * @returns {Promise} A Promise that resolves if yarn install succeeds, and rejects otherwise
  */
 
 
-var npmInstall = function npmInstall(module) {
+var yarnInstall = function yarnInstall(module) {
     if (!module.status || !module.status.cloneSucceeded) {
         return;
     }
 
-    return runCommand('npm', ['install'], module.name);
+    return runCommand('yarn', ['install'], module.name);
 };
 
 /**
@@ -273,7 +273,7 @@ _gulp.default.task('init', function (done) {
 
         _gulp.default.task(taskName, function (subTaskDone) {
             return clone(module).catch(genericErrorHandler).then(function () {
-                return npmInstall(module);
+                return yarnInstall(module);
             }).catch(genericErrorHandler).then(function () {
             }).catch(genericErrorHandler).then(subTaskDone);
         });

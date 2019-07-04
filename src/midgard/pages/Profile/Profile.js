@@ -38,7 +38,8 @@ let user = JSON.parse(localStorage.getItem('currentUser'));
  */
 function Profile({dispatch, history, location}) {
   if (!user) {
-    return <Redirect push to="/" />;
+      user = JSON.parse(localStorage.getItem('currentUser'));
+      return <Redirect push to="/" />;
   }
   if (user !== JSON.parse(localStorage.getItem('currentUser'))) {
     user = JSON.parse(localStorage.getItem('currentUser'));
