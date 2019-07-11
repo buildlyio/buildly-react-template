@@ -201,24 +201,28 @@ _gulp.default.task('createFile', function (done) {
     var start = "//entryPointForGulpStart";
     var end = "//entryPointForGulpEnd";
     for (var i = 0; i < config.modules.length; i++) {
-        var name = config.modules[i].name;
+        var name = config.modules[i].name.charAt(0).toUpperCase() + config.modules[i].name.slice(1);
         var smallName = name.charAt(0).toLowerCase() + name.slice(1);
-        items.push({ id: smallName, title: name, description: config.modules[i].description });
-        imports.push("import " + name + " from 'clients/" + name.charAt(0).toUpperCase() + name.slice(1) + "/src/" + name.charAt(0).toUpperCase() + name.slice(1) + "'; \n");
 
-        var sagaPath = "src/clients/" + config.modules[i].name + "/src/redux/" + name + ".saga.js";
+        var containerPath ="src/clients/" + name + "/src/" + name + ".js";
+        if (_fs.existsSync(containerPath)) {
+            items.push({id: smallName, title: name, description: config.modules[i].description});
+            imports.push("import " + name + " from 'clients/" + name + "/src/" + name + "'; \n");
+            routes.push("routeItems.push(<Route key=\"" + smallName + "\" path=\"/app/" + smallName + "/\" component={" + name + "} />);\n    ");
+        }
+
+        var sagaPath = "src/clients/" + name + "/src/redux/" + name + ".saga.js";
         if (_fs.existsSync(sagaPath)) {
             sagaRoot = sagaRoot + smallName + "Saga(),\n    ";
-            sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + config.modules[i].name + "/src/redux/" + smallName + ".saga'; \n");
+            sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + name + "/src/redux/" + smallName + ".saga'; \n");
         }
 
-        var reducerPath = "src/clients/" + config.modules[i].name + "/src/redux/" + name + ".reducer.js";
+        var reducerPath = "src/clients/" + name + "/src/redux/" + name + ".reducer.js";
         if (_fs.existsSync(reducerPath)){
             reducerRoot = reducerRoot + smallName + "Reducer,\n    ";
-            reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + config.modules[i].name + "/src/redux/" + smallName + ".reducer'; \n");
+            reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + name + "/src/redux/" + smallName + ".reducer'; \n");
         }
 
-        routes.push("routeItems.push(<Route key=\"" + smallName + "\" path=\"/app/" + smallName + "/\" component={" + name + "} />);\n    ");
     }
 
     var appContext = _fs.readFileSync('src/midgard/context/App.context.js',"utf8");

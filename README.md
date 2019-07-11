@@ -18,24 +18,24 @@ Current React version: **v0.0.1.**
 
 To **initialize** the app:
 
-`npm run init`
+`yarn run init`
 
 ### Build app
 
--  Development environment: `npm run build`
--  Production environment: `npm run build-prod`
+-  Development environment: `yarn run build`
+-  Production environment: `yarn run build-prod`
 
 The build artifacts will be stored in the `dist/` directory.
 
 ### Run development server
 
-`npm run start`
+`yarn run start`
 
 ### Run tests
 
 To **run tests** using [Jest](https://jestjs.io/): 
 
-`npm run test`
+`yarn run test`
 
 ## Features
 
@@ -64,9 +64,17 @@ Within the `/src` directory, the following structure is used:
 Midgard-React provides the following core user interfaces:
 
 - **Login screen:** Uses the OAuth library from midgard-core for the OAuth password-flow authentication process with BiFrost.
+
+    ![image](/src/assets/screenshots/login.png)
 - **Register screen:** A form where the user can register an account with the app. They will also be redirected to this screen after accepting an invitation from a super user.
+
+    ![image](/src/assets/screenshots/register.png)
 - **User management:** A screen where an administrator can manage users, update their own profile, and handle permissions in the app.
-- **Settings:** A screen for configuring app settings.
+    ![image](/src/assets/screenshots/settings.png)
+    ![image](/src/assets/screenshots/current_users.png)
+    ![image](/src/assets/screenshots/user_group.png)
+
+**Settings:** A screen for configuring app settings.
 
 These can be found under `/src/midgard/pages`.
 
