@@ -64,9 +64,17 @@ Within the `/src` directory, the following structure is used:
 Midgard-React provides the following core user interfaces:
 
 - **Login screen:** Uses the OAuth library from midgard-core for the OAuth password-flow authentication process with BiFrost.
+
+    ![image](/src/assets/screenshots/login.png)
 - **Register screen:** A form where the user can register an account with the app. They will also be redirected to this screen after accepting an invitation from a super user.
+
+    ![image](/src/assets/screenshots/register.png)
 - **User management:** A screen where an administrator can manage users, update their own profile, and handle permissions in the app.
-- **Settings:** A screen for configuring app settings.
+
+    ![image](/src/assets/screenshots/current_users.png)
+    ![image](/src/assets/screenshots/user_group.png)
+
+**Settings:** A screen for configuring app settings.
 
 These can be found under `/src/midgard/pages`.
 
