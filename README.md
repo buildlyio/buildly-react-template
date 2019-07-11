@@ -70,7 +70,7 @@ Midgard-React provides the following core user interfaces:
 
     ![image](/src/assets/screenshots/register.png)
 - **User management:** A screen where an administrator can manage users, update their own profile, and handle permissions in the app.
-
+    ![image](/src/assets/screenshots/settings.png)
     ![image](/src/assets/screenshots/current_users.png)
     ![image](/src/assets/screenshots/user_group.png)
 
