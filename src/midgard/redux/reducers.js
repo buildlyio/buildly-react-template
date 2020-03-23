@@ -1,6 +1,3 @@
-import productsReducer from 'clients/Products/src/redux/products.reducer'; 
-import documentsReducer from 'clients/Documents/src/redux/documents.reducer'; 
-import blueprintReducer from 'clients/Blueprint/src/redux/blueprint.reducer'; 
 // react library imports
 import { combineReducers } from 'redux';
 import authReducer from './authuser/reducers/authuser.reducer';
@@ -11,9 +8,6 @@ import crudDataReducer from 'midgard/modules/crud/redux/crud.reducer';
 const rootReducer = combineReducers(
   {
     //entryPointForGulpStart
-    productsReducer,
-    documentsReducer,
-    blueprintReducer,
     //entryPointForGulpEnd
     authReducer,
     coreuserReducer,

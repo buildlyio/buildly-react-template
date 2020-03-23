@@ -54,26 +54,11 @@ function NavBar({navHidden, location, history}) {
     const { from } = location.state || { from: { pathname: `/app/${active}` } };
     history.push(from);
   }
-
-  const items = [];
-  if (app.modules.length) {
-    for (const item of app.modules) {
-      items.push(<NavItem
-        key={item.id}
-        id={item.id}
-        title={item.title}
-        description={item.description}
-        active={location.pathname.includes(item.id)}
-        action={(active) => setActive(active)}
-      />);
-    }
-  }
   
   return (
     <NavBarWrapper className="nav-bar" hidden={navHidden}>
       <div className="nav-bar__container">
         <div className="nav-bar__elements">
-          {items}
         </div>
         <NavUser location={location} history={history} />
       </div>

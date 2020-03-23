@@ -37,7 +37,6 @@ var readFile = function readFile(fileName) {
     return file;
 };
 
-var config = readFile('config.json');
 var appState = readFile('app-state.json');
 
 /**
@@ -176,7 +175,7 @@ _gulp.default.task('deleteIndex', function (done) {
     var appContext = _fs.readFileSync('src/midgard/context/App.context.js', "utf8");
     var startIndex = appContext.search(start);
     var endIndex = appContext.search(end);
-    appContext = appContext.slice(0, startIndex + start.length) + "\n" + "export const app = {\n  appTitle: \"My App\",\n  modules: []\n};\n" + appContext.slice(endIndex);
+    appContext = appContext.slice(0, startIndex + start.length) + "\n" + appContext.slice(endIndex);
     _fs.writeFileSync('src/midgard/context/App.context.js', appContext);
 
     var indexFile = _fs.readFileSync('src/index.html',"utf8");
@@ -200,35 +199,11 @@ _gulp.default.task('createFile', function (done) {
     var routes = [];
     var start = "//entryPointForGulpStart";
     var end = "//entryPointForGulpEnd";
-    for (var i = 0; i < config.modules.length; i++) {
-        var name = config.modules[i].name.charAt(0).toUpperCase() + config.modules[i].name.slice(1);
-        var smallName = name.charAt(0).toLowerCase() + name.slice(1);
-
-        var containerPath ="src/clients/" + name + "/src/" + name + ".js";
-        if (_fs.existsSync(containerPath)) {
-            items.push({id: smallName, title: name, description: config.modules[i].description});
-            imports.push("import " + name + " from 'clients/" + name + "/src/" + name + "'; \n");
-            routes.push("routeItems.push(<Route key=\"" + smallName + "\" path=\"/app/" + smallName + "/\" component={" + name + "} />);\n    ");
-        }
-
-        var sagaPath = "src/clients/" + name + "/src/redux/" + name + ".saga.js";
-        if (_fs.existsSync(sagaPath)) {
-            sagaRoot = sagaRoot + smallName + "Saga(),\n    ";
-            sagasImports.push("import " + smallName + "Saga" + " from 'clients/" + name + "/src/redux/" + smallName + ".saga'; \n");
-        }
-
-        var reducerPath = "src/clients/" + name + "/src/redux/" + name + ".reducer.js";
-        if (_fs.existsSync(reducerPath)){
-            reducerRoot = reducerRoot + smallName + "Reducer,\n    ";
-            reducerImports.push("import " + smallName + "Reducer" + " from 'clients/" + name + "/src/redux/" + smallName + ".reducer'; \n");
-        }
-
-    }
 
     var appContext = _fs.readFileSync('src/midgard/context/App.context.js',"utf8");
     var index = appContext.search(start);
     var indexEnd = appContext.search(end);
-    appContext = appContext.slice(0, index + start.length) + "\n" + "export const app = {\n  appTitle: \""  + config.appTitle + "\",\n  modules: " + JSON.stringify(items) + "\n};\n" + appContext.slice(indexEnd);
+    appContext = appContext.slice(0, index + start.length) + "\n" + "export const app = {\n  appTitle: \"My App\"," + "\n};\n" + appContext.slice(indexEnd);
     _fs.writeFileSync('./src/midgard/context/App.context.js', appContext);
 
     var container = _fs.readFileSync('src/midgard/layout/Container/Container.js',"utf8");
@@ -254,50 +229,20 @@ _gulp.default.task('createFile', function (done) {
     end = '</title>';
     index = indexFile.search(start);
     indexEnd = indexFile.search(end);
-    indexFile = indexFile.slice(0, index + start.length) + config.appTitle + indexFile.slice(indexEnd);
+    indexFile = indexFile.slice(0, index + start.length) + "My App" + indexFile.slice(indexEnd);
     _fs.writeFileSync('./src/index.html', indexFile);
     done();
 });
 
 _gulp.default.task('init', function (done) {
-    if (!config) {
-        console.warn('Application configuration not found');
-        done();
-    }
-    if (!config.modules || !config.modules.length) {
-        console.warn('No application modules found');
-        done();
-    }
-
     var tasksToRun = [];
-    process.chdir('./src/clients');
-    var _loop = function _loop(i) {
-        var module = config.modules[i];
-        var taskName = "init:".concat(module.name);
 
-        _gulp.default.task(taskName, function (subTaskDone) {
-            return clone(module).catch(genericErrorHandler).then(function () {
-                return yarnInstall(module);
-            }).catch(genericErrorHandler).then(function () {
-            }).catch(genericErrorHandler).then(subTaskDone);
-        });
-
-        tasksToRun.push(taskName);
-    };
-    for (var i = 0; i < config.modules.length; i++) {
-        _loop(i);
-    }
     _gulp.default.task('add:app', function () {
-        process.chdir('../');
         return _gulp.default.src('.').pipe(_gulpGit.default.add());
     });
 
-    _gulp.default.task('commit:app', function () {
-        return _gulp.default.src('.').pipe(_gulpGit.default.commit('modules has been added'));
-    });
 
-
-    tasksToRun.push('add:app', 'commit:app');
+    tasksToRun.push('add:app');
     return _gulp.default.series(tasksToRun)(function () {
         process.chdir('../');
         (0, _fs.writeFileSync)("".concat(applicationPath, "/app-state.json"), JSON.stringify(appState));
