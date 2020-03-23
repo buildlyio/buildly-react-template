@@ -18,3 +18,4 @@ package-lock.json
 npm-debug.log*
 
 .npmrc
+.idea

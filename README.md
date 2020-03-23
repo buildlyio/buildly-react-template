@@ -1,108 +1,105 @@
-+++
-title = "Midgard-React"
-+++
+# Buildly React Template
+[![Gitter](https://badges.gitter.im/Buildlyio/community.svg)](https://gitter.im/Buildlyio/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-# Midgard-React
+Buildly React Template is a [React](https://reactjs.org/) web application that implements the core features of the UI core, pre-configure to connect to [Buildly Core](https://github.com/buildlyio/buildly-core).
 
-## Summary
+## Getting Started
 
-Midgard-React is a [React](https://reactjs.org/) web app that implements the core features of [Midgard](https://docs.walhall.io/walhall/midgard).
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-Midgard-React is your **app root repository.** When you create a [Walhall app](https://docs.walhall.io/walhall), Walhall forks Midgard-React to your GitHub account and gives it the same name as your app. It comes pre-configured to communicate with your app's API via [BiFrost](https://docs.walhall.io/walhall/bifrost). This is where you develop your Walhall app.
+### Prerequisites
 
-Current React version: **v0.0.1.**
+The web application was tested and built with the following versions: 
 
-## Setup
+- node v10.16.0
+- yarn v1.17.3
+- gulp-cli v2.2.0
 
-### Initialize the app
+### Installing
 
-To **initialize** the app:
+First of all, you need to have a Buildly Core instance up and running locally.
+Further detail about how to deploy Buildly Core locally, check its [documentation](https://buildly-core.readthedocs.io/en/latest/).
 
-`yarn run init`
+To install the application you need to download and install its dependencies, so you have to navigate to the project folder and run the following command:
 
-### Build app
+```
+$ yarn install
+```
 
--  Development environment: `yarn run build`
--  Production environment: `yarn run build-prod`
+Now, initialize and build the project
 
-The build artifacts will be stored in the `dist/` directory.
+```
+$ yarn run init
+$ yarn run build
+```
 
-### Run development server
+To run the web app:
 
-`yarn run start`
+```
+$ yarn run start
+```
 
-### Run tests
+your Buildly React Template will be running locally and listening to the port 3000, so you can access it via your browser typing this address: 127.0.0.1:3000
+
+## Running the tests
 
 To **run tests** using [Jest](https://jestjs.io/): 
 
-`yarn run test`
+```
+$ yarn run test
+```
 
-## Features
+## Deployment
 
-### File tree
+To deploy Buildly React Template on live, you can either use our [Buildly React Template Docker image](https://hub.docker.com/r/buildly/buildly-react-template) from Docker Hub or build your own image and host it somewhere, so it can be used with your deployment platform and/or tool.
 
-Within the `/src` directory, the following structure is used:
+### Build Docker image
 
--  `/assets`: Assets to be used within the project.
--  `/clients`: Contains all the clients added to the project.
--  `/midgard`: 
-    -  `/components`: Components that do not have routes assigned to them.
-    -  `/context`: React context for sharing data between components.
-    -  `/hooks`: Custom-built hooks for handling state.
-    -  `/layout`: Components related to the layout of the application.
-    -  `/modules`: Functions that handle data.
-    -  `/pages`: Components that have routes assigned to them.
-    -  `/routes`: Variations to the standard route.
--  `/redux`: Contains the actions, reducers and sagas for the client.
-    -  `/actions`: Actions and action types.
-    -  `/reducers`: Reducers which must imported into the `index.js` file.
-    -  `/sagas`: Sagas which must imported into the `index.js` file.
--  `/styles`: Contains styling variables.
+First you need to have the web app dependencies installed and the app initialized locally.
+And then you need to build it as a production application executing the following command:
 
-### Core interfaces
+```
+$ yarn run build-prod
+```
 
-Midgard-React provides the following core user interfaces:
+Now, you just need to build a Docker image and host it somewhere. Further info about how to build images, check Docker's [documentation](https://docs.docker.com/).
 
-- **Login screen:** Uses the OAuth library from midgard-core for the OAuth password-flow authentication process with BiFrost.
+### Configuration
 
-    ![image](/src/assets/screenshots/login.png)
-- **Register screen:** A form where the user can register an account with the app. They will also be redirected to this screen after accepting an invitation from a super user.
+The following table lists the configurable parameters of Buildly React Template and their default values.
 
-    ![image](/src/assets/screenshots/register.png)
-- **User management:** A screen where an administrator can manage users, update their own profile, and handle permissions in the app.
-    ![image](/src/assets/screenshots/settings.png)
-    ![image](/src/assets/screenshots/current_users.png)
-    ![image](/src/assets/screenshots/user_group.png)
+|             Parameter               |            Description             |                    Default                |
+|-------------------------------------|------------------------------------|-------------------------------------------|
+| `API_URL`                           | Buildly Core URL                   | ``      |
+| `OAUTH_CLIENT_ID`                   | The client identifier issued to the client during Buildly Core deployment  | `` |
+| `OAUTH_TOKEN_URL`                   | Buildly Core URL used to authenticate users | `` |
 
-**Settings:** A screen for configuring app settings.
+Specify each parameter using `-e`, `--env`, and `--env-file` flags to set simple (non-array) environment variables to `docker run`. For example,
 
-These can be found under `/src/midgard/pages`.
+```bash
+$ docker run -e MYVAR1 --env MYVAR2=foo \
+    --env-file ./env.list \
+    buildly-ui
+```
 
-### Connection to BiFrost
+## Built With
 
-Midgard React uses the Redux-Saga middleware library to handle interactions with BiFrost.
-A store configuration is defined in the `/src/redux` directory and connected at the root level `index.js` file.
+* [Travis CI](https://travis-ci.org/) - Recommended CI/CD
 
-The `/src/redux` directory contains the `/actions`, `/reducers` and `/sagas` sub-directories.
+## Contributing
 
-Actions are dispatched directly by components. Each client has a separate `.actions.js` file which contains actions to create, read, update and delete.
+Please read [CONTRIBUTING.md](https://github.com/buildlyio/docs/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-Generator functions defined in the client's `.saga.js` file watch for actions to be dispatched. When this happens, they call another function that uses the services provided in `/src/midgard/modules`. These services are responsible for commnunicating with the API. All sagas must be imported into the `index.js` file in this directory.
+## Versioning
 
-The `.reducer.js` files update the state with the responses from the server. All reducers should be imported into the `index.js` file within this directory.
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/buildlyio/buildly-react-template/tags). 
 
-### Http module
+## Authors
 
-The Http module connects to the Http implementation in midgard-core and handles requests to the server.
+* **Buildly** - *Initial work*
 
-### OAuth module
-
-The OAuth module connects to the OAuth implementation in midgard-core and provides functionalities related to authentication, e.g., logging in using the password flow, logging out, retrieving and saving the access token.
-
-Midgard uses the actions defined in `/src/redux/actions/Auth.actions.js` to access these functionalities within the components.
+See also the list of [contributors](https://github.com/buildlyio/buildly-react-template/graphs/contributors) who participated in this project.
 
 ## License
 
-Copyright &#169;2019 Humanitec GmbH.
-
-This code is released under the Humanitec Affero GPL. See the **LICENSE** file for details.
+This project is licensed under the GPL v3 License - see the [LICENSE](LICENSE) file for details
