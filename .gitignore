@@ -18,5 +18,7 @@ package-lock.json
 npm-debug.log*
 
 .npmrc
-.idea
-yarn.lock
+
+#IDE
+.idea/
+.vscode/
