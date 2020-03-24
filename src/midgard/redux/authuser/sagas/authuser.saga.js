@@ -35,7 +35,7 @@ function* login(payload) {
   try {
     const token = yield call(oauthService.authenticateWithPasswordFlow, payload.credentials);
     yield call(oauthService.setAccessToken, token.data);
-    const user = yield call(httpService.makeRequest, 'get', `${environment.API_URL}oauthuser/`);
+    const user = yield call(httpService.makeRequest, 'get', `${environment.API_URL}coreuser/me/`);
     yield call(oauthService.setOauthUser, user, payload);
     const coreUser = yield call(httpService.makeRequest, 'get', `${environment.API_URL}coreuser/`);
     yield call(oauthService.setCurrentCoreUser, coreUser, user);
