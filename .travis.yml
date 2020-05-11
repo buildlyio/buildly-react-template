@@ -1,5 +1,5 @@
 language: node_js
-cache: yarn
+cache: yarn, pip
 services:
   - docker
 node_js:
@@ -13,12 +13,13 @@ before_install:
 install:
   - yarn global add gulp-cli
   - yarn install
+  - pip install awscli
 script:
   - yarn run init
   - yarn run build-prod
   - docker build -t $DOCKER_REPO .
 deploy:
   provider: script
-  script: bash scripts/deploy.sh
+  script: bash scripts/deploy-aws.sh
   on:
     branch: master
