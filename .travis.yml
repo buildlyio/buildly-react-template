@@ -4,8 +4,6 @@ services:
   - docker
 node_js:
   - "10.16.0"
-python:
-  - "3.7"
 env:
   global:
   - DOCKER_REPO=transparent-path/react-ui
@@ -15,7 +13,6 @@ before_install:
 install:
   - yarn global add gulp-cli
   - yarn install
-  - pip install awscli
 script:
   - yarn run init
   - yarn run build-prod
