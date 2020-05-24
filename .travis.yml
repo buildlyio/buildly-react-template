@@ -4,6 +4,8 @@ services:
   - docker
 node_js:
   - "10.16.0"
+python:
+  - "3.7"
 env:
   global:
   - DOCKER_REPO=transparent-path/react-ui
