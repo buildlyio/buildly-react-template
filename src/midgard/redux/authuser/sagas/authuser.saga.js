@@ -59,6 +59,7 @@ function* login(payload) {
 }
 
 function* register(payload) {
+  let { history } = payload;
   try {
     const user = yield call(
       httpService.makeRequest,
@@ -66,7 +67,10 @@ function* register(payload) {
       `${environment.API_URL}coreuser/`,
       payload.data
     );
-    yield [yield put({ type: REGISTER_SUCCESS, user })];
+    yield [
+      yield put({ type: REGISTER_SUCCESS, user }),
+      yield call(history.push, "/login"),
+    ];
   } catch (error) {
     yield put({ type: REGISTER_FAIL, error: "Registration failed" });
   }

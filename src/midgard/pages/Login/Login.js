@@ -163,7 +163,7 @@ function Login({ dispatch, loading, history }) {
                 onBlur={(e) => handleBlur(e, "required", password)}
                 {...password.bind}
               />
-              <div class={classes.loadingWrapper}>
+              <div className={classes.loadingWrapper}>
                 <Button
                   type="submit"
                   fullWidth
