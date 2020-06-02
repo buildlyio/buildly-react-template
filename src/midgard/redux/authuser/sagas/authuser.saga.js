@@ -19,6 +19,7 @@ import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
 import { httpService } from "../../../modules/http/http.service";
 import { environment } from "environment";
+import { showAlert } from "../../alert/actions/alert.actions";
 
 function* logout() {
   try {
@@ -51,10 +52,26 @@ function* login(payload) {
     yield call(oauthService.setCurrentCoreUser, coreUser, user);
     yield [
       yield put({ type: LOGIN_SUCCESS, user }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Login Successfully!",
+        })
+      ),
       yield call(history.push, "/app/profile/settings"),
     ];
   } catch (error) {
-    yield put({ type: LOGIN_FAIL, error: "Invalid credentials given" });
+    yield [
+      yield put({ type: LOGIN_FAIL, error: "Invalid credentials given" }),
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Login Failed!",
+        })
+      ),
+    ];
   }
 }
 
@@ -69,10 +86,27 @@ function* register(payload) {
     );
     yield [
       yield put({ type: REGISTER_SUCCESS, user }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Successfully Registered",
+        })
+      ),
       yield call(history.push, "/login"),
     ];
   } catch (error) {
-    yield put({ type: REGISTER_FAIL, error: "Registration failed" });
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Registration Failed!",
+        })
+      ),
+      yield put({ type: REGISTER_FAIL, error: "Registration failed" }),
+    ];
   }
 }
 

@@ -12,6 +12,7 @@ import Register from "./midgard/pages/Register/Register";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "./styles/theme";
+import Alerts from "./midgard/components/Alerts/Alerts";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="/register" component={Register} />
             <PrivateRoute path="/app" component={Container} />
           </div>
+          <Alerts />
         </ThemeProvider>
       </AppContext.Provider>
     </Router>
