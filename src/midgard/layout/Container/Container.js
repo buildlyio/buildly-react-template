@@ -15,32 +15,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { user, UserContext } from "midgard/context/User.context";
 import { subNav, SubNavContext } from "midgard/context/SubNav.context";
 
-const ContainerWrapper = styled.div`
-  height: 100%;
-  display: flex;
-  background-color: ${colors.baseLighter};
-
-  .container {
-    &__row {
-      display: flex;
-      flex: 1;
-    }
-
-    &__column {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-
-    &__scroll {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      overflow: scroll;
-    }
-  }
-`;
-
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "100%",
@@ -51,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     height: "100%",
-    // padding: theme.spacing(3),
   },
 }));
 
@@ -99,11 +72,11 @@ function Dashboard({ location, history }) {
           />
           <Route
             exact
-            path="/app/custodians"
+            path="/app/profile"
             render={() => <Redirect to="/custordians" />}
           />
           <Route path="/app/dashboard" component={Profile} />
-          <Route path="/app/custodians" component={UserManagement} />
+          <Route path="/app/profile/users" component={UserManagement} />
         </Container>
         {routeItems}
       </UserContext.Provider>

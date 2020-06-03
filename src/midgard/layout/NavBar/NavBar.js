@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import AppBar from "@material-ui/core/AppBar";
+import { Link, NavLink } from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
@@ -8,34 +8,32 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { AppContext } from "midgard/context/App.context";
-
-const drawerWidth = 240;
+import { NAVIGATION_ITEMS } from "./NavBarConstants";
+import { isMobile } from "../../utils/mediaQuery";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up("md")]: {
       width: 240,
       flexShrink: 0,
     },
-    height: "100%",
     backgroundColor: "#646262",
   },
   drawerContainer: {
     overflow: "auto",
   },
   appBar: {
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up("md")]: {
       width: `calc(100% - ${240}px)`,
       marginLeft: 240,
     },
   },
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up("md")]: {
       display: "none",
     },
   },
-  // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: 240,
@@ -45,6 +43,11 @@ const useStyles = makeStyles((theme) => ({
   active: {
     backgroundColor: "#B46F04 !important",
     fontWeight: "bold",
+  },
+  navLink: {
+    display: "block",
+    textDecoration: "none",
+    color: "#fff",
   },
   navItems: {
     padding: "24px",
@@ -58,28 +61,33 @@ const useStyles = makeStyles((theme) => ({
 function NavBar({ navHidden, setNavHidden, location, history }) {
   const classes = useStyles();
   const theme = useTheme();
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  let isMobileDevice = isMobile();
 
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
+  const handleListItemClick = (event, index, item) => {
+    if (isMobileDevice) setNavHidden(!navHidden);
   };
 
   const drawer = (
     <div>
       <div className={classes.toolbar} />
       <List>
-        {["Dashboard", "Shipment", "Items", "Custodian"].map((text, index) => (
+        {NAVIGATION_ITEMS.map((items, index) => (
           <React.Fragment>
-            <ListItem
-              button
-              className={classes.navItems}
-              key={text}
-              classes={{ selected: classes.active }}
-              selected={selectedIndex === index}
-              onClick={(event) => handleListItemClick(event, index)}
+            <NavLink
+              to={items.link}
+              activeClassName={classes.active}
+              title={items.name}
+              className={classes.navLink}
             >
-              <ListItemText primary={text} />
-            </ListItem>
+              <ListItem
+                button
+                className={classes.navItems}
+                key={items.id}
+                onClick={(event) => handleListItemClick(event, index, items)}
+              >
+                <ListItemText primary={items.name} />
+              </ListItem>
+            </NavLink>
             <Divider />
           </React.Fragment>
         ))}
@@ -108,7 +116,7 @@ function NavBar({ navHidden, setNavHidden, location, history }) {
           {drawer}
         </Drawer>
       </Hidden>
-      <Hidden xsDown implementation="css">
+      <Hidden smDown implementation="css">
         <Drawer
           classes={{
             paper: classes.drawerPaper,
@@ -121,19 +129,6 @@ function NavBar({ navHidden, setNavHidden, location, history }) {
       </Hidden>
     </nav>
   );
-  // const app = useContext(AppContext);
-  // const setActive = (active) => {
-  //   const { from } = location.state || { from: { pathname: `/app/${active}` } };
-  //   history.push(from);
-  // };
-  // return (
-  //   <NavBarWrapper className="nav-bar" hidden={navHidden}>
-  //     <div className="nav-bar__container">
-  //       <div className="nav-bar__elements"></div>
-  //       <NavUser location={location} history={history} />
-  //     </div>
-  //   </NavBarWrapper>
-  // );
 }
 
 export default NavBar;
