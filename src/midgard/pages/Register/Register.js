@@ -124,6 +124,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
 
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
+    let errorExists = false;
     if (
       !username.value ||
       !password.value ||
@@ -134,9 +135,9 @@ function Register({ dispatch, loading, history, loaded, error }) {
     )
       return true;
     errorKeys.forEach((key) => {
-      if (formError[key].error) return true;
+      if (formError[key].error) errorExists = true;
     });
-    return false;
+    return errorExists;
   };
 
   return (
@@ -279,6 +280,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     id="re_password"
                     label="Confirm Password"
                     name="re_password"
+                    type="password"
                     autoComplete="re_password"
                     error={formError.re_password && formError.re_password.error}
                     helperText={
