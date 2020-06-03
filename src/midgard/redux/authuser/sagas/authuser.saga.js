@@ -59,7 +59,7 @@ function* login(payload) {
           message: "Login Successfully!",
         })
       ),
-      yield call(history.push, "/app/profile/settings"),
+      yield call(history.push, "/app/dashboard"),
     ];
   } catch (error) {
     yield [
