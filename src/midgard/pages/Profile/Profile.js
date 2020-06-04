@@ -1,96 +1,160 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { FjButton, FjInlineEditor } from 'freyja-react'
-import TextField from 'midgard/components/TextField/TextField'
-import { colors } from 'colors'
-import styled from 'styled-components'
-import { rem } from 'polished'
-import { Redirect } from 'react-router-dom'
-import { updateUser, logout } from 'midgard/redux/authuser/actions/authuser.actions'
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
+import DataTable from "../../components/Table/Table";
+import ViewComfyIcon from "@material-ui/icons/ViewComfy";
+import ViewCompactIcon from "@material-ui/icons/ViewCompact";
+import IconButton from "@material-ui/core/IconButton";
+import Hidden from "@material-ui/core/Hidden";
+import { MapComponent } from "../../components/MapComponent/MapComponent";
 
-/**
- * Styled component for the profile page.
- */
-const ProfileWrapper = styled.div`
-  height: 100%;
-  display: flex;
-  flex: 1;
-  background-color: ${colors.baseLighter};
-
-  .profile {
-    &__container {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      align-items: flex-start;
-      margin: 0 ${rem(24)};
-    }
-  }
-`
+const useStyles = makeStyles((theme) => ({
+  dashboardHeaderItems: {},
+  tileView: {
+    display: "flex",
+  },
+  rowView: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  switchViewSection: {
+    background: "#383636",
+    width: "100%",
+    display: "flex",
+    minHeight: "40px",
+    alignItems: "center",
+  },
+  tileHeading: {
+    flex: 1,
+    padding: "8px",
+  },
+}));
 
 /**
  * The current oauth user.
  */
-let user = JSON.parse(localStorage.getItem('currentUser'));
+let user = JSON.parse(localStorage.getItem("currentUser"));
 
 /**
  * Outputs the profile page for the user.
  */
-function Profile({dispatch, history, location}) {
-  if (!user) {
-      user = JSON.parse(localStorage.getItem('currentUser'));
-      return <Redirect push to="/" />;
-  }
-  if (user !== JSON.parse(localStorage.getItem('currentUser'))) {
-    user = JSON.parse(localStorage.getItem('currentUser'));
-  }
-
-  /**
-   * Clears authentication and redirects to the login screen.
-   */
-  const logoutUser = () => {
-    dispatch(logout());
-    const { from } = location.state || { from: { pathname: "/" } };
-    history.push(from);
-  }
-
-  /**
-   * Called when the inline editor value is changed.
-   * @param prop the property to update
-   * @param value the new value to set
-   */
-  const onChange = (prop, value) => {
-    let nameUpdate = {};
-    nameUpdate[prop] = value;
-    user = { ...user, ...nameUpdate };
-    dispatch(updateUser(user));
-  }
-
+function Profile({ dispatch, history, location }) {
+  const [tileView, setTileView] = useState(true);
+  let classes = useStyles();
+  let dashboardItems = [
+    { id: 0, name: "Items in transit", number: 10000 },
+    { id: 0, name: "Delayed Shipment", number: 10000 },
+    { id: 1, name: "Items at risk", number: 10 },
+    { id: 0, name: "Perfect order rate", number: 10000 },
+  ];
   return (
-    <ProfileWrapper className="profile">
-      <div className="profile__container">
-        <h3>Settings</h3>
-        <FjInlineEditor
-          label="First name"
-          value={user.first_name}
-          onChange={(event) => onChange('first_name', event)} />
-        <FjInlineEditor
-          label="Last name"
-          value={user.last_name}
-          onChange={(event) => onChange('last_name', event)} />
-        <TextField label="Email" value={user.email} />
-        <TextField label="Organization" value={user.organization ? user.organization.name: ''} />
-        <FjButton
-          variant="danger"
-          size="small"
-          onClick={logoutUser}
-          type="button">
-          Logout
-        </FjButton>
+    <Box mt={3}>
+      <div className={classes.dashboardContainer}>
+        <Typography variant={"h4"}>Producer Dashboard</Typography>
+        <Box mt={3} mb={4}>
+          <Grid container className={classes.root} spacing={2}>
+            {dashboardItems.map((items, index) => {
+              return (
+                <Grid item md={3} xs={6} key={`${items.name}${index}`}>
+                  <div className={classes.dashboardHeaderItems}>
+                    <Typography variant={"h4"}>{items.number}</Typography>
+                    <Typography variant={"subtitle2"}>{items.name}</Typography>
+                  </div>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </Box>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={tileView ? 6 : 12}>
+            <Grid container spacing={4}>
+              <Grid item xs={12}>
+                <div className={classes.switchViewSection}>
+                  <Typography
+                    color="primary"
+                    variant="h5"
+                    className={classes.tileHeading}
+                  >
+                    Recalls and Excursions
+                  </Typography>
+                  <Hidden smDown>
+                    <IconButton
+                      className={classes.menuButton}
+                      onClick={() => setTileView(!tileView)}
+                      color="primary"
+                      aria-label="menu"
+                    >
+                      {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
+                    </IconButton>
+                  </Hidden>
+                </div>
+                <DataTable />
+              </Grid>
+            </Grid>
+            <Grid container spacing={4}>
+              <Grid item xs={12}>
+                <div className={classes.switchViewSection}>
+                  <Typography
+                    color="primary"
+                    variant="h5"
+                    className={classes.tileHeading}
+                  >
+                    Delayed Shipments
+                  </Typography>
+                  <Hidden smDown>
+                    <IconButton
+                      className={classes.menuButton}
+                      onClick={() => setTileView(!tileView)}
+                      color="primary"
+                      aria-label="menu"
+                    >
+                      {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
+                    </IconButton>
+                  </Hidden>
+                </div>
+                <DataTable />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} md={tileView ? 6 : 12}>
+            <div className={classes.switchViewSection}>
+              <Typography
+                className={classes.tileHeading}
+                color="primary"
+                variant="h5"
+              >
+                Current Shipments
+              </Typography>
+              <Hidden smDown>
+                <IconButton
+                  className={classes.menuButton}
+                  onClick={() => setTileView(!tileView)}
+                  color="primary"
+                  aria-label="menu"
+                >
+                  {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
+                </IconButton>
+              </Hidden>
+            </div>
+            <MapComponent
+              isMarkerShown
+              googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places"
+              loadingElement={<div style={{ height: `100%` }} />}
+              containerElement={<div style={{ height: `500px` }} />}
+              mapElement={<div style={{ height: `100%` }} />}
+            />
+          </Grid>
+        </Grid>
       </div>
-    </ProfileWrapper>
-  )
+    </Box>
+  );
 }
 
-const mapStateToProps = (state, ownProps) => ({...ownProps, ...state.authReducer});
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.authReducer,
+});
 export default connect(mapStateToProps)(Profile);
