@@ -26,7 +26,7 @@ function App() {
               path="/"
               render={() =>
                 oauthService.hasValidAccessToken() ? (
-                  <Redirect to="/dashboard" />
+                  <Redirect to="/app/dashboard" />
                 ) : (
                   <Redirect to="/login" />
                 )
