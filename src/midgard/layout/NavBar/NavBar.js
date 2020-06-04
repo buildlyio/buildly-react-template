@@ -1,69 +1,134 @@
-import React, { useContext } from 'react'
-import NavUser from 'midgard/components/NavUser/NavUser';
-import NavItem from 'midgard/components/NavItem/NavItem';
-import { AppContext } from 'midgard/context/App.context';
-import { colors } from 'colors'
-import styled, { css } from 'styled-components'
-import { rem } from 'polished'
+import React, { useContext } from "react";
+import { Link, NavLink } from "react-router-dom";
+import Divider from "@material-ui/core/Divider";
+import Drawer from "@material-ui/core/Drawer";
+import Hidden from "@material-ui/core/Hidden";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { AppContext } from "midgard/context/App.context";
+import { NAVIGATION_ITEMS } from "./NavBarConstants";
+import { isMobile } from "../../utils/mediaQuery";
 
-const NavBarWrapper = styled.div`
-  display: flex;
-  max-width: ${rem(220)};
-  width: ${rem(220)};
-  height: 100%;
-  background-color: ${colors.base};
-  min-height: calc(100vh - ${rem(60)});
-  transition: max-width 0.3s ease-in-out;
-  margin-top: ${rem(-60)};
-  padding-top: ${rem(60)};
-
-  .nav-bar {
-    &__container {
-      display: flex;
-      margin: 0 ${rem(10)};
-      flex-flow: column nowrap;
-      width: ${rem(200)};
-      height: calc(100vh - ${rem(60)});
-      padding-bottom: ${rem(16)};
-      box-sizing: border-box;
-      transition: all 0.3s ease-in-out;
-    }
-    &__elements {
-      flex: 3;
-    }
-  }
-
-  ${props => props.hidden && css`
-    max-width: 0;
-    overflow: hidden;
-    margin-right: ${rem(40)};
-  `}
-`
+const useStyles = makeStyles((theme) => ({
+  drawer: {
+    [theme.breakpoints.up("md")]: {
+      width: 240,
+      flexShrink: 0,
+    },
+    backgroundColor: "#646262",
+  },
+  drawerContainer: {
+    overflow: "auto",
+  },
+  appBar: {
+    [theme.breakpoints.up("md")]: {
+      width: `calc(100% - ${240}px)`,
+      marginLeft: 240,
+    },
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up("md")]: {
+      display: "none",
+    },
+  },
+  toolbar: theme.mixins.toolbar,
+  drawerPaper: {
+    width: 240,
+    backgroundColor: "#383636",
+    color: "#fff",
+  },
+  active: {
+    backgroundColor: "#B46F04 !important",
+    fontWeight: "bold",
+  },
+  navLink: {
+    display: "block",
+    textDecoration: "none",
+    color: "#fff",
+  },
+  navItems: {
+    padding: "24px",
+    textAlign: "center",
+  },
+}));
 
 /**
  * Component for the side navigation.
  */
-function NavBar({navHidden, location, history}) {
-  const app = useContext(AppContext);
+function NavBar({ navHidden, setNavHidden, location, history }) {
+  const classes = useStyles();
+  const theme = useTheme();
+  let isMobileDevice = isMobile();
 
-  /**
-   * Sets the active item.
-   * @param {string} active the active nav item
-   */
-  const setActive = (active) => {
-    const { from } = location.state || { from: { pathname: `/app/${active}` } };
-    history.push(from);
-  }
-  
+  const handleListItemClick = (event, index, item) => {
+    if (isMobileDevice) setNavHidden(!navHidden);
+  };
+
+  const drawer = (
+    <div>
+      <div className={classes.toolbar} />
+      <List>
+        {NAVIGATION_ITEMS.map((items, index) => (
+          <React.Fragment>
+            <NavLink
+              to={items.link}
+              activeClassName={classes.active}
+              title={items.name}
+              className={classes.navLink}
+            >
+              <ListItem
+                button
+                className={classes.navItems}
+                key={items.id}
+                onClick={(event) => handleListItemClick(event, index, items)}
+              >
+                <ListItemText primary={items.name} />
+              </ListItem>
+            </NavLink>
+            <Divider />
+          </React.Fragment>
+        ))}
+      </List>
+    </div>
+  );
+  const handleDrawerToggle = () => {
+    setNavHidden(!navHidden);
+  };
+
   return (
-    <NavBarWrapper className="nav-bar" hidden={navHidden}>
-      <div className="nav-bar__container">
-        <div className="nav-bar__elements">
-        </div>
-        <NavUser location={location} history={history} />
-      </div>
-    </NavBarWrapper>
-  )
+    <nav className={classes.drawer} aria-label="mailbox folders">
+      <Hidden smUp implementation="css">
+        <Drawer
+          variant="temporary"
+          anchor={theme.direction === "rtl" ? "right" : "left"}
+          open={navHidden}
+          onClose={handleDrawerToggle}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </Hidden>
+      <Hidden smDown implementation="css">
+        <Drawer
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          variant="permanent"
+          open
+        >
+          {drawer}
+        </Drawer>
+      </Hidden>
+    </nav>
+  );
 }
 
 export default NavBar;

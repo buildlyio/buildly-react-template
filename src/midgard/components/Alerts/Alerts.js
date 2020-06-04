@@ -25,20 +25,21 @@ function Alerts({ data, loading, loaded, dispatch }) {
     if (reason === "clickaway") {
       return;
     }
-
     dispatch(hideAlert());
   };
   return (
     <div className={classes.root}>
       <Snackbar
-        open={(data && data.open) || false}
+        open={data ? data.open : false}
         autoHideDuration={6000}
         onClose={handleClose}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert onClose={handleClose} severity={(data && data.type) || "info"}>
-          {data && data.message}
-        </Alert>
+        {data && (
+          <Alert onClose={handleClose} severity={data.type}>
+            {data.message}
+          </Alert>
+        )}
       </Snackbar>
     </div>
   );
