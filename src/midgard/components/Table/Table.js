@@ -8,14 +8,18 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from "@material-ui/core/IconButton";
+import SearchInput from "../SearchComponent/SearchInput";
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
     "&:nth-of-type(odd)": {
-      backgroundColor: "#878282",
+      backgroundColor: "#BEBABA",
     },
     "&:nth-of-type(odd):hover": {
-      backgroundColor: "#BEBABA",
+      backgroundColor: "#DCD9D8",
     },
   },
 }))(TableRow);
@@ -35,11 +39,24 @@ const useStyles = makeStyles({
   container: {
     maxHeight: 440,
   },
-  table: {},
+  searchSection: {
+    background: "#383636",
+    width: "100%",
+    display: "flex",
+    minHeight: "40px",
+    alignItems: "center",
+  },
 });
 
 export default function DataTable({ ...props }) {
-  let { rows, columns } = props;
+  let {
+    rows,
+    columns,
+    actionsColumns,
+    hasSearch,
+    searchValue,
+    setSearchValue,
+  } = props;
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -55,6 +72,14 @@ export default function DataTable({ ...props }) {
 
   return (
     <Paper className={classes.root}>
+      {hasSearch && (
+        <div className={classes.searchSection}>
+          <SearchInput
+            searchValue={searchValue}
+            setSearchValue={setSearchValue}
+          />
+        </div>
+      )}
       <TableContainer className={classes.container}>
         <Table stickyHeader className={classes.table} aria-label="sticky table">
           <TableHead>
@@ -68,6 +93,16 @@ export default function DataTable({ ...props }) {
                   {column.label}
                 </StyledTableHead>
               ))}
+              {actionsColumns &&
+                actionsColumns.map((action, id) => (
+                  <StyledTableHead
+                    key={action.id}
+                    align={"left"}
+                    style={{ minWidth: 50 }}
+                  >
+                    {action.label}
+                  </StyledTableHead>
+                ))}
             </StyledTableRow>
           </TableHead>
           <TableBody>
@@ -89,6 +124,30 @@ export default function DataTable({ ...props }) {
                         </TableCell>
                       );
                     })}
+                    {actionsColumns &&
+                      actionsColumns.map((action, id) => {
+                        const actionItemType = action.type;
+                        return (
+                          <StyledTableHead
+                            key={action.id}
+                            align={"left"}
+                            style={{ minWidth: 50 }}
+                          >
+                            <IconButton
+                              className={classes.menuButton}
+                              onClick={() => action.action(row)}
+                              color="secondary"
+                              aria-label="menu"
+                            >
+                              {actionItemType === "edit" ? (
+                                <EditIcon />
+                              ) : (
+                                <DeleteIcon />
+                              )}
+                            </IconButton>
+                          </StyledTableHead>
+                        );
+                      })}
                   </StyledTableRow>
                 );
               })}
