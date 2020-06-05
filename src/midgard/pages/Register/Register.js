@@ -18,6 +18,7 @@ import Grid from "@material-ui/core/Grid";
 import { validators } from "../../utils/validators";
 import logo from "../../../assets/tp-logo.png";
 import { isMobile } from "../../utils/mediaQuery";
+import { routes } from "../../routes/routesConstants";
 
 function Copyright() {
   return (
@@ -311,7 +312,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
               </div>
               <Grid container>
                 <Grid item>
-                  <Link href="/login" variant="body2" color="secondary">
+                  <Link href={routes.LOGIN} variant="body2" color="secondary">
                     {"Go Back To Login"}
                   </Link>
                 </Grid>

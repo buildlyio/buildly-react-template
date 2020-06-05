@@ -16,6 +16,7 @@ import { useInput } from "../../hooks/useInput";
 import { login } from "../../redux/authuser/actions/authuser.actions";
 import { validators } from "../../utils/validators";
 import logo from "../../../assets/tp-logo.png";
+import { routes } from "../../routes/routesConstants";
 
 function Copyright() {
   return (
@@ -188,7 +189,11 @@ function Login({ dispatch, loading, history }) {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="/register" variant="body2" color="secondary">
+                  <Link
+                    href={routes.REGISTER}
+                    variant="body2"
+                    color="secondary"
+                  >
                     {"Don't have an account? Register"}
                   </Link>
                 </Grid>

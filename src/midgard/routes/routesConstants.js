@@ -1,5 +1,10 @@
-export const DASHBOARD = "/app/dashboard";
-export const CUSTODIANS = "/app/custodians";
-export const USER_MANAGEMENT = "/app/profile/users";
-export const CURRENT_USERS = "/app/profile/users/current-users";
-export const USER_GROUPS = "/app/profile/users/groups";
+export const routes = {
+  LOGIN: "/login",
+  REGISTER: "/register",
+  APP: "/app",
+  DASHBOARD: "/app/dashboard",
+  CUSTODIANS: "/app/custodians",
+  USER_MANAGEMENT: "/app/profile/users",
+  CURRENT_USERS: "/app/profile/users/current-users",
+  USER_GROUPS: "/app/profile/users/groups",
+};

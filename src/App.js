@@ -13,6 +13,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "./styles/theme";
 import Alerts from "./midgard/components/Alerts/Alerts";
+import { routes } from "./midgard/routes/routesConstants";
 
 function App() {
   return (
@@ -26,15 +27,15 @@ function App() {
               path="/"
               render={() =>
                 oauthService.hasValidAccessToken() ? (
-                  <Redirect to="/app/dashboard" />
+                  <Redirect to={routes.DASHBOARD} />
                 ) : (
-                  <Redirect to="/login" />
+                  <Redirect to={routes.LOGIN} />
                 )
               }
             />
-            <Route path="/login" component={Login} />
-            <Route path="/register" component={Register} />
-            <PrivateRoute path="/app" component={ContainerDashboard} />
+            <Route path={routes.LOGIN} component={Login} />
+            <Route path={routes.REGISTER} component={Register} />
+            <PrivateRoute path={routes.APP} component={ContainerDashboard} />
           </div>
           <Alerts />
         </ThemeProvider>

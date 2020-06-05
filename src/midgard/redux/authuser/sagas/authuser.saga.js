@@ -20,6 +20,7 @@ import { oauthService } from "../../../modules/oauth/oauth.service";
 import { httpService } from "../../../modules/http/http.service";
 import { environment } from "environment";
 import { showAlert } from "../../alert/actions/alert.actions";
+import { routes } from "../../../routes/routesConstants";
 
 function* logout() {
   try {
@@ -59,7 +60,7 @@ function* login(payload) {
           message: "Login Successfully!",
         })
       ),
-      yield call(history.push, "/app/dashboard"),
+      yield call(history.push, routes.DASHBOARD),
     ];
   } catch (error) {
     yield [
@@ -93,7 +94,7 @@ function* register(payload) {
           message: "Successfully Registered",
         })
       ),
-      yield call(history.push, "/login"),
+      yield call(history.push, routes.LOGIN),
     ];
   } catch (error) {
     console.log("error", error);

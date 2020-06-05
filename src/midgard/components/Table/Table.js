@@ -73,13 +73,13 @@ export default function DataTable({ ...props }) {
           <TableBody>
             {rows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
+              .map((row, idx) => {
                 return (
                   <StyledTableRow
                     hover
                     role="checkbox"
                     tabIndex={-1}
-                    key={row.code}
+                    key={`tableRow${idx}`}
                   >
                     {columns.map((column) => {
                       const value = row[column.id];
