@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Container for the app layout when the user is authenticated.
  */
-function Dashboard({ location, history }) {
+function ContainerDashboard({ location, history }) {
   const [navHidden, setNavHidden] = useState(false);
   const routeItems = [];
   const classes = useStyles();
@@ -85,4 +85,4 @@ function Dashboard({ location, history }) {
   );
 }
 
-export default Dashboard;
+export default ContainerDashboard;

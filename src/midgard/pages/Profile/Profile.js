@@ -10,6 +10,105 @@ import ViewCompactIcon from "@material-ui/icons/ViewCompact";
 import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import { MapComponent } from "../../components/MapComponent/MapComponent";
+import { numberWithCommas } from "../../utils/utilMethods";
+
+const recallColumns = [
+  { id: "shipmentId", label: "Shipment ID", minWidth: 150 },
+  { id: "issue", label: "Issue", minWidth: 150 },
+  {
+    id: "affected",
+    label: "Affected Items",
+    minWidth: 150,
+  },
+  {
+    id: "custodian",
+    label: "Current Custodians",
+    minWidth: 170,
+  },
+];
+
+const recallRows = [
+  {
+    shipmentId: "10000",
+    issue: "recall",
+    affected: "2000",
+    custodian: "CN01222",
+  },
+  {
+    shipmentId: "20000",
+    issue: "recall",
+    affected: "2000",
+    custodian: "CN01222",
+  },
+  {
+    shipmentId: "30000",
+    issue: "recall",
+    affected: "2000",
+    custodian: "CN01222",
+  },
+  {
+    shipmentId: "40000",
+    issue: "recall",
+    affected: "2000",
+    custodian: "CN01222",
+  },
+];
+
+const delayColumns = [
+  { id: "shipmentId", label: "Shipment ID", minWidth: 150 },
+  {
+    id: "delay",
+    label: "Delay(hrs)",
+    minWidth: 150,
+  },
+  {
+    id: "itemNo",
+    label: "Items",
+    minWidth: 170,
+  },
+  {
+    id: "risk",
+    label: "Revenue Risk",
+    minWidth: 170,
+    format: (value) => `$${numberWithCommas(value)}`,
+  },
+  {
+    id: "custodian",
+    label: "Current Custodians",
+    minWidth: 170,
+  },
+];
+
+const delayRows = [
+  {
+    shipmentId: "10000",
+    delay: "74",
+    itemNo: "400",
+    risk: "100000",
+    custodian: "CN01222",
+  },
+  {
+    shipmentId: "10000",
+    delay: "74",
+    itemNo: "400",
+    risk: "100000",
+    custodian: "CN01222",
+  },
+  {
+    shipmentId: "10000",
+    delay: "74",
+    itemNo: "400",
+    risk: "100000",
+    custodian: "CN01222",
+  },
+  {
+    shipmentId: "10000",
+    delay: "74",
+    itemNo: "400",
+    risk: "100000",
+    custodian: "CN01222",
+  },
+];
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeaderItems: {},
@@ -48,7 +147,7 @@ function Profile({ dispatch, history, location }) {
     { id: 0, name: "Items in transit", number: 10000 },
     { id: 0, name: "Delayed Shipment", number: 10000 },
     { id: 1, name: "Items at risk", number: 10 },
-    { id: 0, name: "Perfect order rate", number: 10000 },
+    { id: 0, name: "Perfect order rate", number: "80%" },
   ];
   return (
     <Box mt={3}>
@@ -91,7 +190,7 @@ function Profile({ dispatch, history, location }) {
                     </IconButton>
                   </Hidden>
                 </div>
-                <DataTable />
+                <DataTable rows={recallRows} columns={recallColumns} />
               </Grid>
             </Grid>
             <Grid container spacing={4}>
@@ -115,7 +214,7 @@ function Profile({ dispatch, history, location }) {
                     </IconButton>
                   </Hidden>
                 </div>
-                <DataTable />
+                <DataTable rows={delayRows} columns={delayColumns} />
               </Grid>
             </Grid>
           </Grid>
