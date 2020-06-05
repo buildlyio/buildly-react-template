@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -11,6 +12,7 @@ import Hidden from "@material-ui/core/Hidden";
 import { AppContext } from "midgard/context/App.context";
 import { SubNavContext } from "midgard/context/SubNav.context";
 import logo from "assets/tp-logo.png";
+import { logout } from "../../redux/authuser/actions/authuser.actions";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -34,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Component for the top bar header.
  */
-function TopBar({ navHidden, setNavHidden, history, location }) {
+function TopBar({ navHidden, setNavHidden, history, location, dispatch }) {
   const app = useContext(AppContext);
   const subNav = useContext(SubNavContext);
   const classes = useStyles();
@@ -48,6 +50,11 @@ function TopBar({ navHidden, setNavHidden, history, location }) {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogoutClick = () => {
+    dispatch(logout());
+    history.push("/");
   };
 
   return (
@@ -91,7 +98,7 @@ function TopBar({ navHidden, setNavHidden, history, location }) {
             open={open}
             onClose={handleClose}
           >
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
+            <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
             <MenuItem onClick={handleClose}>My account</MenuItem>
           </Menu>
         </div>
@@ -100,4 +107,9 @@ function TopBar({ navHidden, setNavHidden, history, location }) {
   );
 }
 
-export default TopBar;
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.authReducer,
+});
+
+export default connect(mapStateToProps)(TopBar);
