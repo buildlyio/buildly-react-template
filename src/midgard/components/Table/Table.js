@@ -20,6 +20,14 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
+const StyledTableHead = withStyles((theme) => ({
+  head: {
+    fontWeight: "bold",
+    color: " #fff",
+    background: "#000",
+  },
+}))(TableCell);
+
 const useStyles = makeStyles({
   root: {
     width: "100%",
@@ -27,6 +35,7 @@ const useStyles = makeStyles({
   container: {
     maxHeight: 440,
   },
+  table: {},
 });
 
 export default function DataTable({ ...props }) {
@@ -47,17 +56,17 @@ export default function DataTable({ ...props }) {
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
-        <Table stickyHeader aria-label="sticky table">
+        <Table stickyHeader className={classes.table} aria-label="sticky table">
           <TableHead>
             <StyledTableRow>
               {columns.map((column) => (
-                <TableCell
+                <StyledTableHead
                   key={column.id}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
-                </TableCell>
+                </StyledTableHead>
               ))}
             </StyledTableRow>
           </TableHead>

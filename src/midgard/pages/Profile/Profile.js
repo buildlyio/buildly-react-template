@@ -111,7 +111,9 @@ const delayRows = [
 ];
 
 const useStyles = makeStyles((theme) => ({
-  dashboardHeaderItems: {},
+  dashboardHeading: {
+    fontWeight: "bold",
+  },
   tileView: {
     display: "flex",
   },
@@ -144,15 +146,17 @@ function Profile({ dispatch, history, location }) {
   const [tileView, setTileView] = useState(true);
   let classes = useStyles();
   let dashboardItems = [
-    { id: 0, name: "Items in transit", number: 10000 },
-    { id: 0, name: "Delayed Shipment", number: 10000 },
-    { id: 1, name: "Items at risk", number: 10 },
+    { id: 0, name: "Items in transit", number: numberWithCommas(18400) },
+    { id: 0, name: "Delayed Shipment", number: 483 },
+    { id: 1, name: "Items at risk", number: numberWithCommas(19000) },
     { id: 0, name: "Perfect order rate", number: "80%" },
   ];
   return (
     <Box mt={3}>
       <div className={classes.dashboardContainer}>
-        <Typography variant={"h4"}>Producer Dashboard</Typography>
+        <Typography className={classes.dashboardHeading} variant={"h4"}>
+          Producer Dashboard
+        </Typography>
         <Box mt={3} mb={4}>
           <Grid container className={classes.root} spacing={2}>
             {dashboardItems.map((items, index) => {
