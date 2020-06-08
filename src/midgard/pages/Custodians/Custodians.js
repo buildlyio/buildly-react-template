@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
@@ -15,7 +15,10 @@ import { RECALL_DATA, CUSTODIAN_DATA } from "../../utils/mock";
 import Modal from "../../components/Modal/Modal";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import Loader from "../../components/Loader/Loader";
-import { searchCustodian } from "../../redux/custodian/actions/custodian.actions";
+import {
+  searchCustodian,
+  getCustodians,
+} from "../../redux/custodian/actions/custodian.actions";
 
 const custodianColumns = [
   { id: "id", label: "CUstodian ID", minWidth: 150 },
@@ -77,6 +80,11 @@ function Custodian({
   const [deleteItem, setDeleteItem] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const classes = useStyles();
+
+  useEffect(() => {
+    dispatch(getCustodians());
+  }, []);
+
   const editItem = (item) => {
     history.push(`${routes.CUSTODIANS}/edit/:${item.id}`, {
       type: "edit",

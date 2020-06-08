@@ -26,7 +26,7 @@ export const SEARCH_SUCCESS = "CUSTODIAN/SEARCH_SUCCESS";
  *
  * @param {{id}} payload
  */
-export const getCustodians = (payload) => ({ type: GET_CUSTODIANS, payload });
+export const getCustodians = () => ({ type: GET_CUSTODIANS });
 
 /**
  *Add Custodain entity

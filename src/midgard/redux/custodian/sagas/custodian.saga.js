@@ -111,18 +111,21 @@ function* register(payload) {
   }
 }
 
-function* getCustodians(payload) {
+function* getCustodians() {
   try {
-    const user = yield call(
+    const data = yield call(
       httpService.makeRequest,
-      "post",
-      `${environment.API_URL}coreuser/invite/`,
-      payload.data
+      "get",
+      `http://localhost:8083/custodian/`,
+      null,
+      true
     );
-    yield [yield put({ type: INVITE_SUCCESS, user })];
+    console.log("data", data);
+    yield [yield put({ type: GET_CUSTODIANS_SUCCESS, data })];
   } catch (error) {
+    console.log("error", error);
     yield put({
-      type: INVITE_FAIL,
+      type: GET_CUSTODIANS_FAILURE,
       error: "One or more email address is invalid",
     });
   }
@@ -181,5 +184,5 @@ function* watchSearchCustodian() {
 }
 
 export default function* custodianSaga() {
-  yield all([watchSearchCustodian()]);
+  yield all([watchSearchCustodian(), watchGetCustodian()]);
 }
