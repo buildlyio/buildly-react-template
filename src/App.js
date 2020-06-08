@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import { PrivateRoute } from "./midgard/routes/Private.route";
 import { oauthService } from "./midgard/modules/oauth/oauth.service";
 import { app, AppContext } from "./midgard/context/App.context";
-import Dashboard from "./midgard/layout/Container/Container";
+import ContainerDashboard from "./midgard/layout/Container/Container";
 import Login from "./midgard/pages/Login/Login";
 import Register from "./midgard/pages/Register/Register";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -34,7 +34,7 @@ function App() {
             />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
-            <PrivateRoute path="/app" component={Dashboard} />
+            <PrivateRoute path="/app" component={ContainerDashboard} />
           </div>
           <Alerts />
         </ThemeProvider>

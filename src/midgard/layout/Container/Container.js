@@ -25,13 +25,14 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     height: "100%",
+    marginTop: "4em",
   },
 }));
 
 /**
  * Container for the app layout when the user is authenticated.
  */
-function Dashboard({ location, history }) {
+function ContainerDashboard({ location, history }) {
   const [navHidden, setNavHidden] = useState(false);
   const routeItems = [];
   const classes = useStyles();
@@ -84,4 +85,4 @@ function Dashboard({ location, history }) {
   );
 }
 
-export default Dashboard;
+export default ContainerDashboard;
