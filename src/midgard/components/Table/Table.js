@@ -46,6 +46,12 @@ const useStyles = makeStyles({
     minHeight: "40px",
     alignItems: "center",
   },
+  nodata: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#BEBABA",
+  },
 });
 
 export default function DataTable({ ...props }) {
@@ -55,7 +61,7 @@ export default function DataTable({ ...props }) {
     actionsColumns,
     hasSearch,
     searchValue,
-    setSearchValue,
+    searchAction,
   } = props;
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
@@ -74,10 +80,7 @@ export default function DataTable({ ...props }) {
     <Paper className={classes.root}>
       {hasSearch && (
         <div className={classes.searchSection}>
-          <SearchInput
-            searchValue={searchValue}
-            setSearchValue={setSearchValue}
-          />
+          <SearchInput searchValue={searchValue} searchAction={searchAction} />
         </div>
       )}
       <TableContainer className={classes.container}>
@@ -106,56 +109,69 @@ export default function DataTable({ ...props }) {
             </StyledTableRow>
           </TableHead>
           <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, idx) => {
-                return (
-                  <StyledTableRow
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    key={`tableRow${idx}`}
-                  >
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format ? column.format(value) : value}
-                        </TableCell>
-                      );
-                    })}
-                    {actionsColumns &&
-                      actionsColumns.map((action, id) => {
-                        const actionItemType = action.type;
+            {rows.length > 0 &&
+              rows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, idx) => {
+                  return (
+                    <StyledTableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={`tableRow${idx}`}
+                    >
+                      {columns.map((column) => {
+                        const value = row[column.id];
                         return (
-                          <StyledTableHead
-                            key={action.id}
-                            align={"left"}
-                            style={{ minWidth: 50 }}
-                          >
-                            <IconButton
-                              className={classes.menuButton}
-                              onClick={() => action.action(row)}
-                              color="secondary"
-                              aria-label="menu"
-                            >
-                              {actionItemType === "edit" ? (
-                                <EditIcon />
-                              ) : (
-                                <DeleteIcon />
-                              )}
-                            </IconButton>
-                          </StyledTableHead>
+                          <TableCell key={column.id} align={column.align}>
+                            {column.format ? column.format(value) : value}
+                          </TableCell>
                         );
                       })}
-                  </StyledTableRow>
-                );
-              })}
+                      {actionsColumns &&
+                        actionsColumns.map((action, id) => {
+                          const actionItemType = action.type;
+                          return (
+                            <StyledTableHead
+                              key={action.id}
+                              align={"left"}
+                              style={{ minWidth: 50 }}
+                            >
+                              <IconButton
+                                className={classes.menuButton}
+                                onClick={() => action.action(row)}
+                                color="secondary"
+                                aria-label="menu"
+                              >
+                                {actionItemType === "edit" ? (
+                                  <EditIcon />
+                                ) : (
+                                  <DeleteIcon />
+                                )}
+                              </IconButton>
+                            </StyledTableHead>
+                          );
+                        })}
+                    </StyledTableRow>
+                  );
+                })}
+            {rows.length === 0 && (
+              <StyledTableRow>
+                <TableCell
+                  align="center"
+                  colSpan={
+                    columns.length + (actionsColumns && actionsColumns.length)
+                  }
+                >
+                  No Data To Display
+                </TableCell>
+              </StyledTableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 20]}
+        rowsPerPageOptions={[5, 6, 10]}
         component="div"
         count={rows.length}
         rowsPerPage={rowsPerPage}

@@ -11,6 +11,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import { MapComponent } from "../../components/MapComponent/MapComponent";
 import { numberWithCommas } from "../../utils/utilMethods";
+import { RECALL_DATA, DELAY_DATA } from "../../utils/mock";
 
 const recallColumns = [
   { id: "shipmentId", label: "Shipment ID", minWidth: 150 },
@@ -24,33 +25,6 @@ const recallColumns = [
     id: "custodian",
     label: "Current Custodians",
     minWidth: 170,
-  },
-];
-
-const recallRows = [
-  {
-    shipmentId: "10000",
-    issue: "recall",
-    affected: "2000",
-    custodian: "CN01222",
-  },
-  {
-    shipmentId: "20000",
-    issue: "recall",
-    affected: "2000",
-    custodian: "CN01222",
-  },
-  {
-    shipmentId: "30000",
-    issue: "recall",
-    affected: "2000",
-    custodian: "CN01222",
-  },
-  {
-    shipmentId: "40000",
-    issue: "recall",
-    affected: "2000",
-    custodian: "CN01222",
   },
 ];
 
@@ -76,37 +50,6 @@ const delayColumns = [
     id: "custodian",
     label: "Current Custodians",
     minWidth: 170,
-  },
-];
-
-const delayRows = [
-  {
-    shipmentId: "10000",
-    delay: "74",
-    itemNo: "400",
-    risk: "100000",
-    custodian: "CN01222",
-  },
-  {
-    shipmentId: "10000",
-    delay: "74",
-    itemNo: "400",
-    risk: "100000",
-    custodian: "CN01222",
-  },
-  {
-    shipmentId: "10000",
-    delay: "74",
-    itemNo: "400",
-    risk: "100000",
-    custodian: "CN01222",
-  },
-  {
-    shipmentId: "10000",
-    delay: "74",
-    itemNo: "400",
-    risk: "100000",
-    custodian: "CN01222",
   },
 ];
 
@@ -194,7 +137,7 @@ function Profile({ dispatch, history, location }) {
                     </IconButton>
                   </Hidden>
                 </div>
-                <DataTable rows={recallRows} columns={recallColumns} />
+                <DataTable rows={RECALL_DATA} columns={recallColumns} />
               </Grid>
             </Grid>
             <Grid container spacing={4}>
@@ -218,7 +161,7 @@ function Profile({ dispatch, history, location }) {
                     </IconButton>
                   </Hidden>
                 </div>
-                <DataTable rows={delayRows} columns={delayColumns} />
+                <DataTable rows={DELAY_DATA} columns={delayColumns} />
               </Grid>
             </Grid>
           </Grid>

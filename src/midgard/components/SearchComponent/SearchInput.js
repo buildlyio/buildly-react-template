@@ -59,6 +59,8 @@ export default function SearchInput({ ...props }) {
           root: classes.inputRoot,
           input: classes.inputInput,
         }}
+        value={props.searchValue}
+        onChange={(e) => props.searchAction(e)}
         inputProps={{ "aria-label": "search" }}
       />
     </div>

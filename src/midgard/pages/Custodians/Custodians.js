@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
+import { Route, Redirect } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
@@ -8,102 +9,31 @@ import DataTable from "../../components/Table/Table";
 import { numberWithCommas } from "../../utils/utilMethods";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
+import AddCustodians from "./forms/AddCustodians";
+import { routes } from "../../routes/routesConstants";
+import { RECALL_DATA, CUSTODIAN_DATA } from "../../utils/mock";
+import Modal from "../../components/Modal/Modal";
+import ConfirmModal from "../../components/Modal/ConfirmModal";
+import Loader from "../../components/Loader/Loader";
+import { searchCustodian } from "../../redux/custodian/actions/custodian.actions";
 
-const recallColumns = [
-  { id: "shipmentId", label: "Shipment ID", minWidth: 150 },
-  { id: "issue", label: "Issue", minWidth: 150 },
+const custodianColumns = [
+  { id: "id", label: "CUstodian ID", minWidth: 150 },
+  { id: "name", label: "Name", minWidth: 150 },
   {
-    id: "affected",
-    label: "Affected Items",
+    id: "location",
+    label: "Location",
+    minWidth: 180,
+  },
+  {
+    id: "gln",
+    label: "GLN",
+    minWidth: 170,
+  },
+  {
+    id: "currentShipments",
+    label: "Current Shipments",
     minWidth: 150,
-  },
-  {
-    id: "custodian",
-    label: "Current Custodians",
-    minWidth: 170,
-  },
-];
-
-const recallRows = [
-  {
-    shipmentId: "10000",
-    issue: "recall",
-    affected: "2000",
-    custodian: "CN01222",
-  },
-  {
-    shipmentId: "20000",
-    issue: "recall",
-    affected: "2000",
-    custodian: "CN01222",
-  },
-  {
-    shipmentId: "30000",
-    issue: "recall",
-    affected: "2000",
-    custodian: "CN01222",
-  },
-  {
-    shipmentId: "40000",
-    issue: "recall",
-    affected: "2000",
-    custodian: "CN01222",
-  },
-];
-
-const delayColumns = [
-  { id: "shipmentId", label: "Shipment ID", minWidth: 150 },
-  {
-    id: "delay",
-    label: "Delay(hrs)",
-    minWidth: 150,
-  },
-  {
-    id: "itemNo",
-    label: "Items",
-    minWidth: 170,
-  },
-  {
-    id: "risk",
-    label: "Revenue Risk",
-    minWidth: 170,
-    format: (value) => `$${numberWithCommas(value)}`,
-  },
-  {
-    id: "custodian",
-    label: "Current Custodians",
-    minWidth: 170,
-  },
-];
-
-const delayRows = [
-  {
-    shipmentId: "10000",
-    delay: "74",
-    itemNo: "400",
-    risk: "100000",
-    custodian: "CN01222",
-  },
-  {
-    shipmentId: "10000",
-    delay: "74",
-    itemNo: "400",
-    risk: "100000",
-    custodian: "CN01222",
-  },
-  {
-    shipmentId: "10000",
-    delay: "74",
-    itemNo: "400",
-    risk: "100000",
-    custodian: "CN01222",
-  },
-  {
-    shipmentId: "10000",
-    delay: "74",
-    itemNo: "400",
-    risk: "100000",
-    custodian: "CN01222",
   },
 ];
 
@@ -134,20 +64,49 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Custodian({ dispatch, history, location, data }) {
-  let classes = useStyles();
+function Custodian({
+  dispatch,
+  history,
+  location,
+  data,
+  loading,
+  loaded,
+  error,
+}) {
+  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [deleteItem, setDeleteItem] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const classes = useStyles();
   const editItem = (item) => {
-    console.log("edit", item);
+    history.push(`${routes.CUSTODIANS}/edit/:${item.id}`, {
+      type: "edit",
+      from: routes.CUSTODIANS,
+    });
   };
   const deletItem = (item) => {
-    console.log("delete", item);
+    setDeleteItem(item);
+    setConfirmModal(true);
+  };
+  const handleConfirmModal = (item) => {
+    console.log("handle");
+  };
+  const searchTable = (e) => {
+    setSearchValue(e.target.value);
+    dispatch(searchCustodian(e.target.value, CUSTODIAN_DATA));
   };
   const actionsColumns = [
-    { id: "edit", type: "edit", action: editItem, label: "Edit" },
+    {
+      id: "edit",
+      type: "edit",
+      action: editItem,
+      label: "Edit",
+    },
     { id: "delete", type: "delete", action: deletItem, label: "Delete" },
   ];
+  let rows = data || CUSTODIAN_DATA;
   return (
     <Box mt={3}>
+      {loading && <Loader open={loading} />}
       <div className={classes.container}>
         <Box mb={3}>
           <Button
@@ -156,6 +115,11 @@ function Custodian({ dispatch, history, location, data }) {
             variant="contained"
             color="primary"
             className={classes.addButton}
+            onClick={() =>
+              history.push(`${routes.CUSTODIANS}/add`, {
+                from: routes.CUSTODIANS,
+              })
+            }
           >
             <AddIcon /> Add Custodian
           </Button>
@@ -166,14 +130,29 @@ function Custodian({ dispatch, history, location, data }) {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <DataTable
-              rows={recallRows}
-              columns={recallColumns}
+              rows={rows || []}
+              columns={custodianColumns}
               actionsColumns={actionsColumns}
-              hasSearch={true} // To show the search field in table
+              hasSearch={true}
+              searchAction={searchTable}
+              searchValue={searchValue} // To show the search field in table
             />
           </Grid>
         </Grid>
+        <Route path={`${routes.CUSTODIANS}/add`} component={AddCustodians} />
+        <Route
+          path={`${routes.CUSTODIANS}/edit/:id`}
+          component={AddCustodians}
+        />
       </div>
+
+      <ConfirmModal
+        open={openConfirmModal}
+        setOpen={setConfirmModal}
+        submitAction={handleConfirmModal}
+        title={"Are you sure you want to delete this item?"}
+        submitText={"Delete"}
+      />
     </Box>
   );
 }
