@@ -22,31 +22,48 @@ export const DELETE_CUSTODIANS_FAILURE = "CUSTODAIN/DELETE_CUSTODIANS_FAILURE";
 export const SEARCH = "CUSTODIAN/SEARCH";
 export const SEARCH_SUCCESS = "CUSTODIAN/SEARCH_SUCCESS";
 
-/**
- *
- * @param {{id}} payload
- */
+//get custodian tyoe action constants
+export const GET_CUSTODIAN_TYPE = "CUSTODAIN/GET_CUSTODIAN_TYPE";
+export const GET_CUSTODIAN_TYPE_SUCCESS =
+  "CUSTODAIN/GET_CUSTODIAN_TYPE_SUCCESS";
+export const GET_CUSTODIAN_TYPE_FAILURE =
+  "CUSTODAIN/GET_CUSTODIAN_TYPE_FAILURE";
+
+//get contact action constants
+export const GET_CONTACT = "CUSTODAIN/GET_CONTACT";
+export const GET_CONTACT_SUCCESS = "CUSTODAIN/GET_CONTACT_SUCCESS";
+export const GET_CONTACT_FAILURE = "CUSTODAIN/GET_CONTACT_FAILURE";
+
 export const getCustodians = () => ({ type: GET_CUSTODIANS });
 
 /**
- *Add Custodain entity
+ *Add custodian
  * @param {Object} payload
+ * @param {Object} history
  */
-export const addCustodians = (payload) => ({ type: ADD_CUSTODIANS, payload });
-
+export const addCustodians = (payload, history) => ({
+  type: ADD_CUSTODIANS,
+  payload,
+  history,
+});
 /**
- *Edit Custodain entity
- * @param {{id}} payload
+ *
+ * @param {Object} payload
+ * @param {Object} history
  */
-export const editCustodian = (payload) => ({ type: EDIT_CUSTODIANS, payload });
+export const editCustodian = (payload, history) => ({
+  type: EDIT_CUSTODIANS,
+  payload,
+  history,
+});
 
 /**
  *Selete Custodain entity
  * @param {{id}} payload
  */
-export const deleteCustodian = (payload) => ({
-  type: GET_CUSTODIANS,
-  payload,
+export const deleteCustodian = (custodianId) => ({
+  type: DELETE_CUSTODIANS,
+  custodianId,
 });
 
 /**
@@ -60,12 +77,10 @@ export const searchCustodian = (searchItem, searchList) => ({
   searchList,
 });
 
-/**
- *
- * @param {Array} data
- *
- */
-export const searchCustodianSuccess = (data) => ({
-  type: SEARCH_SUCCESS,
-  data,
+export const getCustodianType = () => ({
+  type: GET_CUSTODIAN_TYPE,
+});
+
+export const getContact = () => ({
+  type: GET_CONTACT,
 });

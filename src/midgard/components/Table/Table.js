@@ -111,7 +111,7 @@ export default function DataTable({ ...props }) {
           <TableBody>
             {rows.length > 0 &&
               rows
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, idx) => {
                   return (
                     <StyledTableRow
@@ -170,7 +170,7 @@ export default function DataTable({ ...props }) {
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
+      {/* <TablePagination
         rowsPerPageOptions={[5, 6, 10]}
         component="div"
         count={rows.length}
@@ -178,7 +178,7 @@ export default function DataTable({ ...props }) {
         page={page}
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
-      />
+      /> */}
     </Paper>
   );
 }

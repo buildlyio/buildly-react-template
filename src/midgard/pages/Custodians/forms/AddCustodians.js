@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -9,7 +9,6 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-// import { register, login } from "../../redux/authuser/actions/authuser.actions";
 import Grid from "@material-ui/core/Grid";
 import { validators } from "../../../utils/validators";
 import Modal from "../../../components/Modal/Modal";
@@ -19,6 +18,13 @@ import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Select from "@material-ui/core/Select";
 import { useInput } from "../../../hooks/useInput";
+import {
+  addCustodians,
+  getCustodianType,
+  editCustodian,
+} from "../../../redux/custodian/actions/custodian.actions";
+import Loader from "../../../components/Loader/Loader";
+import { dispatch } from "../../../redux/store";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    borderRadius: "18px",
   },
   logo: {
     width: "100%",
@@ -48,6 +55,11 @@ const useStyles = makeStyles((theme) => ({
   addressContainer: {
     marginTop: theme.spacing(4),
   },
+  formTitle: {
+    fontWeight: "bold",
+    marginTop: "1em",
+    textAlign: "center",
+  },
 }));
 
 function AddCustodians({
@@ -58,31 +70,33 @@ function AddCustodians({
   error,
   data,
   location,
+  custodianTypeList,
 }) {
+  const editPage = location.state && location.state.type === "edit";
+  const editData =
+    (location.state && location.state.type === "edit" && location.state.data) ||
+    {};
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
-  const company = useInput("", { required: true });
-  const alias = useInput("");
-  const custodianType = useInput("", { required: true });
-  const consortium = useInput("", { required: true });
-  const [shipmentId, setShipmentId] = useState("");
-  const glnNumber = useInput("", { required: true });
-  const address = useInput("", { required: true });
-  const city = useInput("", { required: true });
-  const state = useInput("", { required: true });
-  const zip = useInput("", { required: true });
+  const company = useInput(editData.name || "", {
+    required: true,
+  });
+  const alias = useInput(editData.custodian_alias || "");
+  const custodianType = useInput(editData.custodian_type || "", {
+    required: true,
+  });
+  const consortium = useInput("");
+  const glnNumber = useInput(editData.custodian_glns || "");
+  const address = useInput(editData.custodian_contact_info || "", {
+    required: true,
+  });
+  const city = useInput("");
+  const state = useInput("");
+  const zip = useInput("");
   const [formError, setFormError] = useState({});
 
-  const buttonText =
-    location && location.state && location.state.type === "edit"
-      ? "save"
-      : "add custodian";
-
-  const formTitle =
-    location && location.state && location.state.type === "edit"
-      ? "Edit Custodian"
-      : "Add Custodian";
-
+  const buttonText = editPage ? "save" : "add custodian";
+  const formTitle = editPage ? "Edit Custodian" : "Add Custodian";
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
@@ -91,21 +105,38 @@ function AddCustodians({
   };
 
   /**
-   * Submit The form and add custodian
+   * Submit The form and add/edit custodian
    * @param {Event} event the default submit event
    */
   const handleSubmit = (event) => {
     event.preventDefault();
     location.register = true;
-    const registerFormValue = {
-      username: username.value,
-      email: email.value,
-      password: password.value,
-      organization_name: organization_name.value,
-      first_name: first_name.value,
-      last_name: last_name.value,
+    let contactObj = {
+      addresses: [
+        {
+          type: "home",
+          street: "21",
+          house_number: "M-31",
+          postal_code: zip.value,
+          city: city.value,
+        },
+      ],
+      country: "http://localhost:8083/US",
+      state: "http://localhost:8083/AR",
     };
-    dispatch(register(registerFormValue, history));
+    const custodianFormValue = {
+      ...(editData.id && { custodian_id: editData.id }),
+      custodian_alias: alias.value,
+      custodian_type: custodianType.value,
+      name: company.value,
+      contact_data: contactObj,
+      custodian_glns: glnNumber.value,
+    };
+    if (editPage) {
+      dispatch(editCustodian(custodianFormValue, history));
+    } else {
+      dispatch(addCustodians(custodianFormValue, history));
+    }
   };
 
   /**
@@ -149,7 +180,12 @@ function AddCustodians({
   return (
     <div>
       {openModal && (
-        <Modal open={openModal} setOpen={closeModal} title={formTitle}>
+        <Modal
+          open={openModal}
+          setOpen={closeModal}
+          title={formTitle}
+          titleClass={classes.formTitle}
+        >
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12} md={6} sm={6}>
@@ -207,8 +243,12 @@ function AddCustodians({
                   {...custodianType.bind}
                 >
                   <MenuItem value={""}>Select</MenuItem>
-                  <MenuItem value={"type1"}>Type 1</MenuItem>
-                  <MenuItem value={"type2"}>Type 2</MenuItem>
+                  {custodianTypeList &&
+                    custodianTypeList.map((item, index) => (
+                      <MenuItem key={`${item.id}${item.name}`} value={item.url}>
+                        {item.name}
+                      </MenuItem>
+                    ))}
                 </TextField>
               </Grid>
               <Grid item item xs={12} md={6} sm={6}>
@@ -218,7 +258,6 @@ function AddCustodians({
                   fullWidth
                   id="consortium"
                   select
-                  required
                   label="Consortium"
                   error={formError.consortium && formError.consortium.error}
                   helperText={
@@ -279,7 +318,7 @@ function AddCustodians({
                       fullWidth
                       id="state"
                       select
-                      required
+                      // required
                       label="State"
                       error={formError.state && formError.state.error}
                       helperText={
@@ -299,7 +338,7 @@ function AddCustodians({
                     <TextField
                       variant="outlined"
                       margin="normal"
-                      required
+                      // required
                       fullWidth
                       id="city"
                       label="City"
@@ -317,7 +356,7 @@ function AddCustodians({
                     <TextField
                       variant="outlined"
                       margin="normal"
-                      required
+                      // required
                       fullWidth
                       id="zip"
                       label="Zip"
@@ -334,7 +373,7 @@ function AddCustodians({
             </Card>
 
             <Grid container spacing={isDesktop ? 3 : 0} justify="center">
-              <Grid item item xs={12} sm={4}>
+              <Grid item xs={12} sm={4}>
                 <div className={classes.loadingWrapper}>
                   <Button
                     type="submit"
@@ -354,12 +393,13 @@ function AddCustodians({
                   )}
                 </div>
               </Grid>
-              <Grid item item xs={12} sm={4}>
+              <Grid item xs={12} sm={4}>
                 <Button
                   type="button"
                   fullWidth
                   variant="contained"
                   color="primary"
+                  onClick={() => closeModal()}
                   className={classes.submit}
                 >
                   Cancel
@@ -375,7 +415,7 @@ function AddCustodians({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.authReducer,
+  ...state.custodianReducer,
 });
 
 export default connect(mapStateToProps)(AddCustodians);

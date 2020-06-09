@@ -18,31 +18,35 @@ import Loader from "../../components/Loader/Loader";
 import {
   searchCustodian,
   getCustodians,
+  getCustodianType,
+  deleteCustodian,
+  getContact,
 } from "../../redux/custodian/actions/custodian.actions";
 
 const custodianColumns = [
-  { id: "id", label: "CUstodian ID", minWidth: 150 },
+  { id: "id", label: "Custodian ID", minWidth: 150 },
   { id: "name", label: "Name", minWidth: 150 },
   {
-    id: "location",
+    id: "contact_data",
     label: "Location",
     minWidth: 180,
   },
   {
-    id: "gln",
+    id: "custodian_glns",
     label: "GLN",
     minWidth: 170,
   },
-  {
-    id: "currentShipments",
-    label: "Current Shipments",
-    minWidth: 150,
-  },
+  // {
+  //   id: "currentShipments",
+  //   label: "Current Shipments",
+  //   minWidth: 150,
+  // },
 ];
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
     fontWeight: "bold",
+    marginBottom: "0.5em",
   },
   tileView: {
     display: "flex",
@@ -77,30 +81,34 @@ function Custodian({
   error,
 }) {
   const [openConfirmModal, setConfirmModal] = useState(false);
-  const [deleteItem, setDeleteItem] = useState(false);
+  const [deleteItemId, setDeleteItemId] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const classes = useStyles();
 
   useEffect(() => {
     dispatch(getCustodians());
+    dispatch(getCustodianType());
+    dispatch(getContact());
   }, []);
 
   const editItem = (item) => {
     history.push(`${routes.CUSTODIANS}/edit/:${item.id}`, {
       type: "edit",
       from: routes.CUSTODIANS,
+      data: item,
     });
   };
   const deletItem = (item) => {
-    setDeleteItem(item);
+    setDeleteItemId(9);
     setConfirmModal(true);
   };
-  const handleConfirmModal = (item) => {
-    console.log("handle");
+  const handleConfirmModal = () => {
+    dispatch(deleteCustodian(deleteItemId));
+    setConfirmModal(false);
   };
   const searchTable = (e) => {
     setSearchValue(e.target.value);
-    dispatch(searchCustodian(e.target.value, CUSTODIAN_DATA));
+    dispatch(searchCustodian(e.target.value, data));
   };
   const actionsColumns = [
     {
@@ -111,9 +119,9 @@ function Custodian({
     },
     { id: "delete", type: "delete", action: deletItem, label: "Delete" },
   ];
-  let rows = data || CUSTODIAN_DATA;
+  let rows = data || [];
   return (
-    <Box mt={3}>
+    <Box mt={2}>
       {loading && <Loader open={loading} />}
       <div className={classes.container}>
         <Box mb={3}>

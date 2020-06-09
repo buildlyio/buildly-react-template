@@ -13,6 +13,12 @@ import {
   DELETE_CUSTODIANS_SUCCESS,
   SEARCH,
   SEARCH_SUCCESS,
+  GET_CUSTODIAN_TYPE,
+  GET_CUSTODIAN_TYPE_SUCCESS,
+  GET_CUSTODIAN_TYPE_FAILURE,
+  GET_CONTACT,
+  GET_CONTACT_SUCCESS,
+  GET_CONTACT_FAILURE,
 } from "../actions/custodian.actions";
 
 const initialState = {
@@ -20,6 +26,8 @@ const initialState = {
   loaded: false,
   data: null,
   error: null,
+  custodianTypeList: null,
+  contactInfo: null,
 };
 
 // Reducer
@@ -116,8 +124,6 @@ export default (state = initialState, action) => {
     case SEARCH:
       return {
         ...state,
-        loading: true,
-        loaded: false,
         error: null,
       };
     case SEARCH_SUCCESS:
@@ -126,6 +132,48 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         data: action.data,
+      };
+    case GET_CUSTODIAN_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_CUSTODIAN_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodianTypeList: action.data,
+      };
+    case GET_CUSTODIAN_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case GET_CONTACT:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_CONTACT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        contactInfo: action.data,
+      };
+    case GET_CONTACT_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
       };
     default:
       return state;
