@@ -27,7 +27,7 @@ const custodianColumns = [
   { id: "id", label: "Custodian ID", minWidth: 150 },
   { id: "name", label: "Name", minWidth: 150 },
   {
-    id: "contact_data",
+    id: "location",
     label: "Location",
     minWidth: 180,
   },
@@ -36,12 +36,35 @@ const custodianColumns = [
     label: "GLN",
     minWidth: 170,
   },
-  // {
-  //   id: "currentShipments",
-  //   label: "Current Shipments",
-  //   minWidth: 150,
-  // },
 ];
+
+const getUniqueContactInfo = (rowItem, contactInfo) => {
+  let obj = "";
+  contactInfo.forEach((info) => {
+    if (rowItem.contact_data[0] === info.url) {
+      obj = info;
+    }
+  });
+  return obj;
+};
+
+const getFormattedRow = (data, contactInfo) => {
+  let customizedRow = [...data];
+  if (data && data.length && contactInfo && contactInfo.length) {
+    customizedRow.forEach((rowItem) => {
+      let contactInfoItem = getUniqueContactInfo(rowItem, contactInfo);
+      rowItem["location"] = `${
+        contactInfoItem.address1 && `${contactInfoItem.address1},`
+      }
+          ${contactInfoItem.address2 && `${contactInfoItem.address2},`}
+          ${contactInfoItem.city && `${contactInfoItem.city},`}
+          ${contactInfoItem.state && `${contactInfoItem.state},`}
+          ${contactInfoItem.country && `${contactInfoItem.country},`}
+          ${contactInfoItem.postal_code && `${contactInfoItem.postal_code}`}`;
+    });
+  }
+  return data;
+};
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -79,11 +102,20 @@ function Custodian({
   loading,
   loaded,
   error,
+  contactInfo,
+  searchedData,
 }) {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const classes = useStyles();
+
+  let rows = [];
+  if (searchedData && searchedData.length) {
+    rows = searchedData;
+  } else if (data && data.length) {
+    rows = getFormattedRow(data, contactInfo);
+  }
 
   useEffect(() => {
     dispatch(getCustodians());
@@ -92,14 +124,16 @@ function Custodian({
   }, []);
 
   const editItem = (item) => {
+    let contactObj = getUniqueContactInfo(item, contactInfo);
     history.push(`${routes.CUSTODIANS}/edit/:${item.id}`, {
       type: "edit",
       from: routes.CUSTODIANS,
       data: item,
+      contactData: contactObj,
     });
   };
   const deletItem = (item) => {
-    setDeleteItemId(9);
+    setDeleteItemId(item.id);
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
@@ -108,7 +142,7 @@ function Custodian({
   };
   const searchTable = (e) => {
     setSearchValue(e.target.value);
-    dispatch(searchCustodian(e.target.value, data));
+    dispatch(searchCustodian(e.target.value, rows));
   };
   const actionsColumns = [
     {
@@ -119,7 +153,6 @@ function Custodian({
     },
     { id: "delete", type: "delete", action: deletItem, label: "Delete" },
   ];
-  let rows = data || [];
   return (
     <Box mt={2}>
       {loading && <Loader open={loading} />}

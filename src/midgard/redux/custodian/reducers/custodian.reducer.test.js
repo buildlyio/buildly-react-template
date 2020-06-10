@@ -191,9 +191,10 @@ describe("Search reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      data: undefined,
+      data: null,
       custodianTypeList: null,
       contactInfo: null,
+      searchedData: undefined,
     });
   });
 });

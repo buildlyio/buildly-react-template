@@ -77,7 +77,6 @@ function AddCustodians({
   history,
   loaded,
   error,
-  data,
   location,
   custodianTypeList,
 }) {
@@ -85,6 +84,7 @@ function AddCustodians({
   const editData =
     (location.state && location.state.type === "edit" && location.state.data) ||
     {};
+  const contactData = editPage && location.state.contactData;
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
   const company = useInput(editData.name || "", {
@@ -99,17 +99,18 @@ function AddCustodians({
   const address = useInput(editData.custodian_contact_info || "", {
     required: true,
   });
-  const city = useInput("");
-  const state = useInput("", {
+  const city = useInput(contactData.city || "");
+  const state = useInput(contactData.state || "", {
     required: true,
   });
-  const country = useInput("", {
+  const country = useInput(contactData.country || "", {
     required: true,
   });
-  const zip = useInput("");
-  const addressType = useInput("");
-  const house_no = useInput("");
-  const street = useInput("");
+  const zip = useInput(contactData.postal_code || "");
+  const address_1 = useInput(contactData.address1 || "", {
+    required: true,
+  });
+  const address_2 = useInput(contactData.address2 || "");
   const [formError, setFormError] = useState({});
 
   const buttonText = editPage ? "save" : "add custodian";
@@ -127,27 +128,26 @@ function AddCustodians({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    location.register = true;
-    let contactObj = {
-      addresses: [
-        {
-          type: addressType.value,
-          street: street.value,
-          house_number: house_no.value,
-          postal_code: zip.value,
-          city: city.value,
-        },
-      ],
+    let contact_obj = {
       country: country.value,
       state: state.value,
+      address1: address_1.value,
+      address2: address_2.value,
+      city: city.value,
+      postal_code: zip.value,
+      ...(editPage && { contact_uuid: contactData.contact_uuid }),
+      ...(editPage && { url: contactData.url }),
+      ...(editPage && { id: contactData.id }),
     };
+    location.register = true;
     const custodianFormValue = {
-      ...(editData.id && { custodian_id: editData.id }),
       custodian_alias: alias.value,
       custodian_type: custodianType.value,
       name: company.value,
-      contact_data: contactObj,
       custodian_glns: glnNumber.value,
+      contact_obj: contact_obj,
+      ...(editPage && { url: editData.url }),
+      ...(editPage && { id: editData.id }),
     };
     if (editPage) {
       dispatch(editCustodian(custodianFormValue, history));
@@ -184,7 +184,14 @@ function AddCustodians({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!company.value || !address.value || !custodianType.value) return true;
+    if (
+      !company.value ||
+      !custodianType.value ||
+      !address_1.value ||
+      !state.value ||
+      !country.value
+    )
+      return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -307,72 +314,36 @@ function AddCustodians({
             </Grid>
             <Card variant="outlined" className={classes.addressContainer}>
               <CardContent>
-                <Typography variant="h6">Location</Typography>
+                <Typography variant="h6">Contact Info</Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
-                  <Grid item xs={12}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      required
-                      fullWidth
-                      select
-                      id="addressType"
-                      label="Address Type"
-                      name="addressType"
-                      autoComplete="addressType"
-                      error={
-                        formError.addressType && formError.addressType.error
-                      }
-                      helperText={
-                        formError.addressType
-                          ? formError.addressType.message
-                          : ""
-                      }
-                      // onBlur={(e) => handleBlur(e, "required", addressType)}
-                      {...addressType.bind}
-                    >
-                      <MenuItem value={""}>Select</MenuItem>
-                      {ADDRESS_TYPE.map((value, id) => (
-                        <MenuItem key={value} value={value}>
-                          {value}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
                       variant="outlined"
                       margin="normal"
                       required
                       fullWidth
-                      id="house_no"
-                      label="House Number"
-                      name="house_no"
-                      autoComplete="house_no"
-                      error={formError.house_no && formError.house_no.error}
+                      id="address_1"
+                      label="Address Line 1"
+                      name="address_1"
+                      autoComplete="address_1"
+                      error={formError.address_1 && formError.address_1.error}
                       helperText={
-                        formError.house_no ? formError.house_no.message : ""
+                        formError.address_1 ? formError.address_1.message : ""
                       }
-                      // onBlur={(e) => handleBlur(e, "required", house_no)}
-                      {...house_no.bind}
+                      onBlur={(e) => handleBlur(e, "required", address_1)}
+                      {...address_1.bind}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
                       variant="outlined"
                       margin="normal"
-                      required
                       fullWidth
-                      id="street"
-                      label="Street"
-                      name="street"
-                      autoComplete="street"
-                      error={formError.street && formError.street.error}
-                      helperText={
-                        formError.street ? formError.street.message : ""
-                      }
-                      // onBlur={(e) => handleBlur(e, "required", house_no)}
-                      {...street.bind}
+                      id="address_2"
+                      label="Address Line 2"
+                      name="address_2"
+                      autoComplete="address_2"
+                      {...address_2.bind}
                     />
                   </Grid>
                 </Grid>
@@ -416,30 +387,6 @@ function AddCustodians({
                       variant="outlined"
                       margin="normal"
                       fullWidth
-                      id="state"
-                      select
-                      required
-                      label="State"
-                      error={formError.state && formError.state.error}
-                      helperText={
-                        formError.state ? formError.state.message : ""
-                      }
-                      onBlur={(e) => handleBlur(e, "required", state, "state")}
-                      {...state.bind}
-                    >
-                      <MenuItem value={""}>Select</MenuItem>
-                      {STATE_CHOICES.map((value, id) => (
-                        <MenuItem key={value} value={value}>
-                          {value}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
                       id="country"
                       select
                       required
@@ -455,6 +402,30 @@ function AddCustodians({
                     >
                       <MenuItem value={""}>Select</MenuItem>
                       {COUNTRY_CHOICES.map((value, id) => (
+                        <MenuItem key={value} value={value}>
+                          {value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="state"
+                      select
+                      required
+                      label="State"
+                      error={formError.state && formError.state.error}
+                      helperText={
+                        formError.state ? formError.state.message : ""
+                      }
+                      onBlur={(e) => handleBlur(e, "required", state, "state")}
+                      {...state.bind}
+                    >
+                      <MenuItem value={""}>Select</MenuItem>
+                      {STATE_CHOICES.map((value, id) => (
                         <MenuItem key={value} value={value}>
                           {value}
                         </MenuItem>

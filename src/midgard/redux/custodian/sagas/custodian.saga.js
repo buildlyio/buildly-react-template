@@ -20,6 +20,8 @@ import {
   GET_CONTACT,
   GET_CONTACT_SUCCESS,
   GET_CONTACT_FAILURE,
+  getContact,
+  getCustodians,
 } from "../actions/custodian.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -35,7 +37,7 @@ const custodainEnvironment = window.environment || {
   production: false,
 };
 
-function* getCustodians() {
+function* getCustodiansList() {
   try {
     const data = yield call(
       httpService.makeRequest,
@@ -103,28 +105,19 @@ function* deleteCustodian(payload) {
       httpService.makeRequest,
       "delete",
       `${custodainEnvironment.API_URL}custodian/${custodianId}/`,
-      {},
+      null,
       true
     );
-    if (response) {
-      const data = yield call(
-        httpService.makeRequest,
-        "get",
-        `${custodainEnvironment.API_URL}custodian/`,
-        null,
-        true
-      );
-      yield [
-        yield put({ type: DELETE_CUSTODIANS_SUCCESS, data: data.data }),
-        yield put(
-          showAlert({
-            type: "success",
-            open: true,
-            message: "Custodian deleted successfully!",
-          })
-        ),
-      ];
-    }
+    yield [
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Custodian deleted successfully!",
+        })
+      ),
+      yield put(getCustodians()),
+    ];
   } catch (error) {
     console.log("error", error);
     yield [
@@ -146,31 +139,43 @@ function* deleteCustodian(payload) {
 function* editCustodian(action) {
   let { payload, history } = action;
   try {
-    yield call(
+    let contactData = yield call(
       httpService.makeRequest,
       "put",
-      `${custodainEnvironment.API_URL}custodian/${payload.id}`,
-      { payload },
+      `${custodainEnvironment.API_URL}contact/${payload.contact_obj.id}/`,
+      payload.contact_obj,
       true
     );
-    const data = yield call(
-      httpService.makeRequest,
-      "get",
-      `${custodainEnvironment.API_URL}custodian/`,
-      null,
-      true
-    );
-    yield [
-      yield put({ type: EDIT_CUSTODIANS_SUCCESS, data: data.data }),
-      yield put(
-        showAlert({
-          type: "success",
-          open: true,
-          message: "Custodian edited successfully!",
-        })
-      ),
-      yield call(history.push, routes.CUSTODIANS),
-    ];
+    if (contactData && contactData.data) {
+      let contactInfo = contactData.data.url;
+      let custodianPayload = {
+        name: payload.name,
+        custodian_type: payload.custodian_type,
+        contact_data: [contactInfo],
+        id: payload.id,
+      };
+      let data = yield call(
+        httpService.makeRequest,
+        "put",
+        `${custodainEnvironment.API_URL}custodian/${payload.id}/`,
+        custodianPayload,
+        true
+      );
+      if (data && data.data) {
+        yield [
+          yield put(getCustodians()),
+          yield put(getContact()),
+          yield put(
+            showAlert({
+              type: "success",
+              open: true,
+              message: "Custodian successfully Edited!",
+            })
+          ),
+          yield call(history.push, routes.CUSTODIANS),
+        ];
+      }
+    }
   } catch (error) {
     yield [
       yield put(
@@ -191,38 +196,50 @@ function* editCustodian(action) {
 function* addCustodian(action) {
   let { history, payload } = action;
   try {
-    yield call(
+    let contactData = yield call(
       httpService.makeRequest,
       "post",
-      `${custodainEnvironment.API_URL}custodian/`,
-      payload,
+      `${custodainEnvironment.API_URL}contact/`,
+      payload.contact_obj,
       true
     );
-    const data = yield call(
-      httpService.makeRequest,
-      "get",
-      `${custodainEnvironment.API_URL}custodian/`,
-      null,
-      true
-    );
-    yield [
-      yield put({ type: ADD_CUSTODIANS_SUCCESS, data: data.data }),
-      yield put(
-        showAlert({
-          type: "success",
-          open: true,
-          message: "Successfully Added Custodian",
-        })
-      ),
-      yield call(history.push, routes.CUSTODIANS),
-    ];
+    if (contactData && contactData.data) {
+      let contactInfo = contactData.data.url;
+      let custodianPayload = {
+        name: payload.name,
+        custodian_type: payload.custodian_type,
+        contact_data: [contactInfo],
+      };
+      let data = yield call(
+        httpService.makeRequest,
+        "post",
+        `${custodainEnvironment.API_URL}custodian/`,
+        custodianPayload,
+        true
+      );
+      if (data && data.data) {
+        yield [
+          yield put(
+            showAlert({
+              type: "success",
+              open: true,
+              message: "Successfully Added Custodian",
+            })
+          ),
+          yield put(getCustodians()),
+          yield put(getContact()),
+          yield call(history.push, routes.CUSTODIANS),
+        ];
+      }
+    }
   } catch (error) {
+    console.log("error", error);
     yield [
       yield put(
         showAlert({
           type: "error",
           open: true,
-          message: "Custodian Not Created!",
+          message: "Error in creating custodian",
         })
       ),
       yield put({
@@ -234,13 +251,18 @@ function* addCustodian(action) {
 }
 
 function* searchCustodian(payload) {
-  let resultArr = [];
   try {
-    resultArr = payload.searchList.filter((item) => {
-      return item.name.includes(payload.searchItem);
-    });
-
-    yield [yield put({ type: SEARCH_SUCCESS, resultArr })];
+    if (!payload.searchItem) {
+      yield put({ type: SEARCH_SUCCESS, data: [] });
+    } else {
+      let data = payload.searchList.filter((item) => {
+        return (
+          item.name.includes(payload.searchItem.trim()) ||
+          item.id.toString().includes(payload.searchItem)
+        );
+      });
+      yield put({ type: SEARCH_SUCCESS, data });
+    }
   } catch (error) {
     // yield put({ type: UPDATE_USER_FAIL, error: "Updating user fields failed" });
   }
@@ -274,7 +296,7 @@ function* getContactInfo() {
 }
 
 function* watchGetCustodian() {
-  yield takeLatest(GET_CUSTODIANS, getCustodians);
+  yield takeLatest(GET_CUSTODIANS, getCustodiansList);
 }
 
 function* watchSearchCustodian() {

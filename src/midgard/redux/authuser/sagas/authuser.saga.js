@@ -53,13 +53,6 @@ function* login(payload) {
     yield call(oauthService.setCurrentCoreUser, coreUser, user);
     yield [
       yield put({ type: LOGIN_SUCCESS, user }),
-      yield put(
-        showAlert({
-          type: "success",
-          open: true,
-          message: "Login Successfully!",
-        })
-      ),
       yield call(history.push, routes.DASHBOARD),
     ];
   } catch (error) {
