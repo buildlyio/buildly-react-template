@@ -31,7 +31,7 @@ function Alerts({ data, loading, loaded, dispatch }) {
     <div className={classes.root}>
       <Snackbar
         open={data ? data.open : false}
-        autoHideDuration={6000}
+        autoHideDuration={4000}
         onClose={handleClose}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >

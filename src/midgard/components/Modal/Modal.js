@@ -68,11 +68,7 @@ export default function Modal(props) {
         >
           {title}
         </DialogTitle>
-        <DialogContent>
-          <Container component="main" maxWidth={!isMobile ? "sm" : false}>
-            {children}
-          </Container>
-        </DialogContent>
+        <DialogContent>{children}</DialogContent>
       </Dialog>
     </div>
   );

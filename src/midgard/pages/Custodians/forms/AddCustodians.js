@@ -25,6 +25,11 @@ import {
 } from "../../../redux/custodian/actions/custodian.actions";
 import Loader from "../../../components/Loader/Loader";
 import { dispatch } from "../../../redux/store";
+import {
+  ADDRESS_TYPE,
+  STATE_CHOICES,
+  COUNTRY_CHOICES,
+} from "../../../utils/mock";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,6 +38,10 @@ const useStyles = makeStyles((theme) => ({
   form: {
     width: "100%",
     marginTop: theme.spacing(1),
+    [theme.breakpoints.up("sm")]: {
+      width: "70%",
+      margin: "auto",
+    },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
@@ -91,8 +100,16 @@ function AddCustodians({
     required: true,
   });
   const city = useInput("");
-  const state = useInput("");
+  const state = useInput("", {
+    required: true,
+  });
+  const country = useInput("", {
+    required: true,
+  });
   const zip = useInput("");
+  const addressType = useInput("");
+  const house_no = useInput("");
+  const street = useInput("");
   const [formError, setFormError] = useState({});
 
   const buttonText = editPage ? "save" : "add custodian";
@@ -114,15 +131,15 @@ function AddCustodians({
     let contactObj = {
       addresses: [
         {
-          type: "home",
-          street: "21",
-          house_number: "M-31",
+          type: addressType.value,
+          street: street.value,
+          house_number: house_no.value,
           postal_code: zip.value,
           city: city.value,
         },
       ],
-      country: "http://localhost:8083/US",
-      state: "http://localhost:8083/AR",
+      country: country.value,
+      state: state.value,
     };
     const custodianFormValue = {
       ...(editData.id && { custodian_id: editData.id }),
@@ -167,7 +184,7 @@ function AddCustodians({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!company) return true;
+    if (!company.value || !address.value || !custodianType.value) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -290,51 +307,77 @@ function AddCustodians({
             </Grid>
             <Card variant="outlined" className={classes.addressContainer}>
               <CardContent>
-                <Grid container spacing={2}>
+                <Typography variant="h6">Location</Typography>
+                <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
                       required
                       fullWidth
-                      id="address"
-                      label="Physical Address"
-                      name="address"
-                      autoComplete="address"
-                      error={formError.address && formError.address.error}
-                      helperText={
-                        formError.address ? formError.address.message : ""
+                      select
+                      id="addressType"
+                      label="Address Type"
+                      name="addressType"
+                      autoComplete="addressType"
+                      error={
+                        formError.addressType && formError.addressType.error
                       }
-                      onBlur={(e) => handleBlur(e, "required", address)}
-                      {...address.bind}
+                      helperText={
+                        formError.addressType
+                          ? formError.addressType.message
+                          : ""
+                      }
+                      // onBlur={(e) => handleBlur(e, "required", addressType)}
+                      {...addressType.bind}
+                    >
+                      <MenuItem value={""}>Select</MenuItem>
+                      {ADDRESS_TYPE.map((value, id) => (
+                        <MenuItem key={value} value={value}>
+                          {value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="house_no"
+                      label="House Number"
+                      name="house_no"
+                      autoComplete="house_no"
+                      error={formError.house_no && formError.house_no.error}
+                      helperText={
+                        formError.house_no ? formError.house_no.message : ""
+                      }
+                      // onBlur={(e) => handleBlur(e, "required", house_no)}
+                      {...house_no.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="street"
+                      label="Street"
+                      name="street"
+                      autoComplete="street"
+                      error={formError.street && formError.street.error}
+                      helperText={
+                        formError.street ? formError.street.message : ""
+                      }
+                      // onBlur={(e) => handleBlur(e, "required", house_no)}
+                      {...street.bind}
                     />
                   </Grid>
                 </Grid>
                 <Grid container spacing={isDesktop ? 2 : 0}>
-                  <Grid item xs={12}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="state"
-                      select
-                      // required
-                      label="State"
-                      error={formError.state && formError.state.error}
-                      helperText={
-                        formError.state ? formError.state.message : ""
-                      }
-                      onBlur={(e) => handleBlur(e, "required", state, "state")}
-                      {...state.bind}
-                    >
-                      <MenuItem value={""}>Select</MenuItem>
-                      <MenuItem value={"type1"}>Type 1</MenuItem>
-                      <MenuItem value={"type2"}>Type 2</MenuItem>
-                    </TextField>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={isDesktop ? 2 : 0}>
-                  <Grid item xs={12}>
+                  <Grid item xs={12} md={6}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -350,9 +393,7 @@ function AddCustodians({
                       {...city.bind}
                     />
                   </Grid>
-                </Grid>
-                <Grid container spacing={isDesktop ? 2 : 0}>
-                  <Grid item xs={12}>
+                  <Grid item xs={12} md={6}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -367,6 +408,58 @@ function AddCustodians({
                       onBlur={(e) => handleBlur(e, "required", zip)}
                       {...zip.bind}
                     />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={isDesktop ? 2 : 0}>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="state"
+                      select
+                      required
+                      label="State"
+                      error={formError.state && formError.state.error}
+                      helperText={
+                        formError.state ? formError.state.message : ""
+                      }
+                      onBlur={(e) => handleBlur(e, "required", state, "state")}
+                      {...state.bind}
+                    >
+                      <MenuItem value={""}>Select</MenuItem>
+                      {STATE_CHOICES.map((value, id) => (
+                        <MenuItem key={value} value={value}>
+                          {value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="country"
+                      select
+                      required
+                      label="Country"
+                      error={formError.country && formError.country.error}
+                      helperText={
+                        formError.country ? formError.country.message : ""
+                      }
+                      onBlur={(e) =>
+                        handleBlur(e, "required", country, "country")
+                      }
+                      {...country.bind}
+                    >
+                      <MenuItem value={""}>Select</MenuItem>
+                      {COUNTRY_CHOICES.map((value, id) => (
+                        <MenuItem key={value} value={value}>
+                          {value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
                   </Grid>
                 </Grid>
               </CardContent>
