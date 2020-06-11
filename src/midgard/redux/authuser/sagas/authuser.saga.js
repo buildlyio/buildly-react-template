@@ -14,6 +14,9 @@ import {
   INVITE,
   INVITE_FAIL,
   INVITE_SUCCESS,
+  GET_USER_SUCCESS,
+  GET_USER,
+  GET_USER_FAIL,
 } from "../actions/authuser.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -52,10 +55,11 @@ function* login(payload) {
     );
     yield call(oauthService.setCurrentCoreUser, coreUser, user);
     yield [
-      yield put({ type: LOGIN_SUCCESS, user }),
+      // yield put({ type: LOGIN_SUCCESS, user }),
       yield call(history.push, routes.DASHBOARD),
     ];
   } catch (error) {
+    console.log("error", error);
     yield [
       yield put({ type: LOGIN_FAIL, error: "Invalid credentials given" }),
       yield put(
@@ -63,6 +67,28 @@ function* login(payload) {
           type: "error",
           open: true,
           message: "Login Failed!",
+        })
+      ),
+    ];
+  }
+}
+
+function* getUserDetails() {
+  try {
+    const user = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}coreuser/me/`
+    );
+    yield put({ type: GET_USER_SUCCESS, user });
+  } catch (error) {
+    yield [
+      yield put({ type: GET_USER_FAIL, error: "Error in loading user data" }),
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Error in loading user data",
         })
       ),
     ];
@@ -155,6 +181,10 @@ function* watchInvite() {
   yield takeLatest(INVITE, invite);
 }
 
+function* watchGetUser() {
+  yield takeLatest(GET_USER, getUserDetails);
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
@@ -162,5 +192,6 @@ export default function* authSaga() {
     watchRegister(),
     watchUpdateUser(),
     watchInvite(),
+    watchGetUser(),
   ]);
 }
