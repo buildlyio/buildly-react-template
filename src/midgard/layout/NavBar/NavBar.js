@@ -72,7 +72,7 @@ function NavBar({ navHidden, setNavHidden, location, history }) {
       <div className={classes.toolbar} />
       <List>
         {NAVIGATION_ITEMS.map((items, index) => (
-          <React.Fragment>
+          <React.Fragment key={`${items.id}${index}`}>
             <NavLink
               to={items.link}
               activeClassName={classes.active}

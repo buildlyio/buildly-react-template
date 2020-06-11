@@ -14,6 +14,8 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import { user, UserContext } from "midgard/context/User.context";
 import { subNav, SubNavContext } from "midgard/context/SubNav.context";
+import { routes } from "../../routes/routesConstants";
+import Custodians from "../../pages/Custodians/Custodians";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     height: "100%",
-    marginTop: "4em",
+    paddingTop: "6em",
   },
 }));
 
@@ -68,16 +70,12 @@ function ContainerDashboard({ location, history }) {
         <Container className={classes.content}>
           <Route
             exact
-            path="/app"
-            render={() => <Redirect to="/dashboard" />}
+            path={routes.APP}
+            render={() => <Redirect to={routes.DASHBOARD} />}
           />
-          <Route
-            exact
-            path="/app/profile"
-            render={() => <Redirect to="/custordians" />}
-          />
-          <Route path="/app/dashboard" component={Profile} />
-          <Route path="/app/profile/users" component={UserManagement} />
+          <Route path={routes.DASHBOARD} component={Profile} />
+          <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
+          <Route path={routes.CUSTODIANS} component={Custodians} />
         </Container>
         {routeItems}
       </UserContext.Provider>

@@ -1,23 +1,19 @@
-import {
-  DASHBOARD,
-  CUSTODIANS,
-  USER_MANAGEMENT,
-} from "../../routes/routesConstants";
+import { routes } from "../../routes/routesConstants";
 
 export const NAVIGATION_ITEMS = [
   {
     id: "dashboard",
     name: "Dashboard",
-    link: DASHBOARD,
+    link: routes.DASHBOARD,
   },
   {
     id: "custodians",
     name: "Custodians",
-    link: CUSTODIANS,
+    link: routes.CUSTODIANS,
   },
   {
     id: "user_management",
     name: "User Management",
-    link: USER_MANAGEMENT,
+    link: routes.USER_MANAGEMENT,
   },
 ];
