@@ -209,6 +209,7 @@ function AddCustodians({
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
+          maxWidth={"md"}
         >
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>

@@ -46,7 +46,6 @@ function* getCustodiansList() {
       null,
       true
     );
-    console.log("data", data);
     yield [yield put({ type: GET_CUSTODIANS_SUCCESS, data: data.data })];
   } catch (error) {
     console.log("error", error);

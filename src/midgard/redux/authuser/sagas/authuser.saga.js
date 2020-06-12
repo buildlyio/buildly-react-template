@@ -155,9 +155,30 @@ function* updateUser(payload) {
       `${environment.API_URL}coreuser/${payload.data.id}/`,
       payload.data
     );
-    yield [yield put({ type: UPDATE_USER_SUCCESS, user })];
+    yield [
+      yield put({ type: UPDATE_USER_SUCCESS, user }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Successfully Updated Details",
+        })
+      ),
+    ];
   } catch (error) {
-    yield put({ type: UPDATE_USER_FAIL, error: "Updating user fields failed" });
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Failed to update Details",
+        })
+      ),
+      yield put({
+        type: UPDATE_USER_FAIL,
+        error: "Updating user fields failed",
+      }),
+    ];
   }
 }
 

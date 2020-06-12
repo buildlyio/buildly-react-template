@@ -14,6 +14,9 @@ import {
 import Avatar from "@material-ui/core/Avatar";
 import EditIcon from "@material-ui/icons/Edit";
 import { routes } from "../../routes/routesConstants";
+import profile from "assets/profile.png";
+import Modal from "../../components/Modal/Modal";
+import EditProfileInfo from "./forms/EditProfileInfo";
 
 const useStyles = makeStyles((theme) => ({
   pageHeading: {
@@ -54,20 +57,25 @@ const useStyles = makeStyles((theme) => ({
   backButton: {
     margin: theme.spacing(3, 0),
   },
+  formTitle: {
+    fontWeight: "bold",
+    marginTop: "1em",
+    textAlign: "center",
+  },
 }));
-
-/**
- * The current oauth user.
- */
-let user = JSON.parse(localStorage.getItem("currentUser"));
 
 /**
  * Outputs the profile page for the user.
  */
-function MyAccount({ dispatch, history, location, contactInfo }) {
+function MyAccount({ dispatch, history, location, contactInfo, data }) {
   let classes = useStyles();
+  const [openModal, setModal] = useState(false);
 
-  let userData = location.state && location.state.user;
+  let user;
+
+  if (data && data.data) {
+    user = data.data;
+  }
 
   return (
     <Box mt={3} textAlign={"center"}>
@@ -80,13 +88,23 @@ function MyAccount({ dispatch, history, location, contactInfo }) {
           <Card variant={"outlined"}>
             <CardContent>
               <div className={classes.iconRight}>
-                <IconButton edge="end" color="secondary" aria-label="edit">
+                <IconButton
+                  edge="end"
+                  color="secondary"
+                  aria-label="edit"
+                  onClick={() => setModal(true)}
+                >
                   <EditIcon />
                 </IconButton>
               </div>
               <Grid container spacing={3} justify={"center"}>
                 <Grid item xs={12}>
-                  <Avatar alt="Remy Sharp" src="" className={classes.large} />
+                  <Avatar
+                    alt="Remy Sharp"
+                    src={profile}
+                    className={classes.large}
+                  />
+                  <Typography variant="h6">{user && user.username}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6} sm={8}>
                   <Grid container spacing={5}>
@@ -124,6 +142,16 @@ function MyAccount({ dispatch, history, location, contactInfo }) {
                           {user && user.organization.name}
                         </Typography>
                       </div>
+                      <Divider />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <div className={classes.infoSection}>
+                        <Typography variant="body2">Email:</Typography>
+                        <Typography variant="body1">
+                          {user && user.email}
+                        </Typography>
+                      </div>
+                      <Divider />
                     </Grid>
                   </Grid>
                 </Grid>
@@ -147,6 +175,17 @@ function MyAccount({ dispatch, history, location, contactInfo }) {
       >
         Back To Dashboard
       </Button>
+      {openModal && (
+        <Modal
+          open={openModal}
+          setOpen={(closeModal) => setModal(!openModal)}
+          title={"Edit Profile Info"}
+          titleClass={classes.formTitle}
+          maxWidth={"sm"}
+        >
+          <EditProfileInfo editData={user} setModal={setModal} />
+        </Modal>
+      )}
     </Box>
   );
 }

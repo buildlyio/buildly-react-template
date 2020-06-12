@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   logo: {
-    maxWidth: 160,
+    maxWidth: 250,
   },
   menuRight: {
     marginLeft: "auto",
@@ -52,8 +52,6 @@ function TopBar({
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  console.log("data", data);
-
   let user;
 
   if (data && data.data) {
@@ -74,7 +72,7 @@ function TopBar({
   };
 
   const handleMyAccountClick = () => {
-    history.push(routes.MY_ACCOUNT, { user });
+    history.push(routes.MY_ACCOUNT);
     setAnchorEl(null);
   };
 

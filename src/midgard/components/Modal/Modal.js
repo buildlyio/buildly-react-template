@@ -44,7 +44,7 @@ const DialogTitle = withStyles(styles)((props) => {
 });
 
 export default function Modal(props) {
-  let { open, setOpen, title, children, titleClass } = props;
+  let { open, setOpen, title, children, titleClass, maxWidth } = props;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const handleClose = () => {
@@ -58,7 +58,7 @@ export default function Modal(props) {
         onClose={handleClose}
         fullWidth={true}
         fullScreen={isMobile}
-        maxWidth={"md"}
+        maxWidth={maxWidth}
         aria-labelledby="form-dialog-title"
       >
         <DialogTitle
