@@ -10,8 +10,8 @@ Features
     login
     registration
     user_management
-    reset_password
     profile_settings
+    reset_password
     
 
 
