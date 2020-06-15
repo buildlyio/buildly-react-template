@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -17,6 +17,7 @@ import { routes } from "../../routes/routesConstants";
 import profile from "assets/profile.png";
 import Modal from "../../components/Modal/Modal";
 import EditProfileInfo from "./forms/EditProfileInfo";
+import { getOrganization } from "../../redux/authuser/actions/authuser.actions";
 
 const useStyles = makeStyles((theme) => ({
   pageHeading: {
@@ -67,7 +68,14 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Outputs the profile page for the user.
  */
-function MyAccount({ dispatch, history, location, contactInfo, data }) {
+function MyAccount({
+  dispatch,
+  history,
+  location,
+  contactInfo,
+  data,
+  organizationData,
+}) {
   let classes = useStyles();
   const [openModal, setModal] = useState(false);
 
@@ -76,6 +84,13 @@ function MyAccount({ dispatch, history, location, contactInfo, data }) {
   if (data && data.data) {
     user = data.data;
   }
+
+  useEffect(() => {
+    if (user && user.organization && user.organization.organization_uuid)
+      dispatch(getOrganization(user.organization.organization_uuid));
+  }, [user]);
+
+  console.log("organizationData", organizationData);
 
   return (
     <Box mt={3} textAlign={"center"}>
@@ -135,15 +150,17 @@ function MyAccount({ dispatch, history, location, contactInfo, data }) {
                       </div>
                       <Divider />
                     </Grid>
-                    <Grid item xs={12}>
-                      <div className={classes.infoSection}>
-                        <Typography variant="body2">Company:</Typography>
-                        <Typography variant="body1">
-                          {user && user.organization.name}
-                        </Typography>
-                      </div>
-                      <Divider />
-                    </Grid>
+                    {organizationData && (
+                      <Grid item xs={12}>
+                        <div className={classes.infoSection}>
+                          <Typography variant="body2">Company:</Typography>
+                          <Typography variant="body1">
+                            {user && user.organization.name}
+                          </Typography>
+                        </div>
+                        <Divider />
+                      </Grid>
+                    )}
                     <Grid item xs={12}>
                       <div className={classes.infoSection}>
                         <Typography variant="body2">Email:</Typography>
@@ -183,7 +200,11 @@ function MyAccount({ dispatch, history, location, contactInfo, data }) {
           titleClass={classes.formTitle}
           maxWidth={"sm"}
         >
-          <EditProfileInfo editData={user} setModal={setModal} />
+          <EditProfileInfo
+            editData={user}
+            setModal={setModal}
+            organizationData={organizationData}
+          />
         </Modal>
       )}
     </Box>

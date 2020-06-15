@@ -22,6 +22,15 @@ export const GET_USER_FAIL = "AUTH/GET_USER_FAIL";
 export const INVITE = "AUTH/INVITE";
 export const INVITE_SUCCESS = "AUTH/INVITE_SUCCESS";
 export const INVITE_FAIL = "AUTH/INVITE_FAIL";
+
+export const GET_ORGANIZATION = "AUTH/GET_ORGANIZATION";
+export const GET_ORGANIZATION_SUCCESS = "AUTH/GET_ORGANIZATION_SUCCESS";
+export const GET_ORGANIZATION_FAILURE = "AUTH/GET_ORGANIZATION_FAILURE";
+
+export const UPDATE_ORGANIZATION = "AUTH/UPDATE_ORGANIZATION";
+export const UPDATE_ORGANIZATION_SUCCESS = "AUTH/UPDATE_ORGANIZATION_SUCCESS";
+export const UPDATE_ORGANIZATION_FAILURE = "AUTH/UPDATE_ORGANIZATION_FAILURE";
+
 /**
  * Login action
  * @param {{username, password}} credentials
@@ -60,3 +69,13 @@ export const getUser = () => ({ type: GET_USER });
  * @param {{ first_name, last_name}} data
  */
 export const invite = (data) => ({ type: INVITE, data });
+
+export const getOrganization = (uuid) => ({
+  type: GET_ORGANIZATION,
+  uuid,
+});
+
+export const updateOrganization = (uuid) => ({
+  type: UPDATE_ORGANIZATION,
+  uuid,
+});

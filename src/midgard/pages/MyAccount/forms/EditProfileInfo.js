@@ -82,6 +82,7 @@ function EditProfileInfo({
   location,
   editData,
   setModal,
+  organizationData,
 }) {
   const classes = useStyles();
   const first_name = useInput((editData && editData.first_name) || "", {
@@ -89,7 +90,7 @@ function EditProfileInfo({
   });
   const last_name = useInput((editData && editData.last_name) || "");
   const organisation_name = useInput(
-    (editData && editData.organization.name) || "",
+    (organizationData && organizationData.name) || "",
     {
       required: true,
     }
@@ -112,6 +113,7 @@ function EditProfileInfo({
       password: "admin",
       organization_name: organisation_name.value,
       id: editData.id,
+      organization_uuid: organizationData.organization_uuid,
     };
     dispatch(updateUser(editUserFormValue));
     setModal(false);
@@ -207,28 +209,31 @@ function EditProfileInfo({
               {...email.bind}
             />
           </Grid>
-          <Grid item item xs={12}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="organisation_name"
-              label="Organisation Name"
-              name="organisation_name"
-              autoComplete="organisation_name"
-              error={
-                formError.organisation_name && formError.organisation_name.error
-              }
-              helperText={
-                formError.organisation_name
-                  ? formError.organisation_name.message
-                  : ""
-              }
-              onBlur={(e) => handleBlur(e, "required", organisation_name)}
-              {...organisation_name.bind}
-            />
-          </Grid>
+          {organizationData && (
+            <Grid item item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="organisation_name"
+                label="Organisation Name"
+                name="organisation_name"
+                autoComplete="organisation_name"
+                error={
+                  formError.organisation_name &&
+                  formError.organisation_name.error
+                }
+                helperText={
+                  formError.organisation_name
+                    ? formError.organisation_name.message
+                    : ""
+                }
+                onBlur={(e) => handleBlur(e, "required", organisation_name)}
+                {...organisation_name.bind}
+              />
+            </Grid>
+          )}
         </Grid>
         <Grid container spacing={isDesktop ? 3 : 0} justify="center">
           <Grid item xs={12} sm={4}>

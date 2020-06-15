@@ -17,6 +17,10 @@ import {
   GET_USER_SUCCESS,
   GET_USER,
   GET_USER_FAIL,
+  GET_ORGANIZATION,
+  GET_ORGANIZATION_FAILURE,
+  GET_ORGANIZATION_SUCCESS,
+  getOrganization,
 } from "../actions/authuser.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -155,8 +159,15 @@ function* updateUser(payload) {
       `${environment.API_URL}coreuser/${payload.data.id}/`,
       payload.data
     );
+    yield call(
+      httpService.makeRequest,
+      "put",
+      `${environment.API_URL}organization/${payload.data.organization_uuid}/`,
+      { name: payload.data.organization_name }
+    );
     yield [
       yield put({ type: UPDATE_USER_SUCCESS, user }),
+      yield put(getOrganization()),
       yield put(
         showAlert({
           type: "success",
@@ -179,6 +190,22 @@ function* updateUser(payload) {
         error: "Updating user fields failed",
       }),
     ];
+  }
+}
+
+function* getOrganizationData(payload) {
+  let { uuid } = payload;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}organization/${uuid}/`,
+      null,
+      true
+    );
+    yield put({ type: GET_ORGANIZATION_SUCCESS, data });
+  } catch (error) {
+    yield put({ type: GET_ORGANIZATION_FAILURE, error });
   }
 }
 
@@ -206,6 +233,10 @@ function* watchGetUser() {
   yield takeLatest(GET_USER, getUserDetails);
 }
 
+function* watchGetOrganization() {
+  yield takeLatest(GET_ORGANIZATION, getOrganizationData);
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
@@ -214,5 +245,6 @@ export default function* authSaga() {
     watchUpdateUser(),
     watchInvite(),
     watchGetUser(),
+    watchGetOrganization(),
   ]);
 }
