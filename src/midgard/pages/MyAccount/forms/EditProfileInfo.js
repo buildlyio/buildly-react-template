@@ -107,11 +107,11 @@ function EditProfileInfo({
       first_name: first_name.value,
       last_name: last_name.value,
       email: email.value,
-      username: user.username,
+      username: editData.username,
       title: "",
       password: "admin",
       organization_name: organisation_name.value,
-      id: user.id,
+      id: editData.id,
     };
     dispatch(updateUser(editUserFormValue));
     setModal(false);
