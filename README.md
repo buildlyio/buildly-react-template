@@ -9,7 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-The web application was tested and built with the following versions: 
+The web application was tested and built with the following versions:
 
 - node v10.16.0
 - yarn v1.17.3
@@ -43,7 +43,7 @@ your Buildly React Template will be running locally and listening to the port 30
 
 ## Running the tests
 
-To **run tests** using [Jest](https://jestjs.io/): 
+To **run tests** using [Jest](https://jestjs.io/):
 
 ```
 $ yarn run test
@@ -66,7 +66,8 @@ Now, you just need to build a Docker image and host it somewhere. Further info a
 
 ### Configuration
 
-The following table lists the configurable parameters of Buildly React Template and their default values.
+The following table lists the configurable parameters of Buildly React Template and their default values.  They can be updated in the
+Docker container via flags as below or configured as environment variables in Travis.
 
 |             Parameter               |            Description             |                    Default                |
 |-------------------------------------|------------------------------------|-------------------------------------------|
@@ -92,7 +93,7 @@ Please read [CONTRIBUTING.md](https://github.com/buildlyio/docs/blob/master/CONT
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/buildlyio/buildly-react-template/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/buildlyio/buildly-react-template/tags).
 
 ## Authors
 

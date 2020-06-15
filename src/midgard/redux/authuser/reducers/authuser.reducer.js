@@ -15,6 +15,9 @@ import {
   INVITE,
   INVITE_FAIL,
   INVITE_SUCCESS,
+  GET_ORGANIZATION,
+  GET_ORGANIZATION_SUCCESS,
+  GET_ORGANIZATION_FAILURE,
 } from "../actions/authuser.actions";
 
 const initialState = {
@@ -22,6 +25,7 @@ const initialState = {
   loaded: false,
   data: null,
   error: null,
+  organizationData: null,
 };
 
 // Reducer
@@ -152,6 +156,31 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         data: null,
+        error: action.error,
+      };
+
+    case GET_ORGANIZATION:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        organizationData: null,
+        error: null,
+      };
+    case GET_ORGANIZATION_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        organizationData: action.data.data,
+        error: null,
+      };
+    case GET_ORGANIZATION_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        organizationData: null,
         error: action.error,
       };
 
