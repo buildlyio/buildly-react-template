@@ -6,13 +6,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import DataTable from "../../components/Table/Table";
-import { numberWithCommas } from "../../utils/utilMethods";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
-import AddCustodians from "./forms/AddCustodians";
 import { routes } from "../../routes/routesConstants";
-import { RECALL_DATA, CUSTODIAN_DATA } from "../../utils/mock";
-import Modal from "../../components/Modal/Modal";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import Loader from "../../components/Loader/Loader";
 import {
@@ -22,11 +18,8 @@ import {
   deleteCustodian,
   getContact,
 } from "../../redux/custodian/actions/custodian.actions";
-import {
-  custodianColumns,
-  getFormattedRow,
-  getUniqueContactInfo,
-} from "./CustodianConstants";
+import AddItems from "./forms/AddItems";
+import { itemColumns } from "./ItemsConstants";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -38,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Custodian({
+function Items({
   dispatch,
   history,
   location,
@@ -51,7 +44,6 @@ function Custodian({
 }) {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
-  const [deleteContactObjId, setDeleteContactObjId] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const classes = useStyles();
 
@@ -59,32 +51,28 @@ function Custodian({
   if (searchedData && searchedData.length) {
     rows = searchedData;
   } else if (data && data.length) {
-    rows = getFormattedRow(data, contactInfo);
+    rows = data;
   }
 
   useEffect(() => {
-    dispatch(getCustodians());
-    dispatch(getCustodianType());
-    dispatch(getContact());
+    // dispatch(getCustodians());
+    // dispatch(getCustodianType());
+    // dispatch(getContact());
   }, []);
 
   const editItem = (item) => {
-    let contactObj = getUniqueContactInfo(item, contactInfo);
-    history.push(`${routes.CUSTODIANS}/edit/:${item.id}`, {
+    history.push(`${routes.ITEMS}/edit/:${item.id}`, {
       type: "edit",
-      from: routes.CUSTODIANS,
+      from: routes.ITEMS,
       data: item,
-      contactData: contactObj,
     });
   };
   const deletItem = (item) => {
-    let contactObj = getUniqueContactInfo(item, contactInfo);
     setDeleteItemId(item.id);
-    setDeleteContactObjId(contactObj.id);
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    dispatch(deleteCustodian(deleteItemId, deleteContactObjId));
+    dispatch(deleteCustodian(deleteItemId));
     setConfirmModal(false);
   };
   const searchTable = (e) => {
@@ -112,22 +100,22 @@ function Custodian({
             color="primary"
             className={classes.addButton}
             onClick={() =>
-              history.push(`${routes.CUSTODIANS}/add`, {
-                from: routes.CUSTODIANS,
+              history.push(`${routes.ITEMS}/add`, {
+                from: routes.ITEMS,
               })
             }
           >
-            <AddIcon /> Add Custodian
+            <AddIcon /> Add Items
           </Button>
         </Box>
         <Typography className={classes.dashboardHeading} variant={"h4"}>
-          Custodians
+          Items
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <DataTable
               rows={rows || []}
-              columns={custodianColumns}
+              columns={itemColumns}
               actionsColumns={actionsColumns}
               hasSearch={true}
               searchAction={searchTable}
@@ -135,11 +123,8 @@ function Custodian({
             />
           </Grid>
         </Grid>
-        <Route path={`${routes.CUSTODIANS}/add`} component={AddCustodians} />
-        <Route
-          path={`${routes.CUSTODIANS}/edit/:id`}
-          component={AddCustodians}
-        />
+        <Route path={`${routes.ITEMS}/add`} component={AddItems} />
+        <Route path={`${routes.ITEMS}/edit/:id`} component={AddItems} />
       </div>
 
       <ConfirmModal
@@ -157,4 +142,4 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
 });
-export default connect(mapStateToProps)(Custodian);
+export default connect(mapStateToProps)(Items);

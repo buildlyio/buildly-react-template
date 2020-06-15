@@ -1,7 +1,7 @@
 //get custodains action constants
-export const GET_CUSTODIANS = "CUSTODAIN/GET_CUSTODAINS";
-export const GET_CUSTODIANS_SUCCESS = "CUSTODAIN/GET_CUSTODAINS_SUCCESS";
-export const GET_CUSTODIANS_FAILURE = "CUSTODAIN/GET_CUSTODAINS_FAILURE";
+export const GET_CUSTODIANS = "CUSTODAIN/GET_CUSTODIANS";
+export const GET_CUSTODIANS_SUCCESS = "CUSTODAIN/GET_CUSTODIANS_SUCCESS";
+export const GET_CUSTODIANS_FAILURE = "CUSTODAIN/GET_CUSTODIANS_FAILURE";
 
 //add custodain action constants
 export const ADD_CUSTODIANS = "CUSTODAIN/ADD_CUSTODIANS";
@@ -61,9 +61,10 @@ export const editCustodian = (payload, history) => ({
  *Selete Custodain entity
  * @param {{id}} payload
  */
-export const deleteCustodian = (custodianId) => ({
+export const deleteCustodian = (custodianId, contactObjId) => ({
   type: DELETE_CUSTODIANS,
   custodianId,
+  contactObjId,
 });
 
 /**

@@ -17,6 +17,7 @@ import { subNav, SubNavContext } from "midgard/context/SubNav.context";
 import { routes } from "../../routes/routesConstants";
 import Custodians from "../../pages/Custodians/Custodians";
 import MyAccount from "../../pages/MyAccount/MyAccount";
+import Items from "../../pages/Items/Items";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,6 +81,8 @@ function ContainerDashboard({ location, history }) {
           <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
           <Route path={routes.CUSTODIANS} component={Custodians} />
           <Route path={routes.MY_ACCOUNT} component={MyAccount} />
+          <Route path={routes.ITEMS} component={Items} />
+          {/* <Route path={routes.SENSORS} component={Sensors} /> */}
         </Container>
         {routeItems}
       </UserContext.Provider>

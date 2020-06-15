@@ -8,4 +8,6 @@ export const routes = {
   CURRENT_USERS: "/app/profile/users/current-users",
   USER_GROUPS: "/app/profile/users/groups",
   MY_ACCOUNT: "/app/account",
+  ITEMS: "/app/items",
+  SENSORS: "/app/sensors",
 };

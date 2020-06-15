@@ -98,12 +98,19 @@ function* getCustodianType() {
 }
 
 function* deleteCustodian(payload) {
-  let { custodianId } = payload;
+  let { custodianId, contactObjId } = payload;
   try {
-    const response = yield call(
+    yield call(
       httpService.makeRequest,
       "delete",
       `${custodainEnvironment.API_URL}custodian/${custodianId}/`,
+      null,
+      true
+    );
+    yield call(
+      httpService.makeRequest,
+      "delete",
+      `${custodainEnvironment.API_URL}contact/${contactObjId}/`,
       null,
       true
     );
@@ -124,7 +131,7 @@ function* deleteCustodian(payload) {
         showAlert({
           type: "error",
           open: true,
-          message: "Couldn't delete Custodian!",
+          message: "Error in deleting CUstodian!",
         })
       ),
       yield put({
