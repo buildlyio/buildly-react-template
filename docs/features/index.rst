@@ -10,8 +10,9 @@ Features
     login
     registration
     user_management
-    profile_settings
     reset_password
+    profile_settings
+    
 
 
 Buildly React Template provides different features and user interfaces corresponding to each feature.
