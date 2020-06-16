@@ -22,12 +22,54 @@ export const DELETE_ITEMS_FAILURE = "ITEMS/DELETE_ITEMS_FAILURE";
 export const SEARCH = "ITEMS/SEARCH";
 export const SEARCH_SUCCESS = "ITEMS/SEARCH_SUCCESS";
 
-//get custodian tyoe action constants
+//get item types action constants
 export const GET_ITEMS_TYPE = "ITEMS/GET_ITEMS_TYPE";
 export const GET_ITEMS_TYPE_SUCCESS = "ITEMS/GET_ITEMS_TYPE_SUCCESS";
 export const GET_ITEMS_TYPE_FAILURE = "ITEMS/GET_ITEMS_TYPE_FAILURE";
 
-//get contact action constants
-export const GET_CONTACT = "ITEMS/GET_CONTACT";
-export const GET_CONTACT_SUCCESS = "ITEMS/GET_CONTACT_SUCCESS";
-export const GET_CONTACT_FAILURE = "ITEMS/GET_CONTACT_FAILURE";
+export const getItems = () => ({ type: GET_ITEMS });
+
+/**
+ *Add Item
+ * @param {Object} payload
+ * @param {Object} history
+ */
+export const addItem = (payload, history) => ({
+  type: ADD_ITEMS,
+  payload,
+  history,
+});
+/**
+ *
+ * @param {Object} payload
+ * @param {Object} history
+ */
+export const editItem = (payload, history) => ({
+  type: EDIT_ITEMS,
+  payload,
+  history,
+});
+
+/**
+ *Delete Item entity
+ * @param {{id}} payload
+ */
+export const deleteItem = (itemId) => ({
+  type: DELETE_ITEMS,
+  itemId,
+});
+
+/**
+ *
+ * @param {String} searchItem
+ * @param {Array} searchList
+ */
+export const searchItem = (searchItem, searchList) => ({
+  type: SEARCH,
+  searchItem,
+  searchList,
+});
+
+export const getItemType = () => ({
+  type: GET_ITEMS_TYPE,
+});

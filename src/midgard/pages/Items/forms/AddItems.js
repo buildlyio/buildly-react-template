@@ -2,17 +2,11 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import Box from "@material-ui/core/Box";
-import Card from "@material-ui/core/Card";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import { validators } from "../../../utils/validators";
 import Modal from "../../../components/Modal/Modal";
-import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -25,11 +19,6 @@ import {
 } from "../../../redux/custodian/actions/custodian.actions";
 import Loader from "../../../components/Loader/Loader";
 import { dispatch } from "../../../redux/store";
-import {
-  ADDRESS_TYPE,
-  STATE_CHOICES,
-  COUNTRY_CHOICES,
-} from "../../../utils/mock";
 
 const useStyles = makeStyles((theme) => ({
   root: {

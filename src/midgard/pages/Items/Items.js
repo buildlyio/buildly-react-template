@@ -11,15 +11,9 @@ import AddIcon from "@material-ui/icons/Add";
 import { routes } from "../../routes/routesConstants";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import Loader from "../../components/Loader/Loader";
-import {
-  searchCustodian,
-  getCustodians,
-  getCustodianType,
-  deleteCustodian,
-  getContact,
-} from "../../redux/custodian/actions/custodian.actions";
 import AddItems from "./forms/AddItems";
 import { itemColumns } from "./ItemsConstants";
+import { getItems } from "../../redux/items/actions/items.actions";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -39,7 +33,6 @@ function Items({
   loading,
   loaded,
   error,
-  contactInfo,
   searchedData,
 }) {
   const [openConfirmModal, setConfirmModal] = useState(false);
@@ -55,6 +48,7 @@ function Items({
   }
 
   useEffect(() => {
+    dispatch(getItems());
     // dispatch(getCustodians());
     // dispatch(getCustodianType());
     // dispatch(getContact());
