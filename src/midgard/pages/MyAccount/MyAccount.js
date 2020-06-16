@@ -85,13 +85,6 @@ function MyAccount({
     user = data.data;
   }
 
-  useEffect(() => {
-    if (user && user.organization && user.organization.organization_uuid)
-      dispatch(getOrganization(user.organization.organization_uuid));
-  }, [user]);
-
-  console.log("organizationData", organizationData);
-
   return (
     <Box mt={3} textAlign={"center"}>
       <Typography className={classes.pageHeading} variant={"h5"}>

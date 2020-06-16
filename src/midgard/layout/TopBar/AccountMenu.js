@@ -50,6 +50,7 @@ export default function AccountMenu(props) {
     user,
     handleLogoutClick,
     handleMyAccountClick,
+    organizationData,
   } = props;
 
   const handleClose = () => {
@@ -70,9 +71,11 @@ export default function AccountMenu(props) {
             {user && `${user.first_name} ${user.last_name}`}
           </Typography>
           <Typography variant={"body2"}>{user && `${user.email}`}</Typography>
-          <Typography variant={"body1"}>
-            {user && `Works at: ${user.organization.name}`}
-          </Typography>
+          {organizationData && (
+            <Typography variant={"body1"}>
+              {user && `Works at: ${user.organization.name}`}
+            </Typography>
+          )}
         </Box>
 
         <Divider />

@@ -111,9 +111,11 @@ function EditProfileInfo({
       username: editData.username,
       title: "",
       password: "admin",
-      organization_name: organisation_name.value,
+      ...(organizationData && { organization_name: organisation_name.value }),
       id: editData.id,
-      organization_uuid: organizationData.organization_uuid,
+      ...(organizationData && {
+        organization_uuid: organizationData.organization_uuid,
+      }),
     };
     dispatch(updateUser(editUserFormValue));
     setModal(false);
@@ -147,7 +149,8 @@ function EditProfileInfo({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!first_name.value || !organisation_name.value) return true;
+    if (!first_name.value || (organizationData && !organisation_name.value))
+      return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });

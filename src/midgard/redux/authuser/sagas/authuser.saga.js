@@ -32,8 +32,12 @@ import { routes } from "../../../routes/routesConstants";
 function* logout() {
   try {
     yield call(oauthService.logout);
-    yield [yield put({ type: LOGOUT_SUCCESS })];
+    yield [
+      yield put({ type: LOGOUT_SUCCESS }),
+      yield put({ type: GET_ORGANIZATION_SUCCESS, data: null }),
+    ];
   } catch (error) {
+    console.log("error", error);
     yield put({ type: LOGOUT_FAIL });
   }
 }
@@ -58,6 +62,9 @@ function* login(payload) {
       `${environment.API_URL}coreuser/`
     );
     yield call(oauthService.setCurrentCoreUser, coreUser, user);
+    if (user && user.data && user.data.organization) {
+      yield put(getOrganization(user.data.organization.organization_uuid));
+    }
     yield [
       // yield put({ type: LOGIN_SUCCESS, user }),
       yield call(history.push, routes.DASHBOARD),

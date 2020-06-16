@@ -48,6 +48,7 @@ function TopBar({
   location,
   dispatch,
   data,
+  organizationData,
 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -61,6 +62,11 @@ function TopBar({
   useEffect(() => {
     dispatch(getUser());
   }, []);
+
+  // useEffect(() => {
+  //   if (user && user.organization && user.organization.organization_uuid)
+  //     dispatch(getOrganization(user.organization.organization_uuid));
+  // }, [user]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -106,6 +112,7 @@ function TopBar({
             anchorEl={anchorEl}
             setAnchorEl={setAnchorEl}
             user={user}
+            organizationData={organizationData}
             handleLogoutClick={handleLogoutClick}
             handleMyAccountClick={handleMyAccountClick}
           />
