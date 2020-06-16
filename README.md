@@ -39,7 +39,7 @@ To run the web app:
 $ yarn run start
 ```
 
-your Buildly React Template will be running locally and listening to the port 3000, so you can access it via your browser typing this address: 127.0.0.1:3000
+Your Buildly React Template will be running locally and listening to the port 3000, so you can access it via your browser typing this address: 127.0.0.1:3000
 
 ## Running the tests
 
