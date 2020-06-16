@@ -19,6 +19,7 @@ import {
 } from "../../../redux/custodian/actions/custodian.actions";
 import Loader from "../../../components/Loader/Loader";
 import { dispatch } from "../../../redux/store";
+import { Card, CardContent } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,6 +79,12 @@ function AddItems({
   const item_type = useInput(editData.item_type || "", {
     required: true,
   });
+  const gtin = useInput("");
+  const ean = useInput("");
+  const upc = useInput("");
+  const paper_tag_no = useInput("");
+  const batch_id = useInput("");
+  const bin_id = useInput("");
   const [formError, setFormError] = useState({});
 
   const buttonText = editPage ? "save" : "add item";
@@ -227,9 +234,84 @@ function AddItems({
                 </TextField>
               </Grid>
             </Grid>
-            {/* <Card variant="outlined" className={classes.cardItems}>
-              <CardContent></CardContent>
-            </Card> */}
+            <Card variant="outlined" className={classes.cardItems}>
+              <CardContent>
+                <Grid container spacing={isDesktop ? 2 : 0}>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="gtin"
+                      label="GTIN"
+                      name="gtin"
+                      autoComplete="gtin"
+                      {...gtin.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="upc"
+                      label="UPC"
+                      name="upc"
+                      autoComplete="upc"
+                      {...upc.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="ean"
+                      label="EAN"
+                      name="ean"
+                      autoComplete="ean"
+                      {...ean.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="paper_tag_no"
+                      label="Paper Tag Number"
+                      name="paper_tag_no"
+                      autoComplete="paper_tag_no"
+                      {...paper_tag_no.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="batch_id"
+                      label="Batch/Run ID"
+                      name="batch_id"
+                      autoComplete="batch_id"
+                      {...batch_id.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="bin_id"
+                      label="BIN ID"
+                      name="bin_id"
+                      autoComplete="bin_id"
+                      {...bin_id.bind}
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
 
             <Grid container spacing={isDesktop ? 3 : 0} justify="center">
               <Grid item xs={12} sm={4}>
