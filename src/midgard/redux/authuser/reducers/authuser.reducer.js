@@ -172,7 +172,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        organizationData: action.data.data,
+        organizationData: (action.data && action.data.data) || null,
         error: null,
       };
     case GET_ORGANIZATION_FAILURE:
