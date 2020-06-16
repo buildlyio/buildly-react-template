@@ -13,7 +13,12 @@ import ConfirmModal from "../../components/Modal/ConfirmModal";
 import Loader from "../../components/Loader/Loader";
 import AddItems from "./forms/AddItems";
 import { itemColumns } from "./ItemsConstants";
-import { getItems } from "../../redux/items/actions/items.actions";
+import {
+  getItems,
+  deleteItem,
+  searchItem,
+  getItemType,
+} from "../../redux/items/actions/items.actions";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -49,9 +54,7 @@ function Items({
 
   useEffect(() => {
     dispatch(getItems());
-    // dispatch(getCustodians());
-    // dispatch(getCustodianType());
-    // dispatch(getContact());
+    dispatch(getItemType());
   }, []);
 
   const editItem = (item) => {
@@ -66,12 +69,12 @@ function Items({
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    dispatch(deleteCustodian(deleteItemId));
+    dispatch(deleteItem(deleteItemId));
     setConfirmModal(false);
   };
   const searchTable = (e) => {
     setSearchValue(e.target.value);
-    dispatch(searchCustodian(e.target.value, rows));
+    dispatch(searchItem(e.target.value, rows));
   };
   const actionsColumns = [
     {
@@ -134,6 +137,6 @@ function Items({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.custodianReducer,
+  ...state.itemsReducer,
 });
 export default connect(mapStateToProps)(Items);

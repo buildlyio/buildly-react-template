@@ -274,7 +274,7 @@ function AddItems({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.custodianReducer,
+  ...state.itemsReducer,
 });
 
 export default connect(mapStateToProps)(AddItems);
