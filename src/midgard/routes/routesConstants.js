@@ -9,5 +9,5 @@ export const routes = {
   USER_GROUPS: "/app/profile/users/groups",
   MY_ACCOUNT: "/app/account",
   ITEMS: "/app/items",
-  SENSORS: "/app/sensors",
+  SENSORS_GATEWAY: "/app/sensors-gateway",
 };

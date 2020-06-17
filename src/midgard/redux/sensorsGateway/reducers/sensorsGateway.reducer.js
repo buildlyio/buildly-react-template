@@ -1,70 +1,70 @@
 import {
-  GET_ITEMS,
-  GET_ITEMS_SUCCESS,
-  GET_ITEMS_FAILURE,
-  ADD_ITEMS,
-  ADD_ITEMS_SUCCESS,
-  ADD_ITEMS_FAILURE,
-  EDIT_ITEMS,
-  EDIT_ITEMS_SUCCESS,
-  EDIT_ITEMS_FAILURE,
-  DELETE_ITEMS,
-  DELETE_ITEMS_SUCCESS,
-  GET_ITEMS_TYPE,
-  GET_ITEMS_TYPE_SUCCESS,
-  GET_ITEMS_TYPE_FAILURE,
-  SEARCH,
-  SEARCH_SUCCESS,
-  DELETE_ITEMS_FAILURE,
-} from "../actions/items.actions";
+  GET_GATEWAYS,
+  GET_GATEWAYS_SUCCESS,
+  GET_GATEWAYS_FAILURE,
+  ADD_GATEWAY,
+  ADD_GATEWAY_SUCCESS,
+  ADD_GATEWAY_FAILURE,
+  EDIT_GATEWAY,
+  EDIT_GATEWAY_SUCCESS,
+  EDIT_GATEWAY_FAILURE,
+  DELETE_GATEWAY,
+  DELETE_GATEWAY_SUCCESS,
+  GET_GATEWAYS_TYPE,
+  GET_GATEWAYS_TYPE_SUCCESS,
+  GET_GATEWAYS_TYPE_FAILURE,
+  GATEWAY_SEARCH_SUCCESS,
+  GATEWAY_SEARCH,
+  DELETE_GATEWAY_FAILURE,
+} from "../actions/sensorsGateway.actions";
 
 const initialState = {
   loading: false,
   loaded: false,
-  data: null,
   error: null,
-  itemTypeList: null,
+  gatewayTypeList: null,
+  gatewayData: null,
 };
 
 // Reducer
 export default (state = initialState, action) => {
   switch (action.type) {
-    case GET_ITEMS:
+    case GET_GATEWAYS:
       return {
         ...state,
         loading: true,
         loaded: false,
         error: null,
       };
-    case GET_ITEMS_SUCCESS:
+    case GET_GATEWAYS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        gatewayData: action.data,
       };
-    case GET_ITEMS_FAILURE:
+    case GET_GATEWAYS_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
         error: action.error,
       };
-    case ADD_ITEMS:
+    case ADD_GATEWAY:
       return {
         ...state,
         loading: true,
         loaded: false,
         error: null,
       };
-    case ADD_ITEMS_SUCCESS:
+    case ADD_GATEWAY_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        gatewayData: action.data,
       };
-    case ADD_ITEMS_FAILURE:
+    case ADD_GATEWAY_FAILURE:
       return {
         ...state,
         loading: false,
@@ -72,7 +72,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case EDIT_ITEMS:
+    case EDIT_GATEWAY:
       return {
         ...state,
         loading: true,
@@ -80,70 +80,70 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case EDIT_ITEMS_SUCCESS:
+    case EDIT_GATEWAY_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        gatewayData: action.data,
         error: null,
       };
 
-    case EDIT_ITEMS_FAILURE:
+    case EDIT_GATEWAY_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
         error: action.error,
       };
-    case DELETE_ITEMS:
+    case DELETE_GATEWAY:
       return {
         ...state,
         loading: true,
         loaded: false,
         error: null,
       };
-    case DELETE_ITEMS_SUCCESS:
+    case DELETE_GATEWAY_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        gatewayData: action.data,
       };
-    case DELETE_ITEMS_FAILURE:
+    case DELETE_GATEWAY_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
         error: action.error,
       };
-    case SEARCH:
+    case GATEWAY_SEARCH:
       return {
         ...state,
         error: null,
       };
-    case SEARCH_SUCCESS:
+    case GATEWAY_SEARCH_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        searchedData: action.data,
+        gatewaySearchedData: action.data,
       };
-    case GET_ITEMS_TYPE:
+    case GET_GATEWAYS_TYPE:
       return {
         ...state,
         loading: true,
         loaded: false,
         error: null,
       };
-    case GET_ITEMS_TYPE_SUCCESS:
+    case GET_GATEWAYS_TYPE_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        itemTypeList: action.data,
+        gatewayTypeList: action.data,
       };
-    case GET_ITEMS_TYPE_FAILURE:
+    case GET_GATEWAYS_TYPE_FAILURE:
       return {
         ...state,
         loading: false,

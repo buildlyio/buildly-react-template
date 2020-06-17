@@ -36,7 +36,7 @@ describe("actions", () => {
   it("should create an action to delete item", () => {
     const itemId = "123";
     const expectedAction = {
-      type: actions.DELETE_CUSTODIANS,
+      type: actions.DELETE_ITEMS,
       itemId,
     };
     expect(actions.deleteItem(itemId)).toEqual(expectedAction);

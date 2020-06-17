@@ -18,6 +18,7 @@ import { routes } from "../../routes/routesConstants";
 import Custodians from "../../pages/Custodians/Custodians";
 import MyAccount from "../../pages/MyAccount/MyAccount";
 import Items from "../../pages/Items/Items";
+import SensorsGateway from "../../pages/SensorsGateway/SensorsGateway";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -82,7 +83,7 @@ function ContainerDashboard({ location, history }) {
           <Route path={routes.CUSTODIANS} component={Custodians} />
           <Route path={routes.MY_ACCOUNT} component={MyAccount} />
           <Route path={routes.ITEMS} component={Items} />
-          {/* <Route path={routes.SENSORS} component={Sensors} /> */}
+          <Route path={routes.SENSORS_GATEWAY} component={SensorsGateway} />
         </Container>
         {routeItems}
       </UserContext.Provider>

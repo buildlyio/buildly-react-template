@@ -19,16 +19,7 @@ import {
   searchItem,
   getItemType,
 } from "../../redux/items/actions/items.actions";
-
-const useStyles = makeStyles((theme) => ({
-  dashboardHeading: {
-    fontWeight: "bold",
-    marginBottom: "0.5em",
-  },
-  addButton: {
-    backgroundColor: "#000",
-  },
-}));
+import DashboardWrapper from "../../components/DashboardWrapper/DashboardWrapper";
 
 function Items({
   dispatch,
@@ -43,8 +34,6 @@ function Items({
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
   const [searchValue, setSearchValue] = useState("");
-  const classes = useStyles();
-
   let rows = [];
   if (searchedData && searchedData.length) {
     rows = searchedData;
@@ -76,62 +65,32 @@ function Items({
     setSearchValue(e.target.value);
     dispatch(searchItem(e.target.value, rows));
   };
-  const actionsColumns = [
-    {
-      id: "edit",
-      type: "edit",
-      action: editItem,
-      label: "Edit",
-    },
-    { id: "delete", type: "delete", action: deletItem, label: "Delete" },
-  ];
-  return (
-    <Box mt={2}>
-      {loading && <Loader open={loading} />}
-      <div className={classes.container}>
-        <Box mb={3}>
-          <Button
-            type="button"
-            // fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.addButton}
-            onClick={() =>
-              history.push(`${routes.ITEMS}/add`, {
-                from: routes.ITEMS,
-              })
-            }
-          >
-            <AddIcon /> Add Items
-          </Button>
-        </Box>
-        <Typography className={classes.dashboardHeading} variant={"h4"}>
-          Items
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <DataTable
-              rows={rows || []}
-              columns={itemColumns}
-              actionsColumns={actionsColumns}
-              hasSearch={true}
-              searchAction={searchTable}
-              searchValue={searchValue} // To show the search field in table
-            />
-          </Grid>
-        </Grid>
-        <Route path={`${routes.ITEMS}/add`} component={AddItems} />
-        <Route path={`${routes.ITEMS}/edit/:id`} component={AddItems} />
-      </div>
 
-      <ConfirmModal
-        open={openConfirmModal}
-        setOpen={setConfirmModal}
-        submitAction={handleConfirmModal}
-        title={"Are you sure you want to delete this item?"}
-        submitText={"Delete"}
-      />
-    </Box>
+  const onAddButtonClick = () => {
+    history.push(`${routes.ITEMS}/add`, {
+      from: routes.ITEMS,
+    });
+  };
+  return (
+    <DashboardWrapper
+      loading={loading}
+      onAddButtonClick={onAddButtonClick}
+      dashboardHeading={"Items"}
+      addButtonHeading={"Add Item"}
+      editAction={editItem}
+      deleteAction={deletItem}
+      columns={itemColumns}
+      rows={rows}
+      hasSearch={true}
+      search={{ searchValue, searchAction: searchTable }}
+      openConfirmModal={openConfirmModal}
+      setConfirmModal={setConfirmModal}
+      handleConfirmModal={handleConfirmModal}
+      confirmModalTitle={"Delete Item"}
+    >
+      <Route path={`${routes.ITEMS}/add`} component={AddItems} />
+      <Route path={`${routes.ITEMS}/edit/:id`} component={AddItems} />
+    </DashboardWrapper>
   );
 }
 

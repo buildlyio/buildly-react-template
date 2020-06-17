@@ -35,13 +35,15 @@ describe("actions", () => {
 describe("actions", () => {
   it("should create an action to delete custodian", () => {
     const custodianId = "123";
-    contactObjId = "21";
+    const contactObjId = "21";
     const expectedAction = {
       type: actions.DELETE_CUSTODIANS,
       custodianId,
       contactObjId,
     };
-    expect(actions.deleteCustodian(custodianId)).toEqual(expectedAction);
+    expect(actions.deleteCustodian(custodianId, contactObjId)).toEqual(
+      expectedAction
+    );
   });
 });
 

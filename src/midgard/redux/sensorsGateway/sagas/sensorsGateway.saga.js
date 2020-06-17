@@ -1,42 +1,39 @@
-import {
-  getItems,
-  GET_ITEMS,
-  GET_ITEMS_SUCCESS,
-  GET_ITEMS_FAILURE,
-  ADD_ITEMS,
-  ADD_ITEMS_SUCCESS,
-  ADD_ITEMS_FAILURE,
-  EDIT_ITEMS,
-  EDIT_ITEMS_SUCCESS,
-  EDIT_ITEMS_FAILURE,
-  DELETE_ITEMS,
-  DELETE_ITEMS_SUCCESS,
-  GET_ITEMS_TYPE,
-  GET_ITEMS_TYPE_SUCCESS,
-  GET_ITEMS_TYPE_FAILURE,
-  DELETE_ITEMS_FAILURE,
-  SEARCH_SUCCESS,
-  SEARCH,
-} from "../actions/items.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
-import { oauthService } from "../../../modules/oauth/oauth.service";
 import { httpService } from "../../../modules/http/http.service";
 import { environment } from "environment";
 import { routes } from "../../../routes/routesConstants";
 import { showAlert } from "../../alert/actions/alert.actions";
+import {
+  GET_GATEWAYS,
+  GATEWAY_SEARCH_SUCCESS,
+  GATEWAY_SEARCH,
+  GET_GATEWAYS_TYPE,
+  ADD_GATEWAY,
+  DELETE_GATEWAY,
+  EDIT_GATEWAY,
+  GET_GATEWAYS_SUCCESS,
+  GET_GATEWAYS_FAILURE,
+  GET_GATEWAYS_TYPE_SUCCESS,
+  GET_GATEWAYS_TYPE_FAILURE,
+  getGateways,
+  DELETE_GATEWAY_FAILURE,
+  EDIT_GATEWAY_SUCCESS,
+  EDIT_GATEWAY_FAILURE,
+  ADD_GATEWAY_FAILURE,
+} from "../actions/sensorsGateway.actions";
 
-const shipmentApiEndPoint = "shipment/";
+const sensorApiEndPoint = "sensor/";
 
-function* getItemsList() {
+function* getGatewayList() {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${shipmentApiEndPoint}item/`,
+      `${environment.API_URL}${sensorApiEndPoint}gateway/`,
       null,
       true
     );
-    yield [yield put({ type: GET_ITEMS_SUCCESS, data: data.data })];
+    yield [yield put({ type: GET_GATEWAYS_SUCCESS, data: data.data })];
   } catch (error) {
     console.log("error", error);
     yield [
@@ -48,25 +45,25 @@ function* getItemsList() {
         })
       ),
       yield put({
-        type: GET_ITEMS_FAILURE,
+        type: GET_GATEWAYS_FAILURE,
         error: error,
       }),
     ];
   }
 }
 
-function* getItemType() {
+function* getGatewayTypeList() {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${shipmentApiEndPoint}item_type/`,
+      `${environment.API_URL}${sensorApiEndPoint}gateway_type/`,
       null,
       true
     );
     yield [
       yield put({
-        type: GET_ITEMS_TYPE_SUCCESS,
+        type: GET_GATEWAYS_TYPE_SUCCESS,
         data: data.data,
       }),
     ];
@@ -80,20 +77,20 @@ function* getItemType() {
         })
       ),
       yield put({
-        type: GET_ITEMS_TYPE_FAILURE,
+        type: GET_GATEWAYS_TYPE_FAILURE,
         error: error,
       }),
     ];
   }
 }
 
-function* deleteItem(payload) {
-  let { itemId } = payload;
+function* deleteGatewayItem(payload) {
+  let { gatewayId } = payload;
   try {
     yield call(
       httpService.makeRequest,
       "delete",
-      `${environment.API_URL}${shipmentApiEndPoint}item/${itemId}/`,
+      `${environment.API_URL}${sensorApiEndPoint}gateway/${gatewayId}/`,
       null,
       true
     );
@@ -102,10 +99,10 @@ function* deleteItem(payload) {
         showAlert({
           type: "success",
           open: true,
-          message: "Item deleted successfully!",
+          message: "Gateway deleted successfully!",
         })
       ),
-      yield put(getItems()),
+      yield put(getGateways()),
     ];
   } catch (error) {
     console.log("error", error);
@@ -114,37 +111,37 @@ function* deleteItem(payload) {
         showAlert({
           type: "error",
           open: true,
-          message: "Error in deleting Item!",
+          message: "Error in deleting Gateway!",
         })
       ),
       yield put({
-        type: DELETE_ITEMS_FAILURE,
+        type: DELETE_GATEWAY_FAILURE,
         error: error,
       }),
     ];
   }
 }
 
-function* editItem(action) {
+function* editGateWayItem(action) {
   let { payload, history } = action;
   try {
     let data = yield call(
       httpService.makeRequest,
       "put",
-      `${environment.API_URL}${shipmentApiEndPoint}item/${payload.id}/`,
+      `${environment.API_URL}${sensorApiEndPoint}gateway/${payload.id}/`,
       payload,
       true
     );
     yield [
-      yield put(getItems()),
+      yield put(getGateways()),
       yield put(
         showAlert({
           type: "success",
           open: true,
-          message: "Item successfully Edited!",
+          message: "Gateway successfully Edited!",
         })
       ),
-      yield call(history.push, routes.CUSTODIANS),
+      yield call(history.push, routes.SENSORS_GATEWAY),
     ];
   } catch (error) {
     yield [
@@ -152,24 +149,24 @@ function* editItem(action) {
         showAlert({
           type: "error",
           open: true,
-          message: "Couldn't edit Item!",
+          message: "Couldn't edit Gateway due to some error!",
         })
       ),
       yield put({
-        type: EDIT_ITEMS_FAILURE,
+        type: EDIT_GATEWAY_FAILURE,
         error: error,
       }),
     ];
   }
 }
 
-function* addItem(action) {
+function* addGateway(action) {
   let { history, payload } = action;
   try {
     let data = yield call(
       httpService.makeRequest,
       "post",
-      `${environment.API_URL}${shipmentApiEndPoint}item/`,
+      `${environment.API_URL}${sensorApiEndPoint}gateway/`,
       payload,
       true
     );
@@ -178,11 +175,11 @@ function* addItem(action) {
         showAlert({
           type: "success",
           open: true,
-          message: "Successfully Added Item",
+          message: "Successfully Added Gateway",
         })
       ),
-      yield put(getItems()),
-      yield call(history.push, routes.CUSTODIANS),
+      yield put(getGateways()),
+      yield call(history.push, routes.SENSORS_GATEWAY),
     ];
   } catch (error) {
     console.log("error", error);
@@ -191,21 +188,21 @@ function* addItem(action) {
         showAlert({
           type: "error",
           open: true,
-          message: "Error in creating Item",
+          message: "Error in creating Gateway",
         })
       ),
       yield put({
-        type: ADD_ITEMS_FAILURE,
+        type: ADD_GATEWAY_FAILURE,
         error: error,
       }),
     ];
   }
 }
 
-function* searchItem(payload) {
+function* searchGateway(payload) {
   try {
     if (!payload.searchItem) {
-      yield put({ type: SEARCH_SUCCESS, data: [] });
+      yield put({ type: GATEWAY_SEARCH_SUCCESS, data: [] });
     } else {
       let data = payload.searchList.filter((item) => {
         return (
@@ -213,44 +210,44 @@ function* searchItem(payload) {
           item.id.toString().includes(payload.searchItem)
         );
       });
-      yield put({ type: SEARCH_SUCCESS, data });
+      yield put({ type: GATEWAY_SEARCH_SUCCESS, data });
     }
   } catch (error) {
     // yield put({ type: UPDATE_USER_FAIL, error: "Updating user fields failed" });
   }
 }
 
-function* watchGetItem() {
-  yield takeLatest(GET_ITEMS, getItemsList);
+function* watchGetGateway() {
+  yield takeLatest(GET_GATEWAYS, getGatewayList);
 }
 
-function* watchSearchItem() {
-  yield takeLatest(SEARCH, searchItem);
+function* watchGatewaySearch() {
+  yield takeLatest(GATEWAY_SEARCH, searchGateway);
 }
 
-function* watchGetItemType() {
-  yield takeLatest(GET_ITEMS_TYPE, getItemType);
+function* watchGetGatewayType() {
+  yield takeLatest(GET_GATEWAYS_TYPE, getGatewayTypeList);
 }
 
-function* watchAddItem() {
-  yield takeLatest(ADD_ITEMS, addItem);
+function* watchAddGateway() {
+  yield takeLatest(ADD_GATEWAY, addGateway);
 }
 
-function* watchDeleteItem() {
-  yield takeLatest(DELETE_ITEMS, deleteItem);
+function* watchDeleteGateway() {
+  yield takeLatest(DELETE_GATEWAY, deleteGatewayItem);
 }
 
-function* watchEditItem() {
-  yield takeLatest(EDIT_ITEMS, editItem);
+function* watchEditGateway() {
+  yield takeLatest(EDIT_GATEWAY, editGateWayItem);
 }
 
-export default function* itemSaga() {
+export default function* sensorsGatewaySaga() {
   yield all([
-    watchSearchItem(),
-    watchGetItem(),
-    watchGetItemType(),
-    watchAddItem(),
-    watchDeleteItem(),
-    watchEditItem(),
+    watchGatewaySearch(),
+    watchGetGateway(),
+    watchGetGatewayType(),
+    watchAddGateway(),
+    watchDeleteGateway(),
+    watchEditGateway(),
   ]);
 }

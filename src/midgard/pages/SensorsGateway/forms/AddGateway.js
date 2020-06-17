@@ -14,7 +14,7 @@ import Select from "@material-ui/core/Select";
 import { useInput } from "../../../hooks/useInput";
 import Loader from "../../../components/Loader/Loader";
 import { Card, CardContent } from "@material-ui/core";
-import { editItem, addItem } from "../../../redux/items/actions/items.actions";
+import DatePickerComponent from "../../../components/DatePicker/DatePicker";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,14 +53,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function AddItems({
+function AddGateway({
   dispatch,
   loading,
   history,
   loaded,
   error,
   location,
-  itemTypeList,
+  gatewayTypeList,
 }) {
   const editPage = location.state && location.state.type === "edit";
   const editData =
@@ -68,22 +68,19 @@ function AddItems({
     {};
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
-  const item_desc = useInput(editData.item_desc || "");
-  const item_name = useInput(editData.item_name || "");
-  const units = useInput(editData.units || "");
-  const item_type = useInput(editData.item_type || "", {
+  const gateway_name = useInput(editData.name || "");
+  const gateway_type = useInput(editData.gateway_type || "", {
     required: true,
   });
-  const gtin = useInput("");
-  const ean = useInput("");
-  const upc = useInput("");
-  const paper_tag_no = useInput("");
-  const batch_id = useInput("");
-  const bin_id = useInput("");
+  const [activation_date, handleDateChange] = useState(
+    editData.activation_date || new Date()
+  );
+  const sim_card_id = useInput("");
+  const battery_level = useInput("");
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? "save" : "add item";
-  const formTitle = editPage ? "Edit Item" : "Add Item";
+  const buttonText = editPage ? "save" : "add gateway";
+  const formTitle = editPage ? "Edit Gateway" : "Add Gateway";
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
@@ -97,9 +94,14 @@ function AddItems({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    const itemFormValue = {
-      item_type: item_type.value,
-      name: item_name.value,
+    const gatewayFormValues = {
+      name: gateway_name.value,
+      sensors: "",
+      sim_card_id: sim_card_id.value,
+      gateway_type: gateway_type.value,
+      // shipment_ids: ["string"],
+      activation_date: activation_date.value,
+      last_known_battery_level: battery_level.value,
       ...(editPage && editData && { id: editData.id }),
     };
     if (editPage) {
@@ -137,7 +139,7 @@ function AddItems({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!item_type.value) return true;
+    if (!gateway_type.value) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -164,65 +166,12 @@ function AddItems({
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  id="item_name"
-                  label="Item Name"
-                  name="item_name"
-                  autoComplete="item_name"
-                  {...item_name.bind}
+                  id="gateway_name"
+                  label="Alias"
+                  name="gateway_name"
+                  autoComplete="gateway_name"
+                  {...gateway_name.bind}
                 />
-              </Grid>
-              <Grid item item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  multiline
-                  rows={4}
-                  id="item_desc"
-                  label="Item Description"
-                  name="item_desc"
-                  autoComplete="item_desc"
-                  {...item_desc.bind}
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item item xs={12} md={6} sm={6}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  id="units"
-                  label="Number of Units"
-                  {...units.bind}
-                ></TextField>
-              </Grid>
-              <Grid item xs={12} md={6} sm={6}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  required
-                  id="item_type"
-                  select
-                  label="Item Type"
-                  error={formError.item_type && formError.item_type.error}
-                  helperText={
-                    formError.item_type ? formError.item_type.message : ""
-                  }
-                  onBlur={(e) =>
-                    handleBlur(e, "required", item_type, "item_type")
-                  }
-                  {...item_type.bind}
-                >
-                  <MenuItem value={""}>Select</MenuItem>
-                  {itemTypeList &&
-                    itemTypeList.map((item, index) => (
-                      <MenuItem key={`${item.id}${item.name}`} value={item.url}>
-                        {item.name}
-                      </MenuItem>
-                    ))}
-                </TextField>
               </Grid>
             </Grid>
             <Card variant="outlined" className={classes.cardItems}>
@@ -233,11 +182,40 @@ function AddItems({
                       variant="outlined"
                       margin="normal"
                       fullWidth
-                      id="gtin"
-                      label="GTIN"
-                      name="gtin"
-                      autoComplete="gtin"
-                      {...gtin.bind}
+                      required
+                      id="gateway_type"
+                      select
+                      label="Gateway Type"
+                      error={
+                        formError.gateway_type && formError.gateway_type.error
+                      }
+                      helperText={
+                        formError.gateway_type
+                          ? formError.gateway_type.message
+                          : ""
+                      }
+                      onBlur={(e) =>
+                        handleBlur(e, "required", gateway_type, "gateway_type")
+                      }
+                      {...gateway_type.bind}
+                    >
+                      <MenuItem value={""}>Select</MenuItem>
+                      {gatewayTypeList &&
+                        gatewayTypeList.map((item, index) => (
+                          <MenuItem
+                            key={`${item.id}${item.name}`}
+                            value={item.url}
+                          >
+                            {item.name}
+                          </MenuItem>
+                        ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <DatePickerComponent
+                      label={"Activated"}
+                      selectedDate={activation_date}
+                      handleDateChange={handleDateChange}
                     />
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
@@ -245,11 +223,11 @@ function AddItems({
                       variant="outlined"
                       margin="normal"
                       fullWidth
-                      id="upc"
-                      label="UPC"
-                      name="upc"
-                      autoComplete="upc"
-                      {...upc.bind}
+                      id="sim_card_id"
+                      label="IMEI"
+                      name="sim_card_id"
+                      autoComplete="sim_card_id"
+                      {...sim_card_id.bind}
                     />
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
@@ -257,47 +235,11 @@ function AddItems({
                       variant="outlined"
                       margin="normal"
                       fullWidth
-                      id="ean"
-                      label="EAN"
-                      name="ean"
-                      autoComplete="ean"
-                      {...ean.bind}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="paper_tag_no"
-                      label="Paper Tag Number"
-                      name="paper_tag_no"
-                      autoComplete="paper_tag_no"
-                      {...paper_tag_no.bind}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="batch_id"
-                      label="Batch/Run ID"
-                      name="batch_id"
-                      autoComplete="batch_id"
-                      {...batch_id.bind}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="bin_id"
-                      label="BIN ID"
-                      name="bin_id"
-                      autoComplete="bin_id"
-                      {...bin_id.bind}
+                      id="battery_level"
+                      label="Battery"
+                      name="battery_level"
+                      autoComplete="battery_level"
+                      {...battery_level.bind}
                     />
                   </Grid>
                 </Grid>
@@ -347,7 +289,7 @@ function AddItems({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.itemsReducer,
+  ...state.sensorsGatewayReducer,
 });
 
-export default connect(mapStateToProps)(AddItems);
+export default connect(mapStateToProps)(AddGateway);

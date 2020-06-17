@@ -7,6 +7,7 @@ import crudDataReducer from "midgard/modules/crud/redux/crud.reducer";
 import alertReducer from "./alert/reducers/alert.reducer";
 import custodianReducer from "./custodian/reducers/custodian.reducer";
 import itemsReducer from "./items/reducers/items.reducer";
+import sensorsGatewayReducer from "./sensorsGateway/reducers/sensorsGateway.reducer";
 
 const rootReducer = combineReducers({
   //entryPointForGulpStart
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   alertReducer,
   custodianReducer,
   itemsReducer,
+  sensorsGatewayReducer,
 });
 
 export default rootReducer;
