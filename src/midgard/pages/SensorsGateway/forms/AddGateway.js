@@ -80,9 +80,6 @@ function AddGateway({
   const battery_level = useInput("");
   const mac_address = useInput("");
   const last_known_location = useInput("");
-  const [last_report_date_time, handleLastReportDate] = useState(
-    moment(new Date())
-  );
   const gateway_uuid = useInput("");
   const [formError, setFormError] = useState({});
 
@@ -283,14 +280,6 @@ function AddGateway({
                       name="last_known_location"
                       autoComplete="last_known_location"
                       {...last_known_location.bind}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
-                    <DatePickerComponent
-                      label={"Last Report Date Time"}
-                      hasTime
-                      selectedDate={last_report_date_time}
-                      handleDateChange={handleLastReportDate}
                     />
                   </Grid>
                 </Grid>
