@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import moment from "moment";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -73,10 +74,16 @@ function AddGateway({
     required: true,
   });
   const [activation_date, handleDateChange] = useState(
-    editData.activation_date || new Date()
+    editData.activation_date || moment()
   );
   const sim_card_id = useInput("");
   const battery_level = useInput("");
+  const mac_address = useInput("");
+  const last_known_location = useInput("");
+  const [last_report_date_time, handleLastReportDate] = useState(
+    moment(new Date())
+  );
+  const gateway_uuid = useInput("");
   const [formError, setFormError] = useState({});
 
   const buttonText = editPage ? "save" : "add gateway";
@@ -173,6 +180,18 @@ function AddGateway({
                   {...gateway_name.bind}
                 />
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="gateway_uuid"
+                  label="UUID"
+                  name="gateway_uuid"
+                  autoComplete="gateway_uuid"
+                  {...gateway_uuid.bind}
+                />
+              </Grid>
             </Grid>
             <Card variant="outlined" className={classes.cardItems}>
               <CardContent>
@@ -240,6 +259,38 @@ function AddGateway({
                       name="battery_level"
                       autoComplete="battery_level"
                       {...battery_level.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="mac_address"
+                      label="Mac Address"
+                      name="mac_address"
+                      autoComplete="mac_address"
+                      {...mac_address.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="last_known_location"
+                      label="Lat Known Location"
+                      name="last_known_location"
+                      autoComplete="last_known_location"
+                      {...last_known_location.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <DatePickerComponent
+                      label={"Last Report Date Time"}
+                      hasTime
+                      selectedDate={last_report_date_time}
+                      handleDateChange={handleLastReportDate}
                     />
                   </Grid>
                 </Grid>

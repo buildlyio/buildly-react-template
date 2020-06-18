@@ -30,7 +30,7 @@ import { environment } from "environment";
 import { routes } from "../../../routes/routesConstants";
 import { showAlert } from "../../alert/actions/alert.actions";
 
-const custodiansApiEndPoint = "custodians/";
+const custodiansApiEndPoint = "custodian/";
 
 function* getCustodiansList() {
   try {
