@@ -291,14 +291,6 @@ function AddSensor({
                       {...mac_address.bind}
                     />
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
-                    <DatePickerComponent
-                      label={"Last Report Date Time"}
-                      hasTime
-                      selectedDate={last_report_date_time}
-                      handleDateChange={handleLastReportDate}
-                    />
-                  </Grid>
                 </Grid>
               </CardContent>
             </Card>
