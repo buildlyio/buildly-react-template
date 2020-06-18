@@ -48,7 +48,7 @@ function DashboardWrapper(props) {
     { id: "delete", type: "delete", action: deleteAction, label: "Delete" },
   ];
   return (
-    <Box mt={2}>
+    <Box mt={5}>
       {loading && <Loader open={loading} />}
       <div className={classes.container}>
         <Box mb={3}>

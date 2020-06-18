@@ -1,5 +1,5 @@
 export const gatewayColumns = [
-  { id: "id", label: "UUID", minWidth: 150 },
+  { id: "gateway_uuid", label: "UUID", minWidth: 150 },
   { id: "name", label: "Alias", minWidth: 180 },
   {
     id: "",
@@ -26,4 +26,11 @@ export const gatewayColumns = [
     label: "Activation",
     minWidth: 150,
   },
+];
+
+export const sensorsColumns = [
+  { id: "sensor_uuid", label: "UUID", minWidth: 150 },
+  { id: "name", label: "Alias", minWidth: 150 },
+  { id: "sensor_type", label: "Type", minWidth: 150 },
+  { id: "activation_date", label: "Activated", minWidth: 150 },
 ];
