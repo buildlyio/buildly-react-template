@@ -52,27 +52,18 @@ function EnvironmentalLimitsForm({
     changeMinTempVal(value[0]);
     changeMaxTempVal(value[3]);
     changeHighTempVal(value[2]);
-    changeMinTempVal(value[1]);
+    changeLowTempVal(value[1]);
   };
 
   return (
     <div>
-      <Grid container spacing={2}>
-        <Grid item sm={12} md={6} sm={6}>
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={6} sm={6}>
           <Card variant="outlined">
+            <Typography variant="body2">Temprature Settings(°F)</Typography>
             <CardContent>
               <Grid container spacing={2}>
-                <Grid item sm={6} md={6} sm={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="min_temp_val"
-                    label="Min"
-                    name="min_temp_val"
-                    autoComplete="min_temp_val"
-                    value={min_temp_val}
-                  />
+                <Grid item xs={6}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -82,6 +73,17 @@ function EnvironmentalLimitsForm({
                     name="max_temp_val"
                     autoComplete="max_temp_val"
                     value={max_temp_val}
+                  />
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    id="high_temp_val"
+                    label="Warning High"
+                    name="high_temp_val"
+                    autoComplete="high_temp_val"
+                    value={high_temp_val}
+                    // {...last_known_location.bind}
                   />
                   <TextField
                     variant="outlined"
@@ -98,6 +100,58 @@ function EnvironmentalLimitsForm({
                     variant="outlined"
                     margin="normal"
                     fullWidth
+                    id="min_temp_val"
+                    label="Min"
+                    name="min_temp_val"
+                    autoComplete="min_temp_val"
+                    value={min_temp_val}
+                  />
+                </Grid>
+                <Grid item xs={6} className={classes.slider}>
+                  <RangeSlider
+                    value={minMaxTempValue}
+                    orientation={"vertical"}
+                    handleSliderChange={handleTempMinMaxChange}
+                    rangeText={""}
+                    max={minMaxTempValue[3]}
+                    min={minMaxTempValue[0]}
+                    marks={[
+                      {
+                        value: 0,
+                        label: `0°F`,
+                      },
+
+                      {
+                        value: 100,
+                        label: `100°F`,
+                      },
+                    ]}
+                  />
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={6} sm={6}>
+          <Card variant="outlined">
+            <Typography variant="body2">Humidity Settings(%)</Typography>
+            <CardContent>
+              <Grid container spacing={4}>
+                <Grid item xs={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    id="max_temp_val"
+                    label="Max"
+                    name="max_temp_val"
+                    autoComplete="max_temp_val"
+                    value={max_temp_val}
+                  />
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
                     id="high_temp_val"
                     label="Warning High"
                     name="high_temp_val"
@@ -105,38 +159,51 @@ function EnvironmentalLimitsForm({
                     value={high_temp_val}
                     // {...last_known_location.bind}
                   />
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    id="low_temp_val"
+                    label="Warning Low"
+                    name="low_temp_val"
+                    autoComplete="low_temp_val"
+                    value={low_temp_val}
+                    // {...last_known_location.bind}
+                  />
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    id="min_temp_val"
+                    label="Min"
+                    name="min_temp_val"
+                    autoComplete="min_temp_val"
+                    value={min_temp_val}
+                  />
                 </Grid>
-                <Grid item sm={12} md={6} sm={6}>
-                  <Grid container spacing={2}>
-                    <Grid item sm={12} className={classes.slider}>
-                      <RangeSlider
-                        value={minMaxTempValue}
-                        handleSliderChange={handleTempMinMaxChange}
-                        rangeText={""}
-                        max={minMaxTempValue[3]}
-                        min={minMaxTempValue[0]}
-                        marks={[
-                          {
-                            value: 0,
-                            label: `0°F`,
-                          },
+                <Grid item xs={6} className={classes.slider}>
+                  <RangeSlider
+                    value={minMaxTempValue}
+                    orientation={"vertical"}
+                    handleSliderChange={handleTempMinMaxChange}
+                    rangeText={""}
+                    max={minMaxTempValue[3]}
+                    min={minMaxTempValue[0]}
+                    marks={[
+                      {
+                        value: 0,
+                        label: `0°F`,
+                      },
 
-                          {
-                            value: 100,
-                            label: `100°F`,
-                          },
-                        ]}
-                      />
-                    </Grid>
-                  </Grid>
+                      {
+                        value: 100,
+                        label: `100°F`,
+                      },
+                    ]}
+                  />
                 </Grid>
               </Grid>
             </CardContent>
-          </Card>
-        </Grid>
-        <Grid item sm={12} md={6} sm={6}>
-          <Card variant="outlined">
-            <CardContent></CardContent>
           </Card>
         </Grid>
       </Grid>

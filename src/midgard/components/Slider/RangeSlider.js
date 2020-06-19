@@ -17,9 +17,11 @@ const useStyles = makeStyles((theme) => ({
   },
   arrow: {
     color: theme.palette.common.black,
+    zIndex: "-1",
   },
   tooltip: {
     backgroundColor: theme.palette.common.black,
+    zIndex: "-1",
   },
 }));
 
@@ -33,7 +35,7 @@ function ValueLabelComponent(props) {
   return (
     <Tooltip
       open={true}
-      enterTouchDelay={0}
+      // enterTouchDelay={0}
       placement="left"
       title={value}
       classes={{ tooltip: classes.tooltip, arrow: classes.arrow }}
@@ -52,6 +54,7 @@ export default function RangeSlider({
   min,
   handleSliderChange,
   marks,
+  orientation,
 }) {
   const classes = useStyles();
 
@@ -65,7 +68,7 @@ export default function RangeSlider({
       <Slider
         value={value}
         // track={false}
-        orientation="vertical"
+        orientation={orientation}
         aria-labelledby="range-slider"
         valueLabelDisplay="on"
         ValueLabelComponent={ValueLabelComponent}
