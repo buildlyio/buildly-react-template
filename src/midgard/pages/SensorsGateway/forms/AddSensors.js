@@ -16,6 +16,7 @@ import { useInput } from "../../../hooks/useInput";
 import Loader from "../../../components/Loader/Loader";
 import { Card, CardContent, Typography } from "@material-ui/core";
 import DatePickerComponent from "../../../components/DatePicker/DatePicker";
+import EnvironmentalLimitsForm from "./EnvironmentalLimitsForm";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,6 +70,11 @@ function AddSensor({
     {};
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
+  const [min_temp_val, changeMinTempVal] = useState(0);
+  const [max_temp_val, changeMaxTempVal] = useState(100);
+  const [minMaxTempValue, setMinMaxTempValue] = useState([0, 35, 75, 100]);
+  const [low_temp_val, changeLowTempVal] = useState(0);
+  const [high_temp_val, changeHighTempVal] = useState(100);
   const gateway_name = useInput(editData.name || "");
   const gateway_type = useInput(editData.gateway_type || "", {
     required: true,
@@ -85,9 +91,10 @@ function AddSensor({
   );
   const gateway_uuid = useInput("");
   const [formError, setFormError] = useState({});
+  const [environmentalModal, toggleEnvironmentalModal] = useState(false);
 
   const buttonText = editPage ? "save" : "add Sensor";
-  const formTitle = editPage ? "Edit Sensor" : "Add Sensor";
+  const formTitle = editPage ? "Edit Sensor(1/2)" : "Add Sensor(1/2)";
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
@@ -295,28 +302,8 @@ function AddSensor({
               </CardContent>
             </Card>
 
-            <Grid container spacing={isDesktop ? 3 : 0} justify="center">
-              <Grid item xs={12} sm={4}>
-                <div className={classes.loadingWrapper}>
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                    disabled={loading || submitDisabled()}
-                  >
-                    {buttonText}
-                  </Button>
-                  {loading && (
-                    <CircularProgress
-                      size={24}
-                      className={classes.buttonProgress}
-                    />
-                  )}
-                </div>
-              </Grid>
-              <Grid item xs={12} sm={4}>
+            <Grid container spacing={2} justify="center">
+              <Grid item xs={6} sm={4}>
                 <Button
                   type="button"
                   fullWidth
@@ -328,7 +315,52 @@ function AddSensor({
                   Cancel
                 </Button>
               </Grid>
+              <Grid item xs={6} sm={4}>
+                <div className={classes.loadingWrapper}>
+                  <Button
+                    onClick={() => toggleEnvironmentalModal(true)}
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    // disabled={loading || submitDisabled()}
+                  >
+                    Next
+                  </Button>
+                  {loading && (
+                    <CircularProgress
+                      size={24}
+                      className={classes.buttonProgress}
+                    />
+                  )}
+                </div>
+              </Grid>
             </Grid>
+            {environmentalModal && (
+              <Modal
+                open={environmentalModal}
+                setOpen={toggleEnvironmentalModal}
+                title={"Set Environmental Limits(2/2)"}
+                titleClass={classes.formTitle}
+                maxWidth={"md"}
+              >
+                <EnvironmentalLimitsForm
+                  closeModal={toggleEnvironmentalModal}
+                  parentClasses={classes}
+                  isSubmitDisabled={loading || submitDisabled()}
+                  min_temp_val={min_temp_val}
+                  max_temp_val={max_temp_val}
+                  changeMinTempVal={changeMinTempVal}
+                  changeMaxTempVal={changeMaxTempVal}
+                  minMaxTempValue={minMaxTempValue}
+                  setMinMaxTempValue={setMinMaxTempValue}
+                  low_temp_val={low_temp_val}
+                  high_temp_val={high_temp_val}
+                  changeLowTempVal={changeLowTempVal}
+                  changeHighTempVal={changeHighTempVal}
+                />
+              </Modal>
+            )}
           </form>
         </Modal>
       )}

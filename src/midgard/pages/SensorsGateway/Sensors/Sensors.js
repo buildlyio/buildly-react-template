@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { sensorsColumns } from "../Constants";
-import AddGateway from "../forms/AddGateway";
 import DashboardWrapper from "../../../components/DashboardWrapper/DashboardWrapper";
 import { routes } from "../../../routes/routesConstants";
 import {
