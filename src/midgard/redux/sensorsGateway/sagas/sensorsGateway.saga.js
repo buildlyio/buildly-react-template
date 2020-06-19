@@ -22,7 +22,7 @@ import {
   ADD_GATEWAY_FAILURE,
 } from "../actions/sensorsGateway.actions";
 
-const sensorApiEndPoint = "sensor/";
+const sensorApiEndPoint = "sensors/";
 
 function* getGatewayList() {
   try {
