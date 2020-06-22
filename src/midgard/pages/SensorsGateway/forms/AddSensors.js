@@ -17,6 +17,7 @@ import Loader from "../../../components/Loader/Loader";
 import { Card, CardContent, Typography } from "@material-ui/core";
 import DatePickerComponent from "../../../components/DatePicker/DatePicker";
 import EnvironmentalLimitsForm from "./EnvironmentalLimitsForm";
+import { associatedGatewayMock } from "../../../utils/mock";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,6 +76,13 @@ function AddSensor({
   const [minMaxTempValue, setMinMaxTempValue] = useState([0, 35, 75, 100]);
   const [low_temp_val, changeLowTempVal] = useState(0);
   const [high_temp_val, changeHighTempVal] = useState(100);
+
+  const [min_humid_val, changeMinHumidVal] = useState(0);
+  const [max_humid_val, changeMaxHumidVal] = useState(100);
+  const [minMaxHumidValue, setMinMaxHumidValue] = useState([0, 35, 75, 100]);
+  const [low_humid_val, changeLowHumidVal] = useState(0);
+  const [high_humid_val, changeHighHumidVal] = useState(100);
+
   const gateway_name = useInput(editData.name || "");
   const gateway_type = useInput(editData.gateway_type || "", {
     required: true,
@@ -91,7 +99,9 @@ function AddSensor({
   );
   const gateway_uuid = useInput("");
   const [formError, setFormError] = useState({});
+  const [associatedGateway, setAccociatedGateway] = useState([]);
   const [environmentalModal, toggleEnvironmentalModal] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   const buttonText = editPage ? "save" : "add Sensor";
   const formTitle = editPage ? "Edit Sensor(1/2)" : "Add Sensor(1/2)";
@@ -358,6 +368,20 @@ function AddSensor({
                   high_temp_val={high_temp_val}
                   changeLowTempVal={changeLowTempVal}
                   changeHighTempVal={changeHighTempVal}
+                  searchModalOpen={searchModalOpen}
+                  setSearchModalOpen={setSearchModalOpen}
+                  associatedGateway={associatedGateway}
+                  setAccociatedGateway={setAccociatedGateway}
+                  min_humid_val={min_humid_val}
+                  changeMinHumidVal={changeMinHumidVal}
+                  max_humid_val={max_humid_val}
+                  changeMaxHumidVal={changeMaxHumidVal}
+                  minMaxHumidValue={minMaxHumidValue}
+                  setMinMaxHumidValue={setMinMaxHumidValue}
+                  low_humid_val={low_humid_val}
+                  changeLowHumidVal={changeLowHumidVal}
+                  high_humid_val={high_humid_val}
+                  changeHighHumidVal={changeHighHumidVal}
                 />
               </Modal>
             )}

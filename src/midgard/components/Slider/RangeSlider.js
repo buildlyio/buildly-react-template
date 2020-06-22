@@ -17,11 +17,11 @@ const useStyles = makeStyles((theme) => ({
   },
   arrow: {
     color: theme.palette.common.black,
-    zIndex: "-1",
+    zIndex: 1,
   },
   tooltip: {
     backgroundColor: theme.palette.common.black,
-    zIndex: "-1",
+    zIndex: 1,
   },
 }));
 
@@ -61,8 +61,6 @@ export default function RangeSlider({
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  console.log("value", value);
-
   return (
     <div className={classes.root}>
       <Slider
@@ -70,8 +68,8 @@ export default function RangeSlider({
         // track={false}
         orientation={orientation}
         aria-labelledby="range-slider"
-        valueLabelDisplay="on"
-        ValueLabelComponent={ValueLabelComponent}
+        valueLabelDisplay="auto"
+        // ValueLabelComponent={ValueLabelComponent}
         marks={marks}
         onChange={handleSliderChange}
       />

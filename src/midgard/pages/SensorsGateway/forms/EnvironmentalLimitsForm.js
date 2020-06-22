@@ -14,13 +14,29 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Select from "@material-ui/core/Select";
 import { useInput } from "../../../hooks/useInput";
 import Loader from "../../../components/Loader/Loader";
-import { Card, CardContent, Typography } from "@material-ui/core";
+import { Card, CardContent, Typography, Paper } from "@material-ui/core";
 import DatePickerComponent from "../../../components/DatePicker/DatePicker";
 import RangeSlider from "../../../components/Slider/RangeSlider";
+import SearchModal from "../../../components/Modal/SearchModal";
+import Gateway from "../Gateway/Gateway";
+import Chip from "@material-ui/core/Chip";
+import TagFacesIcon from "@material-ui/icons/TagFaces";
+import { associatedGatewayMock } from "../../../utils/mock";
 
 const useStyles = makeStyles((theme) => ({
   slider: {
     margin: "auto",
+  },
+  root: {
+    display: "flex",
+    justifyContent: "left",
+    flexWrap: "wrap",
+    listStyle: "none",
+    padding: theme.spacing(0.5),
+    margin: 0,
+  },
+  chip: {
+    margin: theme.spacing(0.5),
   },
 }));
 
@@ -39,20 +55,45 @@ function EnvironmentalLimitsForm({
   high_temp_val,
   changeLowTempVal,
   changeHighTempVal,
-  highLowTempValue,
-  setHighLowTempValue,
+  searchModalOpen,
+  setSearchModalOpen,
+  associatedGateway,
+  setAccociatedGateway,
+  min_humid_val,
+  max_humid_val,
+  low_humid_val,
+  high_humid_val,
+  minMaxHumidValue,
+  setMinMaxHumidValue,
+  changeMinHumidVal,
+  changeMaxHumidVal,
+  changeHighHumidVal,
+  changeLowHumidVal,
 }) {
   const theme = useTheme();
   const classes = useStyles();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
+  const handleDelete = (chipToDelete) => () => {
+    setAccociatedGateway((chips) =>
+      chips.filter((chip) => chip.uuid !== chipToDelete.uuid)
+    );
+  };
+
   const handleTempMinMaxChange = (e, value) => {
-    console.log("val", value);
     setMinMaxTempValue(value);
     changeMinTempVal(value[0]);
     changeMaxTempVal(value[3]);
     changeHighTempVal(value[2]);
     changeLowTempVal(value[1]);
+  };
+
+  const handleHumidMinMaxChange = (e, value) => {
+    setMinMaxHumidValue(value);
+    changeMinHumidVal(value[0]);
+    changeMaxHumidVal(value[3]);
+    changeHighHumidVal(value[2]);
+    changeLowHumidVal(value[1]);
   };
 
   return (
@@ -142,62 +183,62 @@ function EnvironmentalLimitsForm({
                     variant="outlined"
                     margin="normal"
                     fullWidth
-                    id="max_temp_val"
+                    id="max_humid_val"
                     label="Max"
-                    name="max_temp_val"
-                    autoComplete="max_temp_val"
-                    value={max_temp_val}
+                    name="max_humid_val"
+                    autoComplete="max_humid_val"
+                    value={max_humid_val}
                   />
                   <TextField
                     variant="outlined"
                     margin="normal"
                     fullWidth
-                    id="high_temp_val"
+                    id="high_humid_val"
                     label="Warning High"
-                    name="high_temp_val"
-                    autoComplete="high_temp_val"
-                    value={high_temp_val}
+                    name="high_humid_val"
+                    autoComplete="high_humid_val"
+                    value={high_humid_val}
                     // {...last_known_location.bind}
                   />
                   <TextField
                     variant="outlined"
                     margin="normal"
                     fullWidth
-                    id="low_temp_val"
+                    id="low_humid_val"
                     label="Warning Low"
-                    name="low_temp_val"
-                    autoComplete="low_temp_val"
-                    value={low_temp_val}
+                    name="low_humid_val"
+                    autoComplete="low_humid_val"
+                    value={low_humid_val}
                     // {...last_known_location.bind}
                   />
                   <TextField
                     variant="outlined"
                     margin="normal"
                     fullWidth
-                    id="min_temp_val"
+                    id="min_humid_val"
                     label="Min"
-                    name="min_temp_val"
-                    autoComplete="min_temp_val"
-                    value={min_temp_val}
+                    name="min_humid_val"
+                    autoComplete="min_humid_val"
+                    value={min_humid_val}
                   />
                 </Grid>
                 <Grid item xs={6} className={classes.slider}>
                   <RangeSlider
-                    value={minMaxTempValue}
+                    value={minMaxHumidValue}
                     orientation={"vertical"}
-                    handleSliderChange={handleTempMinMaxChange}
+                    handleSliderChange={handleHumidMinMaxChange}
                     rangeText={""}
-                    max={minMaxTempValue[3]}
-                    min={minMaxTempValue[0]}
+                    max={minMaxHumidValue[3]}
+                    min={minMaxHumidValue[0]}
                     marks={[
                       {
                         value: 0,
-                        label: `0°F`,
+                        label: `0`,
                       },
 
                       {
                         value: 100,
-                        label: `100°F`,
+                        label: `100`,
                       },
                     ]}
                   />
@@ -205,6 +246,36 @@ function EnvironmentalLimitsForm({
               </Grid>
             </CardContent>
           </Card>
+        </Grid>
+        <Grid item xs={6} sm={4}>
+          <Button
+            type="button"
+            fullWidth
+            variant="contained"
+            color="secondary"
+            onClick={() => setSearchModalOpen(true)}
+            className={parentClasses.submit}
+          >
+            Associate to Gateway
+          </Button>
+        </Grid>
+
+        <Grid item xs={12}>
+          {associatedGateway.length > 0 && (
+            <ul className={classes.root}>
+              {associatedGateway.map((data) => {
+                return (
+                  <li key={data.uuid}>
+                    <Chip
+                      label={data.uuid}
+                      onDelete={handleDelete(data)}
+                      className={classes.chip}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </Grid>
       </Grid>
       <Grid container spacing={2} justify="center">
@@ -241,6 +312,19 @@ function EnvironmentalLimitsForm({
           </div>
         </Grid>
       </Grid>
+      {searchModalOpen && (
+        <SearchModal
+          open={searchModalOpen}
+          setOpen={setSearchModalOpen}
+          title={"Associate Gateway UUID"}
+          submitText={"Save"}
+          submitAction={setAccociatedGateway}
+          selectedList={associatedGateway}
+          listOfItems={associatedGatewayMock}
+          searchFieldLabel={"Select Gateway UUID"}
+          searchFieldPlaceHolder={"Select the Value"}
+        />
+      )}
     </div>
   );
 }
