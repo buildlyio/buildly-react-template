@@ -69,7 +69,7 @@ function AddItems({
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
   const item_desc = useInput(editData.item_desc || "");
-  const item_name = useInput(editData.item_name || "");
+  const item_name = useInput(editData.name || "");
   const units = useInput(editData.units || "");
   const item_type = useInput(editData.item_type || "", {
     required: true,

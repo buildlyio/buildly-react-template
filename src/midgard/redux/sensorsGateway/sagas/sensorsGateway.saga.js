@@ -200,6 +200,7 @@ function* addGateway(action) {
 }
 
 function* searchGateway(payload) {
+  console.log("payload", payload);
   try {
     if (!payload.searchItem) {
       yield put({ type: GATEWAY_SEARCH_SUCCESS, data: [] });
@@ -207,7 +208,8 @@ function* searchGateway(payload) {
       let data = payload.searchList.filter((item) => {
         return (
           item.name.includes(payload.searchItem.trim()) ||
-          item.id.toString().includes(payload.searchItem)
+          item.id.toString().includes(payload.searchItem) ||
+          item.gateway_uuid.toString().includes(payload.searchItem)
         );
       });
       yield put({ type: GATEWAY_SEARCH_SUCCESS, data });

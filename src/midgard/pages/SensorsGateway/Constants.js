@@ -1,13 +1,11 @@
+import moment from "moment";
+
 export const gatewayColumns = [
-  { id: "id", label: "UUID", minWidth: 150 },
+  { id: "id", label: "Id", minWidth: 100 },
+  { id: "gateway_uuid", label: "UUID", minWidth: 300 },
   { id: "name", label: "Alias", minWidth: 180 },
   {
-    id: "",
-    label: "# of Units",
-    minWidth: 100,
-  },
-  {
-    id: "gateway_type",
+    id: "gateway_type_value",
     label: "Type",
     minWidth: 150,
   },
@@ -24,6 +22,27 @@ export const gatewayColumns = [
   {
     id: "activation_date",
     label: "Activation",
-    minWidth: 150,
+    minWidth: 180,
+    format: (value) => returnFormattedData(value),
   },
 ];
+
+const returnFormattedData = (value) => {
+  let formattedDate = moment(value);
+  return formattedDate.format("MM/DD/yyyy");
+};
+
+export const getFormattedRow = (data, itemTypeList) => {
+  if (data && itemTypeList) {
+    let formattedData = [...data];
+    formattedData.forEach((element) => {
+      itemTypeList.forEach((type) => {
+        if (type.url === element.gateway_type) {
+          element["gateway_type_value"] = type.name;
+        }
+      });
+    });
+    return formattedData;
+  }
+  return data;
+};

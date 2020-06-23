@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { gatewayColumns } from "../Constants";
+import { gatewayColumns, getFormattedRow } from "../Constants";
 import AddGateway from "../forms/AddGateway";
 import DashboardWrapper from "../../../components/DashboardWrapper/DashboardWrapper";
 import { routes } from "../../../routes/routesConstants";
 import {
   getGateways,
   getGatewayType,
+  editGateway,
+  deleteGateway,
+  searchGatewayItem,
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
 
 function Gateway(props) {
-  console.log("props", props);
   const {
     dispatch,
     history,
     location,
     data,
     loading,
-    searchedData,
+    searchData,
     gatewayTypeList,
   } = props;
   const [openConfirmModal, setConfirmModal] = useState(false);
@@ -26,10 +28,10 @@ function Gateway(props) {
   const [searchValue, setSearchValue] = useState("");
 
   let rows = [];
-  if (searchedData && searchedData.length) {
-    rows = searchedData;
+  if (searchData && searchData.length) {
+    rows = searchData;
   } else if (data && data.length) {
-    rows = data;
+    rows = getFormattedRow(data, gatewayTypeList);
   }
 
   useEffect(() => {
@@ -37,24 +39,25 @@ function Gateway(props) {
     dispatch(getGatewayType());
   }, []);
 
-  const editGateway = (item) => {
-    history.push(`${routes.ITEMS}/gateway/edit/:${item.id}`, {
+  const editGatewayAction = (item) => {
+    history.push(`${routes.SENSORS_GATEWAY}/gateway/edit/:${item.id}`, {
       type: "edit",
       from: routes.SENSORS_GATEWAY,
       data: item,
     });
   };
-  const deleteGateway = (item) => {
+  const deleteGatewayAction = (item) => {
     setDeleteGatewayId(item.id);
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    // dispatch(deleteItem(deleteGatewayId));
+    dispatch(deleteGateway(deleteGatewayId));
     setConfirmModal(false);
   };
   const searchTable = (e) => {
     setSearchValue(e.target.value);
-    // dispatch(searchItem(e.target.value, rows));
+    console.log("e", e.target.value);
+    dispatch(searchGatewayItem(e.target.value, rows));
   };
   const onAddButtonClick = () => {
     history.push(`${routes.SENSORS_GATEWAY}/gateway/add`, {
@@ -67,8 +70,8 @@ function Gateway(props) {
       onAddButtonClick={onAddButtonClick}
       dashboardHeading={"Gateway"}
       addButtonHeading={"Add Gateway"}
-      editAction={editGateway}
-      deleteAction={deleteGateway}
+      editAction={editGatewayAction}
+      deleteAction={deleteGatewayAction}
       columns={gatewayColumns}
       rows={rows}
       hasSearch={true}
@@ -76,7 +79,7 @@ function Gateway(props) {
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle={"Delete Gateway"}
+      confirmModalTitle={"Are your sure you want to Delete this Gateway?"}
     >
       <Route
         path={`${routes.SENSORS_GATEWAY}/gateway/add`}

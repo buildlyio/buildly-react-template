@@ -144,7 +144,7 @@ function* editItem(action) {
           message: "Item successfully Edited!",
         })
       ),
-      yield call(history.push, routes.CUSTODIANS),
+      yield call(history.push, routes.ITEMS),
     ];
   } catch (error) {
     yield [
@@ -182,7 +182,7 @@ function* addItem(action) {
         })
       ),
       yield put(getItems()),
-      yield call(history.push, routes.CUSTODIANS),
+      yield call(history.push, routes.ITEMS),
     ];
   } catch (error) {
     console.log("error", error);
