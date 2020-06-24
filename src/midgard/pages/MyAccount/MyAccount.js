@@ -148,7 +148,7 @@ function MyAccount({
                         <div className={classes.infoSection}>
                           <Typography variant="body2">Company:</Typography>
                           <Typography variant="body1">
-                            {user && user.organization.name}
+                            {organizationData.name}
                           </Typography>
                         </div>
                         <Divider />

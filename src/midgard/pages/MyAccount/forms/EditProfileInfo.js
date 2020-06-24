@@ -90,13 +90,15 @@ function EditProfileInfo({
   });
   const last_name = useInput((editData && editData.last_name) || "");
   const organisation_name = useInput(
-    (organizationData && organizationData.name) || "",
-    {
-      required: true,
-    }
+    (organizationData && organizationData.name) || ""
   );
   const email = useInput((editData && editData.email) || "");
+  const password = useInput("", { required: true });
   const [formError, setFormError] = useState({});
+
+  // if (loade) {
+  //   setModal(false);
+  // }
 
   /**
    * Submit The form and add/edit custodian
@@ -110,7 +112,7 @@ function EditProfileInfo({
       email: email.value,
       username: editData.username,
       title: "",
-      password: "admin",
+      password: password.value,
       ...(organizationData && { organization_name: organisation_name.value }),
       id: editData.id,
       ...(organizationData && {
@@ -118,7 +120,6 @@ function EditProfileInfo({
       }),
     };
     dispatch(updateUser(editUserFormValue));
-    setModal(false);
   };
 
   /**
@@ -149,8 +150,7 @@ function EditProfileInfo({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!first_name.value || (organizationData && !organisation_name.value))
-      return true;
+    if (!first_name.value || !password.value) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -217,7 +217,6 @@ function EditProfileInfo({
               <TextField
                 variant="outlined"
                 margin="normal"
-                required
                 fullWidth
                 id="organisation_name"
                 label="Organisation Name"
@@ -232,11 +231,28 @@ function EditProfileInfo({
                     ? formError.organisation_name.message
                     : ""
                 }
-                onBlur={(e) => handleBlur(e, "required", organisation_name)}
+                // onBlur={(e) => handleBlur(e, "required", organisation_name)}
                 {...organisation_name.bind}
               />
             </Grid>
           )}
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              error={formError.password && formError.password.error}
+              helperText={formError.password ? formError.password.message : ""}
+              onBlur={(e) => handleBlur(e, "required", password)}
+              {...password.bind}
+            />
+          </Grid>
         </Grid>
         <Grid container spacing={isDesktop ? 3 : 0} justify="center">
           <Grid item xs={12} sm={4}>

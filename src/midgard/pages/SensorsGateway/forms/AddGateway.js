@@ -16,6 +16,10 @@ import { useInput } from "../../../hooks/useInput";
 import Loader from "../../../components/Loader/Loader";
 import { Card, CardContent } from "@material-ui/core";
 import DatePickerComponent from "../../../components/DatePicker/DatePicker";
+import {
+  addGateway,
+  editGateway,
+} from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -76,11 +80,13 @@ function AddGateway({
   const [activation_date, handleDateChange] = useState(
     editData.activation_date || moment()
   );
-  const sim_card_id = useInput("");
-  const battery_level = useInput("");
-  const mac_address = useInput("");
-  const last_known_location = useInput("");
-  const gateway_uuid = useInput("");
+  const sim_card_id = useInput(editData.sim_card_id || "");
+  const battery_level = useInput(editData.last_known_battery_level || "");
+  const mac_address = useInput(editData.mac_address || "");
+  const last_known_location = useInput(
+    (editData.last_known_location && editData.last_known_location[0]) || ""
+  );
+  const gateway_uuid = useInput(editData.gateway_uuid || "");
   const [formError, setFormError] = useState({});
 
   const buttonText = editPage ? "save" : "add gateway";
@@ -103,15 +109,18 @@ function AddGateway({
       sensors: "",
       sim_card_id: sim_card_id.value,
       gateway_type: gateway_type.value,
-      // shipment_ids: ["string"],
-      activation_date: activation_date.value,
+      shipment_ids: ["4"],
+      activation_date: activation_date,
       last_known_battery_level: battery_level.value,
       ...(editPage && editData && { id: editData.id }),
+      mac_address: mac_address.value,
+      last_known_location: [last_known_location.value],
+      last_known_battery_level: battery_level.value,
     };
     if (editPage) {
-      dispatch(editItem(itemFormValue, history));
+      dispatch(editGateway(gatewayFormValues, history));
     } else {
-      dispatch(addItem(itemFormValue, history));
+      dispatch(addGateway(gatewayFormValues, history));
     }
   };
 
@@ -276,7 +285,7 @@ function AddGateway({
                       margin="normal"
                       fullWidth
                       id="last_known_location"
-                      label="Lat Known Location"
+                      label="Last Known Location"
                       name="last_known_location"
                       autoComplete="last_known_location"
                       {...last_known_location.bind}
