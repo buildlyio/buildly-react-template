@@ -4,11 +4,16 @@ import Gateway from "./Gateway/Gateway";
 import Sensors from "./Sensors/Sensors";
 
 function SensorsGateway(props) {
-  const { gatewayData, gatewaySearchedData } = props;
+  const {
+    gatewayData,
+    gatewaySearchedData,
+    sensorData,
+    sensorSearchedData,
+  } = props;
   return (
     <React.Fragment>
       <Gateway data={gatewayData} searchData={gatewaySearchedData} {...props} />
-      <Sensors data={gatewayData} searchData={gatewaySearchedData} {...props} />
+      <Sensors data={sensorData} searchData={sensorSearchedData} {...props} />
     </React.Fragment>
   );
 }
