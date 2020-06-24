@@ -191,19 +191,6 @@ function AddSensor({
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  disabled
-                  id="sensor_uuid"
-                  label="Sensor1 UUID"
-                  name="sensor_uuid"
-                  autoComplete="sensor_uuid"
-                  {...sensor_uuid.bind}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
                   id="sensor_name"
                   label="Alias"
                   name="sensor_name"

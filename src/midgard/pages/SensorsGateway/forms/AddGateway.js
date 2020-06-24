@@ -73,7 +73,9 @@ function AddGateway({
     {};
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
-  const gateway_name = useInput(editData.name || "");
+  const gateway_name = useInput(editData.name || "", {
+    required: true,
+  });
   const gateway_type = useInput(editData.gateway_type || "", {
     required: true,
   });
@@ -152,7 +154,7 @@ function AddGateway({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!gateway_type.value) return true;
+    if (!gateway_type.value || !gateway_name.value) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -179,23 +181,16 @@ function AddGateway({
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  disabled
-                  id="gateway_uuid"
-                  label="UUID"
-                  name="gateway_uuid"
-                  autoComplete="gateway_uuid"
-                  {...gateway_uuid.bind}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
                   id="gateway_name"
+                  required
                   label="Alias"
                   name="gateway_name"
                   autoComplete="gateway_name"
+                  error={formError.gateway_name && formError.gateway_name.error}
+                  helperText={
+                    formError.gateway_name ? formError.gateway_name.message : ""
+                  }
+                  onBlur={(e) => handleBlur(e, "required", gateway_name)}
                   {...gateway_name.bind}
                 />
               </Grid>

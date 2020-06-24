@@ -69,7 +69,9 @@ function AddItems({
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
   const item_desc = useInput(editData.item_desc || "");
-  const item_name = useInput(editData.name || "");
+  const item_name = useInput(editData.name || "", {
+    required: true,
+  });
   const units = useInput(editData.units || "");
   const item_type = useInput(editData.item_type || "", {
     required: true,
@@ -137,7 +139,7 @@ function AddItems({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!item_type.value) return true;
+    if (!item_type.value || !item_name.value) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -163,11 +165,17 @@ function AddItems({
                 <TextField
                   variant="outlined"
                   margin="normal"
+                  required
                   fullWidth
                   id="item_name"
                   label="Item Name"
                   name="item_name"
                   autoComplete="item_name"
+                  error={formError.item_name && formError.item_name.error}
+                  helperText={
+                    formError.item_name ? formError.item_name.message : ""
+                  }
+                  onBlur={(e) => handleBlur(e, "required", item_name)}
                   {...item_name.bind}
                 />
               </Grid>

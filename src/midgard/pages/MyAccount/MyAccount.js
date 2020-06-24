@@ -117,7 +117,7 @@ function MyAccount({
                   />
                   <Typography variant="h6">{user && user.username}</Typography>
                 </Grid>
-                <Grid item xs={12} md={6} sm={8}>
+                <Grid item xs={12} md={8} sm={8}>
                   <Grid container spacing={5}>
                     <Grid item xs={12}>
                       <div className={classes.infoSection}>
@@ -141,7 +141,7 @@ function MyAccount({
                       <div className={classes.infoSection}>
                         <Typography variant="body2">Customer Id:</Typography>
                         <Typography variant="body1">
-                          {user && user.id}
+                          {user && user.core_user_uuid}
                         </Typography>
                       </div>
                       <Divider />

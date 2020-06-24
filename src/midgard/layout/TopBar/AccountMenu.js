@@ -73,7 +73,7 @@ export default function AccountMenu(props) {
           <Typography variant={"body2"}>{user && `${user.email}`}</Typography>
           {organizationData && (
             <Typography variant={"body1"}>
-              {user && `Works at: ${user.organization.name}`}
+              {`Works at: ${organizationData.name}`}
             </Typography>
           )}
         </Box>
