@@ -111,7 +111,7 @@ function AddGateway({
       sensors: "",
       sim_card_id: sim_card_id.value,
       gateway_type: gateway_type.value,
-      shipment_ids: ["4"],
+      shipment_ids: [],
       activation_date: activation_date,
       last_known_battery_level: battery_level.value,
       ...(editPage && editData && { id: editData.id }),
