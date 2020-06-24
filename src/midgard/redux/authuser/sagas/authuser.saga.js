@@ -62,9 +62,6 @@ function* login(payload) {
       `${environment.API_URL}coreuser/`
     );
     yield call(oauthService.setCurrentCoreUser, coreUser, user);
-    if (user && user.data && user.data.organization) {
-      yield put(getOrganization(user.data.organization.organization_uuid));
-    }
     yield [
       // yield put({ type: LOGIN_SUCCESS, user }),
       yield call(history.push, routes.DASHBOARD),
@@ -92,6 +89,9 @@ function* getUserDetails() {
       `${environment.API_URL}coreuser/me/`
     );
     yield put({ type: GET_USER_SUCCESS, user });
+    if (user && user.data && user.data.organization) {
+      yield put(getOrganization(user.data.organization.organization_uuid));
+    }
   } catch (error) {
     yield [
       yield put({ type: GET_USER_FAIL, error: "Error in loading user data" }),
@@ -166,7 +166,7 @@ function* updateUser(payload) {
       `${environment.API_URL}coreuser/${payload.data.id}/`,
       payload.data
     );
-    yield call(
+    const data = yield call(
       httpService.makeRequest,
       "put",
       `${environment.API_URL}organization/${payload.data.organization_uuid}/`,
@@ -174,7 +174,7 @@ function* updateUser(payload) {
     );
     yield [
       yield put({ type: UPDATE_USER_SUCCESS, user }),
-      yield put(getOrganization()),
+      yield put({ type: GET_ORGANIZATION_SUCCESS, data }),
       yield put(
         showAlert({
           type: "success",
