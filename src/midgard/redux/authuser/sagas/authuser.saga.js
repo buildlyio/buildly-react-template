@@ -14,6 +14,13 @@ import {
   INVITE,
   INVITE_FAIL,
   INVITE_SUCCESS,
+  GET_USER_SUCCESS,
+  GET_USER,
+  GET_USER_FAIL,
+  GET_ORGANIZATION,
+  GET_ORGANIZATION_FAILURE,
+  GET_ORGANIZATION_SUCCESS,
+  getOrganization,
 } from "../actions/authuser.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -25,8 +32,12 @@ import { routes } from "../../../routes/routesConstants";
 function* logout() {
   try {
     yield call(oauthService.logout);
-    yield [yield put({ type: LOGOUT_SUCCESS })];
+    yield [
+      yield put({ type: LOGOUT_SUCCESS }),
+      yield put({ type: GET_ORGANIZATION_SUCCESS, data: null }),
+    ];
   } catch (error) {
+    console.log("error", error);
     yield put({ type: LOGOUT_FAIL });
   }
 }
@@ -52,10 +63,11 @@ function* login(payload) {
     );
     yield call(oauthService.setCurrentCoreUser, coreUser, user);
     yield [
-      yield put({ type: LOGIN_SUCCESS, user }),
+      // yield put({ type: LOGIN_SUCCESS, user }),
       yield call(history.push, routes.DASHBOARD),
     ];
   } catch (error) {
+    console.log("error", error);
     yield [
       yield put({ type: LOGIN_FAIL, error: "Invalid credentials given" }),
       yield put(
@@ -63,6 +75,31 @@ function* login(payload) {
           type: "error",
           open: true,
           message: "Login Failed!",
+        })
+      ),
+    ];
+  }
+}
+
+function* getUserDetails() {
+  try {
+    const user = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}coreuser/me/`
+    );
+    yield put({ type: GET_USER_SUCCESS, user });
+    if (user && user.data && user.data.organization) {
+      yield put(getOrganization(user.data.organization.organization_uuid));
+    }
+  } catch (error) {
+    yield [
+      yield put({ type: GET_USER_FAIL, error: "Error in loading user data" }),
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Error in loading user data",
         })
       ),
     ];
@@ -129,9 +166,53 @@ function* updateUser(payload) {
       `${environment.API_URL}coreuser/${payload.data.id}/`,
       payload.data
     );
-    yield [yield put({ type: UPDATE_USER_SUCCESS, user })];
+    const data = yield call(
+      httpService.makeRequest,
+      "put",
+      `${environment.API_URL}organization/${payload.data.organization_uuid}/`,
+      { name: payload.data.organization_name }
+    );
+    yield [
+      yield put({ type: UPDATE_USER_SUCCESS, user }),
+      yield put({ type: GET_ORGANIZATION_SUCCESS, data }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Account Details successfully updated!",
+        })
+      ),
+    ];
   } catch (error) {
-    yield put({ type: UPDATE_USER_FAIL, error: "Updating user fields failed" });
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Failed to update Details",
+        })
+      ),
+      yield put({
+        type: UPDATE_USER_FAIL,
+        error: "Updating user fields failed",
+      }),
+    ];
+  }
+}
+
+function* getOrganizationData(payload) {
+  let { uuid } = payload;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}organization/${uuid}/`,
+      null,
+      true
+    );
+    yield put({ type: GET_ORGANIZATION_SUCCESS, data });
+  } catch (error) {
+    yield put({ type: GET_ORGANIZATION_FAILURE, error });
   }
 }
 
@@ -155,6 +236,14 @@ function* watchInvite() {
   yield takeLatest(INVITE, invite);
 }
 
+function* watchGetUser() {
+  yield takeLatest(GET_USER, getUserDetails);
+}
+
+function* watchGetOrganization() {
+  yield takeLatest(GET_ORGANIZATION, getOrganizationData);
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
@@ -162,5 +251,7 @@ export default function* authSaga() {
     watchRegister(),
     watchUpdateUser(),
     watchInvite(),
+    watchGetUser(),
+    watchGetOrganization(),
   ]);
 }

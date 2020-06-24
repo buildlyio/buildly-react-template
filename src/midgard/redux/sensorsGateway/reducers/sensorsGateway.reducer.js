@@ -1,53 +1,70 @@
 import {
-  LOGIN,
-  LOGIN_SUCCESS,
-  LOGIN_FAIL,
-  LOGOUT_SUCCESS,
-  REGISTER,
-  REGISTER_SUCCESS,
-  REGISTER_FAIL,
-  UPDATE_USER,
-  UPDATE_USER_FAIL,
-  UPDATE_USER_SUCCESS,
-  GET_USER,
-  GET_USER_FAIL,
-  GET_USER_SUCCESS,
-  INVITE,
-  INVITE_FAIL,
-  INVITE_SUCCESS,
-  GET_ORGANIZATION,
-  GET_ORGANIZATION_SUCCESS,
-  GET_ORGANIZATION_FAILURE,
-} from "../actions/authuser.actions";
+  GET_GATEWAYS,
+  GET_GATEWAYS_SUCCESS,
+  GET_GATEWAYS_FAILURE,
+  ADD_GATEWAY,
+  ADD_GATEWAY_SUCCESS,
+  ADD_GATEWAY_FAILURE,
+  EDIT_GATEWAY,
+  EDIT_GATEWAY_SUCCESS,
+  EDIT_GATEWAY_FAILURE,
+  DELETE_GATEWAY,
+  DELETE_GATEWAY_SUCCESS,
+  GET_GATEWAYS_TYPE,
+  GET_GATEWAYS_TYPE_SUCCESS,
+  GET_GATEWAYS_TYPE_FAILURE,
+  GATEWAY_SEARCH_SUCCESS,
+  GATEWAY_SEARCH,
+  DELETE_GATEWAY_FAILURE,
+} from "../actions/sensorsGateway.actions";
 
 const initialState = {
   loading: false,
   loaded: false,
-  data: null,
   error: null,
-  organizationData: null,
+  gatewayTypeList: null,
+  gatewayData: null,
 };
 
 // Reducer
 export default (state = initialState, action) => {
   switch (action.type) {
-    case LOGIN:
+    case GET_GATEWAYS:
       return {
         ...state,
         loading: true,
         loaded: false,
         error: null,
       };
-
-    case LOGIN_SUCCESS:
+    case GET_GATEWAYS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.user,
+        gatewayData: action.data,
       };
-
-    case LOGIN_FAIL:
+    case GET_GATEWAYS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case ADD_GATEWAY:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case ADD_GATEWAY_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        gatewayData: action.data,
+      };
+    case ADD_GATEWAY_FAILURE:
       return {
         ...state,
         loading: false,
@@ -55,12 +72,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case LOGOUT_SUCCESS:
-      return {
-        ...state,
-      };
-
-    case REGISTER:
+    case EDIT_GATEWAY:
       return {
         ...state,
         loading: true,
@@ -68,122 +80,76 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case REGISTER_SUCCESS:
+    case EDIT_GATEWAY_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.user,
+        gatewayData: action.data,
         error: null,
       };
 
-    case REGISTER_FAIL:
+    case EDIT_GATEWAY_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
         error: action.error,
       };
-    case UPDATE_USER:
+    case DELETE_GATEWAY:
       return {
         ...state,
         loading: true,
         loaded: false,
         error: null,
       };
-
-    case UPDATE_USER_SUCCESS:
+    case DELETE_GATEWAY_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.user,
+        gatewayData: action.data,
       };
-
-    case UPDATE_USER_FAIL:
+    case DELETE_GATEWAY_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
         error: action.error,
       };
-
-    case GET_USER:
+    case GATEWAY_SEARCH:
+      return {
+        ...state,
+        error: null,
+      };
+    case GATEWAY_SEARCH_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        gatewaySearchedData: action.data,
+      };
+    case GET_GATEWAYS_TYPE:
       return {
         ...state,
         loading: true,
         loaded: false,
         error: null,
       };
-
-    case GET_USER_SUCCESS:
+    case GET_GATEWAYS_TYPE_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.user,
+        gatewayTypeList: action.data,
       };
-
-    case GET_USER_FAIL:
+    case GET_GATEWAYS_TYPE_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
         error: action.error,
       };
-
-    case INVITE:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        data: null,
-        error: null,
-      };
-
-    case INVITE_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: null,
-        data: action.user,
-      };
-
-    case INVITE_FAIL:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        data: null,
-        error: action.error,
-      };
-
-    case GET_ORGANIZATION:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        organizationData: null,
-        error: null,
-      };
-    case GET_ORGANIZATION_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        organizationData: (action.data && action.data.data) || null,
-        error: null,
-      };
-    case GET_ORGANIZATION_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        organizationData: null,
-        error: action.error,
-      };
-
     default:
       return state;
   }

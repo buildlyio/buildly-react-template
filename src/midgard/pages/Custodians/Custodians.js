@@ -22,72 +22,16 @@ import {
   deleteCustodian,
   getContact,
 } from "../../redux/custodian/actions/custodian.actions";
-
-const custodianColumns = [
-  { id: "id", label: "Custodian ID", minWidth: 150 },
-  { id: "name", label: "Name", minWidth: 150 },
-  {
-    id: "location",
-    label: "Location",
-    minWidth: 180,
-  },
-  {
-    id: "custodian_glns",
-    label: "GLN",
-    minWidth: 170,
-  },
-];
-
-const getUniqueContactInfo = (rowItem, contactInfo) => {
-  let obj = "";
-  contactInfo.forEach((info) => {
-    if (rowItem.contact_data[0] === info.url) {
-      obj = info;
-    }
-  });
-  return obj;
-};
-
-const getFormattedRow = (data, contactInfo) => {
-  let customizedRow = [...data];
-  if (data && data.length && contactInfo && contactInfo.length) {
-    customizedRow.forEach((rowItem) => {
-      let contactInfoItem = getUniqueContactInfo(rowItem, contactInfo);
-      rowItem["location"] = `${
-        contactInfoItem.address1 && `${contactInfoItem.address1},`
-      }
-          ${contactInfoItem.address2 && `${contactInfoItem.address2},`}
-          ${contactInfoItem.city && `${contactInfoItem.city},`}
-          ${contactInfoItem.state && `${contactInfoItem.state},`}
-          ${contactInfoItem.country && `${contactInfoItem.country},`}
-          ${contactInfoItem.postal_code && `${contactInfoItem.postal_code}`}`;
-    });
-  }
-  return data;
-};
+import {
+  custodianColumns,
+  getFormattedRow,
+  getUniqueContactInfo,
+} from "./CustodianConstants";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
     fontWeight: "bold",
     marginBottom: "0.5em",
-  },
-  tileView: {
-    display: "flex",
-  },
-  rowView: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  switchViewSection: {
-    background: "#383636",
-    width: "100%",
-    display: "flex",
-    minHeight: "40px",
-    alignItems: "center",
-  },
-  tileHeading: {
-    flex: 1,
-    padding: "8px",
   },
   addButton: {
     backgroundColor: "#000",
@@ -107,6 +51,7 @@ function Custodian({
 }) {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
+  const [deleteContactObjId, setDeleteContactObjId] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const classes = useStyles();
 
@@ -133,11 +78,13 @@ function Custodian({
     });
   };
   const deletItem = (item) => {
+    let contactObj = getUniqueContactInfo(item, contactInfo);
     setDeleteItemId(item.id);
+    setDeleteContactObjId(contactObj.id);
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    dispatch(deleteCustodian(deleteItemId));
+    dispatch(deleteCustodian(deleteItemId, deleteContactObjId));
     setConfirmModal(false);
   };
   const searchTable = (e) => {

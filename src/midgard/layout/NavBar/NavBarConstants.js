@@ -12,6 +12,16 @@ export const NAVIGATION_ITEMS = [
     link: routes.CUSTODIANS,
   },
   {
+    id: "items",
+    name: "Items",
+    link: routes.ITEMS,
+  },
+  {
+    id: "sensors",
+    name: "Gateway & Sensors",
+    link: routes.SENSORS_GATEWAY,
+  },
+  {
     id: "user_management",
     name: "User Management",
     link: routes.USER_MANAGEMENT,

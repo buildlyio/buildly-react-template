@@ -12,7 +12,9 @@ import Hidden from "@material-ui/core/Hidden";
 import { AppContext } from "midgard/context/App.context";
 import { SubNavContext } from "midgard/context/SubNav.context";
 import logo from "assets/tp-logo.png";
-import { logout } from "../../redux/authuser/actions/authuser.actions";
+import { logout, getUser } from "../../redux/authuser/actions/authuser.actions";
+import AccountMenu from "./AccountMenu";
+import { routes } from "../../routes/routesConstants";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -26,35 +28,58 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   logo: {
-    maxWidth: 160,
+    maxWidth: 250,
   },
   menuRight: {
     marginLeft: "auto",
+  },
+  paper: {
+    border: "1px solid",
   },
 }));
 
 /**
  * Component for the top bar header.
  */
-function TopBar({ navHidden, setNavHidden, history, location, dispatch }) {
-  const app = useContext(AppContext);
-  const subNav = useContext(SubNavContext);
+function TopBar({
+  navHidden,
+  setNavHidden,
+  history,
+  location,
+  dispatch,
+  data,
+  organizationData,
+}) {
   const classes = useStyles();
-  const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
+
+  let user;
+
+  if (data && data.data) {
+    user = data.data;
+  }
+
+  useEffect(() => {
+    dispatch(getUser());
+  }, []);
+
+  // useEffect(() => {
+  //   if (user && user.organization && user.organization.organization_uuid)
+  //     dispatch(getOrganization(user.organization.organization_uuid));
+  // }, [user]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const handleLogoutClick = () => {
     dispatch(logout());
     history.push("/");
+  };
+
+  const handleMyAccountClick = () => {
+    history.push(routes.MY_ACCOUNT);
+    setAnchorEl(null);
   };
 
   return (
@@ -81,26 +106,16 @@ function TopBar({ navHidden, setNavHidden, history, location, dispatch }) {
             onClick={handleMenu}
             color="inherit"
           >
-            <AccountCircle />
+            <AccountCircle fontSize="large" />
           </IconButton>
-          <Menu
-            id="menu-appbar"
+          <AccountMenu
             anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            open={open}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
-            <MenuItem onClick={handleClose}>My account</MenuItem>
-          </Menu>
+            setAnchorEl={setAnchorEl}
+            user={user}
+            organizationData={organizationData}
+            handleLogoutClick={handleLogoutClick}
+            handleMyAccountClick={handleMyAccountClick}
+          />
         </div>
       </Toolbar>
     </AppBar>

@@ -30,23 +30,17 @@ import { environment } from "environment";
 import { routes } from "../../../routes/routesConstants";
 import { showAlert } from "../../alert/actions/alert.actions";
 
-const custodainEnvironment = window.environment || {
-  API_URL: "http://localhost:8083/",
-  OAUTH_CLIENT_ID: "d2tYTGxDOWgzazBqeEl4N29MbGx4cEZWVTg5RHhnaTdPOEZZWnlmWA==",
-  OAUTH_TOKEN_URL: "http://localhost:8080/oauth/token/",
-  production: false,
-};
+const custodiansApiEndPoint = "custodian/";
 
 function* getCustodiansList() {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${custodainEnvironment.API_URL}custodian/`,
+      `${environment.API_URL}${custodiansApiEndPoint}custodian/`,
       null,
       true
     );
-    console.log("data", data);
     yield [yield put({ type: GET_CUSTODIANS_SUCCESS, data: data.data })];
   } catch (error) {
     console.log("error", error);
@@ -71,7 +65,7 @@ function* getCustodianType() {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${custodainEnvironment.API_URL}custodian_type/`,
+      `${environment.API_URL}${custodiansApiEndPoint}custodian_type/`,
       null,
       true
     );
@@ -99,12 +93,19 @@ function* getCustodianType() {
 }
 
 function* deleteCustodian(payload) {
-  let { custodianId } = payload;
+  let { custodianId, contactObjId } = payload;
   try {
-    const response = yield call(
+    yield call(
       httpService.makeRequest,
       "delete",
-      `${custodainEnvironment.API_URL}custodian/${custodianId}/`,
+      `${environment.API_URL}${custodiansApiEndPoint}custodian/${custodianId}/`,
+      null,
+      true
+    );
+    yield call(
+      httpService.makeRequest,
+      "delete",
+      `${custodainEnvironment.API_URL}contact/${contactObjId}/`,
       null,
       true
     );
@@ -125,7 +126,7 @@ function* deleteCustodian(payload) {
         showAlert({
           type: "error",
           open: true,
-          message: "Couldn't delete Custodian!",
+          message: "Error in deleting CUstodian!",
         })
       ),
       yield put({
@@ -142,7 +143,7 @@ function* editCustodian(action) {
     let contactData = yield call(
       httpService.makeRequest,
       "put",
-      `${custodainEnvironment.API_URL}contact/${payload.contact_obj.id}/`,
+      `${environment.API_URL}${custodiansApiEndPoint}contact/${payload.contact_obj.id}/`,
       payload.contact_obj,
       true
     );
@@ -157,7 +158,7 @@ function* editCustodian(action) {
       let data = yield call(
         httpService.makeRequest,
         "put",
-        `${custodainEnvironment.API_URL}custodian/${payload.id}/`,
+        `${environment.API_URL}${custodiansApiEndPoint}custodian/${payload.id}/`,
         custodianPayload,
         true
       );
@@ -199,7 +200,7 @@ function* addCustodian(action) {
     let contactData = yield call(
       httpService.makeRequest,
       "post",
-      `${custodainEnvironment.API_URL}contact/`,
+      `${environment.API_URL}${custodiansApiEndPoint}contact/`,
       payload.contact_obj,
       true
     );
@@ -213,7 +214,7 @@ function* addCustodian(action) {
       let data = yield call(
         httpService.makeRequest,
         "post",
-        `${custodainEnvironment.API_URL}custodian/`,
+        `${environment.API_URL}${custodiansApiEndPoint}custodian/`,
         custodianPayload,
         true
       );
@@ -273,7 +274,7 @@ function* getContactInfo() {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${custodainEnvironment.API_URL}contact/`,
+      `${environment.API_URL}${custodiansApiEndPoint}contact/`,
       null,
       true
     );
