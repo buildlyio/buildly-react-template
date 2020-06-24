@@ -200,7 +200,6 @@ function* addGateway(action) {
 }
 
 function* searchGateway(payload) {
-  console.log("payload", payload);
   try {
     if (!payload.searchItem) {
       yield put({ type: GATEWAY_SEARCH_SUCCESS, data: [] });

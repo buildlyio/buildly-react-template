@@ -91,7 +91,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
       username: username.value,
       email: email.value,
       password: password.value,
-      organization_name: organization_name.value,
+      organization: { name: organization_name.value },
       first_name: first_name.value,
       last_name: last_name.value,
     };

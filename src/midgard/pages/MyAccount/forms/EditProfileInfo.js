@@ -120,6 +120,7 @@ function EditProfileInfo({
       }),
     };
     dispatch(updateUser(editUserFormValue));
+    setModal(false);
   };
 
   /**

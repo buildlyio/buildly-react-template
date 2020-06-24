@@ -14,7 +14,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Select from "@material-ui/core/Select";
 import { useInput } from "../../../hooks/useInput";
 import Loader from "../../../components/Loader/Loader";
-import { Card, CardContent } from "@material-ui/core";
+import { Card, CardContent, Typography } from "@material-ui/core";
 import DatePickerComponent from "../../../components/DatePicker/DatePicker";
 import {
   addGateway,
@@ -89,7 +89,7 @@ function AddGateway({
   const gateway_uuid = useInput(editData.gateway_uuid || "");
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? "save" : "add gateway";
+  const buttonText = editPage ? "save" : "Submit";
   const formTitle = editPage ? "Edit Gateway" : "Add Gateway";
   const closeModal = () => {
     toggleModal(false);
@@ -179,18 +179,7 @@ function AddGateway({
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  id="gateway_name"
-                  label="Alias"
-                  name="gateway_name"
-                  autoComplete="gateway_name"
-                  {...gateway_name.bind}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
+                  disabled
                   id="gateway_uuid"
                   label="UUID"
                   name="gateway_uuid"
@@ -198,9 +187,27 @@ function AddGateway({
                   {...gateway_uuid.bind}
                 />
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="gateway_name"
+                  label="Alias"
+                  name="gateway_name"
+                  autoComplete="gateway_name"
+                  {...gateway_name.bind}
+                />
+              </Grid>
             </Grid>
             <Card variant="outlined" className={classes.cardItems}>
               <CardContent>
+                <Typography
+                  className={classes.dashboardHeading}
+                  variant={"body1"}
+                >
+                  Gateway Info
+                </Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
@@ -261,7 +268,7 @@ function AddGateway({
                       margin="normal"
                       fullWidth
                       id="battery_level"
-                      label="Battery"
+                      label="Battery(%)"
                       name="battery_level"
                       autoComplete="battery_level"
                       {...battery_level.bind}
@@ -295,8 +302,8 @@ function AddGateway({
               </CardContent>
             </Card>
 
-            <Grid container spacing={isDesktop ? 3 : 0} justify="center">
-              <Grid item xs={12} sm={4}>
+            <Grid container spacing={2} justify="center">
+              <Grid item xs={6} sm={4}>
                 <div className={classes.loadingWrapper}>
                   <Button
                     type="submit"
@@ -316,7 +323,7 @@ function AddGateway({
                   )}
                 </div>
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={6} sm={4}>
                 <Button
                   type="button"
                   fullWidth

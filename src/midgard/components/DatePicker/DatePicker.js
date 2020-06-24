@@ -43,7 +43,7 @@ export default function DatePickerComponent({
         />
       ) : (
         <KeyboardDatePicker
-          disableToolbar
+          // disableToolbar
           autoOk
           fullWidth
           inputVariant="outlined"

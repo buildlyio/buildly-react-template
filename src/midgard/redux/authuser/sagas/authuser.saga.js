@@ -179,7 +179,7 @@ function* updateUser(payload) {
         showAlert({
           type: "success",
           open: true,
-          message: "Successfully Updated Details",
+          message: "Account Details successfully updated!",
         })
       ),
     ];

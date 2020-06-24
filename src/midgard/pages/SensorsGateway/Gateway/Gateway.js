@@ -56,7 +56,6 @@ function Gateway(props) {
   };
   const searchTable = (e) => {
     setSearchValue(e.target.value);
-    console.log("e", e.target.value);
     dispatch(searchGatewayItem(e.target.value, rows));
   };
   const onAddButtonClick = () => {

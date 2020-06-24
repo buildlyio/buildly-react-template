@@ -20,7 +20,6 @@ export const getUniqueContactInfo = (rowItem, contactInfo) => {
       obj = info;
     }
   });
-  console.log("obj", obj);
   return obj;
 };
 

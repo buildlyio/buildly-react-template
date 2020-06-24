@@ -18,6 +18,7 @@ import profile from "assets/profile.png";
 import Modal from "../../components/Modal/Modal";
 import EditProfileInfo from "./forms/EditProfileInfo";
 import { getOrganization } from "../../redux/authuser/actions/authuser.actions";
+import Loader from "../../components/Loader/Loader";
 
 const useStyles = makeStyles((theme) => ({
   pageHeading: {
@@ -75,6 +76,7 @@ function MyAccount({
   contactInfo,
   data,
   organizationData,
+  loading,
 }) {
   let classes = useStyles();
   const [openModal, setModal] = useState(false);
@@ -87,6 +89,7 @@ function MyAccount({
 
   return (
     <Box mt={3} textAlign={"center"}>
+      {loading && <Loader open={loading} />}
       <Typography className={classes.pageHeading} variant={"h5"}>
         Accounts and Settings
       </Typography>

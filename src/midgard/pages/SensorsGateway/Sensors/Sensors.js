@@ -11,7 +11,6 @@ import {
 import AddSensors from "../forms/AddSensors";
 
 function Sensors(props) {
-  console.log("props", props);
   const {
     dispatch,
     history,

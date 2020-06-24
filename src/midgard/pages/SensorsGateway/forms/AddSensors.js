@@ -63,7 +63,7 @@ function AddSensor({
   loaded,
   error,
   location,
-  gatewayTypeList,
+  sensorTypeList,
 }) {
   const editPage = location.state && location.state.type === "edit";
   const editData =
@@ -83,8 +83,8 @@ function AddSensor({
   const [low_humid_val, changeLowHumidVal] = useState(0);
   const [high_humid_val, changeHighHumidVal] = useState(100);
 
-  const gateway_name = useInput(editData.name || "");
-  const gateway_type = useInput(editData.gateway_type || "", {
+  const sensor_name = useInput(editData.name || "");
+  const sensor_type = useInput(editData.sensor_type || "", {
     required: true,
   });
   const [activation_date, handleDateChange] = useState(
@@ -94,10 +94,11 @@ function AddSensor({
   const battery_level = useInput("");
   const mac_address = useInput("");
   const last_known_location = useInput("");
+  const recharge_before = useInput("");
   const [last_report_date_time, handleLastReportDate] = useState(
     moment(new Date())
   );
-  const gateway_uuid = useInput("");
+  const sensor_uuid = useInput("");
   const [formError, setFormError] = useState({});
   const [associatedGateway, setAccociatedGateway] = useState([]);
   const [environmentalModal, toggleEnvironmentalModal] = useState(false);
@@ -118,11 +119,11 @@ function AddSensor({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    const gatewayFormValues = {
-      name: gateway_name.value,
+    const sensorFormValues = {
+      name: sensor_name.value,
       sensors: "",
       sim_card_id: sim_card_id.value,
-      gateway_type: gateway_type.value,
+      sensor_type: sensor_type.value,
       // shipment_ids: ["string"],
       activation_date: activation_date.value,
       last_known_battery_level: battery_level.value,
@@ -163,7 +164,7 @@ function AddSensor({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!gateway_type.value) return true;
+    if (!sensor_type.value) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -190,11 +191,12 @@ function AddSensor({
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  id="gateway_name"
-                  label="Alias"
-                  name="gateway_name"
-                  autoComplete="gateway_name"
-                  {...gateway_name.bind}
+                  disabled
+                  id="sensor_uuid"
+                  label="Sensor1 UUID"
+                  name="sensor_uuid"
+                  autoComplete="sensor_uuid"
+                  {...sensor_uuid.bind}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -202,13 +204,14 @@ function AddSensor({
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  id="gateway_uuid"
-                  label="Sensor1 UUID"
-                  name="gateway_uuid"
-                  autoComplete="gateway_uuid"
-                  {...gateway_uuid.bind}
+                  id="sensor_name"
+                  label="Alias"
+                  name="sensor_name"
+                  autoComplete="sensor_name"
+                  {...sensor_name.bind}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -237,25 +240,25 @@ function AddSensor({
                       margin="normal"
                       fullWidth
                       required
-                      id="gateway_type"
+                      id="sensor_type"
                       select
                       label="Sensor Type"
                       error={
-                        formError.gateway_type && formError.gateway_type.error
+                        formError.sensor_type && formError.sensor_type.error
                       }
                       helperText={
-                        formError.gateway_type
-                          ? formError.gateway_type.message
+                        formError.sensor_type
+                          ? formError.sensor_type.message
                           : ""
                       }
                       onBlur={(e) =>
-                        handleBlur(e, "required", gateway_type, "gateway_type")
+                        handleBlur(e, "required", sensor_type, "sensor_type")
                       }
-                      {...gateway_type.bind}
+                      {...sensor_type.bind}
                     >
                       <MenuItem value={""}>Select</MenuItem>
-                      {gatewayTypeList &&
-                        gatewayTypeList.map((item, index) => (
+                      {sensorTypeList &&
+                        sensorTypeList.map((item, index) => (
                           <MenuItem
                             key={`${item.id}${item.name}`}
                             value={item.url}
@@ -272,6 +275,31 @@ function AddSensor({
                       handleDateChange={handleDateChange}
                     />
                   </Grid>
+
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="battery_level"
+                      label="Battery(%)"
+                      name="battery_level"
+                      autoComplete="battery_level"
+                      {...battery_level.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="recharge_before"
+                      label="Recharge Before"
+                      name="recharge_before"
+                      autoComplete="recharge_before"
+                      {...recharge_before.bind}
+                    />
+                  </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
                       variant="outlined"
@@ -282,18 +310,6 @@ function AddSensor({
                       name="sim_card_id"
                       autoComplete="sim_card_id"
                       {...sim_card_id.bind}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="battery_level"
-                      label="Battery"
-                      name="battery_level"
-                      autoComplete="battery_level"
-                      {...battery_level.bind}
                     />
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
