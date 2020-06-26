@@ -8,6 +8,7 @@ import alertReducer from "./alert/reducers/alert.reducer";
 import custodianReducer from "./custodian/reducers/custodian.reducer";
 import itemsReducer from "./items/reducers/items.reducer";
 import sensorsGatewayReducer from "./sensorsGateway/reducers/sensorsGateway.reducer";
+import shipmentReducer from "./shipment/reducers/shipment.reducers";
 
 const rootReducer = combineReducers({
   //entryPointForGulpStart
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   custodianReducer,
   itemsReducer,
   sensorsGatewayReducer,
+  shipmentReducer,
 });
 
 export default rootReducer;

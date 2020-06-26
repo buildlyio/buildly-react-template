@@ -35,7 +35,7 @@ const useStyles = makeStyles({
     maxHeight: 440,
   },
   searchSection: {
-    background: "#383636",
+    background: "#878282",
     width: "100%",
     display: "flex",
     minHeight: "40px",
@@ -50,6 +50,19 @@ const useStyles = makeStyles({
   tableCell: {
     padding: theme.spacing(0, 1),
     borderBottom: 0,
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+  searchComponent: {
+    [theme.breakpoints.up("sm")]: {
+      width: "100%",
+    },
+  },
+  searchInput: {
+    [theme.breakpoints.up("md")]: {
+      width: "100%",
+    },
   },
 });
 
@@ -101,13 +114,17 @@ export default function ShipmentList({ ...props }) {
   };
   const handleSort = (sortValue) => {
     setSortValue(sortValue);
-    console.log("sortVal", sortValue);
   };
   return (
     <Paper className={classes.root}>
       {hasSearch && (
         <div className={classes.searchSection}>
-          <SearchInput searchValue={searchValue} searchAction={searchAction} />
+          <SearchInput
+            searchValue={searchValue}
+            searchAction={searchAction}
+            customContainerClass={classes.searchComponent}
+            customSearchInputClass={classes.searchInput}
+          />
         </div>
       )}
       {hasSort && (
@@ -141,6 +158,7 @@ export default function ShipmentList({ ...props }) {
                             <TableBody>
                               <TableRow>
                                 <TableCell
+                                  title={`Shipment#: ${row.id}`}
                                   className={classes.tableCell}
                                   colSpan={columns.length + 2}
                                 >
@@ -155,10 +173,18 @@ export default function ShipmentList({ ...props }) {
                                       const value = row[column.id] || "-";
                                       return (
                                         <TableCell
-                                          style={{ width: column.width }}
+                                          style={{
+                                            width: column.width,
+                                            maxWidth: column.maxWidth,
+                                          }}
                                           className={classes.tableCell}
                                           key={column.id}
                                           align={column.align}
+                                          title={
+                                            column.format
+                                              ? column.format(value)
+                                              : value
+                                          }
                                         >
                                           {column.format
                                             ? column.format(value)

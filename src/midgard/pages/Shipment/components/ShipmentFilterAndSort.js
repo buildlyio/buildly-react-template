@@ -15,9 +15,8 @@ const useStyles = makeStyles((theme) => ({
     border: "1px solid rgba(27,31,35,.15)",
     boxShadow: "0 3px 12px rgba(27,31,35,.15)",
     borderRadius: 3,
-    // width: 200,
     zIndex: 1,
-    fontSize: 13,
+    fontSize: 16,
     color: "#586069",
     backgroundColor: "#f6f8fa",
     padding: theme.spacing(2),
@@ -28,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     minHeight: "40px",
     alignItems: "center",
+    padding: theme.spacing(1),
   },
   filterButton: {
     borderRadius: "500px",
@@ -175,23 +175,23 @@ export default function ShipmentFilterAndSort(props) {
           placement={"bottom-start"}
         >
           <div className={classes.popper}>
-            <List>
-              <ListItem onClick={() => handleSort("dateDsc")}>
+            <List component="ul">
+              <ListItem button onClick={() => handleSort("dateDsc")}>
                 Most Recent
               </ListItem>
-              <ListItem onClick={() => handleSort("dateAsc")}>
+              <ListItem button onClick={() => handleSort("dateAsc")}>
                 Least Recent
               </ListItem>
-              <ListItem onClick={() => handleSort("valueDesc")}>
+              <ListItem button onClick={() => handleSort("valueDesc")}>
                 Highest Value
               </ListItem>
-              <ListItem onClick={() => handleSort("valueAsc")}>
-                Highest Value
+              <ListItem button onClick={() => handleSort("valueAsc")}>
+                Lowest Value
               </ListItem>
-              <ListItem onClick={() => handleSort("nameAsc")}>
+              <ListItem button onClick={() => handleSort("nameAsc")}>
                 Custodian A-Z
               </ListItem>
-              <ListItem onClick={() => handleSort("nameDesc")}>
+              <ListItem button onClick={() => handleSort("nameDesc")}>
                 Custodian Z-A
               </ListItem>
             </List>

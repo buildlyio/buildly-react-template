@@ -11,6 +11,11 @@ import DataTable from "../../components/Table/Table";
 import { SHIPMENT_COLUMNS } from "./ShipmentConstants";
 import ShipmentList from "./components/ShipmentList";
 import { shipmentMock } from "../../utils/mock";
+import moment from "moment";
+import { routes } from "../../routes/routesConstants";
+import { Route } from "react-router-dom";
+import AddShipment from "./forms/AddShipment";
+import AddOriginInfo from "./forms/AddOriginInfo";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -22,12 +27,49 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function showAlert(data) {
+  let alerts = [];
+  if (data) {
+    data.forEach((element) => {
+      if (
+        moment(element.actual_time_of_arrival).isAfter(
+          element.estimated_time_of_arrival,
+          "day"
+        )
+      ) {
+        alerts.push({
+          id: element.id,
+          alertId: "delay",
+          message: "Delay warning",
+          severity: "warning",
+        });
+      }
+    });
+  }
+  return alerts;
+}
+
+const ShowAlerts = (props) => {
+  let { alertData } = props;
+  const uniqueAlertsId = [];
+  alertData.forEach((data) => {});
+};
+
 function Shipment(props) {
-  const { shipmentData } = props;
+  const { shipmentData, history } = props;
   const classes = useStyles();
-  let rows = shipmentData;
+  let rows = shipmentData || shipmentMock;
+  let alerts = showAlert(rows);
+
+  const onAddButtonClick = () => {
+    console.log("ffff");
+    history.push(`${routes.SHIPMENT}/add`, {
+      from: routes.SHIPMENT,
+    });
+  };
   return (
     <Box mt={5} mb={5}>
+      {/* {alerts.length > 0 && <ShowAlerts alertData={alerts} />} */}
       <Box mb={3}>
         <Button
           type="button"
@@ -35,7 +77,7 @@ function Shipment(props) {
           variant="contained"
           color="primary"
           className={classes.addButton}
-          onClick={() => {}}
+          onClick={onAddButtonClick}
         >
           <AddIcon /> {"Add Shipment"}
         </Button>
@@ -64,6 +106,14 @@ function Shipment(props) {
           />
         </Grid>
       </Grid>
+      <Route path={`${routes.SHIPMENT}/add`} component={AddShipment} />
+      <Route path={`${routes.SHIPMENT}/add/origin`} component={AddOriginInfo} />
+      <Route path={`${routes.SHIPMENT}/add/shipper`} component={AddShipment} />
+      <Route
+        path={`${routes.SHIPMENT}/add/destination`}
+        component={AddShipment}
+      />
+      <Route path={`${routes.SHIPMENT}/edit/:id`} component={AddShipment} />
     </Box>
   );
 }

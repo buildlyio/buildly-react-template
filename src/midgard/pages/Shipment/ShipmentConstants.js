@@ -1,13 +1,20 @@
+import { numberWithCommas } from "../../utils/utilMethods";
+import moment from "moment";
+
 export const SHIPMENT_COLUMNS = [
-  { id: "id", width: 100 },
+  { id: "id", width: 150, maxWidth: 150 },
   {
-    id: "date",
+    id: "actual_time_of_arrival",
     width: 150,
+    maxWidth: 150,
+    format: (value) => value && moment(value).format("MM/DD/yyyy"),
   },
-  { id: "name", width: 300 },
-  { id: "item", width: 180 },
+  { id: "name", width: 150, maxWidth: 150 },
+  { id: "custodian_name", width: 150, maxWidth: 150 },
   {
     id: "price",
     width: 150,
+    maxWidth: 150,
+    format: (value) => `$${numberWithCommas(value)}`,
   },
 ];
