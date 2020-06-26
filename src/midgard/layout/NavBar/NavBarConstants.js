@@ -7,6 +7,11 @@ export const NAVIGATION_ITEMS = [
     link: routes.DASHBOARD,
   },
   {
+    id: "shipment",
+    name: "Shipments",
+    link: routes.SHIPMENT,
+  },
+  {
     id: "custodians",
     name: "Custodians",
     link: routes.CUSTODIANS,

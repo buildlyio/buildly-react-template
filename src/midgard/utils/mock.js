@@ -151,3 +151,27 @@ export const associatedGatewayMock = [
   { id: 1, uuid: "GT123458", name: "Gateway 4" },
   { id: 1, uuid: "GT123455", name: "Gateway 5" },
 ];
+
+export const shipmentMock = [
+  {
+    id: "SH10234567",
+    name: "Shipment 1",
+    item: "Chocolates",
+    price: "$10,000",
+    date: "02/06/2020",
+  },
+  {
+    id: "SH10234567",
+    name: "Shipment 1",
+    item: "Chocolates",
+    price: "$10,000",
+    date: "02/06/2020",
+  },
+  {
+    id: "SH10234567",
+    name: "Shipment 1",
+    item: "Chocolates",
+    price: "$10,000",
+    date: "02/06/2020",
+  },
+];
