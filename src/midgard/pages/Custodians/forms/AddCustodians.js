@@ -84,6 +84,7 @@ function AddCustodians({
   const editData =
     (location.state && location.state.type === "edit" && location.state.data) ||
     {};
+  const redirectTo = location.state && location.state.from;
   const contactData = editPage && location.state.contactData;
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
@@ -118,7 +119,7 @@ function AddCustodians({
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
-      history.push(location.state.from);
+      history.push(redirectTo);
     }
   };
 
@@ -139,7 +140,6 @@ function AddCustodians({
       ...(editPage && { url: contactData.url }),
       ...(editPage && { id: contactData.id }),
     };
-    location.register = true;
     const custodianFormValue = {
       custodian_alias: alias.value,
       custodian_type: custodianType.value,
@@ -150,9 +150,9 @@ function AddCustodians({
       ...(editPage && { id: editData.id }),
     };
     if (editPage) {
-      dispatch(editCustodian(custodianFormValue, history));
+      dispatch(editCustodian(custodianFormValue, history, redirectTo));
     } else {
-      dispatch(addCustodians(custodianFormValue, history));
+      dispatch(addCustodians(custodianFormValue, history, redirectTo));
     }
   };
 

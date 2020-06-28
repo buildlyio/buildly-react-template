@@ -21,7 +21,7 @@ import {
 const initialState = {
   loading: false,
   loaded: false,
-  data: null,
+  itemData: null,
   error: null,
   itemTypeList: null,
 };
@@ -41,7 +41,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        itemData: action.data,
       };
     case GET_ITEMS_FAILURE:
       return {
@@ -62,7 +62,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        itemData: action.data,
       };
     case ADD_ITEMS_FAILURE:
       return {
@@ -85,7 +85,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        itemData: action.data,
         error: null,
       };
 
@@ -108,7 +108,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        itemData: action.data,
       };
     case DELETE_ITEMS_FAILURE:
       return {

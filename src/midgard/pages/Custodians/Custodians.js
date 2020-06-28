@@ -42,12 +42,14 @@ function Custodian({
   dispatch,
   history,
   location,
-  data,
+  custodianData,
   loading,
   loaded,
   error,
   contactInfo,
   searchedData,
+  noSearch,
+  redirectTo,
 }) {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
@@ -55,24 +57,34 @@ function Custodian({
   const [searchValue, setSearchValue] = useState("");
   const classes = useStyles();
 
+  const addCustodianPath = redirectTo
+    ? `${redirectTo}/custodian`
+    : `${routes.CUSTODIANS}/add`;
+
+  const editCustodianPath = redirectTo
+    ? `${redirectTo}/custodian`
+    : `${routes.CUSTODIANS}/edit`;
+
   let rows = [];
   if (searchedData && searchedData.length) {
     rows = searchedData;
-  } else if (data && data.length) {
-    rows = getFormattedRow(data, contactInfo);
+  } else if (custodianData && custodianData.length) {
+    rows = getFormattedRow(custodianData, contactInfo);
   }
 
   useEffect(() => {
-    dispatch(getCustodians());
-    dispatch(getCustodianType());
-    dispatch(getContact());
+    if (custodianData === null) {
+      dispatch(getCustodians());
+      dispatch(getCustodianType());
+      dispatch(getContact());
+    }
   }, []);
 
   const editItem = (item) => {
     let contactObj = getUniqueContactInfo(item, contactInfo);
-    history.push(`${routes.CUSTODIANS}/edit/:${item.id}`, {
+    history.push(`${editCustodianPath}/:${item.id}`, {
       type: "edit",
-      from: routes.CUSTODIANS,
+      from: redirectTo || routes.CUSTODIANS,
       data: item,
       contactData: contactObj,
     });
@@ -112,34 +124,33 @@ function Custodian({
             color="primary"
             className={classes.addButton}
             onClick={() =>
-              history.push(`${routes.CUSTODIANS}/add`, {
-                from: routes.CUSTODIANS,
+              history.push(addCustodianPath, {
+                from: redirectTo || routes.CUSTODIANS,
               })
             }
           >
             <AddIcon /> Add Custodian
           </Button>
         </Box>
-        <Typography className={classes.dashboardHeading} variant={"h4"}>
-          Custodians
-        </Typography>
+        {!redirectTo && (
+          <Typography className={classes.dashboardHeading} variant={"h4"}>
+            Custodians
+          </Typography>
+        )}
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <DataTable
               rows={rows || []}
               columns={custodianColumns}
               actionsColumns={actionsColumns}
-              hasSearch={true}
+              hasSearch={noSearch ? false : true}
               searchAction={searchTable}
               searchValue={searchValue} // To show the search field in table
             />
           </Grid>
         </Grid>
-        <Route path={`${routes.CUSTODIANS}/add`} component={AddCustodians} />
-        <Route
-          path={`${routes.CUSTODIANS}/edit/:id`}
-          component={AddCustodians}
-        />
+        <Route path={addCustodianPath} component={AddCustodians} />
+        <Route path={`${editCustodianPath}/:id`} component={AddCustodians} />
       </div>
 
       <ConfirmModal

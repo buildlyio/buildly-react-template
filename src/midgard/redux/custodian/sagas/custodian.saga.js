@@ -138,7 +138,7 @@ function* deleteCustodian(payload) {
 }
 
 function* editCustodian(action) {
-  let { payload, history } = action;
+  let { payload, history, redirectTo } = action;
   try {
     let contactData = yield call(
       httpService.makeRequest,
@@ -173,7 +173,7 @@ function* editCustodian(action) {
               message: "Custodian successfully Edited!",
             })
           ),
-          yield call(history.push, routes.CUSTODIANS),
+          yield call(history.push, redirectTo),
         ];
       }
     }
@@ -195,7 +195,7 @@ function* editCustodian(action) {
 }
 
 function* addCustodian(action) {
-  let { history, payload } = action;
+  let { history, payload, redirectTo } = action;
   try {
     let contactData = yield call(
       httpService.makeRequest,
@@ -229,7 +229,7 @@ function* addCustodian(action) {
           ),
           yield put(getCustodians()),
           yield put(getContact()),
-          yield call(history.push, routes.CUSTODIANS),
+          yield call(history.push, redirectTo),
         ];
       }
     }

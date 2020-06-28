@@ -3,13 +3,13 @@ import * as reducer from "./items.reducer";
 const initialState = {
   loading: false,
   loaded: false,
-  data: null,
+  itemData: null,
   error: null,
   itemTypeList: null,
 };
 
 const mockData = {
-  data: { id: "" },
+  itemData: { id: "" },
 };
 
 describe("Get Item reducer", () => {
@@ -18,7 +18,7 @@ describe("Get Item reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      data: null,
+      itemData: null,
       itemTypeList: null,
     });
   });
@@ -28,7 +28,7 @@ describe("Get Item reducer", () => {
     ).toEqual({
       loaded: true,
       loading: false,
-      data: undefined,
+      itemData: undefined,
       itemTypeList: null,
       error: null,
     });
@@ -40,7 +40,7 @@ describe("Get Item reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
+      itemData: null,
       itemTypeList: null,
     });
   });
@@ -52,7 +52,7 @@ describe("Add Item reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      data: null,
+      itemData: null,
       itemTypeList: null,
     });
   });
@@ -64,7 +64,7 @@ describe("Add Item reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      data: undefined,
+      itemData: undefined,
       itemTypeList: null,
     });
   });
@@ -75,7 +75,7 @@ describe("Add Item reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
+      itemData: null,
       itemTypeList: null,
     });
   });
@@ -88,7 +88,7 @@ describe("Edit Item reducer", () => {
         error: null,
         loaded: false,
         loading: true,
-        data: null,
+        itemData: null,
         itemTypeList: null,
       }
     );
@@ -101,7 +101,7 @@ describe("Edit Item reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      data: undefined,
+      itemData: undefined,
       itemTypeList: null,
     });
   });
@@ -112,7 +112,7 @@ describe("Edit Item reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
+      itemData: null,
       itemTypeList: null,
     });
   });
@@ -126,7 +126,7 @@ describe("Delete Item reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      data: null,
+      itemData: null,
       itemTypeList: null,
     });
   });
@@ -138,7 +138,7 @@ describe("Delete Item reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      data: undefined,
+      itemData: undefined,
       itemTypeList: null,
     });
   });
@@ -149,7 +149,7 @@ describe("Delete Item reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
+      itemData: null,
       itemTypeList: null,
     });
   });
@@ -161,7 +161,7 @@ describe("Search reducer", () => {
       error: null,
       loaded: false,
       loading: false,
-      data: null,
+      itemData: null,
       itemTypeList: null,
     });
   });
@@ -173,7 +173,7 @@ describe("Search reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      data: null,
+      itemData: null,
       itemTypeList: null,
       searchedData: undefined,
     });
@@ -188,7 +188,7 @@ describe("Get Item type reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      data: null,
+      itemData: null,
       itemTypeList: null,
     });
   });
@@ -202,7 +202,7 @@ describe("Get Item type reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      data: null,
+      itemData: null,
       itemTypeList: undefined,
     });
   });
@@ -215,7 +215,7 @@ describe("Get Item type reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
+      itemData: null,
       itemTypeList: null,
     });
   });

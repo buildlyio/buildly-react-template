@@ -8,10 +8,8 @@ import Typography from "@material-ui/core/Typography";
 import Modal from "../../../components/Modal/Modal";
 import ShipmentInfo from "../components/ShipmentInfo";
 import CustodianInfo from "../components/CustodianInfo";
-import { Hidden } from "@material-ui/core";
+import { Hidden, Grid } from "@material-ui/core";
 import MobileStepper from "@material-ui/core/MobileStepper";
-import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
-import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import { dispatch } from "../../../redux/store";
 
 const useStyles = makeStyles((theme) => ({
@@ -96,14 +94,31 @@ export default function AddShipment(props) {
           maxWidth={"md"}
         >
           <div className={classes.root}>
-            <Hidden smDown>
-              <Stepper activeStep={activeStep}>
-                {steps.map((label) => (
-                  <Step key={label}>
-                    <StepLabel>{label}</StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
+            <Hidden xsDown>
+              <Grid container alignItems="center" justify="center">
+                {activeStep > 0 && (
+                  <Grid item xs={6} sm={2}>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      onClick={handleBack}
+                      className={classes.submit}
+                    >
+                      {"Back"}
+                    </Button>
+                  </Grid>
+                )}
+                <Grid item sm={10}>
+                  <Stepper activeStep={activeStep} alternativeLabel nonLinear>
+                    {steps.map((label) => (
+                      <Step key={label}>
+                        <StepLabel>{label}</StepLabel>
+                      </Step>
+                    ))}
+                  </Stepper>
+                </Grid>
+              </Grid>
             </Hidden>
 
             <div>

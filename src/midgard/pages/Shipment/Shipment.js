@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -18,6 +18,11 @@ import AddShipment from "./forms/AddShipment";
 import AddOriginInfo from "./forms/AddOriginInfo";
 import AddShipperInfo from "./forms/AddShipperInfo";
 import AddDestinationInfo from "./forms/AddDestinationInfo";
+import {
+  getCustodians,
+  getCustodianType,
+  getContact,
+} from "../../redux/custodian/actions/custodian.actions";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -58,13 +63,21 @@ const ShowAlerts = (props) => {
 };
 
 function Shipment(props) {
-  const { shipmentData, history } = props;
+  const { shipmentData, history, custodianData, dispatch } = props;
+  console.log("props", props);
   const classes = useStyles();
   let rows = shipmentData || shipmentMock;
   let alerts = showAlert(rows);
 
+  useEffect(() => {
+    if (custodianData === null) {
+      dispatch(getCustodians());
+      dispatch(getCustodianType());
+      dispatch(getContact());
+    }
+  }, []);
+
   const onAddButtonClick = () => {
-    console.log("ffff");
     history.push(`${routes.SHIPMENT}/add`, {
       from: routes.SHIPMENT,
     });
@@ -126,6 +139,7 @@ function Shipment(props) {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.shipmentReducer,
+  ...state.custodianReducer,
 });
 
 export default connect(mapStateToProps)(Shipment);

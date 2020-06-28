@@ -24,7 +24,7 @@ import {
 const initialState = {
   loading: false,
   loaded: false,
-  data: null,
+  custodianData: null,
   error: null,
   custodianTypeList: null,
   contactInfo: null,
@@ -45,7 +45,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        custodianData: action.data,
       };
     case GET_CUSTODIANS_FAILURE:
       return {
@@ -66,7 +66,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        custodianData: action.data,
       };
     case ADD_CUSTODIANS_FAILURE:
       return {
@@ -89,7 +89,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        custodianData: action.data,
         error: null,
       };
 
@@ -112,7 +112,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        custodianData: action.data,
       };
     case DELETE_CUSTODIANS_FAILURE:
       return {

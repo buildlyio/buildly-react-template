@@ -12,10 +12,12 @@ describe("actions", () => {
   it("should create an action to add custodian", () => {
     const payload = { id: 123, name: "Abc" };
     const history = undefined;
+    const redirectTo = undefined;
     const expectedAction = {
       type: actions.ADD_CUSTODIANS,
       payload,
       history,
+      redirectTo,
     };
     expect(actions.addCustodians(payload, history)).toEqual(expectedAction);
   });
@@ -24,9 +26,13 @@ describe("actions", () => {
 describe("actions", () => {
   it("should create an action to update custodian", () => {
     const payload = { id: 123 };
+    const history = undefined;
+    const redirectTo = undefined;
     const expectedAction = {
       type: actions.EDIT_CUSTODIANS,
       payload,
+      history,
+      redirectTo,
     };
     expect(actions.editCustodian(payload)).toEqual(expectedAction);
   });

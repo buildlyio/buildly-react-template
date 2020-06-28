@@ -40,21 +40,24 @@ export const getCustodians = () => ({ type: GET_CUSTODIANS });
  *Add custodian
  * @param {Object} payload
  * @param {Object} history
+ * @param {String} redirectTo path to redirect
  */
-export const addCustodians = (payload, history) => ({
+export const addCustodians = (payload, history, redirectTo) => ({
   type: ADD_CUSTODIANS,
   payload,
   history,
+  redirectTo,
 });
 /**
  *
  * @param {Object} payload
  * @param {Object} history
  */
-export const editCustodian = (payload, history) => ({
+export const editCustodian = (payload, history, redirectTo) => ({
   type: EDIT_CUSTODIANS,
   payload,
   history,
+  redirectTo,
 });
 
 /**

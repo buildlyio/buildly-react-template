@@ -16,7 +16,7 @@ function Items({
   dispatch,
   history,
   location,
-  data,
+  itemData,
   loading,
   loaded,
   error,
@@ -29,8 +29,8 @@ function Items({
   let rows = [];
   if (searchedData && searchedData.length) {
     rows = searchedData;
-  } else if (data && data.length) {
-    rows = getFormattedRow(data, itemTypeList);
+  } else if (itemData && itemData.length) {
+    rows = getFormattedRow(itemData, itemTypeList);
   }
 
   useEffect(() => {

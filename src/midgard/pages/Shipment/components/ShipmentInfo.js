@@ -34,9 +34,6 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "18px",
     fontSize: 11,
   },
-  logo: {
-    width: "100%",
-  },
   buttonProgress: {
     position: "absolute",
     top: "50%",
@@ -48,27 +45,31 @@ const useStyles = makeStyles((theme) => ({
     // margin: theme.spacing(1),
     position: "relative",
   },
-  addressContainer: {
-    marginTop: theme.spacing(4),
-  },
-  formTitle: {
-    fontWeight: "bold",
-    marginTop: "1em",
-    textAlign: "center",
-  },
   cardItems: {
     marginTop: theme.spacing(4),
+  },
+  buttonContainer: {
+    margin: theme.spacing(8, 0),
+    textAlign: "center",
+  },
+  alignRight: {
+    marginLeft: "auto",
   },
 }));
 
 function ShipmentInfo(props) {
-  const { handleNext, shipmentFormData, history } = props;
+  const { handleNext, shipmentFormData, history, custodianData } = props;
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   const classes = useStyles();
   return (
     <React.Fragment>
       <div>
+        {!isDesktop && (
+          <Box mb={2}>
+            <Typography variant="h4">Shipment Details(1/5)</Typography>
+          </Box>
+        )}
         <form className={classes.form} noValidate>
           <Box mb={2}>
             <Grid container spacing={2}>
@@ -169,8 +170,8 @@ function ShipmentInfo(props) {
                       </ListItem>
                     </List>
                     <Button
-                      variant="contained"
-                      color="primary"
+                      variant="outlined"
+                      color="secondary"
                       className={classes.submit}
                     >
                       Edit Origin Info
@@ -179,8 +180,9 @@ function ShipmentInfo(props) {
                 </Card>
               ) : (
                 <Button
-                  variant="contained"
-                  color="primary"
+                  variant="outlined"
+                  fullWidth
+                  color="secondary"
                   className={classes.submit}
                   onClick={() =>
                     history.push(`${routes.SHIPMENT}/add/origin`, {
@@ -219,8 +221,8 @@ function ShipmentInfo(props) {
                       </ListItem>
                     </List>
                     <Button
-                      variant="contained"
-                      color="primary"
+                      variant="outlined"
+                      color="secondary"
                       className={classes.submit}
                     >
                       Edit Shipper Info
@@ -229,8 +231,9 @@ function ShipmentInfo(props) {
                 </Card>
               ) : (
                 <Button
-                  variant="contained"
-                  color="primary"
+                  variant="outlined"
+                  color="secondary"
+                  fullWidth
                   className={classes.submit}
                   onClick={() =>
                     history.push(`${routes.SHIPMENT}/add/shipper`, {
@@ -269,8 +272,8 @@ function ShipmentInfo(props) {
                       </ListItem>
                     </List>
                     <Button
-                      variant="contained"
-                      color="primary"
+                      variant="outlined"
+                      color="secondary"
                       className={classes.submit}
                     >
                       Edit Destination Info
@@ -279,8 +282,9 @@ function ShipmentInfo(props) {
                 </Card>
               ) : (
                 <Button
-                  variant="contained"
-                  color="primary"
+                  variant="outlined"
+                  fullWidth
+                  color="secondary"
                   className={classes.submit}
                   onClick={() =>
                     history.push(`${routes.SHIPMENT}/add/destination`, {
@@ -296,16 +300,42 @@ function ShipmentInfo(props) {
           </Grid>
         </form>
       </div>
-      <div>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleNext}
-          // className={classes.button}
-        >
-          Add Custodian
-        </Button>
-      </div>
+
+      <Grid container spacing={3} className={classes.buttonContainer}>
+        <Grid item xs={6} sm={2}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={() => handleSaveAndClose()}
+            className={classes.submit}
+          >
+            {`Save & Close`}
+          </Button>
+        </Grid>
+        <Grid item xs={6} sm={2}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={() => history.push(`${routes.SHIPMENT}`)}
+            className={classes.submit}
+          >
+            {`Cancel`}
+          </Button>
+        </Grid>
+        <Grid item xs={12} sm={4} className={classes.alignRight}>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleNext}
+            className={classes.submit}
+          >
+            Next: Add Custodian
+          </Button>
+        </Grid>
+      </Grid>
     </React.Fragment>
   );
 }
