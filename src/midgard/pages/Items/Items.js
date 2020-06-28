@@ -22,7 +22,17 @@ function Items({
   error,
   searchedData,
   itemTypeList,
+  redirectTo,
+  noSearch,
 }) {
+  const addItemPath = redirectTo
+    ? `${redirectTo}/items`
+    : `${routes.CUSTODIANS}/add`;
+
+  const editItemPath = redirectTo
+    ? `${redirectTo}/items`
+    : `${routes.CUSTODIANS}/edit`;
+
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
   const [searchValue, setSearchValue] = useState("");
@@ -34,14 +44,16 @@ function Items({
   }
 
   useEffect(() => {
-    dispatch(getItems());
-    dispatch(getItemType());
+    if (itemData === null) {
+      dispatch(getItems());
+      dispatch(getItemType());
+    }
   }, []);
 
   const editItem = (item) => {
-    history.push(`${routes.ITEMS}/edit/:${item.id}`, {
+    history.push(`${editItemPath}/:${item.id}`, {
       type: "edit",
-      from: routes.ITEMS,
+      from: redirectTo || routes.ITEMS,
       data: item,
     });
   };
@@ -59,8 +71,8 @@ function Items({
   };
 
   const onAddButtonClick = () => {
-    history.push(`${routes.ITEMS}/add`, {
-      from: routes.ITEMS,
+    history.push(`${addItemPath}`, {
+      from: redirectTo || routes.ITEMS,
     });
   };
   return (
@@ -72,16 +84,17 @@ function Items({
       editAction={editItem}
       deleteAction={deletItem}
       columns={itemColumns}
+      redirectTo={redirectTo}
       rows={rows}
-      hasSearch={true}
+      hasSearch={noSearch ? false : true}
       search={{ searchValue, searchAction: searchTable }}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
       confirmModalTitle={"Are you sure you want to delete this Item?"}
     >
-      <Route path={`${routes.ITEMS}/add`} component={AddItems} />
-      <Route path={`${routes.ITEMS}/edit/:id`} component={AddItems} />
+      <Route path={`${addItemPath}`} component={AddItems} />
+      <Route path={`${editItemPath}/:id`} component={AddItems} />
     </DashboardWrapper>
   );
 }

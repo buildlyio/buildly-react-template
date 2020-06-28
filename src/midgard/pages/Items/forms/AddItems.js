@@ -62,6 +62,7 @@ function AddItems({
   location,
   itemTypeList,
 }) {
+  const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === "edit";
   const editData =
     (location.state && location.state.type === "edit" && location.state.data) ||
@@ -89,7 +90,7 @@ function AddItems({
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
-      history.push(location.state.from);
+      history.push(redirectTo);
     }
   };
 
@@ -105,9 +106,9 @@ function AddItems({
       ...(editPage && editData && { id: editData.id }),
     };
     if (editPage) {
-      dispatch(editItem(itemFormValue, history));
+      dispatch(editItem(itemFormValue, history, redirectTo));
     } else {
-      dispatch(addItem(itemFormValue, history));
+      dispatch(addItem(itemFormValue, history, redirectTo));
     }
   };
 

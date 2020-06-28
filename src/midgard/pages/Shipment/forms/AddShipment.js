@@ -11,6 +11,10 @@ import CustodianInfo from "../components/CustodianInfo";
 import { Hidden, Grid } from "@material-ui/core";
 import MobileStepper from "@material-ui/core/MobileStepper";
 import { dispatch } from "../../../redux/store";
+import ViewDetailsWrapper from "../components/ViewDetailsWrapper";
+import Custodians from "../../Custodians/Custodians";
+import Items from "../../Items/Items";
+import { routes } from "../../../routes/routesConstants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,7 +39,7 @@ function getSteps() {
   ];
 }
 
-const getStepContent = (stepIndex, props, handleNext, handleBack) => {
+const getStepContent = (stepIndex, props, handleNext, handleBack, maxSteps) => {
   switch (stepIndex) {
     case 0:
       return (
@@ -47,14 +51,40 @@ const getStepContent = (stepIndex, props, handleNext, handleBack) => {
       );
     case 1:
       return (
-        <CustodianInfo
+        <ViewDetailsWrapper
           {...props}
           handleNext={handleNext}
           handleBack={handleBack}
-        />
+          nextButtonText={"Add Items"}
+          title={"Custodians"}
+          maxSteps={maxSteps}
+          activeStep={stepIndex}
+        >
+          <Custodians
+            noSearch={true}
+            history={history}
+            redirectTo={`${routes.SHIPMENT}/add`}
+          />
+        </ViewDetailsWrapper>
       );
     case 2:
-      return "This is the bit I really care about!";
+      return (
+        <ViewDetailsWrapper
+          {...props}
+          handleNext={handleNext}
+          handleBack={handleBack}
+          nextButtonText={"Add Sensors & Gateways"}
+          title={"Items"}
+          maxSteps={maxSteps}
+          activeStep={stepIndex}
+        >
+          <Items
+            noSearch={true}
+            history={history}
+            redirectTo={`${routes.SHIPMENT}/add`}
+          />
+        </ViewDetailsWrapper>
+      );
     default:
       return "Unknown stepIndex";
   }
@@ -123,7 +153,13 @@ export default function AddShipment(props) {
 
             <div>
               <div>
-                {getStepContent(activeStep, props, handleNext, handleBack)}
+                {getStepContent(
+                  activeStep,
+                  props,
+                  handleNext,
+                  handleBack,
+                  maxSteps
+                )}
               </div>
             </div>
           </div>

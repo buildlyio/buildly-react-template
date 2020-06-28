@@ -23,6 +23,7 @@ import {
   getCustodianType,
   getContact,
 } from "../../redux/custodian/actions/custodian.actions";
+import { getItems, getItemType } from "../../redux/items/actions/items.actions";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -63,7 +64,7 @@ const ShowAlerts = (props) => {
 };
 
 function Shipment(props) {
-  const { shipmentData, history, custodianData, dispatch } = props;
+  const { shipmentData, history, custodianData, dispatch, itemData } = props;
   console.log("props", props);
   const classes = useStyles();
   let rows = shipmentData || shipmentMock;
@@ -74,6 +75,10 @@ function Shipment(props) {
       dispatch(getCustodians());
       dispatch(getCustodianType());
       dispatch(getContact());
+    }
+    if (itemData === null) {
+      dispatch(getItems());
+      dispatch(getItemType());
     }
   }, []);
 
@@ -140,6 +145,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.shipmentReducer,
   ...state.custodianReducer,
+  ...state.itemsReducer,
 });
 
 export default connect(mapStateToProps)(Shipment);

@@ -5,7 +5,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import { Grid, Box, Typography } from "@material-ui/core";
-import Custodians from "../../Custodians/Custodians";
 import { routes } from "../../../routes/routesConstants";
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,16 +34,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function CustodianInfo(props) {
+function ViewDetailsWrapper(props) {
   const {
-    gatewayData,
-    gatewaySearchedData,
-    sensorData,
-    sensorSearchedData,
     handleBack,
     handleNext,
     history,
     handleSaveAndClose,
+    children,
+    nextButtonText,
+    title,
+    maxSteps,
+    activeStep,
   } = props;
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
@@ -55,7 +55,9 @@ function CustodianInfo(props) {
         <Box mb={5}>
           <Grid container spacing={2}>
             <Grid item xs={8}>
-              <Typography variant="h4">Custodians (2/5)</Typography>
+              <Typography variant="h4">{`${title} ${
+                activeStep + 1
+              }/${maxSteps}`}</Typography>
             </Grid>
             <Grid item xs={3}>
               <Button
@@ -72,11 +74,7 @@ function CustodianInfo(props) {
           </Grid>
         </Box>
       )}
-      <Custodians
-        noSearch={true}
-        history={history}
-        redirectTo={`${routes.SHIPMENT}/add`}
-      />
+      {children}
       <Grid container spacing={3} className={classes.buttonContainer}>
         <Grid item xs={6} sm={2}>
           <Button
@@ -108,7 +106,7 @@ function CustodianInfo(props) {
             onClick={handleNext}
             className={classes.submit}
           >
-            Next: Add Items
+            {`Next: ${nextButtonText}`}
           </Button>
         </Grid>
       </Grid>
@@ -122,4 +120,4 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.custodianReducer,
 });
 
-export default connect(mapStateToProps)(CustodianInfo);
+export default connect(mapStateToProps)(ViewDetailsWrapper);
