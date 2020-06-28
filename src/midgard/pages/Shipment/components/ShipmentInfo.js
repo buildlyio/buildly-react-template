@@ -232,6 +232,12 @@ function ShipmentInfo(props) {
                   variant="contained"
                   color="primary"
                   className={classes.submit}
+                  onClick={() =>
+                    history.push(`${routes.SHIPMENT}/add/shipper`, {
+                      from: `${routes.SHIPMENT}/add`,
+                      shipmentFormData,
+                    })
+                  }
                 >
                   Add Shipper Info
                 </Button>
@@ -276,6 +282,12 @@ function ShipmentInfo(props) {
                   variant="contained"
                   color="primary"
                   className={classes.submit}
+                  onClick={() =>
+                    history.push(`${routes.SHIPMENT}/add/destination`, {
+                      from: `${routes.SHIPMENT}/add`,
+                      shipmentFormData,
+                    })
+                  }
                 >
                   Add Destination Info
                 </Button>

@@ -33,7 +33,7 @@ function getSteps() {
     "Custodians",
     "Items",
     "Sensors & Gateways",
-    "SHipment Overview",
+    "Shipment Overview",
   ];
 }
 
@@ -97,7 +97,7 @@ export default function AddShipment(props) {
         >
           <div className={classes.root}>
             <Hidden smDown>
-              <Stepper activeStep={activeStep} nonLinear>
+              <Stepper activeStep={activeStep}>
                 {steps.map((label) => (
                   <Step key={label}>
                     <StepLabel>{label}</StepLabel>

@@ -17,6 +17,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Select from "@material-ui/core/Select";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormGroup from "@material-ui/core/FormGroup";
 import { useInput } from "../../../hooks/useInput";
 import Loader from "../../../components/Loader/Loader";
 import { dispatch } from "../../../redux/store";
@@ -25,6 +28,7 @@ import {
   STATE_CHOICES,
   COUNTRY_CHOICES,
 } from "../../../utils/mock";
+import { routes } from "../../../routes/routesConstants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -73,13 +77,8 @@ function AddOriginInfo({
   loaded,
   error,
   location,
-  custodianTypeList,
 }) {
   const editPage = location.state && location.state.type === "edit";
-  const shipmentFormData = location.state && location.state.shipmentFormData;
-  const formData = location.state && location.state.formData;
-  const setFormData = location.state && location.state.setFormData;
-  const contactData = editPage && location.state.contactData;
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
   const company = useInput("", {
@@ -106,15 +105,15 @@ function AddOriginInfo({
     required: true,
   });
   const address_2 = useInput("");
+  const [custodian_info_check, setCustodianInfoCheck] = useState(false);
   const [formError, setFormError] = useState({});
 
-  const buttonText = "Save & Close";
-  const formTitle = "Add Origin Info";
+  const buttonText = "Next: Add Shipper";
+  const formTitle = "Add Origin Info (1/3)";
   const closeModal = () => {
     toggleModal(false);
-    if (location && location.state) {
-      history.push(location.state.from);
-    }
+    if (location && location.state) history.push(location.state.from);
+    else history.push(`${routes.SHIPMENT}/add`);
   };
 
   /**
@@ -153,18 +152,18 @@ function AddOriginInfo({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (
-      !company.value ||
-      !custodianType.value ||
-      !address_1.value ||
-      !state.value ||
-      !country.value
-    )
+    if (!company.value || !address_1.value || !state.value || !country.value)
       return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
     return errorExists;
+  };
+
+  const onNextClick = (e) => {
+    history.push(`${routes.SHIPMENT}/add/shipper`, {
+      from: `${routes.SHIPMENT}/add/origin`,
+    });
   };
 
   const theme = useTheme();
@@ -182,6 +181,19 @@ function AddOriginInfo({
         >
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
+              <Grid item item xs={12} md={6} sm={6}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={custodian_info_check}
+                      onChange={(e) => setCustodianInfoCheck(e.target.checked)}
+                      name="custodian_info"
+                      color="primary"
+                    />
+                  }
+                  label="Use My Custodian Info"
+                />
+              </Grid>
               <Grid item xs={12} md={6} sm={6}>
                 <TextField
                   variant="outlined"
@@ -189,7 +201,7 @@ function AddOriginInfo({
                   required
                   fullWidth
                   id="company"
-                  label="Company Name"
+                  label="Custodian Name"
                   name="company"
                   autoComplete="company"
                   error={formError.company && formError.company.error}
@@ -198,18 +210,6 @@ function AddOriginInfo({
                   }
                   onBlur={(e) => handleBlur(e, "required", company)}
                   {...company.bind}
-                />
-              </Grid>
-              <Grid item item xs={12} md={6} sm={6}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  id="alias"
-                  label="Alias"
-                  name="alias"
-                  autoComplete="alias"
-                  {...alias.bind}
                 />
               </Grid>
             </Grid>
@@ -229,7 +229,7 @@ function AddOriginInfo({
             </Grid>
             <Card variant="outlined" className={classes.addressContainer}>
               <CardContent>
-                <Typography variant="h6">Contact Info</Typography>
+                <Typography variant="h6">Ship From Location</Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
@@ -353,12 +353,25 @@ function AddOriginInfo({
 
             <Grid container spacing={isDesktop ? 3 : 0} justify="center">
               <Grid item xs={12} sm={4}>
+                <Button
+                  type="button"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={() => closeModal()}
+                  className={classes.submit}
+                >
+                  Cancel
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={4}>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type="submit"
+                    type="button"
                     fullWidth
                     variant="contained"
                     color="primary"
+                    onClick={(e) => onNextClick(e)}
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
                   >
@@ -372,18 +385,6 @@ function AddOriginInfo({
                   )}
                 </div>
               </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="button"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={() => closeModal()}
-                  className={classes.submit}
-                >
-                  Cancel
-                </Button>
-              </Grid>
             </Grid>
           </form>
         </Modal>
@@ -392,4 +393,9 @@ function AddOriginInfo({
   );
 }
 
-export default AddOriginInfo;
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.shipmentReducer,
+});
+
+export default connect(mapStateToProps)(AddOriginInfo);

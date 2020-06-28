@@ -39,6 +39,7 @@ function CustodianInfo(props) {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.shipmentReducer,
+  ...state.custodianReducer,
 });
 
 export default connect(mapStateToProps)(CustodianInfo);
