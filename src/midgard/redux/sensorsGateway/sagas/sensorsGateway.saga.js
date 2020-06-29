@@ -123,7 +123,7 @@ function* deleteGatewayItem(payload) {
 }
 
 function* editGateWayItem(action) {
-  let { payload, history } = action;
+  let { payload, history, redirectTo } = action;
   try {
     let data = yield call(
       httpService.makeRequest,
@@ -141,7 +141,7 @@ function* editGateWayItem(action) {
           message: "Gateway successfully Edited!",
         })
       ),
-      yield call(history.push, routes.SENSORS_GATEWAY),
+      yield call(history.push, redirectTo),
     ];
   } catch (error) {
     yield [
@@ -179,7 +179,7 @@ function* addGateway(action) {
         })
       ),
       yield put(getGateways()),
-      yield call(history.push, routes.SENSORS_GATEWAY),
+      yield call(history.push, redirectTo),
     ];
   } catch (error) {
     console.log("error", error);

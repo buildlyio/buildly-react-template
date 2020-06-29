@@ -52,6 +52,7 @@ export const addCustodians = (payload, history, redirectTo) => ({
  *
  * @param {Object} payload
  * @param {Object} history
+ * @param {String} redirectTo path to redirect
  */
 export const editCustodian = (payload, history, redirectTo) => ({
   type: EDIT_CUSTODIANS,
@@ -61,7 +62,7 @@ export const editCustodian = (payload, history, redirectTo) => ({
 });
 
 /**
- *Selete Custodain entity
+ *Delete Custodain entity
  * @param {{id}} payload
  */
 export const deleteCustodian = (custodianId, contactObjId) => ({

@@ -7,7 +7,6 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Modal from "../../../components/Modal/Modal";
 import ShipmentInfo from "../components/ShipmentInfo";
-import CustodianInfo from "../components/CustodianInfo";
 import { Hidden, Grid } from "@material-ui/core";
 import MobileStepper from "@material-ui/core/MobileStepper";
 import { dispatch } from "../../../redux/store";
@@ -15,6 +14,8 @@ import ViewDetailsWrapper from "../components/ViewDetailsWrapper";
 import Custodians from "../../Custodians/Custodians";
 import Items from "../../Items/Items";
 import { routes } from "../../../routes/routesConstants";
+import SensorsGateway from "../../SensorsGateway/SensorsGateway";
+import ShipmentOverview from "../components/ShipmentOverview";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,15 +40,35 @@ function getSteps() {
   ];
 }
 
-const getStepContent = (stepIndex, props, handleNext, handleBack, maxSteps) => {
+const getStepContent = (
+  stepIndex,
+  props,
+  handleNext,
+  handleBack,
+  maxSteps,
+  handleSubmit,
+  handleSaveAndClose
+) => {
   switch (stepIndex) {
     case 0:
       return (
-        <ShipmentInfo
+        <ViewDetailsWrapper
           {...props}
           handleNext={handleNext}
           handleBack={handleBack}
-        />
+          handleSubmit={handleSubmit}
+          handleSaveAndClose={handleSaveAndClose}
+          nextButtonText={"Add Custodians"}
+          title={"Custodians"}
+          maxSteps={maxSteps}
+          activeStep={stepIndex}
+        >
+          <ShipmentInfo
+            {...props}
+            handleNext={handleNext}
+            handleBack={handleBack}
+          />
+        </ViewDetailsWrapper>
       );
     case 1:
       return (
@@ -62,7 +83,7 @@ const getStepContent = (stepIndex, props, handleNext, handleBack, maxSteps) => {
         >
           <Custodians
             noSearch={true}
-            history={history}
+            history={props.history}
             redirectTo={`${routes.SHIPMENT}/add`}
           />
         </ViewDetailsWrapper>
@@ -80,11 +101,44 @@ const getStepContent = (stepIndex, props, handleNext, handleBack, maxSteps) => {
         >
           <Items
             noSearch={true}
-            history={history}
+            history={props.history}
             redirectTo={`${routes.SHIPMENT}/add`}
           />
         </ViewDetailsWrapper>
       );
+    case 3:
+      return (
+        <ViewDetailsWrapper
+          {...props}
+          handleNext={handleNext}
+          handleBack={handleBack}
+          nextButtonText={"Shipment Overview"}
+          title={"Gateways & Sensors"}
+          maxSteps={maxSteps}
+          activeStep={stepIndex}
+        >
+          <SensorsGateway
+            noSearch={true}
+            history={props.history}
+            redirectTo={`${routes.SHIPMENT}/add`}
+          />
+        </ViewDetailsWrapper>
+      );
+    case 4:
+      return (
+        <ViewDetailsWrapper
+          {...props}
+          handleNext={handleNext}
+          handleBack={handleBack}
+          nextButtonText={"Save & Finish"}
+          title={"Shipment Overview"}
+          maxSteps={maxSteps}
+          activeStep={stepIndex}
+        >
+          <ShipmentOverview {...props} />
+        </ViewDetailsWrapper>
+      );
+
     default:
       return "Unknown stepIndex";
   }
@@ -112,6 +166,10 @@ export default function AddShipment(props) {
       history.push(location.state.from);
     }
   };
+
+  const handleSubmit = () => {};
+
+  const handleSaveAndClose = () => {};
 
   return (
     <div>
@@ -158,7 +216,9 @@ export default function AddShipment(props) {
                   props,
                   handleNext,
                   handleBack,
-                  maxSteps
+                  maxSteps,
+                  handleSubmit,
+                  handleSaveAndClose
                 )}
               </div>
             </div>

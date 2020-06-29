@@ -24,6 +24,11 @@ import {
   getContact,
 } from "../../redux/custodian/actions/custodian.actions";
 import { getItems, getItemType } from "../../redux/items/actions/items.actions";
+import {
+  getGateways,
+  getGatewayType,
+} from "../../redux/sensorsGateway/actions/sensorsGateway.actions";
+import { MAP_API_URL } from "../../utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -64,8 +69,14 @@ const ShowAlerts = (props) => {
 };
 
 function Shipment(props) {
-  const { shipmentData, history, custodianData, dispatch, itemData } = props;
-  console.log("props", props);
+  const {
+    shipmentData,
+    history,
+    custodianData,
+    dispatch,
+    itemData,
+    gatewayData,
+  } = props;
   const classes = useStyles();
   let rows = shipmentData || shipmentMock;
   let alerts = showAlert(rows);
@@ -79,6 +90,10 @@ function Shipment(props) {
     if (itemData === null) {
       dispatch(getItems());
       dispatch(getItemType());
+    }
+    if (gatewayData === null) {
+      dispatch(getGateways());
+      dispatch(getGatewayType());
     }
   }, []);
 
@@ -119,7 +134,7 @@ function Shipment(props) {
         <Grid item xs={12} sm={6}>
           <MapComponent
             isMarkerShown
-            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOxE87ZNM_xe5X1BH1KYwUo9S4Qs1BV5w&v=3.exp&libraries=geometry,drawing,places"
+            googleMapURL={MAP_API_URL}
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `500px` }} />}
             mapElement={<div style={{ height: `100%` }} />}
@@ -146,6 +161,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.shipmentReducer,
   ...state.custodianReducer,
   ...state.itemsReducer,
+  ...state.sensorsGatewayReducer,
 });
 
 export default connect(mapStateToProps)(Shipment);

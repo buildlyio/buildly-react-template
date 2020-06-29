@@ -77,15 +77,7 @@ function AddDestinationInfo({
   const company = useInput("", {
     required: true,
   });
-  const alias = useInput("");
-  const custodianType = useInput("", {
-    required: true,
-  });
-  const consortium = useInput("");
   const glnNumber = useInput("");
-  const address = useInput("", {
-    required: true,
-  });
   const city = useInput("");
   const state = useInput("", {
     required: true,

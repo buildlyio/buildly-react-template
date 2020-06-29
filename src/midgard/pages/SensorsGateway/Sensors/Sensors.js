@@ -19,7 +19,16 @@ function Sensors(props) {
     loading,
     searchedData,
     gatewayTypeList,
+    redirectTo,
+    noSearch,
   } = props;
+  const addPath = redirectTo
+    ? `${redirectTo}/sensors`
+    : `${routes.SENSORS_GATEWAY}/sensor/add`;
+
+  const editPath = redirectTo
+    ? `${redirectTo}/sensors`
+    : `${routes.SENSORS_GATEWAY}/sensor/edit`;
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteGatewayId, setDeleteGatewayId] = useState("");
   const [searchValue, setSearchValue] = useState("");
@@ -32,14 +41,14 @@ function Sensors(props) {
   }
 
   useEffect(() => {
-    dispatch(getGateways());
-    dispatch(getGatewayType());
+    // dispatch(getGateways());
+    // dispatch(getGatewayType());
   }, []);
 
   const editGateway = (item) => {
-    history.push(`${routes.ITEMS}/sensor/edit/:${item.id}`, {
+    history.push(`${editPath}/:${item.id}`, {
       type: "edit",
-      from: routes.SENSORS_GATEWAY,
+      from: redirectTo || routes.SENSORS_GATEWAY,
       data: item,
     });
   };
@@ -56,8 +65,8 @@ function Sensors(props) {
     // dispatch(searchItem(e.target.value, rows));
   };
   const onAddButtonClick = () => {
-    history.push(`${routes.SENSORS_GATEWAY}/sensor/add`, {
-      from: routes.SENSORS_GATEWAY,
+    history.push(`${addPath}`, {
+      from: redirectTo || routes.SENSORS_GATEWAY,
     });
   };
   return (
@@ -69,22 +78,17 @@ function Sensors(props) {
       editAction={editGateway}
       deleteAction={deleteGateway}
       columns={sensorsColumns}
+      redirectTo={redirectTo}
       rows={rows}
-      hasSearch={true}
+      hasSearch={noSearch ? false : true}
       search={{ searchValue, searchAction: searchTable }}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
       confirmModalTitle={"Delete Sensor"}
     >
-      <Route
-        path={`${routes.SENSORS_GATEWAY}/sensor/add`}
-        component={AddSensors}
-      />
-      <Route
-        path={`${routes.SENSORS_GATEWAY}/sensor/edit/:id`}
-        component={AddSensors}
-      />
+      <Route path={`${addPath}`} component={AddSensors} />
+      <Route path={`${editPath}/:id`} component={AddSensors} />
     </DashboardWrapper>
   );
 }

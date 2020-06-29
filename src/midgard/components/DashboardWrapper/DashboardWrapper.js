@@ -66,7 +66,7 @@ function DashboardWrapper(props) {
         </Box>
         {!redirectTo && (
           <Typography className={classes.dashboardHeading} variant={"h4"}>
-            Custodians
+            {dashboardHeading}
           </Typography>
         )}
         <Grid container spacing={2}>

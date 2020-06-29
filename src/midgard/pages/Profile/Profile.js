@@ -10,7 +10,7 @@ import ViewCompactIcon from "@material-ui/icons/ViewCompact";
 import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import { MapComponent } from "../../components/MapComponent/MapComponent";
-import { numberWithCommas } from "../../utils/utilMethods";
+import { numberWithCommas, MAP_API_URL } from "../../utils/utilMethods";
 import { RECALL_DATA, DELAY_DATA } from "../../utils/mock";
 
 const recallColumns = [
@@ -187,7 +187,7 @@ function Profile({ dispatch, history, location }) {
             </div>
             <MapComponent
               isMarkerShown
-              googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOxE87ZNM_xe5X1BH1KYwUo9S4Qs1BV5w&v=3.exp&libraries=geometry,drawing,places"
+              googleMapURL={MAP_API_URL}
               loadingElement={<div style={{ height: `100%` }} />}
               containerElement={<div style={{ height: `500px` }} />}
               mapElement={<div style={{ height: `100%` }} />}

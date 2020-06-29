@@ -33,21 +33,25 @@ export const getItems = () => ({ type: GET_ITEMS });
  *Add Item
  * @param {Object} payload
  * @param {Object} history
+ * @param {String} redirectTo
  */
-export const addItem = (payload, history) => ({
+export const addItem = (payload, history, redirectTo) => ({
   type: ADD_ITEMS,
   payload,
   history,
+  redirectTo,
 });
 /**
  *
  * @param {Object} payload
  * @param {Object} history
+ * @param {String} redirectTo
  */
-export const editItem = (payload, history) => ({
+export const editItem = (payload, history, redirectTo) => ({
   type: EDIT_ITEMS,
   payload,
   history,
+  redirectTo,
 });
 
 /**

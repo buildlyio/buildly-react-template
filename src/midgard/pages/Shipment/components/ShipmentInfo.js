@@ -14,9 +14,13 @@ import {
   ListItemText,
   Typography,
   Box,
+  MenuItem,
 } from "@material-ui/core";
 import { MapComponent } from "../../../components/MapComponent/MapComponent";
 import { routes } from "../../../routes/routesConstants";
+import { MAP_API_URL } from "../../../utils/utilMethods";
+import { useInput } from "../../../hooks/useInput";
+import { SHIPMENT_STATUS } from "../../../utils/mock";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,6 +66,12 @@ function ShipmentInfo(props) {
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   const classes = useStyles();
+  const shipment_id = useInput("");
+  const lading_bill = useInput("");
+  const load_no = useInput("");
+  const shipment_status = useInput("");
+  const route_desc = useInput("");
+  const route_dist = useInput("");
   return (
     <React.Fragment>
       <div>
@@ -79,38 +89,38 @@ function ShipmentInfo(props) {
                     <TextField
                       variant="outlined"
                       margin="normal"
-                      required
+                      disabled
                       fullWidth
-                      id="item_name"
-                      label="Item Name"
-                      name="item_name"
-                      autoComplete="item_name"
+                      id="shipment_id"
+                      label="Shipment Id"
+                      name="shipment_id"
+                      autoComplete="shipment_id"
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
+                      fullWidth
+                      id="lading_bill"
+                      label="Bill of Lading"
+                      name="lading_bill"
+                      autoComplete="lading_bill"
+                      {...lading_bill.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
                       multiline
                       rows={4}
-                      required
-                      fullWidth
-                      id="item_name"
-                      label="Item Name"
-                      name="item_name"
-                      autoComplete="item_name"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      required
-                      fullWidth
-                      id="item_name"
-                      label="Item Name"
-                      name="item_name"
-                      autoComplete="item_name"
+                      id="route_desc"
+                      label="Route Description"
+                      name="route_desc"
+                      autoComplete="route_desc"
+                      {...route_desc.bind}
                     />
                   </Grid>
                 </Grid>
@@ -121,18 +131,26 @@ function ShipmentInfo(props) {
                     <TextField
                       variant="outlined"
                       margin="normal"
-                      required
                       fullWidth
-                      id="item_name"
-                      label="Item Name"
-                      name="item_name"
-                      autoComplete="item_name"
-                    />
+                      id="shipment_status"
+                      name="shipment_status"
+                      select
+                      label="Shipment Status"
+                      {...shipment_status.bind}
+                    >
+                      <MenuItem value={""}>Select</MenuItem>
+                      {SHIPMENT_STATUS &&
+                        SHIPMENT_STATUS.map((item, index) => (
+                          <MenuItem key={`${item}`} value={item}>
+                            {item}
+                          </MenuItem>
+                        ))}
+                    </TextField>
                   </Grid>
                   <Grid item xs={12}>
                     <MapComponent
                       isMarkerShown
-                      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOxE87ZNM_xe5X1BH1KYwUo9S4Qs1BV5w&v=3.exp&libraries=geometry,drawing,places"
+                      googleMapURL={MAP_API_URL}
                       loadingElement={<div style={{ height: `100%` }} />}
                       containerElement={<div style={{ height: `200px` }} />}
                       mapElement={<div style={{ height: `100%` }} />}
@@ -153,19 +171,19 @@ function ShipmentInfo(props) {
                       <ListItem>
                         <ListItemText
                           primary="Origin Company"
-                          secondary="Jan 9, 2014"
+                          secondary={shipmentFormData.originInfo.company_name}
                         />
                       </ListItem>
                       <ListItem>
                         <ListItemText
                           primary="Address"
-                          secondary="Jan 9, 2014"
+                          secondary={shipmentFormData.originInfo.address}
                         />
                       </ListItem>
                       <ListItem>
                         <ListItemText
                           primary="ETA Data/Time"
-                          secondary="Jan 9, 2014"
+                          secondary={shipmentFormData.originInfo.eta}
                         />
                       </ListItem>
                     </List>
@@ -203,20 +221,20 @@ function ShipmentInfo(props) {
                     <List>
                       <ListItem>
                         <ListItemText
-                          primary="Origin Company"
-                          secondary="Jan 9, 2014"
+                          primary="Shipping Company"
+                          secondary={shipmentFormData.shipperInfo.company_name}
                         />
                       </ListItem>
                       <ListItem>
                         <ListItemText
                           primary="Address"
-                          secondary="Jan 9, 2014"
+                          secondary={shipmentFormData.shipperInfo.address}
                         />
                       </ListItem>
                       <ListItem>
                         <ListItemText
-                          primary="ETA Data/Time"
-                          secondary="Jan 9, 2014"
+                          primary="Mode Type"
+                          secondary={shipmentFormData.shipperInfo.mode_type}
                         />
                       </ListItem>
                     </List>
@@ -254,20 +272,22 @@ function ShipmentInfo(props) {
                     <List>
                       <ListItem>
                         <ListItemText
-                          primary="Origin Company"
-                          secondary="Jan 9, 2014"
+                          primary="Destination Company"
+                          secondary={
+                            shipmentFormData.destinationInfo.company_name
+                          }
                         />
                       </ListItem>
                       <ListItem>
                         <ListItemText
                           primary="Address"
-                          secondary="Jan 9, 2014"
+                          secondary={shipmentFormData.destinationInfo.address}
                         />
                       </ListItem>
                       <ListItem>
                         <ListItemText
                           primary="ETA Data/Time"
-                          secondary="Jan 9, 2014"
+                          secondary={shipmentFormData.destinationInfo.eta}
                         />
                       </ListItem>
                     </List>
@@ -300,42 +320,6 @@ function ShipmentInfo(props) {
           </Grid>
         </form>
       </div>
-
-      <Grid container spacing={3} className={classes.buttonContainer}>
-        <Grid item xs={6} sm={2}>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={() => handleSaveAndClose()}
-            className={classes.submit}
-          >
-            {`Save & Close`}
-          </Button>
-        </Grid>
-        <Grid item xs={6} sm={2}>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={() => history.push(`${routes.SHIPMENT}`)}
-            className={classes.submit}
-          >
-            {`Cancel`}
-          </Button>
-        </Grid>
-        <Grid item xs={12} sm={4} className={classes.alignRight}>
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleNext}
-            className={classes.submit}
-          >
-            Next: Add Custodian
-          </Button>
-        </Grid>
-      </Grid>
     </React.Fragment>
   );
 }

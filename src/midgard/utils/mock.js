@@ -144,6 +144,8 @@ export const ADDRESS_TYPE = [
   "mailing",
 ];
 
+export const SHIPMENT_STATUS = ["Planned", "Enroute", "Cancelled", "Completed"];
+
 export const associatedGatewayMock = [
   { id: 1, uuid: "GT123456", name: "Gateway 1" },
   { id: 1, uuid: "GT123457", name: "Gateway 2" },

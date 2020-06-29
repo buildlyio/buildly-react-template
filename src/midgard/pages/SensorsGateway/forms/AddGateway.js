@@ -67,6 +67,7 @@ function AddGateway({
   location,
   gatewayTypeList,
 }) {
+  const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === "edit";
   const editData =
     (location.state && location.state.type === "edit" && location.state.data) ||
@@ -96,7 +97,7 @@ function AddGateway({
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
-      history.push(location.state.from);
+      history.push(redirectTo);
     }
   };
 
@@ -120,9 +121,9 @@ function AddGateway({
       last_known_battery_level: battery_level.value,
     };
     if (editPage) {
-      dispatch(editGateway(gatewayFormValues, history));
+      dispatch(editGateway(gatewayFormValues, history, redirectTo));
     } else {
-      dispatch(addGateway(gatewayFormValues, history));
+      dispatch(addGateway(gatewayFormValues, history, redirectTo));
     }
   };
 

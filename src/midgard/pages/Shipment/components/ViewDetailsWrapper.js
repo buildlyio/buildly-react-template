@@ -45,13 +45,14 @@ function ViewDetailsWrapper(props) {
     title,
     maxSteps,
     activeStep,
+    handleSubmit,
   } = props;
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   const classes = useStyles();
   return (
     <React.Fragment>
-      {!isDesktop && (
+      {!isDesktop && activeStep !== 0 && (
         <Box mb={5}>
           <Grid container spacing={2}>
             <Grid item xs={8}>
@@ -98,26 +99,35 @@ function ViewDetailsWrapper(props) {
             {"Cancel"}
           </Button>
         </Grid>
-        <Grid item xs={12} sm={4} className={classes.alignRight}>
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleNext}
-            className={classes.submit}
-          >
-            {`Next: ${nextButtonText}`}
-          </Button>
-        </Grid>
+        {activeStep === maxSteps - 1 && (
+          <Grid item xs={12} sm={4} className={classes.alignRight}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleSubmit}
+              className={classes.submit}
+            >
+              {`Save & Finish`}
+            </Button>
+          </Grid>
+        )}
+        {activeStep < maxSteps - 1 && (
+          <Grid item xs={12} sm={4} className={classes.alignRight}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleNext}
+              className={classes.submit}
+            >
+              {`Next: ${nextButtonText}`}
+            </Button>
+          </Grid>
+        )}
       </Grid>
     </React.Fragment>
   );
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.shipmentReducer,
-  ...state.custodianReducer,
-});
-
-export default connect(mapStateToProps)(ViewDetailsWrapper);
+export default ViewDetailsWrapper;

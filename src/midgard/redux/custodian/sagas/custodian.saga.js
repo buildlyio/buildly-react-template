@@ -105,7 +105,7 @@ function* deleteCustodian(payload) {
     yield call(
       httpService.makeRequest,
       "delete",
-      `${custodainEnvironment.API_URL}contact/${contactObjId}/`,
+      `${environment.API_URL}custodian/contact/${contactObjId}/`,
       null,
       true
     );
