@@ -34,7 +34,7 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         error: null,
-        shipmentFormData: action.formDara,
+        shipmentFormData: action.formData,
       };
     case GET_SHIPMENTS:
       return {

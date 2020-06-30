@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -29,6 +29,12 @@ import {
   getGatewayType,
 } from "../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import { MAP_API_URL } from "../../utils/utilMethods";
+import {
+  getShipmentDetails,
+  saveShipmentFormData,
+  deleteShipment,
+} from "../../redux/shipment/actions/shipment.actions";
+import ConfirmModal from "../../components/Modal/ConfirmModal";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -78,10 +84,15 @@ function Shipment(props) {
     gatewayData,
   } = props;
   const classes = useStyles();
+  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [deleteItemId, setDeleteItemId] = useState("");
   let rows = shipmentData || shipmentMock;
   let alerts = showAlert(rows);
 
   useEffect(() => {
+    if (shipmentData === null) {
+      dispatch(getShipmentDetails());
+    }
     if (custodianData === null) {
       dispatch(getCustodians());
       dispatch(getCustodianType());
@@ -102,6 +113,25 @@ function Shipment(props) {
       from: routes.SHIPMENT,
     });
   };
+
+  const handleEdit = (item) => {
+    dispatch(saveShipmentFormData(item));
+    history.push(`${routes.SHIPMENT}/edit/:${item.id}`, {
+      type: "edit",
+      data: item,
+      from: routes.SHIPMENT,
+    });
+  };
+  const handleDelete = (item) => {
+    setDeleteItemId(item.id);
+    setConfirmModal(true);
+  };
+
+  const handleConfirmModal = () => {
+    dispatch(deleteShipment(deleteItemId));
+    setConfirmModal(false);
+  };
+
   return (
     <Box mt={5} mb={5}>
       {/* {alerts.length > 0 && <ShowAlerts alertData={alerts} />} */}
@@ -123,10 +153,12 @@ function Shipment(props) {
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <ShipmentList
-            rows={shipmentMock}
+            rows={shipmentData || shipmentMock}
             columns={SHIPMENT_COLUMNS}
             hasSearch={true}
             searchValue={""}
+            editAction={handleEdit}
+            deleteAction={handleDelete}
             searchAction={() => {}}
             hasSort={true}
           />
@@ -152,6 +184,13 @@ function Shipment(props) {
         component={AddDestinationInfo}
       />
       <Route path={`${routes.SHIPMENT}/edit/:id`} component={AddShipment} />
+      <ConfirmModal
+        open={openConfirmModal}
+        setOpen={setConfirmModal}
+        submitAction={handleConfirmModal}
+        title={"Are You sure you want to Delete this Shipment?"}
+        submitText={"Delete"}
+      />
     </Box>
   );
 }

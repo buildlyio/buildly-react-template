@@ -35,18 +35,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ViewDetailsWrapper(props) {
-  const {
-    handleBack,
-    handleNext,
-    history,
-    handleSaveAndClose,
-    children,
-    nextButtonText,
-    title,
-    maxSteps,
-    activeStep,
-    handleSubmit,
-  } = props;
+  const { handleBack, children, title, maxSteps, activeStep } = props;
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   const classes = useStyles();
@@ -76,56 +65,6 @@ function ViewDetailsWrapper(props) {
         </Box>
       )}
       {children}
-      <Grid container spacing={3} className={classes.buttonContainer}>
-        <Grid item xs={6} sm={2}>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={handleSaveAndClose}
-            className={classes.submit}
-          >
-            {`Save & Close`}
-          </Button>
-        </Grid>
-        <Grid item xs={6} sm={2}>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={() => history.push(`${routes.SHIPMENT}`)}
-            className={classes.submit}
-          >
-            {"Cancel"}
-          </Button>
-        </Grid>
-        {activeStep === maxSteps - 1 && (
-          <Grid item xs={12} sm={4} className={classes.alignRight}>
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              onClick={handleSubmit}
-              className={classes.submit}
-            >
-              {`Save & Finish`}
-            </Button>
-          </Grid>
-        )}
-        {activeStep < maxSteps - 1 && (
-          <Grid item xs={12} sm={4} className={classes.alignRight}>
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              onClick={handleNext}
-              className={classes.submit}
-            >
-              {`Next: ${nextButtonText}`}
-            </Button>
-          </Grid>
-        )}
-      </Grid>
     </React.Fragment>
   );
 }

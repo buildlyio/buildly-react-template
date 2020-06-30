@@ -20,17 +20,17 @@ export default function DatePickerComponent({
     <MuiPickersUtilsProvider utils={MomentUtils}>
       {hasTime ? (
         <DateTimePicker
-          disableFuture
           hideTabs
+          autoOk
           ampm={false}
           inputVariant="outlined"
           variant="inline"
-          format="yyyy/MM/DD HH:mm"
+          format="yyyy/MM/DD HH:mm:ss"
           value={selectedDate}
           onChange={(date) => handleDateChange(date)}
           allowKeyboardControl={false}
           fullWidth
-          helperText="Hardcoded helper text"
+          label={label}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -52,7 +52,6 @@ export default function DatePickerComponent({
           margin="normal"
           id="date-picker-inline"
           label={label}
-          disableFuture
           value={selectedDate}
           onChange={handleDateChange}
           KeyboardButtonProps={{

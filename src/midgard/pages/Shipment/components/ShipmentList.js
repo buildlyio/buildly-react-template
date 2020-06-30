@@ -75,6 +75,8 @@ export default function ShipmentList({ ...props }) {
     searchValue,
     searchAction,
     hasSort,
+    editAction,
+    deleteAction,
   } = props;
   const classes = useStyles();
   const [allCheck, setAllCheck] = useState(false);
@@ -158,11 +160,11 @@ export default function ShipmentList({ ...props }) {
                             <TableBody>
                               <TableRow>
                                 <TableCell
-                                  title={`Shipment#: ${row.id}`}
+                                  title={`Shipment#: ${row.shipment_uuid}`}
                                   className={classes.tableCell}
                                   colSpan={columns.length + 2}
                                 >
-                                  {`Shipment#: ${row.id}`}
+                                  {`Shipment#: ${row.shipment_uuid}`}
                                   <Divider />
                                 </TableCell>
                               </TableRow>
@@ -196,7 +198,7 @@ export default function ShipmentList({ ...props }) {
                                 <TableCell className={classes.tableCell}>
                                   <IconButton
                                     className={classes.menuButton}
-                                    onClick={() => {}}
+                                    onClick={() => editAction(row)}
                                     color="secondary"
                                     aria-label="menu"
                                   >
@@ -206,7 +208,7 @@ export default function ShipmentList({ ...props }) {
                                 <TableCell className={classes.tableCell}>
                                   <IconButton
                                     className={classes.menuButton}
-                                    onClick={() => {}}
+                                    onClick={() => deleteAction(row)}
                                     color="secondary"
                                     aria-label="menu"
                                   >

@@ -66,7 +66,7 @@ export const editShipment = (payload, history, redirectTo) => ({
  *Delete Shipment entity
  * @param {{id}} payload
  */
-export const deleteCustodian = (shipmentId) => ({
+export const deleteShipment = (shipmentId) => ({
   type: DELETE_SHIPMENT,
   shipmentId,
 });

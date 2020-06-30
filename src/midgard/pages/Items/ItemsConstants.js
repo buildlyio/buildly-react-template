@@ -24,7 +24,7 @@ export const itemColumns = [
   },
 ];
 
-export const getFormattedRow = (data, itemTypeList) => {
+export const getFormattedRow = (data, itemTypeList, associatedToShipment) => {
   if (data && itemTypeList) {
     let formattedData = [...data];
     formattedData.forEach((element) => {

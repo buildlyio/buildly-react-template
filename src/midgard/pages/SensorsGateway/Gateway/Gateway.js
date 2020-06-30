@@ -25,7 +25,6 @@ function Gateway(props) {
     redirectTo,
     noSearch,
   } = props;
-  console.log("data", data);
   const addPath = redirectTo
     ? `${redirectTo}/gateways`
     : `${routes.SENSORS_GATEWAY}/gateway/add`;

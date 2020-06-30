@@ -14,14 +14,23 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Select from "@material-ui/core/Select";
 import { useInput } from "../../../hooks/useInput";
 import Loader from "../../../components/Loader/Loader";
-import { Card, CardContent, Typography } from "@material-ui/core";
+import { Card, CardContent, Typography, Chip } from "@material-ui/core";
 import DatePickerComponent from "../../../components/DatePicker/DatePicker";
 import EnvironmentalLimitsForm from "./EnvironmentalLimitsForm";
 import { associatedGatewayMock } from "../../../utils/mock";
+import SearchModal from "../Sensors/SearchModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    marginTop: theme.spacing(8),
+    display: "flex",
+    justifyContent: "left",
+    flexWrap: "wrap",
+    listStyle: "none",
+    padding: theme.spacing(0.5),
+    margin: 0,
+  },
+  chip: {
+    margin: theme.spacing(0.5),
   },
   form: {
     width: "100%",
@@ -64,6 +73,8 @@ function AddSensor({
   error,
   location,
   sensorTypeList,
+  gatewayData,
+  data,
 }) {
   const editPage = location.state && location.state.type === "edit";
   const editData =
@@ -71,19 +82,10 @@ function AddSensor({
     {};
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
-  const [min_temp_val, changeMinTempVal] = useState(0);
-  const [max_temp_val, changeMaxTempVal] = useState(100);
-  const [minMaxTempValue, setMinMaxTempValue] = useState([0, 35, 75, 100]);
-  const [low_temp_val, changeLowTempVal] = useState(0);
-  const [high_temp_val, changeHighTempVal] = useState(100);
 
-  const [min_humid_val, changeMinHumidVal] = useState(0);
-  const [max_humid_val, changeMaxHumidVal] = useState(100);
-  const [minMaxHumidValue, setMinMaxHumidValue] = useState([0, 35, 75, 100]);
-  const [low_humid_val, changeLowHumidVal] = useState(0);
-  const [high_humid_val, changeHighHumidVal] = useState(100);
-
-  const sensor_name = useInput(editData.name || "");
+  const sensor_name = useInput(editData.name || "", {
+    required: true,
+  });
   const sensor_type = useInput(editData.sensor_type || "", {
     required: true,
   });
@@ -104,8 +106,8 @@ function AddSensor({
   const [environmentalModal, toggleEnvironmentalModal] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
-  const buttonText = editPage ? "save" : "add Sensor";
-  const formTitle = editPage ? "Edit Sensor(1/2)" : "Add Sensor(1/2)";
+  const buttonText = editPage ? "Save" : "Add Sensor";
+  const formTitle = editPage ? "Edit Sensor" : "Add Sensor";
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
@@ -164,7 +166,8 @@ function AddSensor({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!sensor_type.value) return true;
+    if (!sensor_type.value || !sensor_name || associatedGateway.length === 0)
+      return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -173,6 +176,12 @@ function AddSensor({
 
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const handleDelete = (chipToDelete) => () => {
+    setAccociatedGateway((chips) =>
+      chips.filter((chip) => chip.gateway_uuid !== chipToDelete.gateway_uuid)
+    );
+  };
 
   return (
     <div>
@@ -191,10 +200,16 @@ function AddSensor({
                   variant="outlined"
                   margin="normal"
                   fullWidth
+                  required
                   id="sensor_name"
                   label="Alias"
                   name="sensor_name"
                   autoComplete="sensor_name"
+                  error={formError.sensor_name && formError.sensor_name.error}
+                  helperText={
+                    formError.sensor_name ? formError.sensor_name.message : ""
+                  }
+                  onBlur={(e) => handleBlur(e, "required", sensor_name)}
                   {...sensor_name.bind}
                 />
               </Grid>
@@ -314,6 +329,35 @@ function AddSensor({
                 </Grid>
               </CardContent>
             </Card>
+            <Grid item xs={6} sm={4}>
+              <Button
+                type="button"
+                fullWidth
+                variant="contained"
+                color="secondary"
+                onClick={() => setSearchModalOpen(true)}
+                className={classes.submit}
+              >
+                Associate to Gateway
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              {associatedGateway.length > 0 && (
+                <ul className={classes.root}>
+                  {associatedGateway.map((data) => {
+                    return (
+                      <li key={data.gateway_uuid}>
+                        <Chip
+                          label={`${data.name}:${data.gateway_uuid}`}
+                          onDelete={handleDelete(data)}
+                          className={classes.chip}
+                        />
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </Grid>
 
             <Grid container spacing={2} justify="center">
               <Grid item xs={6} sm={4}>
@@ -331,14 +375,14 @@ function AddSensor({
               <Grid item xs={6} sm={4}>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    onClick={() => toggleEnvironmentalModal(true)}
+                    type="submit"
                     fullWidth
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    // disabled={loading || submitDisabled()}
+                    disabled={loading || submitDisabled()}
                   >
-                    Next
+                    {buttonText}
                   </Button>
                   {loading && (
                     <CircularProgress
@@ -349,46 +393,20 @@ function AddSensor({
                 </div>
               </Grid>
             </Grid>
-            {environmentalModal && (
-              <Modal
-                open={environmentalModal}
-                setOpen={toggleEnvironmentalModal}
-                title={"Set Environmental Limits(2/2)"}
-                titleClass={classes.formTitle}
-                maxWidth={"md"}
-              >
-                <EnvironmentalLimitsForm
-                  closeModal={toggleEnvironmentalModal}
-                  parentClasses={classes}
-                  isSubmitDisabled={loading || submitDisabled()}
-                  min_temp_val={min_temp_val}
-                  max_temp_val={max_temp_val}
-                  changeMinTempVal={changeMinTempVal}
-                  changeMaxTempVal={changeMaxTempVal}
-                  minMaxTempValue={minMaxTempValue}
-                  setMinMaxTempValue={setMinMaxTempValue}
-                  low_temp_val={low_temp_val}
-                  high_temp_val={high_temp_val}
-                  changeLowTempVal={changeLowTempVal}
-                  changeHighTempVal={changeHighTempVal}
-                  searchModalOpen={searchModalOpen}
-                  setSearchModalOpen={setSearchModalOpen}
-                  associatedGateway={associatedGateway}
-                  setAccociatedGateway={setAccociatedGateway}
-                  min_humid_val={min_humid_val}
-                  changeMinHumidVal={changeMinHumidVal}
-                  max_humid_val={max_humid_val}
-                  changeMaxHumidVal={changeMaxHumidVal}
-                  minMaxHumidValue={minMaxHumidValue}
-                  setMinMaxHumidValue={setMinMaxHumidValue}
-                  low_humid_val={low_humid_val}
-                  changeLowHumidVal={changeLowHumidVal}
-                  high_humid_val={high_humid_val}
-                  changeHighHumidVal={changeHighHumidVal}
-                />
-              </Modal>
-            )}
           </form>
+          {searchModalOpen && (
+            <SearchModal
+              open={searchModalOpen}
+              setOpen={setSearchModalOpen}
+              title={"Associate Gateway UUID"}
+              submitText={"Save"}
+              submitAction={setAccociatedGateway}
+              selectedList={associatedGateway}
+              listOfItems={gatewayData}
+              searchFieldLabel={"Select Gateway UUID"}
+              searchFieldPlaceHolder={"Select the Value"}
+            />
+          )}
         </Modal>
       )}
     </div>

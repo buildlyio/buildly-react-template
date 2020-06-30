@@ -46,15 +46,15 @@ export default function SearchModal({
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent className={classes.root}>
         <Autocomplete
-          multiple
           id="tags-outlined"
           options={listOfItems}
-          getOptionLabel={(option) => option && option.uuid}
-          filterSelectedOptions
+          getOptionLabel={(option) =>
+            option && `${option.name}:${option.gateway_uuid}`
+          }
           onChange={(event, newValue) => {
             setList(newValue);
           }}
-          defaultValue={selectedList}
+          defaultValue={selectedList[0] || null}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -71,7 +71,8 @@ export default function SearchModal({
         </Button>
         <Button
           onClick={() => {
-            submitAction(list);
+            console.log("list", list);
+            submitAction([list]);
             setOpen(false);
           }}
           color="primary"

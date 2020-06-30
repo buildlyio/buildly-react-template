@@ -16,6 +16,11 @@ import Items from "../../Items/Items";
 import { routes } from "../../../routes/routesConstants";
 import SensorsGateway from "../../SensorsGateway/SensorsGateway";
 import ShipmentOverview from "../components/ShipmentOverview";
+import ItemsInfo from "../components/ItemInfo";
+import { saveShipmentFormData } from "../../../redux/shipment/actions/shipment.actions";
+import { connect } from "react-redux";
+import SensorsGatewayInfo from "../components/Sensors&GatewayInfo";
+import EnvironmentalLimitsInfo from "../components/EnvironmentalLimitsInfo";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,10 +38,11 @@ const useStyles = makeStyles((theme) => ({
 function getSteps() {
   return [
     "Shipment Details",
-    "Custodians",
     "Items",
+    "Custodians",
     "Sensors & Gateways",
-    "Shipment Overview",
+    // "Shipment Overview",
+    "Environmental Limits",
   ];
 }
 
@@ -46,27 +52,25 @@ const getStepContent = (
   handleNext,
   handleBack,
   maxSteps,
-  handleSubmit,
-  handleSaveAndClose
+  handleCancel
 ) => {
   switch (stepIndex) {
     case 0:
       return (
         <ViewDetailsWrapper
           {...props}
-          handleNext={handleNext}
           handleBack={handleBack}
-          handleSubmit={handleSubmit}
-          handleSaveAndClose={handleSaveAndClose}
-          nextButtonText={"Add Custodians"}
-          title={"Custodians"}
+          title={"Shipment Details"}
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
           <ShipmentInfo
             {...props}
+            location={props.location}
             handleNext={handleNext}
             handleBack={handleBack}
+            handleCancel={handleCancel}
+            redirectTo={`${routes.SHIPMENT}`}
           />
         </ViewDetailsWrapper>
       );
@@ -74,9 +78,25 @@ const getStepContent = (
       return (
         <ViewDetailsWrapper
           {...props}
-          handleNext={handleNext}
           handleBack={handleBack}
-          nextButtonText={"Add Items"}
+          title={"Items"}
+          maxSteps={maxSteps}
+          activeStep={stepIndex}
+        >
+          <ItemsInfo
+            {...props}
+            history={props.history}
+            redirectTo={`${routes.SHIPMENT}/add`}
+            handleNext={handleNext}
+            handleCancel={handleCancel}
+          />
+        </ViewDetailsWrapper>
+      );
+    case 2:
+      return (
+        <ViewDetailsWrapper
+          {...props}
+          handleBack={handleBack}
           title={"Custodians"}
           maxSteps={maxSteps}
           activeStep={stepIndex}
@@ -88,39 +108,22 @@ const getStepContent = (
           />
         </ViewDetailsWrapper>
       );
-    case 2:
-      return (
-        <ViewDetailsWrapper
-          {...props}
-          handleNext={handleNext}
-          handleBack={handleBack}
-          nextButtonText={"Add Sensors & Gateways"}
-          title={"Items"}
-          maxSteps={maxSteps}
-          activeStep={stepIndex}
-        >
-          <Items
-            noSearch={true}
-            history={props.history}
-            redirectTo={`${routes.SHIPMENT}/add`}
-          />
-        </ViewDetailsWrapper>
-      );
+
     case 3:
       return (
         <ViewDetailsWrapper
           {...props}
-          handleNext={handleNext}
           handleBack={handleBack}
-          nextButtonText={"Shipment Overview"}
-          title={"Gateways & Sensors"}
+          title={"Items"}
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
-          <SensorsGateway
-            noSearch={true}
+          <SensorsGatewayInfo
+            {...props}
             history={props.history}
             redirectTo={`${routes.SHIPMENT}/add`}
+            handleNext={handleNext}
+            handleCancel={handleCancel}
           />
         </ViewDetailsWrapper>
       );
@@ -128,23 +131,41 @@ const getStepContent = (
       return (
         <ViewDetailsWrapper
           {...props}
-          handleNext={handleNext}
           handleBack={handleBack}
-          nextButtonText={"Save & Finish"}
-          title={"Shipment Overview"}
+          title={"Items"}
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
-          <ShipmentOverview {...props} />
+          <EnvironmentalLimitsInfo
+            {...props}
+            history={props.history}
+            redirectTo={`${routes.SHIPMENT}/add`}
+            handleNext={handleNext}
+            handleCancel={handleCancel}
+          />
         </ViewDetailsWrapper>
       );
+    // case 4:
+    //   return (
+    //     <ViewDetailsWrapper
+    //       {...props}
+    //       handleNext={handleNext}
+    //       handleBack={handleBack}
+    //       nextButtonText={"Save & Finish"}
+    //       title={"Shipment Overview"}
+    //       maxSteps={maxSteps}
+    //       activeStep={stepIndex}
+    //     >
+    //       <ShipmentOverview {...props} />
+    //     </ViewDetailsWrapper>
+    //   );
 
     default:
       return "Unknown stepIndex";
   }
 };
 
-export default function AddShipment(props) {
+function AddShipment(props) {
   const { location, history, shipmentFormData, dispatch } = props;
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -160,16 +181,24 @@ export default function AddShipment(props) {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  const handleStep = (step) => () => {
+    if (shipmentFormData !== null) {
+      setActiveStep(step);
+    }
+  };
+
   const closeModal = () => {
     toggleModal(false);
+    dispatch(saveShipmentFormData(null));
     if (location && location.state) {
       history.push(location.state.from);
     }
   };
 
-  const handleSubmit = () => {};
-
-  const handleSaveAndClose = () => {};
+  const handleCancel = () => {
+    dispatch(saveShipmentFormData(null));
+    history.push(`${routes.SHIPMENT}`);
+  };
 
   return (
     <div>
@@ -199,8 +228,8 @@ export default function AddShipment(props) {
                 )}
                 <Grid item sm={10}>
                   <Stepper activeStep={activeStep} alternativeLabel nonLinear>
-                    {steps.map((label) => (
-                      <Step key={label}>
+                    {steps.map((label, index) => (
+                      <Step key={label} onClick={handleStep(index)}>
                         <StepLabel>{label}</StepLabel>
                       </Step>
                     ))}
@@ -217,8 +246,7 @@ export default function AddShipment(props) {
                   handleNext,
                   handleBack,
                   maxSteps,
-                  handleSubmit,
-                  handleSaveAndClose
+                  handleCancel
                 )}
               </div>
             </div>
@@ -228,3 +256,10 @@ export default function AddShipment(props) {
     </div>
   );
 }
+
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.shipmentReducer,
+});
+
+export default connect(mapStateToProps)(AddShipment);

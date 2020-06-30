@@ -16,6 +16,7 @@ import {
   EDIT_SHIPMENT_FAILURE,
   DELETE_SHIPMENT_FAILURE,
   GET_SHIPMENTS,
+  saveShipmentFormData,
 } from "../actions/shipment.actions";
 
 const shipmentApiEndPoint = "shipment/";
@@ -49,12 +50,12 @@ function* getShipmentList() {
 }
 
 function* deleteShipment(payload) {
-  let { itemId } = payload;
+  let { shipmentId } = payload;
   try {
     yield call(
       httpService.makeRequest,
       "delete",
-      `${environment.API_URL}${shipmentApiEndPoint}shipment/${itemId}/`,
+      `${environment.API_URL}${shipmentApiEndPoint}shipment/${shipmentId}/`,
       null,
       true
     );
@@ -96,7 +97,9 @@ function* editShipment(action) {
       payload,
       true
     );
+
     yield [
+      yield put(saveShipmentFormData(data.data)),
       yield put(getShipmentDetails()),
       yield put(
         showAlert({
@@ -134,6 +137,7 @@ function* addShipment(action) {
       payload,
       true
     );
+    console.log("Data", data);
     yield [
       yield put(
         showAlert({
@@ -142,6 +146,7 @@ function* addShipment(action) {
           message: "Successfully Added Shipment",
         })
       ),
+      yield put(saveShipmentFormData(data.data)),
       yield put(getShipmentDetails()),
       yield call(history.push, redirectTo),
     ];

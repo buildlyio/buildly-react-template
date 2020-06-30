@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import moment from "moment";
 import Button from "@material-ui/core/Button";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -15,12 +16,21 @@ import {
   Typography,
   Box,
   MenuItem,
+  CircularProgress,
 } from "@material-ui/core";
 import { MapComponent } from "../../../components/MapComponent/MapComponent";
 import { routes } from "../../../routes/routesConstants";
 import { MAP_API_URL } from "../../../utils/utilMethods";
 import { useInput } from "../../../hooks/useInput";
-import { SHIPMENT_STATUS } from "../../../utils/mock";
+import { SHIPMENT_STATUS, TRANSPORT_MODE } from "../../../utils/mock";
+import DatePickerComponent from "../../../components/DatePicker/DatePicker";
+import { validators } from "../../../utils/validators";
+import {
+  editShipment,
+  addShipment,
+  saveShipmentFormData,
+} from "../../../redux/shipment/actions/shipment.actions";
+import ItemsInfo from "./ItemInfo";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,6 +48,16 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "18px",
     fontSize: 11,
   },
+  cardItems: {
+    marginTop: theme.spacing(4),
+  },
+  buttonContainer: {
+    margin: theme.spacing(8, 0),
+    textAlign: "center",
+  },
+  alignRight: {
+    marginLeft: "auto",
+  },
   buttonProgress: {
     position: "absolute",
     top: "50%",
@@ -49,29 +69,119 @@ const useStyles = makeStyles((theme) => ({
     // margin: theme.spacing(1),
     position: "relative",
   },
-  cardItems: {
-    marginTop: theme.spacing(4),
-  },
-  buttonContainer: {
-    margin: theme.spacing(8, 0),
-    textAlign: "center",
-  },
-  alignRight: {
-    marginLeft: "auto",
-  },
 }));
 
 function ShipmentInfo(props) {
-  const { handleNext, shipmentFormData, history, custodianData } = props;
+  const {
+    handleNext,
+    shipmentFormData,
+    history,
+    loading,
+    dispatch,
+    redirectTo,
+    handleCancel,
+    location,
+  } = props;
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   const classes = useStyles();
-  const shipment_id = useInput("");
-  const lading_bill = useInput("");
+  const editPage = location.state && location.state.type === "edit";
+  const editData = (location.state && location.state.data) || shipmentFormData;
+  const shipment_name = useInput((editData && editData.name) || "", {
+    required: true,
+  });
+  const lading_bill = useInput((editData && editData.bol_order_id) || "");
   const load_no = useInput("");
-  const shipment_status = useInput("");
-  const route_desc = useInput("");
+  const shipment_status = useInput((editData && editData.status) || "");
+  const route_desc = useInput((editData && editData.route_description) || "");
+  const mode_type = useInput((editData && editData.transport_mode) || "");
   const route_dist = useInput("");
+  const [scheduled_departure, handleDepartureDateChange] = useState(
+    (editData && moment(editData.estimated_time_of_departure)) || moment()
+  );
+  const [scheduled_arrival, handleScheduledDateChange] = useState(
+    (editData && moment(editData.estimated_time_of_arrival)) || moment()
+  );
+  const [formError, setFormError] = useState({});
+
+  useEffect(() => {
+    if (editPage) {
+      dispatch(saveShipmentFormData(editData));
+    }
+  }, []);
+  /**
+   * Handle input field blur event
+   * @param {Event} e Event
+   * @param {String} validation validation type if any
+   * @param {Object} input input field
+   */
+
+  const handleBlur = (e, validation, input, parentId) => {
+    let validateObj = validators(validation, input);
+    let prevState = { ...formError };
+    if (validateObj && validateObj.error)
+      setFormError({
+        ...prevState,
+        [e.target.id || parentId]: validateObj,
+      });
+    else
+      setFormError({
+        ...prevState,
+        [e.target.id || parentId]: {
+          error: false,
+          message: "",
+        },
+      });
+  };
+
+  const submitDisabled = () => {
+    let errorKeys = Object.keys(formError);
+    let errorExists = false;
+    if (!shipment_name.value) return true;
+    errorKeys.forEach((key) => {
+      if (formError[key].error) errorExists = true;
+    });
+    return errorExists;
+  };
+
+  /**
+   * Submit The form and add/edit custodian
+   * @param {Event} event the default submit event
+   */
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    let shipmentFormValue = {
+      name: shipment_name.value,
+      status: shipment_status.value,
+      bol_order_id: lading_bill.value,
+      route_description: route_desc.value,
+      transport_mode: mode_type.value,
+      estimated_time_of_arrival: scheduled_arrival.format(
+        "YYYY-MM-DD HH:mm:ss"
+      ),
+      estimated_time_of_departure: scheduled_departure.format(
+        "YYYY-MM-DD HH:mm:ss"
+      ),
+      ...(editData && { ...editData }),
+      item_ids: (editData && editData.item_ids) || [],
+      gateway_ids: (editData && editData.gateway_ids) || [],
+      sensor_report_ids: (editData && editData.sensor_report_ids) || [],
+      wallet_ids: (editData && editData.wallet_ids) || [],
+      custodian_ids: (editData && editData.custodian_ids) || [],
+    };
+
+    if (editPage) {
+      dispatch(
+        editShipment(
+          shipmentFormValue,
+          history,
+          `${routes.SHIPMENT}/edit/:${editData.id}`
+        )
+      );
+    } else {
+      dispatch(addShipment(shipmentFormValue, history, redirectTo));
+    }
+  };
   return (
     <React.Fragment>
       <div>
@@ -80,7 +190,7 @@ function ShipmentInfo(props) {
             <Typography variant="h4">Shipment Details(1/5)</Typography>
           </Box>
         )}
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <Box mb={2}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -89,12 +199,22 @@ function ShipmentInfo(props) {
                     <TextField
                       variant="outlined"
                       margin="normal"
-                      disabled
                       fullWidth
-                      id="shipment_id"
-                      label="Shipment Id"
-                      name="shipment_id"
-                      autoComplete="shipment_id"
+                      required
+                      id="shipment_name"
+                      label="Shipment Name"
+                      name="shipment_name"
+                      autoComplete="shipment_name"
+                      error={
+                        formError.shipment_name && formError.shipment_name.error
+                      }
+                      helperText={
+                        formError.shipment_name
+                          ? formError.shipment_name.message
+                          : ""
+                      }
+                      onBlur={(e) => handleBlur(e, "required", shipment_name)}
+                      {...shipment_name.bind}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -123,6 +243,26 @@ function ShipmentInfo(props) {
                       {...route_desc.bind}
                     />
                   </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      required
+                      id="mode_type"
+                      select
+                      label="Mode Type"
+                      {...mode_type.bind}
+                    >
+                      <MenuItem value={""}>Select</MenuItem>
+                      {TRANSPORT_MODE &&
+                        TRANSPORT_MODE.map((item, index) => (
+                          <MenuItem key={`${item.value}`} value={item.value}>
+                            {item.label}
+                          </MenuItem>
+                        ))}
+                    </TextField>
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -141,11 +281,27 @@ function ShipmentInfo(props) {
                       <MenuItem value={""}>Select</MenuItem>
                       {SHIPMENT_STATUS &&
                         SHIPMENT_STATUS.map((item, index) => (
-                          <MenuItem key={`${item}`} value={item}>
-                            {item}
+                          <MenuItem key={`${item.value}`} value={item.value}>
+                            {item.label}
                           </MenuItem>
                         ))}
                     </TextField>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <DatePickerComponent
+                      label={"Scheduled Arrival"}
+                      hasTime
+                      selectedDate={scheduled_arrival}
+                      handleDateChange={handleScheduledDateChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <DatePickerComponent
+                      label={"Scheduled Departure"}
+                      hasTime
+                      selectedDate={scheduled_departure}
+                      handleDateChange={handleDepartureDateChange}
+                    />
                   </Grid>
                   <Grid item xs={12}>
                     <MapComponent
@@ -160,162 +316,49 @@ function ShipmentInfo(props) {
               </Grid>
             </Grid>
           </Box>
-
-          <Grid container spacing={2} justify="center">
-            <Grid item xs={12} sm={6} md={4}>
-              {shipmentFormData && shipmentFormData.originInfo ? (
-                <Card variant="outlined" className={classes.cardItems}>
-                  <Typography variant="body2">Origin Info</Typography>
-                  <CardContent>
-                    <List>
-                      <ListItem>
-                        <ListItemText
-                          primary="Origin Company"
-                          secondary={shipmentFormData.originInfo.company_name}
-                        />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemText
-                          primary="Address"
-                          secondary={shipmentFormData.originInfo.address}
-                        />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemText
-                          primary="ETA Data/Time"
-                          secondary={shipmentFormData.originInfo.eta}
-                        />
-                      </ListItem>
-                    </List>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      className={classes.submit}
-                    >
-                      Edit Origin Info
-                    </Button>
-                  </CardContent>
-                </Card>
-              ) : (
+          <Grid container spacing={3} className={classes.buttonContainer}>
+            <Grid item xs={6} sm={2}>
+              <div className={classes.loadingWrapper}>
                 <Button
-                  variant="outlined"
+                  type="submit"
                   fullWidth
-                  color="secondary"
+                  variant="contained"
+                  color="primary"
                   className={classes.submit}
-                  onClick={() =>
-                    history.push(`${routes.SHIPMENT}/add/origin`, {
-                      from: `${routes.SHIPMENT}/add`,
-                      shipmentFormData,
-                    })
-                  }
+                  disabled={loading || submitDisabled()}
                 >
-                  Add Origin Info
+                  {`Save`}
                 </Button>
-              )}
+                {loading && (
+                  <CircularProgress
+                    size={24}
+                    className={classes.buttonProgress}
+                  />
+                )}
+              </div>
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              {shipmentFormData && shipmentFormData.shipperInfo ? (
-                <Card variant="outlined" className={classes.cardItems}>
-                  <Typography variant="body2">Shipper Info</Typography>
-                  <CardContent>
-                    <List>
-                      <ListItem>
-                        <ListItemText
-                          primary="Shipping Company"
-                          secondary={shipmentFormData.shipperInfo.company_name}
-                        />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemText
-                          primary="Address"
-                          secondary={shipmentFormData.shipperInfo.address}
-                        />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemText
-                          primary="Mode Type"
-                          secondary={shipmentFormData.shipperInfo.mode_type}
-                        />
-                      </ListItem>
-                    </List>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      className={classes.submit}
-                    >
-                      Edit Shipper Info
-                    </Button>
-                  </CardContent>
-                </Card>
-              ) : (
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  fullWidth
-                  className={classes.submit}
-                  onClick={() =>
-                    history.push(`${routes.SHIPMENT}/add/shipper`, {
-                      from: `${routes.SHIPMENT}/add`,
-                      shipmentFormData,
-                    })
-                  }
-                >
-                  Add Shipper Info
-                </Button>
-              )}
+            <Grid item xs={6} sm={2}>
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={handleCancel}
+                className={classes.submit}
+              >
+                {"Cancel"}
+              </Button>
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              {shipmentFormData && shipmentFormData.destinationInfo ? (
-                <Card variant="outlined" className={classes.cardItems}>
-                  <Typography variant="body2">Destination Info</Typography>
-                  <CardContent>
-                    <List>
-                      <ListItem>
-                        <ListItemText
-                          primary="Destination Company"
-                          secondary={
-                            shipmentFormData.destinationInfo.company_name
-                          }
-                        />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemText
-                          primary="Address"
-                          secondary={shipmentFormData.destinationInfo.address}
-                        />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemText
-                          primary="ETA Data/Time"
-                          secondary={shipmentFormData.destinationInfo.eta}
-                        />
-                      </ListItem>
-                    </List>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      className={classes.submit}
-                    >
-                      Edit Destination Info
-                    </Button>
-                  </CardContent>
-                </Card>
-              ) : (
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  color="secondary"
-                  className={classes.submit}
-                  onClick={() =>
-                    history.push(`${routes.SHIPMENT}/add/destination`, {
-                      from: `${routes.SHIPMENT}/add`,
-                      shipmentFormData,
-                    })
-                  }
-                >
-                  Add Destination Info
-                </Button>
-              )}
+            <Grid item xs={12} sm={4} className={classes.alignRight}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={handleNext}
+                disabled={shipmentFormData === null}
+                className={classes.submit}
+              >
+                {`Next: Add Items`}
+              </Button>
             </Grid>
           </Grid>
         </form>
@@ -327,6 +370,7 @@ function ShipmentInfo(props) {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.shipmentReducer,
+  ...state.itemsReducer,
 });
 
 export default connect(mapStateToProps)(ShipmentInfo);

@@ -144,7 +144,20 @@ export const ADDRESS_TYPE = [
   "mailing",
 ];
 
-export const SHIPMENT_STATUS = ["Planned", "Enroute", "Cancelled", "Completed"];
+export const SHIPMENT_STATUS = [
+  { value: "Planned", label: "Planned" },
+  { value: "Enroute", label: "Enroute" },
+  { value: "Cancelled", label: "Cancelled" },
+  { value: "Completed", label: "Completed" },
+];
+
+export const TRANSPORT_MODE = [
+  { value: "Air", label: "Air" },
+  { value: "sea", label: "Sea" },
+  { value: "land-rail", label: "Land Rail" },
+  { value: "land-road", label: "Land Road" },
+  { value: "mixed", label: "Mixed" },
+];
 
 export const associatedGatewayMock = [
   { id: 1, uuid: "GT123456", name: "Gateway 1" },

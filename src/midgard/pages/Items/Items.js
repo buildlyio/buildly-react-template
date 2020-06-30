@@ -27,11 +27,11 @@ function Items({
 }) {
   const addItemPath = redirectTo
     ? `${redirectTo}/items`
-    : `${routes.CUSTODIANS}/add`;
+    : `${routes.ITEMS}/add`;
 
   const editItemPath = redirectTo
     ? `${redirectTo}/items`
-    : `${routes.CUSTODIANS}/edit`;
+    : `${routes.ITEMS}/edit`;
 
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");

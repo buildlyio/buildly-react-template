@@ -160,7 +160,9 @@ export default function DataTable({ ...props }) {
                 <TableCell
                   align="center"
                   colSpan={
-                    columns.length + (actionsColumns && actionsColumns.length)
+                    actionsColumns
+                      ? `${columns.length + actionsColumns.length}`
+                      : columns.length
                   }
                 >
                   No Data To Display
