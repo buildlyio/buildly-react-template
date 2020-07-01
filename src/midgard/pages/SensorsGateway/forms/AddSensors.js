@@ -19,6 +19,11 @@ import DatePickerComponent from "../../../components/DatePicker/DatePicker";
 import EnvironmentalLimitsForm from "./EnvironmentalLimitsForm";
 import { associatedGatewayMock } from "../../../utils/mock";
 import SearchModal from "../Sensors/SearchModal";
+import {
+  editSensor,
+  addSensor,
+} from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
+import { routes } from "../../../routes/routesConstants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -123,18 +128,20 @@ function AddSensor({
     event.preventDefault();
     const sensorFormValues = {
       name: sensor_name.value,
-      sensors: "",
-      sim_card_id: sim_card_id.value,
+      mac_address: mac_address.value,
       sensor_type: sensor_type.value,
-      // shipment_ids: ["string"],
-      activation_date: activation_date.value,
-      last_known_battery_level: battery_level.value,
+      estimated_eol: "",
+      activation_date: moment(activation_date, "yyyy/MM/DD"),
+      last_known_location: last_known_location,
+      last_report_date_time: moment(last_report_date_time, "yyyy/MM/DD"),
+      associated_sensors_ids: [],
+      associated_shipment_item_ids: [],
       ...(editPage && editData && { id: editData.id }),
     };
     if (editPage) {
-      dispatch(editItem(itemFormValue, history));
+      dispatch(editSensor(itemFormValue, history, `${routes.SENSORS_GATEWAY}`));
     } else {
-      dispatch(addItem(itemFormValue, history));
+      dispatch(addSensor(itemFormValue, history));
     }
   };
 

@@ -7,6 +7,8 @@ import { routes } from "../../../routes/routesConstants";
 import {
   getGateways,
   getGatewayType,
+  getSensors,
+  getSensorType,
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import AddSensors from "../forms/AddSensors";
 
@@ -40,10 +42,10 @@ function Sensors(props) {
     rows = data;
   }
 
-  useEffect(() => {
-    // dispatch(getGateways());
-    // dispatch(getGatewayType());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(getSensors());
+  //   dispatch(getSensorType());
+  // }, []);
 
   const editGateway = (item) => {
     history.push(`${editPath}/:${item.id}`, {

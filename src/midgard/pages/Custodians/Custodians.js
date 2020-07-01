@@ -21,6 +21,7 @@ import {
   getCustodianType,
   deleteCustodian,
   getContact,
+  getCustody,
 } from "../../redux/custodian/actions/custodian.actions";
 import {
   custodianColumns,
@@ -50,6 +51,7 @@ function Custodian({
   searchedData,
   noSearch,
   redirectTo,
+  custodyData,
 }) {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
@@ -69,7 +71,7 @@ function Custodian({
   if (searchedData && searchedData.length) {
     rows = searchedData;
   } else if (custodianData && custodianData.length) {
-    rows = getFormattedRow(custodianData, contactInfo);
+    rows = getFormattedRow(custodianData, contactInfo, custodyData);
   }
 
   useEffect(() => {
@@ -77,6 +79,9 @@ function Custodian({
       dispatch(getCustodians());
       dispatch(getCustodianType());
       dispatch(getContact());
+    }
+    if (!custodyData) {
+      dispatch(getCustody());
     }
   }, []);
 

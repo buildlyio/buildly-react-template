@@ -15,6 +15,8 @@ import SearchInput from "../../../components/SearchComponent/SearchInput";
 import theme from "../../../../styles/theme";
 import { Divider } from "@material-ui/core";
 import ShipmentFilterAndSort from "./ShipmentFilterAndSort";
+import { dispatch } from "../../../redux/store";
+import { filterShipmentData } from "../../../redux/shipment/actions/shipment.actions";
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
@@ -72,11 +74,10 @@ export default function ShipmentList({ ...props }) {
     columns,
     actionsColumns,
     hasSearch,
-    searchValue,
-    searchAction,
     hasSort,
     editAction,
     deleteAction,
+    dispatch,
   } = props;
   const classes = useStyles();
   const [allCheck, setAllCheck] = useState(false);
@@ -85,6 +86,8 @@ export default function ShipmentList({ ...props }) {
   const [humidityCheck, setHumidityCheck] = useState(false);
   const [lateShipment, setLateShipmentCheck] = useState(false);
   const [sortValue, setSortValue] = useState("");
+  const [filterObject, setFilterObject] = useState({});
+  const [searchValue, setSearchValue] = useState("");
 
   const handleAllCheck = (e) => {
     setAllCheck(e.target.checked);
@@ -116,6 +119,34 @@ export default function ShipmentList({ ...props }) {
   };
   const handleSort = (sortValue) => {
     setSortValue(sortValue);
+    let prevFilters = { ...filterObject };
+
+    let filterObj = {
+      ...prevFilters,
+      type: "sort",
+      value: sortValue,
+    };
+    setFilterObject(filterObj);
+    dispatch(filterShipmentData(rows, filterObj));
+  };
+  const handleSearch = (e) => {
+    setSearchValue(e.target.value);
+    let prevFilters = { ...filterObject };
+
+    let filterObj = {
+      ...prevFilters,
+      type: "search",
+      value: e.target.value,
+      searchFields: [
+        "shipment_uuid",
+        "estimated_time_of_arrival",
+        "name",
+        "custodian_name",
+        "value",
+      ],
+    };
+    setFilterObject(filterObj);
+    dispatch(filterShipmentData(rows, filterObj));
   };
   return (
     <Paper className={classes.root}>
@@ -123,7 +154,7 @@ export default function ShipmentList({ ...props }) {
         <div className={classes.searchSection}>
           <SearchInput
             searchValue={searchValue}
-            searchAction={searchAction}
+            searchAction={handleSearch}
             customContainerClass={classes.searchComponent}
             customSearchInputClass={classes.searchInput}
           />
@@ -150,6 +181,7 @@ export default function ShipmentList({ ...props }) {
           <TableBody>
             {rows.length > 0 &&
               rows
+
                 // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, idx) => {
                   return (
@@ -172,7 +204,7 @@ export default function ShipmentList({ ...props }) {
                                 {columns &&
                                   columns.map((column) => {
                                     if (column.id !== "id") {
-                                      const value = row[column.id] || "-";
+                                      const value = row[column.id] || "";
                                       return (
                                         <TableCell
                                           style={{

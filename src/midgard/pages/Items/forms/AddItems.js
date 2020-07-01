@@ -61,6 +61,7 @@ function AddItems({
   error,
   location,
   itemTypeList,
+  unitsOfMeasure,
 }) {
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === "edit";
@@ -73,6 +74,9 @@ function AddItems({
   const item_name = useInput(editData.name || "", {
     required: true,
   });
+  const item_value = useInput(editData.value || 0);
+  const item_weight = useInput(editData.gross_weight || 0);
+  const unit_of_measure = useInput(editData.unit_of_measure || "");
   const units = useInput(editData.units || "");
   const item_type = useInput(editData.item_type || "", {
     required: true,
@@ -103,6 +107,9 @@ function AddItems({
     const itemFormValue = {
       item_type: item_type.value,
       name: item_name.value,
+      value: item_value.value,
+      gross_weight: item_weight.value,
+      unit_of_measure: unit_of_measure.value,
       ...(editPage && editData && { id: editData.id }),
     };
     if (editPage) {
@@ -232,6 +239,48 @@ function AddItems({
                       </MenuItem>
                     ))}
                 </TextField>
+              </Grid>
+              <Grid item item xs={12} md={6} sm={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  type="number"
+                  id="item_value"
+                  label="Item Value"
+                  {...item_value.bind}
+                ></TextField>
+              </Grid>
+              <Grid item xs={12} md={6} sm={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  required
+                  id="unit_of_measure"
+                  select
+                  label="Units of Measure"
+                  {...unit_of_measure.bind}
+                >
+                  <MenuItem value={""}>Select</MenuItem>
+                  {unitsOfMeasure &&
+                    unitsOfMeasure.map((item, index) => (
+                      <MenuItem key={`${item.id}${item.name}`} value={item.url}>
+                        {item.name}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Grid>
+              <Grid item item xs={12} md={6} sm={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  type="number"
+                  id="item_weight"
+                  label="Item Weight"
+                  {...item_weight.bind}
+                ></TextField>
               </Grid>
             </Grid>
             <Card variant="outlined" className={classes.cardItems}>

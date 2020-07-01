@@ -320,9 +320,9 @@ describe("Add Sensor reducer", () => {
     );
   });
 
-  it("Add Gateway success Reducer", () => {
+  it("Add Sensor success Reducer", () => {
     expect(
-      reducer.default(initialState, { type: actions.ADD_SENSOR_SUCCESS })
+      reducer.default(initialState, { type: actions.Add_SENSOR_SUCCESS })
     ).toEqual({
       error: null,
       loaded: true,

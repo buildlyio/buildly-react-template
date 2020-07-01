@@ -12,14 +12,14 @@ export const NAVIGATION_ITEMS = [
     link: routes.SHIPMENT,
   },
   {
-    id: "custodians",
-    name: "Custodians",
-    link: routes.CUSTODIANS,
-  },
-  {
     id: "items",
     name: "Items",
     link: routes.ITEMS,
+  },
+  {
+    id: "custodians",
+    name: "Custodians",
+    link: routes.CUSTODIANS,
   },
   {
     id: "sensors",

@@ -27,6 +27,13 @@ export const GET_ITEMS_TYPE = "ITEMS/GET_ITEMS_TYPE";
 export const GET_ITEMS_TYPE_SUCCESS = "ITEMS/GET_ITEMS_TYPE_SUCCESS";
 export const GET_ITEMS_TYPE_FAILURE = "ITEMS/GET_ITEMS_TYPE_FAILURE";
 
+//get item types action constants
+export const GET_UNITS_OF_MEASURE = "ITEMS/GET_UNITS_OF_MEASURE";
+export const GET_UNITS_OF_MEASURE_SUCCESS =
+  "ITEMS/GET_UNITS_OF_MEASURE_SUCCESS";
+export const GET_UNITS_OF_MEASURE_FAILURE =
+  "ITEMS/GET_UNITS_OF_MEASURE_FAILURE";
+
 export const getItems = () => ({ type: GET_ITEMS });
 
 /**
@@ -76,4 +83,8 @@ export const searchItem = (searchItem, searchList) => ({
 
 export const getItemType = () => ({
   type: GET_ITEMS_TYPE,
+});
+
+export const getUnitsOfMeasure = () => ({
+  type: GET_UNITS_OF_MEASURE,
 });

@@ -9,6 +9,7 @@ import {
   deleteItem,
   searchItem,
   getItemType,
+  getUnitsOfMeasure,
 } from "../../redux/items/actions/items.actions";
 import DashboardWrapper from "../../components/DashboardWrapper/DashboardWrapper";
 
@@ -24,6 +25,7 @@ function Items({
   itemTypeList,
   redirectTo,
   noSearch,
+  unitsOfMeasure,
 }) {
   const addItemPath = redirectTo
     ? `${redirectTo}/items`
@@ -40,13 +42,16 @@ function Items({
   if (searchedData && searchedData.length) {
     rows = searchedData;
   } else if (itemData && itemData.length) {
-    rows = getFormattedRow(itemData, itemTypeList);
+    rows = getFormattedRow(itemData, itemTypeList, unitsOfMeasure);
   }
 
   useEffect(() => {
     if (itemData === null) {
       dispatch(getItems());
       dispatch(getItemType());
+    }
+    if (!unitsOfMeasure) {
+      dispatch(getUnitsOfMeasure());
     }
   }, []);
 

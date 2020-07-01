@@ -20,6 +20,10 @@ export const FILTER_SHIPMENT = "SHIPMENT/FILTER_SHIPMENT";
 export const FILTER_SHIPMENT_SUCCESS = "SHIPMENT/FILTER_SHIPMENT_SUCCESS";
 export const FILTER_SHIPMENT_FAILURE = "SHIPMENT/FILTER_SHIPMENT_FAILURE";
 
+export const GET_SHIPMENT_FLAG = "SHIPMENT/GET_SHIPMENT_FLAG";
+export const GET_SHIPMENT_FLAG_SUCCESS = "SHIPMENT/GET_SHIPMENT_FLAG_SUCCESS";
+export const GET_SHIPMENT_FLAG_FAILURE = "SHIPMENT/GET_SHIPMENT_FLAG_FAILURE";
+
 /**
  *
  * @param {Object} formData
@@ -80,4 +84,8 @@ export const filterShipmentData = (list, filterObject) => ({
   type: FILTER_SHIPMENT,
   list,
   filterObject,
+});
+
+export const getShipmentFlag = () => ({
+  type: GET_SHIPMENT_FLAG,
 });

@@ -21,6 +21,7 @@ import { saveShipmentFormData } from "../../../redux/shipment/actions/shipment.a
 import { connect } from "react-redux";
 import SensorsGatewayInfo from "../components/Sensors&GatewayInfo";
 import EnvironmentalLimitsInfo from "../components/EnvironmentalLimitsInfo";
+import CustodianInfo from "../components/custodian-info/CustodianInfo";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -101,10 +102,12 @@ const getStepContent = (
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
-          <Custodians
-            noSearch={true}
+          <CustodianInfo
+            {...props}
             history={props.history}
             redirectTo={`${routes.SHIPMENT}/add`}
+            handleNext={handleNext}
+            handleCancel={handleCancel}
           />
         </ViewDetailsWrapper>
       );
@@ -114,7 +117,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title={"Items"}
+          title={"Sensors & Gateways"}
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -132,7 +135,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title={"Items"}
+          title={"Environmental Limits"}
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -190,9 +193,7 @@ function AddShipment(props) {
   const closeModal = () => {
     toggleModal(false);
     dispatch(saveShipmentFormData(null));
-    if (location && location.state) {
-      history.push(location.state.from);
-    }
+    history.push(routes.SHIPMENT);
   };
 
   const handleCancel = () => {

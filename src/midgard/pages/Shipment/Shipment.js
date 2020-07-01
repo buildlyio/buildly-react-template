@@ -8,7 +8,7 @@ import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import { MapComponent } from "../../components/MapComponent/MapComponent";
 import DataTable from "../../components/Table/Table";
-import { SHIPMENT_COLUMNS } from "./ShipmentConstants";
+import { SHIPMENT_COLUMNS, getFormattedRow } from "./ShipmentConstants";
 import ShipmentList from "./components/ShipmentList";
 import { shipmentMock } from "../../utils/mock";
 import moment from "moment";
@@ -22,8 +22,13 @@ import {
   getCustodians,
   getCustodianType,
   getContact,
+  getCustody,
 } from "../../redux/custodian/actions/custodian.actions";
-import { getItems, getItemType } from "../../redux/items/actions/items.actions";
+import {
+  getItems,
+  getItemType,
+  getUnitsOfMeasure,
+} from "../../redux/items/actions/items.actions";
 import {
   getGateways,
   getGatewayType,
@@ -33,6 +38,7 @@ import {
   getShipmentDetails,
   saveShipmentFormData,
   deleteShipment,
+  getShipmentFlag,
 } from "../../redux/shipment/actions/shipment.actions";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 
@@ -46,34 +52,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function showAlert(data) {
-  let alerts = [];
-  if (data) {
-    data.forEach((element) => {
-      if (
-        moment(element.actual_time_of_arrival).isAfter(
-          element.estimated_time_of_arrival,
-          "day"
-        )
-      ) {
-        alerts.push({
-          id: element.id,
-          alertId: "delay",
-          message: "Delay warning",
-          severity: "warning",
-        });
-      }
-    });
-  }
-  return alerts;
-}
-
-const ShowAlerts = (props) => {
-  let { alertData } = props;
-  const uniqueAlertsId = [];
-  alertData.forEach((data) => {});
-};
-
 function Shipment(props) {
   const {
     shipmentData,
@@ -82,16 +60,27 @@ function Shipment(props) {
     dispatch,
     itemData,
     gatewayData,
+    shipmentFlag,
+    unitsOfMeasure,
+    filteredData,
+    custodyData,
   } = props;
   const classes = useStyles();
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
-  let rows = shipmentData || shipmentMock;
-  let alerts = showAlert(rows);
+  let rows = [];
 
+  if (filteredData && filteredData.length) {
+    rows = filteredData;
+  } else if (shipmentData) {
+    rows = getFormattedRow(shipmentData, custodianData, itemData);
+  }
   useEffect(() => {
     if (shipmentData === null) {
       dispatch(getShipmentDetails());
+    }
+    if (!shipmentFlag) {
+      dispatch(getShipmentFlag());
     }
     if (custodianData === null) {
       dispatch(getCustodians());
@@ -105,6 +94,12 @@ function Shipment(props) {
     if (gatewayData === null) {
       dispatch(getGateways());
       dispatch(getGatewayType());
+    }
+    if (!unitsOfMeasure) {
+      dispatch(getUnitsOfMeasure());
+    }
+    if (!custodyData) {
+      dispatch(getCustody());
     }
   }, []);
 
@@ -153,13 +148,13 @@ function Shipment(props) {
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <ShipmentList
-            rows={shipmentData || shipmentMock}
+            rows={rows}
             columns={SHIPMENT_COLUMNS}
             hasSearch={true}
             searchValue={""}
+            dispatch={dispatch}
             editAction={handleEdit}
             deleteAction={handleDelete}
-            searchAction={() => {}}
             hasSort={true}
           />
         </Grid>

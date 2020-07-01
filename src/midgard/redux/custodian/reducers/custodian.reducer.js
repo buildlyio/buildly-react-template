@@ -19,6 +19,12 @@ import {
   GET_CONTACT,
   GET_CONTACT_SUCCESS,
   GET_CONTACT_FAILURE,
+  ADD_CUSTODY,
+  ADD_CUSTODY_SUCCESS,
+  ADD_CUSTODY_FAILURE,
+  GET_CUSTODY,
+  GET_CUSTODY_SUCCESS,
+  GET_CUSTODY_FAILURE,
 } from "../actions/custodian.actions";
 
 const initialState = {
@@ -169,6 +175,48 @@ export default (state = initialState, action) => {
         contactInfo: action.data,
       };
     case GET_CONTACT_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case GET_CUSTODY:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_CUSTODY_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodyData: action.data,
+      };
+    case GET_CUSTODY_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case ADD_CUSTODY:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case ADD_CUSTODY_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodyData: action.data,
+      };
+    case ADD_CUSTODY_FAILURE:
       return {
         ...state,
         loading: false,

@@ -17,6 +17,9 @@ import {
   DELETE_ITEMS_FAILURE,
   SEARCH_SUCCESS,
   SEARCH,
+  GET_UNITS_OF_MEASURE,
+  GET_UNITS_OF_MEASURE_FAILURE,
+  GET_UNITS_OF_MEASURE_SUCCESS,
 } from "../actions/items.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -202,6 +205,38 @@ function* addItem(action) {
   }
 }
 
+function* getUnits() {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}${shipmentApiEndPoint}unit_of_measure/`,
+      null,
+      true
+    );
+    yield [
+      yield put({
+        type: GET_UNITS_OF_MEASURE_SUCCESS,
+        data: data.data,
+      }),
+    ];
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't load data due to some error!",
+        })
+      ),
+      yield put({
+        type: GET_UNITS_OF_MEASURE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* searchItem(payload) {
   try {
     if (!payload.searchItem) {
@@ -244,6 +279,10 @@ function* watchEditItem() {
   yield takeLatest(EDIT_ITEMS, editItem);
 }
 
+function* watchGetUnitsOfMeasure() {
+  yield takeLatest(GET_UNITS_OF_MEASURE, getUnits);
+}
+
 export default function* itemSaga() {
   yield all([
     watchSearchItem(),
@@ -252,5 +291,6 @@ export default function* itemSaga() {
     watchAddItem(),
     watchDeleteItem(),
     watchEditItem(),
+    watchGetUnitsOfMeasure(),
   ]);
 }

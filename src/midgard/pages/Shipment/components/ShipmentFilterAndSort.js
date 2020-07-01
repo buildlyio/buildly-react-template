@@ -51,6 +51,7 @@ export default function ShipmentFilterAndSort(props) {
     lateShipment,
     handleLateCheck,
     handleSort,
+    sortValue,
   } = props;
   const [alertAnchor, setAlertAnchor] = useState(null);
   const [sortAnchor, setSortAnchor] = useState(null);
@@ -176,22 +177,46 @@ export default function ShipmentFilterAndSort(props) {
         >
           <div className={classes.popper}>
             <List component="ul">
-              <ListItem button onClick={() => handleSort("dateDsc")}>
+              <ListItem
+                selected={sortValue === "dateDesc"}
+                button
+                onClick={() => handleSort("dateDesc")}
+              >
                 Most Recent
               </ListItem>
-              <ListItem button onClick={() => handleSort("dateAsc")}>
+              <ListItem
+                button
+                selected={sortValue === "dateAsc"}
+                onClick={() => handleSort("dateAsc")}
+              >
                 Least Recent
               </ListItem>
-              <ListItem button onClick={() => handleSort("valueDesc")}>
+              <ListItem
+                button
+                selected={sortValue === "valueDesc"}
+                onClick={() => handleSort("valueDesc")}
+              >
                 Highest Value
               </ListItem>
-              <ListItem button onClick={() => handleSort("valueAsc")}>
+              <ListItem
+                button
+                selected={sortValue === "valueAsc"}
+                onClick={() => handleSort("valueAsc")}
+              >
                 Lowest Value
               </ListItem>
-              <ListItem button onClick={() => handleSort("nameAsc")}>
+              <ListItem
+                button
+                selected={sortValue === "nameAsc"}
+                onClick={() => handleSort("nameAsc")}
+              >
                 Custodian A-Z
               </ListItem>
-              <ListItem button onClick={() => handleSort("nameDesc")}>
+              <ListItem
+                button
+                selected={sortValue === "nameDesc"}
+                onClick={() => handleSort("nameDesc")}
+              >
                 Custodian Z-A
               </ListItem>
             </List>

@@ -81,6 +81,9 @@ function ShipmentInfo(props) {
     redirectTo,
     handleCancel,
     location,
+    shipmentFlag,
+    custodianData,
+    custodyData,
   } = props;
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
@@ -102,6 +105,9 @@ function ShipmentInfo(props) {
   const [scheduled_arrival, handleScheduledDateChange] = useState(
     (editData && moment(editData.estimated_time_of_arrival)) || moment()
   );
+  const flags = useInput((editData && editData.flags[0]) || "", {
+    required: true,
+  });
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
@@ -137,7 +143,7 @@ function ShipmentInfo(props) {
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!shipment_name.value) return true;
+    if (!shipment_name.value || !flags.value) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -156,18 +162,16 @@ function ShipmentInfo(props) {
       bol_order_id: lading_bill.value,
       route_description: route_desc.value,
       transport_mode: mode_type.value,
-      estimated_time_of_arrival: scheduled_arrival.format(
-        "YYYY-MM-DD HH:mm:ss"
-      ),
-      estimated_time_of_departure: scheduled_departure.format(
-        "YYYY-MM-DD HH:mm:ss"
-      ),
+      estimated_time_of_arrival: scheduled_arrival.format("YYYY-MM-DD"),
+      estimated_time_of_departure: scheduled_departure.format("YYYY-MM-DD"),
+
       ...(editData && { ...editData }),
       item_ids: (editData && editData.item_ids) || [],
       gateway_ids: (editData && editData.gateway_ids) || [],
       sensor_report_ids: (editData && editData.sensor_report_ids) || [],
       wallet_ids: (editData && editData.wallet_ids) || [],
       custodian_ids: (editData && editData.custodian_ids) || [],
+      flags: [flags.value],
     };
 
     if (editPage) {
@@ -290,7 +294,6 @@ function ShipmentInfo(props) {
                   <Grid item xs={12}>
                     <DatePickerComponent
                       label={"Scheduled Arrival"}
-                      hasTime
                       selectedDate={scheduled_arrival}
                       handleDateChange={handleScheduledDateChange}
                     />
@@ -298,20 +301,49 @@ function ShipmentInfo(props) {
                   <Grid item xs={12}>
                     <DatePickerComponent
                       label={"Scheduled Departure"}
-                      hasTime
                       selectedDate={scheduled_departure}
                       handleDateChange={handleDepartureDateChange}
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <MapComponent
-                      isMarkerShown
-                      googleMapURL={MAP_API_URL}
-                      loadingElement={<div style={{ height: `100%` }} />}
-                      containerElement={<div style={{ height: `200px` }} />}
-                      mapElement={<div style={{ height: `100%` }} />}
-                    />
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      required
+                      id="flags"
+                      select
+                      label="Excursions/Warnings"
+                      error={formError.flags && formError.flags.error}
+                      helperText={
+                        formError.flags ? formError.flags.message : ""
+                      }
+                      onBlur={(e) => handleBlur(e, "required", flags, "flags")}
+                      {...flags.bind}
+                    >
+                      {shipmentFlag &&
+                        shipmentFlag.map((item, index) => (
+                          <MenuItem
+                            key={`${item.id}${item.name}`}
+                            value={item.url}
+                          >
+                            {`${item.name}(${item.type})`}
+                          </MenuItem>
+                        ))}
+                    </TextField>
                   </Grid>
+                  {editPage && (
+                    <Grid item xs={12}>
+                      <MapComponent
+                        custodianData={custodianData}
+                        isMarkerShown
+                        googleMapURL={MAP_API_URL}
+                        loadingElement={<div style={{ height: `100%` }} />}
+                        containerElement={<div style={{ height: `200px` }} />}
+                        mapElement={<div style={{ height: `100%` }} />}
+                      />
+                    </Grid>
+                  )}
                 </Grid>
               </Grid>
             </Grid>
@@ -371,6 +403,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.shipmentReducer,
   ...state.itemsReducer,
+  ...state.custodianReducer,
 });
 
 export default connect(mapStateToProps)(ShipmentInfo);

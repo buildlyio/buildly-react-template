@@ -62,6 +62,7 @@ export default function DataTable({ ...props }) {
     hasSearch,
     searchValue,
     searchAction,
+    showTotal,
   } = props;
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
@@ -121,7 +122,7 @@ export default function DataTable({ ...props }) {
                       key={`tableRow${idx}`}
                     >
                       {columns.map((column) => {
-                        const value = row[column.id] || "-";
+                        const value = row[column.id] || "";
                         return (
                           <TableCell key={column.id} align={column.align}>
                             {column.format ? column.format(value) : value}
@@ -155,6 +156,7 @@ export default function DataTable({ ...props }) {
                     </StyledTableRow>
                   );
                 })}
+
             {rows.length === 0 && (
               <StyledTableRow>
                 <TableCell

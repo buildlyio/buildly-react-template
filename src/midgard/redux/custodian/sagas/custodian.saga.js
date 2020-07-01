@@ -22,6 +22,12 @@ import {
   GET_CONTACT_FAILURE,
   getContact,
   getCustodians,
+  GET_CUSTODY_SUCCESS,
+  GET_CUSTODY_FAILURE,
+  getCustody,
+  ADD_CUSTODY_FAILURE,
+  GET_CUSTODY,
+  ADD_CUSTODY,
 } from "../actions/custodian.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -296,6 +302,74 @@ function* getContactInfo() {
   }
 }
 
+function* getCustodyList() {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}${custodiansApiEndPoint}custody/`,
+      null,
+      true
+    );
+    yield [yield put({ type: GET_CUSTODY_SUCCESS, data: data.data })];
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't load data due to some error!",
+        })
+      ),
+      yield put({
+        type: GET_CUSTODY_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* addCustody(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}${custodiansApiEndPoint}custody/`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put(getCustody()),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Added Custody",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Add Custody due to some error!",
+        })
+      ),
+      yield put({
+        type: ADD_CUSTODY_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* watchGetCustodian() {
   yield takeLatest(GET_CUSTODIANS, getCustodiansList);
 }
@@ -324,6 +398,14 @@ function* watchGetContact() {
   yield takeLatest(GET_CONTACT, getContactInfo);
 }
 
+function* watchGetCustody() {
+  yield takeLatest(GET_CUSTODY, getCustodyList);
+}
+
+function* watchAddCustody() {
+  yield takeLatest(ADD_CUSTODY, addCustody);
+}
+
 export default function* custodianSaga() {
   yield all([
     watchSearchCustodian(),
@@ -333,5 +415,7 @@ export default function* custodianSaga() {
     watchDeleteCustodian(),
     watchEditCustodian(),
     watchGetContact(),
+    watchGetCustody(),
+    watchAddCustody(),
   ]);
 }

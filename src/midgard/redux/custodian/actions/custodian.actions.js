@@ -34,6 +34,14 @@ export const GET_CONTACT = "CUSTODIAN/GET_CONTACT";
 export const GET_CONTACT_SUCCESS = "CUSTODIAN/GET_CONTACT_SUCCESS";
 export const GET_CONTACT_FAILURE = "CUSTODIAN/GET_CONTACT_FAILURE";
 
+export const GET_CUSTODY = "CUSTODIAN/GET_CUSTODY";
+export const GET_CUSTODY_SUCCESS = "CUSTODIAN/GET_CUSTODY_SUCCESS";
+export const GET_CUSTODY_FAILURE = "CUSTODIAN/GET_CUSTODY_FAILURE";
+
+export const ADD_CUSTODY = "CUSTODIAN/ADD_CUSTODY";
+export const ADD_CUSTODY_SUCCESS = "CUSTODIAN/ADD_CUSTODY_SUCCESS";
+export const ADD_CUSTODY_FAILURE = "CUSTODIAN/ADD_CUSTODY_FAILURE";
+
 export const getCustodians = () => ({ type: GET_CUSTODIANS });
 
 /**
@@ -88,4 +96,13 @@ export const getCustodianType = () => ({
 
 export const getContact = () => ({
   type: GET_CONTACT,
+});
+
+export const getCustody = () => ({
+  type: GET_CUSTODY,
+});
+
+export const addCUstody = (payload) => ({
+  type: ADD_CUSTODY,
+  payload,
 });

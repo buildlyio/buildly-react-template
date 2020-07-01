@@ -70,6 +70,7 @@ function ItemsInfo(props) {
     handleNext,
     shipmentFormData,
     dispatch,
+    unitsOfMeasure,
   } = props;
   const [itemIds, setItemIds] = useState(
     (shipmentFormData && shipmentFormData.item_ids) || []
@@ -87,7 +88,7 @@ function ItemsInfo(props) {
         selectedRows.push(element);
       }
     });
-    rows = getFormattedRow(selectedRows, itemTypeList);
+    rows = getFormattedRow(selectedRows, itemTypeList, unitsOfMeasure);
   }
 
   const onInputChange = (value) => {
@@ -174,6 +175,7 @@ function ItemsInfo(props) {
                     columns={columns}
                     // actionsColumns={actionsColumns}
                     hasSearch={false}
+                    showTotal={true}
                   />
                 </Box>
               </Grid>

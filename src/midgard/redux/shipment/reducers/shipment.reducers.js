@@ -15,6 +15,9 @@ import {
   FILTER_SHIPMENT,
   FILTER_SHIPMENT_SUCCESS,
   FILTER_SHIPMENT_FAILURE,
+  GET_SHIPMENT_FLAG,
+  GET_SHIPMENT_FLAG_SUCCESS,
+  GET_SHIPMENT_FLAG_FAILURE,
 } from "../actions/shipment.actions";
 
 const initialState = {
@@ -136,7 +139,28 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        shipmentData: action.data,
+        filteredData: action.data,
+      };
+    case GET_SHIPMENT_FLAG:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_SHIPMENT_FLAG_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        shipmentFlag: action.data,
+      };
+    case GET_SHIPMENT_FLAG_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
       };
     default:
       return state;
