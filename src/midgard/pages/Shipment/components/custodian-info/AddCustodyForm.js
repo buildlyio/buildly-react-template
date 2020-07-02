@@ -70,6 +70,7 @@ function AddCustodyInfo(props) {
     handleSubmit,
     setItemIds,
     custodyData,
+    shipmentFormData,
   } = props;
   const classes = useStyles();
   const [custodianId, setCustodianId] = useState();
@@ -121,7 +122,12 @@ function AddCustodyInfo(props) {
                   options={
                     (custodianData &&
                       custodianData.filter((data) => {
-                        return itemIds.indexOf(data.custodian_uuid) === -1;
+                        return (
+                          shipmentFormData &&
+                          shipmentFormData.custodian_ids.indexOf(
+                            data.custodian_uuid
+                          ) === -1
+                        );
                       })) ||
                     []
                   }
@@ -200,7 +206,7 @@ function AddCustodyInfo(props) {
                     color="primary"
                     onClick={(e) => onAddCustodyClick(e)}
                     className={classes.submit}
-                    disabled={loading}
+                    disabled={loading || !custodianId}
                   >
                     {`Add Custody`}
                   </Button>

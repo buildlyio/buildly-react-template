@@ -143,8 +143,19 @@ function CustodianInfo(props) {
     setItemIds(newArr);
   };
 
+  const oncloseModal = () => {
+    rows.forEach((item) => {
+      if (shipmentFormData.custodian_ids.indexOf(item.custodian_uuid) === -1) {
+        let index = itemIds.indexOf(item.custodian_uuid);
+        let newArr = itemIds.filter((item, idx) => idx !== index);
+        setItemIds(newArr);
+      }
+    });
+    setOpenModal(false);
+  };
+
   const actionsColumns = [
-    { id: "delete", type: "delete", action: deletItem, label: "Delete" },
+    { id: "delete", type: "delete", action: deletItem, label: "Unassociate" },
   ];
 
   return (
@@ -178,7 +189,7 @@ function CustodianInfo(props) {
         {openModal && (
           <Modal
             open={openModal}
-            setOpen={() => setOpenModal(false)}
+            setOpen={() => oncloseModal()}
             title={"Associate Custodian to this Shipment"}
             titleClass={classes.formTitle}
             maxWidth={"sm"}
@@ -186,7 +197,7 @@ function CustodianInfo(props) {
             <AddCustodyForm
               setItemIds={setItemIds}
               itemIds={itemIds}
-              setOpenModal={setOpenModal}
+              setOpenModal={() => oncloseModal()}
               start_of_custody={start_of_custody}
               handleStartChange={handleStartChange}
               rows={rows}

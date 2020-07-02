@@ -43,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "1em",
     textAlign: "center",
   },
+  step: {
+    cursor: "pointer",
+  },
 }));
 
 function getSteps() {
@@ -225,23 +228,16 @@ function AddShipment(props) {
           <div className={classes.root}>
             <Hidden xsDown>
               <Grid container alignItems="center" justify="center">
-                {activeStep > 0 && (
-                  <Grid item xs={6} sm={2}>
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      onClick={handleBack}
-                      className={classes.submit}
-                    >
-                      {"Back"}
-                    </Button>
-                  </Grid>
-                )}
                 <Grid item sm={10}>
                   <Stepper activeStep={activeStep} alternativeLabel nonLinear>
                     {steps.map((label, index) => (
-                      <Step key={label} onClick={handleStep(index)}>
+                      <Step
+                        key={label}
+                        className={`${
+                          shipmentFormData !== null && classes.step
+                        }`}
+                        onClick={handleStep(index)}
+                      >
                         <StepLabel>{label}</StepLabel>
                       </Step>
                     ))}

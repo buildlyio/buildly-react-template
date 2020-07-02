@@ -1,7 +1,7 @@
 import moment from "moment";
 
 export const gatewayColumns = [
-  { id: "id", label: "Id", minWidth: 100 },
+  { id: "id", label: "Id", minWidth: 50 },
   { id: "gateway_uuid", label: "UUID", minWidth: 300 },
   { id: "name", label: "Alias", minWidth: 180 },
   {
@@ -48,8 +48,29 @@ export const getFormattedRow = (data, itemTypeList) => {
 };
 
 export const sensorsColumns = [
+  { id: "id", label: "ID", minWidth: 50 },
   { id: "sensor_uuid", label: "UUID", minWidth: 150 },
   { id: "name", label: "Alias", minWidth: 150 },
-  { id: "sensor_type", label: "Type", minWidth: 150 },
-  { id: "activation_date", label: "Activated", minWidth: 150 },
+  { id: "sensor_type_value", label: "Type", minWidth: 150 },
+  {
+    id: "activation_date",
+    label: "Activated",
+    minWidth: 150,
+    format: (value) => returnFormattedData(value),
+  },
 ];
+
+export const getFormattedSensorRow = (data, sensorTypeList) => {
+  if (data && sensorTypeList) {
+    let formattedData = [...data];
+    formattedData.forEach((element) => {
+      sensorTypeList.forEach((type) => {
+        if (type.url === element.sensor_type) {
+          element["sensor_type_value"] = type.name;
+        }
+      });
+    });
+    return formattedData;
+  }
+  return data;
+};

@@ -30,8 +30,6 @@ export default function DatePickerComponent({
           label={label}
           value={selectedDate}
           onChange={handleDateChange}
-          onError={console.log}
-          disablePast
           format="yyyy/MM/dd HH:mm:ss"
         />
       ) : (

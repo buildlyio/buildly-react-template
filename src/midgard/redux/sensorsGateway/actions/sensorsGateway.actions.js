@@ -136,9 +136,9 @@ export const editSensor = (payload, history, redirectTo) => ({
  *Delete Gateway entity
  * @param {{id}} payload
  */
-export const deleteSensor = (gatewayId) => ({
+export const deleteSensor = (sensorId) => ({
   type: DELETE_SENSOR,
-  gatewayId,
+  sensorId,
 });
 
 /**

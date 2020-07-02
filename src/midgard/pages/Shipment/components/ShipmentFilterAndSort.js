@@ -182,16 +182,16 @@ export default function ShipmentFilterAndSort(props) {
           <div className={classes.popper}>
             <List component="ul">
               <ListItem
-                selected={sortValue === "dateDesc"}
+                selected={sortValue === "dateAsc"}
                 button
-                onClick={() => handleSort("dateDesc")}
+                onClick={() => handleSort("dateAsc")}
               >
                 Most Recent
               </ListItem>
               <ListItem
                 button
-                selected={sortValue === "dateAsc"}
-                onClick={() => handleSort("dateAsc")}
+                selected={sortValue === "dateDesc"}
+                onClick={() => handleSort("dateDesc")}
               >
                 Least Recent
               </ListItem>

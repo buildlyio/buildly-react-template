@@ -16,8 +16,6 @@ import { useInput } from "../../../hooks/useInput";
 import Loader from "../../../components/Loader/Loader";
 import { Card, CardContent, Typography, Chip } from "@material-ui/core";
 import DatePickerComponent from "../../../components/DatePicker/DatePicker";
-import EnvironmentalLimitsForm from "./EnvironmentalLimitsForm";
-import { associatedGatewayMock } from "../../../utils/mock";
 import SearchModal from "../Sensors/SearchModal";
 import {
   editSensor,
@@ -95,12 +93,12 @@ function AddSensor({
     required: true,
   });
   const [activation_date, handleDateChange] = useState(
-    editData.activation_date || moment()
+    editData.activation_date || new Date()
   );
   const sim_card_id = useInput("");
   const battery_level = useInput("");
   const mac_address = useInput("");
-  const last_known_location = useInput("");
+  const last_known_location = useInput(editData.last_known_location || "");
   const recharge_before = useInput("");
   const [last_report_date_time, handleLastReportDate] = useState(
     moment(new Date())
@@ -131,17 +129,21 @@ function AddSensor({
       mac_address: mac_address.value,
       sensor_type: sensor_type.value,
       estimated_eol: "",
-      activation_date: moment(activation_date, "yyyy/MM/DD"),
-      last_known_location: last_known_location,
-      last_report_date_time: moment(last_report_date_time, "yyyy/MM/DD"),
+      activation_date: activation_date,
+      last_known_location: [last_known_location.value],
+      // last_report_date_time: last_report_date_time,
       associated_sensors_ids: [],
       associated_shipment_item_ids: [],
       ...(editPage && editData && { id: editData.id }),
     };
     if (editPage) {
-      dispatch(editSensor(itemFormValue, history, `${routes.SENSORS_GATEWAY}`));
+      dispatch(
+        editSensor(sensorFormValues, history, `${routes.SENSORS_GATEWAY}`)
+      );
     } else {
-      dispatch(addSensor(itemFormValue, history));
+      dispatch(
+        addSensor(sensorFormValues, history, `${routes.SENSORS_GATEWAY}`)
+      );
     }
   };
 
@@ -285,7 +287,7 @@ function AddSensor({
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={6} sm={6}>
+                  {/* <Grid item xs={12} md={6} sm={6}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -296,8 +298,8 @@ function AddSensor({
                       autoComplete="battery_level"
                       {...battery_level.bind}
                     />
-                  </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  </Grid> */}
+                  {/* <Grid item xs={12} md={6} sm={6}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -308,8 +310,8 @@ function AddSensor({
                       autoComplete="recharge_before"
                       {...recharge_before.bind}
                     />
-                  </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  </Grid> */}
+                  {/* <Grid item xs={12} md={6} sm={6}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -320,7 +322,7 @@ function AddSensor({
                       autoComplete="sim_card_id"
                       {...sim_card_id.bind}
                     />
-                  </Grid>
+                  </Grid> */}
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
                       variant="outlined"

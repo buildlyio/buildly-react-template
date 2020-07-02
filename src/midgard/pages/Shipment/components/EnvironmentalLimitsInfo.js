@@ -64,6 +64,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(2, 0),
     fontWeight: "bold",
     fontSize: "14px",
+    textAlign: "center",
   },
 }));
 
