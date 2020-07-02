@@ -1,33 +1,45 @@
 // Auth action types
-export const LOGIN = 'AUTH/LOGIN';
-export const LOGIN_SUCCESS = 'AUTH/LOGIN_SUCCESS';
-export const LOGIN_FAIL = 'AUTH/LOGIN_FAIL';
+export const LOGIN = "AUTH/LOGIN";
+export const LOGIN_SUCCESS = "AUTH/LOGIN_SUCCESS";
+export const LOGIN_FAIL = "AUTH/LOGIN_FAIL";
 
-export const LOGOUT = 'AUTH/LOGOUT';
-export const LOGOUT_SUCCESS = 'AUTH/LOGOUT_SUCCESS';
-export const LOGOUT_FAIL = 'AUTH/LOGOUT_FAIL';
+export const LOGOUT = "AUTH/LOGOUT";
+export const LOGOUT_SUCCESS = "AUTH/LOGOUT_SUCCESS";
+export const LOGOUT_FAIL = "AUTH/LOGOUT_FAIL";
 
-export const REGISTER = 'AUTH/REGISTER';
-export const REGISTER_SUCCESS = 'AUTH/REGISTER_SUCCESS';
-export const REGISTER_FAIL = 'AUTH/REGISTER_FAIL';
+export const REGISTER = "AUTH/REGISTER";
+export const REGISTER_SUCCESS = "AUTH/REGISTER_SUCCESS";
+export const REGISTER_FAIL = "AUTH/REGISTER_FAIL";
 
-export const UPDATE_USER = 'AUTH/USER';
-export const UPDATE_USER_SUCCESS = 'AUTH/UPDATE_USER_SUCCESS';
-export const UPDATE_USER_FAIL = 'AUTH/UPDATE_USER_FAIL';
+export const UPDATE_USER = "AUTH/USER";
+export const UPDATE_USER_SUCCESS = "AUTH/UPDATE_USER_SUCCESS";
+export const UPDATE_USER_FAIL = "AUTH/UPDATE_USER_FAIL";
 
+export const GET_USER = "AUTH/GET_USER";
+export const GET_USER_SUCCESS = "AUTH/GET_USER_SUCCESS";
+export const GET_USER_FAIL = "AUTH/GET_USER_FAIL";
 
-export const GET_USER = 'AUTH/GET_USER';
-export const GET_USER_SUCCESS = 'AUTH/GET_USER_SUCCESS';
-export const GET_USER_FAIL = 'AUTH/GET_USER_FAIL';
+export const INVITE = "AUTH/INVITE";
+export const INVITE_SUCCESS = "AUTH/INVITE_SUCCESS";
+export const INVITE_FAIL = "AUTH/INVITE_FAIL";
 
-export const INVITE = 'AUTH/INVITE';
-export const INVITE_SUCCESS = 'AUTH/INVITE_SUCCESS';
-export const INVITE_FAIL = 'AUTH/INVITE_FAIL';
+export const GET_ORGANIZATION = "AUTH/GET_ORGANIZATION";
+export const GET_ORGANIZATION_SUCCESS = "AUTH/GET_ORGANIZATION_SUCCESS";
+export const GET_ORGANIZATION_FAILURE = "AUTH/GET_ORGANIZATION_FAILURE";
+
+export const UPDATE_ORGANIZATION = "AUTH/UPDATE_ORGANIZATION";
+export const UPDATE_ORGANIZATION_SUCCESS = "AUTH/UPDATE_ORGANIZATION_SUCCESS";
+export const UPDATE_ORGANIZATION_FAILURE = "AUTH/UPDATE_ORGANIZATION_FAILURE";
+
 /**
  * Login action
  * @param {{username, password}} credentials
  */
-export const login = (credentials) => ({ type: LOGIN, credentials });
+export const login = (credentials, history) => ({
+  type: LOGIN,
+  credentials,
+  history,
+});
 
 /**
  * Logout action
@@ -38,8 +50,7 @@ export const logout = () => ({ type: LOGOUT });
  * Register action
  * @param {{username, password, email, organization_name, first_name, last_name}} data
  */
-export const register = (data) => ({ type: REGISTER, data });
-
+export const register = (data, history) => ({ type: REGISTER, data, history });
 
 /**
  * Update user action
@@ -47,14 +58,11 @@ export const register = (data) => ({ type: REGISTER, data });
  */
 export const updateUser = (data) => ({ type: UPDATE_USER, data });
 
-
 /**
  * Update user action
  * @param {{ first_name, last_name}} data
  */
 export const getUser = () => ({ type: GET_USER });
-
-
 
 /**
  * invite user action
@@ -62,3 +70,12 @@ export const getUser = () => ({ type: GET_USER });
  */
 export const invite = (data) => ({ type: INVITE, data });
 
+export const getOrganization = (uuid) => ({
+  type: GET_ORGANIZATION,
+  uuid,
+});
+
+export const updateOrganization = (uuid) => ({
+  type: UPDATE_ORGANIZATION,
+  uuid,
+});

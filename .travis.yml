@@ -1,12 +1,12 @@
 language: node_js
-cache: yarn
+cache: yarn, pip
 services:
   - docker
 node_js:
   - "10.16.0"
 env:
   global:
-  - DOCKER_REPO=buildly/buildly-react-template
+  - DOCKER_REPO=transparent-path/react-ui
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH="$HOME/.yarn/bin:$PATH"
@@ -19,6 +19,6 @@ script:
   - docker build -t $DOCKER_REPO .
 deploy:
   provider: script
-  script: bash scripts/deploy.sh
+  script: bash scripts/deploy-aws.sh
   on:
     branch: master

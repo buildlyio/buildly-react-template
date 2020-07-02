@@ -8,7 +8,7 @@ RESULT='window.environment = {'
 while read line; do
   if [[ $line == *"API_URL"* || $line == *"OAUTH_CLIENT_ID"* || $line == *"OAUTH_TOKEN_URL"* ]] ; then
     #Note that multi-line environment variable values will break this
-    RESULT+='"'`echo $line | sed --expression='s/=/\":\"/g'`'"',
+    RESULT+='"'`echo $line | sed --expression='s/~/\":\"/g'`'"',
   fi
 done < <(printenv)
 #Add production flag which is typically found in environment.prod.ts

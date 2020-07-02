@@ -1,25 +1,32 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-export const useInput = (initialValue = '', validators = {}) => {
+export const useInput = (initialValue = "", validators = {}) => {
   const [value, setValue] = useState(initialValue);
 
   // Validators
-  let requiredValid = !validators.required || value && value.trim() !== '';
-  let maxLengthValid = !validators.maxLength || value && value.length <= validators.maxLength;
-  let minLengthValid = !validators.minLength || value && value.length >= validators.minLength;
-  let customValidatorValid = !validators.customValidator || value && customValidator(value);
-  const valid = requiredValid && maxLengthValid && minLengthValid && customValidatorValid;
+  // let requiredValid = !validators.required || (value && value.trim() !== "");
+  // let maxLengthValid =
+  //   !validators.maxLength || (value && value.length <= validators.maxLength);
+  // let minLengthValid =
+  //   !validators.minLength || (value && value.length >= validators.minLength);
+  // let customValidatorValid =
+  //   !validators.customValidator || (value && customValidator(value));
+  // const valid =
+  //   requiredValid && maxLengthValid && minLengthValid && customValidatorValid;
 
   return {
     value,
-    valid,
+    // valid,
     required: validators.required,
+    confirm: validators.confirm,
+    ...(validators.confirm &&
+      validators.matchField && { matchField: validators.matchField.value }),
     bind: {
-      onChange: e => setValue(e.target.value),
+      onChange: (e) => setValue(e.target.value),
       value,
-      required: validators.required
+      required: validators.required,
     },
-    clear: () => setValue(''),
-    reset: () => setValue(initialValue)
+    clear: () => setValue(""),
+    reset: () => setValue(initialValue),
   };
 };

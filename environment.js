@@ -1,6 +1,6 @@
 export const environment = window.environment || {
-    API_URL: 'http://localhost:8080/',
-    OAUTH_CLIENT_ID: 'wkXLlC9h3k0jxIx7oLllxpFVU89Dxgi7O8FYZyfX',
-    OAUTH_TOKEN_URL:  'http://localhost:8080/oauth/token/',
-    production: false
+  API_URL: "https://tp-dev-api.buildly.io/",
+  OAUTH_CLIENT_ID: "pljxXjxQbtzLbh8pPQG3xLLrW6tC6XghOp2OGCUS",
+  OAUTH_TOKEN_URL: "https://tp-dev-api.buildly.io/oauth/token/",
+  production: false,
 };
