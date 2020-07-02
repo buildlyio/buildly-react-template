@@ -88,6 +88,8 @@ export default function ShipmentList({ ...props }) {
   const [sortValue, setSortValue] = useState("");
   const [filterObject, setFilterObject] = useState({});
   const [searchValue, setSearchValue] = useState("");
+  const [alertAnchor, setAlertAnchor] = useState(null);
+  const [sortAnchor, setSortAnchor] = useState(null);
 
   const handleAllCheck = (e) => {
     setAllCheck(e.target.checked);
@@ -106,6 +108,15 @@ export default function ShipmentList({ ...props }) {
 
   const handleRecallCheck = (e) => {
     setRecallCheck(e.target.checked);
+    let filterObj = {
+      ...prevFilters,
+      type: "alert",
+      value: sortValue,
+      temepratureCheck: temepratureCheck,
+      humidityCheck: humidityCheck,
+      recallCheck: recallCheck,
+      lateShipmentCheck,
+    };
   };
 
   const handleTemperatureCheck = (e) => {
@@ -128,6 +139,7 @@ export default function ShipmentList({ ...props }) {
     };
     setFilterObject(filterObj);
     dispatch(filterShipmentData(rows, filterObj));
+    setSortAnchor(null);
   };
   const handleSearch = (e) => {
     setSearchValue(e.target.value);
@@ -174,6 +186,10 @@ export default function ShipmentList({ ...props }) {
           handleLateCheck={handleLateCheck}
           sortValue={sortValue}
           handleSort={handleSort}
+          alertAnchor={alertAnchor}
+          setAlertAnchor={setAlertAnchor}
+          sortAnchor={sortAnchor}
+          setSortAnchor={setSortAnchor}
         />
       )}
       <TableContainer className={classes.container}>

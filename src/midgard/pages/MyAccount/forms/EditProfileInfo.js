@@ -112,7 +112,7 @@ function EditProfileInfo({
       email: email.value,
       username: editData.username,
       title: "",
-      password: password.value,
+      // password: password.value,
       ...(organizationData && { organization_name: organisation_name.value }),
       id: editData.id,
       ...(organizationData && {

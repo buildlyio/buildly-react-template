@@ -34,6 +34,15 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
+  submit: {
+    borderRadius: "18px",
+    fontSize: 11,
+  },
+  formTitle: {
+    fontWeight: "bold",
+    marginTop: "1em",
+    textAlign: "center",
+  },
 }));
 
 function getSteps() {
@@ -170,11 +179,13 @@ const getStepContent = (
 
 function AddShipment(props) {
   const { location, history, shipmentFormData, dispatch } = props;
+  const editPage = location.state && location.state.type === "edit";
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [openModal, toggleModal] = useState(true);
   const steps = getSteps();
   const maxSteps = steps.length;
+  const formTitle = editPage ? "Edit Shipment" : "Add Shipment";
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -207,7 +218,7 @@ function AddShipment(props) {
         <Modal
           open={openModal}
           setOpen={closeModal}
-          title={"Add Shipment"}
+          title={formTitle}
           titleClass={classes.formTitle}
           maxWidth={"md"}
         >

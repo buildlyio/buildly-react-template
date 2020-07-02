@@ -155,7 +155,9 @@ function SensorsGatewayInfo(props) {
             {rows.length > 0 && (
               <Grid item xs={12}>
                 <Box mt={5}>
-                  <Typography variant="h5">Associated Gateways</Typography>
+                  <Typography gutterBottom variant="h5">
+                    Associated Gateways
+                  </Typography>
                   <DataTable
                     rows={rows || []}
                     columns={columns}

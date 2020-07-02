@@ -31,6 +31,7 @@ import {
   saveShipmentFormData,
 } from "../../../redux/shipment/actions/shipment.actions";
 import ItemsInfo from "./ItemInfo";
+import ShipmentRouteInfo from "./ShipmentRouteInfo";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -100,10 +101,10 @@ function ShipmentInfo(props) {
   const mode_type = useInput((editData && editData.transport_mode) || "");
   const route_dist = useInput("");
   const [scheduled_departure, handleDepartureDateChange] = useState(
-    (editData && moment(editData.estimated_time_of_departure)) || moment()
+    (editData && new Date(editData.estimated_time_of_departure)) || new Date()
   );
   const [scheduled_arrival, handleScheduledDateChange] = useState(
-    (editData && moment(editData.estimated_time_of_arrival)) || moment()
+    (editData && new Date(editData.estimated_time_of_arrival)) || new Date()
   );
   const flags = useInput((editData && editData.flags[0]) || "", {
     required: true,
@@ -162,9 +163,8 @@ function ShipmentInfo(props) {
       bol_order_id: lading_bill.value,
       route_description: route_desc.value,
       transport_mode: mode_type.value,
-      estimated_time_of_arrival: scheduled_arrival.format("YYYY-MM-DD"),
-      estimated_time_of_departure: scheduled_departure.format("YYYY-MM-DD"),
-
+      estimated_time_of_arrival: scheduled_arrival,
+      estimated_time_of_departure: scheduled_departure,
       ...(editData && { ...editData }),
       item_ids: (editData && editData.item_ids) || [],
       gateway_ids: (editData && editData.gateway_ids) || [],
@@ -295,6 +295,7 @@ function ShipmentInfo(props) {
                     <DatePickerComponent
                       label={"Scheduled Arrival"}
                       selectedDate={scheduled_arrival}
+                      hasTime={true}
                       handleDateChange={handleScheduledDateChange}
                     />
                   </Grid>
@@ -302,6 +303,7 @@ function ShipmentInfo(props) {
                     <DatePickerComponent
                       label={"Scheduled Departure"}
                       selectedDate={scheduled_departure}
+                      hasTime={true}
                       handleDateChange={handleDepartureDateChange}
                     />
                   </Grid>
@@ -321,6 +323,7 @@ function ShipmentInfo(props) {
                       onBlur={(e) => handleBlur(e, "required", flags, "flags")}
                       {...flags.bind}
                     >
+                      <MenuItem>Select</MenuItem>
                       {shipmentFlag &&
                         shipmentFlag.map((item, index) => (
                           <MenuItem
@@ -332,20 +335,13 @@ function ShipmentInfo(props) {
                         ))}
                     </TextField>
                   </Grid>
-                  {editPage && (
-                    <Grid item xs={12}>
-                      <MapComponent
-                        custodianData={custodianData}
-                        isMarkerShown
-                        googleMapURL={MAP_API_URL}
-                        loadingElement={<div style={{ height: `100%` }} />}
-                        containerElement={<div style={{ height: `200px` }} />}
-                        mapElement={<div style={{ height: `100%` }} />}
-                      />
-                    </Grid>
-                  )}
                 </Grid>
               </Grid>
+              {editPage && (
+                <Grid item xs={12}>
+                  <ShipmentRouteInfo {...props} editData={editData} />
+                </Grid>
+              )}
             </Grid>
           </Box>
           <Grid container spacing={3} className={classes.buttonContainer}>

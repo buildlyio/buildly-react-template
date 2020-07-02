@@ -60,6 +60,11 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "18px",
     fontSize: 11,
   },
+  boxHeading: {
+    margin: theme.spacing(2, 0),
+    fontWeight: "bold",
+    fontSize: "14px",
+  },
 }));
 
 function EnvironmentalLimitsInfo(props) {
@@ -171,7 +176,9 @@ function EnvironmentalLimitsInfo(props) {
       <Grid container spacing={4}>
         <Grid item xs={12} md={6} sm={6}>
           <Card variant="outlined">
-            <Typography variant="body2">Temprature Settings(°F)</Typography>
+            <Typography className={classes.boxHeading} variant="body2">
+              Temperature Settings(°F)
+            </Typography>
             <CardContent>
               <Grid container spacing={2}>
                 <Grid item xs={6}>
@@ -245,7 +252,9 @@ function EnvironmentalLimitsInfo(props) {
         </Grid>
         <Grid item xs={12} md={6} sm={6}>
           <Card variant="outlined">
-            <Typography variant="body2">Humidity Settings(%)</Typography>
+            <Typography className={classes.boxHeading} variant="body2">
+              Humidity Settings(%)
+            </Typography>
             <CardContent>
               <Grid container spacing={4}>
                 <Grid item xs={6}>

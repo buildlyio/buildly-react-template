@@ -20,13 +20,13 @@ import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import DataTable from "../../../../components/Table/Table";
 import { editShipment } from "../../../../redux/shipment/actions/shipment.actions";
 import { routes } from "../../../../routes/routesConstants";
-import {
-  getFormattedRow,
-  custodianColumns,
-} from "../../../Custodians/CustodianConstants";
 import DatePickerComponent from "../../../../components/DatePicker/DatePicker";
 import Modal from "../../../../components/Modal/Modal";
 import AddCustodyForm from "./AddCustodyForm";
+import {
+  getFormattedCustodianRow,
+  custodianColumns,
+} from "../../ShipmentConstants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,7 +91,7 @@ function CustodianInfo(props) {
 
   const [openModal, setOpenModal] = useState(false);
 
-  const [start_of_custody, handleStartChange] = useState(moment());
+  const [start_of_custody, handleStartChange] = useState(new Date());
   let rows = [];
   let columns = custodianColumns;
   if (custodianData && custodianData.length) {
@@ -101,7 +101,7 @@ function CustodianInfo(props) {
         selectedRows.push(element);
       }
     });
-    rows = getFormattedRow(selectedRows, contactInfo, custodyData);
+    rows = getFormattedCustodianRow(selectedRows, contactInfo, custodyData);
   }
 
   const submitDisabled = () => {
@@ -124,10 +124,23 @@ function CustodianInfo(props) {
         `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`
       )
     );
+    setOpenModal(false);
   };
 
   const deletItem = (item) => {
     let index = itemIds.indexOf(item.custodian_uuid);
+    let newArr = itemIds.filter((item, idx) => idx !== index);
+    const shipmentFormValue = {
+      ...{ ...shipmentFormData, custodian_ids: newArr },
+    };
+    dispatch(
+      editShipment(
+        shipmentFormValue,
+        history,
+        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`
+      )
+    );
+    setItemIds(newArr);
   };
 
   const actionsColumns = [
@@ -149,7 +162,9 @@ function CustodianInfo(props) {
           {rows.length > 0 && (
             <Grid item xs={12}>
               <Box mt={5}>
-                <Typography variant="h5">Associated Custodians</Typography>
+                <Typography gutterBottom variant="h5">
+                  Associated Custodians
+                </Typography>
                 <DataTable
                   rows={rows || []}
                   columns={columns}

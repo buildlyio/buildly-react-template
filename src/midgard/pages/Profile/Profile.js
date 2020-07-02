@@ -124,30 +124,6 @@ function Profile({ dispatch, history, location }) {
                     variant="h5"
                     className={classes.tileHeading}
                   >
-                    Recalls and Excursions
-                  </Typography>
-                  <Hidden smDown>
-                    <IconButton
-                      className={classes.menuButton}
-                      onClick={() => setTileView(!tileView)}
-                      color="primary"
-                      aria-label="menu"
-                    >
-                      {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
-                    </IconButton>
-                  </Hidden>
-                </div>
-                <DataTable rows={RECALL_DATA} columns={recallColumns} />
-              </Grid>
-            </Grid>
-            <Grid container spacing={4}>
-              <Grid item xs={12}>
-                <div className={classes.switchViewSection}>
-                  <Typography
-                    color="primary"
-                    variant="h5"
-                    className={classes.tileHeading}
-                  >
                     Delayed Shipments
                   </Typography>
                   <Hidden smDown>
@@ -162,6 +138,30 @@ function Profile({ dispatch, history, location }) {
                   </Hidden>
                 </div>
                 <DataTable rows={DELAY_DATA} columns={delayColumns} />
+              </Grid>
+            </Grid>
+            <Grid container spacing={4}>
+              <Grid item xs={12}>
+                <div className={classes.switchViewSection}>
+                  <Typography
+                    color="primary"
+                    variant="h5"
+                    className={classes.tileHeading}
+                  >
+                    Recalls and Excursions
+                  </Typography>
+                  <Hidden smDown>
+                    <IconButton
+                      className={classes.menuButton}
+                      onClick={() => setTileView(!tileView)}
+                      color="primary"
+                      aria-label="menu"
+                    >
+                      {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
+                    </IconButton>
+                  </Hidden>
+                </div>
+                <DataTable rows={RECALL_DATA} columns={recallColumns} />
               </Grid>
             </Grid>
           </Grid>

@@ -52,9 +52,13 @@ export default function ShipmentFilterAndSort(props) {
     handleLateCheck,
     handleSort,
     sortValue,
+    alertAnchor,
+    setAlertAnchor,
+    sortAnchor,
+    setSortAnchor,
   } = props;
-  const [alertAnchor, setAlertAnchor] = useState(null);
-  const [sortAnchor, setSortAnchor] = useState(null);
+  // const [alertAnchor, setAlertAnchor] = useState(null);
+  // const [sortAnchor, setSortAnchor] = useState(null);
 
   const handleSortClick = (event) => {
     setSortAnchor(sortAnchor ? null : event.currentTarget);

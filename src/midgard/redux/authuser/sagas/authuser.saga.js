@@ -159,7 +159,7 @@ function* updateUser(payload) {
   try {
     const user = yield call(
       httpService.makeRequest,
-      "put",
+      "patch",
       `${environment.API_URL}coreuser/${payload.data.id}/`,
       payload.data
     );

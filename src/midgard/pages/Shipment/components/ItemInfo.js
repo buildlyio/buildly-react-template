@@ -169,7 +169,9 @@ function ItemsInfo(props) {
             {rows.length > 0 && (
               <Grid item xs={12}>
                 <Box mt={5}>
-                  <Typography variant="h5">Associated Items</Typography>
+                  <Typography gutterBottom variant="h5">
+                    Associated Items
+                  </Typography>
                   <DataTable
                     rows={rows || []}
                     columns={columns}

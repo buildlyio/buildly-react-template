@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
   buttonContainer: {
     textAlign: "center",
     justifyContent: "center",
+    margin: theme.spacing(3, 0),
   },
   alignRight: {
     marginLeft: "auto",
@@ -72,8 +73,9 @@ function AddCustodyInfo(props) {
   } = props;
   const classes = useStyles();
   const [custodianId, setCustodianId] = useState();
+
   const submitDisabled = () => {
-    if (!itemIds) return true;
+    if (!custodianId) return true;
   };
 
   const onInputChange = (value) => {
@@ -101,7 +103,7 @@ function AddCustodyInfo(props) {
       });
     }
     const custodyFormValues = {
-      start_of_custody: moment(start_of_custody, "yyyy/MM/DD"),
+      start_of_custody: start_of_custody,
       custodian: custodian,
     };
     dispatch(addCUstody(custodyFormValues));
@@ -126,9 +128,9 @@ function AddCustodyInfo(props) {
                   getOptionLabel={(option) =>
                     `${option.name}:${option.custodian_uuid}`
                   }
-                  //   getOptionSelected={(option) =>
-                  //     option.custodian_uuid === itemIds
-                  //   }
+                  // getOptionSelected={(option) =>
+                  //   option.custodian_uuid === custodianId
+                  // }
                   onChange={(event, newValue) => onInputChange(newValue)}
                   value={
                     (rows &&
@@ -183,6 +185,7 @@ function AddCustodyInfo(props) {
                 <DatePickerComponent
                   label={"Start of custody"}
                   selectedDate={start_of_custody}
+                  hasTime={true}
                   handleDateChange={handleStartChange}
                 />
               </Grid>
