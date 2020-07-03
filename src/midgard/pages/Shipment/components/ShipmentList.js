@@ -207,10 +207,10 @@ export default function ShipmentList({ ...props }) {
       let filterObj = {
         ...prevFilters,
         type: "status",
-        temp: false,
-        humid: false,
-        delay: false,
-        recall: false,
+        planned: false,
+        compeleted: false,
+        enroute: false,
+        cancelled: false,
       };
       setFilterObject(filterObj);
       dispatch(filterShipmentData(rows, filterObj));

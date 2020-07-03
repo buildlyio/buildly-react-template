@@ -179,17 +179,23 @@ function* filterShipment(payload) {
   try {
     if (filterObject.type === "sort" && list.length > 0) {
       let sortedList = sortFilter(filterObject, list);
-      let filteredList = [...sortedList];
       if (
         filterObject.temp ||
         filterObject.humid ||
         filterObject.recall ||
         filterObject.delay
       ) {
-        console.log("insode sort");
-        filteredList = alertFilter(filterObject, sortedList);
+        sortedList = alertFilter(filterObject, sortedList);
       }
-      yield put({ type: FILTER_SHIPMENT_SUCCESS, data: filteredList });
+      if (
+        filterObject.compeleted ||
+        filterObject.cancelled ||
+        filterObject.enroute ||
+        filterObject.planned
+      ) {
+        sortedList = statusFilter(filterObject, sortedList);
+      }
+      yield put({ type: FILTER_SHIPMENT_SUCCESS, data: sortedList });
     }
     if (filterObject.type === "search" && list.length > 0) {
       if (!filterObject.value) {
@@ -203,6 +209,14 @@ function* filterShipment(payload) {
       console.log("fff", filterObject, list);
       let filteredData = alertFilter(filterObject, list);
       if (
+        filterObject.compeleted ||
+        filterObject.cancelled ||
+        filterObject.enroute ||
+        filterObject.planned
+      ) {
+        filteredData = statusFilter(filterObject, filteredData);
+      }
+      if (
         filterObject.value &&
         (filterObject.value.includes("Asc") ||
           filterObject.value.includes("Desc"))
@@ -210,6 +224,26 @@ function* filterShipment(payload) {
         filteredData = sortFilter(filterObject, filteredData);
       }
       yield put({ type: FILTER_SHIPMENT_SUCCESS, data: filteredData });
+    }
+    if (filterObject.type === "status" && list.length > 0) {
+      console.log("status", filterObject, list);
+      let statusFilteredData = statusFilter(filterObject, list);
+      if (
+        filterObject.temp ||
+        filterObject.humid ||
+        filterObject.recall ||
+        filterObject.delay
+      ) {
+        statusFilteredData = alertFilter(filterObject, statusFilteredData);
+      }
+      if (
+        filterObject.value &&
+        (filterObject.value.includes("Asc") ||
+          filterObject.value.includes("Desc"))
+      ) {
+        statusFilteredData = sortFilter(filterObject, statusFilteredData);
+      }
+      yield put({ type: FILTER_SHIPMENT_SUCCESS, data: statusFilteredData });
     }
   } catch (error) {
     // yield put({ type: UPDATE_USER_FAIL, error: "Updating user fields failed" });
@@ -237,6 +271,28 @@ const alertFilter = (filterObject, list) => {
       item.shipment_flag &&
       filter.indexOf(item.shipment_flag.toLowerCase()) !== -1
     );
+  });
+  return filteredList;
+};
+
+const statusFilter = (filterObject, list) => {
+  let { planned, cancelled, compeleted, enroute } = filterObject;
+  let filter = [];
+  let filteredList = [];
+  if (
+    (planned && cancelled && compeleted && enroute) ||
+    (!planned && !cancelled && !compeleted && !enroute)
+  ) {
+    return list;
+  }
+
+  if (filterObject.planned) filter.push("planned");
+  if (filterObject.cancelled) filter.push("cancelled");
+  if (filterObject.compeleted) filter.push("compeleted");
+  if (filterObject.enroute) filter.push("enroute");
+
+  filteredList = list.filter((item) => {
+    return item.status && filter.indexOf(item.status.toLowerCase()) !== -1;
   });
   return filteredList;
 };

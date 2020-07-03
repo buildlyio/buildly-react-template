@@ -165,7 +165,7 @@ function ShipmentInfo(props) {
       transport_mode: mode_type.value,
       estimated_time_of_arrival: scheduled_arrival,
       estimated_time_of_departure: scheduled_departure,
-      ...(editData && { ...editData }),
+      ...(editData && { id: editData.id }),
       item_ids: (editData && editData.item_ids) || [],
       gateway_ids: (editData && editData.gateway_ids) || [],
       sensor_report_ids: (editData && editData.sensor_report_ids) || [],
