@@ -96,7 +96,7 @@ export default function ShipmentList({ ...props }) {
   const [enrouteCheck, setEnrouteCheck] = useState(null);
   const [plannedCheck, setPlannedCheck] = useState(null);
   const [cancelledCheck, setCancelledCheck] = useState(null);
-  const [compeletedCheck, setCompeletedCheck] = useState(null);
+  const [completedCheck, setCompeletedCheck] = useState(null);
 
   const handleAllCheck = (e) => {
     setAllCheck(e.target.checked);
@@ -193,7 +193,7 @@ export default function ShipmentList({ ...props }) {
         ...prevFilters,
         type: "status",
         planned: true,
-        compeleted: true,
+        completed: true,
         enroute: true,
         cancelled: true,
       };
@@ -208,7 +208,7 @@ export default function ShipmentList({ ...props }) {
         ...prevFilters,
         type: "status",
         planned: false,
-        compeleted: false,
+        completed: false,
         enroute: false,
         cancelled: false,
       };
@@ -224,7 +224,7 @@ export default function ShipmentList({ ...props }) {
     let filterObj = {
       ...prevFilters,
       type: "status",
-      compeleted: e.target.checked,
+      completed: e.target.checked,
     };
     setFilterObject(filterObj);
     dispatch(filterShipmentData(rows, filterObj));
@@ -336,7 +336,7 @@ export default function ShipmentList({ ...props }) {
           handleEnrouteCheck={handleEnrouteCheck}
           handleCompeletedCheck={handleCompeletedCheck}
           statusAllCheck={statusAllCheck}
-          compeletedCheck={compeletedCheck}
+          completedCheck={completedCheck}
           plannedCheck={plannedCheck}
           enrouteCheck={enrouteCheck}
           cancelledCheck={cancelledCheck}

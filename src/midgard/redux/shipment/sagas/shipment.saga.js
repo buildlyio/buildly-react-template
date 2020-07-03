@@ -114,7 +114,7 @@ function* editShipment(action) {
           message: "Shipment successfully Edited!",
         })
       ),
-      yield call(history.push, redirectTo),
+      // yield call(history.push, redirectTo),
     ];
   } catch (error) {
     yield [
@@ -143,7 +143,6 @@ function* addShipment(action) {
       payload,
       true
     );
-    console.log("Data", data);
     yield [
       yield put(
         showAlert({
@@ -188,7 +187,7 @@ function* filterShipment(payload) {
         sortedList = alertFilter(filterObject, sortedList);
       }
       if (
-        filterObject.compeleted ||
+        filterObject.completed ||
         filterObject.cancelled ||
         filterObject.enroute ||
         filterObject.planned
@@ -206,10 +205,9 @@ function* filterShipment(payload) {
       }
     }
     if (filterObject.type === "alert" && list.length > 0) {
-      console.log("fff", filterObject, list);
       let filteredData = alertFilter(filterObject, list);
       if (
-        filterObject.compeleted ||
+        filterObject.completed ||
         filterObject.cancelled ||
         filterObject.enroute ||
         filterObject.planned
@@ -226,7 +224,6 @@ function* filterShipment(payload) {
       yield put({ type: FILTER_SHIPMENT_SUCCESS, data: filteredData });
     }
     if (filterObject.type === "status" && list.length > 0) {
-      console.log("status", filterObject, list);
       let statusFilteredData = statusFilter(filterObject, list);
       if (
         filterObject.temp ||
@@ -261,7 +258,7 @@ const alertFilter = (filterObject, list) => {
     return list;
   }
 
-  if (filterObject.temp) filter.push("trmperature");
+  if (filterObject.temp) filter.push("temperature");
   if (filterObject.humid) filter.push("humidity");
   if (filterObject.delay) filter.push("delay");
   if (filterObject.recall) filter.push("recall");
@@ -276,19 +273,19 @@ const alertFilter = (filterObject, list) => {
 };
 
 const statusFilter = (filterObject, list) => {
-  let { planned, cancelled, compeleted, enroute } = filterObject;
+  let { planned, cancelled, completed, enroute } = filterObject;
   let filter = [];
   let filteredList = [];
   if (
-    (planned && cancelled && compeleted && enroute) ||
-    (!planned && !cancelled && !compeleted && !enroute)
+    (planned && cancelled && completed && enroute) ||
+    (!planned && !cancelled && !completed && !enroute)
   ) {
     return list;
   }
 
   if (filterObject.planned) filter.push("planned");
   if (filterObject.cancelled) filter.push("cancelled");
-  if (filterObject.compeleted) filter.push("compeleted");
+  if (filterObject.completed) filter.push("completed");
   if (filterObject.enroute) filter.push("enroute");
 
   filteredList = list.filter((item) => {

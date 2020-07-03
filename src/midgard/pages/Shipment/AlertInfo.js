@@ -96,6 +96,7 @@ function AlertInfo(props) {
           //     className={classes.snackbar}
           //   >
           <Alert
+            key={`alert${index}`}
             variant="filled"
             severity={alert.severity}
             onClose={(e) => handleClose(e, index)}

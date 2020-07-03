@@ -151,7 +151,7 @@ function EditProfileInfo({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!first_name.value || !password.value) return true;
+    if (!first_name.value) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -237,23 +237,6 @@ function EditProfileInfo({
               />
             </Grid>
           )}
-          <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              error={formError.password && formError.password.error}
-              helperText={formError.password ? formError.password.message : ""}
-              onBlur={(e) => handleBlur(e, "required", password)}
-              {...password.bind}
-            />
-          </Grid>
         </Grid>
         <Grid container spacing={isDesktop ? 3 : 0} justify="center">
           <Grid item xs={12} sm={4}>

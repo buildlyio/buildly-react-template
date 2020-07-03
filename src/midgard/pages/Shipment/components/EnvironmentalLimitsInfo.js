@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
   buttonContainer: {
     margin: theme.spacing(8, 0),
     textAlign: "center",
+    justifyContent: "center",
   },
   alignRight: {
     marginLeft: "auto",
@@ -344,23 +345,12 @@ function EnvironmentalLimitsInfo(props) {
               className={classes.submit}
               disabled={loading}
             >
-              {`Save & Finish`}
+              {`Save`}
             </Button>
             {loading && (
               <CircularProgress size={24} className={classes.buttonProgress} />
             )}
           </div>
-        </Grid>
-        <Grid item xs={6} sm={4}>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={handleCancel}
-            className={classes.submit}
-          >
-            {"Cancel"}
-          </Button>
         </Grid>
       </Grid>
     </form>

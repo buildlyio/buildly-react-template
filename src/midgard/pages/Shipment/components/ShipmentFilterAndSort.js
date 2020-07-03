@@ -42,7 +42,7 @@ const StatusFilter = (props) => {
     plannedCheck,
     enrouteCheck,
     cancelledCheck,
-    compeletedCheck,
+    completedCheck,
     handleStatusClick,
     handlePlannedCheck,
     handleEnrouteCheck,
@@ -125,7 +125,7 @@ const StatusFilter = (props) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={compeletedCheck || false}
+                  checked={completedCheck || false}
                   onChange={(e) => handleCompeletedCheck(e)}
                   name="checkedB"
                   color="primary"

@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
   buttonContainer: {
     margin: theme.spacing(8, 0),
     textAlign: "center",
+    justifyContent: "center",
   },
   alignRight: {
     marginLeft: "auto",
@@ -190,18 +191,8 @@ function SensorsGatewayInfo(props) {
               )}
             </div>
           </Grid>
-          <Grid item xs={6} sm={2}>
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={() => history.push(`${routes.SHIPMENT}`)}
-              className={classes.submit}
-            >
-              {"Cancel"}
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={4} className={classes.alignRight}>
+
+          <Grid item xs={12} sm={4}>
             <Button
               variant="contained"
               color="primary"

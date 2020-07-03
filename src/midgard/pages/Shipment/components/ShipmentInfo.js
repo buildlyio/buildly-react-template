@@ -55,6 +55,7 @@ const useStyles = makeStyles((theme) => ({
   buttonContainer: {
     margin: theme.spacing(8, 0),
     textAlign: "center",
+    justifyContent: "center",
   },
   alignRight: {
     marginLeft: "auto",
@@ -90,7 +91,7 @@ function ShipmentInfo(props) {
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   const classes = useStyles();
   const editPage = location.state && location.state.type === "edit";
-  const editData = (location.state && location.state.data) || shipmentFormData;
+  const editData = location.state && location.state.data;
   const shipment_name = useInput((editData && editData.name) || "", {
     required: true,
   });
@@ -174,7 +175,7 @@ function ShipmentInfo(props) {
       flags: [flags.value],
     };
 
-    if (editPage) {
+    if (editPage && editData) {
       dispatch(
         editShipment(
           shipmentFormValue,
@@ -182,7 +183,9 @@ function ShipmentInfo(props) {
           `${routes.SHIPMENT}/edit/:${editData.id}`
         )
       );
+      console.log("edit", editPage);
     } else {
+      console.log("add", editPage);
       dispatch(addShipment(shipmentFormValue, history, redirectTo));
     }
   };
@@ -365,18 +368,7 @@ function ShipmentInfo(props) {
                 )}
               </div>
             </Grid>
-            <Grid item xs={6} sm={2}>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={handleCancel}
-                className={classes.submit}
-              >
-                {"Cancel"}
-              </Button>
-            </Grid>
-            <Grid item xs={12} sm={4} className={classes.alignRight}>
+            <Grid item xs={12} sm={4}>
               <Button
                 variant="contained"
                 color="primary"
