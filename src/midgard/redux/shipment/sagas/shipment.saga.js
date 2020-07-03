@@ -22,6 +22,7 @@ import {
   GET_SHIPMENT_FLAG_FAILURE,
   GET_SHIPMENT_FLAG_SUCCESS,
   FILTER_SHIPMENT_SUCCESS,
+  filterShipmentData,
 } from "../actions/shipment.actions";
 
 const shipmentApiEndPoint = "shipment/";
@@ -177,107 +178,140 @@ function* filterShipment(payload) {
   let { filterObject, list } = payload;
   try {
     if (filterObject.type === "sort" && list.length > 0) {
-      switch (filterObject.value) {
-        case "valueAsc": {
-          let sortedList = list.sort((a, b) => {
-            return a.value - b.value;
-          });
-          yield put({ type: FILTER_SHIPMENT_SUCCESS, data: sortedList });
-          break;
-        }
-        case "valueDesc": {
-          let sortedList = list.sort((a, b) => {
-            return b.value - a.value;
-          });
-          yield put({ type: FILTER_SHIPMENT_SUCCESS, data: sortedList });
-          break;
-        }
-        case "dateAsc": {
-          let sortedList = list.sort((a, b) => {
-            return moment
-              .utc(a.estimated_time_of_arrival)
-              .diff(moment.utc(b.estimated_time_of_arrival));
-          });
-          yield put({ type: FILTER_SHIPMENT_SUCCESS, data: sortedList });
-          break;
-        }
-        case "dateDesc": {
-          let sortedList = list.sort((a, b) => {
-            return moment
-              .utc(b.estimated_time_of_arrival)
-              .diff(moment.utc(a.estimated_time_of_arrival));
-          });
-          yield put({ type: FILTER_SHIPMENT_SUCCESS, data: sortedList });
-          break;
-        }
-        case "nameAsc": {
-          let sortedList = list.sort((a, b) => {
-            if (a.custodian_name.toUpperCase() < b.custodian_name.toUpperCase())
-              return -1;
-            else if (
-              a.custodian_name.toUpperCase() > b.custodian_name.toUpperCase()
-            )
-              return 1;
-            else return 0;
-          });
-          yield put({ type: FILTER_SHIPMENT_SUCCESS, data: sortedList });
-          break;
-        }
-        case "nameDesc": {
-          let sortedList = list.sort((a, b) => {
-            if (a.custodian_name.toUpperCase() > b.custodian_name.toUpperCase())
-              return -1;
-            else if (
-              a.custodian_name.toUpperCase() < b.custodian_name.toUpperCase()
-            )
-              return 1;
-            else return 0;
-          });
-          yield put({ type: FILTER_SHIPMENT_SUCCESS, data: sortedList });
-          break;
-        }
-        default: {
-          yield put({ type: FILTER_SHIPMENT_SUCCESS, data: list });
-          break;
-        }
+      let sortedList = sortFilter(filterObject, list);
+      let filteredList = [...sortedList];
+      if (
+        filterObject.temp ||
+        filterObject.humid ||
+        filterObject.recall ||
+        filterObject.delay
+      ) {
+        console.log("insode sort");
+        filteredList = alertFilter(filterObject, sortedList);
       }
+      yield put({ type: FILTER_SHIPMENT_SUCCESS, data: filteredList });
     }
     if (filterObject.type === "search" && list.length > 0) {
       if (!filterObject.value) {
-        yield put({ type: FILTER_SHIPMENT_SUCCESS, data: [] });
+        yield put({ type: FILTER_SHIPMENT_SUCCESS, data: list });
       } else {
-        let data = list.filter((item) => {
-          let itemKeys = Object.keys(item);
-          let foundItem = "";
-          itemKeys.forEach((key) => {
-            if (
-              filterObject.searchFields.includes(key) &&
-              item[key] &&
-              item[key].toString().includes(filterObject.value)
-            ) {
-              foundItem = { ...item };
-            }
-          });
-          return foundItem && foundItem.id === item.id;
-        });
-        yield put({ type: FILTER_SHIPMENT_SUCCESS, data });
+        let filteredData = searchFilter(filterObject, list);
+        yield put({ type: FILTER_SHIPMENT_SUCCESS, data: filteredData });
       }
     }
-    // if (!payload.searchItem) {
-    //   yield put({ type: SEARCH_SUCCESS, data: [] });
-    // } else {
-    //   let data = payload.searchList.filter((item) => {
-    //     return (
-    //       item.name.includes(payload.searchItem.trim()) ||
-    //       item.id.toString().includes(payload.searchItem)
-    //     );
-    //   });
-    //   yield put({ type: SEARCH_SUCCESS, data });
-    // }
+    if (filterObject.type === "alert" && list.length > 0) {
+      console.log("fff", filterObject, list);
+      let filteredData = alertFilter(filterObject, list);
+      if (
+        filterObject.value &&
+        (filterObject.value.includes("Asc") ||
+          filterObject.value.includes("Desc"))
+      ) {
+        filteredData = sortFilter(filterObject, filteredData);
+      }
+      yield put({ type: FILTER_SHIPMENT_SUCCESS, data: filteredData });
+    }
   } catch (error) {
     // yield put({ type: UPDATE_USER_FAIL, error: "Updating user fields failed" });
   }
 }
+
+const alertFilter = (filterObject, list) => {
+  let { temp, humid, recall, delay } = filterObject;
+  let filter = [];
+  let filteredList = [];
+  if (
+    (temp && humid && recall && delay) ||
+    (!temp && !humid && !recall && !delay)
+  ) {
+    return list;
+  }
+
+  if (filterObject.temp) filter.push("trmperature");
+  if (filterObject.humid) filter.push("humidity");
+  if (filterObject.delay) filter.push("delay");
+  if (filterObject.recall) filter.push("recall");
+
+  filteredList = list.filter((item) => {
+    return (
+      item.shipment_flag &&
+      filter.indexOf(item.shipment_flag.toLowerCase()) !== -1
+    );
+  });
+  return filteredList;
+};
+
+const searchFilter = (filterObject, list) => {
+  let data = list.filter((item) => {
+    let itemKeys = Object.keys(item);
+    let foundItem = "";
+    itemKeys.forEach((key) => {
+      if (
+        filterObject.searchFields.includes(key) &&
+        item[key] &&
+        item[key].toString().includes(filterObject.value)
+      ) {
+        foundItem = { ...item };
+      }
+    });
+    return foundItem && foundItem.id === item.id;
+  });
+  return data;
+};
+
+const sortFilter = (filterObject, list) => {
+  switch (filterObject.value) {
+    case "valueAsc": {
+      return list.sort((a, b) => {
+        return a.value - b.value;
+      });
+    }
+    case "valueDesc": {
+      return list.sort((a, b) => {
+        return b.value - a.value;
+      });
+    }
+    case "dateAsc": {
+      return list.sort((a, b) => {
+        return moment
+          .utc(a.estimated_time_of_arrival)
+          .diff(moment.utc(b.estimated_time_of_arrival));
+      });
+    }
+    case "dateDesc": {
+      return list.sort((a, b) => {
+        return moment
+          .utc(b.estimated_time_of_arrival)
+          .diff(moment.utc(a.estimated_time_of_arrival));
+      });
+    }
+    case "nameAsc": {
+      return list.sort((a, b) => {
+        if (a.custodian_name.toUpperCase() < b.custodian_name.toUpperCase())
+          return -1;
+        else if (
+          a.custodian_name.toUpperCase() > b.custodian_name.toUpperCase()
+        )
+          return 1;
+        else return 0;
+      });
+    }
+    case "nameDesc": {
+      return list.sort((a, b) => {
+        if (a.custodian_name.toUpperCase() > b.custodian_name.toUpperCase())
+          return -1;
+        else if (
+          a.custodian_name.toUpperCase() < b.custodian_name.toUpperCase()
+        )
+          return 1;
+        else return 0;
+      });
+    }
+    default: {
+      return list;
+    }
+  }
+};
 
 function* getShipmentFlagList() {
   try {

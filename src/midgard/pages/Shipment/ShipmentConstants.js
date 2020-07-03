@@ -1,5 +1,7 @@
+import React from "react";
 import { numberWithCommas } from "../../utils/utilMethods";
 import moment from "moment";
+import { Typography } from "@material-ui/core";
 
 export const SHIPMENT_COLUMNS = [
   { id: "id", width: 150, maxWidth: 150 },
@@ -7,19 +9,47 @@ export const SHIPMENT_COLUMNS = [
     id: "estimated_time_of_arrival",
     width: 150,
     maxWidth: 150,
+    minWidth: 100,
     format: (value) => value && moment(value).format("yyyy/MM/DD"),
   },
-  { id: "name", width: 150, maxWidth: 150 },
-  { id: "custodian_name", width: 150, maxWidth: 150 },
+  { id: "name", width: 150, maxWidth: 150, minWidth: 100 },
+  { id: "custodian_name", width: 150, maxWidth: 150, minWidth: 100 },
   {
     id: "value",
     width: 150,
     maxWidth: 150,
+    minWidth: 100,
     format: (value) => (value ? `$${numberWithCommas(value)}` : "-"),
+  },
+  { id: "status", width: 100, maxWidth: 150, minWidth: 100 },
+  {
+    id: "shipment_flag",
+    width: 100,
+    maxWidth: 150,
+    minWidth: 100,
+
+    format: (value, row) => {
+      if (row) {
+        return (
+          <Typography
+            variant="body1"
+            color={row.flag_type === "Warning" ? "primary" : "error"}
+          >
+            {value}
+          </Typography>
+        );
+      }
+      return value;
+    },
   },
 ];
 
-export const getFormattedRow = (shipmentData, custodianData, itemData) => {
+export const getFormattedRow = (
+  shipmentData,
+  custodianData,
+  itemData,
+  shipmentFlag
+) => {
   let shipmentList = [...shipmentData];
   shipmentList.forEach((list) => {
     let shipmentValue = 0;
@@ -39,6 +69,15 @@ export const getFormattedRow = (shipmentData, custodianData, itemData) => {
           list["value"] = shipmentValue;
         }
       });
+    }
+    if (shipmentFlag && shipmentFlag.length) {
+      shipmentFlag &&
+        shipmentFlag.forEach((flag) => {
+          if (list.flags.indexOf(flag.url) !== -1 && flag.type !== "None") {
+            list["shipment_flag"] = flag.name;
+            list["flag_type"] = flag.type;
+          }
+        });
     }
   });
   return shipmentList;

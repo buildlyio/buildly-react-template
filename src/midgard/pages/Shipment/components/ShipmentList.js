@@ -78,6 +78,7 @@ export default function ShipmentList({ ...props }) {
     editAction,
     deleteAction,
     dispatch,
+    filteredRows,
   } = props;
   const classes = useStyles();
   const [allCheck, setAllCheck] = useState(false);
@@ -90,44 +91,180 @@ export default function ShipmentList({ ...props }) {
   const [searchValue, setSearchValue] = useState("");
   const [alertAnchor, setAlertAnchor] = useState(null);
   const [sortAnchor, setSortAnchor] = useState(null);
+  const [statusAnchor, setStatusAnchor] = useState(null);
+  const [statusAllCheck, setStatusAllCheck] = useState(null);
+  const [enrouteCheck, setEnrouteCheck] = useState(null);
+  const [plannedCheck, setPlannedCheck] = useState(null);
+  const [cancelledCheck, setCancelledCheck] = useState(null);
+  const [compeletedCheck, setCompeletedCheck] = useState(null);
 
   const handleAllCheck = (e) => {
     setAllCheck(e.target.checked);
+    let prevFilters = { ...filterObject };
     if (e.target.checked) {
       setRecallCheck(true);
       setTemperatureCheck(true);
       setHumidityCheck(true);
       setLateShipmentCheck(true);
+      let filterObj = {
+        ...prevFilters,
+        type: "alert",
+        temp: true,
+        humid: true,
+        delay: true,
+        recall: true,
+      };
+      setFilterObject(filterObj);
+      dispatch(filterShipmentData(rows, filterObj));
     } else {
       setRecallCheck(false);
       setTemperatureCheck(false);
       setHumidityCheck(false);
       setLateShipmentCheck(false);
+      let filterObj = {
+        ...prevFilters,
+        type: "alert",
+        temp: false,
+        humid: false,
+        delay: false,
+        recall: false,
+      };
+      setFilterObject(filterObj);
+      dispatch(filterShipmentData(rows, filterObj));
     }
   };
 
   const handleRecallCheck = (e) => {
     setRecallCheck(e.target.checked);
+    let prevFilters = { ...filterObject };
     let filterObj = {
       ...prevFilters,
       type: "alert",
-      value: sortValue,
-      temepratureCheck: temepratureCheck,
-      humidityCheck: humidityCheck,
-      recallCheck: recallCheck,
-      lateShipmentCheck,
+      recall: e.target.checked,
     };
+    setFilterObject(filterObj);
+    dispatch(filterShipmentData(rows, filterObj));
   };
 
   const handleTemperatureCheck = (e) => {
     setTemperatureCheck(e.target.checked);
+    let prevFilters = { ...filterObject };
+
+    let filterObj = {
+      ...prevFilters,
+      type: "alert",
+      temp: e.target.checked,
+    };
+    setFilterObject(filterObj);
+    dispatch(filterShipmentData(rows, filterObj));
   };
   const handleHumidityCheck = (e) => {
     setHumidityCheck(e.target.checked);
+    let prevFilters = { ...filterObject };
+    let filterObj = {
+      ...prevFilters,
+      type: "alert",
+      humid: e.target.checked,
+    };
+    setFilterObject(filterObj);
+    dispatch(filterShipmentData(rows, filterObj));
   };
   const handleLateCheck = (e) => {
     setLateShipmentCheck(e.target.checked);
+    let prevFilters = { ...filterObject };
+    let filterObj = {
+      ...prevFilters,
+      type: "alert",
+      delay: e.target.checked,
+    };
+    setFilterObject(filterObj);
+    dispatch(filterShipmentData(rows, filterObj));
   };
+
+  const handleStatusAllCheck = (e) => {
+    setStatusAllCheck(e.target.checked);
+    let prevFilters = { ...filterObject };
+    if (e.target.checked) {
+      setEnrouteCheck(true);
+      setCancelledCheck(true);
+      setPlannedCheck(true);
+      setCompeletedCheck(true);
+      let filterObj = {
+        ...prevFilters,
+        type: "status",
+        planned: true,
+        compeleted: true,
+        enroute: true,
+        cancelled: true,
+      };
+      setFilterObject(filterObj);
+      dispatch(filterShipmentData(rows, filterObj));
+    } else {
+      setEnrouteCheck(false);
+      setCancelledCheck(false);
+      setPlannedCheck(false);
+      setCompeletedCheck(false);
+      let filterObj = {
+        ...prevFilters,
+        type: "status",
+        temp: false,
+        humid: false,
+        delay: false,
+        recall: false,
+      };
+      setFilterObject(filterObj);
+      dispatch(filterShipmentData(rows, filterObj));
+    }
+  };
+
+  const handleCompeletedCheck = (e) => {
+    setCompeletedCheck(e.target.checked);
+    let prevFilters = { ...filterObject };
+
+    let filterObj = {
+      ...prevFilters,
+      type: "status",
+      compeleted: e.target.checked,
+    };
+    setFilterObject(filterObj);
+    dispatch(filterShipmentData(rows, filterObj));
+  };
+
+  const handleEnrouteCheck = (e) => {
+    setEnrouteCheck(e.target.checked);
+    let prevFilters = { ...filterObject };
+
+    let filterObj = {
+      ...prevFilters,
+      type: "status",
+      enroute: e.target.checked,
+    };
+    setFilterObject(filterObj);
+    dispatch(filterShipmentData(rows, filterObj));
+  };
+  const handleCancelledCheck = (e) => {
+    setCancelledCheck(e.target.checked);
+    let prevFilters = { ...filterObject };
+    let filterObj = {
+      ...prevFilters,
+      type: "status",
+      cancelled: e.target.checked,
+    };
+    setFilterObject(filterObj);
+    dispatch(filterShipmentData(rows, filterObj));
+  };
+  const handlePlannedCheck = (e) => {
+    setPlannedCheck(e.target.checked);
+    let prevFilters = { ...filterObject };
+    let filterObj = {
+      ...prevFilters,
+      type: "status",
+      planned: e.target.checked,
+    };
+    setFilterObject(filterObj);
+    dispatch(filterShipmentData(rows, filterObj));
+  };
+
   const handleSort = (sortValue) => {
     setSortValue(sortValue);
     let prevFilters = { ...filterObject };
@@ -135,6 +272,7 @@ export default function ShipmentList({ ...props }) {
     let filterObj = {
       ...prevFilters,
       type: "sort",
+      valueType: "sort",
       value: sortValue,
     };
     setFilterObject(filterObj);
@@ -190,13 +328,25 @@ export default function ShipmentList({ ...props }) {
           setAlertAnchor={setAlertAnchor}
           sortAnchor={sortAnchor}
           setSortAnchor={setSortAnchor}
+          statusAnchor={statusAnchor}
+          setStatusAnchor={setStatusAnchor}
+          handlePlannedCheck={handlePlannedCheck}
+          handleStatusAllCheck={handleStatusAllCheck}
+          handleCancelledCheck={handleCancelledCheck}
+          handleEnrouteCheck={handleEnrouteCheck}
+          handleCompeletedCheck={handleCompeletedCheck}
+          statusAllCheck={statusAllCheck}
+          compeletedCheck={compeletedCheck}
+          plannedCheck={plannedCheck}
+          enrouteCheck={enrouteCheck}
+          cancelledCheck={cancelledCheck}
         />
       )}
       <TableContainer className={classes.container}>
         <Table stickyHeader className={classes.table} aria-label="sticky table">
           <TableBody>
-            {rows.length > 0 &&
-              rows
+            {filteredRows.length > 0 &&
+              filteredRows
 
                 // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, idx) => {
@@ -226,6 +376,7 @@ export default function ShipmentList({ ...props }) {
                                           style={{
                                             width: column.width,
                                             maxWidth: column.maxWidth,
+                                            minWidth: column.minWidth,
                                           }}
                                           className={classes.tableCell}
                                           key={column.id}
@@ -237,7 +388,7 @@ export default function ShipmentList({ ...props }) {
                                           }
                                         >
                                           {column.format
-                                            ? column.format(value)
+                                            ? column.format(value, row)
                                             : value}
                                         </TableCell>
                                       );
@@ -271,7 +422,7 @@ export default function ShipmentList({ ...props }) {
                     </React.Fragment>
                   );
                 })}
-            {rows.length === 0 && (
+            {filteredRows.length === 0 && (
               <StyledTableRow>
                 <TableCell align="center" colSpan={columns.length + 2}>
                   No Data To Display

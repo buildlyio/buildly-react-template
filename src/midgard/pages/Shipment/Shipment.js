@@ -39,8 +39,10 @@ import {
   saveShipmentFormData,
   deleteShipment,
   getShipmentFlag,
+  FILTER_SHIPMENT_SUCCESS,
 } from "../../redux/shipment/actions/shipment.actions";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
+import AlertInfo from "./AlertInfo";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -49,6 +51,9 @@ const useStyles = makeStyles((theme) => ({
   },
   addButton: {
     backgroundColor: "#000",
+    [theme.breakpoints.down("xs")]: {
+      marginTop: theme.spacing(2),
+    },
   },
 }));
 
@@ -68,13 +73,8 @@ function Shipment(props) {
   const classes = useStyles();
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
-  let rows = [];
-
-  if (filteredData && filteredData.length) {
-    rows = filteredData;
-  } else if (shipmentData) {
-    rows = getFormattedRow(shipmentData, custodianData, itemData);
-  }
+  const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
   useEffect(() => {
     if (shipmentData === null) {
       dispatch(getShipmentDetails());
@@ -101,7 +101,27 @@ function Shipment(props) {
     if (!custodyData) {
       dispatch(getCustody());
     }
+    return function cleanup() {
+      dispatch({ type: FILTER_SHIPMENT_SUCCESS, data: undefined });
+    };
   }, []);
+
+  useEffect(() => {
+    if (shipmentData && custodianData && itemData && shipmentFlag) {
+      setRows(
+        getFormattedRow(shipmentData, custodianData, itemData, shipmentFlag)
+      );
+      setFilteredRows(
+        getFormattedRow(shipmentData, custodianData, itemData, shipmentFlag)
+      );
+    }
+  }, [shipmentData, custodianData, itemData, shipmentFlag]);
+
+  useEffect(() => {
+    if (filteredData && filteredData.length >= 0) {
+      setFilteredRows(filteredData);
+    }
+  }, [filteredData]);
 
   const onAddButtonClick = () => {
     history.push(`${routes.SHIPMENT}/add`, {
@@ -129,8 +149,8 @@ function Shipment(props) {
 
   return (
     <Box mt={5} mb={5}>
-      {/* {alerts.length > 0 && <ShowAlerts alertData={alerts} />} */}
-      <Box mb={3}>
+      <AlertInfo {...props} />
+      <Box mb={3} mt={2}>
         <Button
           type="button"
           // fullWidth
@@ -149,6 +169,7 @@ function Shipment(props) {
         <Grid item xs={12} sm={6}>
           <ShipmentList
             rows={rows}
+            filteredRows={filteredRows}
             columns={SHIPMENT_COLUMNS}
             hasSearch={true}
             searchValue={""}
