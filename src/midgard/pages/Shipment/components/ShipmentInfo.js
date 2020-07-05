@@ -113,7 +113,7 @@ function ShipmentInfo(props) {
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
-    if (editPage) {
+    if (editPage && shipmentFormData === null) {
       dispatch(saveShipmentFormData(editData));
     }
   }, []);

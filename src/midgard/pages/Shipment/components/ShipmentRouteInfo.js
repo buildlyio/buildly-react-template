@@ -12,7 +12,11 @@ import {
   GoogleMap,
   Marker,
 } from "react-google-maps";
-import { MAP_API_URL, MAP_API_KEY } from "../../../utils/utilMethods";
+import {
+  MAP_API_URL,
+  MAP_API_KEY,
+  GEO_CODE_API,
+} from "../../../utils/utilMethods";
 import { getFormattedCustodianRow } from "../ShipmentConstants";
 
 const useStyles = makeStyles((theme) => ({
@@ -21,8 +25,22 @@ const useStyles = makeStyles((theme) => ({
 
 const MapComponent = withScriptjs(
   withGoogleMap((props) => (
-    <GoogleMap defaultZoom={8} defaultCenter={{ lat: -34.397, lng: 150.644 }}>
-      {props.isMarkerShown && (
+    <GoogleMap
+      defaultZoom={3}
+      defaultCenter={
+        props.markers && props.markers.length && props.markers[0]
+          ? { lat: props.markers[0].lat, lng: props.markers[0].lng }
+          : { lat: -34.397, lng: 150.644 }
+      }
+    >
+      {props.markers && props.markers.length ? (
+        props.markers.map((mark) => (
+          <Marker
+            key={`${mark.lat},${mark.lng}`}
+            position={{ lat: mark.lat, lng: mark.lng }}
+          />
+        ))
+      ) : (
         <Marker position={{ lat: -34.397, lng: 150.644 }} />
       )}
     </GoogleMap>
@@ -30,50 +48,112 @@ const MapComponent = withScriptjs(
 );
 
 export default function ShipmentRouteInfo(props) {
-  const { custodianData, custodyData, contactInfo, editData } = props;
+  const {
+    custodianData,
+    custodyData,
+    contactInfo,
+    editData,
+    shipmentFormData,
+  } = props;
   const classes = useStyles();
-  const [markers, setMarkers] = useState([]);
-  const [itemIds, setItemIds] = useState(
-    (editData && editData.custodian_ids) || []
-  );
-  let rows = [];
-  if (custodianData && custodianData.length) {
-    let selectedRows = [];
-    custodianData.forEach((element) => {
-      if (itemIds.indexOf(element.custodian_uuid) !== -1) {
-        selectedRows.push(element);
-      }
-    });
-    rows = getFormattedCustodianRow(selectedRows, contactInfo, custodyData);
-  }
+  // const [itemIds, setItemIds] = useState(
+  //   (shipmentFormData && shipmentFormData.custodian_ids) || []
+  // );
+  const [rows, setRows] = useState([]);
+  const [routes, setRoutes] = useState([]);
 
   useEffect(() => {
-    // set Google Maps Geocoding API for purposes of quota management. Its optional but recommended.
-    Geocode.setApiKey(MAP_API_KEY);
-
-    // set response language. Defaults to english.
+    Geocode.setApiKey(GEO_CODE_API);
     Geocode.setLanguage("en");
-    Geocode.fromAddress("Eiffel Tower").then(
-      (response) => {
-        const { lat, lng } = response.results[0].geometry.location;
-        console.log(lat, lng);
-      },
-      (error) => {
-        console.error(error);
+    if (
+      custodianData &&
+      custodianData.length &&
+      contactInfo &&
+      custodyData &&
+      custodyData.length &&
+      shipmentFormData !== null
+    ) {
+      let selectedRows = [];
+      let itemIds = shipmentFormData.custodian_ids;
+      custodianData.forEach((element) => {
+        if (itemIds.indexOf(element.custodian_uuid) !== -1) {
+          selectedRows.push(element);
+        }
+      });
+      selectedRows = getFormattedCustodianRow(
+        selectedRows,
+        contactInfo,
+        custodyData
+      );
+      if (selectedRows.length) {
+        selectedRows.forEach((row) => {
+          let routeObj = {};
+          Geocode.fromAddress(row.location).then(
+            (response) => {
+              const { lat, lng } = response.results[0].geometry.location;
+              console.log(lat, lng);
+              routeObj = {
+                lat: lat,
+                lng: lng,
+                shipmentId: row.shipment_uuid,
+                name: row.name,
+              };
+              setRoutes((prevRoutes) => [...prevRoutes, routeObj]);
+            },
+            (error) => {
+              console.error(error);
+            }
+          );
+        });
       }
-    );
-  }, []);
+
+      setRows(selectedRows);
+    }
+    return function cleanup() {
+      setRoutes([]);
+    };
+  }, [custodyData, contactInfo, custodyData, shipmentFormData]);
+
+  useEffect(() => {
+    if (routes.length > 1) {
+      const directionsService = new google.maps.DirectionsService();
+      let origin = { lat: routes[0].lat, lng: routes[0].lng };
+      let destination = {
+        lat: routes[routes.length - 1].lat,
+        lng: routes[routes.length - 1].lng,
+      };
+      directionsService.route(
+        {
+          origin: origin,
+          destination: destination,
+          travelMode: "DRIVING",
+        },
+        (result, status) => {
+          if (result) {
+            console.log("res", result);
+          } else {
+            console.error(`error fetching directions ${result}`);
+          }
+        }
+      );
+
+      console.log("routes", origin, destination);
+    }
+  }, [routes]);
+
   return (
     <Card>
       <CardContent>
-        <MapComponent
-          isMarkerShown
-          googleMapURL={MAP_API_URL}
-          loadingElement={<div style={{ height: `100%` }} />}
-          containerElement={<div style={{ height: `200px` }} />}
-          mapElement={<div style={{ height: `100%` }} />}
-          markers={markers}
-        />
+        {routes.length > 0 && (
+          <MapComponent
+            isMarkerShown
+            googleMapURL={MAP_API_URL}
+            loadingElement={<div style={{ height: `100%` }} />}
+            containerElement={<div style={{ height: `400px` }} />}
+            mapElement={<div style={{ height: `100%` }} />}
+            markers={routes}
+          />
+        )}
       </CardContent>
     </Card>
   );

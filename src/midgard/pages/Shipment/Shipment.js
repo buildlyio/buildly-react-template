@@ -130,7 +130,7 @@ function Shipment(props) {
   };
 
   const handleEdit = (item) => {
-    dispatch(saveShipmentFormData(item));
+    // dispatch(saveShipmentFormData(item));
     history.push(`${routes.SHIPMENT}/edit/:${item.id}`, {
       type: "edit",
       data: item,
