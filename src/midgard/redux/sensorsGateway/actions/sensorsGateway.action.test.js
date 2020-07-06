@@ -114,12 +114,12 @@ describe("actions", () => {
 
 describe("actions", () => {
   it("should create an action to delete Sensor", () => {
-    const gatewayId = "123";
+    const sensorId = "123";
     const expectedAction = {
       type: actions.DELETE_SENSOR,
-      gatewayId,
+      sensorId,
     };
-    expect(actions.deleteSensor(gatewayId)).toEqual(expectedAction);
+    expect(actions.deleteSensor(sensorId)).toEqual(expectedAction);
   });
 });
 
