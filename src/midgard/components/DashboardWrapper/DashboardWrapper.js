@@ -36,6 +36,7 @@ function DashboardWrapper(props) {
     handleConfirmModal,
     confirmModalTitle,
     children,
+    redirectTo,
   } = props;
   const classes = useStyles();
   const actionsColumns = [
@@ -63,9 +64,11 @@ function DashboardWrapper(props) {
             <AddIcon /> {addButtonHeading}
           </Button>
         </Box>
-        <Typography className={classes.dashboardHeading} variant={"h4"}>
-          {dashboardHeading}
-        </Typography>
+        {!redirectTo && (
+          <Typography className={classes.dashboardHeading} variant={"h4"}>
+            {dashboardHeading}
+          </Typography>
+        )}
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <DataTable

@@ -22,27 +22,46 @@ function Gateway(props) {
     loading,
     searchData,
     gatewayTypeList,
+    redirectTo,
+    noSearch,
   } = props;
+  const addPath = redirectTo
+    ? `${redirectTo}/gateways`
+    : `${routes.SENSORS_GATEWAY}/gateway/add`;
+
+  const editPath = redirectTo
+    ? `${redirectTo}/gateways`
+    : `${routes.SENSORS_GATEWAY}/gateway/edit`;
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteGatewayId, setDeleteGatewayId] = useState("");
   const [searchValue, setSearchValue] = useState("");
-
-  let rows = [];
-  if (searchData && searchData.length) {
-    rows = searchData;
-  } else if (data && data.length) {
-    rows = getFormattedRow(data, gatewayTypeList);
-  }
+  const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
 
   useEffect(() => {
-    dispatch(getGateways());
-    dispatch(getGatewayType());
+    if (data === null) {
+      dispatch(getGateways());
+      dispatch(getGatewayType());
+    }
   }, []);
 
+  useEffect(() => {
+    if (data && data.length && gatewayTypeList && gatewayTypeList.length) {
+      setRows(getFormattedRow(data, gatewayTypeList));
+      setFilteredRows(getFormattedRow(data, gatewayTypeList));
+    }
+  }, [data, gatewayTypeList]);
+
+  useEffect(() => {
+    if (searchData) {
+      setFilteredRows(searchData);
+    }
+  }, [searchData]);
+
   const editGatewayAction = (item) => {
-    history.push(`${routes.SENSORS_GATEWAY}/gateway/edit/:${item.id}`, {
+    history.push(`${editPath}/:${item.id}`, {
       type: "edit",
-      from: routes.SENSORS_GATEWAY,
+      from: redirectTo || routes.SENSORS_GATEWAY,
       data: item,
     });
   };
@@ -55,12 +74,20 @@ function Gateway(props) {
     setConfirmModal(false);
   };
   const searchTable = (e) => {
+    let searchFields = [
+      "id",
+      "name",
+      "gateway_uuid",
+      "gateway_type_value",
+      "last_known_battery_level",
+      "activation_date",
+    ];
     setSearchValue(e.target.value);
-    dispatch(searchGatewayItem(e.target.value, rows));
+    dispatch(searchGatewayItem(e.target.value, rows, searchFields));
   };
   const onAddButtonClick = () => {
-    history.push(`${routes.SENSORS_GATEWAY}/gateway/add`, {
-      from: routes.SENSORS_GATEWAY,
+    history.push(`${addPath}`, {
+      from: redirectTo || routes.SENSORS_GATEWAY,
     });
   };
   return (
@@ -72,22 +99,17 @@ function Gateway(props) {
       editAction={editGatewayAction}
       deleteAction={deleteGatewayAction}
       columns={gatewayColumns}
-      rows={rows}
-      hasSearch={true}
+      rows={filteredRows}
+      redirectTo={redirectTo}
+      hasSearch={noSearch ? false : true}
       search={{ searchValue, searchAction: searchTable }}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
       confirmModalTitle={"Are your sure you want to Delete this Gateway?"}
     >
-      <Route
-        path={`${routes.SENSORS_GATEWAY}/gateway/add`}
-        component={AddGateway}
-      />
-      <Route
-        path={`${routes.SENSORS_GATEWAY}/gateway/edit/:id`}
-        component={AddGateway}
-      />
+      <Route path={`${addPath}`} component={AddGateway} />
+      <Route path={`${editPath}/:id`} component={AddGateway} />
     </DashboardWrapper>
   );
 }

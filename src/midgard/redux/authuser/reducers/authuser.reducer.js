@@ -54,12 +54,6 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
-
-    case LOGOUT_SUCCESS:
-      return {
-        ...state,
-      };
-
     case REGISTER:
       return {
         ...state,

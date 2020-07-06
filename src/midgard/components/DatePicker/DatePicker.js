@@ -9,6 +9,8 @@ import EventIcon from "@material-ui/icons/Event";
 import AlarmIcon from "@material-ui/icons/AddAlarm";
 import { IconButton, InputAdornment } from "@material-ui/core";
 import MomentUtils from "@date-io/moment";
+import DateFnsUtils from "@date-io/date-fns";
+import moment from "moment";
 
 export default function DatePickerComponent({
   selectedDate,
@@ -17,29 +19,18 @@ export default function DatePickerComponent({
   hasTime,
 }) {
   return (
-    <MuiPickersUtilsProvider utils={MomentUtils}>
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
       {hasTime ? (
-        <DateTimePicker
-          disableFuture
-          hideTabs
-          ampm={false}
-          inputVariant="outlined"
+        <KeyboardDateTimePicker
           variant="inline"
-          format="yyyy/MM/DD HH:mm"
-          value={selectedDate}
-          onChange={(date) => handleDateChange(date)}
-          allowKeyboardControl={false}
+          inputVariant="outlined"
+          ampm={false}
           fullWidth
-          helperText="Hardcoded helper text"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton>
-                  <EventIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
+          margin="normal"
+          label={label}
+          value={selectedDate}
+          onChange={handleDateChange}
+          format="yyyy/MM/dd HH:mm:ss"
         />
       ) : (
         <KeyboardDatePicker
@@ -48,11 +39,10 @@ export default function DatePickerComponent({
           fullWidth
           inputVariant="outlined"
           variant="inline"
-          format="MM/DD/yyyy"
+          format="MM/dd/yyyy"
           margin="normal"
           id="date-picker-inline"
           label={label}
-          disableFuture
           value={selectedDate}
           onChange={handleDateChange}
           KeyboardButtonProps={{

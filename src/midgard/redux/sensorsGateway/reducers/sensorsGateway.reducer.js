@@ -16,6 +16,23 @@ import {
   GATEWAY_SEARCH_SUCCESS,
   GATEWAY_SEARCH,
   DELETE_GATEWAY_FAILURE,
+  GET_SENSORS,
+  GET_SENSORS_SUCCESS,
+  GET_SENSORS_FAILURE,
+  Add_SENSOR,
+  Add_SENSOR_SUCCESS,
+  Add_SENSOR_FAILURE,
+  EDIT_SENSOR,
+  EDIT_SENSOR_SUCCESS,
+  EDIT_SENSOR_FAILURE,
+  DELETE_SENSOR,
+  DELETE_SENSOR_SUCCESS,
+  DELETE_SENSOR_FAILURE,
+  SENSOR_SEARCH,
+  SENSOR_SEARCH_SUCCESS,
+  GET_SENSORS_TYPE,
+  GET_SENSORS_TYPE_SUCCESS,
+  GET_SENSORS_TYPE_FAILURE,
 } from "../actions/sensorsGateway.actions";
 
 const initialState = {
@@ -24,6 +41,8 @@ const initialState = {
   error: null,
   gatewayTypeList: null,
   gatewayData: null,
+  sensorData: null,
+  sensorTypeList: null,
 };
 
 // Reducer
@@ -144,6 +163,128 @@ export default (state = initialState, action) => {
         gatewayTypeList: action.data,
       };
     case GET_GATEWAYS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_SENSORS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_SENSORS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorData: action.data,
+      };
+    case GET_SENSORS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case Add_SENSOR:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case Add_SENSOR_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorData: action.data,
+      };
+    case Add_SENSOR_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case EDIT_SENSOR:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case EDIT_SENSOR_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorData: action.data,
+        error: null,
+      };
+
+    case EDIT_SENSOR_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case DELETE_SENSOR:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case DELETE_SENSOR_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorData: action.data,
+      };
+    case DELETE_SENSOR_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case SENSOR_SEARCH:
+      return {
+        ...state,
+        error: null,
+      };
+    case SENSOR_SEARCH_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorSearchedData: action.data,
+      };
+    case GET_SENSORS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_SENSORS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorTypeList: action.data,
+      };
+    case GET_SENSORS_TYPE_FAILURE:
       return {
         ...state,
         loading: false,

@@ -10,4 +10,5 @@ export const routes = {
   MY_ACCOUNT: "/app/account",
   ITEMS: "/app/items",
   SENSORS_GATEWAY: "/app/sensors-gateway",
+  SHIPMENT: "/app/shipment",
 };

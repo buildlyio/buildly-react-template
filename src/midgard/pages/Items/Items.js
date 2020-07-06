@@ -9,6 +9,7 @@ import {
   deleteItem,
   searchItem,
   getItemType,
+  getUnitsOfMeasure,
 } from "../../redux/items/actions/items.actions";
 import DashboardWrapper from "../../components/DashboardWrapper/DashboardWrapper";
 
@@ -16,32 +17,64 @@ function Items({
   dispatch,
   history,
   location,
-  data,
+  itemData,
   loading,
   loaded,
   error,
   searchedData,
   itemTypeList,
+  redirectTo,
+  noSearch,
+  unitsOfMeasure,
 }) {
+  const addItemPath = redirectTo
+    ? `${redirectTo}/items`
+    : `${routes.ITEMS}/add`;
+
+  const editItemPath = redirectTo
+    ? `${redirectTo}/items`
+    : `${routes.ITEMS}/edit`;
+
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
   const [searchValue, setSearchValue] = useState("");
-  let rows = [];
-  if (searchedData && searchedData.length) {
-    rows = searchedData;
-  } else if (data && data.length) {
-    rows = getFormattedRow(data, itemTypeList);
-  }
+  const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
 
   useEffect(() => {
-    dispatch(getItems());
-    dispatch(getItemType());
+    if (itemData === null) {
+      dispatch(getItems());
+      dispatch(getItemType());
+    }
+    if (!unitsOfMeasure) {
+      dispatch(getUnitsOfMeasure());
+    }
   }, []);
 
+  useEffect(() => {
+    if (
+      itemData &&
+      itemData.length &&
+      itemTypeList &&
+      itemTypeList.length &&
+      unitsOfMeasure &&
+      unitsOfMeasure.length
+    ) {
+      setRows(getFormattedRow(itemData, itemTypeList, unitsOfMeasure));
+      setFilteredRows(getFormattedRow(itemData, itemTypeList, unitsOfMeasure));
+    }
+  }, [itemData, itemTypeList, unitsOfMeasure]);
+
+  useEffect(() => {
+    if (searchedData) {
+      setFilteredRows(searchedData);
+    }
+  }, [searchedData]);
+
   const editItem = (item) => {
-    history.push(`${routes.ITEMS}/edit/:${item.id}`, {
+    history.push(`${editItemPath}/:${item.id}`, {
       type: "edit",
-      from: routes.ITEMS,
+      from: redirectTo || routes.ITEMS,
       data: item,
     });
   };
@@ -54,13 +87,21 @@ function Items({
     setConfirmModal(false);
   };
   const searchTable = (e) => {
+    let searchFields = [
+      "id",
+      "name",
+      "item_type_value",
+      "unitsMeasure",
+      "value",
+      "gross_weight",
+    ];
     setSearchValue(e.target.value);
-    dispatch(searchItem(e.target.value, rows));
+    dispatch(searchItem(e.target.value, rows, searchFields));
   };
 
   const onAddButtonClick = () => {
-    history.push(`${routes.ITEMS}/add`, {
-      from: routes.ITEMS,
+    history.push(`${addItemPath}`, {
+      from: redirectTo || routes.ITEMS,
     });
   };
   return (
@@ -72,16 +113,17 @@ function Items({
       editAction={editItem}
       deleteAction={deletItem}
       columns={itemColumns}
-      rows={rows}
-      hasSearch={true}
+      redirectTo={redirectTo}
+      rows={filteredRows}
+      hasSearch={noSearch ? false : true}
       search={{ searchValue, searchAction: searchTable }}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
       confirmModalTitle={"Are you sure you want to delete this Item?"}
     >
-      <Route path={`${routes.ITEMS}/add`} component={AddItems} />
-      <Route path={`${routes.ITEMS}/edit/:id`} component={AddItems} />
+      <Route path={`${addItemPath}`} component={AddItems} />
+      <Route path={`${editItemPath}/:id`} component={AddItems} />
     </DashboardWrapper>
   );
 }

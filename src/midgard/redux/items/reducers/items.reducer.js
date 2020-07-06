@@ -16,12 +16,15 @@ import {
   SEARCH,
   SEARCH_SUCCESS,
   DELETE_ITEMS_FAILURE,
+  GET_UNITS_OF_MEASURE,
+  GET_UNITS_OF_MEASURE_SUCCESS,
+  GET_UNITS_OF_MEASURE_FAILURE,
 } from "../actions/items.actions";
 
 const initialState = {
   loading: false,
   loaded: false,
-  data: null,
+  itemData: null,
   error: null,
   itemTypeList: null,
 };
@@ -41,7 +44,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        itemData: action.data,
       };
     case GET_ITEMS_FAILURE:
       return {
@@ -62,7 +65,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        itemData: action.data,
       };
     case ADD_ITEMS_FAILURE:
       return {
@@ -85,7 +88,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        itemData: action.data,
         error: null,
       };
 
@@ -108,7 +111,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        itemData: action.data,
       };
     case DELETE_ITEMS_FAILURE:
       return {
@@ -144,6 +147,27 @@ export default (state = initialState, action) => {
         itemTypeList: action.data,
       };
     case GET_ITEMS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case GET_UNITS_OF_MEASURE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_UNITS_OF_MEASURE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        unitsOfMeasure: action.data,
+      };
+    case GET_UNITS_OF_MEASURE_FAILURE:
       return {
         ...state,
         loading: false,

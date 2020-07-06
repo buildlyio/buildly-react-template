@@ -7,6 +7,7 @@ import coreGroupSaga from "./coregroup/sagas/coregroup.saga";
 import custodianSaga from "./custodian/sagas/custodian.saga";
 import itemSaga from "./items/sagas/items.saga";
 import sensorsGatewaySaga from "./sensorsGateway/sagas/sensorsGateway.saga";
+import shipmentSaga from "./shipment/sagas/shipment.saga";
 
 // single entry point to start all Sagas at once
 export default function* rootSaga() {
@@ -21,5 +22,6 @@ export default function* rootSaga() {
     crudSaga(),
     itemSaga(),
     sensorsGatewaySaga(),
+    shipmentSaga(),
   ]);
 }

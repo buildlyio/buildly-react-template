@@ -27,27 +27,38 @@ export const GET_ITEMS_TYPE = "ITEMS/GET_ITEMS_TYPE";
 export const GET_ITEMS_TYPE_SUCCESS = "ITEMS/GET_ITEMS_TYPE_SUCCESS";
 export const GET_ITEMS_TYPE_FAILURE = "ITEMS/GET_ITEMS_TYPE_FAILURE";
 
+//get item types action constants
+export const GET_UNITS_OF_MEASURE = "ITEMS/GET_UNITS_OF_MEASURE";
+export const GET_UNITS_OF_MEASURE_SUCCESS =
+  "ITEMS/GET_UNITS_OF_MEASURE_SUCCESS";
+export const GET_UNITS_OF_MEASURE_FAILURE =
+  "ITEMS/GET_UNITS_OF_MEASURE_FAILURE";
+
 export const getItems = () => ({ type: GET_ITEMS });
 
 /**
  *Add Item
  * @param {Object} payload
  * @param {Object} history
+ * @param {String} redirectTo
  */
-export const addItem = (payload, history) => ({
+export const addItem = (payload, history, redirectTo) => ({
   type: ADD_ITEMS,
   payload,
   history,
+  redirectTo,
 });
 /**
  *
  * @param {Object} payload
  * @param {Object} history
+ * @param {String} redirectTo
  */
-export const editItem = (payload, history) => ({
+export const editItem = (payload, history, redirectTo) => ({
   type: EDIT_ITEMS,
   payload,
   history,
+  redirectTo,
 });
 
 /**
@@ -64,12 +75,17 @@ export const deleteItem = (itemId) => ({
  * @param {String} searchItem
  * @param {Array} searchList
  */
-export const searchItem = (searchItem, searchList) => ({
+export const searchItem = (searchItem, searchList, searchFields) => ({
   type: SEARCH,
   searchItem,
   searchList,
+  searchFields,
 });
 
 export const getItemType = () => ({
   type: GET_ITEMS_TYPE,
+});
+
+export const getUnitsOfMeasure = () => ({
+  type: GET_UNITS_OF_MEASURE,
 });

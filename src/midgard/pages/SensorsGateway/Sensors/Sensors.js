@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { sensorsColumns } from "../Constants";
+import { sensorsColumns, getFormattedSensorRow } from "../Constants";
 import DashboardWrapper from "../../../components/DashboardWrapper/DashboardWrapper";
 import { routes } from "../../../routes/routesConstants";
 import {
-  getGateways,
-  getGatewayType,
+  getSensors,
+  getSensorType,
+  deleteSensor,
+  searchSensorItem,
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import AddSensors from "../forms/AddSensors";
 
@@ -17,47 +19,67 @@ function Sensors(props) {
     location,
     data,
     loading,
-    searchedData,
-    gatewayTypeList,
+    searchData,
+    sensorTypeList,
+    redirectTo,
+    noSearch,
   } = props;
-  const [openConfirmModal, setConfirmModal] = useState(false);
-  const [deleteGatewayId, setDeleteGatewayId] = useState("");
-  const [searchValue, setSearchValue] = useState("");
+  const addPath = redirectTo
+    ? `${redirectTo}/sensors`
+    : `${routes.SENSORS_GATEWAY}/sensor/add`;
 
-  let rows = [];
-  if (searchedData && searchedData.length) {
-    rows = searchedData;
-  } else if (data && data.length) {
-    rows = data;
-  }
+  const editPath = redirectTo
+    ? `${redirectTo}/sensors`
+    : `${routes.SENSORS_GATEWAY}/sensor/edit`;
+  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [deleteSensorId, setDeleteSensorId] = useState("");
+  const [searchValue, setSearchValue] = useState("");
+  const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
 
   useEffect(() => {
-    dispatch(getGateways());
-    dispatch(getGatewayType());
+    if (data === null) {
+      dispatch(getSensors());
+      dispatch(getSensorType());
+    }
   }, []);
 
-  const editGateway = (item) => {
-    history.push(`${routes.ITEMS}/sensor/edit/:${item.id}`, {
+  useEffect(() => {
+    if (data && data.length && sensorTypeList && sensorTypeList.length) {
+      setRows(getFormattedSensorRow(data, sensorTypeList));
+      setFilteredRows(getFormattedSensorRow(data, sensorTypeList));
+    }
+  }, [data, sensorTypeList]);
+
+  useEffect(() => {
+    if (searchData) {
+      setFilteredRows(searchData);
+    }
+  }, [searchData]);
+
+  const editSensor = (item) => {
+    history.push(`${editPath}/:${item.id}`, {
       type: "edit",
-      from: routes.SENSORS_GATEWAY,
+      from: redirectTo || routes.SENSORS_GATEWAY,
       data: item,
     });
   };
-  const deleteGateway = (item) => {
-    setDeleteGatewayId(item.id);
+  const deleteSensorItem = (item) => {
+    setDeleteSensorId(item.id);
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    // dispatch(deleteItem(deleteGatewayId));
+    dispatch(deleteSensor(deleteSensorId));
     setConfirmModal(false);
   };
   const searchTable = (e) => {
+    let searchFields = ["id", "name", "sensor_uuid", "activation_date"];
     setSearchValue(e.target.value);
-    // dispatch(searchItem(e.target.value, rows));
+    dispatch(searchSensorItem(e.target.value, rows, searchFields));
   };
   const onAddButtonClick = () => {
-    history.push(`${routes.SENSORS_GATEWAY}/sensor/add`, {
-      from: routes.SENSORS_GATEWAY,
+    history.push(`${addPath}`, {
+      from: redirectTo || routes.SENSORS_GATEWAY,
     });
   };
   return (
@@ -66,25 +88,20 @@ function Sensors(props) {
       onAddButtonClick={onAddButtonClick}
       dashboardHeading={"Sensors"}
       addButtonHeading={"Add Sensor"}
-      editAction={editGateway}
-      deleteAction={deleteGateway}
+      editAction={editSensor}
+      deleteAction={deleteSensorItem}
       columns={sensorsColumns}
-      rows={rows}
-      hasSearch={true}
+      redirectTo={redirectTo}
+      rows={filteredRows}
+      hasSearch={noSearch ? false : true}
       search={{ searchValue, searchAction: searchTable }}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle={"Delete Sensor"}
+      confirmModalTitle={"Are you sure you want to Delete this Sensor?"}
     >
-      <Route
-        path={`${routes.SENSORS_GATEWAY}/sensor/add`}
-        component={AddSensors}
-      />
-      <Route
-        path={`${routes.SENSORS_GATEWAY}/sensor/edit/:id`}
-        component={AddSensors}
-      />
+      <Route path={`${addPath}`} component={AddSensors} />
+      <Route path={`${editPath}/:id`} component={AddSensors} />
     </DashboardWrapper>
   );
 }

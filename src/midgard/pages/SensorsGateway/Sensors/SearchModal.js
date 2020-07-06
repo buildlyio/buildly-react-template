@@ -33,8 +33,7 @@ export default function SearchModal({
   selectedList,
 }) {
   const classes = useStyles();
-  const [list, setList] = useState([]);
-
+  const [list, setList] = useState({});
   return (
     <Dialog
       open={open}
@@ -46,11 +45,11 @@ export default function SearchModal({
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent className={classes.root}>
         <Autocomplete
-          multiple
           id="tags-outlined"
           options={listOfItems}
-          getOptionLabel={(option) => option && option.uuid}
-          filterSelectedOptions
+          getOptionLabel={(option) =>
+            option && `${option.name}:${option.gateway_uuid}`
+          }
           onChange={(event, newValue) => {
             setList(newValue);
           }}

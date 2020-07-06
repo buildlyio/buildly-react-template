@@ -48,8 +48,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function SearchInput({ ...props }) {
   const classes = useStyles();
+  const { customContainerClass, customSearchInputClass } = props;
   return (
-    <div className={classes.search}>
+    <div
+      className={`${classes.search} ${
+        customContainerClass && customContainerClass
+      }`}
+    >
       <div className={classes.searchIcon}>
         <SearchIcon color={"secondary"} />
       </div>
@@ -57,7 +62,9 @@ export default function SearchInput({ ...props }) {
         placeholder="Search…"
         classes={{
           root: classes.inputRoot,
-          input: classes.inputInput,
+          input: `${classes.inputInput} ${
+            customSearchInputClass && customSearchInputClass
+          }`,
         }}
         value={props.searchValue}
         onChange={(e) => props.searchAction(e)}

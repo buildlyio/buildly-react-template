@@ -6,22 +6,14 @@ import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { validators } from "../../../utils/validators";
-import Modal from "../../../components/Modal/Modal";
-import MenuItem from "@material-ui/core/MenuItem";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Select from "@material-ui/core/Select";
-import { useInput } from "../../../hooks/useInput";
-import Loader from "../../../components/Loader/Loader";
 import { Card, CardContent, Typography, Paper } from "@material-ui/core";
-import DatePickerComponent from "../../../components/DatePicker/DatePicker";
 import RangeSlider from "../../../components/Slider/RangeSlider";
-import SearchModal from "../../../components/Modal/SearchModal";
-import Gateway from "../Gateway/Gateway";
-import Chip from "@material-ui/core/Chip";
-import TagFacesIcon from "@material-ui/icons/TagFaces";
-import { associatedGatewayMock } from "../../../utils/mock";
+import { validators } from "../../../utils/validators";
+import { editShipment } from "../../../redux/shipment/actions/shipment.actions";
+import { routes } from "../../../routes/routesConstants";
 
 const useStyles = makeStyles((theme) => ({
   slider: {
@@ -38,47 +30,100 @@ const useStyles = makeStyles((theme) => ({
   chip: {
     margin: theme.spacing(0.5),
   },
+  buttonContainer: {
+    margin: theme.spacing(8, 0),
+    textAlign: "center",
+    justifyContent: "center",
+  },
+  alignRight: {
+    marginLeft: "auto",
+  },
+  buttonProgress: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginTop: -12,
+    marginLeft: -12,
+  },
+  loadingWrapper: {
+    // margin: theme.spacing(1),
+    position: "relative",
+  },
+  form: {
+    width: "100%",
+    marginTop: theme.spacing(1),
+    [theme.breakpoints.up("sm")]: {
+      width: "70%",
+      margin: "auto",
+    },
+  },
+  submit: {
+    borderRadius: "18px",
+    fontSize: 11,
+  },
+  boxHeading: {
+    margin: theme.spacing(2, 0),
+    fontWeight: "bold",
+    fontSize: "14px",
+    textAlign: "center",
+  },
 }));
 
-function EnvironmentalLimitsForm({
-  isSubmitDisabled,
-  min_temp_val,
-  max_temp_val,
-  changeMinTempVal,
-  changeMaxTempVal,
-  closeModal,
-  parentClasses,
-  loading,
-  minMaxTempValue,
-  setMinMaxTempValue,
-  low_temp_val,
-  high_temp_val,
-  changeLowTempVal,
-  changeHighTempVal,
-  searchModalOpen,
-  setSearchModalOpen,
-  associatedGateway,
-  setAccociatedGateway,
-  min_humid_val,
-  max_humid_val,
-  low_humid_val,
-  high_humid_val,
-  minMaxHumidValue,
-  setMinMaxHumidValue,
-  changeMinHumidVal,
-  changeMaxHumidVal,
-  changeHighHumidVal,
-  changeLowHumidVal,
-}) {
+function EnvironmentalLimitsInfo(props) {
+  const {
+    handleNext,
+    shipmentFormData,
+    history,
+    loading,
+    dispatch,
+    redirectTo,
+    handleCancel,
+    location,
+  } = props;
   const theme = useTheme();
   const classes = useStyles();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+  const [min_temp_val, changeMinTempVal] = useState(
+    (shipmentFormData && shipmentFormData.min_excursion_temp) || 0
+  );
+  const [max_temp_val, changeMaxTempVal] = useState(
+    (shipmentFormData && shipmentFormData.max_excursion_temp) || 100
+  );
+  const [minMaxTempValue, setMinMaxTempValue] = useState(
+    shipmentFormData && [
+      shipmentFormData.min_excursion_temp || 0,
+      shipmentFormData.min_warning_temp || 35,
+      shipmentFormData.max_warning_temp || 75,
+      shipmentFormData.max_excursion_temp || 100,
+    ]
+  );
+  const [low_temp_val, changeLowTempVal] = useState(
+    (shipmentFormData && shipmentFormData.min_warning_temp) || 35
+  );
+  const [high_temp_val, changeHighTempVal] = useState(
+    (shipmentFormData && shipmentFormData.max_warning_temp) || 75
+  );
 
-  const handleDelete = (chipToDelete) => () => {
-    setAccociatedGateway((chips) =>
-      chips.filter((chip) => chip.uuid !== chipToDelete.uuid)
-    );
-  };
+  const [min_humid_val, changeMinHumidVal] = useState(
+    (shipmentFormData && shipmentFormData.min_excursion_humidity) || 0
+  );
+  const [max_humid_val, changeMaxHumidVal] = useState(
+    (shipmentFormData && shipmentFormData.max_excursion_humidity) || 100
+  );
+  const [minMaxHumidValue, setMinMaxHumidValue] = useState(
+    shipmentFormData && [
+      shipmentFormData.min_excursion_humidity || 0,
+      shipmentFormData.min_warning_humidity || 35,
+      shipmentFormData.max_warning_humidity || 75,
+      shipmentFormData.max_excursion_humidity || 100,
+    ]
+  );
+  const [low_humid_val, changeLowHumidVal] = useState(
+    (shipmentFormData && shipmentFormData.min_warning_humidity) || 35
+  );
+  const [high_humid_val, changeHighHumidVal] = useState(
+    (shipmentFormData && shipmentFormData.max_warning_humidity) || 75
+  );
 
   const handleTempMinMaxChange = (e, value) => {
     setMinMaxTempValue(value);
@@ -96,12 +141,46 @@ function EnvironmentalLimitsForm({
     changeLowHumidVal(value[1]);
   };
 
+  const submitDisabled = () => {
+    if (!gatewayId || gatewayData === null) return true;
+  };
+
+  /**
+   * Submit The form and add/edit custodian
+   * @param {Event} event the default submit event
+   */
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const shipmentFormValue = {
+      ...{
+        ...shipmentFormData,
+        max_warning_temp: high_temp_val,
+        min_warning_temp: low_temp_val,
+        max_excursion_temp: max_temp_val,
+        min_excursion_temp: min_temp_val,
+        max_warning_humidity: high_humid_val,
+        min_warning_humidity: low_humid_val,
+        max_excursion_humidity: max_humid_val,
+        min_excursion_humidity: min_humid_val,
+      },
+    };
+    dispatch(
+      editShipment(
+        shipmentFormValue,
+        history,
+        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`
+      )
+    );
+  };
+
   return (
-    <div>
+    <form className={classes.form} noValidate onSubmit={handleSubmit}>
       <Grid container spacing={4}>
         <Grid item xs={12} md={6} sm={6}>
           <Card variant="outlined">
-            <Typography variant="body2">Temprature Settings(°F)</Typography>
+            <Typography className={classes.boxHeading} variant="body2">
+              Temperature Settings(°F)
+            </Typography>
             <CardContent>
               <Grid container spacing={2}>
                 <Grid item xs={6}>
@@ -175,7 +254,9 @@ function EnvironmentalLimitsForm({
         </Grid>
         <Grid item xs={12} md={6} sm={6}>
           <Card variant="outlined">
-            <Typography variant="body2">Humidity Settings(%)</Typography>
+            <Typography className={classes.boxHeading} variant="body2">
+              Humidity Settings(%)
+            </Typography>
             <CardContent>
               <Grid container spacing={4}>
                 <Grid item xs={6}>
@@ -247,91 +328,39 @@ function EnvironmentalLimitsForm({
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={6} sm={4}>
-          <Button
-            type="button"
-            fullWidth
-            variant="contained"
-            color="secondary"
-            onClick={() => setSearchModalOpen(true)}
-            className={parentClasses.submit}
-          >
-            Associate to Gateway
-          </Button>
-        </Grid>
-
-        <Grid item xs={12}>
-          {associatedGateway.length > 0 && (
-            <ul className={classes.root}>
-              {associatedGateway.map((data) => {
-                return (
-                  <li key={data.uuid}>
-                    <Chip
-                      label={data.uuid}
-                      onDelete={handleDelete(data)}
-                      className={classes.chip}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </Grid>
       </Grid>
-      <Grid container spacing={2} justify="center">
+      <Grid
+        container
+        spacing={3}
+        justify="center"
+        className={classes.buttonContainer}
+      >
         <Grid item xs={6} sm={4}>
-          <Button
-            type="button"
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={() => closeModal(false)}
-            className={parentClasses.submit}
-          >
-            Back
-          </Button>
-        </Grid>
-        <Grid item xs={6} sm={4}>
-          <div className={parentClasses.loadingWrapper}>
+          <div className={classes.loadingWrapper}>
             <Button
               type="submit"
               fullWidth
               variant="contained"
               color="primary"
-              className={parentClasses.submit}
-              disabled={isSubmitDisabled}
+              className={classes.submit}
+              disabled={loading}
             >
-              Submit
+              {`Save`}
             </Button>
             {loading && (
-              <CircularProgress
-                size={24}
-                className={parentClasses.buttonProgress}
-              />
+              <CircularProgress size={24} className={classes.buttonProgress} />
             )}
           </div>
         </Grid>
       </Grid>
-      {searchModalOpen && (
-        <SearchModal
-          open={searchModalOpen}
-          setOpen={setSearchModalOpen}
-          title={"Associate Gateway UUID"}
-          submitText={"Save"}
-          submitAction={setAccociatedGateway}
-          selectedList={associatedGateway}
-          listOfItems={associatedGatewayMock}
-          searchFieldLabel={"Select Gateway UUID"}
-          searchFieldPlaceHolder={"Select the Value"}
-        />
-      )}
-    </div>
+    </form>
   );
 }
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
+  ...state.shipmentReducer,
 });
 
-export default connect(mapStateToProps)(EnvironmentalLimitsForm);
+export default connect(mapStateToProps)(EnvironmentalLimitsInfo);

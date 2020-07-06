@@ -12,6 +12,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import SearchInput from "../SearchComponent/SearchInput";
+import LinkOffIcon from "@material-ui/icons/LinkOff";
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
@@ -62,6 +63,7 @@ export default function DataTable({ ...props }) {
     hasSearch,
     searchValue,
     searchAction,
+    showTotal,
   } = props;
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
@@ -121,7 +123,7 @@ export default function DataTable({ ...props }) {
                       key={`tableRow${idx}`}
                     >
                       {columns.map((column) => {
-                        const value = row[column.id] || "-";
+                        const value = row[column.id] || "";
                         return (
                           <TableCell key={column.id} align={column.align}>
                             {column.format ? column.format(value) : value}
@@ -145,6 +147,8 @@ export default function DataTable({ ...props }) {
                               >
                                 {actionItemType === "edit" ? (
                                   <EditIcon />
+                                ) : actionItemType === "unlink" ? (
+                                  <LinkOffIcon />
                                 ) : (
                                   <DeleteIcon />
                                 )}
@@ -155,12 +159,15 @@ export default function DataTable({ ...props }) {
                     </StyledTableRow>
                   );
                 })}
+
             {rows.length === 0 && (
               <StyledTableRow>
                 <TableCell
                   align="center"
                   colSpan={
-                    columns.length + (actionsColumns && actionsColumns.length)
+                    actionsColumns
+                      ? `${columns.length + actionsColumns.length}`
+                      : columns.length
                   }
                 >
                   No Data To Display

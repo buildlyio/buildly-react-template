@@ -34,31 +34,43 @@ export const GET_CONTACT = "CUSTODIAN/GET_CONTACT";
 export const GET_CONTACT_SUCCESS = "CUSTODIAN/GET_CONTACT_SUCCESS";
 export const GET_CONTACT_FAILURE = "CUSTODIAN/GET_CONTACT_FAILURE";
 
+export const GET_CUSTODY = "CUSTODIAN/GET_CUSTODY";
+export const GET_CUSTODY_SUCCESS = "CUSTODIAN/GET_CUSTODY_SUCCESS";
+export const GET_CUSTODY_FAILURE = "CUSTODIAN/GET_CUSTODY_FAILURE";
+
+export const ADD_CUSTODY = "CUSTODIAN/ADD_CUSTODY";
+export const ADD_CUSTODY_SUCCESS = "CUSTODIAN/ADD_CUSTODY_SUCCESS";
+export const ADD_CUSTODY_FAILURE = "CUSTODIAN/ADD_CUSTODY_FAILURE";
+
 export const getCustodians = () => ({ type: GET_CUSTODIANS });
 
 /**
  *Add custodian
  * @param {Object} payload
  * @param {Object} history
+ * @param {String} redirectTo path to redirect
  */
-export const addCustodians = (payload, history) => ({
+export const addCustodians = (payload, history, redirectTo) => ({
   type: ADD_CUSTODIANS,
   payload,
   history,
+  redirectTo,
 });
 /**
  *
  * @param {Object} payload
  * @param {Object} history
+ * @param {String} redirectTo path to redirect
  */
-export const editCustodian = (payload, history) => ({
+export const editCustodian = (payload, history, redirectTo) => ({
   type: EDIT_CUSTODIANS,
   payload,
   history,
+  redirectTo,
 });
 
 /**
- *Selete Custodain entity
+ *Delete Custodain entity
  * @param {{id}} payload
  */
 export const deleteCustodian = (custodianId, contactObjId) => ({
@@ -72,10 +84,11 @@ export const deleteCustodian = (custodianId, contactObjId) => ({
  * @param {String} searchItem
  * @param {Array} searchList
  */
-export const searchCustodian = (searchItem, searchList) => ({
+export const searchCustodian = (searchItem, searchList, searchFields) => ({
   type: SEARCH,
   searchItem,
   searchList,
+  searchFields,
 });
 
 export const getCustodianType = () => ({
@@ -84,4 +97,13 @@ export const getCustodianType = () => ({
 
 export const getContact = () => ({
   type: GET_CONTACT,
+});
+
+export const getCustody = () => ({
+  type: GET_CUSTODY,
+});
+
+export const addCUstody = (payload) => ({
+  type: ADD_CUSTODY,
+  payload,
 });

@@ -1,3 +1,4 @@
+import moment from "moment";
 export const custodianColumns = [
   { id: "id", label: "Custodian ID", minWidth: 150 },
   { id: "name", label: "Name", minWidth: 150 },
@@ -23,7 +24,7 @@ export const getUniqueContactInfo = (rowItem, contactInfo) => {
   return obj;
 };
 
-export const getFormattedRow = (data, contactInfo) => {
+export const getFormattedRow = (data, contactInfo, custodyData) => {
   let customizedRow = [...data];
   if (data && data.length && contactInfo && contactInfo.length) {
     customizedRow.forEach((rowItem) => {
@@ -38,5 +39,6 @@ export const getFormattedRow = (data, contactInfo) => {
             ${contactInfoItem.postal_code && `${contactInfoItem.postal_code}`}`;
     });
   }
-  return data;
+
+  return customizedRow;
 };

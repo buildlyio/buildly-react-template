@@ -10,7 +10,7 @@ import ViewCompactIcon from "@material-ui/icons/ViewCompact";
 import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import { MapComponent } from "../../components/MapComponent/MapComponent";
-import { numberWithCommas } from "../../utils/utilMethods";
+import { numberWithCommas, MAP_API_URL } from "../../utils/utilMethods";
 import { RECALL_DATA, DELAY_DATA } from "../../utils/mock";
 
 const recallColumns = [
@@ -124,30 +124,6 @@ function Profile({ dispatch, history, location }) {
                     variant="h5"
                     className={classes.tileHeading}
                   >
-                    Recalls and Excursions
-                  </Typography>
-                  <Hidden smDown>
-                    <IconButton
-                      className={classes.menuButton}
-                      onClick={() => setTileView(!tileView)}
-                      color="primary"
-                      aria-label="menu"
-                    >
-                      {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
-                    </IconButton>
-                  </Hidden>
-                </div>
-                <DataTable rows={RECALL_DATA} columns={recallColumns} />
-              </Grid>
-            </Grid>
-            <Grid container spacing={4}>
-              <Grid item xs={12}>
-                <div className={classes.switchViewSection}>
-                  <Typography
-                    color="primary"
-                    variant="h5"
-                    className={classes.tileHeading}
-                  >
                     Delayed Shipments
                   </Typography>
                   <Hidden smDown>
@@ -162,6 +138,30 @@ function Profile({ dispatch, history, location }) {
                   </Hidden>
                 </div>
                 <DataTable rows={DELAY_DATA} columns={delayColumns} />
+              </Grid>
+            </Grid>
+            <Grid container spacing={4}>
+              <Grid item xs={12}>
+                <div className={classes.switchViewSection}>
+                  <Typography
+                    color="primary"
+                    variant="h5"
+                    className={classes.tileHeading}
+                  >
+                    Recalls and Excursions
+                  </Typography>
+                  <Hidden smDown>
+                    <IconButton
+                      className={classes.menuButton}
+                      onClick={() => setTileView(!tileView)}
+                      color="primary"
+                      aria-label="menu"
+                    >
+                      {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
+                    </IconButton>
+                  </Hidden>
+                </div>
+                <DataTable rows={RECALL_DATA} columns={recallColumns} />
               </Grid>
             </Grid>
           </Grid>
@@ -187,7 +187,7 @@ function Profile({ dispatch, history, location }) {
             </div>
             <MapComponent
               isMarkerShown
-              googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOxE87ZNM_xe5X1BH1KYwUo9S4Qs1BV5w&v=3.exp&libraries=geometry,drawing,places"
+              googleMapURL={MAP_API_URL}
               loadingElement={<div style={{ height: `100%` }} />}
               containerElement={<div style={{ height: `500px` }} />}
               mapElement={<div style={{ height: `100%` }} />}

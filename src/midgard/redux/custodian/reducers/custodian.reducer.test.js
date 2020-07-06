@@ -3,14 +3,14 @@ import * as reducer from "./custodian.reducer";
 const initialState = {
   loading: false,
   loaded: false,
-  data: null,
+  custodianData: null,
   error: null,
   custodianTypeList: null,
   contactInfo: null,
 };
 
 const mockData = {
-  data: { id: "" },
+  custodianData: { id: "" },
 };
 
 describe("Get custodian reducer", () => {
@@ -21,7 +21,7 @@ describe("Get custodian reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -32,7 +32,7 @@ describe("Get custodian reducer", () => {
     ).toEqual({
       loaded: true,
       loading: false,
-      data: undefined,
+      custodianData: undefined,
       custodianTypeList: null,
       contactInfo: null,
       error: null,
@@ -45,7 +45,7 @@ describe("Get custodian reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -60,7 +60,7 @@ describe("Add Custodian reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -73,7 +73,7 @@ describe("Add Custodian reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      data: undefined,
+      custodianData: undefined,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -85,7 +85,7 @@ describe("Add Custodian reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -100,7 +100,7 @@ describe("Edit Custodian reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -113,7 +113,7 @@ describe("Edit Custodian reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      data: undefined,
+      custodianData: undefined,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -125,7 +125,7 @@ describe("Edit Custodian reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -140,7 +140,7 @@ describe("Delete Custodian reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -153,7 +153,7 @@ describe("Delete Custodian reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      data: undefined,
+      custodianData: undefined,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -165,7 +165,7 @@ describe("Delete Custodian reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -178,7 +178,7 @@ describe("Search reducer", () => {
       error: null,
       loaded: false,
       loading: false,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -191,7 +191,7 @@ describe("Search reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
       searchedData: undefined,
@@ -207,7 +207,7 @@ describe("Get Custodian type reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -222,7 +222,7 @@ describe("Get Custodian type reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      data: null,
+      custodianData: null,
       custodianTypeList: undefined,
       contactInfo: null,
     });
@@ -236,7 +236,7 @@ describe("Get Custodian type reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -251,7 +251,7 @@ describe("Get contact info reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
@@ -264,7 +264,7 @@ describe("Get contact info reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: undefined,
     });
@@ -276,7 +276,7 @@ describe("Get contact info reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
+      custodianData: null,
       custodianTypeList: null,
       contactInfo: null,
     });
