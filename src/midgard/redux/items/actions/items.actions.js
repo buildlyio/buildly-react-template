@@ -75,10 +75,11 @@ export const deleteItem = (itemId) => ({
  * @param {String} searchItem
  * @param {Array} searchList
  */
-export const searchItem = (searchItem, searchList) => ({
+export const searchItem = (searchItem, searchList, searchFields) => ({
   type: SEARCH,
   searchItem,
   searchList,
+  searchFields,
 });
 
 export const getItemType = () => ({

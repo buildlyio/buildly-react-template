@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   withScriptjs,
   withGoogleMap,
@@ -6,20 +6,44 @@ import {
   Marker,
 } from "react-google-maps";
 
-const onMarkerDrag = (e) => {
-  console.log(e);
-};
+export function MapComponent(props) {
+  const { markers } = props;
+  const [center, setCenter] = useState({ lat: 41.850033, lng: -87.6500523 });
 
-export const MapComponent = withScriptjs(
+  useEffect(() => {
+    if (markers && markers.length) {
+      setCenter({
+        lat: markers[0].lat || 41.850033,
+        lng: markers[0].lng || -87.6500523,
+      });
+    }
+  }, [markers]);
+
+  const onMarkerDrag = (e, onMarkerDragAction) => {
+    if (onMarkerDragAction) {
+      onMarkerDragAction(`${e.latLng.lat()},${e.latLng.lng()}`);
+    }
+    console.log(`${e.latLng.lat()},${e.latLng.lng()}`);
+  };
+
+  return <RenderedMap {...props} onMarkerDrag={onMarkerDrag} center={center} />;
+}
+
+const RenderedMap = withScriptjs(
   withGoogleMap((props) => (
-    <GoogleMap defaultZoom={8} defaultCenter={{ lat: -34.397, lng: 150.644 }}>
-      {props.isMarkerShown && (
-        <Marker
-          draggable
-          onDrag={(e) => onMarkerDrag(e)}
-          position={{ lat: -34.397, lng: 150.644 }}
-        />
-      )}
+    <GoogleMap defaultZoom={5} defaultCenter={props.center}>
+      {props.isMarkerShown &&
+        props.markers &&
+        props.markers.map((marker) => (
+          <Marker
+            draggable={marker.dragable}
+            onDragEnd={(e) => props.onMarkerDrag(e, marker.onMarkerDrag)}
+            position={{
+              lat: marker.lat || 41.850033,
+              lng: marker.lng || -87.6500523,
+            }}
+          />
+        ))}
     </GoogleMap>
   ))
 );

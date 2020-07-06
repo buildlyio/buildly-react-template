@@ -84,10 +84,11 @@ export const deleteCustodian = (custodianId, contactObjId) => ({
  * @param {String} searchItem
  * @param {Array} searchList
  */
-export const searchCustodian = (searchItem, searchList) => ({
+export const searchCustodian = (searchItem, searchList, searchFields) => ({
   type: SEARCH,
   searchItem,
   searchList,
+  searchFields,
 });
 
 export const getCustodianType = () => ({

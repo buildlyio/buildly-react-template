@@ -35,6 +35,8 @@ function Gateway(props) {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteGatewayId, setDeleteGatewayId] = useState("");
   const [searchValue, setSearchValue] = useState("");
+  const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
 
   useEffect(() => {
     if (data === null) {
@@ -43,12 +45,18 @@ function Gateway(props) {
     }
   }, []);
 
-  let rows = [];
-  if (searchData && searchData.length) {
-    rows = searchData;
-  } else if (data && data.length) {
-    rows = getFormattedRow(data, gatewayTypeList);
-  }
+  useEffect(() => {
+    if (data && data.length && gatewayTypeList && gatewayTypeList.length) {
+      setRows(getFormattedRow(data, gatewayTypeList));
+      setFilteredRows(getFormattedRow(data, gatewayTypeList));
+    }
+  }, [data, gatewayTypeList]);
+
+  useEffect(() => {
+    if (searchData) {
+      setFilteredRows(searchData);
+    }
+  }, [searchData]);
 
   const editGatewayAction = (item) => {
     history.push(`${editPath}/:${item.id}`, {
@@ -66,8 +74,16 @@ function Gateway(props) {
     setConfirmModal(false);
   };
   const searchTable = (e) => {
+    let searchFields = [
+      "id",
+      "name",
+      "gateway_uuid",
+      "gateway_type_value",
+      "last_known_battery_level",
+      "activation_date",
+    ];
     setSearchValue(e.target.value);
-    dispatch(searchGatewayItem(e.target.value, rows));
+    dispatch(searchGatewayItem(e.target.value, rows, searchFields));
   };
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -83,7 +99,7 @@ function Gateway(props) {
       editAction={editGatewayAction}
       deleteAction={deleteGatewayAction}
       columns={gatewayColumns}
-      rows={rows}
+      rows={filteredRows}
       redirectTo={redirectTo}
       hasSearch={noSearch ? false : true}
       search={{ searchValue, searchAction: searchTable }}

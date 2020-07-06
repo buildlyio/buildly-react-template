@@ -22,6 +22,8 @@ import {
   addSensor,
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import { routes } from "../../../routes/routesConstants";
+import { MapComponent } from "../../../components/MapComponent/MapComponent";
+import { MAP_API_URL } from "../../../utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -98,7 +100,7 @@ function AddSensor({
   const sim_card_id = useInput("");
   const battery_level = useInput("");
   const mac_address = useInput("");
-  const last_known_location = useInput(
+  const [last_known_location, setLastLocation] = useState(
     (editData.last_known_location && editData.last_known_location[0]) || ""
   );
   const recharge_before = useInput("");
@@ -149,7 +151,7 @@ function AddSensor({
       sensor_type: sensor_type.value,
       estimated_eol: "",
       activation_date: activation_date,
-      last_known_location: [last_known_location.value],
+      last_known_location: [last_known_location],
       gateway: gateway,
       // last_report_date_time: last_report_date_time,
       associated_sensors_ids: [],
@@ -210,6 +212,11 @@ function AddSensor({
     setGateway("");
   };
 
+  const setLastKnownLocation = (value) => {
+    console.log("val", value);
+    setLastLocation(value);
+  };
+
   return (
     <div>
       {openModal && (
@@ -250,7 +257,27 @@ function AddSensor({
                   label="Sensor Placed"
                   name="last_known_location"
                   autoComplete="last_known_location"
-                  {...last_known_location.bind}
+                  value={last_known_location}
+                  // onChange={(e) => setLastLocation(e.target.value)}
+                />
+                <MapComponent
+                  isMarkerShown
+                  googleMapURL={MAP_API_URL}
+                  loadingElement={<div style={{ height: `100%` }} />}
+                  containerElement={<div style={{ height: `200px` }} />}
+                  mapElement={<div style={{ height: `100%` }} />}
+                  markers={[
+                    {
+                      lat:
+                        last_known_location &&
+                        parseFloat(last_known_location.split(",")[0]),
+                      lng:
+                        last_known_location &&
+                        parseFloat(last_known_location.split(",")[1]),
+                      onMarkerDrag: setLastKnownLocation,
+                      dragable: true,
+                    },
+                  ]}
                 />
               </Grid>
             </Grid>

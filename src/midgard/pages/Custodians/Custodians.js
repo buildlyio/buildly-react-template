@@ -57,6 +57,8 @@ function Custodian({
   const [deleteItemId, setDeleteItemId] = useState("");
   const [deleteContactObjId, setDeleteContactObjId] = useState("");
   const [searchValue, setSearchValue] = useState("");
+  const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
   const classes = useStyles();
 
   const addCustodianPath = redirectTo
@@ -66,13 +68,6 @@ function Custodian({
   const editCustodianPath = redirectTo
     ? `${redirectTo}/custodian`
     : `${routes.CUSTODIANS}/edit`;
-
-  let rows = [];
-  if (searchedData && searchedData.length) {
-    rows = searchedData;
-  } else if (custodianData && custodianData.length) {
-    rows = getFormattedRow(custodianData, contactInfo, custodyData);
-  }
 
   useEffect(() => {
     if (custodianData === null) {
@@ -84,6 +79,19 @@ function Custodian({
       dispatch(getCustody());
     }
   }, []);
+
+  useEffect(() => {
+    if (custodianData && custodianData.length && contactInfo) {
+      setRows(getFormattedRow(custodianData, contactInfo));
+      setFilteredRows(getFormattedRow(custodianData, contactInfo));
+    }
+  }, [custodianData, contactInfo, custodyData]);
+
+  useEffect(() => {
+    if (searchedData) {
+      setFilteredRows(searchedData);
+    }
+  }, [searchedData]);
 
   const editItem = (item) => {
     let contactObj = getUniqueContactInfo(item, contactInfo);
@@ -105,8 +113,9 @@ function Custodian({
     setConfirmModal(false);
   };
   const searchTable = (e) => {
+    let searchFields = ["id", "name", "location"];
     setSearchValue(e.target.value);
-    dispatch(searchCustodian(e.target.value, rows));
+    dispatch(searchCustodian(e.target.value, rows, searchFields));
   };
   const actionsColumns = [
     {
@@ -145,7 +154,7 @@ function Custodian({
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <DataTable
-              rows={rows || []}
+              rows={filteredRows}
               columns={custodianColumns}
               actionsColumns={actionsColumns}
               hasSearch={noSearch ? false : true}

@@ -37,6 +37,7 @@ import {
   Add_SENSOR_FAILURE,
   SENSOR_SEARCH_SUCCESS,
 } from "../actions/sensorsGateway.actions";
+import { searchFilter } from "../../../utils/utilMethods";
 
 const sensorApiEndPoint = "sensors/";
 
@@ -217,18 +218,8 @@ function* addGateway(action) {
 
 function* searchGateway(payload) {
   try {
-    if (!payload.searchItem) {
-      yield put({ type: GATEWAY_SEARCH_SUCCESS, data: [] });
-    } else {
-      let data = payload.searchList.filter((item) => {
-        return (
-          item.name.includes(payload.searchItem.trim()) ||
-          item.id.toString().includes(payload.searchItem) ||
-          item.gateway_uuid.toString().includes(payload.searchItem)
-        );
-      });
-      yield put({ type: GATEWAY_SEARCH_SUCCESS, data });
-    }
+    let filteredData = searchFilter(payload);
+    yield put({ type: GATEWAY_SEARCH_SUCCESS, data: filteredData });
   } catch (error) {
     // yield put({ type: UPDATE_USER_FAIL, error: "Updating user fields failed" });
   }
@@ -411,18 +402,8 @@ function* addSensor(action) {
 
 function* searchSensors(payload) {
   try {
-    if (!payload.searchItem) {
-      yield put({ type: SENSOR_SEARCH_SUCCESS, data: [] });
-    } else {
-      let data = payload.searchList.filter((item) => {
-        return (
-          item.name.includes(payload.searchItem.trim()) ||
-          item.id.toString().includes(payload.searchItem) ||
-          item.gateway_uuid.toString().includes(payload.searchItem)
-        );
-      });
-      yield put({ type: SENSOR_SEARCH_SUCCESS, data });
-    }
+    let filteredData = searchFilter(payload);
+    yield put({ type: SENSOR_SEARCH_SUCCESS, data: filteredData });
   } catch (error) {
     // yield put({ type: UPDATE_USER_FAIL, error: "Updating user fields failed" });
   }

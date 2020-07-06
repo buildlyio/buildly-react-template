@@ -38,12 +38,8 @@ function Items({
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
   const [searchValue, setSearchValue] = useState("");
-  let rows = [];
-  if (searchedData && searchedData.length) {
-    rows = searchedData;
-  } else if (itemData && itemData.length) {
-    rows = getFormattedRow(itemData, itemTypeList, unitsOfMeasure);
-  }
+  const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
 
   useEffect(() => {
     if (itemData === null) {
@@ -54,6 +50,26 @@ function Items({
       dispatch(getUnitsOfMeasure());
     }
   }, []);
+
+  useEffect(() => {
+    if (
+      itemData &&
+      itemData.length &&
+      itemTypeList &&
+      itemTypeList.length &&
+      unitsOfMeasure &&
+      unitsOfMeasure.length
+    ) {
+      setRows(getFormattedRow(itemData, itemTypeList, unitsOfMeasure));
+      setFilteredRows(getFormattedRow(itemData, itemTypeList, unitsOfMeasure));
+    }
+  }, [itemData, itemTypeList, unitsOfMeasure]);
+
+  useEffect(() => {
+    if (searchedData) {
+      setFilteredRows(searchedData);
+    }
+  }, [searchedData]);
 
   const editItem = (item) => {
     history.push(`${editItemPath}/:${item.id}`, {
@@ -71,8 +87,16 @@ function Items({
     setConfirmModal(false);
   };
   const searchTable = (e) => {
+    let searchFields = [
+      "id",
+      "name",
+      "item_type_value",
+      "unitsMeasure",
+      "value",
+      "gross_weight",
+    ];
     setSearchValue(e.target.value);
-    dispatch(searchItem(e.target.value, rows));
+    dispatch(searchItem(e.target.value, rows, searchFields));
   };
 
   const onAddButtonClick = () => {
@@ -90,7 +114,7 @@ function Items({
       deleteAction={deletItem}
       columns={itemColumns}
       redirectTo={redirectTo}
-      rows={rows}
+      rows={filteredRows}
       hasSearch={noSearch ? false : true}
       search={{ searchValue, searchAction: searchTable }}
       openConfirmModal={openConfirmModal}

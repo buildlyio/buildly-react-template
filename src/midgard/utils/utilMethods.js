@@ -21,3 +21,22 @@ export const compareSort = (propName) => {
     }
   };
 };
+
+export const searchFilter = (payload) => {
+  let { searchItem, searchList, searchFields } = payload;
+  let data = searchList.filter((item) => {
+    let itemKeys = Object.keys(item);
+    let foundItem = "";
+    itemKeys.forEach((key) => {
+      if (
+        searchFields.includes(key) &&
+        item[key] &&
+        item[key].toString().includes(searchItem)
+      ) {
+        foundItem = { ...item };
+      }
+    });
+    return foundItem && foundItem.id === item.id;
+  });
+  return data;
+};

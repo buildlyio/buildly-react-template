@@ -8,6 +8,7 @@ import {
   getSensors,
   getSensorType,
   deleteSensor,
+  searchSensorItem,
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import AddSensors from "../forms/AddSensors";
 
@@ -18,7 +19,7 @@ function Sensors(props) {
     location,
     data,
     loading,
-    searchedData,
+    searchData,
     sensorTypeList,
     redirectTo,
     noSearch,
@@ -33,13 +34,8 @@ function Sensors(props) {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteSensorId, setDeleteSensorId] = useState("");
   const [searchValue, setSearchValue] = useState("");
-
-  let rows = [];
-  if (searchedData && searchedData.length) {
-    rows = searchedData;
-  } else if (data && data.length) {
-    rows = getFormattedSensorRow(data, sensorTypeList);
-  }
+  const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
 
   useEffect(() => {
     if (data === null) {
@@ -47,6 +43,19 @@ function Sensors(props) {
       dispatch(getSensorType());
     }
   }, []);
+
+  useEffect(() => {
+    if (data && data.length && sensorTypeList && sensorTypeList.length) {
+      setRows(getFormattedSensorRow(data, sensorTypeList));
+      setFilteredRows(getFormattedSensorRow(data, sensorTypeList));
+    }
+  }, [data, sensorTypeList]);
+
+  useEffect(() => {
+    if (searchData) {
+      setFilteredRows(searchData);
+    }
+  }, [searchData]);
 
   const editSensor = (item) => {
     history.push(`${editPath}/:${item.id}`, {
@@ -64,8 +73,9 @@ function Sensors(props) {
     setConfirmModal(false);
   };
   const searchTable = (e) => {
+    let searchFields = ["id", "name", "sensor_uuid", "activation_date"];
     setSearchValue(e.target.value);
-    // dispatch(searchItem(e.target.value, rows));
+    dispatch(searchSensorItem(e.target.value, rows, searchFields));
   };
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -82,7 +92,7 @@ function Sensors(props) {
       deleteAction={deleteSensorItem}
       columns={sensorsColumns}
       redirectTo={redirectTo}
-      rows={rows}
+      rows={filteredRows}
       hasSearch={noSearch ? false : true}
       search={{ searchValue, searchAction: searchTable }}
       openConfirmModal={openConfirmModal}

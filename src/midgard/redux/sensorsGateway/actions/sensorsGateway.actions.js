@@ -66,10 +66,11 @@ export const deleteGateway = (gatewayId) => ({
  * @param {String} searchItem
  * @param {Array} searchList
  */
-export const searchGatewayItem = (searchItem, searchList) => ({
+export const searchGatewayItem = (searchItem, searchList, searchFields) => ({
   type: GATEWAY_SEARCH,
   searchItem,
   searchList,
+  searchFields,
 });
 
 export const getGatewayType = () => ({
@@ -146,10 +147,11 @@ export const deleteSensor = (sensorId) => ({
  * @param {String} searchItem
  * @param {Array} searchList
  */
-export const searchSensorItem = (searchItem, searchList) => ({
+export const searchSensorItem = (searchItem, searchList, searchFields) => ({
   type: SENSOR_SEARCH,
   searchItem,
   searchList,
+  searchFields,
 });
 
 export const getSensorType = () => ({

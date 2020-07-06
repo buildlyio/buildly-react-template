@@ -27,6 +27,7 @@ import { httpService } from "../../../modules/http/http.service";
 import { environment } from "environment";
 import { routes } from "../../../routes/routesConstants";
 import { showAlert } from "../../alert/actions/alert.actions";
+import { searchFilter } from "../../../utils/utilMethods";
 
 const shipmentApiEndPoint = "shipment/";
 
@@ -239,17 +240,8 @@ function* getUnits() {
 
 function* searchItem(payload) {
   try {
-    if (!payload.searchItem) {
-      yield put({ type: SEARCH_SUCCESS, data: [] });
-    } else {
-      let data = payload.searchList.filter((item) => {
-        return (
-          item.name.includes(payload.searchItem.trim()) ||
-          item.id.toString().includes(payload.searchItem)
-        );
-      });
-      yield put({ type: SEARCH_SUCCESS, data });
-    }
+    let filteredData = searchFilter(payload);
+    yield put({ type: SEARCH_SUCCESS, data: filteredData });
   } catch (error) {
     // yield put({ type: UPDATE_USER_FAIL, error: "Updating user fields failed" });
   }
