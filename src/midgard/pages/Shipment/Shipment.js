@@ -32,6 +32,8 @@ import {
 import {
   getGateways,
   getGatewayType,
+  getSensors,
+  getSensorType,
 } from "../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import { MAP_API_URL } from "../../utils/utilMethods";
 import {
@@ -43,6 +45,7 @@ import {
 } from "../../redux/shipment/actions/shipment.actions";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import AlertInfo from "./AlertInfo";
+import Loader from "../../components/Loader/Loader";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -69,6 +72,8 @@ function Shipment(props) {
     unitsOfMeasure,
     filteredData,
     custodyData,
+    sensorData,
+    loading,
   } = props;
   const classes = useStyles();
   const [openConfirmModal, setConfirmModal] = useState(false);
@@ -100,6 +105,10 @@ function Shipment(props) {
     }
     if (!custodyData) {
       dispatch(getCustody());
+    }
+    if (!sensorData) {
+      dispatch(getSensors());
+      dispatch(getSensorType());
     }
     return function cleanup() {
       dispatch({ type: FILTER_SHIPMENT_SUCCESS, data: undefined });
@@ -149,6 +158,7 @@ function Shipment(props) {
 
   return (
     <Box mt={5} mb={5}>
+      {loading && <Loader open={loading} />}
       <AlertInfo {...props} />
       <Box mb={3} mt={2}>
         <Button

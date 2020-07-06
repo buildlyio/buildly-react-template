@@ -22,6 +22,8 @@ import { routes } from "../../../routes/routesConstants";
 import {
   gatewayColumns,
   getFormattedRow,
+  sensorsColumns,
+  getFormattedSensorRow,
 } from "../../SensorsGateway/Constants";
 
 const useStyles = makeStyles((theme) => ({
@@ -74,6 +76,8 @@ function SensorsGatewayInfo(props) {
     handleNext,
     shipmentFormData,
     dispatch,
+    sensorData,
+    sensorTypeList,
   } = props;
   const [gatewayId, setGatewayId] = useState(
     (shipmentFormData &&
@@ -84,15 +88,25 @@ function SensorsGatewayInfo(props) {
   const classes = useStyles();
 
   let rows = [];
+  let sensorsRow = [];
   let columns = gatewayColumns;
   if (gatewayData && gatewayData.length) {
     let selectedRows = [];
+    let selectedSensors = [];
     gatewayData.forEach((element) => {
       if (element.gateway_uuid === gatewayId) {
         selectedRows.push(element);
+        if (sensorData && sensorData.length) {
+          sensorData.forEach((sensor) => {
+            if (element.url === sensor.gateway) {
+              selectedSensors.push(sensor);
+            }
+          });
+        }
       }
     });
     rows = getFormattedRow(selectedRows, gatewayTypeList);
+    sensorsRow = getFormattedSensorRow(selectedSensors, sensorTypeList);
   }
 
   const onInputChange = (value) => {
@@ -162,6 +176,21 @@ function SensorsGatewayInfo(props) {
                   <DataTable
                     rows={rows || []}
                     columns={columns}
+                    // actionsColumns={actionsColumns}
+                    hasSearch={false}
+                  />
+                </Box>
+              </Grid>
+            )}
+            {sensorsRow.length > 0 && (
+              <Grid item xs={12}>
+                <Box mt={5}>
+                  <Typography gutterBottom variant="h5">
+                    Associated Sensors with Gateway
+                  </Typography>
+                  <DataTable
+                    rows={sensorsRow || []}
+                    columns={sensorsColumns}
                     // actionsColumns={actionsColumns}
                     hasSearch={false}
                   />

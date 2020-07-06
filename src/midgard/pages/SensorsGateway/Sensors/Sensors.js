@@ -42,8 +42,10 @@ function Sensors(props) {
   }
 
   useEffect(() => {
-    dispatch(getSensors());
-    dispatch(getSensorType());
+    if (data === null) {
+      dispatch(getSensors());
+      dispatch(getSensorType());
+    }
   }, []);
 
   const editSensor = (item) => {
@@ -53,7 +55,7 @@ function Sensors(props) {
       data: item,
     });
   };
-  const deleteSensor = (item) => {
+  const deleteSensorItem = (item) => {
     setDeleteSensorId(item.id);
     setConfirmModal(true);
   };
@@ -77,7 +79,7 @@ function Sensors(props) {
       dashboardHeading={"Sensors"}
       addButtonHeading={"Add Sensor"}
       editAction={editSensor}
-      deleteAction={deleteSensor}
+      deleteAction={deleteSensorItem}
       columns={sensorsColumns}
       redirectTo={redirectTo}
       rows={rows}

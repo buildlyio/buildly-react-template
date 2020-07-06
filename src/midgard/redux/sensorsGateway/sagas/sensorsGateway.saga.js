@@ -371,7 +371,7 @@ function* editSensorItem(action) {
 }
 
 function* addSensor(action) {
-  let { history, payload } = action;
+  let { history, payload, redirectTo } = action;
   try {
     let data = yield call(
       httpService.makeRequest,

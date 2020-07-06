@@ -33,8 +33,7 @@ export default function SearchModal({
   selectedList,
 }) {
   const classes = useStyles();
-  const [list, setList] = useState([]);
-
+  const [list, setList] = useState({});
   return (
     <Dialog
       open={open}
@@ -54,7 +53,7 @@ export default function SearchModal({
           onChange={(event, newValue) => {
             setList(newValue);
           }}
-          defaultValue={selectedList[0] || null}
+          defaultValue={selectedList}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -71,8 +70,7 @@ export default function SearchModal({
         </Button>
         <Button
           onClick={() => {
-            console.log("list", list);
-            submitAction([list]);
+            submitAction(list);
             setOpen(false);
           }}
           color="primary"

@@ -98,24 +98,43 @@ function AddSensor({
   const sim_card_id = useInput("");
   const battery_level = useInput("");
   const mac_address = useInput("");
-  const last_known_location = useInput(editData.last_known_location || "");
+  const last_known_location = useInput(
+    (editData.last_known_location && editData.last_known_location[0]) || ""
+  );
   const recharge_before = useInput("");
   const [last_report_date_time, handleLastReportDate] = useState(
     moment(new Date())
   );
   const sensor_uuid = useInput("");
   const [formError, setFormError] = useState({});
-  const [associatedGateway, setAccociatedGateway] = useState([]);
+  const [associatedGateway, setAccociatedGateway] = useState(null);
+  const [gateway, setGateway] = useState((editData && editData.gateway) || "");
   const [environmentalModal, toggleEnvironmentalModal] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   const buttonText = editPage ? "Save" : "Add Sensor";
   const formTitle = editPage ? "Edit Sensor" : "Add Sensor";
+
+  useEffect(() => {
+    if (gatewayData && gatewayData.length && editData.gateway) {
+      gatewayData.forEach((gateway) => {
+        if (gateway.url === editData.gateway) {
+          setAccociatedGateway(gateway);
+        }
+      });
+    }
+  }, [gatewayData, gateway]);
+
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
       history.push(location.state.from);
     }
+  };
+
+  const setGatewayUrl = (list) => {
+    setAccociatedGateway(list);
+    setGateway(list.url);
   };
 
   /**
@@ -131,6 +150,7 @@ function AddSensor({
       estimated_eol: "",
       activation_date: activation_date,
       last_known_location: [last_known_location.value],
+      gateway: gateway,
       // last_report_date_time: last_report_date_time,
       associated_sensors_ids: [],
       associated_shipment_item_ids: [],
@@ -175,8 +195,7 @@ function AddSensor({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!sensor_type.value || !sensor_name || associatedGateway.length === 0)
-      return true;
+    if (!sensor_type.value || !sensor_name || !gateway) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -187,9 +206,8 @@ function AddSensor({
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
   const handleDelete = (chipToDelete) => () => {
-    setAccociatedGateway((chips) =>
-      chips.filter((chip) => chip.gateway_uuid !== chipToDelete.gateway_uuid)
-    );
+    setAccociatedGateway(null);
+    setGateway("");
   };
 
   return (
@@ -351,23 +369,14 @@ function AddSensor({
               </Button>
             </Grid>
             <Grid item xs={12}>
-              {associatedGateway.length > 0 && (
-                <ul className={classes.root}>
-                  {associatedGateway.map((data) => {
-                    return (
-                      <li key={data.gateway_uuid}>
-                        <Chip
-                          label={`${data.name}:${data.gateway_uuid}`}
-                          onDelete={handleDelete(data)}
-                          className={classes.chip}
-                        />
-                      </li>
-                    );
-                  })}
-                </ul>
+              {associatedGateway && gateway && (
+                <Chip
+                  label={`${associatedGateway.name}:${associatedGateway.gateway_uuid}`}
+                  onDelete={handleDelete(associatedGateway)}
+                  className={classes.chip}
+                />
               )}
             </Grid>
-
             <Grid container spacing={2} justify="center">
               <Grid item xs={6} sm={4}>
                 <Button
@@ -409,8 +418,10 @@ function AddSensor({
               setOpen={setSearchModalOpen}
               title={"Associate Gateway UUID"}
               submitText={"Save"}
-              submitAction={setAccociatedGateway}
-              selectedList={associatedGateway}
+              submitAction={setGatewayUrl}
+              selectedList={
+                gateway && associatedGateway ? associatedGateway : null
+              }
               listOfItems={gatewayData}
               searchFieldLabel={"Select Gateway UUID"}
               searchFieldPlaceHolder={"Select the Value"}
