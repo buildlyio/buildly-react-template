@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { http } from "midgard-core";
 import Geocode from "react-geocode";
 import { connect } from "react-redux";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -18,6 +19,7 @@ import {
   GEO_CODE_API,
 } from "../../../utils/utilMethods";
 import { getFormattedCustodianRow } from "../ShipmentConstants";
+import { httpService } from "../../../modules/http/http.service";
 
 const useStyles = makeStyles((theme) => ({
   roote: {},
@@ -56,9 +58,7 @@ export default function ShipmentRouteInfo(props) {
     shipmentFormData,
   } = props;
   const classes = useStyles();
-  // const [itemIds, setItemIds] = useState(
-  //   (shipmentFormData && shipmentFormData.custodian_ids) || []
-  // );
+
   const [rows, setRows] = useState([]);
   const [routes, setRoutes] = useState([]);
 
@@ -114,32 +114,27 @@ export default function ShipmentRouteInfo(props) {
     };
   }, [custodyData, contactInfo, custodyData, shipmentFormData]);
 
-  useEffect(() => {
-    if (routes.length > 1) {
-      const directionsService = new google.maps.DirectionsService();
-      let origin = { lat: routes[0].lat, lng: routes[0].lng };
-      let destination = {
-        lat: routes[routes.length - 1].lat,
-        lng: routes[routes.length - 1].lng,
-      };
-      directionsService.route(
-        {
-          origin: origin,
-          destination: destination,
-          travelMode: "DRIVING",
-        },
-        (result, status) => {
-          if (result) {
-            console.log("res", result);
-          } else {
-            console.error(`error fetching directions ${result}`);
-          }
-        }
-      );
+  // useEffect(() => {
+  //   if (routes.length > 1) {
+  //     const directionsService = new google.maps.DirectionsService();
+  //     let origin = { lat: routes[0].lat, lng: routes[0].lng };
+  //     let destination = {
+  //       lat: routes[routes.length - 1].lat,
+  //       lng: routes[routes.length - 1].lng,
+  //     };
+  //     let url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&key=${GEO_CODE_API}`;
+  //     httpService
+  //       .makeRequest("get", url, null, false)
+  //       .then((res) => {
+  //         console.log("res", res);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
 
-      console.log("routes", origin, destination);
-    }
-  }, [routes]);
+  //     console.log("routes", origin, destination);
+  //   }
+  // }, [routes]);
 
   return (
     <Card>
