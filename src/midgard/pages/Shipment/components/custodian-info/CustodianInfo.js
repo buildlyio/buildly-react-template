@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import moment from "moment";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -26,6 +26,8 @@ import AddCustodyForm from "./AddCustodyForm";
 import {
   getFormattedCustodianRow,
   custodianColumns,
+  getFormattedCustodyRows,
+  custodyColumns,
 } from "../../ShipmentConstants";
 
 const useStyles = makeStyles((theme) => ({
@@ -91,19 +93,27 @@ function CustodianInfo(props) {
   const classes = useStyles();
 
   const [openModal, setOpenModal] = useState(false);
+  const [rows, setRows] = useState([]);
+  const [editItem, setEditItem] = useState(null);
 
-  const [start_of_custody, handleStartChange] = useState(new Date());
-  let rows = [];
-  let columns = custodianColumns;
-  if (custodianData && custodianData.length) {
-    let selectedRows = [];
-    custodianData.forEach((element) => {
-      if (itemIds.indexOf(element.custodian_uuid) !== -1) {
-        selectedRows.push(element);
-      }
-    });
-    rows = getFormattedCustodianRow(selectedRows, contactInfo, custodyData);
-  }
+  useEffect(() => {
+    if (
+      custodyData &&
+      custodyData.length &&
+      custodianData &&
+      custodianData.length &&
+      shipmentFormData
+    ) {
+      let filteredCustodyData = custodyData.filter((data) => {
+        return data.shipment_id === shipmentFormData.shipment_uuid;
+      });
+      let customizedRows = getFormattedCustodyRows(
+        filteredCustodyData,
+        custodianData
+      );
+      setRows(customizedRows);
+    }
+  }, [custodyData, custodianData, shipmentFormData]);
 
   const submitDisabled = () => {
     if (!itemIds || custodianData === null) return true;
@@ -145,18 +155,23 @@ function CustodianInfo(props) {
   };
 
   const oncloseModal = () => {
-    rows.forEach((item) => {
-      if (shipmentFormData.custodian_ids.indexOf(item.custodian_uuid) === -1) {
-        let index = itemIds.indexOf(item.custodian_uuid);
-        let newArr = itemIds.filter((item, idx) => idx !== index);
-        setItemIds(newArr);
-      }
-    });
+    setEditItem(null);
     setOpenModal(false);
   };
 
+  const editCustody = (item) => {
+    setEditItem(item);
+    setOpenModal(true);
+  };
+
   const actionsColumns = [
-    { id: "unlink", type: "unlink", action: deletItem, label: "Unassociate" },
+    // { id: "unlink", type: "unlink", action: deletItem, label: "Unassociate" },
+    {
+      id: "edit",
+      type: "edit",
+      action: editCustody,
+      label: "Edit",
+    },
   ];
 
   return (
@@ -167,7 +182,7 @@ function CustodianInfo(props) {
         onClick={() => setOpenModal(true)}
         className={classes.submit}
       >
-        {`Associate Custodian`}
+        {`Add Custody`}
       </Button>
       <Box mt={3} mb={5}>
         <Grid container>
@@ -179,7 +194,7 @@ function CustodianInfo(props) {
                 </Typography>
                 <DataTable
                   rows={rows || []}
-                  columns={columns}
+                  columns={custodyColumns}
                   actionsColumns={actionsColumns}
                   hasSearch={false}
                 />
@@ -191,18 +206,16 @@ function CustodianInfo(props) {
           <Modal
             open={openModal}
             setOpen={() => oncloseModal()}
-            title={"Associate Custodian to this Shipment"}
+            title={editItem ? "Edit Custody" : "Add Custody"}
             titleClass={classes.formTitle}
-            maxWidth={"sm"}
+            maxWidth={"md"}
           >
             <AddCustodyForm
               setItemIds={setItemIds}
               itemIds={itemIds}
               setOpenModal={() => oncloseModal()}
-              start_of_custody={start_of_custody}
-              handleStartChange={handleStartChange}
               rows={rows}
-              handleSubmit={handleSubmit}
+              editItem={editItem}
               {...props}
             />
           </Modal>

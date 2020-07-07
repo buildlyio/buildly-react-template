@@ -8,7 +8,11 @@ import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import { MapComponent } from "../../components/MapComponent/MapComponent";
 import DataTable from "../../components/Table/Table";
-import { SHIPMENT_COLUMNS, getFormattedRow } from "./ShipmentConstants";
+import {
+  SHIPMENT_COLUMNS,
+  getFormattedRow,
+  getFormattedCustodyRows,
+} from "./ShipmentConstants";
 import ShipmentList from "./components/ShipmentList";
 import { shipmentMock } from "../../utils/mock";
 import moment from "moment";
@@ -80,6 +84,7 @@ function Shipment(props) {
   const [deleteItemId, setDeleteItemId] = useState("");
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
+  const [markers, setMarkers] = useState([]);
   useEffect(() => {
     if (shipmentData === null) {
       dispatch(getShipmentDetails());
@@ -116,15 +121,108 @@ function Shipment(props) {
   }, []);
 
   useEffect(() => {
-    if (shipmentData && custodianData && itemData && shipmentFlag) {
-      setRows(
-        getFormattedRow(shipmentData, custodianData, itemData, shipmentFlag)
+    if (
+      shipmentData &&
+      custodianData &&
+      custodyData &&
+      itemData &&
+      shipmentFlag
+    ) {
+      let routesInfo = [];
+      let formattedRow = getFormattedRow(
+        shipmentData,
+        custodianData,
+        itemData,
+        shipmentFlag,
+        custodyData
       );
-      setFilteredRows(
-        getFormattedRow(shipmentData, custodianData, itemData, shipmentFlag)
-      );
+      formattedRow.forEach((row) => {
+        if (row.custody_info && row.custody_info.length > 0) {
+          // if (row.status == "Planned") {
+          //   if (row.custody_info[0].start_of_custody_location)
+          //     routesInfo.push({
+          //       lat:
+          //         row.custody_info[0].start_of_custody_location &&
+          //         parseFloat(
+          //           row.custody_info[0].start_of_custody_location.split(",")[0]
+          //         ),
+          //       lng:
+          //         row.custody_info[0].start_of_custody_location &&
+          //         parseFloat(
+          //           row.custody_info[0].start_of_custody_location.split(",")[1]
+          //         ),
+          //       label: `${row.name}:${row.shipment_uuid}(Start Location)`,
+          //       icon: (
+          //         <svg
+          //           xmlns="http://www.w3.org/2000/svg"
+          //           viewBox="0 0 24 24"
+          //           width="24"
+          //           height="24"
+          //         >
+          //           <path fill="none" d="M0 0h24v24H0z" />
+          //           <path d="M8 5a4 4 0 1 1 8 0v5.255a7 7 0 1 1-8 0V5zm1.144 6.895a5 5 0 1 0 5.712 0L14 11.298V5a2 2 0 1 0-4 0v6.298l-.856.597zm1.856.231V5h2v7.126A4.002 4.002 0 0 1 12 20a4 4 0 0 1-1-7.874zM12 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
+          //         </svg>
+          //       ),
+          //       excursion_name: row.shipment_flag,
+          //       excursion_type: row.flag_type,
+          //     });
+          //   if (row.custody_info[0].end_of_custody_location)
+          //     routesInfo.push({
+          //       lat:
+          //         row.custody_info[0].end_of_custody_location &&
+          //         parseFloat(
+          //           row.custody_info[0].end_of_custody_location.split(",")[0]
+          //         ),
+          //       lng:
+          //         row.custody_info[0].end_of_custody_location &&
+          //         parseFloat(
+          //           row.custody_info[0].end_of_custody_location.split(",")[1]
+          //         ),
+          //       label: `${row.name}:${row.shipment_uuid}(End Location)`,
+
+          //       excursion_name: row.shipment_flag,
+          //       excursion_type: row.flag_type,
+          //     });
+          // }
+          // else if (row.status === "Enroute") {
+          row.custody_info.forEach((custody) => {
+            if (custody.has_current_custody || custody.first_custody) {
+              if (custody.start_of_custody_location) {
+                routesInfo.push({
+                  lat:
+                    custody.start_of_custody_location &&
+                    parseFloat(custody.start_of_custody_location.split(",")[0]),
+                  lng:
+                    custody.start_of_custody_location &&
+                    parseFloat(custody.start_of_custody_location.split(",")[1]),
+                  label: `${row.name}:${row.shipment_uuid}(Start Location)`,
+                  excursion_name: row.shipment_flag,
+                  excursion_type: row.flag_type,
+                });
+              }
+              if (custody.end_of_custody_location) {
+                routesInfo.push({
+                  lat:
+                    custody.end_of_custody_location &&
+                    parseFloat(custody.end_of_custody_location.split(",")[0]),
+                  lng:
+                    custody.end_of_custody_location &&
+                    parseFloat(custody.end_of_custody_location.split(",")[1]),
+                  label: `${row.name}:${row.shipment_uuid}(End Location)`,
+                  excursion_name: row.shipment_flag,
+                  excursion_type: row.flag_type,
+                });
+              }
+            }
+          });
+          // }
+        }
+      });
+      setMarkers(routesInfo);
+      setRows(formattedRow);
+      setFilteredRows(formattedRow);
     }
-  }, [shipmentData, custodianData, itemData, shipmentFlag]);
+  }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData]);
 
   useEffect(() => {
     if (filteredData && filteredData.length >= 0) {
@@ -192,9 +290,10 @@ function Shipment(props) {
         <Grid item xs={12} sm={6}>
           <MapComponent
             isMarkerShown
+            markers={markers}
             googleMapURL={MAP_API_URL}
             loadingElement={<div style={{ height: `100%` }} />}
-            containerElement={<div style={{ height: `500px` }} />}
+            containerElement={<div style={{ height: `550px` }} />}
             mapElement={<div style={{ height: `100%` }} />}
           />
         </Grid>

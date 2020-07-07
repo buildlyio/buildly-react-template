@@ -5,6 +5,12 @@ import {
   GoogleMap,
   Marker,
 } from "react-google-maps";
+const {
+  MarkerWithLabel,
+} = require("react-google-maps/lib/components/addons/MarkerWithLabel");
+
+const labelSize = { width: 150 };
+const labelPadding = 8;
 
 export function MapComponent(props) {
   const { markers } = props;
@@ -23,7 +29,6 @@ export function MapComponent(props) {
     if (onMarkerDragAction) {
       onMarkerDragAction(`${e.latLng.lat()},${e.latLng.lng()}`);
     }
-    console.log(`${e.latLng.lat()},${e.latLng.lng()}`);
   };
 
   return <RenderedMap {...props} onMarkerDrag={onMarkerDrag} center={center} />;
@@ -34,16 +39,31 @@ const RenderedMap = withScriptjs(
     <GoogleMap defaultZoom={5} defaultCenter={props.center}>
       {props.isMarkerShown &&
         props.markers &&
-        props.markers.map((marker) => (
-          <Marker
-            draggable={marker.dragable}
-            onDragEnd={(e) => props.onMarkerDrag(e, marker.onMarkerDrag)}
-            position={{
-              lat: marker.lat || 41.850033,
-              lng: marker.lng || -87.6500523,
-            }}
-          />
-        ))}
+        props.markers.map((mark) =>
+          mark.label ? (
+            <MarkerWithLabel
+              key={`${mark.lat},${mark.lng}`}
+              position={{ lat: mark.lat, lng: mark.lng }}
+              labelAnchor={new google.maps.Point(0, 0)}
+              icon={mark.icon}
+              labelStyle={{
+                backgroundColor: "yellow",
+                fontSize: "11px",
+                padding: labelPadding + "px",
+                width: labelSize.width + "px",
+              }}
+            >
+              <span>{mark.label}</span>
+            </MarkerWithLabel>
+          ) : (
+            <Marker
+              draggable={mark.draggable}
+              key={`${mark.lat},${mark.lng}`}
+              position={{ lat: mark.lat, lng: mark.lng }}
+              onDragEnd={(e) => props.onMarkerDrag(e, mark.onMarkerDrag)}
+            />
+          )
+        )}
     </GoogleMap>
   ))
 );

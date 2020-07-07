@@ -213,7 +213,6 @@ function AddSensor({
   };
 
   const setLastKnownLocation = (value) => {
-    console.log("val", value);
     setLastLocation(value);
   };
 
@@ -275,7 +274,7 @@ function AddSensor({
                         last_known_location &&
                         parseFloat(last_known_location.split(",")[1]),
                       onMarkerDrag: setLastKnownLocation,
-                      dragable: true,
+                      draggable: true,
                     },
                   ]}
                 />

@@ -183,9 +183,7 @@ function ShipmentInfo(props) {
           `${routes.SHIPMENT}/edit/:${editData.id}`
         )
       );
-      console.log("edit", editPage);
     } else {
-      console.log("add", editPage);
       dispatch(addShipment(shipmentFormValue, history, redirectTo));
     }
   };

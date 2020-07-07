@@ -1,6 +1,7 @@
 /* eslint-disable no-use-before-define */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import Geocode from "react-geocode";
 import moment from "moment";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { makeStyles } from "@material-ui/core/styles";
@@ -14,10 +15,19 @@ import {
   Grid,
   Button,
   CircularProgress,
+  MenuItem,
 } from "@material-ui/core";
 
 import DatePickerComponent from "../../../../components/DatePicker/DatePicker";
-import { addCUstody } from "../../../../redux/custodian/actions/custodian.actions";
+import {
+  addCustody,
+  editCustody,
+} from "../../../../redux/custodian/actions/custodian.actions";
+import { useInput } from "../../../../hooks/useInput";
+import { validators } from "../../../../utils/validators";
+import { MapComponent } from "../../../../components/MapComponent/MapComponent";
+import { MAP_API_URL, GEO_CODE_API } from "../../../../utils/utilMethods";
+import { getFormattedRow } from "../../../Custodians/CustodianConstants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,30 +73,95 @@ function AddCustodyInfo(props) {
     custodianData,
     loading,
     dispatch,
-    itemIds,
-    start_of_custody,
-    handleStartChange,
-    rows,
-    handleSubmit,
-    setItemIds,
-    custodyData,
     shipmentFormData,
+    contactInfo,
+    editItem,
+    setOpenModal,
   } = props;
   const classes = useStyles();
-  const [custodianId, setCustodianId] = useState();
+  const [custodianId, setCustodianId] = useState(
+    (editItem && editItem.custodian_data) || ""
+  );
+  const [custodianList, setCustodianList] = useState([]);
+  const [start_of_custody, handleStartChange] = useState(
+    (editItem && editItem.start_of_custody) || new Date()
+  );
+  const [start_of_custody_location, handleStartLocation] = useState(
+    (editItem && editItem.start_of_custody_location) || ""
+  );
+  const [end_of_custody_location, handleEndLocation] = useState(
+    (editItem && editItem.end_of_custody_location) || ""
+  );
+  const shipment = useInput(
+    shipmentFormData && shipmentFormData.shipment_uuid,
+    "",
+    { required: true }
+  );
+  const shipment_name = useInput(shipmentFormData && shipmentFormData.name, "");
+  const has_current_custody = useInput(
+    (editItem && editItem.has_current_custody) || false
+  );
+  const first_custody = useInput((editItem && editItem.first_custody) || false);
+  const last_custody = useInput((editItem && editItem.last_custody) || false);
+  const [formError, setFormError] = useState({});
+
+  useEffect(() => {
+    if (custodianData && custodianData.length && contactInfo) {
+      setCustodianList(getFormattedRow(custodianData, contactInfo));
+    }
+  }, [custodianData, contactInfo]);
 
   const submitDisabled = () => {
     if (!custodianId) return true;
   };
 
-  const onInputChange = (value) => {
+  const onInputChange = (e) => {
+    let value = e.target.value;
     if (value) {
-      setCustodianId(value.custodian_uuid);
-      if (itemIds.indexOf(value.custodian_uuid) === -1)
-        setItemIds([...itemIds, value.custodian_uuid]);
+      setCustodianId(value);
+      // if (itemIds.indexOf(value.custodian_uuid) === -1)
+      //   setItemIds([...itemIds, value.custodian_uuid]);
+      if (custodianList.length > 0) {
+        let selectedCustodian = "";
+        custodianList.forEach((list) => {
+          if (list.custodian_uuid === value.custodian_uuid) {
+            selectedCustodian = list;
+          }
+        });
+        Geocode.setApiKey(GEO_CODE_API);
+        Geocode.setLanguage("en");
+        Geocode.fromAddress(selectedCustodian.location).then(
+          (response) => {
+            const { lat, lng } = response.results[0].geometry.location;
+            setEndLocation(`${lat},${lng}`);
+            setStartLocation(`${lat},${lng}`);
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+      }
     } else {
       setCustodianId(value);
     }
+  };
+
+  const handleBlur = (e, validation, input, parentId) => {
+    let validateObj = validators(validation, input);
+    let prevState = { ...formError };
+    if (validateObj && validateObj.error)
+      setFormError({
+        ...prevState,
+        [e.target.id || parentId]: validateObj,
+      });
+    else
+      setFormError({
+        ...prevState,
+        [e.target.id || parentId]: {
+          error: false,
+          message: "",
+        },
+      });
   };
 
   /**
@@ -95,48 +170,104 @@ function AddCustodyInfo(props) {
    */
   const onAddCustodyClick = (event) => {
     event.preventDefault();
-    let custodian = [];
-    if (rows && rows.length) {
-      rows.forEach((element) => {
-        if (element.custodian_uuid === custodianId) {
-          custodian.push(element.url);
-        }
-      });
-    }
     const custodyFormValues = {
       start_of_custody: start_of_custody,
-      custodian: custodian,
+      custodian: [custodianId.url],
+      start_of_custody_location: start_of_custody_location,
+      end_of_custody_location: end_of_custody_location,
+      shipment_id: shipment.value,
+      has_current_custody: has_current_custody.value,
+      first_custody: first_custody.value,
+      last_custody: last_custody.value,
+      ...(editItem !== null && { id: editItem.id }),
     };
-    dispatch(addCUstody(custodyFormValues));
+    if (editItem !== null) {
+      dispatch(editCustody(custodyFormValues));
+    } else {
+      dispatch(addCustody(custodyFormValues));
+    }
+    setOpenModal();
+  };
+
+  const setStartLocation = (value) => {
+    handleStartLocation(value);
+  };
+
+  const setEndLocation = (value) => {
+    handleEndLocation(value);
   };
 
   return (
     <Box mb={5} mt={3}>
-      <form noValidate onSubmit={handleSubmit}>
+      <form noValidate onSubmit={onAddCustodyClick}>
         <Card variant="outlined" className={classes.form}>
           <CardContent>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <Autocomplete
-                  id="combo-box-demo"
-                  options={
-                    (custodianData &&
-                      custodianData.filter((data) => {
-                        return (
-                          shipmentFormData &&
-                          shipmentFormData.custodian_ids.indexOf(
-                            data.custodian_uuid
-                          ) === -1
-                        );
-                      })) ||
-                    []
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  required
+                  disabled
+                  id="shipment"
+                  label="Shipment ID"
+                  name="shipment"
+                  autoComplete="shipment"
+                  error={formError.shipment && formError.shipment.error}
+                  helperText={
+                    formError.shipment ? formError.shipment.message : ""
                   }
+                  onBlur={(e) => handleBlur(e, "required", shipment)}
+                  {...shipment.bind}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  disabled
+                  id="shipment_name"
+                  label="Shipment Name"
+                  name="shipment_name"
+                  autoComplete="shipment_name"
+                  {...shipment_name.bind}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="custodianId"
+                  select
+                  required
+                  label="Custodian"
+                  error={formError.custodianId && formError.custodianId.error}
+                  helperText={
+                    formError.custodianId ? formError.custodianId.message : ""
+                  }
+                  onBlur={(e) =>
+                    handleBlur(e, "required", custodianId, "custodianId")
+                  }
+                  value={custodianId}
+                  onChange={onInputChange}
+                >
+                  <MenuItem value={""}>Select</MenuItem>
+                  {custodianList &&
+                    custodianList.map((item, index) => (
+                      <MenuItem key={`${item.id}${item.name}`} value={item}>
+                        {`${item.name}:${item.custodian_uuid}`}
+                      </MenuItem>
+                    ))}
+                </TextField>
+                {/* <Autocomplete
+                  id="combo-box-demo"
+                  options={custodianData || []}
                   getOptionLabel={(option) =>
                     `${option.name}:${option.custodian_uuid}`
                   }
-                  // getOptionSelected={(option) =>
-                  //   option.custodian_uuid === custodianId
-                  // }
                   onChange={(event, newValue) => onInputChange(newValue)}
                   value={
                     (rows &&
@@ -148,38 +279,7 @@ function AddCustodyInfo(props) {
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      variant="outlined"
-                      label="Select Custodian To Be Associated"
-                      placeholder="Select a Custodian"
-                    />
-                  )}
-                />
-                {/* <Autocomplete
-                  multiple
-                  id="tags-outlined"
-                  options={custodianData || []}
-                  getOptionLabel={(option) =>
-                    option && `${option.name}:${option.custodian_uuid}`
-                  }
-                  filterSelectedOptions
-                  onChange={(event, newValue) => {
-                    onInputChange(newValue);
-                  }}
-                  defaultValue={rows}
-                  renderOption={(option, { selected }) => (
-                    <React.Fragment>
-                      <Checkbox
-                        icon={icon}
-                        checkedIcon={checkedIcon}
-                        style={{ marginRight: 8 }}
-                        checked={selected}
-                      />
-                      {`${option.name}:${option.custodian_uuid}`}
-                    </React.Fragment>
-                  )}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
+                      margin="normal"
                       variant="outlined"
                       label="Select Custodian To Be Associated"
                       placeholder="Select a Custodian"
@@ -195,9 +295,115 @@ function AddCustodyInfo(props) {
                   handleDateChange={handleStartChange}
                 />
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="start_of_custody_location"
+                  label="Start Of Custody Location"
+                  name="start_of_custody_location"
+                  autoComplete="start_of_custody_location"
+                  value={start_of_custody_location}
+                  // onChange={(e) => setLastLocation(e.target.value)}
+                />
+                <MapComponent
+                  isMarkerShown
+                  googleMapURL={MAP_API_URL}
+                  loadingElement={<div style={{ height: `100%` }} />}
+                  containerElement={<div style={{ height: `200px` }} />}
+                  mapElement={<div style={{ height: `100%` }} />}
+                  markers={[
+                    {
+                      lat:
+                        start_of_custody_location &&
+                        parseFloat(start_of_custody_location.split(",")[0]),
+                      lng:
+                        start_of_custody_location &&
+                        parseFloat(start_of_custody_location.split(",")[1]),
+                      onMarkerDrag: setStartLocation,
+                      draggable: true,
+                    },
+                  ]}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="end_of_custody_location"
+                  label="End Of Custody Location"
+                  name="end_of_custody_location"
+                  autoComplete="end_of_custody_location"
+                  value={end_of_custody_location}
+                  // onChange={(e) => setLastLocation(e.target.value)}
+                />
+                <MapComponent
+                  isMarkerShown
+                  googleMapURL={MAP_API_URL}
+                  loadingElement={<div style={{ height: `100%` }} />}
+                  containerElement={<div style={{ height: `200px` }} />}
+                  mapElement={<div style={{ height: `100%` }} />}
+                  markers={[
+                    {
+                      lat:
+                        end_of_custody_location &&
+                        parseFloat(end_of_custody_location.split(",")[0]),
+                      lng:
+                        end_of_custody_location &&
+                        parseFloat(end_of_custody_location.split(",")[1]),
+                      onMarkerDrag: setEndLocation,
+                      draggable: true,
+                    },
+                  ]}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="has_current_custody"
+                  select
+                  label="Has Current Custody"
+                  {...has_current_custody.bind}
+                >
+                  <MenuItem value={true}>YES</MenuItem>
+                  <MenuItem value={false}>NO</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="first_custody"
+                  select
+                  label="Is First Custody"
+                  {...first_custody.bind}
+                >
+                  <MenuItem value={true}>YES</MenuItem>
+                  <MenuItem value={false}>NO</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="last_custody"
+                  select
+                  label="Is Last Custody"
+                  {...last_custody.bind}
+                >
+                  <MenuItem value={true}>YES</MenuItem>
+                  <MenuItem value={false}>NO</MenuItem>
+                </TextField>
+              </Grid>
             </Grid>
             <Grid container spacing={3} justify="center">
-              <Grid item xs={6}>
+              {/* <Grid item xs={6}>
                 <div className={classes.loadingWrapper}>
                   <Button
                     type="button"
@@ -217,7 +423,7 @@ function AddCustodyInfo(props) {
                     />
                   )}
                 </div>
-              </Grid>
+              </Grid> */}
             </Grid>
           </CardContent>
         </Card>
@@ -232,7 +438,7 @@ function AddCustodyInfo(props) {
                 className={classes.submit}
                 disabled={loading || submitDisabled()}
               >
-                {`Associate Custodian`}
+                {editItem ? "Save" : `Add Custody`}
               </Button>
               {loading && (
                 <CircularProgress
@@ -248,10 +454,10 @@ function AddCustodyInfo(props) {
   );
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.custodianReducer,
-  ...state.shipmentReducer,
-});
+// const mapStateToProps = (state, ownProps) => ({
+//   ...ownProps,
+//   ...state.custodianReducer,
+//   ...state.shipmentReducer,
+// });
 
-export default connect(mapStateToProps)(AddCustodyInfo);
+export default AddCustodyInfo;

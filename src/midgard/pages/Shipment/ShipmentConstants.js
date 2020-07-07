@@ -48,20 +48,35 @@ export const getFormattedRow = (
   shipmentData,
   custodianData,
   itemData,
-  shipmentFlag
+  shipmentFlag,
+  custodyData
 ) => {
   let shipmentList = [...shipmentData];
+  let custodyRows = [];
+  if (
+    custodyData &&
+    custodyData.length &&
+    custodianData &&
+    custodianData.length
+  ) {
+    custodyRows = getFormattedCustodyRows(custodyData, custodianData);
+  }
+
   shipmentList.forEach((list) => {
     let shipmentValue = 0;
-    let custodianNames = "";
-    if (custodianData && list.custodian_ids.length) {
-      custodianData.forEach((custodian) => {
-        if (list.custodian_ids.indexOf(custodian.custodian_uuid) !== -1) {
-          custodianNames = custodianNames + custodian.name + ", ";
-          list["custodian_name"] = custodianNames;
+    let custodyInfo = [];
+    let custodianName = "";
+    if (custodyRows.length > 0) {
+      custodyRows.forEach((custody) => {
+        if (custody.shipment_id === list.shipment_uuid) {
+          custodianName = custodianName + custody.custodian_data.name + ",";
+          custodyInfo.push(custody);
         }
       });
     }
+    list["custodian_name"] = custodianName;
+    list["custody_info"] = custodyInfo;
+
     if (itemData && list.item_ids.length) {
       itemData.forEach((item) => {
         if (list.item_ids.indexOf(item.item_uuid) !== -1) {
@@ -104,6 +119,26 @@ export const custodianColumns = [
   },
 ];
 
+export const custodyColumns = [
+  { id: "custodian_name", label: "Custodian Name", minWidth: 150 },
+  {
+    id: "start_of_custody",
+    label: "Start of Custody",
+    format: (value) => value && moment(value).format("yyyy/MM/DD"),
+    minWidth: 180,
+  },
+  {
+    id: "start_of_custody_location",
+    label: "Start Location",
+    minWidth: 170,
+  },
+  {
+    id: "end_of_custody_location",
+    label: "End Location",
+    minWidth: 170,
+  },
+];
+
 export const getUniqueContactInfo = (rowItem, contactInfo) => {
   let obj = "";
   contactInfo.forEach((info) => {
@@ -139,6 +174,29 @@ export const getFormattedCustodianRow = (data, contactInfo, custodyData) => {
   }
 
   let sortedList = customizedRow.sort((a, b) => {
+    return moment.utc(a.start_of_custody).diff(moment.utc(b.start_of_custody));
+  });
+
+  return sortedList;
+};
+
+export const getFormattedCustodyRows = (
+  custodyData,
+  custodianData,
+  shipmentFormData
+) => {
+  let customizedRows = [...custodyData];
+  if (customizedRows && custodianData) {
+    customizedRows.forEach((custody) => {
+      custodianData.forEach((custodian) => {
+        if (custody.custodian[0] === custodian.url) {
+          custody["custodian_name"] = custodian.name;
+          custody["custodian_data"] = custodian;
+        }
+      });
+    });
+  }
+  let sortedList = customizedRows.sort((a, b) => {
     return moment.utc(a.start_of_custody).diff(moment.utc(b.start_of_custody));
   });
 
