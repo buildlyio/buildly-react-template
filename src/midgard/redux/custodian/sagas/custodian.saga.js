@@ -28,6 +28,8 @@ import {
   ADD_CUSTODY_FAILURE,
   GET_CUSTODY,
   ADD_CUSTODY,
+  EDIT_CUSTODY,
+  EDIT_CUSTODY_FAILURE,
 } from "../actions/custodian.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -362,6 +364,46 @@ function* addCustody(action) {
   }
 }
 
+function* editCustody(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "put",
+      `${environment.API_URL}${custodiansApiEndPoint}custody/${payload.id}`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put(getCustody()),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Edited Custody",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Edit Custody due to some error!",
+        })
+      ),
+      yield put({
+        type: EDIT_CUSTODY_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* watchGetCustodian() {
   yield takeLatest(GET_CUSTODIANS, getCustodiansList);
 }
@@ -398,6 +440,10 @@ function* watchAddCustody() {
   yield takeLatest(ADD_CUSTODY, addCustody);
 }
 
+function* watchEditCustody() {
+  yield takeLatest(EDIT_CUSTODY, editCustody);
+}
+
 export default function* custodianSaga() {
   yield all([
     watchSearchCustodian(),
@@ -409,5 +455,6 @@ export default function* custodianSaga() {
     watchGetContact(),
     watchGetCustody(),
     watchAddCustody(),
+    watchEditCustody(),
   ]);
 }

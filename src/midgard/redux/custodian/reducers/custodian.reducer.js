@@ -25,6 +25,9 @@ import {
   GET_CUSTODY,
   GET_CUSTODY_SUCCESS,
   GET_CUSTODY_FAILURE,
+  EDIT_CUSTODY,
+  EDIT_CUSTODY_SUCCESS,
+  EDIT_CUSTODY_FAILURE,
 } from "../actions/custodian.actions";
 
 const initialState = {
@@ -217,6 +220,27 @@ export default (state = initialState, action) => {
         custodyData: action.data,
       };
     case ADD_CUSTODY_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case EDIT_CUSTODY:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case EDIT_CUSTODY_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodyData: action.data,
+      };
+    case EDIT_CUSTODY_FAILURE:
       return {
         ...state,
         loading: false,

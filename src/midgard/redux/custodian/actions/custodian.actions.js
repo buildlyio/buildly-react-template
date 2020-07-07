@@ -42,6 +42,10 @@ export const ADD_CUSTODY = "CUSTODIAN/ADD_CUSTODY";
 export const ADD_CUSTODY_SUCCESS = "CUSTODIAN/ADD_CUSTODY_SUCCESS";
 export const ADD_CUSTODY_FAILURE = "CUSTODIAN/ADD_CUSTODY_FAILURE";
 
+export const EDIT_CUSTODY = "CUSTODIAN/EDIT_CUSTODY";
+export const EDIT_CUSTODY_SUCCESS = "CUSTODIAN/EDIT_CUSTODY_SUCCESS";
+export const EDIT_CUSTODY_FAILURE = "CUSTODIAN/EDIT_CUSTODY_FAILURE";
+
 export const getCustodians = () => ({ type: GET_CUSTODIANS });
 
 /**
@@ -103,7 +107,12 @@ export const getCustody = () => ({
   type: GET_CUSTODY,
 });
 
-export const addCUstody = (payload) => ({
+export const addCustody = (payload) => ({
   type: ADD_CUSTODY,
+  payload,
+});
+
+export const editCustody = (payload) => ({
+  type: EDIT_CUSTODY,
   payload,
 });

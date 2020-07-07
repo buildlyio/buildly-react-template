@@ -7,47 +7,25 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import { Grid, Box, Typography, Card, CardContent } from "@material-ui/core";
-import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  Marker,
-} from "react-google-maps";
+
 import {
   MAP_API_URL,
   MAP_API_KEY,
   GEO_CODE_API,
 } from "../../../utils/utilMethods";
-import { getFormattedCustodianRow } from "../ShipmentConstants";
+import {
+  getFormattedCustodianRow,
+  getFormattedCustodyRows,
+} from "../ShipmentConstants";
 import { httpService } from "../../../modules/http/http.service";
+import { MapComponent } from "../../../components/MapComponent/MapComponent";
 
 const useStyles = makeStyles((theme) => ({
   roote: {},
 }));
 
-const MapComponent = withScriptjs(
-  withGoogleMap((props) => (
-    <GoogleMap
-      defaultZoom={3}
-      defaultCenter={
-        props.markers && props.markers.length && props.markers[0]
-          ? { lat: props.markers[0].lat, lng: props.markers[0].lng }
-          : { lat: -34.397, lng: 150.644 }
-      }
-    >
-      {props.markers && props.markers.length ? (
-        props.markers.map((mark) => (
-          <Marker
-            key={`${mark.lat},${mark.lng}`}
-            position={{ lat: mark.lat, lng: mark.lng }}
-          />
-        ))
-      ) : (
-        <Marker position={{ lat: -34.397, lng: 150.644 }} />
-      )}
-    </GoogleMap>
-  ))
-);
+const labelSize = { width: 150 };
+const labelPadding = 8;
 
 export default function ShipmentRouteInfo(props) {
   const {
@@ -63,78 +41,52 @@ export default function ShipmentRouteInfo(props) {
   const [routes, setRoutes] = useState([]);
 
   useEffect(() => {
-    Geocode.setApiKey(GEO_CODE_API);
-    Geocode.setLanguage("en");
     if (
-      custodianData &&
-      custodianData.length &&
-      contactInfo &&
       custodyData &&
       custodyData.length &&
-      shipmentFormData !== null
+      custodianData &&
+      custodianData.length &&
+      shipmentFormData
     ) {
-      let selectedRows = [];
-      let itemIds = shipmentFormData.custodian_ids;
-      custodianData.forEach((element) => {
-        if (itemIds.indexOf(element.custodian_uuid) !== -1) {
-          selectedRows.push(element);
+      let filteredCustodyData = custodyData.filter((data) => {
+        return data.shipment_id === shipmentFormData.shipment_uuid;
+      });
+      let customizedRows = getFormattedCustodyRows(
+        filteredCustodyData,
+        custodianData
+      );
+      let routesInfo = [];
+      customizedRows.forEach((row) => {
+        if (row.start_of_custody_location) {
+          routesInfo.push({
+            lat:
+              row.start_of_custody_location &&
+              parseFloat(row.start_of_custody_location.split(",")[0]),
+            lng:
+              row.start_of_custody_location &&
+              parseFloat(row.start_of_custody_location.split(",")[1]),
+            label: `${row.custodian_data.name}(Start Location)`,
+          });
+        }
+        if (row.end_of_custody_location) {
+          routesInfo.push({
+            lat:
+              row.end_of_custody_location &&
+              parseFloat(row.end_of_custody_location.split(",")[0]),
+            lng:
+              row.end_of_custody_location &&
+              parseFloat(row.end_of_custody_location.split(",")[1]),
+            label: `${row.custodian_data.name}(End Location)`,
+          });
         }
       });
-      selectedRows = getFormattedCustodianRow(
-        selectedRows,
-        contactInfo,
-        custodyData
-      );
-      if (selectedRows.length) {
-        selectedRows.forEach((row) => {
-          let routeObj = {};
-          Geocode.fromAddress(row.location).then(
-            (response) => {
-              const { lat, lng } = response.results[0].geometry.location;
-              console.log(lat, lng);
-              routeObj = {
-                lat: lat,
-                lng: lng,
-                shipmentId: row.shipment_uuid,
-                name: row.name,
-              };
-              setRoutes((prevRoutes) => [...prevRoutes, routeObj]);
-            },
-            (error) => {
-              console.error(error);
-            }
-          );
-        });
-      }
-
-      setRows(selectedRows);
+      setRoutes(routesInfo);
+      setRows(customizedRows);
     }
     return function cleanup() {
       setRoutes([]);
     };
-  }, [custodyData, contactInfo, custodyData, shipmentFormData]);
-
-  // useEffect(() => {
-  //   if (routes.length > 1) {
-  //     const directionsService = new google.maps.DirectionsService();
-  //     let origin = { lat: routes[0].lat, lng: routes[0].lng };
-  //     let destination = {
-  //       lat: routes[routes.length - 1].lat,
-  //       lng: routes[routes.length - 1].lng,
-  //     };
-  //     let url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&key=${GEO_CODE_API}`;
-  //     httpService
-  //       .makeRequest("get", url, null, false)
-  //       .then((res) => {
-  //         console.log("res", res);
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-
-  //     console.log("routes", origin, destination);
-  //   }
-  // }, [routes]);
+  }, [custodianData, custodyData, shipmentFormData]);
 
   return (
     <Card>
