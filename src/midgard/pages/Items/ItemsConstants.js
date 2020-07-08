@@ -23,13 +23,14 @@ export const itemColumns = [
     id: "value",
     label: "Value",
     minWidth: 150,
-    format: (value) => `$${numberWithCommas(value)}`,
+    format: (value) =>
+      value && value !== "-" ? `$${numberWithCommas(value)}` : value,
   },
   {
     id: "gross_weight",
     label: "Gross Weight",
     minWidth: 150,
-    format: (value) => `${numberWithCommas(value)}`,
+    format: (value) => value && value !== "-" && `${numberWithCommas(value)}`,
     type: "number",
   },
   {

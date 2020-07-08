@@ -44,7 +44,7 @@ const delayColumns = [
     id: "risk",
     label: "Revenue Risk",
     minWidth: 170,
-    format: (value) => `$${numberWithCommas(value)}`,
+    format: (value) => value && value !== "-" && `$${numberWithCommas(value)}`,
   },
   {
     id: "custodian",

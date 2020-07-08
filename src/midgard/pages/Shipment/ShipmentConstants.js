@@ -11,7 +11,8 @@ export const SHIPMENT_COLUMNS = [
     width: 150,
     maxWidth: 150,
     minWidth: 100,
-    format: (value) => value && moment(value).format("yyyy/MM/DD"),
+    format: (value) =>
+      value && value !== "-" && moment(value).format("yyyy/MM/DD"),
   },
   { id: "name", width: 150, maxWidth: 150, minWidth: 100 },
   { id: "custodian_name", width: 150, maxWidth: 150, minWidth: 100 },
@@ -20,7 +21,7 @@ export const SHIPMENT_COLUMNS = [
     width: 150,
     maxWidth: 150,
     minWidth: 100,
-    format: (value) => (value ? `$${numberWithCommas(value)}` : "-"),
+    format: (value) => value && value !== "-" && `$${numberWithCommas(value)}`,
   },
   { id: "status", width: 100, maxWidth: 150, minWidth: 100 },
   {
@@ -30,7 +31,7 @@ export const SHIPMENT_COLUMNS = [
     minWidth: 100,
 
     format: (value, row) => {
-      if (row && row.flag_type && value) {
+      if (row && row.flag_type && value && value !== "-") {
         let color =
           row.flag_type.toLowerCase() === "warning" ? "#ff9800" : "#f44336";
         if (value.toLowerCase() === "temperature")
@@ -115,7 +116,8 @@ export const custodianColumns = [
     id: "start_of_custody",
     label: "Start Of Custody",
     minWidth: 170,
-    format: (value) => value && moment(value).format("yyyy/MM/DD"),
+    format: (value) =>
+      value && value !== "-" && moment(value).format("yyyy/MM/DD"),
   },
 ];
 
@@ -124,7 +126,8 @@ export const custodyColumns = [
   {
     id: "start_of_custody",
     label: "Start of Custody",
-    format: (value) => value && moment(value).format("yyyy/MM/DD"),
+    format: (value) =>
+      value && value !== "-" && moment(value).format("yyyy/MM/DD"),
     minWidth: 180,
   },
   {

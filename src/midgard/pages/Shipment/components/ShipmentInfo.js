@@ -111,9 +111,9 @@ function ShipmentInfo(props) {
   const flags = useInput((editData && editData.flags[0]) || "", {
     required: true,
   });
-  const uom_temp = useInput(editData.uom_temp || null);
-  const uom_weight = useInput(editData.uom_weight || null);
-  const uom_distance = useInput(editData.uom_distance || null);
+  const uom_temp = useInput((editData && editData.uom_temp) || "");
+  const uom_weight = useInput((editData && editData.uom_weight) || "");
+  const uom_distance = useInput((editData && editData.uom_distance) || "");
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
@@ -191,7 +191,7 @@ function ShipmentInfo(props) {
         )
       );
     } else {
-      dispatch(addShipment(shipmentFormValue, history, redirectTo));
+      dispatch(addShipment(shipmentFormValue, history));
     }
   };
   return (

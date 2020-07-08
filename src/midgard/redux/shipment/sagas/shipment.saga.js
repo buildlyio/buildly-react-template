@@ -154,8 +154,10 @@ function* addShipment(action) {
       ),
       yield put(saveShipmentFormData(data.data)),
       yield put(getShipmentDetails()),
-      yield call(history.push, redirectTo),
     ];
+    if (redirectTo) {
+      yield call(history.push, redirectTo);
+    }
   } catch (error) {
     console.log("error", error);
     yield [

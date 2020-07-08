@@ -350,107 +350,107 @@ export default function ShipmentList({ ...props }) {
       )}
 
       <TableContainer id="shipment-table" className={classes.container}>
+        {/* <InfiniteScroll
+          dataLength={rows.length} //This is important field to render the next data
+          next={fetchData}
+          hasMore={true}
+          scrollableTarget="shipment-table"
+          loader={loading && <Loader open={loading} />}
+          endMessage={
+            <p style={{ textAlign: "center" }}>
+              <b>Yay! You have seen it all</b>
+            </p>
+          }
+        > */}
         <Table stickyHeader className={classes.table} aria-label="sticky table">
-          <InfiniteScroll
-            dataLength={rows.length} //This is important field to render the next data
-            next={fetchData}
-            hasMore={true}
-            scrollableTarget="shipment-table"
-            loader={loading && <Loader open={loading} />}
-            endMessage={
-              <p style={{ textAlign: "center" }}>
-                <b>Yay! You have seen it all</b>
-              </p>
-            }
-          >
-            <TableBody>
-              {filteredRows.length > 0 &&
-                filteredRows
+          <TableBody>
+            {filteredRows.length > 0 &&
+              filteredRows
 
-                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, idx) => {
-                    return (
-                      <React.Fragment key={`tableRow${idx}`}>
-                        <StyledTableRow hover tabIndex={-1}>
-                          <TableCell key={row.id} colSpan={3}>
-                            <Table>
-                              <TableBody>
-                                <TableRow>
-                                  <TableCell
-                                    title={`Shipment#: ${row.shipment_uuid}`}
-                                    className={classes.tableCell}
-                                    colSpan={columns.length + 2}
+                // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, idx) => {
+                  return (
+                    <React.Fragment key={`tableRow${idx}`}>
+                      <StyledTableRow hover tabIndex={-1}>
+                        <TableCell key={row.id} colSpan={3}>
+                          <Table>
+                            <TableBody>
+                              <TableRow>
+                                <TableCell
+                                  title={`Shipment#: ${row.shipment_uuid}`}
+                                  className={classes.tableCell}
+                                  colSpan={columns.length + 2}
+                                >
+                                  {`Shipment#: ${row.shipment_uuid}`}
+                                  <Divider />
+                                </TableCell>
+                              </TableRow>
+                              <TableRow>
+                                {columns &&
+                                  columns.map((column) => {
+                                    if (column.id !== "id") {
+                                      const value = row[column.id] || "-";
+                                      return (
+                                        <TableCell
+                                          style={{
+                                            width: column.width,
+                                            maxWidth: column.maxWidth,
+                                            minWidth: column.minWidth,
+                                          }}
+                                          className={classes.tableCell}
+                                          key={column.id}
+                                          align={column.align}
+                                          title={
+                                            column.format
+                                              ? column.format(value)
+                                              : value
+                                          }
+                                        >
+                                          {column.format
+                                            ? column.format(value, row)
+                                            : value}
+                                        </TableCell>
+                                      );
+                                    }
+                                  })}
+                                <TableCell className={classes.tableCell}>
+                                  <IconButton
+                                    className={classes.menuButton}
+                                    onClick={() => editAction(row)}
+                                    color="secondary"
+                                    aria-label="menu"
                                   >
-                                    {`Shipment#: ${row.shipment_uuid}`}
-                                    <Divider />
-                                  </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                  {columns &&
-                                    columns.map((column) => {
-                                      if (column.id !== "id") {
-                                        const value = row[column.id] || "";
-                                        return (
-                                          <TableCell
-                                            style={{
-                                              width: column.width,
-                                              maxWidth: column.maxWidth,
-                                              minWidth: column.minWidth,
-                                            }}
-                                            className={classes.tableCell}
-                                            key={column.id}
-                                            align={column.align}
-                                            title={
-                                              column.format
-                                                ? column.format(value)
-                                                : value
-                                            }
-                                          >
-                                            {column.format
-                                              ? column.format(value, row)
-                                              : value}
-                                          </TableCell>
-                                        );
-                                      }
-                                    })}
-                                  <TableCell className={classes.tableCell}>
-                                    <IconButton
-                                      className={classes.menuButton}
-                                      onClick={() => editAction(row)}
-                                      color="secondary"
-                                      aria-label="menu"
-                                    >
-                                      <EditIcon />
-                                    </IconButton>
-                                  </TableCell>
-                                  <TableCell className={classes.tableCell}>
-                                    <IconButton
-                                      className={classes.menuButton}
-                                      onClick={() => deleteAction(row)}
-                                      color="secondary"
-                                      aria-label="menu"
-                                    >
-                                      <DeleteIcon />
-                                    </IconButton>
-                                  </TableCell>
-                                </TableRow>
-                              </TableBody>
-                            </Table>
-                          </TableCell>
-                        </StyledTableRow>
-                      </React.Fragment>
-                    );
-                  })}
-              {filteredRows.length === 0 && (
-                <StyledTableRow>
-                  <TableCell align="center" colSpan={columns.length + 2}>
-                    No Data To Display
-                  </TableCell>
-                </StyledTableRow>
-              )}
-            </TableBody>
-          </InfiniteScroll>
+                                    <EditIcon />
+                                  </IconButton>
+                                </TableCell>
+                                <TableCell className={classes.tableCell}>
+                                  <IconButton
+                                    className={classes.menuButton}
+                                    onClick={() => deleteAction(row)}
+                                    color="secondary"
+                                    aria-label="menu"
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </TableCell>
+                              </TableRow>
+                            </TableBody>
+                          </Table>
+                        </TableCell>
+                      </StyledTableRow>
+                    </React.Fragment>
+                  );
+                })}
+            {filteredRows.length === 0 && (
+              <StyledTableRow>
+                <TableCell align="center" colSpan={columns.length + 2}>
+                  No Data To Display
+                </TableCell>
+              </StyledTableRow>
+            )}
+          </TableBody>
         </Table>
+        {/* </InfiniteScroll> */}
       </TableContainer>
 
       {/* <TablePagination

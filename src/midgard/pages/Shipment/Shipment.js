@@ -146,7 +146,11 @@ function Shipment(props) {
       formattedRow.forEach((row) => {
         if (row.custody_info && row.custody_info.length > 0) {
           row.custody_info.forEach((custody) => {
-            if (custody.has_current_custody || custody.first_custody) {
+            if (
+              (custody.has_current_custody || custody.first_custody) &&
+              (row.status.toLowerCase() === "planned" ||
+                row.status.toLowerCase() === "enroute")
+            ) {
               if (custody.start_of_custody_location) {
                 routesInfo.push({
                   lat:
