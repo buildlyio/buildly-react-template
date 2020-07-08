@@ -93,7 +93,10 @@ export default function DataTable({ ...props }) {
                 <StyledTableHead
                   key={column.id}
                   align={column.align}
-                  style={{ minWidth: column.minWidth }}
+                  style={{
+                    minWidth: column.minWidth,
+                    maxWidth: column.maxWidth,
+                  }}
                 >
                   {column.label}
                 </StyledTableHead>

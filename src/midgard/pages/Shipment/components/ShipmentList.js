@@ -350,22 +350,18 @@ export default function ShipmentList({ ...props }) {
       )}
 
       <TableContainer id="shipment-table" className={classes.container}>
-        <InfiniteScroll
-          dataLength={rows.length} //This is important field to render the next data
-          next={fetchData}
-          hasMore={true}
-          scrollableTarget="shipment-table"
-          loader={loading && <Loader open={loading} />}
-          endMessage={
-            <p style={{ textAlign: "center" }}>
-              <b>Yay! You have seen it all</b>
-            </p>
-          }
-        >
-          <Table
-            stickyHeader
-            className={classes.table}
-            aria-label="sticky table"
+        <Table stickyHeader className={classes.table} aria-label="sticky table">
+          <InfiniteScroll
+            dataLength={rows.length} //This is important field to render the next data
+            next={fetchData}
+            hasMore={true}
+            scrollableTarget="shipment-table"
+            loader={loading && <Loader open={loading} />}
+            endMessage={
+              <p style={{ textAlign: "center" }}>
+                <b>Yay! You have seen it all</b>
+              </p>
+            }
           >
             <TableBody>
               {filteredRows.length > 0 &&
@@ -453,8 +449,8 @@ export default function ShipmentList({ ...props }) {
                 </StyledTableRow>
               )}
             </TableBody>
-          </Table>
-        </InfiniteScroll>
+          </InfiniteScroll>
+        </Table>
       </TableContainer>
 
       {/* <TablePagination

@@ -2,6 +2,7 @@ import React from "react";
 import { numberWithCommas } from "../../utils/utilMethods";
 import moment from "moment";
 import { Typography } from "@material-ui/core";
+import { TempIcon, HumidIcon, DelayIcon } from "../../components/Icons/Icons";
 
 export const SHIPMENT_COLUMNS = [
   { id: "id", width: 150, maxWidth: 150 },
@@ -29,15 +30,14 @@ export const SHIPMENT_COLUMNS = [
     minWidth: 100,
 
     format: (value, row) => {
-      if (row) {
-        return (
-          <Typography
-            variant="body1"
-            color={row.flag_type === "Warning" ? "primary" : "error"}
-          >
-            {value}
-          </Typography>
-        );
+      if (row && row.flag_type && value) {
+        let color =
+          row.flag_type.toLowerCase() === "warning" ? "#ff9800" : "#f44336";
+        if (value.toLowerCase() === "temperature")
+          return <TempIcon color={color} />;
+        if (value.toLowerCase() === "humidity")
+          return <HumidIcon color={color} />;
+        if (value.toLowerCase() === "delay") return <DelayIcon color={color} />;
       }
       return value;
     },
@@ -130,12 +130,26 @@ export const custodyColumns = [
   {
     id: "start_of_custody_location",
     label: "Start Location",
-    minWidth: 170,
+    minWidth: 150,
+    maxWidth: 150,
   },
   {
     id: "end_of_custody_location",
     label: "End Location",
-    minWidth: 170,
+    minWidth: 150,
+    maxWidth: 150,
+  },
+  {
+    id: "has_current_custody",
+    label: "Current Custody",
+    minWidth: 100,
+    format: (value) => (value === true ? "YES" : "NO"),
+  },
+  {
+    id: "first_custody",
+    label: "First Custody",
+    minWidth: 100,
+    format: (value) => (value === true ? "YES" : "NO"),
   },
 ];
 
@@ -201,4 +215,45 @@ export const getFormattedCustodyRows = (
   });
 
   return sortedList;
+};
+
+export const svgIcon = (flagType, flag) => {
+  if (flag && flag.toLowerCase() === "humidity") {
+    let url = "";
+    if (flagType.toLowerCase() === "warning") {
+      url = `data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path fill="%23ff9800" d="M5.636 6.636L12 .272l6.364 6.364a9 9 0 1 1-12.728 0z"/></svg>`;
+    } else
+      url = `data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path fill="%23f44336" d="M5.636 6.636L12 .272l6.364 6.364a9 9 0 1 1-12.728 0z"/></svg>`;
+    return {
+      url: url,
+    };
+  } else if (flag && flag.toLowerCase() === "temperature") {
+    let url = "";
+    if (flagType.toLowerCase() === "warning") {
+      url = `data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path fill="%23ff9800" d="M8 5a4 4 0 1 1 8 0v5.255a7 7 0 1 1-8 0V5zm1.144 6.895a5 5 0 1 0 5.712 0L14 11.298V5a2 2 0 1 0-4 0v6.298l-.856.597zm1.856.231V5h2v7.126A4.002 4.002 0 0 1 12 20a4 4 0 0 1-1-7.874zM12 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>`;
+    } else
+      url = `data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path fill="%23f44336" d="M8 5a4 4 0 1 1 8 0v5.255a7 7 0 1 1-8 0V5zm1.144 6.895a5 5 0 1 0 5.712 0L14 11.298V5a2 2 0 1 0-4 0v6.298l-.856.597zm1.856.231V5h2v7.126A4.002 4.002 0 0 1 12 20a4 4 0 0 1-1-7.874zM12 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>`;
+    return {
+      url: url,
+    };
+  } else if (flag && flag.toLowerCase() === "delay") {
+    let url = "";
+    if (flagType.toLowerCase() === "warning") {
+      url = `data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path fill="%23ff9800" d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm3.536 5.05L10.586 12 12 13.414l4.95-4.95-1.414-1.414z"/></svg>`;
+    } else
+      url = `data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path fill="%23f44336" d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm3.536 5.05L10.586 12 12 13.414l4.95-4.95-1.414-1.414z"/></svg>`;
+    return {
+      url: url,
+    };
+  } else if (flag && flag.toLowerCase() === "recall") {
+    let url = "";
+    if (flagType.toLowerCase() === "warning") {
+      url = `data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path fill="%23ff9800" d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm0 9V8l-4 4 4 4v-3h4v-2h-4z"/></svg>`;
+    } else
+      url = `data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path fill="%23f44336" d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm0 9V8l-4 4 4 4v-3h4v-2h-4z"/></svg>`;
+    return {
+      url: url,
+    };
+  }
+  return null;
 };

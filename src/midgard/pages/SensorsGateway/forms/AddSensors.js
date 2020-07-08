@@ -197,7 +197,7 @@ function AddSensor({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!sensor_type.value || !sensor_name || !gateway) return true;
+    if (!sensor_type.value || !sensor_name.value || !gateway) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });

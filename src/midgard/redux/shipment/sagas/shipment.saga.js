@@ -36,6 +36,7 @@ function* getShipmentList() {
       null,
       true
     );
+    console.log("data", data);
     yield [yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data })];
   } catch (error) {
     console.log("error", error);

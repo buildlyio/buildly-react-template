@@ -12,6 +12,7 @@ import {
   SHIPMENT_COLUMNS,
   getFormattedRow,
   getFormattedCustodyRows,
+  svgIcon,
 } from "./ShipmentConstants";
 import ShipmentList from "./components/ShipmentList";
 import { shipmentMock } from "../../utils/mock";
@@ -120,6 +121,12 @@ function Shipment(props) {
     };
   }, []);
 
+  const returnIcon = (row) => {
+    let flagType = row.flag_type;
+    let flag = row.shipment_flag;
+    return svgIcon(flagType, flag);
+  };
+
   useEffect(() => {
     if (
       shipmentData &&
@@ -138,53 +145,6 @@ function Shipment(props) {
       );
       formattedRow.forEach((row) => {
         if (row.custody_info && row.custody_info.length > 0) {
-          // if (row.status == "Planned") {
-          //   if (row.custody_info[0].start_of_custody_location)
-          //     routesInfo.push({
-          //       lat:
-          //         row.custody_info[0].start_of_custody_location &&
-          //         parseFloat(
-          //           row.custody_info[0].start_of_custody_location.split(",")[0]
-          //         ),
-          //       lng:
-          //         row.custody_info[0].start_of_custody_location &&
-          //         parseFloat(
-          //           row.custody_info[0].start_of_custody_location.split(",")[1]
-          //         ),
-          //       label: `${row.name}:${row.shipment_uuid}(Start Location)`,
-          //       icon: (
-          //         <svg
-          //           xmlns="http://www.w3.org/2000/svg"
-          //           viewBox="0 0 24 24"
-          //           width="24"
-          //           height="24"
-          //         >
-          //           <path fill="none" d="M0 0h24v24H0z" />
-          //           <path d="M8 5a4 4 0 1 1 8 0v5.255a7 7 0 1 1-8 0V5zm1.144 6.895a5 5 0 1 0 5.712 0L14 11.298V5a2 2 0 1 0-4 0v6.298l-.856.597zm1.856.231V5h2v7.126A4.002 4.002 0 0 1 12 20a4 4 0 0 1-1-7.874zM12 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
-          //         </svg>
-          //       ),
-          //       excursion_name: row.shipment_flag,
-          //       excursion_type: row.flag_type,
-          //     });
-          //   if (row.custody_info[0].end_of_custody_location)
-          //     routesInfo.push({
-          //       lat:
-          //         row.custody_info[0].end_of_custody_location &&
-          //         parseFloat(
-          //           row.custody_info[0].end_of_custody_location.split(",")[0]
-          //         ),
-          //       lng:
-          //         row.custody_info[0].end_of_custody_location &&
-          //         parseFloat(
-          //           row.custody_info[0].end_of_custody_location.split(",")[1]
-          //         ),
-          //       label: `${row.name}:${row.shipment_uuid}(End Location)`,
-
-          //       excursion_name: row.shipment_flag,
-          //       excursion_type: row.flag_type,
-          //     });
-          // }
-          // else if (row.status === "Enroute") {
           row.custody_info.forEach((custody) => {
             if (custody.has_current_custody || custody.first_custody) {
               if (custody.start_of_custody_location) {
@@ -198,6 +158,7 @@ function Shipment(props) {
                   label: `${row.name}:${row.shipment_uuid}(Start Location)`,
                   excursion_name: row.shipment_flag,
                   excursion_type: row.flag_type,
+                  icon: returnIcon(row),
                 });
               }
               if (custody.end_of_custody_location) {
@@ -211,11 +172,11 @@ function Shipment(props) {
                   label: `${row.name}:${row.shipment_uuid}(End Location)`,
                   excursion_name: row.shipment_flag,
                   excursion_type: row.flag_type,
+                  icon: returnIcon(row),
                 });
               }
             }
           });
-          // }
         }
       });
       setMarkers(routesInfo);

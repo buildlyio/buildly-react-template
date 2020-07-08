@@ -7,7 +7,6 @@ import { colors } from "colors";
 // react user imports
 import NavBar from "midgard/layout/NavBar/NavBar";
 import TopBar from "midgard/layout/TopBar/TopBar";
-import Profile from "midgard/pages/Profile/Profile";
 import UserManagement from "midgard/pages/UserManagement/UserManagement";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
@@ -20,6 +19,7 @@ import MyAccount from "../../pages/MyAccount/MyAccount";
 import Items from "../../pages/Items/Items";
 import SensorsGateway from "../../pages/SensorsGateway/SensorsGateway";
 import Shipment from "../../pages/Shipment/Shipment";
+import Dashboard from "../../pages/Dashboard/Dashboard";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -79,7 +79,7 @@ function ContainerDashboard({ location, history }) {
             path={routes.APP}
             render={() => <Redirect to={routes.DASHBOARD} />}
           />
-          <Route path={routes.DASHBOARD} component={Profile} />
+          <Route path={routes.DASHBOARD} component={Dashboard} />
           <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
           <Route path={routes.CUSTODIANS} component={Custodians} />
           <Route path={routes.MY_ACCOUNT} component={MyAccount} />
