@@ -238,7 +238,7 @@ function AddSensor({
                   fullWidth
                   required
                   id="sensor_name"
-                  label="Alias"
+                  label="Sensor Name"
                   name="sensor_name"
                   autoComplete="sensor_name"
                   error={formError.sensor_name && formError.sensor_name.error}
@@ -256,7 +256,7 @@ function AddSensor({
                   margin="normal"
                   fullWidth
                   id="last_known_location"
-                  label="Sensor Placed"
+                  label="Last Known Location"
                   name="last_known_location"
                   autoComplete="last_known_location"
                   value={last_known_location}

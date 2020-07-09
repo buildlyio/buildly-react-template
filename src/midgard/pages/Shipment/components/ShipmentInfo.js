@@ -108,9 +108,7 @@ function ShipmentInfo(props) {
   const [scheduled_arrival, handleScheduledDateChange] = useState(
     (editData && new Date(editData.estimated_time_of_arrival)) || new Date()
   );
-  const flags = useInput((editData && editData.flags[0]) || "", {
-    required: true,
-  });
+  const flags = useInput((editData && editData.flags[0]) || "");
   const uom_temp = useInput((editData && editData.uom_temp) || "");
   const uom_weight = useInput((editData && editData.uom_weight) || "");
   const uom_distance = useInput((editData && editData.uom_distance) || "");
@@ -349,15 +347,14 @@ function ShipmentInfo(props) {
                       variant="outlined"
                       margin="normal"
                       fullWidth
-                      required
                       id="flags"
                       select
                       label="Excursions/Warnings"
                       error={formError.flags && formError.flags.error}
-                      helperText={
-                        formError.flags ? formError.flags.message : ""
-                      }
-                      onBlur={(e) => handleBlur(e, "required", flags, "flags")}
+                      // helperText={
+                      //   formError.flags ? formError.flags.message : ""
+                      // }
+                      // onBlur={(e) => handleBlur(e, "required", flags, "flags")}
                       {...flags.bind}
                     >
                       <MenuItem>Select</MenuItem>
