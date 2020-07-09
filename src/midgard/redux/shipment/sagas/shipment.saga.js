@@ -23,6 +23,9 @@ import {
   GET_SHIPMENT_FLAG_SUCCESS,
   FILTER_SHIPMENT_SUCCESS,
   filterShipmentData,
+  GET_DASHBOARD_ITEMS,
+  GET_DASHBOARD_ITEMS_SUCCESS,
+  GET_DASHBOARD_ITEMS_FAILURE,
 } from "../actions/shipment.actions";
 
 const shipmentApiEndPoint = "shipment/";
@@ -397,6 +400,34 @@ function* getShipmentFlagList() {
   }
 }
 
+function* getDashboard() {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}${shipmentApiEndPoint}dashboard/`,
+      null,
+      true
+    );
+    yield [yield put({ type: GET_DASHBOARD_ITEMS_SUCCESS, data: data.data })];
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't load data due to some error!",
+        })
+      ),
+      yield put({
+        type: GET_DASHBOARD_ITEMS_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* watchGetShipment() {
   yield takeLatest(GET_SHIPMENTS, getShipmentList);
 }
@@ -421,6 +452,10 @@ function* watchGetShipmentFlag() {
   yield takeLatest(GET_SHIPMENT_FLAG, getShipmentFlagList);
 }
 
+function* watchGetDashboardItems() {
+  yield takeLatest(GET_DASHBOARD_ITEMS, getDashboard);
+}
+
 export default function* shipmentSaga() {
   yield all([
     watchFilterShipment(),
@@ -429,5 +464,6 @@ export default function* shipmentSaga() {
     watchDeleteShipment(),
     watchEditShipment(),
     watchGetShipmentFlag(),
+    watchGetDashboardItems(),
   ]);
 }

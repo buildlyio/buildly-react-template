@@ -24,6 +24,12 @@ export const GET_SHIPMENT_FLAG = "SHIPMENT/GET_SHIPMENT_FLAG";
 export const GET_SHIPMENT_FLAG_SUCCESS = "SHIPMENT/GET_SHIPMENT_FLAG_SUCCESS";
 export const GET_SHIPMENT_FLAG_FAILURE = "SHIPMENT/GET_SHIPMENT_FLAG_FAILURE";
 
+export const GET_DASHBOARD_ITEMS = "SHIPMENT/GET_DASHBOARD_ITEMS";
+export const GET_DASHBOARD_ITEMS_SUCCESS =
+  "SHIPMENT/GET_DASHBOARD_ITEMS_SUCCESS";
+export const GET_DASHBOARD_ITEMS_FAILURE =
+  "SHIPMENT/GET_DASHBOARD_ITEMS_FAILURE";
+
 /**
  *
  * @param {Object} formData
@@ -88,4 +94,8 @@ export const filterShipmentData = (list, filterObject) => ({
 
 export const getShipmentFlag = () => ({
   type: GET_SHIPMENT_FLAG,
+});
+
+export const getDashboardItems = () => ({
+  type: GET_DASHBOARD_ITEMS,
 });

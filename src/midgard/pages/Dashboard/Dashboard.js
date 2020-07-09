@@ -16,6 +16,7 @@ import { HumidIcon } from "../../components/Icons/Icons";
 import {
   getShipmentDetails,
   getShipmentFlag,
+  getDashboardItems,
 } from "../../redux/shipment/actions/shipment.actions";
 import {
   getCustodians,
@@ -40,6 +41,7 @@ import {
   delayColumns,
   getFormattedShipmentRow,
 } from "./DashboardConstants";
+import Loader from "../../components/Loader/Loader";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -86,6 +88,7 @@ function Dashboard(props) {
     custodyData,
     sensorData,
     loading,
+    dashboardItems,
   } = props;
   const [tileView, setTileView] = useState(true);
   let classes = useStyles();
@@ -121,6 +124,9 @@ function Dashboard(props) {
     if (!sensorData) {
       dispatch(getSensors());
       dispatch(getSensorType());
+    }
+    if (!dashboardItems) {
+      dispatch(getDashboardItems());
     }
   }, []);
 
@@ -207,6 +213,7 @@ function Dashboard(props) {
   return (
     <Box mt={3}>
       <div className={classes.dashboardContainer}>
+        {loading && <Loader open={loading} />}
         <Typography className={classes.dashboardHeading} variant={"h4"}>
           Producer Dashboard
         </Typography>

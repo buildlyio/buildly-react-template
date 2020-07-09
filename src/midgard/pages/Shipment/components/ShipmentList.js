@@ -386,7 +386,14 @@ export default function ShipmentList({ ...props }) {
                                 </TableCell>
                               </TableRow>
                               <TableRow>
-                                <TableCell className={classes.tableCell}>
+                                <TableCell
+                                  style={{
+                                    width: 80,
+                                    maxWidth: 80,
+                                    minWidth: 50,
+                                  }}
+                                  className={classes.tableCell}
+                                >
                                   <IconButton
                                     className={classes.menuButton}
                                     onClick={() => editAction(row)}
@@ -396,7 +403,14 @@ export default function ShipmentList({ ...props }) {
                                     <EditIcon />
                                   </IconButton>
                                 </TableCell>
-                                <TableCell className={classes.tableCell}>
+                                <TableCell
+                                  className={classes.tableCell}
+                                  style={{
+                                    width: 80,
+                                    maxWidth: 80,
+                                    minWidth: 50,
+                                  }}
+                                >
                                   <IconButton
                                     className={classes.menuButton}
                                     onClick={() => deleteAction(row)}

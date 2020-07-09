@@ -18,6 +18,9 @@ import {
   GET_SHIPMENT_FLAG,
   GET_SHIPMENT_FLAG_SUCCESS,
   GET_SHIPMENT_FLAG_FAILURE,
+  GET_DASHBOARD_ITEMS,
+  GET_DASHBOARD_ITEMS_SUCCESS,
+  GET_DASHBOARD_ITEMS_FAILURE,
 } from "../actions/shipment.actions";
 
 const initialState = {
@@ -162,6 +165,29 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
+    case GET_DASHBOARD_ITEMS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_DASHBOARD_ITEMS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        dashboardItems: action.data,
+      };
+    case GET_DASHBOARD_ITEMS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
     default:
       return state;
   }
