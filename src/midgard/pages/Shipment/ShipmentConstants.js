@@ -27,8 +27,8 @@ export const SHIPMENT_COLUMNS = [
   {
     id: "shipment_flag",
     width: 100,
-    maxWidth: 150,
-    minWidth: 100,
+    maxWidth: 80,
+    minWidth: 80,
 
     format: (value, row) => {
       if (row && row.flag_type && value && value !== "-") {
@@ -96,7 +96,10 @@ export const getFormattedRow = (
         });
     }
   });
-  return shipmentList;
+  let sortedList = shipmentList.sort((a, b) => {
+    return moment.utc(a.create_date).diff(moment.utc(b.create_date));
+  });
+  return sortedList;
 };
 
 export const custodianColumns = [

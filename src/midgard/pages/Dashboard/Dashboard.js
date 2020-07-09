@@ -35,7 +35,11 @@ import {
   getSensorType,
 } from "../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import { getFormattedRow, svgIcon } from "../Shipment/ShipmentConstants";
-import { recallColumns, delayColumns } from "./DashboardConstants";
+import {
+  recallColumns,
+  delayColumns,
+  getFormattedShipmentRow,
+} from "./DashboardConstants";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -137,7 +141,7 @@ function Dashboard(props) {
       let routesInfo = [];
       let delayedInfo = [];
       let excursionInfo = [];
-      let formattedRow = getFormattedRow(
+      let formattedRow = getFormattedShipmentRow(
         shipmentData,
         custodianData,
         itemData,
@@ -148,7 +152,7 @@ function Dashboard(props) {
         if (row.custody_info && row.custody_info.length > 0) {
           row.custody_info.forEach((custody) => {
             if (
-              (custody.has_current_custody || custody.first_custody) &&
+              custody.has_current_custody &&
               row.status.toLowerCase() === "enroute"
             ) {
               if (custody.start_of_custody_location) {
@@ -210,34 +214,34 @@ function Dashboard(props) {
           <Grid container className={classes.root} spacing={2}>
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
-                <Typography variant={"h4"}>{"N/A"}</Typography>
+                <Typography variant={"h4"}>{"-"}</Typography>
                 <Typography variant={"subtitle2"}>Items in transit</Typography>
               </div>
             </Grid>
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
-                <Typography variant={"h4"}>{"N/A"}</Typography>
+                <Typography variant={"h4"}>{"-"}</Typography>
                 <Typography variant={"subtitle2"}>Delayed Shipment</Typography>
               </div>
             </Grid>
+            {/* <Grid item md={3} xs={6}>
+              <div className={classes.dashboardHeaderItems}>
+                <Typography variant={"h4"}>{"-"}</Typography>
+                <Typography variant={"subtitle2"}>Items at risk</Typography>
+              </div>
+            </Grid> */}
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
-                <Typography variant={"h4"}>{"N/A"}</Typography>
-                <Typography variant={"subtitle2"}>Items at risk</Typography>
+                <Typography variant={"h4"}>{"-"}</Typography>
+                <Typography variant={"subtitle2"}>Revenue Risk</Typography>
               </div>
             </Grid>
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
-                <Typography variant={"h4"}>{"N/A"}</Typography>
+                <Typography variant={"h4"}>{"-"}</Typography>
                 <Typography variant={"subtitle2"}>
                   Perfect order rate
                 </Typography>
-              </div>
-            </Grid>
-            <Grid item md={3} xs={6}>
-              <div className={classes.dashboardHeaderItems}>
-                <Typography variant={"h4"}>{"N/A"}</Typography>
-                <Typography variant={"subtitle2"}>Revenue Risk</Typography>
               </div>
             </Grid>
           </Grid>
@@ -276,7 +280,7 @@ function Dashboard(props) {
                     variant="h5"
                     className={classes.tileHeading}
                   >
-                    Recalls and Excursions
+                    Recalls and Violations
                   </Typography>
                   <Hidden smDown>
                     <IconButton

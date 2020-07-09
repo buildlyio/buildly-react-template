@@ -386,6 +386,26 @@ export default function ShipmentList({ ...props }) {
                                 </TableCell>
                               </TableRow>
                               <TableRow>
+                                <TableCell className={classes.tableCell}>
+                                  <IconButton
+                                    className={classes.menuButton}
+                                    onClick={() => editAction(row)}
+                                    color="secondary"
+                                    aria-label="menu"
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                </TableCell>
+                                <TableCell className={classes.tableCell}>
+                                  <IconButton
+                                    className={classes.menuButton}
+                                    onClick={() => deleteAction(row)}
+                                    color="secondary"
+                                    aria-label="menu"
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </TableCell>
                                 {columns &&
                                   columns.map((column) => {
                                     if (column.id !== "id") {
@@ -413,26 +433,6 @@ export default function ShipmentList({ ...props }) {
                                       );
                                     }
                                   })}
-                                <TableCell className={classes.tableCell}>
-                                  <IconButton
-                                    className={classes.menuButton}
-                                    onClick={() => editAction(row)}
-                                    color="secondary"
-                                    aria-label="menu"
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                </TableCell>
-                                <TableCell className={classes.tableCell}>
-                                  <IconButton
-                                    className={classes.menuButton}
-                                    onClick={() => deleteAction(row)}
-                                    color="secondary"
-                                    aria-label="menu"
-                                  >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                </TableCell>
                               </TableRow>
                             </TableBody>
                           </Table>

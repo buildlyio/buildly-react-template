@@ -233,9 +233,10 @@ function AddCustodians({
               </Grid>
               <Grid item item xs={12} md={6} sm={6}>
                 <TextField
-                  variant="outlined"
+                  variant="filled"
                   margin="normal"
                   fullWidth
+                  disabled
                   id="alias"
                   label="Alias"
                   name="alias"
@@ -278,9 +279,10 @@ function AddCustodians({
               </Grid>
               <Grid item item xs={12} md={6} sm={6}>
                 <TextField
-                  variant="outlined"
+                  variant="filled"
                   margin="normal"
                   fullWidth
+                  disabled
                   id="consortium"
                   select
                   label="Consortium"
@@ -302,8 +304,9 @@ function AddCustodians({
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item item xs={12}>
                 <TextField
-                  variant="outlined"
+                  variant="filled"
                   margin="normal"
+                  disabled
                   fullWidth
                   id="glnNumber"
                   label="GLN Number"

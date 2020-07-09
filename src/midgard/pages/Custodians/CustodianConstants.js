@@ -40,5 +40,8 @@ export const getFormattedRow = (data, contactInfo, custodyData) => {
     });
   }
 
-  return customizedRow;
+  let sortedList = customizedRow.sort((a, b) => {
+    return moment.utc(a.create_date).diff(moment.utc(b.create_date));
+  });
+  return sortedList;
 };

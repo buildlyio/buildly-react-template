@@ -189,7 +189,8 @@ function AddItems({
               </Grid>
               <Grid item item xs={12}>
                 <TextField
-                  variant="outlined"
+                  variant="filled"
+                  disabled
                   margin="normal"
                   fullWidth
                   multiline
@@ -205,7 +206,8 @@ function AddItems({
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item item xs={12} md={6} sm={6}>
                 <TextField
-                  variant="outlined"
+                  variant="filled"
+                  disabled
                   margin="normal"
                   fullWidth
                   id="units"
@@ -288,7 +290,8 @@ function AddItems({
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
+                      variant="filled"
+                      disabled
                       margin="normal"
                       fullWidth
                       id="gtin"
@@ -300,7 +303,8 @@ function AddItems({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
+                      variant="filled"
+                      disabled
                       margin="normal"
                       fullWidth
                       id="upc"
@@ -312,7 +316,8 @@ function AddItems({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
+                      variant="filled"
+                      disabled
                       margin="normal"
                       fullWidth
                       id="ean"
@@ -324,7 +329,8 @@ function AddItems({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
+                      variant="filled"
+                      disabled
                       margin="normal"
                       fullWidth
                       id="paper_tag_no"
@@ -336,7 +342,8 @@ function AddItems({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
+                      variant="filled"
+                      disabled
                       margin="normal"
                       fullWidth
                       id="batch_id"
@@ -348,7 +355,8 @@ function AddItems({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
+                      variant="filled"
+                      disabled
                       margin="normal"
                       fullWidth
                       id="bin_id"

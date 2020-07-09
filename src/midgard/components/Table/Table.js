@@ -89,6 +89,16 @@ export default function DataTable({ ...props }) {
         <Table stickyHeader className={classes.table} aria-label="sticky table">
           <TableHead>
             <StyledTableRow>
+              {actionsColumns &&
+                actionsColumns.map((action, id) => (
+                  <StyledTableHead
+                    key={action.id}
+                    align={"left"}
+                    style={{ minWidth: 50 }}
+                  >
+                    {action.label}
+                  </StyledTableHead>
+                ))}
               {columns.map((column) => (
                 <StyledTableHead
                   key={column.id}
@@ -101,16 +111,6 @@ export default function DataTable({ ...props }) {
                   {column.label}
                 </StyledTableHead>
               ))}
-              {actionsColumns &&
-                actionsColumns.map((action, id) => (
-                  <StyledTableHead
-                    key={action.id}
-                    align={"left"}
-                    style={{ minWidth: 50 }}
-                  >
-                    {action.label}
-                  </StyledTableHead>
-                ))}
             </StyledTableRow>
           </TableHead>
           <TableBody>
@@ -125,14 +125,6 @@ export default function DataTable({ ...props }) {
                       tabIndex={-1}
                       key={`tableRow${idx}`}
                     >
-                      {columns.map((column) => {
-                        const value = row[column.id] || "-";
-                        return (
-                          <TableCell key={column.id} align={column.align}>
-                            {column.format ? column.format(value) : value}
-                          </TableCell>
-                        );
-                      })}
                       {actionsColumns &&
                         actionsColumns.map((action, id) => {
                           const actionItemType = action.type;
@@ -159,6 +151,14 @@ export default function DataTable({ ...props }) {
                             </StyledTableHead>
                           );
                         })}
+                      {columns.map((column) => {
+                        const value = row[column.id] || "-";
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            {column.format ? column.format(value) : value}
+                          </TableCell>
+                        );
+                      })}
                     </StyledTableRow>
                   );
                 })}

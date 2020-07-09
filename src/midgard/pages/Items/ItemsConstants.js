@@ -1,4 +1,5 @@
 import { numberWithCommas } from "../../utils/utilMethods";
+import moment from "moment";
 
 export const itemColumns = [
   { id: "id", label: "Item ID", minWidth: 150 },
@@ -58,7 +59,10 @@ export const getFormattedRow = (data, itemTypeList, unitsOfMeasure) => {
         });
       }
     });
-    return formattedData;
+    let sortedList = formattedData.sort((a, b) => {
+      return moment.utc(a.create_date).diff(moment.utc(b.create_date));
+    });
+    return sortedList;
   }
   return data;
 };

@@ -327,20 +327,21 @@ function ShipmentInfo(props) {
                         ))}
                     </TextField>
                   </Grid>
-                  <Grid item xs={12}>
-                    <DatePickerComponent
-                      label={"Scheduled Arrival"}
-                      selectedDate={scheduled_arrival}
-                      hasTime={true}
-                      handleDateChange={handleScheduledDateChange}
-                    />
-                  </Grid>
+
                   <Grid item xs={12}>
                     <DatePickerComponent
                       label={"Scheduled Departure"}
                       selectedDate={scheduled_departure}
                       hasTime={true}
                       handleDateChange={handleDepartureDateChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <DatePickerComponent
+                      label={"Scheduled Arrival"}
+                      selectedDate={scheduled_arrival}
+                      hasTime={true}
+                      handleDateChange={handleScheduledDateChange}
                     />
                   </Grid>
                   <Grid item xs={12}>

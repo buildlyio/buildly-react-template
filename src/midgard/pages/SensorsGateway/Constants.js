@@ -42,7 +42,10 @@ export const getFormattedRow = (data, itemTypeList) => {
         }
       });
     });
-    return formattedData;
+    let sortedList = formattedData.sort((a, b) => {
+      return moment.utc(a.create_date).diff(moment.utc(b.create_date));
+    });
+    return sortedList;
   }
   return data;
 };
@@ -70,7 +73,10 @@ export const getFormattedSensorRow = (data, sensorTypeList) => {
         }
       });
     });
-    return formattedData;
+    let sortedList = formattedData.sort((a, b) => {
+      return moment.utc(a.create_date).diff(moment.utc(b.create_date));
+    });
+    return sortedList;
   }
   return data;
 };

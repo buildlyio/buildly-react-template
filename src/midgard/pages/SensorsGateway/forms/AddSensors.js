@@ -88,20 +88,23 @@ function AddSensor({
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
 
-  const sensor_name = useInput(editData.name || "", {
+  const sensor_name = useInput((editData && editData.name) || "", {
     required: true,
   });
-  const sensor_type = useInput(editData.sensor_type || "", {
+  const sensor_type = useInput((editData && editData.sensor_type) || "", {
     required: true,
   });
   const [activation_date, handleDateChange] = useState(
-    editData.activation_date || new Date()
+    (editData && editData.activation_date) || new Date()
   );
   const sim_card_id = useInput("");
   const battery_level = useInput("");
   const mac_address = useInput("");
   const [last_known_location, setLastLocation] = useState(
-    (editData.last_known_location && editData.last_known_location[0]) || ""
+    (editData &&
+      editData.last_known_location &&
+      editData.last_known_location[0]) ||
+      ""
   );
   const recharge_before = useInput("");
   const [last_report_date_time, handleLastReportDate] = useState(
