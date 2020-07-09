@@ -74,7 +74,7 @@ function ItemsInfo(props) {
     unitsOfMeasure,
   } = props;
   const [itemIds, setItemIds] = useState(
-    (shipmentFormData && shipmentFormData.item_ids) || []
+    (shipmentFormData && shipmentFormData.items) || []
   );
   const classes = useStyles();
 
@@ -85,7 +85,7 @@ function ItemsInfo(props) {
   if (itemData && itemData.length) {
     let selectedRows = [];
     itemData.forEach((element) => {
-      if (itemIds.indexOf(element.item_uuid) !== -1) {
+      if (itemIds.indexOf(element.url) !== -1) {
         selectedRows.push(element);
       }
     });
@@ -95,7 +95,7 @@ function ItemsInfo(props) {
   const onInputChange = (value) => {
     let itemIdArray = [];
     value.forEach((val) => {
-      itemIdArray.push(val.item_uuid);
+      itemIdArray.push(val.url);
     });
     setItemIds(itemIdArray);
   };
@@ -111,7 +111,7 @@ function ItemsInfo(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const shipmentFormValue = {
-      ...{ ...shipmentFormData, item_ids: itemIds },
+      ...{ ...shipmentFormData, items: itemIds },
     };
     dispatch(
       editShipment(

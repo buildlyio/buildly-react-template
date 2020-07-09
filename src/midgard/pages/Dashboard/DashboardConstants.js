@@ -78,9 +78,9 @@ export const getFormattedShipmentRow = (
     list["custodian_name"] = custodianName;
     list["custody_info"] = custodyInfo;
 
-    if (itemData && list.item_ids.length) {
+    if (itemData && list.items && list.items.length) {
       itemData.forEach((item) => {
-        if (list.item_ids.indexOf(item.item_uuid) !== -1) {
+        if (list.items.indexOf(item.url) !== -1) {
           shipmentValue += item.value;
           list["value"] = shipmentValue;
         }

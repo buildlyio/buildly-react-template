@@ -171,7 +171,7 @@ function ShipmentInfo(props) {
       estimated_time_of_arrival: scheduled_arrival,
       estimated_time_of_departure: scheduled_departure,
       ...(editData && { id: editData.id }),
-      item_ids: (editData && editData.item_ids) || [],
+      items: (editData && editData.items) || [],
       gateway_ids: (editData && editData.gateway_ids) || [],
       sensor_report_ids: (editData && editData.sensor_report_ids) || [],
       wallet_ids: (editData && editData.wallet_ids) || [],
