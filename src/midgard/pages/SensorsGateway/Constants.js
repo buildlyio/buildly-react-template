@@ -23,7 +23,8 @@ export const gatewayColumns = [
     id: "activation_date",
     label: "Activation",
     minWidth: 180,
-    format: (value) => value && value !== "-" && returnFormattedData(value),
+    format: (value) =>
+      value && value !== "-" ? returnFormattedData(value) : value,
   },
 ];
 
@@ -59,7 +60,8 @@ export const sensorsColumns = [
     id: "activation_date",
     label: "Activated",
     minWidth: 150,
-    format: (value) => value && value !== "-" && returnFormattedData(value),
+    format: (value) =>
+      value && value !== "-" ? returnFormattedData(value) : value,
   },
 ];
 

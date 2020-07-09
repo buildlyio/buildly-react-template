@@ -8,6 +8,10 @@ import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import { MapComponent } from "../../components/MapComponent/MapComponent";
 import DataTable from "../../components/Table/Table";
+import ViewComfyIcon from "@material-ui/icons/ViewComfy";
+import ViewCompactIcon from "@material-ui/icons/ViewCompact";
+import IconButton from "@material-ui/core/IconButton";
+import Hidden from "@material-ui/core/Hidden";
 import {
   SHIPMENT_COLUMNS,
   getFormattedRow,
@@ -63,6 +67,16 @@ const useStyles = makeStyles((theme) => ({
       marginTop: theme.spacing(2),
     },
   },
+  switchViewSection: {
+    background: "#383636",
+    width: "100%",
+    display: "flex",
+    minHeight: "40px",
+    alignItems: "center",
+  },
+  menuButton: {
+    marginLeft: "auto",
+  },
 }));
 
 function Shipment(props) {
@@ -86,6 +100,7 @@ function Shipment(props) {
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const [markers, setMarkers] = useState([]);
+  const [tileView, setTileView] = useState(true);
   useEffect(() => {
     if (shipmentData === null) {
       dispatch(getShipmentDetails());
@@ -239,7 +254,19 @@ function Shipment(props) {
         Shipments
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} md={tileView ? 6 : 12}>
+          <div className={classes.switchViewSection}>
+            <Hidden smDown>
+              <IconButton
+                className={classes.menuButton}
+                onClick={() => setTileView(!tileView)}
+                color="primary"
+                aria-label="menu"
+              >
+                {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
+              </IconButton>
+            </Hidden>
+          </div>
           <ShipmentList
             rows={rows}
             filteredRows={filteredRows}
@@ -252,7 +279,19 @@ function Shipment(props) {
             hasSort={true}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} md={tileView ? 6 : 12}>
+          <div className={classes.switchViewSection}>
+            <Hidden smDown>
+              <IconButton
+                className={classes.menuButton}
+                onClick={() => setTileView(!tileView)}
+                color="primary"
+                aria-label="menu"
+              >
+                {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
+              </IconButton>
+            </Hidden>
+          </div>
           <MapComponent
             isMarkerShown
             markers={markers}

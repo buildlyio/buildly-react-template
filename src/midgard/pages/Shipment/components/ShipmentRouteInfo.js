@@ -89,19 +89,21 @@ export default function ShipmentRouteInfo(props) {
   }, [custodianData, custodyData, shipmentFormData]);
 
   return (
-    <Card>
-      <CardContent>
-        {routes.length > 0 && (
-          <MapComponent
-            isMarkerShown
-            googleMapURL={MAP_API_URL}
-            loadingElement={<div style={{ height: `100%` }} />}
-            containerElement={<div style={{ height: `400px` }} />}
-            mapElement={<div style={{ height: `100%` }} />}
-            markers={routes}
-          />
-        )}
-      </CardContent>
-    </Card>
+    <React.Fragment>
+      {routes.length > 0 && (
+        <Card variant="outlined">
+          <CardContent>
+            <MapComponent
+              isMarkerShown
+              googleMapURL={MAP_API_URL}
+              loadingElement={<div style={{ height: `100%` }} />}
+              containerElement={<div style={{ height: `400px` }} />}
+              mapElement={<div style={{ height: `100%` }} />}
+              markers={routes}
+            />
+          </CardContent>
+        </Card>
+      )}
+    </React.Fragment>
   );
 }

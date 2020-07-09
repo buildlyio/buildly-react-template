@@ -31,7 +31,8 @@ export const itemColumns = [
     id: "gross_weight",
     label: "Gross Weight",
     minWidth: 150,
-    format: (value) => value && value !== "-" && `${numberWithCommas(value)}`,
+    format: (value) =>
+      value && value !== "-" ? `${numberWithCommas(value)}` : value,
     type: "number",
   },
   {
