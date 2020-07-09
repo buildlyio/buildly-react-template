@@ -1,6 +1,6 @@
 import moment from "moment";
 export const custodianColumns = [
-  { id: "id", label: "Custodian ID", minWidth: 150 },
+  // { id: "id", label: "Custodian ID", minWidth: 150 },
   { id: "name", label: "Name", minWidth: 150 },
   {
     id: "location",
@@ -40,5 +40,8 @@ export const getFormattedRow = (data, contactInfo, custodyData) => {
     });
   }
 
-  return customizedRow;
+  let sortedList = customizedRow.sort((a, b) => {
+    return moment.utc(a.create_date).diff(moment.utc(b.create_date));
+  });
+  return sortedList;
 };

@@ -113,7 +113,7 @@ function Custodian({
     setConfirmModal(false);
   };
   const searchTable = (e) => {
-    let searchFields = ["id", "name", "location"];
+    let searchFields = ["name", "location"];
     setSearchValue(e.target.value);
     dispatch(searchCustodian(e.target.value, rows, searchFields));
   };

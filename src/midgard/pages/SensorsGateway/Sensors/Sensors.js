@@ -73,7 +73,13 @@ function Sensors(props) {
     setConfirmModal(false);
   };
   const searchTable = (e) => {
-    let searchFields = ["id", "name", "sensor_uuid", "activation_date"];
+    let searchFields = [
+      "id",
+      "name",
+      // "sensor_uuid",
+      "activation_date",
+      "sensor_type_value",
+    ];
     setSearchValue(e.target.value);
     dispatch(searchSensorItem(e.target.value, rows, searchFields));
   };

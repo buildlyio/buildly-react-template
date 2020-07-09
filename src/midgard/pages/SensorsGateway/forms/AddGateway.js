@@ -20,6 +20,8 @@ import {
   addGateway,
   editGateway,
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
+import { MAP_API_URL } from "../../../utils/utilMethods";
+import { MapComponent } from "../../../components/MapComponent/MapComponent";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -86,8 +88,11 @@ function AddGateway({
   const sim_card_id = useInput(editData.sim_card_id || "");
   const battery_level = useInput(editData.last_known_battery_level || "");
   const mac_address = useInput(editData.mac_address || "");
-  const last_known_location = useInput(
-    (editData.last_known_location && editData.last_known_location[0]) || ""
+  const [last_known_location, setLastLocation] = useState(
+    (editData &&
+      editData.last_known_location &&
+      editData.last_known_location[0]) ||
+      ""
   );
   const gateway_uuid = useInput(editData.gateway_uuid || "");
   const [formError, setFormError] = useState({});
@@ -117,7 +122,7 @@ function AddGateway({
       last_known_battery_level: battery_level.value,
       ...(editPage && editData && { id: editData.id }),
       mac_address: mac_address.value,
-      last_known_location: [last_known_location.value],
+      last_known_location: [last_known_location],
       last_known_battery_level: battery_level.value,
     };
     if (editPage) {
@@ -164,6 +169,10 @@ function AddGateway({
 
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const setLastKnownLocation = (value) => {
+    setLastLocation(value);
+  };
 
   return (
     <div>
@@ -282,7 +291,7 @@ function AddGateway({
                       {...mac_address.bind}
                     />
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -291,7 +300,26 @@ function AddGateway({
                       label="Last Known Location"
                       name="last_known_location"
                       autoComplete="last_known_location"
-                      {...last_known_location.bind}
+                      value={last_known_location}
+                    />
+                    <MapComponent
+                      isMarkerShown
+                      googleMapURL={MAP_API_URL}
+                      loadingElement={<div style={{ height: `100%` }} />}
+                      containerElement={<div style={{ height: `200px` }} />}
+                      mapElement={<div style={{ height: `100%` }} />}
+                      markers={[
+                        {
+                          lat:
+                            last_known_location &&
+                            parseFloat(last_known_location.split(",")[0]),
+                          lng:
+                            last_known_location &&
+                            parseFloat(last_known_location.split(",")[1]),
+                          onMarkerDrag: setLastKnownLocation,
+                          draggable: true,
+                        },
+                      ]}
                     />
                   </Grid>
                 </Grid>

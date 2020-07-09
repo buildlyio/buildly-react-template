@@ -1,7 +1,8 @@
 import { numberWithCommas } from "../../utils/utilMethods";
+import moment from "moment";
 
 export const itemColumns = [
-  { id: "id", label: "Item ID", minWidth: 150 },
+  // { id: "id", label: "Item ID", minWidth: 150 },
   { id: "name", label: "Item Name", minWidth: 180 },
   { id: "desc", label: "Item Description", minWidth: 180 },
   {
@@ -23,13 +24,15 @@ export const itemColumns = [
     id: "value",
     label: "Value",
     minWidth: 150,
-    format: (value) => `$${numberWithCommas(value)}`,
+    format: (value) =>
+      value && value !== "-" ? `$${numberWithCommas(value)}` : value,
   },
   {
     id: "gross_weight",
     label: "Gross Weight",
     minWidth: 150,
-    format: (value) => `${numberWithCommas(value)}`,
+    format: (value) =>
+      value && value !== "-" ? `${numberWithCommas(value)}` : value,
     type: "number",
   },
   {
@@ -57,7 +60,10 @@ export const getFormattedRow = (data, itemTypeList, unitsOfMeasure) => {
         });
       }
     });
-    return formattedData;
+    let sortedList = formattedData.sort((a, b) => {
+      return moment.utc(a.create_date).diff(moment.utc(b.create_date));
+    });
+    return sortedList;
   }
   return data;
 };

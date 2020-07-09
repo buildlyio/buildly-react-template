@@ -88,7 +88,7 @@ function Items({
   };
   const searchTable = (e) => {
     let searchFields = [
-      "id",
+      // "id",
       "name",
       "item_type_value",
       "unitsMeasure",

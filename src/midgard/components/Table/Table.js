@@ -89,15 +89,6 @@ export default function DataTable({ ...props }) {
         <Table stickyHeader className={classes.table} aria-label="sticky table">
           <TableHead>
             <StyledTableRow>
-              {columns.map((column) => (
-                <StyledTableHead
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </StyledTableHead>
-              ))}
               {actionsColumns &&
                 actionsColumns.map((action, id) => (
                   <StyledTableHead
@@ -108,6 +99,18 @@ export default function DataTable({ ...props }) {
                     {action.label}
                   </StyledTableHead>
                 ))}
+              {columns.map((column) => (
+                <StyledTableHead
+                  key={column.id}
+                  align={column.align}
+                  style={{
+                    minWidth: column.minWidth,
+                    maxWidth: column.maxWidth,
+                  }}
+                >
+                  {column.label}
+                </StyledTableHead>
+              ))}
             </StyledTableRow>
           </TableHead>
           <TableBody>
@@ -122,14 +125,6 @@ export default function DataTable({ ...props }) {
                       tabIndex={-1}
                       key={`tableRow${idx}`}
                     >
-                      {columns.map((column) => {
-                        const value = row[column.id] || "";
-                        return (
-                          <TableCell key={column.id} align={column.align}>
-                            {column.format ? column.format(value) : value}
-                          </TableCell>
-                        );
-                      })}
                       {actionsColumns &&
                         actionsColumns.map((action, id) => {
                           const actionItemType = action.type;
@@ -137,7 +132,7 @@ export default function DataTable({ ...props }) {
                             <StyledTableHead
                               key={action.id}
                               align={"left"}
-                              style={{ minWidth: 50 }}
+                              style={{ minWidth: 50, width: 50 }}
                             >
                               <IconButton
                                 className={classes.menuButton}
@@ -156,6 +151,21 @@ export default function DataTable({ ...props }) {
                             </StyledTableHead>
                           );
                         })}
+                      {columns.map((column) => {
+                        const value = row[column.id] || "-";
+                        return (
+                          <TableCell
+                            key={column.id}
+                            align={column.align}
+                            style={{
+                              minWidth: column.minWidth,
+                              maxWidth: column.maxWidth,
+                            }}
+                          >
+                            {column.format ? column.format(value) : value}
+                          </TableCell>
+                        );
+                      })}
                     </StyledTableRow>
                   );
                 })}

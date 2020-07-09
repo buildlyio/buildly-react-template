@@ -88,20 +88,23 @@ function AddSensor({
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
 
-  const sensor_name = useInput(editData.name || "", {
+  const sensor_name = useInput((editData && editData.name) || "", {
     required: true,
   });
-  const sensor_type = useInput(editData.sensor_type || "", {
+  const sensor_type = useInput((editData && editData.sensor_type) || "", {
     required: true,
   });
   const [activation_date, handleDateChange] = useState(
-    editData.activation_date || new Date()
+    (editData && editData.activation_date) || new Date()
   );
   const sim_card_id = useInput("");
   const battery_level = useInput("");
   const mac_address = useInput("");
   const [last_known_location, setLastLocation] = useState(
-    (editData.last_known_location && editData.last_known_location[0]) || ""
+    (editData &&
+      editData.last_known_location &&
+      editData.last_known_location[0]) ||
+      ""
   );
   const recharge_before = useInput("");
   const [last_report_date_time, handleLastReportDate] = useState(
@@ -197,7 +200,7 @@ function AddSensor({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!sensor_type.value || !sensor_name || !gateway) return true;
+    if (!sensor_type.value || !sensor_name.value || !gateway) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -235,7 +238,7 @@ function AddSensor({
                   fullWidth
                   required
                   id="sensor_name"
-                  label="Alias"
+                  label="Sensor Name"
                   name="sensor_name"
                   autoComplete="sensor_name"
                   error={formError.sensor_name && formError.sensor_name.error}
@@ -253,7 +256,7 @@ function AddSensor({
                   margin="normal"
                   fullWidth
                   id="last_known_location"
-                  label="Sensor Placed"
+                  label="Last Known Location"
                   name="last_known_location"
                   autoComplete="last_known_location"
                   value={last_known_location}
