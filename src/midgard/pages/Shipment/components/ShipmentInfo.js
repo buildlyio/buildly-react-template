@@ -430,7 +430,7 @@ function ShipmentInfo(props) {
                   </Grid>
                 </Grid>
               </Grid>
-              {editPage && (
+              {(shipmentFormData || editPage) && (
                 <Grid item xs={12}>
                   <ShipmentRouteInfo {...props} editData={editData} />
                 </Grid>

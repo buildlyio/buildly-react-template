@@ -132,7 +132,7 @@ export default function DataTable({ ...props }) {
                             <StyledTableHead
                               key={action.id}
                               align={"left"}
-                              style={{ minWidth: 50 }}
+                              style={{ minWidth: 50, width: 50 }}
                             >
                               <IconButton
                                 className={classes.menuButton}
@@ -154,7 +154,14 @@ export default function DataTable({ ...props }) {
                       {columns.map((column) => {
                         const value = row[column.id] || "-";
                         return (
-                          <TableCell key={column.id} align={column.align}>
+                          <TableCell
+                            key={column.id}
+                            align={column.align}
+                            style={{
+                              minWidth: column.minWidth,
+                              maxWidth: column.maxWidth,
+                            }}
+                          >
                             {column.format ? column.format(value) : value}
                           </TableCell>
                         );

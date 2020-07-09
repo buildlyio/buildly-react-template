@@ -2,7 +2,7 @@ import { numberWithCommas } from "../../utils/utilMethods";
 import moment from "moment";
 
 export const itemColumns = [
-  { id: "id", label: "Item ID", minWidth: 150 },
+  // { id: "id", label: "Item ID", minWidth: 150 },
   { id: "name", label: "Item Name", minWidth: 180 },
   { id: "desc", label: "Item Description", minWidth: 180 },
   {

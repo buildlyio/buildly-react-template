@@ -125,9 +125,8 @@ function Dashboard(props) {
       dispatch(getSensors());
       dispatch(getSensorType());
     }
-    if (!dashboardItems) {
-      dispatch(getDashboardItems());
-    }
+
+    dispatch(getDashboardItems());
   }, []);
 
   const returnIcon = (row) => {
@@ -211,7 +210,7 @@ function Dashboard(props) {
   }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData]);
 
   return (
-    <Box mt={3}>
+    <Box mt={3} mb={3}>
       <div className={classes.dashboardContainer}>
         {loading && <Loader open={loading} />}
         <Typography className={classes.dashboardHeading} variant={"h4"}>
@@ -221,25 +220,41 @@ function Dashboard(props) {
           <Grid container className={classes.root} spacing={2}>
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
-                <Typography variant={"h4"}>{"-"}</Typography>
+                <Typography variant={"h4"}>
+                  {dashboardItems && dashboardItems.items_in_transit
+                    ? numberWithCommas(dashboardItems.items_in_transit)
+                    : "-"}
+                </Typography>
                 <Typography variant={"subtitle2"}>Items in transit</Typography>
               </div>
             </Grid>
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
-                <Typography variant={"h4"}>{"-"}</Typography>
+                <Typography variant={"h4"}>
+                  {delayedRows && delayedRows.length > 0
+                    ? delayedRows.length
+                    : 0}
+                </Typography>
                 <Typography variant={"subtitle2"}>Delayed Shipment</Typography>
               </div>
             </Grid>
-            {/* <Grid item md={3} xs={6}>
-              <div className={classes.dashboardHeaderItems}>
-                <Typography variant={"h4"}>{"-"}</Typography>
-                <Typography variant={"subtitle2"}>Items at risk</Typography>
-              </div>
-            </Grid> */}
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
-                <Typography variant={"h4"}>{"-"}</Typography>
+                <Typography variant={"h4"}>
+                  {dashboardItems && dashboardItems.items_at_risk
+                    ? dashboardItems.items_at_risk
+                    : "-"}
+                </Typography>
+                <Typography variant={"subtitle2"}>Items at risk</Typography>
+              </div>
+            </Grid>
+            <Grid item md={3} xs={6}>
+              <div className={classes.dashboardHeaderItems}>
+                <Typography variant={"h4"}>
+                  {dashboardItems && dashboardItems.items_at_risk_value
+                    ? `$${numberWithCommas(dashboardItems.items_at_risk_value)}`
+                    : "-"}
+                </Typography>
                 <Typography variant={"subtitle2"}>Revenue Risk</Typography>
               </div>
             </Grid>

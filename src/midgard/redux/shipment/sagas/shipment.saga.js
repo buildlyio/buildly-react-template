@@ -322,31 +322,73 @@ const sortFilter = (filterObject, list) => {
   switch (filterObject.value) {
     case "valueAsc": {
       return list.sort((a, b) => {
-        return a.value - b.value;
+        if (a.value === null || a.value === "") {
+          return 1;
+        } else if (b.value === null || b.value === "") {
+          return -1;
+        } else {
+          return a.value - b.value;
+        }
       });
     }
     case "valueDesc": {
       return list.sort((a, b) => {
-        return b.value - a.value;
+        if (a.value === null || a.value === "") {
+          return 1;
+        } else if (b.value === null || b.value === "") {
+          return -1;
+        } else {
+          return b.value - a.value;
+        }
       });
     }
     case "dateAsc": {
       return list.sort((a, b) => {
-        return moment
-          .utc(a.estimated_time_of_arrival)
-          .diff(moment.utc(b.estimated_time_of_arrival));
+        if (
+          a.estimated_time_of_arrival === null ||
+          a.estimated_time_of_arrival === ""
+        ) {
+          return 1;
+        } else if (
+          b.estimated_time_of_arrival === null ||
+          b.estimated_time_of_arrival === ""
+        ) {
+          return -1;
+        } else {
+          return moment
+            .utc(a.estimated_time_of_arrival)
+            .diff(moment.utc(b.estimated_time_of_arrival));
+        }
       });
     }
     case "dateDesc": {
       return list.sort((a, b) => {
-        return moment
-          .utc(b.estimated_time_of_arrival)
-          .diff(moment.utc(a.estimated_time_of_arrival));
+        if (
+          a.estimated_time_of_arrival === null ||
+          a.estimated_time_of_arrival === ""
+        ) {
+          return 1;
+        } else if (
+          b.estimated_time_of_arrival === null ||
+          b.estimated_time_of_arrival === ""
+        ) {
+          return -1;
+        } else {
+          return moment
+            .utc(b.estimated_time_of_arrival)
+            .diff(moment.utc(a.estimated_time_of_arrival));
+        }
       });
     }
     case "nameAsc": {
       return list.sort((a, b) => {
-        if (a.custodian_name.toUpperCase() < b.custodian_name.toUpperCase())
+        if (a.custodian_name === null || a.custodian_name === "") {
+          return 1;
+        } else if (b.custodian_name === null || b.custodian_name === "") {
+          return -1;
+        } else if (
+          a.custodian_name.toUpperCase() < b.custodian_name.toUpperCase()
+        )
           return -1;
         else if (
           a.custodian_name.toUpperCase() > b.custodian_name.toUpperCase()
@@ -357,7 +399,13 @@ const sortFilter = (filterObject, list) => {
     }
     case "nameDesc": {
       return list.sort((a, b) => {
-        if (a.custodian_name.toUpperCase() > b.custodian_name.toUpperCase())
+        if (a.custodian_name === null || a.custodian_name === "") {
+          return 1;
+        } else if (b.custodian_name === null || b.custodian_name === "") {
+          return -1;
+        } else if (
+          a.custodian_name.toUpperCase() > b.custodian_name.toUpperCase()
+        )
           return -1;
         else if (
           a.custodian_name.toUpperCase() < b.custodian_name.toUpperCase()

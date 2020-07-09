@@ -1,6 +1,6 @@
 import moment from "moment";
 export const custodianColumns = [
-  { id: "id", label: "Custodian ID", minWidth: 150 },
+  // { id: "id", label: "Custodian ID", minWidth: 150 },
   { id: "name", label: "Name", minWidth: 150 },
   {
     id: "location",

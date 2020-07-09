@@ -77,7 +77,7 @@ function Gateway(props) {
     let searchFields = [
       "id",
       "name",
-      "gateway_uuid",
+      // "gateway_uuid",
       "gateway_type_value",
       "last_known_battery_level",
       "activation_date",

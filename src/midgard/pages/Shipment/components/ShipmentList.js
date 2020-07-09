@@ -291,11 +291,12 @@ export default function ShipmentList({ ...props }) {
       type: "search",
       value: e.target.value,
       searchFields: [
-        "shipment_uuid",
+        // "shipment_uuid",
         "estimated_time_of_arrival",
         "name",
         "custodian_name",
         "value",
+        "status",
       ],
     };
     setFilterObject(filterObj);
@@ -387,8 +388,9 @@ export default function ShipmentList({ ...props }) {
                               </TableRow>
                               <TableRow>
                                 <TableCell
+                                  align="left"
                                   style={{
-                                    width: 80,
+                                    width: 50,
                                     maxWidth: 80,
                                     minWidth: 50,
                                   }}
@@ -404,9 +406,10 @@ export default function ShipmentList({ ...props }) {
                                   </IconButton>
                                 </TableCell>
                                 <TableCell
+                                  align="left"
                                   className={classes.tableCell}
                                   style={{
-                                    width: 80,
+                                    width: 50,
                                     maxWidth: 80,
                                     minWidth: 50,
                                   }}
@@ -433,7 +436,7 @@ export default function ShipmentList({ ...props }) {
                                           }}
                                           className={classes.tableCell}
                                           key={column.id}
-                                          align={column.align}
+                                          align="left"
                                           title={
                                             column.format
                                               ? column.format(value)

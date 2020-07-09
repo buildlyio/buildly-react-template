@@ -10,21 +10,12 @@ export const SHIPMENT_COLUMNS = [
     id: "estimated_time_of_arrival",
     width: 150,
     maxWidth: 150,
-    minWidth: 100,
+    minWidth: 150,
     format: (value) =>
       value && value !== "-" ? moment(value).format("yyyy/MM/DD") : value,
   },
-  { id: "name", width: 150, maxWidth: 150, minWidth: 100 },
-  { id: "custodian_name", width: 200, maxWidth: 200, minWidth: 100 },
-  {
-    id: "value",
-    width: 150,
-    maxWidth: 150,
-    minWidth: 100,
-    format: (value) =>
-      value && value !== "-" ? `$${numberWithCommas(value)}` : value,
-  },
-  { id: "status", width: 100, maxWidth: 150, minWidth: 100 },
+  { id: "name", width: 150, maxWidth: 150, minWidth: 150 },
+  { id: "status", width: 100, maxWidth: 100, minWidth: 100 },
   {
     id: "shipment_flag",
     width: 100,
@@ -43,6 +34,15 @@ export const SHIPMENT_COLUMNS = [
       }
       return value;
     },
+  },
+  { id: "custodian_name", width: 200, maxWidth: 200, minWidth: 200 },
+  {
+    id: "value",
+    width: 150,
+    maxWidth: 150,
+    minWidth: 150,
+    format: (value) =>
+      value && value !== "-" ? `$${numberWithCommas(value)}` : value,
   },
 ];
 
