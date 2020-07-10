@@ -335,7 +335,6 @@ function ShipmentInfo(props) {
                       value={uom_temp}
                       onChange={(e) => setUomTemp(e.target.value)}
                     >
-                      <MenuItem value={""}>Select</MenuItem>
                       {unitsOfMeasure &&
                         unitsOfMeasure
                           .filter((obj) => {
@@ -448,7 +447,6 @@ function ShipmentInfo(props) {
                       value={uom_distance}
                       onChange={(e) => setUomDistance(e.target.value)}
                     >
-                      <MenuItem value={""}>Select</MenuItem>
                       {unitsOfMeasure &&
                         unitsOfMeasure
                           .filter((obj) => {
@@ -479,7 +477,6 @@ function ShipmentInfo(props) {
                       value={uom_weight}
                       onChange={(e) => setUomWeight(e.target.value)}
                     >
-                      <MenuItem value={""}>Select</MenuItem>
                       {unitsOfMeasure &&
                         unitsOfMeasure
                           .filter((obj) => {

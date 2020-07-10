@@ -140,7 +140,7 @@ function Shipment(props) {
     let flagType = "";
     let flag = "";
     let shipmentFlags = row.flag_list;
-    if (shipmentFlags) {
+    if (shipmentFlags && shipmentFlags.length) {
       flagType = shipmentFlags[0].type;
       flag = shipmentFlags[0].name;
     }
