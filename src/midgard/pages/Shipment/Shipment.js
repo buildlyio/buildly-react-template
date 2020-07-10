@@ -137,9 +137,14 @@ function Shipment(props) {
   }, []);
 
   const returnIcon = (row) => {
-    let flagType = row.flag_type;
-    let flag = row.shipment_flag;
-    return svgIcon(flagType, flag);
+    let flagType = "";
+    let flag = "";
+    let shipmentFlags = row.flag_list;
+    if (shipmentFlags) {
+      flagType = shipmentFlags[0].type;
+      flag = shipmentFlags[0].name;
+    }
+    return svgIcon(flagType, flag, row);
   };
 
   useEffect(() => {
@@ -175,8 +180,6 @@ function Shipment(props) {
                     custody.start_of_custody_location &&
                     parseFloat(custody.start_of_custody_location.split(",")[1]),
                   label: `${row.name}:${row.shipment_uuid}(Start Location)`,
-                  excursion_name: row.shipment_flag,
-                  excursion_type: row.flag_type,
                   icon: returnIcon(row),
                 });
               }
@@ -189,8 +192,6 @@ function Shipment(props) {
                     custody.end_of_custody_location &&
                     parseFloat(custody.end_of_custody_location.split(",")[1]),
                   label: `${row.name}:${row.shipment_uuid}(End Location)`,
-                  excursion_name: row.shipment_flag,
-                  excursion_type: row.flag_type,
                   icon: returnIcon(row),
                 });
               }

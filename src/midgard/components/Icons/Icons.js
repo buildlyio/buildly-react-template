@@ -37,3 +37,5 @@ export function DelayIcon(props) {
     </SvgIcon>
   );
 }
+
+export function RecallIcon(props) {}

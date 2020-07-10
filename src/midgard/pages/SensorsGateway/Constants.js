@@ -63,9 +63,15 @@ export const sensorsColumns = [
     format: (value) =>
       value && value !== "-" ? returnFormattedData(value) : value,
   },
+  {
+    id: "associated_gateway",
+    label: "Associated Gateway",
+    minWidth: 150,
+    maxWidth: 150,
+  },
 ];
 
-export const getFormattedSensorRow = (data, sensorTypeList) => {
+export const getFormattedSensorRow = (data, sensorTypeList, gatewayData) => {
   if (data && sensorTypeList) {
     let formattedData = [...data];
     formattedData.forEach((element) => {
@@ -74,6 +80,13 @@ export const getFormattedSensorRow = (data, sensorTypeList) => {
           element["sensor_type_value"] = type.name;
         }
       });
+      if (gatewayData && gatewayData.length) {
+        gatewayData.forEach((gateway) => {
+          if (gateway.url === element.gateway) {
+            element["associated_gateway"] = gateway.name;
+          }
+        });
+      }
     });
     let sortedList = formattedData.sort((a, b) => {
       return moment.utc(a.create_date).diff(moment.utc(b.create_date));

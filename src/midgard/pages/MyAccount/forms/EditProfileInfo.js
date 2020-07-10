@@ -220,8 +220,8 @@ function EditProfileInfo({
                 margin="normal"
                 fullWidth
                 id="organisation_name"
-                label="Organisation Name"
-                name="organisation_name"
+                label="Organization Name"
+                name="organization_name"
                 autoComplete="organisation_name"
                 error={
                   formError.organisation_name &&

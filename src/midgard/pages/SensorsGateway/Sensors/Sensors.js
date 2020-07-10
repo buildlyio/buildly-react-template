@@ -23,6 +23,7 @@ function Sensors(props) {
     sensorTypeList,
     redirectTo,
     noSearch,
+    gatewayData,
   } = props;
   const addPath = redirectTo
     ? `${redirectTo}/sensors`
@@ -46,8 +47,8 @@ function Sensors(props) {
 
   useEffect(() => {
     if (data && data.length && sensorTypeList && sensorTypeList.length) {
-      setRows(getFormattedSensorRow(data, sensorTypeList));
-      setFilteredRows(getFormattedSensorRow(data, sensorTypeList));
+      setRows(getFormattedSensorRow(data, sensorTypeList, gatewayData));
+      setFilteredRows(getFormattedSensorRow(data, sensorTypeList, gatewayData));
     }
   }, [data, sensorTypeList]);
 
@@ -79,6 +80,7 @@ function Sensors(props) {
       // "sensor_uuid",
       "activation_date",
       "sensor_type_value",
+      "associated_gateway",
     ];
     setSearchValue(e.target.value);
     dispatch(searchSensorItem(e.target.value, rows, searchFields));

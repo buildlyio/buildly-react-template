@@ -30,7 +30,7 @@ export default function DatePickerComponent({
           label={label}
           value={selectedDate}
           onChange={handleDateChange}
-          format="yyyy/MM/dd HH:mm:ss"
+          format="MM/dd/yyyy HH:mm:ss"
         />
       ) : (
         <KeyboardDatePicker

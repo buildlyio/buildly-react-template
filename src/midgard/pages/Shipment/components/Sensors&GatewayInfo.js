@@ -25,6 +25,7 @@ import {
   sensorsColumns,
   getFormattedSensorRow,
 } from "../../SensorsGateway/Constants";
+import { compareSort } from "../../../utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -145,8 +146,12 @@ function SensorsGatewayInfo(props) {
               <Grid item xs={12}>
                 <Autocomplete
                   id="combo-box-demo"
-                  options={gatewayData || []}
-                  getOptionLabel={(option) => `${option.gateway_uuid}`}
+                  options={
+                    (gatewayData && gatewayData.sort(compareSort("name"))) || []
+                  }
+                  getOptionLabel={(option) =>
+                    `${option.name}:${option.gateway_uuid}`
+                  }
                   getOptionSelected={(option) =>
                     option.gateway_uuid === gatewayId
                   }

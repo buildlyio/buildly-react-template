@@ -3,7 +3,21 @@ import { getFormattedCustodyRows } from "../Shipment/ShipmentConstants";
 
 export const recallColumns = [
   { id: "shipment_uuid", label: "Shipment ID", minWidth: 180 },
-  { id: "shipment_flag", label: "Issue", minWidth: 150 },
+  {
+    id: "flag_list",
+    label: "Issue",
+    minWidth: 150,
+    format: (value) => {
+      if (value && value.length) {
+        let flagName = "";
+        value.forEach((flag) => {
+          flagName = flagName + flag.name + ", ";
+        });
+        return flagName;
+      }
+      return value;
+    },
+  },
   {
     id: "affected",
     label: "Affected Items",
@@ -64,6 +78,7 @@ export const getFormattedShipmentRow = (
     let shipmentValue = 0;
     let custodyInfo = [];
     let custodianName = "";
+    let flag_list = [];
     if (custodyRows.length > 0) {
       custodyRows.forEach((custody) => {
         if (
@@ -90,11 +105,12 @@ export const getFormattedShipmentRow = (
       shipmentFlag &&
         shipmentFlag.forEach((flag) => {
           if (list.flags.indexOf(flag.url) !== -1 && flag.type !== "None") {
-            list["shipment_flag"] = flag.name;
-            list["flag_type"] = flag.type;
+            list[`${flag.name.toLowerCase()}_flag`] = true;
+            flag_list.push(flag);
           }
         });
     }
+    list["flag_list"] = flag_list;
   });
   return shipmentList;
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import { numberWithCommas } from "../../utils/utilMethods";
 import moment from "moment";
-import { Typography } from "@material-ui/core";
+import { Typography, List, ListItem } from "@material-ui/core";
 import { TempIcon, HumidIcon, DelayIcon } from "../../components/Icons/Icons";
 
 export const SHIPMENT_COLUMNS = [
@@ -12,25 +12,65 @@ export const SHIPMENT_COLUMNS = [
     maxWidth: 150,
     minWidth: 150,
     format: (value) =>
-      value && value !== "-" ? moment(value).format("yyyy/MM/DD") : value,
+      value && value !== "-" ? moment(value).format("MM/DD/yyyy") : value,
   },
   { id: "name", width: 150, maxWidth: 150, minWidth: 150 },
   { id: "status", width: 100, maxWidth: 100, minWidth: 100 },
   {
     id: "shipment_flag",
     width: 100,
-    maxWidth: 80,
-    minWidth: 80,
-
+    maxWidth: 200,
+    minWidth: 100,
     format: (value, row) => {
-      if (row && row.flag_type && value && value !== "-") {
-        let color =
-          row.flag_type.toLowerCase() === "warning" ? "#ff9800" : "#f44336";
-        if (value.toLowerCase() === "temperature")
-          return <TempIcon color={color} />;
-        if (value.toLowerCase() === "humidity")
-          return <HumidIcon color={color} />;
-        if (value.toLowerCase() === "delay") return <DelayIcon color={color} />;
+      if (row && row.flag_list && value && value !== "-") {
+        return (
+          <React.Fragment>
+            {row.flag_list.map((obj, idx) => {
+              if (obj.name.toLowerCase().includes("temp")) {
+                return (
+                  <TempIcon
+                    color={
+                      obj.type.toLowerCase() === "warning"
+                        ? "#ff9800"
+                        : "#f44336"
+                    }
+                  />
+                );
+              } else if (obj.name.toLowerCase().includes("humid")) {
+                return (
+                  <HumidIcon
+                    color={
+                      obj.type.toLowerCase() === "warning"
+                        ? "#ff9800"
+                        : "#f44336"
+                    }
+                  />
+                );
+              } else if (obj.name.toLowerCase().includes("delay")) {
+                return (
+                  <DelayIcon
+                    color={
+                      obj.type.toLowerCase() === "warning"
+                        ? "#ff9800"
+                        : "#f44336"
+                    }
+                  />
+                );
+              }
+              // else if (obj.name.toLowerCase().includes("recall")) {
+              //   return (
+              //     <Recall
+              //       color={
+              //         obj.type.toLowerCase() === "warning"
+              //           ? "#ff9800"
+              //           : "#f44336"
+              //       }
+              //     />
+              //   );
+              // }
+            })}
+          </React.Fragment>
+        );
       }
       return value;
     },
@@ -67,6 +107,7 @@ export const getFormattedRow = (
   shipmentList.forEach((list) => {
     let shipmentValue = 0;
     let custodyInfo = [];
+    let flag_list = [];
     let custodianName = "";
     if (custodyRows.length > 0) {
       custodyRows.forEach((custody) => {
@@ -93,9 +134,12 @@ export const getFormattedRow = (
           if (list.flags.indexOf(flag.url) !== -1 && flag.type !== "None") {
             list["shipment_flag"] = flag.name;
             list["flag_type"] = flag.type;
+            list[`${flag.name.toLowerCase()}_flag`] = true;
+            flag_list.push(flag);
           }
         });
     }
+    list["flag_list"] = flag_list;
   });
   let sortedList = shipmentList.sort((a, b) => {
     return moment.utc(a.create_date).diff(moment.utc(b.create_date));
@@ -121,7 +165,7 @@ export const custodianColumns = [
     label: "Start Of Custody",
     minWidth: 170,
     format: (value) =>
-      value && value !== "-" ? moment(value).format("yyyy/MM/DD") : value,
+      value && value !== "-" ? moment(value).format("MM/DD/yyyy") : value,
   },
 ];
 
@@ -131,7 +175,7 @@ export const custodyColumns = [
     id: "start_of_custody",
     label: "Start of Custody",
     format: (value) =>
-      value && value !== "-" ? moment(value).format("yyyy/MM/DD") : value,
+      value && value !== "-" ? moment(value).format("MM/DD/yyyy") : value,
     minWidth: 180,
   },
   {

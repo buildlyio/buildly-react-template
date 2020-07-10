@@ -130,8 +130,13 @@ function Dashboard(props) {
   }, []);
 
   const returnIcon = (row) => {
-    let flagType = row.flag_type;
-    let flag = row.shipment_flag;
+    let flagType = "";
+    let flag = "";
+    let shipmentFlags = row.flag_list;
+    if (shipmentFlags) {
+      flagType = shipmentFlags[0].type;
+      flag = shipmentFlags[0].name;
+    }
     return svgIcon(flagType, flag);
   };
 
@@ -169,8 +174,6 @@ function Dashboard(props) {
                     custody.start_of_custody_location &&
                     parseFloat(custody.start_of_custody_location.split(",")[1]),
                   label: `${row.name}:${row.shipment_uuid}(Start Location)`,
-                  excursion_name: row.shipment_flag,
-                  excursion_type: row.flag_type,
                   icon: returnIcon(row),
                 });
               }
@@ -183,24 +186,24 @@ function Dashboard(props) {
                     custody.end_of_custody_location &&
                     parseFloat(custody.end_of_custody_location.split(",")[1]),
                   label: `${row.name}:${row.shipment_uuid}(End Location)`,
-                  excursion_name: row.shipment_flag,
-                  excursion_type: row.flag_type,
                   icon: returnIcon(row),
                 });
               }
             }
           });
         }
-        if (row.shipment_flag && row.shipment_flag.toLowerCase() === "delay") {
-          delayedInfo.push(row);
-        }
-        if (
-          row.shipment_flag &&
-          ["temperature", "humidity", "recall"].indexOf(
-            row.shipment_flag.toLowerCase()
-          ) !== -1
-        ) {
-          excursionInfo.push(row);
+        if (row.flag_list) {
+          row.flag_list.forEach((flag) => {
+            if (flag.name.toLowerCase() === "delay") {
+              delayedInfo.push(row);
+            } else {
+              let itemExists = false;
+              excursionInfo.forEach((item) => {
+                itemExists = item.url === row.url;
+              });
+              if (!itemExists) excursionInfo.push(row);
+            }
+          });
         }
       });
       setMarkers(routesInfo);

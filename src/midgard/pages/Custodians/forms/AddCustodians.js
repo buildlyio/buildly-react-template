@@ -30,6 +30,7 @@ import {
   STATE_CHOICES,
   COUNTRY_CHOICES,
 } from "../../../utils/mock";
+import { compareSort } from "../../../utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -270,11 +271,16 @@ function AddCustodians({
                 >
                   <MenuItem value={""}>Select</MenuItem>
                   {custodianTypeList &&
-                    custodianTypeList.map((item, index) => (
-                      <MenuItem key={`${item.id}${item.name}`} value={item.url}>
-                        {item.name}
-                      </MenuItem>
-                    ))}
+                    custodianTypeList
+                      .sort(compareSort("name"))
+                      .map((item, index) => (
+                        <MenuItem
+                          key={`${item.id}${item.name}`}
+                          value={item.url}
+                        >
+                          {item.name}
+                        </MenuItem>
+                      ))}
                 </TextField>
               </Grid>
               <Grid item item xs={12} md={6} sm={6}>
@@ -405,7 +411,7 @@ function AddCustodians({
                       {...country.bind}
                     >
                       <MenuItem value={""}>Select</MenuItem>
-                      {COUNTRY_CHOICES.map((value, id) => (
+                      {COUNTRY_CHOICES.sort().map((value, id) => (
                         <MenuItem key={value} value={value}>
                           {value}
                         </MenuItem>
@@ -429,7 +435,7 @@ function AddCustodians({
                       {...state.bind}
                     >
                       <MenuItem value={""}>Select</MenuItem>
-                      {STATE_CHOICES.map((value, id) => (
+                      {STATE_CHOICES.sort().map((value, id) => (
                         <MenuItem key={value} value={value}>
                           {value}
                         </MenuItem>

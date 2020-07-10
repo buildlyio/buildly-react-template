@@ -15,6 +15,7 @@ import { useInput } from "../../../hooks/useInput";
 import Loader from "../../../components/Loader/Loader";
 import { Card, CardContent } from "@material-ui/core";
 import { editItem, addItem } from "../../../redux/items/actions/items.actions";
+import { compareSort } from "../../../utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -211,6 +212,7 @@ function AddItems({
                   margin="normal"
                   fullWidth
                   id="units"
+                  type="number"
                   label="Number of Units"
                   {...units.bind}
                 ></TextField>
@@ -235,11 +237,16 @@ function AddItems({
                 >
                   <MenuItem value={""}>Select</MenuItem>
                   {itemTypeList &&
-                    itemTypeList.map((item, index) => (
-                      <MenuItem key={`${item.id}${item.name}`} value={item.url}>
-                        {item.name}
-                      </MenuItem>
-                    ))}
+                    itemTypeList
+                      .sort(compareSort("name"))
+                      .map((item, index) => (
+                        <MenuItem
+                          key={`${item.id}${item.name}`}
+                          value={item.url}
+                        >
+                          {item.name}
+                        </MenuItem>
+                      ))}
                 </TextField>
               </Grid>
               <Grid item item xs={12} md={6} sm={6}>
@@ -266,11 +273,16 @@ function AddItems({
                 >
                   <MenuItem value={""}>Select</MenuItem>
                   {unitsOfMeasure &&
-                    unitsOfMeasure.map((item, index) => (
-                      <MenuItem key={`${item.id}${item.name}`} value={item.url}>
-                        {item.name}
-                      </MenuItem>
-                    ))}
+                    unitsOfMeasure
+                      .sort(compareSort("name"))
+                      .map((item, index) => (
+                        <MenuItem
+                          key={`${item.id}${item.name}`}
+                          value={item.url}
+                        >
+                          {item.name}
+                        </MenuItem>
+                      ))}
                 </TextField>
               </Grid>
               <Grid item item xs={12} md={6} sm={6}>

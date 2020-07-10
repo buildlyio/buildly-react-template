@@ -26,7 +26,11 @@ import {
 import { useInput } from "../../../../hooks/useInput";
 import { validators } from "../../../../utils/validators";
 import { MapComponent } from "../../../../components/MapComponent/MapComponent";
-import { MAP_API_URL, GEO_CODE_API } from "../../../../utils/utilMethods";
+import {
+  MAP_API_URL,
+  GEO_CODE_API,
+  compareSort,
+} from "../../../../utils/utilMethods";
 import { getFormattedRow } from "../../../Custodians/CustodianConstants";
 
 const useStyles = makeStyles((theme) => ({
@@ -256,11 +260,13 @@ function AddCustodyInfo(props) {
                 >
                   <MenuItem value={""}>Select</MenuItem>
                   {custodianList &&
-                    custodianList.map((item, index) => (
-                      <MenuItem key={`${item.id}${item.name}`} value={item}>
-                        {`${item.name}:${item.custodian_uuid}`}
-                      </MenuItem>
-                    ))}
+                    custodianList
+                      .sort(compareSort("name"))
+                      .map((item, index) => (
+                        <MenuItem key={`${item.id}${item.name}`} value={item}>
+                          {`${item.name}:${item.custodian_uuid}`}
+                        </MenuItem>
+                      ))}
                 </TextField>
                 {/* <Autocomplete
                   id="combo-box-demo"

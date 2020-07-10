@@ -11,12 +11,32 @@ export function numberWithCommas(x) {
 export const compareSort = (propName) => {
   return function (a, b) {
     if (isNaN(parseFloat(a[propName]))) {
-      if (a[propName].toUpperCase() < b[propName].toUpperCase()) return -1;
-      if (a[propName].toUpperCase() > b[propName].toUpperCase()) return 1;
+      if (
+        a[propName] &&
+        b[propName] &&
+        a[propName].toUpperCase() < b[propName].toUpperCase()
+      )
+        return -1;
+      if (
+        a[propName] &&
+        b[propName] &&
+        a[propName].toUpperCase() > b[propName].toUpperCase()
+      )
+        return 1;
       return 0;
     } else {
-      if (parseFloat(a[propName]) < parseFloat(b[propName])) return -1;
-      if (parseFloat(a[propName]) > parseFloat(b[propName])) return 1;
+      if (
+        a[propName] &&
+        b[propName] &&
+        parseFloat(a[propName]) < parseFloat(b[propName])
+      )
+        return -1;
+      if (
+        a[propName] &&
+        b[propName] &&
+        parseFloat(a[propName]) > parseFloat(b[propName])
+      )
+        return 1;
       return 0;
     }
   };

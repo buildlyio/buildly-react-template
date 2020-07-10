@@ -1,8 +1,8 @@
-import React from "react"
+import React from "react";
 
 //entryPointForGulpStart
 export const app = {
-  appTitle: "My App",
+  appTitle: "Transparent Path",
 };
 //entryPointForGulpEnd
 
