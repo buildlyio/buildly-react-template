@@ -184,7 +184,7 @@ function ShipmentInfo(props) {
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!shipment_name.value || !flags.length) return true;
+    if (!shipment_name.value) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
