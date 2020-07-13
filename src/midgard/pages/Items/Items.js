@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
 import { routes } from "../../routes/routesConstants";
+import { environment } from "environment";
 import AddItems from "./forms/AddItems";
 import { itemColumns, getFormattedRow } from "./ItemsConstants";
 import {
@@ -10,8 +11,11 @@ import {
   searchItem,
   getItemType,
   getUnitsOfMeasure,
+  GET_ITEM_OPTIONS_SUCCESS,
+  GET_ITEM_OPTIONS_FAILURE,
 } from "../../redux/items/actions/items.actions";
 import DashboardWrapper from "../../components/DashboardWrapper/DashboardWrapper";
+import { httpService } from "../../modules/http/http.service";
 
 function Items({
   dispatch,
@@ -49,6 +53,20 @@ function Items({
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
     }
+    httpService
+      .makeOptionsRequest(
+        "options",
+        `${environment.API_URL}shipment/item/`,
+        true
+      )
+      .then((response) => response.json())
+      .then((res) => {
+        console.log("ress", res);
+        dispatch({ type: GET_ITEM_OPTIONS_SUCCESS, data: res });
+      })
+      .catch((err) => {
+        dispatch({ type: GET_ITEM_OPTIONS_FAILURE, error: err });
+      });
   }, []);
 
   useEffect(() => {

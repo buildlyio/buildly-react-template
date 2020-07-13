@@ -52,11 +52,15 @@ import {
   deleteShipment,
   getShipmentFlag,
   FILTER_SHIPMENT_SUCCESS,
+  GET_SHIPMENT_OPTIONS_SUCCESS,
+  GET_SHIPMENT_OPTIONS_FAILURE,
 } from "../../redux/shipment/actions/shipment.actions";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import AlertInfo from "./AlertInfo";
 import Loader from "../../components/Loader/Loader";
 import CustomizedTooltips from "../../components/ToolTip/ToolTip";
+import { httpService } from "../../modules/http/http.service";
+import { environment } from "../../../../environment";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -133,6 +137,20 @@ function Shipment(props) {
       dispatch(getSensors());
       dispatch(getSensorType());
     }
+    httpService
+      .makeOptionsRequest(
+        "options",
+        `${environment.API_URL}shipment/shipment/`,
+        true
+      )
+      .then((response) => response.json())
+      .then((res) => {
+        console.log("ress", res);
+        dispatch({ type: GET_SHIPMENT_OPTIONS_SUCCESS, data: res });
+      })
+      .catch((err) => {
+        dispatch({ type: GET_SHIPMENT_OPTIONS_FAILURE, error: err });
+      });
     return function cleanup() {
       dispatch({ type: FILTER_SHIPMENT_SUCCESS, data: undefined });
     };

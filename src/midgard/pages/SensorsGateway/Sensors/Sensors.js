@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
+import { environment } from "environment";
 import { sensorsColumns, getFormattedSensorRow } from "../Constants";
 import DashboardWrapper from "../../../components/DashboardWrapper/DashboardWrapper";
 import { routes } from "../../../routes/routesConstants";
@@ -9,8 +10,11 @@ import {
   getSensorType,
   deleteSensor,
   searchSensorItem,
+  GET_SENSOR_OPTIONS_SUCCESS,
+  GET_SENSOR_OPTIONS_FAILURE,
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import AddSensors from "../forms/AddSensors";
+import { httpService } from "../../../modules/http/http.service";
 
 function Sensors(props) {
   const {
@@ -43,6 +47,20 @@ function Sensors(props) {
       dispatch(getSensors());
       dispatch(getSensorType());
     }
+    httpService
+      .makeOptionsRequest(
+        "options",
+        `${environment.API_URL}sensors/sensor/`,
+        true
+      )
+      .then((response) => response.json())
+      .then((res) => {
+        console.log("ress", res);
+        dispatch({ type: GET_SENSOR_OPTIONS_SUCCESS, data: res });
+      })
+      .catch((err) => {
+        dispatch({ type: GET_SENSOR_OPTIONS_FAILURE, error: err });
+      });
   }, []);
 
   useEffect(() => {

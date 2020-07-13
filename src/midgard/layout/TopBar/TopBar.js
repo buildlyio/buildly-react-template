@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
+import { environment } from "environment";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -12,9 +13,16 @@ import Hidden from "@material-ui/core/Hidden";
 import { AppContext } from "midgard/context/App.context";
 import { SubNavContext } from "midgard/context/SubNav.context";
 import logo from "assets/tp-logo.png";
-import { logout, getUser } from "../../redux/authuser/actions/authuser.actions";
+import {
+  logout,
+  getUser,
+  getUserOptions,
+  GET_USER_OPTIONS_SUCCESS,
+  GET_USER_OPTIONS_FAILURE,
+} from "../../redux/authuser/actions/authuser.actions";
 import AccountMenu from "./AccountMenu";
 import { routes } from "../../routes/routesConstants";
+import { httpService } from "../../modules/http/http.service";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -61,6 +69,19 @@ function TopBar({
 
   useEffect(() => {
     dispatch(getUser());
+
+    httpService
+      .makeOptionsRequest("options", `${environment.API_URL}coreuser/`, true)
+      .then((response) => response.json())
+      .then((res) => {
+        console.log("ress", res);
+        dispatch({ type: GET_USER_OPTIONS_SUCCESS, data: res });
+      })
+      .catch((err) => {
+        dispatch({ type: GET_USER_OPTIONS_FAILURE, error: err });
+      });
+
+    // dispatch(getUserOptions());
   }, []);
 
   // useEffect(() => {

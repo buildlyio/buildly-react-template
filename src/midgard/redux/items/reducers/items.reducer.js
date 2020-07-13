@@ -19,6 +19,9 @@ import {
   GET_UNITS_OF_MEASURE,
   GET_UNITS_OF_MEASURE_SUCCESS,
   GET_UNITS_OF_MEASURE_FAILURE,
+  GET_ITEM_OPTIONS,
+  GET_ITEM_OPTIONS_SUCCESS,
+  GET_ITEM_OPTIONS_FAILURE,
 } from "../actions/items.actions";
 
 const initialState = {
@@ -27,6 +30,7 @@ const initialState = {
   itemData: null,
   error: null,
   itemTypeList: null,
+  itemOptions: null,
 };
 
 // Reducer
@@ -172,6 +176,30 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
+        error: action.error,
+      };
+    case GET_ITEM_OPTIONS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        itemOptions: null,
+        error: null,
+      };
+    case GET_ITEM_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        itemOptions: action.data,
+        error: null,
+      };
+    case GET_ITEM_OPTIONS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        itemOptions: null,
         error: action.error,
       };
     default:
