@@ -38,6 +38,14 @@ export const GET_ITEM_OPTIONS = "ITEMS/GET_ITEM_OPTIONS";
 export const GET_ITEM_OPTIONS_SUCCESS = "ITEMS/GET_ITEM_OPTIONS_SUCCESS";
 export const GET_ITEM_OPTIONS_FAILURE = "ITEMS/GET_ITEM_OPTIONS_FAILURE";
 
+export const GET_PRODUCTS = "ITEM/GET_PRODUCTS";
+export const GET_PRODUCTS_SUCCESS = "ITEMS/GET_PRODUCTS_SUCCESS";
+export const GET_PRODUCTS_FAILURE = "ITEMS/GET_PRODUCTS_FAILURE";
+
+export const GET_PRODUCTS_TYPE = "ITEM/GET_PRODUCTS_TYPE";
+export const GET_PRODUCTS_TYPE_SUCCESS = "ITEMS/GET_PRODUCTS_TYPE_SUCCESS";
+export const GET_PRODUCTS_TYPE_FAILURE = "ITEMS/GET_PRODUCTS_TYPE_FAILURE";
+
 export const getItems = () => ({ type: GET_ITEMS });
 
 /**
@@ -92,4 +100,12 @@ export const getItemType = () => ({
 
 export const getUnitsOfMeasure = () => ({
   type: GET_UNITS_OF_MEASURE,
+});
+
+export const getProducts = () => ({
+  type: GET_PRODUCTS,
+});
+
+export const getProductType = () => ({
+  type: GET_PRODUCT_TYPE,
 });

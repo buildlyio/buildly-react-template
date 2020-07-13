@@ -22,6 +22,12 @@ import {
   GET_ITEM_OPTIONS,
   GET_ITEM_OPTIONS_SUCCESS,
   GET_ITEM_OPTIONS_FAILURE,
+  GET_PRODUCTS,
+  GET_PRODUCTS_SUCCESS,
+  GET_PRODUCTS_FAILURE,
+  GET_PRODUCTS_TYPE,
+  GET_PRODUCTS_TYPE_SUCCESS,
+  GET_PRODUCTS_TYPE_FAILURE,
 } from "../actions/items.actions";
 
 const initialState = {
@@ -31,6 +37,8 @@ const initialState = {
   error: null,
   itemTypeList: null,
   itemOptions: null,
+  products: null,
+  productType: null,
 };
 
 // Reducer
@@ -200,6 +208,49 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         itemOptions: null,
+        error: action.error,
+      };
+    case GET_PRODUCTS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_PRODUCTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        products: action.data,
+      };
+    case GET_PRODUCTS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_PRODUCTS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_PRODUCTS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        productType: action.data,
+      };
+    case GET_PRODUCTS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
         error: action.error,
       };
     default:

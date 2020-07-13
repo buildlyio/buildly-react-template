@@ -20,6 +20,12 @@ import {
   GET_UNITS_OF_MEASURE,
   GET_UNITS_OF_MEASURE_FAILURE,
   GET_UNITS_OF_MEASURE_SUCCESS,
+  GET_PRODUCTS_SUCCESS,
+  GET_PRODUCTS_FAILURE,
+  GET_PRODUCTS,
+  GET_PRODUCTS_TYPE,
+  GET_PRODUCTS_TYPE_SUCCESS,
+  GET_PRODUCTS_TYPE_FAILURE,
 } from "../actions/items.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -247,6 +253,70 @@ function* searchItem(payload) {
   }
 }
 
+function* getProductList() {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}${shipmentApiEndPoint}product/`,
+      null,
+      true
+    );
+    yield [yield put({ type: GET_PRODUCTS_SUCCESS, data: data.data })];
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't load data due to some error!",
+        })
+      ),
+      yield put({
+        type: GET_PRODUCTS_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* getProductTypeList() {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}${shipmentApiEndPoint}product_type/`,
+      null,
+      true
+    );
+    yield [yield put({ type: GET_PRODUCTS_TYPE_SUCCESS, data: data.data })];
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't load data due to some error!",
+        })
+      ),
+      yield put({
+        type: GET_PRODUCTS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* watchGetProductsList() {
+  yield takeLatest(GET_PRODUCTS, getProductList);
+}
+
+function* watchGetProductTypeList() {
+  yield takeLatest(GET_PRODUCTS_TYPE, getProductTypeList);
+}
+
 function* watchGetItem() {
   yield takeLatest(GET_ITEMS, getItemsList);
 }
@@ -284,5 +354,7 @@ export default function* itemSaga() {
     watchDeleteItem(),
     watchEditItem(),
     watchGetUnitsOfMeasure(),
+    watchGetProductsList(),
+    watchGetProductTypeList(),
   ]);
 }
