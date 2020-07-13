@@ -20,6 +20,7 @@ import { getFormattedRow, itemColumns } from "../../Items/ItemsConstants";
 import DataTable from "../../../components/Table/Table";
 import { editShipment } from "../../../redux/shipment/actions/shipment.actions";
 import { routes } from "../../../routes/routesConstants";
+import { compareSort } from "../../../utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -132,7 +133,9 @@ function ItemsInfo(props) {
                 <Autocomplete
                   multiple
                   id="tags-outlined"
-                  options={itemData || []}
+                  options={
+                    (itemData && itemData.sort(compareSort("name"))) || []
+                  }
                   getOptionLabel={(option) =>
                     option && `${option.name}:${option.item_uuid}`
                   }

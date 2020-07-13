@@ -5,6 +5,9 @@ import Button from "@material-ui/core/Button";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles } from "@material-ui/core/styles";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import {
   Grid,
   TextField,
@@ -17,10 +20,11 @@ import {
   Box,
   MenuItem,
   CircularProgress,
+  Checkbox,
 } from "@material-ui/core";
 import { MapComponent } from "../../../components/MapComponent/MapComponent";
 import { routes } from "../../../routes/routesConstants";
-import { MAP_API_URL } from "../../../utils/utilMethods";
+import { MAP_API_URL, compareSort } from "../../../utils/utilMethods";
 import { useInput } from "../../../hooks/useInput";
 import { SHIPMENT_STATUS, TRANSPORT_MODE } from "../../../utils/mock";
 import DatePickerComponent from "../../../components/DatePicker/DatePicker";
@@ -73,6 +77,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
 function ShipmentInfo(props) {
   const {
     handleNext,
@@ -108,10 +115,16 @@ function ShipmentInfo(props) {
   const [scheduled_arrival, handleScheduledDateChange] = useState(
     (editData && new Date(editData.estimated_time_of_arrival)) || new Date()
   );
-  const flags = useInput((editData && editData.flags[0]) || "");
-  const uom_temp = useInput((editData && editData.uom_temp) || "");
-  const uom_weight = useInput((editData && editData.uom_weight) || "");
-  const uom_distance = useInput((editData && editData.uom_distance) || "");
+  const [flags, setFlags] = useState((editData && editData.flags) || []);
+  const [uom_temp, setUomTemp] = useState(
+    (editData && editData.uom_temp) || ""
+  );
+  const [uom_weight, setUomWeight] = useState(
+    (editData && editData.uom_weight) || ""
+  );
+  const [uom_distance, setUomDistance] = useState(
+    (editData && editData.uom_distance) || ""
+  );
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
@@ -119,6 +132,30 @@ function ShipmentInfo(props) {
       dispatch(saveShipmentFormData(editData));
     }
   }, []);
+
+  useEffect(() => {
+    if (unitsOfMeasure && unitsOfMeasure.length) {
+      unitsOfMeasure.forEach((unit) => {
+        if (
+          unit.supported_class.toLowerCase().includes("temp") &&
+          unit.is_default_for_class
+        ) {
+          setUomTemp(unit.url);
+        } else if (
+          unit.supported_class.toLowerCase().includes("distance") &&
+          unit.is_default_for_class
+        ) {
+          setUomDistance(unit.url);
+        } else if (
+          unit.supported_class.toLowerCase().includes("weight") &&
+          unit.is_default_for_class
+        ) {
+          setUomWeight(unit.url);
+        }
+      });
+    }
+  }, [unitsOfMeasure]);
+
   /**
    * Handle input field blur event
    * @param {Event} e Event
@@ -147,7 +184,7 @@ function ShipmentInfo(props) {
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!shipment_name.value || !flags.value) return true;
+    if (!shipment_name.value) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -174,10 +211,10 @@ function ShipmentInfo(props) {
       sensor_report_ids: (editData && editData.sensor_report_ids) || [],
       wallet_ids: (editData && editData.wallet_ids) || [],
       custodian_ids: (editData && editData.custodian_ids) || [],
-      flags: [flags.value],
-      uom_distance: uom_distance.value,
-      uom_temp: uom_temp.value,
-      uom_weight: uom_weight.value,
+      flags: flags,
+      uom_distance: uom_distance,
+      uom_temp: uom_temp,
+      uom_weight: uom_weight,
     };
 
     if (editPage && editData) {
@@ -191,6 +228,16 @@ function ShipmentInfo(props) {
     } else {
       dispatch(addShipment(shipmentFormValue, history));
     }
+  };
+
+  const onShipmentFlagChange = (value) => {
+    let flagsUrl = [];
+    if (value) {
+      value.forEach((val) => {
+        flagsUrl.push(val.url);
+      });
+    }
+    setFlags(flagsUrl);
   };
   return (
     <React.Fragment>
@@ -253,11 +300,13 @@ function ShipmentInfo(props) {
                     >
                       <MenuItem value={""}>Select</MenuItem>
                       {TRANSPORT_MODE &&
-                        TRANSPORT_MODE.map((item, index) => (
-                          <MenuItem key={`${item.value}`} value={item.value}>
-                            {item.label}
-                          </MenuItem>
-                        ))}
+                        TRANSPORT_MODE.sort(compareSort("value")).map(
+                          (item, index) => (
+                            <MenuItem key={`${item.value}`} value={item.value}>
+                              {item.label}
+                            </MenuItem>
+                          )
+                        )}
                     </TextField>
                   </Grid>
                   <Grid item xs={12}>
@@ -283,14 +332,15 @@ function ShipmentInfo(props) {
                       id="uom_temp"
                       select
                       label="Units of Measure Temperature"
-                      {...uom_temp.bind}
+                      value={uom_temp}
+                      onChange={(e) => setUomTemp(e.target.value)}
                     >
-                      <MenuItem value={""}>Select</MenuItem>
                       {unitsOfMeasure &&
                         unitsOfMeasure
                           .filter((obj) => {
                             return obj.supported_class === "Temperature";
                           })
+                          .sort(compareSort("name"))
                           .map((item, index) => (
                             <MenuItem
                               key={`${item.id}${item.name}`}
@@ -318,11 +368,13 @@ function ShipmentInfo(props) {
                     >
                       <MenuItem value={""}>Select</MenuItem>
                       {SHIPMENT_STATUS &&
-                        SHIPMENT_STATUS.map((item, index) => (
-                          <MenuItem key={`${item.value}`} value={item.value}>
-                            {item.label}
-                          </MenuItem>
-                        ))}
+                        SHIPMENT_STATUS.sort(compareSort("value")).map(
+                          (item, index) => (
+                            <MenuItem key={`${item.value}`} value={item.value}>
+                              {item.label}
+                            </MenuItem>
+                          )
+                        )}
                     </TextField>
                   </Grid>
 
@@ -343,31 +395,45 @@ function ShipmentInfo(props) {
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="flags"
-                      select
-                      label="Excursions/Warnings"
-                      error={formError.flags && formError.flags.error}
-                      // helperText={
-                      //   formError.flags ? formError.flags.message : ""
-                      // }
-                      // onBlur={(e) => handleBlur(e, "required", flags, "flags")}
-                      {...flags.bind}
-                    >
-                      <MenuItem>Select</MenuItem>
-                      {shipmentFlag &&
-                        shipmentFlag.map((item, index) => (
-                          <MenuItem
-                            key={`${item.id}${item.name}`}
-                            value={item.url}
-                          >
-                            {`${item.name}(${item.type})`}
-                          </MenuItem>
-                        ))}
-                    </TextField>
+                    <Autocomplete
+                      multiple
+                      id="tags-outlined"
+                      options={shipmentFlag || []}
+                      getOptionLabel={(option) => {
+                        if (option) return `${option.name}(${option.type})`;
+                      }}
+                      onChange={(event, newValue) => {
+                        onShipmentFlagChange(newValue);
+                      }}
+                      // filterSelectedOptions
+                      value={
+                        (shipmentFlag &&
+                          shipmentFlag.filter((flag) => {
+                            return flags.indexOf(flag.url) !== -1;
+                          })) ||
+                        []
+                      }
+                      renderOption={(option, { selected }) => (
+                        <React.Fragment>
+                          <Checkbox
+                            // icon={icon}
+                            // checkedIcon={checkedIcon}
+                            style={{ marginRight: 8 }}
+                            checked={selected}
+                          />
+                          {`${option.name}(${option.type})`}
+                        </React.Fragment>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          label="Violation/Warnings"
+                          placeholder="Select"
+                          margin="normal"
+                        />
+                      )}
+                    />
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
@@ -378,9 +444,9 @@ function ShipmentInfo(props) {
                       id="uom_distance"
                       select
                       label="Units of Measure Distance"
-                      {...uom_distance.bind}
+                      value={uom_distance}
+                      onChange={(e) => setUomDistance(e.target.value)}
                     >
-                      <MenuItem value={""}>Select</MenuItem>
                       {unitsOfMeasure &&
                         unitsOfMeasure
                           .filter((obj) => {
@@ -388,6 +454,7 @@ function ShipmentInfo(props) {
                               obj.supported_class === "Distance and Length"
                             );
                           })
+                          .sort(compareSort("name"))
                           .map((item, index) => (
                             <MenuItem
                               key={`${item.id}${item.name}`}
@@ -407,14 +474,15 @@ function ShipmentInfo(props) {
                       id="uom_weight"
                       select
                       label="Units of Measure Mass/Weight"
-                      {...uom_weight.bind}
+                      value={uom_weight}
+                      onChange={(e) => setUomWeight(e.target.value)}
                     >
-                      <MenuItem value={""}>Select</MenuItem>
                       {unitsOfMeasure &&
                         unitsOfMeasure
                           .filter((obj) => {
                             return obj.supported_class === "Mass and Weight";
                           })
+                          .sort(compareSort("name"))
                           .map((item, index) => (
                             <MenuItem
                               key={`${item.id}${item.name}`}

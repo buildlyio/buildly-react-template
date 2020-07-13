@@ -112,6 +112,7 @@ function AddSensor({
   );
   const sensor_uuid = useInput("");
   const [formError, setFormError] = useState({});
+  const sensor_placed = useInput("");
   const [associatedGateway, setAccociatedGateway] = useState(null);
   const [gateway, setGateway] = useState((editData && editData.gateway) || "");
   const [environmentalModal, toggleEnvironmentalModal] = useState(false);
@@ -280,6 +281,19 @@ function AddSensor({
                       draggable: true,
                     },
                   ]}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="filled"
+                  disabled
+                  margin="normal"
+                  fullWidth
+                  id="sensor_placed"
+                  label="Sensor Placed"
+                  name="sensor_placed"
+                  autoComplete="sensor_placed"
+                  {...sensor_placed.bind}
                 />
               </Grid>
             </Grid>

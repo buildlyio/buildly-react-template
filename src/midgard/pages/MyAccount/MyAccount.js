@@ -139,7 +139,7 @@ function MyAccount({
                     </Grid>
                     <Grid item xs={12}>
                       <div className={classes.infoSection}>
-                        <Typography variant="body2">Customer Id:</Typography>
+                        <Typography variant="body2">Customer ID:</Typography>
                         <Typography variant="body1">
                           {user && user.core_user_uuid}
                         </Typography>

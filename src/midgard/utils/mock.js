@@ -153,10 +153,10 @@ export const SHIPMENT_STATUS = [
 
 export const TRANSPORT_MODE = [
   { value: "Air", label: "Air" },
-  { value: "sea", label: "Sea" },
   { value: "land-rail", label: "Land Rail" },
   { value: "land-road", label: "Land Road" },
   { value: "mixed", label: "Mixed" },
+  { value: "sea", label: "Sea" },
 ];
 
 export const associatedGatewayMock = [

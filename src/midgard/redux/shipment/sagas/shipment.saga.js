@@ -27,6 +27,7 @@ import {
   GET_DASHBOARD_ITEMS_SUCCESS,
   GET_DASHBOARD_ITEMS_FAILURE,
 } from "../actions/shipment.actions";
+import { compareSort } from "../../../utils/utilMethods";
 
 const shipmentApiEndPoint = "shipment/";
 
@@ -269,12 +270,23 @@ const alertFilter = (filterObject, list) => {
   if (filterObject.delay) filter.push("delay");
   if (filterObject.recall) filter.push("recall");
 
-  filteredList = list.filter((item) => {
-    return (
-      item.shipment_flag &&
-      filter.indexOf(item.shipment_flag.toLowerCase()) !== -1
-    );
+  list.forEach((shipment) => {
+    let flags = [];
+    if (shipment.flag_list) {
+      shipment.flag_list.forEach((flag) => {
+        flags.push(flag.name.toLowerCase());
+      });
+    }
+    if (flags.length > 0 && filter.every((val) => flags.includes(val)))
+      filteredList.push(shipment);
   });
+
+  // filteredList = list.filter((item) => {
+  //   return (
+  //     item.shipment_flag &&
+  //     filter.indexOf(item.shipment_flag.toLowerCase()) !== -1
+  //   );
+  // });
   return filteredList;
 };
 
@@ -429,7 +441,8 @@ function* getShipmentFlagList() {
       null,
       true
     );
-    yield [yield put({ type: GET_SHIPMENT_FLAG_SUCCESS, data: data.data })];
+    let sortedData = data.data.sort(compareSort("name"));
+    yield [yield put({ type: GET_SHIPMENT_FLAG_SUCCESS, data: sortedData })];
   } catch (error) {
     console.log("error", error);
     yield [
