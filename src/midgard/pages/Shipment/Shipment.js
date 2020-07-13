@@ -17,6 +17,7 @@ import {
   getFormattedRow,
   getFormattedCustodyRows,
   svgIcon,
+  MAP_TOOLTIP,
 } from "./ShipmentConstants";
 import ShipmentList from "./components/ShipmentList";
 import { shipmentMock } from "../../utils/mock";
@@ -55,6 +56,7 @@ import {
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import AlertInfo from "./AlertInfo";
 import Loader from "../../components/Loader/Loader";
+import CustomizedTooltips from "../../components/ToolTip/ToolTip";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -105,9 +107,9 @@ function Shipment(props) {
     if (shipmentData === null) {
       dispatch(getShipmentDetails());
     }
-    if (!shipmentFlag) {
-      dispatch(getShipmentFlag());
-    }
+    // if (!shipmentFlag) {
+    //   dispatch(getShipmentFlag());
+    // }
     if (custodianData === null) {
       dispatch(getCustodians());
       dispatch(getCustodianType());
@@ -282,6 +284,7 @@ function Shipment(props) {
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
+            <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
             <Hidden smDown>
               <IconButton
                 className={classes.menuButton}

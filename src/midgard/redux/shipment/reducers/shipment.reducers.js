@@ -21,6 +21,8 @@ import {
   GET_DASHBOARD_ITEMS,
   GET_DASHBOARD_ITEMS_SUCCESS,
   GET_DASHBOARD_ITEMS_FAILURE,
+  GET_ALERTS,
+  SET_ALERTS,
 } from "../actions/shipment.actions";
 
 const initialState = {
@@ -29,6 +31,7 @@ const initialState = {
   error: null,
   shipmentData: null,
   shipmentFormData: null,
+  shipmentAlerts: { show: true, data: [] },
 };
 
 // Reducer
@@ -186,6 +189,14 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         error: action.error,
+      };
+    case SET_ALERTS:
+      return {
+        ...state,
+        loading: false,
+        loaded: false,
+        shipmentAlerts: { show: action.alerts.show, data: action.alerts.data },
+        error: null,
       };
 
     default:

@@ -9,6 +9,9 @@ import {
   RecallIcon,
 } from "../../components/Icons/Icons";
 
+export const MAP_TOOLTIP =
+  "Start and End Location of custodians which have the current custody/first custody of the shipments that are either planned or are Enroute";
+
 export const SHIPMENT_COLUMNS = [
   { id: "id", width: 150, maxWidth: 150 },
   {
