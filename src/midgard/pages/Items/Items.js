@@ -13,6 +13,7 @@ import {
   getUnitsOfMeasure,
   GET_ITEM_OPTIONS_SUCCESS,
   GET_ITEM_OPTIONS_FAILURE,
+  getProducts,
 } from "../../redux/items/actions/items.actions";
 import DashboardWrapper from "../../components/DashboardWrapper/DashboardWrapper";
 import { httpService } from "../../modules/http/http.service";
@@ -30,6 +31,7 @@ function Items({
   redirectTo,
   noSearch,
   unitsOfMeasure,
+  products,
 }) {
   const addItemPath = redirectTo
     ? `${redirectTo}/items`
@@ -52,6 +54,9 @@ function Items({
     }
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
+    }
+    if (products === null) {
+      dispatch(getProducts());
     }
     httpService
       .makeOptionsRequest(
