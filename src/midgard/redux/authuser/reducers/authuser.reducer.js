@@ -21,6 +21,12 @@ import {
   GET_USER_OPTIONS,
   GET_USER_OPTIONS_SUCCESS,
   GET_USER_OPTIONS_FAILURE,
+  RESET_PASSWORD,
+  RESET_PASSWORD_SUCCESS,
+  RESET_PASSWORD_FAILURE,
+  RESET_PASSWORD_CONFIRM,
+  RESET_PASSWORD_CONFIRM_SUCCESS,
+  RESET_PASSWORD_CONFIRM_FAILURE,
 } from "../actions/authuser.actions";
 
 const initialState = {
@@ -204,6 +210,50 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         userOptions: null,
+        error: action.error,
+      };
+
+    case RESET_PASSWORD:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case RESET_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: null,
+      };
+    case RESET_PASSWORD_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case RESET_PASSWORD_CONFIRM:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case RESET_PASSWORD_CONFIRM_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: null,
+      };
+    case RESET_PASSWORD_CONFIRM_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
         error: action.error,
       };
 

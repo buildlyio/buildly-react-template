@@ -86,25 +86,31 @@ function AddItems({
   const [unit_of_measure, setUomContainer] = useState(
     editData.unit_of_measure || ""
   );
-  const [units, setContainerUnits] = useState(editData.units || 0);
+  const [units, setContainerUnits] = useState(editData.number_of_units || 0);
   const item_type = useInput(editData.item_type || "", {
     required: true,
   });
-  const [gtin, setGtin] = useState("");
-  const [ean, setEan] = useState("");
-  const [upc, setUpc] = useState("");
-  const [paper_tag_no, setPaperTag] = useState("");
-  const [batch_id, setBatchId] = useState("");
-  const [bin_id, setBinId] = useState("");
+  const [gtin, setGtin] = useState(editData.gtin || "");
+  const [ean, setEan] = useState(editData.ean || "");
+  const [upc, setUpc] = useState(editData.upc || "");
+  const [paper_tag_no, setPaperTag] = useState(editData.paper_tag_number || "");
+  const [batch_id, setBatchId] = useState(editData.batch_run_id || "");
+  const [bin_id, setBinId] = useState(editData.bin_id || "");
   const [product, setProduct] = useState("");
-  const [product_url, setProductUrl] = useState("");
+  const [product_url, setProductUrl] = useState(editData.product || "");
   const [product_type, setProductType] = useState("");
   const [product_value, setProductValue] = useState("");
   const [product_desc, setProductDesc] = useState("");
-  const [product_weight, setProductWeight] = useState("");
-  const [product_uom, setProductUom] = useState("");
+  const [product_weight, setProductWeight] = useState(
+    editData.product_weight || ""
+  );
+  const [product_uom, setProductUom] = useState(
+    editData.product_weight_unit_of_measure || ""
+  );
   const [product_uom_name, setProductUomName] = useState("");
-  const container_name = useInput("");
+  const container_name = useInput(editData.container_name || "", {
+    required: true,
+  });
 
   const [formError, setFormError] = useState({});
 
@@ -138,7 +144,7 @@ function AddItems({
       batch_run_id: batch_id,
       paper_tag_number: paper_tag_no,
       product_weight: product_weight,
-      container_name: container_name,
+      // container_name: container_name,
       product_value: product_value,
       product: product_url,
       ...(editPage && editData && { id: editData.id }),
@@ -178,7 +184,7 @@ function AddItems({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!item_type.value || !container_name.value || !product) return true;
+    if (!item_type.value || !item_name.value || !product) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -417,20 +423,16 @@ function AddItems({
                   margin="normal"
                   required
                   fullWidth
-                  id="container_name"
-                  label="Container Name"
-                  name="container_name"
-                  autoComplete="container_name"
-                  error={
-                    formError.container_name && formError.container_name.error
-                  }
+                  id="item_name"
+                  label="Item Name"
+                  name="item_name"
+                  autoComplete="item_name"
+                  error={formError.item_name && formError.item_name.error}
                   helperText={
-                    formError.container_name
-                      ? formError.container_name.message
-                      : ""
+                    formError.item_name ? formError.item_name.message : ""
                   }
-                  onBlur={(e) => handleBlur(e, "required", container_name)}
-                  {...container_name.bind}
+                  onBlur={(e) => handleBlur(e, "required", item_name)}
+                  {...item_name.bind}
                 />
               </Grid>
               <Grid item xs={12} md={6} sm={6}>
@@ -441,7 +443,7 @@ function AddItems({
                   required
                   id="item_type"
                   select
-                  label="Container Type"
+                  label="Item Type"
                   error={formError.item_type && formError.item_type.error}
                   helperText={
                     formError.item_type ? formError.item_type.message : ""
@@ -465,7 +467,7 @@ function AddItems({
                       ))}
                 </TextField>
               </Grid>
-              <Grid item item xs={12} sm={6}>
+              {/* <Grid item item xs={12} sm={6}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -478,7 +480,7 @@ function AddItems({
                   autoComplete="item_desc"
                   {...item_desc.bind}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item item xs={12} md={6} sm={6}>
@@ -488,7 +490,7 @@ function AddItems({
                   fullWidth
                   id="units"
                   type="number"
-                  label="# of Products in Container"
+                  label="# of Units"
                   value={units}
                   onChange={(e) => onNumberOfUnitsChange(e)}
                 ></TextField>
@@ -501,7 +503,7 @@ function AddItems({
                   fullWidth
                   type="number"
                   id="item_value"
-                  label="Container Value"
+                  label="Item Value"
                   value={item_value}
                   InputProps={{
                     startAdornment: (
@@ -517,7 +519,7 @@ function AddItems({
                   fullWidth
                   type="number"
                   id="item_weight"
-                  label="Container Weight"
+                  label="Item Weight"
                   value={item_weight}
                 ></TextField>
               </Grid>

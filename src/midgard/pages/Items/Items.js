@@ -14,6 +14,7 @@ import {
   GET_ITEM_OPTIONS_SUCCESS,
   GET_ITEM_OPTIONS_FAILURE,
   getProducts,
+  getProductType,
 } from "../../redux/items/actions/items.actions";
 import DashboardWrapper from "../../components/DashboardWrapper/DashboardWrapper";
 import { httpService } from "../../modules/http/http.service";
@@ -57,6 +58,7 @@ function Items({
     }
     if (products === null) {
       dispatch(getProducts());
+      dispatch(getProductType());
     }
     httpService
       .makeOptionsRequest(

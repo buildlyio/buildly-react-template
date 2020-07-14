@@ -13,23 +13,13 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useInput } from "../../hooks/useInput";
-import { login } from "../../redux/authuser/actions/authuser.actions";
+import {
+  login,
+  resetPassword,
+} from "../../redux/authuser/actions/authuser.actions";
 import { validators } from "../../utils/validators";
 import logo from "../../../assets/tp-logo.png";
 import { routes } from "../../routes/routesConstants";
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://xparent.io/" target="_blank">
-        Transparent Path
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
   logo: {
     width: "100%",
+    marginBottom: theme.spacing(3),
   },
   buttonProgress: {
     position: "absolute",
@@ -67,10 +58,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Login({ dispatch, loading, history }) {
+function EmailForm({ dispatch, loading, history }) {
   const classes = useStyles();
-  const username = useInput("", { required: true });
-  const password = useInput("", { required: true });
+  const email = useInput("", { required: true });
   const [error, setError] = useState({});
 
   /**
@@ -80,10 +70,9 @@ function Login({ dispatch, loading, history }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const loginFormValue = {
-      username: username.value,
-      password: password.value,
+      email: email.value,
     };
-    dispatch(login(loginFormValue, history));
+    dispatch(resetPassword(loginFormValue));
   };
 
   /**
@@ -96,6 +85,7 @@ function Login({ dispatch, loading, history }) {
   const handleBlur = (e, validation, input) => {
     let validateObj = validators(validation, input);
     let prevState = { ...error };
+    console.log("validate", validateObj);
     if (validateObj && validateObj.error)
       setError({
         ...prevState,
@@ -113,7 +103,7 @@ function Login({ dispatch, loading, history }) {
 
   const submitDisabled = () => {
     let errorKeys = Object.keys(error);
-    if (!username.value || !password.value) return true;
+    if (!email.value) return true;
     errorKeys.forEach((key) => {
       if (error[key].error) return true;
     });
@@ -127,8 +117,8 @@ function Login({ dispatch, loading, history }) {
         <CardContent>
           <div className={classes.paper}>
             <img src={logo} className={classes.logo} />
-            <Typography component="h1" variant="h5">
-              Sign in
+            <Typography component="h1" variant="h5" gutterBottom>
+              Enter your registered Email
             </Typography>
             <form className={classes.form} noValidate onSubmit={handleSubmit}>
               <TextField
@@ -136,34 +126,16 @@ function Login({ dispatch, loading, history }) {
                 margin="normal"
                 required
                 fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
-                error={error.username && error.username.error}
-                helperText={
-                  error && error.username ? error.username.message : ""
-                }
-                onBlur={(e) => handleBlur(e, "required", username)}
-                {...username.bind}
+                id="email"
+                label="Registered email"
+                name="email"
+                autoComplete="email"
+                error={error.email && error.email.error}
+                helperText={error && error.email ? error.email.message : ""}
+                onBlur={(e) => handleBlur(e, "email", email)}
+                {...email.bind}
               />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                error={error.password && error.password.error}
-                helperText={
-                  error && error.password ? error.password.message : ""
-                }
-                onBlur={(e) => handleBlur(e, "required", password)}
-                {...password.bind}
-              />
+
               <div className={classes.loadingWrapper}>
                 <Button
                   type="submit"
@@ -173,7 +145,7 @@ function Login({ dispatch, loading, history }) {
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
-                  Sign In
+                  Submit
                 </Button>
                 {loading && (
                   <CircularProgress
@@ -184,24 +156,8 @@ function Login({ dispatch, loading, history }) {
               </div>
               <Grid container>
                 <Grid item xs>
-                  {/* <Link
-                    href={routes.RESET_PASSWORD}
-                    variant="body2"
-                    color="secondary"
-                  >
-                    Forgot password?
-                  </Link> */}
-                  <Link href={"#"} variant="body2" color="secondary">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link
-                    href={routes.REGISTER}
-                    variant="body2"
-                    color="secondary"
-                  >
-                    {"Don't have an account? Register"}
+                  <Link href={routes.LOGIN} variant="body2" color="secondary">
+                    Go back to Login
                   </Link>
                 </Grid>
               </Grid>
@@ -209,9 +165,6 @@ function Login({ dispatch, loading, history }) {
           </div>
         </CardContent>
       </Card>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
     </Container>
   );
 }
@@ -221,4 +174,4 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.authReducer,
 });
 
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps)(EmailForm);

@@ -14,6 +14,8 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "./styles/theme";
 import Alerts from "./midgard/components/Alerts/Alerts";
 import { routes } from "./midgard/routes/routesConstants";
+import EmailForm from "./midgard/pages/ResetPassword/EmailForm";
+import NewPasswordForm from "./midgard/pages/ResetPassword/NewPasswordForm";
 
 function App() {
   return (
@@ -35,6 +37,11 @@ function App() {
             />
             <Route path={routes.LOGIN} component={Login} />
             <Route path={routes.REGISTER} component={Register} />
+            <Route path={routes.RESET_PASSWORD} component={EmailForm} />
+            <Route
+              path={routes.RESET_PASSWORD_CONFIRM}
+              component={NewPasswordForm}
+            />
             <PrivateRoute path={routes.APP} component={ContainerDashboard} />
           </div>
           <Alerts />

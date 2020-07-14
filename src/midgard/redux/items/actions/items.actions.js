@@ -107,5 +107,5 @@ export const getProducts = () => ({
 });
 
 export const getProductType = () => ({
-  type: GET_PRODUCT_TYPE,
+  type: GET_PRODUCTS_TYPE,
 });

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -13,23 +13,16 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useInput } from "../../hooks/useInput";
-import { login } from "../../redux/authuser/actions/authuser.actions";
+import {
+  register,
+  login,
+  confirmResetPassword,
+} from "../../redux/authuser/actions/authuser.actions";
+import Grid from "@material-ui/core/Grid";
 import { validators } from "../../utils/validators";
 import logo from "../../../assets/tp-logo.png";
+import { isMobile } from "../../utils/mediaQuery";
 import { routes } from "../../routes/routesConstants";
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://xparent.io/" target="_blank">
-        Transparent Path
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,10 +32,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
   },
   form: {
     width: "100%",
@@ -67,11 +56,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Login({ dispatch, loading, history }) {
+function NewPassword({ dispatch, loading, history, loaded, error }) {
   const classes = useStyles();
-  const username = useInput("", { required: true });
   const password = useInput("", { required: true });
-  const [error, setError] = useState({});
+  const re_password = useInput("", {
+    required: true,
+    confirm: true,
+    matchField: password,
+  });
+
+  const [formError, setFormError] = useState({});
 
   /**
    * Submit the form to the backend and attempts to authenticate
@@ -79,11 +73,13 @@ function Login({ dispatch, loading, history }) {
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    const loginFormValue = {
-      username: username.value,
-      password: password.value,
+    const registerFormValue = {
+      new_password1: password.value,
+      new_password2: re_password,
+      uid: "",
+      token: "",
     };
-    dispatch(login(loginFormValue, history));
+    dispatch(confirmResetPassword(registerFormValue, history));
   };
 
   /**
@@ -95,14 +91,14 @@ function Login({ dispatch, loading, history }) {
 
   const handleBlur = (e, validation, input) => {
     let validateObj = validators(validation, input);
-    let prevState = { ...error };
+    let prevState = { ...formError };
     if (validateObj && validateObj.error)
-      setError({
+      setFormError({
         ...prevState,
         [e.target.id]: validateObj,
       });
     else
-      setError({
+      setFormError({
         ...prevState,
         [e.target.id]: {
           error: false,
@@ -112,12 +108,13 @@ function Login({ dispatch, loading, history }) {
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(error);
-    if (!username.value || !password.value) return true;
+    let errorKeys = Object.keys(formError);
+    let errorExists = false;
+    if (!password.value || !re_password.value) return true;
     errorKeys.forEach((key) => {
-      if (error[key].error) return true;
+      if (formError[key].error) errorExists = true;
     });
-    return false;
+    return errorExists;
   };
 
   return (
@@ -128,42 +125,49 @@ function Login({ dispatch, loading, history }) {
           <div className={classes.paper}>
             <img src={logo} className={classes.logo} />
             <Typography component="h1" variant="h5">
-              Sign in
+              Reset your Password
             </Typography>
             <form className={classes.form} noValidate onSubmit={handleSubmit}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
-                error={error.username && error.username.error}
-                helperText={
-                  error && error.username ? error.username.message : ""
-                }
-                onBlur={(e) => handleBlur(e, "required", username)}
-                {...username.bind}
-              />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                error={error.password && error.password.error}
-                helperText={
-                  error && error.password ? error.password.message : ""
-                }
-                onBlur={(e) => handleBlur(e, "required", password)}
-                {...password.bind}
-              />
+              <Grid container spacing={isMobile() ? 0 : 2}>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="New Password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    error={formError.password && formError.password.error}
+                    helperText={
+                      formError.password ? formError.password.message : ""
+                    }
+                    onBlur={(e) => handleBlur(e, "required", password)}
+                    {...password.bind}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="re_password"
+                    label="Confirm Password"
+                    name="re_password"
+                    type="password"
+                    autoComplete="re_password"
+                    error={formError.re_password && formError.re_password.error}
+                    helperText={
+                      formError.re_password ? formError.re_password.message : ""
+                    }
+                    onBlur={(e) => handleBlur(e, "confirm", re_password)}
+                    {...re_password.bind}
+                  />
+                </Grid>
+              </Grid>
               <div className={classes.loadingWrapper}>
                 <Button
                   type="submit"
@@ -173,7 +177,7 @@ function Login({ dispatch, loading, history }) {
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
-                  Sign In
+                  Submit
                 </Button>
                 {loading && (
                   <CircularProgress
@@ -183,25 +187,9 @@ function Login({ dispatch, loading, history }) {
                 )}
               </div>
               <Grid container>
-                <Grid item xs>
-                  {/* <Link
-                    href={routes.RESET_PASSWORD}
-                    variant="body2"
-                    color="secondary"
-                  >
-                    Forgot password?
-                  </Link> */}
-                  <Link href={"#"} variant="body2" color="secondary">
-                    Forgot password?
-                  </Link>
-                </Grid>
                 <Grid item>
-                  <Link
-                    href={routes.REGISTER}
-                    variant="body2"
-                    color="secondary"
-                  >
-                    {"Don't have an account? Register"}
+                  <Link href={routes.LOGIN} variant="body2" color="secondary">
+                    {"Go Back To Login"}
                   </Link>
                 </Grid>
               </Grid>
@@ -209,9 +197,6 @@ function Login({ dispatch, loading, history }) {
           </div>
         </CardContent>
       </Card>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
     </Container>
   );
 }
@@ -221,4 +206,4 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.authReducer,
 });
 
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps)(NewPassword);

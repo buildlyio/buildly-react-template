@@ -35,6 +35,16 @@ export const GET_USER_OPTIONS = "AUTH/GET_USER_OPTIONS";
 export const GET_USER_OPTIONS_SUCCESS = "AUTH/GET_USER_OPTIONS_SUCCESS";
 export const GET_USER_OPTIONS_FAILURE = "AUTH/GET_USER_OPTIONS_FAILURE";
 
+export const RESET_PASSWORD = "AUTH/RESET_PASSWORD";
+export const RESET_PASSWORD_SUCCESS = "AUTH/RESET_PASSWORD_SUCCESS";
+export const RESET_PASSWORD_FAILURE = "AUTH/RESET_PASSWORD_FAILURE";
+
+export const RESET_PASSWORD_CONFIRM = "AUTH/RESET_PASSWORD_CONFIRM";
+export const RESET_PASSWORD_CONFIRM_SUCCESS =
+  "AUTH/RESET_PASSWORD_CONFIRM_SUCCESS";
+export const RESET_PASSWORD_CONFIRM_FAILURE =
+  "AUTH/RESET_PASSWORD_CONFIRM_FAILURE";
+
 /**
  * Login action
  * @param {{username, password}} credentials
@@ -86,4 +96,15 @@ export const updateOrganization = (uuid) => ({
 
 export const getUserOptions = () => ({
   type: GET_USER_OPTIONS,
+});
+
+export const resetPassword = (data) => ({
+  type: RESET_PASSWORD,
+  data,
+});
+
+export const confirmResetPassword = (data, history) => ({
+  type: RESET_PASSWORD_CONFIRM,
+  data,
+  history,
 });

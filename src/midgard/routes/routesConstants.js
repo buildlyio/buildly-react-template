@@ -11,4 +11,6 @@ export const routes = {
   ITEMS: "/app/items",
   SENSORS_GATEWAY: "/app/sensors-gateway",
   SHIPMENT: "/app/shipment",
+  RESET_PASSWORD: "/reset-password",
+  RESET_PASSWORD_CONFIRM: "/reset-password-confirm",
 };
