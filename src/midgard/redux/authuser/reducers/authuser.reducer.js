@@ -27,6 +27,9 @@ import {
   RESET_PASSWORD_CONFIRM,
   RESET_PASSWORD_CONFIRM_SUCCESS,
   RESET_PASSWORD_CONFIRM_FAILURE,
+  RESET_PASSWORD_CHECK,
+  RESET_PASSWORD_CHECK_SUCCESS,
+  RESET_PASSWORD_CHECK_FAILURE,
 } from "../actions/authuser.actions";
 
 const initialState = {
@@ -250,6 +253,29 @@ export default (state = initialState, action) => {
         error: null,
       };
     case RESET_PASSWORD_CONFIRM_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case RESET_PASSWORD_CHECK:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case RESET_PASSWORD_CHECK_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: null,
+        resetPasswordCheckData: action.data,
+      };
+    case RESET_PASSWORD_CHECK_FAILURE:
       return {
         ...state,
         loading: false,

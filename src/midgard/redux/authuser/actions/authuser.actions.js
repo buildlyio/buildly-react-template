@@ -45,6 +45,10 @@ export const RESET_PASSWORD_CONFIRM_SUCCESS =
 export const RESET_PASSWORD_CONFIRM_FAILURE =
   "AUTH/RESET_PASSWORD_CONFIRM_FAILURE";
 
+export const RESET_PASSWORD_CHECK = "AUTH/RESET_PASSWORD_CHECK";
+export const RESET_PASSWORD_CHECK_SUCCESS = "AUTH/RESET_PASSWORD_CHECK_SUCCESS";
+export const RESET_PASSWORD_CHECK_FAILURE = "AUTH/RESET_PASSWORD_CHECK_FAILURE";
+
 /**
  * Login action
  * @param {{username, password}} credentials
@@ -105,6 +109,12 @@ export const resetPassword = (data) => ({
 
 export const confirmResetPassword = (data, history) => ({
   type: RESET_PASSWORD_CONFIRM,
+  data,
+  history,
+});
+
+export const resetPasswordCheck = (data, history) => ({
+  type: RESET_PASSWORD_CHECK,
   data,
   history,
 });
