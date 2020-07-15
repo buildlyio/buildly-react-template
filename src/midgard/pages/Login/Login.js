@@ -184,16 +184,16 @@ function Login({ dispatch, loading, history }) {
               </div>
               <Grid container>
                 <Grid item xs>
-                  {/* <Link
+                  <Link
                     href={routes.RESET_PASSWORD}
                     variant="body2"
                     color="secondary"
                   >
                     Forgot password?
-                  </Link> */}
-                  <Link href={"#"} variant="body2" color="secondary">
-                    Forgot password?
                   </Link>
+                  {/* <Link href={"#"} variant="body2" color="secondary">
+                    Forgot password?
+                  </Link> */}
                 </Grid>
                 <Grid item>
                   <Link

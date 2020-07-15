@@ -14,7 +14,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Select from "@material-ui/core/Select";
 import { useInput } from "../../../hooks/useInput";
 import Loader from "../../../components/Loader/Loader";
-import { Card, CardContent } from "@material-ui/core";
+import { Card, CardContent, Typography } from "@material-ui/core";
 import { editItem, addItem } from "../../../redux/items/actions/items.actions";
 import { compareSort } from "../../../utils/utilMethods";
 import CardItem from "../../../components/CardItem/CardItem";
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     position: "relative",
   },
   cardItems: {
-    marginBottom: theme.spacing(4),
+    margin: theme.spacing(4, 0),
   },
   formTitle: {
     fontWeight: "bold",
@@ -116,6 +116,20 @@ function AddItems({
 
   const buttonText = editPage ? "save" : "add item";
   const formTitle = editPage ? "Edit Item" : "Add Item";
+
+  useEffect(() => {
+    if (editPage && editData && products && productType && unitsOfMeasure) {
+      let selectedProduct = "";
+      products.forEach((obj) => {
+        if (obj.url === editData.product[0]) {
+          selectedProduct = obj;
+        }
+      });
+      if (selectedProduct) {
+        onProductChange(selectedProduct);
+      }
+    }
+  }, [editPage, editData, products, productType, unitsOfMeasure]);
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
@@ -146,7 +160,7 @@ function AddItems({
       product_weight: product_weight,
       // container_name: container_name,
       product_value: product_value,
-      product: product_url,
+      product: [product_url],
       ...(editPage && editData && { id: editData.id }),
     };
     if (editPage) {
@@ -195,7 +209,7 @@ function AddItems({
     setProduct(value);
     setProductUrl(value.url);
     setProductDesc(value.description);
-    setProductType(value.product_type);
+
     setProductValue(value.value);
     setBinId(value.bin_id);
     setBatchId(value.batch_run_id);
@@ -204,15 +218,24 @@ function AddItems({
     setGtin(value.gtin);
     setPaperTag(value.paper_tag_number);
     setProductWeight(value.gross_weight);
-    setContainerUnits(1);
-    setItemWeight(value.gross_weight);
-    setItemValue(value.value);
+    if (units === 0) {
+      setContainerUnits(1);
+      setItemWeight(value.gross_weight);
+      setItemValue(value.value);
+    }
     if (unitsOfMeasure && unitsOfMeasure.length) {
       unitsOfMeasure.forEach((unit) => {
         if (unit.url === value.unit_of_measure) {
           setProductUom(value.unit_of_measure);
           setProductUomName(unit.name);
           setUomContainer(value.unit_of_measure);
+        }
+      });
+    }
+    if (productType && productType.length) {
+      productType.forEach((type) => {
+        if (type.url === value.product_type) {
+          setProductType(type.name);
         }
       });
     }
@@ -240,13 +263,82 @@ function AddItems({
           maxWidth={"md"}
         >
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
+            <Grid container spacing={isDesktop ? 2 : 0}>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="item_name"
+                  label="Item Name"
+                  name="item_name"
+                  autoComplete="item_name"
+                  error={formError.item_name && formError.item_name.error}
+                  helperText={
+                    formError.item_name ? formError.item_name.message : ""
+                  }
+                  onBlur={(e) => handleBlur(e, "required", item_name)}
+                  {...item_name.bind}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  required
+                  id="item_type"
+                  select
+                  label="Item Type"
+                  error={formError.item_type && formError.item_type.error}
+                  helperText={
+                    formError.item_type ? formError.item_type.message : ""
+                  }
+                  onBlur={(e) =>
+                    handleBlur(e, "required", item_type, "item_type")
+                  }
+                  {...item_type.bind}
+                >
+                  <MenuItem value={""}>Select</MenuItem>
+                  {itemTypeList &&
+                    itemTypeList
+                      .sort(compareSort("name"))
+                      .map((item, index) => (
+                        <MenuItem
+                          key={`${item.id}${item.name}`}
+                          value={item.url}
+                        >
+                          {item.name}
+                        </MenuItem>
+                      ))}
+                </TextField>
+              </Grid>
+              {/* <Grid item item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  multiline
+                  rows={4}
+                  id="item_desc"
+                  label="Container Description"
+                  name="item_desc"
+                  autoComplete="item_desc"
+                  {...item_desc.bind}
+                />
+              </Grid> */}
+            </Grid>
             <Card variant="outlined" className={classes.cardItems}>
               <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Product Info
+                </Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12}>
                     <Autocomplete
                       id="products"
-                      options={PRODUCT_MOCK}
+                      options={products || []}
                       value={product}
                       onChange={(event, newValue) => {
                         onProductChange(newValue);
@@ -416,72 +508,7 @@ function AddItems({
                 </Grid>
               </CardContent>
             </Card>
-            <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="item_name"
-                  label="Item Name"
-                  name="item_name"
-                  autoComplete="item_name"
-                  error={formError.item_name && formError.item_name.error}
-                  helperText={
-                    formError.item_name ? formError.item_name.message : ""
-                  }
-                  onBlur={(e) => handleBlur(e, "required", item_name)}
-                  {...item_name.bind}
-                />
-              </Grid>
-              <Grid item xs={12} md={6} sm={6}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  required
-                  id="item_type"
-                  select
-                  label="Item Type"
-                  error={formError.item_type && formError.item_type.error}
-                  helperText={
-                    formError.item_type ? formError.item_type.message : ""
-                  }
-                  onBlur={(e) =>
-                    handleBlur(e, "required", item_type, "item_type")
-                  }
-                  {...item_type.bind}
-                >
-                  <MenuItem value={""}>Select</MenuItem>
-                  {itemTypeList &&
-                    itemTypeList
-                      .sort(compareSort("name"))
-                      .map((item, index) => (
-                        <MenuItem
-                          key={`${item.id}${item.name}`}
-                          value={item.url}
-                        >
-                          {item.name}
-                        </MenuItem>
-                      ))}
-                </TextField>
-              </Grid>
-              {/* <Grid item item xs={12} sm={6}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  multiline
-                  rows={4}
-                  id="item_desc"
-                  label="Container Description"
-                  name="item_desc"
-                  autoComplete="item_desc"
-                  {...item_desc.bind}
-                />
-              </Grid> */}
-            </Grid>
+
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item item xs={12} md={6} sm={6}>
                 <TextField
