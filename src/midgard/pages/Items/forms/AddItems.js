@@ -128,6 +128,9 @@ function AddItems({
       if (selectedProduct) {
         onProductChange(selectedProduct);
       }
+      setContainerUnits(editData.number_of_units);
+      setItemWeight(editData.gross_weight);
+      setItemValue(editData.value);
     }
   }, [editPage, editData, products, productType, unitsOfMeasure]);
   const closeModal = () => {
@@ -209,7 +212,6 @@ function AddItems({
     setProduct(value);
     setProductUrl(value.url);
     setProductDesc(value.description);
-
     setProductValue(value.value);
     setBinId(value.bin_id);
     setBatchId(value.batch_run_id);
@@ -218,11 +220,9 @@ function AddItems({
     setGtin(value.gtin);
     setPaperTag(value.paper_tag_number);
     setProductWeight(value.gross_weight);
-    if (units === 0) {
-      setContainerUnits(1);
-      setItemWeight(value.gross_weight);
-      setItemValue(value.value);
-    }
+    setContainerUnits(1);
+    setItemWeight(value.gross_weight);
+    setItemValue(value.value);
     if (unitsOfMeasure && unitsOfMeasure.length) {
       unitsOfMeasure.forEach((unit) => {
         if (unit.url === value.unit_of_measure) {

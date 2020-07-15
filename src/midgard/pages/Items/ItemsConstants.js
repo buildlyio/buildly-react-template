@@ -6,7 +6,7 @@ export const itemColumns = [
   { id: "name", label: "Item Name", minWidth: 180 },
   { id: "desc", label: "Item Description", minWidth: 180 },
   {
-    id: "units",
+    id: "number_of_units",
     label: "# of Units",
     minWidth: 100,
   },
