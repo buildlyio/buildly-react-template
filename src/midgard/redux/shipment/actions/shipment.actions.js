@@ -30,6 +30,15 @@ export const GET_DASHBOARD_ITEMS_SUCCESS =
 export const GET_DASHBOARD_ITEMS_FAILURE =
   "SHIPMENT/GET_DASHBOARD_ITEMS_FAILURE";
 
+export const GET_ALERTS = "SHIPMENT/GET_ALERTS";
+export const SET_ALERTS = "SHIPMENT/SET_ALERTS";
+
+export const GET_SHIPMENT_OPTIONS = "ITEMS/GET_SHIPMENT_OPTIONS";
+export const GET_SHIPMENT_OPTIONS_SUCCESS =
+  "ITEMS/GET_SHIPMENT_OPTIONS_SUCCESS";
+export const GET_SHIPMENT_OPTIONS_FAILURE =
+  "ITEMS/GET_SHIPMENT_OPTIONS_FAILURE";
+
 /**
  *
  * @param {Object} formData
@@ -98,4 +107,9 @@ export const getShipmentFlag = () => ({
 
 export const getDashboardItems = () => ({
   type: GET_DASHBOARD_ITEMS,
+});
+
+export const setAlerts = (alerts) => ({
+  type: SET_ALERTS,
+  alerts,
 });

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
+import { environment } from "environment";
 import { gatewayColumns, getFormattedRow } from "../Constants";
 import AddGateway from "../forms/AddGateway";
 import DashboardWrapper from "../../../components/DashboardWrapper/DashboardWrapper";
@@ -11,7 +12,11 @@ import {
   editGateway,
   deleteGateway,
   searchGatewayItem,
+  GET_GATEWAY_OPTIONS,
+  GET_GATEWAY_OPTIONS_FAILURE,
+  GET_GATEWAY_OPTIONS_SUCCESS,
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
+import { httpService } from "../../../modules/http/http.service";
 
 function Gateway(props) {
   const {
@@ -43,6 +48,20 @@ function Gateway(props) {
       dispatch(getGateways());
       dispatch(getGatewayType());
     }
+    httpService
+      .makeOptionsRequest(
+        "options",
+        `${environment.API_URL}sensors/gateway/`,
+        true
+      )
+      .then((response) => response.json())
+      .then((res) => {
+        console.log("ress", res);
+        dispatch({ type: GET_GATEWAY_OPTIONS_SUCCESS, data: res });
+      })
+      .catch((err) => {
+        dispatch({ type: GET_GATEWAY_OPTIONS_FAILURE, error: err });
+      });
   }, []);
 
   useEffect(() => {

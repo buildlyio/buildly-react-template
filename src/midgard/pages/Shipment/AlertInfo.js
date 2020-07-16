@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Alert from "@material-ui/lab/Alert";
+import { setAlerts } from "../../redux/shipment/actions/shipment.actions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,12 +46,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function AlertInfo(props) {
-  let { shipmentData, shipmentFlag } = props;
+  let { shipmentData, shipmentFlag, dispatch, shipmentAlerts } = props;
   const [openAlerts, setOpenAlerts] = useState([]);
-  const [alertsToShow, setAlertsToShow] = useState([]);
+  // const [alertsToShow, setAlertsToShow] = useState([]);
 
   useEffect(() => {
-    if (shipmentData && shipmentData.length) {
+    if (
+      shipmentData &&
+      shipmentData.length &&
+      shipmentAlerts &&
+      shipmentAlerts.show
+    ) {
       let alerts = [];
       let openAlerts = [];
       shipmentData &&
@@ -72,7 +78,8 @@ function AlertInfo(props) {
               }
             });
         });
-      setAlertsToShow(alerts);
+      dispatch(setAlerts({ show: true, data: alerts }));
+      // setAlertsToShow(alerts);
       setOpenAlerts(openAlerts);
     }
   }, [shipmentData, shipmentFlag]);
@@ -81,36 +88,31 @@ function AlertInfo(props) {
   const handleClose = (event, index) => {
     event.stopPropagation();
     event.preventDefault();
-    let open = alertsToShow.filter((item, idx) => idx !== index);
-    setAlertsToShow(open);
+    let open = shipmentAlerts.data.filter((item, idx) => idx !== index);
+    if (open.length === 0) {
+      dispatch(setAlerts({ show: false, data: open }));
+    } else {
+      dispatch(setAlerts({ show: true, data: open }));
+    }
+    // setAlertsToShow(open);
   };
   return (
     <div className={classes.root}>
-      {alertsToShow.map((alert, index) => {
-        return (
-          //   <Snackbar
-          //     key={`alert${index}`}
-          //     open={openAlerts.indexOf(index) !== -1}
-          //     onClose={(e) => handleClose(e, index)}
-          //     anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          //     className={classes.snackbar}
-          //   >
-          <Alert
-            key={`alert${index}`}
-            variant="filled"
-            severity={alert.severity}
-            onClose={(e) => handleClose(e, index)}
-            classes={{ message: classes.message, root: classes.alert }}
-            title={`${alert.name} ${alert.type} Shipment#${alert.shipment}`}
-          >
-            {`${alert.name} ${alert.type} Shipment#${alert.shipment}`}
-          </Alert>
-          //   </Snackbar>
-        );
-      })}
-      {/* <Alert onClose={handleClose} severity={data.type}>
-        {data.message}
-      </Alert> */}
+      {shipmentAlerts &&
+        shipmentAlerts.data.map((alert, index) => {
+          return (
+            <Alert
+              key={`alert${index}`}
+              variant="filled"
+              severity={alert.severity}
+              onClose={(e) => handleClose(e, index)}
+              classes={{ message: classes.message, root: classes.alert }}
+              title={`${alert.name} ${alert.type} Shipment#${alert.shipment}`}
+            >
+              {`${alert.name} ${alert.type} Shipment#${alert.shipment}`}
+            </Alert>
+          );
+        })}
     </div>
   );
 }

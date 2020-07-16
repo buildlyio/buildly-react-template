@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { makeStyles } from "@material-ui/core/styles";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import Grid from "@material-ui/core/Grid";
 import { validators } from "../../../utils/validators";
 import Modal from "../../../components/Modal/Modal";
@@ -13,9 +14,12 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Select from "@material-ui/core/Select";
 import { useInput } from "../../../hooks/useInput";
 import Loader from "../../../components/Loader/Loader";
-import { Card, CardContent } from "@material-ui/core";
+import { Card, CardContent, Typography } from "@material-ui/core";
 import { editItem, addItem } from "../../../redux/items/actions/items.actions";
 import { compareSort } from "../../../utils/utilMethods";
+import CardItem from "../../../components/CardItem/CardItem";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { PRODUCT_MOCK } from "../../../utils/mock";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     position: "relative",
   },
   cardItems: {
-    marginTop: theme.spacing(4),
+    margin: theme.spacing(4, 0),
   },
   formTitle: {
     fontWeight: "bold",
@@ -63,6 +67,8 @@ function AddItems({
   location,
   itemTypeList,
   unitsOfMeasure,
+  products,
+  productType,
 }) {
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === "edit";
@@ -71,27 +77,62 @@ function AddItems({
     {};
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
-  const item_desc = useInput(editData.item_desc || "");
+  const item_desc = useInput(editData.container_description || "");
   const item_name = useInput(editData.name || "", {
     required: true,
   });
-  const item_value = useInput(editData.value || 0);
-  const item_weight = useInput(editData.gross_weight || 0);
-  const unit_of_measure = useInput(editData.unit_of_measure || "");
-  const units = useInput(editData.units || "");
+  const [item_value, setItemValue] = useState(editData.value || 0);
+  const [item_weight, setItemWeight] = useState(editData.gross_weight || 0);
+  const [unit_of_measure, setUomContainer] = useState(
+    editData.unit_of_measure || ""
+  );
+  const [units, setContainerUnits] = useState(editData.number_of_units || 0);
   const item_type = useInput(editData.item_type || "", {
     required: true,
   });
-  const gtin = useInput("");
-  const ean = useInput("");
-  const upc = useInput("");
-  const paper_tag_no = useInput("");
-  const batch_id = useInput("");
-  const bin_id = useInput("");
+  const [gtin, setGtin] = useState(editData.gtin || "");
+  const [ean, setEan] = useState(editData.ean || "");
+  const [upc, setUpc] = useState(editData.upc || "");
+  const [paper_tag_no, setPaperTag] = useState(editData.paper_tag_number || "");
+  const [batch_id, setBatchId] = useState(editData.batch_run_id || "");
+  const [bin_id, setBinId] = useState(editData.bin_id || "");
+  const [product, setProduct] = useState("");
+  const [product_url, setProductUrl] = useState(editData.product || "");
+  const [product_type, setProductType] = useState("");
+  const [product_value, setProductValue] = useState("");
+  const [product_desc, setProductDesc] = useState("");
+  const [product_weight, setProductWeight] = useState(
+    editData.product_weight || ""
+  );
+  const [product_uom, setProductUom] = useState(
+    editData.product_weight_unit_of_measure || ""
+  );
+  const [product_uom_name, setProductUomName] = useState("");
+  const container_name = useInput(editData.container_name || "", {
+    required: true,
+  });
+
   const [formError, setFormError] = useState({});
 
   const buttonText = editPage ? "save" : "add item";
   const formTitle = editPage ? "Edit Item" : "Add Item";
+
+  useEffect(() => {
+    if (editPage && editData && products && productType && unitsOfMeasure) {
+      let selectedProduct = "";
+      products.forEach((obj) => {
+        if (obj.url === editData.product[0]) {
+          selectedProduct = obj;
+        }
+      });
+      if (selectedProduct) {
+        onProductChange(selectedProduct);
+      }
+      setContainerUnits(editData.number_of_units);
+      setItemWeight(editData.gross_weight);
+      setItemValue(editData.value);
+    }
+  }, [editPage, editData, products, productType, unitsOfMeasure]);
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
@@ -108,9 +149,21 @@ function AddItems({
     const itemFormValue = {
       item_type: item_type.value,
       name: item_name.value,
-      value: item_value.value,
-      gross_weight: item_weight.value,
-      unit_of_measure: unit_of_measure.value,
+      value: item_value,
+      gross_weight: item_weight,
+      unit_of_measure: unit_of_measure,
+      product_weight_unit_of_measure: product_uom,
+      number_of_units: units,
+      ean: ean,
+      upc: upc,
+      gtin: gtin,
+      bin_id: bin_id,
+      batch_run_id: batch_id,
+      paper_tag_number: paper_tag_no,
+      product_weight: product_weight,
+      // container_name: container_name,
+      product_value: product_value,
+      product: [product_url],
       ...(editPage && editData && { id: editData.id }),
     };
     if (editPage) {
@@ -148,11 +201,52 @@ function AddItems({
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!item_type.value || !item_name.value) return true;
+    if (!item_type.value || !item_name.value || !product) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
     return errorExists;
+  };
+
+  const onProductChange = (value) => {
+    setProduct(value);
+    setProductUrl(value.url);
+    setProductDesc(value.description);
+    setProductValue(value.value);
+    setBinId(value.bin_id);
+    setBatchId(value.batch_run_id);
+    setEan(value.ean);
+    setUpc(value.upc);
+    setGtin(value.gtin);
+    setPaperTag(value.paper_tag_number);
+    setProductWeight(value.gross_weight);
+    setContainerUnits(1);
+    setItemWeight(value.gross_weight);
+    setItemValue(value.value);
+    if (unitsOfMeasure && unitsOfMeasure.length) {
+      unitsOfMeasure.forEach((unit) => {
+        if (unit.url === value.unit_of_measure) {
+          setProductUom(value.unit_of_measure);
+          setProductUomName(unit.name);
+          setUomContainer(value.unit_of_measure);
+        }
+      });
+    }
+    if (productType && productType.length) {
+      productType.forEach((type) => {
+        if (type.url === value.product_type) {
+          setProductType(type.name);
+        }
+      });
+    }
+  };
+
+  const onNumberOfUnitsChange = (e) => {
+    let previousValue = product_value;
+    let previousWeight = product_weight;
+    setContainerUnits(e.target.value);
+    setItemValue(e.target.value * previousValue);
+    setItemWeight(e.target.value * previousWeight);
   };
 
   const theme = useTheme();
@@ -188,36 +282,7 @@ function AddItems({
                   {...item_name.bind}
                 />
               </Grid>
-              <Grid item item xs={12}>
-                <TextField
-                  variant="filled"
-                  disabled
-                  margin="normal"
-                  fullWidth
-                  multiline
-                  rows={4}
-                  id="item_desc"
-                  label="Item Description"
-                  name="item_desc"
-                  autoComplete="item_desc"
-                  {...item_desc.bind}
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item item xs={12} md={6} sm={6}>
-                <TextField
-                  variant="filled"
-                  disabled
-                  margin="normal"
-                  fullWidth
-                  id="units"
-                  type="number"
-                  label="Number of Units"
-                  {...units.bind}
-                ></TextField>
-              </Grid>
-              <Grid item xs={12} md={6} sm={6}>
+              <Grid item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -249,7 +314,216 @@ function AddItems({
                       ))}
                 </TextField>
               </Grid>
+              {/* <Grid item item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  multiline
+                  rows={4}
+                  id="item_desc"
+                  label="Container Description"
+                  name="item_desc"
+                  autoComplete="item_desc"
+                  {...item_desc.bind}
+                />
+              </Grid> */}
+            </Grid>
+            <Card variant="outlined" className={classes.cardItems}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Product Info
+                </Typography>
+                <Grid container spacing={isDesktop ? 2 : 0}>
+                  <Grid item xs={12}>
+                    <Autocomplete
+                      id="products"
+                      options={products || []}
+                      value={product}
+                      onChange={(event, newValue) => {
+                        onProductChange(newValue);
+                      }}
+                      getOptionLabel={(option) => option && option.name}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          required
+                          label="Product"
+                          variant="outlined"
+                          margin="normal"
+                          fullWidth
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  <Grid item item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      multiline
+                      rows={4}
+                      id="product_desc"
+                      label="Product Description"
+                      name="product_desc"
+                      autoComplete="product_desc"
+                      value={product_desc}
+                    />
+                  </Grid>
+                  <Grid item item xs={12} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="product_type"
+                      label="Product Type"
+                      value={product_type}
+                    ></TextField>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      type="number"
+                      id="product_value"
+                      label="Product Value"
+                      value={product_value}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">$</InputAdornment>
+                        ),
+                      }}
+                    ></TextField>
+                  </Grid>
+                  <Grid item item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      type="number"
+                      id="product_weight"
+                      label="Product Weight"
+                      value={product_weight}
+                    ></TextField>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      // select
+                      id="product_uom"
+                      label="Units of Measure"
+                      value={product_uom_name}
+                    >
+                      {/* {unitsOfMeasure &&
+                        unitsOfMeasure
+                          .sort(compareSort("name"))
+                          .map((item, index) => (
+                            <MenuItem
+                              key={`${item.id}${item.name}`}
+                              value={item.url}
+                            >
+                              {item.name}
+                            </MenuItem>
+                          ))} */}
+                    </TextField>
+                  </Grid>
+                </Grid>
+                <Grid container spacing={isDesktop ? 2 : 0}>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="gtin"
+                      label="GTIN"
+                      name="gtin"
+                      autoComplete="gtin"
+                      value={gtin}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="upc"
+                      label="UPC"
+                      name="upc"
+                      autoComplete="upc"
+                      value={upc}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="ean"
+                      label="EAN"
+                      name="ean"
+                      autoComplete="ean"
+                      value={ean}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="paper_tag_no"
+                      label="Paper Tag Number"
+                      name="paper_tag_no"
+                      autoComplete="paper_tag_no"
+                      value={paper_tag_no}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="batch_id"
+                      label="Batch/Run ID"
+                      name="batch_id"
+                      autoComplete="batch_id"
+                      value={batch_id}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="bin_id"
+                      label="BIN ID"
+                      name="bin_id"
+                      autoComplete="bin_id"
+                      value={bin_id}
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+
+            <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item item xs={12} md={6} sm={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="units"
+                  type="number"
+                  label="# of Units"
+                  value={units}
+                  onChange={(e) => onNumberOfUnitsChange(e)}
+                ></TextField>
+              </Grid>
+
+              <Grid item xs={12} md={6} sm={6}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -257,7 +531,23 @@ function AddItems({
                   type="number"
                   id="item_value"
                   label="Item Value"
-                  {...item_value.bind}
+                  value={item_value}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  }}
+                ></TextField>
+              </Grid>
+              <Grid item item xs={12} md={6} sm={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  type="number"
+                  id="item_weight"
+                  label="Item Weight"
+                  value={item_weight}
                 ></TextField>
               </Grid>
               <Grid item xs={12} md={6} sm={6}>
@@ -265,15 +555,18 @@ function AddItems({
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  required
                   id="unit_of_measure"
                   select
                   label="Units of Measure"
-                  {...unit_of_measure.bind}
+                  value={unit_of_measure}
+                  onChange={(e) => setUomContainer(e.target.value)}
                 >
                   <MenuItem value={""}>Select</MenuItem>
                   {unitsOfMeasure &&
                     unitsOfMeasure
+                      .filter((obj) => {
+                        return obj.supported_class === "Mass and Weight";
+                      })
                       .sort(compareSort("name"))
                       .map((item, index) => (
                         <MenuItem
@@ -285,102 +578,7 @@ function AddItems({
                       ))}
                 </TextField>
               </Grid>
-              <Grid item item xs={12} md={6} sm={6}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  type="number"
-                  id="item_weight"
-                  label="Item Weight"
-                  {...item_weight.bind}
-                ></TextField>
-              </Grid>
             </Grid>
-            <Card variant="outlined" className={classes.cardItems}>
-              <CardContent>
-                <Grid container spacing={isDesktop ? 2 : 0}>
-                  <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="filled"
-                      disabled
-                      margin="normal"
-                      fullWidth
-                      id="gtin"
-                      label="GTIN"
-                      name="gtin"
-                      autoComplete="gtin"
-                      {...gtin.bind}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="filled"
-                      disabled
-                      margin="normal"
-                      fullWidth
-                      id="upc"
-                      label="UPC"
-                      name="upc"
-                      autoComplete="upc"
-                      {...upc.bind}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="filled"
-                      disabled
-                      margin="normal"
-                      fullWidth
-                      id="ean"
-                      label="EAN"
-                      name="ean"
-                      autoComplete="ean"
-                      {...ean.bind}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="filled"
-                      disabled
-                      margin="normal"
-                      fullWidth
-                      id="paper_tag_no"
-                      label="Paper Tag Number"
-                      name="paper_tag_no"
-                      autoComplete="paper_tag_no"
-                      {...paper_tag_no.bind}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="filled"
-                      disabled
-                      margin="normal"
-                      fullWidth
-                      id="batch_id"
-                      label="Batch/Run ID"
-                      name="batch_id"
-                      autoComplete="batch_id"
-                      {...batch_id.bind}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="filled"
-                      disabled
-                      margin="normal"
-                      fullWidth
-                      id="bin_id"
-                      label="BIN ID"
-                      name="bin_id"
-                      autoComplete="bin_id"
-                      {...bin_id.bind}
-                    />
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
 
             <Grid container spacing={isDesktop ? 3 : 0} justify="center">
               <Grid item xs={12} sm={4}>

@@ -28,6 +28,9 @@ import {
   EDIT_CUSTODY,
   EDIT_CUSTODY_SUCCESS,
   EDIT_CUSTODY_FAILURE,
+  GET_CUSTODIAN_OPTIONS,
+  GET_CUSTODIAN_OPTIONS_SUCCESS,
+  GET_CUSTODIAN_OPTIONS_FAILURE,
 } from "../actions/custodian.actions";
 
 const initialState = {
@@ -37,6 +40,7 @@ const initialState = {
   error: null,
   custodianTypeList: null,
   contactInfo: null,
+  custodianOptions: null,
 };
 
 // Reducer
@@ -245,6 +249,30 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
+        error: action.error,
+      };
+    case GET_CUSTODIAN_OPTIONS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        custodianOptions: null,
+        error: null,
+      };
+    case GET_CUSTODIAN_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodianOptions: action.data,
+        error: null,
+      };
+    case GET_CUSTODIAN_OPTIONS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        userOptions: null,
         error: action.error,
       };
     default:

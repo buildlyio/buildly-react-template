@@ -21,6 +21,12 @@ import {
   GET_ORGANIZATION_FAILURE,
   GET_ORGANIZATION_SUCCESS,
   getOrganization,
+  RESET_PASSWORD,
+  RESET_PASSWORD_CONFIRM,
+  RESET_PASSWORD_SUCCESS,
+  RESET_PASSWORD_FAILURE,
+  RESET_PASSWORD_CONFIRM_SUCCESS,
+  RESET_PASSWORD_CONFIRM_FAILURE,
 } from "../actions/authuser.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -213,6 +219,89 @@ function* getOrganizationData(payload) {
   }
 }
 
+function* resetPassword(payload) {
+  let { history } = payload;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}coreuser/reset_password/`,
+      payload.data
+    );
+    console.log("data", data);
+    yield [
+      yield put({ type: RESET_PASSWORD_SUCCESS, data: data.data }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: data.data.detail,
+        })
+      ),
+      // yield call(history.push, routes.LOGIN),
+    ];
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Email not sent",
+        })
+      ),
+      yield put({ type: RESET_PASSWORD_FAILURE, error: "Email not sent" }),
+    ];
+  }
+}
+
+function* resetPasswordConfirm(payload) {
+  let { history } = payload;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}coreuser/reset_password_confirm/`,
+      payload.data
+    );
+    console.log("data", data);
+    yield [
+      yield put({ type: RESET_PASSWORD_CONFIRM_SUCCESS, data: data.data }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: data.data.detail,
+        })
+      ),
+      yield call(history.push, routes.LOGIN),
+    ];
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Password Rest Failed",
+        })
+      ),
+      yield put({
+        type: RESET_PASSWORD_CONFIRM_FAILURE,
+        error: "Password Rest Failed",
+      }),
+    ];
+  }
+}
+
+function* watchResetPassword() {
+  yield takeLatest(RESET_PASSWORD, resetPassword);
+}
+
+function* watchConfirmResetPassword() {
+  yield takeLatest(RESET_PASSWORD_CONFIRM, resetPasswordConfirm);
+}
+
 function* watchLogout() {
   yield takeLatest(LOGOUT, logout);
 }
@@ -250,5 +339,7 @@ export default function* authSaga() {
     watchInvite(),
     watchGetUser(),
     watchGetOrganization(),
+    watchResetPassword(),
+    watchConfirmResetPassword(),
   ]);
 }

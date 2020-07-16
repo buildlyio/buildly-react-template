@@ -1,6 +1,14 @@
 import { numberWithCommas } from "../../utils/utilMethods";
 import { getFormattedCustodyRows } from "../Shipment/ShipmentConstants";
 
+export const DASHBOARD_MAP_TOOLTIP =
+  "Start and End Locations of custodians which have current custody of the shipments that are currently Enroute.";
+
+export const DASHBOARD_RECALL_TOOLTIP =
+  "Shipments which are either recalled or have violations like Temperature, Humidity and Delay";
+
+export const DASHBOARD_DELAY_TOOLTIP = "Shipments which are delayed";
+
 export const recallColumns = [
   { id: "shipment_uuid", label: "Shipment ID", minWidth: 180 },
   {

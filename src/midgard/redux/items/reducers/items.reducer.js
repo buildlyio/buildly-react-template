@@ -19,6 +19,15 @@ import {
   GET_UNITS_OF_MEASURE,
   GET_UNITS_OF_MEASURE_SUCCESS,
   GET_UNITS_OF_MEASURE_FAILURE,
+  GET_ITEM_OPTIONS,
+  GET_ITEM_OPTIONS_SUCCESS,
+  GET_ITEM_OPTIONS_FAILURE,
+  GET_PRODUCTS,
+  GET_PRODUCTS_SUCCESS,
+  GET_PRODUCTS_FAILURE,
+  GET_PRODUCTS_TYPE,
+  GET_PRODUCTS_TYPE_SUCCESS,
+  GET_PRODUCTS_TYPE_FAILURE,
 } from "../actions/items.actions";
 
 const initialState = {
@@ -27,6 +36,9 @@ const initialState = {
   itemData: null,
   error: null,
   itemTypeList: null,
+  itemOptions: null,
+  products: null,
+  productType: null,
 };
 
 // Reducer
@@ -168,6 +180,73 @@ export default (state = initialState, action) => {
         unitsOfMeasure: action.data,
       };
     case GET_UNITS_OF_MEASURE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case GET_ITEM_OPTIONS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        itemOptions: null,
+        error: null,
+      };
+    case GET_ITEM_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        itemOptions: action.data,
+        error: null,
+      };
+    case GET_ITEM_OPTIONS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        itemOptions: null,
+        error: action.error,
+      };
+    case GET_PRODUCTS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_PRODUCTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        products: action.data,
+      };
+    case GET_PRODUCTS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_PRODUCTS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_PRODUCTS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        productType: action.data,
+      };
+    case GET_PRODUCTS_TYPE_FAILURE:
       return {
         ...state,
         loading: false,

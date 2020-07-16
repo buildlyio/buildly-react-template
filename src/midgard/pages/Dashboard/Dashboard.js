@@ -40,8 +40,12 @@ import {
   recallColumns,
   delayColumns,
   getFormattedShipmentRow,
+  DASHBOARD_MAP_TOOLTIP,
+  DASHBOARD_RECALL_TOOLTIP,
+  DASHBOARD_DELAY_TOOLTIP,
 } from "./DashboardConstants";
 import Loader from "../../components/Loader/Loader";
+import CustomizedTooltips from "../../components/ToolTip/ToolTip";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -64,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
   tileHeading: {
     flex: 1,
     padding: "8px",
+    display: "flex",
   },
 }));
 
@@ -99,9 +104,9 @@ function Dashboard(props) {
     if (shipmentData === null) {
       dispatch(getShipmentDetails());
     }
-    if (!shipmentFlag) {
-      dispatch(getShipmentFlag());
-    }
+    // if (!shipmentFlag) {
+    //   dispatch(getShipmentFlag());
+    // }
     if (custodianData === null) {
       dispatch(getCustodians());
       dispatch(getCustodianType());
@@ -282,6 +287,7 @@ function Dashboard(props) {
                     className={classes.tileHeading}
                   >
                     Delayed Shipments
+                    <CustomizedTooltips toolTipText={DASHBOARD_DELAY_TOOLTIP} />
                   </Typography>
                   <Hidden smDown>
                     <IconButton
@@ -306,6 +312,9 @@ function Dashboard(props) {
                     className={classes.tileHeading}
                   >
                     Recalls and Violations
+                    <CustomizedTooltips
+                      toolTipText={DASHBOARD_RECALL_TOOLTIP}
+                    />
                   </Typography>
                   <Hidden smDown>
                     <IconButton
@@ -330,6 +339,7 @@ function Dashboard(props) {
                 variant="h5"
               >
                 Current Shipments
+                <CustomizedTooltips toolTipText={DASHBOARD_MAP_TOOLTIP} />
               </Typography>
               <Hidden smDown>
                 <IconButton

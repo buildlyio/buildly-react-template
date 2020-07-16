@@ -33,6 +33,12 @@ import {
   GET_SENSORS_TYPE,
   GET_SENSORS_TYPE_SUCCESS,
   GET_SENSORS_TYPE_FAILURE,
+  GET_GATEWAY_OPTIONS,
+  GET_GATEWAY_OPTIONS_SUCCESS,
+  GET_GATEWAY_OPTIONS_FAILURE,
+  GET_SENSOR_OPTIONS,
+  GET_SENSOR_OPTIONS_SUCCESS,
+  GET_SENSOR_OPTIONS_FAILURE,
 } from "../actions/sensorsGateway.actions";
 
 const initialState = {
@@ -43,6 +49,8 @@ const initialState = {
   gatewayData: null,
   sensorData: null,
   sensorTypeList: null,
+  gatewayOptions: null,
+  sensorOptions: null,
 };
 
 // Reducer
@@ -285,6 +293,52 @@ export default (state = initialState, action) => {
         sensorTypeList: action.data,
       };
     case GET_SENSORS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case GET_GATEWAY_OPTIONS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        gatewayOptions: null,
+        error: null,
+      };
+    case GET_GATEWAY_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        gatewayOptions: action.data,
+        error: null,
+      };
+    case GET_GATEWAY_OPTIONS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case GET_SENSOR_OPTIONS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        sensorOptions: null,
+        error: null,
+      };
+    case GET_SENSOR_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorOptions: action.data,
+        error: null,
+      };
+    case GET_SENSOR_OPTIONS_FAILURE:
       return {
         ...state,
         loading: false,

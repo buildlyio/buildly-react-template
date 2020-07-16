@@ -26,8 +26,10 @@ import {
   GET_DASHBOARD_ITEMS,
   GET_DASHBOARD_ITEMS_SUCCESS,
   GET_DASHBOARD_ITEMS_FAILURE,
+  getShipmentFlag,
 } from "../actions/shipment.actions";
 import { compareSort } from "../../../utils/utilMethods";
+import configureStore from "../../store";
 
 const shipmentApiEndPoint = "shipment/";
 
@@ -40,6 +42,9 @@ function* getShipmentList() {
       null,
       true
     );
+    if (data && data.data) {
+      yield put(getShipmentFlag());
+    }
     console.log("data", data);
     yield [yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data })];
   } catch (error) {
@@ -442,6 +447,7 @@ function* getShipmentFlagList() {
       true
     );
     let sortedData = data.data.sort(compareSort("name"));
+
     yield [yield put({ type: GET_SHIPMENT_FLAG_SUCCESS, data: sortedData })];
   } catch (error) {
     console.log("error", error);

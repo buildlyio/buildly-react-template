@@ -1,8 +1,9 @@
-import { http } from 'midgard-core';
-import { oauthService } from 'midgard/modules/oauth/oauth.service';
+import { http } from "midgard-core";
+import { oauthService } from "midgard/modules/oauth/oauth.service";
 
 export const httpService = {
-  makeRequest
+  makeRequest,
+  makeOptionsRequest,
 };
 
 /**
@@ -19,23 +20,45 @@ function makeRequest(method, url, body, useJwt, contentType, responseType) {
   let token;
   let tokenType;
   if (useJwt) {
-    tokenType = 'JWT';
+    tokenType = "JWT";
     token = oauthService.getJwtToken();
   } else {
-    tokenType = 'Bearer';
+    tokenType = "Bearer";
     token = oauthService.getAccessToken();
   }
   const headers = {
-    'Authorization': `${tokenType} ${token}`,
-    'Content-Type': contentType ? contentType : 'application/json'
+    Authorization: `${tokenType} ${token}`,
+    "Content-Type": contentType ? contentType : "application/json",
   };
   const options = {
     method: method,
     data: body,
     headers: headers,
     returnPromise: true,
-    responseType: responseType ? responseType : null
+    responseType: responseType ? responseType : null,
   };
   return http.request(url, options);
 }
 
+function makeOptionsRequest(method, url, useJwt) {
+  let token;
+  let tokenType;
+  if (useJwt) {
+    tokenType = "JWT";
+    token = oauthService.getJwtToken();
+  }
+  const headers = {
+    Authorization: `${tokenType} ${token}`,
+    "Content-Type": "application/json",
+  };
+  let body = {
+    jwt_iss: "Buildly",
+  };
+  const options = {
+    method: method,
+    body: JSON.stringify(body),
+    headers: headers,
+    returnPromise: true,
+  };
+  return fetch(url, options);
+}

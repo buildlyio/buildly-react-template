@@ -17,6 +17,7 @@ import {
   getFormattedRow,
   getFormattedCustodyRows,
   svgIcon,
+  MAP_TOOLTIP,
 } from "./ShipmentConstants";
 import ShipmentList from "./components/ShipmentList";
 import { shipmentMock } from "../../utils/mock";
@@ -51,10 +52,15 @@ import {
   deleteShipment,
   getShipmentFlag,
   FILTER_SHIPMENT_SUCCESS,
+  GET_SHIPMENT_OPTIONS_SUCCESS,
+  GET_SHIPMENT_OPTIONS_FAILURE,
 } from "../../redux/shipment/actions/shipment.actions";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import AlertInfo from "./AlertInfo";
 import Loader from "../../components/Loader/Loader";
+import CustomizedTooltips from "../../components/ToolTip/ToolTip";
+import { httpService } from "../../modules/http/http.service";
+import { environment } from "../../../../environment";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -105,9 +111,9 @@ function Shipment(props) {
     if (shipmentData === null) {
       dispatch(getShipmentDetails());
     }
-    if (!shipmentFlag) {
-      dispatch(getShipmentFlag());
-    }
+    // if (!shipmentFlag) {
+    //   dispatch(getShipmentFlag());
+    // }
     if (custodianData === null) {
       dispatch(getCustodians());
       dispatch(getCustodianType());
@@ -131,6 +137,20 @@ function Shipment(props) {
       dispatch(getSensors());
       dispatch(getSensorType());
     }
+    httpService
+      .makeOptionsRequest(
+        "options",
+        `${environment.API_URL}shipment/shipment/`,
+        true
+      )
+      .then((response) => response.json())
+      .then((res) => {
+        console.log("ress", res);
+        dispatch({ type: GET_SHIPMENT_OPTIONS_SUCCESS, data: res });
+      })
+      .catch((err) => {
+        dispatch({ type: GET_SHIPMENT_OPTIONS_FAILURE, error: err });
+      });
     return function cleanup() {
       dispatch({ type: FILTER_SHIPMENT_SUCCESS, data: undefined });
     };
@@ -282,6 +302,7 @@ function Shipment(props) {
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
+            <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
             <Hidden smDown>
               <IconButton
                 className={classes.menuButton}
