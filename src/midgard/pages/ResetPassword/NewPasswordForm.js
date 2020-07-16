@@ -13,11 +13,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useInput } from "../../hooks/useInput";
-import {
-  register,
-  login,
-  confirmResetPassword,
-} from "../../redux/authuser/actions/authuser.actions";
+import { confirmResetPassword } from "../../redux/authuser/actions/authuser.actions";
 import Grid from "@material-ui/core/Grid";
 import { validators } from "../../utils/validators";
 import logo from "../../../assets/tp-logo.png";
@@ -56,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function NewPassword({ dispatch, loading, history, loaded, error }) {
+function NewPassword({ dispatch, loading, history, loaded, error, location }) {
   const classes = useStyles();
   const password = useInput("", { required: true });
   const re_password = useInput("", {
@@ -68,18 +64,27 @@ function NewPassword({ dispatch, loading, history, loaded, error }) {
   const [formError, setFormError] = useState({});
 
   /**
-   * Submit the form to the backend and attempts to authenticate
+   * Submit the form to the backend and attempts to change password
    * @param {Event} event the default submit event
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    const registerFormValue = {
-      new_password1: password.value,
-      new_password2: re_password,
-      uid: "",
-      token: "",
-    };
-    dispatch(confirmResetPassword(registerFormValue, history));
+    if (location.pathname.includes(routes.RESET_PASSWORD_CONFIRM)) {
+      let restPath = location.pathname.substring(
+        location.pathname.indexOf(routes.RESET_PASSWORD_CONFIRM) + 1,
+        location.pathname.lastIndexOf("/")
+      );
+      let restPathArr = restPath.split("/");
+      let uid = restPathArr[1];
+      let token = restPathArr[2];
+      const registerFormValue = {
+        new_password1: password.value,
+        new_password2: re_password.value,
+        uid: uid,
+        token: token,
+      };
+      dispatch(confirmResetPassword(registerFormValue, history));
+    }
   };
 
   /**

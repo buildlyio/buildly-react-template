@@ -328,7 +328,10 @@ function* resetPasswordCheck(payload) {
     if (data.data && data.data.success) {
       yield [
         yield put({ type: RESET_PASSWORD_CHECK_SUCCESS, data: data.data }),
-        yield call(history.push, routes.RESET_PASSWORD_CONFIRM),
+        yield call(
+          history.push,
+          `${routes.RESET_PASSWORD_CONFIRM}/${payload.data.uid}/${payload.data.token}/`
+        ),
       ];
     } else {
       yield [
