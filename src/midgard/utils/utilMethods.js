@@ -60,3 +60,15 @@ export const searchFilter = (payload) => {
   });
   return data;
 };
+
+export const checkForGlobalAdmin = (userData) => {
+  let isGlobalAdmin = false;
+  if (userData && userData.core_groups) {
+    userData.core_groups.map((group) => {
+      if (group.is_global) {
+        isGlobalAdmin = true;
+      }
+    });
+  }
+  return isGlobalAdmin;
+};
