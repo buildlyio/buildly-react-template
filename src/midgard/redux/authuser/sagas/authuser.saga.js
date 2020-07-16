@@ -27,6 +27,9 @@ import {
   RESET_PASSWORD_FAILURE,
   RESET_PASSWORD_CONFIRM_SUCCESS,
   RESET_PASSWORD_CONFIRM_FAILURE,
+  RESET_PASSWORD_CHECK,
+  RESET_PASSWORD_CHECK_SUCCESS,
+  RESET_PASSWORD_CHECK_FAILURE,
 } from "../actions/authuser.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -229,17 +232,33 @@ function* resetPassword(payload) {
       payload.data
     );
     console.log("data", data);
-    yield [
-      yield put({ type: RESET_PASSWORD_SUCCESS, data: data.data }),
-      yield put(
-        showAlert({
-          type: "success",
-          open: true,
-          message: data.data.detail,
-        })
-      ),
-      // yield call(history.push, routes.LOGIN),
-    ];
+    if (data.data && data.data.count > 0) {
+      yield [
+        yield put({ type: RESET_PASSWORD_SUCCESS, data: data.data }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: data.data.detail,
+          })
+        ),
+        // yield call(history.push, routes.LOGIN),
+      ];
+    } else {
+      yield [
+        yield put(
+          showAlert({
+            type: "error",
+            open: true,
+            message: "Email does not exist. Please enter a vaild email.",
+          })
+        ),
+        yield put({
+          type: RESET_PASSWORD_FAILURE,
+          error: "Email does not exist. Please enter a vaild email.",
+        }),
+      ];
+    }
   } catch (error) {
     console.log("error", error);
     yield [
@@ -247,10 +266,13 @@ function* resetPassword(payload) {
         showAlert({
           type: "error",
           open: true,
-          message: "Email not sent",
+          message: "Email not sent due to some error!",
         })
       ),
-      yield put({ type: RESET_PASSWORD_FAILURE, error: "Email not sent" }),
+      yield put({
+        type: RESET_PASSWORD_FAILURE,
+        error: "Email not sent due to some error!",
+      }),
     ];
   }
 }
@@ -292,6 +314,62 @@ function* resetPasswordConfirm(payload) {
       }),
     ];
   }
+}
+
+function* resetPasswordCheck(payload) {
+  let { history } = payload;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}coreuser/reset_password_check/`,
+      payload.data
+    );
+    if (data.data && data.data.success) {
+      yield [
+        yield put({ type: RESET_PASSWORD_CHECK_SUCCESS, data: data.data }),
+        yield call(
+          history.push,
+          `${routes.RESET_PASSWORD_CONFIRM}/${payload.data.uid}/${payload.data.token}/`
+        ),
+      ];
+    } else {
+      yield [
+        yield put(
+          showAlert({
+            type: "error",
+            open: true,
+            message: "Not Valid UID or Token.Try sending mail again",
+          })
+        ),
+        yield put({
+          type: RESET_PASSWORD_CHECK_FAILURE,
+          error: "Not Valid UID or Token.Try sending mail again",
+        }),
+        yield call(history.push, routes.LOGIN),
+      ];
+    }
+    console.log("data", data);
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Password Rest Failed",
+        })
+      ),
+      yield put({
+        type: RESET_PASSWORD_CHECK_FAILURE,
+        error: "Password Rest Failed",
+      }),
+    ];
+  }
+}
+
+function* watchResetPasswordCheck() {
+  yield takeLatest(RESET_PASSWORD_CHECK, resetPasswordCheck);
 }
 
 function* watchResetPassword() {
@@ -341,5 +419,6 @@ export default function* authSaga() {
     watchGetOrganization(),
     watchResetPassword(),
     watchConfirmResetPassword(),
+    watchResetPasswordCheck(),
   ]);
 }

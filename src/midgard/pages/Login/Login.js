@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -13,7 +13,10 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useInput } from "../../hooks/useInput";
-import { login } from "../../redux/authuser/actions/authuser.actions";
+import {
+  login,
+  resetPasswordCheck,
+} from "../../redux/authuser/actions/authuser.actions";
 import { validators } from "../../utils/validators";
 import logo from "../../../assets/tp-logo.png";
 import { routes } from "../../routes/routesConstants";
@@ -72,6 +75,24 @@ function Login({ dispatch, loading, history }) {
   const username = useInput("", { required: true });
   const password = useInput("", { required: true });
   const [error, setError] = useState({});
+
+  useEffect(() => {
+    if (location.pathname.includes(routes.RESET_PASSWORD_CONFIRM)) {
+      let restPath = location.pathname.substring(
+        location.pathname.indexOf(routes.RESET_PASSWORD_CONFIRM) + 1,
+        location.pathname.lastIndexOf("/")
+      );
+      let restPathArr = restPath.split("/");
+      let uid = restPathArr[1];
+      let token = restPathArr[2];
+      let resetCheckValues = {
+        uid: uid,
+        token: token,
+      };
+
+      dispatch(resetPasswordCheck(resetCheckValues, history));
+    }
+  }, []);
 
   /**
    * Submit the form to the backend and attempts to authenticate

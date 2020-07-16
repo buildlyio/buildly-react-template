@@ -1,16 +1,16 @@
 // react library imports
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 import styled from "styled-components";
 import { colors } from "colors";
-
-// react user imports
 import NavBar from "midgard/layout/NavBar/NavBar";
 import TopBar from "midgard/layout/TopBar/TopBar";
 import UserManagement from "midgard/pages/UserManagement/UserManagement";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 
+// react user imports
 import { user, UserContext } from "midgard/context/User.context";
 import { subNav, SubNavContext } from "midgard/context/SubNav.context";
 import { routes } from "../../routes/routesConstants";
@@ -20,6 +20,7 @@ import Items from "../../pages/Items/Items";
 import SensorsGateway from "../../pages/SensorsGateway/SensorsGateway";
 import Shipment from "../../pages/Shipment/Shipment";
 import Dashboard from "../../pages/Dashboard/Dashboard";
+import { checkForGlobalAdmin } from "../../utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,12 +39,19 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Container for the app layout when the user is authenticated.
  */
-function ContainerDashboard({ location, history }) {
+function ContainerDashboard({ location, history, data }) {
   const [navHidden, setNavHidden] = useState(false);
   const routeItems = [];
   const classes = useStyles();
+
   //entryPointForGulpStart
   //entryPointForGulpEnd
+
+  let userData = "";
+
+  if (data && data.data) {
+    userData = data.data;
+  }
 
   let subNavItems = subNav;
   if (location.pathname.includes("profile")) {
@@ -70,6 +78,7 @@ function ContainerDashboard({ location, history }) {
               setNavHidden={setNavHidden}
               location={location}
               history={history}
+              userData={userData}
             />
           )}
         </SubNavContext.Provider>
@@ -80,7 +89,9 @@ function ContainerDashboard({ location, history }) {
             render={() => <Redirect to={routes.DASHBOARD} />}
           />
           <Route path={routes.DASHBOARD} component={Dashboard} />
-          <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
+          {checkForGlobalAdmin(userData) && (
+            <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
+          )}
           <Route path={routes.CUSTODIANS} component={Custodians} />
           <Route path={routes.MY_ACCOUNT} component={MyAccount} />
           <Route path={routes.ITEMS} component={Items} />
@@ -93,4 +104,9 @@ function ContainerDashboard({ location, history }) {
   );
 }
 
-export default ContainerDashboard;
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.authReducer,
+});
+
+export default connect(mapStateToProps)(ContainerDashboard);

@@ -10,6 +10,7 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { AppContext } from "midgard/context/App.context";
 import { NAVIGATION_ITEMS } from "./NavBarConstants";
 import { isMobile } from "../../utils/mediaQuery";
+import { checkForGlobalAdmin } from "../../utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -55,13 +56,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const getFilteredNavItems = (userData, navItems) => {
+  let isGlobalAdmin = checkForGlobalAdmin(userData);
+
+  console.log("isGlobalAdmin", isGlobalAdmin);
+  if (isGlobalAdmin) return navItems;
+  else
+    return navItems.filter((nav) => {
+      return nav.id !== "user_management";
+    });
+};
+
 /**
  * Component for the side navigation.
  */
-function NavBar({ navHidden, setNavHidden, location, history }) {
+function NavBar({ navHidden, setNavHidden, location, history, userData }) {
   const classes = useStyles();
   const theme = useTheme();
   let isMobileDevice = isMobile();
+
+  let navItmes = getFilteredNavItems(userData, NAVIGATION_ITEMS);
 
   const handleListItemClick = (event, index, item) => {
     if (isMobileDevice) setNavHidden(!navHidden);
@@ -71,7 +85,7 @@ function NavBar({ navHidden, setNavHidden, location, history }) {
     <div>
       <div className={classes.toolbar} />
       <List>
-        {NAVIGATION_ITEMS.map((items, index) => (
+        {navItmes.map((items, index) => (
           <React.Fragment key={`${items.id}${index}`}>
             <NavLink
               to={items.link}
