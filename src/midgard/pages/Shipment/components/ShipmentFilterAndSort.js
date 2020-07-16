@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     background: "#383636",
     width: "100%",
     display: "flex",
+    flexWrap: "wrap",
     minHeight: "40px",
     alignItems: "center",
     padding: theme.spacing(1),
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "500px",
     textTransform: "Capitalize",
     padding: "3px 16px",
-    margin: theme.spacing(0, 2),
+    margin: theme.spacing(1, 2),
   },
 }));
 
