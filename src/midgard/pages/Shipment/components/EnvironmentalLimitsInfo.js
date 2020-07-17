@@ -9,11 +9,18 @@ import Grid from "@material-ui/core/Grid";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Select from "@material-ui/core/Select";
-import { Card, CardContent, Typography, Paper } from "@material-ui/core";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Paper,
+  InputAdornment,
+} from "@material-ui/core";
 import RangeSlider from "../../../components/Slider/RangeSlider";
 import { validators } from "../../../utils/validators";
 import { editShipment } from "../../../redux/shipment/actions/shipment.actions";
 import { routes } from "../../../routes/routesConstants";
+import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 
 const useStyles = makeStyles((theme) => ({
   slider: {
@@ -79,6 +86,7 @@ function EnvironmentalLimitsInfo(props) {
     redirectTo,
     handleCancel,
     location,
+    shipmentOptions,
   } = props;
   const theme = useTheme();
   const classes = useStyles();
@@ -124,6 +132,15 @@ function EnvironmentalLimitsInfo(props) {
   const [high_humid_val, changeHighHumidVal] = useState(
     (shipmentFormData && shipmentFormData.max_warning_humidity) || 75
   );
+
+  const [shipmentMetaData, setShipmentMetaData] = useState({});
+
+  useEffect(() => {
+    console.log("shipmentOptions", shipmentOptions);
+    if (shipmentOptions && shipmentOptions.actions) {
+      setShipmentMetaData(shipmentOptions.actions.POST);
+    }
+  }, [shipmentOptions]);
 
   const handleTempMinMaxChange = (e, value) => {
     setMinMaxTempValue(value);
@@ -179,7 +196,7 @@ function EnvironmentalLimitsInfo(props) {
         <Grid item xs={12} md={6} sm={6}>
           <Card variant="outlined">
             <Typography className={classes.boxHeading} variant="body2">
-              Temperature Settings(°F)
+              Temperature Settings
             </Typography>
             <CardContent>
               <Grid container spacing={2}>
@@ -193,6 +210,24 @@ function EnvironmentalLimitsInfo(props) {
                     name="max_temp_val"
                     autoComplete="max_temp_val"
                     value={max_temp_val}
+                    InputProps={
+                      shipmentMetaData["max_excursion_temp"] &&
+                      shipmentMetaData["max_excursion_temp"].help_text && {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {shipmentMetaData["max_excursion_temp"]
+                              .help_text && (
+                              <CustomizedTooltips
+                                toolTipText={
+                                  shipmentMetaData["max_excursion_temp"]
+                                    .help_text
+                                }
+                              />
+                            )}
+                          </InputAdornment>
+                        ),
+                      }
+                    }
                   />
                   <TextField
                     variant="outlined"
@@ -204,6 +239,22 @@ function EnvironmentalLimitsInfo(props) {
                     autoComplete="high_temp_val"
                     value={high_temp_val}
                     // {...last_known_location.bind}
+                    InputProps={
+                      shipmentMetaData["max_warning_temp"] &&
+                      shipmentMetaData["max_warning_temp"].help_text && {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {shipmentMetaData["max_warning_temp"].help_text && (
+                              <CustomizedTooltips
+                                toolTipText={
+                                  shipmentMetaData["max_warning_temp"].help_text
+                                }
+                              />
+                            )}
+                          </InputAdornment>
+                        ),
+                      }
+                    }
                   />
                   <TextField
                     variant="outlined"
@@ -214,6 +265,22 @@ function EnvironmentalLimitsInfo(props) {
                     name="low_temp_val"
                     autoComplete="low_temp_val"
                     value={low_temp_val}
+                    InputProps={
+                      shipmentMetaData["min_warning_temp"] &&
+                      shipmentMetaData["min_warning_temp"].help_text && {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {shipmentMetaData["min_warning_temp"].help_text && (
+                              <CustomizedTooltips
+                                toolTipText={
+                                  shipmentMetaData["min_warning_temp"].help_text
+                                }
+                              />
+                            )}
+                          </InputAdornment>
+                        ),
+                      }
+                    }
                     // {...last_known_location.bind}
                   />
                   <TextField
@@ -225,6 +292,24 @@ function EnvironmentalLimitsInfo(props) {
                     name="min_temp_val"
                     autoComplete="min_temp_val"
                     value={min_temp_val}
+                    InputProps={
+                      shipmentMetaData["min_excursion_temp"] &&
+                      shipmentMetaData["min_excursion_temp"].help_text && {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {shipmentMetaData["min_excursion_temp"]
+                              .help_text && (
+                              <CustomizedTooltips
+                                toolTipText={
+                                  shipmentMetaData["min_excursion_temp"]
+                                    .help_text
+                                }
+                              />
+                            )}
+                          </InputAdornment>
+                        ),
+                      }
+                    }
                   />
                 </Grid>
                 <Grid item xs={6} className={classes.slider}>
@@ -238,12 +323,12 @@ function EnvironmentalLimitsInfo(props) {
                     marks={[
                       {
                         value: 0,
-                        label: `0°F`,
+                        label: `0°`,
                       },
 
                       {
                         value: 100,
-                        label: `100°F`,
+                        label: `100°`,
                       },
                     ]}
                   />
@@ -269,6 +354,24 @@ function EnvironmentalLimitsInfo(props) {
                     name="max_humid_val"
                     autoComplete="max_humid_val"
                     value={max_humid_val}
+                    InputProps={
+                      shipmentMetaData["max_excursion_humidity"] &&
+                      shipmentMetaData["max_excursion_humidity"].help_text && {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {shipmentMetaData["max_excursion_humidity"]
+                              .help_text && (
+                              <CustomizedTooltips
+                                toolTipText={
+                                  shipmentMetaData["max_excursion_humidity"]
+                                    .help_text
+                                }
+                              />
+                            )}
+                          </InputAdornment>
+                        ),
+                      }
+                    }
                   />
                   <TextField
                     variant="outlined"
@@ -279,6 +382,24 @@ function EnvironmentalLimitsInfo(props) {
                     name="high_humid_val"
                     autoComplete="high_humid_val"
                     value={high_humid_val}
+                    InputProps={
+                      shipmentMetaData["max_warning_humidity"] &&
+                      shipmentMetaData["max_warning_humidity"].help_text && {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {shipmentMetaData["max_warning_humidity"]
+                              .help_text && (
+                              <CustomizedTooltips
+                                toolTipText={
+                                  shipmentMetaData["max_warning_humidity"]
+                                    .help_text
+                                }
+                              />
+                            )}
+                          </InputAdornment>
+                        ),
+                      }
+                    }
                     // {...last_known_location.bind}
                   />
                   <TextField
@@ -290,6 +411,24 @@ function EnvironmentalLimitsInfo(props) {
                     name="low_humid_val"
                     autoComplete="low_humid_val"
                     value={low_humid_val}
+                    InputProps={
+                      shipmentMetaData["min_warning_humidity"] &&
+                      shipmentMetaData["min_warning_humidity"].help_text && {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {shipmentMetaData["min_warning_humidity"]
+                              .help_text && (
+                              <CustomizedTooltips
+                                toolTipText={
+                                  shipmentMetaData["min_warning_humidity"]
+                                    .help_text
+                                }
+                              />
+                            )}
+                          </InputAdornment>
+                        ),
+                      }
+                    }
                     // {...last_known_location.bind}
                   />
                   <TextField
@@ -301,6 +440,24 @@ function EnvironmentalLimitsInfo(props) {
                     name="min_humid_val"
                     autoComplete="min_humid_val"
                     value={min_humid_val}
+                    InputProps={
+                      shipmentMetaData["min_excursion_humidity"] &&
+                      shipmentMetaData["min_excursion_humidity"].help_text && {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {shipmentMetaData["min_excursion_humidity"]
+                              .help_text && (
+                              <CustomizedTooltips
+                                toolTipText={
+                                  shipmentMetaData["min_excursion_humidity"]
+                                    .help_text
+                                }
+                              />
+                            )}
+                          </InputAdornment>
+                        ),
+                      }
+                    }
                   />
                 </Grid>
                 <Grid item xs={6} className={classes.slider}>

@@ -68,6 +68,7 @@ function AddGateway({
   error,
   location,
   gatewayTypeList,
+  gatewayOptions,
 }) {
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === "edit";
@@ -99,6 +100,15 @@ function AddGateway({
 
   const buttonText = editPage ? "save" : "Submit";
   const formTitle = editPage ? "Edit Gateway" : "Add Gateway";
+
+  const [gatewayMetaData, setGatewayMetaData] = useState({});
+
+  useEffect(() => {
+    if (gatewayOptions && gatewayOptions.actions) {
+      setGatewayMetaData(gatewayOptions.actions.POST);
+    }
+  }, [gatewayOptions]);
+
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
@@ -193,7 +203,7 @@ function AddGateway({
                   fullWidth
                   id="gateway_name"
                   required
-                  label="Alias"
+                  label="Gateway Name"
                   name="gateway_name"
                   autoComplete="gateway_name"
                   error={formError.gateway_name && formError.gateway_name.error}
@@ -202,6 +212,20 @@ function AddGateway({
                   }
                   onBlur={(e) => handleBlur(e, "required", gateway_name)}
                   {...gateway_name.bind}
+                  InputProps={
+                    gatewayMetaData["name"] &&
+                    gatewayMetaData["name"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {gatewayMetaData["name"].help_text && (
+                            <CustomizedTooltips
+                              toolTipText={gatewayMetaData["name"].help_text}
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                 />
               </Grid>
             </Grid>
@@ -235,6 +259,22 @@ function AddGateway({
                         handleBlur(e, "required", gateway_type, "gateway_type")
                       }
                       {...gateway_type.bind}
+                      InputProps={
+                        gatewayMetaData["gateway_type"] &&
+                        gatewayMetaData["gateway_type"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="start">
+                              {gatewayMetaData["gateway_type"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    gatewayMetaData["gateway_type"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     >
                       <MenuItem value={""}>Select</MenuItem>
                       {gatewayTypeList &&
@@ -265,6 +305,22 @@ function AddGateway({
                       name="sim_card_id"
                       autoComplete="sim_card_id"
                       {...sim_card_id.bind}
+                      InputProps={
+                        gatewayMetaData["sim_card_id"] &&
+                        gatewayMetaData["sim_card_id"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {gatewayMetaData["sim_card_id"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    gatewayMetaData["sim_card_id"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     />
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
@@ -277,6 +333,25 @@ function AddGateway({
                       name="battery_level"
                       autoComplete="battery_level"
                       {...battery_level.bind}
+                      InputProps={
+                        gatewayMetaData["last_known_battery_level"] &&
+                        gatewayMetaData["last_known_battery_level"]
+                          .help_text && {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {gatewayMetaData["last_known_battery_level"]
+                                .help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    gatewayMetaData["last_known_battery_level"]
+                                      .help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     />
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
@@ -289,6 +364,22 @@ function AddGateway({
                       name="mac_address"
                       autoComplete="mac_address"
                       {...mac_address.bind}
+                      InputProps={
+                        gatewayMetaData["mac_address"] &&
+                        gatewayMetaData["mac_address"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {gatewayMetaData["mac_address"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    gatewayMetaData["mac_address"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -301,6 +392,24 @@ function AddGateway({
                       name="last_known_location"
                       autoComplete="last_known_location"
                       value={last_known_location}
+                      InputProps={
+                        gatewayMetaData["last_known_location"] &&
+                        gatewayMetaData["last_known_location"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {gatewayMetaData["last_known_location"]
+                                .help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    gatewayMetaData["last_known_location"]
+                                      .help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     />
                     <MapComponent
                       isMarkerShown

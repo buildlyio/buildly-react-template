@@ -31,6 +31,10 @@ import {
   GET_CUSTODIAN_OPTIONS,
   GET_CUSTODIAN_OPTIONS_SUCCESS,
   GET_CUSTODIAN_OPTIONS_FAILURE,
+  GET_CONTACT_OPTIONS_SUCCESS,
+  GET_CONTACT_OPTIONS_FAILURE,
+  GET_CUSTODY_OPTIONS_SUCCESS,
+  GET_CUSTODY_OPTIONS_FAILURE,
 } from "../actions/custodian.actions";
 
 const initialState = {
@@ -41,6 +45,8 @@ const initialState = {
   custodianTypeList: null,
   contactInfo: null,
   custodianOptions: null,
+  custodyOptions: null,
+  contactOptions: null,
 };
 
 // Reducer
@@ -273,6 +279,40 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         userOptions: null,
+        error: action.error,
+      };
+
+    case GET_CUSTODY_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodyOptions: action.data,
+        error: null,
+      };
+    case GET_CUSTODY_OPTIONS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodyOptions: null,
+        error: action.error,
+      };
+
+    case GET_CONTACT_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        contactOptions: action.data,
+        error: null,
+      };
+    case GET_CONTACT_OPTIONS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        contactOptions: null,
         error: action.error,
       };
     default:

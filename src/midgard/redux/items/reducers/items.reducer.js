@@ -28,6 +28,8 @@ import {
   GET_PRODUCTS_TYPE,
   GET_PRODUCTS_TYPE_SUCCESS,
   GET_PRODUCTS_TYPE_FAILURE,
+  GET_PRODUCTS_OPTIONS_SUCCESS,
+  GET_PRODUCTS_OPTIONS_FAILURE,
 } from "../actions/items.actions";
 
 const initialState = {
@@ -39,6 +41,7 @@ const initialState = {
   itemOptions: null,
   products: null,
   productType: null,
+  productOptions: null,
 };
 
 // Reducer
@@ -251,6 +254,22 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
+        error: action.error,
+      };
+    case GET_PRODUCTS_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        productOptions: action.data,
+        error: null,
+      };
+    case GET_PRODUCTS_OPTIONS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        productOptions: null,
         error: action.error,
       };
     default:

@@ -149,7 +149,7 @@ function Login({ dispatch, loading, history }) {
           <div className={classes.paper}>
             <img src={logo} className={classes.logo} />
             <Typography component="h1" variant="h5">
-              Sign in
+              Sign In
             </Typography>
             <form className={classes.form} noValidate onSubmit={handleSubmit}>
               <TextField

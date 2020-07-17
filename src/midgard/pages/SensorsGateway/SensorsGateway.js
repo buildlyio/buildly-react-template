@@ -9,6 +9,8 @@ function SensorsGateway(props) {
     gatewaySearchedData,
     sensorData,
     sensorSearchedData,
+    gatewayOptions,
+    sensorOptions,
   } = props;
   return (
     <React.Fragment>

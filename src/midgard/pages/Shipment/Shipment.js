@@ -33,6 +33,8 @@ import {
   getCustodianType,
   getContact,
   getCustody,
+  GET_CUSTODY_OPTIONS_SUCCESS,
+  GET_CUSTODY_OPTIONS_FAILURE,
 } from "../../redux/custodian/actions/custodian.actions";
 import {
   getItems,
@@ -99,6 +101,8 @@ function Shipment(props) {
     custodyData,
     sensorData,
     loading,
+    shipmentOptions,
+    custodyOptions,
   } = props;
   const classes = useStyles();
   const [openConfirmModal, setConfirmModal] = useState(false);
@@ -137,20 +141,38 @@ function Shipment(props) {
       dispatch(getSensors());
       dispatch(getSensorType());
     }
-    httpService
-      .makeOptionsRequest(
-        "options",
-        `${environment.API_URL}shipment/shipment/`,
-        true
-      )
-      .then((response) => response.json())
-      .then((res) => {
-        console.log("ress", res);
-        dispatch({ type: GET_SHIPMENT_OPTIONS_SUCCESS, data: res });
-      })
-      .catch((err) => {
-        dispatch({ type: GET_SHIPMENT_OPTIONS_FAILURE, error: err });
-      });
+    if (shipmentOptions === null) {
+      httpService
+        .makeOptionsRequest(
+          "options",
+          `${environment.API_URL}shipment/shipment/`,
+          true
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          dispatch({ type: GET_SHIPMENT_OPTIONS_SUCCESS, data: res });
+        })
+        .catch((err) => {
+          dispatch({ type: GET_SHIPMENT_OPTIONS_FAILURE, error: err });
+        });
+    }
+
+    if (custodyOptions === null) {
+      httpService
+        .makeOptionsRequest(
+          "options",
+          `${environment.API_URL}custodian/custody/`,
+          true
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          dispatch({ type: GET_CUSTODY_OPTIONS_SUCCESS, data: res });
+        })
+        .catch((err) => {
+          dispatch({ type: GET_CUSTODY_OPTIONS_FAILURE, error: err });
+        });
+    }
+
     return function cleanup() {
       dispatch({ type: FILTER_SHIPMENT_SUCCESS, data: undefined });
     };

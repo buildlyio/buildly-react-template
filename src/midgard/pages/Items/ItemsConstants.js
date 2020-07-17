@@ -4,7 +4,7 @@ import moment from "moment";
 export const itemColumns = [
   // { id: "id", label: "Item ID", minWidth: 150 },
   { id: "name", label: "Item Name", minWidth: 180 },
-  { id: "desc", label: "Item Description", minWidth: 180 },
+
   {
     id: "number_of_units",
     label: "# of Units",
@@ -15,11 +15,7 @@ export const itemColumns = [
     label: "Item Type",
     minWidth: 150,
   },
-  {
-    id: "shipping_id",
-    label: "Shipping ID",
-    minWidth: 150,
-  },
+
   {
     id: "value",
     label: "Value",

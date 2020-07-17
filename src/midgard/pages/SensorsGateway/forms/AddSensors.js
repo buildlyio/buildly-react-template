@@ -14,7 +14,13 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Select from "@material-ui/core/Select";
 import { useInput } from "../../../hooks/useInput";
 import Loader from "../../../components/Loader/Loader";
-import { Card, CardContent, Typography, Chip } from "@material-ui/core";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Chip,
+  InputAdornment,
+} from "@material-ui/core";
 import DatePickerComponent from "../../../components/DatePicker/DatePicker";
 import SearchModal from "../Sensors/SearchModal";
 import {
@@ -24,6 +30,7 @@ import {
 import { routes } from "../../../routes/routesConstants";
 import { MapComponent } from "../../../components/MapComponent/MapComponent";
 import { MAP_API_URL } from "../../../utils/utilMethods";
+import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,6 +87,7 @@ function AddSensor({
   sensorTypeList,
   gatewayData,
   data,
+  sensorOptions,
 }) {
   const editPage = location.state && location.state.type === "edit";
   const editData =
@@ -120,6 +128,15 @@ function AddSensor({
 
   const buttonText = editPage ? "Save" : "Add Sensor";
   const formTitle = editPage ? "Edit Sensor" : "Add Sensor";
+
+  const [sensorMetaData, setSensorMetaData] = useState({});
+
+  useEffect(() => {
+    console.log("sensorOptions", sensorOptions);
+    if (sensorOptions && sensorOptions.actions) {
+      setSensorMetaData(sensorOptions.actions.POST);
+    }
+  }, [sensorOptions]);
 
   useEffect(() => {
     if (gatewayData && gatewayData.length && editData.gateway) {
@@ -248,6 +265,20 @@ function AddSensor({
                   }
                   onBlur={(e) => handleBlur(e, "required", sensor_name)}
                   {...sensor_name.bind}
+                  InputProps={
+                    sensorMetaData["name"] &&
+                    sensorMetaData["name"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {sensorMetaData["name"].help_text && (
+                            <CustomizedTooltips
+                              toolTipText={sensorMetaData["name"].help_text}
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                 />
               </Grid>
 
@@ -261,6 +292,22 @@ function AddSensor({
                   name="last_known_location"
                   autoComplete="last_known_location"
                   value={last_known_location}
+                  InputProps={
+                    sensorMetaData["last_known_location"] &&
+                    sensorMetaData["last_known_location"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {sensorMetaData["last_known_location"].help_text && (
+                            <CustomizedTooltips
+                              toolTipText={
+                                sensorMetaData["last_known_location"].help_text
+                              }
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                   // onChange={(e) => setLastLocation(e.target.value)}
                 />
                 <MapComponent
@@ -327,6 +374,22 @@ function AddSensor({
                         handleBlur(e, "required", sensor_type, "sensor_type")
                       }
                       {...sensor_type.bind}
+                      InputProps={
+                        sensorMetaData["sensor_type"] &&
+                        sensorMetaData["sensor_type"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {sensorMetaData["sensor_type"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    sensorMetaData["sensor_type"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     >
                       <MenuItem value={""}>Select</MenuItem>
                       {sensorTypeList &&
@@ -348,42 +411,6 @@ function AddSensor({
                     />
                   </Grid>
 
-                  {/* <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="battery_level"
-                      label="Battery(%)"
-                      name="battery_level"
-                      autoComplete="battery_level"
-                      {...battery_level.bind}
-                    />
-                  </Grid> */}
-                  {/* <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="recharge_before"
-                      label="Recharge Before"
-                      name="recharge_before"
-                      autoComplete="recharge_before"
-                      {...recharge_before.bind}
-                    />
-                  </Grid> */}
-                  {/* <Grid item xs={12} md={6} sm={6}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="sim_card_id"
-                      label="IMEI"
-                      name="sim_card_id"
-                      autoComplete="sim_card_id"
-                      {...sim_card_id.bind}
-                    />
-                  </Grid> */}
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
                       variant="outlined"
@@ -394,6 +421,22 @@ function AddSensor({
                       name="mac_address"
                       autoComplete="mac_address"
                       {...mac_address.bind}
+                      InputProps={
+                        sensorMetaData["mac_address"] &&
+                        sensorMetaData["mac_address"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {sensorMetaData["mac_address"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    sensorMetaData["mac_address"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     />
                   </Grid>
                 </Grid>

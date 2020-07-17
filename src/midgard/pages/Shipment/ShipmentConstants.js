@@ -186,6 +186,13 @@ export const custodyColumns = [
     minWidth: 180,
   },
   {
+    id: "end_of_custody",
+    label: "End of Custody",
+    format: (value) =>
+      value && value !== "-" ? moment(value).format("MM/DD/yyyy") : value,
+    minWidth: 180,
+  },
+  {
     id: "start_of_custody_location",
     label: "Start Location",
     minWidth: 150,

@@ -29,6 +29,7 @@ function Gateway(props) {
     gatewayTypeList,
     redirectTo,
     noSearch,
+    gatewayOptions,
   } = props;
   const addPath = redirectTo
     ? `${redirectTo}/gateways`
@@ -48,20 +49,21 @@ function Gateway(props) {
       dispatch(getGateways());
       dispatch(getGatewayType());
     }
-    httpService
-      .makeOptionsRequest(
-        "options",
-        `${environment.API_URL}sensors/gateway/`,
-        true
-      )
-      .then((response) => response.json())
-      .then((res) => {
-        console.log("ress", res);
-        dispatch({ type: GET_GATEWAY_OPTIONS_SUCCESS, data: res });
-      })
-      .catch((err) => {
-        dispatch({ type: GET_GATEWAY_OPTIONS_FAILURE, error: err });
-      });
+    if (gatewayOptions === null) {
+      httpService
+        .makeOptionsRequest(
+          "options",
+          `${environment.API_URL}sensors/gateway/`,
+          true
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          dispatch({ type: GET_GATEWAY_OPTIONS_SUCCESS, data: res });
+        })
+        .catch((err) => {
+          dispatch({ type: GET_GATEWAY_OPTIONS_FAILURE, error: err });
+        });
+    }
   }, []);
 
   useEffect(() => {

@@ -28,6 +28,7 @@ function Sensors(props) {
     redirectTo,
     noSearch,
     gatewayData,
+    sensorOptions,
   } = props;
   const addPath = redirectTo
     ? `${redirectTo}/sensors`
@@ -47,20 +48,21 @@ function Sensors(props) {
       dispatch(getSensors());
       dispatch(getSensorType());
     }
-    httpService
-      .makeOptionsRequest(
-        "options",
-        `${environment.API_URL}sensors/sensor/`,
-        true
-      )
-      .then((response) => response.json())
-      .then((res) => {
-        console.log("ress", res);
-        dispatch({ type: GET_SENSOR_OPTIONS_SUCCESS, data: res });
-      })
-      .catch((err) => {
-        dispatch({ type: GET_SENSOR_OPTIONS_FAILURE, error: err });
-      });
+    if (sensorOptions === null) {
+      httpService
+        .makeOptionsRequest(
+          "options",
+          `${environment.API_URL}sensors/sensor/`,
+          true
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          dispatch({ type: GET_SENSOR_OPTIONS_SUCCESS, data: res });
+        })
+        .catch((err) => {
+          dispatch({ type: GET_SENSOR_OPTIONS_FAILURE, error: err });
+        });
+    }
   }, []);
 
   useEffect(() => {

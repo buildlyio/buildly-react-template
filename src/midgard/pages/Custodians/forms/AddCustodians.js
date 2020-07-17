@@ -31,6 +31,8 @@ import {
   COUNTRY_CHOICES,
 } from "../../../utils/mock";
 import { compareSort } from "../../../utils/utilMethods";
+import { InputAdornment } from "@material-ui/core";
+import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,6 +82,8 @@ function AddCustodians({
   error,
   location,
   custodianTypeList,
+  custodianOptions,
+  contactOptions,
 }) {
   const editPage = location.state && location.state.type === "edit";
   const editData =
@@ -117,6 +121,18 @@ function AddCustodians({
 
   const buttonText = editPage ? "save" : "add custodian";
   const formTitle = editPage ? "Edit Custodian" : "Add Custodian";
+  const [custodianMetaData, setCustodianMetaData] = useState({});
+  const [contactMetaData, setProductMetaData] = useState({});
+
+  useEffect(() => {
+    if (custodianOptions && custodianOptions.actions) {
+      setCustodianMetaData(custodianOptions.actions.POST);
+    }
+    if (contactOptions && contactOptions.actions) {
+      setProductMetaData(contactOptions.actions);
+    }
+  }, [contactOptions, custodianOptions]);
+
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
@@ -230,6 +246,20 @@ function AddCustodians({
                   }
                   onBlur={(e) => handleBlur(e, "required", company)}
                   {...company.bind}
+                  InputProps={
+                    custodianMetaData["name"] &&
+                    custodianMetaData["name"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {custodianMetaData["name"].help_text && (
+                            <CustomizedTooltips
+                              toolTipText={custodianMetaData["name"].help_text}
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                 />
               </Grid>
               <Grid item item xs={12} md={6} sm={6}>
@@ -243,6 +273,20 @@ function AddCustodians({
                   name="alias"
                   autoComplete="alias"
                   {...alias.bind}
+                  InputProps={
+                    custodianMetaData["alias"] &&
+                    custodianMetaData["alias"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {custodianMetaData["alias"].help_text && (
+                            <CustomizedTooltips
+                              toolTipText={custodianMetaData["alias"].help_text}
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                 />
               </Grid>
             </Grid>
@@ -268,6 +312,22 @@ function AddCustodians({
                     handleBlur(e, "required", custodianType, "custodianType")
                   }
                   {...custodianType.bind}
+                  InputProps={
+                    custodianMetaData["custodian_type"] &&
+                    custodianMetaData["custodian_type"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          {custodianMetaData["custodian_type"].help_text && (
+                            <CustomizedTooltips
+                              toolTipText={
+                                custodianMetaData["custodian_type"].help_text
+                              }
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                 >
                   <MenuItem value={""}>Select</MenuItem>
                   {custodianTypeList &&
@@ -342,6 +402,22 @@ function AddCustodians({
                       }
                       onBlur={(e) => handleBlur(e, "required", address_1)}
                       {...address_1.bind}
+                      InputProps={
+                        contactMetaData["address1"] &&
+                        contactMetaData["address1"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {contactMetaData["address1"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    contactMetaData["address1"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
@@ -354,6 +430,22 @@ function AddCustodians({
                       name="address_2"
                       autoComplete="address_2"
                       {...address_2.bind}
+                      InputProps={
+                        contactMetaData["address2"] &&
+                        contactMetaData["address2"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {contactMetaData["address2"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    contactMetaData["address2"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     />
                   </Grid>
                 </Grid>
@@ -372,6 +464,22 @@ function AddCustodians({
                       helperText={formError.city ? formError.city.message : ""}
                       onBlur={(e) => handleBlur(e, "required", city)}
                       {...city.bind}
+                      InputProps={
+                        contactMetaData["city"] &&
+                        contactMetaData["city"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {contactMetaData["city"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    contactMetaData["city"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
@@ -388,6 +496,22 @@ function AddCustodians({
                       helperText={formError.zip ? formError.zip.message : ""}
                       onBlur={(e) => handleBlur(e, "required", zip)}
                       {...zip.bind}
+                      InputProps={
+                        contactMetaData["postal_code"] &&
+                        contactMetaData["postal_code"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {contactMetaData["postal_code"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    contactMetaData["postal_code"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     />
                   </Grid>
                 </Grid>
@@ -409,6 +533,22 @@ function AddCustodians({
                         handleBlur(e, "required", country, "country")
                       }
                       {...country.bind}
+                      InputProps={
+                        contactMetaData["country"] &&
+                        contactMetaData["country"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="start">
+                              {contactMetaData["country"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    contactMetaData["country"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     >
                       <MenuItem value={""}>Select</MenuItem>
                       {COUNTRY_CHOICES.sort().map((value, id) => (
@@ -433,6 +573,22 @@ function AddCustodians({
                       }
                       onBlur={(e) => handleBlur(e, "required", state, "state")}
                       {...state.bind}
+                      InputProps={
+                        contactMetaData["state"] &&
+                        contactMetaData["state"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="start">
+                              {contactMetaData["state"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    contactMetaData["state"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
                     >
                       <MenuItem value={""}>Select</MenuItem>
                       {STATE_CHOICES.sort().map((value, id) => (

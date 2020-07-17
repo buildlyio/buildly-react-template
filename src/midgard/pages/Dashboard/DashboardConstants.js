@@ -27,7 +27,7 @@ export const recallColumns = [
     },
   },
   {
-    id: "affected",
+    id: "itemNo",
     label: "Affected Items",
     minWidth: 150,
   },
@@ -83,7 +83,7 @@ export const getFormattedShipmentRow = (
   }
 
   shipmentList.forEach((list) => {
-    let shipmentValue = 0;
+    let itemName = "";
     let custodyInfo = [];
     let custodianName = "";
     let flag_list = [];
@@ -104,8 +104,8 @@ export const getFormattedShipmentRow = (
     if (itemData && list.items && list.items.length) {
       itemData.forEach((item) => {
         if (list.items.indexOf(item.url) !== -1) {
-          shipmentValue += item.value;
-          list["value"] = shipmentValue;
+          itemName = itemName + item.name + ", ";
+          list["itemNo"] = itemName;
         }
       });
     }

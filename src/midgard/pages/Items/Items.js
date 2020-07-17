@@ -15,6 +15,8 @@ import {
   GET_ITEM_OPTIONS_FAILURE,
   getProducts,
   getProductType,
+  GET_PRODUCTS_OPTIONS_SUCCESS,
+  GET_PRODUCTS_OPTIONS_FAILURE,
 } from "../../redux/items/actions/items.actions";
 import DashboardWrapper from "../../components/DashboardWrapper/DashboardWrapper";
 import { httpService } from "../../modules/http/http.service";
@@ -33,6 +35,8 @@ function Items({
   noSearch,
   unitsOfMeasure,
   products,
+  itemOptions,
+  productOptions,
 }) {
   const addItemPath = redirectTo
     ? `${redirectTo}/items`
@@ -60,20 +64,37 @@ function Items({
       dispatch(getProducts());
       dispatch(getProductType());
     }
-    httpService
-      .makeOptionsRequest(
-        "options",
-        `${environment.API_URL}shipment/item/`,
-        true
-      )
-      .then((response) => response.json())
-      .then((res) => {
-        console.log("ress", res);
-        dispatch({ type: GET_ITEM_OPTIONS_SUCCESS, data: res });
-      })
-      .catch((err) => {
-        dispatch({ type: GET_ITEM_OPTIONS_FAILURE, error: err });
-      });
+    if (itemOptions === null) {
+      httpService
+        .makeOptionsRequest(
+          "options",
+          `${environment.API_URL}shipment/item/`,
+          true
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          dispatch({ type: GET_ITEM_OPTIONS_SUCCESS, data: res });
+        })
+        .catch((err) => {
+          dispatch({ type: GET_ITEM_OPTIONS_FAILURE, error: err });
+        });
+    }
+
+    if (productOptions === null) {
+      httpService
+        .makeOptionsRequest(
+          "options",
+          `${environment.API_URL}shipment/product/`,
+          true
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          dispatch({ type: GET_PRODUCTS_OPTIONS_SUCCESS, data: res });
+        })
+        .catch((err) => {
+          dispatch({ type: GET_PRODUCTS_OPTIONS_FAILURE, error: err });
+        });
+    }
   }, []);
 
   useEffect(() => {
