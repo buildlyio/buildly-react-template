@@ -132,14 +132,18 @@ function AddSensor({
   const [sensorMetaData, setSensorMetaData] = useState({});
 
   useEffect(() => {
-    console.log("sensorOptions", sensorOptions);
     if (sensorOptions && sensorOptions.actions) {
       setSensorMetaData(sensorOptions.actions.POST);
     }
   }, [sensorOptions]);
 
   useEffect(() => {
-    if (gatewayData && gatewayData.length && editData.gateway) {
+    if (
+      gatewayData &&
+      gatewayData.length &&
+      editData.gateway &&
+      associatedGateway === null
+    ) {
       gatewayData.forEach((gateway) => {
         if (gateway.url === editData.gateway) {
           setAccociatedGateway(gateway);
@@ -408,6 +412,12 @@ function AddSensor({
                       label={"Activated"}
                       selectedDate={activation_date}
                       handleDateChange={handleDateChange}
+                      helpText={
+                        sensorMetaData["activation_date"] &&
+                        sensorMetaData["activation_date"].help_text
+                          ? sensorMetaData["activation_date"].help_text
+                          : ""
+                      }
                     />
                   </Grid>
 
@@ -509,6 +519,11 @@ function AddSensor({
                 gateway && associatedGateway ? associatedGateway : null
               }
               listOfItems={gatewayData}
+              helpText={
+                sensorMetaData["gateway"] && sensorMetaData["gateway"].help_text
+                  ? sensorMetaData["gateway"].help_text
+                  : ""
+              }
               searchFieldLabel={"Select Gateway UUID"}
               searchFieldPlaceHolder={"Select the Value"}
             />

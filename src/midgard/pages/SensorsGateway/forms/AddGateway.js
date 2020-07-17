@@ -293,6 +293,12 @@ function AddGateway({
                       label={"Activated"}
                       selectedDate={activation_date}
                       handleDateChange={handleDateChange}
+                      helpText={
+                        gatewayMetaData["activation_date"] &&
+                        gatewayMetaData["activation_date"].help_text
+                          ? gatewayMetaData["activation_date"].help_text
+                          : ""
+                      }
                     />
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>

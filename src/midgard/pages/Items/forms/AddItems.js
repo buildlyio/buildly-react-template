@@ -378,25 +378,34 @@ function AddItems({
                 </Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12}>
-                    <Autocomplete
-                      id="products"
-                      options={products || []}
-                      value={product}
-                      onChange={(event, newValue) => {
-                        onProductChange(newValue);
-                      }}
-                      getOptionLabel={(option) => option && option.name}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          required
-                          label="Product"
-                          variant="outlined"
-                          margin="normal"
-                          fullWidth
-                        />
-                      )}
-                    />
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Autocomplete
+                        id="products"
+                        options={products || []}
+                        value={product}
+                        onChange={(event, newValue) => {
+                          onProductChange(newValue);
+                        }}
+                        style={{ flex: 1 }}
+                        getOptionLabel={(option) => option && option.name}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            required
+                            label="Product"
+                            variant="outlined"
+                            margin="normal"
+                            fullWidth
+                          />
+                        )}
+                      />
+                      {productMetData["name"] &&
+                        productMetData["name"].help_text && (
+                          <CustomizedTooltips
+                            toolTipText={productMetData["name"].help_text}
+                          />
+                        )}
+                    </div>
                   </Grid>
 
                   <Grid item item xs={12}>

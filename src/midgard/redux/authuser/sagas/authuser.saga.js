@@ -231,7 +231,6 @@ function* resetPassword(payload) {
       `${environment.API_URL}coreuser/reset_password/`,
       payload.data
     );
-    console.log("data", data);
     if (data.data && data.data.count > 0) {
       yield [
         yield put({ type: RESET_PASSWORD_SUCCESS, data: data.data }),
@@ -349,7 +348,6 @@ function* resetPasswordCheck(payload) {
         yield call(history.push, routes.LOGIN),
       ];
     }
-    console.log("data", data);
   } catch (error) {
     console.log("error", error);
     yield [

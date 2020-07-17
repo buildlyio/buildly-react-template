@@ -118,7 +118,6 @@ function AddCustodyInfo(props) {
   const [custodyMetaData, setCustodyMetaData] = useState({});
 
   useEffect(() => {
-    console.log("custodyOptions", custodyOptions);
     if (custodyOptions && custodyOptions.actions) {
       setCustodyMetaData(custodyOptions.actions.POST);
     }
@@ -322,6 +321,12 @@ function AddCustodyInfo(props) {
                   label={"Start of custody"}
                   selectedDate={start_of_custody}
                   hasTime={true}
+                  helpText={
+                    custodyMetaData["start_of_custody"] &&
+                    custodyMetaData["start_of_custody"].help_text
+                      ? custodyMetaData["start_of_custody"].help_text
+                      : ""
+                  }
                   handleDateChange={handleStartChange}
                 />
               </Grid>
@@ -331,6 +336,12 @@ function AddCustodyInfo(props) {
                   selectedDate={end_of_custody}
                   hasTime={true}
                   handleDateChange={handleEndChange}
+                  helpText={
+                    custodyMetaData["end_of_custody"] &&
+                    custodyMetaData["end_of_custody"].help_text
+                      ? custodyMetaData["end_of_custody"].help_text
+                      : ""
+                  }
                 />
               </Grid>
               <Grid item xs={12}>

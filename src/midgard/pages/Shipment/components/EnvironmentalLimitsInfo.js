@@ -136,7 +136,6 @@ function EnvironmentalLimitsInfo(props) {
   const [shipmentMetaData, setShipmentMetaData] = useState({});
 
   useEffect(() => {
-    console.log("shipmentOptions", shipmentOptions);
     if (shipmentOptions && shipmentOptions.actions) {
       setShipmentMetaData(shipmentOptions.actions.POST);
     }

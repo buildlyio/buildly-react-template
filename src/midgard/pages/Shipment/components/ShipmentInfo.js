@@ -540,6 +540,12 @@ function ShipmentInfo(props) {
                       selectedDate={scheduled_departure}
                       hasTime={true}
                       handleDateChange={handleDepartureDateChange}
+                      helpText={
+                        fieldsMetadata["scheduled_departure"] &&
+                        fieldsMetadata["scheduled_departure"].help_text
+                          ? fieldsMetadata["scheduled_departure"].help_text
+                          : ""
+                      }
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -548,48 +554,63 @@ function ShipmentInfo(props) {
                       selectedDate={scheduled_arrival}
                       hasTime={true}
                       handleDateChange={handleScheduledDateChange}
+                      helpText={
+                        fieldsMetadata["scheduled_arrival"] &&
+                        fieldsMetadata["scheduled_arrival"].help_text
+                          ? fieldsMetadata["scheduled_arrival"].help_text
+                          : ""
+                      }
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <Autocomplete
-                      multiple
-                      id="tags-outlined"
-                      options={shipmentFlag || []}
-                      getOptionLabel={(option) => {
-                        if (option) return `${option.name} (${option.type})`;
-                      }}
-                      onChange={(event, newValue) => {
-                        onShipmentFlagChange(newValue);
-                      }}
-                      // filterSelectedOptions
-                      value={
-                        (shipmentFlag &&
-                          shipmentFlag.filter((flag) => {
-                            return flags.indexOf(flag.url) !== -1;
-                          })) ||
-                        []
-                      }
-                      renderOption={(option, { selected }) => (
-                        <React.Fragment>
-                          <Checkbox
-                            // icon={icon}
-                            // checkedIcon={checkedIcon}
-                            style={{ marginRight: 8 }}
-                            checked={selected}
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Autocomplete
+                        multiple
+                        id="tags-outlined"
+                        options={shipmentFlag || []}
+                        getOptionLabel={(option) => {
+                          if (option) return `${option.name} (${option.type})`;
+                        }}
+                        style={{ flex: 1 }}
+                        onChange={(event, newValue) => {
+                          onShipmentFlagChange(newValue);
+                        }}
+                        // filterSelectedOptions
+                        value={
+                          (shipmentFlag &&
+                            shipmentFlag.filter((flag) => {
+                              return flags.indexOf(flag.url) !== -1;
+                            })) ||
+                          []
+                        }
+                        renderOption={(option, { selected }) => (
+                          <React.Fragment>
+                            <Checkbox
+                              // icon={icon}
+                              // checkedIcon={checkedIcon}
+                              style={{ marginRight: 8 }}
+                              checked={selected}
+                            />
+                            {`${option.name} (${option.type})`}
+                          </React.Fragment>
+                        )}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            label="Violation/Warnings"
+                            placeholder="Select"
+                            margin="normal"
                           />
-                          {`${option.name} (${option.type})`}
-                        </React.Fragment>
-                      )}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="outlined"
-                          label="Violation/Warnings"
-                          placeholder="Select"
-                          margin="normal"
-                        />
-                      )}
-                    />
+                        )}
+                      />
+                      {fieldsMetadata["flags"] &&
+                        fieldsMetadata["flags"].help_text && (
+                          <CustomizedTooltips
+                            toolTipText={fieldsMetadata["flags"].help_text}
+                          />
+                        )}
+                    </div>
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
