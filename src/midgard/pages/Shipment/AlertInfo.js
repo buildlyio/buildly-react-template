@@ -107,9 +107,13 @@ function AlertInfo(props) {
               severity={alert.severity}
               onClose={(e) => handleClose(e, index)}
               classes={{ message: classes.message, root: classes.alert }}
-              title={`${alert.name} ${alert.type} Shipment#${alert.shipment}`}
+              title={`${alert.name} ${
+                alert.type.toLowerCase() === "warning" ? "Warning" : "Violation"
+              } Shipment#${alert.shipment}`}
             >
-              {`${alert.name} ${alert.type} Shipment#${alert.shipment}`}
+              {`${alert.name} ${
+                alert.type.toLowerCase() === "warning" ? "Warning" : "Violation"
+              } Shipment#${alert.shipment}`}
             </Alert>
           );
         })}

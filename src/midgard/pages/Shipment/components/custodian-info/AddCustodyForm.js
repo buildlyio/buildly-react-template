@@ -16,6 +16,7 @@ import {
   Button,
   CircularProgress,
   MenuItem,
+  InputAdornment,
 } from "@material-ui/core";
 
 import DatePickerComponent from "../../../../components/DatePicker/DatePicker";
@@ -32,6 +33,7 @@ import {
   compareSort,
 } from "../../../../utils/utilMethods";
 import { getFormattedRow } from "../../../Custodians/CustodianConstants";
+import CustomizedTooltips from "../../../../components/ToolTip/ToolTip";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -81,6 +83,7 @@ function AddCustodyInfo(props) {
     contactInfo,
     editItem,
     setOpenModal,
+    custodyOptions,
   } = props;
   const classes = useStyles();
   const [custodianId, setCustodianId] = useState(
@@ -89,6 +92,9 @@ function AddCustodyInfo(props) {
   const [custodianList, setCustodianList] = useState([]);
   const [start_of_custody, handleStartChange] = useState(
     (editItem && editItem.start_of_custody) || new Date()
+  );
+  const [end_of_custody, handleEndChange] = useState(
+    (editItem && editItem.end_of_custody) || new Date()
   );
   const [start_of_custody_location, handleStartLocation] = useState(
     (editItem && editItem.start_of_custody_location) || ""
@@ -108,6 +114,14 @@ function AddCustodyInfo(props) {
   const first_custody = useInput((editItem && editItem.first_custody) || false);
   const last_custody = useInput((editItem && editItem.last_custody) || false);
   const [formError, setFormError] = useState({});
+
+  const [custodyMetaData, setCustodyMetaData] = useState({});
+
+  useEffect(() => {
+    if (custodyOptions && custodyOptions.actions) {
+      setCustodyMetaData(custodyOptions.actions.POST);
+    }
+  }, [custodyOptions]);
 
   useEffect(() => {
     if (custodianData && custodianData.length && contactInfo) {
@@ -176,6 +190,7 @@ function AddCustodyInfo(props) {
     event.preventDefault();
     const custodyFormValues = {
       start_of_custody: start_of_custody,
+      end_of_custody: end_of_custody,
       custodian: [custodianId.url],
       start_of_custody_location: start_of_custody_location,
       end_of_custody_location: end_of_custody_location,
@@ -224,6 +239,22 @@ function AddCustodyInfo(props) {
                   }
                   onBlur={(e) => handleBlur(e, "required", shipment)}
                   {...shipment.bind}
+                  InputProps={
+                    custodyMetaData["shipment_id"] &&
+                    custodyMetaData["shipment_id"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {custodyMetaData["shipment_id"].help_text && (
+                            <CustomizedTooltips
+                              toolTipText={
+                                custodyMetaData["shipment_id"].help_text
+                              }
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -257,6 +288,22 @@ function AddCustodyInfo(props) {
                   }
                   value={custodianId}
                   onChange={onInputChange}
+                  InputProps={
+                    custodyMetaData["custodian"] &&
+                    custodyMetaData["custodian"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          {custodyMetaData["custodian"].help_text && (
+                            <CustomizedTooltips
+                              toolTipText={
+                                custodyMetaData["custodian"].help_text
+                              }
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                 >
                   <MenuItem value={""}>Select</MenuItem>
                   {custodianList &&
@@ -268,37 +315,33 @@ function AddCustodyInfo(props) {
                         </MenuItem>
                       ))}
                 </TextField>
-                {/* <Autocomplete
-                  id="combo-box-demo"
-                  options={custodianData || []}
-                  getOptionLabel={(option) =>
-                    `${option.name}:${option.custodian_uuid}`
-                  }
-                  onChange={(event, newValue) => onInputChange(newValue)}
-                  value={
-                    (rows &&
-                      rows.filter((item) => {
-                        return item.custodian_uuid === custodianId;
-                      })[0]) ||
-                    null
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      margin="normal"
-                      variant="outlined"
-                      label="Select Custodian To Be Associated"
-                      placeholder="Select a Custodian"
-                    />
-                  )}
-                /> */}
               </Grid>
               <Grid item xs={12}>
                 <DatePickerComponent
                   label={"Start of custody"}
                   selectedDate={start_of_custody}
                   hasTime={true}
+                  helpText={
+                    custodyMetaData["start_of_custody"] &&
+                    custodyMetaData["start_of_custody"].help_text
+                      ? custodyMetaData["start_of_custody"].help_text
+                      : ""
+                  }
                   handleDateChange={handleStartChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <DatePickerComponent
+                  label={"End of custody"}
+                  selectedDate={end_of_custody}
+                  hasTime={true}
+                  handleDateChange={handleEndChange}
+                  helpText={
+                    custodyMetaData["end_of_custody"] &&
+                    custodyMetaData["end_of_custody"].help_text
+                      ? custodyMetaData["end_of_custody"].help_text
+                      : ""
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -311,6 +354,24 @@ function AddCustodyInfo(props) {
                   name="start_of_custody_location"
                   autoComplete="start_of_custody_location"
                   value={start_of_custody_location}
+                  InputProps={
+                    custodyMetaData["start_of_custody_location"] &&
+                    custodyMetaData["start_of_custody_location"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {custodyMetaData["start_of_custody_location"]
+                            .help_text && (
+                            <CustomizedTooltips
+                              toolTipText={
+                                custodyMetaData["start_of_custody_location"]
+                                  .help_text
+                              }
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                   // onChange={(e) => setLastLocation(e.target.value)}
                 />
                 <MapComponent
@@ -343,6 +404,24 @@ function AddCustodyInfo(props) {
                   name="end_of_custody_location"
                   autoComplete="end_of_custody_location"
                   value={end_of_custody_location}
+                  InputProps={
+                    custodyMetaData["end_of_custody_location"] &&
+                    custodyMetaData["end_of_custody_location"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {custodyMetaData["end_of_custody_location"]
+                            .help_text && (
+                            <CustomizedTooltips
+                              toolTipText={
+                                custodyMetaData["end_of_custody_location"]
+                                  .help_text
+                              }
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                   // onChange={(e) => setLastLocation(e.target.value)}
                 />
                 <MapComponent
@@ -374,6 +453,22 @@ function AddCustodyInfo(props) {
                   select
                   label="Has Current Custody"
                   {...has_current_custody.bind}
+                  InputProps={
+                    custodyMetaData["has_current_custody"] &&
+                    custodyMetaData["has_current_custody"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          {custodyMetaData["has_current_custody"].help_text && (
+                            <CustomizedTooltips
+                              toolTipText={
+                                custodyMetaData["has_current_custody"].help_text
+                              }
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                 >
                   <MenuItem value={true}>YES</MenuItem>
                   <MenuItem value={false}>NO</MenuItem>
@@ -388,6 +483,22 @@ function AddCustodyInfo(props) {
                   select
                   label="Is First Custody"
                   {...first_custody.bind}
+                  InputProps={
+                    custodyMetaData["first_custody"] &&
+                    custodyMetaData["first_custody"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          {custodyMetaData["first_custody"].help_text && (
+                            <CustomizedTooltips
+                              toolTipText={
+                                custodyMetaData["first_custody"].help_text
+                              }
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                 >
                   <MenuItem value={true}>YES</MenuItem>
                   <MenuItem value={false}>NO</MenuItem>
@@ -402,6 +513,22 @@ function AddCustodyInfo(props) {
                   select
                   label="Is Last Custody"
                   {...last_custody.bind}
+                  InputProps={
+                    custodyMetaData["last_custody"] &&
+                    custodyMetaData["last_custody"].help_text && {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          {custodyMetaData["last_custody"].help_text && (
+                            <CustomizedTooltips
+                              toolTipText={
+                                custodyMetaData["last_custody"].help_text
+                              }
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }
+                  }
                 >
                   <MenuItem value={true}>YES</MenuItem>
                   <MenuItem value={false}>NO</MenuItem>

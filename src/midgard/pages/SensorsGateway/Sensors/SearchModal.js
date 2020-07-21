@@ -11,6 +11,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import { useState } from "react";
+import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,6 +32,7 @@ export default function SearchModal({
   searchFieldLabel,
   searchFieldPlaceHolder,
   selectedList,
+  helpText,
 }) {
   const classes = useStyles();
   const [list, setList] = useState({});
@@ -44,25 +46,29 @@ export default function SearchModal({
     >
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent className={classes.root}>
-        <Autocomplete
-          id="tags-outlined"
-          options={listOfItems}
-          getOptionLabel={(option) =>
-            option && `${option.name}:${option.gateway_uuid}`
-          }
-          onChange={(event, newValue) => {
-            setList(newValue);
-          }}
-          defaultValue={selectedList}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="outlined"
-              label={searchFieldLabel}
-              placeholder={searchFieldPlaceHolder}
-            />
-          )}
-        />
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Autocomplete
+            id="tags-outlined"
+            options={listOfItems}
+            getOptionLabel={(option) =>
+              option && `${option.name}:${option.gateway_uuid}`
+            }
+            onChange={(event, newValue) => {
+              setList(newValue);
+            }}
+            defaultValue={selectedList}
+            style={{ flex: 1 }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                label={searchFieldLabel}
+                placeholder={searchFieldPlaceHolder}
+              />
+            )}
+          />
+          {helpText && <CustomizedTooltips toolTipText={helpText} />}
+        </div>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => setOpen(false)} color="primary">

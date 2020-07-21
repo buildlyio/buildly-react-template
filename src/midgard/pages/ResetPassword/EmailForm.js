@@ -85,7 +85,6 @@ function EmailForm({ dispatch, loading, history }) {
   const handleBlur = (e, validation, input) => {
     let validateObj = validators(validation, input);
     let prevState = { ...error };
-    console.log("validate", validateObj);
     if (validateObj && validateObj.error)
       setError({
         ...prevState,

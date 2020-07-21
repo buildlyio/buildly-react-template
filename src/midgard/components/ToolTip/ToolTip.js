@@ -30,21 +30,19 @@ export default function CustomizedTooltips(props) {
   const { toolTipText, children } = props;
   const classes = useStyles();
   return (
-    <div>
-      <StyledToolTip
-        arrow
-        title={
-          <React.Fragment>
-            <Typography color="inherit">{toolTipText}</Typography>
-          </React.Fragment>
-        }
-      >
-        <InfoIcon
-          color="primary"
-          fontSize="small"
-          className={classes.infoToolTip}
-        />
-      </StyledToolTip>
-    </div>
+    <StyledToolTip
+      arrow
+      title={
+        <React.Fragment>
+          <Typography color="inherit">{toolTipText}</Typography>
+        </React.Fragment>
+      }
+    >
+      <InfoIcon
+        color="primary"
+        fontSize="small"
+        className={classes.infoToolTip}
+      />
+    </StyledToolTip>
   );
 }

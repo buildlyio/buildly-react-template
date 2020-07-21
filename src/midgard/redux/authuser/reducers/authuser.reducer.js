@@ -30,6 +30,8 @@ import {
   RESET_PASSWORD_CHECK,
   RESET_PASSWORD_CHECK_SUCCESS,
   RESET_PASSWORD_CHECK_FAILURE,
+  GET_ORGANIZATION_OPTIONS_SUCCESS,
+  GET_ORGANIZATION_OPTIONS_FAILURE,
 } from "../actions/authuser.actions";
 
 const initialState = {
@@ -39,6 +41,7 @@ const initialState = {
   error: null,
   organizationData: null,
   userOptions: null,
+  orgOptions: null,
 };
 
 // Reducer
@@ -280,6 +283,23 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
+        error: action.error,
+      };
+
+    case GET_ORGANIZATION_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        orgOptions: action.data,
+        error: null,
+      };
+    case GET_ORGANIZATION_OPTIONS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        orgOptions: null,
         error: action.error,
       };
 

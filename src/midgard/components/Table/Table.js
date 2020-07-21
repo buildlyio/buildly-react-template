@@ -160,6 +160,7 @@ export default function DataTable({ ...props }) {
                             style={{
                               minWidth: column.minWidth,
                               maxWidth: column.maxWidth,
+                              wordBreak: "break-word",
                             }}
                           >
                             {column.format ? column.format(value) : value}

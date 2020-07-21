@@ -19,6 +19,8 @@ import {
   getUserOptions,
   GET_USER_OPTIONS_SUCCESS,
   GET_USER_OPTIONS_FAILURE,
+  GET_ORGANIZATION_OPTIONS_SUCCESS,
+  GET_ORGANIZATION_OPTIONS_FAILURE,
 } from "../../redux/authuser/actions/authuser.actions";
 import AccountMenu from "./AccountMenu";
 import { routes } from "../../routes/routesConstants";
@@ -57,6 +59,8 @@ function TopBar({
   dispatch,
   data,
   organizationData,
+  userOptions,
+  orgOptions,
 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -69,17 +73,33 @@ function TopBar({
 
   useEffect(() => {
     dispatch(getUser());
+    if (userOptions === null) {
+      httpService
+        .makeOptionsRequest("options", `${environment.API_URL}coreuser/`, true)
+        .then((response) => response.json())
+        .then((res) => {
+          dispatch({ type: GET_USER_OPTIONS_SUCCESS, data: res });
+        })
+        .catch((err) => {
+          dispatch({ type: GET_USER_OPTIONS_FAILURE, error: err });
+        });
+    }
 
-    httpService
-      .makeOptionsRequest("options", `${environment.API_URL}coreuser/`, true)
-      .then((response) => response.json())
-      .then((res) => {
-        console.log("ress", res);
-        dispatch({ type: GET_USER_OPTIONS_SUCCESS, data: res });
-      })
-      .catch((err) => {
-        dispatch({ type: GET_USER_OPTIONS_FAILURE, error: err });
-      });
+    if (orgOptions === null) {
+      httpService
+        .makeOptionsRequest(
+          "options",
+          `${environment.API_URL}organization/`,
+          true
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          dispatch({ type: GET_ORGANIZATION_OPTIONS_SUCCESS, data: res });
+        })
+        .catch((err) => {
+          dispatch({ type: GET_ORGANIZATION_OPTIONS_FAILURE, error: err });
+        });
+    }
 
     // dispatch(getUserOptions());
   }, []);

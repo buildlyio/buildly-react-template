@@ -32,6 +32,9 @@ import {
 } from "../../../utils/mock";
 import { user } from "../../../context/User.context";
 import { updateUser } from "../../../redux/authuser/actions/authuser.actions";
+import { setOptionsData } from "../../../utils/utilMethods";
+import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
+import { InputAdornment } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,6 +86,8 @@ function EditProfileInfo({
   editData,
   setModal,
   organizationData,
+  userOptions,
+  orgOptions,
 }) {
   const classes = useStyles();
   const first_name = useInput((editData && editData.first_name) || "", {
@@ -95,6 +100,34 @@ function EditProfileInfo({
   const email = useInput((editData && editData.email) || "");
   const password = useInput("", { required: true });
   const [formError, setFormError] = useState({});
+  const [fieldsMetadata, setFieldsMetaData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    organisation_name: "",
+  });
+
+  useEffect(() => {
+    let metadata = { ...fieldsMetadata };
+    if (userOptions && userOptions.actions) {
+      metadata["first_name"] = setOptionsData(
+        userOptions.actions.POST,
+        "first_name"
+      );
+      metadata["last_name"] = setOptionsData(
+        userOptions.actions.POST,
+        "last_name"
+      );
+      metadata["email"] = setOptionsData(userOptions.actions.POST, "email");
+    }
+    if (orgOptions && orgOptions.actions) {
+      metadata["organisation_name"] = setOptionsData(
+        orgOptions.actions.POST,
+        "name"
+      );
+    }
+    setFieldsMetaData(metadata);
+  }, [userOptions, orgOptions]);
 
   // if (loade) {
   //   setModal(false);
@@ -181,6 +214,19 @@ function EditProfileInfo({
               }
               onBlur={(e) => handleBlur(e, "required", first_name)}
               {...first_name.bind}
+              InputProps={
+                fieldsMetadata["first_name"].help_text && {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {fieldsMetadata["first_name"].help_text && (
+                        <CustomizedTooltips
+                          toolTipText={fieldsMetadata["first_name"].help_text}
+                        />
+                      )}
+                    </InputAdornment>
+                  ),
+                }
+              }
             />
           </Grid>
           <Grid item item xs={12}>
@@ -193,6 +239,19 @@ function EditProfileInfo({
               name="last_name"
               autoComplete="last_name"
               {...last_name.bind}
+              InputProps={
+                fieldsMetadata["last_name"].help_text && {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {fieldsMetadata["last_name"].help_text && (
+                        <CustomizedTooltips
+                          toolTipText={fieldsMetadata["last_name"].help_text}
+                        />
+                      )}
+                    </InputAdornment>
+                  ),
+                }
+              }
             />
           </Grid>
         </Grid>
@@ -211,6 +270,19 @@ function EditProfileInfo({
               helperText={formError.email ? formError.email.message : ""}
               onBlur={(e) => handleBlur(e, "email", email)}
               {...email.bind}
+              InputProps={
+                fieldsMetadata["email"].help_text && {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {fieldsMetadata["email"].help_text && (
+                        <CustomizedTooltips
+                          toolTipText={fieldsMetadata["email"].help_text}
+                        />
+                      )}
+                    </InputAdornment>
+                  ),
+                }
+              }
             />
           </Grid>
           {organizationData && (
@@ -234,6 +306,21 @@ function EditProfileInfo({
                 }
                 // onBlur={(e) => handleBlur(e, "required", organisation_name)}
                 {...organisation_name.bind}
+                InputProps={
+                  fieldsMetadata["organisation_name"].help_text && {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {fieldsMetadata["organisation_name"].help_text && (
+                          <CustomizedTooltips
+                            toolTipText={
+                              fieldsMetadata["organisation_name"].help_text
+                            }
+                          />
+                        )}
+                      </InputAdornment>
+                    ),
+                  }
+                }
               />
             </Grid>
           )}

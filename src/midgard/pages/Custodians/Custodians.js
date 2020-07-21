@@ -25,6 +25,8 @@ import {
   getCustody,
   GET_CUSTODIAN_OPTIONS_SUCCESS,
   GET_CUSTODIAN_OPTIONS_FAILURE,
+  GET_CONTACT_OPTIONS_SUCCESS,
+  GET_CONTACT_OPTIONS_FAILURE,
 } from "../../redux/custodian/actions/custodian.actions";
 import {
   custodianColumns,
@@ -56,6 +58,8 @@ function Custodian({
   noSearch,
   redirectTo,
   custodyData,
+  custodianOptions,
+  contactOptions,
 }) {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
@@ -82,20 +86,36 @@ function Custodian({
     if (!custodyData) {
       dispatch(getCustody());
     }
-    httpService
-      .makeOptionsRequest(
-        "options",
-        `${environment.API_URL}custodian/custodian/`,
-        true
-      )
-      .then((response) => response.json())
-      .then((res) => {
-        console.log("ress", res);
-        dispatch({ type: GET_CUSTODIAN_OPTIONS_SUCCESS, data: res });
-      })
-      .catch((err) => {
-        dispatch({ type: GET_CUSTODIAN_OPTIONS_FAILURE, error: err });
-      });
+    if (custodianOptions === null) {
+      httpService
+        .makeOptionsRequest(
+          "options",
+          `${environment.API_URL}custodian/custodian/`,
+          true
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          dispatch({ type: GET_CUSTODIAN_OPTIONS_SUCCESS, data: res });
+        })
+        .catch((err) => {
+          dispatch({ type: GET_CUSTODIAN_OPTIONS_FAILURE, error: err });
+        });
+    }
+    if (contactOptions === null) {
+      httpService
+        .makeOptionsRequest(
+          "options",
+          `${environment.API_URL}custodian/contact/`,
+          true
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          dispatch({ type: GET_CONTACT_OPTIONS_SUCCESS, data: res });
+        })
+        .catch((err) => {
+          dispatch({ type: GET_CONTACT_OPTIONS_FAILURE, error: err });
+        });
+    }
   }, []);
 
   useEffect(() => {

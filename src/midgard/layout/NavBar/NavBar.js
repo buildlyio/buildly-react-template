@@ -59,7 +59,6 @@ const useStyles = makeStyles((theme) => ({
 const getFilteredNavItems = (userData, navItems) => {
   let isGlobalAdmin = checkForGlobalAdmin(userData);
 
-  console.log("isGlobalAdmin", isGlobalAdmin);
   if (isGlobalAdmin) return navItems;
   else
     return navItems.filter((nav) => {

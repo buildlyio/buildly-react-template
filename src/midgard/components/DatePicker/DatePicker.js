@@ -11,45 +11,50 @@ import { IconButton, InputAdornment } from "@material-ui/core";
 import MomentUtils from "@date-io/moment";
 import DateFnsUtils from "@date-io/date-fns";
 import moment from "moment";
+import CustomizedTooltips from "../ToolTip/ToolTip";
 
 export default function DatePickerComponent({
   selectedDate,
   handleDateChange,
   label,
   hasTime,
+  helpText,
 }) {
   return (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      {hasTime ? (
-        <KeyboardDateTimePicker
-          variant="inline"
-          inputVariant="outlined"
-          ampm={false}
-          fullWidth
-          margin="normal"
-          label={label}
-          value={selectedDate}
-          onChange={handleDateChange}
-          format="MM/dd/yyyy HH:mm:ss"
-        />
-      ) : (
-        <KeyboardDatePicker
-          // disableToolbar
-          autoOk
-          fullWidth
-          inputVariant="outlined"
-          variant="inline"
-          format="MM/dd/yyyy"
-          margin="normal"
-          id="date-picker-inline"
-          label={label}
-          value={selectedDate}
-          onChange={handleDateChange}
-          KeyboardButtonProps={{
-            "aria-label": "change date",
-          }}
-        />
-      )}
-    </MuiPickersUtilsProvider>
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        {hasTime ? (
+          <KeyboardDateTimePicker
+            variant="inline"
+            inputVariant="outlined"
+            ampm={false}
+            fullWidth
+            margin="normal"
+            label={label}
+            value={selectedDate}
+            onChange={handleDateChange}
+            format="MM/dd/yyyy HH:mm:ss"
+          />
+        ) : (
+          <KeyboardDatePicker
+            // disableToolbar
+            autoOk
+            fullWidth
+            inputVariant="outlined"
+            variant="inline"
+            format="MM/dd/yyyy"
+            margin="normal"
+            id="date-picker-inline"
+            label={label}
+            value={selectedDate}
+            onChange={handleDateChange}
+            KeyboardButtonProps={{
+              "aria-label": "change date",
+            }}
+          />
+        )}
+      </MuiPickersUtilsProvider>
+      {helpText && <CustomizedTooltips toolTipText={helpText} />}
+    </div>
   );
 }
