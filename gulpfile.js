@@ -164,25 +164,20 @@ _gulp.default.task('deleteIndex', function (done) {
     fileObject.push('src/midgard/layout/Container/Container.js');
     fileObject.push('src/midgard/redux/reducers.js');
     fileObject.push('src/midgard/redux/sagas.js');
-    for (var i=0; fileObject[i];i++) {
+    for (var i = 0; fileObject[i]; i++) {
         var container = _fs.readFileSync(fileObject[i], "utf8");
         var importSearch = container.search(imports);
         var startIndex = container.search(start);
         var endIndex = container.search(end);
-        container = container.slice(importSearch, startIndex + start.length) + "\n    " +  container.slice(endIndex);
+        container = container.slice(importSearch, startIndex + start.length) + "\n    " + container.slice(endIndex);
         _fs.writeFileSync(fileObject[i], container);
     }
-    var appContext = _fs.readFileSync('src/midgard/context/App.context.js', "utf8");
-    var startIndex = appContext.search(start);
-    var endIndex = appContext.search(end);
-    appContext = appContext.slice(0, startIndex + start.length) + "\n" + appContext.slice(endIndex);
-    _fs.writeFileSync('src/midgard/context/App.context.js', appContext);
 
-    var indexFile = _fs.readFileSync('src/index.html',"utf8");
+    var indexFile = _fs.readFileSync('src/index.html', "utf8");
     start = '<title>';
     end = '</title>';
-    startIndex = indexFile.search(start);
-    endIndex = indexFile.search(end);
+    var startIndex = indexFile.search(start);
+    var endIndex = indexFile.search(end);
     indexFile = indexFile.slice(0, startIndex + start.length) + "My App" + indexFile.slice(endIndex);
     _fs.writeFileSync('src/index.html', indexFile);
 
@@ -191,7 +186,7 @@ _gulp.default.task('deleteIndex', function (done) {
 
 _gulp.default.task('createFile', function (done) {
     var items = [];
-    var imports= [];
+    var imports = [];
     var sagasImports = [];
     var sagaRoot = '';
     var reducerRoot = '';
@@ -200,31 +195,25 @@ _gulp.default.task('createFile', function (done) {
     var start = "//entryPointForGulpStart";
     var end = "//entryPointForGulpEnd";
 
-    var appContext = _fs.readFileSync('src/midgard/context/App.context.js',"utf8");
-    var index = appContext.search(start);
-    var indexEnd = appContext.search(end);
-    appContext = appContext.slice(0, index + start.length) + "\n" + "export const app = {\n  appTitle: \"My App\"," + "\n};\n" + appContext.slice(indexEnd);
-    _fs.writeFileSync('./src/midgard/context/App.context.js', appContext);
-
-    var container = _fs.readFileSync('src/midgard/layout/Container/Container.js',"utf8");
-    index = container.search(start);
-    indexEnd = container.search(end);
-    container = container.slice(0, index + start.length) + "\n    "  + routes.join("") + container.slice(indexEnd);
+    var container = _fs.readFileSync('src/midgard/layout/Container/Container.js', "utf8");
+    var index = container.search(start);
+    var indexEnd = container.search(end);
+    container = container.slice(0, index + start.length) + "\n    " + routes.join("") + container.slice(indexEnd);
     _fs.writeFileSync('./src/midgard/layout/Container/Container.js', imports.join("") + container);
 
-    var sagaFile = _fs.readFileSync('./src/midgard/redux/sagas.js',"utf8");
+    var sagaFile = _fs.readFileSync('./src/midgard/redux/sagas.js', "utf8");
     index = sagaFile.search(start);
     indexEnd = sagaFile.search(end);
     sagaFile = sagaFile.slice(0, index + start.length) + "\n    " + sagaRoot + sagaFile.slice(indexEnd);
     _fs.writeFileSync('./src/midgard/redux/sagas.js', sagasImports.join("") + sagaFile);
 
-    var reducerFile = _fs.readFileSync('./src/midgard/redux/reducers.js',"utf8");
+    var reducerFile = _fs.readFileSync('./src/midgard/redux/reducers.js', "utf8");
     index = reducerFile.search(start);
     indexEnd = reducerFile.search(end);
     reducerFile = reducerFile.slice(0, index + start.length) + "\n    " + reducerRoot + reducerFile.slice(indexEnd);
     _fs.writeFileSync('./src/midgard/redux/reducers.js', reducerImports.join("") + reducerFile);
 
-    var indexFile = _fs.readFileSync('./src/index.html',"utf8");
+    var indexFile = _fs.readFileSync('./src/index.html', "utf8");
     start = '<title>';
     end = '</title>';
     index = indexFile.search(start);
