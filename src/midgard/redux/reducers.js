@@ -9,7 +9,7 @@ import { LOGOUT_SUCCESS } from "./authuser/actions/authuser.actions";
 
 const appReducer = combineReducers({
   //entryPointForGulpStart
-  //entryPointForGulpEnd
+    //entryPointForGulpEnd
   authReducer,
   coreuserReducer,
   coreGroupReducer,
