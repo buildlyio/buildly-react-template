@@ -15,15 +15,15 @@ import Container from "@material-ui/core/Container";
 import { useInput } from "../../hooks/useInput";
 import { login } from "../../redux/authuser/actions/authuser.actions";
 import { validators } from "../../utils/validators";
-import logo from "../../../assets/tp-logo.png";
+import logo from "../../../assets/buildly-logo.png";
 import { routes } from "../../routes/routesConstants";
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
-      <Link color="inherit" href="https://xparent.io/" target="_blank">
-        Transparent Path
+      <Link color="inherit" href="https://example.com/" target="_blank">
+        Buildly
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}

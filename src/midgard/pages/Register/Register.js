@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
@@ -16,7 +15,7 @@ import { useInput } from "../../hooks/useInput";
 import { register, login } from "../../redux/authuser/actions/authuser.actions";
 import Grid from "@material-ui/core/Grid";
 import { validators } from "../../utils/validators";
-import logo from "../../../assets/tp-logo.png";
+import logo from "../../../assets/buildly-logo.png";
 import { isMobile } from "../../utils/mediaQuery";
 import { routes } from "../../routes/routesConstants";
 
@@ -24,8 +23,8 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
-      <Link color="inherit" href="https://xparent.io/" target="_blank">
-        Transparent Path
+      <Link color="inherit" href="https://example.com/" target="_blank">
+        Buildly
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}

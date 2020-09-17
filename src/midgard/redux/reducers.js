@@ -5,10 +5,6 @@ import coreuserReducer from "./coreuser/coreuser.reducer";
 import coreGroupReducer from "./coregroup/reducers/coregroup.reducer";
 import crudDataReducer from "midgard/modules/crud/redux/crud.reducer";
 import alertReducer from "./alert/reducers/alert.reducer";
-import custodianReducer from "./custodian/reducers/custodian.reducer";
-import itemsReducer from "./items/reducers/items.reducer";
-import sensorsGatewayReducer from "./sensorsGateway/reducers/sensorsGateway.reducer";
-import shipmentReducer from "./shipment/reducers/shipment.reducers";
 import { LOGOUT_SUCCESS } from "./authuser/actions/authuser.actions";
 
 const appReducer = combineReducers({
@@ -19,10 +15,6 @@ const appReducer = combineReducers({
   coreGroupReducer,
   crudDataReducer,
   alertReducer,
-  custodianReducer,
-  itemsReducer,
-  sensorsGatewayReducer,
-  shipmentReducer,
 });
 
 const rootReducer = (state, action) => {
