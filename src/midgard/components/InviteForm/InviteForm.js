@@ -1,7 +1,7 @@
-import React from 'react'
-import styled from 'styled-components'
-import { colors } from 'colors'
-import { rem } from 'polished'
+import React from 'react';
+import styled from 'styled-components';
+import { colors } from 'colors';
+import { rem } from 'polished';
 
 const InviteContainer = styled.div`
   height: 100%;

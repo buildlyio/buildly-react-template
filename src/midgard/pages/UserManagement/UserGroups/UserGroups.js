@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
-import { FjButton, FjTable, FjMenu, FjToggle, FjInlineEditor } from 'freyja-react'
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { FjButton, FjTable, FjMenu, FjToggle, FjInlineEditor } from 'freyja-react';
 import Crud, { CrudContext } from 'midgard/modules/crud/Crud';
+import { rem } from 'polished';
 
 const UserGroupsLayout = styled.div`
   width: 100%;
@@ -9,7 +10,8 @@ const UserGroupsLayout = styled.div`
 
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: flex-end
+  justify-content: flex-end;
+  margin-bottom: ${rem(10)};
 `;
 
 /**
