@@ -15,53 +15,57 @@ import {
 } from "react-notifications";
 import Users from "./Users/Users";
 import UserGroups from "./UserGroups/UserGroups";
-import { Route, Redirect } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { routes } from "../../routes/routesConstants";
 
 /**
  * Styled component for the user management page.
  */
-const UserManagementWrapper = styled.div`
+const UserManagementLayout = styled.div`
   height: 100%;
   display: flex;
   flex: 1;
   background-color: ${colors.baseLighter};
-  .invite_button {
-    border: ${rem(1)} solid ${colors.primary};
-    color: ${colors.white};
-  }
-  .profile {
-    &__container {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      align-items: flex-start;
-      margin: 0 ${rem(24)};
-    }
-    &__header {
-      display: flex;
-      align-items: center;
-      margin-bottom: ${rem(30)};
-      &__name {
-        padding-right: ${rem(12)};
-      }
-    }
-    &__users {
-      width: 100%;
-    }
-  }
+`;
 
-  .content-switcher {
-    margin-top: ${rem(-22)};
-    &__container {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-content: center;
-      border-top: 1px solid #e1e1e1;
-      margin-bottom: ${rem(30)};
-    }
-  }
+const ProfileContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: flex-start;
+  margin: 0 ${rem(24)};
+`;
+
+const ProfileHeader = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: ${rem(30)};
+`;
+
+const ProfileHeading = styled.h3`
+  padding-right: ${rem(12)};
+`;
+
+const SwitcherContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  border-top: 1px solid #e1e1e1;
+  margin-bottom: ${rem(30)};
+`;
+
+const SwitcherPosition = styled.div`
+  margin-top: ${rem(-22)};
+`;
+
+const InviteHeader = styled.div`
+  width: 100%;
+  margin-bottom: ${rem(12)};
+`;
+
+const InviteInputContainer = styled.div`
+  width: 100%;
 `;
 
 /**
@@ -102,13 +106,13 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
   };
 
   return (
-    <UserManagementWrapper className="profile">
-      <div className="profile__container">
-        <div className="profile__header">
-          <h3 className="profile__header__name">People using this system</h3>
+    <UserManagementLayout>
+      <ProfileContainer>
+        <ProfileHeader>
+          <ProfileHeading>People using this system</ProfileHeading>
           <Popup
             trigger={<FjButton size="small">Invite</FjButton>}
-            position="bottom right"
+            position="bottom center"
             on="click"
             closeOnDocumentClick
             mouseLeaveDelay={300}
@@ -121,11 +125,11 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
             arrow={false}
           >
             <InviteForm onSubmit={inviteUser}>
-              <div className="invite__form__header">
+              <InviteHeader>
                 {" "}
                 Invite user to platform
-              </div>
-              <div className="invite__form__input">
+              </InviteHeader>
+              <InviteInputContainer>
                 <FjInputField
                   label="Emails"
                   id="email"
@@ -134,27 +138,27 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
                   error={error}
                   {...email.bind}
                 />
-              </div>
+              </InviteInputContainer>
               <FjButton size="small" disabled={loading} type="submit">
                 Send
               </FjButton>
             </InviteForm>
           </Popup>
-        </div>
-        <div className="content-switcher__container">
-          <div className="content-switcher">
+        </ProfileHeader>
+        <SwitcherContainer>
+          <SwitcherPosition>
             <FjContentSwitcher
               size="small"
               active={viewState}
               options={subNav}
             />
-          </div>
-        </div>
+          </SwitcherPosition>
+        </SwitcherContainer>
         <Route path={routes.CURRENT_USERS} component={Users} />
         <Route path={routes.USER_GROUPS} component={UserGroups} />
-      </div>
+      </ProfileContainer>
       <NotificationContainer />
-    </UserManagementWrapper>
+    </UserManagementLayout>
   );
 }
 
