@@ -146,7 +146,16 @@ function* invite(payload) {
       `${environment.API_URL}coreuser/invite/`,
       payload.data
     );
-    yield [yield put({ type: INVITE_SUCCESS, user })];
+    yield [
+      yield put({ type: INVITE_SUCCESS, user }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Invitations sent successfully",
+        })
+      ),
+    ];
   } catch (error) {
     yield put({
       type: INVITE_FAIL,
