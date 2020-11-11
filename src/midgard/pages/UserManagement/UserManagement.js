@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { colors } from "colors";
 import styled from "styled-components";
 import { rem } from "polished";
-import { FjInputField } from "freyja-react";
 import InviteForm from "midgard/components/InviteForm/InviteForm";
 import { invite } from "midgard/redux/authuser/actions/authuser.actions";
 import { useInput } from "midgard/hooks/useInput";
@@ -84,7 +83,8 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
     { label: "Current users", value: "current-users" },
     { label: "User groups", value: "groups" },
   ];
-  const [view, setView] = useState("current-users");
+  const viewPath = (subNav.find(item => location.pathname.endsWith(item.value)) || subNav[0]).value;
+  const [view, setView] = useState(viewPath);
 
   // this will be triggered whenever the content switcher is clicked to change the view
   useEffect(() => {
