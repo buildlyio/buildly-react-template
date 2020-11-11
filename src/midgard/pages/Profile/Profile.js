@@ -1,11 +1,12 @@
+import { Typography } from '@material-ui/core';
 import React from 'react';
 
 function Profile() {
   return (
-    <div>
+    <Typography variant="body1">
       Welcome to Buildly Dashboard
-    </div>
-  )
+    </Typography>
+  );
 }
 
-export default Profile
+export default Profile;

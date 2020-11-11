@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { FjButton, FjTable, FjMenu, FjToggle, FjInlineEditor } from 'freyja-react';
-import Crud, { CrudContext } from 'midgard/modules/crud/Crud';
+import { FjTable, FjMenu, FjInlineEditor } from 'freyja-react'
+import Crud from 'midgard/modules/crud/Crud';
 import { rem } from 'polished';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MoreHoriz from '@material-ui/icons/MoreHoriz';
+import Switch from '@material-ui/core/Switch';
 
 const UserGroupsLayout = styled.div`
   width: 100%;
@@ -18,20 +24,18 @@ const ButtonContainer = styled.div`
  * Manage user groups
  */
 function UserGroups() {
-
   // state to toggle actions menus
-  const [menuState, setMenuState] = useState({opened: false, id: ''});
+  const [menu, setMenu] = useState({ row: null, element: null });
 
   const permissionCellTemplate = (row, crud, operation) => {
     return (
-      <FjToggle
-        size="micro"
-        checked={[
-          row.permissions[operation], () => {
-            row.permissions[operation] = !row.permissions[operation];
-            crud.updateItem(row);
-          }
-        ]}
+      <Switch
+        size="small"
+        checked={row.permissions[operation]}
+        onChange={() => {
+          row.permissions[operation] = !row.permissions[operation];
+          crud.updateItem(row);
+        }}
       />
     );
   };
@@ -47,21 +51,47 @@ function UserGroups() {
   };
 
   const actionsTemplate = (row, crud) => {
+    const handleMenuClick = (event) => {
+      setMenu({ row: row, element: event.currentTarget });
+    };
+
+    const handleMenuItemClick = (action) => {
+      if (action === 'delete') {
+        crud.deleteItem(menu.row);
+      }
+      setMenu({ row: null, element: null });
+    };
+
+    const handleMenuClose = () => {
+      setMenu({ row: null, element: null });
+    };
+    
     return (
-      <FjMenu
-        menuItems={row.actions}
-        xPosition="right"
-        yPosition="down"
-        open={menuState.id === row.id ? menuState.opened: null}
-        setOpen={() => setMenuState({opened: !menuState.opened, id: row.id})}
-        onActionClicked={(action) => {
-          if (action === 'delete') {
-            crud.deleteItem(row)
-          }
-        }}
-      >
-        <FjButton variant="secondary" size="small" onClick={() => setMenuState({opened: !menuState.opened, id: row.id})}>•••</FjButton>
-      </FjMenu>
+      <React.Fragment>
+        <IconButton
+          aria-label="more"
+          aria-controls={'group-actions-menu-' + row.id}
+          aria-haspopup="true"
+          onClick={handleMenuClick}
+        >
+          <MoreHoriz />
+        </IconButton>
+        <Menu
+          id={'group-actions-menu-' + row.id}
+          anchorEl={menu.element}
+          keepMounted
+          open={Boolean(menu.row && (menu.row.id === row.id))}
+          onClose={handleMenuClose}
+        >
+          {row.actions.map((option) => (
+          <MenuItem
+            key={'group-actions-' + row.id + '-' + option.value}
+            onClick={() => handleMenuItemClick(option.value)}
+          >
+            {option.label}
+          </MenuItem>))}
+        </Menu>
+      </React.Fragment>
     );
   };
 
@@ -101,7 +131,7 @@ function UserGroups() {
             return (
               <React.Fragment>
                 <ButtonContainer>
-                  <FjButton variant="secondary" size="small" onClick={() => addGroup(crud)}>Create a group</FjButton>
+                  <Button variant="outlined" size="small" onClick={() => addGroup(crud)}>Create a group</Button>
                 </ButtonContainer>
                 <FjTable
                   columns={[

@@ -24,7 +24,7 @@ const InviteContent = styled.div`
 
 const InviteStyledForm = styled.form`
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   flex-direction: column;
 `;
 
