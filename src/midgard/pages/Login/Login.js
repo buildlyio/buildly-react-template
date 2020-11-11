@@ -46,13 +46,18 @@ const useStyles = makeStyles((theme) => ({
   },
   form: {
     width: "100%",
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(2),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
   logo: {
-    width: "100%",
+    width: "12.5rem",
+    maxWidth: "100%",
+  },
+  textField: {
+    minHeight: "5rem",
+    margin: "0.25rem 0",
   },
   buttonProgress: {
     position: "absolute",
@@ -144,6 +149,7 @@ function Login({ dispatch, loading, history }) {
                 helperText={
                   error && error.username ? error.username.message : ""
                 }
+                className={classes.textField}
                 onBlur={(e) => handleBlur(e, "required", username)}
                 {...username.bind}
               />
@@ -161,6 +167,7 @@ function Login({ dispatch, loading, history }) {
                 helperText={
                   error && error.password ? error.password.message : ""
                 }
+                className={classes.textField}
                 onBlur={(e) => handleBlur(e, "required", password)}
                 {...password.bind}
               />
@@ -173,7 +180,7 @@ function Login({ dispatch, loading, history }) {
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
-                  Sign In
+                  Sign in
                 </Button>
                 {loading && (
                   <CircularProgress
@@ -202,7 +209,7 @@ function Login({ dispatch, loading, history }) {
           </div>
         </CardContent>
       </Card>
-      <Box mt={8}>
+      <Box mt={8} mb={1}>
         <Copyright />
       </Box>
     </Container>
