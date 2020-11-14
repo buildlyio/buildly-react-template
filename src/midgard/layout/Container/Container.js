@@ -1,9 +1,7 @@
 // react library imports
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import styled from "styled-components";
-import { colors } from "colors";
 import NavBar from "midgard/layout/NavBar/NavBar";
 import TopBar from "midgard/layout/TopBar/TopBar";
 import UserManagement from "midgard/pages/UserManagement/UserManagement";

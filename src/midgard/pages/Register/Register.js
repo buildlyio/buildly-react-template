@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
@@ -13,7 +12,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useInput } from "../../hooks/useInput";
-import { register, login } from "../../redux/authuser/actions/authuser.actions";
+import { register } from "../../redux/authuser/actions/authuser.actions";
 import Grid from "@material-ui/core/Grid";
 import { validators } from "../../utils/validators";
 import logo from "../../../assets/tp-logo.png";
@@ -44,13 +43,19 @@ const useStyles = makeStyles((theme) => ({
   },
   form: {
     width: "100%",
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(2),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
   logo: {
+    maxWidth: "20rem",
     width: "100%",
+    marginBottom: theme.spacing(3),
+  },
+  textField: {
+    minHeight: "5rem",
+    margin: "0.25rem 0",
   },
   buttonProgress: {
     position: "absolute",
@@ -167,6 +172,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     helperText={
                       formError.first_name ? formError.first_name.message : ""
                     }
+                    className={classes.textField}
                     onBlur={(e) => handleBlur(e, "required", first_name)}
                     {...first_name.bind}
                   />
@@ -184,6 +190,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     helperText={
                       formError.last_name ? formError.last_name.message : ""
                     }
+                    className={classes.textField}
                     onBlur={(e) => handleBlur(e)}
                     {...last_name.bind}
                   />
@@ -204,6 +211,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     helperText={
                       formError.username ? formError.username.message : ""
                     }
+                    className={classes.textField}
                     onBlur={(e) => handleBlur(e, "required", username)}
                     {...username.bind}
                   />
@@ -221,6 +229,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     type="email"
                     error={formError.email && formError.email.error}
                     helperText={formError.email ? formError.email.message : ""}
+                    className={classes.textField}
                     onBlur={(e) => handleBlur(e, "email", email)}
                     {...email.bind}
                   />
@@ -246,6 +255,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
                         ? formError.organization_name.message
                         : ""
                     }
+                    className={classes.textField}
                     onBlur={(e) => handleBlur(e, "required", organization_name)}
                     {...organization_name.bind}
                   />
@@ -267,6 +277,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     helperText={
                       formError.password ? formError.password.message : ""
                     }
+                    className={classes.textField}
                     onBlur={(e) => handleBlur(e, "required", password)}
                     {...password.bind}
                   />
@@ -287,6 +298,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     helperText={
                       formError.re_password ? formError.re_password.message : ""
                     }
+                    className={classes.textField}
                     onBlur={(e) => handleBlur(e, "confirm", re_password)}
                     {...re_password.bind}
                   />
@@ -313,7 +325,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
               <Grid container>
                 <Grid item>
                   <Link href={routes.LOGIN} variant="body2" color="secondary">
-                    {"Go Back To Login"}
+                    {"Already have an account? Sign in"}
                   </Link>
                 </Grid>
               </Grid>
@@ -321,7 +333,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
           </div>
         </CardContent>
       </Card>
-      <Box mt={8}>
+      <Box mt={8} mb={1}>
         <Copyright />
       </Box>
     </Container>
