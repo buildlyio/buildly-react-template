@@ -33,10 +33,10 @@ const useStyles = makeStyles((theme) => ({
   },
   textField: {
     minHeight: "5rem",
-    margin: "0.25rem 0",
+    margin: theme.spacing(1, 0),
   },
   submit: {
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(3, 0, 2),
   },
   logo: {
     maxWidth: "20rem",

@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
   textField: {
     minHeight: "5rem",
-    margin: "0.25rem 0",
+    margin: theme.spacing(1, 0),
   },
   buttonProgress: {
     position: "absolute",
