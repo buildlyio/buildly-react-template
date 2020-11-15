@@ -35,8 +35,8 @@ function Copyright() {
 }
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(8),
+  container: {
+    paddingTop: theme.spacing(8),
   },
   paper: {
     display: "flex",
@@ -148,9 +148,9 @@ function Login({ dispatch, loading, history }) {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="xs" className={classes.container}>
       <CssBaseline />
-      <Card className={classes.root} variant="outlined">
+      <Card variant="outlined">
         <CardContent>
           <div className={classes.paper}>
             <img src={logo} className={classes.logo} />

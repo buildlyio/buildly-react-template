@@ -35,7 +35,8 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(1.5)
   },
   contentMaxWidth: {
-    maxWidth: "calc(100vw - 240px)"
+    width: "calc(100vw - 240px)",
+    maxWidth: theme.breakpoints.values.lg
   }
 }));
 
