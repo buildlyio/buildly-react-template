@@ -40,9 +40,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
     marginBottom: "0.5em",
   },
-  addButton: {
-    backgroundColor: "#000",
-  },
 }));
 
 function Custodian({
@@ -174,7 +171,6 @@ function Custodian({
             // fullWidth
             variant="contained"
             color="primary"
-            className={classes.addButton}
             onClick={() =>
               history.push(addCustodianPath, {
                 from: redirectTo || routes.CUSTODIANS,

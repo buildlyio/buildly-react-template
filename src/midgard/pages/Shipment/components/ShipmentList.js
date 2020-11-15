@@ -23,11 +23,17 @@ import Loader from "../../../components/Loader/Loader";
 const StyledTableRow = withStyles((theme) => ({
   root: {
     "&:nth-of-type(odd)": {
-      backgroundColor: "#BEBABA",
+      backgroundColor: "#4F4D4D",
+    },
+    "&:nth-of-type(even)": {
+      backgroundColor: "#383636",
     },
     "&:nth-of-type(odd):hover": {
-      backgroundColor: "#DCD9D8",
+      backgroundColor: "#000"
     },
+    "&:nth-of-type(even):hover": {
+      backgroundColor: "#000"
+    }
   },
 }))(TableRow);
 
@@ -39,7 +45,7 @@ const useStyles = makeStyles({
     maxHeight: 440,
   },
   searchSection: {
-    background: "#878282",
+    background: "#383636",
     width: "100%",
     display: "flex",
     minHeight: "40px",
@@ -49,7 +55,7 @@ const useStyles = makeStyles({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#BEBABA",
+    backgroundColor: "#4F4D4D",
   },
   tableCell: {
     padding: theme.spacing(0, 1),

@@ -31,9 +31,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1, 0),
     width: "100%",
   },
-  addButton: {
-    backgroundColor: "#000",
-  },
   inviteForm: {
     margin: "1rem",
     minWidth: "25rem",
@@ -84,7 +81,6 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
         <Popup
           trigger={
             <Button
-              className={classes.addButton}
               type="button"
               variant="contained"
               color="primary">

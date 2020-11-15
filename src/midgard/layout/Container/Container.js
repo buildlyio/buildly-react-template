@@ -19,6 +19,7 @@ import SensorsGateway from "../../pages/SensorsGateway/SensorsGateway";
 import Shipment from "../../pages/Shipment/Shipment";
 import Dashboard from "../../pages/Dashboard/Dashboard";
 import { checkForGlobalAdmin } from "../../utils/utilMethods";
+import { isMobile } from "../../utils/mediaQuery";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,7 +32,11 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: "100%",
     paddingTop: "6em",
+    paddingBottom: theme.spacing(1.5)
   },
+  contentMaxWidth: {
+    maxWidth: "calc(100vw - 240px)"
+  }
 }));
 
 /**
@@ -80,7 +85,7 @@ function ContainerDashboard({ location, history, data }) {
             />
           )}
         </SubNavContext.Provider>
-        <Container className={classes.content}>
+        <Container className={`${classes.content} ${!isMobile() && classes.contentMaxWidth}`}>
           <Route
             exact
             path={routes.APP}

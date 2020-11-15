@@ -11,6 +11,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import { MapComponent } from "../../components/MapComponent/MapComponent";
 import { numberWithCommas, MAP_API_URL } from "../../utils/utilMethods";
+import AppsIcon from "@material-ui/icons/Apps";
 import { RECALL_DATA, DELAY_DATA } from "../../utils/mock";
 import { HumidIcon } from "../../components/Icons/Icons";
 import {
@@ -67,10 +68,20 @@ const useStyles = makeStyles((theme) => ({
   },
   tileHeading: {
     flex: 1,
-    padding: "8px",
+    padding: theme.spacing(1, 2),
+    textTransform: "uppercase",
+    fontSize: 18,
     display: "flex",
     alignItems: "center",
   },
+  statisticTitle: {
+    textTransform: "uppercase",
+    fontWeight: 400
+  },
+  largeIcon: {
+    width: 48,
+    height: 48,
+  }
 }));
 
 /**
@@ -132,7 +143,7 @@ function Dashboard(props) {
       dispatch(getSensorType());
     }
 
-    dispatch(getDashboardItems());
+    // dispatch(getDashboardItems());
   }, []);
 
   const returnIcon = (row) => {
@@ -222,9 +233,16 @@ function Dashboard(props) {
     <Box mt={3} mb={3}>
       <div className={classes.dashboardContainer}>
         {loading && <Loader open={loading} />}
-        <Typography className={classes.dashboardHeading} variant={"h4"}>
-          Producer Dashboard
-        </Typography>
+        <Grid container spacing={2} direction="row" alignItems="center">
+          <Grid item>
+            <AppsIcon className={classes.largeIcon}></AppsIcon>
+          </Grid>
+          <Grid item>
+            <Typography className={classes.dashboardHeading} variant={"h4"}>
+              Producer Dashboard
+            </Typography>
+          </Grid>
+        </Grid>
         <Box mt={3} mb={4}>
           <Grid container className={classes.root} spacing={2}>
             <Grid item md={3} xs={6}>
@@ -234,7 +252,7 @@ function Dashboard(props) {
                     ? numberWithCommas(dashboardItems.items_in_transit)
                     : "-"}
                 </Typography>
-                <Typography variant={"subtitle2"}>Items in transit</Typography>
+                <Typography variant={"subtitle2"} className={classes.statisticTitle}>Items in transit</Typography>
               </div>
             </Grid>
             <Grid item md={3} xs={6}>
@@ -244,7 +262,7 @@ function Dashboard(props) {
                     ? delayedRows.length
                     : 0}
                 </Typography>
-                <Typography variant={"subtitle2"}>Delayed Shipment</Typography>
+                <Typography variant={"subtitle2"} className={classes.statisticTitle}>Delayed Shipment</Typography>
               </div>
             </Grid>
             <Grid item md={3} xs={6}>
@@ -254,7 +272,7 @@ function Dashboard(props) {
                     ? dashboardItems.items_at_risk
                     : "-"}
                 </Typography>
-                <Typography variant={"subtitle2"}>Items at risk</Typography>
+                <Typography variant={"subtitle2"} className={classes.statisticTitle}>Items at risk</Typography>
               </div>
             </Grid>
             <Grid item md={3} xs={6}>
@@ -264,13 +282,13 @@ function Dashboard(props) {
                     ? `$${numberWithCommas(dashboardItems.items_at_risk_value)}`
                     : "-"}
                 </Typography>
-                <Typography variant={"subtitle2"}>Revenue Risk</Typography>
+                <Typography variant={"subtitle2"} className={classes.statisticTitle}>Revenue Risk</Typography>
               </div>
             </Grid>
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
                 <Typography variant={"h4"}>{"-"}</Typography>
-                <Typography variant={"subtitle2"}>
+                <Typography variant={"subtitle2"} className={classes.statisticTitle}>
                   Perfect order rate
                 </Typography>
               </div>
@@ -283,7 +301,6 @@ function Dashboard(props) {
               <Grid item xs={12}>
                 <div className={classes.switchViewSection}>
                   <Typography
-                    color="primary"
                     variant="h5"
                     className={classes.tileHeading}
                   >
@@ -294,7 +311,6 @@ function Dashboard(props) {
                     <IconButton
                       className={classes.menuButton}
                       onClick={() => setTileView(!tileView)}
-                      color="primary"
                       aria-label="menu"
                     >
                       {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
@@ -308,7 +324,6 @@ function Dashboard(props) {
               <Grid item xs={12}>
                 <div className={classes.switchViewSection}>
                   <Typography
-                    color="primary"
                     variant="h5"
                     className={classes.tileHeading}
                   >
@@ -321,7 +336,6 @@ function Dashboard(props) {
                     <IconButton
                       className={classes.menuButton}
                       onClick={() => setTileView(!tileView)}
-                      color="primary"
                       aria-label="menu"
                     >
                       {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
@@ -336,7 +350,6 @@ function Dashboard(props) {
             <div className={classes.switchViewSection}>
               <Typography
                 className={classes.tileHeading}
-                color="primary"
                 variant="h5"
               >
                 Current Shipments
@@ -346,7 +359,6 @@ function Dashboard(props) {
                 <IconButton
                   className={classes.menuButton}
                   onClick={() => setTileView(!tileView)}
-                  color="primary"
                   aria-label="menu"
                 >
                   {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}

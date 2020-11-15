@@ -74,7 +74,6 @@ module.exports = {
       store: path.resolve(__dirname, './src/store'),
       environment$: path.resolve(__dirname, './environment.js'),
       styles$: path.resolve(__dirname, './src/styles.scss'),
-      colors$: path.resolve(__dirname, './src/styles/colors.js'),
     }
   },
   output: {

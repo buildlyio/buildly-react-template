@@ -17,19 +17,28 @@ import LinkOffIcon from "@material-ui/icons/LinkOff";
 const StyledTableRow = withStyles((theme) => ({
   root: {
     "&:nth-of-type(odd)": {
-      backgroundColor: "#BEBABA",
+      backgroundColor: "#4F4D4D",
+    },
+    "&:nth-of-type(even)": {
+      backgroundColor: "#383636",
     },
     "&:nth-of-type(odd):hover": {
-      backgroundColor: "#DCD9D8",
+      backgroundColor: "#000"
     },
+    "&:nth-of-type(even):hover": {
+      backgroundColor: "#000"
+    }
   },
 }))(TableRow);
 
 const StyledTableHead = withStyles((theme) => ({
   head: {
-    fontWeight: "bold",
-    color: " #fff",
-    background: "#000",
+    textTransform: "uppercase",
+    fontSize: 12.5,
+    fontWeight: "400",
+    padding: theme.spacing(1, 2),
+    color: "#7C7A7A",
+    background: "#383636",
   },
 }))(TableCell);
 
@@ -51,7 +60,7 @@ const useStyles = makeStyles({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#BEBABA",
+    backgroundColor: "#4F4D4D",
   },
 });
 

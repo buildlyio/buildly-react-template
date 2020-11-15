@@ -17,12 +17,12 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 3,
     zIndex: 1,
     fontSize: 16,
-    color: "#586069",
-    backgroundColor: "#f6f8fa",
+    backgroundColor: "#383636",
+    color: "#fff",
     padding: theme.spacing(2),
   },
   container: {
-    background: "#383636",
+    background: "#7C7A7A",
     width: "100%",
     display: "flex",
     flexWrap: "wrap",
@@ -34,7 +34,9 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "500px",
     textTransform: "Capitalize",
     padding: "3px 16px",
-    margin: theme.spacing(1, 2),
+    margin: theme.spacing(0.5, 1),
+    borderColor: '#fff',
+    color: '#fff'
   },
 }));
 

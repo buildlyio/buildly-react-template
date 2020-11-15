@@ -1,5 +1,5 @@
 import React from "react";
-import { fade, makeStyles } from "@material-ui/core/styles";
+import { lighten, makeStyles } from "@material-ui/core/styles";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 const useStyles = makeStyles((theme) => ({
@@ -10,9 +10,10 @@ const useStyles = makeStyles((theme) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,
     backgroundColor: "#fff",
+    color: "#000",
     "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
-      color: "#fff",
+      backgroundColor: lighten(theme.palette.primary.main, 0.5),
+      color: theme.palette.primary.contrastText,
     },
     marginRight: theme.spacing(2),
     width: "100%",
@@ -25,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
   searchIcon: {
     padding: theme.spacing(0, 2),
+    opacity: 0.8,
     height: "100%",
     position: "absolute",
     pointerEvents: "none",
@@ -56,7 +58,7 @@ export default function SearchInput({ ...props }) {
       }`}
     >
       <div className={classes.searchIcon}>
-        <SearchIcon color={"secondary"} />
+        <SearchIcon color="inherit" />
       </div>
       <InputBase
         placeholder="Search…"

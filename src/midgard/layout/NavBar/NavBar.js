@@ -42,7 +42,10 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
   },
   active: {
-    backgroundColor: "#B46F04 !important",
+    backgroundColor: "#887C5E !important",
+    borderRightColor: theme.palette.primary.main,
+    borderRightWidth: 10,
+    borderRightStyle: "solid",
     fontWeight: "bold",
   },
   navLink: {
@@ -51,8 +54,8 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
   },
   navItems: {
-    padding: "24px",
-    textAlign: "center",
+    padding: theme.spacing(3, 4),
+    textAlign: "left",
   },
 }));
 
@@ -74,7 +77,7 @@ function NavBar({ navHidden, setNavHidden, location, history, userData }) {
   const theme = useTheme();
   let isMobileDevice = isMobile();
 
-  let navItmes = getFilteredNavItems(userData, NAVIGATION_ITEMS);
+  let navItems = getFilteredNavItems(userData, NAVIGATION_ITEMS);
 
   const handleListItemClick = (event, index, item) => {
     if (isMobileDevice) setNavHidden(!navHidden);
@@ -84,7 +87,7 @@ function NavBar({ navHidden, setNavHidden, location, history, userData }) {
     <div>
       <div className={classes.toolbar} />
       <List>
-        {navItmes.map((items, index) => (
+        {navItems.map((items, index) => (
           <React.Fragment key={`${items.id}${index}`}>
             <NavLink
               to={items.link}

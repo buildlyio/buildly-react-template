@@ -14,7 +14,6 @@ import AddIcon from "@material-ui/icons/Add";
 const useStyles = makeStyles((theme) => ({
   addButton: {
     marginBottom: "1.5em",
-    backgroundColor: "#000",
   },
 }));
 

@@ -14,9 +14,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
     marginBottom: "0.5em",
   },
-  addButton: {
-    backgroundColor: "#000",
-  },
 }));
 
 function DashboardWrapper(props) {
@@ -55,10 +52,8 @@ function DashboardWrapper(props) {
         <Box mb={3}>
           <Button
             type="button"
-            // fullWidth
             variant="contained"
             color="primary"
-            className={classes.addButton}
             onClick={onAddButtonClick}
           >
             <AddIcon /> {addButtonHeading}
