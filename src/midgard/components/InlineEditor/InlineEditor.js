@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Component for inline editing.
  */
-export function InlineEditor({id, tag, label, value, placeholder, onChange}) {
+export function InlineEditor({id, tag, value, placeholder, onChange}) {
   const classes = useStyles();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value);
@@ -92,9 +92,11 @@ export function InlineEditor({id, tag, label, value, placeholder, onChange}) {
       {editing ? (
         <TextField
           tag={tag}
-          autoFocus="true"
+          size="small"
+          variant="outlined"
+          autoFocus={true}
           ref={node}
-          name={id}
+          name={`${id}`}
           type="text"
           placeholder={placeholder}
           value={text}

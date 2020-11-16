@@ -103,7 +103,7 @@ function UserGroups() {
   const nameTemplate = (row, crud) => {
     return (
       <InlineEditor
-        tag="h6"
+        tag="body1"
         id={row.id}
         value={row.name}
         placeholder="Group type"

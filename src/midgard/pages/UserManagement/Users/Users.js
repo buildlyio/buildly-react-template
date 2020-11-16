@@ -12,6 +12,7 @@ import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import Box from "@material-ui/core/Box";
 import { makeStyles } from '@material-ui/core/styles';
 import { rem } from 'polished';
+import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   btnPermission: {
@@ -140,9 +141,9 @@ function Users({ location, history, data, dispatch }) {
           return (
             <PermissionsTable
               columns={[
-                { label: 'Full name', prop: 'name', template: (row) => {return <b style={!row.is_active? {'color': '#aaa'}: null}>{row.first_name} {row.last_name}</b>}, flex: '1' },
-                { label: 'Email', prop: 'email', flex: '2', template: (row) => {return <span style={!row.is_active? {'color': '#aaa'}: null}> {row.email} </span>}},
-                { label: 'Last activity', prop: 'activity', template: (row) => {return <small style={{'color': '#aaa'}}>Today</small>}, flex: '1' },
+                { label: 'Full name', prop: 'name', template: (row) => {return <Typography variant="body1" style={!row.is_active? {'color': '#aaa'}: null}>{row.first_name} {row.last_name}</Typography>}, flex: '1' },
+                { label: 'Email', prop: 'email', flex: '2', template: (row) => {return <Typography variant="body2" style={!row.is_active? {'color': '#aaa'}: null}> {row.email}</Typography>}},
+                { label: 'Last activity', prop: 'activity', template: (row) => {return <Typography variant="caption" style={{'color': '#aaa'}}>Today</Typography>}, flex: '1' },
                 { label: 'Permissions', prop: 'permission', template: (row) => permissionsTemplate(row, crud, classes), flex: '2' },
                 { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud), flex: '1' },
               ]}
