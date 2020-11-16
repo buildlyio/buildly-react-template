@@ -10,7 +10,7 @@ import {
 } from "../../components/Icons/Icons";
 
 export const MAP_TOOLTIP =
-  "Start and End Location of custodians which have the current custody/first custody of the shipments that are either planned or are Enroute";
+  "Start and end location of custodians which have the current custody/first custody of the shipments that are either planned or enroute";
 
 export const SHIPMENT_COLUMNS = [
   { id: "id", width: 150, maxWidth: 150 },

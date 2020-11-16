@@ -156,7 +156,6 @@ const SortFilter = (props) => {
     <React.Fragment>
       <Button
         type="button"
-        // fullWidth
         variant="outlined"
         aria-describedby={"sort-popup"}
         color="primary"

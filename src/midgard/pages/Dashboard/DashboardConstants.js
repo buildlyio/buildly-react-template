@@ -2,10 +2,10 @@ import { numberWithCommas } from "../../utils/utilMethods";
 import { getFormattedCustodyRows } from "../Shipment/ShipmentConstants";
 
 export const DASHBOARD_MAP_TOOLTIP =
-  "Start and End Locations of custodians which have current custody of the shipments that are currently Enroute.";
+  "Start and end locations of custodians which have current custody of the shipments that are currently enroute.";
 
 export const DASHBOARD_RECALL_TOOLTIP =
-  "Shipments which are either recalled or have violations like Temperature, Humidity and Delay";
+  "Shipments which are either recalled or have violations such as temperature, humidity and delay";
 
 export const DASHBOARD_DELAY_TOOLTIP = "Shipments which are delayed";
 

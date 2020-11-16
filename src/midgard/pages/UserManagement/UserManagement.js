@@ -85,7 +85,7 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
               type="button"
               variant="contained"
               color="primary">
-              <AddIcon /> Invite users
+              <AddIcon /> Invite Users
             </Button>
           }
           position="bottom left"

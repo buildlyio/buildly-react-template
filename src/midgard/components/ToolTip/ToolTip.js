@@ -39,7 +39,7 @@ export default function CustomizedTooltips(props) {
       }
     >
       <InfoIcon
-        color="primary"
+        color="action"
         fontSize="small"
         className={classes.infoToolTip}
       />

@@ -132,7 +132,7 @@ function UserGroups() {
             return (
               <React.Fragment>
                 <Button className={classes.addButton} color="primary" variant="contained" onClick={() => addGroup(crud)}>
-                  <AddIcon /> Create a group
+                  <AddIcon /> Add Group
                 </Button>
                 <PermissionsTable
                   columns={[

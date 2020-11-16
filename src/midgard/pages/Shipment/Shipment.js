@@ -283,7 +283,6 @@ function Shipment(props) {
       <Box mb={3} mt={2}>
         <Button
           type="button"
-          // fullWidth
           variant="contained"
           color="primary"
           className={classes.addButton}
@@ -302,7 +301,7 @@ function Shipment(props) {
               <IconButton
                 className={classes.menuButton}
                 onClick={() => setTileView(!tileView)}
-                color="primary"
+                color="action"
                 aria-label="menu"
               >
                 {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
@@ -328,7 +327,7 @@ function Shipment(props) {
               <IconButton
                 className={classes.menuButton}
                 onClick={() => setTileView(!tileView)}
-                color="primary"
+                color="action"
                 aria-label="menu"
               >
                 {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}

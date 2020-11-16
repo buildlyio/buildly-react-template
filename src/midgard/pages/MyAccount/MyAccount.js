@@ -180,7 +180,6 @@ function MyAccount({
       </Grid>
       <Button
         type="button"
-        // fullWidth
         variant="contained"
         color="primary"
         onClick={() => history.push(routes.DASHBOARD)}
