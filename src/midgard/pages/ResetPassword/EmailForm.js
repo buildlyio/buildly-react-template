@@ -5,7 +5,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import CardContent from "@material-ui/core/CardContent";
@@ -14,7 +13,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useInput } from "../../hooks/useInput";
 import {
-  login,
   resetPassword,
 } from "../../redux/authuser/actions/authuser.actions";
 import { validators } from "../../utils/validators";
@@ -22,8 +20,8 @@ import logo from "../../../assets/tp-logo.png";
 import { routes } from "../../routes/routesConstants";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(8),
+  container: {
+    paddingTop: theme.spacing(8),
   },
   paper: {
     display: "flex",
@@ -38,10 +36,15 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     marginTop: theme.spacing(1),
   },
+  textField: {
+    minHeight: "5rem",
+    margin: theme.spacing(1, 0),
+  },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
   logo: {
+    maxWidth: "20rem",
     width: "100%",
     marginBottom: theme.spacing(3),
   },
@@ -110,9 +113,9 @@ function EmailForm({ dispatch, loading, history }) {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="xs" className={classes.container}>
       <CssBaseline />
-      <Card className={classes.root} variant="outlined">
+      <Card variant="outlined">
         <CardContent>
           <div className={classes.paper}>
             <img src={logo} className={classes.logo} />
@@ -129,6 +132,7 @@ function EmailForm({ dispatch, loading, history }) {
                 label="Registered email"
                 name="email"
                 autoComplete="email"
+                className={classes.textField}
                 error={error.email && error.email.error}
                 helperText={error && error.email ? error.email.message : ""}
                 onBlur={(e) => handleBlur(e, "email", email)}
@@ -156,7 +160,7 @@ function EmailForm({ dispatch, loading, history }) {
               <Grid container>
                 <Grid item xs>
                   <Link href={routes.LOGIN} variant="body2" color="secondary">
-                    Go back to Login
+                    Go back to Sign in
                   </Link>
                 </Grid>
               </Grid>

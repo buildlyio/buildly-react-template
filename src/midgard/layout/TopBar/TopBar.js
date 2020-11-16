@@ -131,7 +131,7 @@ function TopBar({
             edge="start"
             className={classes.menuButton}
             onClick={() => setNavHidden(!navHidden)}
-            color="inherit"
+            color="default"
             aria-label="menu"
           >
             <MenuIcon />
@@ -145,7 +145,7 @@ function TopBar({
             aria-controls="menu-appbar"
             aria-haspopup="true"
             onClick={handleMenu}
-            color="inherit"
+            color="default"
           >
             <AccountCircle fontSize="large" />
           </IconButton>

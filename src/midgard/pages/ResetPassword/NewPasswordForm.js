@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
-import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import CardContent from "@material-ui/core/CardContent";
@@ -21,8 +19,8 @@ import { isMobile } from "../../utils/mediaQuery";
 import { routes } from "../../routes/routesConstants";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(8),
+  container: {
+    paddingTop: theme.spacing(8),
   },
   paper: {
     display: "flex",
@@ -33,11 +31,17 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     marginTop: theme.spacing(1),
   },
+  textField: {
+    minHeight: "5rem",
+    margin: theme.spacing(1, 0),
+  },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
   logo: {
+    maxWidth: "20rem",
     width: "100%",
+    marginBottom: theme.spacing(3),
   },
   buttonProgress: {
     position: "absolute",
@@ -123,9 +127,9 @@ function NewPassword({ dispatch, loading, history, loaded, error, location }) {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="xs" className={classes.container}>
       <CssBaseline />
-      <Card className={classes.root} variant="outlined">
+      <Card variant="outlined">
         <CardContent>
           <div className={classes.paper}>
             <img src={logo} className={classes.logo} />
@@ -145,6 +149,7 @@ function NewPassword({ dispatch, loading, history, loaded, error, location }) {
                     type="password"
                     id="password"
                     autoComplete="current-password"
+                    className={classes.textField}
                     error={formError.password && formError.password.error}
                     helperText={
                       formError.password ? formError.password.message : ""
@@ -164,6 +169,7 @@ function NewPassword({ dispatch, loading, history, loaded, error, location }) {
                     name="re_password"
                     type="password"
                     autoComplete="re_password"
+                    className={classes.textField}
                     error={formError.re_password && formError.re_password.error}
                     helperText={
                       formError.re_password ? formError.re_password.message : ""
@@ -194,7 +200,7 @@ function NewPassword({ dispatch, loading, history, loaded, error, location }) {
               <Grid container>
                 <Grid item>
                   <Link href={routes.LOGIN} variant="body2" color="secondary">
-                    {"Go Back To Login"}
+                    Go back to Sign in
                   </Link>
                 </Grid>
               </Grid>

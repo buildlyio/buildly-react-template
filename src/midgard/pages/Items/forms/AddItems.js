@@ -11,15 +11,11 @@ import Modal from "../../../components/Modal/Modal";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import Select from "@material-ui/core/Select";
 import { useInput } from "../../../hooks/useInput";
-import Loader from "../../../components/Loader/Loader";
 import { Card, CardContent, Typography } from "@material-ui/core";
 import { editItem, addItem } from "../../../redux/items/actions/items.actions";
 import { compareSort } from "../../../utils/utilMethods";
-import CardItem from "../../../components/CardItem/CardItem";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { PRODUCT_MOCK } from "../../../utils/mock";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 
 const useStyles = makeStyles((theme) => ({

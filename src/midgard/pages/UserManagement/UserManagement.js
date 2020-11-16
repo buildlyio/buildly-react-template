@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { colors } from "colors";
-import styled from "styled-components";
-import { rem } from "polished";
-import { FjButton, FjInputField } from "freyja-react";
-import InviteForm from "midgard/components/InviteForm/InviteForm";
 import { invite } from "midgard/redux/authuser/actions/authuser.actions";
 import { useInput } from "midgard/hooks/useInput";
-import { FjContentSwitcher } from "freyja-react";
 import Popup from "reactjs-popup";
 import {
   NotificationContainer,
@@ -15,72 +9,47 @@ import {
 } from "react-notifications";
 import Users from "./Users/Users";
 import UserGroups from "./UserGroups/UserGroups";
-import { Route, Redirect } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { routes } from "../../routes/routesConstants";
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import AddIcon from "@material-ui/icons/Add";
 
-/**
- * Styled component for the user management page.
- */
-const UserManagementWrapper = styled.div`
-  height: 100%;
-  display: flex;
-  flex: 1;
-  background-color: ${colors.baseLighter};
-  .invite_button {
-    border: ${rem(1)} solid ${colors.primary};
-    color: ${colors.white};
+const useStyles = makeStyles((theme) => ({
+  userManagementHeading: {
+    fontWeight: "bold",
+    margin: "0.5em 0",
+  },
+  textField: {
+    minHeight: "5rem",
+    margin: theme.spacing(1, 0),
+    width: "100%",
+  },
+  inviteForm: {
+    margin: "1rem",
+    minWidth: "25rem",
   }
-  .profile {
-    &__container {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      align-items: flex-start;
-      margin: 0 ${rem(24)};
-    }
-    &__header {
-      display: flex;
-      align-items: center;
-      margin-bottom: ${rem(30)};
-      &__name {
-        padding-right: ${rem(12)};
-      }
-    }
-    &__users {
-      width: 100%;
-    }
-  }
-
-  .content-switcher {
-    margin-top: ${rem(-22)};
-    &__container {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-content: center;
-      border-top: 1px solid #e1e1e1;
-      margin-bottom: ${rem(30)};
-    }
-  }
-`;
-
-/**
- * The current oauth user.
- */
-let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+}));
 
 /**
  * Outputs the user management page.
  */
 function UserManagement({ dispatch, loading, error, user, history, location }) {
+  const classes = useStyles();
   const email = useInput("", { required: true });
-  const [inviteCall, setinviteCall] = useState(false);
+  const [inviteCall, setInviteCall] = useState(false);
   const subNav = [
     { label: "Current users", value: "current-users" },
     { label: "User groups", value: "groups" },
   ];
-  let viewState = useState("current-users");
-  const [view, setView] = viewState;
+  const viewPath = (subNav.find(item => location.pathname.endsWith(item.value)) || subNav[0]).value;
+  const [view, setView] = useState(viewPath);
 
   // this will be triggered whenever the content switcher is clicked to change the view
   useEffect(() => {
@@ -89,7 +58,7 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
 
   if (user && user.data && user.data.detail && inviteCall && !error) {
     NotificationManager.success(user.data.detail, "Success");
-    setinviteCall(false);
+    setInviteCall(false);
   }
 
   const inviteUser = (event) => {
@@ -97,64 +66,84 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
     const inviteFormValue = {
       emails: [email.value],
     };
-    setinviteCall(true);
+    setInviteCall(true);
     dispatch(invite(inviteFormValue));
+    email.clear();
+  };
+
+  const viewTabClicked = (event, view) => {
+    setView(view);
   };
 
   return (
-    <UserManagementWrapper className="profile">
-      <div className="profile__container">
-        <div className="profile__header">
-          <h3 className="profile__header__name">People using this system</h3>
-          <Popup
-            trigger={<FjButton size="small">Invite</FjButton>}
-            position="bottom right"
-            on="click"
-            closeOnDocumentClick
-            mouseLeaveDelay={300}
-            mouseEnterDelay={0}
-            contentStyle={{
-              padding: "0px",
-              border: "none",
-              width: `{rem(250)}`,
-            }}
-            arrow={false}
-          >
-            <InviteForm onSubmit={inviteUser}>
-              <div className="invite__form__header">
-                {" "}
-                Invite user to platform
-              </div>
-              <div className="invite__form__input">
-                <FjInputField
-                  label="Emails"
-                  id="email"
-                  type="text"
-                  placeholder="abc@xcy.com, 123@zxc.com"
-                  error={error}
-                  {...email.bind}
-                />
-              </div>
-              <FjButton size="small" disabled={loading} type="submit">
+    <Box mt={5} mb={3}>
+      <Box mb={3}>
+        <Popup
+          trigger={
+            <Button
+              type="button"
+              variant="contained"
+              color="primary">
+              <AddIcon /> Invite users
+            </Button>
+          }
+          position="bottom left"
+          on="click"
+          closeOnDocumentClick
+          mouseLeaveDelay={300}
+          mouseEnterDelay={0}
+          contentStyle={{
+            padding: "0px",
+            border: "none",
+            width: `{rem(250)}`,
+          }}
+          arrow={false}
+        >
+        <form className={classes.inviteForm}>
+          <Typography variant="h6">
+            Invite users to platform
+          </Typography>
+          <TextField
+            className={classes.textField}
+            label="Emails"
+            id="email"
+            variant="outlined" 
+            placeholder="abc@xcy.com, 123@zxc.com"
+            error={error}
+            helperText={error}
+            {...email.bind}
+          />
+          <Grid
+            justify="flex-end"
+            container 
+            spacing={0}>
+            <Grid item>
+              <Button
+                onClick={inviteUser}
+                size="small"
+                variant="contained"
+                color="primary"
+                disabled={loading}
+                type="submit">
                 Send
-              </FjButton>
-            </InviteForm>
-          </Popup>
-        </div>
-        <div className="content-switcher__container">
-          <div className="content-switcher">
-            <FjContentSwitcher
-              size="small"
-              active={viewState}
-              options={subNav}
-            />
-          </div>
-        </div>
-        <Route path={routes.CURRENT_USERS} component={Users} />
-        <Route path={routes.USER_GROUPS} component={UserGroups} />
-      </div>
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
+        </Popup>
+        <Typography className={classes.userManagementHeading} variant={"h4"}>
+          People using this system
+        </Typography>
+      </Box>
+      <Box mb={3}>
+        <Tabs value={view} onChange={viewTabClicked}>
+          {subNav.map(itemProps => <Tab {...itemProps} key={'tab-view-' + itemProps.value} />)}
+        </Tabs>
+      </Box>
+      <Route path={routes.CURRENT_USERS} component={Users} />
+      <Route path={routes.USER_GROUPS} component={UserGroups} />
       <NotificationContainer />
-    </UserManagementWrapper>
+    </Box>
   );
 }
 

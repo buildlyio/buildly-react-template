@@ -70,7 +70,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "0.5em",
   },
   addButton: {
-    backgroundColor: "#000",
     [theme.breakpoints.down("xs")]: {
       marginTop: theme.spacing(2),
     },
