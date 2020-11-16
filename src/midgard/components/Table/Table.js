@@ -190,7 +190,7 @@ export default function DataTable({ ...props }) {
                       : columns.length
                   }
                 >
-                  No Data To Display
+                  No data to display
                 </TableCell>
               </StyledTableRow>
             )}

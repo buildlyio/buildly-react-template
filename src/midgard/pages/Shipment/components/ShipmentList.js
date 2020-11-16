@@ -467,7 +467,7 @@ export default function ShipmentList({ ...props }) {
             {filteredRows.length === 0 && (
               <StyledTableRow>
                 <TableCell align="center" colSpan={columns.length + 2}>
-                  No Data To Display
+                  No data to display
                 </TableCell>
               </StyledTableRow>
             )}
