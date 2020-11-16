@@ -5,6 +5,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
+import Box from '@material-ui/core/Box';
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
@@ -34,6 +35,12 @@ const StyledTableHeadCell = withStyles((theme) => ({
   },
 }))(TableCell);
 
+const StyledContainer = withStyles((theme) => ({
+  root: {
+    overflowX: "auto",
+  },
+}))(Box);
+
 export function PermissionsTable({columns, rows}) {
   const header = columns.map(col => <StyledTableHeadCell key={col.prop}>{col.label}</StyledTableHeadCell>);
   const content = rows.map((row, rowIndex) => (
@@ -47,15 +54,17 @@ export function PermissionsTable({columns, rows}) {
   ));
 
   return (
-    <Table>
-      <TableHead>
-        <StyledTableRow>
-          {header}
-        </StyledTableRow>
-      </TableHead>
-      <TableBody>
-        {content}
-      </TableBody>
-    </Table>
+    <StyledContainer>
+      <Table>
+        <TableHead>
+          <StyledTableRow>
+            {header}
+          </StyledTableRow>
+        </TableHead>
+        <TableBody>
+          {content}
+        </TableBody>
+      </Table>
+    </StyledContainer>
   );
 }
