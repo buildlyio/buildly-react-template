@@ -32,8 +32,9 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   inviteForm: {
-    margin: "1rem",
+    padding: "1rem",
     minWidth: "25rem",
+    backgroundColor: "#424242"
   }
 }));
 

@@ -32,7 +32,6 @@ const useStyles = makeStyles((theme) => ({
   },
   filterButton: {
     borderRadius: "500px",
-    textTransform: "Capitalize",
     padding: "3px 16px",
     margin: theme.spacing(0.5, 1),
     borderColor: '#fff',
@@ -69,7 +68,7 @@ const StatusFilter = (props) => {
         onClick={handleStatusClick}
         endIcon={statusOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
       >
-        Shipment Status
+        Shipment status
       </Button>
       <Popper
         id={"alert-popup"}
@@ -165,7 +164,7 @@ const SortFilter = (props) => {
         onClick={handleSortClick}
         endIcon={sortOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
       >
-        Sort By
+        Sort by
       </Button>
       <Popper
         id={"sort-popup"}
@@ -181,28 +180,28 @@ const SortFilter = (props) => {
               button
               onClick={() => handleSort("dateAsc")}
             >
-              Most Recent
+              Most recent
             </ListItem>
             <ListItem
               button
               selected={sortValue === "dateDesc"}
               onClick={() => handleSort("dateDesc")}
             >
-              Least Recent
+              Least recent
             </ListItem>
             <ListItem
               button
               selected={sortValue === "valueDesc"}
               onClick={() => handleSort("valueDesc")}
             >
-              Highest Value
+              Highest value
             </ListItem>
             <ListItem
               button
               selected={sortValue === "valueAsc"}
               onClick={() => handleSort("valueAsc")}
             >
-              Lowest Value
+              Lowest value
             </ListItem>
             <ListItem
               button
