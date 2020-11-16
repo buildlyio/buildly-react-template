@@ -1,6 +1,5 @@
 import * as React from "react";
 import { connect } from 'react-redux'
-import { FjButton, FjInputField } from 'freyja-react'
 import { crudCreate, crudDelete, crudLoadData, crudUpdate } from './redux/crud.actions';
 
 export interface CrudProps {

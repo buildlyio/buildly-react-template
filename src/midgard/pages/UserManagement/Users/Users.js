@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { FjTable } from 'freyja-react'
+import { PermissionsTable } from 'midgard/components/PermissionsTable/PermissionsTable';
 import Crud from 'midgard/modules/crud/Crud';
 import { getCoreGroups } from 'midgard/redux/coregroup/actions/coregroup.actions'
 import { connect } from 'react-redux'
@@ -138,16 +138,17 @@ function Users({ location, history, data, dispatch }) {
             });
           }
           return (
-          <FjTable
-            columns={[
-              { label: 'Full name', prop: 'name', template: (row) => {return <b style={!row.is_active? {'color': '#aaa'}: null}>{row.first_name} {row.last_name}</b>}, flex: '1' },
-              { label: 'Email', prop: 'email', flex: '2', template: (row) => {return <span style={!row.is_active? {'color': '#aaa'}: null}> {row.email} </span>}},
-              { label: 'Last activity', prop: 'activity', template: (row) => {return <small style={{'color': '#aaa'}}>Today</small>}, flex: '1' },
-              { label: 'Permissions', prop: 'permission', template: (row) => permissionsTemplate(row, crud, classes), flex: '2' },
-              { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud), flex: '1' },
-            ]}
-            rows={crud.getData()}
-          />)
+            <PermissionsTable
+              columns={[
+                { label: 'Full name', prop: 'name', template: (row) => {return <b style={!row.is_active? {'color': '#aaa'}: null}>{row.first_name} {row.last_name}</b>}, flex: '1' },
+                { label: 'Email', prop: 'email', flex: '2', template: (row) => {return <span style={!row.is_active? {'color': '#aaa'}: null}> {row.email} </span>}},
+                { label: 'Last activity', prop: 'activity', template: (row) => {return <small style={{'color': '#aaa'}}>Today</small>}, flex: '1' },
+                { label: 'Permissions', prop: 'permission', template: (row) => permissionsTemplate(row, crud, classes), flex: '2' },
+                { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud), flex: '1' },
+              ]}
+              rows={crud.getData()}
+            />
+          )
         }}
       </Crud>
   </Box>

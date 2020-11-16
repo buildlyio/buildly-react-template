@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { FjTable, FjInlineEditor } from 'freyja-react'
+import { InlineEditor } from 'midgard/components/InlineEditor/InlineEditor';
+import { PermissionsTable } from 'midgard/components/PermissionsTable/PermissionsTable';
 import Crud from 'midgard/modules/crud/Crud';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -29,6 +30,7 @@ function UserGroups() {
     return (
       <Switch
         size="small"
+        color="primary"
         checked={row.permissions[operation]}
         onChange={() => {
           row.permissions[operation] = !row.permissions[operation];
@@ -78,7 +80,7 @@ function UserGroups() {
           id={'group-actions-menu-' + row.id}
           anchorEl={menu.element}
           keepMounted
-          open={Boolean(menu.row && (menu.row.id === row.id))}
+          open={menu.row && (menu.row.id === row.id) || false}
           onClose={handleMenuClose}
         >
           {row.actions.map((option) => (
@@ -100,10 +102,11 @@ function UserGroups() {
 
   const nameTemplate = (row, crud) => {
     return (
-      <FjInlineEditor
-        tag="h4"
+      <InlineEditor
+        tag="h6"
         id={row.id}
         value={row.name}
+        placeholder="Group type"
         onChange={(event) => update(crud, row, event)}
       />
     );
@@ -131,9 +134,9 @@ function UserGroups() {
                 <Button className={classes.addButton} color="primary" variant="contained" onClick={() => addGroup(crud)}>
                   <AddIcon /> Create a group
                 </Button>
-                <FjTable
+                <PermissionsTable
                   columns={[
-                    { label: 'Group Type', prop: 'name', flex: '1', template: (row) => nameTemplate(row, crud ) },
+                    { label: 'Group type', prop: 'name', flex: '1', template: (row) => nameTemplate(row, crud ) },
                     { label: 'Create', prop: 'Create', template: (row) => permissionCellTemplate(row, crud, 'create' ) },
                     { label: 'Read', prop: 'Read', template: (row) => permissionCellTemplate(row, crud, 'read') },
                     { label: 'Update', prop: 'Update', template: (row) => permissionCellTemplate(row, crud, 'update') },
