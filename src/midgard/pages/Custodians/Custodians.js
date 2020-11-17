@@ -162,10 +162,10 @@ function Custodian({
     { id: "delete", type: "delete", action: deletItem, label: "Delete" },
   ];
   return (
-    <Box mt={2}>
+    <Box mt={5} mb={5}>
       {loading && <Loader open={loading} />}
       <div className={classes.container}>
-        <Box mb={3}>
+        <Box mb={3} mt={2}>
           <Button
             type="button"
             variant="contained"
