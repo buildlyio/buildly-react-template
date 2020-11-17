@@ -300,8 +300,8 @@ function AddDestinationInfo({
                       {...country.bind}
                     >
                       <MenuItem value={""}>Select</MenuItem>
-                      {COUNTRY_CHOICES.map((value, id) => (
-                        <MenuItem key={value} value={value}>
+                      {COUNTRY_CHOICES.map((value, index) => (
+                        <MenuItem key={`destCountry${index}:${value}`} value={value}>
                           {value}
                         </MenuItem>
                       ))}
@@ -324,8 +324,8 @@ function AddDestinationInfo({
                       {...state.bind}
                     >
                       <MenuItem value={""}>Select</MenuItem>
-                      {STATE_CHOICES.map((value, id) => (
-                        <MenuItem key={value} value={value}>
+                      {STATE_CHOICES.map((value, index) => (
+                        <MenuItem key={`destState${index}:${value}`} value={value}>
                           {value}
                         </MenuItem>
                       ))}

@@ -335,7 +335,7 @@ function AddCustodians({
                       .sort(compareSort("name"))
                       .map((item, index) => (
                         <MenuItem
-                          key={`${item.id}${item.name}`}
+                          key={`custodianType${index}:${item.id}`}
                           value={item.url}
                         >
                           {item.name}
@@ -551,8 +551,8 @@ function AddCustodians({
                       }
                     >
                       <MenuItem value={""}>Select</MenuItem>
-                      {COUNTRY_CHOICES.sort().map((value, id) => (
-                        <MenuItem key={value} value={value}>
+                      {COUNTRY_CHOICES.sort().map((value, index) => (
+                        <MenuItem key={`custodianCountry${index}${value}`} value={value}>
                           {value}
                         </MenuItem>
                       ))}
@@ -591,8 +591,8 @@ function AddCustodians({
                       }
                     >
                       <MenuItem value={""}>Select</MenuItem>
-                      {STATE_CHOICES.sort().map((value, id) => (
-                        <MenuItem key={value} value={value}>
+                      {STATE_CHOICES.sort().map((value, index) => (
+                        <MenuItem key={`custodianState${index}${value}`} value={value}>
                           {value}
                         </MenuItem>
                       ))}

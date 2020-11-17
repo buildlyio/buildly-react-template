@@ -309,7 +309,7 @@ function ShipmentInfo(props) {
       <div>
         {!isDesktop && (
           <Box mb={2}>
-            <Typography variant="h4">Shipment Details(1/5)</Typography>
+            <Typography variant="h4">Shipment Details (1/5)</Typography>
           </Box>
         )}
         <form className={classes.form} noValidate onSubmit={handleSubmit}>
@@ -412,7 +412,7 @@ function ShipmentInfo(props) {
                       {TRANSPORT_MODE &&
                         TRANSPORT_MODE.sort(compareSort("value")).map(
                           (item, index) => (
-                            <MenuItem key={`${item.value}`} value={item.value}>
+                            <MenuItem key={`transportMode${index}:${item.value}`} value={item.value}>
                               {item.label}
                             </MenuItem>
                           )
@@ -484,7 +484,7 @@ function ShipmentInfo(props) {
                           .sort(compareSort("name"))
                           .map((item, index) => (
                             <MenuItem
-                              key={`${item.id}${item.name}`}
+                              key={`temperature${index}:${item.id}`}
                               value={item.url}
                             >
                               {item.name}
@@ -526,7 +526,7 @@ function ShipmentInfo(props) {
                       {SHIPMENT_STATUS &&
                         SHIPMENT_STATUS.sort(compareSort("value")).map(
                           (item, index) => (
-                            <MenuItem key={`${item.value}`} value={item.value}>
+                            <MenuItem key={`shipmentStatus${index}:${item.value}`} value={item.value}>
                               {item.label}
                             </MenuItem>
                           )
@@ -650,7 +650,7 @@ function ShipmentInfo(props) {
                           .sort(compareSort("name"))
                           .map((item, index) => (
                             <MenuItem
-                              key={`${item.id}${item.name}`}
+                              key={`lengthUnit${index}:${item.id}`}
                               value={item.url}
                             >
                               {item.name}
@@ -694,7 +694,7 @@ function ShipmentInfo(props) {
                           .sort(compareSort("name"))
                           .map((item, index) => (
                             <MenuItem
-                              key={`${item.id}${item.name}`}
+                              key={`weightUnit${index}:${item.id}`}
                               value={item.url}
                             >
                               {item.name}

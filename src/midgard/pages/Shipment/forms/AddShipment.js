@@ -232,7 +232,7 @@ function AddShipment(props) {
                   <Stepper activeStep={activeStep} alternativeLabel nonLinear>
                     {steps.map((label, index) => (
                       <Step
-                        key={label}
+                        key={`step${index}:${label}`}
                         className={`${
                           shipmentFormData !== null && classes.step
                         }`}

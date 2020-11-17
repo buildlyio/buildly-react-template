@@ -311,8 +311,8 @@ function AddOriginInfo({
                       {...country.bind}
                     >
                       <MenuItem value={""}>Select</MenuItem>
-                      {COUNTRY_CHOICES.map((value, id) => (
-                        <MenuItem key={value} value={value}>
+                      {COUNTRY_CHOICES.map((value, index) => (
+                        <MenuItem key={`originCountry${index}:${value}`} value={value}>
                           {value}
                         </MenuItem>
                       ))}
@@ -335,8 +335,8 @@ function AddOriginInfo({
                       {...state.bind}
                     >
                       <MenuItem value={""}>Select</MenuItem>
-                      {STATE_CHOICES.map((value, id) => (
-                        <MenuItem key={value} value={value}>
+                      {STATE_CHOICES.map((value, index) => (
+                        <MenuItem key={`originState${index}:${value}`} value={value}>
                           {value}
                         </MenuItem>
                       ))}

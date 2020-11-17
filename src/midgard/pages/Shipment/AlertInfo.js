@@ -102,7 +102,7 @@ function AlertInfo(props) {
         shipmentAlerts.data.map((alert, index) => {
           return (
             <Alert
-              key={`alert${index}`}
+              key={`shipmentAlert${index}:${alert.shipment}`}
               variant="filled"
               severity={alert.severity}
               onClose={(e) => handleClose(e, index)}

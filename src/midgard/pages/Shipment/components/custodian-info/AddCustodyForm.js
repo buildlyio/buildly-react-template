@@ -310,7 +310,7 @@ function AddCustodyInfo(props) {
                     custodianList
                       .sort(compareSort("name"))
                       .map((item, index) => (
-                        <MenuItem key={`${item.id}${item.name}`} value={item}>
+                        <MenuItem key={`custodian${index}:${item.id}`} value={item}>
                           {`${item.name}:${item.custodian_uuid}`}
                         </MenuItem>
                       ))}

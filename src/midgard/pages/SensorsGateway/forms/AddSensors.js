@@ -399,7 +399,7 @@ function AddSensor({
                       {sensorTypeList &&
                         sensorTypeList.map((item, index) => (
                           <MenuItem
-                            key={`${item.id}${item.name}`}
+                            key={`sensorType${index}:${item.id}`}
                             value={item.url}
                           >
                             {item.name}

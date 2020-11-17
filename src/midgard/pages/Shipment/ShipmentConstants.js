@@ -33,10 +33,11 @@ export const SHIPMENT_COLUMNS = [
       if (row && row.flag_list && value && value !== "-") {
         return (
           <React.Fragment>
-            {row.flag_list.map((obj, idx) => {
+            {row.flag_list.map((obj, index) => {
               if (obj.name.toLowerCase().includes("temp")) {
                 return (
                   <TempIcon
+                    key={`iconTemp${index}`}
                     color={
                       obj.type.toLowerCase() === "warning"
                         ? "#ff9800"
@@ -47,6 +48,7 @@ export const SHIPMENT_COLUMNS = [
               } else if (obj.name.toLowerCase().includes("humid")) {
                 return (
                   <HumidIcon
+                    key={`iconHumid${index}`}
                     color={
                       obj.type.toLowerCase() === "warning"
                         ? "#ff9800"
@@ -57,6 +59,7 @@ export const SHIPMENT_COLUMNS = [
               } else if (obj.name.toLowerCase().includes("delay")) {
                 return (
                   <DelayIcon
+                    key={`iconDelay${index}`}
                     color={
                       obj.type.toLowerCase() === "warning"
                         ? "#ff9800"
@@ -67,6 +70,7 @@ export const SHIPMENT_COLUMNS = [
               } else if (obj.name.toLowerCase().includes("recall")) {
                 return (
                   <RecallIcon
+                    key={`iconRecall${index}`}
                     color={
                       obj.type.toLowerCase() === "warning"
                         ? "#ff9800"

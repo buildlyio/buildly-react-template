@@ -138,7 +138,7 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
       </Box>
       <Box mb={3}>
         <Tabs value={view} onChange={viewTabClicked}>
-          {subNav.map(itemProps => <Tab {...itemProps} key={'tab-view-' + itemProps.value} />)}
+          {subNav.map((itemProps, index) => <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />)}
         </Tabs>
       </Box>
       <Route path={routes.CURRENT_USERS} component={Users} />

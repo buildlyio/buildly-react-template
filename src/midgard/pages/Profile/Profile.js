@@ -105,7 +105,7 @@ function Profile({ dispatch, history, location }) {
           <Grid container className={classes.root} spacing={2}>
             {dashboardItems.map((items, index) => {
               return (
-                <Grid item md={3} xs={6} key={`${items.name}${index}`}>
+                <Grid item md={3} xs={6} key={`dashboardItem${index}:${items.name}`}>
                   <div className={classes.dashboardHeaderItems}>
                     <Typography variant={"h4"}>{items.number}</Typography>
                     <Typography variant={"subtitle2"}>{items.name}</Typography>

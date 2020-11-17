@@ -39,10 +39,10 @@ const RenderedMap = withScriptjs(
     <GoogleMap defaultZoom={5} defaultCenter={props.center}>
       {props.isMarkerShown &&
         props.markers &&
-        props.markers.map((mark, indx) =>
+        props.markers.map((mark, index) =>
           mark.label ? (
             <MarkerWithLabel
-              key={`${mark.lat},${mark.lng}`}
+              key={`marker${index}:${mark.lat},${mark.lng}`}
               position={{ lat: mark.lat, lng: mark.lng }}
               labelAnchor={new google.maps.Point(0, 0)}
               icon={mark.icon}
@@ -60,7 +60,7 @@ const RenderedMap = withScriptjs(
           ) : (
             <Marker
               draggable={mark.draggable}
-              key={mark.lat && mark.lng ? `${mark.lat},${mark.lng}` : `${indx}`}
+              key={mark.lat && mark.lng ? `marker${index}:${mark.lat},${mark.lng}` : `marker${index}`}
               position={
                 mark.lat && mark.lng
                   ? { lat: mark.lat, lng: mark.lng }

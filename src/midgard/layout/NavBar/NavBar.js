@@ -87,21 +87,20 @@ function NavBar({ navHidden, setNavHidden, location, history, userData }) {
     <div>
       <div className={classes.toolbar} />
       <List>
-        {navItems.map((items, index) => (
-          <React.Fragment key={`${items.id}${index}`}>
+        {navItems.map((item, index) => (
+          <React.Fragment key={`navItem${index}${item.id}`}>
             <NavLink
-              to={items.link}
+              to={item.link}
               activeClassName={classes.active}
-              title={items.name}
+              title={item.name}
               className={classes.navLink}
             >
               <ListItem
                 button
                 className={classes.navItems}
-                key={items.id}
-                onClick={(event) => handleListItemClick(event, index, items)}
+                onClick={(event) => handleListItemClick(event, index, item)}
               >
-                <ListItemText primary={items.name} />
+                <ListItemText primary={item.name} />
               </ListItem>
             </NavLink>
             <Divider />

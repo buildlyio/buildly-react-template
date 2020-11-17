@@ -375,11 +375,11 @@ export default function ShipmentList({ ...props }) {
               filteredRows
 
                 // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, idx) => {
+                .map((row, rowIndex) => {
                   return (
-                    <React.Fragment key={`tableRow${idx}`}>
+                    <React.Fragment key={`row${rowIndex}:${row.id}`}>
                       <StyledTableRow hover tabIndex={-1}>
-                        <TableCell key={row.id} colSpan={3}>
+                        <TableCell colSpan={3}>
                           <Table>
                             <TableBody>
                               <TableRow>
@@ -430,7 +430,7 @@ export default function ShipmentList({ ...props }) {
                                   </IconButton>
                                 </TableCell>
                                 {columns &&
-                                  columns.map((column) => {
+                                  columns.map((column, colIndex) => {
                                     if (column.id !== "id") {
                                       const value = row[column.id] || "-";
                                       return (
@@ -441,7 +441,7 @@ export default function ShipmentList({ ...props }) {
                                             minWidth: column.minWidth,
                                           }}
                                           className={classes.tableCell}
-                                          key={column.id}
+                                          key={`row${rowIndex}col${colIndex}:${row.id}`}
                                           align="left"
                                           title={
                                             column.format

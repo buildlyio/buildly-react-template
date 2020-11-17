@@ -344,7 +344,7 @@ function AddItems({
                       .sort(compareSort("name"))
                       .map((item, index) => (
                         <MenuItem
-                          key={`${item.id}${item.name}`}
+                          key={`itemType${index}:${item.id}`}
                           value={item.url}
                         >
                           {item.name}
@@ -829,7 +829,7 @@ function AddItems({
                       .sort(compareSort("name"))
                       .map((item, index) => (
                         <MenuItem
-                          key={`${item.id}${item.name}`}
+                          key={`weightUnit${index}:${item.id}`}
                           value={item.url}
                         >
                           {item.name}
