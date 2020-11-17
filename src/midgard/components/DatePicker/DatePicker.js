@@ -19,6 +19,7 @@ export default function DatePickerComponent({
   label,
   hasTime,
   helpText,
+  disabled
 }) {
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
@@ -30,6 +31,7 @@ export default function DatePickerComponent({
             ampm={false}
             fullWidth
             margin="normal"
+            disabled={disabled}
             label={label}
             value={selectedDate}
             onChange={handleDateChange}
@@ -44,6 +46,7 @@ export default function DatePickerComponent({
             variant="inline"
             format="MM/dd/yyyy"
             margin="normal"
+            disabled={disabled}
             id="date-picker-inline"
             label={label}
             value={selectedDate}

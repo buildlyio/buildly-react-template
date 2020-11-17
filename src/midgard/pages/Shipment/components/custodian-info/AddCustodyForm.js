@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function AddCustodyInfo(props) {
+function AddCustodyForm(props) {
   const {
     custodianData,
     loading,
@@ -84,6 +84,7 @@ function AddCustodyInfo(props) {
     editItem,
     setOpenModal,
     custodyOptions,
+    viewOnly
   } = props;
   const classes = useStyles();
   const [custodianId, setCustodianId] = useState(
@@ -264,7 +265,7 @@ function AddCustodyInfo(props) {
                   fullWidth
                   disabled
                   id="shipment_name"
-                  label="Shipment Name"
+                  label="Shipment name"
                   name="shipment_name"
                   autoComplete="shipment_name"
                   {...shipment_name.bind}
@@ -279,6 +280,7 @@ function AddCustodyInfo(props) {
                   select
                   required
                   label="Custodian"
+                  disabled={viewOnly}
                   error={formError.custodianId && formError.custodianId.error}
                   helperText={
                     formError.custodianId ? formError.custodianId.message : ""
@@ -318,9 +320,10 @@ function AddCustodyInfo(props) {
               </Grid>
               <Grid item xs={12}>
                 <DatePickerComponent
-                  label={"Start of custody"}
+                  label={"Start of Custody"}
                   selectedDate={start_of_custody}
                   hasTime={true}
+                  disabled={viewOnly}
                   helpText={
                     custodyMetaData["start_of_custody"] &&
                     custodyMetaData["start_of_custody"].help_text
@@ -332,10 +335,11 @@ function AddCustodyInfo(props) {
               </Grid>
               <Grid item xs={12}>
                 <DatePickerComponent
-                  label={"End of custody"}
+                  label={"End of Custody"}
                   selectedDate={end_of_custody}
                   hasTime={true}
                   handleDateChange={handleEndChange}
+                  disabled={viewOnly}
                   helpText={
                     custodyMetaData["end_of_custody"] &&
                     custodyMetaData["end_of_custody"].help_text
@@ -350,10 +354,11 @@ function AddCustodyInfo(props) {
                   margin="normal"
                   fullWidth
                   id="start_of_custody_location"
-                  label="Start Of Custody Location"
+                  label="Start of Custody location"
                   name="start_of_custody_location"
                   autoComplete="start_of_custody_location"
                   value={start_of_custody_location}
+                  disabled={viewOnly}
                   InputProps={
                     custodyMetaData["start_of_custody_location"] &&
                     custodyMetaData["start_of_custody_location"].help_text && {
@@ -400,10 +405,11 @@ function AddCustodyInfo(props) {
                   margin="normal"
                   fullWidth
                   id="end_of_custody_location"
-                  label="End Of Custody Location"
+                  label="End of Custody location"
                   name="end_of_custody_location"
                   autoComplete="end_of_custody_location"
                   value={end_of_custody_location}
+                  disabled={viewOnly}
                   InputProps={
                     custodyMetaData["end_of_custody_location"] &&
                     custodyMetaData["end_of_custody_location"].help_text && {
@@ -451,7 +457,8 @@ function AddCustodyInfo(props) {
                   fullWidth
                   id="has_current_custody"
                   select
-                  label="Has Current Custody"
+                  disabled={viewOnly}
+                  label="Has current Custody?"
                   {...has_current_custody.bind}
                   InputProps={
                     custodyMetaData["has_current_custody"] &&
@@ -481,7 +488,8 @@ function AddCustodyInfo(props) {
                   fullWidth
                   id="first_custody"
                   select
-                  label="Is First Custody"
+                  disabled={viewOnly}
+                  label="Is first Custody?"
                   {...first_custody.bind}
                   InputProps={
                     custodyMetaData["first_custody"] &&
@@ -511,7 +519,8 @@ function AddCustodyInfo(props) {
                   fullWidth
                   id="last_custody"
                   select
-                  label="Is Last Custody"
+                  disabled={viewOnly}
+                  label="Is last Custody?"
                   {...last_custody.bind}
                   InputProps={
                     custodyMetaData["last_custody"] &&
@@ -562,24 +571,37 @@ function AddCustodyInfo(props) {
         </Card>
         <Grid container spacing={3} className={classes.buttonContainer}>
           <Grid item xs={6}>
-            <div className={classes.loadingWrapper}>
+            {viewOnly ? (
               <Button
-                type="submit"
+                type="button"
                 fullWidth
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                disabled={loading || submitDisabled()}
+                onClick={setOpenModal}
               >
-                {editItem ? "Save" : `Add Custody`}
+                Done
               </Button>
-              {loading && (
-                <CircularProgress
-                  size={24}
-                  className={classes.buttonProgress}
-                />
-              )}
-            </div>
+            ) : (
+              <div className={classes.loadingWrapper}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  disabled={loading || submitDisabled()}
+                >
+                  {editItem ? "Save" : `Add Custody`}
+                </Button>
+                {loading && (
+                  <CircularProgress
+                    size={24}
+                    className={classes.buttonProgress}
+                  />
+                )}
+              </div>
+            )}
           </Grid>
         </Grid>
       </form>
@@ -593,4 +615,4 @@ function AddCustodyInfo(props) {
 //   ...state.shipmentReducer,
 // });
 
-export default AddCustodyInfo;
+export default AddCustodyForm;

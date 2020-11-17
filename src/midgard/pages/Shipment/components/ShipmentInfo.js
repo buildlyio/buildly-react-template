@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import moment from "moment";
 import Button from "@material-ui/core/Button";
@@ -38,6 +38,8 @@ import {
 import ItemsInfo from "./ItemInfo";
 import ShipmentRouteInfo from "./ShipmentRouteInfo";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
+import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -97,6 +99,7 @@ function ShipmentInfo(props) {
     custodyData,
     unitsOfMeasure,
     shipmentOptions,
+    viewOnly
   } = props;
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
@@ -106,6 +109,7 @@ function ShipmentInfo(props) {
   const shipment_name = useInput((editData && editData.name) || "", {
     required: true,
   });
+  
   const lading_bill = useInput((editData && editData.bol_order_id) || "");
   const load_no = useInput("");
   const shipment_status = useInput((editData && editData.status) || "");
@@ -324,9 +328,10 @@ function ShipmentInfo(props) {
                       fullWidth
                       required
                       id="shipment_name"
-                      label="Shipment Name"
+                      label="Shipment name"
                       name="shipment_name"
                       autoComplete="shipment_name"
+                      disabled={viewOnly}
                       error={
                         formError.shipment_name && formError.shipment_name.error
                       }
@@ -360,9 +365,10 @@ function ShipmentInfo(props) {
                       margin="normal"
                       fullWidth
                       id="lading_bill"
-                      label="Bill of Lading"
+                      label="Bill of lading"
                       name="lading_bill"
                       autoComplete="lading_bill"
+                      disabled={viewOnly}
                       {...lading_bill.bind}
                       InputProps={
                         fieldsMetadata["lading_bill"].help_text && {
@@ -390,7 +396,8 @@ function ShipmentInfo(props) {
                       required
                       id="mode_type"
                       select
-                      label="Mode Type"
+                      label="Mode type"
+                      disabled={viewOnly}
                       {...mode_type.bind}
                       InputProps={
                         fieldsMetadata["mode_type"].help_text && {
@@ -427,9 +434,10 @@ function ShipmentInfo(props) {
                       multiline
                       rows={6}
                       id="route_desc"
-                      label="Route Description"
+                      label="Route description"
                       name="route_desc"
                       autoComplete="route_desc"
+                      disabled={viewOnly}
                       {...route_desc.bind}
                       InputProps={
                         fieldsMetadata["route_desc"].help_text && {
@@ -456,7 +464,8 @@ function ShipmentInfo(props) {
                       required
                       id="uom_temp"
                       select
-                      label="Units of Measure Temperature"
+                      label="Unit of measure temperature"
+                      disabled={viewOnly}
                       value={uom_temp}
                       onChange={(e) => setUomTemp(e.target.value)}
                       InputProps={
@@ -504,7 +513,8 @@ function ShipmentInfo(props) {
                       id="shipment_status"
                       name="shipment_status"
                       select
-                      label="Shipment Status"
+                      label="Shipment status"
+                      disabled={viewOnly}
                       {...shipment_status.bind}
                       InputProps={
                         fieldsMetadata["shipment_status"].help_text && {
@@ -536,10 +546,11 @@ function ShipmentInfo(props) {
 
                   <Grid item xs={12}>
                     <DatePickerComponent
-                      label={"Scheduled Departure"}
+                      label={"Scheduled departure"}
                       selectedDate={scheduled_departure}
                       hasTime={true}
                       handleDateChange={handleDepartureDateChange}
+                      disabled={viewOnly}
                       helpText={
                         fieldsMetadata["scheduled_departure"] &&
                         fieldsMetadata["scheduled_departure"].help_text
@@ -550,10 +561,11 @@ function ShipmentInfo(props) {
                   </Grid>
                   <Grid item xs={12}>
                     <DatePickerComponent
-                      label={"Scheduled Arrival"}
+                      label={"Scheduled arrival"}
                       selectedDate={scheduled_arrival}
                       hasTime={true}
                       handleDateChange={handleScheduledDateChange}
+                      disabled={viewOnly}
                       helpText={
                         fieldsMetadata["scheduled_arrival"] &&
                         fieldsMetadata["scheduled_arrival"].help_text
@@ -567,6 +579,7 @@ function ShipmentInfo(props) {
                       <Autocomplete
                         multiple
                         id="tags-outlined"
+                        disabled={viewOnly}
                         options={shipmentFlag || []}
                         getOptionLabel={(option) => {
                           if (option) return `${option.name} (${option.type})`;
@@ -598,9 +611,11 @@ function ShipmentInfo(props) {
                           <TextField
                             {...params}
                             variant="outlined"
-                            label="Violation/Warnings"
+                            label="Violations/Warnings"
                             placeholder="Select"
+                            disabled={viewOnly}
                             margin="normal"
+                            disabled={viewOnly}
                           />
                         )}
                       />
@@ -620,8 +635,9 @@ function ShipmentInfo(props) {
                       required
                       id="uom_distance"
                       select
-                      label="Units of Measure Distance"
+                      label="Unit of measure distance"
                       value={uom_distance}
+                      disabled={viewOnly}
                       onChange={(e) => setUomDistance(e.target.value)}
                       InputProps={
                         fieldsMetadata["uom_distance"].help_text && {
@@ -666,8 +682,9 @@ function ShipmentInfo(props) {
                       required
                       id="uom_weight"
                       select
-                      label="Units of Measure Mass/Weight"
+                      label="Unit of measure mass/weight"
                       value={uom_weight}
+                      disabled={viewOnly}
                       onChange={(e) => setUomWeight(e.target.value)}
                       InputProps={
                         fieldsMetadata["uom_weight"].help_text && {
@@ -713,24 +730,37 @@ function ShipmentInfo(props) {
           </Box>
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={6} sm={2}>
-              <div className={classes.loadingWrapper}>
+              {viewOnly ? (
                 <Button
-                  type="submit"
+                  type="button"
                   fullWidth
                   variant="contained"
                   color="primary"
                   className={classes.submit}
-                  disabled={loading || submitDisabled()}
+                  onClick={handleCancel}
                 >
-                  {`Save`}
+                  Done
                 </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                )}
-              </div>
+              ) : (
+                <div className={classes.loadingWrapper}>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    disabled={loading || submitDisabled()}
+                  >
+                    Save
+                  </Button>
+                  {loading && (
+                    <CircularProgress
+                      size={24}
+                      className={classes.buttonProgress}
+                    />
+                  )}
+                </div>
+              )}
             </Grid>
             <Grid item xs={12} sm={4}>
               <Button
@@ -741,7 +771,7 @@ function ShipmentInfo(props) {
                 disabled={shipmentFormData === null}
                 className={classes.submit}
               >
-                {`Next: Add Items`}
+                {`Next: Items`}
               </Button>
             </Grid>
           </Grid>

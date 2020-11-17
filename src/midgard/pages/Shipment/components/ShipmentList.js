@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Paper from "@material-ui/core/Paper";
@@ -10,6 +10,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import EditIcon from "@material-ui/icons/Edit";
+import ViewIcon from "@material-ui/icons/RemoveRedEye";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import SearchInput from "../../../components/SearchComponent/SearchInput";
@@ -19,6 +20,8 @@ import ShipmentFilterAndSort from "./ShipmentFilterAndSort";
 import { dispatch } from "../../../redux/store";
 import { filterShipmentData } from "../../../redux/shipment/actions/shipment.actions";
 import Loader from "../../../components/Loader/Loader";
+import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
+import { UserContext } from "midgard/context/User.context";
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
@@ -106,6 +109,9 @@ export default function ShipmentList({ ...props }) {
   const [plannedCheck, setPlannedCheck] = useState(null);
   const [cancelledCheck, setCancelledCheck] = useState(null);
   const [completedCheck, setCompeletedCheck] = useState(null);
+  const editData = location.state && location.state.data;
+  const user = useContext(UserContext);
+  const isAdmin = checkForGlobalAdmin(user);
 
   const handleAllCheck = (e) => {
     setAllCheck(e.target.checked);
@@ -408,7 +414,7 @@ export default function ShipmentList({ ...props }) {
                                     color="secondary"
                                     aria-label="menu"
                                   >
-                                    <EditIcon />
+                                    {!isAdmin && row && row.status && row.status.toLowerCase() !== 'planned' ? <ViewIcon /> : <EditIcon />}
                                   </IconButton>
                                 </TableCell>
                                 <TableCell
