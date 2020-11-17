@@ -47,7 +47,8 @@ const RenderedMap = withScriptjs(
               labelAnchor={new google.maps.Point(0, 0)}
               icon={mark.icon}
               labelStyle={{
-                backgroundColor: "	#FFFF99",
+                color: '#000',
+                backgroundColor: "#FFFF99",
                 fontSize: "11px",
                 padding: labelPadding + "px",
                 width: labelSize.width + "px",
