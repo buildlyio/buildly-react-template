@@ -94,7 +94,7 @@ export default function DataTable({ ...props }) {
     setSelectedRows(
       rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
     );
-  }, [rows, page])
+  }, [rows, page, rowsPerPage])
 
   return (
     <Paper className={classes.root}>
