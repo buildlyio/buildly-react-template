@@ -502,7 +502,7 @@ export default function ShipmentList({ ...props }) {
       </TableContainer>
 
       <TablePagination
-        rowsPerPageOptions={[5, 6, 10]}
+        rowsPerPageOptions={[5, 10, 20]}
         component="div"
         count={filteredRows.length}
         rowsPerPage={rowsPerPage}
