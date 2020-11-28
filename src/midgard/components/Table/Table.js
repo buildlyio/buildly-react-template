@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -46,6 +46,8 @@ const StyledTableHead = withStyles((theme) => ({
 const useStyles = makeStyles({
   root: {
     width: "100%",
+    borderRadius: 0,
+    background: "#383636",
   },
   container: {
     maxHeight: 440,
@@ -62,7 +64,7 @@ const useStyles = makeStyles({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#4F4D4D",
-  },
+  }
 });
 
 export default function DataTable({ ...props }) {
@@ -78,7 +80,7 @@ export default function DataTable({ ...props }) {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
+  const [selectedRows, setSelectedRows] = React.useState(rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage))
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -87,6 +89,12 @@ export default function DataTable({ ...props }) {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  useEffect(() => {
+    setSelectedRows(
+      rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    );
+  }, [rows, page, rowsPerPage])
 
   return (
     <Paper className={classes.root}>
@@ -125,63 +133,61 @@ export default function DataTable({ ...props }) {
           </TableHead>
           <TableBody>
             {rows.length > 0 &&
-              rows
-                // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, rowIndex) => {
-                  return (
-                    <StyledTableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={`tableRow${rowIndex}`}
-                    >
-                      {actionsColumns &&
-                        actionsColumns.map((action, colIndex) => {
-                          const actionItemType = action.type;
-                          return (
-                            <StyledTableHead
-                              key={`tableRow${rowIndex}:${colIndex}`}
-                              align={"left"}
-                              style={{ minWidth: 50, width: 50 }}
-                            >
-                              <IconButton
-                                className={classes.menuButton}
-                                onClick={() => action.action(row)}
-                                color="secondary"
-                                aria-label="menu"
-                              >
-                                {actionItemType === "edit" ? (
-                                  <EditIcon />
-                                ) : actionItemType === "view" ? (
-                                  <ViewIcon />
-                                )  : actionItemType === "unlink" ? (
-                                  <LinkOffIcon />
-                                ) : (
-                                  <DeleteIcon />
-                                )}
-                              </IconButton>
-                            </StyledTableHead>
-                          );
-                        })}
-                      {columns.map((column, colIndex) => {
-                        const value = row[column.id] || "-";
+              selectedRows.map((row, rowIndex) => {
+                return (
+                  <StyledTableRow
+                    hover
+                    role="checkbox"
+                    tabIndex={-1}
+                    key={`tableRow${rowIndex}`}
+                  >
+                    {actionsColumns &&
+                      actionsColumns.map((action, colIndex) => {
+                        const actionItemType = action.type;
                         return (
-                          <TableCell
-                            key={`col${colIndex}:${column.id}`}
-                            align={column.align}
-                            style={{
-                              minWidth: column.minWidth,
-                              maxWidth: column.maxWidth,
-                              wordBreak: "break-word",
-                            }}
+                          <StyledTableHead
+                            key={`tableRow${rowIndex}:${colIndex}`}
+                            align={"left"}
+                            style={{ minWidth: 50, width: 50 }}
                           >
-                            {column.format ? column.format(value) : value}
-                          </TableCell>
+                            <IconButton
+                              className={classes.menuButton}
+                              onClick={() => action.action(row)}
+                              color="secondary"
+                              aria-label="menu"
+                            >
+                              {actionItemType === "edit" ? (
+                                <EditIcon />
+                              ) : actionItemType === "view" ? (
+                                <ViewIcon />
+                              )  : actionItemType === "unlink" ? (
+                                <LinkOffIcon />
+                              ) : (
+                                <DeleteIcon />
+                              )}
+                            </IconButton>
+                          </StyledTableHead>
                         );
                       })}
-                    </StyledTableRow>
-                  );
-                })}
+                    {columns.map((column, colIndex) => {
+                      const value = row[column.id] || "-";
+                      return (
+                        <TableCell
+                          key={`col${colIndex}:${column.id}`}
+                          align={column.align}
+                          style={{
+                            minWidth: column.minWidth,
+                            maxWidth: column.maxWidth,
+                            wordBreak: "break-word",
+                          }}
+                        >
+                          {column.format ? column.format(value) : value}
+                        </TableCell>
+                      );
+                    })}
+                  </StyledTableRow>
+                );
+              })}
 
             {rows.length === 0 && (
               <StyledTableRow>
@@ -200,15 +206,16 @@ export default function DataTable({ ...props }) {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* <TablePagination
-        rowsPerPageOptions={[5, 6, 10]}
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 20]}
         component="div"
         count={rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
-      /> */}
+        classes={{ toolbar: classes.toolbar }}
+      />
     </Paper>
   );
 }

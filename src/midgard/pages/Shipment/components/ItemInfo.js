@@ -124,7 +124,6 @@ function ItemsInfo(props) {
       )
     );
   };
-  console.log(props)
 
   return (
     <Box mb={5} mt={3}>

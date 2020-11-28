@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Paper from "@material-ui/core/Paper";
@@ -43,6 +43,8 @@ const StyledTableRow = withStyles((theme) => ({
 const useStyles = makeStyles({
   root: {
     width: "100%",
+    borderRadius: 0,
+    background: "#383636",
   },
   container: {
     maxHeight: 440,
@@ -112,6 +114,26 @@ export default function ShipmentList({ ...props }) {
   const editData = location.state && location.state.data;
   const user = useContext(UserContext);
   const isAdmin = checkForGlobalAdmin(user);
+
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [selectedRows, setSelectedRows] = React.useState(
+    filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+  )
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
+  useEffect(() => {
+    setSelectedRows(
+      filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    );
+  }, [filteredRows, sortValue, page, rowsPerPage])
 
   const handleAllCheck = (e) => {
     setAllCheck(e.target.checked);
@@ -378,98 +400,95 @@ export default function ShipmentList({ ...props }) {
         <Table stickyHeader className={classes.table} aria-label="sticky table">
           <TableBody>
             {filteredRows.length > 0 &&
-              filteredRows
-
-                // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, rowIndex) => {
-                  return (
-                    <React.Fragment key={`row${rowIndex}:${row.id}`}>
-                      <StyledTableRow hover tabIndex={-1}>
-                        <TableCell colSpan={3}>
-                          <Table>
-                            <TableBody>
-                              <TableRow>
-                                <TableCell
-                                  title={`Shipment#: ${row.shipment_uuid}`}
-                                  className={classes.tableCell}
-                                  colSpan={columns.length + 2}
+              selectedRows.map((row, rowIndex) => {
+                return (
+                  <React.Fragment key={`row${rowIndex}:${row.id}`}>
+                    <StyledTableRow hover tabIndex={-1}>
+                      <TableCell colSpan={3}>
+                        <Table>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell
+                                title={`Shipment#: ${row.shipment_uuid}`}
+                                className={classes.tableCell}
+                                colSpan={columns.length + 2}
+                              >
+                                {`Shipment#: ${row.shipment_uuid}`}
+                                <Divider />
+                              </TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell
+                                align="left"
+                                style={{
+                                  width: 50,
+                                  maxWidth: 80,
+                                  minWidth: 50,
+                                }}
+                                className={classes.tableCell}
+                              >
+                                <IconButton
+                                  className={classes.menuButton}
+                                  onClick={() => editAction(row)}
+                                  color="secondary"
+                                  aria-label="menu"
                                 >
-                                  {`Shipment#: ${row.shipment_uuid}`}
-                                  <Divider />
-                                </TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell
-                                  align="left"
-                                  style={{
-                                    width: 50,
-                                    maxWidth: 80,
-                                    minWidth: 50,
-                                  }}
-                                  className={classes.tableCell}
+                                  {!isAdmin && row && row.status && row.status.toLowerCase() !== 'planned' ? <ViewIcon /> : <EditIcon />}
+                                </IconButton>
+                              </TableCell>
+                              <TableCell
+                                align="left"
+                                className={classes.tableCell}
+                                style={{
+                                  width: 50,
+                                  maxWidth: 80,
+                                  minWidth: 50,
+                                }}
+                              >
+                                <IconButton
+                                  className={classes.menuButton}
+                                  onClick={() => deleteAction(row)}
+                                  color="secondary"
+                                  aria-label="menu"
                                 >
-                                  <IconButton
-                                    className={classes.menuButton}
-                                    onClick={() => editAction(row)}
-                                    color="secondary"
-                                    aria-label="menu"
-                                  >
-                                    {!isAdmin && row && row.status && row.status.toLowerCase() !== 'planned' ? <ViewIcon /> : <EditIcon />}
-                                  </IconButton>
-                                </TableCell>
-                                <TableCell
-                                  align="left"
-                                  className={classes.tableCell}
-                                  style={{
-                                    width: 50,
-                                    maxWidth: 80,
-                                    minWidth: 50,
-                                  }}
-                                >
-                                  <IconButton
-                                    className={classes.menuButton}
-                                    onClick={() => deleteAction(row)}
-                                    color="secondary"
-                                    aria-label="menu"
-                                  >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                </TableCell>
-                                {columns &&
-                                  columns.map((column, colIndex) => {
-                                    if (column.id !== "id") {
-                                      const value = row[column.id] || "-";
-                                      return (
-                                        <TableCell
-                                          style={{
-                                            width: column.width,
-                                            maxWidth: column.maxWidth,
-                                            minWidth: column.minWidth,
-                                          }}
-                                          className={classes.tableCell}
-                                          key={`row${rowIndex}col${colIndex}:${row.id}`}
-                                          align="left"
-                                          title={
-                                            column.format
-                                              ? column.format(value)
-                                              : value
-                                          }
-                                        >
-                                          {column.format
-                                            ? column.format(value, row)
-                                            : value}
-                                        </TableCell>
-                                      );
-                                    }
-                                  })}
-                              </TableRow>
-                            </TableBody>
-                          </Table>
-                        </TableCell>
-                      </StyledTableRow>
-                    </React.Fragment>
-                  );
-                })}
+                                  <DeleteIcon />
+                                </IconButton>
+                              </TableCell>
+                              {columns &&
+                                columns.map((column, colIndex) => {
+                                  if (column.id !== "id") {
+                                    const value = row[column.id] || "-";
+                                    return (
+                                      <TableCell
+                                        style={{
+                                          width: column.width,
+                                          maxWidth: column.maxWidth,
+                                          minWidth: column.minWidth,
+                                        }}
+                                        className={classes.tableCell}
+                                        key={`row${rowIndex}col${colIndex}:${row.id}`}
+                                        align="left"
+                                        title={
+                                          column.format
+                                            ? column.format(value)
+                                            : value
+                                        }
+                                      >
+                                        {column.format
+                                          ? column.format(value, row)
+                                          : value}
+                                      </TableCell>
+                                    );
+                                  }
+                                })}
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableCell>
+                    </StyledTableRow>
+                  </React.Fragment>
+                );
+              })}
             {filteredRows.length === 0 && (
               <StyledTableRow>
                 <TableCell align="center" colSpan={columns.length + 2}>
@@ -482,15 +501,15 @@ export default function ShipmentList({ ...props }) {
         {/* </InfiniteScroll> */}
       </TableContainer>
 
-      {/* <TablePagination
-        rowsPerPageOptions={[5, 6, 10]}
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 20]}
         component="div"
-        count={rows.length}
+        count={filteredRows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
-      /> */}
+      />
     </Paper>
   );
 }
