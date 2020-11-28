@@ -51,7 +51,7 @@ function Users({ location, history, data, dispatch }) {
         {permissions.map((permission, index) => (
           <Button
             className={classes.btnPermission}
-            key={'btn-group-'+index}
+            key={`btnGroup${index}`}
             variant={permission.value === active ? "contained" : "outlined"}
             onClick={() => {
               setActive(permission.value);
@@ -88,14 +88,14 @@ function Users({ location, history, data, dispatch }) {
       <React.Fragment>
         <IconButton
           aria-label="more"
-          aria-controls={'user-actions-menu-' + row.id}
+          aria-controls={`userActions${row.id}`}
           aria-haspopup="true"
           onClick={handleMenuClick}
         >
           <MoreHoriz />
         </IconButton>
         <Menu
-          id={'user-actions-menu-' + row.id}
+          id={`userActions${row.id}`}
           anchorEl={menu.element}
           keepMounted
           open={Boolean(menu.row && (menu.row.id === row.id))}
@@ -103,7 +103,7 @@ function Users({ location, history, data, dispatch }) {
         >
           {row.actions.map((option) => (
           <MenuItem
-            key={'user-actions-' + row.id + '-' + option.value}
+            key={`userActions${row.id }:${option.value}`}
             onClick={() => handleMenuItemClick(option.value)}
           >
             {option.label}

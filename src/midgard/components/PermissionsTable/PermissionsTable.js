@@ -42,11 +42,11 @@ const StyledContainer = withStyles((theme) => ({
 }))(Box);
 
 export function PermissionsTable({columns, rows}) {
-  const header = columns.map(col => <StyledTableHeadCell key={col.prop}>{col.label}</StyledTableHeadCell>);
+  const header = columns.map((col, colIndex) => <StyledTableHeadCell key={`tableCol${colIndex}:${col.prop}`}>{col.label}</StyledTableHeadCell>);
   const content = rows.map((row, rowIndex) => (
-    <StyledTableRow key={"table-row-" + rowIndex}>
+    <StyledTableRow key={`tableRow${rowIndex}`}>
       {columns.map((col, colIndex) => (
-        <TableCell key={"table-cell-" + rowIndex + '-' + colIndex}>
+        <TableCell key={`tableCell${rowIndex}:${colIndex}`}>
           {col.template(row)}
         </TableCell>
       ))}

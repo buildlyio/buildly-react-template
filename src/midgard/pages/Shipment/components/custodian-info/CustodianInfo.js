@@ -81,10 +81,12 @@ function CustodianInfo(props) {
     redirectTo,
     loading,
     handleNext,
+    handleCancel,
     shipmentFormData,
     dispatch,
     contactInfo,
     custodyData,
+    viewOnly
   } = props;
   const [itemIds, setItemIds] = useState(
     (shipmentFormData && shipmentFormData.custodian_ids) || []
@@ -138,7 +140,7 @@ function CustodianInfo(props) {
     setOpenModal(false);
   };
 
-  const deletItem = (item) => {
+  const deleteItem = (item) => {
     let index = itemIds.indexOf(item.custodian_uuid);
     let newArr = itemIds.filter((item, idx) => idx !== index);
     const shipmentFormValue = {
@@ -165,12 +167,12 @@ function CustodianInfo(props) {
   };
 
   const actionsColumns = [
-    // { id: "unlink", type: "unlink", action: deletItem, label: "Unassociate" },
+    // { id: "unlink", type: "unlink", action: deleteItem, label: "Unassociate" },
     {
       id: "edit",
-      type: "edit",
+      type: viewOnly ? "view" : "edit",
       action: editCustody,
-      label: "Edit",
+      label: viewOnly ? "View" : "Edit",
     },
   ];
 
@@ -179,6 +181,7 @@ function CustodianInfo(props) {
       <Button
         variant="contained"
         color="primary"
+        disabled={viewOnly}
         onClick={() => setOpenModal(true)}
         className={classes.submit}
       >
@@ -206,7 +209,7 @@ function CustodianInfo(props) {
           <Modal
             open={openModal}
             setOpen={() => oncloseModal()}
-            title={editItem ? "Edit Custody" : "Add Custody"}
+            title={editItem ? viewOnly ? "View Custody" : "Edit Custody" : "Add Custody"}
             titleClass={classes.formTitle}
             maxWidth={"md"}
           >
@@ -215,6 +218,7 @@ function CustodianInfo(props) {
               itemIds={itemIds}
               setOpenModal={() => oncloseModal()}
               rows={rows}
+              viewOnly={viewOnly}
               editItem={editItem}
               {...props}
             />
@@ -222,6 +226,20 @@ function CustodianInfo(props) {
         )}
       </Box>
       <Grid container spacing={3} className={classes.buttonContainer}>
+          {viewOnly && (
+            <Grid item xs={6} sm={2}>
+              <Button
+                type="button"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                onClick={handleCancel}
+              >
+                Done
+              </Button>
+            </Grid>
+          )}
         <Grid item xs={12} sm={4}>
           <Button
             variant="contained"
@@ -230,7 +248,7 @@ function CustodianInfo(props) {
             onClick={handleNext}
             className={classes.submit}
           >
-            {`Next: Add Sensors & Gateways`}
+            {`Next: Sensors & Gateways`}
           </Button>
         </Grid>
       </Grid>

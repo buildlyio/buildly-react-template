@@ -211,7 +211,7 @@ function AddShipperInfo({
                   <MenuItem value={""}>Select</MenuItem>
                   {modeTypeList &&
                     modeTypeList.map((item, index) => (
-                      <MenuItem key={`${item.id}${item.name}`} value={item.url}>
+                      <MenuItem key={`modeType${index}:${item.id}`} value={item.url}>
                         {item.name}
                       </MenuItem>
                     ))}

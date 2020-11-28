@@ -124,7 +124,7 @@ function Items({
       data: item,
     });
   };
-  const deletItem = (item) => {
+  const deleteItem = (item) => {
     setDeleteItemId(item.id);
     setConfirmModal(true);
   };
@@ -157,7 +157,7 @@ function Items({
       dashboardHeading={"Items"}
       addButtonHeading={"Add Item"}
       editAction={editItem}
-      deleteAction={deletItem}
+      deleteAction={deleteItem}
       columns={itemColumns}
       redirectTo={redirectTo}
       rows={filteredRows}

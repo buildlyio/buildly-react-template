@@ -280,7 +280,7 @@ function AddGateway({
                       {gatewayTypeList &&
                         gatewayTypeList.map((item, index) => (
                           <MenuItem
-                            key={`${item.id}${item.name}`}
+                            key={`gatewayType${index}:${item.id}`}
                             value={item.url}
                           >
                             {item.name}

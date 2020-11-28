@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -16,12 +16,14 @@ import Items from "../../Items/Items";
 import { routes } from "../../../routes/routesConstants";
 import SensorsGateway from "../../SensorsGateway/SensorsGateway";
 import ShipmentOverview from "../components/ShipmentOverview";
-import ItemsInfo from "../components/ItemInfo";
+import ItemInfo from "../components/ItemInfo";
 import { saveShipmentFormData } from "../../../redux/shipment/actions/shipment.actions";
 import { connect } from "react-redux";
 import SensorsGatewayInfo from "../components/Sensors&GatewayInfo";
 import EnvironmentalLimitsInfo from "../components/EnvironmentalLimitsInfo";
 import CustodianInfo from "../components/custodian-info/CustodianInfo";
+import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,6 +64,7 @@ function getSteps() {
 const getStepContent = (
   stepIndex,
   props,
+  viewOnly,
   handleNext,
   handleBack,
   maxSteps,
@@ -79,6 +82,7 @@ const getStepContent = (
         >
           <ShipmentInfo
             {...props}
+            viewOnly={viewOnly}
             location={props.location}
             handleNext={handleNext}
             handleBack={handleBack}
@@ -96,8 +100,9 @@ const getStepContent = (
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
-          <ItemsInfo
+          <ItemInfo
             {...props}
+            viewOnly={viewOnly}
             history={props.history}
             redirectTo={`${routes.SHIPMENT}/add`}
             handleNext={handleNext}
@@ -116,6 +121,7 @@ const getStepContent = (
         >
           <CustodianInfo
             {...props}
+            viewOnly={viewOnly}
             history={props.history}
             redirectTo={`${routes.SHIPMENT}/add`}
             handleNext={handleNext}
@@ -135,6 +141,7 @@ const getStepContent = (
         >
           <SensorsGatewayInfo
             {...props}
+            viewOnly={viewOnly}
             history={props.history}
             redirectTo={`${routes.SHIPMENT}/add`}
             handleNext={handleNext}
@@ -153,6 +160,7 @@ const getStepContent = (
         >
           <EnvironmentalLimitsInfo
             {...props}
+            viewOnly={viewOnly}
             history={props.history}
             redirectTo={`${routes.SHIPMENT}/add`}
             handleNext={handleNext}
@@ -183,12 +191,20 @@ const getStepContent = (
 function AddShipment(props) {
   const { location, history, shipmentFormData, dispatch } = props;
   const editPage = location.state && location.state.type === "edit";
+  const editData = location.state && location.state.data;
+  const user = useContext(UserContext);
+  // For non-admins the forms becomes view-only once the shipment status is no longer just planned
+  const viewOnly = !(checkForGlobalAdmin(user)) && editPage && editData && editData.status && editData.status.toLowerCase() !== "planned";
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [openModal, toggleModal] = useState(true);
   const steps = getSteps();
   const maxSteps = steps.length;
-  const formTitle = editPage ? "Edit Shipment" : "Add Shipment";
+  const formTitle = editPage
+    ? viewOnly
+      ? "View Shipment"
+      : "Edit Shipment"
+    : "Add Shipment";
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -232,7 +248,7 @@ function AddShipment(props) {
                   <Stepper activeStep={activeStep} alternativeLabel nonLinear>
                     {steps.map((label, index) => (
                       <Step
-                        key={label}
+                        key={`step${index}:${label}`}
                         className={`${
                           shipmentFormData !== null && classes.step
                         }`}
@@ -251,6 +267,7 @@ function AddShipment(props) {
                 {getStepContent(
                   activeStep,
                   props,
+                  viewOnly,
                   handleNext,
                   handleBack,
                   maxSteps,

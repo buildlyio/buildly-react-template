@@ -9,6 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import EditIcon from "@material-ui/icons/Edit";
+import ViewIcon from "@material-ui/icons/RemoveRedEye";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import SearchInput from "../SearchComponent/SearchInput";
@@ -99,18 +100,18 @@ export default function DataTable({ ...props }) {
           <TableHead>
             <StyledTableRow>
               {actionsColumns &&
-                actionsColumns.map((action, id) => (
+                actionsColumns.map((action, index) => (
                   <StyledTableHead
-                    key={action.id}
+                    key={`actionCol${index}:${action.id}`}
                     align={"left"}
                     style={{ minWidth: 50 }}
                   >
                     {action.label}
                   </StyledTableHead>
                 ))}
-              {columns.map((column) => (
+              {columns.map((column, index) => (
                 <StyledTableHead
-                  key={column.id}
+                  key={`col${index}:${column.id}`}
                   align={column.align}
                   style={{
                     minWidth: column.minWidth,
@@ -126,20 +127,20 @@ export default function DataTable({ ...props }) {
             {rows.length > 0 &&
               rows
                 // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, idx) => {
+                .map((row, rowIndex) => {
                   return (
                     <StyledTableRow
                       hover
                       role="checkbox"
                       tabIndex={-1}
-                      key={`tableRow${idx}`}
+                      key={`tableRow${rowIndex}`}
                     >
                       {actionsColumns &&
-                        actionsColumns.map((action, id) => {
+                        actionsColumns.map((action, colIndex) => {
                           const actionItemType = action.type;
                           return (
                             <StyledTableHead
-                              key={action.id}
+                              key={`tableRow${rowIndex}:${colIndex}`}
                               align={"left"}
                               style={{ minWidth: 50, width: 50 }}
                             >
@@ -151,7 +152,9 @@ export default function DataTable({ ...props }) {
                               >
                                 {actionItemType === "edit" ? (
                                   <EditIcon />
-                                ) : actionItemType === "unlink" ? (
+                                ) : actionItemType === "view" ? (
+                                  <ViewIcon />
+                                )  : actionItemType === "unlink" ? (
                                   <LinkOffIcon />
                                 ) : (
                                   <DeleteIcon />
@@ -160,11 +163,11 @@ export default function DataTable({ ...props }) {
                             </StyledTableHead>
                           );
                         })}
-                      {columns.map((column) => {
+                      {columns.map((column, colIndex) => {
                         const value = row[column.id] || "-";
                         return (
                           <TableCell
-                            key={column.id}
+                            key={`col${colIndex}:${column.id}`}
                             align={column.align}
                             style={{
                               minWidth: column.minWidth,

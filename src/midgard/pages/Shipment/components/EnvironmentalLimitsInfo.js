@@ -87,6 +87,7 @@ function EnvironmentalLimitsInfo(props) {
     handleCancel,
     location,
     shipmentOptions,
+    viewOnly
   } = props;
   const theme = useTheme();
   const classes = useStyles();
@@ -195,7 +196,7 @@ function EnvironmentalLimitsInfo(props) {
         <Grid item xs={12} md={6} sm={6}>
           <Card variant="outlined">
             <Typography className={classes.boxHeading} variant="body2">
-              Temperature Settings
+              Temperature settings
             </Typography>
             <CardContent>
               <Grid container spacing={2}>
@@ -209,6 +210,7 @@ function EnvironmentalLimitsInfo(props) {
                     name="max_temp_val"
                     autoComplete="max_temp_val"
                     value={max_temp_val}
+                    disabled={viewOnly}
                     InputProps={
                       shipmentMetaData["max_excursion_temp"] &&
                       shipmentMetaData["max_excursion_temp"].help_text && {
@@ -233,10 +235,11 @@ function EnvironmentalLimitsInfo(props) {
                     margin="normal"
                     fullWidth
                     id="high_temp_val"
-                    label="Warning High"
+                    label="Warning high"
                     name="high_temp_val"
                     autoComplete="high_temp_val"
                     value={high_temp_val}
+                    disabled={viewOnly}
                     // {...last_known_location.bind}
                     InputProps={
                       shipmentMetaData["max_warning_temp"] &&
@@ -260,10 +263,11 @@ function EnvironmentalLimitsInfo(props) {
                     margin="normal"
                     fullWidth
                     id="low_temp_val"
-                    label="Warning Low"
+                    label="Warning low"
                     name="low_temp_val"
                     autoComplete="low_temp_val"
                     value={low_temp_val}
+                    disabled={viewOnly}
                     InputProps={
                       shipmentMetaData["min_warning_temp"] &&
                       shipmentMetaData["min_warning_temp"].help_text && {
@@ -291,6 +295,7 @@ function EnvironmentalLimitsInfo(props) {
                     name="min_temp_val"
                     autoComplete="min_temp_val"
                     value={min_temp_val}
+                    disabled={viewOnly}
                     InputProps={
                       shipmentMetaData["min_excursion_temp"] &&
                       shipmentMetaData["min_excursion_temp"].help_text && {
@@ -314,6 +319,7 @@ function EnvironmentalLimitsInfo(props) {
                 <Grid item xs={6} className={classes.slider}>
                   <RangeSlider
                     value={minMaxTempValue}
+                    disabled={viewOnly}
                     orientation={"vertical"}
                     handleSliderChange={handleTempMinMaxChange}
                     rangeText={""}
@@ -339,7 +345,7 @@ function EnvironmentalLimitsInfo(props) {
         <Grid item xs={12} md={6} sm={6}>
           <Card variant="outlined">
             <Typography className={classes.boxHeading} variant="body2">
-              Humidity Settings(%)
+              Humidity settings (%)
             </Typography>
             <CardContent>
               <Grid container spacing={4}>
@@ -353,6 +359,7 @@ function EnvironmentalLimitsInfo(props) {
                     name="max_humid_val"
                     autoComplete="max_humid_val"
                     value={max_humid_val}
+                    disabled={viewOnly}
                     InputProps={
                       shipmentMetaData["max_excursion_humidity"] &&
                       shipmentMetaData["max_excursion_humidity"].help_text && {
@@ -377,10 +384,11 @@ function EnvironmentalLimitsInfo(props) {
                     margin="normal"
                     fullWidth
                     id="high_humid_val"
-                    label="Warning High"
+                    label="Warning high"
                     name="high_humid_val"
                     autoComplete="high_humid_val"
                     value={high_humid_val}
+                    disabled={viewOnly}
                     InputProps={
                       shipmentMetaData["max_warning_humidity"] &&
                       shipmentMetaData["max_warning_humidity"].help_text && {
@@ -406,10 +414,11 @@ function EnvironmentalLimitsInfo(props) {
                     margin="normal"
                     fullWidth
                     id="low_humid_val"
-                    label="Warning Low"
+                    label="Warning low"
                     name="low_humid_val"
                     autoComplete="low_humid_val"
                     value={low_humid_val}
+                    disabled={viewOnly}
                     InputProps={
                       shipmentMetaData["min_warning_humidity"] &&
                       shipmentMetaData["min_warning_humidity"].help_text && {
@@ -439,6 +448,7 @@ function EnvironmentalLimitsInfo(props) {
                     name="min_humid_val"
                     autoComplete="min_humid_val"
                     value={min_humid_val}
+                    disabled={viewOnly}
                     InputProps={
                       shipmentMetaData["min_excursion_humidity"] &&
                       shipmentMetaData["min_excursion_humidity"].help_text && {
@@ -462,6 +472,7 @@ function EnvironmentalLimitsInfo(props) {
                 <Grid item xs={6} className={classes.slider}>
                   <RangeSlider
                     value={minMaxHumidValue}
+                    disabled={viewOnly}
                     orientation={"vertical"}
                     handleSliderChange={handleHumidMinMaxChange}
                     rangeText={""}
@@ -492,21 +503,36 @@ function EnvironmentalLimitsInfo(props) {
         className={classes.buttonContainer}
       >
         <Grid item xs={6} sm={4}>
-          <div className={classes.loadingWrapper}>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              disabled={loading}
-            >
-              {`Save`}
-            </Button>
-            {loading && (
-              <CircularProgress size={24} className={classes.buttonProgress} />
-            )}
-          </div>
+          {!viewOnly && (
+            <div className={classes.loadingWrapper}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                disabled={viewOnly}
+                className={classes.submit}
+                disabled={loading}
+              >
+                Save
+              </Button>
+              {loading && (
+                <CircularProgress size={24} className={classes.buttonProgress} />
+              )}
+            </div>
+          )}
+        </Grid>
+        <Grid item xs={6} sm={4}>
+          <Button
+            type="button"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            onClick={handleCancel}
+          >
+            Done
+          </Button>
         </Grid>
       </Grid>
     </form>

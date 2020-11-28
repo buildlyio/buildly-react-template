@@ -70,9 +70,11 @@ function ItemsInfo(props) {
     redirectTo,
     loading,
     handleNext,
+    handleCancel,
     shipmentFormData,
     dispatch,
     unitsOfMeasure,
+    viewOnly
   } = props;
   const [itemIds, setItemIds] = useState(
     (shipmentFormData && shipmentFormData.items) || []
@@ -122,6 +124,7 @@ function ItemsInfo(props) {
       )
     );
   };
+  console.log(props)
 
   return (
     <Box mb={5} mt={3}>
@@ -133,6 +136,7 @@ function ItemsInfo(props) {
                 <Autocomplete
                   multiple
                   id="tags-outlined"
+                  disabled={viewOnly}
                   options={
                     (itemData && itemData.sort(compareSort("name"))) || []
                   }
@@ -158,9 +162,10 @@ function ItemsInfo(props) {
                   renderInput={(params) => (
                     <TextField
                       {...params}
+                      disabled={viewOnly}
                       variant="outlined"
-                      label="Select Items To Be Associated"
-                      placeholder="Select an Items"
+                      label="Select items to be associated"
+                      placeholder="Select an item"
                     />
                   )}
                 />
@@ -190,26 +195,38 @@ function ItemsInfo(props) {
         </Box>
         <Grid container spacing={3} className={classes.buttonContainer}>
           <Grid item xs={6} sm={2}>
-            <div className={classes.loadingWrapper}>
+            {viewOnly ? (
               <Button
-                type="submit"
+                type="button"
                 fullWidth
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                disabled={loading || submitDisabled()}
+                onClick={handleCancel}
               >
-                {`Save`}
+                Done
               </Button>
-              {loading && (
-                <CircularProgress
-                  size={24}
-                  className={classes.buttonProgress}
-                />
-              )}
-            </div>
+            ) : (
+              <div className={classes.loadingWrapper}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  disabled={loading || submitDisabled()}
+                >
+                  Save
+                </Button>
+                {loading && (
+                  <CircularProgress
+                    size={24}
+                    className={classes.buttonProgress}
+                  />
+                )}
+              </div>
+            )}
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <Button
               variant="contained"
@@ -218,7 +235,7 @@ function ItemsInfo(props) {
               onClick={handleNext}
               className={classes.submit}
             >
-              {`Next: Add Custodians`}
+              {`Next: Custodians`}
             </Button>
           </Grid>
         </Grid>

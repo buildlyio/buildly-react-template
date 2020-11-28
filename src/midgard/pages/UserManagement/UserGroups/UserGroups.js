@@ -70,14 +70,14 @@ function UserGroups() {
       <React.Fragment>
         <IconButton
           aria-label="more"
-          aria-controls={'group-actions-menu-' + row.id}
+          aria-controls={`groupActions${row.id}`}
           aria-haspopup="true"
           onClick={handleMenuClick}
         >
           <MoreHoriz />
         </IconButton>
         <Menu
-          id={'group-actions-menu-' + row.id}
+          id={`groupActions${row.id}`}
           anchorEl={menu.element}
           keepMounted
           open={menu.row && (menu.row.id === row.id) || false}
@@ -85,7 +85,7 @@ function UserGroups() {
         >
           {row.actions.map((option) => (
           <MenuItem
-            key={'group-actions-' + row.id + '-' + option.value}
+            key={`groupActions${row.id}:${option.value}`}
             onClick={() => handleMenuItemClick(option.value)}
           >
             {option.label}

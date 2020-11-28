@@ -301,7 +301,7 @@ function Shipment(props) {
               <IconButton
                 className={classes.menuButton}
                 onClick={() => setTileView(!tileView)}
-                color="action"
+                color="default"
                 aria-label="menu"
               >
                 {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}
@@ -327,7 +327,7 @@ function Shipment(props) {
               <IconButton
                 className={classes.menuButton}
                 onClick={() => setTileView(!tileView)}
-                color="action"
+                color="default"
                 aria-label="menu"
               >
                 {!tileView ? <ViewCompactIcon /> : <ViewComfyIcon />}

@@ -52,6 +52,7 @@ export default function RangeSlider({
   rangeText,
   max,
   min,
+  disabled,
   handleSliderChange,
   marks,
   orientation,
@@ -70,6 +71,7 @@ export default function RangeSlider({
         aria-labelledby="range-slider"
         valueLabelDisplay="auto"
         // ValueLabelComponent={ValueLabelComponent}
+        disabled={disabled}
         marks={marks}
         onChange={handleSliderChange}
       />

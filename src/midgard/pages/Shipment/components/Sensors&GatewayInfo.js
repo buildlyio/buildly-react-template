@@ -75,10 +75,12 @@ function SensorsGatewayInfo(props) {
     redirectTo,
     loading,
     handleNext,
+    handleCancel,
     shipmentFormData,
     dispatch,
     sensorData,
     sensorTypeList,
+    viewOnly
   } = props;
   const [gatewayId, setGatewayId] = useState(
     (shipmentFormData &&
@@ -146,6 +148,7 @@ function SensorsGatewayInfo(props) {
               <Grid item xs={12}>
                 <Autocomplete
                   id="combo-box-demo"
+                  disabled={viewOnly}
                   options={
                     (gatewayData && gatewayData.sort(compareSort("name"))) || []
                   }
@@ -160,6 +163,7 @@ function SensorsGatewayInfo(props) {
                   renderInput={(params) => (
                     <TextField
                       {...params}
+                      disabled={viewOnly}
                       label="Associate to Gateway"
                       variant="outlined"
                       placeholder="Select a Gateway"
@@ -206,24 +210,37 @@ function SensorsGatewayInfo(props) {
         </Box>
         <Grid container spacing={3} className={classes.buttonContainer}>
           <Grid item xs={6} sm={2}>
-            <div className={classes.loadingWrapper}>
+            {viewOnly ? (
               <Button
-                type="submit"
+                type="button"
                 fullWidth
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                disabled={loading || submitDisabled()}
+                onClick={handleCancel}
               >
-                {`Save`}
+                Done
               </Button>
-              {loading && (
-                <CircularProgress
-                  size={24}
-                  className={classes.buttonProgress}
-                />
-              )}
-            </div>
+            ) : (
+              <div className={classes.loadingWrapper}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  disabled={loading || submitDisabled()}
+                >
+                  Save
+                </Button>
+                {loading && (
+                  <CircularProgress
+                    size={24}
+                    className={classes.buttonProgress}
+                  />
+                )}
+              </div>
+            )}
           </Grid>
 
           <Grid item xs={12} sm={4}>
@@ -234,7 +251,7 @@ function SensorsGatewayInfo(props) {
               onClick={handleNext}
               className={classes.submit}
             >
-              {`Next: Add Environmental Limits`}
+              {`Next: Environmental Limits`}
             </Button>
           </Grid>
         </Grid>
