@@ -175,16 +175,16 @@ const SortFilter = (props) => {
         <div className={classes.popper}>
           <List component="ul">
             <ListItem
-              selected={sortValue === "dateAsc"}
               button
-              onClick={() => handleSort("dateAsc")}
+              selected={sortValue === "dateDesc"}
+              onClick={() => handleSort("dateDesc")}
             >
               Most recent
             </ListItem>
             <ListItem
               button
-              selected={sortValue === "dateDesc"}
-              onClick={() => handleSort("dateDesc")}
+              selected={sortValue === "dateAsc"}
+              onClick={() => handleSort("dateAsc")}
             >
               Least recent
             </ListItem>
