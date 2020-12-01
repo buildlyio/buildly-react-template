@@ -73,6 +73,21 @@ export const checkForGlobalAdmin = (userData) => {
   return isGlobalAdmin;
 };
 
+export const checkForAdmin = (userData) => {
+  let isAdmin = false;
+  if (userData && userData.core_groups) {
+    userData.core_groups.map((group) => {
+      if (group.is_org_level && group.name.toLowerCase().includes("admin")) {
+        isAdmin = true;
+      }
+      else if (group.is_global) {
+        isAdmin = true;
+      }
+    });
+  }
+  return isAdmin;
+}
+
 export const setOptionsData = (options, fieldName) => {
   let result = null;
   let optionKeys = Object.keys(options);
