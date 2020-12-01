@@ -10,7 +10,7 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { AppContext } from "midgard/context/App.context";
 import { NAVIGATION_ITEMS } from "./NavBarConstants";
 import { isMobile } from "../../utils/mediaQuery";
-import { checkForAdmin } from "../../utils/utilMethods";
+import { checkForAdmin, checkForGlobalAdmin } from "../../utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const getFilteredNavItems = (userData, navItems) => {
-  let isAdmin = checkForAdmin(userData);
+  let isAdmin = checkForAdmin(userData) || checkForGlobalAdmin(userData);
   
   if (isAdmin) return navItems;
   else

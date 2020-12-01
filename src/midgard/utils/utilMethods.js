@@ -77,10 +77,7 @@ export const checkForAdmin = (userData) => {
   let isAdmin = false;
   if (userData && userData.core_groups) {
     userData.core_groups.map((group) => {
-      if (group.is_org_level && group.name.toLowerCase().includes("admin")) {
-        isAdmin = true;
-      }
-      else if (group.is_global) {
+      if (group.is_org_level && group.name.toLowerCase().includes("admin") && !group.is_global) {
         isAdmin = true;
       }
     });
