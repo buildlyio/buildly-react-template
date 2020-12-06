@@ -8,6 +8,8 @@ import { oauthService } from "./midgard/modules/oauth/oauth.service";
 import ContainerDashboard from "./midgard/layout/Container/Container";
 import Login from "./midgard/pages/Login/Login";
 import Register from "./midgard/pages/Register/Register";
+import ForgotPassword from "./midgard/pages/ForgotPassword/ForgotPassword";
+import ResetPassword from "./midgard/pages/ResetPassword/ResetPassword";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "./styles/theme";
@@ -33,6 +35,8 @@ function App() {
           />
           <Route path={routes.LOGIN} component={Login} />
           <Route path={routes.REGISTER} component={Register} />
+          <Route path={routes.FORGOT_PASSWORD} component={ForgotPassword} />
+          <Route path={routes.RESET_PASSWORD} component={ResetPassword} />
           <PrivateRoute path={routes.APP} component={ContainerDashboard} />
         </div>
         <Alerts />

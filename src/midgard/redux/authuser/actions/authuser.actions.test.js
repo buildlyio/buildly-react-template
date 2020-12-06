@@ -12,7 +12,7 @@ describe('actions', () => {
 })
 
 describe('actions', () => {
-    it('should create an action to logOut', () => {
+    it('should create an action to logout', () => {
         const credentials = 'AUTH/LOGOUT';
         const expectedAction = {
             type: actions.LOGOUT,
@@ -22,7 +22,7 @@ describe('actions', () => {
 })
 
 describe('actions', () => {
-    it('should create an action to Register', () => {
+    it('should create an action to register', () => {
         const data = 'AUTH/REGISTER';
         const expectedAction = {
             data,
@@ -33,7 +33,7 @@ describe('actions', () => {
 })
 
 describe('actions', () => {
-    it('should create an action to Update User', () => {
+    it('should create an action to update user', () => {
         const data = 'AUTH/UPDATE_USER';
         const expectedAction = {
             data,
@@ -44,7 +44,7 @@ describe('actions', () => {
 })
 
 describe('actions', () => {
-    it('should create an action to Update User', () => {
+    it('should create an action to invite user', () => {
         const data = 'AUTH/INVITE_USER';
         const expectedAction = {
             data,

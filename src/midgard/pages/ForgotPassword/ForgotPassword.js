@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
+import Box from "@material-ui/core/Box";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useInput } from "../../hooks/useInput";
-import { login } from "../../redux/authuser/actions/authuser.actions";
+import {
+  sendPasswordResetLink,
+} from "../../redux/authuser/actions/authuser.actions";
 import { validators } from "../../utils/validators";
 import logo from "../../../assets/buildly-logo.png";
 import { routes } from "../../routes/routesConstants";
@@ -60,22 +62,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Login({ dispatch, loading, history }) {
+function ForgotPassword({ dispatch, loading, history }) {
   const classes = useStyles();
-  const username = useInput("", { required: true });
-  const password = useInput("", { required: true });
+  const email = useInput("", { required: true });
   const [error, setError] = useState({});
-
-  useEffect(() => {
-    const [uid, token] = location.pathname.substring(
-      location.pathname.indexOf(routes.RESET_PASSWORD) + 1,
-      location.pathname.lastIndexOf("/")
-    ).split("/").slice(1);
-    if (location.pathname.includes(routes.RESET_PASSWORD)) {
-      const values = { uid, token };
-      dispatch(validateResetPasswordToken(values, history));
-    }
-  }, []);
 
   /**
    * Submit the form to the backend and attempts to authenticate
@@ -84,10 +74,9 @@ function Login({ dispatch, loading, history }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const loginFormValue = {
-      username: username.value,
-      password: password.value,
+      email: email.value,
     };
-    dispatch(login(loginFormValue, history));
+    dispatch(sendPasswordResetLink(loginFormValue));
   };
 
   /**
@@ -117,7 +106,7 @@ function Login({ dispatch, loading, history }) {
 
   const submitDisabled = () => {
     let errorKeys = Object.keys(error);
-    if (!username.value || !password.value) return true;
+    if (!email.value) return true;
     errorKeys.forEach((key) => {
       if (error[key].error) return true;
     });
@@ -131,8 +120,8 @@ function Login({ dispatch, loading, history }) {
         <CardContent>
           <div className={classes.paper}>
             <img src={logo} className={classes.logo} />
-            <Typography component="h1" variant="h5">
-              Sign in
+            <Typography component="h1" variant="h5" gutterBottom>
+              Enter your registered Email
             </Typography>
             <form className={classes.form} noValidate onSubmit={handleSubmit}>
               <TextField
@@ -140,36 +129,17 @@ function Login({ dispatch, loading, history }) {
                 margin="normal"
                 required
                 fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
-                error={error.username && error.username.error}
-                helperText={
-                  error && error.username ? error.username.message : ""
-                }
+                id="email"
+                label="Registered email"
+                name="email"
+                autoComplete="email"
                 className={classes.textField}
-                onBlur={(e) => handleBlur(e, "required", username)}
-                {...username.bind}
+                error={error.email && error.email.error}
+                helperText={error && error.email ? error.email.message : ""}
+                onBlur={(e) => handleBlur(e, "email", email)}
+                {...email.bind}
               />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                error={error.password && error.password.error}
-                helperText={
-                  error && error.password ? error.password.message : ""
-                }
-                className={classes.textField}
-                onBlur={(e) => handleBlur(e, "required", password)}
-                {...password.bind}
-              />
+
               <div className={classes.loadingWrapper}>
                 <Button
                   type="submit"
@@ -179,7 +149,7 @@ function Login({ dispatch, loading, history }) {
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
-                  Sign in
+                  Submit
                 </Button>
                 {loading && (
                   <CircularProgress
@@ -190,11 +160,8 @@ function Login({ dispatch, loading, history }) {
               </div>
               <Grid container>
                 <Grid item xs>
-                  <Link 
-                    href={routes.FORGOT_PASSWORD}
-                    variant="body2"
-                    color="secondary">
-                    Forgot password?
+                  <Link href={routes.LOGIN} variant="body2" color="secondary">
+                    Go back to Sign in
                   </Link>
                 </Grid>
                 <Grid item>
@@ -223,4 +190,4 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.authReducer,
 });
 
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps)(ForgotPassword);

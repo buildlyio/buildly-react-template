@@ -11,6 +11,18 @@ export const REGISTER = "AUTH/REGISTER";
 export const REGISTER_SUCCESS = "AUTH/REGISTER_SUCCESS";
 export const REGISTER_FAIL = "AUTH/REGISTER_FAIL";
 
+export const SEND_PASSWORD_RESET_LINK = "AUTH/SEND_PASSWORD_RESET_LINK";
+export const SEND_PASSWORD_RESET_LINK_SUCCESS = "AUTH/SEND_PASSWORD_RESET_LINK_SUCCESS";
+export const SEND_PASSWORD_RESET_LINK_FAIL = "AUTH/SEND_PASSWORD_RESET_LINK_FAIL";
+
+export const VALIDATE_RESET_PASSWORD_TOKEN = "AUTH/VALIDATE_RESET_PASSWORD_TOKEN";
+export const VALIDATE_RESET_PASSWORD_TOKEN_SUCCESS = "AUTH/VALIDATE_RESET_PASSWORD_TOKEN_SUCCESS";
+export const VALIDATE_RESET_PASSWORD_TOKEN_FAIL = "AUTH/VALIDATE_RESET_PASSWORD_TOKEN_FAIL";
+
+export const RESET_PASSWORD = "AUTH/RESET_PASSWORD";
+export const RESET_PASSWORD_SUCCESS = "AUTH/RESET_PASSWORD_SUCCESS";
+export const RESET_PASSWORD_FAIL = "AUTH/RESET_PASSWORD_FAIL";
+
 export const UPDATE_USER = "AUTH/USER";
 export const UPDATE_USER_SUCCESS = "AUTH/UPDATE_USER_SUCCESS";
 export const UPDATE_USER_FAIL = "AUTH/UPDATE_USER_FAIL";
@@ -33,7 +45,7 @@ export const UPDATE_ORGANIZATION_FAILURE = "AUTH/UPDATE_ORGANIZATION_FAILURE";
 
 /**
  * Login action
- * @param {{username, password}} credentials
+ * @param {{ username, password }} credentials
  */
 export const login = (credentials, history) => ({
   type: LOGIN,
@@ -48,25 +60,44 @@ export const logout = () => ({ type: LOGOUT });
 
 /**
  * Register action
- * @param {{username, password, email, organization_name, first_name, last_name}} data
+ * @param {{ username, password, email, organization_name, first_name, last_name }} data
  */
 export const register = (data, history) => ({ type: REGISTER, data, history });
 
 /**
+ * Send password reset link action
+ * @param {{ email }} data
+ */
+export const sendPasswordResetLink = (data, history) => ({ type: SEND_PASSWORD_RESET_LINK, data, history });
+
+/**
+ * Validate reset password token action
+ * @param {{ uid, token }} data 
+ * @param {*} history 
+ */
+export const validateResetPasswordToken = (data, history) => ({ type: VALIDATE_RESET_PASSWORD_TOKEN, data, history });
+
+/**
+ * Reset password action
+ * @param {{ new_password1, new_password2, uid, token }} data
+ */
+export const resetPassword = (data, history) => ({ type: RESET_PASSWORD, data, history });
+
+/**
  * Update user action
- * @param {{ first_name, last_name}} data
+ * @param {{ first_name, last_name }} data
  */
 export const updateUser = (data) => ({ type: UPDATE_USER, data });
 
 /**
  * Update user action
- * @param {{ first_name, last_name}} data
+ * @param {{ first_name, last_name }} data
  */
 export const getUser = () => ({ type: GET_USER });
 
 /**
- * invite user action
- * @param {{ first_name, last_name}} data
+ * Invite user action
+ * @param {{ first_name, last_name }} data
  */
 export const invite = (data) => ({ type: INVITE, data });
 

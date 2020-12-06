@@ -8,6 +8,15 @@ import {
   REGISTER,
   REGISTER_SUCCESS,
   REGISTER_FAIL,
+  SEND_PASSWORD_RESET_LINK,
+  SEND_PASSWORD_RESET_LINK_SUCCESS,
+  SEND_PASSWORD_RESET_LINK_FAIL,
+  VALIDATE_RESET_PASSWORD_TOKEN,
+  VALIDATE_RESET_PASSWORD_TOKEN_SUCCESS,
+  VALIDATE_RESET_PASSWORD_TOKEN_FAIL,
+  RESET_PASSWORD,
+  RESET_PASSWORD_SUCCESS,
+  RESET_PASSWORD_FAIL,
   UPDATE_USER,
   UPDATE_USER_FAIL,
   UPDATE_USER_SUCCESS,
@@ -53,14 +62,14 @@ function* login(payload) {
       `${environment.API_URL}coreuser/me/`
     );
     yield call(oauthService.setOauthUser, user, payload);
-    const coreUser = yield call(
+    const coreuser = yield call(
       httpService.makeRequest,
       "get",
       `${environment.API_URL}coreuser/`
     );
-    yield call(oauthService.setCurrentCoreUser, coreUser, user);
+    yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield [
-      // yield put({ type: LOGIN_SUCCESS, user }),
+      yield put({ type: LOGIN_SUCCESS, user }),
       yield call(history.push, routes.DASHBOARD),
     ];
   } catch (error) {
@@ -71,7 +80,7 @@ function* login(payload) {
         showAlert({
           type: "error",
           open: true,
-          message: "Login Failed!",
+          message: "Sign in failed",
         })
       ),
     ];
@@ -91,12 +100,12 @@ function* getUserDetails() {
     }
   } catch (error) {
     yield [
-      yield put({ type: GET_USER_FAIL, error: "Error in loading user data" }),
+      yield put({ type: GET_USER_FAIL, error: "Error loading user data" }),
       yield put(
         showAlert({
           type: "error",
           open: true,
-          message: "Error in loading user data",
+          message: "Error loading user data",
         })
       ),
     ];
@@ -118,7 +127,7 @@ function* register(payload) {
         showAlert({
           type: "success",
           open: true,
-          message: "Successfully Registered",
+          message: "Registration was successful",
         })
       ),
       yield call(history.push, routes.LOGIN),
@@ -130,10 +139,154 @@ function* register(payload) {
         showAlert({
           type: "error",
           open: true,
-          message: "Registration Failed!",
+          message: "Registration failed",
         })
       ),
       yield put({ type: REGISTER_FAIL, error: "Registration failed" }),
+    ];
+  }
+}
+
+function* sendPasswordResetLink(payload) {
+  let { history } = payload;
+  try {
+    const response = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}coreuser/reset_password/`,
+      payload.data
+    );
+    if (response.data && response.data.count) {
+      yield [
+        yield put({ type: SEND_PASSWORD_RESET_LINK_SUCCESS, data: response.data }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: response.data.detail,
+          })
+        ),
+        // yield call(history.push, routes.LOGIN),
+      ];
+    } else {
+      yield [
+        yield put(
+          showAlert({
+            type: "error",
+            open: true,
+            message: "The email address entered does not exist",
+          })
+        ),
+        yield put({
+          type: SEND_PASSWORD_RESET_LINK_FAIL,
+          error: "The email address entered does not exist",
+        }),
+      ];
+    }
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Email could not be sent",
+        })
+      ),
+      yield put({
+        type: SEND_PASSWORD_RESET_LINK_FAIL,
+        error: "Email could not be sent",
+      }),
+    ];
+  }
+}
+
+function* validateResetPasswordToken(payload) {
+  let { history } = payload;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}coreuser/reset_password_check/`,
+      payload.data
+    );
+    if (data.data && data.data.success) {
+      yield [
+        yield put({ type: VALIDATE_RESET_PASSWORD_TOKEN_SUCCESS, data: data.data }),
+        yield call(
+          history.push,
+          `${routes.RESET_PASSWORD}/${payload.data.uid}/${payload.data.token}/`
+        ),
+      ];
+    } else {
+      yield [
+        yield put(
+          showAlert({
+            type: "error",
+            open: true,
+            message: "Invalid ID or token. Try sending resending the link to your email",
+          })
+        ),
+        yield put({
+          type: VALIDATE_RESET_PASSWORD_TOKEN_FAIL,
+          error: "Invalid ID or token. Try sending resending the link to your email",
+        }),
+        yield call(history.push, routes.LOGIN),
+      ];
+    }
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Password reset failed",
+        })
+      ),
+      yield put({
+        type: VALIDATE_RESET_PASSWORD_TOKEN_FAIL,
+        error: "Password reset failed",
+      }),
+    ];
+  }
+}
+
+function* resetPassword(payload) {
+  let { history } = payload;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}coreuser/reset_password_confirm/`,
+      payload.data
+    );
+    console.log("data", data);
+    yield [
+      yield put({ type: RESET_PASSWORD_SUCCESS, data: data.data }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: data.data.detail,
+        })
+      ),
+      yield call(history.push, routes.LOGIN),
+    ];
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Password reset failed",
+        })
+      ),
+      yield put({
+        type: RESET_PASSWORD_FAIL,
+        error: "Password reset failed",
+      }),
     ];
   }
 }
@@ -185,7 +338,7 @@ function* updateUser(payload) {
         showAlert({
           type: "success",
           open: true,
-          message: "Account Details successfully updated!",
+          message: "Account details successfully updated",
         })
       ),
     ];
@@ -195,12 +348,12 @@ function* updateUser(payload) {
         showAlert({
           type: "error",
           open: true,
-          message: "Failed to update Details",
+          message: "Unable to update user details",
         })
       ),
       yield put({
         type: UPDATE_USER_FAIL,
-        error: "Updating user fields failed",
+        error: "Unable to update user details",
       }),
     ];
   }
@@ -234,6 +387,18 @@ function* watchRegister() {
   yield takeLatest(REGISTER, register);
 }
 
+function* watchSendResetPasswordLink() {
+  yield takeLatest(SEND_PASSWORD_RESET_LINK, sendPasswordResetLink);
+}
+
+function* watchValidateResetPasswordToken() {
+  yield takeLatest(VALIDATE_RESET_PASSWORD_TOKEN, validateResetPasswordToken);
+}
+
+function* watchResetPassword() {
+  yield takeLatest(RESET_PASSWORD, resetPassword);
+}
+
 function* watchUpdateUser() {
   yield takeLatest(UPDATE_USER, updateUser);
 }
@@ -254,6 +419,9 @@ export default function* authSaga() {
   yield all([
     watchLogin(),
     watchLogout(),
+    watchSendResetPasswordLink(),
+    watchValidateResetPasswordToken(),
+    watchResetPassword(),
     watchRegister(),
     watchUpdateUser(),
     watchInvite(),
