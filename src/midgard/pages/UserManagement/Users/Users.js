@@ -30,11 +30,11 @@ function Users({ location, history, data, dispatch }) {
   const classes = useStyles();
   // state to toggle actions menus
   const [menu, setMenu] = useState({ row: null, element: null });
-  const [coreGroupsLoaded, setCoreGroupsLoaded] = useState(false);
+  const [coregroupsLoaded, setCoreGroupsLoaded] = useState(false);
   const [permissions, setPermissions] = useState([]);
 
   useEffect(() => {
-    if (!coreGroupsLoaded) {
+    if (!coregroupsLoaded) {
       dispatch(getCoreGroups());
       setCoreGroupsLoaded(true);
     } else {
@@ -48,7 +48,7 @@ function Users({ location, history, data, dispatch }) {
 
   // table templates
   const permissionsTemplate = (row, crud, classes) => {
-    if (coreGroupsLoaded) {
+    if (coregroupsLoaded) {
       const [active, setActive] = useState(row.core_groups[0] && row.core_groups[0].id || row.core_groups[0]);
       return <ButtonGroup disableElevation color="primary" size="small" disabled={!row.is_active}>
         {permissions.map((permission, index) => (
@@ -158,6 +158,6 @@ function Users({ location, history, data, dispatch }) {
   )
 }
 
-const mapStateToProps = (state, ownProps) => ({...state.coreGroupReducer, ...ownProps});
+const mapStateToProps = (state, ownProps) => ({...state.coregroupReducer, ...ownProps});
 
 export default connect(mapStateToProps)(Users);

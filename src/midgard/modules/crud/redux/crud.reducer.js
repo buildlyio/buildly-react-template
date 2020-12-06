@@ -4,22 +4,11 @@ import {
   CRUD_LOAD_DATA_COMMIT,
   CRUD_UPDATE_COMMIT,
 } from './crud.actions';
-import {addAll, deleteOne, upsertOne} from '../../../redux/reducer.utils';
+import {addAll, deleteOne, upsertOne} from 'midgard/redux/reducer.utils';
+import PropTypes from 'prop-types';
 
-export interface EndpointState {
-  data;
-  loaded: false;
-  created: false;
-  updated: false;
-  deleted: false;
-}
-
-export interface CrudState {
-  [key: string]: EndpointState;
-}
-
-export default function crudDataReducer(state: CrudState = {}, action) {
-  const newState: CrudState = {...state};
+export default function crudDataReducer(state = {}, action) {
+  const newState = {...state};
   switch (action.type) {
     case CRUD_LOAD_DATA_COMMIT:
       newState[action.endpoint] = addAll(state[action.endpoint], action);
@@ -36,4 +25,16 @@ export default function crudDataReducer(state: CrudState = {}, action) {
     default:
       return state;
   }
+}
+
+crudDataReducer.propTypes = {
+  state: PropTypes.objectOf(
+    PropTypes.shape({
+      data: PropTypes.any,
+      loaded: PropTypes.bool,
+      created: PropTypes.bool,
+      updated: PropTypes.bool,
+      deleted: PropTypes.bool,
+    })
+  )
 }

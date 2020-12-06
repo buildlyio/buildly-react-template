@@ -2,8 +2,8 @@
 import authSaga from "./authuser/sagas/authuser.saga";
 import crudSaga from "midgard/modules/crud/redux/crud.saga";
 import { all } from "redux-saga/effects";
-import coreUserSaga from "midgard/redux/coreuser/coreuser.saga";
-import coreGroupSaga from "./coregroup/sagas/coregroup.saga";
+import coreuserSaga from "midgard/redux/coreuser/coreuser.saga";
+import coregroupSaga from "./coregroup/sagas/coregroup.saga";
 
 // single entry point to start all Sagas at once
 export default function* rootSaga() {
@@ -12,8 +12,8 @@ export default function* rootSaga() {
     //entryPointForGulpStart
     //entryPointForGulpEnd
     authSaga(),
-    coreUserSaga(),
-    coreGroupSaga(),
+    coreuserSaga(),
+    coregroupSaga(),
     crudSaga(),
   ]);
 }

@@ -1,5 +1,3 @@
-import { CoreUser } from './coreuser.model';
-
 export const LOAD_DATA_COREUSER = 'LOAD_DATA_COREUSER';
 export const LOAD_DATA_COREUSER_COMMIT = 'LOAD_DATA_COREUSER_COMMIT';
 export const LOAD_DATA_COREUSER_FAIL = 'LOAD_DATA_COREUSER_FAIL';
@@ -22,7 +20,7 @@ export function loadCoreuserData() {
   };
 }
 
-export function loadCoreuserDataCommit(data: CoreUser[]) {
+export function loadCoreuserDataCommit(data) {
   return {
     type: LOAD_DATA_COREUSER_COMMIT,
     data
@@ -36,14 +34,14 @@ export function loadCoreuserDataFail(error) {
   };
 }
 
-export function createCoreUser(data: CoreUser) {
+export function createCoreUser(data) {
   return {
     type: CREATE_COREUSER,
     data
   };
 }
 
-export function createCoreUserCommit(data: CoreUser) {
+export function createCoreUserCommit(data) {
   return {
     type: CREATE_COREUSER_COMMIT,
     data
@@ -57,14 +55,14 @@ export function createCoreUserFail(error) {
   };
 }
 
-export function updateCoreUser(data: CoreUser) {
+export function updateCoreUser(data) {
   return {
     type: UPDATE_COREUSER,
     data
   };
 }
 
-export function updateCoreUserCommit(data: CoreUser) {
+export function updateCoreUserCommit(data) {
   return {
     type: UPDATE_COREUSER_COMMIT,
     data
@@ -78,14 +76,14 @@ export function updateCoreUserFail(error) {
   };
 }
 
-export function deleteCoreUser(data: CoreUser) {
+export function deleteCoreUser(data) {
   return {
     type: DELETE_COREUSER,
     data
   };
 }
 
-export function deleteCoreUserCommit(data: CoreUser) {
+export function deleteCoreUserCommit(data) {
   return {
     type: DELETE_COREUSER_COMMIT,
     data

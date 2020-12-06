@@ -1,13 +1,9 @@
 {
   "compilerOptions": {
-    "allowJs": true,
+    "baseUrl": "./src",
     "outDir": "./dist/",
-    "sourceMap": true,
-    "noImplicitAny": false,
-    "skipLibCheck": true,
     "module": "commonjs",
     "target": "es6",
-    "esModuleInterop": true,
     "moduleResolution": "node",
     "jsx": "react",
     "allowSyntheticDefaultImports": true
@@ -15,15 +11,9 @@
   "include": [
     "./src/**/*"
   ],
-  "baseUrl": ".",
   "paths": {
     "midgard/*": ["src/midgard/*"],
     "environment": ["environment.js"]
   },
   "exclude": ["node_modules"],
-  "typedocOptions": {
-    "hideGenerator": true,
-    "ignoreCompilerErrors": true,
-    "out": "./docs"
-  }
 }
