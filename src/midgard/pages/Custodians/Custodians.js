@@ -35,6 +35,12 @@ import {
 } from "./CustodianConstants";
 import { httpService } from "../../modules/http/http.service";
 
+/**
+ *
+ * The current organization
+ */
+let organization = JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid;
+
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
     fontWeight: "bold",
@@ -76,9 +82,9 @@ function Custodian({
 
   useEffect(() => {
     if (custodianData === null) {
-      dispatch(getCustodians());
+      dispatch(getCustodians(organization));
       dispatch(getCustodianType());
-      dispatch(getContact());
+      dispatch(getContact(organization));
     }
     if (!custodyData) {
       dispatch(getCustody());

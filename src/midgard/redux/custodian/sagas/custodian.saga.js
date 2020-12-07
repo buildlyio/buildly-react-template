@@ -41,12 +41,12 @@ import { searchFilter } from "../../../utils/utilMethods";
 
 const custodiansApiEndPoint = "custodian/";
 
-function* getCustodiansList() {
+function* getCustodiansList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${custodiansApiEndPoint}custodian/`,
+      `${environment.API_URL}${custodiansApiEndPoint}custodian/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );

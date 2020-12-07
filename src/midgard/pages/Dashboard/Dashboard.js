@@ -90,6 +90,12 @@ const useStyles = makeStyles((theme) => ({
 let user = JSON.parse(localStorage.getItem("currentUser"));
 
 /**
+ *
+ * The current organization
+ */
+let organization = JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid;
+
+/**
  * Outputs the profile page for the user.
  */
 function Dashboard(props) {
@@ -120,9 +126,9 @@ function Dashboard(props) {
     //   dispatch(getShipmentFlag());
     // }
     if (custodianData === null) {
-      dispatch(getCustodians());
+      dispatch(getCustodians(organization));
       dispatch(getCustodianType());
-      dispatch(getContact());
+      dispatch(getContact(organization));
     }
     if (itemData === null) {
       dispatch(getItems());

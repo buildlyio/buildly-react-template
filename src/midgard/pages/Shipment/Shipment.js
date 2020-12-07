@@ -64,6 +64,12 @@ import CustomizedTooltips from "../../components/ToolTip/ToolTip";
 import { httpService } from "../../modules/http/http.service";
 import { environment } from "../../../../environment";
 
+/**
+ *
+ * The current organization
+ */
+let organization = JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid;
+
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
     fontWeight: "bold",
@@ -118,9 +124,9 @@ function Shipment(props) {
     //   dispatch(getShipmentFlag());
     // }
     if (custodianData === null) {
-      dispatch(getCustodians());
+      dispatch(getCustodians(organization));
       dispatch(getCustodianType());
-      dispatch(getContact());
+      dispatch(getContact(organization));
     }
     if (itemData === null) {
       dispatch(getItems());
