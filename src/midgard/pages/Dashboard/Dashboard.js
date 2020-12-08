@@ -120,7 +120,7 @@ function Dashboard(props) {
   const [markers, setMarkers] = useState([]);
   useEffect(() => {
     if (shipmentData === null) {
-      dispatch(getShipmentDetails());
+      dispatch(getShipmentDetails(organization));
     }
     // if (!shipmentFlag) {
     //   dispatch(getShipmentFlag());
@@ -131,11 +131,11 @@ function Dashboard(props) {
       dispatch(getContact(organization));
     }
     if (itemData === null) {
-      dispatch(getItems());
-      dispatch(getItemType());
+      dispatch(getItems(organization));
+      dispatch(getItemType(organization));
     }
     if (gatewayData === null) {
-      dispatch(getGateways());
+      dispatch(getGateways(organization));
       dispatch(getGatewayType());
     }
     if (!unitsOfMeasure) {
@@ -145,7 +145,7 @@ function Dashboard(props) {
       dispatch(getCustody());
     }
     if (!sensorData) {
-      dispatch(getSensors());
+      dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
 

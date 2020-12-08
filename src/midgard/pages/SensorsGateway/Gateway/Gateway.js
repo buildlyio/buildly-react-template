@@ -18,6 +18,12 @@ import {
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import { httpService } from "../../../modules/http/http.service";
 
+/**
+ *
+ * The current organization
+ */
+let organization = JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid;
+
 function Gateway(props) {
   const {
     dispatch,
@@ -46,7 +52,7 @@ function Gateway(props) {
 
   useEffect(() => {
     if (data === null) {
-      dispatch(getGateways());
+      dispatch(getGateways(organization));
       dispatch(getGatewayType());
     }
     if (gatewayOptions === null) {

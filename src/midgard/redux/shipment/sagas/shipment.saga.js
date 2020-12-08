@@ -33,12 +33,12 @@ import configureStore from "../../store";
 
 const shipmentApiEndPoint = "shipment/";
 
-function* getShipmentList() {
+function* getShipmentList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${shipmentApiEndPoint}shipment/`,
+      `${environment.API_URL}${shipmentApiEndPoint}shipment/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );
@@ -437,12 +437,12 @@ const sortFilter = (filterObject, list) => {
   }
 };
 
-function* getShipmentFlagList() {
+function* getShipmentFlagList(organization_uuid) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${shipmentApiEndPoint}shipment_flag/`,
+      `${environment.API_URL}${shipmentApiEndPoint}shipment_flag/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );

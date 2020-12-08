@@ -51,8 +51,9 @@ export const saveShipmentFormData = (formData) => ({
 /**
  * Get Shipment Details
  */
-export const getShipmentDetails = () => ({
+export const getShipmentDetails = (organization_uuid) => ({
   type: GET_SHIPMENTS,
+  organization_uuid,
 });
 
 /**
@@ -101,8 +102,9 @@ export const filterShipmentData = (list, filterObject) => ({
   filterObject,
 });
 
-export const getShipmentFlag = () => ({
+export const getShipmentFlag = (organization_uuid) => ({
   type: GET_SHIPMENT_FLAG,
+  organization_uuid,
 });
 
 export const getDashboardItems = () => ({

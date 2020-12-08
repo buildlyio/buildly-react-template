@@ -118,7 +118,7 @@ function Shipment(props) {
   const [tileView, setTileView] = useState(true);
   useEffect(() => {
     if (shipmentData === null) {
-      dispatch(getShipmentDetails());
+      dispatch(getShipmentDetails(organization));
     }
     // if (!shipmentFlag) {
     //   dispatch(getShipmentFlag());
@@ -129,11 +129,11 @@ function Shipment(props) {
       dispatch(getContact(organization));
     }
     if (itemData === null) {
-      dispatch(getItems());
+      dispatch(getItems(organization));
       dispatch(getItemType());
     }
     if (gatewayData === null) {
-      dispatch(getGateways());
+      dispatch(getGateways(organization));
       dispatch(getGatewayType());
     }
     if (!unitsOfMeasure) {
@@ -143,14 +143,14 @@ function Shipment(props) {
       dispatch(getCustody());
     }
     if (!sensorData) {
-      dispatch(getSensors());
+      dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
     if (shipmentOptions === null) {
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}shipment/shipment/`,
+          `${environment.API_URL}shipment/shipment/?organization_uuid=${organization}`,
           true
         )
         .then((response) => response.json())

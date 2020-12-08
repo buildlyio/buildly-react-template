@@ -41,12 +41,12 @@ import { searchFilter } from "../../../utils/utilMethods";
 
 const sensorApiEndPoint = "sensors/";
 
-function* getGatewayList() {
+function* getGatewayList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${sensorApiEndPoint}gateway/`,
+      `${environment.API_URL}${sensorApiEndPoint}gateway/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );
@@ -225,12 +225,12 @@ function* searchGateway(payload) {
   }
 }
 
-function* getSensorList() {
+function* getSensorList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${sensorApiEndPoint}sensor/`,
+      `${environment.API_URL}${sensorApiEndPoint}sensor/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );

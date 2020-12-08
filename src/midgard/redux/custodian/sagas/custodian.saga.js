@@ -269,12 +269,12 @@ function* searchCustodian(payload) {
   }
 }
 
-function* getContactInfo() {
+function* getContactInfo(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${custodiansApiEndPoint}contact/`,
+      `${environment.API_URL}${custodiansApiEndPoint}contact/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );

@@ -52,7 +52,7 @@ export const GET_PRODUCTS_TYPE = "ITEM/GET_PRODUCTS_TYPE";
 export const GET_PRODUCTS_TYPE_SUCCESS = "ITEMS/GET_PRODUCTS_TYPE_SUCCESS";
 export const GET_PRODUCTS_TYPE_FAILURE = "ITEMS/GET_PRODUCTS_TYPE_FAILURE";
 
-export const getItems = () => ({ type: GET_ITEMS });
+export const getItems = (organization_uuid) => ({ type: GET_ITEMS,organization_uuid, });
 
 /**
  *Add Item
@@ -100,18 +100,21 @@ export const searchItem = (searchItem, searchList, searchFields) => ({
   searchFields,
 });
 
-export const getItemType = () => ({
+export const getItemType = (organization_uuid) => ({
   type: GET_ITEMS_TYPE,
+  organization_uuid,
 });
 
 export const getUnitsOfMeasure = () => ({
   type: GET_UNITS_OF_MEASURE,
 });
 
-export const getProducts = () => ({
+export const getProducts = (organization_uuid) => ({
   type: GET_PRODUCTS,
+  organization_uuid,
 });
 
-export const getProductType = () => ({
+export const getProductType = (organization_uuid) => ({
   type: GET_PRODUCTS_TYPE,
+  organization_uuid,
 });

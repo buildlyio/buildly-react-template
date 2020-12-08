@@ -16,6 +16,12 @@ import {
 import AddSensors from "../forms/AddSensors";
 import { httpService } from "../../../modules/http/http.service";
 
+/**
+ *
+ * The current organization
+ */
+let organization = JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid;
+
 function Sensors(props) {
   const {
     dispatch,
@@ -45,7 +51,7 @@ function Sensors(props) {
 
   useEffect(() => {
     if (data === null) {
-      dispatch(getSensors());
+      dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
     if (sensorOptions === null) {

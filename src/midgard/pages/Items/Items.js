@@ -21,6 +21,12 @@ import {
 import DashboardWrapper from "../../components/DashboardWrapper/DashboardWrapper";
 import { httpService } from "../../modules/http/http.service";
 
+/**
+ *
+ * The current organization
+ */
+let organization = JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid;
+
 function Items({
   dispatch,
   history,
@@ -54,15 +60,15 @@ function Items({
 
   useEffect(() => {
     if (itemData === null) {
-      dispatch(getItems());
-      dispatch(getItemType());
+      dispatch(getItems(organization));
+      dispatch(getItemType(organization));
     }
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
     }
     if (products === null) {
-      dispatch(getProducts());
-      dispatch(getProductType());
+      dispatch(getProducts(organization));
+      dispatch(getProductType(organization));
     }
     if (itemOptions === null) {
       httpService
