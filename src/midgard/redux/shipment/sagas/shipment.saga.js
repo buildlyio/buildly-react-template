@@ -437,7 +437,7 @@ const sortFilter = (filterObject, list) => {
   }
 };
 
-function* getShipmentFlagList(organization_uuid) {
+function* getShipmentFlagList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
