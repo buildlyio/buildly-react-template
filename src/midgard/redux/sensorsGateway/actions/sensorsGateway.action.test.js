@@ -1,10 +1,12 @@
 import * as actions from "./sensorsGateway.actions";
 describe("actions", () => {
-  it("should create an action to get Gateway", () => {
+  it("should create an action to get Gateway by organization", () => {
+    const organization_uuid = "224761f5-0010-4a46-ba2f-d92a4fdc1d21";
     const expectedAction = {
       type: actions.GET_GATEWAYS,
+      organization_uuid,
     };
-    expect(actions.getGateways()).toEqual(expectedAction);
+    expect(actions.getGateways(organization_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -74,11 +76,13 @@ describe("actions", () => {
 });
 
 describe("actions", () => {
-  it("should create an action to get Sensor", () => {
+  it("should create an action to get Sensor by organization", () => {
+    const organization_uuid = "224761f5-0010-4a46-ba2f-d92a4fdc1d21";
     const expectedAction = {
       type: actions.GET_SENSORS,
+      organization_uuid,
     };
-    expect(actions.getSensors()).toEqual(expectedAction);
+    expect(actions.getSensors(organization_uuid)).toEqual(expectedAction);
   });
 });
 
