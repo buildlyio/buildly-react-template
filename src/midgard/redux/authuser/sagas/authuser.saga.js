@@ -30,7 +30,7 @@ import {
   GET_ORGANIZATION_FAILURE,
   GET_ORGANIZATION_SUCCESS,
   getOrganization,
-} from "midgard/redux/actions/authuser.actions";
+} from "midgard/redux/authuser/actions/authuser.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "midgard/modules/oauth/oauth.service";
 import { httpService } from "midgard/modules/http/http.service";
