@@ -1,4 +1,4 @@
-import { SHOW_ALERT, HIDE_ALERT } from "../actions/alert.actions";
+import { SHOW_ALERT, HIDE_ALERT } from "midgard/redux/actions/alert.actions";
 
 const initialState = {
   data: {},

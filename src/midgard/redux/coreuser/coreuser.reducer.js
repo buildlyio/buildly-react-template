@@ -3,7 +3,7 @@ import {
   DELETE_COREUSER_COMMIT,
   LOAD_DATA_COREUSER_COMMIT, UPDATE_COREUSER_COMMIT
 } from './coreuser.actions';
-import {addAll, deleteOne, upsertOne} from '../reducer.utils';
+import {addAll, deleteOne, upsertOne} from 'midgard/redux/reducer.utils';
 import PropTypes from 'prop-types';
 
 const initialState = {

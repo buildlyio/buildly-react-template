@@ -11,7 +11,7 @@ import {
     DELETE_COREGROUP,
     DELETE_COREGROUP_FAIL,
     DELETE_COREGROUP_COMMIT
-} from '../actions/coregroup.actions';
+} from 'midgard/redux/actions/coregroup.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
 import { httpService } from 'midgard/modules/http/http.service';
 import { environment } from 'environment';
