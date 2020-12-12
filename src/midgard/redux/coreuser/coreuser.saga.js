@@ -80,7 +80,7 @@ function* watchDeleteCoreUser() {
   yield takeLatest(DELETE_COREUSER, deleteCoreUser)
 }
 
-export default function* coreUserSaga() {
+export default function* coreuserSaga() {
   yield all([
     watchLoadCoreUsers(),
     watchCreateCoreUser(),

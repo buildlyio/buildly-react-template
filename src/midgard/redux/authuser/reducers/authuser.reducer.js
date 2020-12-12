@@ -2,10 +2,18 @@ import {
   LOGIN,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
-  LOGOUT_SUCCESS,
   REGISTER,
   REGISTER_SUCCESS,
   REGISTER_FAIL,
+  SEND_PASSWORD_RESET_LINK,
+  SEND_PASSWORD_RESET_LINK_SUCCESS,
+  SEND_PASSWORD_RESET_LINK_FAIL,
+  VALIDATE_RESET_PASSWORD_TOKEN,
+  VALIDATE_RESET_PASSWORD_TOKEN_SUCCESS,
+  VALIDATE_RESET_PASSWORD_TOKEN_FAIL,
+  RESET_PASSWORD,
+  RESET_PASSWORD_SUCCESS,
+  RESET_PASSWORD_FAIL,
   UPDATE_USER,
   UPDATE_USER_FAIL,
   UPDATE_USER_SUCCESS,
@@ -54,6 +62,79 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+    
+    case SEND_PASSWORD_RESET_LINK:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case SEND_PASSWORD_RESET_LINK_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: null,
+      };
+
+    case SEND_PASSWORD_RESET_LINK_FAIL:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case VALIDATE_RESET_PASSWORD_TOKEN:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case VALIDATE_RESET_PASSWORD_TOKEN_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: null,
+      };
+
+    case VALIDATE_RESET_PASSWORD_TOKEN_FAIL:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case RESET_PASSWORD:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case RESET_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: null,
+      };
+
+    case RESET_PASSWORD_FAIL:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    
     case REGISTER:
       return {
         ...state,
@@ -161,6 +242,7 @@ export default (state = initialState, action) => {
         organizationData: null,
         error: null,
       };
+
     case GET_ORGANIZATION_SUCCESS:
       return {
         ...state,
@@ -169,6 +251,7 @@ export default (state = initialState, action) => {
         organizationData: (action.data && action.data.data) || null,
         error: null,
       };
+
     case GET_ORGANIZATION_FAILURE:
       return {
         ...state,

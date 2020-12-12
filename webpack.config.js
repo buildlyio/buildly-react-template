@@ -10,23 +10,24 @@ module.exports = {
     devtool: 'inline-source-map',
     module: {
     rules: [
-      // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
       {
-        test: /\.(ts|tsx)?$/,
-        loader: "awesome-typescript-loader"
-      },
-      // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-      {
-        enforce: "pre",
-        test: /\.js$/,
-        loader: "source-map-loader",
-        exclude: /node_modules/
-      },
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /(node_modules|bower_components)/,
-        loader: "babel-loader",
-        options: { presets: ["@babel/env"], rootMode: "upward" }
+        test: /\.(jsx|js)$/,
+        include: path.resolve(__dirname, 'src'),
+        exclude: /node_modules/,
+        use: [{
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', {
+                "targets": "defaults" 
+              }],
+              '@babel/preset-react'
+            ],
+            plugins: [
+              "@babel/plugin-proposal-class-properties"
+            ]
+          }
+        }]
       },
       {
         test: /\.(js|jsx)$/,

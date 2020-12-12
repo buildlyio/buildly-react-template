@@ -2,7 +2,7 @@
 import { combineReducers } from "redux";
 import authReducer from "./authuser/reducers/authuser.reducer";
 import coreuserReducer from "./coreuser/coreuser.reducer";
-import coreGroupReducer from "./coregroup/reducers/coregroup.reducer";
+import coregroupReducer from "./coregroup/reducers/coregroup.reducer";
 import crudDataReducer from "midgard/modules/crud/redux/crud.reducer";
 import alertReducer from "./alert/reducers/alert.reducer";
 import { LOGOUT_SUCCESS } from "./authuser/actions/authuser.actions";
@@ -12,7 +12,7 @@ const appReducer = combineReducers({
     //entryPointForGulpEnd
   authReducer,
   coreuserReducer,
-  coreGroupReducer,
+  coregroupReducer,
   crudDataReducer,
   alertReducer,
 });

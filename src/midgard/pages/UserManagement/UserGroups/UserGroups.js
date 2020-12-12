@@ -118,7 +118,7 @@ function UserGroups() {
         updateAction="UPDATE_COREGROUP"
         createAction="CREATE_COREGROUP"
         loadAction="LOAD_DATA_COREGROUP"
-        reducer="coreGroupReducer"
+        reducer="coregroupReducer"
       >
         {
           crud => {

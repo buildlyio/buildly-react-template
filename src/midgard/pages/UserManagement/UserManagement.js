@@ -99,12 +99,16 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
   const inviteUser = (event) => {
     event.preventDefault();
     const inviteFormValue = {
-      emails: [email.value],
+      emails: getEmailsFromInputValue(email.value),
     };
     setInviteCall(true);
     dispatch(invite(inviteFormValue));
     email.clear();
   };
+
+  const getEmailsFromInputValue = (value) => {
+    return value.split(",").map((item) => item.trim());
+  }
 
   const viewTabClicked = (event, view) => {
     setView(view);

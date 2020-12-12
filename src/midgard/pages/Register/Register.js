@@ -12,25 +12,13 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useInput } from "../../hooks/useInput";
-import { register, login } from "../../redux/authuser/actions/authuser.actions";
+import { register } from "../../redux/authuser/actions/authuser.actions";
 import Grid from "@material-ui/core/Grid";
 import { validators } from "../../utils/validators";
 import logo from "../../../assets/buildly-logo.png";
 import { isMobile } from "../../utils/mediaQuery";
 import { routes } from "../../routes/routesConstants";
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://example.com/" target="_blank">
-        Buildly
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import Copyright from '../../components/Copyright/Copyright';
 
 const useStyles = makeStyles((theme) => ({
   root: {

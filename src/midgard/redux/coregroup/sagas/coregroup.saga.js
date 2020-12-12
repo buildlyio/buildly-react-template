@@ -79,7 +79,7 @@ function* watchDeleteCoreGroups() {
 function* watchUpdateCoreGroups() {
     yield takeLatest(UPDATE_COREGROUP, updateCoreGroups)
 }
-export default function* coreGroupSaga() {
+export default function* coregroupSaga() {
   yield all([
       watchLoadCoreGroups(),
       watchDeleteCoreGroups(),
