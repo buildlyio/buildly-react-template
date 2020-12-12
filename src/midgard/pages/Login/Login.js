@@ -12,12 +12,12 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import { useInput } from "../../hooks/useInput";
-import { login } from "../../redux/authuser/actions/authuser.actions";
-import { validators } from "../../utils/validators";
-import logo from "../../../assets/buildly-logo.png";
-import { routes } from "../../routes/routesConstants";
-import Copyright from '../../components/Copyright/Copyright';
+import { useInput } from "midgard/hooks/useInput";
+import { login } from "midgard/redux/authuser/actions/authuser.actions";
+import { validators } from "midgard/utils/validators";
+import logo from "assets/buildly-logo.png";
+import { routes } from "midgard/routes/routesConstants";
+import Copyright from 'midgard/components/Copyright/Copyright';
 
 const useStyles = makeStyles((theme) => ({
   root: {

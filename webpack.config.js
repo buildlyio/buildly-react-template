@@ -71,11 +71,18 @@ module.exports = {
     extensions: ["*", ".js", ".jsx", ".ts", ".tsx"],
     modules: [path.resolve(__dirname, './src'), 'node_modules'],
     alias: {
+      assets: path.resolve(__dirname, './src/assets'),
+      components: path.resolve(__dirname, './src/midgard/components'),
+      hooks: path.resolve(__dirname, './src/midgard/hooks'),
+      layout: path.resolve(__dirname, './src/midgard/layout'),
       midgard: path.resolve(__dirname, './src/midgard'),
-      store: path.resolve(__dirname, './src/store'),
+      modules: path.resolve(__dirname, './src/midgard/modules'),
+      pages: path.resolve(__dirname, './src/midgard/pages'),
+      redux: path.resolve(__dirname, './src/midgard/redux'),
+      routes: path.resolve(__dirname, './src/midgard/routes'),
+      styles: path.resolve(__dirname, './src/styles'),
+      utils: path.resolve(__dirname, './src/midgard/utils'),
       environment$: path.resolve(__dirname, './environment.js'),
-      styles$: path.resolve(__dirname, './src/styles.scss'),
-      colors$: path.resolve(__dirname, './src/styles/colors.js'),
     }
   },
   output: {

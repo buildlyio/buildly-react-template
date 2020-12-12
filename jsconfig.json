@@ -12,7 +12,17 @@
     "./src/**/*"
   ],
   "paths": {
+    "assets/*": ["src/assets/*"],
+    "components/*": ["src/midgard/components/*"],
+    "hooks/*": ["src/midgard/hooks/*"],
+    "layout/*": ["src/midgard/layout/*"],
     "midgard/*": ["src/midgard/*"],
+    "modules/*": ["src/midgard/modules/*"],
+    "pages/*": ["src/midgard/pages/*"],
+    "redux/*": ["src/midgard/redux/*"],
+    "routes/*": ["src/midgard/routes/*"],
+    "styles/*": ["src/styles/*"],
+    "utils/*": ["src/midgard/utils/*"],
     "environment": ["environment.js"]
   },
   "exclude": ["node_modules"],

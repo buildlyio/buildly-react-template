@@ -4,7 +4,7 @@ import React from 'react';
 function Profile() {
   return (
     <Typography variant="body1">
-      Welcome to Buildly Dashboard
+      Welcome to the Buildly Dashboard
     </Typography>
   );
 }

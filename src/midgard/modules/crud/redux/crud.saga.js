@@ -1,5 +1,5 @@
 import { put, takeLatest, all, call } from 'redux-saga/effects';
-import { httpService } from '../../../modules/http/http.service';
+import { httpService } from 'midgard/modules/http/http.service';
 import { environment } from 'environment';
 
 import {

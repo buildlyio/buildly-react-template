@@ -7,13 +7,13 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import GroupIcon from "@material-ui/icons/Group";
-import logo from "../../../assets/topbar-logo.png";
-import { logout } from "../../redux/authuser/actions/authuser.actions";
-import { routes } from "../../routes/routesConstants";
+import logo from "assets/topbar-logo.png";
+import { logout } from "midgard/redux/authuser/actions/authuser.actions";
+import { routes } from "midgard/routes/routesConstants";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    backgroundColor: "#383636",
+    backgroundColor: "#2A3744",
     zIndex: theme.zIndex.drawer + 1,
   },
   logo: {

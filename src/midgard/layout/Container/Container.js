@@ -8,7 +8,7 @@ import Profile from "midgard/pages/Profile/Profile";
 import UserManagement from "midgard/pages/UserManagement/UserManagement";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
-import { routes } from "../../routes/routesConstants";
+import { routes } from "midgard/routes/routesConstants";
 
 const useStyles = makeStyles((theme) => ({
   root: {

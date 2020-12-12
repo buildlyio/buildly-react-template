@@ -3,8 +3,7 @@ import { connect } from "react-redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
-import { dispatch } from "../../redux/store";
-import { hideAlert } from "../../redux/alert/actions/alert.actions";
+import { hideAlert } from "midgard/redux/alert/actions/alert.actions";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;

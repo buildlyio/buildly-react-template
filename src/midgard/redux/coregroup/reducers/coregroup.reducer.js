@@ -3,7 +3,7 @@ import {
     DELETE_COREGROUP_COMMIT,
     LOAD_DATA_COREGROUP_COMMIT, UPDATE_COREGROUP_COMMIT
 } from '../actions/coregroup.actions';
-import {addAll, deleteOne, upsertOne} from '../../reducer.utils';
+import {addAll, deleteOne, upsertOne} from 'midgard/redux/reducer.utils';
 import PropTypes from 'prop-types';
 
 const initialState = {

@@ -1,24 +1,16 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-import { FjTable, FjMenu, FjInlineEditor } from 'freyja-react'
+import { InlineEditor } from 'midgard/components/InlineEditor/InlineEditor';
+import { StyledTable } from 'midgard/components/StyledTable/StyledTable';
 import Crud from 'midgard/modules/crud/Crud';
-import { rem } from 'polished';
 import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import Switch from '@material-ui/core/Switch';
-
-const UserGroupsLayout = styled.div`
-  width: 100%;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: ${rem(10)};
-`;
+import Box from "@material-ui/core/Box";
+import AddIcon from "@material-ui/icons/AddCircle";
 
 /**
  * Manage user groups
@@ -31,6 +23,7 @@ function UserGroups() {
     return (
       <Switch
         size="small"
+        color="primary"
         checked={row.permissions[operation]}
         onChange={() => {
           row.permissions[operation] = !row.permissions[operation];
@@ -70,22 +63,22 @@ function UserGroups() {
       <React.Fragment>
         <IconButton
           aria-label="more"
-          aria-controls={'group-actions-menu-' + row.id}
+          aria-controls={`groupActions${row.id}`}
           aria-haspopup="true"
           onClick={handleMenuClick}
         >
           <MoreHoriz />
         </IconButton>
         <Menu
-          id={'group-actions-menu-' + row.id}
+          id={`groupActions${row.id}`}
           anchorEl={menu.element}
           keepMounted
-          open={Boolean(menu.row && (menu.row.id === row.id))}
+          open={menu.row && (menu.row.id === row.id) || false}
           onClose={handleMenuClose}
         >
           {row.actions.map((option) => (
           <MenuItem
-            key={'group-actions-' + row.id + '-' + option.value}
+            key={`groupActions${row.id}:${option.value}`}
             onClick={() => handleMenuItemClick(option.value)}
           >
             {option.label}
@@ -102,17 +95,18 @@ function UserGroups() {
 
   const nameTemplate = (row, crud) => {
     return (
-      <FjInlineEditor
-        tag="h4"
+      <InlineEditor
+        tag="body1"
         id={row.id}
         value={row.name}
+        placeholder="Group type"
         onChange={(event) => update(crud, row, event)}
       />
     );
   };
 
   return (
-    <UserGroupsLayout>
+    <Box>
       <Crud
         deleteAction="DELETE_COREGROUP"
         updateAction="UPDATE_COREGROUP"
@@ -130,21 +124,29 @@ function UserGroups() {
 
             return (
               <React.Fragment>
-                <ButtonContainer>
-                  <Button variant="outlined" size="small" onClick={() => addGroup(crud)}>Create a group</Button>
-                </ButtonContainer>
-                <FjTable
+                <Grid container justify="flex-end">
+                  <Grid item>
+                    <Button
+                      color="primary"
+                      size="small"
+                      variant="outlined"
+                      onClick={() => addGroup(crud)}
+                      startIcon={<AddIcon />}>
+                      Add group
+                    </Button>
+                  </Grid>
+                </Grid>
+                <StyledTable
                   columns={[
-                    { label: 'Group Type', prop: 'name', flex: '1', template: (row) => nameTemplate(row, crud ) },
+                    { label: 'Group type', prop: 'name', template: (row) => nameTemplate(row, crud ) },
                     { label: 'Create', prop: 'Create', template: (row) => permissionCellTemplate(row, crud, 'create' ) },
                     { label: 'Read', prop: 'Read', template: (row) => permissionCellTemplate(row, crud, 'read') },
                     { label: 'Update', prop: 'Update', template: (row) => permissionCellTemplate(row, crud, 'update') },
-                    { label: 'Delete', prop: 'Delete', template: (row) => permissionCellTemplate(row, crud, 'delete'), flex: '2' },
+                    { label: 'Delete', prop: 'Delete', template: (row) => permissionCellTemplate(row, crud, 'delete') },
                     {
                       label: 'Actions',
                       prop: 'options',
                       template: (row) => actionsTemplate(row, crud),
-                      flex: '1'
                     },
                   ]}
                   rows={crud.getData()}
@@ -154,7 +156,7 @@ function UserGroups() {
           }
         }
       </Crud>
-    </UserGroupsLayout>
+    </Box>
   );
 }
 

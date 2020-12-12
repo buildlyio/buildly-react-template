@@ -32,11 +32,11 @@ import {
   getOrganization,
 } from "../actions/authuser.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
-import { oauthService } from "../../../modules/oauth/oauth.service";
-import { httpService } from "../../../modules/http/http.service";
+import { oauthService } from "midgard/modules/oauth/oauth.service";
+import { httpService } from "midgard/modules/http/http.service";
 import { environment } from "environment";
-import { showAlert } from "../../alert/actions/alert.actions";
-import { routes } from "../../../routes/routesConstants";
+import { showAlert } from "midgard/redux/alert/actions/alert.actions";
+import { routes } from "midgard/routes/routesConstants";
 
 function* logout() {
   try {
