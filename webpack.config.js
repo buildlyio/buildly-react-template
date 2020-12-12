@@ -78,7 +78,6 @@ module.exports = {
       midgard: path.resolve(__dirname, './src/midgard'),
       modules: path.resolve(__dirname, './src/midgard/modules'),
       pages: path.resolve(__dirname, './src/midgard/pages'),
-      redux: path.resolve(__dirname, './src/midgard/redux'),
       routes: path.resolve(__dirname, './src/midgard/routes'),
       styles: path.resolve(__dirname, './src/styles'),
       utils: path.resolve(__dirname, './src/midgard/utils'),

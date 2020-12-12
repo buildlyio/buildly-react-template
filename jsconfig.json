@@ -19,7 +19,6 @@
     "midgard/*": ["src/midgard/*"],
     "modules/*": ["src/midgard/modules/*"],
     "pages/*": ["src/midgard/pages/*"],
-    "redux/*": ["src/midgard/redux/*"],
     "routes/*": ["src/midgard/routes/*"],
     "styles/*": ["src/styles/*"],
     "utils/*": ["src/midgard/utils/*"],
