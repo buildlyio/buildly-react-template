@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { PermissionsTable } from 'midgard/components/PermissionsTable/PermissionsTable';
 import Crud from 'midgard/modules/crud/Crud';
 import { getCoreGroups } from 'midgard/redux/coregroup/actions/coregroup.actions'
@@ -13,6 +13,8 @@ import Box from "@material-ui/core/Box";
 import { makeStyles } from '@material-ui/core/styles';
 import { rem } from 'polished';
 import { Typography } from '@material-ui/core';
+import { checkForGlobalAdmin, checkForAdmin } from "midgard/utils/utilMethods";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   btnPermission: {
@@ -29,7 +31,10 @@ function Users({ location, history, data, dispatch }) {
   const [menu, setMenu] = useState({ row: null, element: null });
   const [coreGroupsLoaded, setCoreGroupsLoaded] = useState(false);
   const [permissions, setPermissions] = useState([]);
-
+  // to get currently logged in user
+  const user = useContext(UserContext);
+  const isOrganizationAdmin = checkForAdmin(user);
+ 
   useEffect(() => {
     if (!coreGroupsLoaded) {
       dispatch(getCoreGroups());
@@ -139,10 +144,23 @@ function Users({ location, history, data, dispatch }) {
             });
           }
           return (
+            isOrganizationAdmin ?
             <PermissionsTable
               columns={[
                 { label: 'Full name', prop: 'name', template: (row) => {return <Typography variant="body1" style={!row.is_active? {'color': '#aaa'}: null}>{row.first_name} {row.last_name}</Typography>}, flex: '1' },
-                { label: 'Email', prop: 'email', flex: '2', template: (row) => {return <Typography variant="body2" style={!row.is_active? {'color': '#aaa'}: null}> {row.email}</Typography>}},
+                { label: 'Email', prop: 'email', flex: '2', template: (row) => {return <Typography variant="body2" style={!row.is_active? {'color': '#aaa'}: null}>{row.email}</Typography>}},
+                { label: 'Last activity', prop: 'activity', template: (row) => {return <Typography variant="caption" style={{'color': '#aaa'}}>Today</Typography>}, flex: '1' },
+                { label: 'Permissions', prop: 'permission', template: (row) => permissionsTemplate(row, crud, classes), flex: '2' },
+                { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud), flex: '1' },
+              ]}
+              rows={crud.getData()}
+            />
+            :
+            <PermissionsTable
+              columns={[
+                { label: 'Full name', prop: 'name', template: (row) => {return <Typography variant="body1" style={!row.is_active? {'color': '#aaa'}: null}>{row.first_name} {row.last_name}</Typography>}, flex: '1' },
+                { label: 'Email', prop: 'email', flex: '2', template: (row) => {return <Typography variant="body2" style={!row.is_active? {'color': '#aaa'}: null}>{row.email}</Typography>}},
+                { label: 'Organization name', prop: 'organization', flex: '2', template: (row) => {return <Typography variant="body2" style={!row.is_active? {'color': '#aaa'}: null}>{row.organization.name}</Typography>}},
                 { label: 'Last activity', prop: 'activity', template: (row) => {return <Typography variant="caption" style={{'color': '#aaa'}}>Today</Typography>}, flex: '1' },
                 { label: 'Permissions', prop: 'permission', template: (row) => permissionsTemplate(row, crud, classes), flex: '2' },
                 { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud), flex: '1' },

@@ -18,7 +18,7 @@ import Items from "../../pages/Items/Items";
 import SensorsGateway from "../../pages/SensorsGateway/SensorsGateway";
 import Shipment from "../../pages/Shipment/Shipment";
 import Dashboard from "../../pages/Dashboard/Dashboard";
-import { checkForGlobalAdmin } from "../../utils/utilMethods";
+import { checkForAdmin, checkForGlobalAdmin } from "../../utils/utilMethods";
 import { isMobile } from "../../utils/mediaQuery";
 
 const useStyles = makeStyles((theme) => ({
@@ -93,7 +93,7 @@ function ContainerDashboard({ location, history, data }) {
             render={() => <Redirect to={routes.DASHBOARD} />}
           />
           <Route path={routes.DASHBOARD} component={Dashboard} />
-          {checkForGlobalAdmin(userData) && (
+          {(checkForAdmin(userData) || checkForGlobalAdmin(userData)) && (
             <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
           )}
           <Route path={routes.CUSTODIANS} component={Custodians} />
