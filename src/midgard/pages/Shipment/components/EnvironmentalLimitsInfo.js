@@ -22,6 +22,12 @@ import { editShipment } from "../../../redux/shipment/actions/shipment.actions";
 import { routes } from "../../../routes/routesConstants";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 
+/**
+ *
+ * The current organization
+ */
+let organization = JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid;
+
 const useStyles = makeStyles((theme) => ({
   slider: {
     margin: "auto",
@@ -185,7 +191,8 @@ function EnvironmentalLimitsInfo(props) {
       editShipment(
         shipmentFormValue,
         history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`
+        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
+        organization
       )
     );
   };

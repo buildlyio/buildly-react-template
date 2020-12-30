@@ -30,6 +30,12 @@ import {
   custodyColumns,
 } from "../../ShipmentConstants";
 
+/**
+ *
+ * The current organization
+ */
+let organization = JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid;
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& > * + *": {
@@ -134,7 +140,8 @@ function CustodianInfo(props) {
       editShipment(
         shipmentFormValue,
         history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`
+        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
+        organization
       )
     );
     setOpenModal(false);
@@ -150,7 +157,8 @@ function CustodianInfo(props) {
       editShipment(
         shipmentFormValue,
         history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`
+        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
+        organization
       )
     );
     setItemIds(newArr);

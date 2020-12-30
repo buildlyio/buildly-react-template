@@ -50,6 +50,7 @@ export const saveShipmentFormData = (formData) => ({
 
 /**
  * Get Shipment Details
+ * @param {String} organization_uuid
  */
 export const getShipmentDetails = (organization_uuid) => ({
   type: GET_SHIPMENTS,
@@ -61,12 +62,14 @@ export const getShipmentDetails = (organization_uuid) => ({
  * @param {Object} payload
  * @param {Object} history
  * @param {String} redirectTo
+ * @param {String} organization_uuid
  */
-export const addShipment = (payload, history, redirectTo) => ({
+export const addShipment = (payload, history, redirectTo, organization_uuid) => ({
   type: ADD_SHIPMENT,
   payload,
   history,
   redirectTo,
+  organization_uuid,
 });
 
 /**
@@ -74,21 +77,25 @@ export const addShipment = (payload, history, redirectTo) => ({
  * @param {Object} payload
  * @param {Object} history
  * @param {String} redirectTo path to redirect
+ * @param {String} organization_uuid
  */
-export const editShipment = (payload, history, redirectTo) => ({
+export const editShipment = (payload, history, redirectTo, organization_uuid) => ({
   type: EDIT_SHIPMENT,
   payload,
   history,
   redirectTo,
+  organization_uuid,
 });
 
 /**
  *Delete Shipment entity
- * @param {{id}} payload
+ * @param {{id}} shipmentId
+ * @param {String} organization_uuid
  */
-export const deleteShipment = (shipmentId) => ({
+export const deleteShipment = (shipmentId, organization_uuid) => ({
   type: DELETE_SHIPMENT,
   shipmentId,
+  organization_uuid,
 });
 
 /**
@@ -102,6 +109,10 @@ export const filterShipmentData = (list, filterObject) => ({
   filterObject,
 });
 
+/**
+ *
+ * @param {String} organization_uuid
+ */
 export const getShipmentFlag = (organization_uuid) => ({
   type: GET_SHIPMENT_FLAG,
   organization_uuid,

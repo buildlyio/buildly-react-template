@@ -66,12 +66,11 @@ function* getShipmentList(payload) {
 }
 
 function* deleteShipment(payload) {
-  let { shipmentId } = payload;
   try {
     yield call(
       httpService.makeRequest,
       "delete",
-      `${environment.API_URL}${shipmentApiEndPoint}shipment/${shipmentId}/`,
+      `${environment.API_URL}${shipmentApiEndPoint}shipment/${payload.shipmentId}/`,
       null,
       true
     );
@@ -83,7 +82,7 @@ function* deleteShipment(payload) {
           message: "Shipment deleted successfully!",
         })
       ),
-      yield put(getShipmentDetails()),
+      yield put(getShipmentDetails(payload.organization_uuid)),
     ];
   } catch (error) {
     console.log("error", error);
@@ -116,7 +115,7 @@ function* editShipment(action) {
 
     yield [
       yield put(saveShipmentFormData(data.data)),
-      yield put(getShipmentDetails()),
+      yield put(getShipmentDetails(payload.organization_uuid)),
       yield put(
         showAlert({
           type: "success",
@@ -162,7 +161,7 @@ function* addShipment(action) {
         })
       ),
       yield put(saveShipmentFormData(data.data)),
-      yield put(getShipmentDetails()),
+      yield put(getShipmentDetails(payload.organization_uuid)),
     ];
     if (redirectTo) {
       yield call(history.push, redirectTo);

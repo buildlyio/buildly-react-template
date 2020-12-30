@@ -278,7 +278,7 @@ function Shipment(props) {
   };
 
   const handleConfirmModal = () => {
-    dispatch(deleteShipment(deleteItemId));
+    dispatch(deleteShipment(deleteItemId, organization));
     setConfirmModal(false);
   };
 
