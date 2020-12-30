@@ -45,7 +45,8 @@ import { UserContext } from "midgard/context/User.context";
  *
  * The current organization
  */
-let organization = JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid;
+let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -290,6 +291,7 @@ function ShipmentInfo(props) {
       uom_distance: uom_distance,
       uom_temp: uom_temp,
       uom_weight: uom_weight,
+      organization_uuid: organization,
     };
 
     if (editPage && editData) {

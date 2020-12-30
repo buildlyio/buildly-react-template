@@ -93,7 +93,8 @@ let user = JSON.parse(localStorage.getItem("currentUser"));
  *
  * The current organization
  */
-let organization = JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid;
+let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+
 
 /**
  * Outputs the profile page for the user.

@@ -22,7 +22,8 @@ import { httpService } from "../../../modules/http/http.service";
  *
  * The current organization
  */
-let organization = JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid;
+let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+
 
 function Gateway(props) {
   const {
