@@ -43,11 +43,13 @@ describe("actions", () => {
 describe("actions", () => {
   it("should create an action to delete Gateway", () => {
     const gatewayId = "123";
+    const organization_uuid = "224761f5-0010-4a46-ba2f-d92a4fdc1d21";
     const expectedAction = {
       type: actions.DELETE_GATEWAY,
       gatewayId,
+      organization_uuid,
     };
-    expect(actions.deleteGateway(gatewayId)).toEqual(expectedAction);
+    expect(actions.deleteGateway(gatewayId, organization_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -119,11 +121,12 @@ describe("actions", () => {
 describe("actions", () => {
   it("should create an action to delete Sensor", () => {
     const sensorId = "123";
+    const organization_uuid = "224761f5-0010-4a46-ba2f-d92a4fdc1d21";
     const expectedAction = {
       type: actions.DELETE_SENSOR,
       sensorId,
     };
-    expect(actions.deleteSensor(sensorId)).toEqual(expectedAction);
+    expect(actions.deleteSensor(sensorId, organization_uuid)).toEqual(expectedAction);
   });
 });
 
