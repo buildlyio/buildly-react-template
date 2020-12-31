@@ -151,7 +151,7 @@ function Custodian({
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    dispatch(deleteCustodian(deleteItemId, deleteContactObjId));
+    dispatch(deleteCustodian(deleteItemId, deleteContactObjId, organization));
     setConfirmModal(false);
   };
   const searchTable = (e) => {

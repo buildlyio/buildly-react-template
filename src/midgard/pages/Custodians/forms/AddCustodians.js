@@ -34,6 +34,12 @@ import { compareSort } from "../../../utils/utilMethods";
 import { InputAdornment } from "@material-ui/core";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 
+/**
+ *
+ * The current organization
+ */
+let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(8),
@@ -156,6 +162,7 @@ function AddCustodians({
       ...(editPage && { contact_uuid: contactData.contact_uuid }),
       ...(editPage && { url: contactData.url }),
       ...(editPage && { id: contactData.id }),
+      organization_uuid: organization,
     };
     const custodianFormValue = {
       custodian_alias: alias.value,
@@ -165,6 +172,7 @@ function AddCustodians({
       contact_obj: contact_obj,
       ...(editPage && { url: editData.url }),
       ...(editPage && { id: editData.id }),
+      organization_uuid: organization,
     };
     if (editPage) {
       dispatch(editCustodian(custodianFormValue, history, redirectTo));

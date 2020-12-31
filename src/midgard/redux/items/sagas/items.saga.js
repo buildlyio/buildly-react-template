@@ -98,7 +98,7 @@ function* getItemType(payload) {
 }
 
 function* deleteItem(payload) {
-  let { itemId } = payload;
+  let { itemId, organization_uuid } = payload;
   try {
     yield call(
       httpService.makeRequest,
@@ -115,7 +115,7 @@ function* deleteItem(payload) {
           message: "Item deleted successfully!",
         })
       ),
-      yield put(getItems()),
+      yield put(getItems(organization_uuid)),
     ];
   } catch (error) {
     console.log("error", error);
@@ -146,7 +146,7 @@ function* editItem(action) {
       true
     );
     yield [
-      yield put(getItems()),
+      yield put(getItems(payload.organization_uuid)),
       yield put(
         showAlert({
           type: "success",
@@ -191,7 +191,7 @@ function* addItem(action) {
           message: "Successfully Added Item",
         })
       ),
-      yield put(getItems()),
+      yield put(getItems(payload.organization_uuid)),
       yield call(history.push, redirectTo),
     ];
   } catch (error) {

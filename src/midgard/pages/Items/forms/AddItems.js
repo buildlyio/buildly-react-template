@@ -18,6 +18,12 @@ import { compareSort } from "../../../utils/utilMethods";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 
+/**
+ *
+ * The current organization
+ */
+let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(8),
@@ -175,6 +181,7 @@ function AddItems({
       product_value: product_value,
       product: [product_url],
       ...(editPage && editData && { id: editData.id }),
+      organization_uuid: organization,
     };
     if (editPage) {
       dispatch(editItem(itemFormValue, history, redirectTo));

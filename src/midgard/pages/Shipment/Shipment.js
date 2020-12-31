@@ -131,7 +131,7 @@ function Shipment(props) {
     }
     if (itemData === null) {
       dispatch(getItems(organization));
-      dispatch(getItemType());
+      dispatch(getItemType(organization));
     }
     if (gatewayData === null) {
       dispatch(getGateways(organization));
@@ -279,7 +279,7 @@ function Shipment(props) {
   };
 
   const handleConfirmModal = () => {
-    dispatch(deleteShipment(deleteItemId, organization));
+    dispatch(deleteShipment(deleteItemId,organization));
     setConfirmModal(false);
   };
 

@@ -136,7 +136,7 @@ function Items({
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    dispatch(deleteItem(deleteItemId));
+    dispatch(deleteItem(deleteItemId,organization));
     setConfirmModal(false);
   };
   const searchTable = (e) => {

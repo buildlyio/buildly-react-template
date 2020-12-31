@@ -102,7 +102,7 @@ function* getCustodianType() {
 }
 
 function* deleteCustodian(payload) {
-  let { custodianId, contactObjId } = payload;
+  let { custodianId, contactObjId, organization_uuid } = payload;
   try {
     yield call(
       httpService.makeRequest,
@@ -126,7 +126,7 @@ function* deleteCustodian(payload) {
           message: "Custodian deleted successfully!",
         })
       ),
-      yield put(getCustodians()),
+      yield put(getCustodians(organization_uuid)),
     ];
   } catch (error) {
     console.log("error", error);
@@ -173,8 +173,8 @@ function* editCustodian(action) {
       );
       if (data && data.data) {
         yield [
-          yield put(getCustodians()),
-          yield put(getContact()),
+          yield put(getCustodians(payload.organization_uuid)),
+          yield put(getContact(payload.organization_uuid)),
           yield put(
             showAlert({
               type: "success",
@@ -236,8 +236,8 @@ function* addCustodian(action) {
               message: "Successfully Added Custodian",
             })
           ),
-          yield put(getCustodians()),
-          yield put(getContact()),
+          yield put(getCustodians(payload.organization_uuid)),
+          yield put(getContact(payload.organization_uuid)),
           yield call(history.push, redirectTo),
         ];
       }

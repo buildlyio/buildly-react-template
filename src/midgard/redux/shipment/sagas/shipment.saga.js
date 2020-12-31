@@ -66,11 +66,12 @@ function* getShipmentList(payload) {
 }
 
 function* deleteShipment(payload) {
+  let { shipmentId,organization_uuid } = payload;
   try {
     yield call(
       httpService.makeRequest,
       "delete",
-      `${environment.API_URL}${shipmentApiEndPoint}shipment/${payload.shipmentId}/`,
+      `${environment.API_URL}${shipmentApiEndPoint}shipment/${shipmentId}/`,
       null,
       true
     );
@@ -82,7 +83,7 @@ function* deleteShipment(payload) {
           message: "Shipment deleted successfully!",
         })
       ),
-      yield put(getShipmentDetails(payload.organization_uuid)),
+      yield put(getShipmentDetails(organization_uuid)),
     ];
   } catch (error) {
     console.log("error", error);

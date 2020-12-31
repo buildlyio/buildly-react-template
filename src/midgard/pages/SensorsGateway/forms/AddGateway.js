@@ -23,6 +23,12 @@ import {
 import { MAP_API_URL } from "../../../utils/utilMethods";
 import { MapComponent } from "../../../components/MapComponent/MapComponent";
 
+/**
+ *
+ * The current organization
+ */
+let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(8),
@@ -134,6 +140,7 @@ function AddGateway({
       mac_address: mac_address.value,
       last_known_location: [last_known_location],
       last_known_battery_level: battery_level.value,
+      organization_uuid: organization,
     };
     if (editPage) {
       dispatch(editGateway(gatewayFormValues, history, redirectTo));

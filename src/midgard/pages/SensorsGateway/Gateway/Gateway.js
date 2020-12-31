@@ -98,7 +98,7 @@ function Gateway(props) {
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    dispatch(deleteGateway(deleteGatewayId));
+    dispatch(deleteGateway(deleteGatewayId, organization));
     setConfirmModal(false);
   };
   const searchTable = (e) => {
