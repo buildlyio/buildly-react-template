@@ -27,7 +27,6 @@ import { httpService } from "../../modules/http/http.service";
  */
 let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
 
-
 function Items({
   dispatch,
   history,
@@ -131,7 +130,7 @@ function Items({
       data: item,
     });
   };
-  const deleteItem = (item) => {
+  const deleteItems = (item) => {
     setDeleteItemId(item.id);
     setConfirmModal(true);
   };
@@ -164,7 +163,7 @@ function Items({
       dashboardHeading={"Items"}
       addButtonHeading={"Add Item"}
       editAction={editItem}
-      deleteAction={deleteItem}
+      deleteAction={deleteItems}
       columns={itemColumns}
       redirectTo={redirectTo}
       rows={filteredRows}

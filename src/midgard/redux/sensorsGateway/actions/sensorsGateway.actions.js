@@ -60,9 +60,10 @@ export const editGateway = (payload, history, redirectTo) => ({
  *Delete Gateway entity
  * @param {{id}} payload
  */
-export const deleteGateway = (gatewayId) => ({
+export const deleteGateway = (gatewayId, organization_uuid) => ({
   type: DELETE_GATEWAY,
   gatewayId,
+  organization_uuid,
 });
 
 /**
@@ -145,9 +146,10 @@ export const editSensor = (payload, history, redirectTo) => ({
  *Delete Gateway entity
  * @param {{id}} payload
  */
-export const deleteSensor = (sensorId) => ({
+export const deleteSensor = (sensorId, organization_uuid) => ({
   type: DELETE_SENSOR,
   sensorId,
+  organization_uuid,
 });
 
 /**

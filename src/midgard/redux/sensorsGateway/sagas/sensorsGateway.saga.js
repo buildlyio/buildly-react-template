@@ -286,7 +286,7 @@ function* getSensorTypeList() {
 }
 
 function* deleteSensorItem(payload) {
-  let { sensorId } = payload;
+  let { sensorId, organization_uuid } = payload;
   try {
     yield call(
       httpService.makeRequest,
@@ -303,7 +303,7 @@ function* deleteSensorItem(payload) {
           message: "Sensor deleted successfully!",
         })
       ),
-      yield put(getSensors(payload.organization_uuid)),
+      yield put(getSensors(organization_uuid)),
     ];
   } catch (error) {
     console.log("error", error);

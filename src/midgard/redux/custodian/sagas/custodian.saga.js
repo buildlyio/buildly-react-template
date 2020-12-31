@@ -163,6 +163,7 @@ function* editCustodian(action) {
         custodian_type: payload.custodian_type,
         contact_data: [contactInfo],
         id: payload.id,
+        organization_uuid: payload.organization_uuid,
       };
       let data = yield call(
         httpService.makeRequest,
@@ -219,6 +220,7 @@ function* addCustodian(action) {
         name: payload.name,
         custodian_type: payload.custodian_type,
         contact_data: [contactInfo],
+        organization_uuid: payload.organization_uuid,
       };
       let data = yield call(
         httpService.makeRequest,

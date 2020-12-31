@@ -117,6 +117,7 @@ function Shipment(props) {
   const [filteredRows, setFilteredRows] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [tileView, setTileView] = useState(true);
+
   useEffect(() => {
     if (shipmentData === null) {
       dispatch(getShipmentDetails(organization));

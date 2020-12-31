@@ -22,7 +22,6 @@ import { httpService } from "../../../modules/http/http.service";
  */
 let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
 
-
 function Sensors(props) {
   const {
     dispatch,
@@ -97,7 +96,7 @@ function Sensors(props) {
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    dispatch(deleteSensor(deleteSensorId));
+    dispatch(deleteSensor(deleteSensorId, organization));
     setConfirmModal(false);
   };
   const searchTable = (e) => {

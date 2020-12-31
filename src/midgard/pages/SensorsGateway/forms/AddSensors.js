@@ -32,6 +32,12 @@ import { MapComponent } from "../../../components/MapComponent/MapComponent";
 import { MAP_API_URL } from "../../../utils/utilMethods";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 
+/**
+ *
+ * The current organization
+ */
+let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -182,6 +188,7 @@ function AddSensor({
       associated_sensors_ids: [],
       associated_shipment_item_ids: [],
       ...(editPage && editData && { id: editData.id }),
+      organization_uuid: organization,
     };
     if (editPage) {
       dispatch(

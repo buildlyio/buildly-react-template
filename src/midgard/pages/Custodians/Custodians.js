@@ -41,7 +41,6 @@ import { httpService } from "../../modules/http/http.service";
  */
 let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
 
-
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
     fontWeight: "bold",

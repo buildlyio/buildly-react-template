@@ -44,12 +44,14 @@ describe("actions", () => {
   it("should create an action to delete custodian", () => {
     const custodianId = "123";
     const contactObjId = "21";
+    const organization_uuid = "224761f5-0010-4a46-ba2f-d92a4fdc1d21";
     const expectedAction = {
       type: actions.DELETE_CUSTODIANS,
       custodianId,
       contactObjId,
+      organization_uuid,
     };
-    expect(actions.deleteCustodian(custodianId, contactObjId)).toEqual(
+    expect(actions.deleteCustodian(custodianId, contactObjId, organization_uuid)).toEqual(
       expectedAction
     );
   });

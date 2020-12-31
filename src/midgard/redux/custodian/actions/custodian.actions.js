@@ -95,10 +95,11 @@ export const editCustodian = (payload, history, redirectTo) => ({
  *Delete Custodain entity
  * @param {{id}} payload
  */
-export const deleteCustodian = (custodianId, contactObjId) => ({
+export const deleteCustodian = (custodianId, contactObjId, organization_uuid) => ({
   type: DELETE_CUSTODIANS,
   custodianId,
   contactObjId,
+  organization_uuid,
 });
 
 /**

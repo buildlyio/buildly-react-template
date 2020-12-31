@@ -43,11 +43,13 @@ describe("actions", () => {
 describe("actions", () => {
   it("should create an action to delete item", () => {
     const itemId = "123";
+    const organization_uuid = "224761f5-0010-4a46-ba2f-d92a4fdc1d21";
     const expectedAction = {
       type: actions.DELETE_ITEMS,
       itemId,
+      organization_uuid
     };
-    expect(actions.deleteItem(itemId)).toEqual(expectedAction);
+    expect(actions.deleteItem(itemId, organization_uuid)).toEqual(expectedAction);
   });
 });
 

@@ -82,10 +82,12 @@ export const editItem = (payload, history, redirectTo) => ({
 /**
  *Delete Item entity
  * @param {{id}} payload
+ * @param {{organization_uuid}} organization
  */
-export const deleteItem = (itemId) => ({
+export const deleteItem = (itemId, organization_uuid) => ({
   type: DELETE_ITEMS,
   itemId,
+  organization_uuid,
 });
 
 /**
