@@ -225,7 +225,9 @@ function Dashboard(props) {
               excursionInfo.forEach((item) => {
                 itemExists = item.url === row.url;
               });
-              if (!itemExists) excursionInfo.push(row);
+              if (!itemExists && row.status.toLowerCase() !== 'planned') {
+                excursionInfo.push(row);
+              }
             }
           });
         }

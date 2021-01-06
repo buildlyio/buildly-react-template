@@ -133,7 +133,11 @@ export default function ShipmentList({ ...props }) {
     setSelectedRows(
       filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
     );
-  }, [filteredRows, sortValue, page, rowsPerPage])
+  }, [filteredRows, sortValue, page, rowsPerPage]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [filterObject]);
 
   const handleAllCheck = (e) => {
     setAllCheck(e.target.checked);
