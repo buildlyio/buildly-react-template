@@ -29,7 +29,6 @@ function UserGroups() {
   const user = useContext(UserContext);
 
   const permissionCellTemplate = (row, crud, operation) => {
-    console.log(row)
     return (
       <Switch
         size="small"
