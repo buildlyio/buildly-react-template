@@ -84,9 +84,9 @@
     "start:dev": "webpack-dev-server --mode development --env.build=dev",
     "build:prod": "webpack --mode development --env.build=prod",
     "start:prod": "webpack-dev-server --mode development --env.build=prod",
-    "test": "jest  --watch",
-    "test-prod": "jest",
-    "test-coverage": "jest  --updateSnapshot --coverage",
+    "test": "jest --watch",
+    "test:prod": "jest",
+    "test-coverage": "jest --updateSnapshot --coverage",
     "serve": "./node_modules/.bin/serve -s dist"
   },
   "jest": {

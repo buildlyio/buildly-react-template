@@ -6,20 +6,22 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 const envConfig = require('./environments.config.json');
 
 module.exports = (env, argv) => {
-  const configuration = envConfig.configurations[env.build];
   const fileReplacements = [];
-  if (configuration && configuration.fileReplacements) {
-    for (const replacement of configuration.fileReplacements) {
-      // create Webpack module rule
-      const replace = {
-        test: path.resolve(replacement.replace),
-        loader: 'file-replace-loader',
-        options: {
-          replacement: path.resolve(replacement.with),
-          async: true
+  if (env) {
+    const configuration = envConfig.configurations[env.build];
+    if (configuration && configuration.fileReplacements) {
+      for (const replacement of configuration.fileReplacements) {
+        // create Webpack module rule
+        const replace = {
+          test: path.resolve(replacement.replace),
+          loader: 'file-replace-loader',
+          options: {
+            replacement: path.resolve(replacement.with),
+            async: true
+          }
         }
+        fileReplacements.push(replace);
       }
-      fileReplacements.push(replace);
     }
   }
 

@@ -57,7 +57,7 @@ First you need to have the web app dependencies installed and the app initialize
 And then you need to build it as a production application executing the following command:
 
 ```
-$ yarn run build-prod
+$ yarn run build:prod
 ```
 
 Now, you just need to build a Docker image and host it somewhere. Further info about how to build images, check Docker's [documentation](https://docs.docker.com/).
