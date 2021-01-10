@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Component for inline editing.
  */
-export function InlineEditor({id, tag, value, placeholder, onChange}) {
+export function InlineEditor({id, tag, value, placeholder, disabled, onChange}) {
   const classes = useStyles();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value);
@@ -106,9 +106,11 @@ export function InlineEditor({id, tag, value, placeholder, onChange}) {
           <Grid item="true">
             <Typography className={classes.typography} variant={tag}>{value || placeholder}</Typography>
           </Grid>
-          <Grid item="true">
-            <EditIcon className={classes.editIcon} onClick={() => setEditing(true)}></EditIcon>
-          </Grid>
+          {!disabled && (
+            <Grid item="true">
+              <EditIcon className={classes.editIcon} onClick={() => setEditing(true)}></EditIcon>
+            </Grid>
+          )}
         </Grid>
       )}
     </Box>

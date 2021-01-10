@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { UserContext } from "midgard/context/User.context";
 import { StyledTable } from 'midgard/components/StyledTable/StyledTable';
 import Crud from 'midgard/modules/crud/Crud';
 import { getCoregroups } from 'midgard/redux/coregroup/actions/coregroup.actions'
@@ -35,6 +36,7 @@ function Users({ location, history, data, dispatch }) {
   const [menu, setMenu] = useState({ row: null, element: null });
   const [coregroupsLoaded, setCoregroupsLoaded] = useState(false);
   const [permissions, setPermissions] = useState([]);
+  const user = useContext(UserContext);
 
   useEffect(() => {
     if (!coregroupsLoaded) {
@@ -53,7 +55,7 @@ function Users({ location, history, data, dispatch }) {
   const permissionsTemplate = (row, crud, classes) => {
     if (coregroupsLoaded) {
       const [active, setActive] = useState(row.core_groups[0] && row.core_groups[0].id || row.core_groups[0]);
-      return <ButtonGroup disableElevation color="primary" size="small" disabled={!row.is_active}>
+      return <ButtonGroup disableElevation color="primary" size="small" disabled={!row.is_active || user.core_user_uuid === row.core_user_uuid}>
         {permissions.map((permission, index) => (
           <Button
             className={classes.btnPermission}
@@ -61,7 +63,7 @@ function Users({ location, history, data, dispatch }) {
             variant={permission.value === active ? "contained" : "outlined"}
             onClick={() => {
               setActive(permission.value);
-              crud.updateItem({id: row.id, core_groups: [permission.value]});
+              crud.updateItem({ id: row.id, core_groups: [permission.value] });
             }}>
             {permission.label}
           </Button>
@@ -79,9 +81,9 @@ function Users({ location, history, data, dispatch }) {
       if (action === 'delete') {
         crud.deleteItem(menu.row);
       } else if (action === 'deactivate') {
-        crud.updateItem({id: menu.row.id, is_active: false});
+        crud.updateItem({ id: menu.row.id, is_active: false });
       } else {
-        crud.updateItem({id: menu.row.id, is_active: true});
+        crud.updateItem({ id: menu.row.id, is_active: true });
       }
       setMenu({ row: null, element: null });
     };
@@ -93,6 +95,7 @@ function Users({ location, history, data, dispatch }) {
     return (
       <React.Fragment>
         <IconButton
+          disabled={user.core_user_uuid === row.core_user_uuid}
           aria-label="more"
           aria-controls={`userActions${row.id}`}
           aria-haspopup="true"
@@ -107,7 +110,9 @@ function Users({ location, history, data, dispatch }) {
           open={Boolean(menu.row && (menu.row.id === row.id))}
           onClose={handleMenuClose}
         >
-          {row.actions.map((option) => (
+          {row.actions.filter(
+            option => !(option.value === 'delete' && row.is_active)
+          ).map((option) => (
           <MenuItem
             key={`userActions${row.id }:${option.value}`}
             onClick={() => handleMenuItemClick(option.value)}
@@ -155,6 +160,7 @@ function Users({ location, history, data, dispatch }) {
                 { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud) },
               ]}
               rows={crud.getData()}
+              sortFn={(a, b) => (a.core_user_uuid === user.core_user_uuid ? -1 : b.core_user_uuid === user.core_user_uuid ? 1 : 0)}
             />
           )
         }}

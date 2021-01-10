@@ -14,9 +14,10 @@ const StyledContainer = withStyles((theme) => ({
   },
 }))(Box);
 
-export function StyledTable({columns, rows}) {
+export function StyledTable({columns, rows, sortFn}) {
   const header = columns.map((col, colIndex) => <TableCell key={`tableCol${colIndex}:${col.prop}`}>{col.label}</TableCell>);
-  const content = rows.map((row, rowIndex) => (
+  const sortedRows = sortFn ? rows.sort(sortFn) : rows;
+  const content = sortedRows.map((row, rowIndex) => (
     <TableRow key={`tableRow${rowIndex}`}>
       {columns.map((col, colIndex) => (
         <TableCell key={`tableCell${rowIndex}:${colIndex}`}>

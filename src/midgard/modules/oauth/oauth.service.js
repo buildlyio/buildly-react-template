@@ -95,6 +95,8 @@ function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('expires_at');
     localStorage.removeItem('token_stored_at');
+    localStorage.removeItem('oauthUser');
+    localStorage.removeItem('currentUser');
   }
 }
 
