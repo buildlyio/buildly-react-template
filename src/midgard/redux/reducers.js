@@ -8,8 +8,6 @@ import alertReducer from "./alert/reducers/alert.reducer";
 import { LOGOUT_SUCCESS } from "./authuser/actions/authuser.actions";
 
 const appReducer = combineReducers({
-  //entryPointForGulpStart
-    //entryPointForGulpEnd
   authReducer,
   coreuserReducer,
   coregroupReducer,

@@ -13,7 +13,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useInput } from "midgard/hooks/useInput";
-import { login } from "midgard/redux/authuser/actions/authuser.actions";
+import { login, validateResetPasswordToken } from "midgard/redux/authuser/actions/authuser.actions";
 import { validators } from "midgard/utils/validators";
 import logo from "assets/buildly-logo.png";
 import { routes } from "midgard/routes/routesConstants";

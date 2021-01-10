@@ -13,11 +13,10 @@ Welcome to Buildly React Template's documentation! Get started with the :ref:`qu
 Features are described and explained in more details in the :ref:`features` section.
 The rest of the docs describe each module of Buildly React Template in detail.
 
-Buildly React Template depends on the NodeJS, Yarn and Gulp. The documentation for this service can be found at:
+Buildly React Template depends on the NodeJS and Yarn. The documentation for this service can be found at:
 
 - `NodeJS documentation <https://nodejs.org/en/docs//>`_
 - `Yarn documentation <https://yarnpkg.com/lang/en/docs/>`_
-- `Gulp documentation <https://gulpjs.com/docs/en/getting-started/quick-start>`_
 
 
 User's Guide

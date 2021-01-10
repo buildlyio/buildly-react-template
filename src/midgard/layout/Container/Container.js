@@ -1,5 +1,5 @@
 // react library imports
-import React, { useState } from "react";
+import React from "react";
 import { Route, Redirect } from "react-router-dom";
 
 // react user imports
@@ -31,8 +31,6 @@ const useStyles = makeStyles((theme) => ({
 function ContainerDashboard({ location, history }) {
   const routeItems = [];
   const classes = useStyles();
-  //entryPointForGulpStart
-    //entryPointForGulpEnd
 
   return (
     <div className={classes.root}>

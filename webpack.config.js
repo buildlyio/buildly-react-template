@@ -1,8 +1,9 @@
-const path = require("path");
-const webpack = require("webpack");
-const HtmlWebPackPlugin = require("html-webpack-plugin");
-const CopyPlugin = require('copy-webpack-plugin');
+/* eslint-env node */
 
+var path = require("path");
+var webpack = require("webpack");
+var HtmlWebPackPlugin = require("html-webpack-plugin");
+var CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: ["babel-polyfill", "./src/index.js"] ,

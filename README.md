@@ -13,7 +13,6 @@ The web application was tested and built with the following versions:
 
 - node v10.16.0
 - yarn v1.17.3
-- gulp-cli v2.2.0
 
 ### Installing
 
@@ -29,7 +28,6 @@ $ yarn install
 Now, initialize and build the project
 
 ```
-$ yarn run init
 $ yarn run build
 ```
 

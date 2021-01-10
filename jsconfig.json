@@ -6,6 +6,7 @@
     "target": "es6",
     "moduleResolution": "node",
     "jsx": "react",
+    "checkJs": true,
     "allowSyntheticDefaultImports": true
   },
   "include": [
