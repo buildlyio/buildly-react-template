@@ -3,14 +3,19 @@ import { createMuiTheme, responsiveFontSizes } from "@material-ui/core/styles";
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: "#FBAE36",
-      contrastText: "#fff",
+      main: "#3e5266",
+      contrastText: "#eff7ff",
     },
     secondary: {
-      main: "#B46F04",
-      contrastText: "#fff",
+      main: "#5d758c",
+      contrastText: "#eff7ff",
     },
   },
+  typography: {
+    button: {
+      textTransform: "none"
+    }
+  }
 });
 
 export default responsiveFontSizes(theme);

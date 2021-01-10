@@ -9,7 +9,6 @@ prerequisites installed.
 
 - node v10.16.0
 - yarn v1.17.3
-- gulp-cli v2.2.0
 
 Installing
 ----------
@@ -24,7 +23,6 @@ Now, initialize and build the project
 
 .. code-block:: bash
    
-   yarn run init
    yarn run build
 
 To run the web app:

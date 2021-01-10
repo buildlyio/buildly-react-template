@@ -1,5 +1,4 @@
 import * as React from "react";
-import "./styles.scss";
 import "react-notifications/lib/notifications.css";
 import { hot } from "react-hot-loader";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";

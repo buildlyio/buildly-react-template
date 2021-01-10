@@ -54,13 +54,12 @@ export class Crud extends React.Component {
   * @param item - selected item
   */
   deleteItem = (item) => {
-    const {deleteAction, itemDeleted, dispatch, endpoint} = this.props;
-      if (endpoint) {
-          dispatch(crudDelete(item.data, endpoint, item.idProp, item.dataProp));
-      }
-    else if (deleteAction) {
-      dispatch({type: deleteAction, data: item});
-      return itemDeleted
+    const { deleteAction, itemDeleted, dispatch, endpoint } = this.props;
+    if (endpoint) {
+      dispatch(crudDelete(item.data, endpoint, item.idProp, item.dataProp));
+    } else if (deleteAction) {
+      dispatch({ type: deleteAction, data: item });
+      return itemDeleted;
     }
   };
 

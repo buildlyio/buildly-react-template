@@ -1,14 +1,15 @@
 // react library imports
-import React, { useState } from "react";
+import React from "react";
 import { Route, Redirect } from "react-router-dom";
 
 // react user imports
+import { UserContext, getUser } from "midgard/context/User.context";
 import TopBar from "midgard/layout/TopBar/TopBar";
 import Profile from "midgard/pages/Profile/Profile";
 import UserManagement from "midgard/pages/UserManagement/UserManagement";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
-import { routes } from "../../routes/routesConstants";
+import { routes } from "midgard/routes/routesConstants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,25 +31,25 @@ const useStyles = makeStyles((theme) => ({
 function ContainerDashboard({ location, history }) {
   const routeItems = [];
   const classes = useStyles();
-  //entryPointForGulpStart
-    //entryPointForGulpEnd
 
   return (
     <div className={classes.root}>
-      <TopBar
-        location={location}
-        history={history}
-      />
-      <Container className={classes.content}>
-        <Route
-          exact
-          path={routes.APP}
-          render={() => <Redirect to={routes.DASHBOARD} />}
+      <UserContext.Provider value={getUser()}>
+        <TopBar
+          location={location}
+          history={history}
         />
-        <Route path={routes.DASHBOARD} component={Profile} />
-        <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
-      </Container>
-      {routeItems}
+        <Container className={classes.content}>
+          <Route
+            exact
+            path={routes.APP}
+            render={() => <Redirect to={routes.DASHBOARD} />}
+          />
+          <Route path={routes.DASHBOARD} component={Profile} />
+          <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
+        </Container>
+        {routeItems}
+      </UserContext.Provider>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { redux } from 'midgard-core';
-import {compose, composeEnhancers } from 'redux';
+import { compose, composeEnhancers } from 'redux';
 
 import createSagaMiddleware from 'redux-saga';
 

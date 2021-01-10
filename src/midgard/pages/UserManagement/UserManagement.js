@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { colors } from "colors";
-import styled from "styled-components";
-import { rem } from "polished";
-import InviteForm from "midgard/components/InviteForm/InviteForm";
 import { invite } from "midgard/redux/authuser/actions/authuser.actions";
 import { useInput } from "midgard/hooks/useInput";
 import Popup from "reactjs-popup";
@@ -14,61 +10,30 @@ import {
 import Users from "./Users/Users";
 import UserGroups from "./UserGroups/UserGroups";
 import { Route } from "react-router-dom";
-import { routes } from "../../routes/routesConstants";
+import { routes } from "midgard/routes/routesConstants";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-
-/**
- * Styled component for the user management page.
- */
-const UserManagementLayout = styled.div`
-  height: 100%;
-  display: flex;
-  flex: 1;
-  background-color: ${colors.baseLighter};
-`;
-
-const ProfileContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  align-items: flex-start;
-  margin: 0 ${rem(24)};
-`;
-
-const ProfileHeader = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: ${rem(30)};
-`;
-
-const SwitcherContainer = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  margin-bottom: ${rem(30)};
-`;
-
-const InviteInputContainer = styled.div`
-  width: 100%;
-`;
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import EmailIcon from "@material-ui/icons/Email";
+import { rem } from "polished";
 
 const useStyles = makeStyles((theme) => ({
-  btnTriggerPanel: {
-    marginLeft: theme.spacing(2),
-  },
-  btnSendInvite: {
-    marginLeft: "auto",
+  userManagementHeading: {
+    margin: theme.spacing(3, 0),
   },
   textField: {
-    minHeight: "5rem",
-    margin: "0.25rem 0",
+    minHeight: rem(5),
+    margin: theme.spacing(1, 0),
     width: "100%",
+  },
+  inviteForm: {
+    padding: theme.spacing(3),
+    minWidth: rem(25)
   }
 }));
 
@@ -115,68 +80,84 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
   };
 
   return (
-    <UserManagementLayout>
-      <ProfileContainer>
-        <ProfileHeader>
-          <Typography variant="h6">People using this system</Typography>
+    <Box mt={1} mb={3}>
+      <Grid container mb={3} justify="space-between" alignItems="center">
+        <Grid item>
+          <Typography className={classes.userManagementHeading} variant={"h4"}>
+            People using this system
+          </Typography>
+        </Grid>
+        <Grid item>
           <Popup
             trigger={
               <Button
-                className={classes.btnTriggerPanel}
+                type="button"
+                variant="outlined"
                 size="small"
-                variant="contained"
-                color="primary">
-                Invite
+                color="primary"
+                startIcon={<EmailIcon />}>
+                Invite users
               </Button>
             }
-            position="bottom center"
+            position="bottom right"
             on="click"
             closeOnDocumentClick
             mouseLeaveDelay={300}
             mouseEnterDelay={0}
             contentStyle={{
-              padding: "0px",
+              padding: 0,
               border: "none",
-              width: `{rem(250)}`,
+              width: "100%",
+              minWidth: `${rem(250)}`,
+              maxWidth: `${rem(400)}`
             }}
             arrow={false}
           >
-            <InviteForm onSubmit={inviteUser}>
-              <Typography variant="h6">
-                Invite users to platform
-              </Typography>
-              <TextField
-                className={classes.textField}
-                label="Emails"
-                id="email"
-                variant="outlined" 
-                placeholder="abc@xcy.com, 123@zxc.com"
-                error={error}
-                helperText={error}
-                {...email.bind}
-              />
-              <Button
-                className={classes.btnSendInvite}
-                size="small"
-                variant="contained"
-                color="primary"
-                disabled={loading}
-                type="submit">
-                Send
-              </Button>
-            </InviteForm>
+          <form className={classes.inviteForm}>
+            <Typography variant="h6">
+              Invite users to platform
+            </Typography>
+            <TextField
+              className={classes.textField}
+              label="Emails"
+              id="email"
+              variant="outlined"
+              placeholder="abc@xcy.com, 123@zxc.com"
+              error={error}
+              helperText={error}
+              {...email.bind}
+            />
+            <Grid
+              justify="flex-end"
+              container 
+              spacing={0}>
+              <Grid item>
+                <Button
+                  onClick={inviteUser}
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  disabled={loading}
+                  type="submit">
+                  Send
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
           </Popup>
-        </ProfileHeader>
-        <SwitcherContainer>
+        </Grid>
+      </Grid>
+      <Grid mb={3} container justify="center">
+        <Grid item>
           <Tabs value={view} onChange={viewTabClicked}>
-            {subNav.map(itemProps => <Tab {...itemProps} key={'tab-view-' + itemProps.value} />)}
+            {subNav.map((itemProps, index) => <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />)}
           </Tabs>
-        </SwitcherContainer>
-        <Route path={routes.CURRENT_USERS} component={Users} />
-        <Route path={routes.USER_GROUPS} component={UserGroups} />
-      </ProfileContainer>
+        </Grid>
+      </Grid>
+      <Route path={routes.CURRENT_USERS} component={Users} />
+      <Route path={routes.USER_GROUPS} component={UserGroups} />
       <NotificationContainer />
-    </UserManagementLayout>
+    </Box>
   );
 }
 

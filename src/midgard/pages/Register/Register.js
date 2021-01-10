@@ -11,14 +11,14 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import { useInput } from "../../hooks/useInput";
-import { register } from "../../redux/authuser/actions/authuser.actions";
+import { useInput } from "midgard/hooks/useInput";
+import { register } from "midgard/redux/authuser/actions/authuser.actions";
 import Grid from "@material-ui/core/Grid";
-import { validators } from "../../utils/validators";
-import logo from "../../../assets/buildly-logo.png";
-import { isMobile } from "../../utils/mediaQuery";
-import { routes } from "../../routes/routesConstants";
-import Copyright from '../../components/Copyright/Copyright';
+import { validators } from "midgard/utils/validators";
+import logo from "assets/buildly-logo.png";
+import { isMobile } from "midgard/utils/mediaQuery";
+import { routes } from "midgard/routes/routesConstants";
+import Copyright from 'midgard/components/Copyright/Copyright';
 
 const useStyles = makeStyles((theme) => ({
   root: {

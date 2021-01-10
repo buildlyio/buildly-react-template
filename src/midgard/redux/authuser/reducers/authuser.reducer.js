@@ -26,7 +26,7 @@ import {
   GET_ORGANIZATION,
   GET_ORGANIZATION_SUCCESS,
   GET_ORGANIZATION_FAILURE,
-} from "../actions/authuser.actions";
+} from "midgard/redux/authuser/actions/authuser.actions";
 
 const initialState = {
   loading: false,
