@@ -29,11 +29,12 @@ function UserGroups() {
   const user = useContext(UserContext);
 
   const permissionCellTemplate = (row, crud, operation) => {
+    console.log(row)
     return (
       <Switch
         size="small"
         color="primary"
-        disabled={user.core_groups[0].id === row.id}
+        disabled={user.core_groups[0].id === row.id || !row.organization}
         checked={row.permissions[operation]}
         onChange={() => {
           row.permissions[operation] = !row.permissions[operation];
@@ -75,7 +76,7 @@ function UserGroups() {
           aria-label="more"
           aria-controls={`groupActions${row.id}`}
           aria-haspopup="true"
-          disabled={user.core_groups[0].id === row.id}
+          disabled={user.core_groups[0].id === row.id || !row.organization}
           onClick={handleMenuClick}
         >
           <MoreHoriz />
@@ -109,6 +110,7 @@ function UserGroups() {
       <InlineEditor
         tag="body1"
         id={row.id}
+        disabled={!row.organization}
         value={row.name}
         placeholder="Group type"
         onChange={(event) => update(crud, row, event)}

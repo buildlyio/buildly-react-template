@@ -9,7 +9,7 @@ import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 
 // react user imports
-import { user, UserContext } from "midgard/context/User.context";
+import { getUser, UserContext } from "midgard/context/User.context";
 import { subNav, SubNavContext } from "midgard/context/SubNav.context";
 import { routes } from "../../routes/routesConstants";
 import Custodians from "../../pages/Custodians/Custodians";
@@ -67,7 +67,7 @@ function ContainerDashboard({ location, history, data }) {
 
   return (
     <div className={classes.root}>
-      <UserContext.Provider value={user}>
+      <UserContext.Provider value={getUser()}>
         <SubNavContext.Provider value={subNavItems}>
           <TopBar
             navHidden={navHidden}
