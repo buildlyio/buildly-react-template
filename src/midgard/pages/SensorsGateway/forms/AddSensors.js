@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import moment from "moment";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
@@ -31,12 +31,7 @@ import { routes } from "../../../routes/routesConstants";
 import { MapComponent } from "../../../components/MapComponent/MapComponent";
 import { MAP_API_URL } from "../../../utils/utilMethods";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
-
-/**
- *
- * The current organization
- */
-let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -136,6 +131,7 @@ function AddSensor({
   const formTitle = editPage ? "Edit Sensor" : "Add Sensor";
 
   const [sensorMetaData, setSensorMetaData] = useState({});
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (sensorOptions && sensorOptions.actions) {

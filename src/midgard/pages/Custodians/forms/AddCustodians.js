@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -33,12 +33,7 @@ import {
 import { compareSort } from "../../../utils/utilMethods";
 import { InputAdornment } from "@material-ui/core";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
-
-/**
- *
- * The current organization
- */
-let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -129,6 +124,7 @@ function AddCustodians({
   const formTitle = editPage ? "Edit Custodian" : "Add Custodian";
   const [custodianMetaData, setCustodianMetaData] = useState({});
   const [contactMetaData, setProductMetaData] = useState({});
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (custodianOptions && custodianOptions.actions) {

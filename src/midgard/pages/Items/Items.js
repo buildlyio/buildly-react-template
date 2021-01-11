@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
 import { routes } from "../../routes/routesConstants";
@@ -20,12 +20,7 @@ import {
 } from "../../redux/items/actions/items.actions";
 import DashboardWrapper from "../../components/DashboardWrapper/DashboardWrapper";
 import { httpService } from "../../modules/http/http.service";
-
-/**
- *
- * The current organization
- */
-let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+import { UserContext } from "midgard/context/User.context";
 
 function Items({
   dispatch,
@@ -57,6 +52,7 @@ function Items({
   const [searchValue, setSearchValue] = useState("");
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (itemData === null) {

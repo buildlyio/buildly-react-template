@@ -41,13 +41,6 @@ import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
 
-/**
- *
- * The current organization
- */
-let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
-
-
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(8),
@@ -153,6 +146,7 @@ function ShipmentInfo(props) {
     uom_distance: "",
     uom_weight,
   });
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (editPage && shipmentFormData === null) {

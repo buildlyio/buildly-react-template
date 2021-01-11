@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -47,6 +47,7 @@ import {
 } from "./DashboardConstants";
 import Loader from "../../components/Loader/Loader";
 import CustomizedTooltips from "../../components/ToolTip/ToolTip";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -85,18 +86,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
- * The current oauth user.
- */
-let user = JSON.parse(localStorage.getItem("currentUser"));
-
-/**
- *
- * The current organization
- */
-let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
-
-
-/**
  * Outputs the profile page for the user.
  */
 function Dashboard(props) {
@@ -119,6 +108,8 @@ function Dashboard(props) {
   const [delayedRows, setDelayedRows] = useState([]);
   const [excursionRows, setExcursionRows] = useState([]);
   const [markers, setMarkers] = useState([]);
+  const organization = useContext(UserContext).organization.organization_uuid;
+
   useEffect(() => {
     if (shipmentData === null) {
       dispatch(getShipmentDetails(organization));

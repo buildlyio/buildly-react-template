@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
@@ -34,12 +34,7 @@ import {
   getUniqueContactInfo,
 } from "./CustodianConstants";
 import { httpService } from "../../modules/http/http.service";
-
-/**
- *
- * The current organization
- */
-let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -71,6 +66,7 @@ function Custodian({
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const classes = useStyles();
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   const addCustodianPath = redirectTo
     ? `${redirectTo}/custodian`

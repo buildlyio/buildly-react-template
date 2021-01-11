@@ -17,12 +17,7 @@ import { editItem, addItem } from "../../../redux/items/actions/items.actions";
 import { compareSort } from "../../../utils/utilMethods";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
-
-/**
- *
- * The current organization
- */
-let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -123,6 +118,7 @@ function AddItems({
   const formTitle = editPage ? "Edit Item" : "Add Item";
   const [itemMetData, setItemMetaData] = useState({});
   const [productMetData, productMetaData] = useState({});
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (itemOptions && itemOptions.actions) {

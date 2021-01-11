@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { environment } from "environment";
@@ -15,12 +15,7 @@ import {
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import AddSensors from "../forms/AddSensors";
 import { httpService } from "../../../modules/http/http.service";
-
-/**
- *
- * The current organization
- */
-let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
+import { UserContext } from "midgard/context/User.context";
 
 function Sensors(props) {
   const {
@@ -48,6 +43,7 @@ function Sensors(props) {
   const [searchValue, setSearchValue] = useState("");
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (data === null) {

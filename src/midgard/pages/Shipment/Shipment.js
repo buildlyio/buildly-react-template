@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -63,13 +63,7 @@ import Loader from "../../components/Loader/Loader";
 import CustomizedTooltips from "../../components/ToolTip/ToolTip";
 import { httpService } from "../../modules/http/http.service";
 import { environment } from "../../../../environment";
-
-/**
- *
- * The current organization
- */
-let organization = localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")).organization.organization_uuid : '';
-
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -117,6 +111,7 @@ function Shipment(props) {
   const [filteredRows, setFilteredRows] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [tileView, setTileView] = useState(true);
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (shipmentData === null) {
