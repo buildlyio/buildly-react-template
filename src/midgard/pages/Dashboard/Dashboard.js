@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -47,6 +47,7 @@ import {
 } from "./DashboardConstants";
 import Loader from "../../components/Loader/Loader";
 import CustomizedTooltips from "../../components/ToolTip/ToolTip";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -85,11 +86,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
- * The current oauth user.
- */
-let user = JSON.parse(localStorage.getItem("currentUser"));
-
-/**
  * Outputs the profile page for the user.
  */
 function Dashboard(props) {
@@ -112,24 +108,26 @@ function Dashboard(props) {
   const [delayedRows, setDelayedRows] = useState([]);
   const [excursionRows, setExcursionRows] = useState([]);
   const [markers, setMarkers] = useState([]);
+  const organization = useContext(UserContext).organization.organization_uuid;
+
   useEffect(() => {
     if (shipmentData === null) {
-      dispatch(getShipmentDetails());
+      dispatch(getShipmentDetails(organization));
     }
     // if (!shipmentFlag) {
     //   dispatch(getShipmentFlag());
     // }
     if (custodianData === null) {
-      dispatch(getCustodians());
+      dispatch(getCustodians(organization));
       dispatch(getCustodianType());
-      dispatch(getContact());
+      dispatch(getContact(organization));
     }
     if (itemData === null) {
-      dispatch(getItems());
-      dispatch(getItemType());
+      dispatch(getItems(organization));
+      dispatch(getItemType(organization));
     }
     if (gatewayData === null) {
-      dispatch(getGateways());
+      dispatch(getGateways(organization));
       dispatch(getGatewayType());
     }
     if (!unitsOfMeasure) {
@@ -139,7 +137,7 @@ function Dashboard(props) {
       dispatch(getCustody());
     }
     if (!sensorData) {
-      dispatch(getSensors());
+      dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
 
@@ -218,7 +216,9 @@ function Dashboard(props) {
               excursionInfo.forEach((item) => {
                 itemExists = item.url === row.url;
               });
-              if (!itemExists) excursionInfo.push(row);
+              if (!itemExists && row.status.toLowerCase() !== 'planned') {
+                excursionInfo.push(row);
+              }
             }
           });
         }

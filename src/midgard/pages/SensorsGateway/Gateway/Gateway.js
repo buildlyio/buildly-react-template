@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { environment } from "environment";
@@ -17,6 +17,7 @@ import {
   GET_GATEWAY_OPTIONS_SUCCESS,
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import { httpService } from "../../../modules/http/http.service";
+import { UserContext } from "midgard/context/User.context";
 
 function Gateway(props) {
   const {
@@ -43,17 +44,18 @@ function Gateway(props) {
   const [searchValue, setSearchValue] = useState("");
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (data === null) {
-      dispatch(getGateways());
+      dispatch(getGateways(organization));
       dispatch(getGatewayType());
     }
     if (gatewayOptions === null) {
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}sensors/gateway/`,
+          `${environment.API_URL}sensors/gateway/?organization_uuid=${organization}`,
           true
         )
         .then((response) => response.json())
@@ -91,7 +93,7 @@ function Gateway(props) {
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    dispatch(deleteGateway(deleteGatewayId));
+    dispatch(deleteGateway(deleteGatewayId, organization));
     setConfirmModal(false);
   };
   const searchTable = (e) => {

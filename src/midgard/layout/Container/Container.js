@@ -9,7 +9,7 @@ import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 
 // react user imports
-import { user, UserContext } from "midgard/context/User.context";
+import { getUser, UserContext } from "midgard/context/User.context";
 import { subNav, SubNavContext } from "midgard/context/SubNav.context";
 import { routes } from "../../routes/routesConstants";
 import Custodians from "../../pages/Custodians/Custodians";
@@ -18,7 +18,7 @@ import Items from "../../pages/Items/Items";
 import SensorsGateway from "../../pages/SensorsGateway/SensorsGateway";
 import Shipment from "../../pages/Shipment/Shipment";
 import Dashboard from "../../pages/Dashboard/Dashboard";
-import { checkForGlobalAdmin } from "../../utils/utilMethods";
+import { checkForAdmin, checkForGlobalAdmin } from "../../utils/utilMethods";
 import { isMobile } from "../../utils/mediaQuery";
 
 const useStyles = makeStyles((theme) => ({
@@ -67,7 +67,7 @@ function ContainerDashboard({ location, history, data }) {
 
   return (
     <div className={classes.root}>
-      <UserContext.Provider value={user}>
+      <UserContext.Provider value={getUser()}>
         <SubNavContext.Provider value={subNavItems}>
           <TopBar
             navHidden={navHidden}
@@ -93,7 +93,7 @@ function ContainerDashboard({ location, history, data }) {
             render={() => <Redirect to={routes.DASHBOARD} />}
           />
           <Route path={routes.DASHBOARD} component={Dashboard} />
-          {checkForGlobalAdmin(userData) && (
+          {(checkForAdmin(userData) || checkForGlobalAdmin(userData)) && (
             <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
           )}
           <Route path={routes.CUSTODIANS} component={Custodians} />

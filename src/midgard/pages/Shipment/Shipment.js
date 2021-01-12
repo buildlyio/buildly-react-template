@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -63,6 +63,7 @@ import Loader from "../../components/Loader/Loader";
 import CustomizedTooltips from "../../components/ToolTip/ToolTip";
 import { httpService } from "../../modules/http/http.service";
 import { environment } from "../../../../environment";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -110,24 +111,26 @@ function Shipment(props) {
   const [filteredRows, setFilteredRows] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [tileView, setTileView] = useState(true);
+  const organization = useContext(UserContext).organization.organization_uuid;
+
   useEffect(() => {
     if (shipmentData === null) {
-      dispatch(getShipmentDetails());
+      dispatch(getShipmentDetails(organization));
     }
     // if (!shipmentFlag) {
     //   dispatch(getShipmentFlag());
     // }
     if (custodianData === null) {
-      dispatch(getCustodians());
+      dispatch(getCustodians(organization));
       dispatch(getCustodianType());
-      dispatch(getContact());
+      dispatch(getContact(organization));
     }
     if (itemData === null) {
-      dispatch(getItems());
-      dispatch(getItemType());
+      dispatch(getItems(organization));
+      dispatch(getItemType(organization));
     }
     if (gatewayData === null) {
-      dispatch(getGateways());
+      dispatch(getGateways(organization));
       dispatch(getGatewayType());
     }
     if (!unitsOfMeasure) {
@@ -137,14 +140,14 @@ function Shipment(props) {
       dispatch(getCustody());
     }
     if (!sensorData) {
-      dispatch(getSensors());
+      dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
     if (shipmentOptions === null) {
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}shipment/shipment/`,
+          `${environment.API_URL}shipment/shipment/?organization_uuid=${organization}`,
           true
         )
         .then((response) => response.json())
@@ -272,7 +275,7 @@ function Shipment(props) {
   };
 
   const handleConfirmModal = () => {
-    dispatch(deleteShipment(deleteItemId));
+    dispatch(deleteShipment(deleteItemId,organization));
     setConfirmModal(false);
   };
 

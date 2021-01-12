@@ -41,9 +41,10 @@ const StyledContainer = withStyles((theme) => ({
   },
 }))(Box);
 
-export function PermissionsTable({columns, rows}) {
+export function PermissionsTable({columns, rows, sortFn}) {
   const header = columns.map((col, colIndex) => <StyledTableHeadCell key={`tableCol${colIndex}:${col.prop}`}>{col.label}</StyledTableHeadCell>);
-  const content = rows.map((row, rowIndex) => (
+  const sortedRows = sortFn ? rows.sort(sortFn) : rows;
+  const content = sortedRows.map((row, rowIndex) => (
     <StyledTableRow key={`tableRow${rowIndex}`}>
       {columns.map((col, colIndex) => (
         <TableCell key={`tableCell${rowIndex}:${colIndex}`}>

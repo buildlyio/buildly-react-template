@@ -31,7 +31,7 @@ export const GET_GATEWAY_OPTIONS = "ITEMS/GET_GATEWAY_OPTIONS";
 export const GET_GATEWAY_OPTIONS_SUCCESS = "ITEMS/GET_GATEWAY_OPTIONS_SUCCESS";
 export const GET_GATEWAY_OPTIONS_FAILURE = "ITEMS/GET_GATEWAY_OPTIONS_FAILURE";
 
-export const getGateways = () => ({ type: GET_GATEWAYS });
+export const getGateways = (organization_uuid) => ({ type: GET_GATEWAYS, organization_uuid, });
 
 /**
  *Add Gateway
@@ -60,9 +60,10 @@ export const editGateway = (payload, history, redirectTo) => ({
  *Delete Gateway entity
  * @param {{id}} payload
  */
-export const deleteGateway = (gatewayId) => ({
+export const deleteGateway = (gatewayId, organization_uuid) => ({
   type: DELETE_GATEWAY,
   gatewayId,
+  organization_uuid,
 });
 
 /**
@@ -116,7 +117,7 @@ export const GET_SENSOR_OPTIONS = "ITEMS/GET_SENSOR_OPTIONS";
 export const GET_SENSOR_OPTIONS_SUCCESS = "ITEMS/GET_SENSOR_OPTIONS_SUCCESS";
 export const GET_SENSOR_OPTIONS_FAILURE = "ITEMS/GET_SENSOR_OPTIONS_FAILURE";
 
-export const getSensors = () => ({ type: GET_SENSORS });
+export const getSensors = (organization_uuid) => ({ type: GET_SENSORS, organization_uuid, });
 
 /**
  *
@@ -145,9 +146,10 @@ export const editSensor = (payload, history, redirectTo) => ({
  *Delete Gateway entity
  * @param {{id}} payload
  */
-export const deleteSensor = (sensorId) => ({
+export const deleteSensor = (sensorId, organization_uuid) => ({
   type: DELETE_SENSOR,
   sensorId,
+  organization_uuid,
 });
 
 /**

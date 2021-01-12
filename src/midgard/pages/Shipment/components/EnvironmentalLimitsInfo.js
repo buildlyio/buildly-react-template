@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import moment from "moment";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
@@ -21,6 +21,7 @@ import { validators } from "../../../utils/validators";
 import { editShipment } from "../../../redux/shipment/actions/shipment.actions";
 import { routes } from "../../../routes/routesConstants";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   slider: {
@@ -135,6 +136,7 @@ function EnvironmentalLimitsInfo(props) {
   );
 
   const [shipmentMetaData, setShipmentMetaData] = useState({});
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (shipmentOptions && shipmentOptions.actions) {
@@ -185,7 +187,8 @@ function EnvironmentalLimitsInfo(props) {
       editShipment(
         shipmentFormValue,
         history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`
+        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
+        organization
       )
     );
   };

@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { connect } from "react-redux";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { makeStyles } from "@material-ui/core/styles";
@@ -26,6 +26,7 @@ import {
   getFormattedSensorRow,
 } from "../../SensorsGateway/Constants";
 import { compareSort } from "../../../utils/utilMethods";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -82,13 +83,15 @@ function SensorsGatewayInfo(props) {
     sensorTypeList,
     viewOnly
   } = props;
-  const [gatewayId, setGatewayId] = useState(
+  const [gatewayIds, setGatewayIds] = useState(
     (shipmentFormData &&
-      shipmentFormData.gateway_ids &&
-      shipmentFormData.gateway_ids[0]) ||
-      ""
+      shipmentFormData.gateway_ids) ||
+      []
   );
   const classes = useStyles();
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+  const checkedIcon = <CheckBoxIcon fontSize="small" />;
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   let rows = [];
   let sensorsRow = [];
@@ -97,7 +100,7 @@ function SensorsGatewayInfo(props) {
     let selectedRows = [];
     let selectedSensors = [];
     gatewayData.forEach((element) => {
-      if (element.gateway_uuid === gatewayId) {
+      if (gatewayIds.indexOf(element.gateway_uuid) !== -1) {
         selectedRows.push(element);
         if (sensorData && sensorData.length) {
           sensorData.forEach((sensor) => {
@@ -113,12 +116,12 @@ function SensorsGatewayInfo(props) {
   }
 
   const onInputChange = (value) => {
-    if (value) setGatewayId(value.gateway_uuid);
-    else setGatewayId(value);
+    const gatewayIds = value.map(val => val.gateway_uuid);
+    setGatewayIds(gatewayIds);
   };
 
   const submitDisabled = () => {
-    if (!gatewayId || gatewayData === null) return true;
+    if (!gatewayIds.length || gatewayData === null) return true;
   };
 
   /**
@@ -128,13 +131,14 @@ function SensorsGatewayInfo(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const shipmentFormValue = {
-      ...{ ...shipmentFormData, gateway_ids: [gatewayId] },
+      ...{ ...shipmentFormData, gateway_ids: gatewayIds },
     };
     dispatch(
       editShipment(
         shipmentFormValue,
         history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`
+        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
+        organization
       )
     );
   };
@@ -147,19 +151,29 @@ function SensorsGatewayInfo(props) {
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Autocomplete
+                  multiple
                   id="combo-box-demo"
                   disabled={viewOnly}
                   options={
                     (gatewayData && gatewayData.sort(compareSort("name"))) || []
                   }
                   getOptionLabel={(option) =>
-                    `${option.name}:${option.gateway_uuid}`
+                    option && `${option.name}:${option.gateway_uuid}`
                   }
-                  getOptionSelected={(option) =>
-                    option.gateway_uuid === gatewayId
-                  }
+                  filterSelectedOptions
                   onChange={(event, newValue) => onInputChange(newValue)}
-                  value={(rows && rows[0]) || null}
+                  defaultValue={rows}
+                  renderOption={(option, { selected }) => (
+                    <React.Fragment>
+                      <Checkbox
+                        icon={icon}
+                        checkedIcon={checkedIcon}
+                        style={{ marginRight: 8 }}
+                        checked={selected}
+                      />
+                      {`${option.name}:${option.gateway_uuid}`}
+                    </React.Fragment>
+                  )}
                   renderInput={(params) => (
                     <TextField
                       {...params}

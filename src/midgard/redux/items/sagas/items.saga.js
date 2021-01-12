@@ -37,12 +37,12 @@ import { searchFilter } from "../../../utils/utilMethods";
 
 const shipmentApiEndPoint = "shipment/";
 
-function* getItemsList() {
+function* getItemsList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${shipmentApiEndPoint}item/`,
+      `${environment.API_URL}${shipmentApiEndPoint}item/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );
@@ -65,12 +65,12 @@ function* getItemsList() {
   }
 }
 
-function* getItemType() {
+function* getItemType(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${shipmentApiEndPoint}item_type/`,
+      `${environment.API_URL}${shipmentApiEndPoint}item_type/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );
@@ -98,7 +98,7 @@ function* getItemType() {
 }
 
 function* deleteItem(payload) {
-  let { itemId } = payload;
+  let { itemId, organization_uuid } = payload;
   try {
     yield call(
       httpService.makeRequest,
@@ -115,7 +115,7 @@ function* deleteItem(payload) {
           message: "Item deleted successfully!",
         })
       ),
-      yield put(getItems()),
+      yield put(getItems(organization_uuid)),
     ];
   } catch (error) {
     console.log("error", error);
@@ -146,7 +146,7 @@ function* editItem(action) {
       true
     );
     yield [
-      yield put(getItems()),
+      yield put(getItems(payload.organization_uuid)),
       yield put(
         showAlert({
           type: "success",
@@ -191,7 +191,7 @@ function* addItem(action) {
           message: "Successfully Added Item",
         })
       ),
-      yield put(getItems()),
+      yield put(getItems(payload.organization_uuid)),
       yield call(history.push, redirectTo),
     ];
   } catch (error) {
@@ -253,12 +253,12 @@ function* searchItem(payload) {
   }
 }
 
-function* getProductList() {
+function* getProductList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${shipmentApiEndPoint}product/`,
+      `${environment.API_URL}${shipmentApiEndPoint}product/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );
@@ -281,12 +281,12 @@ function* getProductList() {
   }
 }
 
-function* getProductTypeList() {
+function* getProductTypeList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${shipmentApiEndPoint}product_type/`,
+      `${environment.API_URL}${shipmentApiEndPoint}product_type/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );

@@ -41,12 +41,12 @@ import { searchFilter } from "../../../utils/utilMethods";
 
 const custodiansApiEndPoint = "custodian/";
 
-function* getCustodiansList() {
+function* getCustodiansList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${custodiansApiEndPoint}custodian/`,
+      `${environment.API_URL}${custodiansApiEndPoint}custodian/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );
@@ -102,7 +102,7 @@ function* getCustodianType() {
 }
 
 function* deleteCustodian(payload) {
-  let { custodianId, contactObjId } = payload;
+  let { custodianId, contactObjId, organization_uuid } = payload;
   try {
     yield call(
       httpService.makeRequest,
@@ -126,7 +126,7 @@ function* deleteCustodian(payload) {
           message: "Custodian deleted successfully!",
         })
       ),
-      yield put(getCustodians()),
+      yield put(getCustodians(organization_uuid)),
     ];
   } catch (error) {
     console.log("error", error);
@@ -163,6 +163,7 @@ function* editCustodian(action) {
         custodian_type: payload.custodian_type,
         contact_data: [contactInfo],
         id: payload.id,
+        organization_uuid: payload.organization_uuid,
       };
       let data = yield call(
         httpService.makeRequest,
@@ -173,8 +174,8 @@ function* editCustodian(action) {
       );
       if (data && data.data) {
         yield [
-          yield put(getCustodians()),
-          yield put(getContact()),
+          yield put(getCustodians(payload.organization_uuid)),
+          yield put(getContact(payload.organization_uuid)),
           yield put(
             showAlert({
               type: "success",
@@ -219,6 +220,7 @@ function* addCustodian(action) {
         name: payload.name,
         custodian_type: payload.custodian_type,
         contact_data: [contactInfo],
+        organization_uuid: payload.organization_uuid,
       };
       let data = yield call(
         httpService.makeRequest,
@@ -236,8 +238,8 @@ function* addCustodian(action) {
               message: "Successfully Added Custodian",
             })
           ),
-          yield put(getCustodians()),
-          yield put(getContact()),
+          yield put(getCustodians(payload.organization_uuid)),
+          yield put(getContact(payload.organization_uuid)),
           yield call(history.push, redirectTo),
         ];
       }
@@ -269,12 +271,12 @@ function* searchCustodian(payload) {
   }
 }
 
-function* getContactInfo() {
+function* getContactInfo(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${custodiansApiEndPoint}contact/`,
+      `${environment.API_URL}${custodiansApiEndPoint}contact/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );

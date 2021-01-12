@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import moment from "moment";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -29,6 +29,7 @@ import {
   getFormattedCustodyRows,
   custodyColumns,
 } from "../../ShipmentConstants";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -97,6 +98,7 @@ function CustodianInfo(props) {
   const [openModal, setOpenModal] = useState(false);
   const [rows, setRows] = useState([]);
   const [editItem, setEditItem] = useState(null);
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (
@@ -134,7 +136,8 @@ function CustodianInfo(props) {
       editShipment(
         shipmentFormValue,
         history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`
+        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
+        organization
       )
     );
     setOpenModal(false);
@@ -150,7 +153,8 @@ function CustodianInfo(props) {
       editShipment(
         shipmentFormValue,
         history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`
+        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
+        organization
       )
     );
     setItemIds(newArr);

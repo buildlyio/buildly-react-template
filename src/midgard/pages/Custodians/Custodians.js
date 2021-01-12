@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
@@ -34,6 +34,7 @@ import {
   getUniqueContactInfo,
 } from "./CustodianConstants";
 import { httpService } from "../../modules/http/http.service";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -65,6 +66,7 @@ function Custodian({
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const classes = useStyles();
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   const addCustodianPath = redirectTo
     ? `${redirectTo}/custodian`
@@ -76,9 +78,9 @@ function Custodian({
 
   useEffect(() => {
     if (custodianData === null) {
-      dispatch(getCustodians());
+      dispatch(getCustodians(organization));
       dispatch(getCustodianType());
-      dispatch(getContact());
+      dispatch(getContact(organization));
     }
     if (!custodyData) {
       dispatch(getCustody());
@@ -87,7 +89,7 @@ function Custodian({
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}custodian/custodian/`,
+          `${environment.API_URL}custodian/custodian/?organization_uuid=${organization}`,
           true
         )
         .then((response) => response.json())
@@ -102,7 +104,7 @@ function Custodian({
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}custodian/contact/`,
+          `${environment.API_URL}custodian/contact/?organization_uuid=${organization}`,
           true
         )
         .then((response) => response.json())
@@ -144,7 +146,7 @@ function Custodian({
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    dispatch(deleteCustodian(deleteItemId, deleteContactObjId));
+    dispatch(deleteCustodian(deleteItemId, deleteContactObjId, organization));
     setConfirmModal(false);
   };
   const searchTable = (e) => {

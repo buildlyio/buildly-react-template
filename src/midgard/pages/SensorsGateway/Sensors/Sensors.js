@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { environment } from "environment";
@@ -15,6 +15,7 @@ import {
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import AddSensors from "../forms/AddSensors";
 import { httpService } from "../../../modules/http/http.service";
+import { UserContext } from "midgard/context/User.context";
 
 function Sensors(props) {
   const {
@@ -42,17 +43,18 @@ function Sensors(props) {
   const [searchValue, setSearchValue] = useState("");
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (data === null) {
-      dispatch(getSensors());
+      dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
     if (sensorOptions === null) {
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}sensors/sensor/`,
+          `${environment.API_URL}sensors/sensor/?organization_uuid=${organization}`,
           true
         )
         .then((response) => response.json())
@@ -90,7 +92,7 @@ function Sensors(props) {
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    dispatch(deleteSensor(deleteSensorId));
+    dispatch(deleteSensor(deleteSensorId, organization));
     setConfirmModal(false);
   };
   const searchTable = (e) => {

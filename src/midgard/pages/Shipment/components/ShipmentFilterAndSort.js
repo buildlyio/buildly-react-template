@@ -252,7 +252,7 @@ const AlertFilter = (props) => {
         onClick={handleAlertClick}
         endIcon={alertOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
       >
-        Alerts
+        Alert type
       </Button>
       <Popper
         id={"alert-popup"}
