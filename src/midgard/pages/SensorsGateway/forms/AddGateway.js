@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import moment from "moment";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
@@ -22,6 +22,7 @@ import {
 } from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import { MAP_API_URL } from "../../../utils/utilMethods";
 import { MapComponent } from "../../../components/MapComponent/MapComponent";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -102,6 +103,7 @@ function AddGateway({
   const formTitle = editPage ? "Edit Gateway" : "Add Gateway";
 
   const [gatewayMetaData, setGatewayMetaData] = useState({});
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (gatewayOptions && gatewayOptions.actions) {
@@ -134,6 +136,7 @@ function AddGateway({
       mac_address: mac_address.value,
       last_known_location: [last_known_location],
       last_known_battery_level: battery_level.value,
+      organization_uuid: organization,
     };
     if (editPage) {
       dispatch(editGateway(gatewayFormValues, history, redirectTo));

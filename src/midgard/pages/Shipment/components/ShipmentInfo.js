@@ -109,7 +109,7 @@ function ShipmentInfo(props) {
   const shipment_name = useInput((editData && editData.name) || "", {
     required: true,
   });
-  
+
   const lading_bill = useInput((editData && editData.bol_order_id) || "");
   const load_no = useInput("");
   const shipment_status = useInput((editData && editData.status) || "");
@@ -146,6 +146,7 @@ function ShipmentInfo(props) {
     uom_distance: "",
     uom_weight,
   });
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (editPage && shipmentFormData === null) {
@@ -284,6 +285,7 @@ function ShipmentInfo(props) {
       uom_distance: uom_distance,
       uom_temp: uom_temp,
       uom_weight: uom_weight,
+      organization_uuid: organization,
     };
 
     if (editPage && editData) {
@@ -291,11 +293,12 @@ function ShipmentInfo(props) {
         editShipment(
           shipmentFormValue,
           history,
-          `${routes.SHIPMENT}/edit/:${editData.id}`
+          `${routes.SHIPMENT}/edit/:${editData.id}`,
+          organization
         )
       );
     } else {
-      dispatch(addShipment(shipmentFormValue, history));
+      dispatch(addShipment(shipmentFormValue, history, organization));
     }
   };
 

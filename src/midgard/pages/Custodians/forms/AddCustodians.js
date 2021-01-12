@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -33,6 +33,7 @@ import {
 import { compareSort } from "../../../utils/utilMethods";
 import { InputAdornment } from "@material-ui/core";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -123,6 +124,7 @@ function AddCustodians({
   const formTitle = editPage ? "Edit Custodian" : "Add Custodian";
   const [custodianMetaData, setCustodianMetaData] = useState({});
   const [contactMetaData, setProductMetaData] = useState({});
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (custodianOptions && custodianOptions.actions) {
@@ -156,6 +158,7 @@ function AddCustodians({
       ...(editPage && { contact_uuid: contactData.contact_uuid }),
       ...(editPage && { url: contactData.url }),
       ...(editPage && { id: contactData.id }),
+      organization_uuid: organization,
     };
     const custodianFormValue = {
       custodian_alias: alias.value,
@@ -165,6 +168,7 @@ function AddCustodians({
       contact_obj: contact_obj,
       ...(editPage && { url: editData.url }),
       ...(editPage && { id: editData.id }),
+      organization_uuid: organization,
     };
     if (editPage) {
       dispatch(editCustodian(custodianFormValue, history, redirectTo));

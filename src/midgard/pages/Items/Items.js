@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
 import { routes } from "../../routes/routesConstants";
@@ -20,6 +20,7 @@ import {
 } from "../../redux/items/actions/items.actions";
 import DashboardWrapper from "../../components/DashboardWrapper/DashboardWrapper";
 import { httpService } from "../../modules/http/http.service";
+import { UserContext } from "midgard/context/User.context";
 
 function Items({
   dispatch,
@@ -51,24 +52,25 @@ function Items({
   const [searchValue, setSearchValue] = useState("");
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (itemData === null) {
-      dispatch(getItems());
-      dispatch(getItemType());
+      dispatch(getItems(organization));
+      dispatch(getItemType(organization));
     }
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
     }
     if (products === null) {
-      dispatch(getProducts());
-      dispatch(getProductType());
+      dispatch(getProducts(organization));
+      dispatch(getProductType(organization));
     }
     if (itemOptions === null) {
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}shipment/item/`,
+          `${environment.API_URL}shipment/item/?organization_uuid=${organization}`,
           true
         )
         .then((response) => response.json())
@@ -84,7 +86,7 @@ function Items({
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}shipment/product/`,
+          `${environment.API_URL}shipment/product/?organization_uuid=${organization}`,
           true
         )
         .then((response) => response.json())
@@ -124,12 +126,12 @@ function Items({
       data: item,
     });
   };
-  const deleteItem = (item) => {
+  const deleteItems = (item) => {
     setDeleteItemId(item.id);
     setConfirmModal(true);
   };
   const handleConfirmModal = () => {
-    dispatch(deleteItem(deleteItemId));
+    dispatch(deleteItem(deleteItemId,organization));
     setConfirmModal(false);
   };
   const searchTable = (e) => {
@@ -157,7 +159,7 @@ function Items({
       dashboardHeading={"Items"}
       addButtonHeading={"Add Item"}
       editAction={editItem}
-      deleteAction={deleteItem}
+      deleteAction={deleteItems}
       columns={itemColumns}
       redirectTo={redirectTo}
       rows={filteredRows}

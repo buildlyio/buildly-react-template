@@ -33,17 +33,17 @@ import configureStore from "../../store";
 
 const shipmentApiEndPoint = "shipment/";
 
-function* getShipmentList() {
+function* getShipmentList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${shipmentApiEndPoint}shipment/`,
+      `${environment.API_URL}${shipmentApiEndPoint}shipment/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );
     if (data && data.data) {
-      yield put(getShipmentFlag());
+      yield put(getShipmentFlag(payload.organization_uuid));
     }
     console.log("data", data);
     yield [yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data })];
@@ -66,7 +66,7 @@ function* getShipmentList() {
 }
 
 function* deleteShipment(payload) {
-  let { shipmentId } = payload;
+  let { shipmentId,organization_uuid } = payload;
   try {
     yield call(
       httpService.makeRequest,
@@ -83,7 +83,7 @@ function* deleteShipment(payload) {
           message: "Shipment deleted successfully!",
         })
       ),
-      yield put(getShipmentDetails()),
+      yield put(getShipmentDetails(organization_uuid)),
     ];
   } catch (error) {
     console.log("error", error);
@@ -116,7 +116,7 @@ function* editShipment(action) {
 
     yield [
       yield put(saveShipmentFormData(data.data)),
-      yield put(getShipmentDetails()),
+      yield put(getShipmentDetails(payload.organization_uuid)),
       yield put(
         showAlert({
           type: "success",
@@ -162,7 +162,7 @@ function* addShipment(action) {
         })
       ),
       yield put(saveShipmentFormData(data.data)),
-      yield put(getShipmentDetails()),
+      yield put(getShipmentDetails(payload.organization_uuid)),
     ];
     if (redirectTo) {
       yield call(history.push, redirectTo);
@@ -437,12 +437,12 @@ const sortFilter = (filterObject, list) => {
   }
 };
 
-function* getShipmentFlagList() {
+function* getShipmentFlagList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${shipmentApiEndPoint}shipment_flag/`,
+      `${environment.API_URL}${shipmentApiEndPoint}shipment_flag/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );

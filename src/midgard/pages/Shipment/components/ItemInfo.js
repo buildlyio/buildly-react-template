@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { connect } from "react-redux";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,6 +21,7 @@ import DataTable from "../../../components/Table/Table";
 import { editShipment } from "../../../redux/shipment/actions/shipment.actions";
 import { routes } from "../../../routes/routesConstants";
 import { compareSort } from "../../../utils/utilMethods";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -79,6 +80,8 @@ function ItemsInfo(props) {
   const [itemIds, setItemIds] = useState(
     (shipmentFormData && shipmentFormData.items) || []
   );
+  const organization = useContext(UserContext).organization.organization_uuid;
+
   const classes = useStyles();
 
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -120,7 +123,8 @@ function ItemsInfo(props) {
       editShipment(
         shipmentFormValue,
         history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`
+        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
+        organization
       )
     );
   };

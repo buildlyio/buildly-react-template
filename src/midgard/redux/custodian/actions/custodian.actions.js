@@ -64,7 +64,7 @@ export const GET_CUSTODY_OPTIONS_SUCCESS =
 export const GET_CUSTODY_OPTIONS_FAILURE =
   "CUSTODIAN/GET_CUSTODY_OPTIONS_FAILURE";
 
-export const getCustodians = () => ({ type: GET_CUSTODIANS });
+export const getCustodians = (organization_uuid) => ({ type: GET_CUSTODIANS, organization_uuid, });
 
 /**
  *Add custodian
@@ -95,10 +95,11 @@ export const editCustodian = (payload, history, redirectTo) => ({
  *Delete Custodain entity
  * @param {{id}} payload
  */
-export const deleteCustodian = (custodianId, contactObjId) => ({
+export const deleteCustodian = (custodianId, contactObjId, organization_uuid) => ({
   type: DELETE_CUSTODIANS,
   custodianId,
   contactObjId,
+  organization_uuid,
 });
 
 /**
@@ -117,8 +118,9 @@ export const getCustodianType = () => ({
   type: GET_CUSTODIAN_TYPE,
 });
 
-export const getContact = () => ({
+export const getContact = (organization_uuid) => ({
   type: GET_CONTACT,
+  organization_uuid,
 });
 
 export const getCustody = () => ({

@@ -1,10 +1,12 @@
 import * as actions from "./items.actions";
 describe("actions", () => {
-  it("should create an action to get items", () => {
+  it("should create an action to get items by organization", () => {
+    const organization_uuid = "224761f5-0010-4a46-ba2f-d92a4fdc1d21";
     const expectedAction = {
       type: actions.GET_ITEMS,
+      organization_uuid,
     };
-    expect(actions.getItems()).toEqual(expectedAction);
+    expect(actions.getItems(organization_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -41,11 +43,13 @@ describe("actions", () => {
 describe("actions", () => {
   it("should create an action to delete item", () => {
     const itemId = "123";
+    const organization_uuid = "224761f5-0010-4a46-ba2f-d92a4fdc1d21";
     const expectedAction = {
       type: actions.DELETE_ITEMS,
       itemId,
+      organization_uuid
     };
-    expect(actions.deleteItem(itemId)).toEqual(expectedAction);
+    expect(actions.deleteItem(itemId, organization_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -63,10 +67,12 @@ describe("actions", () => {
 });
 
 describe("actions", () => {
-  it("should create an action to get item type", () => {
+  it("should create an action to get item type by organization", () => {
+    const organization_uuid = "224761f5-0010-4a46-ba2f-d92a4fdc1d21";
     const expectedAction = {
       type: actions.GET_ITEMS_TYPE,
+      organization_uuid,
     };
-    expect(actions.getItemType()).toEqual(expectedAction);
+    expect(actions.getItemType(organization_uuid)).toEqual(expectedAction);
   });
 });

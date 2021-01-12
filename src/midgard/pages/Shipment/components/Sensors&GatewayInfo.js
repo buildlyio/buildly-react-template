@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { connect } from "react-redux";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { makeStyles } from "@material-ui/core/styles";
@@ -26,6 +26,7 @@ import {
   getFormattedSensorRow,
 } from "../../SensorsGateway/Constants";
 import { compareSort } from "../../../utils/utilMethods";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -90,6 +91,7 @@ function SensorsGatewayInfo(props) {
   const classes = useStyles();
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   let rows = [];
   let sensorsRow = [];
@@ -135,7 +137,8 @@ function SensorsGatewayInfo(props) {
       editShipment(
         shipmentFormValue,
         history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`
+        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
+        organization
       )
     );
   };

@@ -41,12 +41,12 @@ import { searchFilter } from "../../../utils/utilMethods";
 
 const sensorApiEndPoint = "sensors/";
 
-function* getGatewayList() {
+function* getGatewayList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${sensorApiEndPoint}gateway/`,
+      `${environment.API_URL}${sensorApiEndPoint}gateway/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );
@@ -102,7 +102,7 @@ function* getGatewayTypeList() {
 }
 
 function* deleteGatewayItem(payload) {
-  let { gatewayId } = payload;
+  let { gatewayId, organization_uuid } = payload;
   try {
     yield call(
       httpService.makeRequest,
@@ -119,7 +119,7 @@ function* deleteGatewayItem(payload) {
           message: "Gateway deleted successfully!",
         })
       ),
-      yield put(getGateways()),
+      yield put(getGateways(organization_uuid)),
     ];
   } catch (error) {
     console.log("error", error);
@@ -150,7 +150,7 @@ function* editGateWayItem(action) {
       true
     );
     yield [
-      yield put(getGateways()),
+      yield put(getGateways(payload.organization_uuid)),
       yield put(
         showAlert({
           type: "success",
@@ -195,7 +195,7 @@ function* addGateway(action) {
           message: "Successfully Added Gateway",
         })
       ),
-      yield put(getGateways()),
+      yield put(getGateways(payload.organization_uuid)),
       yield call(history.push, redirectTo),
     ];
   } catch (error) {
@@ -225,12 +225,12 @@ function* searchGateway(payload) {
   }
 }
 
-function* getSensorList() {
+function* getSensorList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${sensorApiEndPoint}sensor/`,
+      `${environment.API_URL}${sensorApiEndPoint}sensor/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );
@@ -286,7 +286,7 @@ function* getSensorTypeList() {
 }
 
 function* deleteSensorItem(payload) {
-  let { sensorId } = payload;
+  let { sensorId, organization_uuid } = payload;
   try {
     yield call(
       httpService.makeRequest,
@@ -303,7 +303,7 @@ function* deleteSensorItem(payload) {
           message: "Sensor deleted successfully!",
         })
       ),
-      yield put(getSensors()),
+      yield put(getSensors(organization_uuid)),
     ];
   } catch (error) {
     console.log("error", error);
@@ -334,7 +334,7 @@ function* editSensorItem(action) {
       true
     );
     yield [
-      yield put(getSensors()),
+      yield put(getSensors(payload.organization_uuid)),
       yield put(
         showAlert({
           type: "success",
@@ -379,7 +379,7 @@ function* addSensor(action) {
           message: "Successfully Added Sensor",
         })
       ),
-      yield put(getSensors()),
+      yield put(getSensors(payload.organization_uuid)),
       yield call(history.push, redirectTo),
     ];
   } catch (error) {
