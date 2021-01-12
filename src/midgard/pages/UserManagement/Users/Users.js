@@ -52,7 +52,7 @@ function Users({ location, history, data, dispatch }) {
   const permissionsTemplate = (row, crud, classes) => {
     if (coreGroupsLoaded) {
       const [active, setActive] = useState(row.core_groups[0] && row.core_groups[0].id || row.core_groups[0]);
-      return <ButtonGroup disableElevation color="primary" size="small" disabled={!row.is_active}>
+      return <ButtonGroup disableElevation color="primary" size="small" disabled={!row.is_active || user.core_user_uuid === row.core_user_uuid}>
         {permissions.map((permission, index) => (
           <Button
             className={classes.btnPermission}
@@ -92,6 +92,7 @@ function Users({ location, history, data, dispatch }) {
     return (
       <React.Fragment>
         <IconButton
+          disabled={user.core_user_uuid === row.core_user_uuid}
           aria-label="more"
           aria-controls={`userActions${row.id}`}
           aria-haspopup="true"
@@ -106,7 +107,9 @@ function Users({ location, history, data, dispatch }) {
           open={Boolean(menu.row && (menu.row.id === row.id))}
           onClose={handleMenuClose}
         >
-          {row.actions.map((option) => (
+          {row.actions.filter(
+            option => !(option.value === 'delete' && row.is_active)
+          ).map((option) => (
           <MenuItem
             key={`userActions${row.id }:${option.value}`}
             onClick={() => handleMenuItemClick(option.value)}
@@ -154,6 +157,7 @@ function Users({ location, history, data, dispatch }) {
                 { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud), flex: '1' },
               ]}
               rows={crud.getData()}
+              sortFn={(a, b) => (a.core_user_uuid === user.core_user_uuid ? -1 : b.core_user_uuid === user.core_user_uuid ? 1 : 0)}
             />
             :
             <PermissionsTable
@@ -166,6 +170,7 @@ function Users({ location, history, data, dispatch }) {
                 { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud), flex: '1' },
               ]}
               rows={crud.getData()}
+              sortFn={(a, b) => (a.core_user_uuid === user.core_user_uuid ? -1 : b.core_user_uuid === user.core_user_uuid ? 1 : 0)}
             />
           )
         }}

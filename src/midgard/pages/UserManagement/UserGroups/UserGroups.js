@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { UserContext } from "midgard/context/User.context";
 import { InlineEditor } from 'midgard/components/InlineEditor/InlineEditor';
 import { PermissionsTable } from 'midgard/components/PermissionsTable/PermissionsTable';
 import Crud from 'midgard/modules/crud/Crud';
@@ -25,12 +26,14 @@ function UserGroups() {
   const classes = useStyles();
   // state to toggle actions menus
   const [menu, setMenu] = useState({ row: null, element: null });
+  const user = useContext(UserContext);
 
   const permissionCellTemplate = (row, crud, operation) => {
     return (
       <Switch
         size="small"
         color="primary"
+        disabled={user.core_groups[0].id === row.id || !row.organization}
         checked={row.permissions[operation]}
         onChange={() => {
           row.permissions[operation] = !row.permissions[operation];
@@ -72,6 +75,7 @@ function UserGroups() {
           aria-label="more"
           aria-controls={`groupActions${row.id}`}
           aria-haspopup="true"
+          disabled={user.core_groups[0].id === row.id || !row.organization}
           onClick={handleMenuClick}
         >
           <MoreHoriz />
@@ -105,6 +109,7 @@ function UserGroups() {
       <InlineEditor
         tag="body1"
         id={row.id}
+        disabled={!row.organization}
         value={row.name}
         placeholder="Group type"
         onChange={(event) => update(crud, row, event)}
