@@ -13,7 +13,7 @@ before_install:
 install:
   - yarn install
 script:
-  - yarn run build-prod
+  - yarn run build:prod
   - docker build -t $DOCKER_REPO .
 deploy:
   provider: script
