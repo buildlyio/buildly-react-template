@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
@@ -7,10 +7,10 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { AppContext } from "midgard/context/App.context";
 import { NAVIGATION_ITEMS } from "./NavBarConstants";
-import { isMobile } from "../../utils/mediaQuery";
-import { checkForAdmin, checkForGlobalAdmin } from "../../utils/utilMethods";
+import { isMobile } from "midgard/utils/mediaQuery";
+import { checkForAdmin, checkForGlobalAdmin } from "midgard/utils/utilMethods";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -76,6 +76,7 @@ function NavBar({ navHidden, setNavHidden, location, history, userData }) {
   const classes = useStyles();
   const theme = useTheme();
   let isMobileDevice = isMobile();
+  const user = useContext(UserContext);
 
   let navItems = getFilteredNavItems(userData, NAVIGATION_ITEMS);
 

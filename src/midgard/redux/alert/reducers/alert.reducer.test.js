@@ -1,4 +1,4 @@
-import * as actions from "../actions/alert.actions";
+import * as actions from "midgard/redux/alert/actions/alert.actions";
 import * as reducer from "./alert.reducer";
 const initialState = {
   data: null,

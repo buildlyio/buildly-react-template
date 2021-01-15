@@ -56,7 +56,7 @@ export const RESET_PASSWORD_CHECK_FAILURE = "AUTH/RESET_PASSWORD_CHECK_FAILURE";
 
 /**
  * Login action
- * @param {{username, password}} credentials
+ * @param {{ username, password }} credentials
  */
 export const login = (credentials, history) => ({
   type: LOGIN,
@@ -71,25 +71,25 @@ export const logout = () => ({ type: LOGOUT });
 
 /**
  * Register action
- * @param {{username, password, email, organization_name, first_name, last_name}} data
+ * @param {{ username, password, email, organization_name, first_name, last_name }} data
  */
 export const register = (data, history) => ({ type: REGISTER, data, history });
 
 /**
  * Update user action
- * @param {{ first_name, last_name}} data
+ * @param {{ first_name, last_name }} data
  */
 export const updateUser = (data) => ({ type: UPDATE_USER, data });
 
 /**
  * Update user action
- * @param {{ first_name, last_name}} data
+ * @param {{ first_name, last_name }} data
  */
 export const getUser = () => ({ type: GET_USER });
 
 /**
- * invite user action
- * @param {{ first_name, last_name}} data
+ * Invite user action
+ * @param {{ first_name, last_name }} data
  */
 export const invite = (data) => ({ type: INVITE, data });
 

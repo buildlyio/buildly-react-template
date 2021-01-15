@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -7,16 +7,11 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
 import Hidden from "@material-ui/core/Hidden";
-import { AppContext } from "midgard/context/App.context";
-import { SubNavContext } from "midgard/context/SubNav.context";
 import logo from "assets/tp-logo.png";
 import {
   logout,
   getUser,
-  getUserOptions,
   GET_USER_OPTIONS_SUCCESS,
   GET_USER_OPTIONS_FAILURE,
   GET_ORGANIZATION_OPTIONS_SUCCESS,
@@ -55,7 +50,6 @@ function TopBar({
   navHidden,
   setNavHidden,
   history,
-  location,
   dispatch,
   data,
   organizationData,
@@ -100,14 +94,7 @@ function TopBar({
           dispatch({ type: GET_ORGANIZATION_OPTIONS_FAILURE, error: err });
         });
     }
-
-    // dispatch(getUserOptions());
   }, []);
-
-  // useEffect(() => {
-  //   if (user && user.organization && user.organization.organization_uuid)
-  //     dispatch(getOrganization(user.organization.organization_uuid));
-  // }, [user]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);

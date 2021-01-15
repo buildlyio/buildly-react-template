@@ -7,7 +7,6 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import { MapComponent } from "../../components/MapComponent/MapComponent";
-import DataTable from "../../components/Table/Table";
 import ViewComfyIcon from "@material-ui/icons/ViewComfy";
 import ViewCompactIcon from "@material-ui/icons/ViewCompact";
 import IconButton from "@material-ui/core/IconButton";
@@ -15,13 +14,10 @@ import Hidden from "@material-ui/core/Hidden";
 import {
   SHIPMENT_COLUMNS,
   getFormattedRow,
-  getFormattedCustodyRows,
   svgIcon,
   MAP_TOOLTIP,
 } from "./ShipmentConstants";
 import ShipmentList from "./components/ShipmentList";
-import { shipmentMock } from "../../utils/mock";
-import moment from "moment";
 import { routes } from "../../routes/routesConstants";
 import { Route } from "react-router-dom";
 import AddShipment from "./forms/AddShipment";
@@ -35,34 +31,32 @@ import {
   getCustody,
   GET_CUSTODY_OPTIONS_SUCCESS,
   GET_CUSTODY_OPTIONS_FAILURE,
-} from "../../redux/custodian/actions/custodian.actions";
+} from "midgard/redux/custodian/actions/custodian.actions";
 import {
   getItems,
   getItemType,
   getUnitsOfMeasure,
-} from "../../redux/items/actions/items.actions";
+} from "midgard/redux/items/actions/items.actions";
 import {
   getGateways,
   getGatewayType,
   getSensors,
   getSensorType,
-} from "../../redux/sensorsGateway/actions/sensorsGateway.actions";
-import { MAP_API_URL } from "../../utils/utilMethods";
+} from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
+import { MAP_API_URL } from "midgard/utils/utilMethods";
 import {
   getShipmentDetails,
-  saveShipmentFormData,
   deleteShipment,
-  getShipmentFlag,
   FILTER_SHIPMENT_SUCCESS,
   GET_SHIPMENT_OPTIONS_SUCCESS,
   GET_SHIPMENT_OPTIONS_FAILURE,
-} from "../../redux/shipment/actions/shipment.actions";
-import ConfirmModal from "../../components/Modal/ConfirmModal";
+} from "midgard/redux/shipment/actions/shipment.actions";
+import ConfirmModal from "midgard/components/Modal/ConfirmModal";
 import AlertInfo from "./AlertInfo";
-import Loader from "../../components/Loader/Loader";
-import CustomizedTooltips from "../../components/ToolTip/ToolTip";
-import { httpService } from "../../modules/http/http.service";
-import { environment } from "../../../../environment";
+import Loader from "midgard/components/Loader/Loader";
+import CustomizedTooltips from "midgard/components/ToolTip/ToolTip";
+import { httpService } from "midgard/modules/http/http.service";
+import { environment } from "environment";
 import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({

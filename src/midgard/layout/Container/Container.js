@@ -1,25 +1,20 @@
-// react library imports
 import React, { useState } from "react";
 import { Route, Redirect } from "react-router-dom";
-import { connect } from "react-redux";
-import NavBar from "midgard/layout/NavBar/NavBar";
+import { UserContext, getUser } from "midgard/context/User.context";
 import TopBar from "midgard/layout/TopBar/TopBar";
 import UserManagement from "midgard/pages/UserManagement/UserManagement";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
-
-// react user imports
-import { getUser, UserContext } from "midgard/context/User.context";
-import { subNav, SubNavContext } from "midgard/context/SubNav.context";
-import { routes } from "../../routes/routesConstants";
-import Custodians from "../../pages/Custodians/Custodians";
-import MyAccount from "../../pages/MyAccount/MyAccount";
-import Items from "../../pages/Items/Items";
-import SensorsGateway from "../../pages/SensorsGateway/SensorsGateway";
-import Shipment from "../../pages/Shipment/Shipment";
-import Dashboard from "../../pages/Dashboard/Dashboard";
-import { checkForAdmin, checkForGlobalAdmin } from "../../utils/utilMethods";
-import { isMobile } from "../../utils/mediaQuery";
+import { routes } from "midgard/routes/routesConstants";
+import NavBar from "midgard/layout/NavBar/NavBar";
+import Custodians from "midgard/pages/Custodians/Custodians";
+import MyAccount from "midgard/pages/MyAccount/MyAccount";
+import Items from "midgard/pages/Items/Items";
+import SensorsGateway from "midgard/pages/SensorsGateway/SensorsGateway";
+import Shipment from "midgard/pages/Shipment/Shipment";
+import Dashboard from "midgard/pages/Dashboard/Dashboard";
+import { checkForAdmin, checkForGlobalAdmin } from "midgard/utils/utilMethods";
+import { isMobile } from "midgard/utils/mediaQuery";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,21 +38,13 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Container for the app layout when the user is authenticated.
  */
-function ContainerDashboard({ location, history, data }) {
+function ContainerDashboard({ location, history }) {
   const [navHidden, setNavHidden] = useState(false);
   const routeItems = [];
   const classes = useStyles();
+  const userData = getUser();
+  let subNavItems = [];
 
-  //entryPointForGulpStart
-    //entryPointForGulpEnd
-
-  let userData = "";
-
-  if (data && data.data) {
-    userData = data.data;
-  }
-
-  let subNavItems = subNav;
   if (location.pathname.includes("profile")) {
     subNavItems = [
       { label: "Dashboard", value: "dashboard" },
@@ -68,24 +55,22 @@ function ContainerDashboard({ location, history, data }) {
   return (
     <div className={classes.root}>
       <UserContext.Provider value={getUser()}>
-        <SubNavContext.Provider value={subNavItems}>
-          <TopBar
+        <TopBar
+          navHidden={navHidden}
+          setNavHidden={setNavHidden}
+          options={subNavItems}
+          location={location}
+          history={history}
+        />
+        {!location.pathname.includes(routes.MY_ACCOUNT) && (
+          <NavBar
             navHidden={navHidden}
             setNavHidden={setNavHidden}
-            options={subNavItems}
             location={location}
             history={history}
+            userData={userData}
           />
-          {!location.pathname.includes(routes.MY_ACCOUNT) && (
-            <NavBar
-              navHidden={navHidden}
-              setNavHidden={setNavHidden}
-              location={location}
-              history={history}
-              userData={userData}
-            />
-          )}
-        </SubNavContext.Provider>
+        )}
         <Container className={`${classes.content} ${!isMobile() && classes.contentMaxWidth}`}>
           <Route
             exact
@@ -108,9 +93,4 @@ function ContainerDashboard({ location, history, data }) {
   );
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(ContainerDashboard);
+export default ContainerDashboard;

@@ -94,15 +94,5 @@ export const setOptionsData = (options, fieldName) => {
   if (optionKeys.includes(fieldName)) {
     return options[fieldName];
   }
-  // optionKeys.forEach((key) => {
-  //   console.log("not found", key);
-  //   let nestedObjKeys = Object.keys(options[key]);
-  //   nestedObjKeys.forEach((nestedObj) => {
-  //     if (typeof options[key][nestedObj] === "object") {
-  //       result = setOptionsData(options[key][nestedObj], fieldName);
-  //       console.log("nested", options[key][nestedObj]);
-  //     }
-  //   });
-  // });
   return result;
 };
