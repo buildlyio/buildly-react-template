@@ -99,9 +99,6 @@ function SensorsGatewayInfo(props) {
   if (gatewayData && gatewayData.length) {
     let selectedRows = [];
     let selectedSensors = [];
-    gatewayData = gatewayData.filter((gateway) => {
-      return gateway.is_active == false;
-    })
     gatewayData.forEach((element) => {
       if (gatewayIds.indexOf(element.gateway_uuid) !== -1) {
         selectedRows.push(element);
@@ -158,7 +155,7 @@ function SensorsGatewayInfo(props) {
                   id="combo-box-demo"
                   disabled={viewOnly}
                   options={
-                    (gatewayData && gatewayData.sort(compareSort("name"))) || []
+                    (gatewayData && gatewayData.sort(compareSort("name")) && gatewayData.filter((gateway) => {return gateway.is_active == false;})) || []
                   }
                   getOptionLabel={(option) =>
                     option && `${option.name}:${option.gateway_uuid}`
