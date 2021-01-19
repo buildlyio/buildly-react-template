@@ -31,7 +31,7 @@ export const GET_GATEWAY_OPTIONS = "ITEMS/GET_GATEWAY_OPTIONS";
 export const GET_GATEWAY_OPTIONS_SUCCESS = "ITEMS/GET_GATEWAY_OPTIONS_SUCCESS";
 export const GET_GATEWAY_OPTIONS_FAILURE = "ITEMS/GET_GATEWAY_OPTIONS_FAILURE";
 
-export const getGateways = (organization_uuid) => ({ type: GET_GATEWAYS, organization_uuid, });
+export const getGateways = (organization_uuid, is_active) => ({ type: GET_GATEWAYS, organization_uuid, is_active });
 
 /**
  *Add Gateway

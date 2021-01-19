@@ -2,11 +2,12 @@ import * as actions from "./sensorsGateway.actions";
 describe("actions", () => {
   it("should create an action to get Gateway by organization", () => {
     const organization_uuid = "224761f5-0010-4a46-ba2f-d92a4fdc1d21";
+    const is_active = false;
     const expectedAction = {
       type: actions.GET_GATEWAYS,
       organization_uuid,
     };
-    expect(actions.getGateways(organization_uuid)).toEqual(expectedAction);
+    expect(actions.getGateways(organization_uuid, is_active)).toEqual(expectedAction);
   });
 });
 

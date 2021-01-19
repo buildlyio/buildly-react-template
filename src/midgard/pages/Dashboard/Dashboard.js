@@ -126,10 +126,10 @@ function Dashboard(props) {
       dispatch(getItems(organization));
       dispatch(getItemType(organization));
     }
-    if (gatewayData === null) {
-      dispatch(getGateways(organization));
-      dispatch(getGatewayType());
-    }
+    // if (gatewayData === null) {
+    dispatch(getGateways(organization,null));
+    dispatch(getGatewayType());
+    // }
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
     }

@@ -47,10 +47,10 @@ function Gateway(props) {
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
-    if (data === null) {
-      dispatch(getGateways(organization));
-      dispatch(getGatewayType());
-    }
+    // if (data === null) {
+    dispatch(getGateways(organization, null));
+    dispatch(getGatewayType());
+    // }
     if (gatewayOptions === null) {
       httpService
         .makeOptionsRequest(

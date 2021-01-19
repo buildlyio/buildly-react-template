@@ -43,10 +43,14 @@ const sensorApiEndPoint = "sensors/";
 
 function* getGatewayList(payload) {
   try {
+    let queryParams = `?organization_uuid=${payload.organization_uuid}`;
+    if(payload.is_active != null) {
+      queryParams = `?organization_uuid=${payload.organization_uuid}&is_active=${payload.is_active}`;
+    }
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${sensorApiEndPoint}gateway/?organization_uuid=${payload.organization_uuid}&is_active=false`,
+      `${environment.API_URL}${sensorApiEndPoint}gateway/`+queryParams,
       null,
       true
     );
