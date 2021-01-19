@@ -99,6 +99,9 @@ function SensorsGatewayInfo(props) {
   if (gatewayData && gatewayData.length) {
     let selectedRows = [];
     let selectedSensors = [];
+    gatewayData = gatewayData.filter((gateway) => {
+      return gateway.is_active == false;
+    })
     gatewayData.forEach((element) => {
       if (gatewayIds.indexOf(element.gateway_uuid) !== -1) {
         selectedRows.push(element);

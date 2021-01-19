@@ -129,11 +129,10 @@ function Shipment(props) {
       dispatch(getItems(organization));
       dispatch(getItemType(organization));
     }
-    // if (gatewayData === null) {
-    let is_active = false;
-    dispatch(getGateways(organization,is_active));
-    dispatch(getGatewayType());
-    // }
+    if (gatewayData === null) {
+      dispatch(getGateways(organization,is_active));
+      dispatch(getGatewayType());
+    }
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
     }
