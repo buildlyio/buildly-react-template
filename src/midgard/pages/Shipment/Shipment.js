@@ -130,7 +130,7 @@ function Shipment(props) {
       dispatch(getItemType(organization));
     }
     if (gatewayData === null) {
-      dispatch(getGateways(organization,is_active));
+      dispatch(getGateways(organization));
       dispatch(getGatewayType());
     }
     if (!unitsOfMeasure) {
