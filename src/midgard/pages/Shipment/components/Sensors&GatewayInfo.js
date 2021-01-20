@@ -155,7 +155,7 @@ function SensorsGatewayInfo(props) {
                   id="combo-box-demo"
                   disabled={viewOnly}
                   options={
-                    (gatewayData && gatewayData.sort(compareSort("name")) && gatewayData.filter((gateway) => {return gateway.is_active == false;})) || []
+                    (gatewayData && gatewayData.sort(compareSort("name")) && gatewayData.filter((gateway) => {return gateway.is_active === false;})) || []
                   }
                   getOptionLabel={(option) =>
                     option && `${option.name}:${option.gateway_uuid}`
