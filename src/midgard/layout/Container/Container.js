@@ -1,8 +1,5 @@
-// react library imports
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
-
-// react user imports
 import { UserContext, getUser } from "midgard/context/User.context";
 import TopBar from "midgard/layout/TopBar/TopBar";
 import Profile from "midgard/pages/Profile/Profile";
@@ -29,7 +26,6 @@ const useStyles = makeStyles((theme) => ({
  * Container for the app layout when the user is authenticated.
  */
 function ContainerDashboard({ location, history }) {
-  const routeItems = [];
   const classes = useStyles();
 
   return (
@@ -48,7 +44,6 @@ function ContainerDashboard({ location, history }) {
           <Route path={routes.DASHBOARD} component={Profile} />
           <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
         </Container>
-        {routeItems}
       </UserContext.Provider>
     </div>
   );
