@@ -55,7 +55,7 @@ function Gateway(props) {
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}sensors/gateway/?organization_uuid=${organization}`,
+          `${environment.API_URL}sensors/gateway/`,
           true
         )
         .then((response) => response.json())

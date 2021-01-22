@@ -28,9 +28,11 @@ import {
   EDIT_SENSOR,
   GET_SENSORS_SUCCESS,
   GET_SENSORS_FAILURE,
+  getSensors,
   GET_SENSORS_TYPE_SUCCESS,
   GET_SENSORS_TYPE_FAILURE,
-  getSensors,
+  GET_SENSORS_REPORT_SUCCESS,
+  GET_SENSORS_REPORT_FAILURE,
   DELETE_SENSOR_FAILURE,
   EDIT_SENSOR_SUCCESS,
   EDIT_SENSOR_FAILURE,
@@ -285,6 +287,34 @@ function* getSensorTypeList() {
   }
 }
 
+function* getSensorReportList(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}${sensorApiEndPoint}sensor_report/?organization_uuid=${payload.organization_uuid}`,
+      null,
+      true
+    );
+    yield [yield put({ type: GET_SENSORS_REPORT_SUCCESS, data: data.data })];
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't load data due to some error!",
+        })
+      ),
+      yield put({
+        type: GET_SENSORS_REPORT_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* deleteSensorItem(payload) {
   let { sensorId, organization_uuid } = payload;
   try {
@@ -443,6 +473,10 @@ function* watchSensorSearch() {
 
 function* watchGetSensorType() {
   yield takeLatest(GET_SENSORS_TYPE, getSensorTypeList);
+}
+
+function* watchGetSensorReport() {
+  yield takeLatest(GET_SENSORS_REPORT, getSensorReportList);
 }
 
 function* watchAddSensor() {

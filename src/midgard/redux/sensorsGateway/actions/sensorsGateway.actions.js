@@ -113,6 +113,11 @@ export const GET_SENSORS_TYPE = "SENSORS/GET_SENSORS_TYPE";
 export const GET_SENSORS_TYPE_SUCCESS = "SENSORS/GET_SENSORS_TYPE_SUCCESS";
 export const GET_SENSORS_TYPE_FAILURE = "SENSORS/GET_SENSORS_TYPE_FAILURE";
 
+//get Sensor report action constants
+export const GET_SENSORS_REPORT = "SENSORS/GET_SENSORS_REPORT";
+export const GET_SENSORS_REPORT_SUCCESS = "SENSORS/GET_SENSORS_REPORT_SUCCESS";
+export const GET_SENSORS_REPORT_FAILURE = "SENSORS/GET_SENSORS_REPORT_FAILURE";
+
 export const GET_SENSOR_OPTIONS = "ITEMS/GET_SENSOR_OPTIONS";
 export const GET_SENSOR_OPTIONS_SUCCESS = "ITEMS/GET_SENSOR_OPTIONS_SUCCESS";
 export const GET_SENSOR_OPTIONS_FAILURE = "ITEMS/GET_SENSOR_OPTIONS_FAILURE";
@@ -167,3 +172,8 @@ export const searchSensorItem = (searchItem, searchList, searchFields) => ({
 export const getSensorType = () => ({
   type: GET_SENSORS_TYPE,
 });
+
+
+export const getSensorReport = () => ({
+  type: GET_SENSORS_REPORT,
+})

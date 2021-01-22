@@ -147,7 +147,7 @@ function Shipment(props) {
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}shipment/shipment/?organization_uuid=${organization}`,
+          `${environment.API_URL}shipment/shipment/`,
           true
         )
         .then((response) => response.json())

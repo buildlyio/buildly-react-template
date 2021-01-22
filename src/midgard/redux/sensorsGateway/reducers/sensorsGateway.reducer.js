@@ -33,6 +33,9 @@ import {
   GET_SENSORS_TYPE,
   GET_SENSORS_TYPE_SUCCESS,
   GET_SENSORS_TYPE_FAILURE,
+  GET_SENSORS_REPORT,
+  GET_SENSORS_REPORT_SUCCESS,
+  GET_SENSORS_REPORT_FAILURE,
   GET_GATEWAY_OPTIONS,
   GET_GATEWAY_OPTIONS_SUCCESS,
   GET_GATEWAY_OPTIONS_FAILURE,
@@ -49,6 +52,7 @@ const initialState = {
   gatewayData: null,
   sensorData: null,
   sensorTypeList: null,
+  sensorReportList: null,
   gatewayOptions: null,
   sensorOptions: null,
 };
@@ -299,7 +303,70 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
-    case GET_GATEWAY_OPTIONS:
+    case GET_SENSORS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_SENSORS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorTypeList: action.data,
+      };
+    case GET_SENSORS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case GET_SENSORS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_SENSORS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorTypeList: action.data,
+      };
+    case GET_SENSORS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case GET_SENSORS_REPORT:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case GET_SENSORS_REPORT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorReportList: action.data,
+      };
+    case GET_SENSORS_REPORT_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+      case GET_GATEWAY_OPTIONS:
       return {
         ...state,
         loading: true,
