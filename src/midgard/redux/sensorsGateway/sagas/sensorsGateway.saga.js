@@ -23,6 +23,7 @@ import {
   GET_SENSORS,
   SENSOR_SEARCH,
   GET_SENSORS_TYPE,
+  GET_SENSORS_REPORT,
   Add_SENSOR,
   DELETE_SENSOR,
   EDIT_SENSOR,
@@ -292,7 +293,7 @@ function* getSensorReportList(payload) {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${sensorApiEndPoint}sensor_report/?organization_uuid=${payload.organization_uuid}`,
+      `${environment.API_URL}${sensorApiEndPoint}sensor_report/`,
       null,
       true
     );
@@ -501,6 +502,7 @@ export default function* sensorsGatewaySaga() {
     watchEditGateway(),
     watchGetSensor(),
     watchGetSensorType(),
+    watchGetSensorReport(),
     watchAddSensor(),
     watchEditSensor(),
     watchDeleteSensor(),

@@ -173,7 +173,6 @@ export const getSensorType = () => ({
   type: GET_SENSORS_TYPE,
 });
 
-
 export const getSensorReport = () => ({
   type: GET_SENSORS_REPORT,
 })

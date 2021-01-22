@@ -102,7 +102,8 @@ export const getFormattedRow = (
   custodianData,
   itemData,
   shipmentFlag,
-  custodyData
+  custodyData,
+  sensorReportData
 ) => {
   let shipmentList = [...shipmentData];
   let custodyRows = [];
@@ -120,6 +121,8 @@ export const getFormattedRow = (
     let custodyInfo = [];
     let flag_list = [];
     let custodianName = "";
+    let sensorReportInfo = [];
+
     if (custodyRows.length > 0) {
       custodyRows.forEach((custody) => {
         if (custody.shipment_id === list.shipment_uuid) {
@@ -130,6 +133,17 @@ export const getFormattedRow = (
     }
     list["custodian_name"] = custodianName;
     list["custody_info"] = custodyInfo;
+
+    if (sensorReportData && sensorReportData.length > 0) {
+      sensorReportData.forEach((report) => {
+        if (report.shipment.includes(list.partner_shipment_id)) {
+          // custodianName = custodianName + custody.custodian_data.name + ",";
+          sensorReportInfo.push(sensorReport);
+        }
+      });
+    }
+
+    list["sensor_report"] = sensorReportInfo;
 
     if (itemData && list.items && list.items.length) {
       itemData.forEach((item) => {
@@ -284,6 +298,27 @@ export const getFormattedCustodyRows = (
   });
 
   return sortedList;
+};
+
+export const getFormattedSensorReportRows = (
+  sensorReportData,
+  shipmentFormData
+) => {
+  if (shipmentFormData && sensorReportData) {
+    let formattedData = [...shipmentFormData];
+    formattedData.forEach((element) => {
+      sensorReportData.forEach((report) => {
+        if (report.shipment.includes(element.partner_shipment_id)) {
+          element["sensor_report"] = report.id;
+        }
+      });
+    });
+    let sortedList = formattedData.sort((a, b) => {
+      return moment.utc(a.create_date).diff(moment.utc(b.create_date));
+    });
+    return sortedList;
+  }
+  return data;
 };
 
 export const svgIcon = (flagType, flag) => {

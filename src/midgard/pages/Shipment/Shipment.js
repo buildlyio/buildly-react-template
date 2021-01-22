@@ -46,6 +46,7 @@ import {
   getGatewayType,
   getSensors,
   getSensorType,
+  getSensorReport,
 } from "../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import { MAP_API_URL } from "../../utils/utilMethods";
 import {
@@ -100,6 +101,7 @@ function Shipment(props) {
     filteredData,
     custodyData,
     sensorData,
+    sensorReportData,
     loading,
     shipmentOptions,
     custodyOptions,
@@ -142,6 +144,9 @@ function Shipment(props) {
     if (!sensorData) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
+    }
+    if (!sensorReportData) {
+      dispatch(getSensorReport());
     }
     if (shipmentOptions === null) {
       httpService
@@ -197,6 +202,7 @@ function Shipment(props) {
       custodianData &&
       custodyData &&
       itemData &&
+      sensorReportData &&
       shipmentFlag
     ) {
       let routesInfo = [];
@@ -205,7 +211,8 @@ function Shipment(props) {
         custodianData,
         itemData,
         shipmentFlag,
-        custodyData
+        custodyData,
+        sensorReportData
       );
       formattedRow.forEach((row) => {
         if (row.custody_info && row.custody_info.length > 0) {
@@ -242,12 +249,20 @@ function Shipment(props) {
             }
           });
         }
+        if (row.sensor_report && row.sensor_report.length > 0) {
+          row.sensor_report.forEach((report) => {
+            if (report.report_location != null && Array.isArray(report.report_location)) {
+              let lat_long = JSON.parse(report.report_location[0]);
+              console.log('Lat Long: ',lat_long);
+            }
+          })
+        }
       });
       setMarkers(routesInfo);
       setRows(formattedRow);
       setFilteredRows(formattedRow);
     }
-  }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData]);
+  }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData, sensorReportData]);
 
   useEffect(() => {
     if (filteredData && filteredData.length >= 0) {
