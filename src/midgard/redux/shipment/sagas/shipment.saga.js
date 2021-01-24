@@ -45,10 +45,8 @@ function* getShipmentList(payload) {
     if (data && data.data) {
       yield put(getShipmentFlag(payload.organization_uuid));
     }
-    console.log("data", data);
     yield [yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data })];
   } catch (error) {
-    console.log("error", error);
     yield [
       yield put(
         showAlert({

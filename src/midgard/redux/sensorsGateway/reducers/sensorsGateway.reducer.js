@@ -52,7 +52,7 @@ const initialState = {
   gatewayData: null,
   sensorData: null,
   sensorTypeList: null,
-  sensorReportList: null,
+  sensorReportData: null,
   gatewayOptions: null,
   sensorOptions: null,
 };
@@ -357,7 +357,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        sensorReportList: action.data,
+        sensorReportData: action.data,
       };
     case GET_SENSORS_REPORT_FAILURE:
       return {
