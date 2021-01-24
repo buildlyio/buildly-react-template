@@ -308,7 +308,6 @@ export const getFormattedSensorReportRows = (
     let formattedData = [...shipmentFormData];
     formattedData.forEach((element) => {
       sensorReportData.forEach((report) => {
-        console.log(element, report);
         if (report.shipment_id.includes(element.partner_shipment_id)) {
           element["sensor_report"] = report.id;
         }
