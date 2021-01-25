@@ -258,19 +258,19 @@ function Shipment(props) {
             }
           });
         }
-        if (row.sensor_report && row.sensor_report.length > 0) {
-          row.sensor_report.forEach((report) => {
-            if (report.report_location != null && Array.isArray(report.report_location)) {
-              try {
-                // data uses single quotes which throws an error
-                const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
-                // console.log('Lat Long: ', parsedLocation);
-              } catch(e) {
-                console.log(e);
-              }
-            }
-          });
-        }
+        // if (row.sensor_report && row.sensor_report.length > 0) {
+        //   row.sensor_report.forEach((report) => {
+        //     if (report.report_location != null && Array.isArray(report.report_location)) {
+        //       try {
+        //         // data uses single quotes which throws an error
+        //         const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
+        //         // console.log('Lat Long: ', parsedLocation);
+        //       } catch(e) {
+        //         console.log(e);
+        //       }
+        //     }
+        //   });
+        // }
       });
       // setMarkers(routesInfo);
       setRows(formattedRows);
@@ -295,12 +295,19 @@ function Shipment(props) {
           try {
             // data uses single quotes which throws an error
             const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
-            markersToSet.push({
+            const temperature = report.report_temp;
+            const humidity = report.report_humidity;
+            const marker = {
               lat: parsedLocation && parsedLocation.latitude,
               lng: parsedLocation && parsedLocation.longitude,
-              label: parsedLocation && `${moment.unix(parsedLocation.timeOfPosition).format('llll')}`,
-              icon: returnIcon(mapShipmentFilter),
-            });
+              label: parsedLocation && `Temperature: ${temperature}\u00b0C, Humidity: ${humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
+              icon: returnIcon(mapShipmentFilter)
+            }
+            const markerFound = markersToSet.some(pointer => (pointer.lat === marker.lat && pointer.lng === marker.lng))
+            if (!markerFound) {
+              markersToSet.push(marker);
+            }
+
           } catch(e) {
             console.log(e);
           }
