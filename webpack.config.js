@@ -26,10 +26,8 @@ module.exports = (env, argv) => {
     }
   }
 
-  return {
+  const webpackConfig = {
     entry: ["babel-polyfill", "./src/index.js"],
-    mode: "development",
-    devtool: 'inline-source-map',
     module: {
       rules: [
         {
@@ -129,8 +127,50 @@ module.exports = (env, argv) => {
           favicon: './src/assets/favicon.ico',
       }),
       new CopyPlugin([
-        { from: 'src/environments/environment.js', to: 'environment.js' },
+        { from: 'window.environment.js', to: 'environment.js' },
       ]),
     ]
   };
+
+  if (env.build === 'prod') {
+    webpackConfig.mode = 'production';
+    webpackConfig.devtool = false;
+    webpackConfig.performance = {
+      hints: false,
+      maxEntrypointSize: 512000,
+      maxAssetSize: 512000
+    };
+    webpackConfig.optimization = {
+      namedModules: false,
+      namedChunks: false,
+      nodeEnv: 'production',
+      flagIncludedChunks: true,
+      occurrenceOrder: true,
+      sideEffects: true,
+      usedExports: true,
+      concatenateModules: true,
+      splitChunks: {
+        cacheGroups: {
+          commons: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            chunks: 'all'
+          }
+        },
+        minSize: 30000,
+        maxAsyncRequests: 5,
+        maxAsyncRequests: 3,      
+      },
+      noEmitOnErrors: true,
+      minimize: true,
+      removeAvailableModules: true,
+      removeEmptyChunks: true,
+      mergeDuplicateChunks: true,    
+    };
+  } else {
+    webpackConfig.mode = 'development';
+    webpackConfig.devtool = 'inline-source-map';
+  }
+
+  return webpackConfig;
 };
