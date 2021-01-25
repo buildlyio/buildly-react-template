@@ -54,7 +54,7 @@ function Sensors(props) {
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}sensors/sensor/?organization_uuid=${organization}`,
+          `${environment.API_URL}sensors/sensor/`,
           true
         )
         .then((response) => response.json())

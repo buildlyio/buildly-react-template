@@ -89,7 +89,7 @@ function Custodian({
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}custodian/custodian/?organization_uuid=${organization}`,
+          `${environment.API_URL}custodian/custodian/`,
           true
         )
         .then((response) => response.json())
@@ -104,7 +104,7 @@ function Custodian({
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}custodian/contact/?organization_uuid=${organization}`,
+          `${environment.API_URL}custodian/contact/`,
           true
         )
         .then((response) => response.json())

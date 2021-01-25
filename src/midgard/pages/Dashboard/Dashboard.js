@@ -35,6 +35,7 @@ import {
   getGatewayType,
   getSensors,
   getSensorType,
+  getSensorReport,
 } from "../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import { getFormattedRow, svgIcon } from "../Shipment/ShipmentConstants";
 import {
@@ -100,6 +101,7 @@ function Dashboard(props) {
     unitsOfMeasure,
     custodyData,
     sensorData,
+    sensorReportData,
     loading,
     dashboardItems,
   } = props;
@@ -140,6 +142,9 @@ function Dashboard(props) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
+    if (!sensorReportData) {
+      dispatch(getSensorReport());
+    }
 
     // dispatch(getDashboardItems());
   }, []);
@@ -160,6 +165,7 @@ function Dashboard(props) {
       shipmentData &&
       custodianData &&
       custodyData &&
+      sensorReportData &&
       itemData &&
       shipmentFlag
     ) {
@@ -171,7 +177,8 @@ function Dashboard(props) {
         custodianData,
         itemData,
         shipmentFlag,
-        custodyData
+        custodyData,
+        sensorReportData
       );
       formattedRow.forEach((row) => {
         if (row.custody_info && row.custody_info.length > 0) {
@@ -207,6 +214,20 @@ function Dashboard(props) {
             }
           });
         }
+        // "{'latitude': 47.65982, 'longitude': -122.329514, 'altitude': 22.5, 'positionUncertainty': 41.036568, 'locationMethod': 'GPS', 'timeOfPosition': 1610692285638}"
+        // if (row.sensor_report && row.sensor_report.length > 0) {
+        //   row.sensor_report.forEach((report) => {
+        //     if (report.report_location != null && Array.isArray(report.report_location)) {
+        //       try {
+        //         // data uses single quotes which throws an error
+        //         let lat_long = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
+        //         console.log('Lat Long: ', lat_long);
+        //       } catch(e) {
+        //         console.log(e);
+        //       }
+        //     }
+        //   })
+        // }
         if (row.flag_list) {
           row.flag_list.forEach((flag) => {
             if (flag.name.toLowerCase() === "delay") {
@@ -227,7 +248,7 @@ function Dashboard(props) {
       setDelayedRows(delayedInfo);
       setExcursionRows(excursionInfo);
     }
-  }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData]);
+  }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData, sensorReportData]);
 
   return (
     <Box mt={3} mb={3}>

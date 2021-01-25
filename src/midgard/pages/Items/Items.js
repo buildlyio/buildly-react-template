@@ -70,7 +70,7 @@ function Items({
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}shipment/item/?organization_uuid=${organization}`,
+          `${environment.API_URL}shipment/item/`,
           true
         )
         .then((response) => response.json())
@@ -86,7 +86,7 @@ function Items({
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}shipment/product/?organization_uuid=${organization}`,
+          `${environment.API_URL}shipment/product/`,
           true
         )
         .then((response) => response.json())
