@@ -79,6 +79,16 @@ const useStyles = makeStyles({
       width: "100%",
     },
   },
+  shipmentName: {
+    '&:hover': {
+      color: theme.palette.primary.main,
+      textDecoration: 'underline',
+      cursor: 'pointer'
+    }
+  },
+  selectedShipment: {
+    color: theme.palette.primary.main,
+  }
 });
 
 export default function ShipmentList({ ...props }) {
@@ -93,6 +103,8 @@ export default function ShipmentList({ ...props }) {
     dispatch,
     filteredRows,
     loading,
+    mapShipmentFilter,
+    setMapShipmentFilter
   } = props;
   const classes = useStyles();
   const [allCheck, setAllCheck] = useState(false);
@@ -413,8 +425,9 @@ export default function ShipmentList({ ...props }) {
                           <TableBody>
                             <TableRow>
                               <TableCell
+                                onClick={() => setMapShipmentFilter(row)}
                                 title={`Shipment#: ${row.shipment_uuid}`}
-                                className={classes.tableCell}
+                                className={`${classes.tableCell} ${classes.shipmentName} ${row.shipment_uuid === mapShipmentFilter.shipment_uuid ? classes.selectedShipment : ''}`}
                                 colSpan={columns.length + 2}
                               >
                                 {`Shipment#: ${row.shipment_uuid}`}

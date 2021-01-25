@@ -218,8 +218,13 @@ function Dashboard(props) {
         if (row.sensor_report && row.sensor_report.length > 0) {
           row.sensor_report.forEach((report) => {
             if (report.report_location != null && Array.isArray(report.report_location)) {
-              let lat_long = JSON.parse(report.report_location[0]);
-              console.log('Lat Long: ',lat_long);
+              try {
+                // data uses single quotes which throws an error
+                let lat_long = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
+                console.log('Lat Long: ', lat_long);
+              } catch(e) {
+                console.log(e);
+              }
             }
           })
         }
