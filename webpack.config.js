@@ -3,6 +3,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 const envConfig = require('./environments.config.json');
 
 module.exports = (env, argv) => {
@@ -96,6 +97,7 @@ module.exports = (env, argv) => {
       modules: [path.resolve(__dirname, './src'), 'node_modules'],
       alias: {
         assets: path.resolve(__dirname, './src/assets'),
+        environments: path.resolve(__dirname, './src/environments'),
         components: path.resolve(__dirname, './src/midgard/components'),
         hooks: path.resolve(__dirname, './src/midgard/hooks'),
         layout: path.resolve(__dirname, './src/midgard/layout'),
@@ -104,8 +106,7 @@ module.exports = (env, argv) => {
         pages: path.resolve(__dirname, './src/midgard/pages'),
         routes: path.resolve(__dirname, './src/midgard/routes'),
         styles: path.resolve(__dirname, './src/styles'),
-        utils: path.resolve(__dirname, './src/midgard/utils'),
-        environment$: path.resolve(__dirname, './src/environments/environment.js')
+        utils: path.resolve(__dirname, './src/midgard/utils')
       }
     },
     output: {
@@ -126,7 +127,10 @@ module.exports = (env, argv) => {
           template: "./src/index.html",
           filename: "./index.html",
           favicon: './src/assets/favicon.ico',
-      })
+      }),
+      new CopyPlugin([
+        { from: 'src/environments/environment.js', to: 'environment.js' },
+      ]),
     ]
   };
 };

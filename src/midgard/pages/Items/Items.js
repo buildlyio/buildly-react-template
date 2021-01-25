@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
 import { routes } from "../../routes/routesConstants";
-import { environment } from "environment";
+import { environment } from "environments/environment";
 import AddItems from "./forms/AddItems";
 import { itemColumns, getFormattedRow } from "./ItemsConstants";
 import {

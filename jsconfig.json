@@ -14,6 +14,7 @@
   ],
   "paths": {
     "assets/*": ["src/assets/*"],
+    "environments/*": ["src/environments/*"],
     "components/*": ["src/midgard/components/*"],
     "hooks/*": ["src/midgard/hooks/*"],
     "layout/*": ["src/midgard/layout/*"],
@@ -22,8 +23,7 @@
     "pages/*": ["src/midgard/pages/*"],
     "routes/*": ["src/midgard/routes/*"],
     "styles/*": ["src/styles/*"],
-    "utils/*": ["src/midgard/utils/*"],
-    "environment": ["environment.js"]
+    "utils/*": ["src/midgard/utils/*"]
   },
   "exclude": ["node_modules"],
 }

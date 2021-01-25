@@ -18,7 +18,7 @@ import { httpService } from 'midgard/modules/http/http.service';
 
 const endpoint = `${environment.API_URL}coreuser/`;
 
-import { environment } from 'environment';
+import { environment } from 'environments/environment';
 
 function* loadCoreUsers() {
     try {

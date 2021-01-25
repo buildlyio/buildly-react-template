@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { environment } from "environment";
+import { environment } from "environments/environment";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import DataTable from "../../components/Table/Table";

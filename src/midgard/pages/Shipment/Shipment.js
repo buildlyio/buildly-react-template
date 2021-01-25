@@ -57,7 +57,7 @@ import AlertInfo from "./AlertInfo";
 import Loader from "midgard/components/Loader/Loader";
 import CustomizedTooltips from "midgard/components/ToolTip/ToolTip";
 import { httpService } from "midgard/modules/http/http.service";
-import { environment } from "environment";
+import { environment } from "environments/environment";
 import { UserContext } from "midgard/context/User.context";
 import moment from 'moment';
 

@@ -14,7 +14,7 @@ import {
 } from 'midgard/redux/coregroup/actions/coregroup.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
 import { httpService } from 'midgard/modules/http/http.service';
-import { environment } from 'environment';
+import { environment } from 'environments/environment';
 
 
 function* loadCoregroups() {

@@ -1,7 +1,8 @@
-export const MAP_API_KEY = "AIzaSyBcFCjQsHImeUy8jJQLW37ucWUKKmJwLd0";
-export const MAP_API_URL =
-  "https://maps.googleapis.com/maps/api/js?key=AIzaSyBcFCjQsHImeUy8jJQLW37ucWUKKmJwLd0&v=3.exp&libraries=geometry,drawing,places";
-export const GEO_CODE_API = "AIzaSyDw-lNn69CSWKBGz97HeVuJQKIhiVLcFyE";
+import { environment } from 'environments/environment';
+
+export const MAP_API_KEY = environment.MAP_API_KEY;
+export const MAP_API_URL =environment.MAP_API_URL;
+export const GEO_CODE_API = environment.GEO_CODE_API;
 
 export function numberWithCommas(x) {
   if (!x) return "";

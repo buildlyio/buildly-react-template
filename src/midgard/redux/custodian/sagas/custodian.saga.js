@@ -34,7 +34,7 @@ import {
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
 import { httpService } from "../../../modules/http/http.service";
-import { environment } from "environment";
+import { environment } from "environments/environment";
 import { routes } from "../../../routes/routesConstants";
 import { showAlert } from "../../alert/actions/alert.actions";
 import { searchFilter } from "../../../utils/utilMethods";

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { environment } from "environment";
+import { environment } from "environments/environment";
 import { gatewayColumns, getFormattedRow } from "../Constants";
 import AddGateway from "../forms/AddGateway";
 import DashboardWrapper from "../../../components/DashboardWrapper/DashboardWrapper";
