@@ -1,7 +1,7 @@
 import { environment } from 'environments/environment';
 
 export const MAP_API_KEY = environment.MAP_API_KEY;
-export const MAP_API_URL =environment.MAP_API_URL;
+export const MAP_API_URL = environment.MAP_API_URL;
 export const GEO_CODE_API = environment.GEO_CODE_API;
 
 export function numberWithCommas(x) {
