@@ -42,6 +42,7 @@ import {
   getGatewayType,
   getSensors,
   getSensorType,
+  getSensorReport,
 } from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
 import { MAP_API_URL } from "midgard/utils/utilMethods";
 import {
@@ -58,11 +59,20 @@ import CustomizedTooltips from "midgard/components/ToolTip/ToolTip";
 import { httpService } from "midgard/modules/http/http.service";
 import { environment } from "environment";
 import { UserContext } from "midgard/context/User.context";
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
     fontWeight: "bold",
     marginBottom: "0.5em",
+  },
+  tileHeading: {
+    flex: 1,
+    padding: theme.spacing(1, 2),
+    textTransform: "uppercase",
+    fontSize: 18,
+    display: "flex",
+    alignItems: "center",
   },
   addButton: {
     [theme.breakpoints.down("xs")]: {
@@ -94,6 +104,7 @@ function Shipment(props) {
     filteredData,
     custodyData,
     sensorData,
+    sensorReportData,
     loading,
     shipmentOptions,
     custodyOptions,
@@ -103,6 +114,7 @@ function Shipment(props) {
   const [deleteItemId, setDeleteItemId] = useState("");
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
+  const [mapShipmentFilter, setMapShipmentFilter] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [tileView, setTileView] = useState(true);
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -137,11 +149,14 @@ function Shipment(props) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
+    if (!sensorReportData) {
+      dispatch(getSensorReport());
+    }
     if (shipmentOptions === null) {
       httpService
         .makeOptionsRequest(
           "options",
-          `${environment.API_URL}shipment/shipment/?organization_uuid=${organization}`,
+          `${environment.API_URL}shipment/shipment/`,
           true
         )
         .then((response) => response.json())
@@ -182,7 +197,7 @@ function Shipment(props) {
       flagType = shipmentFlags[0].type;
       flag = shipmentFlags[0].name;
     }
-    return svgIcon(flagType, flag, row);
+    return svgIcon(flagType, flag);
   };
 
   useEffect(() => {
@@ -191,17 +206,19 @@ function Shipment(props) {
       custodianData &&
       custodyData &&
       itemData &&
+      sensorReportData &&
       shipmentFlag
     ) {
       let routesInfo = [];
-      let formattedRow = getFormattedRow(
+      let formattedRows = getFormattedRow(
         shipmentData,
         custodianData,
         itemData,
         shipmentFlag,
-        custodyData
+        custodyData,
+        sensorReportData
       );
-      formattedRow.forEach((row) => {
+      formattedRows.forEach((row) => {
         if (row.custody_info && row.custody_info.length > 0) {
           row.custody_info.forEach((custody) => {
             if (
@@ -236,18 +253,64 @@ function Shipment(props) {
             }
           });
         }
+        // if (row.sensor_report && row.sensor_report.length > 0) {
+        //   row.sensor_report.forEach((report) => {
+        //     if (report.report_location != null && Array.isArray(report.report_location)) {
+        //       try {
+        //         // data uses single quotes which throws an error
+        //         const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
+        //         // console.log('Lat Long: ', parsedLocation);
+        //       } catch(e) {
+        //         console.log(e);
+        //       }
+        //     }
+        //   });
+        // }
       });
-      setMarkers(routesInfo);
-      setRows(formattedRow);
-      setFilteredRows(formattedRow);
+      // setMarkers(routesInfo);
+      setRows(formattedRows);
+      setFilteredRows(formattedRows);
+      if (!mapShipmentFilter && formattedRows.length) {
+        setMapShipmentFilter(formattedRows[0])
+      }
     }
-  }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData]);
+  }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData, sensorReportData]);
 
   useEffect(() => {
     if (filteredData && filteredData.length >= 0) {
       setFilteredRows(filteredData);
     }
   }, [filteredData]);
+
+  useEffect(() => {
+    if (mapShipmentFilter) {
+      let markersToSet = [];
+      mapShipmentFilter.sensor_report.forEach((report) => {
+        if (report.report_location != null && Array.isArray(report.report_location)) {
+          try {
+            // data uses single quotes which throws an error
+            const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
+            const temperature = report.report_temp;
+            const humidity = report.report_humidity;
+            const marker = {
+              lat: parsedLocation && parsedLocation.latitude,
+              lng: parsedLocation && parsedLocation.longitude,
+              label: parsedLocation && `Temperature: ${temperature}\u00b0C, Humidity: ${humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
+              icon: returnIcon(mapShipmentFilter)
+            }
+            const markerFound = markersToSet.some(pointer => (pointer.lat === marker.lat && pointer.lng === marker.lng))
+            if (!markerFound) {
+              markersToSet.push(marker);
+            }
+
+          } catch(e) {
+            console.log(e);
+          }
+        }
+      });
+      setMarkers(markersToSet);
+    }
+  }, [mapShipmentFilter]);
 
   const onAddButtonClick = () => {
     history.push(`${routes.SHIPMENT}/add`, {
@@ -269,7 +332,7 @@ function Shipment(props) {
   };
 
   const handleConfirmModal = () => {
-    dispatch(deleteShipment(deleteItemId,organization));
+    dispatch(deleteShipment(deleteItemId, organization));
     setConfirmModal(false);
   };
 
@@ -315,11 +378,24 @@ function Shipment(props) {
             editAction={handleEdit}
             deleteAction={handleDelete}
             hasSort={true}
+            mapShipmentFilter={mapShipmentFilter}
+            setMapShipmentFilter={setMapShipmentFilter}
           />
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
-            <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
+            {
+              mapShipmentFilter
+              ? (
+                <Typography
+                  className={classes.tileHeading}
+                  variant="h5">
+                  {mapShipmentFilter.name}
+                  <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
+                </Typography>
+              )
+              : (<CustomizedTooltips toolTipText={MAP_TOOLTIP} />)
+            }
             <Hidden smDown>
               <IconButton
                 className={classes.menuButton}

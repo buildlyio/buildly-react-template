@@ -89,8 +89,8 @@ export const editShipment = (payload, history, redirectTo, organization_uuid) =>
 
 /**
  *Delete Shipment entity
- * @param {{id}} shipmentId
- * @param {String} organization_uuid
+ * @param {string} shipmentId
+ * @param {string} organization_uuid
  */
 export const deleteShipment = (shipmentId, organization_uuid) => ({
   type: DELETE_SHIPMENT,
