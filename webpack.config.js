@@ -132,7 +132,7 @@ module.exports = (env, argv) => {
     ]
   };
 
-  if (env.build === 'prod') {
+  if (env && env.build === 'prod') {
     webpackConfig.mode = 'production';
     webpackConfig.devtool = false;
     webpackConfig.performance = {
