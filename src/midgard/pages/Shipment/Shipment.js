@@ -18,6 +18,7 @@ import {
   getFormattedCustodyRows,
   svgIcon,
   MAP_TOOLTIP,
+  SHIPMENT_LIST_TOOLTIP
 } from "./ShipmentConstants";
 import ShipmentList from "./components/ShipmentList";
 import { shipmentMock } from "../../utils/mock";
@@ -362,6 +363,7 @@ function Shipment(props) {
       <Grid container spacing={2}>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
+            <CustomizedTooltips toolTipText={SHIPMENT_LIST_TOOLTIP} />
             <Hidden smDown>
               <IconButton
                 className={classes.menuButton}
