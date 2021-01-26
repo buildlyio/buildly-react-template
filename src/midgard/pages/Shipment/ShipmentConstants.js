@@ -12,6 +12,9 @@ import {
 export const MAP_TOOLTIP =
   "Locations of the shipment from starting point till current time";
 
+export const SHIPMENT_LIST_TOOLTIP =
+  "Click on a shipment to view it on the map";
+
 export const SHIPMENT_COLUMNS = [
   { id: "id", width: 150, maxWidth: 150 },
   {
