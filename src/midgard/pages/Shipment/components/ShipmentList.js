@@ -82,7 +82,7 @@ const useStyles = makeStyles({
     },
   },
   selectedShipment: {
-    background: "#887C5E",
+    background: theme.palette.primary.dark,
   }
 });
 
@@ -413,7 +413,7 @@ export default function ShipmentList({ ...props }) {
                                 className={classes.tableCell}
                                 colSpan={columns.length + 2}
                               >
-                                {`Shipment#: ${row.shipment_uuid}`}
+                                {`Shipment#: ${row.shipment_uuid} ${row.shipment_uuid === mapShipmentFilter.shipment_uuid ? "(Viewing on map)" : ""}`}
                                 <Divider />
                               </TableCell>
                             </TableRow>
