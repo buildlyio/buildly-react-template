@@ -11,13 +11,13 @@ import {
     DELETE_COREGROUP,
     DELETE_COREGROUP_FAIL,
     DELETE_COREGROUP_COMMIT
-} from '../actions/coregroup.actions';
+} from 'midgard/redux/coregroup/actions/coregroup.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
-import { httpService } from '../../../modules/http/http.service';
-import { environment } from 'environment';
+import { httpService } from 'midgard/modules/http/http.service';
+import { environment } from 'environments/environment';
 
 
-function* loadCoreGroups() {
+function* loadCoregroups() {
     try {
         const group = yield call(httpService.makeRequest, 'get', `${environment.API_URL}coregroups/`);
         yield [
@@ -28,7 +28,7 @@ function* loadCoreGroups() {
     }
 }
 
-function* deleteCoreGroups(data) {
+function* deleteCoregroups(data) {
     try {
         const group = yield call(httpService.makeRequest, 'delete', `${environment.API_URL}coregroups/${data.data.id}`);
         yield [
@@ -40,7 +40,7 @@ function* deleteCoreGroups(data) {
 }
 
 
-function* updateCoreGroups(data) {
+function* updateCoregroups(data) {
     try {
         const group = yield call(httpService.makeRequest, 'put', `${environment.API_URL}coregroups/${data.data.id}/`, data.data);
         yield [
@@ -52,7 +52,7 @@ function* updateCoreGroups(data) {
 }
 
 
-function* createCoreGroups(data) {
+function* createCoregroups(data) {
     try {
         const group = yield call(httpService.makeRequest, 'post', `${environment.API_URL}coregroups/`, data.data);
         yield [
@@ -63,27 +63,27 @@ function* createCoreGroups(data) {
     }
 }
 
-function* watchCreateCoreGroups() {
-    yield takeLatest(CREATE_COREGROUP, createCoreGroups)
+function* watchCreateCoregroups() {
+    yield takeLatest(CREATE_COREGROUP, createCoregroups)
 }
 
-function* watchLoadCoreGroups() {
-    yield takeLatest(LOAD_DATA_COREGROUP, loadCoreGroups)
+function* watchLoadCoregroups() {
+    yield takeLatest(LOAD_DATA_COREGROUP, loadCoregroups)
 }
 
 
-function* watchDeleteCoreGroups() {
-    yield takeLatest(DELETE_COREGROUP, deleteCoreGroups)
+function* watchDeleteCoregroups() {
+    yield takeLatest(DELETE_COREGROUP, deleteCoregroups)
 }
 
-function* watchUpdateCoreGroups() {
-    yield takeLatest(UPDATE_COREGROUP, updateCoreGroups)
+function* watchUpdateCoregroups() {
+    yield takeLatest(UPDATE_COREGROUP, updateCoregroups)
 }
-export default function* coreGroupSaga() {
+export default function* coregroupSaga() {
   yield all([
-      watchLoadCoreGroups(),
-      watchDeleteCoreGroups(),
-      watchUpdateCoreGroups(),
-      watchCreateCoreGroups()
+      watchLoadCoregroups(),
+      watchDeleteCoregroups(),
+      watchUpdateCoregroups(),
+      watchCreateCoregroups()
   ]);
 }

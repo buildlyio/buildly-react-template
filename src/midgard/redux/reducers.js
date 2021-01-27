@@ -12,8 +12,6 @@ import shipmentReducer from "./shipment/reducers/shipment.reducers";
 import { LOGOUT_SUCCESS } from "./authuser/actions/authuser.actions";
 
 const appReducer = combineReducers({
-  //entryPointForGulpStart
-    //entryPointForGulpEnd
   authReducer,
   coreuserReducer,
   coreGroupReducer,

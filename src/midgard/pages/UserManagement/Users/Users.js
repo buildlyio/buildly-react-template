@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { PermissionsTable } from 'midgard/components/PermissionsTable/PermissionsTable';
 import Crud from 'midgard/modules/crud/Crud';
-import { getCoreGroups } from 'midgard/redux/coregroup/actions/coregroup.actions'
+import { getCoregroups } from 'midgard/redux/coregroup/actions/coregroup.actions'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -37,7 +37,7 @@ function Users({ location, history, data, dispatch }) {
  
   useEffect(() => {
     if (!coreGroupsLoaded) {
-      dispatch(getCoreGroups());
+      dispatch(getCoregroups());
       setCoreGroupsLoaded(true);
     } else {
       // define permissions

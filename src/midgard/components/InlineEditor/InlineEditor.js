@@ -106,11 +106,11 @@ export function InlineEditor({id, tag, value, placeholder, disabled, onChange}) 
           <Grid item="true">
             <Typography className={classes.typography} variant={tag}>{value || placeholder}</Typography>
           </Grid>
-          {!disabled && 
-            (<Grid item="true">
-              <EditIcon className={classes.editIcon} color="action" onClick={() => setEditing(true)}></EditIcon>
-            </Grid>)
-          }
+          {!disabled && (
+            <Grid item="true">
+              <EditIcon className={classes.editIcon} onClick={() => setEditing(true)}></EditIcon>
+            </Grid>
+          )}
         </Grid>
       )}
     </Box>

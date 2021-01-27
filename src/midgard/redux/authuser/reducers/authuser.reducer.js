@@ -32,7 +32,7 @@ import {
   RESET_PASSWORD_CHECK_FAILURE,
   GET_ORGANIZATION_OPTIONS_SUCCESS,
   GET_ORGANIZATION_OPTIONS_FAILURE,
-} from "../actions/authuser.actions";
+} from "midgard/redux/authuser/actions/authuser.actions";
 
 const initialState = {
   loading: false,
@@ -70,6 +70,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case REGISTER:
       return {
         ...state,
@@ -94,6 +95,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case UPDATE_USER:
       return {
         ...state,
@@ -177,6 +179,7 @@ export default (state = initialState, action) => {
         organizationData: null,
         error: null,
       };
+
     case GET_ORGANIZATION_SUCCESS:
       return {
         ...state,
@@ -185,6 +188,7 @@ export default (state = initialState, action) => {
         organizationData: (action.data && action.data.data) || null,
         error: null,
       };
+
     case GET_ORGANIZATION_FAILURE:
       return {
         ...state,
@@ -202,6 +206,7 @@ export default (state = initialState, action) => {
         userOptions: null,
         error: null,
       };
+
     case GET_USER_OPTIONS_SUCCESS:
       return {
         ...state,
@@ -210,6 +215,7 @@ export default (state = initialState, action) => {
         userOptions: action.data,
         error: null,
       };
+
     case GET_USER_OPTIONS_FAILURE:
       return {
         ...state,
@@ -226,6 +232,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case RESET_PASSWORD_SUCCESS:
       return {
         ...state,
@@ -233,6 +240,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: null,
       };
+
     case RESET_PASSWORD_FAILURE:
       return {
         ...state,
@@ -248,6 +256,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case RESET_PASSWORD_CONFIRM_SUCCESS:
       return {
         ...state,
@@ -255,6 +264,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: null,
       };
+
     case RESET_PASSWORD_CONFIRM_FAILURE:
       return {
         ...state,
@@ -270,6 +280,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case RESET_PASSWORD_CHECK_SUCCESS:
       return {
         ...state,
@@ -278,6 +289,7 @@ export default (state = initialState, action) => {
         error: null,
         resetPasswordCheckData: action.data,
       };
+
     case RESET_PASSWORD_CHECK_FAILURE:
       return {
         ...state,
@@ -294,6 +306,7 @@ export default (state = initialState, action) => {
         orgOptions: action.data,
         error: null,
       };
+      
     case GET_ORGANIZATION_OPTIONS_FAILURE:
       return {
         ...state,

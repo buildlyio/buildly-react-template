@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 /**
 * it will add the loaded element to the state
 * @param state - the current state
@@ -16,7 +18,7 @@ export const addAll = (state, action) => {
  * @param {string} idProp - unique identifier property to check if element exists
  * @returns {any}
  */
-export const upsertOne = (state, action, idProp: string, dataProp?: string) => {
+export const upsertOne = (state, action, idProp, dataProp) => {
   const dataObj = {};
   let dataArr = [];
   if (dataProp) {
@@ -74,6 +76,11 @@ export const upsertOne = (state, action, idProp: string, dataProp?: string) => {
   }
 };
 
+upsertOne.propTypes = {
+  idProp: PropTypes.string,
+  dataProp: PropTypes.string
+}
+
 /**
  * it deletes an from to the state if it does not exist otherwise it will return the curren state
  * @param state - the current state
@@ -82,7 +89,7 @@ export const upsertOne = (state, action, idProp: string, dataProp?: string) => {
  * @param {string} dataProp - property that stores the data
  * @returns {any}
  */
-export const deleteOne = (state, action, idProp: string, dataProp?: string) => {
+export const deleteOne = (state, action, idProp, dataProp) => {
   const dataObj = {};
   let dataArr = [];
   if (dataProp) {
@@ -94,6 +101,11 @@ export const deleteOne = (state, action, idProp: string, dataProp?: string) => {
     return {...state, data: dataArr, deleted: true};
   }
 };
+
+deleteOne.propTypes = {
+  idProp: PropTypes.string,
+  dataProp: PropTypes.string
+}
 
 /**
  * updates nested data in one reducer only one level of nested data supported
@@ -155,7 +167,7 @@ export const deleteNested = (state, action) => {
  * @param action - the returned action
  * @returns {any}
  */
-export const addFromGraphQl = (state, action, type: string) => {
+export const addFromGraphQl = (state, action, type) => {
   Object.keys(action.data).forEach(key => {
     if (action.data[key].__typename === type) {
       const findItem = state.data.find( item => (item.id).toString() === (action.data[key].id).toString());
@@ -168,12 +180,20 @@ export const addFromGraphQl = (state, action, type: string) => {
   return state;
 };
 
+addFromGraphQl.propTypes = {
+  type: PropTypes.string
+}
+
 /**
  * it deletes one or more items from to the state if they exist in the state
  * @param state - the current state
  * @param action - the returned action
  * @returns {any}
  */
-export const deleteMultiple = (state, action, idProp: string) => {
+export const deleteMultiple = (state, action, idProp) => {
   return {...state, data: state.data.filter (item => !action.data.find(element => element[idProp] === item[idProp])), deleted: true};
 };
+
+deleteMultiple.propTypes = {
+  idProp: PropTypes.string
+}

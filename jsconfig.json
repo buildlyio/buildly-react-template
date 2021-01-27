@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "outDir": "./dist/",
+    "module": "commonjs",
+    "target": "es6",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "checkJs": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "paths": {
+    "assets/*": ["src/assets/*"],
+    "environments/*": ["src/environments/*"],
+    "components/*": ["src/midgard/components/*"],
+    "hooks/*": ["src/midgard/hooks/*"],
+    "layout/*": ["src/midgard/layout/*"],
+    "midgard/*": ["src/midgard/*"],
+    "modules/*": ["src/midgard/modules/*"],
+    "pages/*": ["src/midgard/pages/*"],
+    "routes/*": ["src/midgard/routes/*"],
+    "styles/*": ["src/styles/*"],
+    "utils/*": ["src/midgard/utils/*"]
+  },
+  "exclude": ["node_modules"],
+}

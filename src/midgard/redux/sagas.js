@@ -13,8 +13,6 @@ import shipmentSaga from "./shipment/sagas/shipment.saga";
 export default function* rootSaga() {
   yield all([
     // import all sagas and call them here:
-    //entryPointForGulpStart
-    //entryPointForGulpEnd
     authSaga(),
     custodianSaga(),
     coreUserSaga(),

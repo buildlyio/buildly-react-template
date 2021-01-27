@@ -1,0 +1,20 @@
+{
+  "configurations": {
+    "prod": {
+      "fileReplacements": [
+        {
+          "replace": "src/environments/environment.js",
+          "with": "src/environments/environment.prod.js"
+        }
+      ]
+    },
+    "dev": {
+      "fileReplacements": [
+        {
+          "replace": "src/environments/environment.js",
+          "with": "src/environments/environment.dev.js"
+        }
+      ]
+    }
+  }
+}
