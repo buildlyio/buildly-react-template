@@ -1,6 +1,6 @@
 // Configuration for production environment
 
-const API_URL = "https://app.tpath.io/";
+const API_URL = "https://app-api.tpath.io/";
 const MAP_API_KEY = "AIzaSyC95TcB_eTARGYYduIqDf-7u4O6JEjNIgQ";
 
 export const environment = {
