@@ -11,6 +11,8 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import EditIcon from "@material-ui/icons/Edit";
 import ViewIcon from "@material-ui/icons/RemoveRedEye";
+import RadioBtnCheckedIcon from "@material-ui/icons/RadioButtonChecked";
+import RadioBtnUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import SearchInput from "../../../components/SearchComponent/SearchInput";
@@ -79,15 +81,8 @@ const useStyles = makeStyles({
       width: "100%",
     },
   },
-  shipmentName: {
-    '&:hover': {
-      color: theme.palette.primary.main,
-      textDecoration: 'underline',
-      cursor: 'pointer'
-    }
-  },
   selectedShipment: {
-    color: theme.palette.primary.main,
+    background: theme.palette.primary.dark,
   }
 });
 
@@ -401,36 +396,24 @@ export default function ShipmentList({ ...props }) {
       )}
 
       <TableContainer id="shipment-table" className={classes.container}>
-        {/* <InfiniteScroll
-          dataLength={rows.length} //This is important field to render the next data
-          next={fetchData}
-          hasMore={true}
-          scrollableTarget="shipment-table"
-          loader={loading && <Loader open={loading} />}
-          endMessage={
-            <p style={{ textAlign: "center" }}>
-              <b>Yay! You have seen it all</b>
-            </p>
-          }
-        > */}
-        <Table stickyHeader className={classes.table} aria-label="sticky table">
+        <Table stickyHeader aria-label="sticky table">
           <TableBody>
             {filteredRows.length > 0 &&
               selectedRows.map((row, rowIndex) => {
                 return (
                   <React.Fragment key={`row${rowIndex}:${row.id}`}>
                     <StyledTableRow hover tabIndex={-1}>
-                      <TableCell colSpan={3}>
+                      <TableCell colSpan={3} className={row.shipment_uuid === mapShipmentFilter.shipment_uuid ? classes.selectedShipment : ""}>
                         <Table>
                           <TableBody>
                             <TableRow>
                               <TableCell
                                 onClick={() => setMapShipmentFilter(row)}
                                 title={`Shipment#: ${row.shipment_uuid}`}
-                                className={`${classes.tableCell} ${classes.shipmentName} ${row.shipment_uuid === mapShipmentFilter.shipment_uuid ? classes.selectedShipment : ''}`}
+                                className={classes.tableCell}
                                 colSpan={columns.length + 2}
                               >
-                                {`Shipment#: ${row.shipment_uuid}`}
+                                {`Shipment#: ${row.shipment_uuid} ${row.shipment_uuid === mapShipmentFilter.shipment_uuid ? "(Viewing on map)" : ""}`}
                                 <Divider />
                               </TableCell>
                             </TableRow>
@@ -445,7 +428,23 @@ export default function ShipmentList({ ...props }) {
                                 className={classes.tableCell}
                               >
                                 <IconButton
-                                  className={classes.menuButton}
+                                  onClick={() => setMapShipmentFilter(row)}
+                                  color="secondary"
+                                  aria-label="menu"
+                                >
+                                  {row.shipment_uuid === mapShipmentFilter.shipment_uuid ? <RadioBtnCheckedIcon /> : <RadioBtnUncheckedIcon />}
+                                </IconButton>
+                              </TableCell>
+                              <TableCell
+                                align="left"
+                                style={{
+                                  width: 50,
+                                  maxWidth: 80,
+                                  minWidth: 50,
+                                }}
+                                className={classes.tableCell}
+                              >
+                                <IconButton
                                   onClick={() => editAction(row)}
                                   color="secondary"
                                   aria-label="menu"
@@ -463,7 +462,6 @@ export default function ShipmentList({ ...props }) {
                                 }}
                               >
                                 <IconButton
-                                  className={classes.menuButton}
                                   onClick={() => deleteAction(row)}
                                   color="secondary"
                                   aria-label="menu"

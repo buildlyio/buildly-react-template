@@ -16,6 +16,7 @@ import {
   getFormattedRow,
   svgIcon,
   MAP_TOOLTIP,
+  SHIPMENT_LIST_TOOLTIP
 } from "./ShipmentConstants";
 import ShipmentList from "./components/ShipmentList";
 import { routes } from "../../routes/routesConstants";
@@ -296,9 +297,14 @@ function Shipment(props) {
               lat: parsedLocation && parsedLocation.latitude,
               lng: parsedLocation && parsedLocation.longitude,
               label: parsedLocation && `Temperature: ${temperature}\u00b0C, Humidity: ${humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
-              icon: returnIcon(mapShipmentFilter)
+              icon: returnIcon(mapShipmentFilter),
+              temp: temperature,
+              humidity: humidity
             }
-            const markerFound = markersToSet.some(pointer => (pointer.lat === marker.lat && pointer.lng === marker.lng))
+            // Skip a marker on map only if temperature, humidity and lat long are all same.
+            // Considered use case: If a shipment stays at some position for long, temperature and humidity changes can be critical
+            const markerFound = markersToSet.some(pointer => (pointer.temperature === marker.temperature &&
+              pointer.humidity === marker.humidity && pointer.lat === marker.lat && pointer.lng === marker.lng))
             if (!markerFound) {
               markersToSet.push(marker);
             }
@@ -357,6 +363,7 @@ function Shipment(props) {
       <Grid container spacing={2}>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
+            <CustomizedTooltips toolTipText={SHIPMENT_LIST_TOOLTIP} />
             <Hidden smDown>
               <IconButton
                 className={classes.menuButton}
