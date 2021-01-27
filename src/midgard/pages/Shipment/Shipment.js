@@ -302,9 +302,14 @@ function Shipment(props) {
               lat: parsedLocation && parsedLocation.latitude,
               lng: parsedLocation && parsedLocation.longitude,
               label: parsedLocation && `Temperature: ${temperature}\u00b0C, Humidity: ${humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
-              icon: returnIcon(mapShipmentFilter)
+              icon: returnIcon(mapShipmentFilter),
+              temp: temperature,
+              humidity: humidity
             }
-            const markerFound = markersToSet.some(pointer => (pointer.lat === marker.lat && pointer.lng === marker.lng))
+            // Skip a marker on map only if temperature, humidity and lat long are all same.
+            // Considered use case: If a shipment stays at some position for long, temperature and humidity changes can be critical
+            const markerFound = markersToSet.some(pointer => (pointer.temperature === marker.temperature &&
+              pointer.humidity === marker.humidity && pointer.lat === marker.lat && pointer.lng === marker.lng))
             if (!markerFound) {
               markersToSet.push(marker);
             }
