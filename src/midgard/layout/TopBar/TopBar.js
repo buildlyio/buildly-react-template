@@ -7,6 +7,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import RefreshIcon from "@material-ui/icons/Refresh";
 import Hidden from "@material-ui/core/Hidden";
 import logo from "assets/tp-logo.png";
 import {
@@ -100,6 +101,10 @@ function TopBar({
     setAnchorEl(event.currentTarget);
   };
 
+  const refreshPage = () => {
+    window.location.reload();
+  }
+
   const handleLogoutClick = () => {
     dispatch(logout());
     history.push("/");
@@ -127,6 +132,15 @@ function TopBar({
         <img src={logo} className={classes.logo} />
 
         <div className={classes.menuRight}>
+        <IconButton
+            aria-label="refresh-app"
+            aria-controls="menu-appbar"
+            aria-haspopup="false"
+            onClick={refreshPage}
+            color="default"
+          >
+            <RefreshIcon fontSize="large" />
+          </IconButton>
           <IconButton
             aria-label="account of current user"
             aria-controls="menu-appbar"
