@@ -286,6 +286,30 @@ function AddDestinationInfo({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      id="state"
+                      select
+                      required
+                      label="State"
+                      error={formError.state && formError.state.error}
+                      helperText={
+                        formError.state ? formError.state.message : ""
+                      }
+                      onBlur={(e) => handleBlur(e, "required", state, "state")}
+                      {...state.bind}
+                    >
+                      <MenuItem value={""}>Select</MenuItem>
+                      {STATE_CHOICES.map((value, index) => (
+                        <MenuItem key={`destState${index}:${value}`} value={value}>
+                          {value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
                       id="country"
                       select
                       required
@@ -302,30 +326,6 @@ function AddDestinationInfo({
                       <MenuItem value={""}>Select</MenuItem>
                       {COUNTRY_CHOICES.map((value, index) => (
                         <MenuItem key={`destCountry${index}:${value}`} value={value}>
-                          {value}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="state"
-                      select
-                      required
-                      label="State"
-                      error={formError.state && formError.state.error}
-                      helperText={
-                        formError.state ? formError.state.message : ""
-                      }
-                      onBlur={(e) => handleBlur(e, "required", state, "state")}
-                      {...state.bind}
-                    >
-                      <MenuItem value={""}>Select</MenuItem>
-                      {STATE_CHOICES.map((value, index) => (
-                        <MenuItem key={`destState${index}:${value}`} value={value}>
                           {value}
                         </MenuItem>
                       ))}
