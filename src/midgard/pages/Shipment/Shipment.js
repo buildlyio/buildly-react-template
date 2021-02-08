@@ -45,7 +45,7 @@ import {
   getSensorType,
   getSensorReport,
 } from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
-import { MAP_API_URL } from "midgard/utils/utilMethods";
+import { MAP_API_URL, convertUnitsOfMeasure } from "midgard/utils/utilMethods";
 import {
   getShipmentDetails,
   deleteShipment,
@@ -286,17 +286,21 @@ function Shipment(props) {
   useEffect(() => {
     if (mapShipmentFilter) {
       let markersToSet = [];
+      let temperatureUnit = unitsOfMeasure.filter((obj) => {
+        return obj.supported_class === "Temperature";
+      })[0]["name"].toLowerCase()
+      let tempConst = temperatureUnit[0].toUpperCase()
       mapShipmentFilter.sensor_report.forEach((report) => {
         if (report.report_location != null && Array.isArray(report.report_location)) {
           try {
             // data uses single quotes which throws an error
             const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
-            const temperature = report.report_temp;
+            const temperature = convertUnitsOfMeasure('celsius',report.report_temp,temperatureUnit,'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
             const humidity = report.report_humidity;
             const marker = {
               lat: parsedLocation && parsedLocation.latitude,
               lng: parsedLocation && parsedLocation.longitude,
-              label: parsedLocation && `Temperature: ${temperature}\u00b0C, Humidity: ${humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
+              label: parsedLocation && `Temperature: ${temperature}\u00b0${tempConst}, Humidity: ${humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
               icon: returnIcon(mapShipmentFilter),
               temp: temperature,
               humidity: humidity
@@ -324,6 +328,22 @@ function Shipment(props) {
     });
   };
 
+  // const unitConverter = (baseUnitURL) => {
+  //   httpService
+  //       .makeRequest(
+  //         "get",
+  //         baseUnitURL,
+  //         null,
+  //         true
+  //       )
+  //       .then((response) => response.json())
+  //       .then((res) => {
+  //         dispatch({ type: GET_SHIPMENT_OPTIONS_SUCCESS, data: res });
+  //       })
+  //       .catch((err) => {
+  //         dispatch({ type: GET_SHIPMENT_OPTIONS_FAILURE, error: err });
+  //       });
+  // }
   const handleEdit = (item) => {
     // dispatch(saveShipmentFormData(item));
     history.push(`${routes.SHIPMENT}/edit/:${item.id}`, {
