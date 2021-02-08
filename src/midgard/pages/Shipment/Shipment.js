@@ -328,22 +328,6 @@ function Shipment(props) {
     });
   };
 
-  // const unitConverter = (baseUnitURL) => {
-  //   httpService
-  //       .makeRequest(
-  //         "get",
-  //         baseUnitURL,
-  //         null,
-  //         true
-  //       )
-  //       .then((response) => response.json())
-  //       .then((res) => {
-  //         dispatch({ type: GET_SHIPMENT_OPTIONS_SUCCESS, data: res });
-  //       })
-  //       .catch((err) => {
-  //         dispatch({ type: GET_SHIPMENT_OPTIONS_FAILURE, error: err });
-  //       });
-  // }
   const handleEdit = (item) => {
     // dispatch(saveShipmentFormData(item));
     history.push(`${routes.SHIPMENT}/edit/:${item.id}`, {
