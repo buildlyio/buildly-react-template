@@ -97,3 +97,22 @@ export const setOptionsData = (options, fieldName) => {
   }
   return result;
 };
+/**
+ * Used to convert value measured from one unit to other
+ * @param {String} sourceUnit
+ * @param {Number} value
+ * @param {String} destinationUnit
+ * @param {String} _class
+ */
+export const convertUnitsOfMeasure = (sourceUnit, value, destinationUnit, _class) => {
+  switch(_class) {
+    case 'temperature':
+      if (sourceUnit === 'fahrenheit' && destinationUnit === 'celsius')
+        return (value - 32) * 5 / 9;
+      else if (sourceUnit === 'celsius' && destinationUnit === 'fahrenheit')
+        return (value * 9 / 5) + 32;
+      else (sourceUnit === destinationUnit)
+        return value;
+  }
+
+}
