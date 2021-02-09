@@ -3,6 +3,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 const envConfig = require('./environments.config.json');
 
 module.exports = (env, argv) => {
@@ -25,10 +26,8 @@ module.exports = (env, argv) => {
     }
   }
 
-  return {
+  const webpackConfig = {
     entry: ["babel-polyfill", "./src/index.js"],
-    mode: "development",
-    devtool: 'inline-source-map',
     module: {
       rules: [
         {
@@ -96,6 +95,7 @@ module.exports = (env, argv) => {
       modules: [path.resolve(__dirname, './src'), 'node_modules'],
       alias: {
         assets: path.resolve(__dirname, './src/assets'),
+        environments: path.resolve(__dirname, './src/environments'),
         components: path.resolve(__dirname, './src/midgard/components'),
         hooks: path.resolve(__dirname, './src/midgard/hooks'),
         layout: path.resolve(__dirname, './src/midgard/layout'),
@@ -104,8 +104,7 @@ module.exports = (env, argv) => {
         pages: path.resolve(__dirname, './src/midgard/pages'),
         routes: path.resolve(__dirname, './src/midgard/routes'),
         styles: path.resolve(__dirname, './src/styles'),
-        utils: path.resolve(__dirname, './src/midgard/utils'),
-        environment$: path.resolve(__dirname, './src/environments/environment.js')
+        utils: path.resolve(__dirname, './src/midgard/utils')
       }
     },
     output: {
@@ -126,7 +125,51 @@ module.exports = (env, argv) => {
           template: "./src/index.html",
           filename: "./index.html",
           favicon: './src/assets/favicon.ico',
-      })
+      }),
+      new CopyPlugin([
+        { from: 'window.environment.js', to: 'environment.js' },
+      ]),
     ]
   };
+
+  if (env && env.build === 'prod') {
+    webpackConfig.mode = 'production';
+    webpackConfig.devtool = false;
+    webpackConfig.performance = {
+      hints: false,
+      maxEntrypointSize: 512000,
+      maxAssetSize: 512000
+    };
+    webpackConfig.optimization = {
+      namedModules: false,
+      namedChunks: false,
+      nodeEnv: 'production',
+      flagIncludedChunks: true,
+      occurrenceOrder: true,
+      sideEffects: true,
+      usedExports: true,
+      concatenateModules: true,
+      splitChunks: {
+        cacheGroups: {
+          commons: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            chunks: 'all'
+          }
+        },
+        minSize: 30000,
+        maxAsyncRequests: 3,   
+      },
+      noEmitOnErrors: true,
+      minimize: true,
+      removeAvailableModules: true,
+      removeEmptyChunks: true,
+      mergeDuplicateChunks: true,    
+    };
+  } else {
+    webpackConfig.mode = 'development';
+    webpackConfig.devtool = 'inline-source-map';
+  }
+
+  return webpackConfig;
 };
