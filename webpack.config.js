@@ -94,17 +94,18 @@ module.exports = (env, argv) => {
       extensions: ["*", ".js", ".jsx", ".ts", ".tsx"],
       modules: [path.resolve(__dirname, './src'), 'node_modules'],
       alias: {
-        assets: path.resolve(__dirname, './src/assets'),
-        environments: path.resolve(__dirname, './src/environments'),
-        components: path.resolve(__dirname, './src/midgard/components'),
-        hooks: path.resolve(__dirname, './src/midgard/hooks'),
-        layout: path.resolve(__dirname, './src/midgard/layout'),
-        midgard: path.resolve(__dirname, './src/midgard'),
-        modules: path.resolve(__dirname, './src/midgard/modules'),
-        pages: path.resolve(__dirname, './src/midgard/pages'),
-        routes: path.resolve(__dirname, './src/midgard/routes'),
-        styles: path.resolve(__dirname, './src/styles'),
-        utils: path.resolve(__dirname, './src/midgard/utils')
+        '@assets': path.resolve(__dirname, './src/assets'),
+        '@environments': path.resolve(__dirname, './src/environments'),
+        '@styles': path.resolve(__dirname, './src/styles'),
+        '@components': path.resolve(__dirname, './src/components'),
+        '@context': path.resolve(__dirname, './src/context'),
+        '@hooks': path.resolve(__dirname, './src/hooks'),
+        '@layout': path.resolve(__dirname, './src/layout'),
+        '@modules': path.resolve(__dirname, './src/modules'),
+        '@pages': path.resolve(__dirname, './src/pages'),
+        '@redux': path.resolve(__dirname, './src/redux'),
+        '@routes': path.resolve(__dirname, './src/routes'),
+        '@utils': path.resolve(__dirname, './src/utils')
       }
     },
     output: {
