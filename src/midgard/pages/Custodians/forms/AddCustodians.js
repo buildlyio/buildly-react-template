@@ -525,6 +525,46 @@ function AddCustodians({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      id="state"
+                      select
+                      required
+                      label="State"
+                      error={formError.state && formError.state.error}
+                      helperText={
+                        formError.state ? formError.state.message : ""
+                      }
+                      onBlur={(e) => handleBlur(e, "required", state, "state")}
+                      {...state.bind}
+                      InputProps={
+                        contactMetaData["state"] &&
+                        contactMetaData["state"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="start">
+                              {contactMetaData["state"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    contactMetaData["state"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
+                    >
+                      <MenuItem value={""}>Select</MenuItem>
+                      {STATE_CHOICES.sort().map((value, index) => (
+                        <MenuItem key={`custodianState${index}${value}`} value={value}>
+                          {value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
                       id="country"
                       select
                       required
@@ -557,46 +597,6 @@ function AddCustodians({
                       <MenuItem value={""}>Select</MenuItem>
                       {COUNTRY_CHOICES.sort().map((value, index) => (
                         <MenuItem key={`custodianCountry${index}${value}`} value={value}>
-                          {value}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="state"
-                      select
-                      required
-                      label="State"
-                      error={formError.state && formError.state.error}
-                      helperText={
-                        formError.state ? formError.state.message : ""
-                      }
-                      onBlur={(e) => handleBlur(e, "required", state, "state")}
-                      {...state.bind}
-                      InputProps={
-                        contactMetaData["state"] &&
-                        contactMetaData["state"].help_text && {
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              {contactMetaData["state"].help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    contactMetaData["state"].help_text
-                                  }
-                                />
-                              )}
-                            </InputAdornment>
-                          ),
-                        }
-                      }
-                    >
-                      <MenuItem value={""}>Select</MenuItem>
-                      {STATE_CHOICES.sort().map((value, index) => (
-                        <MenuItem key={`custodianState${index}${value}`} value={value}>
                           {value}
                         </MenuItem>
                       ))}
