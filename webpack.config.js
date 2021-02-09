@@ -158,7 +158,6 @@ module.exports = (env, argv) => {
           }
         },
         minSize: 30000,
-        maxAsyncRequests: 5,
         maxAsyncRequests: 3,      
       },
       noEmitOnErrors: true,
