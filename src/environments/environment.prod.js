@@ -11,5 +11,6 @@ export const environment = {
   MAP_API_URL: `https://maps.googleapis.com/maps/api/js?key=${MAP_API_KEY}&v=3.exp&libraries=geometry,drawing,places`,
   GEO_CODE_API: "AIzaSyDw-lNn69CSWKBGz97HeVuJQKIhiVLcFyE",
   production: true,
+  session_timeout: 4000,
   ...(window['environment'] || {})
 };

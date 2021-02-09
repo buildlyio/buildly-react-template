@@ -77,7 +77,7 @@ function setAccessToken(token) {
   if (token) {
     localStorage.setItem('token', JSON.stringify(token));
     if (token.expires_in) {
-      const expiresInMilliSeconds = token.expires_in * 1000;
+      const expiresInMilliSeconds = token.expires_in * environment.session_timeout;
       const now = new Date();
       const expiresAt = now.getTime() + expiresInMilliSeconds;
       localStorage.setItem('expires_at', expiresAt.toString());
