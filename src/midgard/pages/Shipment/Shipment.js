@@ -297,13 +297,14 @@ function Shipment(props) {
             const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
             const temperature = convertUnitsOfMeasure('celsius',report.report_temp,temperatureUnit,'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
             const humidity = report.report_humidity;
+            const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
             const marker = {
               lat: parsedLocation && parsedLocation.latitude,
               lng: parsedLocation && parsedLocation.longitude,
               label: parsedLocation && `Temperature: ${temperature}\u00b0${tempConst}, Humidity: ${humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
-              icon: returnIcon(mapShipmentFilter),
               temp: temperature,
-              humidity: humidity
+              humidity: humidity,
+              color: color,
             }
             // Skip a marker on map only if temperature, humidity and lat long are all same.
             // Considered use case: If a shipment stays at some position for long, temperature and humidity changes can be critical
