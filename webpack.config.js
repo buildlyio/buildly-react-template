@@ -39,7 +39,7 @@ module.exports = (env, argv) => {
             options: {
               presets: [
                 ['@babel/preset-env', {
-                  "targets": "defaults" 
+                  "targets": "defaults"
                 }],
                 '@babel/preset-react'
               ],
@@ -158,14 +158,13 @@ module.exports = (env, argv) => {
           }
         },
         minSize: 30000,
-        maxAsyncRequests: 5,
-        maxAsyncRequests: 3,      
+        maxAsyncRequests: 3,
       },
       noEmitOnErrors: true,
       minimize: true,
       removeAvailableModules: true,
       removeEmptyChunks: true,
-      mergeDuplicateChunks: true,    
+      mergeDuplicateChunks: true,
     };
   } else {
     webpackConfig.mode = 'development';

@@ -1,7 +1,6 @@
 // Default configuration for local use
 
-// const API_URL = "http://127.0.0.1:8080/";
-const API_URL = "https://tp-dev-api.buildly.io/"
+const API_URL = "http://127.0.0.1:8080/";
 const MAP_API_KEY = "AIzaSyBcFCjQsHImeUy8jJQLW37ucWUKKmJwLd0";
 
 export const environment = {
@@ -12,6 +11,6 @@ export const environment = {
   MAP_API_URL: `https://maps.googleapis.com/maps/api/js?key=${MAP_API_KEY}&v=3.exp&libraries=geometry,drawing,places`,
   GEO_CODE_API: "AIzaSyDw-lNn69CSWKBGz97HeVuJQKIhiVLcFyE",
   production: false,
-  session_timeout: 1000,
+  session_timeout: 10000,
   ...(window['environment'] || {})
 };
