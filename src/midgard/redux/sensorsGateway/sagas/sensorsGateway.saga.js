@@ -293,7 +293,7 @@ function* getSensorReportList(payload) {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${sensorApiEndPoint}sensor_report/`,
+      `${environment.API_URL}${sensorApiEndPoint}sensor_report/?shipment_uuid=137`,
       null,
       true
     );

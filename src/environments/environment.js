@@ -1,6 +1,7 @@
 // Default configuration for local use
 
-const API_URL = "http://127.0.0.1:8080/";
+// const API_URL = "http://127.0.0.1:8080/";
+const API_URL = "https://tp-dev-api.buildly.io/"
 const MAP_API_KEY = "AIzaSyBcFCjQsHImeUy8jJQLW37ucWUKKmJwLd0";
 
 export const environment = {

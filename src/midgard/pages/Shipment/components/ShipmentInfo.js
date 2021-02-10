@@ -311,6 +311,21 @@ function ShipmentInfo(props) {
     }
     setFlags(flagsUrl);
   };
+
+  const checkIfFormEdited = () => {
+    if (shipment_name.hasChanged && lading_bill.hasChanged && load_no.hasChanged &&
+      shipment_status.hasChanged && route_desc.hasChanged && mode_type.hasChanged && route_dist.hasChanged) {
+      console.log("Change detected")
+      return true
+    }
+    else
+      return false
+  }
+
+  const showPopOver = () => {
+    console.log("Pop up coming")
+  }
+
   return (
     <React.Fragment>
       <div>
@@ -740,7 +755,7 @@ function ShipmentInfo(props) {
                   variant="contained"
                   color="primary"
                   className={classes.submit}
-                  onClick={handleCancel}
+                  onClick={onCancelClick}
                 >
                   Done
                 </Button>
@@ -770,7 +785,7 @@ function ShipmentInfo(props) {
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={handleNext}
+                onClick={checkIfFormEdited() === true ? showPopOver : handleNext}
                 disabled={shipmentFormData === null}
                 className={classes.submit}
               >
