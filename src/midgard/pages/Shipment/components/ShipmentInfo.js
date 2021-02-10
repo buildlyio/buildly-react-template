@@ -328,7 +328,7 @@ function ShipmentInfo(props) {
 
   const onNextClick = () => {
     if (checkIfShipmentInfoEdited() === true)
-      openConfirmModal()
+      setConfirmModal(true)
     else
       handleNext()
   };

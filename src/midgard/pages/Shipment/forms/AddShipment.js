@@ -20,7 +20,7 @@ import ItemInfo from "../components/ItemInfo";
 import { saveShipmentFormData } from "../../../redux/shipment/actions/shipment.actions";
 import { connect } from "react-redux";
 import SensorsGatewayInfo from "../components/Sensors&GatewayInfo";
-import EnvironmentalLimitsInfo from "../components/EnvironmentalLimitsInfo";
+import EnvironmentalLimitsInfo, { checkIfEnvironmentLimitsEdited } from "../components/EnvironmentalLimitsInfo";
 import CustodianInfo from "../components/custodian-info/CustodianInfo";
 import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
@@ -171,6 +171,9 @@ const getStepContent = (
             redirectTo={`${routes.SHIPMENT}/add`}
             handleNext={handleNext}
             handleCancel={handleCancel}
+            openConfirmModal={openConfirmModal}
+            setConfirmModal={setConfirmModal}
+            handleConfirmModal={handleConfirmModal}
           />
         </ViewDetailsWrapper>
       );
@@ -214,17 +217,11 @@ function AddShipment(props) {
     : "Add Shipment";
 
   const handleNext = () => {
-    if (checkIfFormEdited(activeStep))
-      setConfirmModal(true);
-    else
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const handleBack = () => {
-    if (checkIfFormEdited(activeStep))
-      setConfirmModal(true);
-    else
-      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
   const handleStep = (step) => () => {
@@ -237,9 +234,8 @@ function AddShipment(props) {
     if (checkIfFormEdited(activeStep))
       setConfirmModal(true);
     else {
+      handleConfirmModal();
       toggleModal(false);
-      dispatch(saveShipmentFormData(null));
-      history.push(routes.SHIPMENT);
     }
   };
 
@@ -247,14 +243,12 @@ function AddShipment(props) {
     if (checkIfFormEdited(activeStep))
       setConfirmModal(true);
     else {
-      dispatch(saveShipmentFormData(null));
-      history.push(`${routes.SHIPMENT}`);
+      handleConfirmModal();
     }
   };
 
   const handleConfirmModal = () => {
     setConfirmModal(false);
-    toggleModal(false);
     dispatch(saveShipmentFormData(null));
     history.push(routes.SHIPMENT);
   };
@@ -270,7 +264,7 @@ function AddShipment(props) {
       case 3:
         return false;
       case 4:
-        return false;
+        return checkIfEnvironmentLimitsEdited();
     }
   };
 
