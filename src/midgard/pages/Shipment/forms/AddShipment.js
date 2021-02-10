@@ -6,7 +6,7 @@ import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Modal from "../../../components/Modal/Modal";
-import ShipmentInfo from "../components/ShipmentInfo";
+import ShipmentInfo, {checkIfShipmentInfoEdited} from "../components/ShipmentInfo";
 import { Hidden, Grid } from "@material-ui/core";
 import MobileStepper from "@material-ui/core/MobileStepper";
 import { dispatch } from "../../../redux/store";
@@ -68,7 +68,10 @@ const getStepContent = (
   handleNext,
   handleBack,
   maxSteps,
-  handleCancel
+  handleCancel,
+  openConfirmModal,
+  setConfirmModal,
+  handleConfirmModal,
 ) => {
   switch (stepIndex) {
     case 0:
@@ -88,6 +91,9 @@ const getStepContent = (
             handleBack={handleBack}
             handleCancel={handleCancel}
             redirectTo={`${routes.SHIPMENT}`}
+            openConfirmModal={openConfirmModal}
+            setConfirmModal={setConfirmModal}
+            handleConfirmModal={handleConfirmModal}
           />
         </ViewDetailsWrapper>
       );
@@ -198,6 +204,7 @@ function AddShipment(props) {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [openModal, toggleModal] = useState(true);
+  const [openConfirmModal, setConfirmModal] = useState(false);
   const steps = getSteps();
   const maxSteps = steps.length;
   const formTitle = editPage
@@ -207,11 +214,17 @@ function AddShipment(props) {
     : "Add Shipment";
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (checkIfFormEdited(activeStep))
+      setConfirmModal(true);
+    else
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    if (checkIfFormEdited(activeStep))
+      setConfirmModal(true);
+    else
+      setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
   const handleStep = (step) => () => {
@@ -221,14 +234,44 @@ function AddShipment(props) {
   };
 
   const closeModal = () => {
+    if (checkIfFormEdited(activeStep))
+      setConfirmModal(true);
+    else {
+      toggleModal(false);
+      dispatch(saveShipmentFormData(null));
+      history.push(routes.SHIPMENT);
+    }
+  };
+
+  const handleCancel = () => {
+    if (checkIfFormEdited(activeStep))
+      setConfirmModal(true);
+    else {
+      dispatch(saveShipmentFormData(null));
+      history.push(`${routes.SHIPMENT}`);
+    }
+  };
+
+  const handleConfirmModal = () => {
+    setConfirmModal(false);
     toggleModal(false);
     dispatch(saveShipmentFormData(null));
     history.push(routes.SHIPMENT);
   };
 
-  const handleCancel = () => {
-    dispatch(saveShipmentFormData(null));
-    history.push(`${routes.SHIPMENT}`);
+  const checkIfFormEdited = (activeStep) => {
+    switch (activeStep) {
+      case 0:
+        return checkIfShipmentInfoEdited();
+      case 1:
+        return false;
+      case 2:
+        return false;
+      case 3:
+        return false;
+      case 4:
+        return false;
+    }
   };
 
   return (
@@ -271,7 +314,10 @@ function AddShipment(props) {
                   handleNext,
                   handleBack,
                   maxSteps,
-                  handleCancel
+                  handleCancel,
+                  openConfirmModal,
+                  setConfirmModal,
+                  handleConfirmModal,
                 )}
               </div>
             </div>

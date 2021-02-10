@@ -40,6 +40,7 @@ import ShipmentRouteInfo from "./ShipmentRouteInfo";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
+import ConfirmModal from "../../../components/Modal/ConfirmModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -84,6 +85,8 @@ const useStyles = makeStyles((theme) => ({
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
+export let checkIfShipmentInfoEdited;
+
 function ShipmentInfo(props) {
   const {
     handleNext,
@@ -99,7 +102,10 @@ function ShipmentInfo(props) {
     custodyData,
     unitsOfMeasure,
     shipmentOptions,
-    viewOnly
+    viewOnly,
+    openConfirmModal,
+    setConfirmModal,
+    handleConfirmModal,
   } = props;
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
@@ -312,20 +318,20 @@ function ShipmentInfo(props) {
     setFlags(flagsUrl);
   };
 
-  const checkIfFormEdited = () => {
-    if (shipment_name.hasChanged && lading_bill.hasChanged && load_no.hasChanged &&
-      shipment_status.hasChanged && route_desc.hasChanged && mode_type.hasChanged && route_dist.hasChanged) {
-      console.log("Change detected")
+  checkIfShipmentInfoEdited = () => {
+    if (shipment_name.hasChanged() || lading_bill.hasChanged() || load_no.hasChanged() ||
+      shipment_status.hasChanged() || route_desc.hasChanged() || mode_type.hasChanged() || route_dist.hasChanged())
       return true
-    }
     else
       return false
-  }
+  };
 
-  const showPopOver = () => {
-    console.log("Pop up coming")
-  }
-
+  const onNextClick = () => {
+    if (checkIfShipmentInfoEdited() === true)
+      openConfirmModal()
+    else
+      handleNext()
+  };
   return (
     <React.Fragment>
       <div>
@@ -755,7 +761,7 @@ function ShipmentInfo(props) {
                   variant="contained"
                   color="primary"
                   className={classes.submit}
-                  onClick={onCancelClick}
+                  onClick={onNextClick}
                 >
                   Done
                 </Button>
@@ -785,7 +791,7 @@ function ShipmentInfo(props) {
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={checkIfFormEdited() === true ? showPopOver : handleNext}
+                onClick={onNextClick}
                 disabled={shipmentFormData === null}
                 className={classes.submit}
               >
@@ -795,6 +801,13 @@ function ShipmentInfo(props) {
           </Grid>
         </form>
       </div>
+      <ConfirmModal
+        open={openConfirmModal}
+        setOpen={setConfirmModal}
+        submitAction={handleConfirmModal}
+        title={"Your changes are unsaved and will be discarded. Are you sure to leave?"}
+        submitText={"Yes"}
+      />
     </React.Fragment>
   );
 }
