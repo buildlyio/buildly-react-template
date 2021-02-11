@@ -32,6 +32,7 @@ export const GET_DASHBOARD_ITEMS_FAILURE =
 
 export const GET_ALERTS = "SHIPMENT/GET_ALERTS";
 export const SET_ALERTS = "SHIPMENT/SET_ALERTS";
+export const EMAIL_ALERTS = "SHIPMENT/EMAIL_ALERTS";
 
 export const GET_SHIPMENT_OPTIONS = "ITEMS/GET_SHIPMENT_OPTIONS";
 export const GET_SHIPMENT_OPTIONS_SUCCESS =
@@ -124,5 +125,10 @@ export const getDashboardItems = () => ({
 
 export const setAlerts = (alerts) => ({
   type: SET_ALERTS,
+  alerts,
+});
+
+export const emailAlerts = (alerts) => ({
+  type: EMAIL_ALERTS,
   alerts,
 });
