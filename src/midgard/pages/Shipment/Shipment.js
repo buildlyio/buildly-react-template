@@ -444,7 +444,7 @@ function Shipment(props) {
         open={openConfirmModal}
         setOpen={setConfirmModal}
         submitAction={handleConfirmModal}
-        title={"Are You sure you want to Delete this Shipment?"}
+        title={"Are You sure you want to Delete this Shipment? The shipment will be ended in other platforms"}
         submitText={"Delete"}
       />
     </Box>

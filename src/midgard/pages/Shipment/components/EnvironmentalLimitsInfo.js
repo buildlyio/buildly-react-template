@@ -77,6 +77,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+export let checkIfEnvironmentLimitsEdited;
+
 function EnvironmentalLimitsInfo(props) {
   const {
     handleNext,
@@ -88,7 +90,8 @@ function EnvironmentalLimitsInfo(props) {
     handleCancel,
     location,
     shipmentOptions,
-    viewOnly
+    viewOnly,
+    setConfirmModal,
   } = props;
   const theme = useTheme();
   const classes = useStyles();
@@ -191,6 +194,23 @@ function EnvironmentalLimitsInfo(props) {
         organization
       )
     );
+  };
+
+  checkIfEnvironmentLimitsEdited = () => {
+    if (high_temp_val !== shipmentFormData.max_warning_temp || low_temp_val !== shipmentFormData.min_warning_temp ||
+      max_temp_val !== shipmentFormData.max_excursion_temp || min_temp_val !== shipmentFormData.min_excursion_temp ||
+      high_humid_val !== shipmentFormData.max_warning_humidity || low_humid_val !== shipmentFormData.min_warning_humidity ||
+      max_humid_val !== shipmentFormData.max_excursion_humidity || min_humid_val !== shipmentFormData.min_excursion_humidity)
+        return true
+    else
+      return false
+  };
+
+  const onCancelClick = () => {
+    if (checkIfEnvironmentLimitsEdited() === true)
+      setConfirmModal(true)
+    else
+      handleCancel()
   };
 
   return (
@@ -532,7 +552,7 @@ function EnvironmentalLimitsInfo(props) {
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={handleCancel}
+            onClick={onCancelClick}
           >
             Done
           </Button>

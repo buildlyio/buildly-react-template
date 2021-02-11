@@ -6,7 +6,7 @@ import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Modal from "../../../components/Modal/Modal";
-import ShipmentInfo from "../components/ShipmentInfo";
+import ShipmentInfo, {checkIfShipmentInfoEdited} from "../components/ShipmentInfo";
 import { Hidden, Grid } from "@material-ui/core";
 import MobileStepper from "@material-ui/core/MobileStepper";
 import { dispatch } from "../../../redux/store";
@@ -20,10 +20,11 @@ import ItemInfo from "../components/ItemInfo";
 import { saveShipmentFormData } from "../../../redux/shipment/actions/shipment.actions";
 import { connect } from "react-redux";
 import SensorsGatewayInfo from "../components/Sensors&GatewayInfo";
-import EnvironmentalLimitsInfo from "../components/EnvironmentalLimitsInfo";
+import EnvironmentalLimitsInfo, { checkIfEnvironmentLimitsEdited } from "../components/EnvironmentalLimitsInfo";
 import CustodianInfo from "../components/custodian-info/CustodianInfo";
 import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
+import ConfirmModal from "../../../components/Modal/ConfirmModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,7 +69,8 @@ const getStepContent = (
   handleNext,
   handleBack,
   maxSteps,
-  handleCancel
+  handleCancel,
+  setConfirmModal,
 ) => {
   switch (stepIndex) {
     case 0:
@@ -88,6 +90,7 @@ const getStepContent = (
             handleBack={handleBack}
             handleCancel={handleCancel}
             redirectTo={`${routes.SHIPMENT}`}
+            setConfirmModal={setConfirmModal}
           />
         </ViewDetailsWrapper>
       );
@@ -165,6 +168,7 @@ const getStepContent = (
             redirectTo={`${routes.SHIPMENT}/add`}
             handleNext={handleNext}
             handleCancel={handleCancel}
+            setConfirmModal={setConfirmModal}
           />
         </ViewDetailsWrapper>
       );
@@ -198,6 +202,7 @@ function AddShipment(props) {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [openModal, toggleModal] = useState(true);
+  const [openConfirmModal, setConfirmModal] = useState(false);
   const steps = getSteps();
   const maxSteps = steps.length;
   const formTitle = editPage
@@ -221,14 +226,41 @@ function AddShipment(props) {
   };
 
   const closeModal = () => {
-    toggleModal(false);
+    if (checkIfFormEdited(activeStep))
+      setConfirmModal(true);
+    else {
+      handleConfirmModal();
+      toggleModal(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (checkIfFormEdited(activeStep))
+      setConfirmModal(true);
+    else {
+      handleConfirmModal();
+    }
+  };
+
+  const handleConfirmModal = () => {
+    setConfirmModal(false);
     dispatch(saveShipmentFormData(null));
     history.push(routes.SHIPMENT);
   };
 
-  const handleCancel = () => {
-    dispatch(saveShipmentFormData(null));
-    history.push(`${routes.SHIPMENT}`);
+  const checkIfFormEdited = (activeStep) => {
+    switch (activeStep) {
+      case 0:
+        return checkIfShipmentInfoEdited();
+      case 1:
+        return false;
+      case 2:
+        return false;
+      case 3:
+        return false;
+      case 4:
+        return checkIfEnvironmentLimitsEdited();
+    }
   };
 
   return (
@@ -271,9 +303,17 @@ function AddShipment(props) {
                   handleNext,
                   handleBack,
                   maxSteps,
-                  handleCancel
+                  handleCancel,
+                  setConfirmModal,
                 )}
               </div>
+              <ConfirmModal
+                open={openConfirmModal}
+                setOpen={setConfirmModal}
+                submitAction={handleConfirmModal}
+                title={"Your changes are unsaved and will be discarded. Are you sure to leave?"}
+                submitText={"Yes"}
+              />
             </div>
           </div>
         </Modal>

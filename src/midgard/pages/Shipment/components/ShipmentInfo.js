@@ -84,6 +84,8 @@ const useStyles = makeStyles((theme) => ({
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
+export let checkIfShipmentInfoEdited;
+
 function ShipmentInfo(props) {
   const {
     handleNext,
@@ -99,7 +101,8 @@ function ShipmentInfo(props) {
     custodyData,
     unitsOfMeasure,
     shipmentOptions,
-    viewOnly
+    viewOnly,
+    setConfirmModal,
   } = props;
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
@@ -310,6 +313,28 @@ function ShipmentInfo(props) {
       });
     }
     setFlags(flagsUrl);
+  };
+
+  checkIfShipmentInfoEdited = () => {
+    if (shipment_name.hasChanged() || lading_bill.hasChanged() || load_no.hasChanged() ||
+      shipment_status.hasChanged() || route_desc.hasChanged() || mode_type.hasChanged() || route_dist.hasChanged())
+      return true
+    else
+      return false
+  };
+
+  const onNextClick = () => {
+    if (checkIfShipmentInfoEdited() === true)
+      setConfirmModal(true)
+    else
+      handleNext()
+  };
+
+  const onCancelClick = () => {
+    if (checkIfShipmentInfoEdited() === true)
+      setConfirmModal(true)
+    else
+      handleCancel()
   };
   return (
     <React.Fragment>
@@ -740,7 +765,7 @@ function ShipmentInfo(props) {
                   variant="contained"
                   color="primary"
                   className={classes.submit}
-                  onClick={handleCancel}
+                  onClick={onCancelClick}
                 >
                   Done
                 </Button>
@@ -770,7 +795,7 @@ function ShipmentInfo(props) {
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={handleNext}
+                onClick={onNextClick}
                 disabled={shipmentFormData === null}
                 className={classes.submit}
               >
