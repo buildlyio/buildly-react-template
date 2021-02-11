@@ -14,7 +14,8 @@ const labelPadding = 8;
 
 export function MapComponent(props) {
   const { markers } = props;
-  const [center, setCenter] = useState({ lat: 41.850033, lng: -87.6500523 });
+// 47.6062° N, 122.3321° W
+  const [center, setCenter] = useState({ lat: 47.606209, lng: -122.332069 });
 
   useEffect(() => {
     if (markers && markers.length && markers[0].lat && markers[0].lng) {

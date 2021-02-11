@@ -118,6 +118,8 @@ function Shipment(props) {
   const [mapShipmentFilter, setMapShipmentFilter] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [tileView, setTileView] = useState(true);
+  const [isMapLoaded,setMapLoaded] = useState(false);
+  let routesInfo = [];
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
@@ -210,7 +212,7 @@ function Shipment(props) {
       sensorReportData &&
       shipmentFlag
     ) {
-      let routesInfo = [];
+      routesInfo = [];
       let formattedRows = getFormattedRow(
         shipmentData,
         custodianData,
@@ -219,41 +221,43 @@ function Shipment(props) {
         custodyData,
         sensorReportData
       );
-      formattedRows.forEach((row) => {
-        if (row.custody_info && row.custody_info.length > 0) {
-          row.custody_info.forEach((custody) => {
-            if (
-              (custody.has_current_custody || custody.first_custody) &&
-              (row.status.toLowerCase() === "planned" ||
-                row.status.toLowerCase() === "enroute")
-            ) {
-              if (custody.start_of_custody_location) {
-                routesInfo.push({
-                  lat:
-                    custody.start_of_custody_location &&
-                    parseFloat(custody.start_of_custody_location.split(",")[0]),
-                  lng:
-                    custody.start_of_custody_location &&
-                    parseFloat(custody.start_of_custody_location.split(",")[1]),
-                  label: `${row.name}:${row.shipment_uuid}(Start Location)`,
-                  icon: returnIcon(row),
-                });
-              }
-              if (custody.end_of_custody_location) {
-                routesInfo.push({
-                  lat:
-                    custody.end_of_custody_location &&
-                    parseFloat(custody.end_of_custody_location.split(",")[0]),
-                  lng:
-                    custody.end_of_custody_location &&
-                    parseFloat(custody.end_of_custody_location.split(",")[1]),
-                  label: `${row.name}:${row.shipment_uuid}(End Location)`,
-                  icon: returnIcon(row),
-                });
-              }
-            }
-          });
-        }
+      // formattedRows.forEach((row) => {
+      //   if (row.custody_info && row.custody_info.length > 0) {
+      //     row.custody_info.forEach((custody) => {
+      //       if (
+      //         (custody.has_current_custody || custody.first_custody) &&
+      //         (row.status.toLowerCase() === "planned" ||
+      //           row.status.toLowerCase() === "enroute")
+      //       ) {
+      //         if (custody.start_of_custody_location) {
+      //           routesInfo.push({
+      //             lat:
+      //               custody.start_of_custody_location &&
+      //               parseFloat(custody.start_of_custody_location.split(",")[0]),
+      //             lng:
+      //               custody.start_of_custody_location &&
+      //               parseFloat(custody.start_of_custody_location.split(",")[1]),
+      //             label: `${row.name}:${row.shipment_uuid}(Start Location)`,
+      //             icon: returnIcon(row),
+      //           });
+      //         }
+      //         if (custody.end_of_custody_location) {
+      //           routesInfo.push({
+      //             lat:
+      //               custody.end_of_custody_location &&
+      //               parseFloat(custody.end_of_custody_location.split(",")[0]),
+      //             lng:
+      //               custody.end_of_custody_location &&
+      //               parseFloat(custody.end_of_custody_location.split(",")[1]),
+      //             label: `${row.name}:${row.shipment_uuid}(End Location)`,
+      //             icon: returnIcon(row),
+      //           });
+      //         }
+      //       }
+      //     });
+      //   }
+
+
         // if (row.sensor_report && row.sensor_report.length > 0) {
         //   row.sensor_report.forEach((report) => {
         //     if (report.report_location != null && Array.isArray(report.report_location)) {
@@ -267,7 +271,10 @@ function Shipment(props) {
         //     }
         //   });
         // }
-      });
+
+
+
+      // });
       // setMarkers(routesInfo);
       setRows(formattedRows);
       setFilteredRows(formattedRows);
@@ -323,6 +330,10 @@ function Shipment(props) {
     }
   }, [mapShipmentFilter]);
 
+  useEffect(() => {
+    if(markers && markers.length > 0)
+    setTimeout(() => setMapLoaded(true), 3000)
+  })
   const onAddButtonClick = () => {
     history.push(`${routes.SHIPMENT}/add`, {
       from: routes.SHIPMENT,
@@ -420,7 +431,7 @@ function Shipment(props) {
             </Hidden>
           </div>
           <MapComponent
-            isMarkerShown
+            isMarkerShown={isMapLoaded}
             markers={markers}
             googleMapURL={MAP_API_URL}
             loadingElement={<div style={{ height: `100%` }} />}
