@@ -40,7 +40,6 @@ import ShipmentRouteInfo from "./ShipmentRouteInfo";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
-import ConfirmModal from "../../../components/Modal/ConfirmModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -801,13 +800,6 @@ function ShipmentInfo(props) {
           </Grid>
         </form>
       </div>
-      <ConfirmModal
-        open={openConfirmModal}
-        setOpen={setConfirmModal}
-        submitAction={handleConfirmModal}
-        title={"Your changes are unsaved and will be discarded. Are you sure to leave?"}
-        submitText={"Yes"}
-      />
     </React.Fragment>
   );
 }

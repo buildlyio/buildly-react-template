@@ -24,6 +24,7 @@ import EnvironmentalLimitsInfo, { checkIfEnvironmentLimitsEdited } from "../comp
 import CustodianInfo from "../components/custodian-info/CustodianInfo";
 import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
+import ConfirmModal from "../../../components/Modal/ConfirmModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -314,6 +315,13 @@ function AddShipment(props) {
                   handleConfirmModal,
                 )}
               </div>
+              <ConfirmModal
+                open={openConfirmModal}
+                setOpen={setConfirmModal}
+                submitAction={handleConfirmModal}
+                title={"Your changes are unsaved and will be discarded. Are you sure to leave?"}
+                submitText={"Yes"}
+              />
             </div>
           </div>
         </Modal>
