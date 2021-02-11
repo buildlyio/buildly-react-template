@@ -91,9 +91,7 @@ function EnvironmentalLimitsInfo(props) {
     location,
     shipmentOptions,
     viewOnly,
-    openConfirmModal,
     setConfirmModal,
-    handleConfirmModal,
   } = props;
   const theme = useTheme();
   const classes = useStyles();
@@ -212,7 +210,7 @@ function EnvironmentalLimitsInfo(props) {
     if (checkIfEnvironmentLimitsEdited() === true)
       setConfirmModal(true)
     else
-      handleCance()
+      handleCancel()
   };
 
   return (

@@ -70,9 +70,7 @@ const getStepContent = (
   handleBack,
   maxSteps,
   handleCancel,
-  openConfirmModal,
   setConfirmModal,
-  handleConfirmModal,
 ) => {
   switch (stepIndex) {
     case 0:
@@ -92,9 +90,7 @@ const getStepContent = (
             handleBack={handleBack}
             handleCancel={handleCancel}
             redirectTo={`${routes.SHIPMENT}`}
-            openConfirmModal={openConfirmModal}
             setConfirmModal={setConfirmModal}
-            handleConfirmModal={handleConfirmModal}
           />
         </ViewDetailsWrapper>
       );
@@ -172,9 +168,7 @@ const getStepContent = (
             redirectTo={`${routes.SHIPMENT}/add`}
             handleNext={handleNext}
             handleCancel={handleCancel}
-            openConfirmModal={openConfirmModal}
             setConfirmModal={setConfirmModal}
-            handleConfirmModal={handleConfirmModal}
           />
         </ViewDetailsWrapper>
       );
@@ -310,9 +304,7 @@ function AddShipment(props) {
                   handleBack,
                   maxSteps,
                   handleCancel,
-                  openConfirmModal,
                   setConfirmModal,
-                  handleConfirmModal,
                 )}
               </div>
               <ConfirmModal

@@ -102,9 +102,7 @@ function ShipmentInfo(props) {
     unitsOfMeasure,
     shipmentOptions,
     viewOnly,
-    openConfirmModal,
     setConfirmModal,
-    handleConfirmModal,
   } = props;
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
@@ -330,6 +328,13 @@ function ShipmentInfo(props) {
       setConfirmModal(true)
     else
       handleNext()
+  };
+
+  const onCancelClick = () => {
+    if (checkIfShipmentInfoEdited() === true)
+      setConfirmModal(true)
+    else
+      handleCancel()
   };
   return (
     <React.Fragment>
@@ -760,7 +765,7 @@ function ShipmentInfo(props) {
                   variant="contained"
                   color="primary"
                   className={classes.submit}
-                  onClick={onNextClick}
+                  onClick={onCancelClick}
                 >
                   Done
                 </Button>
