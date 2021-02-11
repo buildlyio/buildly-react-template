@@ -118,6 +118,8 @@ function Shipment(props) {
   const [mapShipmentFilter, setMapShipmentFilter] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [tileView, setTileView] = useState(true);
+  const [isMapLoaded,setMapLoaded] = useState(false);
+  let routesInfo = [];
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
@@ -210,7 +212,7 @@ function Shipment(props) {
       sensorReportData &&
       shipmentFlag
     ) {
-      let routesInfo = [];
+      routesInfo = [];
       let formattedRows = getFormattedRow(
         shipmentData,
         custodianData,
@@ -319,7 +321,8 @@ function Shipment(props) {
           }
         }
       });
-      setMarkers(markersToSet);
+      setMarkers(routesInfo.concat(markersToSet));
+      setMapLoaded(true);
     }
   }, [mapShipmentFilter]);
 
@@ -420,7 +423,7 @@ function Shipment(props) {
             </Hidden>
           </div>
           <MapComponent
-            isMarkerShown
+            isMarkerShown={isMapLoaded}
             markers={markers}
             googleMapURL={MAP_API_URL}
             loadingElement={<div style={{ height: `100%` }} />}
