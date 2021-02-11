@@ -22,7 +22,6 @@ import { editShipment } from "../../../redux/shipment/actions/shipment.actions";
 import { routes } from "../../../routes/routesConstants";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
 import { UserContext } from "midgard/context/User.context";
-import ConfirmModal from "../../../components/Modal/ConfirmModal";
 
 const useStyles = makeStyles((theme) => ({
   slider: {
@@ -561,13 +560,6 @@ function EnvironmentalLimitsInfo(props) {
           </Button>
         </Grid>
       </Grid>
-      <ConfirmModal
-        open={openConfirmModal}
-        setOpen={setConfirmModal}
-        submitAction={handleConfirmModal}
-        title={"Your changes are unsaved and will be discarded. Are you sure to leave?"}
-        submitText={"Yes"}
-      />
     </form>
   );
 }
