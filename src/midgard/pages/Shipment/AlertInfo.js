@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Alert from "@material-ui/lab/Alert";
-import { setAlerts } from "../../redux/shipment/actions/shipment.actions";
+import { UserContext } from "midgard/context/User.context";
+import { setAlerts, emailAlerts } from "../../redux/shipment/actions/shipment.actions";
+import { checkForAdmin, checkForGlobalAdmin } from "midgard/utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,6 +51,8 @@ function AlertInfo(props) {
   let { shipmentData, shipmentFlag, dispatch, shipmentAlerts } = props;
   const [openAlerts, setOpenAlerts] = useState([]);
   // const [alertsToShow, setAlertsToShow] = useState([]);
+  const user = useContext(UserContext);
+  const isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
 
   useEffect(() => {
     if (
@@ -59,6 +63,7 @@ function AlertInfo(props) {
     ) {
       let alerts = [];
       let openAlerts = [];
+      let messages = [];
       shipmentData &&
         shipmentData.forEach((element, index) => {
           shipmentFlag &&
@@ -75,10 +80,21 @@ function AlertInfo(props) {
                     flag.type.toLowerCase() === "warning" ? "warning" : "error",
                 });
                 openAlerts.push(index);
+                messages.push({
+                  shipment_id: Number(element.partner_shipment_id),
+                  alert_message: flag.name,
+                });
               }
             });
         });
       dispatch(setAlerts({ show: true, data: alerts }));
+      if (isAdmin && messages.length > 0) {
+        dispatch(emailAlerts({
+          user_uuid: user.core_user_uuid,
+          messages: messages,
+          date_time: new Date().toJSON(),
+        }))
+      }
       // setAlertsToShow(alerts);
       setOpenAlerts(openAlerts);
     }

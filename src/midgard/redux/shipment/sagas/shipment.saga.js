@@ -27,6 +27,7 @@ import {
   GET_DASHBOARD_ITEMS_SUCCESS,
   GET_DASHBOARD_ITEMS_FAILURE,
   getShipmentFlag,
+  EMAIL_ALERTS,
 } from "../actions/shipment.actions";
 import { compareSort } from "../../../utils/utilMethods";
 import configureStore from "../../store";
@@ -493,6 +494,33 @@ function* getDashboard() {
   }
 }
 
+function* sendEmailAlerts(payload) {
+  try {
+    const alerts = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}coreuser/alert/`,
+      payload.alerts
+    );
+    yield put(
+      showAlert({
+        type: "info",
+        open: true,
+        message: "Email alerts sent successfully",
+      })
+    );
+  } catch (error) {
+    console.log("error", error);
+    yield put(
+      showAlert({
+        type: "error",
+        open: true,
+        message: "Couldn't send email alerts due to some error!",
+      })
+    );
+  }
+}
+
 function* watchGetShipment() {
   yield takeLatest(GET_SHIPMENTS, getShipmentList);
 }
@@ -521,6 +549,10 @@ function* watchGetDashboardItems() {
   yield takeLatest(GET_DASHBOARD_ITEMS, getDashboard);
 }
 
+function* watchEmailAlerts() {
+  yield takeLatest(EMAIL_ALERTS, sendEmailAlerts);
+}
+
 export default function* shipmentSaga() {
   yield all([
     watchFilterShipment(),
@@ -530,5 +562,6 @@ export default function* shipmentSaga() {
     watchEditShipment(),
     watchGetShipmentFlag(),
     watchGetDashboardItems(),
+    watchEmailAlerts(),
   ]);
 }
