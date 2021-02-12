@@ -61,6 +61,7 @@ import { httpService } from "midgard/modules/http/http.service";
 import { environment } from "environments/environment";
 import { UserContext } from "midgard/context/User.context";
 import moment from 'moment';
+import ShipmentSensorTable from "./components/ShipmentSensorTable";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -440,6 +441,9 @@ function Shipment(props) {
           />
         </Grid>
       </Grid>
+      <ShipmentSensorTable
+        sensorReport={mapShipmentFilter?.sensor_report} 
+      />
       <Route path={`${routes.SHIPMENT}/add`} component={AddShipment} />
       <Route path={`${routes.SHIPMENT}/add/origin`} component={AddOriginInfo} />
       <Route
