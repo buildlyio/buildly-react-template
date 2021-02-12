@@ -117,7 +117,7 @@ function Shipment(props) {
   const [filteredRows, setFilteredRows] = useState([]);
   const [mapShipmentFilter, setMapShipmentFilter] = useState(null);
   const [markers, setMarkers] = useState([]);
-  const [zoomLevel,setZoomLevel] = useState(5);
+  const [zoomLevel,setZoomLevel] = useState(12);
   const [tileView, setTileView] = useState(true);
   const [isMapLoaded,setMapLoaded] = useState(false);
   let routesInfo = [];
@@ -298,6 +298,7 @@ function Shipment(props) {
         return obj.supported_class === "Temperature";
       })[0]["name"].toLowerCase()
       let tempConst = temperatureUnit[0].toUpperCase()
+      let index = 1;
       let sampleLocationData = [
         {
           "url": "http://tp-dev-sensors.buildly.io/sensor_report/3278/",
@@ -515,6 +516,9 @@ function Shipment(props) {
           "report_humidity": "48",
           "report_frequency": null,
           "report_location": [
+            "{'latitude': 47.604972, 'longitude': -122.059515, 'altitude': 102.3, 'positionUncertainty': 35.510563, 'locationMethod': 'GPS', 'timeOfPosition': 1612184440882}",
+            "{'latitude': 47.604972, 'longitude': -122.059515, 'altitude': 102.3, 'positionUncertainty': 35.510563, 'locationMethod': 'GPS', 'timeOfPosition': 1612184440882}",
+            "{'latitude': 47.604972, 'longitude': -122.059515, 'altitude': 102.3, 'positionUncertainty': 35.510563, 'locationMethod': 'GPS', 'timeOfPosition': 1612184440882}",
             "{'latitude': 47.604972, 'longitude': -122.059515, 'altitude': 102.3, 'positionUncertainty': 35.510563, 'locationMethod': 'GPS', 'timeOfPosition': 1612184440882}"
           ],
           "report_date_time": null,
@@ -525,8 +529,8 @@ function Shipment(props) {
           "gateway": "http://tp-dev-sensors.buildly.io/gateway/51/"
         }
       ]
-      sampleLocationData.forEach((report) => {
-      // mapShipmentFilter.sensor_report.forEach((report) => {
+      // sampleLocationData.forEach((report) => {
+      mapShipmentFilter.sensor_report.forEach((report) => {
         if (report.report_location != null && Array.isArray(report.report_location)) {
           try {
             // data uses single quotes which throws an error
@@ -548,6 +552,7 @@ function Shipment(props) {
               pointer.humidity === marker.humidity && pointer.lat === marker.lat && pointer.lng === marker.lng))
             if (!markerFound) {
               markersToSet.push(marker);
+              index++;
             }
 
           } catch(e) {
