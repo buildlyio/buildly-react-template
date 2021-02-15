@@ -335,7 +335,7 @@ function Shipment(props) {
           }
         }
       });
-      setMarkers(_.orderBy(markersToSet, ["lat", "lng"], ["asc", "asc"]));
+      setMarkers(markersToSet);
       setZoomLevel(12);
     }
   }, [mapShipmentFilter]);
