@@ -238,6 +238,47 @@ export const custodyColumns = [
   },
 ];
 
+export const SHIPMENT_SENSOR_COLUMNS = [
+  {
+    id: "shipment_id",
+    label: "Shipment ID",
+    minWidth: 150,
+  },
+  {
+    id: "alert_status",
+    label: "Alert Status",
+    minWidth: 150,
+  },
+  {
+    id: "timestamp",
+    label: "Tag Captured Timestamp",
+    minWidth: 150,
+    format: (value) => (`${new Date(value).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})} ${new Date(value).toLocaleTimeString()}`)
+  },
+  {
+    id: "location",
+    label: "Location",
+    minWidth: 150,
+    format: (value) => (
+    <div>
+      Latitude: {value.latitude}<br/>
+      Longitude: {value.longitude}<br />
+      Location Method: {value.locationMethod}
+    </div>
+    )
+  },
+  {
+    id: "humidity",
+    label: "Humidity",
+    minWidth: 150,
+  },
+  {
+    id: "temp",
+    label: "Temperature (\u00b0F)",
+    minWidth: 150,
+  },
+];
+
 export const getUniqueContactInfo = (rowItem, contactInfo) => {
   let obj = "";
   contactInfo.forEach((info) => {
