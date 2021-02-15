@@ -110,7 +110,7 @@ function Dashboard(props) {
   const [delayedRows, setDelayedRows] = useState([]);
   const [excursionRows, setExcursionRows] = useState([]);
   const [markers, setMarkers] = useState([]);
-  const [zoomLevel,setZoomLevel] = useState(5);
+  const [zoomLevel, setZoomLevel] = useState(5);
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {

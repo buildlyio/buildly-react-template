@@ -7,24 +7,24 @@ import {
   InfoWindow,
   Polyline,
 } from "react-google-maps";
-const {
-  MarkerWithLabel,
-} = require("react-google-maps/lib/components/addons/MarkerWithLabel");
-
-const labelSize = { width: 150 };
-const labelPadding = 8;
+import _ from "lodash";
 
 export function MapComponent(props) {
-  const { markers, zoom } = props;
+  const { markers } = props;
   const [center, setCenter] = useState({ lat: 47.606209, lng: -122.332069 });
-  // const [showInfoIndex, setShowInfoIndex] = useState(null);
+  const [showInfoIndex, setShowInfoIndex] = useState(null);
 
   useEffect(() => {
-    if (markers && markers.length && markers[0].lat && markers[0].lng) {
+    if (markers && markers.length && _.last(markers).lat && _.last(markers).lng) {
       setCenter({
-        lat: markers[0].lat,
-        lng: markers[0].lng,
+        lat: _.last(markers).lat,
+        lng: _.last(markers).lng,
       });
+      setShowInfoIndex(null);
+    }
+
+    if(markers && !markers.length) {
+      setCenter({ lat: 47.606209, lng: -122.332069 });
     }
   }, [markers]);
 
@@ -34,67 +34,43 @@ export function MapComponent(props) {
     }
   };
 
-  // const showInfo = (markerId) => {
-  //   console.log('Marker: ',markerId);
-  //   setShowInfoIndex(markerId);
-  // }
-
-  return <RenderedMap {...props} onMarkerDrag={onMarkerDrag} center={center}
-  // showInfo={showInfo} showInfoIndex={showInfoIndex}
-  />;
+  return (
+    <RenderedMap 
+      {...props} 
+      onMarkerDrag={onMarkerDrag} 
+      center={center} 
+      showInfoIndex={showInfoIndex} 
+      setShowInfoIndex={setShowInfoIndex}
+    />
+  );
 }
 
 const RenderedMap = withScriptjs(
   withGoogleMap((props) => (
-    <GoogleMap defaultZoom={props.zoom} defaultCenter={props.center}>
+    <GoogleMap zoom={props.zoom} center={props.center}>
       {props.isMarkerShown &&
         props.markers &&
         props.markers.map((mark, index) =>
           mark.label ? (
-            <MarkerWithLabel
-              key={index}
-              position={{ lat: mark.lat, lng: mark.lng }}
-              labelAnchor={new google.maps.Point(0, 0)}
-              icon={{
-                path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
-                fillColor: `${mark.color}`,
-                fillOpacity: 1,
-                strokeColor: "white",
-                scale: 1.4,
-                anchor: { x: 12, y: 24 },
-              }}
-              labelStyle={{
-                color: '#000',
-                backgroundColor: "#FFFF99",
-                fontSize: "11px",
-                padding: labelPadding+ "px",
-                width: labelSize.width +"px",
-                borderRadius: "4px",
-              }}
+            <Marker
+            key={index}
+            position={{ lat: mark.lat, lng: mark.lng }}
+            icon={{
+              path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
+              fillColor: `${mark.color}`,
+              fillOpacity: 1,
+              strokeColor: "white",
+              scale: 1.4,
+              anchor: { x: 12, y: 24 },
+            }}
+            onClick={() => props.setShowInfoIndex(index)}
             >
-              <span>{mark.label}</span>
-            </MarkerWithLabel>
-          //   <Marker
-          //   key={index}
-          //   position={{ lat: mark.lat, lng: mark.lng }}
-          //   label={`Index: ${index.toString()}`}
-          //   icon={{
-          //     path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
-          //     fillColor: `${mark.color}`,
-          //     fillOpacity: 1,
-          //     strokeColor: "white",
-          //     scale: 1.4,
-          //     anchor: { x: 12, y: 24 },
-          //   }}
-          //   onClick={props.showInfo(index)}
-          //   >
-          //     {props.showInfoIndex === index && (
-          //       <InfoWindow>
-          //         <span>{mark.label}</span>
-          //       </InfoWindow>
-          //     )}
-          // </Marker>
-
+              {props.showInfoIndex === index && (
+                <InfoWindow>
+                  <span style={{ color: "black" }}>{mark.label}</span>
+                </InfoWindow>
+              )}
+          </Marker>
           ) : (
             <Marker
               draggable={mark.draggable}
@@ -108,15 +84,22 @@ const RenderedMap = withScriptjs(
             />
           )
         )}
-        {/* <Polyline
-                path={props.markers}
-                geodesic={true}
-                options={{
-                    strokeColor: "#ff2527",
-                    strokeOpacity: 0.75,
-                    strokeWeight: 1
-                }}
-            /> */}
+        {props.isMarkerShown && 
+        props.markers.length && 
+        props.showPath && (
+          <Polyline
+            path={_.map(
+              props.markers, 
+              (marker) => ({ lat: marker.lat, lng: marker.lng })
+            )}
+            geodesic={true}
+            options={{
+              strokeColor: "#ff2527",
+              strokeOpacity: 0.75,
+              strokeWeight: 1,
+            }}
+          />
+        )}
     </GoogleMap>
   ))
 );

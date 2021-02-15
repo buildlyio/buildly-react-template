@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { connect } from "react-redux";
+import _ from "lodash";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
@@ -118,7 +119,7 @@ function Shipment(props) {
   const [filteredRows, setFilteredRows] = useState([]);
   const [mapShipmentFilter, setMapShipmentFilter] = useState(null);
   const [markers, setMarkers] = useState([]);
-  const [zoomLevel,setZoomLevel] = useState(12);
+  const [zoomLevel, setZoomLevel] = useState(12);
   const [tileView, setTileView] = useState(true);
   const [isMapLoaded,setMapLoaded] = useState(false);
   let routesInfo = [];
@@ -318,8 +319,12 @@ function Shipment(props) {
             }
             // Skip a marker on map only if temperature, humidity and lat long are all same.
             // Considered use case: If a shipment stays at some position for long, temperature and humidity changes can be critical
-            const markerFound = markersToSet.some(pointer => (pointer.temperature === marker.temperature &&
-              pointer.humidity === marker.humidity && pointer.lat === marker.lat && pointer.lng === marker.lng))
+            const markerFound = _.find(markersToSet, { 
+              temp: marker.temp, 
+              humidity: marker.humidity, 
+              lat: marker.lat, 
+              lng: marker.lng,
+            });
             if (!markerFound) {
               markersToSet.push(marker);
               index++;
@@ -330,14 +335,14 @@ function Shipment(props) {
           }
         }
       });
-      setMarkers(markersToSet);
+      setMarkers(_.orderBy(markersToSet, ["lat", "lng"], ["asc", "asc"]));
       setZoomLevel(12);
     }
   }, [mapShipmentFilter]);
 
   useEffect(() => {
     if(markers && markers.length > 0)
-    setTimeout(() => setMapLoaded(true), 3000)
+    setTimeout(() => setMapLoaded(true), 1000)
   })
   const onAddButtonClick = () => {
     history.push(`${routes.SHIPMENT}/add`, {
@@ -437,6 +442,7 @@ function Shipment(props) {
           </div>
           <MapComponent
             isMarkerShown={isMapLoaded}
+            showPath={true}
             markers={markers}
             googleMapURL={MAP_API_URL}
             zoom={zoomLevel}
