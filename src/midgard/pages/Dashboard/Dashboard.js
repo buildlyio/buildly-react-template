@@ -145,8 +145,9 @@ function Dashboard(props) {
     if (!sensorReportData) {
       dispatch(getSensorReport());
     }
-
-    // dispatch(getDashboardItems());
+    if (!dashboardItems) {
+      dispatch(getDashboardItems());
+    }
   }, []);
 
   const returnIcon = (row) => {
@@ -230,7 +231,7 @@ function Dashboard(props) {
         // }
         if (row.flag_list) {
           row.flag_list.forEach((flag) => {
-            if (flag.name.toLowerCase() === "delay") {
+            if (flag.name.toLowerCase().includes("delay")) {
               delayedInfo.push(row);
             } else {
               let itemExists = false;
