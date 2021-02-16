@@ -16,7 +16,6 @@ import { RECALL_DATA, DELAY_DATA } from "../../utils/mock";
 import { HumidIcon } from "../../components/Icons/Icons";
 import {
   getShipmentDetails,
-  getShipmentFlag,
   getDashboardItems,
 } from "../../redux/shipment/actions/shipment.actions";
 import {
@@ -117,9 +116,6 @@ function Dashboard(props) {
     if (shipmentData === null) {
       dispatch(getShipmentDetails(organization));
     }
-    // if (!shipmentFlag) {
-    //   dispatch(getShipmentFlag());
-    // }
     if (custodianData === null) {
       dispatch(getCustodians(organization));
       dispatch(getCustodianType());
