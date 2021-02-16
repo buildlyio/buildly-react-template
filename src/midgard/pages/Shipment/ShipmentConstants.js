@@ -225,14 +225,20 @@ export const custodyColumns = [
     maxWidth: 150,
   },
   {
+    id: "first_custody",
+    label: "First Custody",
+    minWidth: 100,
+    format: (value) => (value === true ? "YES" : "NO"),
+  },
+  {
     id: "has_current_custody",
     label: "Current Custody",
     minWidth: 100,
     format: (value) => (value === true ? "YES" : "NO"),
   },
   {
-    id: "first_custody",
-    label: "First Custody",
+    id: "last_custody",
+    label: "Last Custody",
     minWidth: 100,
     format: (value) => (value === true ? "YES" : "NO"),
   },
