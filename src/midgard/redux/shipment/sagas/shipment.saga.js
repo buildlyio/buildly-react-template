@@ -466,12 +466,12 @@ function* getShipmentFlagList(payload) {
   }
 }
 
-function* getDashboard() {
+function* getDashboard(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${shipmentApiEndPoint}dashboard/`,
+      `${environment.API_URL}${shipmentApiEndPoint}dashboard/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );

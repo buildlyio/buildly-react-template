@@ -147,7 +147,7 @@ function Dashboard(props) {
       dispatch(getSensorReport());
     }
     if (!dashboardItems) {
-      dispatch(getDashboardItems());
+      dispatch(getDashboardItems(organization));
     }
   }, []);
 
