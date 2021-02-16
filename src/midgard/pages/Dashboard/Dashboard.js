@@ -110,6 +110,7 @@ function Dashboard(props) {
   const [delayedRows, setDelayedRows] = useState([]);
   const [excursionRows, setExcursionRows] = useState([]);
   const [markers, setMarkers] = useState([]);
+  const [zoomLevel, setZoomLevel] = useState(5);
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
@@ -245,6 +246,7 @@ function Dashboard(props) {
         }
       });
       setMarkers(routesInfo);
+      setZoomLevel(12);
       setDelayedRows(delayedInfo);
       setExcursionRows(excursionInfo);
     }
@@ -389,6 +391,7 @@ function Dashboard(props) {
             <MapComponent
               isMarkerShown
               markers={markers}
+              zoom={zoomLevel}
               googleMapURL={MAP_API_URL}
               loadingElement={<div style={{ height: `100%` }} />}
               containerElement={<div style={{ height: `620px` }} />}
