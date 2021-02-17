@@ -106,14 +106,14 @@ function EditProfileInfo({
   );
   const email = useInput((editData && editData.email) || "");
   const password = useInput("", { required: true });
-  const [email_alert,setEmailAlert] = useState(false);
+  const [email_alert_flag,setEmailAlert] = useState(false);
   const [formError, setFormError] = useState({});
   const [fieldsMetadata, setFieldsMetaData] = useState({
     first_name: "",
     last_name: "",
     email: "",
     organisation_name: "",
-    email_alert: false,
+    email_alert_flag: false,
   });
 
   useEffect(() => {
@@ -131,9 +131,9 @@ function EditProfileInfo({
         userOptions.actions.POST,
         "email"
       );
-      metadata["email_alert"] = setOptionsData(
+      metadata["email_alert_flag"] = setOptionsData(
         userOptions.actions.POST,
-        "email_alert"
+        "email_alert_flag"
       );
     }
     if (orgOptions && orgOptions.actions) {
@@ -167,7 +167,7 @@ function EditProfileInfo({
       ...(organizationData && {
         organization_uuid: organizationData.organization_uuid,
       }),
-      email_alert: email_alert,
+      email_alert_flag: email_alert_flag,
     };
     dispatch(updateUser(editUserFormValue));
     setModal(false);
@@ -347,7 +347,7 @@ function EditProfileInfo({
               <Switch
                 size="medium"
                 color="primary"
-                checked={email_alert}
+                checked={email_alert_flag}
                 onChange={() => {
                   setEmailAlert(event.target.checked)
                 }}

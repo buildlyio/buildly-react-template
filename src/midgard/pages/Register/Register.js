@@ -90,7 +90,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
   const organization_name = useInput("", { required: true });
   const first_name = useInput("", { required: true });
   const last_name = useInput("");
-  const [email_alert,setEmailAlert] = useState(false);
+  const [email_alert_flag,setEmailAlert] = useState(false);
   const [formError, setFormError] = useState({});
 
   /**
@@ -107,7 +107,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
       organization_name: organization_name.value,
       first_name: first_name.value,
       last_name: last_name.value,
-      email_alert: email_alert,
+      email_alert_flag: email_alert_flag,
     };
     dispatch(register(registerFormValue, history));
   };
@@ -318,7 +318,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
                   <Switch
                     size="medium"
                     color="primary"
-                    checked={email_alert}
+                    checked={email_alert_flag}
                     onChange={() => {
                       setEmailAlert(event.target.checked)
                     }}

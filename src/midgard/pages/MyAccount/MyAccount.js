@@ -170,7 +170,7 @@ function MyAccount({
                       <div className={classes.infoSection}>
                         <Typography variant="body2">Shipment Email Alerts:</Typography>
                         <Typography variant="body1">
-                          {user && user.email_alert}
+                          {user && user.email_alert_flag}
                         </Typography>
                       </div>
                       <Divider />
