@@ -21,7 +21,7 @@ const CustomCheckbox = (props) => {
   }
 };
 
-const ShipmentDataTable = ({ rows, editAction, deleteAction, setMapShipmentFilter }) => {
+const ShipmentDataTable = ({ rows, editAction, deleteAction, setSelectedShipment }) => {
   const [selected, setSelected] = useState(0);
   const user = useContext(UserContext);
   const isAdmin = checkForGlobalAdmin(user);
@@ -39,7 +39,7 @@ const ShipmentDataTable = ({ rows, editAction, deleteAction, setMapShipmentFilte
     onRowSelectionChange: (rowsSelected) => {
       const index = rowsSelected[0].dataIndex;
       setSelected(index);
-      setMapShipmentFilter(rows[index]);
+      setSelectedShipment(rows[index]);
     },
     textLabels: {
       body: {
