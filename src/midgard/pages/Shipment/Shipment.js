@@ -129,9 +129,6 @@ function Shipment(props) {
     if (shipmentData === null) {
       dispatch(getShipmentDetails(organization));
     }
-    // if (!shipmentFlag) {
-    //   dispatch(getShipmentFlag());
-    // }
     if (custodianData === null) {
       dispatch(getCustodians(organization));
       dispatch(getCustodianType());
@@ -319,10 +316,10 @@ function Shipment(props) {
             }
             // Skip a marker on map only if temperature, humidity and lat long are all same.
             // Considered use case: If a shipment stays at some position for long, temperature and humidity changes can be critical
-            const markerFound = _.find(markersToSet, { 
-              temp: marker.temp, 
-              humidity: marker.humidity, 
-              lat: marker.lat, 
+            const markerFound = _.find(markersToSet, {
+              temp: marker.temp,
+              humidity: marker.humidity,
+              lat: marker.lat,
               lng: marker.lng,
             });
             if (!markerFound) {
@@ -453,7 +450,7 @@ function Shipment(props) {
         </Grid>
       </Grid>
       <ShipmentSensorTable
-        sensorReport={mapShipmentFilter?.sensor_report} 
+        sensorReport={mapShipmentFilter?.sensor_report}
       />
       <Route path={`${routes.SHIPMENT}/add`} component={AddShipment} />
       <Route path={`${routes.SHIPMENT}/add/origin`} component={AddOriginInfo} />

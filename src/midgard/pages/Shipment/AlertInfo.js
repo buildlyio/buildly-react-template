@@ -81,7 +81,7 @@ function AlertInfo(props) {
                 });
                 openAlerts.push(index);
                 messages.push({
-                  shipment_id: Number(element.partner_shipment_id),
+                  shipment_id: element.shipment_uuid,
                   alert_message: flag.name,
                 });
               }
@@ -111,6 +111,7 @@ function AlertInfo(props) {
       dispatch(setAlerts({ show: true, data: open }));
     }
     // setAlertsToShow(open);
+    setOpenAlerts(open);
   };
   return (
     <div className={classes.root}>
