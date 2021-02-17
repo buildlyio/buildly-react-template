@@ -178,8 +178,8 @@ function* updateUser(payload) {
     const user = yield call(
       httpService.makeRequest,
       "patch",
-      `${environment.API_URL}coreuser/${payload.data.id}/`,
-      payload.data
+      `${environment.API_URL}coreuser/${payload.data.id}/update_profile/`,
+      payload.data,
     );
     const data = yield call(
       httpService.makeRequest,

@@ -166,6 +166,15 @@ function MyAccount({
                       </div>
                       <Divider />
                     </Grid>
+                    <Grid item xs={12}>
+                      <div className={classes.infoSection}>
+                        <Typography variant="body2">Shipment Email Alerts:</Typography>
+                        <Typography variant="body1">
+                          {user && user.email_alert}
+                        </Typography>
+                      </div>
+                      <Divider />
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>

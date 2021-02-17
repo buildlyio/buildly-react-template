@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
+import Switch from '@material-ui/core/Switch';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
@@ -74,6 +75,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "1em",
     textAlign: "center",
   },
+  infoSection: {
+    display: "flex",
+    justifyContent: "space-between",
+    paddingBottom: theme.spacing(2),
+    alignItems: "center",
+  },
 }));
 
 function EditProfileInfo({
@@ -99,12 +106,14 @@ function EditProfileInfo({
   );
   const email = useInput((editData && editData.email) || "");
   const password = useInput("", { required: true });
+  const [email_alert,setEmailAlert] = useState(false);
   const [formError, setFormError] = useState({});
   const [fieldsMetadata, setFieldsMetaData] = useState({
     first_name: "",
     last_name: "",
     email: "",
     organisation_name: "",
+    email_alert: false,
   });
 
   useEffect(() => {
@@ -118,7 +127,14 @@ function EditProfileInfo({
         userOptions.actions.POST,
         "last_name"
       );
-      metadata["email"] = setOptionsData(userOptions.actions.POST, "email");
+      metadata["email"] = setOptionsData(
+        userOptions.actions.POST,
+        "email"
+      );
+      metadata["email_alert"] = setOptionsData(
+        userOptions.actions.POST,
+        "email_alert"
+      );
     }
     if (orgOptions && orgOptions.actions) {
       metadata["organisation_name"] = setOptionsData(
@@ -151,6 +167,7 @@ function EditProfileInfo({
       ...(organizationData && {
         organization_uuid: organizationData.organization_uuid,
       }),
+      email_alert: email_alert,
     };
     dispatch(updateUser(editUserFormValue));
     setModal(false);
@@ -324,6 +341,19 @@ function EditProfileInfo({
               />
             </Grid>
           )}
+          <Grid item item xs={12}>
+            <div className={classes.infoSection}>
+              <Typography variant="body2">Shipment Email Alerts:</Typography>
+              <Switch
+                size="medium"
+                color="primary"
+                checked={email_alert}
+                onChange={() => {
+                  setEmailAlert(event.target.checked)
+                }}
+              />
+            </div>
+          </Grid>
         </Grid>
         <Grid container spacing={isDesktop ? 3 : 0} justify="center">
           <Grid item xs={12} sm={4}>
