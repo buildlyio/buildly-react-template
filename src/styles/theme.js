@@ -28,7 +28,10 @@ const theme = createMuiTheme({
           backgroundColor: "transparent",
           padding: 0,
           minHeight: "100vh"
-        }
+        },
+        '.MuiTableRow-root.mui-row-selected': {
+          backgroundColor: "#a48a30 !important",
+        },
       }
     }
   }

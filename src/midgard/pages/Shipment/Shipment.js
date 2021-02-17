@@ -13,13 +13,12 @@ import ViewCompactIcon from "@material-ui/icons/ViewCompact";
 import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import {
-  SHIPMENT_COLUMNS,
   getFormattedRow,
   svgIcon,
   MAP_TOOLTIP,
   SHIPMENT_LIST_TOOLTIP
 } from "./ShipmentConstants";
-import ShipmentList from "./components/ShipmentList";
+import ShipmentDataTable from "./components/ShipmentDataTable";
 import { routes } from "../../routes/routesConstants";
 import { Route } from "react-router-dom";
 import AddShipment from "./forms/AddShipment";
@@ -355,6 +354,7 @@ function Shipment(props) {
       from: routes.SHIPMENT,
     });
   };
+
   const handleDelete = (item) => {
     setDeleteItemId(item.id);
     setConfirmModal(true);
@@ -398,7 +398,13 @@ function Shipment(props) {
               </IconButton>
             </Hidden>
           </div>
-          <ShipmentList
+          <ShipmentDataTable 
+            rows={rows}
+            editAction={handleEdit}
+            deleteAction={handleDelete}
+            setMapShipmentFilter={setMapShipmentFilter} 
+          />
+          {/* <ShipmentList
             rows={rows}
             filteredRows={filteredRows}
             columns={SHIPMENT_COLUMNS}
@@ -410,7 +416,7 @@ function Shipment(props) {
             hasSort={true}
             mapShipmentFilter={mapShipmentFilter}
             setMapShipmentFilter={setMapShipmentFilter}
-          />
+          /> */}
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>

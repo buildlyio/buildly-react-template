@@ -22,7 +22,7 @@ const ShipmentSensorTable = (props) => {
       const data = sensorReport.map(report => {
         const alert_status = report.excursion_flag ? "Excursion" : report.warning_flag ? "Warning" : "Normal";
         const temp = convertUnitsOfMeasure('celsius', report.report_temp, 'fahrenheit', 'temperature');
-        const locObj = JSON.parse(`[${report.report_location[0].replaceAll("'", '"')}]`)[0];
+        const locObj = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
 
         return ({ 
           shipment_id: Number(report.shipment_id[0]),
