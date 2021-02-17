@@ -81,7 +81,7 @@ function AlertInfo(props) {
                 });
                 openAlerts.push(index);
                 messages.push({
-                  shipment_id: element.shipment_uuid,
+                  shipment_uuid: element.shipment_uuid,
                   alert_message: flag.name,
                 });
               }
