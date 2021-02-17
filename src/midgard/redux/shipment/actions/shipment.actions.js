@@ -119,8 +119,9 @@ export const getShipmentFlag = (organization_uuid) => ({
   organization_uuid,
 });
 
-export const getDashboardItems = () => ({
+export const getDashboardItems = (organization_uuid) => ({
   type: GET_DASHBOARD_ITEMS,
+  organization_uuid,
 });
 
 export const setAlerts = (alerts) => ({
