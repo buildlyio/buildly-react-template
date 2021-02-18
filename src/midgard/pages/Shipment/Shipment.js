@@ -13,13 +13,10 @@ import ViewCompactIcon from "@material-ui/icons/ViewCompact";
 import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import {
-  SHIPMENT_COLUMNS,
   getFormattedRow,
-  svgIcon,
   MAP_TOOLTIP,
-  SHIPMENT_LIST_TOOLTIP
+  SHIPMENT_DATA_TABLE_TOOLTIP,
 } from "./ShipmentConstants";
-import ShipmentList from "./components/ShipmentList";
 import { routes } from "../../routes/routesConstants";
 import { Route } from "react-router-dom";
 import AddShipment from "./forms/AddShipment";
@@ -50,7 +47,6 @@ import { MAP_API_URL, convertUnitsOfMeasure } from "midgard/utils/utilMethods";
 import {
   getShipmentDetails,
   deleteShipment,
-  FILTER_SHIPMENT_SUCCESS,
   GET_SHIPMENT_OPTIONS_SUCCESS,
   GET_SHIPMENT_OPTIONS_FAILURE,
 } from "midgard/redux/shipment/actions/shipment.actions";
@@ -63,6 +59,7 @@ import { environment } from "environments/environment";
 import { UserContext } from "midgard/context/User.context";
 import moment from 'moment';
 import ShipmentSensorTable from "./components/ShipmentSensorTable";
+import ShipmentDataTable from "./components/ShipmentDataTable";
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -104,7 +101,6 @@ function Shipment(props) {
     gatewayData,
     shipmentFlag,
     unitsOfMeasure,
-    filteredData,
     custodyData,
     sensorData,
     sensorReportData,
@@ -116,13 +112,11 @@ function Shipment(props) {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
   const [rows, setRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
-  const [mapShipmentFilter, setMapShipmentFilter] = useState(null);
+  const [selectedShipment, setSelectedShipment] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [zoomLevel, setZoomLevel] = useState(12);
   const [tileView, setTileView] = useState(true);
-  const [isMapLoaded,setMapLoaded] = useState(false);
-  let routesInfo = [];
+  const [isMapLoaded, setMapLoaded] = useState(false);
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
@@ -186,22 +180,7 @@ function Shipment(props) {
           dispatch({ type: GET_CUSTODY_OPTIONS_FAILURE, error: err });
         });
     }
-
-    return function cleanup() {
-      dispatch({ type: FILTER_SHIPMENT_SUCCESS, data: undefined });
-    };
   }, []);
-
-  const returnIcon = (row) => {
-    let flagType = "";
-    let flag = "";
-    let shipmentFlags = row.flag_list;
-    if (shipmentFlags && shipmentFlags.length) {
-      flagType = shipmentFlags[0].type;
-      flag = shipmentFlags[0].name;
-    }
-    return svgIcon(flagType, flag);
-  };
 
   useEffect(() => {
     if (
@@ -212,7 +191,6 @@ function Shipment(props) {
       sensorReportData &&
       shipmentFlag
     ) {
-      routesInfo = [];
       let formattedRows = getFormattedRow(
         shipmentData,
         custodianData,
@@ -221,84 +199,22 @@ function Shipment(props) {
         custodyData,
         sensorReportData
       );
-      // formattedRows.forEach((row) => {
-      //   if (row.custody_info && row.custody_info.length > 0) {
-      //     row.custody_info.forEach((custody) => {
-      //       if (
-      //         (custody.has_current_custody || custody.first_custody) &&
-      //         (row.status.toLowerCase() === "planned" ||
-      //           row.status.toLowerCase() === "enroute")
-      //       ) {
-      //         if (custody.start_of_custody_location) {
-      //           routesInfo.push({
-      //             lat:
-      //               custody.start_of_custody_location &&
-      //               parseFloat(custody.start_of_custody_location.split(",")[0]),
-      //             lng:
-      //               custody.start_of_custody_location &&
-      //               parseFloat(custody.start_of_custody_location.split(",")[1]),
-      //             label: `${row.name}:${row.shipment_uuid}(Start Location)`,
-      //             icon: returnIcon(row),
-      //           });
-      //         }
-      //         if (custody.end_of_custody_location) {
-      //           routesInfo.push({
-      //             lat:
-      //               custody.end_of_custody_location &&
-      //               parseFloat(custody.end_of_custody_location.split(",")[0]),
-      //             lng:
-      //               custody.end_of_custody_location &&
-      //               parseFloat(custody.end_of_custody_location.split(",")[1]),
-      //             label: `${row.name}:${row.shipment_uuid}(End Location)`,
-      //             icon: returnIcon(row),
-      //           });
-      //         }
-      //       }
-      //     });
-      //   }
-
-
-        // if (row.sensor_report && row.sensor_report.length > 0) {
-        //   row.sensor_report.forEach((report) => {
-        //     if (report.report_location != null && Array.isArray(report.report_location)) {
-        //       try {
-        //         // data uses single quotes which throws an error
-        //         const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
-        //         // console.log('Lat Long: ', parsedLocation);
-        //       } catch(e) {
-        //         console.log(e);
-        //       }
-        //     }
-        //   });
-        // }
-
-
-
-      // });
-      // setMarkers(routesInfo);
       setRows(formattedRows);
-      setFilteredRows(formattedRows);
-      if (!mapShipmentFilter && formattedRows.length) {
-        setMapShipmentFilter(formattedRows[0])
+      if (!selectedShipment && formattedRows.length) {
+        setSelectedShipment(formattedRows[0])
       }
     }
   }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData, sensorReportData]);
 
   useEffect(() => {
-    if (filteredData && filteredData.length >= 0) {
-      setFilteredRows(filteredData);
-    }
-  }, [filteredData]);
-
-  useEffect(() => {
-    if (mapShipmentFilter) {
+    if (selectedShipment) {
       let markersToSet = [];
       let temperatureUnit = unitsOfMeasure.filter((obj) => {
         return obj.supported_class === "Temperature";
       })[0]["name"].toLowerCase()
       let tempConst = temperatureUnit[0].toUpperCase()
       let index = 1;
-      mapShipmentFilter.sensor_report.forEach((report) => {
+      selectedShipment.sensor_report.forEach((report) => {
         if (report.report_location != null && Array.isArray(report.report_location)) {
           try {
             // data uses single quotes which throws an error
@@ -335,7 +251,7 @@ function Shipment(props) {
       setMarkers(markersToSet);
       setZoomLevel(12);
     }
-  }, [mapShipmentFilter]);
+  }, [selectedShipment]);
 
   useEffect(() => {
     if(markers && markers.length > 0)
@@ -355,6 +271,7 @@ function Shipment(props) {
       from: routes.SHIPMENT,
     });
   };
+
   const handleDelete = (item) => {
     setDeleteItemId(item.id);
     setConfirmModal(true);
@@ -386,7 +303,7 @@ function Shipment(props) {
       <Grid container spacing={2}>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
-            <CustomizedTooltips toolTipText={SHIPMENT_LIST_TOOLTIP} />
+            <CustomizedTooltips toolTipText={SHIPMENT_DATA_TABLE_TOOLTIP} />
             <Hidden smDown>
               <IconButton
                 className={classes.menuButton}
@@ -398,29 +315,23 @@ function Shipment(props) {
               </IconButton>
             </Hidden>
           </div>
-          <ShipmentList
+          <ShipmentDataTable 
             rows={rows}
-            filteredRows={filteredRows}
-            columns={SHIPMENT_COLUMNS}
-            hasSearch={true}
-            searchValue={""}
-            dispatch={dispatch}
             editAction={handleEdit}
             deleteAction={handleDelete}
-            hasSort={true}
-            mapShipmentFilter={mapShipmentFilter}
-            setMapShipmentFilter={setMapShipmentFilter}
+            setSelectedShipment={setSelectedShipment}
+            tileView={tileView}
           />
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
             {
-              mapShipmentFilter
+              selectedShipment
               ? (
                 <Typography
                   className={classes.tileHeading}
                   variant="h5">
-                  {mapShipmentFilter.name}
+                  {selectedShipment.name}
                   <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
                 </Typography>
               )
@@ -450,7 +361,9 @@ function Shipment(props) {
         </Grid>
       </Grid>
       <ShipmentSensorTable
-        sensorReport={mapShipmentFilter?.sensor_report}
+        sensorReport={selectedShipment?.sensor_report}
+        shipmentUuid={selectedShipment?.shipment_uuid}
+        shipmentName={selectedShipment?.name}
       />
       <Route path={`${routes.SHIPMENT}/add`} component={AddShipment} />
       <Route path={`${routes.SHIPMENT}/add/origin`} component={AddOriginInfo} />

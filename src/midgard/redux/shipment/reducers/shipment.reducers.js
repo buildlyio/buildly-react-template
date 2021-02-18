@@ -12,9 +12,6 @@ import {
   DELETE_SHIPMENT,
   DELETE_SHIPMENT_SUCCESS,
   DELETE_SHIPMENT_FAILURE,
-  FILTER_SHIPMENT,
-  FILTER_SHIPMENT_SUCCESS,
-  FILTER_SHIPMENT_FAILURE,
   GET_SHIPMENT_FLAG,
   GET_SHIPMENT_FLAG_SUCCESS,
   GET_SHIPMENT_FLAG_FAILURE,
@@ -136,20 +133,6 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         error: action.error,
-      };
-    case FILTER_SHIPMENT:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-    case FILTER_SHIPMENT_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        filteredData: action.data,
       };
     case GET_SHIPMENT_FLAG:
       return {
