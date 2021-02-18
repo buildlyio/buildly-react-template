@@ -16,10 +16,6 @@ export const DELETE_SHIPMENT = "SHIPMENT/DELETE_SHIPMENT";
 export const DELETE_SHIPMENT_SUCCESS = "SHIPMENT/DELETE_SHIPMENT_SUCCESS";
 export const DELETE_SHIPMENT_FAILURE = "SHIPMENT/DELETE_SHIPMENT_FAILURE";
 
-export const FILTER_SHIPMENT = "SHIPMENT/FILTER_SHIPMENT";
-export const FILTER_SHIPMENT_SUCCESS = "SHIPMENT/FILTER_SHIPMENT_SUCCESS";
-export const FILTER_SHIPMENT_FAILURE = "SHIPMENT/FILTER_SHIPMENT_FAILURE";
-
 export const GET_SHIPMENT_FLAG = "SHIPMENT/GET_SHIPMENT_FLAG";
 export const GET_SHIPMENT_FLAG_SUCCESS = "SHIPMENT/GET_SHIPMENT_FLAG_SUCCESS";
 export const GET_SHIPMENT_FLAG_FAILURE = "SHIPMENT/GET_SHIPMENT_FLAG_FAILURE";
@@ -97,17 +93,6 @@ export const deleteShipment = (shipmentId, organization_uuid) => ({
   type: DELETE_SHIPMENT,
   shipmentId,
   organization_uuid,
-});
-
-/**
- *
- * @param {Array} list
- * @param {Object} filterObject {type,params}
- */
-export const filterShipmentData = (list, filterObject) => ({
-  type: FILTER_SHIPMENT,
-  list,
-  filterObject,
 });
 
 /**

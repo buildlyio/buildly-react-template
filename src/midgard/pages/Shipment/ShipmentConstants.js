@@ -1,7 +1,6 @@
 import React from "react";
 import { numberWithCommas } from "../../utils/utilMethods";
 import moment from "moment";
-import { Typography, List, ListItem } from "@material-ui/core";
 import {
   TempIcon,
   HumidIcon,
@@ -12,91 +11,211 @@ import {
 export const MAP_TOOLTIP =
   "Locations of the shipment from starting point till current time";
 
-export const SHIPMENT_LIST_TOOLTIP =
+export const SHIPMENT_DATA_TABLE_TOOLTIP =
   "Click on a shipment to view it on the map";
 
-export const SHIPMENT_COLUMNS = [
-  { id: "id", width: 150, maxWidth: 150 },
+export const SHIPMENT_SENSOR_REPORT_TOOLTIP =
+  "Shipment Sensor Report till current time";
+
+export const SHIPMENT_DATA_TABLE_COLUMNS = [
   {
-    id: "estimated_time_of_arrival",
-    width: 150,
-    maxWidth: 150,
-    minWidth: 150,
-    format: (value) =>
-      value && value !== "-" ? moment(value).format("MM/DD/yyyy") : value,
-  },
-  { id: "name", width: 150, maxWidth: 150, minWidth: 150 },
-  { id: "status", width: 100, maxWidth: 100, minWidth: 100 },
-  {
-    id: "shipment_flag",
-    width: 100,
-    maxWidth: 200,
-    minWidth: 100,
-    format: (value, row) => {
-      if (row && row.flag_list && value && value !== "-") {
-        return (
-          <React.Fragment>
-            {row.flag_list.map((obj, index) => {
-              if (obj.name.toLowerCase().includes("temp")) {
-                return (
-                  <TempIcon
-                    key={`iconTemp${index}`}
-                    color={
-                      obj.type.toLowerCase() === "warning"
-                        ? "#ff9800"
-                        : "#f44336"
-                    }
-                  />
-                );
-              } else if (obj.name.toLowerCase().includes("humid")) {
-                return (
-                  <HumidIcon
-                    key={`iconHumid${index}`}
-                    color={
-                      obj.type.toLowerCase() === "warning"
-                        ? "#ff9800"
-                        : "#f44336"
-                    }
-                  />
-                );
-              } else if (obj.name.toLowerCase().includes("delay")) {
-                return (
-                  <DelayIcon
-                    key={`iconDelay${index}`}
-                    color={
-                      obj.type.toLowerCase() === "warning"
-                        ? "#ff9800"
-                        : "#f44336"
-                    }
-                  />
-                );
-              } else if (obj.name.toLowerCase().includes("recall")) {
-                return (
-                  <RecallIcon
-                    key={`iconRecall${index}`}
-                    color={
-                      obj.type.toLowerCase() === "warning"
-                        ? "#ff9800"
-                        : "#f44336"
-                    }
-                  />
-                );
-              }
-            })}
-          </React.Fragment>
-        );
-      }
-      return value;
+    name: "shipment_uuid",
+    label: "Shipment ID",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
     },
   },
-  { id: "custodian_name", width: 200, maxWidth: 200, minWidth: 200 },
   {
-    id: "value",
-    width: 150,
-    maxWidth: 150,
-    minWidth: 150,
-    format: (value) =>
-      value && value !== "-" ? `$${numberWithCommas(value)}` : value,
+    name: "estimated_time_of_arrival",
+    label: "Estimated Date of Arrival",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => value && value !== "-" 
+        ? moment(value).format("MM/DD/yyyy") 
+        : value
+    },
+  },
+  { 
+    name: "name", 
+    label: "Shipment Name",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  { 
+    name: "status", 
+    label: "Shipment Status",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: "shipment_flag",
+    label: "Shipment Flags",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => {
+        if (value && value.length) {
+          return (
+            <React.Fragment>
+              {value.map((flag, index) => {
+                if (flag.toLowerCase().includes("temp")) {
+                  return (
+                    <TempIcon
+                      key={`iconTemp${index}`}
+                      color={
+                        flag.toLowerCase().includes("warning")
+                          ? "#ff9800"
+                          : "#f44336"
+                      }
+                    />
+                  );
+                } else if (flag.toLowerCase().includes("humid")) {
+                  return (
+                    <HumidIcon
+                      key={`iconHumid${index}`}
+                      color={
+                        flag.toLowerCase().includes("warning")
+                          ? "#ff9800"
+                          : "#f44336"
+                      }
+                    />
+                  );
+                } else if (flag.toLowerCase().includes("delay")) {
+                  return (
+                    <DelayIcon
+                      key={`iconDelay${index}`}
+                      color={
+                        flag.toLowerCase().includes("warning")
+                          ? "#ff9800"
+                          : "#f44336"
+                      }
+                    />
+                  );
+                } else if (flag.toLowerCase().includes("recall")) {
+                  return (
+                    <RecallIcon
+                      key={`iconRecall${index}`}
+                      color={
+                        flag.toLowerCase().includes("warning")
+                          ? "#ff9800"
+                          : "#f44336"
+                      }
+                    />
+                  );
+                }
+              })}
+            </React.Fragment>
+          );
+        }
+        return value.toString();
+      }
+    },
+  },
+  { 
+    name: "custodian_name", 
+    label: "Custodian Name",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: "value",
+    label: "Value",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => value && value !== "-" 
+        ? `$${numberWithCommas(value)}` 
+        : value
+    },
+  },
+];
+
+export const SHIPMENT_SENSOR_COLUMNS = [
+  {
+    name: "shipment_id",
+    label: "Shipment ID",
+    options: {
+      sort: false,
+      filter: false,
+    },
+  },
+  {
+    name: "alert_status",
+    label: "Alert Status",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: "timestamp",
+    label: "Tag Captured Timestamp",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => {
+        const displayDate = new Date(value).toLocaleDateString('en-US', 
+          {year: 'numeric', month: 'short', day: 'numeric'});
+        const displayTime = new Date(value).toLocaleTimeString();
+        return (`${displayDate} ${displayTime}`);
+      }
+    },
+  },
+  {
+    name: "latitude",
+    label: "Location (Latitude)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(5)
+    },
+  },
+  {
+    name: "longitude",
+    label: "Location (Longitude)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(5)
+    },
+  },
+  {
+    name: "humidity",
+    label: "Humidity",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: "temperature",
+    label: "Temperature (\u00b0F)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
+    },
   },
 ];
 
@@ -155,12 +274,12 @@ export const getFormattedRow = (
         }
       });
     }
+    list["shipment_flag"] = [];
     if (shipmentFlag && shipmentFlag.length) {
       shipmentFlag &&
         shipmentFlag.forEach((flag) => {
           if (list.flags.indexOf(flag.url) !== -1 && flag.type !== "None") {
-            list["shipment_flag"] = flag.name;
-            list["flag_type"] = flag.type;
+            list.shipment_flag = [...list.shipment_flag, flag.name];
             list[`${flag.name.toLowerCase()}_flag`] = true;
             flag_list.push(flag);
           }
@@ -241,47 +360,6 @@ export const custodyColumns = [
     label: "Last Custody",
     minWidth: 100,
     format: (value) => (value === true ? "YES" : "NO"),
-  },
-];
-
-export const SHIPMENT_SENSOR_COLUMNS = [
-  {
-    id: "shipment_id",
-    label: "Shipment ID",
-    minWidth: 150,
-  },
-  {
-    id: "alert_status",
-    label: "Alert Status",
-    minWidth: 150,
-  },
-  {
-    id: "timestamp",
-    label: "Tag Captured Timestamp",
-    minWidth: 150,
-    format: (value) => (`${new Date(value).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})} ${new Date(value).toLocaleTimeString()}`)
-  },
-  {
-    id: "location",
-    label: "Location",
-    minWidth: 150,
-    format: (value) => (
-    <div>
-      Latitude: {value.latitude}<br/>
-      Longitude: {value.longitude}<br />
-      Location Method: {value.locationMethod}
-    </div>
-    )
-  },
-  {
-    id: "humidity",
-    label: "Humidity",
-    minWidth: 150,
-  },
-  {
-    id: "temp",
-    label: "Temperature (\u00b0F)",
-    minWidth: 150,
   },
 ];
 

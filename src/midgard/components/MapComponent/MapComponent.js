@@ -85,7 +85,7 @@ const RenderedMap = withScriptjs(
           )
         )}
         {props.isMarkerShown && 
-        props.markers.length && 
+        props.markers.length > 0 && 
         props.showPath && (
           <Polyline
             path={_.map(

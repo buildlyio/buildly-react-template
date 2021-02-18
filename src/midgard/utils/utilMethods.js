@@ -97,6 +97,7 @@ export const setOptionsData = (options, fieldName) => {
   }
   return result;
 };
+
 /**
  * Used to convert value measured from one unit to other
  * @param {String} sourceUnit
@@ -114,5 +115,4 @@ export const convertUnitsOfMeasure = (sourceUnit, value, destinationUnit, _class
       else (sourceUnit === destinationUnit)
         return value;
   }
-
 }
