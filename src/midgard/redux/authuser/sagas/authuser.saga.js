@@ -175,7 +175,7 @@ function* invite(payload) {
 
 function* updateUser(payload) {
   try {
-    const user = yield call(
+    const response = yield call(
       httpService.makeRequest,
       "patch",
       `${environment.API_URL}coreuser/${payload.data.id}/update_profile/`,
@@ -187,6 +187,12 @@ function* updateUser(payload) {
       `${environment.API_URL}organization/${payload.data.organization_uuid}/`,
       { name: payload.data.organization_name }
     );
+    const user = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}coreuser/me/`
+    );
+    yield call(oauthService.setOauthUser, user);
     yield [
       yield put({ type: UPDATE_USER_SUCCESS, user }),
       yield put({ type: GET_ORGANIZATION_SUCCESS, data }),

@@ -90,7 +90,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
   const organization_name = useInput("", { required: true });
   const first_name = useInput("", { required: true });
   const last_name = useInput("");
-  const [email_alert_flag,setEmailAlert] = useState(false);
+  const [emailAlertFlag, setEmailAlertFlag] = useState(false);
   const [formError, setFormError] = useState({});
 
   /**
@@ -107,7 +107,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
       organization_name: organization_name.value,
       first_name: first_name.value,
       last_name: last_name.value,
-      email_alert_flag: email_alert_flag,
+      email_alert_flag: emailAlertFlag,
     };
     dispatch(register(registerFormValue, history));
   };
@@ -313,18 +313,18 @@ function Register({ dispatch, loading, history, loaded, error }) {
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                <div className={classes.infoSection}>
-                  <Typography variant="body2">Shipment Email Alerts:</Typography>
-                  <Switch
-                    size="medium"
-                    color="primary"
-                    checked={email_alert_flag}
-                    onChange={() => {
-                      setEmailAlert(event.target.checked)
-                    }}
-                  />
-                </div>
-              </Grid>
+                  <div className={classes.infoSection}>
+                    <Typography variant="body2">Shipment Email Alerts:</Typography>
+                    <Switch
+                      size="medium"
+                      color="primary"
+                      checked={emailAlertFlag}
+                      onChange={() => {
+                        setEmailAlertFlag(event.target.checked)
+                      }}
+                    />
+                  </div>
+                </Grid>
               </Grid>
               <div className={classes.loadingWrapper}>
                 <Button
