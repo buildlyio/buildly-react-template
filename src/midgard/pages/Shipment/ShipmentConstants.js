@@ -14,6 +14,9 @@ export const MAP_TOOLTIP =
 export const SHIPMENT_DATA_TABLE_TOOLTIP =
   "Click on a shipment to view it on the map";
 
+export const SHIPMENT_SENSOR_REPORT_TOOLTIP =
+  "Shipment Sensor Report till current time";
+
 export const SHIPMENT_DATA_TABLE_COLUMNS = [
   {
     name: "shipment_uuid",
@@ -138,6 +141,80 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       customBodyRender: (value) => value && value !== "-" 
         ? `$${numberWithCommas(value)}` 
         : value
+    },
+  },
+];
+
+export const SHIPMENT_SENSOR_COLUMNS = [
+  {
+    name: "shipment_id",
+    label: "Shipment ID",
+    options: {
+      sort: false,
+      filter: false,
+    },
+  },
+  {
+    name: "alert_status",
+    label: "Alert Status",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: "timestamp",
+    label: "Tag Captured Timestamp",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => {
+        const displayDate = new Date(value).toLocaleDateString('en-US', 
+          {year: 'numeric', month: 'short', day: 'numeric'});
+        const displayTime = new Date(value).toLocaleTimeString();
+        return (`${displayDate} ${displayTime}`);
+      }
+    },
+  },
+  {
+    name: "latitude",
+    label: "Location (Latitude)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(5)
+    },
+  },
+  {
+    name: "longitude",
+    label: "Location (Longitude)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(5)
+    },
+  },
+  {
+    name: "humidity",
+    label: "Humidity",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: "temperature",
+    label: "Temperature (\u00b0F)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
     },
   },
 ];
@@ -283,47 +360,6 @@ export const custodyColumns = [
     label: "Last Custody",
     minWidth: 100,
     format: (value) => (value === true ? "YES" : "NO"),
-  },
-];
-
-export const SHIPMENT_SENSOR_COLUMNS = [
-  {
-    id: "shipment_id",
-    label: "Shipment ID",
-    minWidth: 150,
-  },
-  {
-    id: "alert_status",
-    label: "Alert Status",
-    minWidth: 150,
-  },
-  {
-    id: "timestamp",
-    label: "Tag Captured Timestamp",
-    minWidth: 150,
-    format: (value) => (`${new Date(value).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})} ${new Date(value).toLocaleTimeString()}`)
-  },
-  {
-    id: "location",
-    label: "Location",
-    minWidth: 150,
-    format: (value) => (
-    <div>
-      Latitude: {value.latitude}<br/>
-      Longitude: {value.longitude}<br />
-      Location Method: {value.locationMethod}
-    </div>
-    )
-  },
-  {
-    id: "humidity",
-    label: "Humidity",
-    minWidth: 150,
-  },
-  {
-    id: "temp",
-    label: "Temperature (\u00b0F)",
-    minWidth: 150,
   },
 ];
 

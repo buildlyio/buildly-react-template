@@ -319,7 +319,8 @@ function Shipment(props) {
             rows={rows}
             editAction={handleEdit}
             deleteAction={handleDelete}
-            setSelectedShipment={setSelectedShipment} 
+            setSelectedShipment={setSelectedShipment}
+            tileView={tileView}
           />
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
@@ -361,6 +362,8 @@ function Shipment(props) {
       </Grid>
       <ShipmentSensorTable
         sensorReport={selectedShipment?.sensor_report}
+        shipmentUuid={selectedShipment?.shipment_uuid}
+        shipmentName={selectedShipment?.name}
       />
       <Route path={`${routes.SHIPMENT}/add`} component={AddShipment} />
       <Route path={`${routes.SHIPMENT}/add/origin`} component={AddOriginInfo} />
