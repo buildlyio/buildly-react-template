@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -17,7 +17,6 @@ import { routes } from "../../routes/routesConstants";
 import profile from "assets/profile.png";
 import Modal from "../../components/Modal/Modal";
 import EditProfileInfo from "./forms/EditProfileInfo";
-import { getOrganization } from "../../redux/authuser/actions/authuser.actions";
 import Loader from "../../components/Loader/Loader";
 
 const useStyles = makeStyles((theme) => ({
@@ -70,9 +69,7 @@ const useStyles = makeStyles((theme) => ({
  * Outputs the profile page for the user.
  */
 function MyAccount({
-  dispatch,
   history,
-  location,
   contactInfo,
   data,
   organizationData,
@@ -166,6 +163,15 @@ function MyAccount({
                       </div>
                       <Divider />
                     </Grid>
+                    <Grid item xs={12}>
+                      <div className={classes.infoSection}>
+                        <Typography variant="body2">Shipment Email Alerts:</Typography>
+                        <Typography variant="body1">
+                          {user && user.email_alert_flag ? "Yes" : "No"}
+                        </Typography>
+                      </div>
+                      <Divider />
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
@@ -190,7 +196,7 @@ function MyAccount({
       {openModal && (
         <Modal
           open={openModal}
-          setOpen={(closeModal) => setModal(!openModal)}
+          setOpen={() => setModal(!openModal)}
           title={"Edit Profile Info"}
           titleClass={classes.formTitle}
           maxWidth={"sm"}

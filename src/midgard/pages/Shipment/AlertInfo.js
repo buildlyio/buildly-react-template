@@ -4,7 +4,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Alert from "@material-ui/lab/Alert";
 import { UserContext } from "midgard/context/User.context";
 import { setAlerts, emailAlerts } from "../../redux/shipment/actions/shipment.actions";
-import { checkForAdmin, checkForGlobalAdmin } from "midgard/utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,7 +51,6 @@ function AlertInfo(props) {
   const [openAlerts, setOpenAlerts] = useState([]);
   // const [alertsToShow, setAlertsToShow] = useState([]);
   const user = useContext(UserContext);
-  const isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
 
   useEffect(() => {
     if (
@@ -81,14 +79,14 @@ function AlertInfo(props) {
                 });
                 openAlerts.push(index);
                 messages.push({
-                  shipment_id: element.shipment_uuid,
+                  shipment_uuid: element.shipment_uuid,
                   alert_message: flag.name,
                 });
               }
             });
         });
       dispatch(setAlerts({ show: true, data: alerts }));
-      if (isAdmin && messages.length > 0) {
+      if (user && user.email_alert_flag && messages.length > 0) {
         dispatch(emailAlerts({
           user_uuid: user.core_user_uuid,
           messages: messages,

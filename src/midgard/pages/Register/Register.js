@@ -6,6 +6,7 @@ import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
 import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
+import Switch from '@material-ui/core/Switch';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
@@ -68,6 +69,12 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     position: "relative",
   },
+  infoSection: {
+    display: "flex",
+    justifyContent: "space-between",
+    paddingBottom: theme.spacing(2),
+    alignItems: "center",
+  },
 }));
 
 function Register({ dispatch, loading, history, loaded, error }) {
@@ -83,6 +90,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
   const organization_name = useInput("", { required: true });
   const first_name = useInput("", { required: true });
   const last_name = useInput("");
+  const [emailAlertFlag, setEmailAlertFlag] = useState(false);
   const [formError, setFormError] = useState({});
 
   /**
@@ -99,6 +107,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
       organization_name: organization_name.value,
       first_name: first_name.value,
       last_name: last_name.value,
+      email_alert_flag: emailAlertFlag,
     };
     dispatch(register(registerFormValue, history));
   };
@@ -302,6 +311,19 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     onBlur={(e) => handleBlur(e, "confirm", re_password)}
                     {...re_password.bind}
                   />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <div className={classes.infoSection}>
+                    <Typography variant="body2">Shipment Email Alerts:</Typography>
+                    <Switch
+                      size="medium"
+                      color="primary"
+                      checked={emailAlertFlag}
+                      onChange={() => {
+                        setEmailAlertFlag(event.target.checked)
+                      }}
+                    />
+                  </div>
                 </Grid>
               </Grid>
               <div className={classes.loadingWrapper}>

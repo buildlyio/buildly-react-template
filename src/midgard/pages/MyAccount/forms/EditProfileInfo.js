@@ -2,35 +2,15 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import Box from "@material-ui/core/Box";
-import Card from "@material-ui/core/Card";
+import Switch from '@material-ui/core/Switch';
 import CircularProgress from "@material-ui/core/CircularProgress";
-import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import { validators } from "../../../utils/validators";
-import Modal from "../../../components/Modal/Modal";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import Select from "@material-ui/core/Select";
 import { useInput } from "../../../hooks/useInput";
-import {
-  addCustodians,
-  getCustodianType,
-  editCustodian,
-} from "../../../redux/custodian/actions/custodian.actions";
-import Loader from "../../../components/Loader/Loader";
-import { dispatch } from "../../../redux/store";
-import {
-  ADDRESS_TYPE,
-  STATE_CHOICES,
-  COUNTRY_CHOICES,
-} from "../../../utils/mock";
-import { user } from "../../../context/User.context";
 import { updateUser } from "../../../redux/authuser/actions/authuser.actions";
 import { setOptionsData } from "../../../utils/utilMethods";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
@@ -63,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: -12,
   },
   loadingWrapper: {
-    // margin: theme.spacing(1),
     position: "relative",
   },
   addressContainer: {
@@ -74,15 +53,17 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "1em",
     textAlign: "center",
   },
+  infoSection: {
+    display: "flex",
+    justifyContent: "space-between",
+    paddingBottom: theme.spacing(2),
+    alignItems: "center",
+  },
 }));
 
 function EditProfileInfo({
   dispatch,
   loading,
-  history,
-  loaded,
-  error,
-  location,
   editData,
   setModal,
   organizationData,
@@ -98,13 +79,14 @@ function EditProfileInfo({
     (organizationData && organizationData.name) || ""
   );
   const email = useInput((editData && editData.email) || "");
-  const password = useInput("", { required: true });
+  const [emailAlertFlag, setEmailAlertFlag] = useState(editData && editData.email_alert_flag);
   const [formError, setFormError] = useState({});
   const [fieldsMetadata, setFieldsMetaData] = useState({
     first_name: "",
     last_name: "",
     email: "",
     organisation_name: "",
+    email_alert_flag: false,
   });
 
   useEffect(() => {
@@ -118,7 +100,14 @@ function EditProfileInfo({
         userOptions.actions.POST,
         "last_name"
       );
-      metadata["email"] = setOptionsData(userOptions.actions.POST, "email");
+      metadata["email"] = setOptionsData(
+        userOptions.actions.POST,
+        "email"
+      );
+      metadata["email_alert_flag"] = setOptionsData(
+        userOptions.actions.POST,
+        "email_alert_flag"
+      );
     }
     if (orgOptions && orgOptions.actions) {
       metadata["organisation_name"] = setOptionsData(
@@ -128,10 +117,6 @@ function EditProfileInfo({
     }
     setFieldsMetaData(metadata);
   }, [userOptions, orgOptions]);
-
-  // if (loade) {
-  //   setModal(false);
-  // }
 
   /**
    * Submit The form and add/edit custodian
@@ -144,13 +129,12 @@ function EditProfileInfo({
       last_name: last_name.value,
       email: email.value,
       username: editData.username,
-      title: "",
-      // password: password.value,
       ...(organizationData && { organization_name: organisation_name.value }),
       id: editData.id,
       ...(organizationData && {
         organization_uuid: organizationData.organization_uuid,
       }),
+      email_alert_flag: emailAlertFlag,
     };
     dispatch(updateUser(editUserFormValue));
     setModal(false);
@@ -324,6 +308,19 @@ function EditProfileInfo({
               />
             </Grid>
           )}
+          <Grid item xs={12}>
+            <div className={classes.infoSection}>
+              <Typography variant="body2">Shipment Email Alerts:</Typography>
+              <Switch
+                size="medium"
+                color="primary"
+                checked={emailAlertFlag}
+                onChange={() => {
+                  setEmailAlertFlag(event.target.checked)
+                }}
+              />
+            </div>
+          </Grid>
         </Grid>
         <Grid container spacing={isDesktop ? 3 : 0} justify="center">
           <Grid item xs={12} sm={4}>
