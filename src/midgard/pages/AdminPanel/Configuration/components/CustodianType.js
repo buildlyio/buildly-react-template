@@ -5,10 +5,7 @@ import {
   deleteCustodianType,
 } from "midgard/redux/custodian/actions/custodian.actions";
 import DataTableWrapper from "midgard/components/DataTableWrapper/DataTableWrapper";
-import { 
-  CUSTODIAN_TYPE_TOOLTIP,
-  CUSTODIAN_TYPE_COLUMNS,
-} from "../ConfigurationConstants";
+import { CUSTODIAN_TYPE_COLUMNS } from "../ConfigurationConstants";
 import { routes } from "midgard/routes/routesConstants";
 import { Route } from "react-router-dom";
 import AddCustodianType from "../forms/AddCustodianType";
@@ -67,8 +64,6 @@ const CustodianType = (props) => {
       rows={custodianTypeList || []}
       columns={CUSTODIAN_TYPE_COLUMNS}
       filename="CustodianType"
-      toolTipTitle="Custodian Type"
-      toolTipText={CUSTODIAN_TYPE_TOOLTIP}
       addButtonHeading="Custodian Type"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}

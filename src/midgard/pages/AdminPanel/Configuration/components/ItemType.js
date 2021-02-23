@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { connect } from "react-redux";
 import {
   getItemType,
   deleteItemType,
 } from "midgard/redux/items/actions/items.actions";
 import DataTableWrapper from "midgard/components/DataTableWrapper/DataTableWrapper";
-import { 
-  ITEM_TYPE_TOOLTIP,
-  ITEM_TYPE_COLUMNS,
-} from "../ConfigurationConstants";
+import { ITEM_TYPE_COLUMNS } from "../ConfigurationConstants";
 import { routes } from "midgard/routes/routesConstants";
 import { Route } from "react-router-dom";
 import AddItemType from "../forms/AddItemType";
+import { UserContext } from "midgard/context/User.context";
 
 const ItemType = (props) => {
   const { 
@@ -21,6 +19,7 @@ const ItemType = (props) => {
     redirectTo,
     history, 
   } = props;
+  const organization = useContext(UserContext).organization.organization_uuid;
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
@@ -33,7 +32,7 @@ const ItemType = (props) => {
 
   useEffect(() => {
     if (!loading && !itemTypeList) {
-      dispatch(getItemType());
+      dispatch(getItemType(organization));
     }
   }, [itemTypeList]);
 
@@ -67,8 +66,6 @@ const ItemType = (props) => {
       rows={itemTypeList || []}
       columns={ITEM_TYPE_COLUMNS}
       filename="ItemType"
-      toolTipTitle="Item Type"
-      toolTipText={ITEM_TYPE_TOOLTIP}
       addButtonHeading="Item Type"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}

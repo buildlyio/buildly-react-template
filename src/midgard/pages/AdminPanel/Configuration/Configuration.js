@@ -1,16 +1,83 @@
 import React from "react";
 import { connect } from "react-redux";
+import { makeStyles } from "@material-ui/core/styles";
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import CustomizedTooltips from "midgard/components/ToolTip/ToolTip";
+import {
+  CUSTODIAN_TYPE_TOOLTIP,
+  GATEWAY_TYPE_TOOLTIP,
+  ITEM_TYPE_TOOLTIP,
+} from "./ConfigurationConstants";
 import CustodianType from "./components/CustodianType";
 import GatewayType from "./components/GatewayType";
 import ItemType from "./components/ItemType";
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+    marginTop: theme.spacing(6),
+  },
+  accordian: {
+    backgroundColor: theme.palette.background.default,
+    marginBottom: theme.spacing(4),
+  },
+}));
+
 const Configuration = (props) => {
+  const classes = useStyles();
+
   return (
-    <React.Fragment>
-      <CustodianType {...props} />
-      <GatewayType {...props} />
-      <ItemType {...props} />
-    </React.Fragment>
+    <div className={classes.root}>
+      <Accordion className={classes.accordian}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="custodian-type-content"
+          id="custodian-type-header"
+        >
+          <Typography variant="h5">
+            Custodian Type
+            <CustomizedTooltips toolTipText={CUSTODIAN_TYPE_TOOLTIP} />
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <CustodianType {...props} />
+        </AccordionDetails>
+      </Accordion>
+      <Accordion className={classes.accordian}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="custodian-type-content"
+          id="custodian-type-header"
+        >
+          <Typography variant="h5">
+            Gateway Type
+            <CustomizedTooltips toolTipText={GATEWAY_TYPE_TOOLTIP} />
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <GatewayType {...props} />
+        </AccordionDetails>
+      </Accordion>
+      <Accordion className={classes.accordian}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="custodian-type-content"
+          id="custodian-type-header"
+        >
+          <Typography variant="h5">
+            Item Type
+            <CustomizedTooltips toolTipText={ITEM_TYPE_TOOLTIP} />
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <ItemType {...props} />
+        </AccordionDetails>
+      </Accordion>
+    </div>
   )
 }
 

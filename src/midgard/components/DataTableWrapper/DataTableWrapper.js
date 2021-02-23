@@ -3,8 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Loader from "../../components/Loader/Loader";
 import Grid from "@material-ui/core/Grid";
 import MUIDataTable from "mui-datatables";
-import Typography from "@material-ui/core/Typography";
-import CustomizedTooltips from "midgard/components/ToolTip/ToolTip";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import IconButton from "@material-ui/core/IconButton";
@@ -15,15 +13,10 @@ import ConfirmModal from "midgard/components/Modal/ConfirmModal";
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(1),
+    width: "100%"
   },
-  tooltip: {
-    background: "#383636",
-    width: "100%",
-    display: "flex",
-    minHeight: "40px",
-    alignItems: "center",
-    padding: theme.spacing(1),
-    paddingLeft: 0,
+  addButton: {
+    marginBottom: theme.spacing(2),
   },
   title: {
     flex: 1,
@@ -56,8 +49,6 @@ const DataTableWrapper = ({
   rows,
   columns,
   filename,
-  toolTipTitle,
-  toolTipText,
   addButtonHeading,
   onAddButtonClick,
   children,
@@ -138,23 +129,15 @@ const DataTableWrapper = ({
       <Grid container spacing={2}>
         {loading && <Loader open={loading} />}
         <Grid item xs={12}>
-          <div className={classes.tooltip}>
-            <Typography
-              className={classes.title}
-              variant="h5"
-            >
-              {`${toolTipTitle}`}
-              <CustomizedTooltips toolTipText={toolTipText} />
-            </Typography>
-            <Button
-              type="button"
-              variant="contained"
-              color="primary"
-              onClick={onAddButtonClick}
-            >
-              <AddIcon /> {addButtonHeading}
-            </Button>
-          </div>
+          <Button
+            className={classes.addButton}
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={onAddButtonClick}
+          >
+            <AddIcon /> {addButtonHeading}
+          </Button>
           <MUIDataTable
             data={rows}
             columns={formattedColumns}

@@ -5,10 +5,7 @@ import {
   deleteGatewayType,
 } from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
 import DataTableWrapper from "midgard/components/DataTableWrapper/DataTableWrapper";
-import { 
-  GATEWAY_TYPE_TOOLTIP,
-  GATEWAY_TYPE_COLUMNS,
-} from "../ConfigurationConstants";
+import { GATEWAY_TYPE_COLUMNS } from "../ConfigurationConstants";
 import { routes } from "midgard/routes/routesConstants";
 import { Route } from "react-router-dom";
 import AddGatewayType from "../forms/AddGatewayType";
@@ -67,8 +64,6 @@ const GatewayType = (props) => {
       rows={gatewayTypeList || []}
       columns={GATEWAY_TYPE_COLUMNS}
       filename="GatewayType"
-      toolTipTitle="Gateway Type"
-      toolTipText={GATEWAY_TYPE_TOOLTIP}
       addButtonHeading="Gateway Type"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
