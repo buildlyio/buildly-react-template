@@ -349,7 +349,7 @@ describe("Edit Custodian type reducer", () => {
     const custodianType = { id: 1, name: "test type - edited" };
     expect(
       reducer.default(state, {
-        type: actions.ADD_CUSTODIAN_TYPE_SUCCESS,
+        type: actions.EDIT_CUSTODIAN_TYPE_SUCCESS,
         custodianType,
       })
     ).toEqual({

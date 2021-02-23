@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {
   GET_GATEWAYS,
   GET_GATEWAYS_SUCCESS,
@@ -42,6 +43,15 @@ import {
   GET_SENSOR_OPTIONS,
   GET_SENSOR_OPTIONS_SUCCESS,
   GET_SENSOR_OPTIONS_FAILURE,
+  ADD_GATEWAYS_TYPE,
+  ADD_GATEWAYS_TYPE_SUCCESS,
+  ADD_GATEWAYS_TYPE_FAILURE,
+  EDIT_GATEWAYS_TYPE,
+  EDIT_GATEWAYS_TYPE_SUCCESS,
+  EDIT_GATEWAYS_TYPE_FAILURE,
+  DELETE_GATEWAYS_TYPE,
+  DELETE_GATEWAYS_TYPE_SUCCESS,
+  DELETE_GATEWAYS_TYPE_FAILURE,
 } from "../actions/sensorsGateway.actions";
 
 const initialState = {
@@ -59,6 +69,14 @@ const initialState = {
 
 // Reducer
 export default (state = initialState, action) => {
+  let deletedGatewayType;
+  let editedGatewayType = state.gatewayTypeList;
+  let gatewayTypePresent = _.remove(editedGatewayType, { id: action.gatewayType?.id })[0];
+  if (gatewayTypePresent) {
+    deletedGatewayType = editedGatewayType;
+    editedGatewayType = [ ...editedGatewayType, action.gatewayType ];
+  };
+
   switch (action.type) {
     case GET_GATEWAYS:
       return {
@@ -406,6 +424,71 @@ export default (state = initialState, action) => {
         error: null,
       };
     case GET_SENSOR_OPTIONS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case ADD_GATEWAYS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case ADD_GATEWAYS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        gatewayTypeList: [
+          ...state.gatewayTypeList, action.gatewayType
+        ],
+      };
+    case ADD_GATEWAYS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case EDIT_GATEWAYS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case EDIT_GATEWAYS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        gatewayTypeList: editedGatewayType,
+      };
+    case EDIT_GATEWAYS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case DELETE_GATEWAYS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case DELETE_GATEWAYS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        gatewayTypeList: deletedGatewayType,
+      };
+    case DELETE_GATEWAYS_TYPE_FAILURE:
       return {
         ...state,
         loading: false,

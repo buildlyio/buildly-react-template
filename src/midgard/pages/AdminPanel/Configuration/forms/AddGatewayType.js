@@ -10,9 +10,9 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {
-  addCustodianType,
-  editCustodianType,
-} from "midgard/redux/custodian/actions/custodian.actions";
+  addGatewayType,
+  editGatewayType,
+} from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddCustodianType = ({ history, location, loading, dispatch }) => {
+const AddGatewayType = ({ history, location, loading, dispatch }) => {
   const classes = useStyles();
   const [openModal, toggleModal] = useState(true);
 
@@ -60,8 +60,8 @@ const AddCustodianType = ({ history, location, loading, dispatch }) => {
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const buttonText = editPage ? "Save" : "Add Custodian Type";
-  const formTitle = editPage ? "Edit Custodian Type" : "Add Custodian Type";
+  const buttonText = editPage ? "Save" : "Add Gateway Type";
+  const formTitle = editPage ? "Edit Gateway Type" : "Add Gateway Type";
 
   const closeModal = () => {
     toggleModal(false);
@@ -83,13 +83,13 @@ const AddCustodianType = ({ history, location, loading, dispatch }) => {
       edit_date: currentDateTime,
     };
     if (editPage) {
-      dispatch(editCustodianType(data));
+      dispatch(editGatewayType(data));
     } else {
       data = {
         ...data, 
         create_date: currentDateTime,
       };
-      dispatch(addCustodianType(data));
+      dispatch(addGatewayType(data));
     }
     closeModal();
   };
@@ -148,7 +148,7 @@ const AddCustodianType = ({ history, location, loading, dispatch }) => {
                   fullWidth
                   required
                   id="name"
-                  label="Custodian Type"
+                  label="Gateway Type"
                   name="name"
                   autoComplete="name"
                   error={formError.name && formError.name.error}
@@ -203,7 +203,7 @@ const AddCustodianType = ({ history, location, loading, dispatch }) => {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.custodianReducer,
+  ...state.sensorsGatewayReducer,
 });
 
-export default connect(mapStateToProps)(AddCustodianType);
+export default connect(mapStateToProps)(AddGatewayType);

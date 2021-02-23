@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
-  getCustodianType,
-  deleteCustodianType,
-} from "midgard/redux/custodian/actions/custodian.actions";
+  getGatewayType,
+  deleteGatewayType,
+} from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
 import DataTableWrapper from "midgard/components/DataTableWrapper/DataTableWrapper";
 import { 
-  CUSTODIAN_TYPE_TOOLTIP,
-  CUSTODIAN_TYPE_COLUMNS,
+  GATEWAY_TYPE_TOOLTIP,
+  GATEWAY_TYPE_COLUMNS,
 } from "../ConfigurationConstants";
 import { routes } from "midgard/routes/routesConstants";
 import { Route } from "react-router-dom";
-import AddCustodianType from "../forms/AddCustodianType";
+import AddGatewayType from "../forms/AddGatewayType";
 
-const CustodianType = (props) => {
+const GatewayType = (props) => {
   const { 
     dispatch,
     loading,
-    custodianTypeList,
+    gatewayTypeList,
     redirectTo,
     history, 
   } = props;
@@ -25,17 +25,17 @@ const CustodianType = (props) => {
   const [deleteId, setDeleteId] = useState(null);
 
   const addPath = redirectTo
-    ? `${redirectTo}/custodian-type`
-    : `${routes.CONFIGURATION}/custodian-type/add`;
+    ? `${redirectTo}/gateway-type`
+    : `${routes.CONFIGURATION}/gateway-type/add`;
   const editPath = redirectTo
-  ? `${redirectTo}/custodian-type`
-  : `${routes.CONFIGURATION}/custodian-type/edit`;
+  ? `${redirectTo}/gateway-type`
+  : `${routes.CONFIGURATION}/gateway-type/edit`;
 
   useEffect(() => {
-    if (!loading && !custodianTypeList) {
-      dispatch(getCustodianType());
+    if (!loading && !gatewayTypeList) {
+      dispatch(getGatewayType());
     }
-  }, [custodianTypeList]);
+  }, [gatewayTypeList]);
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -57,36 +57,36 @@ const CustodianType = (props) => {
   };
 
   const handleConfirmModal = () => {
-    dispatch(deleteCustodianType(deleteId));
+    dispatch(deleteGatewayType(deleteId));
     setConfirmModal(false);
   };
 
   return (
     <DataTableWrapper
       loading={loading}
-      rows={custodianTypeList || []}
-      columns={CUSTODIAN_TYPE_COLUMNS}
-      filename="CustodianType"
-      toolTipTitle="Custodian Type"
-      toolTipText={CUSTODIAN_TYPE_TOOLTIP}
-      addButtonHeading="Custodian Type"
+      rows={gatewayTypeList || []}
+      columns={GATEWAY_TYPE_COLUMNS}
+      filename="GatewayType"
+      toolTipTitle="Gateway Type"
+      toolTipText={GATEWAY_TYPE_TOOLTIP}
+      addButtonHeading="Gateway Type"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle={"Are you sure you want to Delete this Custodian Type?"}
+      confirmModalTitle={"Are you sure you want to Delete this Gateway Type?"}
     >
-      <Route path={`${addPath}`} component={AddCustodianType} />
-      <Route path={`${editPath}/:id`} component={AddCustodianType} />
+      <Route path={`${addPath}`} component={AddGatewayType} />
+      <Route path={`${editPath}/:id`} component={AddGatewayType} />
     </DataTableWrapper>
   )
 }
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.custodianReducer,
+  ...state.sensorsGatewayReducer,
 });
 
-export default connect(mapStateToProps)(CustodianType);
+export default connect(mapStateToProps)(GatewayType);
