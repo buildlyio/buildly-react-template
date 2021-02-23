@@ -52,6 +52,15 @@ import {
   DELETE_GATEWAYS_TYPE,
   DELETE_GATEWAYS_TYPE_SUCCESS,
   DELETE_GATEWAYS_TYPE_FAILURE,
+  ADD_SENSORS_TYPE,
+  ADD_SENSORS_TYPE_SUCCESS,
+  ADD_SENSORS_TYPE_FAILURE,
+  EDIT_SENSORS_TYPE,
+  EDIT_SENSORS_TYPE_SUCCESS,
+  EDIT_SENSORS_TYPE_FAILURE,
+  DELETE_SENSORS_TYPE,
+  DELETE_SENSORS_TYPE_SUCCESS,
+  DELETE_SENSORS_TYPE_FAILURE,
 } from "../actions/sensorsGateway.actions";
 
 const initialState = {
@@ -75,6 +84,14 @@ export default (state = initialState, action) => {
   if (gatewayTypePresent) {
     deletedGatewayType = editedGatewayType;
     editedGatewayType = [ ...editedGatewayType, action.gatewayType ];
+  };
+
+  let deletedSensorType;
+  let editedSensorType = state.sensorTypeList;
+  let sensorTypePresent = _.remove(editedSensorType, { id: action.sensorType?.id })[0];
+  if (sensorTypePresent) {
+    deletedSensorType = editedSensorType;
+    editedSensorType = [ ...editedSensorType, action.sensorType ];
   };
 
   switch (action.type) {
@@ -489,6 +506,71 @@ export default (state = initialState, action) => {
         gatewayTypeList: deletedGatewayType,
       };
     case DELETE_GATEWAYS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case ADD_SENSORS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case ADD_SENSORS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorTypeList: [
+          ...state.sensorTypeList, action.sensorType
+        ],
+      };
+    case ADD_SENSORS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case EDIT_SENSORS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case EDIT_SENSORS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorTypeList: editedSensorType,
+      };
+    case EDIT_SENSORS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case DELETE_SENSORS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case DELETE_SENSORS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorTypeList: deletedSensorType,
+      };
+    case DELETE_SENSORS_TYPE_FAILURE:
       return {
         ...state,
         loading: false,

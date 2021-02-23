@@ -12,12 +12,14 @@ import {
   GATEWAY_TYPE_TOOLTIP,
   ITEM_TYPE_TOOLTIP,
   PRODUCT_TYPE_TOOLTIP,
+  SENSOR_TYPE_TOOLTIP,
   SHIPMENT_FLAG_TOOLTIP,
 } from "./ConfigurationConstants";
 import CustodianType from "./components/CustodianType";
 import GatewayType from "./components/GatewayType";
 import ItemType from "./components/ItemType";
 import ProductType from "./components/ProductType";
+import SensorType from "./components/SensorType";
 import ShipmentFlag from "./components/ShipmentFlag";
 
 const useStyles = makeStyles((theme) => ({
@@ -94,6 +96,21 @@ const Configuration = (props) => {
         </AccordionSummary>
         <AccordionDetails>
           <ProductType {...props} />
+        </AccordionDetails>
+      </Accordion>
+      <Accordion className={classes.accordian}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="sensor-type-content"
+          id="sensor-type-header"
+        >
+          <Typography variant="h5">
+            Sensor Type
+            <CustomizedTooltips toolTipText={SENSOR_TYPE_TOOLTIP} />
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <SensorType {...props} />
         </AccordionDetails>
       </Accordion>
       <Accordion className={classes.accordian}>

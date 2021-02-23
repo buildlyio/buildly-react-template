@@ -187,3 +187,36 @@ describe("actions", () => {
     expect(actions.deleteGatewayType(id)).toEqual(expectedAction);
   });
 });
+
+describe("actions", () => {
+  it("should create an action to add Sensor type", () => {
+    const payload = { name: "test sensor" };
+    const expectedAction = {
+      type: actions.ADD_SENSORS_TYPE,
+      payload,
+    };
+    expect(actions.addSensorType(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to edit Sensor type", () => {
+    const payload = { name: "test sensor - edited" };
+    const expectedAction = {
+      type: actions.EDIT_SENSORS_TYPE,
+      payload,
+    };
+    expect(actions.editSensorType(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to delete Sensor type", () => {
+    const id = 1;
+    const expectedAction = {
+      type: actions.DELETE_SENSORS_TYPE,
+      id,
+    };
+    expect(actions.deleteSensorType(id)).toEqual(expectedAction);
+  });
+});

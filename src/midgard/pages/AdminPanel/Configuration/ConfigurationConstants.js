@@ -13,6 +13,9 @@ export const ITEM_TYPE_TOOLTIP =
 export const PRODUCT_TYPE_TOOLTIP = 
   "Product Type(s) available in the system";
 
+export const SENSOR_TYPE_TOOLTIP = 
+  "Shipment Flag(s) available in the system";
+
 export const SHIPMENT_FLAG_TOOLTIP = 
   "Shipment Flag(s) available in the system";
 
@@ -125,6 +128,42 @@ export const ITEM_TYPE_COLUMNS = [
 ];
 
 export const PRODUCT_TYPE_COLUMNS = [
+  {
+    name: "name",
+    label: "Name",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: "create_date",
+    label: "Created At",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => value && value !== "-" 
+        ? moment(value).format('MMM DD YYYY, h:mm a')
+        : value
+    },
+  },
+  {
+    name: "edit_date",
+    label: "Last Edited At",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => value && value !== "-" 
+        ? moment(value).format('MMM DD YYYY, h:mm a')
+        : value
+    },
+  },
+];
+
+export const SENSOR_TYPE_COLUMNS = [
   {
     name: "name",
     label: "Name",
