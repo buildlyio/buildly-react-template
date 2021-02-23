@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {
   GET_ITEMS,
   GET_ITEMS_SUCCESS,

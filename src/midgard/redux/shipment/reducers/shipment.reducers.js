@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {
   SAVE_SHIPMENT_FORM_DATA,
   GET_SHIPMENTS,
@@ -23,6 +24,15 @@ import {
   GET_SHIPMENT_OPTIONS,
   GET_SHIPMENT_OPTIONS_SUCCESS,
   GET_SHIPMENT_OPTIONS_FAILURE,
+  ADD_SHIPMENT_FLAG,
+  ADD_SHIPMENT_FLAG_SUCCESS,
+  ADD_SHIPMENT_FLAG_FAILURE,
+  EDIT_SHIPMENT_FLAG,
+  EDIT_SHIPMENT_FLAG_SUCCESS,
+  EDIT_SHIPMENT_FLAG_FAILURE,
+  DELETE_SHIPMENT_FLAG,
+  DELETE_SHIPMENT_FLAG_SUCCESS,
+  DELETE_SHIPMENT_FLAG_FAILURE,
 } from "../actions/shipment.actions";
 
 const initialState = {
@@ -33,10 +43,19 @@ const initialState = {
   shipmentFormData: null,
   shipmentAlerts: { show: true, data: [] },
   shipmentOptions: null,
+  shipmentFlag: null,
 };
 
 // Reducer
 export default (state = initialState, action) => {
+  let deletedShipmentFlag;
+  let editedShipmentFlag = state.shipmentFlag;
+  let shipmentFlagPresent = _.remove(editedShipmentFlag, { id: action.shipmentFlag?.id })[0];
+  if (shipmentFlagPresent) {
+    deletedShipmentFlag = editedShipmentFlag;
+    editedShipmentFlag = [ ...editedShipmentFlag, action.shipmentFlag ];
+  };
+
   switch (action.type) {
     case SAVE_SHIPMENT_FORM_DATA:
       return {
@@ -207,6 +226,71 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+    case ADD_SHIPMENT_FLAG:
+    return {
+      ...state,
+      loading: true,
+      loaded: false,
+      error: null,
+    };
+  case ADD_SHIPMENT_FLAG_SUCCESS:
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      shipmentFlag: [
+        ...state.shipmentFlag, action.shipmentFlag
+      ],
+    };
+  case ADD_SHIPMENT_FLAG_FAILURE:
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      error: action.error,
+    };
+  case EDIT_SHIPMENT_FLAG:
+    return {
+      ...state,
+      loading: true,
+      loaded: false,
+      error: null,
+    };
+  case EDIT_SHIPMENT_FLAG_SUCCESS:
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      shipmentFlag: editedShipmentFlag,
+    };
+  case EDIT_SHIPMENT_FLAG_FAILURE:
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      error: action.error,
+    };
+  case DELETE_SHIPMENT_FLAG:
+    return {
+      ...state,
+      loading: true,
+      loaded: false,
+      error: null,
+    };
+  case DELETE_SHIPMENT_FLAG_SUCCESS:
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      shipmentFlag: deletedShipmentFlag,
+    };
+  case DELETE_SHIPMENT_FLAG_FAILURE:
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      error: action.error,
+    };
 
     default:
       return state;

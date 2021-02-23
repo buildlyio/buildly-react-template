@@ -12,11 +12,13 @@ import {
   GATEWAY_TYPE_TOOLTIP,
   ITEM_TYPE_TOOLTIP,
   PRODUCT_TYPE_TOOLTIP,
+  SHIPMENT_FLAG_TOOLTIP,
 } from "./ConfigurationConstants";
 import CustodianType from "./components/CustodianType";
 import GatewayType from "./components/GatewayType";
 import ItemType from "./components/ItemType";
 import ProductType from "./components/ProductType";
+import ShipmentFlag from "./components/ShipmentFlag";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,8 +54,8 @@ const Configuration = (props) => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls="custodian-type-content"
-          id="custodian-type-header"
+          aria-controls="gateway-type-content"
+          id="gateway-type-header"
         >
           <Typography variant="h5">
             Gateway Type
@@ -67,8 +69,8 @@ const Configuration = (props) => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls="custodian-type-content"
-          id="custodian-type-header"
+          aria-controls="item-type-content"
+          id="item-type-header"
         >
           <Typography variant="h5">
             Item Type
@@ -82,8 +84,8 @@ const Configuration = (props) => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls="custodian-type-content"
-          id="custodian-type-header"
+          aria-controls="product-type-content"
+          id="product-type-header"
         >
           <Typography variant="h5">
             Product Type
@@ -92,6 +94,21 @@ const Configuration = (props) => {
         </AccordionSummary>
         <AccordionDetails>
           <ProductType {...props} />
+        </AccordionDetails>
+      </Accordion>
+      <Accordion className={classes.accordian}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="shipment-flag-content"
+          id="shipment-flag-header"
+        >
+          <Typography variant="h5">
+            Shipment Flag
+            <CustomizedTooltips toolTipText={SHIPMENT_FLAG_TOOLTIP} />
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <ShipmentFlag {...props} />
         </AccordionDetails>
       </Accordion>
     </div>
