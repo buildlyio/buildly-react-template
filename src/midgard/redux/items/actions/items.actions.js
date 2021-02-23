@@ -67,6 +67,21 @@ export const DELETE_ITEMS_TYPE = "ITEMS/DELETE_ITEMS_TYPE";
 export const DELETE_ITEMS_TYPE_SUCCESS = "ITEMS/DELETE_ITEMS_TYPE_SUCCESS";
 export const DELETE_ITEMS_TYPE_FAILURE = "ITEMS/DELETE_ITEMS_TYPE_FAILURE";
 
+//add product types action constants
+export const ADD_PRODUCTS_TYPE = "ITEMS/ADD_PRODUCTS_TYPE";
+export const ADD_PRODUCTS_TYPE_SUCCESS = "ITEMS/ADD_PRODUCTS_TYPE_SUCCESS";
+export const ADD_PRODUCTS_TYPE_FAILURE = "ITEMS/ADD_PRODUCTS_TYPE_FAILURE";
+
+//edit product types action constants
+export const EDIT_PRODUCTS_TYPE = "ITEMS/EDIT_PRODUCTS_TYPE";
+export const EDIT_PRODUCTS_TYPE_SUCCESS = "ITEMS/EDIT_PRODUCTS_TYPE_SUCCESS";
+export const EDIT_PRODUCTS_TYPE_FAILURE = "ITEMS/EDIT_PRODUCTS_TYPE_FAILURE";
+
+//delete product types action constants
+export const DELETE_PRODUCTS_TYPE = "ITEMS/DELETE_PRODUCTS_TYPE";
+export const DELETE_PRODUCTS_TYPE_SUCCESS = "ITEMS/DELETE_PRODUCTS_TYPE_SUCCESS";
+export const DELETE_PRODUCTS_TYPE_FAILURE = "ITEMS/DELETE_PRODUCTS_TYPE_FAILURE";
+
 export const getItems = (organization_uuid) => ({ type: GET_ITEMS,organization_uuid, });
 
 /**
@@ -148,5 +163,20 @@ export const editItemType = (payload) => ({
 
 export const deleteItemType = (id) => ({
   type: DELETE_ITEMS_TYPE,
+  id,
+});
+
+export const addProductType = (payload) => ({
+  type: ADD_PRODUCTS_TYPE,
+  payload,
+});
+
+export const editProductType = (payload) => ({
+  type: EDIT_PRODUCTS_TYPE,
+  payload,
+});
+
+export const deleteProductType = (id) => ({
+  type: DELETE_PRODUCTS_TYPE,
   id,
 });

@@ -11,10 +11,12 @@ import {
   CUSTODIAN_TYPE_TOOLTIP,
   GATEWAY_TYPE_TOOLTIP,
   ITEM_TYPE_TOOLTIP,
+  PRODUCT_TYPE_TOOLTIP,
 } from "./ConfigurationConstants";
 import CustodianType from "./components/CustodianType";
 import GatewayType from "./components/GatewayType";
 import ItemType from "./components/ItemType";
+import ProductType from "./components/ProductType";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,6 +77,21 @@ const Configuration = (props) => {
         </AccordionSummary>
         <AccordionDetails>
           <ItemType {...props} />
+        </AccordionDetails>
+      </Accordion>
+      <Accordion className={classes.accordian}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="custodian-type-content"
+          id="custodian-type-header"
+        >
+          <Typography variant="h5">
+            Product Type
+            <CustomizedTooltips toolTipText={PRODUCT_TYPE_TOOLTIP} />
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <ProductType {...props} />
         </AccordionDetails>
       </Accordion>
     </div>

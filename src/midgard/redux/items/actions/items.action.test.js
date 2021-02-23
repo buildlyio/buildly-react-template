@@ -116,3 +116,43 @@ describe("actions", () => {
     expect(actions.deleteItemType(id)).toEqual(expectedAction);
   });
 });
+
+describe("actions", () => {
+  it("should create an action to add product type", () => {
+    const payload = {
+      name: "test product type",
+      create_date: new Date(),
+      edit_date: new Date(),
+    };
+    const expectedAction = {
+      type: actions.ADD_PRODUCTS_TYPE,
+      payload,
+    };
+    expect(actions.addProductType(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to edit product type", () => {
+    const payload = {
+      name: "test product type - edited",
+      edit_date: new Date(),
+    };
+    const expectedAction = {
+      type: actions.EDIT_PRODUCTS_TYPE,
+      payload,
+    };
+    expect(actions.editProductType(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to delete product type", () => {
+    const id = 1;
+    const expectedAction = {
+      type: actions.DELETE_PRODUCTS_TYPE,
+      id,
+    };
+    expect(actions.deleteProductType(id)).toEqual(expectedAction);
+  });
+});

@@ -35,6 +35,15 @@ import {
   DELETE_ITEMS_TYPE,
   DELETE_ITEMS_TYPE_SUCCESS,
   DELETE_ITEMS_TYPE_FAILURE,
+  ADD_PRODUCTS_TYPE,
+  ADD_PRODUCTS_TYPE_SUCCESS,
+  ADD_PRODUCTS_TYPE_FAILURE,
+  EDIT_PRODUCTS_TYPE,
+  EDIT_PRODUCTS_TYPE_SUCCESS,
+  EDIT_PRODUCTS_TYPE_FAILURE,
+  DELETE_PRODUCTS_TYPE,
+  DELETE_PRODUCTS_TYPE_SUCCESS,
+  DELETE_PRODUCTS_TYPE_FAILURE,
 } from "../actions/items.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -444,6 +453,132 @@ function* deleteItemType(payload) {
   }
 }
 
+function* addProductType(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}${shipmentApiEndPoint}product_type/`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: ADD_PRODUCTS_TYPE_SUCCESS,
+          productType: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Added Product Type",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Add Product Type due to some error!",
+        })
+      ),
+      yield put({
+        type: ADD_PRODUCTS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* editProductType(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "put",
+      `${environment.API_URL}${shipmentApiEndPoint}product_type/${payload.id}`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: EDIT_PRODUCTS_TYPE_SUCCESS,
+          productType: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Edited Product Type",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Edit Product Type due to some error!",
+        })
+      ),
+      yield put({
+        type: EDIT_PRODUCTS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* deleteProductType(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "delete",
+      `${environment.API_URL}${shipmentApiEndPoint}product_type/${payload.id}`,
+      null,
+      true
+    );
+    yield [
+      yield put({ 
+        type: DELETE_PRODUCTS_TYPE_SUCCESS,
+        productType: { id: payload.id },
+      }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Successfully Deleted Product Type",
+        })
+      ),
+    ];
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Delete Product Type due to some error!",
+        })
+      ),
+      yield put({
+        type: DELETE_PRODUCTS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* watchGetProductsList() {
   yield takeLatest(GET_PRODUCTS, getProductList);
 }
@@ -492,6 +627,18 @@ function* watchDeleteItemType() {
   yield takeLatest(DELETE_ITEMS_TYPE, deleteItemType);
 }
 
+function* watchAddProductType() {
+  yield takeLatest(ADD_PRODUCTS_TYPE, addProductType);
+}
+
+function* watchEditProductType() {
+  yield takeLatest(EDIT_PRODUCTS_TYPE, editProductType);
+}
+
+function* watchDeleteProductType() {
+  yield takeLatest(DELETE_PRODUCTS_TYPE, deleteProductType);
+}
+
 export default function* itemSaga() {
   yield all([
     watchSearchItem(),
@@ -506,5 +653,8 @@ export default function* itemSaga() {
     watchAddItemType(),
     watchEditItemType(),
     watchDeleteItemType(),
+    watchAddProductType(),
+    watchEditProductType(),
+    watchDeleteProductType(),
   ]);
 }
