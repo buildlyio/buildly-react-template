@@ -5,7 +5,7 @@ const initialState = {
   loaded: false,
   itemData: null,
   error: null,
-  itemTypeList: null,
+  itemTypeList: [],
 };
 
 const mockData = {
@@ -19,7 +19,7 @@ describe("Get Item reducer", () => {
       loaded: false,
       loading: true,
       itemData: null,
-      itemTypeList: null,
+      itemTypeList: [],
     });
   });
   it("get Item success Reducer", () => {
@@ -29,7 +29,7 @@ describe("Get Item reducer", () => {
       loaded: true,
       loading: false,
       itemData: undefined,
-      itemTypeList: null,
+      itemTypeList: [],
       error: null,
     });
   });
@@ -41,7 +41,7 @@ describe("Get Item reducer", () => {
       loaded: true,
       loading: false,
       itemData: null,
-      itemTypeList: null,
+      itemTypeList: [],
     });
   });
 });
@@ -53,7 +53,7 @@ describe("Add Item reducer", () => {
       loaded: false,
       loading: true,
       itemData: null,
-      itemTypeList: null,
+      itemTypeList: [],
     });
   });
 
@@ -65,7 +65,7 @@ describe("Add Item reducer", () => {
       loaded: true,
       loading: false,
       itemData: undefined,
-      itemTypeList: null,
+      itemTypeList: [],
     });
   });
   it("Add Item fail Reducer", () => {
@@ -76,7 +76,7 @@ describe("Add Item reducer", () => {
       loaded: true,
       loading: false,
       itemData: null,
-      itemTypeList: null,
+      itemTypeList: [],
     });
   });
 });
@@ -89,7 +89,7 @@ describe("Edit Item reducer", () => {
         loaded: false,
         loading: true,
         itemData: null,
-        itemTypeList: null,
+        itemTypeList: [],
       }
     );
   });
@@ -102,7 +102,7 @@ describe("Edit Item reducer", () => {
       loaded: true,
       loading: false,
       itemData: undefined,
-      itemTypeList: null,
+      itemTypeList: [],
     });
   });
   it("Edit Item fail Reducer", () => {
@@ -113,7 +113,7 @@ describe("Edit Item reducer", () => {
       loaded: true,
       loading: false,
       itemData: null,
-      itemTypeList: null,
+      itemTypeList: [],
     });
   });
 });
@@ -127,7 +127,7 @@ describe("Delete Item reducer", () => {
       loaded: false,
       loading: true,
       itemData: null,
-      itemTypeList: null,
+      itemTypeList: [],
     });
   });
 
@@ -139,7 +139,7 @@ describe("Delete Item reducer", () => {
       loaded: true,
       loading: false,
       itemData: undefined,
-      itemTypeList: null,
+      itemTypeList: [],
     });
   });
   it("Delete Item fail Reducer", () => {
@@ -150,7 +150,7 @@ describe("Delete Item reducer", () => {
       loaded: true,
       loading: false,
       itemData: null,
-      itemTypeList: null,
+      itemTypeList: [],
     });
   });
 });
@@ -162,7 +162,7 @@ describe("Search reducer", () => {
       loaded: false,
       loading: false,
       itemData: null,
-      itemTypeList: null,
+      itemTypeList: [],
     });
   });
 
@@ -174,7 +174,7 @@ describe("Search reducer", () => {
       loaded: true,
       loading: false,
       itemData: null,
-      itemTypeList: null,
+      itemTypeList: [],
       searchedData: undefined,
     });
   });
@@ -189,7 +189,7 @@ describe("Get Item type reducer", () => {
       loaded: false,
       loading: true,
       itemData: null,
-      itemTypeList: null,
+      itemTypeList: [],
     });
   });
 
@@ -216,7 +216,141 @@ describe("Get Item type reducer", () => {
       loaded: true,
       loading: false,
       itemData: null,
-      itemTypeList: null,
+      itemTypeList: [],
+    });
+  });
+});
+
+describe("Add Item type reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.ADD_ITEMS_TYPE })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      itemData: null,
+      itemTypeList: [],
+    });
+  });
+
+  it("Add Item type success Reducer", () => {
+    const itemType = { name: "test type" };
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_ITEMS_TYPE_SUCCESS,
+        itemType,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      itemData: null,
+      itemTypeList: [itemType],
+    });
+  });
+
+  it("Add Item type fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_ITEMS_TYPE_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      itemData: null,
+      itemTypeList: [],
+    });
+  });
+});
+
+describe("Edit Item type reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.EDIT_ITEMS_TYPE })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      itemData: null,
+      itemTypeList: [],
+    });
+  });
+
+  it("Edit Item type success Reducer", () => {
+    const state = { ...initialState, itemTypeList: [{ id: 1, name: "test type" }]};
+    const itemType = { id: 1, name: "test type - edited" };
+    expect(
+      reducer.default(state, {
+        type: actions.EDIT_ITEMS_TYPE_SUCCESS,
+        itemType,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      itemData: null,
+      itemTypeList: [itemType],
+    });
+  });
+
+  it("Edit Item type fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.EDIT_ITEMS_TYPE_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      itemData: null,
+      itemTypeList: [],
+    });
+  });
+});
+
+describe("Delete Item type reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.DELETE_ITEMS_TYPE })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      itemData: null,
+      itemTypeList: [],
+    });
+  });
+
+  it("Delete Item type success Reducer", () => {
+    const state = { ...initialState, itemTypeList: [{ id: 1, name: "test type" }]};
+    const itemType = { id: 1 };
+    expect(
+      reducer.default(state, {
+        type: actions.DELETE_ITEMS_TYPE_SUCCESS,
+        itemType,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      itemData: null,
+      itemTypeList: [],
+    });
+  });
+
+  it("Delete Item type fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.DELETE_ITEMS_TYPE_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      itemData: null,
+      itemTypeList: [],
     });
   });
 });

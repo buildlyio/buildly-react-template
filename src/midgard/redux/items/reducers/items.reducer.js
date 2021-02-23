@@ -30,6 +30,15 @@ import {
   GET_PRODUCTS_TYPE_FAILURE,
   GET_PRODUCTS_OPTIONS_SUCCESS,
   GET_PRODUCTS_OPTIONS_FAILURE,
+  ADD_ITEMS_TYPE,
+  ADD_ITEMS_TYPE_SUCCESS,
+  ADD_ITEMS_TYPE_FAILURE,
+  EDIT_ITEMS_TYPE,
+  EDIT_ITEMS_TYPE_SUCCESS,
+  EDIT_ITEMS_TYPE_FAILURE,
+  DELETE_ITEMS_TYPE,
+  DELETE_ITEMS_TYPE_SUCCESS,
+  DELETE_ITEMS_TYPE_FAILURE,
 } from "../actions/items.actions";
 
 const initialState = {
@@ -46,6 +55,14 @@ const initialState = {
 
 // Reducer
 export default (state = initialState, action) => {
+  let deletedItemType;
+  let editedItemType = state.itemTypeList;
+  let itemTypePresent = _.remove(editedItemType, { id: action.itemType?.id })[0];
+  if (itemTypePresent) {
+    deletedItemType = editedItemType;
+    editedItemType = [ ...editedItemType, action.itemType ];
+  };
+
   switch (action.type) {
     case GET_ITEMS:
       return {
@@ -270,6 +287,71 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         productOptions: null,
+        error: action.error,
+      };
+    case ADD_ITEMS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case ADD_ITEMS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        itemTypeList: [
+          ...state.itemTypeList, action.itemType
+        ],
+      };
+    case ADD_ITEMS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case EDIT_ITEMS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case EDIT_ITEMS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        itemTypeList: editedItemType,
+      };
+    case EDIT_ITEMS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case DELETE_ITEMS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case DELETE_ITEMS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        itemTypeList: deletedItemType,
+      };
+    case DELETE_ITEMS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
         error: action.error,
       };
     default:

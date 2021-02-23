@@ -26,6 +26,15 @@ import {
   GET_PRODUCTS_TYPE,
   GET_PRODUCTS_TYPE_SUCCESS,
   GET_PRODUCTS_TYPE_FAILURE,
+  ADD_ITEMS_TYPE,
+  ADD_ITEMS_TYPE_SUCCESS,
+  ADD_ITEMS_TYPE_FAILURE,
+  EDIT_ITEMS_TYPE,
+  EDIT_ITEMS_TYPE_SUCCESS,
+  EDIT_ITEMS_TYPE_FAILURE,
+  DELETE_ITEMS_TYPE,
+  DELETE_ITEMS_TYPE_SUCCESS,
+  DELETE_ITEMS_TYPE_FAILURE,
 } from "../actions/items.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -309,6 +318,132 @@ function* getProductTypeList(payload) {
   }
 }
 
+function* addItemType(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}${shipmentApiEndPoint}item_type/`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: ADD_ITEMS_TYPE_SUCCESS,
+          itemType: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Added Item Type",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Add Item Type due to some error!",
+        })
+      ),
+      yield put({
+        type: ADD_ITEMS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* editItemType(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "put",
+      `${environment.API_URL}${shipmentApiEndPoint}item_type/${payload.id}`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: EDIT_ITEMS_TYPE_SUCCESS,
+          itemType: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Edited Item Type",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Edit Item Type due to some error!",
+        })
+      ),
+      yield put({
+        type: EDIT_ITEMS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* deleteItemType(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "delete",
+      `${environment.API_URL}${shipmentApiEndPoint}item_type/${payload.id}`,
+      null,
+      true
+    );
+    yield [
+      yield put({ 
+        type: DELETE_ITEMS_TYPE_SUCCESS,
+        itemType: { id: payload.id },
+      }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Successfully Deleted Item Type",
+        })
+      ),
+    ];
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Delete Item Type due to some error!",
+        })
+      ),
+      yield put({
+        type: DELETE_ITEMS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* watchGetProductsList() {
   yield takeLatest(GET_PRODUCTS, getProductList);
 }
@@ -345,6 +480,18 @@ function* watchGetUnitsOfMeasure() {
   yield takeLatest(GET_UNITS_OF_MEASURE, getUnits);
 }
 
+function* watchAddItemType() {
+  yield takeLatest(ADD_ITEMS_TYPE, addItemType);
+}
+
+function* watchEditItemType() {
+  yield takeLatest(EDIT_ITEMS_TYPE, editItemType);
+}
+
+function* watchDeleteItemType() {
+  yield takeLatest(DELETE_ITEMS_TYPE, deleteItemType);
+}
+
 export default function* itemSaga() {
   yield all([
     watchSearchItem(),
@@ -356,5 +503,8 @@ export default function* itemSaga() {
     watchGetUnitsOfMeasure(),
     watchGetProductsList(),
     watchGetProductTypeList(),
+    watchAddItemType(),
+    watchEditItemType(),
+    watchDeleteItemType(),
   ]);
 }

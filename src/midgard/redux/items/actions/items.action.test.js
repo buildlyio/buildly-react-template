@@ -76,3 +76,43 @@ describe("actions", () => {
     expect(actions.getItemType(organization_uuid)).toEqual(expectedAction);
   });
 });
+
+describe("actions", () => {
+  it("should create an action to add item type", () => {
+    const payload = {
+      name: "test type",
+      create_date: new Date(),
+      edit_date: new Date(),
+    };
+    const expectedAction = {
+      type: actions.ADD_ITEMS_TYPE,
+      payload,
+    };
+    expect(actions.addItemType(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to edit item type", () => {
+    const payload = {
+      name: "test type - edited",
+      edit_date: new Date(),
+    };
+    const expectedAction = {
+      type: actions.EDIT_ITEMS_TYPE,
+      payload,
+    };
+    expect(actions.editItemType(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to delete item type", () => {
+    const id = 1;
+    const expectedAction = {
+      type: actions.DELETE_ITEMS_TYPE,
+      id,
+    };
+    expect(actions.deleteItemType(id)).toEqual(expectedAction);
+  });
+});
