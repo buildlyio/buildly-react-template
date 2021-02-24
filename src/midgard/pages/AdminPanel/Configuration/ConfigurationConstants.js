@@ -19,6 +19,9 @@ export const SENSOR_TYPE_TOOLTIP =
 export const SHIPMENT_FLAG_TOOLTIP = 
   "Shipment Flag(s) available in the system";
 
+export const UNITS_OF_MEASURE_TOOLTIP = 
+  "Unit(s) of Measure available in the system";
+
 export const CUSTODIAN_TYPE_COLUMNS = [
   {
     name: "name",
@@ -232,6 +235,61 @@ export const SHIPMENT_FLAG_COLUMNS = [
   {
     name: "min_flag",
     label: "Minimum Limit Flag",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => value ? "YES" : "NO"
+    },
+  },
+  {
+    name: "create_date",
+    label: "Created At",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => value && value !== "-" 
+        ? moment(value).format('MMM DD YYYY, h:mm a')
+        : value
+    },
+  },
+  {
+    name: "edit_date",
+    label: "Last Edited At",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => value && value !== "-" 
+        ? moment(value).format('MMM DD YYYY, h:mm a')
+        : value
+    },
+  },
+];
+
+export const UNITS_OF_MEASURE_COLUMNS = [
+  {
+    name: "name",
+    label: "Unit of Measure",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: "supported_class",
+    label: "Unit Class",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: "is_default_for_class",
+    label: "Default for Unit Class",
     options: {
       sort: true,
       sortThirdClickReset: true,

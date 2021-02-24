@@ -49,6 +49,15 @@ import {
   DELETE_PRODUCTS_TYPE,
   DELETE_PRODUCTS_TYPE_SUCCESS,
   DELETE_PRODUCTS_TYPE_FAILURE,
+  ADD_UNITS_OF_MEASURE,
+  ADD_UNITS_OF_MEASURE_SUCCESS,
+  ADD_UNITS_OF_MEASURE_FAILURE,
+  EDIT_UNITS_OF_MEASURE,
+  EDIT_UNITS_OF_MEASURE_SUCCESS,
+  EDIT_UNITS_OF_MEASURE_FAILURE,
+  DELETE_UNITS_OF_MEASURE,
+  DELETE_UNITS_OF_MEASURE_SUCCESS,
+  DELETE_UNITS_OF_MEASURE_FAILURE,
 } from "../actions/items.actions";
 
 const initialState = {
@@ -61,6 +70,7 @@ const initialState = {
   products: null,
   productType: null,
   productOptions: null,
+  unitsOfMeasure: null,
 };
 
 // Reducer
@@ -79,6 +89,14 @@ export default (state = initialState, action) => {
   if (ProductTypePresent) {
     deletedProductType = editedProductType;
     editedProductType = [ ...editedProductType, action.productType ];
+  };
+
+  let deletedUnitsOfMeasure;
+  let editedUnitsOfMeasure = state.unitsOfMeasure;
+  let UnitsOfMeasurePresent = _.remove(editedUnitsOfMeasure, { id: action.unitsOfMeasure?.id })[0];
+  if (UnitsOfMeasurePresent) {
+    deletedUnitsOfMeasure = editedUnitsOfMeasure;
+    editedUnitsOfMeasure = [ ...editedUnitsOfMeasure, action.unitsOfMeasure ];
   };
 
   switch (action.type) {
@@ -431,6 +449,71 @@ export default (state = initialState, action) => {
         productType: deletedProductType,
       };
     case DELETE_PRODUCTS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case ADD_UNITS_OF_MEASURE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case ADD_UNITS_OF_MEASURE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        unitsOfMeasure: [
+          ...state.unitsOfMeasure, action.unitsOfMeasure
+        ],
+      };
+    case ADD_UNITS_OF_MEASURE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case EDIT_UNITS_OF_MEASURE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case EDIT_UNITS_OF_MEASURE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        unitsOfMeasure: editedUnitsOfMeasure,
+      };
+    case EDIT_UNITS_OF_MEASURE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case DELETE_UNITS_OF_MEASURE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case DELETE_UNITS_OF_MEASURE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        unitsOfMeasure: deletedUnitsOfMeasure,
+      };
+    case DELETE_UNITS_OF_MEASURE_FAILURE:
       return {
         ...state,
         loading: false,

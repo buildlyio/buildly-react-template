@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Modal from "midgard/components/Modal/Modal";
@@ -11,11 +11,11 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from "@material-ui/core/CircularProgress";
+import MenuItem from '@material-ui/core/MenuItem';
 import {
-  addShipmentFlag,
-  editShipmentFlag,
-} from "midgard/redux/shipment/actions/shipment.actions";
-import { UserContext } from "midgard/context/User.context";
+  addUnitsOfMeasure,
+  editUnitsOfMeasure,
+} from "midgard/redux/items/actions/items.actions";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -56,9 +56,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
+const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
   const classes = useStyles();
-  const organization = useContext(UserContext).organization.organization_uuid;
   const [openModal, toggleModal] = useState(true);
 
   const editPage = location.state && location.state.type === "edit";
@@ -68,18 +67,17 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
   const name = useInput((editData && editData.name) || "", {
     required: true,
   });
-  const type = useInput((editData && editData.type) || "", {
+  const unitClass = useInput((editData && editData.supported_class) || "", {
     required: true,
   });
-  const [maxFlag, setMaxFlag] = useState((editData && editData.max_flag) || false);
-  const [minFlag, setMinFlag] = useState((editData && editData.min_flag) || false);
+  const [isDefault, setIsDefault] = useState((editData && editData.is_default_for_class) || false);
   const [formError, setFormError] = useState({});
   
   const theme = useTheme();
   let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const buttonText = editPage ? "Save" : "Add Shipment Flag";
-  const formTitle = editPage ? "Edit Shipment Flag" : "Add Shipment Flag";
+  const buttonText = editPage ? "Save" : "Add Unit of Measure";
+  const formTitle = editPage ? "Edit Unit of Measure" : "Add Unit of Measure";
 
   const closeModal = () => {
     toggleModal(false);
@@ -98,20 +96,18 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
     let data = {
       ...editData,
       name: name.value,
-      type: type.value,
-      max_flag: maxFlag,
-      min_flag: minFlag,
-      organization_uuid: organization,
+      supported_class: unitClass.value,
+      is_default_for_class: isDefault,
       edit_date: currentDateTime,
     };
     if (editPage) {
-      dispatch(editShipmentFlag(data));
+      dispatch(editUnitsOfMeasure(data));
     } else {
       data = {
         ...data, 
         create_date: currentDateTime,
       };
-      dispatch(addShipmentFlag(data));
+      dispatch(addUnitsOfMeasure(data));
     }
     closeModal();
   };
@@ -144,7 +140,7 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!name.value || !type.value) return true;
+    if (!name.value || !unitClass.value) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -170,7 +166,7 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
                   fullWidth
                   required
                   id="name"
-                  label="Flag Name"
+                  label="Unit of Measure"
                   name="name"
                   autoComplete="name"
                   error={formError.name && formError.name.error}
@@ -187,37 +183,39 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
                   margin="normal"
                   fullWidth
                   required
-                  id="type"
-                  label="Flag Type"
-                  name="type"
-                  autoComplete="type"
-                  error={formError.type && formError.type.error}
+                  id="unitClass"
+                  label="Unit Class"
+                  select
+                  error={formError.unitClass && formError.unitClass.error}
                   helperText={
-                    formError.type ? formError.type.message : ""
+                    formError.unitClass ? formError.unitClass.message : ""
                   }
-                  onBlur={(e) => handleBlur(e, "required", type)}
-                  {...type.bind}
-                />
+                  onBlur={(e) => handleBlur(e, "required", unitClass)}
+                  {...unitClass.bind}
+                >
+                  <MenuItem value={""}>--------</MenuItem>
+                  <MenuItem value={"Capacity and Volume"}>
+                    Capacity and Volume
+                  </MenuItem>
+                  <MenuItem value={"Distance and Length"}>
+                    Distance and Length
+                  </MenuItem>
+                  <MenuItem value={"Mass and Weight"}>
+                    Mass and Weight
+                  </MenuItem>
+                  <MenuItem value={"Temperature"}>
+                    Temperature
+                  </MenuItem>
+                </TextField>
               </Grid>
               <Grid item xs={12}>
                 <div className={classes.checkbox}>
                   <Checkbox
-                    checked={maxFlag}
-                    onClick={e => setMaxFlag(e.target.checked)}
+                    checked={isDefault}
+                    onClick={e => setIsDefault(e.target.checked)}
                   />
                   <Typography className={classes.label}>
-                    Is this Maximum Limit Flag?
-                  </Typography>
-                </div>
-              </Grid>
-              <Grid item xs={12}>
-                <div className={classes.checkbox}>
-                  <Checkbox
-                    checked={minFlag}
-                    onClick={e => setMinFlag(e.target.checked)}
-                  />
-                  <Typography className={classes.label}>
-                    Is this Minimum Limit Flag?
+                    Is this default for Unit Class?
                   </Typography>
                 </div>
               </Grid>
@@ -265,7 +263,7 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.shipmentReducer,
+  ...state.itemsReducer,
 });
 
-export default connect(mapStateToProps)(AddShipmentFlag);
+export default connect(mapStateToProps)(AddUnitOfMeasure);

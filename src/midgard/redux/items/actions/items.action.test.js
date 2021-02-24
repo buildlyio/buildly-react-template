@@ -156,3 +156,43 @@ describe("actions", () => {
     expect(actions.deleteProductType(id)).toEqual(expectedAction);
   });
 });
+
+describe("actions", () => {
+  it("should create an action to add units of measure", () => {
+    const payload = {
+      name: "test unit",
+      create_date: new Date(),
+      edit_date: new Date(),
+    };
+    const expectedAction = {
+      type: actions.ADD_UNITS_OF_MEASURE,
+      payload,
+    };
+    expect(actions.addUnitsOfMeasure(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to edit units of measure", () => {
+    const payload = {
+      name: "test unit - edited",
+      edit_date: new Date(),
+    };
+    const expectedAction = {
+      type: actions.EDIT_UNITS_OF_MEASURE,
+      payload,
+    };
+    expect(actions.editUnitsOfMeasure(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to delete units of measure", () => {
+    const id = 1;
+    const expectedAction = {
+      type: actions.DELETE_UNITS_OF_MEASURE,
+      id,
+    };
+    expect(actions.deleteUnitsOfMeasure(id)).toEqual(expectedAction);
+  });
+});

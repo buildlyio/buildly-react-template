@@ -44,6 +44,15 @@ import {
   DELETE_PRODUCTS_TYPE,
   DELETE_PRODUCTS_TYPE_SUCCESS,
   DELETE_PRODUCTS_TYPE_FAILURE,
+  ADD_UNITS_OF_MEASURE,
+  ADD_UNITS_OF_MEASURE_SUCCESS,
+  ADD_UNITS_OF_MEASURE_FAILURE,
+  EDIT_UNITS_OF_MEASURE,
+  EDIT_UNITS_OF_MEASURE_SUCCESS,
+  EDIT_UNITS_OF_MEASURE_FAILURE,
+  DELETE_UNITS_OF_MEASURE,
+  DELETE_UNITS_OF_MEASURE_SUCCESS,
+  DELETE_UNITS_OF_MEASURE_FAILURE,
 } from "../actions/items.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -579,6 +588,132 @@ function* deleteProductType(payload) {
   }
 }
 
+function* addUnitsOfMeasure(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}${shipmentApiEndPoint}unit_of_measure/`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: ADD_UNITS_OF_MEASURE_SUCCESS,
+          unitsOfMeasure: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Added Unit of Measure",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Add Unit of Measure due to some error!",
+        })
+      ),
+      yield put({
+        type: ADD_UNITS_OF_MEASURE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* editUnitsOfMeasure(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "put",
+      `${environment.API_URL}${shipmentApiEndPoint}unit_of_measure/${payload.id}`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: EDIT_UNITS_OF_MEASURE_SUCCESS,
+          unitsOfMeasure: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Edited Unit of Measure",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Edit Unit of Measure due to some error!",
+        })
+      ),
+      yield put({
+        type: EDIT_UNITS_OF_MEASURE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* deleteUnitsOfMeasure(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "delete",
+      `${environment.API_URL}${shipmentApiEndPoint}unit_of_measure/${payload.id}`,
+      null,
+      true
+    );
+    yield [
+      yield put({ 
+        type: DELETE_UNITS_OF_MEASURE_SUCCESS,
+        unitsOfMeasure: { id: payload.id },
+      }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Successfully Deleted Unit of Measure",
+        })
+      ),
+    ];
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Delete Unit of Measure due to some error!",
+        })
+      ),
+      yield put({
+        type: DELETE_UNITS_OF_MEASURE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* watchGetProductsList() {
   yield takeLatest(GET_PRODUCTS, getProductList);
 }
@@ -639,6 +774,18 @@ function* watchDeleteProductType() {
   yield takeLatest(DELETE_PRODUCTS_TYPE, deleteProductType);
 }
 
+function* watchAddUnitsOfMeasure() {
+  yield takeLatest(ADD_UNITS_OF_MEASURE, addUnitsOfMeasure);
+}
+
+function* watchEditUnitsOfMeasure() {
+  yield takeLatest(EDIT_UNITS_OF_MEASURE, editUnitsOfMeasure);
+}
+
+function* watchDeleteUnitsOfMeasure() {
+  yield takeLatest(DELETE_UNITS_OF_MEASURE, deleteUnitsOfMeasure);
+}
+
 export default function* itemSaga() {
   yield all([
     watchSearchItem(),
@@ -656,5 +803,8 @@ export default function* itemSaga() {
     watchAddProductType(),
     watchEditProductType(),
     watchDeleteProductType(),
+    watchAddUnitsOfMeasure(),
+    watchEditUnitsOfMeasure(),
+    watchDeleteUnitsOfMeasure(),
   ]);
 }
