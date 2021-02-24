@@ -125,6 +125,7 @@ describe("actions", () => {
     const expectedAction = {
       type: actions.DELETE_SENSOR,
       sensorId,
+      organization_uuid,
     };
     expect(actions.deleteSensor(sensorId, organization_uuid)).toEqual(expectedAction);
   });
@@ -151,5 +152,71 @@ describe("actions", () => {
       type: actions.GET_SENSORS_TYPE,
     };
     expect(actions.getSensorType()).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to add Gateway type", () => {
+    const payload = { name: "test gateway" };
+    const expectedAction = {
+      type: actions.ADD_GATEWAYS_TYPE,
+      payload,
+    };
+    expect(actions.addGatewayType(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to edit Gateway type", () => {
+    const payload = { name: "test gateway - edited" };
+    const expectedAction = {
+      type: actions.EDIT_GATEWAYS_TYPE,
+      payload,
+    };
+    expect(actions.editGatewayType(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to delete Gateway type", () => {
+    const id = 1;
+    const expectedAction = {
+      type: actions.DELETE_GATEWAYS_TYPE,
+      id,
+    };
+    expect(actions.deleteGatewayType(id)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to add Sensor type", () => {
+    const payload = { name: "test sensor" };
+    const expectedAction = {
+      type: actions.ADD_SENSORS_TYPE,
+      payload,
+    };
+    expect(actions.addSensorType(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to edit Sensor type", () => {
+    const payload = { name: "test sensor - edited" };
+    const expectedAction = {
+      type: actions.EDIT_SENSORS_TYPE,
+      payload,
+    };
+    expect(actions.editSensorType(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to delete Sensor type", () => {
+    const id = 1;
+    const expectedAction = {
+      type: actions.DELETE_SENSORS_TYPE,
+      id,
+    };
+    expect(actions.deleteSensorType(id)).toEqual(expectedAction);
   });
 });

@@ -26,9 +26,17 @@ export const NAVIGATION_ITEMS = [
     name: "Gateway & Sensors",
     link: routes.SENSORS_GATEWAY,
   },
+];
+
+export const ADMIN_NAVIGATION_ITEMS = [
   {
     id: "user_management",
     name: "User Management",
     link: routes.USER_MANAGEMENT,
+  },
+  {
+    id: "admin_panel",
+    name: "Admin Panel",
+    link: routes.ADMIN_PANEL,
   },
 ];

@@ -36,6 +36,18 @@ export const GET_SHIPMENT_OPTIONS_SUCCESS =
 export const GET_SHIPMENT_OPTIONS_FAILURE =
   "ITEMS/GET_SHIPMENT_OPTIONS_FAILURE";
 
+export const ADD_SHIPMENT_FLAG = "SHIPMENT/ADD_SHIPMENT_FLAG";
+export const ADD_SHIPMENT_FLAG_SUCCESS = "SHIPMENT/ADD_SHIPMENT_FLAG_SUCCESS";
+export const ADD_SHIPMENT_FLAG_FAILURE = "SHIPMENT/ADD_SHIPMENT_FLAG_FAILURE";
+
+export const EDIT_SHIPMENT_FLAG = "SHIPMENT/EDIT_SHIPMENT_FLAG";
+export const EDIT_SHIPMENT_FLAG_SUCCESS = "SHIPMENT/EDIT_SHIPMENT_FLAG_SUCCESS";
+export const EDIT_SHIPMENT_FLAG_FAILURE = "SHIPMENT/EDIT_SHIPMENT_FLAG_FAILURE";
+
+export const DELETE_SHIPMENT_FLAG = "SHIPMENT/DELETE_SHIPMENT_FLAG";
+export const DELETE_SHIPMENT_FLAG_SUCCESS = "SHIPMENT/DELETE_SHIPMENT_FLAG_SUCCESS";
+export const DELETE_SHIPMENT_FLAG_FAILURE = "SHIPMENT/DELETE_SHIPMENT_FLAG_FAILURE";
+
 /**
  *
  * @param {Object} formData
@@ -117,4 +129,19 @@ export const setAlerts = (alerts) => ({
 export const emailAlerts = (alerts) => ({
   type: EMAIL_ALERTS,
   alerts,
+});
+
+export const addShipmentFlag = (payload) => ({
+  type: ADD_SHIPMENT_FLAG,
+  payload,
+});
+
+export const editShipmentFlag = (payload) => ({
+  type: EDIT_SHIPMENT_FLAG,
+  payload,
+});
+
+export const deleteShipmentFlag = (id) => ({
+  type: DELETE_SHIPMENT_FLAG,
+  id,
 });

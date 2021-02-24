@@ -31,6 +31,21 @@ export const GET_GATEWAY_OPTIONS = "ITEMS/GET_GATEWAY_OPTIONS";
 export const GET_GATEWAY_OPTIONS_SUCCESS = "ITEMS/GET_GATEWAY_OPTIONS_SUCCESS";
 export const GET_GATEWAY_OPTIONS_FAILURE = "ITEMS/GET_GATEWAY_OPTIONS_FAILURE";
 
+//add Gateway types action constants
+export const ADD_GATEWAYS_TYPE = "SENSORS/ADD_GATEWAYS_TYPE";
+export const ADD_GATEWAYS_TYPE_SUCCESS = "SENSORS/ADD_GATEWAYS_TYPE_SUCCESS";
+export const ADD_GATEWAYS_TYPE_FAILURE = "SENSORS/ADD_GATEWAYS_TYPE_FAILURE";
+
+//edit Gateway types action constants
+export const EDIT_GATEWAYS_TYPE = "SENSORS/EDIT_GATEWAYS_TYPE";
+export const EDIT_GATEWAYS_TYPE_SUCCESS = "SENSORS/EDIT_GATEWAYS_TYPE_SUCCESS";
+export const EDIT_GATEWAYS_TYPE_FAILURE = "SENSORS/EDIT_GATEWAYS_TYPE_FAILURE";
+
+//delete Gateway types action constants
+export const DELETE_GATEWAYS_TYPE = "SENSORS/DELETE_GATEWAYS_TYPE";
+export const DELETE_GATEWAYS_TYPE_SUCCESS = "SENSORS/DELETE_GATEWAYS_TYPE_SUCCESS";
+export const DELETE_GATEWAYS_TYPE_FAILURE = "SENSORS/DELETE_GATEWAYS_TYPE_FAILURE";
+
 export const getGateways = (organization_uuid) => ({ type: GET_GATEWAYS, organization_uuid, });
 
 /**
@@ -82,6 +97,21 @@ export const getGatewayType = () => ({
   type: GET_GATEWAYS_TYPE,
 });
 
+export const addGatewayType = (payload) => ({
+  type: ADD_GATEWAYS_TYPE,
+  payload,
+});
+
+export const editGatewayType = (payload) => ({
+  type: EDIT_GATEWAYS_TYPE,
+  payload,
+});
+
+export const deleteGatewayType = (id) => ({
+  type: DELETE_GATEWAYS_TYPE,
+  id,
+});
+
 //Sensors Actions
 
 //get Sensor action constants
@@ -121,6 +151,21 @@ export const GET_SENSORS_REPORT_FAILURE = "SENSORS/GET_SENSORS_REPORT_FAILURE";
 export const GET_SENSOR_OPTIONS = "ITEMS/GET_SENSOR_OPTIONS";
 export const GET_SENSOR_OPTIONS_SUCCESS = "ITEMS/GET_SENSOR_OPTIONS_SUCCESS";
 export const GET_SENSOR_OPTIONS_FAILURE = "ITEMS/GET_SENSOR_OPTIONS_FAILURE";
+
+//add Sensor types action constants
+export const ADD_SENSORS_TYPE = "SENSORS/ADD_SENSORS_TYPE";
+export const ADD_SENSORS_TYPE_SUCCESS = "SENSORS/ADD_SENSORS_TYPE_SUCCESS";
+export const ADD_SENSORS_TYPE_FAILURE = "SENSORS/ADD_SENSORS_TYPE_FAILURE";
+
+//edit Sensor types action constants
+export const EDIT_SENSORS_TYPE = "SENSORS/EDIT_SENSORS_TYPE";
+export const EDIT_SENSORS_TYPE_SUCCESS = "SENSORS/EDIT_SENSORS_TYPE_SUCCESS";
+export const EDIT_SENSORS_TYPE_FAILURE = "SENSORS/EDIT_SENSORS_TYPE_FAILURE";
+
+//delete Sensor types action constants
+export const DELETE_SENSORS_TYPE = "SENSORS/DELETE_SENSORS_TYPE";
+export const DELETE_SENSORS_TYPE_SUCCESS = "SENSORS/DELETE_SENSORS_TYPE_SUCCESS";
+export const DELETE_SENSORS_TYPE_FAILURE = "SENSORS/DELETE_SENSORS_TYPE_FAILURE";
 
 export const getSensors = (organization_uuid) => ({ type: GET_SENSORS, organization_uuid, });
 
@@ -176,3 +221,18 @@ export const getSensorType = () => ({
 export const getSensorReport = () => ({
   type: GET_SENSORS_REPORT,
 })
+
+export const addSensorType = (payload) => ({
+  type: ADD_SENSORS_TYPE,
+  payload,
+});
+
+export const editSensorType = (payload) => ({
+  type: EDIT_SENSORS_TYPE,
+  payload,
+});
+
+export const deleteSensorType = (id) => ({
+  type: DELETE_SENSORS_TYPE,
+  id,
+});

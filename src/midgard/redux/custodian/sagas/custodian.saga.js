@@ -30,6 +30,15 @@ import {
   ADD_CUSTODY,
   EDIT_CUSTODY,
   EDIT_CUSTODY_FAILURE,
+  ADD_CUSTODIAN_TYPE,
+  ADD_CUSTODIAN_TYPE_SUCCESS,
+  ADD_CUSTODIAN_TYPE_FAILURE,
+  EDIT_CUSTODIAN_TYPE,
+  EDIT_CUSTODIAN_TYPE_SUCCESS,
+  EDIT_CUSTODIAN_TYPE_FAILURE,
+  DELETE_CUSTODIAN_TYPE,
+  DELETE_CUSTODIAN_TYPE_SUCCESS,
+  DELETE_CUSTODIAN_TYPE_FAILURE,
 } from "../actions/custodian.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -406,6 +415,132 @@ function* editCustody(action) {
   }
 }
 
+function* addCustodianType(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}${custodiansApiEndPoint}custodian_type/`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: ADD_CUSTODIAN_TYPE_SUCCESS,
+          custodianType: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Added Custodian Type",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Add Custodian Type due to some error!",
+        })
+      ),
+      yield put({
+        type: ADD_CUSTODIAN_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* editCustodianType(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "put",
+      `${environment.API_URL}${custodiansApiEndPoint}custodian_type/${payload.id}`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: EDIT_CUSTODIAN_TYPE_SUCCESS,
+          custodianType: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Edited Custodian Type",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Edit Custodian Type due to some error!",
+        })
+      ),
+      yield put({
+        type: EDIT_CUSTODIAN_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* deleteCustodianType(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "delete",
+      `${environment.API_URL}${custodiansApiEndPoint}custodian_type/${payload.id}`,
+      null,
+      true
+    );
+    yield [
+      yield put({ 
+        type: DELETE_CUSTODIAN_TYPE_SUCCESS,
+        custodianType: { id: payload.id },
+      }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Successfully Deleted Custodian Type",
+        })
+      ),
+    ];
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Delete Custodian Type due to some error!",
+        })
+      ),
+      yield put({
+        type: DELETE_CUSTODIAN_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* watchGetCustodian() {
   yield takeLatest(GET_CUSTODIANS, getCustodiansList);
 }
@@ -446,6 +581,18 @@ function* watchEditCustody() {
   yield takeLatest(EDIT_CUSTODY, editCustody);
 }
 
+function* watchAddCustodianType() {
+  yield takeLatest(ADD_CUSTODIAN_TYPE, addCustodianType);
+}
+
+function* watchEditCustodianType() {
+  yield takeLatest(EDIT_CUSTODIAN_TYPE, editCustodianType);
+}
+
+function* watchDeleteCustodianType() {
+  yield takeLatest(DELETE_CUSTODIAN_TYPE, deleteCustodianType);
+}
+
 export default function* custodianSaga() {
   yield all([
     watchSearchCustodian(),
@@ -458,5 +605,8 @@ export default function* custodianSaga() {
     watchGetCustody(),
     watchAddCustody(),
     watchEditCustody(),
+    watchAddCustodianType(),
+    watchEditCustodianType(),
+    watchDeleteCustodianType(),
   ]);
 }
