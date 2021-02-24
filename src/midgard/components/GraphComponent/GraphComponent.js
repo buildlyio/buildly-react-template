@@ -8,24 +8,19 @@ import {
 import _ from "lodash";
 
 export function GraphComponent(props) {
-  const { data, maxPoints } = props;
-  const [zoomedXDomain, setZoomedXDomain] = useState([0,100]);
-  const [domain,setDomain] = useState({ x: [0,100], y: [1,10]});
-  const [graphType, setGraphType] = useState(null);
+  const { data, maxPoints,graphType } = props;
+  const [zoomedXDomain, setZoomedXDomain] = useState([]);
+  const [domain,setDomain] = useState({
+    y: [_.minBy(data, d => d.y).y, _.maxBy(data, d => d.y).y],
+    x: [ data[0].x, _.last(data).x ]
+  });
   const [renderedData, setRenderedData] = useState(data);
 
   useEffect(() => {
-    if(data && data.length && graphType == null) {
-      setDomain({
-        y: [_.minBy(data, d => d.y).y, _.maxBy(data, d => d.y).y],
-        x: [ data[0].x, _.last(data).x ]
-      });
-      setGraphType('temperature');
-      // setRenderedData(getData());
-      setZoomedXDomain(domain.x);
+    if (data && data.length) {
+      setZoomedXDomain(domain.x)
     }
-  }, [domain]);
-
+  })
   const getData = () => {
   	const filtered = data.filter(
     	(d) => (d.x >= zoomedXDomain[0] && d.x <= zoomedXDomain[1]));
@@ -51,6 +46,8 @@ export function GraphComponent(props) {
           domain={domain}
           containerComponent={<VictoryZoomContainer
             zoomDimension="x"
+            theme={VictoryTheme.material}
+            responsive={true}
             onZoomDomainChange={() => handleZoomChange()}
             minimumZoom={{x: 1/10000}}
           />}
@@ -65,36 +62,3 @@ export function GraphComponent(props) {
       </div>
     );
   }
-
-    // <VictoryChart
-    //       domain={{ x: [1,20], y: [0, 24] }}
-    //       containerComponent={<VictoryVoronoiContainer />}
-    //     >
-    //       <VictoryScatter
-    //         style={{
-    //           data: { fill: "tomato" }, labels: { fill: "tomato" }
-    //         }}
-    //         size={({ active }) => active ? 5 : 3}
-    //         labels={({ datum }) => datum.y}
-    //         labelComponent={<VictoryTooltip />}
-    //         data={[
-    //           { x: 1, y: -4 },
-    //           { x: 2, y: 4 },
-    //           { x: 3, y: 2 },
-    //           { x: 4, y: 1 }
-    //         ]}
-    //       />
-    //       <VictoryLine
-    //       style={{
-    //         labels: { stroke: "tomato" }
-    //       }}
-    //       labels={({ datum }) => datum.y}
-    //       labelComponent={<VictoryTooltip />}
-    //       data={[
-    //         { x: 1, y: -4 },
-    //         { x: 2, y: 4 },
-    //         { x: 3, y: 2 },
-    //         { x: 4, y: 1 }
-    //       ]}
-    //     />
-    //     </VictoryChart>
