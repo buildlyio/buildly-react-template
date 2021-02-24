@@ -31,4 +31,9 @@ export const NAVIGATION_ITEMS = [
     name: "User Management",
     link: routes.USER_MANAGEMENT,
   },
+  {
+    id: "reporting",
+    name: "Reporting",
+    link: routes.REPORTING,
+  },
 ];

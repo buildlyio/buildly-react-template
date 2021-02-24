@@ -13,6 +13,7 @@ import Items from "midgard/pages/Items/Items";
 import SensorsGateway from "midgard/pages/SensorsGateway/SensorsGateway";
 import Shipment from "midgard/pages/Shipment/Shipment";
 import Dashboard from "midgard/pages/Dashboard/Dashboard";
+import Reporting from "midgard/pages/Reporting/Reporting";
 import { checkForAdmin, checkForGlobalAdmin } from "midgard/utils/utilMethods";
 import { isMobile } from "midgard/utils/mediaQuery";
 
@@ -86,6 +87,7 @@ function ContainerDashboard({ location, history }) {
           <Route path={routes.ITEMS} component={Items} />
           <Route path={routes.SENSORS_GATEWAY} component={SensorsGateway} />
           <Route path={routes.SHIPMENT} component={Shipment} />
+          <Route path={routes.REPORTING} component={Reporting} />
         </Container>
         {routeItems}
       </UserContext.Provider>
