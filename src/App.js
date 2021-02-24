@@ -23,12 +23,23 @@ function App() {
         <ThemeProvider theme={theme}>
           <div className="app">
             <CssBaseline />
-            <Route
+            {/* <Route
               exact
               path="/"
               render={() =>
                 oauthService.hasValidAccessToken() ? (
                   <Redirect to={routes.DASHBOARD} />
+                ) : (
+                  <Redirect to={routes.LOGIN} />
+                )
+              }
+            /> */}
+            <Route
+              exact
+              path="/"
+              render={() =>
+                oauthService.hasValidAccessToken() ? (
+                  <Redirect to={routes.SHIPMENT} />
                 ) : (
                   <Redirect to={routes.LOGIN} />
                 )

@@ -69,16 +69,20 @@ function ContainerDashboard({ location, history }) {
             setNavHidden={setNavHidden}
             location={location}
             history={history}
-            userData={userData}
           />
         )}
         <Container className={`${classes.content} ${!isMobile() && classes.contentMaxWidth}`}>
-          <Route
+          {/* <Route
             exact
             path={routes.APP}
             render={() => <Redirect to={routes.DASHBOARD} />}
+          /> */}
+          <Route
+            exact
+            path={routes.APP}
+            render={() => <Redirect to={routes.SHIPMENT} />}
           />
-          <Route path={routes.DASHBOARD} component={Dashboard} />
+          {/* <Route path={routes.DASHBOARD} component={Dashboard} /> */}
           {(checkForAdmin(userData) || checkForGlobalAdmin(userData)) && (
             <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
           )}

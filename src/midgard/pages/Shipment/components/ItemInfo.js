@@ -144,7 +144,7 @@ function ItemsInfo(props) {
                     (itemData && itemData.sort(compareSort("name"))) || []
                   }
                   getOptionLabel={(option) =>
-                    option && `${option.name}:${option.item_uuid}`
+                    option && option.name
                   }
                   filterSelectedOptions
                   onChange={(event, newValue) => {
@@ -159,7 +159,7 @@ function ItemsInfo(props) {
                         style={{ marginRight: 8 }}
                         checked={selected}
                       />
-                      {`${option.name}:${option.item_uuid}`}
+                      {option.name}
                     </React.Fragment>
                   )}
                   renderInput={(params) => (
