@@ -184,7 +184,7 @@ function MyAccount({
           </Grid>
         )}
       </Grid>
-      <Button
+      {/* <Button
         type="button"
         variant="contained"
         color="primary"
@@ -192,6 +192,15 @@ function MyAccount({
         className={classes.backButton}
       >
         Back To Dashboard
+      </Button> */}
+      <Button
+        type="button"
+        variant="contained"
+        color="primary"
+        onClick={() => history.push(routes.SHIPMENT)}
+        className={classes.backButton}
+      >
+        Back To Shipment Page
       </Button>
       {openModal && (
         <Modal

@@ -158,7 +158,7 @@ function SensorsGatewayInfo(props) {
                     (gatewayData && gatewayData.sort(compareSort("name")) && gatewayData.filter(gateway => !gateway.is_active)) || []
                   }
                   getOptionLabel={(option) =>
-                    option && `${option.name}:${option.gateway_uuid}`
+                    option && option.name
                   }
                   filterSelectedOptions
                   onChange={(event, newValue) => onInputChange(newValue)}
@@ -171,7 +171,7 @@ function SensorsGatewayInfo(props) {
                         style={{ marginRight: 8 }}
                         checked={selected}
                       />
-                      {`${option.name}:${option.gateway_uuid}`}
+                      {option.name}
                     </React.Fragment>
                   )}
                   renderInput={(params) => (

@@ -362,7 +362,6 @@ function Shipment(props) {
       </Grid>
       <ShipmentSensorTable
         sensorReport={selectedShipment?.sensor_report}
-        shipmentUuid={selectedShipment?.shipment_uuid}
         shipmentName={selectedShipment?.name}
       />
       <Route path={`${routes.SHIPMENT}/add`} component={AddShipment} />

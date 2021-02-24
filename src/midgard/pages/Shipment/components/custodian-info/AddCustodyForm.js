@@ -313,7 +313,7 @@ function AddCustodyForm(props) {
                       .sort(compareSort("name"))
                       .map((item, index) => (
                         <MenuItem key={`custodian${index}:${item.id}`} value={item}>
-                          {`${item.name}:${item.custodian_uuid}`}
+                          {item.name}
                         </MenuItem>
                       ))}
                 </TextField>

@@ -18,9 +18,9 @@ export const SHIPMENT_SENSOR_REPORT_TOOLTIP =
   "Shipment Sensor Report till current time";
 
 export const SHIPMENT_DATA_TABLE_COLUMNS = [
-  {
-    name: "shipment_uuid",
-    label: "Shipment ID",
+  { 
+    name: "name", 
+    label: "Shipment Name",
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -37,15 +37,6 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       customBodyRender: (value) => value && value !== "-" 
         ? moment(value).format("MM/DD/yyyy") 
         : value
-    },
-  },
-  { 
-    name: "name", 
-    label: "Shipment Name",
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
     },
   },
   { 
@@ -146,14 +137,6 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
 ];
 
 export const SHIPMENT_SENSOR_COLUMNS = [
-  {
-    name: "shipment_id",
-    label: "Shipment ID",
-    options: {
-      sort: false,
-      filter: false,
-    },
-  },
   {
     name: "alert_status",
     label: "Alert Status",
