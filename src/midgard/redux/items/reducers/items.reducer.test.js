@@ -8,6 +8,7 @@ const initialState = {
   itemTypeList: [],
   productType: [],
   unitsOfMeasure: [],
+  products: [],
 };
 
 const mockData = {
@@ -24,6 +25,7 @@ describe("Get Item reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
   it("get Item success Reducer", () => {
@@ -37,6 +39,7 @@ describe("Get Item reducer", () => {
       error: null,
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
   it("get Item fail Reducer", () => {
@@ -50,6 +53,7 @@ describe("Get Item reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -64,6 +68,7 @@ describe("Add Item reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -78,6 +83,7 @@ describe("Add Item reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
   it("Add Item fail Reducer", () => {
@@ -91,6 +97,7 @@ describe("Add Item reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -106,6 +113,7 @@ describe("Edit Item reducer", () => {
         itemTypeList: [],
         productType: [],
         unitsOfMeasure: [],
+        products: [],
       }
     );
   });
@@ -121,6 +129,7 @@ describe("Edit Item reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
   it("Edit Item fail Reducer", () => {
@@ -134,6 +143,7 @@ describe("Edit Item reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -150,6 +160,7 @@ describe("Delete Item reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -164,6 +175,7 @@ describe("Delete Item reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
   it("Delete Item fail Reducer", () => {
@@ -177,6 +189,7 @@ describe("Delete Item reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -191,6 +204,7 @@ describe("Search reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -206,6 +220,7 @@ describe("Search reducer", () => {
       searchedData: undefined,
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -222,6 +237,7 @@ describe("Get Item type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -238,6 +254,7 @@ describe("Get Item type reducer", () => {
       itemTypeList: undefined,
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
   it("Get Item type fail Reducer", () => {
@@ -253,6 +270,7 @@ describe("Get Item type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -269,6 +287,7 @@ describe("Add Item type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -287,6 +306,7 @@ describe("Add Item type reducer", () => {
       itemTypeList: [itemType],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -303,6 +323,7 @@ describe("Add Item type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -319,6 +340,7 @@ describe("Edit Item type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -338,6 +360,7 @@ describe("Edit Item type reducer", () => {
       itemTypeList: [itemType],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -354,6 +377,7 @@ describe("Edit Item type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -370,6 +394,7 @@ describe("Delete Item type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -389,6 +414,7 @@ describe("Delete Item type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -405,6 +431,168 @@ describe("Delete Item type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
+    });
+  });
+});
+
+describe("Add Products reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.ADD_PRODUCTS })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      itemData: null,
+      itemTypeList: [],
+      productType: [],
+      unitsOfMeasure: [],
+      products: [],
+    });
+  });
+
+  it("Add Products success Reducer", () => {
+    const product = { name: "test type" };
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_PRODUCTS_SUCCESS,
+        product,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      itemData: null,
+      itemTypeList: [],
+      productType: [],
+      unitsOfMeasure: [],
+      products: [product],
+    });
+  });
+
+  it("Add Products fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_PRODUCTS_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      itemData: null,
+      itemTypeList: [],
+      productType: [],
+      unitsOfMeasure: [],
+      products: [],
+    });
+  });
+});
+
+describe("Edit Products reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.EDIT_PRODUCTS })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      itemData: null,
+      itemTypeList: [],
+      productType: [],
+      unitsOfMeasure: [],
+      products: [],
+    });
+  });
+
+  it("Edit Products success Reducer", () => {
+    const state = { ...initialState, products: [{ id: 1, name: "test type" }]};
+    const product = { id: 1, name: "test type - edited" };
+    expect(
+      reducer.default(state, {
+        type: actions.EDIT_PRODUCTS_SUCCESS,
+        product,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      itemData: null,
+      itemTypeList: [],
+      productType: [],
+      unitsOfMeasure: [],
+      products: [product],
+    });
+  });
+
+  it("Edit Products fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.EDIT_PRODUCTS_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      itemData: null,
+      itemTypeList: [],
+      productType: [],
+      unitsOfMeasure: [],
+      products: [],
+    });
+  });
+});
+
+describe("Delete Products reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.DELETE_PRODUCTS })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      itemData: null,
+      itemTypeList: [],
+      productType: [],
+      unitsOfMeasure: [],
+      products: [],
+    });
+  });
+
+  it("Delete Products success Reducer", () => {
+    const state = { ...initialState, products: [{ id: 1, name: "test type" }]};
+    const product = { id: 1 };
+    expect(
+      reducer.default(state, {
+        type: actions.DELETE_PRODUCTS_SUCCESS,
+        product,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      itemData: null,
+      itemTypeList: [],
+      productType: [],
+      unitsOfMeasure: [],
+      products: [],
+    });
+  });
+
+  it("Delete Products fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.DELETE_PRODUCTS_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      itemData: null,
+      itemTypeList: [],
+      productType: [],
+      unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -421,6 +609,7 @@ describe("Add Product type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -439,6 +628,7 @@ describe("Add Product type reducer", () => {
       itemTypeList: [],
       productType: [productType],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -455,6 +645,7 @@ describe("Add Product type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -471,6 +662,7 @@ describe("Edit Product type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -490,6 +682,7 @@ describe("Edit Product type reducer", () => {
       itemTypeList: [],
       productType: [productType],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -506,6 +699,7 @@ describe("Edit Product type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -522,6 +716,7 @@ describe("Delete Product type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -541,6 +736,7 @@ describe("Delete Product type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -557,6 +753,7 @@ describe("Delete Product type reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -573,6 +770,7 @@ describe("Add Units of Sensor reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -591,6 +789,7 @@ describe("Add Units of Sensor reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [unitsOfMeasure],
+      products: [],
     });
   });
 
@@ -607,6 +806,7 @@ describe("Add Units of Sensor reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -623,6 +823,7 @@ describe("Edit Units of Sensor reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -642,6 +843,7 @@ describe("Edit Units of Sensor reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [unitsOfMeasure],
+      products: [],
     });
   });
 
@@ -658,6 +860,7 @@ describe("Edit Units of Sensor reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });
@@ -674,6 +877,7 @@ describe("Delete Units of Sensor reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -693,6 +897,7 @@ describe("Delete Units of Sensor reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 
@@ -709,6 +914,7 @@ describe("Delete Units of Sensor reducer", () => {
       itemTypeList: [],
       productType: [],
       unitsOfMeasure: [],
+      products: [],
     });
   });
 });

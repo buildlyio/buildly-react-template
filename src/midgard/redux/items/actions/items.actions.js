@@ -82,6 +82,18 @@ export const DELETE_PRODUCTS_TYPE = "ITEMS/DELETE_PRODUCTS_TYPE";
 export const DELETE_PRODUCTS_TYPE_SUCCESS = "ITEMS/DELETE_PRODUCTS_TYPE_SUCCESS";
 export const DELETE_PRODUCTS_TYPE_FAILURE = "ITEMS/DELETE_PRODUCTS_TYPE_FAILURE";
 
+export const ADD_PRODUCTS = "ITEM/ADD_PRODUCTS";
+export const ADD_PRODUCTS_SUCCESS = "ITEMS/ADD_PRODUCTS_SUCCESS";
+export const ADD_PRODUCTS_FAILURE = "ITEMS/ADD_PRODUCTS_FAILURE";
+
+export const EDIT_PRODUCTS = "ITEM/EDIT_PRODUCTS";
+export const EDIT_PRODUCTS_SUCCESS = "ITEMS/EDIT_PRODUCTS_SUCCESS";
+export const EDIT_PRODUCTS_FAILURE = "ITEMS/EDIT_PRODUCTS_FAILURE";
+
+export const DELETE_PRODUCTS = "ITEM/DELETE_PRODUCTS";
+export const DELETE_PRODUCTS_SUCCESS = "ITEMS/DELETE_PRODUCTS_SUCCESS";
+export const DELETE_PRODUCTS_FAILURE = "ITEMS/DELETE_PRODUCTS_FAILURE";
+
 //add units of measure action constants
 export const ADD_UNITS_OF_MEASURE = "ITEMS/ADD_UNITS_OF_MEASURE";
 export const ADD_UNITS_OF_MEASURE_SUCCESS =
@@ -184,6 +196,21 @@ export const editItemType = (payload) => ({
 
 export const deleteItemType = (id) => ({
   type: DELETE_ITEMS_TYPE,
+  id,
+});
+
+export const addProduct = (payload) => ({
+  type: ADD_PRODUCTS,
+  payload,
+});
+
+export const editProduct = (payload) => ({
+  type: EDIT_PRODUCTS,
+  payload,
+});
+
+export const deleteProduct = (id) => ({
+  type: DELETE_PRODUCTS,
   id,
 });
 

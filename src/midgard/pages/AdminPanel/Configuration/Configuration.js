@@ -11,6 +11,7 @@ import {
   CUSTODIAN_TYPE_TOOLTIP,
   GATEWAY_TYPE_TOOLTIP,
   ITEM_TYPE_TOOLTIP,
+  PRODUCT_TOOLTIP,
   PRODUCT_TYPE_TOOLTIP,
   SENSOR_TYPE_TOOLTIP,
   SHIPMENT_FLAG_TOOLTIP,
@@ -19,6 +20,7 @@ import {
 import CustodianType from "./components/CustodianType";
 import GatewayType from "./components/GatewayType";
 import ItemType from "./components/ItemType";
+import Product from "./components/Product";
 import ProductType from "./components/ProductType";
 import SensorType from "./components/SensorType";
 import ShipmentFlag from "./components/ShipmentFlag";
@@ -83,6 +85,21 @@ const Configuration = (props) => {
         </AccordionSummary>
         <AccordionDetails>
           <ItemType {...props} />
+        </AccordionDetails>
+      </Accordion>
+      <Accordion className={classes.accordian}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="product-content"
+          id="product-header"
+        >
+          <Typography variant="h5">
+            Products
+            <CustomizedTooltips toolTipText={PRODUCT_TOOLTIP} />
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Product {...props} />
         </AccordionDetails>
       </Accordion>
       <Accordion className={classes.accordian}>

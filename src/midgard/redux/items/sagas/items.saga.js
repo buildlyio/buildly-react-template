@@ -35,6 +35,15 @@ import {
   DELETE_ITEMS_TYPE,
   DELETE_ITEMS_TYPE_SUCCESS,
   DELETE_ITEMS_TYPE_FAILURE,
+  ADD_PRODUCTS,
+  ADD_PRODUCTS_SUCCESS,
+  ADD_PRODUCTS_FAILURE,
+  EDIT_PRODUCTS,
+  EDIT_PRODUCTS_SUCCESS,
+  EDIT_PRODUCTS_FAILURE,
+  DELETE_PRODUCTS,
+  DELETE_PRODUCTS_SUCCESS,
+  DELETE_PRODUCTS_FAILURE,
   ADD_PRODUCTS_TYPE,
   ADD_PRODUCTS_TYPE_SUCCESS,
   ADD_PRODUCTS_TYPE_FAILURE,
@@ -462,6 +471,132 @@ function* deleteItemType(payload) {
   }
 }
 
+function* addProducts(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}${shipmentApiEndPoint}product/`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: ADD_PRODUCTS_SUCCESS,
+          product: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Added Product",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Add Product due to some error!",
+        })
+      ),
+      yield put({
+        type: ADD_PRODUCTS_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* editProducts(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "put",
+      `${environment.API_URL}${shipmentApiEndPoint}product/${payload.id}`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: EDIT_PRODUCTS_SUCCESS,
+          product: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Edited Product",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Edit Product due to some error!",
+        })
+      ),
+      yield put({
+        type: EDIT_PRODUCTS_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* deleteProducts(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "delete",
+      `${environment.API_URL}${shipmentApiEndPoint}product/${payload.id}`,
+      null,
+      true
+    );
+    yield [
+      yield put({ 
+        type: DELETE_PRODUCTS_SUCCESS,
+        product: { id: payload.id },
+      }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Successfully Deleted Product",
+        })
+      ),
+    ];
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Delete Product due to some error!",
+        })
+      ),
+      yield put({
+        type: DELETE_PRODUCTS_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* addProductType(action) {
   let { payload } = action;
   try {
@@ -762,6 +897,18 @@ function* watchDeleteItemType() {
   yield takeLatest(DELETE_ITEMS_TYPE, deleteItemType);
 }
 
+function* watchAddProducts() {
+  yield takeLatest(ADD_PRODUCTS, addProducts);
+}
+
+function* watchEditProducts() {
+  yield takeLatest(EDIT_PRODUCTS, editProducts);
+}
+
+function* watchDeleteProducts() {
+  yield takeLatest(DELETE_PRODUCTS, deleteProducts);
+}
+
 function* watchAddProductType() {
   yield takeLatest(ADD_PRODUCTS_TYPE, addProductType);
 }
@@ -800,6 +947,9 @@ export default function* itemSaga() {
     watchAddItemType(),
     watchEditItemType(),
     watchDeleteItemType(),
+    watchAddProducts(),
+    watchEditProducts(),
+    watchDeleteProducts(),
     watchAddProductType(),
     watchEditProductType(),
     watchDeleteProductType(),

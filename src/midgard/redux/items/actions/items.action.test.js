@@ -118,6 +118,46 @@ describe("actions", () => {
 });
 
 describe("actions", () => {
+  it("should create an action to add product", () => {
+    const payload = {
+      name: "test product",
+      create_date: new Date(),
+      edit_date: new Date(),
+    };
+    const expectedAction = {
+      type: actions.ADD_PRODUCTS,
+      payload,
+    };
+    expect(actions.addProduct(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to edit product", () => {
+    const payload = {
+      name: "test product - edited",
+      edit_date: new Date(),
+    };
+    const expectedAction = {
+      type: actions.EDIT_PRODUCTS,
+      payload,
+    };
+    expect(actions.editProduct(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to delete product", () => {
+    const id = 1;
+    const expectedAction = {
+      type: actions.DELETE_PRODUCTS,
+      id,
+    };
+    expect(actions.deleteProduct(id)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
   it("should create an action to add product type", () => {
     const payload = {
       name: "test product type",

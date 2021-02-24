@@ -40,6 +40,15 @@ import {
   DELETE_ITEMS_TYPE,
   DELETE_ITEMS_TYPE_SUCCESS,
   DELETE_ITEMS_TYPE_FAILURE,
+  ADD_PRODUCTS,
+  ADD_PRODUCTS_SUCCESS,
+  ADD_PRODUCTS_FAILURE,
+  EDIT_PRODUCTS,
+  EDIT_PRODUCTS_SUCCESS,
+  EDIT_PRODUCTS_FAILURE,
+  DELETE_PRODUCTS,
+  DELETE_PRODUCTS_SUCCESS,
+  DELETE_PRODUCTS_FAILURE,
   ADD_PRODUCTS_TYPE,
   ADD_PRODUCTS_TYPE_SUCCESS,
   ADD_PRODUCTS_TYPE_FAILURE,
@@ -81,6 +90,14 @@ export default (state = initialState, action) => {
   if (itemTypePresent) {
     deletedItemType = editedItemType;
     editedItemType = [ ...editedItemType, action.itemType ];
+  };
+
+  let deletedProducts;
+  let editedProducts = state.products;
+  let productsPresent = _.remove(editedProducts, { id: action.product?.id })[0];
+  if (productsPresent) {
+    deletedProducts = editedProducts;
+    editedProducts = [ ...editedProducts, action.product ];
   };
 
   let deletedProductType;
@@ -384,6 +401,71 @@ export default (state = initialState, action) => {
         itemTypeList: deletedItemType,
       };
     case DELETE_ITEMS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case ADD_PRODUCTS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case ADD_PRODUCTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        products: [
+          ...state.products, action.product
+        ],
+      };
+    case ADD_PRODUCTS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case EDIT_PRODUCTS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case EDIT_PRODUCTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        products: editedProducts,
+      };
+    case EDIT_PRODUCTS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case DELETE_PRODUCTS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case DELETE_PRODUCTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        products: deletedProducts,
+      };
+    case DELETE_PRODUCTS_FAILURE:
       return {
         ...state,
         loading: false,
