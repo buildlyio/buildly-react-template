@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import {
     VictoryScatter, VictoryChart,
     VictoryTheme, VictoryTooltip,
-    VictoryLine,VictoryZoomContainer,
-    VictoryVoronoiContainer
+    VictoryLine,VictoryZoomContainer
   } from 'victory';
 import _ from "lodash";
 
 export function GraphComponent(props) {
-  const { data, maxPoints,graphType } = props;
+  const { data, maxPoints } = props;
   const [zoomedXDomain, setZoomedXDomain] = useState([]);
   const [domain,setDomain] = useState({
     y: [_.minBy(data, d => d.y).y, _.maxBy(data, d => d.y).y],
@@ -20,7 +19,8 @@ export function GraphComponent(props) {
     if (data && data.length) {
       setZoomedXDomain(domain.x)
     }
-  })
+  },[zoomedXDomain]);
+
   const getData = () => {
   	const filtered = data.filter(
     	(d) => (d.x >= zoomedXDomain[0] && d.x <= zoomedXDomain[1]));

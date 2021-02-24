@@ -1,25 +1,24 @@
 import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
-import { Route, Redirect } from "react-router-dom";
-import { routes } from "../../routes/routesConstants";
-import { environment } from "environments/environment";
-import { httpService } from "../../modules/http/http.service";
-import { UserContext } from "midgard/context/User.context";
 
-import _ from "lodash";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from "@material-ui/core/ListItemIcon";
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { MapComponent } from "../../components/MapComponent/MapComponent";
-import CustomizedTooltips from "midgard/components/ToolTip/ToolTip";
 import ViewComfyIcon from "@material-ui/icons/ViewComfy";
 import ViewCompactIcon from "@material-ui/icons/ViewCompact";
 import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
+import _ from "lodash";
+
+import { routes } from "../../routes/routesConstants";
+import { environment } from "environments/environment";
+import { UserContext } from "midgard/context/User.context";
 import { MAP_API_URL, convertUnitsOfMeasure } from "midgard/utils/utilMethods";
 import Loader from "midgard/components/Loader/Loader";
 import {
@@ -27,12 +26,14 @@ import {
   MAP_TOOLTIP,
   SHIPMENT_DATA_TABLE_TOOLTIP,
 } from "../Shipment/ShipmentConstants";
+import {
+  getShipmentDetails
+} from "midgard/redux/shipment/actions/shipment.actions";
+import { getSensorReport } from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
 import { GraphComponent } from "../../components/GraphComponent/GraphComponent";
-import { TempIcon, HumidIcon, LightIcon, BatteryIcon, PressureIcon, TiltIcon, ShockIcon} from "../../components/Icons/Icons";
+import { TempIcon, HumidIcon, LightIcon, BatteryIcon, PressureIcon, TiltIcon, ShockIcon } from "../../components/Icons/Icons";
+
 const useStyles = makeStyles((theme) => ({
-  grid: {
-    backgroundColor: "#fff",
-  },
   dashboardHeading: {
     fontWeight: "bold",
     marginBottom: "0.5em",
@@ -65,9 +66,6 @@ const useStyles = makeStyles((theme) => ({
       margin: "0 auto",
     }
   },
-  graphContainer: {
-    height:"400px",
-  }
 }));
 
 function Reporting(props) {
@@ -79,29 +77,36 @@ function Reporting(props) {
     loading,
     loaded,
     error,
+    sensorReportData,
+    shipmentData,
   } = props;
 
   const classes = useStyles();
-  const [openConfirmModal, setConfirmModal] = useState(false);
-  const [deleteItemId, setDeleteItemId] = useState("");
-  const [searchValue, setSearchValue] = useState("");
-  const [rows, setRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
   const organization = useContext(UserContext).organization.organization_uuid;
   const [isMapLoaded, setMapLoaded] = useState(true);
   const [markers, setMarkers] = useState([]);
   const [zoomLevel, setZoomLevel] = useState(12);
   const [tileView, setTileView] = useState(true);
-  const [selectedGraph,setSelectedGraph] = useState("temperature");
-  // const [selectedShipment, setSelectedShipment] = useState("Graph View for ID: 135");
+  const [selectedGraph, setSelectedGraph] = useState("temperature");
+  const [selectedShipment, setSelectedShipment] = useState(null);
 
   const handleListItemClick = (event, index) => {
     setSelectedGraph(index);
   };
+
   const allData = _.range(0, 10, 0.001).map(x => ({
     x: x,
-    y: Math.sin(Math.PI*x/2) * x / 10
+    y: Math.sin(Math.PI * x / 2) * x / 10
   }));
+
+  useEffect(() => {
+    if (shipmentData === null) {
+      dispatch(getShipmentDetails(organization));
+    }
+    if (sensorReportData === null) {
+      dispatch(getSensorReport());
+    }
+  });
 
   return (
     <Box mt={5} mb={5}>
@@ -115,20 +120,8 @@ function Reporting(props) {
             <Typography
               className={classes.tileHeading}
               variant="h5">
-              Graph View for ID: 135
+              Graph View for {selectedShipment === null ? `Shipment` :selectedShipment.name}
         </Typography>
-            {/* {
-              selectedShipment
-              ? (
-                <Typography
-                  className={classes.tileHeading}
-                  variant="h5">
-                  {selectedShipment.name}
-                  <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
-                </Typography>
-              )
-              : (<CustomizedTooltips toolTipText={MAP_TOOLTIP} />)
-            } */}
             <Hidden smDown>
               <IconButton
                 className={classes.menuButton}
@@ -153,7 +146,22 @@ function Reporting(props) {
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
-            {/* <CustomizedTooltips toolTipText={SHIPMENT_DATA_TABLE_TOOLTIP} /> */}
+          <Autocomplete
+              id="shipment-name"
+              options={shipmentData}
+              getOptionLabel={(option) => option.name}
+              style={{ width: 300 }}
+              name="shipment-name"
+              autoComplete="shipment-name"
+              onChange={(event, newValue) => {
+                setSelectedShipment(newValue);
+              }}
+              renderInput={(params) =>
+                <TextField {...params}
+                label="Shipment Name"
+                variant="outlined"
+                />}
+            />
             <Hidden smDown>
               <IconButton
                 className={classes.menuButton}
@@ -206,66 +214,68 @@ function Reporting(props) {
 
       <Grid container spacing={2}>
         <Grid item xs={1} md={1}>
-         {/* <div */}
-         <List component="nav" aria-label="main graph-type" className={classes.iconBar}>
-         <ListItem
-          button
-          selected={selectedGraph === "temperature"}
-          onClick={(event) => handleListItemClick(event, "temperature")}
-        >
-          <TempIcon color="#000"/>
-        </ListItem>
-        <ListItem
-          button
-          selected={selectedGraph === "light"}
-          onClick={(event) => handleListItemClick(event, "light")}
-        >
-          <LightIcon color="#000"/>
-        </ListItem>
-        <ListItem
-          button
-          selected={selectedGraph === "shock"}
-          onClick={(event) => handleListItemClick(event, "shock")}
-        >
-          <ShockIcon color="#000"/>
-        </ListItem>
-        <ListItem
-          button
-          selected={selectedGraph === "tilt"}
-          onClick={(event) => handleListItemClick(event, "tilt")}
-        >
-          <TiltIcon color="#000"/>
-        </ListItem>
-        <ListItem
-          button
-          selected={selectedGraph === "humidity"}
-          onClick={(event) => handleListItemClick(event, "humidity")}
-        >
-          <HumidIcon color="#000"/>
-        </ListItem>
-        <ListItem
-          button
-          selected={selectedGraph === "battery"}
-          onClick={(event) => handleListItemClick(event, "battery")}
-        >
-          <BatteryIcon color="#000"/>
-        </ListItem>
-        <ListItem
-          button
-          selected={selectedGraph === "pressure"}
-          onClick={(event) => handleListItemClick(event, "pressure")}
-        >
-          <PressureIcon color="#000"/>
-        </ListItem>
-        </List>
+          {/* <div */}
+          <List component="nav" aria-label="main graph-type" className={classes.iconBar}>
+            <ListItem
+              button
+              selected={selectedGraph === "temperature"}
+              onClick={(event) => handleListItemClick(event, "temperature")}
+            >
+              <TempIcon color="#000" />
+            </ListItem>
+            <ListItem
+              button
+              selected={selectedGraph === "light"}
+              onClick={(event) => handleListItemClick(event, "light")}
+            >
+              <LightIcon color="#000" />
+            </ListItem>
+            <ListItem
+              button
+              selected={selectedGraph === "shock"}
+              onClick={(event) => handleListItemClick(event, "shock")}
+            >
+              <ShockIcon color="#000" />
+            </ListItem>
+            <ListItem
+              button
+              selected={selectedGraph === "tilt"}
+              onClick={(event) => handleListItemClick(event, "tilt")}
+            >
+              <TiltIcon color="#000" />
+            </ListItem>
+            <ListItem
+              button
+              selected={selectedGraph === "humidity"}
+              onClick={(event) => handleListItemClick(event, "humidity")}
+            >
+              <HumidIcon color="#000" />
+            </ListItem>
+            <ListItem
+              button
+              selected={selectedGraph === "battery"}
+              onClick={(event) => handleListItemClick(event, "battery")}
+            >
+              <BatteryIcon color="#000" />
+            </ListItem>
+            <ListItem
+              button
+              selected={selectedGraph === "pressure"}
+              onClick={(event) => handleListItemClick(event, "pressure")}
+            >
+              <PressureIcon color="#000" />
+            </ListItem>
+          </List>
         </Grid>
         <Grid item xs={10} md={10}>
-        <Typography
+          <Typography
             className={classes.tileHeading}
             variant="h5">
             {selectedGraph}
-        </Typography>
-        <GraphComponent data={allData} maxPoints={100} className={classes.graphContainer}/>
+          </Typography>
+          <GraphComponent
+            data={allData}
+            maxPoints={100} />
         </Grid>
       </Grid>
     </Box>
@@ -274,6 +284,8 @@ function Reporting(props) {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  ...state.shipmentReducer,
+  ...state.sensorsGatewayReducer,
 });
 
 export default connect(mapStateToProps)(Reporting);
