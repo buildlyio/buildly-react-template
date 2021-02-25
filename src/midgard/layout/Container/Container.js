@@ -16,6 +16,7 @@ import Dashboard from "midgard/pages/Dashboard/Dashboard";
 import Reporting from "midgard/pages/Reporting/Reporting";
 import { checkForAdmin, checkForGlobalAdmin } from "midgard/utils/utilMethods";
 import { isMobile } from "midgard/utils/mediaQuery";
+import AdminPanel from "midgard/pages/AdminPanel/AdminPanel";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,16 +70,20 @@ function ContainerDashboard({ location, history }) {
             setNavHidden={setNavHidden}
             location={location}
             history={history}
-            userData={userData}
           />
         )}
         <Container className={`${classes.content} ${!isMobile() && classes.contentMaxWidth}`}>
-          <Route
+          {/* <Route
             exact
             path={routes.APP}
             render={() => <Redirect to={routes.DASHBOARD} />}
+          /> */}
+          <Route
+            exact
+            path={routes.APP}
+            render={() => <Redirect to={routes.SHIPMENT} />}
           />
-          <Route path={routes.DASHBOARD} component={Dashboard} />
+          {/* <Route path={routes.DASHBOARD} component={Dashboard} /> */}
           {(checkForAdmin(userData) || checkForGlobalAdmin(userData)) && (
             <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
           )}
@@ -88,6 +93,7 @@ function ContainerDashboard({ location, history }) {
           <Route path={routes.SENSORS_GATEWAY} component={SensorsGateway} />
           <Route path={routes.SHIPMENT} component={Shipment} />
           <Route path={routes.REPORTING} component={Reporting} />
+          <Route path={routes.ADMIN_PANEL} component={AdminPanel} />
         </Container>
         {routeItems}
       </UserContext.Provider>

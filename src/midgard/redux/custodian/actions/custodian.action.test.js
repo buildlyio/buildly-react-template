@@ -91,3 +91,43 @@ describe("actions", () => {
     expect(actions.getContact(organization_uuid)).toEqual(expectedAction);
   });
 });
+
+describe("actions", () => {
+  it("should create an action to add custodian type", () => {
+    const payload = {
+      name: "test type",
+      create_date: new Date(),
+      edit_date: new Date(),
+    };
+    const expectedAction = {
+      type: actions.ADD_CUSTODIAN_TYPE,
+      payload,
+    };
+    expect(actions.addCustodianType(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to edit custodian type", () => {
+    const payload = {
+      name: "test type - edited",
+      edit_date: new Date(),
+    };
+    const expectedAction = {
+      type: actions.EDIT_CUSTODIAN_TYPE,
+      payload,
+    };
+    expect(actions.editCustodianType(payload)).toEqual(expectedAction);
+  });
+});
+
+describe("actions", () => {
+  it("should create an action to delete custodian type", () => {
+    const id = 1;
+    const expectedAction = {
+      type: actions.DELETE_CUSTODIAN_TYPE,
+      id,
+    };
+    expect(actions.deleteCustodianType(id)).toEqual(expectedAction);
+  });
+});

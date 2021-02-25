@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {
   ADD_CUSTODIANS,
   ADD_CUSTODIANS_SUCCESS,
@@ -35,6 +36,15 @@ import {
   GET_CONTACT_OPTIONS_FAILURE,
   GET_CUSTODY_OPTIONS_SUCCESS,
   GET_CUSTODY_OPTIONS_FAILURE,
+  ADD_CUSTODIAN_TYPE,
+  ADD_CUSTODIAN_TYPE_SUCCESS,
+  ADD_CUSTODIAN_TYPE_FAILURE,
+  EDIT_CUSTODIAN_TYPE,
+  EDIT_CUSTODIAN_TYPE_SUCCESS,
+  EDIT_CUSTODIAN_TYPE_FAILURE,
+  DELETE_CUSTODIAN_TYPE,
+  DELETE_CUSTODIAN_TYPE_SUCCESS,
+  DELETE_CUSTODIAN_TYPE_FAILURE,
 } from "../actions/custodian.actions";
 
 const initialState = {
@@ -51,6 +61,14 @@ const initialState = {
 
 // Reducer
 export default (state = initialState, action) => {
+  let deletedType;
+  let editedType = state.custodianTypeList;
+  let typePresent = _.remove(editedType, { id: action.custodianType?.id })[0];
+  if (typePresent) {
+    deletedType = editedType;
+    editedType = [ ...editedType, action.custodianType ];
+  };
+
   switch (action.type) {
     case GET_CUSTODIANS:
       return {
@@ -164,7 +182,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        custodianTypeList: action.data,
+        custodianTypeList: _.orderBy(action.data, ["id"], "asc"),
       };
     case GET_CUSTODIAN_TYPE_FAILURE:
       return {
@@ -313,6 +331,71 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         contactOptions: null,
+        error: action.error,
+      };
+    case ADD_CUSTODIAN_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case ADD_CUSTODIAN_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodianTypeList: [
+          ...state.custodianTypeList, action.custodianType
+        ],
+      };
+    case ADD_CUSTODIAN_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case EDIT_CUSTODIAN_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case EDIT_CUSTODIAN_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodianTypeList: editedType,
+      };
+    case EDIT_CUSTODIAN_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case DELETE_CUSTODIAN_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case DELETE_CUSTODIAN_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodianTypeList: deletedType,
+      };
+    case DELETE_CUSTODIAN_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
         error: action.error,
       };
     default:

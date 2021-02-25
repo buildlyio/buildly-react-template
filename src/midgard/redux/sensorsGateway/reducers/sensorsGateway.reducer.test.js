@@ -4,10 +4,10 @@ const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  gatewayTypeList: null,
+  gatewayTypeList: [],
   gatewayData: null,
   sensorData: null,
-  sensorTypeList: null,
+  sensorTypeList: [],
 };
 
 const mockData = {
@@ -22,10 +22,10 @@ describe("Get Gateway reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
   it("get Gateway success Reducer", () => {
@@ -34,11 +34,11 @@ describe("Get Gateway reducer", () => {
     ).toEqual({
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: undefined,
       error: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
   it("get Gateway fail Reducer", () => {
@@ -48,10 +48,10 @@ describe("Get Gateway reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 });
@@ -64,10 +64,10 @@ describe("Add Gateway reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 
@@ -78,10 +78,10 @@ describe("Add Gateway reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: undefined,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
   it("Add Gateway fail Reducer", () => {
@@ -91,10 +91,10 @@ describe("Add Gateway reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 });
@@ -107,10 +107,10 @@ describe("Edit Gateway reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 
@@ -121,10 +121,10 @@ describe("Edit Gateway reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: undefined,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
   it("Edit Gateway fail Reducer", () => {
@@ -134,10 +134,10 @@ describe("Edit Gateway reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 });
@@ -150,10 +150,10 @@ describe("Delete Gateway reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 
@@ -164,10 +164,10 @@ describe("Delete Gateway reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: undefined,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
   it("Delete Gateway fail Reducer", () => {
@@ -177,10 +177,10 @@ describe("Delete Gateway reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 });
@@ -193,10 +193,10 @@ describe("Search Gateway reducer", () => {
       error: null,
       loaded: false,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 
@@ -207,11 +207,11 @@ describe("Search Gateway reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       gatewaySearchedData: undefined,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 });
@@ -224,10 +224,10 @@ describe("Get Gateway type reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 
@@ -243,7 +243,7 @@ describe("Get Gateway type reducer", () => {
       gatewayTypeList: undefined,
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
   it("Get Gateway type fail Reducer", () => {
@@ -255,10 +255,10 @@ describe("Get Gateway type reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 });
@@ -271,10 +271,10 @@ describe("Get Sensor reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
   it("get Sensors success Reducer", () => {
@@ -283,11 +283,11 @@ describe("Get Sensor reducer", () => {
     ).toEqual({
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       error: null,
       sensorData: undefined,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
   it("get Sensor fail Reducer", () => {
@@ -297,10 +297,10 @@ describe("Get Sensor reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 });
@@ -312,10 +312,10 @@ describe("Add Sensor reducer", () => {
         error: null,
         loaded: false,
         loading: true,
-        gatewayTypeList: null,
+        gatewayTypeList: [],
         gatewayData: null,
         sensorData: null,
-        sensorTypeList: null,
+        sensorTypeList: [],
       }
     );
   });
@@ -327,10 +327,10 @@ describe("Add Sensor reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: undefined,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
   it("Add Sensor fail Reducer", () => {
@@ -340,10 +340,10 @@ describe("Add Sensor reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 });
@@ -356,10 +356,10 @@ describe("Edit Sensor reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 
@@ -370,10 +370,10 @@ describe("Edit Sensor reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: undefined,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
   it("Edit Sensor fail Reducer", () => {
@@ -383,10 +383,10 @@ describe("Edit Sensor reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 });
@@ -399,10 +399,10 @@ describe("Delete Sensor reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 
@@ -413,10 +413,10 @@ describe("Delete Sensor reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: undefined,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
   it("Delete Gateway fail Reducer", () => {
@@ -426,10 +426,10 @@ describe("Delete Sensor reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 });
@@ -442,10 +442,10 @@ describe("Search Sensor reducer", () => {
       error: null,
       loaded: false,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 
@@ -456,11 +456,11 @@ describe("Search Sensor reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorSearchedData: undefined,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 });
@@ -473,10 +473,10 @@ describe("Get Sensor type reducer", () => {
       error: null,
       loaded: false,
       loading: true,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
     });
   });
 
@@ -489,7 +489,7 @@ describe("Get Sensor type reducer", () => {
       error: null,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
       sensorTypeList: undefined,
@@ -504,10 +504,314 @@ describe("Get Sensor type reducer", () => {
       error: undefined,
       loaded: true,
       loading: false,
-      gatewayTypeList: null,
+      gatewayTypeList: [],
       gatewayData: null,
       sensorData: null,
-      sensorTypeList: null,
+      sensorTypeList: [],
+    });
+  });
+});
+
+describe("Add Gateway type reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.ADD_GATEWAYS_TYPE })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+
+  it("Add Gateway type success Reducer", () => {
+    const gatewayType = { name: "test type" };
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_GATEWAYS_TYPE_SUCCESS,
+        gatewayType,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      gatewayTypeList: [gatewayType],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+
+  it("Add Gateway type fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_GATEWAYS_TYPE_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+});
+
+describe("Edit Gateway type reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.EDIT_GATEWAYS_TYPE })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+
+  it("Edit Gateway type success Reducer", () => {
+    const data = { ...initialState, gatewayTypeList: [{ id: 1, name: "test type" }]};
+    const gatewayType = { id: 1, name: "test type - edited" };
+    expect(
+      reducer.default(data, {
+        type: actions.EDIT_GATEWAYS_TYPE_SUCCESS,
+        gatewayType,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      gatewayTypeList: [gatewayType],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+
+  it("Edit Gateway type fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.EDIT_GATEWAYS_TYPE_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+});
+
+describe("Delete Gateway type reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.DELETE_GATEWAYS_TYPE })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+
+  it("Delete Gateway type success Reducer", () => {
+    const data = { ...initialState, gatewayTypeList: [{ id: 1, name: "test type - edited" }]};
+    const gatewayType = { id: 1 };
+    expect(
+      reducer.default(data, {
+        type: actions.DELETE_GATEWAYS_TYPE_SUCCESS,
+        gatewayType,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+
+  it("Delete Gateway type fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.DELETE_GATEWAYS_TYPE_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+});
+
+describe("Add Sensor type reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.ADD_SENSORS_TYPE })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+
+  it("Add Sensor type success Reducer", () => {
+    const sensorType = { name: "test type" };
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_SENSORS_TYPE_SUCCESS,
+        sensorType,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [sensorType],
+    });
+  });
+
+  it("Add Sensor type fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_SENSORS_TYPE_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+});
+
+describe("Edit Sensor type reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.EDIT_SENSORS_TYPE })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+
+  it("Edit Sensor type success Reducer", () => {
+    const data = { ...initialState, sensorTypeList: [{ id: 1, name: "test type" }]};
+    const sensorType = { id: 1, name: "test type - edited" };
+    expect(
+      reducer.default(data, {
+        type: actions.EDIT_SENSORS_TYPE_SUCCESS,
+        sensorType,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [sensorType],
+    });
+  });
+
+  it("Edit Sensor type fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.EDIT_SENSORS_TYPE_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+});
+
+describe("Delete Sensor type reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.DELETE_SENSORS_TYPE })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+
+  it("Delete Sensor type success Reducer", () => {
+    const data = { ...initialState, sensorTypeList: [{ id: 1, name: "test type - edited" }]};
+    const sensorType = { id: 1 };
+    expect(
+      reducer.default(data, {
+        type: actions.DELETE_SENSORS_TYPE_SUCCESS,
+        sensorType,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
+    });
+  });
+
+  it("Delete Sensor type fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.DELETE_SENSORS_TYPE_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      gatewayTypeList: [],
+      gatewayData: null,
+      sensorData: null,
+      sensorTypeList: [],
     });
   });
 });

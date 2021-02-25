@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ShipmentSensorTable = (props) => {
   const classes = useStyles();
-  const { sensorReport, shipmentUuid, shipmentName } = props;
+  const { sensorReport, shipmentName } = props;
   const [rows, setRows] = useState([]);
 
   const columns = SHIPMENT_SENSOR_COLUMNS.map(column => ({
@@ -73,7 +73,6 @@ const ShipmentSensorTable = (props) => {
         const locObj = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
 
         return ({ 
-          shipment_id: shipmentUuid,
           alert_status,
           timestamp: report.edit_date,
           latitude: locObj.latitude,

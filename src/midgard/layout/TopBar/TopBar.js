@@ -8,6 +8,7 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import RefreshIcon from "@material-ui/icons/Refresh";
+import SettingsIcon from '@material-ui/icons/Settings';
 import Hidden from "@material-ui/core/Hidden";
 import logo from "assets/tp-logo.png";
 import {
@@ -19,8 +20,10 @@ import {
   GET_ORGANIZATION_OPTIONS_FAILURE,
 } from "../../redux/authuser/actions/authuser.actions";
 import AccountMenu from "./AccountMenu";
+import AdminMenu from "./AdminMenu";
 import { routes } from "../../routes/routesConstants";
 import { httpService } from "../../modules/http/http.service";
+import { checkForAdmin, checkForGlobalAdmin } from "midgard/utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -59,11 +62,14 @@ function TopBar({
 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [settingEl, setSettingEl] = React.useState(null);
 
   let user;
+  let isAdmin = false;
 
   if (data && data.data) {
     user = data.data;
+    isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
   }
 
   useEffect(() => {
@@ -97,6 +103,10 @@ function TopBar({
     }
   }, []);
 
+  const settingMenu = (event) => {
+    setSettingEl(event.currentTarget);
+  };
+
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -113,6 +123,16 @@ function TopBar({
   const handleMyAccountClick = () => {
     history.push(routes.MY_ACCOUNT);
     setAnchorEl(null);
+  };
+
+  const handleAdminPanelClick = () => {
+    history.push(routes.ADMIN_PANEL);
+    setSettingEl(null);
+  };
+
+  const handleUserManagementClick = () => {
+    history.push(routes.USER_MANAGEMENT);
+    setSettingEl(null);
   };
 
   return (
@@ -132,7 +152,23 @@ function TopBar({
         <img src={logo} className={classes.logo} />
 
         <div className={classes.menuRight}>
-        <IconButton
+          {isAdmin && 
+          <IconButton
+            aria-label="admin section"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={settingMenu}
+            color="default"
+          >
+            <SettingsIcon fontSize="large" />
+          </IconButton>}
+          <AdminMenu
+            settingEl={settingEl}
+            setSettingEl={setSettingEl}
+            handleAdminPanelClick={handleAdminPanelClick}
+            handleUserManagementClick={handleUserManagementClick}
+          />
+          <IconButton
             aria-label="refresh-app"
             aria-controls="menu-appbar"
             aria-haspopup="false"

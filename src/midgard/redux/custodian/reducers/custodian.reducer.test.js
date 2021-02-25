@@ -5,7 +5,7 @@ const initialState = {
   loaded: false,
   custodianData: null,
   error: null,
-  custodianTypeList: null,
+  custodianTypeList: [],
   contactInfo: null,
 };
 
@@ -22,7 +22,7 @@ describe("Get custodian reducer", () => {
       loaded: false,
       loading: true,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -33,7 +33,7 @@ describe("Get custodian reducer", () => {
       loaded: true,
       loading: false,
       custodianData: undefined,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
       error: null,
     });
@@ -46,7 +46,7 @@ describe("Get custodian reducer", () => {
       loaded: true,
       loading: false,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -61,7 +61,7 @@ describe("Add Custodian reducer", () => {
       loaded: false,
       loading: true,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -74,7 +74,7 @@ describe("Add Custodian reducer", () => {
       loaded: true,
       loading: false,
       custodianData: undefined,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -86,7 +86,7 @@ describe("Add Custodian reducer", () => {
       loaded: true,
       loading: false,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -101,7 +101,7 @@ describe("Edit Custodian reducer", () => {
       loaded: false,
       loading: true,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -114,7 +114,7 @@ describe("Edit Custodian reducer", () => {
       loaded: true,
       loading: false,
       custodianData: undefined,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -126,7 +126,7 @@ describe("Edit Custodian reducer", () => {
       loaded: true,
       loading: false,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -141,7 +141,7 @@ describe("Delete Custodian reducer", () => {
       loaded: false,
       loading: true,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -154,7 +154,7 @@ describe("Delete Custodian reducer", () => {
       loaded: true,
       loading: false,
       custodianData: undefined,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -166,7 +166,7 @@ describe("Delete Custodian reducer", () => {
       loaded: true,
       loading: false,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -179,7 +179,7 @@ describe("Search reducer", () => {
       loaded: false,
       loading: false,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -192,7 +192,7 @@ describe("Search reducer", () => {
       loaded: true,
       loading: false,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
       searchedData: undefined,
     });
@@ -208,7 +208,7 @@ describe("Get Custodian type reducer", () => {
       loaded: false,
       loading: true,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -223,7 +223,7 @@ describe("Get Custodian type reducer", () => {
       loaded: true,
       loading: false,
       custodianData: null,
-      custodianTypeList: undefined,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -237,7 +237,7 @@ describe("Get Custodian type reducer", () => {
       loaded: true,
       loading: false,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -252,7 +252,7 @@ describe("Get contact info reducer", () => {
       loaded: false,
       loading: true,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });
@@ -265,7 +265,7 @@ describe("Get contact info reducer", () => {
       loaded: true,
       loading: false,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
       contactInfo: undefined,
     });
   });
@@ -277,7 +277,150 @@ describe("Get contact info reducer", () => {
       loaded: true,
       loading: false,
       custodianData: null,
-      custodianTypeList: null,
+      custodianTypeList: [],
+      contactInfo: null,
+    });
+  });
+});
+
+describe("Add Custodian type reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.ADD_CUSTODIAN_TYPE })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      custodianData: null,
+      custodianTypeList: [],
+      contactInfo: null,
+    });
+  });
+
+  it("Add Custodian type success Reducer", () => {
+    const custodianType = { name: "test type" };
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_CUSTODIAN_TYPE_SUCCESS,
+        custodianType,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      custodianData: null,
+      custodianTypeList: [custodianType],
+      contactInfo: null,
+    });
+  });
+
+  it("Add Custodian type fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_CUSTODIAN_TYPE_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      custodianData: null,
+      custodianTypeList: [],
+      contactInfo: null,
+    });
+  });
+});
+
+describe("Edit Custodian type reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.EDIT_CUSTODIAN_TYPE })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      custodianData: null,
+      custodianTypeList: [],
+      contactInfo: null,
+    });
+  });
+
+  it("Edit Custodian type success Reducer", () => {
+    const state = { ...initialState, custodianTypeList: [{ id: 1, name: "test type" }]};
+    const custodianType = { id: 1, name: "test type - edited" };
+    expect(
+      reducer.default(state, {
+        type: actions.EDIT_CUSTODIAN_TYPE_SUCCESS,
+        custodianType,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      custodianData: null,
+      custodianTypeList: [custodianType],
+      contactInfo: null,
+    });
+  });
+
+  it("Edit Custodian type fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.EDIT_CUSTODIAN_TYPE_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      custodianData: null,
+      custodianTypeList: [],
+      contactInfo: null,
+    });
+  });
+});
+
+describe("Delete Custodian type reducer", () => {
+  it("Empty Reducer", () => {
+    expect(
+      reducer.default(initialState, { type: actions.DELETE_CUSTODIAN_TYPE })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      custodianData: null,
+      custodianTypeList: [],
+      contactInfo: null,
+    });
+  });
+
+  it("Delete Custodian type success Reducer", () => {
+    const state = { ...initialState, custodianTypeList: [{ id: 1, name: "test type" }]};
+    const custodianType = { id: 1 };
+    expect(
+      reducer.default(state, {
+        type: actions.DELETE_CUSTODIAN_TYPE_SUCCESS,
+        custodianType,
+      })
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      custodianData: null,
+      custodianTypeList: [],
+      contactInfo: null,
+    });
+  });
+
+  it("Delete Custodian type fail Reducer", () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.DELETE_CUSTODIAN_TYPE_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      custodianData: null,
+      custodianTypeList: [],
       contactInfo: null,
     });
   });

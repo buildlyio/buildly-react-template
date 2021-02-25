@@ -39,6 +39,24 @@ import {
   EDIT_SENSOR_FAILURE,
   Add_SENSOR_FAILURE,
   SENSOR_SEARCH_SUCCESS,
+  ADD_GATEWAYS_TYPE,
+  ADD_GATEWAYS_TYPE_SUCCESS,
+  ADD_GATEWAYS_TYPE_FAILURE,
+  EDIT_GATEWAYS_TYPE,
+  EDIT_GATEWAYS_TYPE_SUCCESS,
+  EDIT_GATEWAYS_TYPE_FAILURE,
+  DELETE_GATEWAYS_TYPE,
+  DELETE_GATEWAYS_TYPE_SUCCESS,
+  DELETE_GATEWAYS_TYPE_FAILURE,
+  ADD_SENSORS_TYPE,
+  ADD_SENSORS_TYPE_SUCCESS,
+  ADD_SENSORS_TYPE_FAILURE,
+  EDIT_SENSORS_TYPE,
+  EDIT_SENSORS_TYPE_SUCCESS,
+  EDIT_SENSORS_TYPE_FAILURE,
+  DELETE_SENSORS_TYPE,
+  DELETE_SENSORS_TYPE_SUCCESS,
+  DELETE_SENSORS_TYPE_FAILURE,
 } from "../actions/sensorsGateway.actions";
 import { searchFilter } from "../../../utils/utilMethods";
 
@@ -440,6 +458,258 @@ function* searchSensors(payload) {
   }
 }
 
+function* addGatewayType(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}${sensorApiEndPoint}gateway_type/`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: ADD_GATEWAYS_TYPE_SUCCESS,
+          gatewayType: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Added Gateway Type",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Add Gateway Type due to some error!",
+        })
+      ),
+      yield put({
+        type: ADD_GATEWAYS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* editGatewayType(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "put",
+      `${environment.API_URL}${sensorApiEndPoint}gateway_type/${payload.id}`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: EDIT_GATEWAYS_TYPE_SUCCESS,
+          gatewayType: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Edited Gateway Type",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Edit Gateway Type due to some error!",
+        })
+      ),
+      yield put({
+        type: EDIT_GATEWAYS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* deleteGatewayType(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "delete",
+      `${environment.API_URL}${sensorApiEndPoint}gateway_type/${payload.id}`,
+      null,
+      true
+    );
+    yield [
+      yield put({ 
+        type: DELETE_GATEWAYS_TYPE_SUCCESS,
+        gatewayType: { id: payload.id },
+      }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Successfully Deleted Gateway Type",
+        })
+      ),
+    ];
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Delete Gateway Type due to some error!",
+        })
+      ),
+      yield put({
+        type: DELETE_GATEWAYS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* addSensorType(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}${sensorApiEndPoint}sensor_type/`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: ADD_SENSORS_TYPE_SUCCESS,
+          sensorType: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Added Sensor Type",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Add Sensor Type due to some error!",
+        })
+      ),
+      yield put({
+        type: ADD_SENSORS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* editSensorType(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "put",
+      `${environment.API_URL}${sensorApiEndPoint}sensor_type/${payload.id}`,
+      payload,
+      true
+    );
+    if (data && data.data) {
+      yield [
+        yield put({ 
+          type: EDIT_SENSORS_TYPE_SUCCESS,
+          sensorType: data.data,
+        }),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Edited Sensor Type",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Edit Sensor Type due to some error!",
+        })
+      ),
+      yield put({
+        type: EDIT_SENSORS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* deleteSensorType(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "delete",
+      `${environment.API_URL}${sensorApiEndPoint}sensor_type/${payload.id}`,
+      null,
+      true
+    );
+    yield [
+      yield put({ 
+        type: DELETE_SENSORS_TYPE_SUCCESS,
+        sensorType: { id: payload.id },
+      }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Successfully Deleted Sensor Type",
+        })
+      ),
+    ];
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Delete Sensor Type due to some error!",
+        })
+      ),
+      yield put({
+        type: DELETE_SENSORS_TYPE_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* watchGetGateway() {
   yield takeLatest(GET_GATEWAYS, getGatewayList);
 }
@@ -492,6 +762,30 @@ function* watchEditSensor() {
   yield takeLatest(EDIT_SENSOR, editSensorItem);
 }
 
+function* watchAddGatewayType() {
+  yield takeLatest(ADD_GATEWAYS_TYPE, addGatewayType);
+}
+
+function* watchEditGatewayType() {
+  yield takeLatest(EDIT_GATEWAYS_TYPE, editGatewayType);
+}
+
+function* watchDeleteGatewayType() {
+  yield takeLatest(DELETE_GATEWAYS_TYPE, deleteGatewayType);
+}
+
+function* watchAddSensorType() {
+  yield takeLatest(ADD_SENSORS_TYPE, addSensorType);
+}
+
+function* watchEditSensorType() {
+  yield takeLatest(EDIT_SENSORS_TYPE, editSensorType);
+}
+
+function* watchDeleteSensorType() {
+  yield takeLatest(DELETE_SENSORS_TYPE, deleteSensorType);
+}
+
 export default function* sensorsGatewaySaga() {
   yield all([
     watchGatewaySearch(),
@@ -507,5 +801,11 @@ export default function* sensorsGatewaySaga() {
     watchEditSensor(),
     watchDeleteSensor(),
     watchSensorSearch(),
+    watchAddGatewayType(),
+    watchEditGatewayType(),
+    watchDeleteGatewayType(),
+    watchAddSensorType(),
+    watchEditSensorType(),
+    watchDeleteSensorType(),
   ]);
 }

@@ -1,11 +1,11 @@
 import { routes } from "midgard/routes/routesConstants";
 
 export const NAVIGATION_ITEMS = [
-  {
-    id: "dashboard",
-    name: "Dashboard",
-    link: routes.DASHBOARD,
-  },
+  // {
+  //   id: "dashboard",
+  //   name: "Dashboard",
+  //   link: routes.DASHBOARD,
+  // },
   {
     id: "shipment",
     name: "Shipments",

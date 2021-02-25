@@ -64,6 +64,27 @@ export const GET_CUSTODY_OPTIONS_SUCCESS =
 export const GET_CUSTODY_OPTIONS_FAILURE =
   "CUSTODIAN/GET_CUSTODY_OPTIONS_FAILURE";
 
+//add custodian type action constants
+export const ADD_CUSTODIAN_TYPE = "CUSTODIAN/ADD_CUSTODIAN_TYPE";
+export const ADD_CUSTODIAN_TYPE_SUCCESS =
+  "CUSTODIAN/ADD_CUSTODIAN_TYPE_SUCCESS";
+export const ADD_CUSTODIAN_TYPE_FAILURE =
+  "CUSTODIAN/ADD_CUSTODIAN_TYPE_FAILURE";
+
+//edit custodian type action constants
+export const EDIT_CUSTODIAN_TYPE = "CUSTODIAN/EDIT_CUSTODIAN_TYPE";
+export const EDIT_CUSTODIAN_TYPE_SUCCESS =
+  "CUSTODIAN/EDIT_CUSTODIAN_TYPE_SUCCESS";
+export const EDIT_CUSTODIAN_TYPE_FAILURE =
+  "CUSTODIAN/EDIT_CUSTODIAN_TYPE_FAILURE";
+
+//delete custodian type action constants
+export const DELETE_CUSTODIAN_TYPE = "CUSTODIAN/DELETE_CUSTODIAN_TYPE";
+export const DELETE_CUSTODIAN_TYPE_SUCCESS =
+  "CUSTODIAN/DELETE_CUSTODIAN_TYPE_SUCCESS";
+export const DELETE_CUSTODIAN_TYPE_FAILURE =
+  "CUSTODIAN/DELETE_CUSTODIAN_TYPE_FAILURE";
+
 export const getCustodians = (organization_uuid) => ({ type: GET_CUSTODIANS, organization_uuid, });
 
 /**
@@ -135,4 +156,19 @@ export const addCustody = (payload) => ({
 export const editCustody = (payload) => ({
   type: EDIT_CUSTODY,
   payload,
+});
+
+export const addCustodianType = (payload) => ({
+  type: ADD_CUSTODIAN_TYPE,
+  payload,
+});
+
+export const editCustodianType = (payload) => ({
+  type: EDIT_CUSTODIAN_TYPE,
+  payload,
+});
+
+export const deleteCustodianType = (id) => ({
+  type: DELETE_CUSTODIAN_TYPE,
+  id,
 });
