@@ -11,7 +11,7 @@ import ViewCompactIcon from "@material-ui/icons/ViewCompact";
 import _ from "lodash";
 
 import { UserContext } from "midgard/context/User.context";
-import { MAP_API_URL, convertUnitsOfMeasure } from "midgard/utils/utilMethods";
+import { MAP_API_URL } from "midgard/utils/utilMethods";
 import Loader from "midgard/components/Loader/Loader";
 import {
   getShipmentOverview,
@@ -81,6 +81,9 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     flexDirection: "column",
   },
+  graphContainer: {
+    background: theme.palette.common.white,
+  }
 }));
 
 function Reporting(props) {
@@ -157,7 +160,8 @@ function Reporting(props) {
       custodianData &&
       custodyData &&
       sensorReportData &&
-      contactInfo
+      contactInfo &&
+      unitsOfMeasure
     ) {
       let overview = getShipmentOverview(
         shipmentData,
@@ -165,6 +169,7 @@ function Reporting(props) {
         custodyData,
         sensorReportData,
         contactInfo,
+        unitsOfMeasure,
       );
       setShipmentOverview(overview);
     }
@@ -172,47 +177,7 @@ function Reporting(props) {
 
   useEffect(() => {
     if (selectedShipment) {
-      let markersToSet = [];
-      let temperatureUnit = unitsOfMeasure.filter((obj) => {
-        return obj.supported_class === "Temperature";
-      })[0]["name"].toLowerCase()
-      let tempConst = temperatureUnit[0].toUpperCase()
-      let index = 1;
-      selectedShipment.sensor_report.forEach((report) => {
-        if (report.report_location != null && Array.isArray(report.report_location)) {
-          try {
-            // data uses single quotes which throws an error
-            const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
-            const temperature = convertUnitsOfMeasure('celsius', report.report_temp, temperatureUnit, 'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
-            const humidity = report.report_humidity;
-            const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
-            const marker = {
-              lat: parsedLocation && parsedLocation.latitude,
-              lng: parsedLocation && parsedLocation.longitude,
-              label: parsedLocation && `Temperature: ${temperature}\u00b0${tempConst}, Humidity: ${humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
-              temp: temperature,
-              humidity: humidity,
-              color: color,
-            }
-            // Skip a marker on map only if temperature, humidity and lat long are all same.
-            // Considered use case: If a shipment stays at some position for long, temperature and humidity changes can be critical
-            const markerFound = _.find(markersToSet, {
-              temp: marker.temp,
-              humidity: marker.humidity,
-              lat: marker.lat,
-              lng: marker.lng,
-            });
-            if (!markerFound) {
-              markersToSet.push(marker);
-              index++;
-            }
-
-          } catch (e) {
-            console.log(e);
-          }
-        }
-      });
-      setMarkers(markersToSet);
+      setMarkers(selectedShipment['markers_to_set']);
       setZoomLevel(12);
     }
   }, [selectedShipment]);
@@ -371,15 +336,11 @@ function Reporting(props) {
             </ListItem>
           </List>
         </Grid>
-        {selectedShipment && selectedShipment[selectedGraph].length > 0 && (<Grid item xs={10} md={10}>
-          <Typography
-            className={classes.tileHeading}
-            variant="h5">
-            {selectedGraph}
-          </Typography>
+        {selectedShipment && selectedShipment[selectedGraph] && selectedShipment[selectedGraph].length > 0 && (
+        <Grid item xs={10} md={10} className={classes.graphContainer}>
           <GraphComponent
             data={selectedShipment[selectedGraph]}
-            maxPoints={500} />
+            selectedGraph={selectedGraph}/>
         </Grid>)}
         <ShipmentSensorTable
           sensorReport={selectedShipment?.sensor_report}

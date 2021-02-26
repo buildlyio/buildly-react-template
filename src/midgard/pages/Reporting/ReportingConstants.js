@@ -1,5 +1,7 @@
 import moment from "moment";
+import _ from "lodash";
 import { getFormattedCustodyRows } from "../Shipment/ShipmentConstants";
+import { convertUnitsOfMeasure } from "midgard/utils/utilMethods";
 
 export const SHIPMENT_OVERVIEW_TOOL_TIP =
   "Select a shipment to view reporting data";
@@ -100,6 +102,7 @@ export const getShipmentOverview = (
     custodyData,
     sensorReportData,
     contactData,
+    unitsOfMeasure,
   ) => {
     let shipmentList = [...shipmentData];
     let custodyRows = [];
@@ -124,6 +127,13 @@ export const getShipmentOverview = (
       let humidityData = [];
       let batteryData = [];
       let pressureData = [];
+      let markersToSet = [];
+
+      let temperatureUnit = unitsOfMeasure.filter((obj) => {
+        return obj.supported_class === "Temperature";
+      })[0]["name"].toLowerCase()
+      let tempConst = temperatureUnit[0].toUpperCase()
+      let markerIndex = 1;
 
       if (custodyRows.length > 0) {
         custodyRows.forEach((custody) => {
@@ -147,8 +157,41 @@ export const getShipmentOverview = (
         sensorReportData.forEach((report) => {
           if (report.shipment_id.includes(list.partner_shipment_id)) {
             sensorReportInfo.push(report);
+
+            if (report.report_location != null && Array.isArray(report.report_location)) {
+              try {
+                // data uses single quotes which throws an error
+                const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
+                const temperature = convertUnitsOfMeasure('celsius', report.report_temp, temperatureUnit, 'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
+                const humidity = report.report_humidity;
+                const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
+                const marker = {
+                  lat: parsedLocation && parsedLocation.latitude,
+                  lng: parsedLocation && parsedLocation.longitude,
+                  label: parsedLocation && `Temperature: ${temperature}\u00b0${tempConst}, Humidity: ${humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
+                  temp: temperature,
+                  humidity: humidity,
+                  color: color,
+                }
+                // Skip a marker on map only if temperature, humidity and lat long are all same.
+                // Considered use case: If a shipment stays at some position for long, temperature and humidity changes can be critical
+                const markerFound = _.find(markersToSet, {
+                  temp: marker.temp,
+                  humidity: marker.humidity,
+                  lat: marker.lat,
+                  lng: marker.lng,
+                });
+                if (!markerFound) {
+                  markersToSet.push(marker);
+                  markerIndex++;
+                }
+
+              } catch (e) {
+                console.log(e);
+              }
+            }
             //Change after new data format comes in
-            temperatureData.push({'x': moment(report.create_date),'y': report.report_temp});
+            temperatureData.push({'x': moment(report.create_date).format("MM/DD/YYYY hh:mm:ss"),'y': report.report_temp});
             lightData.push({'x': moment(report.create_date),'y': report.report_temp});
             shockData.push({'x': moment(report.create_date),'y': report.report_temp});
             tiltData.push({'x': moment(report.create_date),'y': report.report_temp});
@@ -160,6 +203,7 @@ export const getShipmentOverview = (
       }
 
       list["sensor_report"] = sensorReportInfo;
+      list["markers_to_set"] = markersToSet;
       list["temperature"] =  temperatureData;
       list["light"] =  lightData;
       list["shock"] =  shockData;
