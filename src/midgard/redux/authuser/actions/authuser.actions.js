@@ -98,9 +98,9 @@ export const getOrganization = (uuid) => ({
   uuid,
 });
 
-export const updateOrganization = (uuid) => ({
+export const updateOrganization = (data) => ({
   type: UPDATE_ORGANIZATION,
-  uuid,
+  data,
 });
 
 export const getUserOptions = () => ({

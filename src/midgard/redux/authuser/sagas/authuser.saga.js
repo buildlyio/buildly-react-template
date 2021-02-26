@@ -30,6 +30,9 @@ import {
   RESET_PASSWORD_CHECK,
   RESET_PASSWORD_CHECK_SUCCESS,
   RESET_PASSWORD_CHECK_FAILURE,
+  UPDATE_ORGANIZATION,
+  UPDATE_ORGANIZATION_SUCCESS,
+  UPDATE_ORGANIZATION_FAILURE,
 } from "midgard/redux/authuser/actions/authuser.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "midgard/modules/oauth/oauth.service";
@@ -184,7 +187,7 @@ function* updateUser(payload) {
     );
     const data = yield call(
       httpService.makeRequest,
-      "put",
+      "patch",
       `${environment.API_URL}organization/${payload.data.organization_uuid}/`,
       { name: payload.data.organization_name }
     );
@@ -382,6 +385,48 @@ function* resetPasswordCheck(payload) {
   }
 }
 
+function* updateOrganizationData(payload) {
+  try {
+    const org = yield call(
+      httpService.makeRequest,
+      "patch",
+      `${environment.API_URL}organization/${payload.data.organization_uuid}/`,
+      payload.data
+    );
+    const user = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}coreuser/me/`
+    );
+    yield call(oauthService.setOauthUser, user);
+    yield [
+      yield put({ type: UPDATE_ORGANIZATION_SUCCESS, user, org }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Organization setting updated successfully",
+        })
+      ),
+    ];
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't update Organization settings due to some error!",
+        })
+      ),
+      yield put({
+        type: UPDATE_ORGANIZATION_FAILURE,
+        error: "Couldn't update Organization settings due to some error!",
+      }),
+    ];
+  }
+}
+
 
 function* watchResetPasswordCheck() {
   yield takeLatest(RESET_PASSWORD_CHECK, resetPasswordCheck);
@@ -423,6 +468,10 @@ function* watchGetOrganization() {
   yield takeLatest(GET_ORGANIZATION, getOrganizationData);
 }
 
+function* watchUpdateOrganization() {
+  yield takeLatest(UPDATE_ORGANIZATION, updateOrganizationData);
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
@@ -435,5 +484,6 @@ export default function* authSaga() {
     watchResetPassword(),
     watchConfirmResetPassword(),
     watchResetPasswordCheck(),
+    watchUpdateOrganization(),
   ]);
 }

@@ -16,6 +16,7 @@ import {
   SENSOR_TYPE_TOOLTIP,
   SHIPMENT_FLAG_TOOLTIP,
   UNITS_OF_MEASURE_TOOLTIP,
+  ORG_SETTINGS_TOOLTIP,
 } from "./ConfigurationConstants";
 import CustodianType from "./components/CustodianType";
 import GatewayType from "./components/GatewayType";
@@ -25,6 +26,7 @@ import ProductType from "./components/ProductType";
 import SensorType from "./components/SensorType";
 import ShipmentFlag from "./components/ShipmentFlag";
 import UnitOfMeasure from "./components/UnitOfMeasure";
+import OrganizationSettings from "./components/OrganizationSettings";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,6 +44,21 @@ const Configuration = (props) => {
 
   return (
     <div className={classes.root}>
+      <Accordion className={classes.accordian}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="organization-setting-content"
+          id="organization-setting-header"
+        >
+          <Typography variant="h5">
+            Organization Settings
+            <CustomizedTooltips toolTipText={ORG_SETTINGS_TOOLTIP} />
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <OrganizationSettings {...props} />
+        </AccordionDetails>
+      </Accordion>
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}

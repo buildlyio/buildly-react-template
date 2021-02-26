@@ -32,6 +32,9 @@ import {
   RESET_PASSWORD_CHECK_FAILURE,
   GET_ORGANIZATION_OPTIONS_SUCCESS,
   GET_ORGANIZATION_OPTIONS_FAILURE,
+  UPDATE_ORGANIZATION,
+  UPDATE_ORGANIZATION_SUCCESS,
+  UPDATE_ORGANIZATION_FAILURE,
 } from "midgard/redux/authuser/actions/authuser.actions";
 
 const initialState = {
@@ -313,6 +316,31 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         orgOptions: null,
+        error: action.error,
+      };
+
+    case UPDATE_ORGANIZATION:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case UPDATE_ORGANIZATION_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        data: action.user,
+        organizationData: (action.org && action.org.data) || null,
+      };
+
+    case UPDATE_ORGANIZATION_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
         error: action.error,
       };
 
