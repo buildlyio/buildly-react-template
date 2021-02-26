@@ -10,19 +10,20 @@ import ViewComfyIcon from "@material-ui/icons/ViewComfy";
 import ViewCompactIcon from "@material-ui/icons/ViewCompact";
 import _ from "lodash";
 
-import { routes } from "../../routes/routesConstants";
-import { environment } from "environments/environment";
 import { UserContext } from "midgard/context/User.context";
 import { MAP_API_URL, convertUnitsOfMeasure } from "midgard/utils/utilMethods";
 import Loader from "midgard/components/Loader/Loader";
-import { getShipmentOverview, SHIPMENT_OVERVIEW_COLUMNS, SHIPMENT_OVERVIEW_TOOL_TIP } from "./ReportingConstants";
+import {
+  getShipmentOverview,
+  SHIPMENT_OVERVIEW_COLUMNS,
+  SHIPMENT_OVERVIEW_TOOL_TIP,
+  REPORT_TYPES,
+} from "./ReportingConstants";
 import {
   getCustodians,
   getCustodianType,
   getContact,
   getCustody,
-  GET_CUSTODY_OPTIONS_SUCCESS,
-  GET_CUSTODY_OPTIONS_FAILURE,
 } from "midgard/redux/custodian/actions/custodian.actions";
 import {
   getGateways,
@@ -33,13 +34,8 @@ import {
 } from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
 import {
   getShipmentDetails,
-  deleteShipment,
-  GET_SHIPMENT_OPTIONS_SUCCESS,
-  GET_SHIPMENT_OPTIONS_FAILURE,
 } from "midgard/redux/shipment/actions/shipment.actions";
 import {
-  getItems,
-  getItemType,
   getUnitsOfMeasure,
 } from "midgard/redux/items/actions/items.actions";
 import { GraphComponent } from "../../components/GraphComponent/GraphComponent";
@@ -60,10 +56,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
   },
-  addButton: {
-    [theme.breakpoints.down("xs")]: {
-      marginTop: theme.spacing(2),
-    },
+  dropDownSection: {
+    padding: theme.spacing(1,2),
+    width:"100%",
   },
   switchViewSection: {
     background: "#383636",
@@ -114,11 +109,6 @@ function Reporting(props) {
   const handleListItemClick = (event, index) => {
     setSelectedGraph(index);
   };
-
-  const allData = _.range(0, 10, 0.001).map(x => ({
-    x: x,
-    y: Math.sin(Math.PI * x / 2) * x / 10
-  }));
 
   const columns = SHIPMENT_OVERVIEW_COLUMNS.map(column => ({
     ...column,
@@ -275,7 +265,7 @@ function Reporting(props) {
               id="shipment-name"
               options={shipmentData}
               getOptionLabel={(option) => option.name}
-              style={{ width: 300 }}
+              className={classes.dropDownSection}
               onChange={(event, newValue) => {
                 setSelectedShipment(newValue);
               }}
@@ -303,16 +293,16 @@ function Reporting(props) {
                 <Grid item
                   className={classes.infoSection} xs={10} md={6}
                   key={`col${index}:${column.name}`}>
-                  <Typography variant="subtitle1">{column.label}</Typography>
+                  <Typography variant="h6">{column.label}</Typography>
                   {column.name === "custody_info" && selectedShipment[column.name] ? (
                     <div>
-                      <Typography variant="caption">{selectedShipment['contact_info']['name']}</Typography>
-                      <Typography variant="caption">{selectedShipment['contact_info']['address']}</Typography>
-                      <Typography variant="caption">{selectedShipment['contact_info']['email_address']}</Typography>
-                      <Typography variant="caption">{selectedShipment['contact_info']['phone']}</Typography>
+                      <Typography variant="body1">{selectedShipment['contact_info']['name']}</Typography>
+                      <Typography variant="body1">{selectedShipment['contact_info']['address']}</Typography>
+                      <Typography variant="body1">{selectedShipment['contact_info']['email_address']}</Typography>
+                      <Typography variant="body1">{selectedShipment['contact_info']['phone']}</Typography>
                     </div>
                   ) : (
-                      <Typography variant="caption">
+                      <Typography variant="body1">
                         {getShipmentValue(column.name)}
                       </Typography>)}
                 </Grid>
@@ -335,61 +325,61 @@ function Reporting(props) {
               selected={selectedGraph === "temperature"}
               onClick={(event) => handleListItemClick(event, "temperature")}
             >
-              <TempIcon color="#000" />
+              <TempIcon color="#fff" />
             </ListItem>
             <ListItem
               button
               selected={selectedGraph === "light"}
               onClick={(event) => handleListItemClick(event, "light")}
             >
-              <LightIcon color="#000" />
+              <LightIcon color="#fff" />
             </ListItem>
             <ListItem
               button
               selected={selectedGraph === "shock"}
               onClick={(event) => handleListItemClick(event, "shock")}
             >
-              <ShockIcon color="#000" />
+              <ShockIcon color="#fff" />
             </ListItem>
             <ListItem
               button
               selected={selectedGraph === "tilt"}
               onClick={(event) => handleListItemClick(event, "tilt")}
             >
-              <TiltIcon color="#000" />
+              <TiltIcon color="#fff" />
             </ListItem>
             <ListItem
               button
               selected={selectedGraph === "humidity"}
               onClick={(event) => handleListItemClick(event, "humidity")}
             >
-              <HumidIcon color="#000" />
+              <HumidIcon color="#fff" />
             </ListItem>
             <ListItem
               button
               selected={selectedGraph === "battery"}
               onClick={(event) => handleListItemClick(event, "battery")}
             >
-              <BatteryIcon color="#000" />
+              <BatteryIcon color="#fff" />
             </ListItem>
             <ListItem
               button
               selected={selectedGraph === "pressure"}
               onClick={(event) => handleListItemClick(event, "pressure")}
             >
-              <PressureIcon color="#000" />
+              <PressureIcon color="#fff" />
             </ListItem>
           </List>
         </Grid>
-        {selectedShipment && (<Grid item xs={10} md={10}>
+        {selectedShipment && selectedShipment[selectedGraph].length > 0 && (<Grid item xs={10} md={10}>
           <Typography
             className={classes.tileHeading}
             variant="h5">
             {selectedGraph}
           </Typography>
-          {/* <GraphComponent
-            data={selectedShipment.sensor_report[selectedGraph]}
-            maxPoints={100} /> */}
+          <GraphComponent
+            data={selectedShipment[selectedGraph]}
+            maxPoints={500} />
         </Grid>)}
         <ShipmentSensorTable
           sensorReport={selectedShipment?.sensor_report}

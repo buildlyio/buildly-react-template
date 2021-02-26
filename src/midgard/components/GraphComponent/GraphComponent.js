@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
 import {
-    VictoryScatter, VictoryChart,
-    VictoryTheme, VictoryTooltip,
-    VictoryLine,VictoryZoomContainer
+    VictoryScatter,
+    VictoryChart,
+    VictoryTheme,
+    VictoryTooltip,
+    VictoryLine,
+    VictoryZoomContainer,
+    VictoryAxis,
   } from 'victory';
 import _ from "lodash";
+import moment from "moment";
 
 export function GraphComponent(props) {
   const { data, maxPoints } = props;
   const [zoomedXDomain, setZoomedXDomain] = useState([]);
   const [domain,setDomain] = useState({
     y: [_.minBy(data, d => d.y).y, _.maxBy(data, d => d.y).y],
-    x: [ data[0].x, _.last(data).x ]
+    x: [ data[0].x, _.last(data).x ],
+    axis: [_.minBy(data, d => d.x).x, _.maxBy(data, d => d.x).x],
   });
   const [renderedData, setRenderedData] = useState(data);
 
@@ -22,7 +28,7 @@ export function GraphComponent(props) {
   },[zoomedXDomain]);
 
   const getData = () => {
-  	const filtered = data.filter(
+    const filtered = data.filter(
     	(d) => (d.x >= zoomedXDomain[0] && d.x <= zoomedXDomain[1]));
 
     if (filtered.length > maxPoints ) {
@@ -42,6 +48,7 @@ export function GraphComponent(props) {
   // const renderedData = getData();
   return (
     <div>
+        { data && data.length > 0 ? (
         <VictoryChart
           domain={domain}
           containerComponent={<VictoryZoomContainer
@@ -55,10 +62,16 @@ export function GraphComponent(props) {
           <VictoryScatter data={renderedData}
           style={{data: { fill: "#EBC645" }, labels: { fill: "#EBC645" }}}
           size={({ active }) => active ? 5 : 3}
-          labels={({ datum }) => datum.y}
+          labels={({ datum, selectedGraph }) => (`${selectedGraph} - ${datum.y}`)}
           labelComponent={<VictoryTooltip />} />
           <VictoryLine data={renderedData} />
-        </VictoryChart>
+          <VictoryAxis
+              tickValues={domain.axis}
+              tickFormat={(t) => `${moment(t).format('MMM-DD')}`}
+              fixLabelOverlap={true}
+          />
+        </VictoryChart>) :
+        <div> No data to display </div>}
       </div>
     );
   }

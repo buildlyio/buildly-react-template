@@ -16,6 +16,7 @@ import {
   getFormattedRow,
   MAP_TOOLTIP,
   SHIPMENT_DATA_TABLE_TOOLTIP,
+  SHIPMENT_SENSOR_COLUMNS,
 } from "./ShipmentConstants";
 import { routes } from "../../routes/routesConstants";
 import { Route } from "react-router-dom";
@@ -315,7 +316,7 @@ function Shipment(props) {
               </IconButton>
             </Hidden>
           </div>
-          <ShipmentDataTable 
+          <ShipmentDataTable
             rows={rows}
             editAction={handleEdit}
             deleteAction={handleDelete}
@@ -363,6 +364,7 @@ function Shipment(props) {
       <ShipmentSensorTable
         sensorReport={selectedShipment?.sensor_report}
         shipmentName={selectedShipment?.name}
+        cols={SHIPMENT_SENSOR_COLUMNS}
       />
       <Route path={`${routes.SHIPMENT}/add`} component={AddShipment} />
       <Route path={`${routes.SHIPMENT}/add/origin`} component={AddOriginInfo} />

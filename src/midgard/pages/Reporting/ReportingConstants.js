@@ -117,6 +117,13 @@ export const getShipmentOverview = (
       let custodianName = "";
       let sensorReportInfo = [];
       let contactInfo = {};
+      let temperatureData = [];
+      let lightData = [];
+      let shockData = [];
+      let tiltData = [];
+      let humidityData = [];
+      let batteryData = [];
+      let pressureData = [];
 
       if (custodyRows.length > 0) {
         custodyRows.forEach((custody) => {
@@ -140,11 +147,27 @@ export const getShipmentOverview = (
         sensorReportData.forEach((report) => {
           if (report.shipment_id.includes(list.partner_shipment_id)) {
             sensorReportInfo.push(report);
+            //Change after new data format comes in
+            temperatureData.push({'x': moment(report.create_date),'y': report.report_temp});
+            lightData.push({'x': moment(report.create_date),'y': report.report_temp});
+            shockData.push({'x': moment(report.create_date),'y': report.report_temp});
+            tiltData.push({'x': moment(report.create_date),'y': report.report_temp});
+            humidityData.push({'x': moment(report.create_date),'y': report.report_humidity});
+            batteryData.push({'x': moment(report.create_date),'y': report.report_humidity});
+            pressureData.push({'x': moment(report.create_date),'y': report.report_temp});
           }
         });
       }
 
       list["sensor_report"] = sensorReportInfo;
+      list["temperature"] =  temperatureData;
+      list["light"] =  lightData;
+      list["shock"] =  shockData;
+      list["tilt"] =  tiltData;
+      list["humidity"] =  humidityData;
+      list["battery"] =  batteryData;
+      list["pressure"] =  pressureData;
+
     });
     let sortedList = shipmentList.sort((a, b) => {
       return moment.utc(a.create_date).diff(moment.utc(b.create_date));
@@ -152,3 +175,28 @@ export const getShipmentOverview = (
 
     return sortedList;
   };
+
+export const REPORT_TYPES = [
+  {
+    name: "temperature",
+    unit: "\u00b0F",
+  },
+  {
+    name: "light",
+  },
+  {
+    name: "shock",
+  },
+  {
+    name: "tilt",
+  },
+  {
+    name: "humidity",
+  },
+  {
+    name: "battery",
+  },
+  {
+    name: "pressure",
+  },
+]
