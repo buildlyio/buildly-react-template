@@ -35,10 +35,9 @@ import {
   addShipment,
   saveShipmentFormData,
 } from "../../../redux/shipment/actions/shipment.actions";
-import ItemsInfo from "./ItemInfo";
 import ShipmentRouteInfo from "./ShipmentRouteInfo";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
-import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
+import { setOptionsData } from "midgard/utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
@@ -93,12 +92,9 @@ function ShipmentInfo(props) {
     history,
     loading,
     dispatch,
-    redirectTo,
     handleCancel,
     location,
     shipmentFlag,
-    custodianData,
-    custodyData,
     unitsOfMeasure,
     shipmentOptions,
     viewOnly,
@@ -189,15 +185,15 @@ function ShipmentInfo(props) {
         "estimated_time_of_arrival"
       );
       metadata["flags"] = setOptionsData(shipmentOptions.actions.POST, "flags");
-      metaData["uom_temp"] = setOptionsData(
+      metadata["uom_temp"] = setOptionsData(
         shipmentOptions.actions.POST,
         "uom_temp"
       );
-      metaData["uom_distance"] = setOptionsData(
+      metadata["uom_distance"] = setOptionsData(
         shipmentOptions.actions.POST,
         "uom_distance"
       );
-      metaData["uom_weight"] = setOptionsData(
+      metadata["uom_weight"] = setOptionsData(
         shipmentOptions.actions.POST,
         "uom_weight"
       );

@@ -53,7 +53,7 @@ export function GraphComponent(props) {
           />}
         >
           <VictoryScatter data={renderedData}
-          style={{data: { fill: "tomato" }, labels: { fill: "tomato" }}}
+          style={{data: { fill: "#EBC645" }, labels: { fill: "#EBC645" }}}
           size={({ active }) => active ? 5 : 3}
           labels={({ datum }) => datum.y}
           labelComponent={<VictoryTooltip />} />

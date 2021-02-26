@@ -27,11 +27,6 @@ export const NAVIGATION_ITEMS = [
     link: routes.SENSORS_GATEWAY,
   },
   {
-    id: "user_management",
-    name: "User Management",
-    link: routes.USER_MANAGEMENT,
-  },
-  {
     id: "reporting",
     name: "Reporting",
     link: routes.REPORTING,

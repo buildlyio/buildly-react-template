@@ -18,8 +18,8 @@ export const SHIPMENT_SENSOR_REPORT_TOOLTIP =
   "Shipment Sensor Report till current time";
 
 export const SHIPMENT_DATA_TABLE_COLUMNS = [
-  { 
-    name: "name", 
+  {
+    name: "name",
     label: "Shipment Name",
     options: {
       sort: true,
@@ -34,13 +34,13 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => value && value !== "-" 
-        ? moment(value).format("MM/DD/yyyy") 
+      customBodyRender: (value) => value && value !== "-"
+        ? moment(value).format("MM/DD/yyyy")
         : value
     },
   },
-  { 
-    name: "status", 
+  {
+    name: "status",
     label: "Shipment Status",
     options: {
       sort: true,
@@ -113,8 +113,8 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       }
     },
   },
-  { 
-    name: "custodian_name", 
+  {
+    name: "custodian_name",
     label: "Custodian Name",
     options: {
       sort: true,
@@ -129,8 +129,8 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => value && value !== "-" 
-        ? `$${numberWithCommas(value)}` 
+      customBodyRender: (value) => value && value !== "-"
+        ? `$${numberWithCommas(value)}`
         : value
     },
   },
@@ -154,7 +154,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => {
-        const displayDate = new Date(value).toLocaleDateString('en-US', 
+        const displayDate = new Date(value).toLocaleDateString('en-US',
           {year: 'numeric', month: 'short', day: 'numeric'});
         const displayTime = new Date(value).toLocaleTimeString();
         return (`${displayDate} ${displayTime}`);
@@ -408,27 +408,6 @@ export const getFormattedCustodyRows = (
   });
 
   return sortedList;
-};
-
-export const getFormattedSensorReportRows = (
-  sensorReportData,
-  shipmentFormData
-) => {
-  if (shipmentFormData && sensorReportData) {
-    let formattedData = [...shipmentFormData];
-    formattedData.forEach((element) => {
-      sensorReportData.forEach((report) => {
-        if (report.shipment_id.includes(element.partner_shipment_id)) {
-          element["sensor_report"] = report.id;
-        }
-      });
-    });
-    let sortedList = formattedData.sort((a, b) => {
-      return moment.utc(a.create_date).diff(moment.utc(b.create_date));
-    });
-    return sortedList;
-  }
-  return data;
 };
 
 export const svgIcon = (flagType, flag) => {

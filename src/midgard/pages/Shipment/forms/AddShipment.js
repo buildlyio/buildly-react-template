@@ -15,7 +15,6 @@ import Custodians from "../../Custodians/Custodians";
 import Items from "../../Items/Items";
 import { routes } from "../../../routes/routesConstants";
 import SensorsGateway from "../../SensorsGateway/SensorsGateway";
-import ShipmentOverview from "../components/ShipmentOverview";
 import ItemInfo from "../components/ItemInfo";
 import { saveShipmentFormData } from "../../../redux/shipment/actions/shipment.actions";
 import { connect } from "react-redux";
@@ -172,21 +171,6 @@ const getStepContent = (
           />
         </ViewDetailsWrapper>
       );
-    // case 4:
-    //   return (
-    //     <ViewDetailsWrapper
-    //       {...props}
-    //       handleNext={handleNext}
-    //       handleBack={handleBack}
-    //       nextButtonText={"Save & Finish"}
-    //       title={"Shipment Overview"}
-    //       maxSteps={maxSteps}
-    //       activeStep={stepIndex}
-    //     >
-    //       <ShipmentOverview {...props} />
-    //     </ViewDetailsWrapper>
-    //   );
-
     default:
       return "Unknown stepIndex";
   }
