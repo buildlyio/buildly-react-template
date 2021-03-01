@@ -192,13 +192,15 @@ function Shipment(props) {
       sensorReportData &&
       shipmentFlag
     ) {
+
       let formattedRows = getFormattedRow(
         shipmentData,
         custodianData,
         itemData,
         shipmentFlag,
         custodyData,
-        sensorReportData
+        sensorReportData,
+        "active",
       );
       setRows(formattedRows);
       if (!selectedShipment && formattedRows.length) {
@@ -258,6 +260,7 @@ function Shipment(props) {
     if(markers && markers.length > 0)
     setTimeout(() => setMapLoaded(true), 1000)
   })
+
   const onAddButtonClick = () => {
     history.push(`${routes.SHIPMENT}/add`, {
       from: routes.SHIPMENT,

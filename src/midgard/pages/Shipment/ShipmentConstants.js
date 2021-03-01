@@ -7,6 +7,7 @@ import {
   DelayIcon,
   RecallIcon,
 } from "../../components/Icons/Icons";
+import _ from "lodash";
 
 export const MAP_TOOLTIP =
   "Locations of the shipment from starting point till current time";
@@ -259,9 +260,20 @@ export const getFormattedRow = (
   itemData,
   shipmentFlag,
   custodyData,
-  sensorReportData
+  sensorReportData,
+  shipmentType
 ) => {
-  let shipmentList = [...shipmentData];
+  let shipmentList = [];
+  if (shipmentType === null)
+    shipmentList = [...shipmentData];
+  else {
+    shipmentList = _.filter(shipmentData,(shipment) => {
+      if (shipmentType === "active")
+        return shipment.status.toLowerCase() === "planned" || shipment.status.toLowerCase() === "enroute"
+      else if (shipmentType === "completed")
+        return shipment.status.toLowerCase() === "completed"
+    });
+  }
   let custodyRows = [];
   if (
     custodyData &&
