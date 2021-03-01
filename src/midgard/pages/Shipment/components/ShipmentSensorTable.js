@@ -4,7 +4,7 @@ import MUIDataTable from "mui-datatables";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { 
+import {
   SHIPMENT_SENSOR_COLUMNS,
   SHIPMENT_SENSOR_REPORT_TOOLTIP,
 } from "../ShipmentConstants";
@@ -68,19 +68,20 @@ const ShipmentSensorTable = (props) => {
   useEffect(() => {
     if (sensorReport) {
       const data = sensorReport.map(report => {
-        const alert_status = report.excursion_flag ? "Excursion" : report.warning_flag ? "Warning" : "Normal";
-        const temperature = convertUnitsOfMeasure('celsius', report.report_temp, 'fahrenheit', 'temperature');
-        const locObj = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
+        if (report.report_entry !== null && typeof report.report_entry === 'object') {
+          const alert_status = report.excursion_flag ? "Excursion" : report.warning_flag ? "Warning" : "Normal";
+          const temperature = convertUnitsOfMeasure('celsius', report.report_entry.report_temp, 'fahrenheit', 'temperature');
 
-        return ({ 
-          alert_status,
-          timestamp: report.edit_date,
-          latitude: locObj.latitude,
-          longitude: locObj.longitude,
-          humidity: report.report_humidity,
-          temperature,
-        })
-      });
+          return ({
+            alert_status,
+            timestamp: report.edit_date,
+            latitude: report.report_entry.report_latitude,
+            longitude: report.report_entry.report_longitude,
+            humidity: report.report_entry.report_humidity,
+            temperature,
+          })
+        }
+      }).filter(report => report !== undefined);
       const sortedData = _.orderBy(data, ['timestamp'], ['desc']);
       setRows(sortedData);
     }
@@ -94,8 +95,8 @@ const ShipmentSensorTable = (props) => {
             className={classes.title}
             variant="h5"
           >
-            {shipmentName && 
-            `Sensor Report for Shipment: ${shipmentName}`}
+            {shipmentName &&
+              `Sensor Report for Shipment: ${shipmentName}`}
             <CustomizedTooltips toolTipText={SHIPMENT_SENSOR_REPORT_TOOLTIP} />
           </Typography>
         </div>

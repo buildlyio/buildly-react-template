@@ -216,12 +216,12 @@ function Shipment(props) {
       let tempConst = temperatureUnit[0].toUpperCase()
       let index = 1;
       selectedShipment.sensor_report.forEach((report) => {
-        if (report.report_location != null && Array.isArray(report.report_location)) {
+        if (report.report_entry != null && typeof(report.report_entry) == 'object') {
           try {
-            // data uses single quotes which throws an error
-            const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
-            const temperature = convertUnitsOfMeasure('celsius',report.report_temp,temperatureUnit,'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
-            const humidity = report.report_humidity;
+            const report_entry = report.report_entry;
+            const parsedLocation = report_entry.report_location;
+            const temperature = convertUnitsOfMeasure('celsius',report_entry.report_temp,temperatureUnit,'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
+            const humidity = report_entry.report_humidity;
             const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
             const marker = {
               lat: parsedLocation && parsedLocation.latitude,

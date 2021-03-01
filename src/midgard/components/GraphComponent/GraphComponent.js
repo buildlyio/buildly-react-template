@@ -1,33 +1,43 @@
 import React, { useState, useEffect } from "react";
-import moment from "moment";
 import _ from "lodash";
-import { Line } from 'react-chartjs-2';
+import { Scatter } from 'react-chartjs-2';
 
 export function GraphComponent(props) {
   const { data, selectedGraph } = props;
-  const [dataChart, setDataChart] = useState ({});
-
+  const [dataChart, setDataChart] = useState({});
+  const options = {
+    responsive: true,
+    scales: {
+      xAxes: [{
+        type: 'time',
+        time: {
+          parser: 'YYYY-MM-DD hh:mm:ss',
+          tooltipFormat: 'YYYY-MM-DD hh:mm:ss'
+        }
+      }]
+    }
+  }
   useEffect(() => {
-    if (data && data.length > 0) {
+    if (data && data.length > 0 && selectedGraph) {
       setDataChart({
-        labels: data.map(({x}) => ([moment(x).format("MMM-DD")])),
+        labels: _.map(data,'x'),
         datasets: [
           {
-            label: selectedGraph,
-            data: _.map(data, 'y'),
+            label: selectedGraph.toUpperCase(),
+            data: data,
             fill: false,
+            showLine: true,
             borderColor: "#EBC645",
-            lineTension: 0.1,
-            backgroundColor: '#EBC645',
+            backgroundColor: '#383636',
             borderCapStyle: 'butt',
             borderDash: [],
             borderDashOffset: 0.0,
             borderJoinStyle: 'miter',
-            pointBorderColor: '#EBC645',
+            pointBorderColor: '#424242',
             pointBackgroundColor: '#fff',
             pointBorderWidth: 1,
             pointHoverRadius: 5,
-            pointHoverBackgroundColor: '#EBC645',
+            pointHoverBackgroundColor: '#424242',
             pointHoverBorderColor: '#EBC645',
             pointHoverBorderWidth: 2,
             pointRadius: 1,
@@ -36,12 +46,12 @@ export function GraphComponent(props) {
         ]
       })
     }
-    },[]);
+  }, [data,selectedGraph]);
 
   return (
     <div>
       { data && data.length > 0 ? (
-        <Line data={dataChart} />
+        <Scatter data={dataChart} options={options} />
       ) :
         <div> No data to display </div>}
     </div>

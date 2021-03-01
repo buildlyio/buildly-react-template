@@ -155,15 +155,14 @@ export const getShipmentOverview = (
 
       if (sensorReportData && sensorReportData.length > 0) {
         sensorReportData.forEach((report) => {
-          if (report.shipment_id.includes(list.partner_shipment_id)) {
+          if (report.shipment_id === list.partner_shipment_id &&
+            report.report_entry != null && typeof(report.report_entry) == 'object') {
             sensorReportInfo.push(report);
-
-            if (report.report_location != null && Array.isArray(report.report_location)) {
+            const report_entry = report.report_entry;
               try {
-                // data uses single quotes which throws an error
-                const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
-                const temperature = convertUnitsOfMeasure('celsius', report.report_temp, temperatureUnit, 'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
-                const humidity = report.report_humidity;
+                const parsedLocation = report_entry.report_location;
+                const temperature = convertUnitsOfMeasure('celsius',report_entry.report_temp,temperatureUnit,'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
+                const humidity = report_entry.report_humidity;
                 const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
                 const marker = {
                   lat: parsedLocation && parsedLocation.latitude,
@@ -185,19 +184,16 @@ export const getShipmentOverview = (
                   markersToSet.push(marker);
                   markerIndex++;
                 }
-
+                temperatureData.push({'x': moment.utc(report.create_date).format('YYYY-MM-DD hh:mm:ss'),'y': temperature});
               } catch (e) {
                 console.log(e);
               }
-            }
-            //Change after new data format comes in
-            temperatureData.push({'x': moment(report.create_date).format("MM/DD/YYYY hh:mm:ss"),'y': report.report_temp});
-            lightData.push({'x': moment(report.create_date),'y': report.report_temp});
-            shockData.push({'x': moment(report.create_date),'y': report.report_temp});
-            tiltData.push({'x': moment(report.create_date),'y': report.report_temp});
-            humidityData.push({'x': moment(report.create_date),'y': report.report_humidity});
-            batteryData.push({'x': moment(report.create_date),'y': report.report_humidity});
-            pressureData.push({'x': moment(report.create_date),'y': report.report_temp});
+            lightData.push({'x': moment.utc(report.create_date).format('YYYY-MM-DD hh:mm:ss'),'y': report_entry.report_light});
+            shockData.push({'x': moment.utc(report.create_date).format('YYYY-MM-DD hh:mm:ss'),'y': report_entry.report_shock});
+            tiltData.push({'x': moment.utc(report.create_date).format('YYYY-MM-DD hh:mm:ss'),'y': report_entry.report_tilt});
+            humidityData.push({'x': moment.utc(report.create_date).format('YYYY-MM-DD hh:mm:ss'),'y': report_entry.report_humidity});
+            batteryData.push({'x': moment.utc(report.create_date).format('YYYY-MM-DD hh:mm:ss'),'y': report_entry.report_battery});
+            pressureData.push({'x': moment.utc(report.create_date).format('YYYY-MM-DD hh:mm:ss'),'y': report_entry.report_pressure});
           }
         });
       }

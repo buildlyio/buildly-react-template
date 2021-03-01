@@ -106,7 +106,7 @@ export const getFormattedShipmentRow = (
 
     if (sensorReportData && sensorReportData.length > 0) {
       sensorReportData.forEach((report) => {
-        if (report.shipment_id.includes(list.partner_shipment_id)) {
+        if (report.shipment_id === list.partner_shipment_id) {
           sensorReportInfo.push(report);
         }
       });
