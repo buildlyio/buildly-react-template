@@ -79,6 +79,10 @@ const ShipmentSensorTable = (props) => {
             longitude: report.report_entry.report_longitude,
             humidity: report.report_entry.report_humidity,
             temperature,
+            light: report.report_entry.report_light,
+            shock: report.report_entry.report_shock,
+            battery: report.report_entry.report_battery,
+            pressure: report.report_entry.report_pressure,
           })
         }
       }).filter(report => report !== undefined);

@@ -182,8 +182,18 @@ export const SHIPMENT_SENSOR_COLUMNS = [
     },
   },
   {
+    name: "light",
+    label: "Light (lux)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
+    },
+  },
+  {
     name: "humidity",
-    label: "Humidity",
+    label: "Humidity (%)",
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -194,6 +204,46 @@ export const SHIPMENT_SENSOR_COLUMNS = [
   {
     name: "temperature",
     label: "Temperature (\u00b0F)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
+    },
+  },
+  {
+    name: "shock",
+    label: "Shock (mg)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
+    },
+  },
+  {
+    name: "tilt",
+    label: "Tilt (deg)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
+    },
+  },
+  {
+    name: "battery",
+    label: "Battery (%)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
+    },
+  },
+  {
+    name: "pressure",
+    label: "Pressure (Pa)",
     options: {
       sort: true,
       sortThirdClickReset: true,
