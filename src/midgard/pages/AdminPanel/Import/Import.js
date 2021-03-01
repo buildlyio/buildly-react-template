@@ -1,17 +1,24 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddFromFile from "./forms/AddFromFile";
+import AddFromAPI from "./forms/AddFromAPI";;
 
 const useStyles = makeStyles((theme) => ({
-  grid: {
-    width: "100%",
+  accordian: {
     backgroundColor: "#393636",
+    marginBottom: theme.spacing(4),
   },
-  title: {
-    padding: theme.spacing(2),
+  form: {
+    width: "100%",
+    margin: theme.spacing(1),
+    backgroundColor: "#424242",
+    padding: theme.spacing(1, 2),
   },
 }));
 
@@ -20,23 +27,38 @@ const Import = () => {
 
   return (
     <Box mt={5} mb={5}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <div className={classes.grid}>
-            <Typography className={classes.title} variant="h6">
-              Import From File
-            </Typography>
+      <Accordion className={classes.accordian}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="from-file-content"
+          id="from-file-header"
+        >
+          <Typography variant="h5">
+            Import from File
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <div className={classes.form}>
             <AddFromFile />
           </div>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <div className={classes.grid}>
-            <Typography className={classes.title} variant="h6">
-              Import From API
-            </Typography>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion className={classes.accordian}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="from-api-content"
+          id="from-api-header"
+        >
+          <Typography variant="h5">
+            Import from API
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <div className={classes.form}>
+            <AddFromAPI />
           </div>
-        </Grid>
-      </Grid>
+        </AccordionDetails>
+      </Accordion>
     </Box>
   )
 }

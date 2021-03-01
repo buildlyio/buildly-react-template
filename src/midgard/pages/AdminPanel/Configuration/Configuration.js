@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(6),
   },
   accordian: {
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: "#393636",
     marginBottom: theme.spacing(4),
   },
 }));

@@ -12,6 +12,8 @@ import {
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
+    backgroundColor: "#424242",
+    margin: theme.spacing(0, 0, 0.25, 0.25),
   },
   checkbox: {
     width: "100%",
@@ -48,7 +50,7 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
   };
 
   return (
-    <Grid container spacing={2}>
+    <Grid className={classes.root} container spacing={2}>
       {loading && <Loader open={loading} />}
       <Grid item xs={12}>
         <div className={classes.checkbox}>
