@@ -20,6 +20,16 @@ export const SHIPMENT_SENSOR_REPORT_TOOLTIP =
 
 export const SHIPMENT_DATA_TABLE_COLUMNS = [
   {
+    name: "type",
+    label: "Shipment Type",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      filterList: ["Active"],
+    },
+  },
+  {
     name: "name",
     label: "Shipment Name",
     options: {
@@ -47,7 +57,6 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      filterList: ["Planned,Completed,Enroute,Cancelled"]
     },
   },
   {
@@ -157,7 +166,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       filter: true,
       customBodyRender: (value) => {
         const displayDate = new Date(value).toLocaleDateString('en-US',
-          {year: 'numeric', month: 'short', day: 'numeric'});
+          { year: 'numeric', month: 'short', day: 'numeric' });
         const displayTime = new Date(value).toLocaleTimeString();
         return (`${displayDate} ${displayTime}`);
       }
@@ -262,19 +271,14 @@ export const getFormattedRow = (
   shipmentFlag,
   custodyData,
   sensorReportData,
-  shipmentType
 ) => {
-  let shipmentList = [];
-  if (shipmentType === null)
-    shipmentList = [...shipmentData];
-  else {
-    shipmentList = _.filter(shipmentData,(shipment) => {
-      if (shipmentType === "active")
-        return shipment.status.toLowerCase() === "planned" || shipment.status.toLowerCase() === "enroute"
-      else if (shipmentType === "completed")
-        return shipment.status.toLowerCase() === "completed" || shipment.status.toLowerCase() === "cancelled"
-    });
-  }
+  let shipmentList = _.map(shipmentData, (shipment) => {
+    if (shipment.status.toLowerCase() === "planned" || shipment.status.toLowerCase() === "enroute")
+      return { ...shipment, type: "Active" }
+    else if (shipment.status.toLowerCase() === "completed" || shipment.status.toLowerCase() === "cancelled")
+      return { ...shipment, type: "Completed" }
+  });
+
   let custodyRows = [];
   if (
     custodyData &&
@@ -425,9 +429,7 @@ export const getFormattedCustodianRow = (data, contactInfo, custodyData) => {
   if (data && data.length && contactInfo && contactInfo.length) {
     customizedRow.forEach((rowItem) => {
       let contactInfoItem = getUniqueContactInfo(rowItem, contactInfo);
-      rowItem["location"] = `${
-        contactInfoItem.address1 && `${contactInfoItem.address1},`
-      }
+      rowItem["location"] = `${contactInfoItem.address1 && `${contactInfoItem.address1},`}
             ${contactInfoItem.address2 && `${contactInfoItem.address2},`}
             ${contactInfoItem.city && `${contactInfoItem.city},`}
             ${contactInfoItem.state && `${contactInfoItem.state},`}

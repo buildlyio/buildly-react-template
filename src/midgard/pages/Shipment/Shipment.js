@@ -200,7 +200,6 @@ function Shipment(props) {
         shipmentFlag,
         custodyData,
         sensorReportData,
-        "active",
       );
       setRows(formattedRows);
       if (!selectedShipment && formattedRows.length) {
