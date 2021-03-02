@@ -47,6 +47,7 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      filterList: ["Planned,Completed,Enroute,Cancelled"]
     },
   },
   {
@@ -271,7 +272,7 @@ export const getFormattedRow = (
       if (shipmentType === "active")
         return shipment.status.toLowerCase() === "planned" || shipment.status.toLowerCase() === "enroute"
       else if (shipmentType === "completed")
-        return shipment.status.toLowerCase() === "completed"
+        return shipment.status.toLowerCase() === "completed" || shipment.status.toLowerCase() === "cancelled"
     });
   }
   let custodyRows = [];

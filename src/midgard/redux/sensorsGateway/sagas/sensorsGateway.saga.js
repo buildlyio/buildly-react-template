@@ -1,7 +1,6 @@
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { httpService } from "../../../modules/http/http.service";
 import { environment } from "environments/environment";
-import { routes } from "../../../routes/routesConstants";
 import { showAlert } from "../../alert/actions/alert.actions";
 import {
   GET_GATEWAYS,
@@ -470,7 +469,7 @@ function* addGatewayType(action) {
     );
     if (data && data.data) {
       yield [
-        yield put({ 
+        yield put({
           type: ADD_GATEWAYS_TYPE_SUCCESS,
           gatewayType: data.data,
         }),
@@ -513,7 +512,7 @@ function* editGatewayType(action) {
     );
     if (data && data.data) {
       yield [
-        yield put({ 
+        yield put({
           type: EDIT_GATEWAYS_TYPE_SUCCESS,
           gatewayType: data.data,
         }),
@@ -554,7 +553,7 @@ function* deleteGatewayType(payload) {
       true
     );
     yield [
-      yield put({ 
+      yield put({
         type: DELETE_GATEWAYS_TYPE_SUCCESS,
         gatewayType: { id: payload.id },
       }),
@@ -596,7 +595,7 @@ function* addSensorType(action) {
     );
     if (data && data.data) {
       yield [
-        yield put({ 
+        yield put({
           type: ADD_SENSORS_TYPE_SUCCESS,
           sensorType: data.data,
         }),
@@ -639,7 +638,7 @@ function* editSensorType(action) {
     );
     if (data && data.data) {
       yield [
-        yield put({ 
+        yield put({
           type: EDIT_SENSORS_TYPE_SUCCESS,
           sensorType: data.data,
         }),
@@ -680,7 +679,7 @@ function* deleteSensorType(payload) {
       true
     );
     yield [
-      yield put({ 
+      yield put({
         type: DELETE_SENSORS_TYPE_SUCCESS,
         sensorType: { id: payload.id },
       }),
