@@ -62,12 +62,9 @@ import {
   DELETE_UNITS_OF_MEASURE,
   DELETE_UNITS_OF_MEASURE_SUCCESS,
   DELETE_UNITS_OF_MEASURE_FAILURE,
-  IMPORT_ITEMS,
-  IMPORT_ITEMS_SUCCESS,
-  IMPORT_ITEMS_FAILURE,
-  IMPORT_PRODUCTS,
-  IMPORT_PRODUCTS_SUCCESS,
-  IMPORT_PRODUCTS_FAILURE,
+  IMPORT_FROM_FILE,
+  IMPORT_FROM_FILE_SUCCESS,
+  IMPORT_FROM_FILE_FAILURE,
 } from "../actions/items.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -855,26 +852,27 @@ function* deleteUnitsOfMeasure(payload) {
   }
 }
 
-function* importItems(action) {
+function* importFromFile(action) {
   let { payload } = action;
   try {
     const data = yield call(
       httpService.makeRequest,
       "post",
-      `${environment.API_URL}${shipmentApiEndPoint}items_upload/`,
+      `${environment.API_URL}${shipmentApiEndPoint}file_upload/`,
       payload,
-      true
+      true,
+      'multipart/form-data'
     );
-    if (data && data.status) {
+    if (data && data.data.status) {
       yield [
         yield put({
-          type: IMPORT_ITEMS_SUCCESS,
+          type: IMPORT_FROM_FILE_SUCCESS,
         }),
         yield put(
           showAlert({
             type: "success",
             open: true,
-            message: data.status,
+            message: data.data.status,
           })
         ),
       ]
@@ -883,54 +881,13 @@ function* importItems(action) {
     console.log(error);
     yield [
       yield put({
-        type: IMPORT_ITEMS_FAILURE,
+        type: IMPORT_FROM_FILE_FAILURE,
       }),
       yield put(
         showAlert({
           type: "error",
           open: true,
-          message: "Couldn't import Items Data due to some error!",
-        })
-      ),
-    ]
-  }
-}
-
-function* importProducts(action) {
-  let { payload } = action;
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      "post",
-      `${environment.API_URL}${shipmentApiEndPoint}products_upload/`,
-      payload,
-      true
-    );
-    if (data && data.status) {
-      yield [
-        yield put({
-          type: IMPORT_PRODUCTS_SUCCESS,
-        }),
-        yield put(
-          showAlert({
-            type: "success",
-            open: true,
-            message: data.status,
-          })
-        ),
-      ]
-    }
-  } catch (error) {
-    console.log(error);
-    yield [
-      yield put({
-        type: IMPORT_PRODUCTS_FAILURE,
-      }),
-      yield put(
-        showAlert({
-          type: "error",
-          open: true,
-          message: "Couldn't import Products Data due to some error!",
+          message: `Couldn't import ${_.capitalize(payload.model)} Data due to some error!`,
         })
       ),
     ]
@@ -1021,12 +978,8 @@ function* watchDeleteUnitsOfMeasure() {
   yield takeLatest(DELETE_UNITS_OF_MEASURE, deleteUnitsOfMeasure);
 }
 
-function* watchImportItems() {
-  yield takeLatest(IMPORT_ITEMS, importItems);
-}
-
-function* watchImportProducts() {
-  yield takeLatest(IMPORT_PRODUCTS, importProducts);
+function* watchImportFromFile() {
+  yield takeLatest(IMPORT_FROM_FILE, importFromFile);
 }
 
 export default function* itemSaga() {
@@ -1052,7 +1005,6 @@ export default function* itemSaga() {
     watchAddUnitsOfMeasure(),
     watchEditUnitsOfMeasure(),
     watchDeleteUnitsOfMeasure(),
-    watchImportItems(),
-    watchImportProducts(),
+    watchImportFromFile(),
   ]);
 }

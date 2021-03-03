@@ -238,23 +238,12 @@ describe("actions", () => {
 });
 
 describe("actions", () => {
-  it("should create an action to import items", () => {
-    const payload = { file: "Items.csv" };
+  it("should create an action to import from file", () => {
+    const payload = { model: "product", file: "Products.csv" };
     const expectedAction = {
-      type: actions.IMPORT_ITEMS,
+      type: actions.IMPORT_FROM_FILE,
       payload,
     };
-    expect(actions.importItems(payload)).toEqual(expectedAction);
-  });
-});
-
-describe("actions", () => {
-  it("should create an action to import products", () => {
-    const payload = { file: "Products.csv" };
-    const expectedAction = {
-      type: actions.IMPORT_PRODUCTS,
-      payload,
-    };
-    expect(actions.importProducts(payload)).toEqual(expectedAction);
+    expect(actions.importFromFile(payload)).toEqual(expectedAction);
   });
 });

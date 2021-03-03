@@ -8,10 +8,7 @@ import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { useInput } from "midgard/hooks/useInput";
 import { validators } from "midgard/utils/validators";
-import {
-  importItems,
-  importProducts,
-} from "midgard/redux/items/actions/items.actions";
+import { importFromFile } from "midgard/redux/items/actions/items.actions";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -50,12 +47,9 @@ const AddFromFile = ({ loading, dispatch }) => {
 
     var formData = new FormData();
     formData.append("file", uploadFile, uploadFile.name);
+    formData.append("model", uploadType.value);
     
-    if (uploadType.value === "item") {
-      dispatch(importItems(formData));
-    } else {
-      dispatch(importProducts(formData));
-    }
+    dispatch(importFromFile(formData));
   };
 
   /**
@@ -94,7 +88,12 @@ const AddFromFile = ({ loading, dispatch }) => {
   };
 
   return (
-    <form className={classes.form} noValidate onSubmit={handleSubmit}>
+    <form
+      className={classes.form}
+      encType='multipart/form-data'
+      noValidate
+      onSubmit={handleSubmit}
+    >
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField

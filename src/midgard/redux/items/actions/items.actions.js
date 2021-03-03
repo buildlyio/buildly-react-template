@@ -115,13 +115,9 @@ export const DELETE_UNITS_OF_MEASURE_SUCCESS =
 export const DELETE_UNITS_OF_MEASURE_FAILURE =
   "ITEMS/DELETE_UNITS_OF_MEASURE_FAILURE";
 
-export const IMPORT_ITEMS = "ITEMS/IMPORT_ITEMS";
-export const IMPORT_ITEMS_SUCCESS = "ITEMS/IMPORT_ITEMS_SUCCESS";
-export const IMPORT_ITEMS_FAILURE = "ITEMS/IMPORT_ITEMS_FAILURE";
-
-export const IMPORT_PRODUCTS = "ITEMS/IMPORT_PRODUCTS";
-export const IMPORT_PRODUCTS_SUCCESS = "ITEMS/IMPORT_PRODUCTS_SUCCESS";
-export const IMPORT_PRODUCTS_FAILURE = "ITEMS/IMPORT_PRODUCTS_FAILURE";
+export const IMPORT_FROM_FILE = "ITEMS/IMPORT_FROM_FILE";
+export const IMPORT_FROM_FILE_SUCCESS = "ITEMS/IMPORT_FROM_FILE_SUCCESS";
+export const IMPORT_FROM_FILE_FAILURE = "ITEMS/IMPORT_FROM_FILE_FAILURE";
 
 export const getItems = (organization_uuid) => ({ type: GET_ITEMS,organization_uuid, });
 
@@ -252,12 +248,7 @@ export const deleteUnitsOfMeasure = (id) => ({
   id,
 });
 
-export const importItems = (payload) => ({
-  type: IMPORT_ITEMS,
-  payload,
-});
-
-export const importProducts = (payload) => ({
-  type: IMPORT_PRODUCTS,
+export const importFromFile = (payload) => ({
+  type: IMPORT_FROM_FILE,
   payload,
 });
