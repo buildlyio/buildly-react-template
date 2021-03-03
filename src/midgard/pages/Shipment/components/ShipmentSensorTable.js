@@ -74,7 +74,7 @@ const ShipmentSensorTable = (props) => {
 
           return ({
             alert_status,
-            timestamp: report.edit_date,
+            timestamp: report.create_date,
             latitude: report.report_entry.report_latitude,
             longitude: report.report_entry.report_longitude,
             humidity: report.report_entry.report_humidity,

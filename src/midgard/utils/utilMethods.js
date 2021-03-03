@@ -117,3 +117,10 @@ export const convertUnitsOfMeasure = (sourceUnit, value, destinationUnit, _class
       return value.toFixed(2);
   }
 }
+
+export const getLocalDateTime = (value) => {
+  const displayDate = new Date(value).toLocaleDateString('en-US',
+  {year: 'numeric', month: 'short', day: 'numeric'});
+  const displayTime = new Date(value).toLocaleTimeString();
+  return displayDate+" "+displayTime;
+}

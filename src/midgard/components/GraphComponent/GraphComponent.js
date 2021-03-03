@@ -11,8 +11,8 @@ export function GraphComponent(props) {
       xAxes: [{
         type: 'time',
         time: {
-          parser: 'YYYY-MM-DD hh:mm:ss',
-          tooltipFormat: 'YYYY-MM-DD hh:mm:ss'
+          parser: 'MMMM DD, YYYY hh:mm:ss',
+          tooltipFormat: 'MMMM DD, YYYY hh:mm:ss'
         }
       }]
     }

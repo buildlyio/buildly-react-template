@@ -55,8 +55,8 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   dropDownSection: {
-    padding: theme.spacing(1,2),
-    width:"100%",
+    padding: theme.spacing(1, 2),
+    width: "100%",
   },
   switchViewSection: {
     background: "#383636",
@@ -79,8 +79,15 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     flexDirection: "column",
   },
-  graphContainer: {
-    background: theme.palette.common.white,
+  gridContainer: {
+    marginBottom: theme.spacing(4),
+  },
+  greyBackground: {
+    backgroundColor: "#424242",
+  },
+  alignCenter: {
+    marginLeft: "auto",
+    marginRight: "auto",
   }
 }));
 
@@ -118,9 +125,9 @@ function Reporting(props) {
   const getShipmentValue = (value) => {
     if (selectedShipment[value] !== null) {
       if (moment(selectedShipment[value], true).isValid()) {
-        return moment(selectedShipment[value]).format("MM/DD/yyyy hh:mm:ss")
+        return moment(selectedShipment[value]).format("MMMM DD, YYYY hh:mm:ss")
       }
-      else if (typeof(selectedShipment[value]) !== 'object') {
+      else if (typeof (selectedShipment[value]) !== 'object') {
         return selectedShipment[value]
       }
     }
@@ -130,7 +137,7 @@ function Reporting(props) {
   }
 
   const getIcon = (item) => {
-    switch(item.id) {
+    switch (item.id) {
       case 'temperature':
         return <TempIcon color={item.color} name={item.name} />
       case 'light':
@@ -211,12 +218,13 @@ function Reporting(props) {
         Reporting
         </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={tileView ? 6 : 12}>
+        <Grid item xs={12} md={tileView ? 6 : 12} className={classes.gridContainer}>
           <div className={classes.switchViewSection}>
             <Typography
               className={classes.tileHeading}
               variant="h5">
-              Graph View for {selectedShipment === null ? `Shipment` : selectedShipment.name}
+              {selectedShipment && selectedShipment.name &&
+                `Map View for Shipment: ${selectedShipment.name}`}
               <CustomizedTooltips toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP} />
             </Typography>
             <Hidden smDown>
@@ -269,8 +277,8 @@ function Reporting(props) {
               </IconButton>
             </Hidden>
           </div>
-          <div style={{ padding: 20 }}>
-            <Grid container spacing={4}>
+          <div style={{ height: 525 }} className={classes.greyBackground}>
+            <Grid container className={classes.gridContainer}>
               {selectedShipment ? (columns.map((column, index) => (
                 <Grid item
                   className={classes.infoSection} xs={10} md={6}
@@ -278,10 +286,10 @@ function Reporting(props) {
                   <Typography variant="h6">{column.label}</Typography>
                   {column.name === "custody_info" && selectedShipment[column.name] ? (
                     <div>
-                      <Typography variant="body1">{selectedShipment['contact_info']['name']}</Typography>
-                      <Typography variant="body1">{selectedShipment['contact_info']['address']}</Typography>
-                      <Typography variant="body1">{selectedShipment['contact_info']['email_address']}</Typography>
-                      <Typography variant="body1">{selectedShipment['contact_info']['phone']}</Typography>
+                      <Typography variant="body1">Custody Type: {selectedShipment['custody_info']['custody_type']}</Typography>
+                      <Typography variant="body1">Address: {selectedShipment['contact_info']['address']}</Typography>
+                      <Typography variant="body1">Email Address: {selectedShipment['contact_info']['email_address']}</Typography>
+                      <Typography variant="body1">Phone: {selectedShipment['contact_info']['phone']}</Typography>
                     </div>
                   ) : (
                       <Typography variant="body1">
@@ -289,43 +297,54 @@ function Reporting(props) {
                       </Typography>)}
                 </Grid>
               ))) : (
-                  <Typography variant="h6">
+                  <Typography variant="h6" className={classes.alignCenter}>
                     {SHIPMENT_OVERVIEW_TOOL_TIP}
                   </Typography>
                 )}
             </Grid>
           </div>
-
         </Grid>
       </Grid>
-
-      <Grid container spacing={2}>
+      <Grid container className={classes.gridContainer + ' ' + classes.greyBackground}>
+        <div className={classes.switchViewSection}>
+          <Typography
+            className={classes.tileHeading}
+            variant="h5">
+            {selectedShipment && selectedShipment.name &&
+              `Graph View for Shipment: ${selectedShipment.name}`}
+            <CustomizedTooltips toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP} />
+          </Typography>
+        </div>
         <Grid item xs={1} md={1}>
           <List component="nav" aria-label="main graph-type" className={classes.iconBar}>
-          {REPORT_TYPES.map((item, index) => (
-          <React.Fragment key={`iconItem${index}${item.id}`}>
-            <ListItem
-              button
-              selected={selectedGraph === item.id}
-              onClick={(event) => handleListItemClick(event, item.id)}
-            >
-              {getIcon(item)}
-            </ListItem>
-          </React.Fragment>
-          ))}
+            {REPORT_TYPES.map((item, index) => (
+              <React.Fragment key={`iconItem${index}${item.id}`}>
+                <ListItem
+                  button
+                  selected={selectedGraph === item.id}
+                  onClick={(event) => handleListItemClick(event, item.id)}
+                >
+                  {getIcon(item)}
+                </ListItem>
+              </React.Fragment>
+            ))}
           </List>
         </Grid>
-        {selectedShipment && selectedShipment[selectedGraph] && selectedShipment[selectedGraph].length > 0 && (
-        <Grid item xs={10} md={10} className={classes.graphContainer}>
-          <GraphComponent
-            data={selectedShipment[selectedGraph]}
-            selectedGraph={selectedGraph}/>
-        </Grid>)}
+        <Grid item xs={10} md={10}>
+          {selectedShipment && selectedShipment[selectedGraph] && selectedShipment[selectedGraph].length > 0 ? (
+            <GraphComponent
+              data={selectedShipment[selectedGraph]}
+              selectedGraph={selectedGraph} />) : (
+              <Typography variant="h6" className={classes.alignCenter}>
+                {SHIPMENT_OVERVIEW_TOOL_TIP}
+              </Typography>
+            )}
+        </Grid>
+        </Grid>
         <ShipmentSensorTable
           sensorReport={selectedShipment?.sensor_report}
           shipmentName={selectedShipment?.name}
         />
-      </Grid>
     </Box>
   )
 }

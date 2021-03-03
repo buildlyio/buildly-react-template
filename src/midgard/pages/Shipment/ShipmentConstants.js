@@ -289,6 +289,10 @@ export const getFormattedRow = (
     }
     list["custodian_name"] = custodianName;
     list["custody_info"] = custodyInfo;
+    if (list.status.toLowerCase() === "planned" || list.status.toLowerCase() === "enroute")
+      list["type"] = "Active";
+    else if (list.status.toLowerCase() === "completed" || list.status.toLowerCase() === "cancelled")
+      list["type"] = "Completed";
 
     if (sensorReportData && sensorReportData.length > 0) {
       sensorReportData.forEach((report) => {
