@@ -112,6 +112,7 @@ function Reporting(props) {
   const [tileView, setTileView] = useState(true);
   const [selectedGraph, setSelectedGraph] = useState("temperature");
   const [selectedShipment, setSelectedShipment] = useState(null);
+  const [shipment,setShipment] = useState("");
   const [shipmentOverview, setShipmentOverview] = useState({});
 
   const handleListItemClick = (event, index) => {
@@ -201,6 +202,7 @@ function Reporting(props) {
 
   useEffect(() => {
     if (selectedShipment) {
+      setShipment(selectedShipment.name);
       setMarkers(selectedShipment['markers_to_set']);
       setZoomLevel(12);
     }
@@ -253,8 +255,9 @@ function Reporting(props) {
           <div className={classes.switchViewSection}>
             <Autocomplete
               id="shipment-name"
-              options={shipmentData}
-              getOptionLabel={(option) => option.name}
+              options={shipmentData || []}
+              value={{name: shipment}}
+              getOptionLabel={(option) => option && option.name}
               className={classes.dropDownSection}
               onChange={(event, newValue) => {
                 setSelectedShipment(newValue);
