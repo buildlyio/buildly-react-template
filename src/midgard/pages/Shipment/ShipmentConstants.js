@@ -7,6 +7,7 @@ import {
   DelayIcon,
   RecallIcon,
 } from "../../components/Icons/Icons";
+import _ from "lodash";
 
 export const MAP_TOOLTIP =
   "Locations of the shipment from starting point till current time";
@@ -18,6 +19,16 @@ export const SHIPMENT_SENSOR_REPORT_TOOLTIP =
   "Shipment Sensor Report till current time";
 
 export const SHIPMENT_DATA_TABLE_COLUMNS = [
+  {
+    name: "type",
+    label: "Shipment Type",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      filterList: ["Active"],
+    },
+  },
   {
     name: "name",
     label: "Shipment Name",
@@ -155,7 +166,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       filter: true,
       customBodyRender: (value) => {
         const displayDate = new Date(value).toLocaleDateString('en-US',
-          {year: 'numeric', month: 'short', day: 'numeric'});
+          { year: 'numeric', month: 'short', day: 'numeric' });
         const displayTime = new Date(value).toLocaleTimeString();
         return (`${displayDate} ${displayTime}`);
       }
@@ -259,9 +270,15 @@ export const getFormattedRow = (
   itemData,
   shipmentFlag,
   custodyData,
-  sensorReportData
+  sensorReportData,
 ) => {
-  let shipmentList = [...shipmentData];
+  let shipmentList = _.map(shipmentData, (shipment) => {
+    if (shipment.status.toLowerCase() === "planned" || shipment.status.toLowerCase() === "enroute")
+      return { ...shipment, type: "Active" }
+    else if (shipment.status.toLowerCase() === "completed" || shipment.status.toLowerCase() === "cancelled")
+      return { ...shipment, type: "Completed" }
+  });
+
   let custodyRows = [];
   if (
     custodyData &&
@@ -416,9 +433,7 @@ export const getFormattedCustodianRow = (data, contactInfo, custodyData) => {
   if (data && data.length && contactInfo && contactInfo.length) {
     customizedRow.forEach((rowItem) => {
       let contactInfoItem = getUniqueContactInfo(rowItem, contactInfo);
-      rowItem["location"] = `${
-        contactInfoItem.address1 && `${contactInfoItem.address1},`
-      }
+      rowItem["location"] = `${contactInfoItem.address1 && `${contactInfoItem.address1},`}
             ${contactInfoItem.address2 && `${contactInfoItem.address2},`}
             ${contactInfoItem.city && `${contactInfoItem.city},`}
             ${contactInfoItem.state && `${contactInfoItem.state},`}

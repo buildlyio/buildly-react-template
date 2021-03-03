@@ -192,13 +192,14 @@ function Shipment(props) {
       sensorReportData &&
       shipmentFlag
     ) {
+
       let formattedRows = getFormattedRow(
         shipmentData,
         custodianData,
         itemData,
         shipmentFlag,
         custodyData,
-        sensorReportData
+        sensorReportData,
       );
       setRows(formattedRows);
       if (!selectedShipment && formattedRows.length) {
@@ -220,31 +221,32 @@ function Shipment(props) {
           try {
             const report_entry = report.report_entry;
             const parsedLocation = report_entry.report_location;
-            const temperature = convertUnitsOfMeasure('celsius',report_entry.report_temp,temperatureUnit,'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
-            const humidity = report_entry.report_humidity;
-            const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
-            const marker = {
-              lat: parsedLocation && parsedLocation.latitude,
-              lng: parsedLocation && parsedLocation.longitude,
-              label: parsedLocation && `Temperature: ${temperature}\u00b0${tempConst}, Humidity: ${humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
-              temp: temperature,
-              humidity: humidity,
-              color: color,
+            if (parsedLocation.locationMethod !== "NoPosition") {
+              const temperature = convertUnitsOfMeasure('celsius', report_entry.report_temp, temperatureUnit, 'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
+              const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
+              const marker = {
+                lat: parsedLocation && parsedLocation.latitude,
+                lng: parsedLocation && parsedLocation.longitude,
+                label: parsedLocation && `Temperature: ${temperature}\u00b0${tempConst}, Humidity: ${report_entry.report_humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
+                temp: temperature,
+                humidity: report_entry.report_humidity,
+                color: color,
+                index: index,
+              }
+              // Skip a marker on map only if temperature, humidity and lat long are all same.
+              // Considered use case: If a shipment stays at some position for long, temperature and humidity changes can be critical
+              const markerFound = _.find(markersToSet, {
+                temp: marker.temp,
+                humidity: marker.humidity,
+                lat: marker.lat,
+                lng: marker.lng,
+              });
+              if (!markerFound) {
+                markersToSet.push(marker);
+                index++;
+              }
             }
-            // Skip a marker on map only if temperature, humidity and lat long are all same.
-            // Considered use case: If a shipment stays at some position for long, temperature and humidity changes can be critical
-            const markerFound = _.find(markersToSet, {
-              temp: marker.temp,
-              humidity: marker.humidity,
-              lat: marker.lat,
-              lng: marker.lng,
-            });
-            if (!markerFound) {
-              markersToSet.push(marker);
-              index++;
-            }
-
-          } catch(e) {
+          } catch (e) {
             console.log(e);
           }
         }
@@ -255,9 +257,10 @@ function Shipment(props) {
   }, [selectedShipment]);
 
   useEffect(() => {
-    if(markers && markers.length > 0)
-    setTimeout(() => setMapLoaded(true), 1000)
+    if (markers && markers.length > 0)
+      setTimeout(() => setMapLoaded(true), 1000)
   })
+
   const onAddButtonClick = () => {
     history.push(`${routes.SHIPMENT}/add`, {
       from: routes.SHIPMENT,
@@ -328,15 +331,15 @@ function Shipment(props) {
           <div className={classes.switchViewSection}>
             {
               selectedShipment
-              ? (
-                <Typography
-                  className={classes.tileHeading}
-                  variant="h5">
-                  {selectedShipment.name}
-                  <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
-                </Typography>
-              )
-              : (<CustomizedTooltips toolTipText={MAP_TOOLTIP} />)
+                ? (
+                  <Typography
+                    className={classes.tileHeading}
+                    variant="h5">
+                    {selectedShipment.name}
+                    <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
+                  </Typography>
+                )
+                : (<CustomizedTooltips toolTipText={MAP_TOOLTIP} />)
             }
             <Hidden smDown>
               <IconButton

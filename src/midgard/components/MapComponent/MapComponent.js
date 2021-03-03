@@ -20,7 +20,7 @@ export function MapComponent(props) {
         lat: _.last(markers).lat,
         lng: _.last(markers).lng,
       });
-      setShowInfoIndex(null);
+      setShowInfoIndex(markers.length-1);
     }
 
     if(markers && !markers.length) {
@@ -35,11 +35,11 @@ export function MapComponent(props) {
   };
 
   return (
-    <RenderedMap 
-      {...props} 
-      onMarkerDrag={onMarkerDrag} 
-      center={center} 
-      showInfoIndex={showInfoIndex} 
+    <RenderedMap
+      {...props}
+      onMarkerDrag={onMarkerDrag}
+      center={center}
+      showInfoIndex={showInfoIndex}
       setShowInfoIndex={setShowInfoIndex}
     />
   );
@@ -63,6 +63,8 @@ const RenderedMap = withScriptjs(
               scale: 1.4,
               anchor: { x: 12, y: 24 },
             }}
+            label={index+1+''}
+            labelAnchor={new google.maps.Point(0, 0)}
             onClick={() => props.setShowInfoIndex(index)}
             >
               {props.showInfoIndex === index && (
@@ -84,17 +86,17 @@ const RenderedMap = withScriptjs(
             />
           )
         )}
-        {props.isMarkerShown && 
-        props.markers.length > 0 && 
+        {props.isMarkerShown &&
+        props.markers.length > 0 &&
         props.showPath && (
           <Polyline
             path={_.map(
-              props.markers, 
+              props.markers,
               (marker) => ({ lat: marker.lat, lng: marker.lng })
             )}
             geodesic={true}
             options={{
-              strokeColor: "#ff2527",
+              strokeColor: "#424242",
               strokeOpacity: 0.75,
               strokeWeight: 1,
             }}

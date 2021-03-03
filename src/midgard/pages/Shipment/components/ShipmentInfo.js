@@ -111,7 +111,9 @@ function ShipmentInfo(props) {
 
   const lading_bill = useInput((editData && editData.bol_order_id) || "");
   const load_no = useInput("");
-  const shipment_status = useInput((editData && editData.status) || "");
+  const shipment_status = useInput((editData && editData.status) || "", {
+    required: true,
+  });
   const route_desc = useInput((editData && editData.route_description) || "");
   const mode_type = useInput((editData && editData.transport_mode) || "");
   const route_dist = useInput("");
@@ -534,6 +536,7 @@ function ShipmentInfo(props) {
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      required
                       id="shipment_status"
                       name="shipment_status"
                       select

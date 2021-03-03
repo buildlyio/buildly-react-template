@@ -42,7 +42,7 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
   const isAdmin = checkForGlobalAdmin(user);
   const options = {
     filter: true,
-    filterType: "dropdown",
+    filterType: "multiselect",
     responsive: "standard",
     tableBodyHeight: tileView ? "435px" : "500px",
     tableBodyMaxHeight: "",
@@ -74,9 +74,9 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
           const row = rows[dataIndex];
           return (
             <IconButton onClick={() => editAction(row)}>
-              {!isAdmin && row && row.status && 
-              row.status.toLowerCase() !== 'planned' 
-                ? <ViewIcon /> 
+              {!isAdmin && row && row.status &&
+              row.status.toLowerCase() !== 'planned'
+                ? <ViewIcon />
                 : <EditIcon />
               }
             </IconButton>
