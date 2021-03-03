@@ -68,7 +68,7 @@ const ShipmentSensorTable = (props) => {
   useEffect(() => {
     if (sensorReport) {
       const data = sensorReport.map(report => {
-        if (report.report_entry !== null && typeof report.report_entry === 'object') {
+        if (report.report_entry !== null && typeof(report.report_entry) === 'object') {
           const alert_status = report.excursion_flag ? "Excursion" : report.warning_flag ? "Warning" : "Normal";
           const temperature = convertUnitsOfMeasure('celsius', report.report_entry.report_temp, 'fahrenheit', 'temperature');
 

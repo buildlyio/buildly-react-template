@@ -216,7 +216,7 @@ function Shipment(props) {
       let tempConst = temperatureUnit[0].toUpperCase()
       let index = 1;
       selectedShipment.sensor_report.forEach((report) => {
-        if (report.report_entry != null && typeof(report.report_entry) == 'object') {
+        if (report.report_entry !== null && typeof(report.report_entry) === 'object') {
           try {
             const report_entry = report.report_entry;
             const parsedLocation = report_entry.report_location;

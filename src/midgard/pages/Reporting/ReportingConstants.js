@@ -140,7 +140,7 @@ export const getShipmentOverview = (
           if (custody.shipment_id === list.shipment_uuid) {
             custodianName = custodianName + custody.custodian_data.name + ",";
             contactData.forEach((contact) => {
-               if (custody.custodian_data.contact_data[0] == contact.url) {
+               if (custody.custodian_data.contact_data[0] === contact.url) {
                 contactInfo['name'] = [contact['first_name'],contact['middle_name'],contact['last_name']].join(' ')
                 contactInfo['address'] = [contact['address1'],contact['address2'],contact['city'],contact['postal_code'],contact['state'],contact['country']].join('\n')
                }
@@ -156,7 +156,7 @@ export const getShipmentOverview = (
       if (sensorReportData && sensorReportData.length > 0) {
         sensorReportData.forEach((report) => {
           if (report.shipment_id === list.partner_shipment_id &&
-            report.report_entry != null && typeof(report.report_entry) == 'object') {
+            report.report_entry !== null && typeof(report.report_entry) === 'object') {
             sensorReportInfo.push(report);
             const report_entry = report.report_entry;
               try {
@@ -218,25 +218,45 @@ export const getShipmentOverview = (
 
 export const REPORT_TYPES = [
   {
-    name: "temperature",
+    id: "temperature",
+    name: "Temperature",
     unit: "\u00b0F",
+    color: "#fff",
   },
   {
-    name: "light",
+    id: "light",
+    name: "Light",
+    unit: "lux",
+    color: "#fff",
   },
   {
-    name: "shock",
+    id: "shock",
+    name: "Shock",
+    unit: "mg",
+    color: "#fff",
   },
   {
-    name: "tilt",
+    id: "tilt",
+    name: "Tilt",
+    unit: "deg",
+    color: "#fff",
   },
   {
-    name: "humidity",
+    id: "humidity",
+    name: "Humidity",
+    unit: "%",
+    color: "#fff",
   },
   {
-    name: "battery",
+    id: "battery",
+    name: "Battery",
+    unit: "%",
+    color: "#fff",
   },
   {
-    name: "pressure",
+    id: "pressure",
+    name: "Pressure",
+    unit: "Pa",
+    color: "#fff",
   },
 ]

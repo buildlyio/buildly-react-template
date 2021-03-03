@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import moment from "moment";
 
 import { makeStyles } from "@material-ui/core/styles";
-import { Box, Grid, List, ListItem, Typography, TextField, IconButton, Hidden } from "@material-ui/core";
+import { Box, Grid, List, ListItem, Typography, TextField, IconButton, Hidden, } from "@material-ui/core";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { MapComponent } from "../../components/MapComponent/MapComponent";
 import ViewComfyIcon from "@material-ui/icons/ViewComfy";
@@ -26,8 +26,6 @@ import {
   getCustody,
 } from "midgard/redux/custodian/actions/custodian.actions";
 import {
-  getGateways,
-  getGatewayType,
   getSensors,
   getSensorType,
   getSensorReport,
@@ -122,12 +120,31 @@ function Reporting(props) {
       if (moment(selectedShipment[value], true).isValid()) {
         return moment(selectedShipment[value]).format("MM/DD/yyyy hh:mm:ss")
       }
-      else if (typeof selectedShipment[value] !== 'object') {
+      else if (typeof(selectedShipment[value]) !== 'object') {
         return selectedShipment[value]
       }
     }
     else {
       return 'NA'
+    }
+  }
+
+  const getIcon = (item) => {
+    switch(item.id) {
+      case 'temperature':
+        return <TempIcon color={item.color} name={item.name} />
+      case 'light':
+        return <LightIcon color={item.color} name={item.name} />
+      case 'shock':
+        return <ShockIcon color={item.color} name={item.name} />
+      case 'tilt':
+        return <TiltIcon color={item.color} name={item.name} />
+      case 'humidity':
+        return <HumidIcon color={item.color} name={item.name} />
+      case 'battery':
+        return <BatteryIcon color={item.color} name={item.name} />
+      case 'pressure':
+        return <PressureIcon color={item.color} name={item.name} />
     }
   }
   useEffect(() => {
@@ -285,55 +302,17 @@ function Reporting(props) {
       <Grid container spacing={2}>
         <Grid item xs={1} md={1}>
           <List component="nav" aria-label="main graph-type" className={classes.iconBar}>
+          {REPORT_TYPES.map((item, index) => (
+          <React.Fragment key={`iconItem${index}${item.id}`}>
             <ListItem
               button
-              selected={selectedGraph === "temperature"}
-              onClick={(event) => handleListItemClick(event, "temperature")}
+              selected={selectedGraph === item.id}
+              onClick={(event) => handleListItemClick(event, item.id)}
             >
-              <TempIcon color="#fff" />
+              {getIcon(item)}
             </ListItem>
-            <ListItem
-              button
-              selected={selectedGraph === "light"}
-              onClick={(event) => handleListItemClick(event, "light")}
-            >
-              <LightIcon color="#fff" />
-            </ListItem>
-            <ListItem
-              button
-              selected={selectedGraph === "shock"}
-              onClick={(event) => handleListItemClick(event, "shock")}
-            >
-              <ShockIcon color="#fff" />
-            </ListItem>
-            <ListItem
-              button
-              selected={selectedGraph === "tilt"}
-              onClick={(event) => handleListItemClick(event, "tilt")}
-            >
-              <TiltIcon color="#fff" />
-            </ListItem>
-            <ListItem
-              button
-              selected={selectedGraph === "humidity"}
-              onClick={(event) => handleListItemClick(event, "humidity")}
-            >
-              <HumidIcon color="#fff" />
-            </ListItem>
-            <ListItem
-              button
-              selected={selectedGraph === "battery"}
-              onClick={(event) => handleListItemClick(event, "battery")}
-            >
-              <BatteryIcon color="#fff" />
-            </ListItem>
-            <ListItem
-              button
-              selected={selectedGraph === "pressure"}
-              onClick={(event) => handleListItemClick(event, "pressure")}
-            >
-              <PressureIcon color="#fff" />
-            </ListItem>
+          </React.Fragment>
+          ))}
           </List>
         </Grid>
         {selectedShipment && selectedShipment[selectedGraph] && selectedShipment[selectedGraph].length > 0 && (
