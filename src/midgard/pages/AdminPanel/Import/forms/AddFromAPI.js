@@ -8,6 +8,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from '@material-ui/core/Typography';
+import IconButton from "@material-ui/core/IconButton";
+import Popover from '@material-ui/core/Popover';
+import InfoIcon from '@material-ui/icons/Info';
+import swaggerUrl from "assets/swagger-url.png";
+import swaggerModel from "assets/swagger-model.png";
 import CustomizedTooltips from 'midgard/components/ToolTip/ToolTip';
 import { useInput } from "midgard/hooks/useInput";
 import { validators } from "midgard/utils/validators";
@@ -56,6 +61,18 @@ const useStyles = makeStyles((theme) => ({
   mapCol: {
     marginBottom: theme.spacing(3),
   },
+  apiMenuItem: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  infoDiv: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
 }));
 
 const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
@@ -64,9 +81,14 @@ const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
     { name: "Items", option: itemOptions },
     { name: "Products", option: productOptions },
   ];
+  const [urlEl, setUrlEl] = React.useState(null);
+  const [modelEl, setModelEl] = React.useState(null);
   const [tableColumns, setTableColumns] = useState({});
   const [mapColumns, setMapColumns] = useState([]);
   const [apiColumns, setAPIColumns] = useState({});
+  const [getSwagger, setGetSwagger] = useState(false);
+  const apiSwaggerURL = useInput("", { required: true });
+  const apiModelName = useInput("", { required: true });
   const dataFor = useInput("", { required: true });
   const apiURL = useInput("", { required: true });
   const apiKey = useInput("", { required: true });
@@ -107,6 +129,21 @@ const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
         });
     }
   }, []);
+
+  useEffect(() => {
+    if (getSwagger) {
+      httpService
+        .makeRequest(
+          "get",
+          `${apiSwaggerURL.value}`
+        )
+        .then((res) => {
+          const cols = res.data.definitions[apiModelName.value].properties;
+          setAPIColumns(cols);
+        })
+        .catch(error => console.log(error))
+    }
+  }, [getSwagger]);
 
   /**
    * Submit The form and add/edit custodian type
@@ -158,8 +195,15 @@ const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
 
       setTableColumns(cols);
       setMapColumns(mapCols);
-      setAPIColumns(cols);
-    };
+    }
+
+    if (apiSwaggerURL.hasChanged() || apiModelName.hasChanged()) {
+      if (apiSwaggerURL.value && apiModelName.value) {
+        setGetSwagger(true);
+      } else {
+        setGetSwagger(false);
+      }
+    }
   };
 
   const submitDisabled = () => {
@@ -192,7 +236,7 @@ const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
         ...formError,
         [key]: {
           error: true,
-          message: `${apiColumns[e.target.value].label} is already mapped to ${present.label}`,
+          message: `${apiColumns[e.target.value].title} is already mapped to ${present.label}`,
         },
       });
     } else {
@@ -210,9 +254,107 @@ const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
     };
   };
 
+  const handlePopoverClick = (event, type) => {
+    if (type === "url") {
+      setUrlEl(event.currentTarget)
+    } else {
+      setModelEl(event.currentTarget)
+    }
+  };
+
+  const handlePopoverClose = (type) => {
+    if (type === "url") {
+      setUrlEl(null)
+    } else {
+      setModelEl(null)
+    }
+  };
+
   return (
     <form className={classes.form} noValidate onSubmit={handleSubmit}>
       <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <div className={classes.infoDiv}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              required
+              id="apiSwaggerURL"
+              label="API Swagger Doc URL"
+              name="apiSwaggerURL"
+              error={formError.apiSwaggerURL && formError.apiSwaggerURL.error}
+              helperText={
+                formError.apiSwaggerURL ? formError.apiSwaggerURL.message : ""
+              }
+              onBlur={(e) => handleBlur(e, "required", apiSwaggerURL)}
+              {...apiSwaggerURL.bind}
+            />
+            <IconButton
+              id="url-popover"
+              onClick={e => handlePopoverClick(e, "url")}
+            >
+              <InfoIcon />
+            </IconButton>
+            <Popover
+              id="url-popover"
+              open={Boolean(urlEl)}
+              anchorEl={urlEl}
+              onClose={e => handlePopoverClose("url")}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+            >
+              <img src={swaggerUrl} alt="No preview available" />
+            </Popover>
+          </div>
+        </Grid>
+        <Grid item xs={12}>
+          <div className={classes.infoDiv}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              required
+              id="apiModelName"
+              label="API Swagger Model Name"
+              name="apiModelName"
+              error={formError.apiModelName && formError.apiModelName.error}
+              helperText={
+                formError.apiModelName ? formError.apiModelName.message : ""
+              }
+              onBlur={(e) => handleBlur(e, "required", apiModelName)}
+              {...apiModelName.bind}
+            />
+            <IconButton
+              id="model-popover"
+              onClick={e => handlePopoverClick(e, "model")}
+            >
+              <InfoIcon />
+            </IconButton>
+            <Popover
+              id="model-popover"
+              open={Boolean(modelEl)}
+              anchorEl={modelEl}
+              onClose={e => handlePopoverClose("model")}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+            >
+              <img src={swaggerModel} alt="No preview available" />
+            </Popover>
+          </div>
+        </Grid>
         <Grid item xs={12}>
           <TextField
             variant="outlined"
@@ -318,7 +460,12 @@ const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
                 {!_.isEmpty(apiColumns) && 
                 _.map(apiColumns, (col, key) => (
                   <MenuItem key={key} value={key}>
-                    {col.label}
+                    <div className={classes.apiMenuItem}>
+                      {col.title ? col.title : _.startCase(key)}
+                      {col.description && 
+                      <CustomizedTooltips toolTipText={col.description} />
+                      }
+                    </div>
                   </MenuItem>
                 ))}
               </TextField>
