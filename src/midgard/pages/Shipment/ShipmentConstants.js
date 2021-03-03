@@ -272,13 +272,7 @@ export const getFormattedRow = (
   custodyData,
   sensorReportData,
 ) => {
-  let shipmentList = _.map(shipmentData, (shipment) => {
-    if (shipment.status.toLowerCase() === "planned" || shipment.status.toLowerCase() === "enroute")
-      return { ...shipment, type: "Active" }
-    else if (shipment.status.toLowerCase() === "completed" || shipment.status.toLowerCase() === "cancelled")
-      return { ...shipment, type: "Completed" }
-  });
-
+  let shipmentList = [...shipmentData];
   let custodyRows = [];
   if (
     custodyData &&

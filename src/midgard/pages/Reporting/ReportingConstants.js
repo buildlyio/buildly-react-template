@@ -119,7 +119,7 @@ export const getShipmentOverview = (
     let custodyInfo = [];
     let custodianName = "";
     let sensorReportInfo = [];
-    let contactInfo = {};
+    let contactInfo = [];
     let temperatureData = [];
     let lightData = [];
     let shockData = [];
@@ -140,16 +140,17 @@ export const getShipmentOverview = (
           custodianName = custodianName + custody.custodian_data.name;
           contactData.forEach((contact) => {
             if (custody.custodian_data.contact_data[0] === contact.url) {
-              contactInfo['name'] = [contact['first_name'], contact['middle_name'], contact['last_name']].join(' ')
-              contactInfo['address'] = [contact['address1'], contact['address2'], contact['city'], contact['postal_code'], contact['state'], contact['country']].join('\n')
+              contact['name'] = [contact['first_name'], contact['middle_name'], contact['last_name']].join(' ')
+              contact['address'] = [contact['address1'], contact['address2'], contact['city'], contact['postal_code'], contact['state'], contact['country']].join('\n')
+              contactInfo.push(contact);
             }
           })
           if (custody['has_current_custody'])
-            custody['custody_type'] = 'current'
+            custody['custody_type'] = 'Current'
           else if (custody['first_custody'])
-            custody['custody_type'] = 'first'
+            custody['custody_type'] = 'First'
           else if(custody['last_custody'])
-            custody['custody_type'] = 'last'
+            custody['custody_type'] = 'Last'
           else
             custody['custody_type'] = 'NA'
           custodyInfo.push(custody);

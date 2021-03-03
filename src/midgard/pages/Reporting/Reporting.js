@@ -286,15 +286,13 @@ function Reporting(props) {
                 <Grid item
                   className={classes.infoSection} xs={10} md={6}
                   key={`col${index}:${column.name}`}>
-                  <Typography variant="h6">{column.label}</Typography>
-                  {column.name === "custody_info" && selectedShipment[column.name] ? (
-                    <div>
-                      <Typography variant="body1">Custody Type: {selectedShipment['custody_info']['custody_type']}</Typography>
-                      <Typography variant="body1">Address: {selectedShipment['contact_info']['address']}</Typography>
-                      <Typography variant="body1">Email Address: {selectedShipment['contact_info']['email_address']}</Typography>
-                      <Typography variant="body1">Phone: {selectedShipment['contact_info']['phone']}</Typography>
-                    </div>
-                  ) : (
+                  {column.name !== "custody_info" && (<Typography variant="h6">{column.label}</Typography>)}
+                  {column.name === "custody_info"  && selectedShipment[column.name] ? selectedShipment[column.name].map((key, index) => (
+                    <div key={`custody_info_${index}`}>
+                      <Typography variant="body1">Custody Type: {selectedShipment['custody_info'][index]['custody_type']}</Typography>
+                      <Typography variant="body1">Custodian Address: {selectedShipment['contact_info'][index]['address']}</Typography>
+                      </div>
+                  )) : (
                       <Typography variant="body1">
                         {getShipmentValue(column.name)}
                       </Typography>)}
