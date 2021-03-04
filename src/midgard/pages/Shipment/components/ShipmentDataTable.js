@@ -35,7 +35,7 @@ const CustomCheckbox = (props) => {
   }
 };
 
-const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelectedShipment }) => {
+const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelectedShipment, setSelectedFilter }) => {
   const classes = useStyles();
   const [selected, setSelected] = useState(0);
   const user = useContext(UserContext);
@@ -55,6 +55,14 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
       const index = rowsSelected[0].dataIndex;
       setSelected(index);
       setSelectedShipment(rows[index]);
+    },
+    onFilterChange: (columnChanged, filterList) => {
+      if (columnChanged === 'type'){
+        if (filterList[2].length === 1)
+          setSelectedFilter(filterList[2][0]);
+        else
+          setSelectedFilter(null);
+      }
     },
     textLabels: {
       body: {
