@@ -67,26 +67,7 @@ const ShipmentSensorTable = (props) => {
 
   useEffect(() => {
     if (sensorReport) {
-      const data = sensorReport.map(report => {
-        if (report.report_entry !== null && typeof(report.report_entry) === 'object') {
-          const alert_status = report.excursion_flag ? "Excursion" : report.warning_flag ? "Warning" : "Normal";
-          const temperature = convertUnitsOfMeasure('celsius', report.report_entry.report_temp, 'fahrenheit', 'temperature');
-
-          return ({
-            alert_status,
-            timestamp: report.create_date,
-            latitude: report.report_entry.report_latitude,
-            longitude: report.report_entry.report_longitude,
-            humidity: report.report_entry.report_humidity,
-            temperature,
-            light: report.report_entry.report_light,
-            shock: report.report_entry.report_shock,
-            battery: report.report_entry.report_battery,
-            pressure: report.report_entry.report_pressure,
-          })
-        }
-      }).filter(report => report !== undefined);
-      const sortedData = _.orderBy(data, ['timestamp'], ['desc']);
+      const sortedData = _.orderBy(sensorReport, ['timestamp'], ['desc']);
       setRows(sortedData);
     }
   }, [sensorReport]);

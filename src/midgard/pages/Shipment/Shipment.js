@@ -44,7 +44,7 @@ import {
   getSensorType,
   getSensorReport,
 } from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
-import { MAP_API_URL, convertUnitsOfMeasure } from "midgard/utils/utilMethods";
+import { MAP_API_URL, convertUnitsOfMeasure, getLocalDateTime } from "midgard/utils/utilMethods";
 import {
   getShipmentDetails,
   deleteShipment,
@@ -58,7 +58,6 @@ import CustomizedTooltips from "midgard/components/ToolTip/ToolTip";
 import { httpService } from "midgard/modules/http/http.service";
 import { environment } from "environments/environment";
 import { UserContext } from "midgard/context/User.context";
-import moment from 'moment';
 import ShipmentSensorTable from "./components/ShipmentSensorTable";
 import ShipmentDataTable from "./components/ShipmentDataTable";
 
@@ -211,48 +210,60 @@ function Shipment(props) {
   useEffect(() => {
     if (selectedShipment) {
       let markersToSet = [];
+      let sensorReportInfo = [];
       let temperatureUnit = unitsOfMeasure.filter((obj) => {
         return obj.supported_class === "Temperature";
       })[0]["name"].toLowerCase()
-      let tempConst = temperatureUnit[0].toUpperCase()
-      let index = 1;
       selectedShipment.sensor_report.forEach((report) => {
-        if (report.report_entry !== null && typeof(report.report_entry) === 'object') {
-          try {
-            const report_entry = report.report_entry;
-            const parsedLocation = report_entry.report_location;
-            if (parsedLocation.locationMethod !== "NoPosition") {
+        if (report.report_entries.length > 0) {
+          const alert_status = report.excursion_flag ? "Excursion" : report.warning_flag ? "Warning" : "Normal";
+          const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
+          report.report_entries.forEach((report_entry) => {
+            try {
               const temperature = convertUnitsOfMeasure('celsius', report_entry.report_temp, temperatureUnit, 'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
-              const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
-              const marker = {
-                lat: parsedLocation && parsedLocation.latitude,
-                lng: parsedLocation && parsedLocation.longitude,
-                label: parsedLocation && `Temperature: ${temperature}\u00b0${tempConst}, Humidity: ${report_entry.report_humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
-                temp: temperature,
-                humidity: report_entry.report_humidity,
-                color: color,
-                index: index,
+              const localDateTime = getLocalDateTime(report_entry.report_location.timeOfPosition)
+              if (report_entry.report_location.locationMethod !== "NoPosition") {
+                const marker = {
+                  lat: report_entry.report_location.latitude,
+                  lng: report_entry.report_location.longitude,
+                  label: 'Clustered',
+                  temperature: temperature,
+                  light: report_entry.report_light,
+                  shock: report_entry.report_shock,
+                  tilt: report_entry.report_tilt,
+                  humidity: report_entry.report_humidity,
+                  battery: report_entry.report_battery,
+                  pressure: report_entry.report_pressure,
+                  color: color,
+                  timestamp: localDateTime,
+                  alert_status: alert_status,
+                }
+                // Considered use case: If a shipment stays at some position for long, other value changes can be critical
+                const markerFound = _.find(markersToSet, {
+                  temperature: marker.temperature,
+                  light: marker.light,
+                  shock: marker.shock,
+                  tilt: marker.tilt,
+                  humidity: marker.humidity,
+                  battery: marker.battery,
+                  pressure: marker.pressure,
+                  lat: marker.lat,
+                  lng: marker.lng,
+                });
+
+                if (!markerFound)
+                  markersToSet.push(marker);
+                sensorReportInfo.push(marker);
               }
-              // Skip a marker on map only if temperature, humidity and lat long are all same.
-              // Considered use case: If a shipment stays at some position for long, temperature and humidity changes can be critical
-              const markerFound = _.find(markersToSet, {
-                temp: marker.temp,
-                humidity: marker.humidity,
-                lat: marker.lat,
-                lng: marker.lng,
-              });
-              if (!markerFound) {
-                markersToSet.push(marker);
-                index++;
-              }
+            } catch (e) {
+              console.log(e);
             }
-          } catch (e) {
-            console.log(e);
-          }
+          });
         }
       });
-      setMarkers(markersToSet);
+      setMarkers(_.orderBy(markersToSet, ['timestamp'], ['asc']));
       setZoomLevel(12);
+      selectedShipment['sensor_report_info'] = sensorReportInfo;
     }
   }, [selectedShipment]);
 
@@ -365,7 +376,7 @@ function Shipment(props) {
         </Grid>
       </Grid>
       <ShipmentSensorTable
-        sensorReport={selectedShipment?.sensor_report}
+        sensorReport={selectedShipment?.sensor_report_info}
         shipmentName={selectedShipment?.name}
         cols={SHIPMENT_SENSOR_COLUMNS}
       />

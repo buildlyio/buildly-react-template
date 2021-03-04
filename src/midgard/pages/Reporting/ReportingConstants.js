@@ -1,7 +1,10 @@
+import React from "react";
 import moment from "moment";
 import _ from "lodash";
 import { getFormattedCustodyRows } from "../Shipment/ShipmentConstants";
-import { convertUnitsOfMeasure , getLocalDateTime } from "midgard/utils/utilMethods";
+import { convertUnitsOfMeasure, getLocalDateTime } from "midgard/utils/utilMethods";
+import { TempIcon, HumidIcon, LightIcon, BatteryIcon, PressureIcon, TiltIcon, ShockIcon } from "../../components/Icons/Icons";
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
 
 export const SHIPMENT_OVERVIEW_TOOL_TIP =
   "Select a shipment to view reporting data";
@@ -96,6 +99,27 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
   },
 ];
 
+export const getIcon = (item, color) => {
+  switch (item.id) {
+    case 'temperature':
+      return <TempIcon color={color} name={item.name} />
+    case 'light':
+      return <LightIcon color={color} name={item.name} />
+    case 'shock':
+      return <ShockIcon color={color} name={item.name} />
+    case 'tilt':
+      return <TiltIcon color={color} name={item.name} />
+    case 'humidity':
+      return <HumidIcon color={color} name={item.name} />
+    case 'battery':
+      return <BatteryIcon color={color} name={item.name} />
+    case 'pressure':
+      return <PressureIcon color={color} name={item.name} />
+    case 'time':
+      return <AccessTimeIcon />
+  }
+}
+
 export const getShipmentOverview = (
   shipmentData,
   custodianData,
@@ -149,7 +173,7 @@ export const getShipmentOverview = (
             custody['custody_type'] = 'Current'
           else if (custody['first_custody'])
             custody['custody_type'] = 'First'
-          else if(custody['last_custody'])
+          else if (custody['last_custody'])
             custody['custody_type'] = 'Last'
           else
             custody['custody_type'] = 'NA'
@@ -164,51 +188,63 @@ export const getShipmentOverview = (
     if (sensorReportData && sensorReportData.length > 0) {
       sensorReportData.forEach((report) => {
         if (report.shipment_id === list.partner_shipment_id &&
-          report.report_entry !== null && typeof (report.report_entry) === 'object') {
-          sensorReportInfo.push(report);
-          const report_entry = report.report_entry;
-          try {
-            const parsedLocation = report_entry.report_location;
-            const temperature = convertUnitsOfMeasure('celsius', report_entry.report_temp, temperatureUnit, 'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
-            const humidity = report_entry.report_humidity;
-            const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
-            const localDateTime = getLocalDateTime(report.create_date)
-            const marker = {
-              lat: parsedLocation && parsedLocation.latitude,
-              lng: parsedLocation && parsedLocation.longitude,
-              label: parsedLocation && `Temperature: ${temperature}\u00b0${tempConst}, Humidity: ${humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
-              temp: temperature,
-              humidity: humidity,
-              color: color,
+          report.report_entries.length > 0) {
+          const alert_status = report.excursion_flag ? "Excursion" : report.warning_flag ? "Warning" : "Normal";
+          const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
+          report.report_entries.forEach((report_entry) => {
+            try {
+              const temperature = convertUnitsOfMeasure('celsius', report_entry.report_temp, temperatureUnit, 'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
+              const localDateTime = getLocalDateTime(report_entry.report_location.timeOfPosition)
+              if (report_entry.report_location.locationMethod !== "NoPosition") {
+              const marker = {
+                lat: report_entry.report_location.latitude,
+                lng: report_entry.report_location.longitude,
+                label: 'Clustered',
+                temperature: temperature,
+                light: report_entry.report_light,
+                shock: report_entry.report_shock,
+                tilt: report_entry.report_tilt,
+                humidity: report_entry.report_humidity,
+                battery: report_entry.report_battery,
+                pressure: report_entry.report_pressure,
+                color: color,
+                timestamp: localDateTime,
+                alert_status: alert_status,
+              }
+              // Considered use case: If a shipment stays at some position for long, other value changes can be critical
+              const markerFound = _.find(markersToSet, {
+                temperature: marker.temperature,
+                light: marker.light,
+                shock: marker.shock,
+                tilt: marker.tilt,
+                humidity: marker.humidity,
+                battery: marker.battery,
+                pressure: marker.pressure,
+                lat: marker.lat,
+                lng: marker.lng,
+              });
+              if (!markerFound) {
+                markersToSet.push(marker);
+              }
+              sensorReportInfo.push(marker);
+              temperatureData.push({ 'x': localDateTime, 'y': temperature });
+              lightData.push({ 'x': localDateTime, 'y': report_entry.report_light });
+              shockData.push({ 'x': localDateTime, 'y': report_entry.report_shock });
+              tiltData.push({ 'x': localDateTime, 'y': report_entry.report_tilt });
+              humidityData.push({ 'x': localDateTime, 'y': report_entry.report_humidity });
+              batteryData.push({ 'x': localDateTime, 'y': report_entry.report_battery });
+              pressureData.push({ 'x': localDateTime, 'y': report_entry.report_pressure });
             }
-            // Skip a marker on map only if temperature, humidity and lat long are all same.
-            // Considered use case: If a shipment stays at some position for long, temperature and humidity changes can be critical
-            const markerFound = _.find(markersToSet, {
-              temp: marker.temp,
-              humidity: marker.humidity,
-              lat: marker.lat,
-              lng: marker.lng,
-            });
-            if (!markerFound) {
-              markersToSet.push(marker);
+            } catch (e) {
+              console.log(e);
             }
-            temperatureData.push({ 'x':localDateTime , 'y': temperature });
-            lightData.push({ 'x': localDateTime, 'y': report_entry.report_light });
-            shockData.push({ 'x': localDateTime, 'y': report_entry.report_shock });
-            tiltData.push({ 'x': localDateTime, 'y': report_entry.report_tilt });
-            humidityData.push({ 'x': localDateTime, 'y': report_entry.report_humidity });
-            batteryData.push({ 'x': localDateTime, 'y': report_entry.report_battery });
-            pressureData.push({ 'x': localDateTime, 'y': report_entry.report_pressure });
-
-          } catch (e) {
-            console.log(e);
-          }
+          });
         }
       });
     }
 
     list["sensor_report"] = sensorReportInfo;
-    list["markers_to_set"] = markersToSet;
+    list["markers_to_set"] = _.orderBy(markersToSet, ['timestamp'], ['asc'])
     list["temperature"] = temperatureData;
     list["light"] = lightData;
     list["shock"] = shockData;
@@ -216,8 +252,8 @@ export const getShipmentOverview = (
     list["humidity"] = humidityData;
     list["battery"] = batteryData;
     list["pressure"] = pressureData;
-
   });
+
   let sortedList = shipmentList.sort((a, b) => {
     return moment.utc(a.create_date).diff(moment.utc(b.create_date));
   });
@@ -230,42 +266,35 @@ export const REPORT_TYPES = [
     id: "temperature",
     name: "Temperature",
     unit: "\u00b0F",
-    color: "#fff",
   },
   {
     id: "light",
     name: "Light",
     unit: "lux",
-    color: "#fff",
   },
   {
     id: "shock",
     name: "Shock",
     unit: "mg",
-    color: "#fff",
   },
   {
     id: "tilt",
     name: "Tilt",
     unit: "deg",
-    color: "#fff",
   },
   {
     id: "humidity",
     name: "Humidity",
     unit: "%",
-    color: "#fff",
   },
   {
     id: "battery",
     name: "Battery",
     unit: "%",
-    color: "#fff",
   },
   {
     id: "pressure",
     name: "Pressure",
     unit: "Pa",
-    color: "#fff",
   },
 ]

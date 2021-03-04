@@ -173,7 +173,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
     },
   },
   {
-    name: "latitude",
+    name: "lat",
     label: "Location (Latitude)",
     options: {
       sort: true,
@@ -183,7 +183,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
     },
   },
   {
-    name: "longitude",
+    name: "lng",
     label: "Location (Longitude)",
     options: {
       sort: true,
@@ -307,7 +307,8 @@ export const getFormattedRow = (
 
     if (sensorReportData && sensorReportData.length > 0) {
       sensorReportData.forEach((report) => {
-        if (report.shipment_id === list.partner_shipment_id) {
+        if (report.shipment_id === list.partner_shipment_id &&
+          report.report_entries.length > 0) {
           sensorReportInfo.push(report);
         }
       });

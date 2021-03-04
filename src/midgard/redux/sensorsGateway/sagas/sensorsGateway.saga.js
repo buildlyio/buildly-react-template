@@ -310,7 +310,7 @@ function* getSensorReportList(payload) {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${sensorApiEndPoint}sensor_report/`,
+      `${environment.API_URL}${sensorApiEndPoint}aggregate_report/`, // aggregate_report
       null,
       true
     );

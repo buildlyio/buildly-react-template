@@ -18,6 +18,7 @@ import {
   SHIPMENT_OVERVIEW_COLUMNS,
   SHIPMENT_OVERVIEW_TOOL_TIP,
   REPORT_TYPES,
+  getIcon,
 } from "./ReportingConstants";
 import {
   getCustodians,
@@ -37,7 +38,6 @@ import {
   getUnitsOfMeasure,
 } from "midgard/redux/items/actions/items.actions";
 import { GraphComponent } from "../../components/GraphComponent/GraphComponent";
-import { TempIcon, HumidIcon, LightIcon, BatteryIcon, PressureIcon, TiltIcon, ShockIcon } from "../../components/Icons/Icons";
 import ShipmentSensorTable from "../Shipment/components/ShipmentSensorTable";
 import CustomizedTooltips from "midgard/components/ToolTip/ToolTip";
 
@@ -137,24 +137,6 @@ function Reporting(props) {
     }
   }
 
-  const getIcon = (item) => {
-    switch (item.id) {
-      case 'temperature':
-        return <TempIcon color={item.color} name={item.name} />
-      case 'light':
-        return <LightIcon color={item.color} name={item.name} />
-      case 'shock':
-        return <ShockIcon color={item.color} name={item.name} />
-      case 'tilt':
-        return <TiltIcon color={item.color} name={item.name} />
-      case 'humidity':
-        return <HumidIcon color={item.color} name={item.name} />
-      case 'battery':
-        return <BatteryIcon color={item.color} name={item.name} />
-      case 'pressure':
-        return <PressureIcon color={item.color} name={item.name} />
-    }
-  }
   useEffect(() => {
     if (!shipmentData) {
       dispatch(getShipmentDetails(organization));
@@ -325,7 +307,7 @@ function Reporting(props) {
                   selected={selectedGraph === item.id}
                   onClick={(event) => handleListItemClick(event, item.id)}
                 >
-                  {getIcon(item)}
+                  {getIcon(item,'white')}
                 </ListItem>
               </React.Fragment>
             ))}
