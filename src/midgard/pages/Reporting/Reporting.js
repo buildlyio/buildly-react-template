@@ -179,6 +179,10 @@ function Reporting(props) {
         unitsOfMeasure,
       );
       setShipmentOverview(overview);
+
+      if (!selectedShipment && overview.length) {
+        setSelectedShipment(overview[0]);
+      }
     }
   }, [shipmentData, custodianData, custodyData, sensorReportData]);
 
