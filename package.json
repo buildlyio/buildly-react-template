@@ -43,7 +43,6 @@
     "reactjs-popup": "^1.4.0",
     "redux-saga": "^1.0.0",
     "serve": "^11.0.0",
-    "victory": "^35.4.9"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
