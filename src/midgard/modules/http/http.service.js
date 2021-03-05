@@ -16,7 +16,7 @@ export const httpService = {
  * @param {string} responseType - the expected response type from the server
  * @returns {Observable} - response of the request or error
  */
-function makeRequest(method, url, body, useJwt, contentType, responseType) {
+function makeRequest(method, url, body, useJwt, contentType, responseType, requestHeader) {
   let token;
   let tokenType;
   if (useJwt) {
@@ -26,10 +26,16 @@ function makeRequest(method, url, body, useJwt, contentType, responseType) {
     tokenType = "Bearer";
     token = oauthService.getAccessToken();
   }
-  const headers = {
+  let headers = {
     Authorization: `${tokenType} ${token}`,
     "Content-Type": contentType ? contentType : "application/json",
   };
+  if (requestHeader) {
+    headers = {
+      ...headers,
+      requestHeader,
+    };
+  }
   const options = {
     method: method,
     data: body,

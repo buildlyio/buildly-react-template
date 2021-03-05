@@ -8,11 +8,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from '@material-ui/core/Typography';
-import IconButton from "@material-ui/core/IconButton";
-import Popover from '@material-ui/core/Popover';
-import InfoIcon from '@material-ui/icons/Info';
-import swaggerUrl from "assets/swagger-url.png";
-import swaggerModel from "assets/swagger-model.png";
+import ConfirmModal from "midgard/components/Modal/ConfirmModal";
 import CustomizedTooltips from 'midgard/components/ToolTip/ToolTip';
 import { useInput } from "midgard/hooks/useInput";
 import { validators } from "midgard/utils/validators";
@@ -24,6 +20,9 @@ import {
   GET_PRODUCTS_OPTIONS_SUCCESS,
   GET_PRODUCTS_OPTIONS_FAILURE,
 } from "midgard/redux/items/actions/items.actions";
+import {
+  getApiResponse,
+} from "midgard/redux/importExport/actions/importExport.actions";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -49,6 +48,14 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(2, 0),
     textAlign: "center",
   },
+  apiResponse: {
+    width: "100%",
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.secondary.contrastText,
+    overflow: "wrap",
+    whiteSpace: "normal",
+    wordBreak: "break-word",
+  },
   tableColumn: {
     backgroundColor: theme.palette.primary.dark,
     borderRadius: theme.spacing(1),
@@ -67,32 +74,35 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  infoDiv: {
-    width: "100%",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
 }));
 
-const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
+const AddFromAPI = ({
+  loading,
+  dispatch,
+  itemOptions,
+  productOptions,
+  apiResponse,
+}) => {
   const classes = useStyles();
   const dataTypes = [
     { name: "Items", option: itemOptions },
     { name: "Products", option: productOptions },
   ];
-  const [urlEl, setUrlEl] = React.useState(null);
-  const [modelEl, setModelEl] = React.useState(null);
+
   const [tableColumns, setTableColumns] = useState({});
-  const [mapColumns, setMapColumns] = useState([]);
+  const [mapColumns, setMapColumns] = useState({});
   const [apiColumns, setAPIColumns] = useState({});
-  const [getSwagger, setGetSwagger] = useState(false);
-  const apiSwaggerURL = useInput("", { required: true });
-  const apiModelName = useInput("", { required: true });
-  const dataFor = useInput("", { required: true });
   const apiURL = useInput("", { required: true });
+  const keyParamName = useInput("", { required: true });
+  const keyParamPlace = useInput("", { required: true });
   const apiKey = useInput("", { required: true });
+  const apiResponseData = useInput("", { required: true });
+  const dataFor = useInput("", { required: true });
   const [formError, setFormError] = useState({});
+  const [openModal, setOpenModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [finalUrl, setFinalUrl] = useState("");
+  const [reqHeader, setReqHeader] = useState("");
 
   useEffect(() => {
     if (itemOptions === null) {
@@ -130,21 +140,6 @@ const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (getSwagger) {
-      httpService
-        .makeRequest(
-          "get",
-          `${apiSwaggerURL.value}`
-        )
-        .then((res) => {
-          const cols = res.data.definitions[apiModelName.value].properties;
-          setAPIColumns(cols);
-        })
-        .catch(error => console.log(error))
-    }
-  }, [getSwagger]);
-
   /**
    * Submit The form and add/edit custodian type
    * @param {Event} event the default submit event
@@ -161,7 +156,7 @@ const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
    * @param {Object} input input field
    */
 
-  const handleBlur = (e, validation, input, parentId) => {
+  const handleBlur = (e, validation, input, parentId="") => {
     let validateObj = validators(validation, input);
     let prevState = { ...formError };
     if (validateObj && validateObj.error)
@@ -197,11 +192,69 @@ const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
       setMapColumns(mapCols);
     }
 
-    if (apiSwaggerURL.hasChanged() || apiModelName.hasChanged()) {
-      if (apiSwaggerURL.value && apiModelName.value) {
-        setGetSwagger(true);
+    if (apiURL.value && keyParamName.value &&
+      keyParamPlace.value && apiKey.value) {
+      const url = _.endsWith(apiURL.value, "/") 
+        ? apiURL.value 
+        : `${apiURL.value}/`
+      const queryUrl = <>
+        <Typography variant="body1">
+          Is the below URL correct?
+        </Typography>
+        <Typography variant="body1" style={{ marginTop: "8px" }}>
+          <strong>
+            <em>{`"${url}?${keyParamName.value}=${apiKey.value}"`}</em>
+          </strong>
+        </Typography>
+      </>;
+      const headerUrl = <>
+        <Typography variant="body1">
+          Is the below URL and Header correct?
+        </Typography>
+        <Typography variant="body1" style={{ marginTop: "8px" }}>
+          <em>
+            <strong>URL:  </strong>
+            {`"${url}"`}
+          </em>
+        </Typography>
+        <Typography variant="body1">
+          <em>
+            <strong>Header:  </strong>
+            {`${keyParamName.value}="${apiKey.value}"`}
+          </em>
+        </Typography>
+      </>;
+      const final = keyParamPlace.value === "queryParam"
+        ? {
+            url: `"${url}?${keyParamName.value}=${apiKey.value}"`,
+            title: queryUrl,
+            header: "",
+          }
+        : {
+            url,
+            title: headerUrl,
+            header: `${keyParamName.value}: ${apiKey.value}`
+          }
+
+      if (
+        (finalUrl !== final.url) || (reqHeader !== final.header)
+      ) {
+        setFinalUrl(final.url);
+        setReqHeader(final.header);
+        setModalTitle(final.title);
+        setOpenModal(true);
+      };
+    }
+
+    if (apiResponseData.hasChanged()) {
+      const cols = apiResponse[apiResponseData.value][0];
+
+      if (!apiColumns) {
+        setAPIColumns(cols);
       } else {
-        setGetSwagger(false);
+        if (apiColumns !== cols) {
+          setAPIColumns(cols);
+        }
       }
     }
   };
@@ -209,19 +262,25 @@ const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    let mapColValues = "";
+    let check = (!apiURL.value || !keyParamName.value ||
+    !keyParamPlace.value || !apiKey.value || !apiResponseData.value ||
+    !dataFor.value);
     _.forEach(mapColumns, (col, index) => {
-      mapColValues = col.required 
-        ? `${mapColValues} || !mapColumns[${index}].value`
-        : mapColValues;
+      if (col.required) {
+        check = check || !mapColumns[index].value
+      }
     });
-    const check = `!dataFor.value || !apiURL.value || !apiKey.value${mapColValues}`;
     
     if (check) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
     return errorExists;
+  };
+
+  const handleConfirmModal = () => {
+    dispatch(getApiResponse(finalUrl, reqHeader));
+    setOpenModal(false);
   };
 
   const handleMapColumn = (e, key) => {
@@ -236,7 +295,7 @@ const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
         ...formError,
         [key]: {
           error: true,
-          message: `${apiColumns[e.target.value].title} is already mapped to ${present.label}`,
+          message: `${_.startCase(e.target.value)} is already mapped to ${present.label}`,
         },
       });
     } else {
@@ -254,254 +313,238 @@ const AddFromAPI = ({ loading, dispatch, itemOptions, productOptions }) => {
     };
   };
 
-  const handlePopoverClick = (event, type) => {
-    if (type === "url") {
-      setUrlEl(event.currentTarget)
-    } else {
-      setModelEl(event.currentTarget)
-    }
-  };
-
-  const handlePopoverClose = (type) => {
-    if (type === "url") {
-      setUrlEl(null)
-    } else {
-      setModelEl(null)
-    }
-  };
-
   return (
-    <form className={classes.form} noValidate onSubmit={handleSubmit}>
-      <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <div className={classes.infoDiv}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              required
-              id="apiSwaggerURL"
-              label="API Swagger Doc URL"
-              name="apiSwaggerURL"
-              error={formError.apiSwaggerURL && formError.apiSwaggerURL.error}
-              helperText={
-                formError.apiSwaggerURL ? formError.apiSwaggerURL.message : ""
-              }
-              onBlur={(e) => handleBlur(e, "required", apiSwaggerURL)}
-              {...apiSwaggerURL.bind}
-            />
-            <IconButton
-              id="url-popover"
-              onClick={e => handlePopoverClick(e, "url")}
-            >
-              <InfoIcon />
-            </IconButton>
-            <Popover
-              id="url-popover"
-              open={Boolean(urlEl)}
-              anchorEl={urlEl}
-              onClose={e => handlePopoverClose("url")}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center',
-              }}
-            >
-              <img src={swaggerUrl} alt="No preview available" />
-            </Popover>
-          </div>
-        </Grid>
-        <Grid item xs={12}>
-          <div className={classes.infoDiv}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              required
-              id="apiModelName"
-              label="API Swagger Model Name"
-              name="apiModelName"
-              error={formError.apiModelName && formError.apiModelName.error}
-              helperText={
-                formError.apiModelName ? formError.apiModelName.message : ""
-              }
-              onBlur={(e) => handleBlur(e, "required", apiModelName)}
-              {...apiModelName.bind}
-            />
-            <IconButton
-              id="model-popover"
-              onClick={e => handlePopoverClick(e, "model")}
-            >
-              <InfoIcon />
-            </IconButton>
-            <Popover
-              id="model-popover"
-              open={Boolean(modelEl)}
-              anchorEl={modelEl}
-              onClose={e => handlePopoverClose("model")}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center',
-              }}
-            >
-              <img src={swaggerModel} alt="No preview available" />
-            </Popover>
-          </div>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            required
-            id="dataFor"
-            label="Import Data For"
-            select
-            error={formError.dataFor && formError.dataFor.error}
-            helperText={
-              formError.dataFor ? formError.dataFor.message : ""
-            }
-            onBlur={(e) => handleBlur(e, "required", dataFor)}
-            {...dataFor.bind}
-          >
-            <MenuItem value={""}>--------</MenuItem>
-            {dataTypes.map((type, index) => (
-              <MenuItem key={index} value={type.option}>
-                {type.name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            required
-            id="apiURL"
-            label="API URL"
-            name="apiURL"
-            error={formError.apiURL && formError.apiURL.error}
-            helperText={
-              formError.apiURL ? formError.apiURL.message : ""
-            }
-            onBlur={(e) => handleBlur(e, "required", apiURL)}
-            {...apiURL.bind}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            required
-            id="apiKey"
-            label="API KEY"
-            name="apiKey"
-            error={formError.apiKey && formError.apiKey.error}
-            helperText={
-              formError.apiKey ? formError.apiKey.message : ""
-            }
-            onBlur={(e) => handleBlur(e, "required", apiKey)}
-            {...apiKey.bind}
-          />
-        </Grid>
+    <>
+      <form className={classes.form} noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography
-              className={classes.title}
-              variant="h6"
-            >
-              Our Columns
-            </Typography>
-            {!_.isEmpty(tableColumns) && 
-            _.map(tableColumns, (column, key) => (
-              <div key={key} className={classes.tableColumn}>
-                <Typography variant="body1">{column.label}</Typography>
-                {column.help_text && 
-                  <CustomizedTooltips toolTipText={column.help_text} />
-                }
-              </div>
-            ))}
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              required
+              id="apiURL"
+              label="API Url to get data"
+              name="apiURL"
+              error={formError.apiURL && formError.apiURL.error}
+              helperText={
+                formError.apiURL ? formError.apiURL.message : ""
+              }
+              onBlur={(e) => handleBlur(e, "required", apiURL)}
+              {...apiURL.bind}
+            />
           </Grid>
-          <Grid item xs={6}>
-            <Typography
-              className={classes.title}
-              variant="h6"
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              required
+              id="keyParamName"
+              label="API Key Param Name"
+              name="keyParamName"
+              error={formError.keyParamName && formError.keyParamName.error}
+              helperText={
+                formError.keyParamName ? formError.keyParamName.message : ""
+              }
+              onBlur={(e) => handleBlur(e, "required", keyParamName)}
+              {...keyParamName.bind}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              required
+              id="keyParamPlace"
+              label="API Key Param Placement"
+              select
+              error={formError.keyParamPlace && formError.keyParamPlace.error}
+              helperText={
+                formError.keyParamPlace ? formError.keyParamPlace.message : ""
+              }
+              onBlur={(e) => handleBlur(e, "required", keyParamPlace, "keyParamPlace")}
+              {...keyParamPlace.bind}
             >
-              Mapping (From API Response)
-            </Typography>
-            {!_.isEmpty(mapColumns) && 
-            _.map(mapColumns, (col, key) => (
+              <MenuItem value={""}>--------</MenuItem>
+              <MenuItem value={"queryParam"}>Query Parameter</MenuItem>
+              <MenuItem value={"header"}>Header</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              required
+              id="apiKey"
+              label="API Key Value"
+              name="apiKey"
+              error={formError.apiKey && formError.apiKey.error}
+              helperText={
+                formError.apiKey ? formError.apiKey.message : ""
+              }
+              onBlur={(e) => handleBlur(e, "required", apiKey)}
+              {...apiKey.bind}
+            />
+          </Grid>
+          {apiResponse &&
+            <Grid item xs={12}>
+              <Typography variant="h6">API Response</Typography>
+              {_.map(apiResponse, (res, key) => (
+                <pre key={key} className={classes.apiResponse}>
+                  {key}: {JSON.stringify(res)}
+                </pre>
+              ))}
+            </Grid>
+          }
+          {apiResponse &&
+            <Grid item xs={12}>
               <TextField
-                key={key}
-                className={classes.mapCol}
                 variant="outlined"
+                margin="normal"
                 fullWidth
-                required={col.required}
-                id={col.name}
-                label={col.label}
-                select
-                value={col.value}
-                onChange={e => handleMapColumn(e, key)}
-                error={formError[key] && formError[key].error}
+                required
+                id="apiResponseData"
+                label="Field name to pick data from API Response"
+                name="apiResponseData"
+                error={formError.apiResponseData && formError.apiResponseData.error}
                 helperText={
-                  formError[key] ? formError[key].message : ""
+                  formError.apiResponseData ? formError.apiResponseData.message : ""
                 }
+                onBlur={(e) => handleBlur(e, "required", apiResponseData)}
+                {...apiResponseData.bind}
+              />
+            </Grid>
+          }
+          {apiResponseData.hasChanged() &&
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                required
+                id="dataFor"
+                label="Import Data For"
+                select
+                error={formError.dataFor && formError.dataFor.error}
+                helperText={
+                  formError.dataFor ? formError.dataFor.message : ""
+                }
+                onBlur={(e) => handleBlur(e, "required", dataFor)}
+                {...dataFor.bind}
               >
                 <MenuItem value={""}>--------</MenuItem>
-                {!_.isEmpty(apiColumns) && 
-                _.map(apiColumns, (col, key) => (
-                  <MenuItem key={key} value={key}>
-                    <div className={classes.apiMenuItem}>
-                      {col.title ? col.title : _.startCase(key)}
-                      {col.description && 
-                      <CustomizedTooltips toolTipText={col.description} />
-                      }
-                    </div>
+                {dataTypes.map((type, index) => (
+                  <MenuItem key={index} value={type.option}>
+                    {type.name}
                   </MenuItem>
                 ))}
               </TextField>
-            ))}
+            </Grid>
+          }
+          {!_.isEmpty(tableColumns) &&
+            !_.isEmpty(mapColumns) &&
+            !_.isEmpty(apiColumns) && 
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography
+                  className={classes.title}
+                  variant="h6"
+                >
+                  Our Columns
+                </Typography>
+                {_.map(tableColumns, (column, key) => (
+                  <div key={key} className={classes.tableColumn}>
+                    <Typography variant="body1">
+                      {column.label}
+                    </Typography>
+                    {column.help_text && 
+                      <CustomizedTooltips
+                        toolTipText={column.help_text}
+                      />
+                    }
+                  </div>
+                ))}
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  className={classes.title}
+                  variant="h6"
+                >
+                  Mapping (From API Response)
+                </Typography>
+                {_.map(mapColumns, (col, key) => (
+                  <TextField
+                    key={key}
+                    className={classes.mapCol}
+                    variant="outlined"
+                    fullWidth
+                    required={col.required}
+                    id={col.name}
+                    label={col.label}
+                    select
+                    value={col.value}
+                    onChange={e => handleMapColumn(e, key)}
+                    error={formError[key] && formError[key].error}
+                    helperText={
+                      formError[key] ? formError[key].message : ""
+                    }
+                  >
+                    <MenuItem value={""}>--------</MenuItem>
+                    {_.map(apiColumns, (col, key) => (
+                      <MenuItem key={key} value={key}>
+                        <div className={classes.apiMenuItem}>
+                          {_.startCase(key)}
+                        </div>
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                ))}
+              </Grid>
+            </Grid>
+          }
+          <Grid container spacing={2} justify="center">
+            <Grid item xs={6} sm={4}>
+              <div className={classes.loadingWrapper}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  disabled={loading || submitDisabled()}
+                >
+                  Set Mapping and Import
+                </Button>
+                {loading && (
+                  <CircularProgress
+                    size={24}
+                    className={classes.buttonProgress}
+                  />
+                )}
+              </div>
+            </Grid>
           </Grid>
         </Grid>
-        <Grid container spacing={2} justify="center">
-          <Grid item xs={6} sm={4}>
-            <div className={classes.loadingWrapper}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                disabled={loading || submitDisabled()}
-              >
-                Set Mapping and Import
-              </Button>
-              {loading && (
-                <CircularProgress
-                  size={24}
-                  className={classes.buttonProgress}
-                />
-              )}
-            </div>
-          </Grid>
-        </Grid>
-      </Grid>
-    </form>
+      </form>
+      <ConfirmModal
+        open={openModal}
+        setOpen={setOpenModal}
+        submitAction={handleConfirmModal}
+        title={modalTitle}
+        submitText={"Correct"}
+      />
+    </>
   )
 }
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.itemsReducer,
+  ...state.importExportReducer,
+  loading: state.itemsReducer.loading || state.importExportReducer.loading,
 });
 
 export default connect(mapStateToProps)(AddFromAPI);

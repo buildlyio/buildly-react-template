@@ -9,6 +9,7 @@ import custodianReducer from "./custodian/reducers/custodian.reducer";
 import itemsReducer from "./items/reducers/items.reducer";
 import sensorsGatewayReducer from "./sensorsGateway/reducers/sensorsGateway.reducer";
 import shipmentReducer from "./shipment/reducers/shipment.reducers";
+import importExportReducer from "./importExport/reducers/importExport.reducer";
 import { LOGOUT_SUCCESS } from "./authuser/actions/authuser.actions";
 
 const appReducer = combineReducers({
@@ -21,6 +22,7 @@ const appReducer = combineReducers({
   itemsReducer,
   sensorsGatewayReducer,
   shipmentReducer,
+  importExportReducer,
 });
 
 const rootReducer = (state, action) => {
