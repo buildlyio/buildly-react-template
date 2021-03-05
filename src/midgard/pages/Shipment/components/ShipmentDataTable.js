@@ -7,6 +7,8 @@ import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
 import ViewIcon from "@material-ui/icons/RemoveRedEye";
 import DeleteIcon from "@material-ui/icons/Delete";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 import { SHIPMENT_DATA_TABLE_COLUMNS } from "../ShipmentConstants";
 import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
@@ -35,9 +37,12 @@ const CustomCheckbox = (props) => {
   }
 };
 
-const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelectedShipment, setSelectedFilter }) => {
+const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelectedShipment, setShipmentFilter }) => {
   const classes = useStyles();
+
   const [selected, setSelected] = useState(0);
+  const [cols, setCols] = useState(columns);
+  const [selectedFilter, setSelectedFilter] = useState("Active");
   const user = useContext(UserContext);
   const isAdmin = checkForGlobalAdmin(user);
   const options = {
@@ -56,20 +61,13 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
       setSelected(index);
       setSelectedShipment(rows[index]);
     },
-    onFilterChange: (columnChanged, filterList) => {
-      if (columnChanged === 'type'){
-        if (filterList[2].length === 1)
-          setSelectedFilter(filterList[2][0]);
-        else
-          setSelectedFilter(null);
-      }
-    },
     textLabels: {
       body: {
         noMatch: "No data to display",
       },
     },
   };
+
   const columns = [
     {
       name: "Edit",
@@ -117,15 +115,30 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
     }))
   ];
 
+  const onFilter = ({ target: { value } }) => {
+    setSelectedFilter(value);
+    setShipmentFilter(value);
+    const filteredCols = columns;
+    let filterList = [];
+    filteredCols[2].options.filterList = filterList;
+    setCols(filteredCols);
+  };
+
   return (
+    <div>
+      <Select onChange={onFilter} value={selectedFilter}>
+        <MenuItem value="Active">Active</MenuItem>
+        <MenuItem value="Completed">Completed</MenuItem>
+      </Select>
     <MUIDataTable
       data={rows}
-      columns={columns}
+      columns={cols}
       options={options}
       components={{
         Checkbox: CustomCheckbox,
       }}
     />
+    </div>
   )
 }
 

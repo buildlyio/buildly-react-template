@@ -113,7 +113,7 @@ function Shipment(props) {
   const [deleteItemId, setDeleteItemId] = useState("");
   const [rows, setRows] = useState([]);
   const [selectedShipment, setSelectedShipment] = useState(null);
-  const [selectedFilter, setSelectedFilter] = useState("Active");
+  const [shipmentFilter, setShipmentFilter] = useState("Active");
   const [markers, setMarkers] = useState([]);
   const [zoomLevel, setZoomLevel] = useState(12);
   const [tileView, setTileView] = useState(true);
@@ -202,12 +202,19 @@ function Shipment(props) {
         sensorReportData,
       );
       setRows(formattedRows);
+      if (formattedRows.length && shipmentFilter) {
+        let filteredFormattedRows = formattedRows.filter((row) => {
+          return row.type === shipmentFilter
+        });
+        setSelectedShipment(filteredFormattedRows[0]);
+      }
+
       if (!selectedShipment && formattedRows.length) {
-        if (selectedFilter) {
-          let filteredFormattedRow = formattedRows.filter((row) => {
-            return row.type === selectedFilter
+        if (shipmentFilter) {
+          let filteredFormattedRows = formattedRows.filter((row) => {
+            return row.type === shipmentFilter
           });
-          setSelectedShipment(filteredFormattedRow[0]);
+          setSelectedShipment(filteredFormattedRows[0]);
         }
         else
           setSelectedShipment(formattedRows[0]);
@@ -343,7 +350,7 @@ function Shipment(props) {
             editAction={handleEdit}
             deleteAction={handleDelete}
             setSelectedShipment={setSelectedShipment}
-            setSelectedFilter={setSelectedFilter}
+            setShipmentFilter={setShipmentFilter}
             tileView={tileView}
           />
         </Grid>
