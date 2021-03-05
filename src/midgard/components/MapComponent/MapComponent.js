@@ -64,12 +64,13 @@ const RenderedMap = withScriptjs(
                 scale: 1.4,
                 anchor: { x: 12, y: 24 },
               }}
-              label={index + 1 + ''}
-              labelAnchor={new google.maps.Point(0, 0)}
+              label={index+1 + ''}
               onClick={() => props.setShowInfoIndex(index)}
             >
               {props.showInfoIndex === index && (
-                <InfoWindow>
+                <InfoWindow
+                onCloseClick={() => props.setShowInfoIndex(null)}
+                >
                   <div style={{ color: "black",display: "flex",justifyContent:"flex-wrap",flexWrap:"wrap",flexDirection:"column",height:"80px",width:"200px"}}>
                     {REPORT_TYPES.map((item, idx) => (
                       <div key={`iconItem${idx}${item.id}`} style={{ boxSizing:"border-box",maxWidth:"50%",padding:"0.5em",display:"flex",alignItems:"center"}}>

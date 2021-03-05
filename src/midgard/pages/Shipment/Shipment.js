@@ -203,13 +203,13 @@ function Shipment(props) {
       );
       setRows(formattedRows);
       if (!selectedShipment && formattedRows.length) {
-        if (selectedFilter) {
-          let filteredFormattedRow = formattedRows.filter((row) => {
-            return row.type === selectedFilter
-          });
-          setSelectedShipment(filteredFormattedRow[0]);
-        }
-        else
+        // if (selectedFilter) {
+        //   let filteredFormattedRow = formattedRows.filter((row) => {
+        //     return row.type === selectedFilter
+        //   });
+        //   setSelectedShipment(filteredFormattedRow[0]);
+        // }
+        // else
           setSelectedShipment(formattedRows[0]);
       }
     }
