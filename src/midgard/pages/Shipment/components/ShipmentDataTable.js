@@ -42,7 +42,7 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
   const isAdmin = checkForGlobalAdmin(user);
   const options = {
     filter: true,
-    filterType: "dropdown",
+    filterType: "multiselect",
     responsive: "standard",
     tableBodyHeight: tileView ? "435px" : "500px",
     tableBodyMaxHeight: "",
@@ -56,6 +56,14 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
       setSelected(index);
       setSelectedShipment(rows[index]);
     },
+    // onFilterChange: (columnChanged, filterList) => {
+    //   if (columnChanged === 'type'){
+    //     if (filterList[2].length === 1)
+    //       setSelectedFilter(filterList[2][0]);
+    //     else
+    //       setSelectedFilter(null);
+    //   }
+    // },
     textLabels: {
       body: {
         noMatch: "No data to display",
@@ -74,9 +82,9 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
           const row = rows[dataIndex];
           return (
             <IconButton onClick={() => editAction(row)}>
-              {!isAdmin && row && row.status && 
-              row.status.toLowerCase() !== 'planned' 
-                ? <ViewIcon /> 
+              {!isAdmin && row && row.status &&
+              row.status.toLowerCase() !== 'planned'
+                ? <ViewIcon />
                 : <EditIcon />
               }
             </IconButton>

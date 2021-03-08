@@ -26,4 +26,9 @@ export const NAVIGATION_ITEMS = [
     name: "Gateway & Sensors",
     link: routes.SENSORS_GATEWAY,
   },
+  {
+    id: "reporting",
+    name: "Reporting",
+    link: routes.REPORTING,
+  },
 ];

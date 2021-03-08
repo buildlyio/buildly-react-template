@@ -83,14 +83,6 @@ export const getFormattedShipmentRow = (
     custodyRows = getFormattedCustodyRows(custodyData, custodianData);
   }
 
-  // let sensorReportRows = [];
-  // if (
-  //   sensorReportData &&
-  //   sensorReportData.length
-  // ) {
-  //   sensorReportRows = getFormattedSensorReportRows(sensorReportData);
-  // }
-
   shipmentList.forEach((list) => {
     let itemName = "";
     let custodyInfo = [];
@@ -114,7 +106,7 @@ export const getFormattedShipmentRow = (
 
     if (sensorReportData && sensorReportData.length > 0) {
       sensorReportData.forEach((report) => {
-        if (report.shipment_id.includes(list.partner_shipment_id)) {
+        if (report.shipment_id === list.partner_shipment_id) {
           sensorReportInfo.push(report);
         }
       });
