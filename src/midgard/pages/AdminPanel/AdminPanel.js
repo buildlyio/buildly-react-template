@@ -8,7 +8,7 @@ import Tab from '@material-ui/core/Tab';
 import { Route } from "react-router-dom";
 import { routes } from "midgard/routes/routesConstants";
 import Configuration from "./Configuration/Configuration";
-import Import from "./Import/Import";
+import ImportExport from "./ImportExport/ImportExport";
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -25,7 +25,7 @@ const AdminPanel = ({ history, location, organizationData }) => {
   const subNav = organizationData && organizationData.allow_import_export
     ? [
       { label: "Configuration", value: "configuration" },
-      { label: "Import", value: "import" },
+      { label: "Import/Export", value: "import-export" },
     ]
     : [
       { label: "Configuration", value: "configuration" },
@@ -58,7 +58,7 @@ const AdminPanel = ({ history, location, organizationData }) => {
       </Box>
       <Route path={routes.CONFIGURATION} component={Configuration} />
       {organizationData && organizationData.allow_import_export && 
-      <Route path={routes.IMPORT} component={Import} />
+      <Route path={routes.IMPORT_EXPORT} component={ImportExport} />
       }
     </Box>
   )

@@ -15,5 +15,5 @@ export const routes = {
   RESET_PASSWORD_CONFIRM: "/reset-password-confirm",
   ADMIN_PANEL: "/app/admin-panel",
   CONFIGURATION: "/app/admin-panel/configuration",
-  IMPORT: "/app/admin-panel/import",
+  IMPORT_EXPORT: "/app/admin-panel/import-export",
 };

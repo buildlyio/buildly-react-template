@@ -7,7 +7,8 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddFromFile from "./forms/AddFromFile";
-import AddFromAPI from "./forms/AddFromAPI";;
+import AddFromAPI from "./forms/AddFromAPI";
+import ExportData from "./forms/ExportData";
 
 const useStyles = makeStyles((theme) => ({
   accordian: {
@@ -22,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Import = () => {
+const ImportExport = () => {
   const classes = useStyles();
 
   return (
@@ -30,8 +31,8 @@ const Import = () => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls="from-file-content"
-          id="from-file-header"
+          aria-controls="import-file-content"
+          id="import-file-header"
         >
           <Typography variant="h5">
             Import from File
@@ -46,8 +47,8 @@ const Import = () => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls="from-api-content"
-          id="from-api-header"
+          aria-controls="import-api-content"
+          id="import-api-header"
         >
           <Typography variant="h5">
             Import from API
@@ -59,8 +60,24 @@ const Import = () => {
           </div>
         </AccordionDetails>
       </Accordion>
+      <Accordion className={classes.accordian}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="export-content"
+          id="export-header"
+        >
+          <Typography variant="h5">
+            Export Data
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <div className={classes.form}>
+            <ExportData />
+          </div>
+        </AccordionDetails>
+      </Accordion>
     </Box>
   )
 }
 
-export default Import;
+export default ImportExport;

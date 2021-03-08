@@ -21,6 +21,7 @@ import {
   GET_PRODUCTS_OPTIONS_FAILURE,
 } from "midgard/redux/items/actions/items.actions";
 import {
+  clearData,
   getApiResponse,
 } from "midgard/redux/importExport/actions/importExport.actions";
 
@@ -105,6 +106,8 @@ const AddFromAPI = ({
   const [reqHeader, setReqHeader] = useState("");
 
   useEffect(() => {
+    dispatch(clearData());
+    
     if (itemOptions === null) {
       httpService
         .makeOptionsRequest(
