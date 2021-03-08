@@ -11,9 +11,9 @@ import _ from "lodash";
 import { REPORT_TYPES, getIcon } from "../../pages/Reporting/ReportingConstants";
 
 export function MapComponent(props) {
-  const { markers } = props;
+  const { markers, setSelectedMarker } = props;
   const [center, setCenter] = useState({ lat: 47.606209, lng: -122.332069 });
-  const [showInfoIndex, setShowInfoIndex] = useState(null);
+  const [showInfoIndex, setShowInfoIndex] = useState({});
 
   useEffect(() => {
     if (markers && markers.length && _.last(markers).lat && _.last(markers).lng) {
@@ -21,7 +21,8 @@ export function MapComponent(props) {
         lat: _.last(markers).lat,
         lng: _.last(markers).lng,
       });
-      setShowInfoIndex(markers.length - 1);
+      setShowInfoIndex(markers[markers.length - 1]);
+      setSelectedMarker(markers[markers.length - 1]);
     }
 
     if (markers && !markers.length) {
@@ -35,13 +36,18 @@ export function MapComponent(props) {
     }
   };
 
+  const onMarkerSelect = (marker) => {
+    setShowInfoIndex(marker);
+    setSelectedMarker(marker);
+  }
+
   return (
     <RenderedMap
       {...props}
       onMarkerDrag={onMarkerDrag}
       center={center}
       showInfoIndex={showInfoIndex}
-      setShowInfoIndex={setShowInfoIndex}
+      onMarkerSelect={onMarkerSelect}
     />
   );
 }
@@ -65,11 +71,11 @@ const RenderedMap = withScriptjs(
                 anchor: { x: 12, y: 24 },
               }}
               label={index+1 + ''}
-              onClick={() => props.setShowInfoIndex(index)}
+              onClick={() => props.onMarkerSelect(mark)}
             >
-              {props.showInfoIndex === index && (
+              {props.showInfoIndex === mark && (
                 <InfoWindow
-                onCloseClick={() => props.setShowInfoIndex(null)}
+                onCloseClick={() => props.onMarkerSelect(null)}
                 >
                   <div style={{ color: "black",display: "flex",justifyContent:"flex-wrap",flexWrap:"wrap",flexDirection:"column",height:"80px",width:"200px"}}>
                     {REPORT_TYPES.map((item, idx) => (

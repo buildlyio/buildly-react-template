@@ -35,7 +35,7 @@ const CustomCheckbox = (props) => {
   }
 };
 
-const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelectedShipment, setSelectedFilter }) => {
+const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelectedShipment }) => {
   const classes = useStyles();
   const [selected, setSelected] = useState(0);
   const user = useContext(UserContext);
