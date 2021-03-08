@@ -35,10 +35,9 @@ import {
   addShipment,
   saveShipmentFormData,
 } from "../../../redux/shipment/actions/shipment.actions";
-import ItemsInfo from "./ItemInfo";
 import ShipmentRouteInfo from "./ShipmentRouteInfo";
 import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
-import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
+import { setOptionsData } from "midgard/utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
@@ -93,12 +92,9 @@ function ShipmentInfo(props) {
     history,
     loading,
     dispatch,
-    redirectTo,
     handleCancel,
     location,
     shipmentFlag,
-    custodianData,
-    custodyData,
     unitsOfMeasure,
     shipmentOptions,
     viewOnly,
@@ -115,7 +111,9 @@ function ShipmentInfo(props) {
 
   const lading_bill = useInput((editData && editData.bol_order_id) || "");
   const load_no = useInput("");
-  const shipment_status = useInput((editData && editData.status) || "");
+  const shipment_status = useInput((editData && editData.status) || "", {
+    required: true,
+  });
   const route_desc = useInput((editData && editData.route_description) || "");
   const mode_type = useInput((editData && editData.transport_mode) || "");
   const route_dist = useInput("");
@@ -189,15 +187,15 @@ function ShipmentInfo(props) {
         "estimated_time_of_arrival"
       );
       metadata["flags"] = setOptionsData(shipmentOptions.actions.POST, "flags");
-      metaData["uom_temp"] = setOptionsData(
+      metadata["uom_temp"] = setOptionsData(
         shipmentOptions.actions.POST,
         "uom_temp"
       );
-      metaData["uom_distance"] = setOptionsData(
+      metadata["uom_distance"] = setOptionsData(
         shipmentOptions.actions.POST,
         "uom_distance"
       );
-      metaData["uom_weight"] = setOptionsData(
+      metadata["uom_weight"] = setOptionsData(
         shipmentOptions.actions.POST,
         "uom_weight"
       );
@@ -538,6 +536,7 @@ function ShipmentInfo(props) {
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      required
                       id="shipment_status"
                       name="shipment_status"
                       select

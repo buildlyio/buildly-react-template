@@ -212,20 +212,7 @@ function Dashboard(props) {
             }
           });
         }
-        // "{'latitude': 47.65982, 'longitude': -122.329514, 'altitude': 22.5, 'positionUncertainty': 41.036568, 'locationMethod': 'GPS', 'timeOfPosition': 1610692285638}"
-        // if (row.sensor_report && row.sensor_report.length > 0) {
-        //   row.sensor_report.forEach((report) => {
-        //     if (report.report_location != null && Array.isArray(report.report_location)) {
-        //       try {
-        //         // data uses single quotes which throws an error
-        //         let lat_long = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
-        //         console.log('Lat Long: ', lat_long);
-        //       } catch(e) {
-        //         console.log(e);
-        //       }
-        //     }
-        //   })
-        // }
+
         if (row.flag_list) {
           row.flag_list.forEach((flag) => {
             if (flag.name.toLowerCase().includes("delay")) {

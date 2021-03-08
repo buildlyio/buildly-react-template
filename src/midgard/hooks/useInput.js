@@ -16,6 +16,6 @@ export const useInput = (initialValue = "", validators = {}) => {
     },
     clear: () => setValue(""),
     reset: () => setValue(initialValue),
-    hasChanged: () => initialValue !== value && value != ""  ? true : false,
+    hasChanged: () => initialValue !== value && value !== ""  ? true : false,
   };
 };

@@ -4,7 +4,7 @@ import MUIDataTable from "mui-datatables";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { 
+import {
   SHIPMENT_SENSOR_COLUMNS,
   SHIPMENT_SENSOR_REPORT_TOOLTIP,
 } from "../ShipmentConstants";
@@ -39,8 +39,9 @@ const useStyles = makeStyles((theme) => ({
 
 const ShipmentSensorTable = (props) => {
   const classes = useStyles();
-  const { sensorReport, shipmentName } = props;
+  const { sensorReport, shipmentName, selectedMarker } = props;
   const [rows, setRows] = useState([]);
+  const [selected, setSelected] = useState([]);
 
   const columns = SHIPMENT_SENSOR_COLUMNS.map(column => ({
     ...column,
@@ -55,9 +56,13 @@ const ShipmentSensorTable = (props) => {
     responsive: "standard",
     tableBodyHeight: "500px",
     tableBodyMaxHeight: "",
-    selectableRows: "none",
+    selectableRows: "multiple",
+    selectToolbarPlacement: "none",
+    selectableRowsHeader: false,
+    selectableRowsHideCheckboxes: true,
     rowsPerPageOptions: [5, 10, 15],
     downloadOptions: { filename: "SensorReportData.csv", separator: "," },
+    rowsSelected: selected,
     textLabels: {
       body: {
         noMatch: "No data to display",
@@ -67,24 +72,19 @@ const ShipmentSensorTable = (props) => {
 
   useEffect(() => {
     if (sensorReport) {
-      const data = sensorReport.map(report => {
-        const alert_status = report.excursion_flag ? "Excursion" : report.warning_flag ? "Warning" : "Normal";
-        const temperature = convertUnitsOfMeasure('celsius', report.report_temp, 'fahrenheit', 'temperature');
-        const locObj = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
-
-        return ({ 
-          alert_status,
-          timestamp: report.edit_date,
-          latitude: locObj.latitude,
-          longitude: locObj.longitude,
-          humidity: report.report_humidity,
-          temperature,
-        })
-      });
-      const sortedData = _.orderBy(data, ['timestamp'], ['desc']);
+      const sortedData = _.orderBy(sensorReport, ['timestamp'], ['desc']);
       setRows(sortedData);
     }
   }, [sensorReport]);
+
+  useEffect(() => {
+    if (selectedMarker) {
+      const selectedIndex = _.map(_.keys(_.pickBy(sensorReport, {lat: selectedMarker.lat,lng:selectedMarker.lng})), Number);
+      setSelected(selectedIndex);
+    }
+    else
+      setSelected([]);
+  }, [selectedMarker]);
 
   return (
     <Grid className={classes.root} container spacing={2}>
@@ -94,8 +94,8 @@ const ShipmentSensorTable = (props) => {
             className={classes.title}
             variant="h5"
           >
-            {shipmentName && 
-            `Sensor Report for Shipment: ${shipmentName}`}
+            {shipmentName &&
+              `Sensor Report for Shipment: ${shipmentName}`}
             <CustomizedTooltips toolTipText={SHIPMENT_SENSOR_REPORT_TOOLTIP} />
           </Typography>
         </div>

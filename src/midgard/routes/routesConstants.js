@@ -13,6 +13,7 @@ export const routes = {
   SHIPMENT: "/app/shipment",
   RESET_PASSWORD: "/reset-password",
   RESET_PASSWORD_CONFIRM: "/reset-password-confirm",
+  REPORTING: "/app/reporting",
   ADMIN_PANEL: "/app/admin-panel",
   CONFIGURATION: "/app/admin-panel/configuration",
 };

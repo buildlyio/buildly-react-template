@@ -16,6 +16,7 @@ import {
   getFormattedRow,
   MAP_TOOLTIP,
   SHIPMENT_DATA_TABLE_TOOLTIP,
+  SHIPMENT_SENSOR_COLUMNS,
 } from "./ShipmentConstants";
 import { routes } from "../../routes/routesConstants";
 import { Route } from "react-router-dom";
@@ -43,7 +44,7 @@ import {
   getSensorType,
   getSensorReport,
 } from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
-import { MAP_API_URL, convertUnitsOfMeasure } from "midgard/utils/utilMethods";
+import { MAP_API_URL, convertUnitsOfMeasure, getLocalDateTime } from "midgard/utils/utilMethods";
 import {
   getShipmentDetails,
   deleteShipment,
@@ -57,7 +58,6 @@ import CustomizedTooltips from "midgard/components/ToolTip/ToolTip";
 import { httpService } from "midgard/modules/http/http.service";
 import { environment } from "environments/environment";
 import { UserContext } from "midgard/context/User.context";
-import moment from 'moment';
 import ShipmentSensorTable from "./components/ShipmentSensorTable";
 import ShipmentDataTable from "./components/ShipmentDataTable";
 
@@ -113,6 +113,8 @@ function Shipment(props) {
   const [deleteItemId, setDeleteItemId] = useState("");
   const [rows, setRows] = useState([]);
   const [selectedShipment, setSelectedShipment] = useState(null);
+  const [selectedMarker, setSelectedMarker] = useState({});
+  const [selectedFilter, setSelectedFilter] = useState("Active");
   const [markers, setMarkers] = useState([]);
   const [zoomLevel, setZoomLevel] = useState(12);
   const [tileView, setTileView] = useState(true);
@@ -191,17 +193,25 @@ function Shipment(props) {
       sensorReportData &&
       shipmentFlag
     ) {
+
       let formattedRows = getFormattedRow(
         shipmentData,
         custodianData,
         itemData,
         shipmentFlag,
         custodyData,
-        sensorReportData
+        sensorReportData,
       );
       setRows(formattedRows);
       if (!selectedShipment && formattedRows.length) {
-        setSelectedShipment(formattedRows[0])
+        // if (selectedFilter) {
+        //   let filteredFormattedRow = formattedRows.filter((row) => {
+        //     return row.type === selectedFilter
+        //   });
+        //   setSelectedShipment(filteredFormattedRow[0]);
+        // }
+        // else
+          setSelectedShipment(formattedRows[0]);
       }
     }
   }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData, sensorReportData]);
@@ -209,54 +219,68 @@ function Shipment(props) {
   useEffect(() => {
     if (selectedShipment) {
       let markersToSet = [];
+      let sensorReportInfo = [];
       let temperatureUnit = unitsOfMeasure.filter((obj) => {
         return obj.supported_class === "Temperature";
       })[0]["name"].toLowerCase()
-      let tempConst = temperatureUnit[0].toUpperCase()
-      let index = 1;
       selectedShipment.sensor_report.forEach((report) => {
-        if (report.report_location != null && Array.isArray(report.report_location)) {
-          try {
-            // data uses single quotes which throws an error
-            const parsedLocation = JSON.parse(report.report_location[0].replaceAll(`'`, `"`));
-            const temperature = convertUnitsOfMeasure('celsius',report.report_temp,temperatureUnit,'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
-            const humidity = report.report_humidity;
-            const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
-            const marker = {
-              lat: parsedLocation && parsedLocation.latitude,
-              lng: parsedLocation && parsedLocation.longitude,
-              label: parsedLocation && `Temperature: ${temperature}\u00b0${tempConst}, Humidity: ${humidity}% recorded at ${moment(parsedLocation.timeOfPosition).format('llll')}`,
-              temp: temperature,
-              humidity: humidity,
-              color: color,
-            }
-            // Skip a marker on map only if temperature, humidity and lat long are all same.
-            // Considered use case: If a shipment stays at some position for long, temperature and humidity changes can be critical
-            const markerFound = _.find(markersToSet, {
-              temp: marker.temp,
-              humidity: marker.humidity,
-              lat: marker.lat,
-              lng: marker.lng,
-            });
-            if (!markerFound) {
-              markersToSet.push(marker);
-              index++;
-            }
+        if (report.report_entries.length > 0) {
+          const alert_status = report.excursion_flag ? "Excursion" : report.warning_flag ? "Warning" : "Normal";
+          const color = report.excursion_flag ? "red" : report.warning_flag ? "yellow" : "green";
+          report.report_entries.forEach((report_entry) => {
+            try {
+              const temperature = convertUnitsOfMeasure('celsius', report_entry.report_temp, temperatureUnit, 'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
+              const localDateTime = getLocalDateTime(report_entry.report_location.timeOfPosition)
+              if (report_entry.report_location.locationMethod !== "NoPosition") {
+                const marker = {
+                  lat: report_entry.report_location.latitude,
+                  lng: report_entry.report_location.longitude,
+                  label: 'Clustered',
+                  temperature: temperature,
+                  light: report_entry.report_light,
+                  shock: report_entry.report_shock,
+                  tilt: report_entry.report_tilt,
+                  humidity: report_entry.report_humidity,
+                  battery: report_entry.report_battery,
+                  pressure: report_entry.report_pressure,
+                  color: color,
+                  timestamp: localDateTime,
+                  alert_status: alert_status,
+                }
+                // Considered use case: If a shipment stays at some position for long, other value changes can be critical
+                const markerFound = _.find(markersToSet, {
+                  temperature: marker.temperature,
+                  light: marker.light,
+                  shock: marker.shock,
+                  tilt: marker.tilt,
+                  humidity: marker.humidity,
+                  battery: marker.battery,
+                  pressure: marker.pressure,
+                  lat: marker.lat,
+                  lng: marker.lng,
+                });
 
-          } catch(e) {
-            console.log(e);
-          }
+                if (!markerFound)
+                  markersToSet.push(marker);
+                sensorReportInfo.push(marker);
+              }
+            } catch (e) {
+              console.log(e);
+            }
+          });
         }
       });
-      setMarkers(markersToSet);
+      setMarkers(_.orderBy(markersToSet, ['timestamp'], ['asc']));
       setZoomLevel(12);
+      selectedShipment['sensor_report_info'] = sensorReportInfo;
     }
   }, [selectedShipment]);
 
   useEffect(() => {
-    if(markers && markers.length > 0)
-    setTimeout(() => setMapLoaded(true), 1000)
+    if (markers && markers.length > 0)
+      setTimeout(() => setMapLoaded(true), 1000)
   })
+
   const onAddButtonClick = () => {
     history.push(`${routes.SHIPMENT}/add`, {
       from: routes.SHIPMENT,
@@ -315,7 +339,7 @@ function Shipment(props) {
               </IconButton>
             </Hidden>
           </div>
-          <ShipmentDataTable 
+          <ShipmentDataTable
             rows={rows}
             editAction={handleEdit}
             deleteAction={handleDelete}
@@ -327,15 +351,15 @@ function Shipment(props) {
           <div className={classes.switchViewSection}>
             {
               selectedShipment
-              ? (
-                <Typography
-                  className={classes.tileHeading}
-                  variant="h5">
-                  {selectedShipment.name}
-                  <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
-                </Typography>
-              )
-              : (<CustomizedTooltips toolTipText={MAP_TOOLTIP} />)
+                ? (
+                  <Typography
+                    className={classes.tileHeading}
+                    variant="h5">
+                    {selectedShipment.name}
+                    <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
+                  </Typography>
+                )
+                : (<CustomizedTooltips toolTipText={MAP_TOOLTIP} />)
             }
             <Hidden smDown>
               <IconButton
@@ -354,6 +378,7 @@ function Shipment(props) {
             markers={markers}
             googleMapURL={MAP_API_URL}
             zoom={zoomLevel}
+            setSelectedMarker={setSelectedMarker}
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `550px` }} />}
             mapElement={<div style={{ height: `100%` }} />}
@@ -361,8 +386,10 @@ function Shipment(props) {
         </Grid>
       </Grid>
       <ShipmentSensorTable
-        sensorReport={selectedShipment?.sensor_report}
+        sensorReport={selectedShipment?.sensor_report_info}
         shipmentName={selectedShipment?.name}
+        selectedMarker={selectedShipment && selectedMarker}
+        cols={SHIPMENT_SENSOR_COLUMNS}
       />
       <Route path={`${routes.SHIPMENT}/add`} component={AddShipment} />
       <Route path={`${routes.SHIPMENT}/add/origin`} component={AddOriginInfo} />

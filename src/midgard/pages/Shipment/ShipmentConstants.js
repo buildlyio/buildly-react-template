@@ -7,6 +7,7 @@ import {
   DelayIcon,
   RecallIcon,
 } from "../../components/Icons/Icons";
+import _ from "lodash";
 
 export const MAP_TOOLTIP =
   "Locations of the shipment from starting point till current time";
@@ -18,8 +19,18 @@ export const SHIPMENT_SENSOR_REPORT_TOOLTIP =
   "Shipment Sensor Report till current time";
 
 export const SHIPMENT_DATA_TABLE_COLUMNS = [
-  { 
-    name: "name", 
+  // {
+  //   name: "type",
+  //   label: "Shipment Type",
+  //   options: {
+  //     sort: true,
+  //     sortThirdClickReset: true,
+  //     filter: true,
+  //     filterList: ["Active"],
+  //   },
+  // },
+  {
+    name: "name",
     label: "Shipment Name",
     options: {
       sort: true,
@@ -34,13 +45,13 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => value && value !== "-" 
-        ? moment(value).format("MM/DD/yyyy") 
+      customBodyRender: (value) => value && value !== "-"
+        ? moment(value).format("MM/DD/yyyy")
         : value
     },
   },
-  { 
-    name: "status", 
+  {
+    name: "status",
     label: "Shipment Status",
     options: {
       sort: true,
@@ -113,8 +124,8 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       }
     },
   },
-  { 
-    name: "custodian_name", 
+  {
+    name: "custodian_name",
     label: "Custodian Name",
     options: {
       sort: true,
@@ -129,8 +140,8 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => value && value !== "-" 
-        ? `$${numberWithCommas(value)}` 
+      customBodyRender: (value) => value && value !== "-"
+        ? `$${numberWithCommas(value)}`
         : value
     },
   },
@@ -154,15 +165,15 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => {
-        const displayDate = new Date(value).toLocaleDateString('en-US', 
-          {year: 'numeric', month: 'short', day: 'numeric'});
+        const displayDate = new Date(value).toLocaleDateString('en-US',
+          { year: 'numeric', month: 'short', day: 'numeric' });
         const displayTime = new Date(value).toLocaleTimeString();
         return (`${displayDate} ${displayTime}`);
       }
     },
   },
   {
-    name: "latitude",
+    name: "lat",
     label: "Location (Latitude)",
     options: {
       sort: true,
@@ -172,7 +183,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
     },
   },
   {
-    name: "longitude",
+    name: "lng",
     label: "Location (Longitude)",
     options: {
       sort: true,
@@ -182,17 +193,68 @@ export const SHIPMENT_SENSOR_COLUMNS = [
     },
   },
   {
-    name: "humidity",
-    label: "Humidity",
+    name: "light",
+    label: "Light (lux)",
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
+    },
+  },
+  {
+    name: "humidity",
+    label: "Humidity (%)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
     },
   },
   {
     name: "temperature",
     label: "Temperature (\u00b0F)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
+    },
+  },
+  {
+    name: "shock",
+    label: "Shock (mg)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
+    },
+  },
+  {
+    name: "tilt",
+    label: "Tilt (deg)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
+    },
+  },
+  {
+    name: "battery",
+    label: "Battery (%)",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => Number(value).toFixed(2)
+    },
+  },
+  {
+    name: "pressure",
+    label: "Pressure (Pa)",
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -208,9 +270,12 @@ export const getFormattedRow = (
   itemData,
   shipmentFlag,
   custodyData,
-  sensorReportData
+  sensorReportData,
 ) => {
-  let shipmentList = [...shipmentData];
+  let shipmentList = shipmentData.filter((shipment) => {
+    return shipment.status.toLowerCase() === "planned" || shipment.status.toLowerCase() === "enroute"
+  });
+
   let custodyRows = [];
   if (
     custodyData &&
@@ -238,10 +303,15 @@ export const getFormattedRow = (
     }
     list["custodian_name"] = custodianName;
     list["custody_info"] = custodyInfo;
+    // if (list.status.toLowerCase() === "planned" || list.status.toLowerCase() === "enroute")
+    //   list["type"] = "Active";
+    // else if (list.status.toLowerCase() === "completed" || list.status.toLowerCase() === "cancelled")
+    //   list["type"] = "Completed";
 
     if (sensorReportData && sensorReportData.length > 0) {
       sensorReportData.forEach((report) => {
-        if (report.shipment_id.includes(list.partner_shipment_id)) {
+        if (report.shipment_id === list.partner_shipment_id &&
+          report.report_entries.length > 0) {
           sensorReportInfo.push(report);
         }
       });
@@ -361,9 +431,7 @@ export const getFormattedCustodianRow = (data, contactInfo, custodyData) => {
   if (data && data.length && contactInfo && contactInfo.length) {
     customizedRow.forEach((rowItem) => {
       let contactInfoItem = getUniqueContactInfo(rowItem, contactInfo);
-      rowItem["location"] = `${
-        contactInfoItem.address1 && `${contactInfoItem.address1},`
-      }
+      rowItem["location"] = `${contactInfoItem.address1 && `${contactInfoItem.address1},`}
             ${contactInfoItem.address2 && `${contactInfoItem.address2},`}
             ${contactInfoItem.city && `${contactInfoItem.city},`}
             ${contactInfoItem.state && `${contactInfoItem.state},`}
@@ -408,27 +476,6 @@ export const getFormattedCustodyRows = (
   });
 
   return sortedList;
-};
-
-export const getFormattedSensorReportRows = (
-  sensorReportData,
-  shipmentFormData
-) => {
-  if (shipmentFormData && sensorReportData) {
-    let formattedData = [...shipmentFormData];
-    formattedData.forEach((element) => {
-      sensorReportData.forEach((report) => {
-        if (report.shipment_id.includes(element.partner_shipment_id)) {
-          element["sensor_report"] = report.id;
-        }
-      });
-    });
-    let sortedList = formattedData.sort((a, b) => {
-      return moment.utc(a.create_date).diff(moment.utc(b.create_date));
-    });
-    return sortedList;
-  }
-  return data;
 };
 
 export const svgIcon = (flagType, flag) => {
