@@ -61,6 +61,14 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
       setSelected(index);
       setSelectedShipment(rows[index]);
     },
+    // onFilterChange: (columnChanged, filterList) => {
+    //   if (columnChanged === 'type'){
+    //     if (filterList[2].length === 1)
+    //       setSelectedFilter(filterList[2][0]);
+    //     else
+    //       setSelectedFilter(null);
+    //   }
+    // },
     textLabels: {
       body: {
         noMatch: "No data to display",

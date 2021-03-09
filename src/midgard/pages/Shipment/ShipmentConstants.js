@@ -19,16 +19,16 @@ export const SHIPMENT_SENSOR_REPORT_TOOLTIP =
   "Shipment Sensor Report till current time";
 
 export const SHIPMENT_DATA_TABLE_COLUMNS = [
-  {
-    name: "type",
-    label: "Shipment Type",
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      filterList: ["Active"],
-    },
-  },
+  // {
+  //   name: "type",
+  //   label: "Shipment Type",
+  //   options: {
+  //     sort: true,
+  //     sortThirdClickReset: true,
+  //     filter: true,
+  //     filterList: ["Active"],
+  //   },
+  // },
   {
     name: "name",
     label: "Shipment Name",
@@ -272,7 +272,10 @@ export const getFormattedRow = (
   custodyData,
   sensorReportData,
 ) => {
-  let shipmentList = [...shipmentData];
+  let shipmentList = shipmentData.filter((shipment) => {
+    return shipment.status.toLowerCase() === "planned" || shipment.status.toLowerCase() === "enroute"
+  });
+
   let custodyRows = [];
   if (
     custodyData &&
@@ -300,10 +303,10 @@ export const getFormattedRow = (
     }
     list["custodian_name"] = custodianName;
     list["custody_info"] = custodyInfo;
-    if (list.status.toLowerCase() === "planned" || list.status.toLowerCase() === "enroute")
-      list["type"] = "Active";
-    else if (list.status.toLowerCase() === "completed" || list.status.toLowerCase() === "cancelled")
-      list["type"] = "Completed";
+    // if (list.status.toLowerCase() === "planned" || list.status.toLowerCase() === "enroute")
+    //   list["type"] = "Active";
+    // else if (list.status.toLowerCase() === "completed" || list.status.toLowerCase() === "cancelled")
+    //   list["type"] = "Completed";
 
     if (sensorReportData && sensorReportData.length > 0) {
       sensorReportData.forEach((report) => {

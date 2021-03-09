@@ -39,8 +39,9 @@ const useStyles = makeStyles((theme) => ({
 
 const ShipmentSensorTable = (props) => {
   const classes = useStyles();
-  const { sensorReport, shipmentName } = props;
+  const { sensorReport, shipmentName, selectedMarker } = props;
   const [rows, setRows] = useState([]);
+  const [selected, setSelected] = useState([]);
 
   const columns = SHIPMENT_SENSOR_COLUMNS.map(column => ({
     ...column,
@@ -55,9 +56,13 @@ const ShipmentSensorTable = (props) => {
     responsive: "standard",
     tableBodyHeight: "500px",
     tableBodyMaxHeight: "",
-    selectableRows: "none",
+    selectableRows: "multiple",
+    selectToolbarPlacement: "none",
+    selectableRowsHeader: false,
+    selectableRowsHideCheckboxes: true,
     rowsPerPageOptions: [5, 10, 15],
     downloadOptions: { filename: "SensorReportData.csv", separator: "," },
+    rowsSelected: selected,
     textLabels: {
       body: {
         noMatch: "No data to display",
@@ -71,6 +76,15 @@ const ShipmentSensorTable = (props) => {
       setRows(sortedData);
     }
   }, [sensorReport]);
+
+  useEffect(() => {
+    if (selectedMarker) {
+      const selectedIndex = _.map(_.keys(_.pickBy(sensorReport, {lat: selectedMarker.lat,lng:selectedMarker.lng})), Number);
+      setSelected(selectedIndex);
+    }
+    else
+      setSelected([]);
+  }, [selectedMarker]);
 
   return (
     <Grid className={classes.root} container spacing={2}>

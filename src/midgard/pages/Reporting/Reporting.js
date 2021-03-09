@@ -114,6 +114,7 @@ function Reporting(props) {
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [shipment,setShipment] = useState("");
   const [shipmentOverview, setShipmentOverview] = useState({});
+  const [selectedMarker, setSelectedMarker] = useState({});
 
   const handleListItemClick = (event, index) => {
     setSelectedGraph(index);
@@ -179,6 +180,10 @@ function Reporting(props) {
         unitsOfMeasure,
       );
       setShipmentOverview(overview);
+
+      if (!selectedShipment && overview.length) {
+        setSelectedShipment(overview[0]);
+      }
     }
   }, [shipmentData, custodianData, custodyData, sensorReportData]);
 
@@ -228,6 +233,7 @@ function Reporting(props) {
             markers={markers}
             googleMapURL={MAP_API_URL}
             zoom={zoomLevel}
+            setSelectedMarker={setSelectedMarker}
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `550px` }} />}
             mapElement={<div style={{ height: `100%` }} />}
@@ -327,6 +333,7 @@ function Reporting(props) {
         <ShipmentSensorTable
           sensorReport={selectedShipment?.sensor_report}
           shipmentName={selectedShipment?.name}
+          selectedMarker={selectedShipment && selectedMarker}
         />
     </Box>
   )

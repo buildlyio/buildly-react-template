@@ -114,6 +114,7 @@ function Shipment(props) {
   const [rows, setRows] = useState([]);
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [shipmentFilter, setShipmentFilter] = useState("Active");
+  const [selectedMarker, setSelectedMarker] = useState({});
   const [markers, setMarkers] = useState([]);
   const [zoomLevel, setZoomLevel] = useState(12);
   const [tileView, setTileView] = useState(true);
@@ -210,13 +211,13 @@ function Shipment(props) {
       }
 
       if (!selectedShipment && formattedRows.length) {
-        if (shipmentFilter) {
-          let filteredFormattedRows = formattedRows.filter((row) => {
-            return row.type === shipmentFilter
-          });
-          setSelectedShipment(filteredFormattedRows[0]);
-        }
-        else
+        // if (selectedFilter) {
+        //   let filteredFormattedRow = formattedRows.filter((row) => {
+        //     return row.type === selectedFilter
+        //   });
+        //   setSelectedShipment(filteredFormattedRow[0]);
+        // }
+        // else
           setSelectedShipment(formattedRows[0]);
       }
     }
@@ -385,6 +386,7 @@ function Shipment(props) {
             markers={markers}
             googleMapURL={MAP_API_URL}
             zoom={zoomLevel}
+            setSelectedMarker={setSelectedMarker}
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `550px` }} />}
             mapElement={<div style={{ height: `100%` }} />}
@@ -394,6 +396,7 @@ function Shipment(props) {
       <ShipmentSensorTable
         sensorReport={selectedShipment?.sensor_report_info}
         shipmentName={selectedShipment?.name}
+        selectedMarker={selectedShipment && selectedMarker}
         cols={SHIPMENT_SENSOR_COLUMNS}
       />
       <Route path={`${routes.SHIPMENT}/add`} component={AddShipment} />
