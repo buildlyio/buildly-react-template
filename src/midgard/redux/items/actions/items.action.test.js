@@ -236,14 +236,3 @@ describe("actions", () => {
     expect(actions.deleteUnitsOfMeasure(id)).toEqual(expectedAction);
   });
 });
-
-describe("actions", () => {
-  it("should create an action to import from file", () => {
-    const payload = { model: "product", file: "Products.csv" };
-    const expectedAction = {
-      type: actions.IMPORT_FROM_FILE,
-      payload,
-    };
-    expect(actions.importFromFile(payload)).toEqual(expectedAction);
-  });
-});

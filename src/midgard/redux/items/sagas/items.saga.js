@@ -62,9 +62,6 @@ import {
   DELETE_UNITS_OF_MEASURE,
   DELETE_UNITS_OF_MEASURE_SUCCESS,
   DELETE_UNITS_OF_MEASURE_FAILURE,
-  IMPORT_FROM_FILE,
-  IMPORT_FROM_FILE_SUCCESS,
-  IMPORT_FROM_FILE_FAILURE,
 } from "../actions/items.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
 import { oauthService } from "../../../modules/oauth/oauth.service";
@@ -852,48 +849,6 @@ function* deleteUnitsOfMeasure(payload) {
   }
 }
 
-function* importFromFile(action) {
-  let { payload } = action;
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      "post",
-      `${environment.API_URL}${shipmentApiEndPoint}file_upload/`,
-      payload,
-      true,
-      'multipart/form-data'
-    );
-    if (data && data.data.status) {
-      yield [
-        yield put({
-          type: IMPORT_FROM_FILE_SUCCESS,
-        }),
-        yield put(
-          showAlert({
-            type: "success",
-            open: true,
-            message: data.data.status,
-          })
-        ),
-      ]
-    }
-  } catch (error) {
-    console.log(error);
-    yield [
-      yield put({
-        type: IMPORT_FROM_FILE_FAILURE,
-      }),
-      yield put(
-        showAlert({
-          type: "error",
-          open: true,
-          message: `Couldn't import ${_.capitalize(payload.model)} Data due to some error!`,
-        })
-      ),
-    ]
-  }
-}
-
 function* watchGetProductsList() {
   yield takeLatest(GET_PRODUCTS, getProductList);
 }
@@ -978,10 +933,6 @@ function* watchDeleteUnitsOfMeasure() {
   yield takeLatest(DELETE_UNITS_OF_MEASURE, deleteUnitsOfMeasure);
 }
 
-function* watchImportFromFile() {
-  yield takeLatest(IMPORT_FROM_FILE, importFromFile);
-}
-
 export default function* itemSaga() {
   yield all([
     watchSearchItem(),
@@ -1005,6 +956,5 @@ export default function* itemSaga() {
     watchAddUnitsOfMeasure(),
     watchEditUnitsOfMeasure(),
     watchDeleteUnitsOfMeasure(),
-    watchImportFromFile(),
   ]);
 }

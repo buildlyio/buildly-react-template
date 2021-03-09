@@ -21,8 +21,8 @@ import {
   GET_PRODUCTS_OPTIONS_FAILURE,
 } from "midgard/redux/items/actions/items.actions";
 import {
-  clearData,
   getApiResponse,
+  addApiSetup,
 } from "midgard/redux/importExport/actions/importExport.actions";
 
 const useStyles = makeStyles((theme) => ({
@@ -86,8 +86,8 @@ const AddFromAPI = ({
 }) => {
   const classes = useStyles();
   const dataTypes = [
-    { name: "Items", option: itemOptions },
-    { name: "Products", option: productOptions },
+    { name: "Items", value: "item", option: itemOptions },
+    { name: "Products", value: "product", option: productOptions },
   ];
 
   const [tableColumns, setTableColumns] = useState({});
@@ -106,14 +106,11 @@ const AddFromAPI = ({
   const [reqHeader, setReqHeader] = useState("");
 
   useEffect(() => {
-    dispatch(clearData());
-    
     if (itemOptions === null) {
       httpService
         .makeOptionsRequest(
           "options",
-          // `${environment.API_URL}shipment/item/`,
-          "https://tp-dev-shipment.buildly.io/item/",
+          `${environment.API_URL}shipment/item/`,
           true
         )
         .then((response) => response.json())
@@ -129,8 +126,7 @@ const AddFromAPI = ({
       httpService
         .makeOptionsRequest(
           "options",
-          // `${environment.API_URL}shipment/product/`,
-          "https://tp-dev-shipment.buildly.io/product/",
+          `${environment.API_URL}shipment/product/`,
           true
         )
         .then((response) => response.json())
@@ -149,7 +145,20 @@ const AddFromAPI = ({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Submit");
+    let mapping = {};
+    _.forEach(mapColumns, (col, key) => {
+      mapping[key] = col.value
+    })
+
+    dispatch(addApiSetup(
+      apiURL.value,
+      keyParamName.value,
+      keyParamPlace.value,
+      apiKey.value,
+      apiResponseData.value,
+      dataFor.value,
+      mapping,
+    ));
   };
 
   /**
@@ -177,7 +186,8 @@ const AddFromAPI = ({
       });
 
     if (dataFor.hasChanged()) {
-      const cols = input.value.actions.POST;
+      const table = _.find(dataTypes, { value: input.value })
+      const cols = table.option.actions.POST;
       let mapCols = {};
       _.forEach(cols, (col, key) => {
         mapCols = {
@@ -229,7 +239,7 @@ const AddFromAPI = ({
       </>;
       const final = keyParamPlace.value === "queryParam"
         ? {
-            url: `"${url}?${keyParamName.value}=${apiKey.value}"`,
+            url: `${url}?${keyParamName.value}=${apiKey.value}`,
             title: queryUrl,
             header: "",
           }
@@ -402,7 +412,7 @@ const AddFromAPI = ({
               ))}
             </Grid>
           }
-          {apiResponse &&
+          {apiResponse && 
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -440,7 +450,7 @@ const AddFromAPI = ({
               >
                 <MenuItem value={""}>--------</MenuItem>
                 {dataTypes.map((type, index) => (
-                  <MenuItem key={index} value={type.option}>
+                  <MenuItem key={index} value={type.value}>
                     {type.name}
                   </MenuItem>
                 ))}

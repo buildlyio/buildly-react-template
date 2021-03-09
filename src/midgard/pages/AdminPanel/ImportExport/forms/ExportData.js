@@ -7,6 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import {
+  clearData,
   getExportData,
 } from "midgard/redux/importExport/actions/importExport.actions";
 
@@ -29,6 +30,7 @@ const ExportData = ({ dispatch, exportData }) => {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    dispatch(clearData())
     setReady(false)
   }, []);
 
@@ -74,7 +76,10 @@ const ExportData = ({ dispatch, exportData }) => {
             label="Data to export"
             select
             value={exportTable}
-            onChange={e => setExportTable(e.target.value)}
+            onChange={e => {
+              dispatch(clearData())
+              setExportTable(e.target.value)
+            }}
           >
             <MenuItem value={""}>--------</MenuItem>
             <MenuItem value={"item"}>Items</MenuItem>
@@ -91,7 +96,10 @@ const ExportData = ({ dispatch, exportData }) => {
             label="Export As"
             select
             value={exportType}
-            onChange={e => setExportType(e.target.value)}
+            onChange={e => {
+              dispatch(clearData())
+              setExportType(e.target.value)
+            }}
           >
             <MenuItem value={""}>--------</MenuItem>
             <MenuItem value={"csv"}>CSV</MenuItem>
