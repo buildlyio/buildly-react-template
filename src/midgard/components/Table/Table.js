@@ -9,7 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import EditIcon from "@material-ui/icons/Edit";
-import ViewIcon from "@material-ui/icons/RemoveRedEye";
+import ViewIcon from "@material-ui/icons/ListAlt";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import SearchInput from "../SearchComponent/SearchInput";
