@@ -32,6 +32,9 @@ const theme = createMuiTheme({
         '.MuiTableRow-root.mui-row-selected': {
           backgroundColor: "#a48a30 !important",
         },
+        '.MuiChip-root': {
+          display: "none",
+        },
       }
     }
   }
