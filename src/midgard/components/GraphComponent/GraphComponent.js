@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import { Scatter } from 'react-chartjs-2';
+import Typography from "@material-ui/core/Typography";
 
 export function GraphComponent(props) {
   const { data, selectedGraph } = props;
@@ -53,7 +54,7 @@ export function GraphComponent(props) {
       { data && data.length > 0 ? (
         <Scatter data={dataChart} options={options} />
       ) :
-        <div> No data to display </div>}
+        <Typography variant={"h4"} align={"center"}>No data to display</Typography>}
     </div>
   );
 }

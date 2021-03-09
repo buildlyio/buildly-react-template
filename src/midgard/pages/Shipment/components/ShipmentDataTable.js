@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import MUIDataTable from "mui-datatables";
 import { makeStyles } from "@material-ui/core/styles";
 import Checkbox from '@material-ui/core/Checkbox';
@@ -12,6 +12,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { SHIPMENT_DATA_TABLE_COLUMNS } from "../ShipmentConstants";
 import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
+import _ from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   centerHeader: {
@@ -61,14 +62,18 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
       setSelected(index);
       setSelectedShipment(rows[index]);
     },
-    // onFilterChange: (columnChanged, filterList) => {
-    //   if (columnChanged === 'type'){
-    //     if (filterList[2].length === 1)
-    //       setSelectedFilter(filterList[2][0]);
-    //     else
-    //       setSelectedFilter(null);
-    //   }
-    // },
+    onFilterChange: (columnChanged, filterList) => {
+      if (columnChanged === 'type'){
+        let filteredValue = null
+        if (filterList[2].length === 1)
+          filteredValue = filterList[2][0]
+        onFilter({ target: { filteredValue } });
+      }
+    },
+    onTableInit: () => {
+      let value = "Active"
+      setTimeout(() => onFilter({ target: { value } }), 1000);
+    },
     textLabels: {
       body: {
         noMatch: "No data to display",
@@ -123,13 +128,27 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
     }))
   ];
 
+  useEffect(() => {
+    if (selectedFilter && rows.length > 0) {
+      let selectedIndex = _.map(_.keys(_.pickBy(rows, {type: selectedFilter})), Number);
+      setSelected(selectedIndex[0]);
+    }
+  })
+
   const onFilter = ({ target: { value } }) => {
     setSelectedFilter(value);
     setShipmentFilter(value);
     const filteredCols = columns;
-    let filterList = [];
-    filteredCols[2].options.filterList = filterList;
-    setCols(filteredCols);
+    if (value == "Active" || value == "Completed") {
+      let filterList = [value];
+      filteredCols[2].options.filterList = filterList;
+      setCols(filteredCols);
+    }
+    else {
+      filteredCols[2].options.filterList = [];
+      setCols(filteredCols);
+      setSelected(0);
+    }
   };
 
   return (
