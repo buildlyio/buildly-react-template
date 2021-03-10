@@ -68,11 +68,13 @@ export const addApiSetup = (
   mapping,
 ) => ({
   type: ADD_API_SETUP,
-  url,
-  key_name,
-  key_placement,
-  key_value,
-  values_to_pick_response_from,
-  table_name,
-  mapping,
+  payload: {
+    url,
+    key_name,
+    key_placement,
+    key_value,
+    values_to_pick_response_from,
+    table_name,
+    mapping,
+  },
 });

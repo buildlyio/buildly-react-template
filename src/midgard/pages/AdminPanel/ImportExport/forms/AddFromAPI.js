@@ -97,7 +97,7 @@ const AddFromAPI = ({
   const keyParamName = useInput("", { required: true });
   const keyParamPlace = useInput("", { required: true });
   const apiKey = useInput("", { required: true });
-  const apiResponseData = useInput("", { required: true });
+  const apiResponseData = useInput("");
   const dataFor = useInput("", { required: true });
   const [formError, setFormError] = useState({});
   const [openModal, setOpenModal] = useState(false);
@@ -185,7 +185,7 @@ const AddFromAPI = ({
         },
       });
 
-    if (dataFor.hasChanged()) {
+    if (parentId === "dataFor") {
       const table = _.find(dataTypes, { value: input.value })
       const cols = table.option.actions.POST;
       let mapCols = {};
@@ -200,6 +200,10 @@ const AddFromAPI = ({
           }
         };
       });
+
+      if (_.isEmpty(apiColumns)) {
+        setAPIColumns(apiResponse[0]);
+      }
 
       setTableColumns(cols);
       setMapColumns(mapCols);
@@ -259,15 +263,11 @@ const AddFromAPI = ({
       };
     }
 
-    if (apiResponseData.hasChanged()) {
-      const cols = apiResponse[apiResponseData.value][0];
+    if (e.target.id === "apiResponseData" && input.value) {
+      const cols = apiResponse[input.value][0];
 
-      if (!apiColumns) {
+      if (_.isEmpty(apiColumns) || (apiColumns !== cols)) {
         setAPIColumns(cols);
-      } else {
-        if (apiColumns !== cols) {
-          setAPIColumns(cols);
-        }
       }
     }
   };
@@ -276,8 +276,7 @@ const AddFromAPI = ({
     let errorKeys = Object.keys(formError);
     let errorExists = false;
     let check = (!apiURL.value || !keyParamName.value ||
-    !keyParamPlace.value || !apiKey.value || !apiResponseData.value ||
-    !dataFor.value);
+    !keyParamPlace.value || !apiKey.value || !dataFor.value);
     _.forEach(mapColumns, (col, index) => {
       if (col.required) {
         check = check || !mapColumns[index].value
@@ -405,11 +404,9 @@ const AddFromAPI = ({
           {apiResponse &&
             <Grid item xs={12}>
               <Typography variant="h6">API Response</Typography>
-              {_.map(apiResponse, (res, key) => (
-                <pre key={key} className={classes.apiResponse}>
-                  {key}: {JSON.stringify(res)}
-                </pre>
-              ))}
+              <pre className={classes.apiResponse}>
+                {JSON.stringify(apiResponse)}
+              </pre>
             </Grid>
           }
           {apiResponse && 
@@ -420,18 +417,18 @@ const AddFromAPI = ({
                 fullWidth
                 required
                 id="apiResponseData"
-                label="Field name to pick data from API Response"
+                label="Pick only this from response (Optional)"
                 name="apiResponseData"
                 error={formError.apiResponseData && formError.apiResponseData.error}
                 helperText={
                   formError.apiResponseData ? formError.apiResponseData.message : ""
                 }
-                onBlur={(e) => handleBlur(e, "required", apiResponseData)}
+                onBlur={(e) => handleBlur(e, "", apiResponseData)}
                 {...apiResponseData.bind}
               />
             </Grid>
           }
-          {apiResponseData.hasChanged() &&
+          {apiResponse &&
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -445,7 +442,7 @@ const AddFromAPI = ({
                 helperText={
                   formError.dataFor ? formError.dataFor.message : ""
                 }
-                onBlur={(e) => handleBlur(e, "required", dataFor)}
+                onBlur={(e) => handleBlur(e, "required", dataFor, "dataFor")}
                 {...dataFor.bind}
               >
                 <MenuItem value={""}>--------</MenuItem>

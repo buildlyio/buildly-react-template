@@ -35,7 +35,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        apiResponse: action.res,
+        apiResponse: action.res.data,
       };
 
     case GET_API_RESPONSE_FAILURE:

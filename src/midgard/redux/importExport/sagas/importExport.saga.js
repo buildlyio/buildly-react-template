@@ -66,7 +66,6 @@ function* addFromFile(payload) {
 }
 
 function* getApiResponse(payload) {
-  console.log(payload);
   try {
     const data = yield call(
       httpService.makeRequest,
@@ -130,7 +129,8 @@ function* getExportData(payload) {
   }
 }
 
-function* addApiSetup(payload) {
+function* addApiSetup(action) {
+  const { payload } = action;
   let endPoint;
   switch (payload.table_name) {
     case "item":
@@ -153,7 +153,7 @@ function* addApiSetup(payload) {
           message: response.data.status,
         })
       ),
-      yield put({ type: ADD_API_SETUP })
+      yield put({ type: ADD_API_SETUP_SUCCESS })
     ];
   } catch (error) {
     console.log("error", error);
