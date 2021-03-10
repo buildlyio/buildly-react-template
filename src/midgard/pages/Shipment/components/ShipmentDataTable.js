@@ -77,17 +77,17 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
       setSelected(index);
       setSelectedShipment(rows[index]);
     },
-    onFilterChange: (columnChanged, filterList,event) => {
-      if (columnChanged === 'type'){
-        let filteredValue = null
-        if (filterList[2].length === 1)
-          filteredValue = filterList[2][0]
-        onTypeFilter(event,filteredValue);
-      }
-    },
-    onTableInit: () => {
-      setTimeout(() => onTypeFilter(null,typeFilter), 1000);
-    },
+    // onFilterChange: (columnChanged, filterList,event) => {
+    //   if (columnChanged === 'type'){
+    //     let filteredValue = null
+    //     if (filterList[2].length === 1)
+    //       filteredValue = filterList[2][0]
+    //     onTypeFilter(event,filteredValue);
+    //   }
+    // },
+    // onTableInit: () => {
+    //   onTypeFilter(null,typeFilter);
+    // },
     textLabels: {
       body: {
         noMatch: "No data to display",
@@ -142,12 +142,12 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
     }))
   ];
 
-  useEffect(() => {
-    if (selectedFilter && rows.length > 0) {
-      let selectedIndex = _.map(_.keys(_.pickBy(rows, {type: selectedFilter})), Number);
-      setSelected(selectedIndex[0]);
-    }
-  })
+  // useEffect(() => {
+  //   if (selectedFilter && rows.length) {
+  //     let selectedIndex = _.map(_.keys(_.pickBy(rows, {type: selectedFilter})), Number);
+  //     setSelected(selectedIndex[0]);
+  //   }
+  // })
 
   const onTypeFilter = (event, value) => {
     setSelectedFilter(value);
@@ -167,14 +167,14 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
 
   return (
     <div className={classes.root}>
-      <Box mb={3} className={classes.tabContainer}>
+      {/* <Box mb={3} className={classes.tabContainer}>
         <Tabs value={selectedFilter} onChange={onTypeFilter}>
           {subNav.map((itemProps, index) => <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />)}
         </Tabs>
-      </Box>
+      </Box> */}
       <MUIDataTable
         data={rows}
-        columns={cols}
+        columns={columns}
         options={options}
         components={{
           Checkbox: CustomCheckbox,

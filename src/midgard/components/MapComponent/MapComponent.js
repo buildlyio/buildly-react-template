@@ -22,7 +22,8 @@ export function MapComponent(props) {
         lng: _.last(markers).lng,
       });
       setShowInfoIndex(markers[markers.length - 1]);
-      setSelectedMarker(markers[markers.length - 1]);
+      if (setSelectedMarker)
+        setSelectedMarker(markers[markers.length - 1]);
     }
 
     if (markers && !markers.length) {
@@ -38,7 +39,8 @@ export function MapComponent(props) {
 
   const onMarkerSelect = (marker) => {
     setShowInfoIndex(marker);
-    setSelectedMarker(marker);
+    if (setSelectedMarker)
+      setSelectedMarker(marker);
   }
 
   return (
@@ -56,7 +58,7 @@ const RenderedMap = withScriptjs(
   withGoogleMap((props) => (
     <GoogleMap zoom={props.zoom} center={props.center}>
         {props.isMarkerShown &&
-        props.markers &&
+        props.markers && props.setSelectedMarker &&
         props.markers.map((mark, index) =>
           mark.label ? (
             <Marker
@@ -103,7 +105,7 @@ const RenderedMap = withScriptjs(
               />
             )
         )}
-      {props.isMarkerShown &&
+      {props.isMarkerShown && props.setSelectedMarker &&
         props.markers.length > 0 &&
         props.showPath && (
           <Polyline
