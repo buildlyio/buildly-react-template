@@ -125,6 +125,7 @@ module.exports = (env, argv) => {
           template: "./src/index.html",
           filename: "./index.html",
           favicon: './src/assets/favicon.ico',
+          hash: true,
       }),
       new CopyPlugin([
         { from: 'window.environment.js', to: 'environment.js' },

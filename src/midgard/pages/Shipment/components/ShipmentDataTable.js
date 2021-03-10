@@ -8,7 +8,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Radio from '@material-ui/core/Radio';
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
-import ViewIcon from "@material-ui/icons/RemoveRedEye";
+import ViewIcon from "@material-ui/icons/ListAlt";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { SHIPMENT_DATA_TABLE_COLUMNS } from "../ShipmentConstants";
 import { checkForGlobalAdmin } from "midgard/utils/utilMethods";

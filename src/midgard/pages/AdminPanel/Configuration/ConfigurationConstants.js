@@ -3,6 +3,9 @@ import _ from "lodash";
 
 let units = [];
 
+export const ORG_SETTINGS_TOOLTIP = 
+  "Setting(s) for the Organization";
+
 export const CUSTODIAN_TYPE_TOOLTIP = 
   "Custodian Type(s) available in the system";
 

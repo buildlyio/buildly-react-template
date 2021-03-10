@@ -53,3 +53,14 @@ describe('actions', () => {
         expect(actions.invite(data)).toEqual(expectedAction)
     })
 })
+
+describe('actions', () => {
+    it('should create an action to Update Organization', () => {
+        const data = 'AUTH/UPDATE_ORGANIZATION';
+        const expectedAction = {
+            data,
+            type: actions.UPDATE_ORGANIZATION,
+        }
+        expect(actions.updateOrganization(data)).toEqual(expectedAction)
+    })
+})
