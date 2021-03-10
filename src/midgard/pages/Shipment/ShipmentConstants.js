@@ -26,7 +26,8 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: false,
-      filterList: ["Active"],
+      display: false,
+      // filterList: ["Active"],
     },
   },
   {
