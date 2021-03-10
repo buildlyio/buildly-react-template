@@ -3,7 +3,7 @@ import MUIDataTable from "mui-datatables";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from "@material-ui/core/Box";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles , createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import Checkbox from '@material-ui/core/Checkbox';
 import Radio from '@material-ui/core/Radio';
 import IconButton from "@material-ui/core/IconButton";
@@ -27,9 +27,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   tabContainer: {
-    backgroundColor: "#424242",
+    backgroundColor: "#383636",
     margin: "0",
-    borderRadius: "6px",
   },
 }));
 
@@ -90,6 +89,37 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
       },
     },
   };
+
+  const getMuiTheme = () => createMuiTheme({
+    palette: {
+      type: "dark",
+      background: {
+        default: "#605e5e"
+      },
+      primary: {
+        main: "#EBC645",
+        contrastText: "#3B3A3A",
+      },
+      secondary: {
+        main: "#fff",
+        contrastText: "#000",
+      },
+    },
+    overrides: {
+      MuiTableRow: {
+        root: {
+          '&$selected': {
+            backgroundColor: '#a48a30 !important'
+          }
+        }
+      },
+      MUIDataTableFilterList: {
+        chip: {
+          display: 'none'
+        }
+      },
+    }
+  })
 
   const columns = [
     {
@@ -168,6 +198,7 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
           {subNav.map((itemProps, index) => <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />)}
         </Tabs>
       </Box>
+      <MuiThemeProvider theme={getMuiTheme}>
     <MUIDataTable
       data={rows}
       columns={cols}
@@ -176,6 +207,7 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
         Checkbox: CustomCheckbox,
       }}
     />
+    </MuiThemeProvider>
     </div>
   )
 }
