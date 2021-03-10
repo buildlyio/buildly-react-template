@@ -113,8 +113,8 @@ function Shipment(props) {
   const [deleteItemId, setDeleteItemId] = useState("");
   const [rows, setRows] = useState([]);
   const [selectedShipment, setSelectedShipment] = useState(null);
+  const [shipmentFilter, setShipmentFilter] = useState("Active");
   const [selectedMarker, setSelectedMarker] = useState({});
-  const [selectedFilter, setSelectedFilter] = useState("Active");
   const [markers, setMarkers] = useState([]);
   const [zoomLevel, setZoomLevel] = useState(12);
   const [tileView, setTileView] = useState(true);
@@ -204,14 +204,15 @@ function Shipment(props) {
       );
       setRows(formattedRows);
       if (!selectedShipment && formattedRows.length) {
-        // if (selectedFilter) {
-        //   let filteredFormattedRow = formattedRows.filter((row) => {
-        //     return row.type === selectedFilter
-        //   });
-        //   setSelectedShipment(filteredFormattedRow[0]);
-        // }
-        // else
-          setSelectedShipment(formattedRows[0]);
+          if (shipmentFilter) {
+            let filteredFormattedRows = formattedRows.filter((row) => {
+              return row.type === shipmentFilter
+            });
+            setSelectedShipment(filteredFormattedRows[0]);
+          }
+          else {
+            setSelectedShipment(formattedRows[0]);
+          }
       }
     }
   }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData, sensorReportData]);
@@ -281,6 +282,15 @@ function Shipment(props) {
       setTimeout(() => setMapLoaded(true), 1000)
   })
 
+  useEffect(() => {
+    if (shipmentFilter && rows.length > 0) {
+      let filteredFormattedRows = rows.filter((row) => {
+        return row.type === shipmentFilter
+      });
+      setSelectedShipment(filteredFormattedRows[0]);
+    }
+  }, [shipmentFilter])
+
   const onAddButtonClick = () => {
     history.push(`${routes.SHIPMENT}/add`, {
       from: routes.SHIPMENT,
@@ -344,6 +354,7 @@ function Shipment(props) {
             editAction={handleEdit}
             deleteAction={handleDelete}
             setSelectedShipment={setSelectedShipment}
+            setShipmentFilter={setShipmentFilter}
             tileView={tileView}
           />
         </Grid>

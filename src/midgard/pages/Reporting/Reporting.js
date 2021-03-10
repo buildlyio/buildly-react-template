@@ -320,7 +320,7 @@ function Reporting(props) {
           </List>
         </Grid>
         <Grid item xs={10} md={10}>
-          {selectedShipment && selectedShipment[selectedGraph] && selectedShipment[selectedGraph].length > 0 ? (
+          {selectedShipment && selectedShipment[selectedGraph] ? (
             <GraphComponent
               data={selectedShipment[selectedGraph]}
               selectedGraph={selectedGraph} />) : (
