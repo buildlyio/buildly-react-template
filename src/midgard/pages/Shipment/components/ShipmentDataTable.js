@@ -3,7 +3,7 @@ import MUIDataTable from "mui-datatables";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from "@material-ui/core/Box";
-import { makeStyles , createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Checkbox from '@material-ui/core/Checkbox';
 import Radio from '@material-ui/core/Radio';
 import IconButton from "@material-ui/core/IconButton";
@@ -16,6 +16,11 @@ import { UserContext } from "midgard/context/User.context";
 import _ from "lodash";
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    '& .MuiChip-root': {
+      display: 'none',
+    },
+  },
   centerHeader: {
     '& div': {
       textAlign: "center",
@@ -90,37 +95,6 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
     },
   };
 
-  const getMuiTheme = () => createMuiTheme({
-    palette: {
-      type: "dark",
-      background: {
-        default: "#605e5e"
-      },
-      primary: {
-        main: "#EBC645",
-        contrastText: "#3B3A3A",
-      },
-      secondary: {
-        main: "#fff",
-        contrastText: "#000",
-      },
-    },
-    overrides: {
-      MuiTableRow: {
-        root: {
-          '&$selected': {
-            backgroundColor: '#a48a30 !important'
-          }
-        }
-      },
-      MUIDataTableFilterList: {
-        chip: {
-          display: 'none'
-        }
-      },
-    }
-  })
-
   const columns = [
     {
       name: "Edit",
@@ -192,22 +166,20 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
   };
 
   return (
-    <div>
+    <div className={classes.root}>
       <Box mb={3} className={classes.tabContainer}>
         <Tabs value={selectedFilter} onChange={onTypeFilter}>
           {subNav.map((itemProps, index) => <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />)}
         </Tabs>
       </Box>
-      <MuiThemeProvider theme={getMuiTheme}>
-    <MUIDataTable
-      data={rows}
-      columns={cols}
-      options={options}
-      components={{
-        Checkbox: CustomCheckbox,
-      }}
-    />
-    </MuiThemeProvider>
+      <MUIDataTable
+        data={rows}
+        columns={cols}
+        options={options}
+        components={{
+          Checkbox: CustomCheckbox,
+        }}
+      />
     </div>
   )
 }
