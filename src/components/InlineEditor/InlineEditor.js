@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { makeStyles } from "@material-ui/core/styles";
-import Typography from '@material-ui/core/Typography';
-import EditIcon from "@material-ui/icons/Edit";
-import TextField from "@material-ui/core/TextField";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Box";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  makeStyles,
+  Typography,
+  TextField,
+  Box,
+  Grid,
+} from "@material-ui/core";
+import { Edit as EditIcon } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   nonEditMode: {
@@ -24,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0)
   },
   placeholder: {
-    color: '#aaa'
+    color: "#aaa"
   }
 }));
 
@@ -39,16 +41,16 @@ export function InlineEditor({id, tag, value, placeholder, disabled, onChange}) 
 
   useEffect(() => {
     if (editing) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keyup', handleKeyup);
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keyup", handleKeyup);
     } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keyup', handleKeyup);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keyup", handleKeyup);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keyup', handleKeyup);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keyup", handleKeyup);
     };
   }, [editing, text]);
 

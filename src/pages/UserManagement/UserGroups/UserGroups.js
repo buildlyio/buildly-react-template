@@ -1,17 +1,21 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext } from "react";
+import {
+  Button,
+  Grid,
+  IconButton,
+  Menu,
+  MenuItem,
+  Switch,
+  Box,
+} from "@material-ui/core";
+import {
+  AddCircle as AddIcon,
+  MoreHoriz,
+} from "@material-ui/icons";
+import { InlineEditor } from "@components/InlineEditor/InlineEditor";
+import { StyledTable } from "@components/StyledTable/StyledTable";
 import { UserContext } from "@context/User.context";
-import { InlineEditor } from '@components/InlineEditor/InlineEditor';
-import { StyledTable } from '@components/StyledTable/StyledTable';
-import Crud from '@modules/crud/Crud';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreHoriz from '@material-ui/icons/MoreHoriz';
-import Switch from '@material-ui/core/Switch';
-import Box from "@material-ui/core/Box";
-import AddIcon from "@material-ui/icons/AddCircle";
+import Crud from "@modules/crud/Crud";
 
 /**
  * Manage user groups
@@ -52,7 +56,7 @@ function UserGroups() {
     };
 
     const handleMenuItemClick = (action) => {
-      if (action === 'delete') {
+      if (action === "delete") {
         crud.deleteItem(menu.row);
       }
       setMenu({ row: null, element: null });
@@ -123,7 +127,7 @@ function UserGroups() {
           crud => {
             if (crud.getData()) {
               crud.getData().forEach(row => {
-                row.actions = [{value: 'delete', label: 'Delete'}];
+                row.actions = [{value: "delete", label: "Delete"}];
               });
             }
 
@@ -143,14 +147,14 @@ function UserGroups() {
                 </Grid>
                 <StyledTable
                   columns={[
-                    { label: 'Group type', prop: 'name', template: (row) => nameTemplate(row, crud ) },
-                    { label: 'Create', prop: 'Create', template: (row) => permissionCellTemplate(row, crud, 'create' ) },
-                    { label: 'Read', prop: 'Read', template: (row) => permissionCellTemplate(row, crud, 'read') },
-                    { label: 'Update', prop: 'Update', template: (row) => permissionCellTemplate(row, crud, 'update') },
-                    { label: 'Delete', prop: 'Delete', template: (row) => permissionCellTemplate(row, crud, 'delete') },
+                    { label: "Group type", prop: "name", template: (row) => nameTemplate(row, crud ) },
+                    { label: "Create", prop: "Create", template: (row) => permissionCellTemplate(row, crud, "create" ) },
+                    { label: "Read", prop: "Read", template: (row) => permissionCellTemplate(row, crud, "read") },
+                    { label: "Update", prop: "Update", template: (row) => permissionCellTemplate(row, crud, "update") },
+                    { label: "Delete", prop: "Delete", template: (row) => permissionCellTemplate(row, crud, "delete") },
                     {
-                      label: 'Actions',
-                      prop: 'options',
+                      label: "Actions",
+                      prop: "options",
                       template: (row) => actionsTemplate(row, crud),
                     },
                   ]}

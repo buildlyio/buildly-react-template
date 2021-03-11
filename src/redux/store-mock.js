@@ -1,5 +1,5 @@
-import { redux } from 'midgard-core';
-import rootReducer from './reducers';
+import { redux } from "midgard-core";
+import rootReducer from "./reducers";
 
 const configureStore = () => {
   // redux devtools

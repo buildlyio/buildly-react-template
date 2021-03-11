@@ -11,15 +11,15 @@ import {
     DELETE_COREGROUP,
     DELETE_COREGROUP_FAIL,
     DELETE_COREGROUP_COMMIT
-} from '@redux/coregroup/actions/coregroup.actions';
-import { put, takeLatest, all, call } from 'redux-saga/effects';
-import { httpService } from '@modules/http/http.service';
-import { environment } from '@environments/environment';
+} from "@redux/coregroup/actions/coregroup.actions";
+import { put, takeLatest, all, call } from "redux-saga/effects";
+import { environment } from "@environments/environment";
+import { httpService } from "@modules/http/http.service";
 
 
 function* loadCoregroups() {
     try {
-        const group = yield call(httpService.makeRequest, 'get', `${environment.API_URL}coregroups/`);
+        const group = yield call(httpService.makeRequest, "get", `${environment.API_URL}coregroups/`);
         yield [
             yield put({ type: LOAD_DATA_COREGROUP_COMMIT, data:group.data })
         ];
@@ -30,36 +30,36 @@ function* loadCoregroups() {
 
 function* deleteCoregroups(data) {
     try {
-        const group = yield call(httpService.makeRequest, 'delete', `${environment.API_URL}coregroups/${data.data.id}`);
+        const group = yield call(httpService.makeRequest, "delete", `${environment.API_URL}coregroups/${data.data.id}`);
         yield [
             yield put({ type: DELETE_COREGROUP_COMMIT, data:data.data, group })
         ];
     } catch(error) {
-        yield put({ type: DELETE_COREGROUP_FAIL, error: 'failed deleting group' });
+        yield put({ type: DELETE_COREGROUP_FAIL, error: "failed deleting group" });
     }
 }
 
 
 function* updateCoregroups(data) {
     try {
-        const group = yield call(httpService.makeRequest, 'put', `${environment.API_URL}coregroups/${data.data.id}/`, data.data);
+        const group = yield call(httpService.makeRequest, "put", `${environment.API_URL}coregroups/${data.data.id}/`, data.data);
         yield [
             yield put({ type: UPDATE_COREGROUP_COMMIT, data:data.data })
         ];
     } catch(error) {
-        yield put({ type: UPDATE_COREGROUP_FAIL, error: 'failed to update group' });
+        yield put({ type: UPDATE_COREGROUP_FAIL, error: "failed to update group" });
     }
 }
 
 
 function* createCoregroups(data) {
     try {
-        const group = yield call(httpService.makeRequest, 'post', `${environment.API_URL}coregroups/`, data.data);
+        const group = yield call(httpService.makeRequest, "post", `${environment.API_URL}coregroups/`, data.data);
         yield [
             yield put({ type: CREATE_COREGROUP_COMMIT, data:group.data })
         ];
     } catch(error) {
-        yield put({ type: CREATE_COREGROUP_FAIL, error: 'failed to create group' });
+        yield put({ type: CREATE_COREGROUP_FAIL, error: "failed to create group" });
     }
 }
 
@@ -84,6 +84,6 @@ export default function* coregroupSaga() {
       watchLoadCoregroups(),
       watchDeleteCoregroups(),
       watchUpdateCoregroups(),
-      watchCreateCoregroups()
+      watchCreateCoregroups(),
   ]);
 }

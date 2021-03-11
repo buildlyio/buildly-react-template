@@ -2,10 +2,13 @@ export const validators = (type, input) => {
   switch (type) {
     case "required":
       return requiredValidator(input);
+
     case "email":
       return emailValidator(input);
+
     case "confirm":
       return confirmValidator(input);
+      
     default:
       return { error: false, message: "" };
   }

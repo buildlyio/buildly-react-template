@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { invite } from "@redux/authuser/actions/authuser.actions";
-import { useInput } from "@hooks/useInput";
+import { Route } from "react-router-dom";
 import Popup from "reactjs-popup";
 import {
   NotificationContainer,
   NotificationManager,
 } from "react-notifications";
+import { rem } from "polished";
+import {
+  makeStyles,
+  Tabs,
+  Tab,
+  Button,
+  TextField,
+  Typography,
+  Grid,
+  Box,
+} from "@material-ui/core";
+import { Email as EmailIcon } from "@material-ui/icons";
+import { useInput } from "@hooks/useInput";
+import { invite } from "@redux/authuser/actions/authuser.actions";
+import { routes } from "@routes/routesConstants";
 import Users from "./Users/Users";
 import UserGroups from "./UserGroups/UserGroups";
-import { Route } from "react-router-dom";
-import { routes } from "@routes/routesConstants";
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import EmailIcon from "@material-ui/icons/Email";
-import { rem } from "polished";
 
 const useStyles = makeStyles((theme) => ({
   userManagementHeading: {

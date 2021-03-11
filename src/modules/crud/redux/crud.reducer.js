@@ -1,11 +1,11 @@
+import PropTypes from "prop-types";
 import {
   CRUD_CREATE_COMMIT,
   CRUD_DELETE_COMMIT,
   CRUD_LOAD_DATA_COMMIT,
   CRUD_UPDATE_COMMIT,
-} from './crud.actions';
-import {addAll, deleteOne, upsertOne} from '@redux/reducer.utils';
-import PropTypes from 'prop-types';
+} from "./crud.actions";
+import {addAll, deleteOne, upsertOne} from "@redux/reducer.utils";
 
 export default function crudDataReducer(state = {}, action) {
   const newState = {...state};

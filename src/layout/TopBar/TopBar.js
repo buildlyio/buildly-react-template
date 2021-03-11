@@ -1,13 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import GroupIcon from "@material-ui/icons/Group";
-import logo from "assets/topbar-logo.png";
+import {
+  makeStyles,
+  AppBar,
+  Toolbar,
+  IconButton,
+} from "@material-ui/core";
+import {
+  ExitToApp as ExitToAppIcon,
+  Group as GroupIcon,
+} from "@material-ui/icons";
+import logo from "@assets/topbar-logo.png";
 import { logout } from "@redux/authuser/actions/authuser.actions";
 import { routes } from "@routes/routesConstants";
 

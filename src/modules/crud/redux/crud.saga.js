@@ -1,7 +1,6 @@
-import { put, takeLatest, all, call } from 'redux-saga/effects';
-import { httpService } from '@modules/http/http.service';
-import { environment } from '@environments/environment';
-
+import { put, takeLatest, all, call } from "redux-saga/effects";
+import { environment } from "@environments/environment";
+import { httpService } from "@modules/http/http.service";
 import {
     CRUD_CREATE,
     CRUD_CREATE_COMMIT, CRUD_CREATE_FAIL,
@@ -19,7 +18,7 @@ import {
  */
 function* crudLoadDataSaga(action) {
     try {
-        const res = yield call(httpService.makeRequest, 'get', `${environment.API_URL}${action.endpoint}`, {}, true);
+        const res = yield call(httpService.makeRequest, "get", `${environment.API_URL}${action.endpoint}`, {}, true);
         yield [
             yield put({ type: CRUD_LOAD_DATA_COMMIT, data: res.data, endpoint: action.endpoint, idProp: action.idProp, dataProp:action.dataProp })
         ];
@@ -34,7 +33,7 @@ function* crudLoadDataSaga(action) {
  */
 function* crudDeleteDataSaga(action) {
     try {
-        const res =yield call(httpService.makeRequest, 'delete', `${environment.API_URL}${action.endpoint}${action.data[ action.idProp]}/`, {}, true);
+        const res =yield call(httpService.makeRequest, "delete", `${environment.API_URL}${action.endpoint}${action.data[ action.idProp]}/`, {}, true);
         yield [
             yield put({ type: CRUD_DELETE_COMMIT, data: res.data? res.data:action.data, endpoint: action.endpoint, idProp: action.idProp, dataProp:action.dataProp })
         ];
@@ -49,7 +48,7 @@ function* crudDeleteDataSaga(action) {
 */
 function* crudUpdateDataSaga(action) {
     try {
-        const res =yield call(httpService.makeRequest, 'PATCH', `${environment.API_URL}${action.endpoint}${action.data[ action.idProp]}/`, action.data, true);
+        const res =yield call(httpService.makeRequest, "PATCH", `${environment.API_URL}${action.endpoint}${action.data[ action.idProp]}/`, action.data, true);
         yield [
             yield put({ type: CRUD_UPDATE_COMMIT, data: res.data? res.data:action.data, endpoint: action.endpoint, idProp: action.idProp, dataProp:action.dataProp })
         ];
@@ -64,7 +63,7 @@ function* crudUpdateDataSaga(action) {
 */
 function* crudCreateDataSaga(action) {
     try {
-        const res =yield call(httpService.makeRequest, 'post', `${environment.API_URL}${action.endpoint}`, action.data, true);
+        const res =yield call(httpService.makeRequest, "post", `${environment.API_URL}${action.endpoint}`, action.data, true);
         yield [
             yield put({ type: CRUD_CREATE_COMMIT, data: res.data? res.data:action.data, endpoint: action.endpoint, idProp: action.idProp, dataProp:action.dataProp })
         ];

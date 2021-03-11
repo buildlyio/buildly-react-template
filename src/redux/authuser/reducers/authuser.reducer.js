@@ -159,6 +159,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+      
     case UPDATE_USER:
       return {
         ...state,

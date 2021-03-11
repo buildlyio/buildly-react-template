@@ -32,9 +32,9 @@ import {
   getOrganization,
 } from "@redux/authuser/actions/authuser.actions";
 import { put, takeLatest, all, call } from "redux-saga/effects";
+import { environment } from "@environments/environment";
 import { oauthService } from "@modules/oauth/oauth.service";
 import { httpService } from "@modules/http/http.service";
-import { environment } from '@environments/environment';
 import { showAlert } from "@redux/alert/actions/alert.actions";
 import { routes } from "@routes/routesConstants";
 

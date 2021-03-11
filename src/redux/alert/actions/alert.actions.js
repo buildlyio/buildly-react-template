@@ -3,8 +3,8 @@ export const SHOW_ALERT = "ALERT/SHOW_ALERT";
 export const HIDE_ALERT = "ALERT/HIDE_ALERT";
 
 /**
- * Alert action
- * @param {{type,open,message}} data
+ * Show Alert action
+ * @param {{ type, open, message }} data
  */
 export const showAlert = (data) => ({
   type: SHOW_ALERT,
@@ -12,6 +12,6 @@ export const showAlert = (data) => ({
 });
 
 /**
- * Logout action
+ * Hide Alert action
  */
 export const hideAlert = () => ({ type: HIDE_ALERT });

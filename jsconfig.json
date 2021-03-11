@@ -13,18 +13,44 @@
     "./src/**/*"
   ],
   "paths": {
-    "@assets/*": ["src/assets/*"],
-    "@environments/*": ["src/environments/*"],
-    "@styles/*": ["src/styles/*"],
-    "@components/*": ["src/components/*"],
-    "@context/*": ["src/context/*"],
-    "@hooks/*": ["src/hooks/*"],
-    "@layout/*": ["src/layout/*"],
-    "@modules/*": ["src/modules/*"],
-    "@pages/*": ["src/pages/*"],
-    "@redux/*": ["src/routes/*"],
-    "@routes/*": ["src/routes/*"],
-    "@utils/*": ["src/utils/*"],
+    "@assets/*": [
+      "src/assets/*"
+    ],
+    "@environments/*": [
+      "src/environments/*"
+    ],
+    "@styles/*": [
+      "src/styles/*"
+    ],
+    "@components/*": [
+      "src/components/*"
+    ],
+    "@context/*": [
+      "src/context/*"
+    ],
+    "@hooks/*": [
+      "src/hooks/*"
+    ],
+    "@layout/*": [
+      "src/layout/*"
+    ],
+    "@modules/*": [
+      "src/modules/*"
+    ],
+    "@pages/*": [
+      "src/pages/*"
+    ],
+    "@redux/*": [
+      "src/redux/*"
+    ],
+    "@routes/*": [
+      "src/routes/*"
+    ],
+    "@utils/*": [
+      "src/utils/*"
+    ],
   },
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules"
+  ],
 }

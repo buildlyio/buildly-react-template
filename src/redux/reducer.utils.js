@@ -1,10 +1,10 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 /**
 * it will add the loaded element to the state
 * @param state - the current state
 * @param action - the returned action
-* @returns {{data; dataLoaded: boolean}}
+* @returns {{ data; dataLoaded: boolean }}
 */
 export const addAll = (state, action) => {
   return {...state, data: action.data, loaded: true};

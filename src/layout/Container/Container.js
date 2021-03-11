@@ -1,11 +1,10 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
+import { makeStyles, Container } from "@material-ui/core";
 import { UserContext, getUser } from "@context/User.context";
 import TopBar from "@layout/TopBar/TopBar";
-import Profile from "@pages/Profile/Profile";
+import Dashboard from "@pages/Dashboard/Dashboard";
 import UserManagement from "@pages/UserManagement/UserManagement";
-import Container from "@material-ui/core/Container";
-import { makeStyles } from "@material-ui/core/styles";
 import { routes } from "@routes/routesConstants";
 
 const useStyles = makeStyles((theme) => ({
@@ -41,7 +40,7 @@ function ContainerDashboard({ location, history }) {
             path={routes.APP}
             render={() => <Redirect to={routes.DASHBOARD} />}
           />
-          <Route path={routes.DASHBOARD} component={Profile} />
+          <Route path={routes.DASHBOARD} component={Dashboard} />
           <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
         </Container>
       </UserContext.Provider>

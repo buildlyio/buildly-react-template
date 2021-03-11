@@ -1,19 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext } from "react";
+import { connect } from "react-redux";
+import { rem } from "polished";
+import {
+  makeStyles,
+  Typography,
+  Button,
+  IconButton,
+  ButtonGroup,
+  Menu,
+  MenuItem,
+  Box,
+} from "@material-ui/core";
+import { MoreHoriz } from "@material-ui/icons";
+import { StyledTable } from "@components/StyledTable/StyledTable";
 import { UserContext } from "@context/User.context";
-import { StyledTable } from '@components/StyledTable/StyledTable';
-import Crud from '@modules/crud/Crud';
-import { getCoregroups } from '@redux/coregroup/actions/coregroup.actions'
-import { connect } from 'react-redux'
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreHoriz from '@material-ui/icons/MoreHoriz';
-import Box from "@material-ui/core/Box";
-import { makeStyles } from '@material-ui/core/styles';
-import { rem } from 'polished';
-import { Typography } from '@material-ui/core';
+import Crud from "@modules/crud/Crud";
+import { getCoregroups } from "@redux/coregroup/actions/coregroup.actions"
 
 const useStyles = makeStyles((theme) => ({
   btnPermission: {
@@ -23,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2)
   },
   textDisabled: {
-    color: '#aaaaaa'
+    color: "#aaaaaa"
   }
 }));
 
@@ -78,9 +80,9 @@ function Users({ location, history, data, dispatch }) {
     };
 
     const handleMenuItemClick = (action) => {
-      if (action === 'delete') {
+      if (action === "delete") {
         crud.deleteItem(menu.row);
-      } else if (action === 'deactivate') {
+      } else if (action === "deactivate") {
         crud.updateItem({ id: menu.row.id, is_active: false });
       } else {
         crud.updateItem({ id: menu.row.id, is_active: true });
@@ -111,7 +113,7 @@ function Users({ location, history, data, dispatch }) {
           onClose={handleMenuClose}
         >
           {row.actions.filter(
-            option => !(option.value === 'delete' && row.is_active)
+            option => !(option.value === "delete" && row.is_active)
           ).map((option) => (
           <MenuItem
             key={`userActions${row.id }:${option.value}`}
@@ -138,13 +140,13 @@ function Users({ location, history, data, dispatch }) {
             crud.getData().forEach(row => {
               if(row.is_active) {
                 row.actions = [
-                  { value: 'deactivate', label: 'Deactivate' },
-                  { value: 'delete', label: 'Delete' }
+                  { value: "deactivate", label: "Deactivate" },
+                  { value: "delete", label: "Delete" }
                 ];
               } else {
                 row.actions = [
-                  { value: 'activate', label: 'Activate' },
-                  { value: 'delete', label: 'Delete' }
+                  { value: "activate", label: "Activate" },
+                  { value: "delete", label: "Delete" }
                 ];
               }
             });
@@ -153,11 +155,11 @@ function Users({ location, history, data, dispatch }) {
             <StyledTable
               className={classes.table}
               columns={[
-                { label: 'Full name', prop: 'name', template: (row) => (<Typography variant="body1" className={row.is_active ? '' : classes.textDisabled}>{row.first_name} {row.last_name}</Typography>) },
-                { label: 'Email', prop: 'email', template: (row) => (<Typography variant="body2" className={row.is_active ? '' : classes.textDisabled}> {row.email}</Typography>) },
-                { label: 'Last activity', prop: 'activity', template: (row) => (<Typography variant="caption" className={classes.textDisabled}>Today</Typography>) },
-                { label: 'Permissions', prop: 'permission', template: (row) => permissionsTemplate(row, crud, classes) },
-                { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud) },
+                { label: "Full name", prop: "name", template: (row) => (<Typography variant="body1" className={row.is_active ? "" : classes.textDisabled}>{row.first_name} {row.last_name}</Typography>) },
+                { label: "Email", prop: "email", template: (row) => (<Typography variant="body2" className={row.is_active ? "" : classes.textDisabled}> {row.email}</Typography>) },
+                { label: "Last activity", prop: "activity", template: (row) => (<Typography variant="caption" className={classes.textDisabled}>Today</Typography>) },
+                { label: "Permissions", prop: "permission", template: (row) => permissionsTemplate(row, crud, classes) },
+                { label: "Actions", prop: "options", template: (row) => actionsTemplate(row, crud) },
               ]}
               rows={crud.getData()}
               sortFn={(a, b) => (a.core_user_uuid === user.core_user_uuid ? -1 : b.core_user_uuid === user.core_user_uuid ? 1 : 0)}
