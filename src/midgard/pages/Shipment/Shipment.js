@@ -299,12 +299,6 @@ function Shipment(props) {
 
   useEffect(() => {
     if (shipmentFilter && rows.length > 0) {
-      // setActiveRows(rows.filter((row) => {
-      //   return row.type === "Active"
-      // }));
-      // setCompletedRows(rows.filter((row) => {
-      //   return row.type === "Completed"
-      // }));
       if (shipmentFilter === "Completed")
         setSelectedShipment(completedRows[0]);
       else
