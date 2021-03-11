@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import _ from "lodash";
+import moment from "moment";
 import MUIDataTable from "mui-datatables";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -72,7 +73,7 @@ const ShipmentSensorTable = (props) => {
 
   useEffect(() => {
     if (sensorReport) {
-      const sortedData = _.orderBy(sensorReport, ['timestamp'], ['desc']);
+      const sortedData = _.orderBy(sensorReport, (item) => {return moment(item.timestamp)}, ['desc']);
       setRows(sortedData);
     }
   }, [sensorReport]);
@@ -95,7 +96,7 @@ const ShipmentSensorTable = (props) => {
             variant="h5"
           >
             {shipmentName &&
-              `Sensor Report for Shipment: ${shipmentName}`}
+              `Sensor Report - Shipment: ${shipmentName}`}
             <CustomizedTooltips toolTipText={SHIPMENT_SENSOR_REPORT_TOOLTIP} />
           </Typography>
         </div>

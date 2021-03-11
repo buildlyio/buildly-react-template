@@ -215,6 +215,8 @@ export const getShipmentOverview = (
               const markerFound = _.find(markersToSet, {
                 lat: marker.lat,
                 lng: marker.lng,
+                temperature: marker.temperature,
+                humidity: marker.humidity,
               });
               if (!markerFound) {
                 markersToSet.push(marker);
@@ -237,7 +239,7 @@ export const getShipmentOverview = (
     }
 
     list["sensor_report"] = sensorReportInfo;
-    list["markers_to_set"] = _.orderBy(markersToSet, ['timestamp'], ['asc'])
+    list["markers_to_set"] = _.orderBy(markersToSet, (item) => {return moment(item.timestamp)}, ['asc'])
     list["temperature"] = temperatureData;
     list["light"] = lightData;
     list["shock"] = shockData;

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { connect } from "react-redux";
 import _ from "lodash";
+import moment from "moment";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Tabs from '@material-ui/core/Tabs';
@@ -267,6 +268,8 @@ function Shipment(props) {
                 const markerFound = _.find(markersToSet, {
                   lat: marker.lat,
                   lng: marker.lng,
+                  temperature: marker.temperature,
+                  humidity: marker.humidity,
                 });
 
                 if (!markerFound)
@@ -279,7 +282,7 @@ function Shipment(props) {
           });
         }
       });
-      setMarkers(_.orderBy(markersToSet, ['timestamp'], ['asc']));
+      setMarkers(_.orderBy(markersToSet, (item) => {return moment(item.timestamp)}, ['asc']));
       setZoomLevel(12);
       selectedShipment['sensor_report_info'] = sensorReportInfo;
     }
