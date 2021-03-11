@@ -20,17 +20,6 @@ export const SHIPMENT_SENSOR_REPORT_TOOLTIP =
 
 export const SHIPMENT_DATA_TABLE_COLUMNS = [
   {
-    name: "type",
-    label: "Shipment Type",
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: false,
-      display: false,
-      // filterList: ["Active"],
-    },
-  },
-  {
     name: "name",
     label: "Shipment Name",
     options: {
@@ -41,7 +30,19 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
   },
   {
     name: "estimated_time_of_arrival",
-    label: "Estimated Date of Arrival",
+    label: "Estimated Arrival Date",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => value && value !== "-"
+        ? moment(value).format("MM/DD/yyyy")
+        : value
+    },
+  },
+  {
+    name: "estimated_time_of_departure",
+    label: "Estimated Departure Date",
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -160,7 +161,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
   },
   {
     name: "timestamp",
-    label: "Tag Captured Timestamp",
+    label: "Tag Captured Timestamp (UTC)",
     options: {
       sort: true,
       sortThirdClickReset: true,

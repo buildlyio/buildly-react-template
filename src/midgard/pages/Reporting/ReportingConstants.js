@@ -194,7 +194,7 @@ export const getShipmentOverview = (
           report.report_entries.forEach((report_entry) => {
             try {
               const temperature = convertUnitsOfMeasure('celsius', report_entry.report_temp, temperatureUnit, 'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
-              const localDateTime = getLocalDateTime(report_entry.report_location.timeOfPosition)
+              const localDateTime = getLocalDateTime("report_timestamp" in report_entry ? report_entry.report_timestamp : report_entry.report_location.timeOfPosition)
               if (report_entry.report_location.locationMethod !== "NoPosition") {
               const marker = {
                 lat: report_entry.report_location.latitude,

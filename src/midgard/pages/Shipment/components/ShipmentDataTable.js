@@ -1,8 +1,5 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import MUIDataTable from "mui-datatables";
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
 import Checkbox from '@material-ui/core/Checkbox';
 import Radio from '@material-ui/core/Radio';
@@ -13,7 +10,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { SHIPMENT_DATA_TABLE_COLUMNS } from "../ShipmentConstants";
 import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
-import _ from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,10 +27,6 @@ const useStyles = makeStyles((theme) => ({
       textAlign: "left",
     },
   },
-  tabContainer: {
-    backgroundColor: "#383636",
-    margin: "0",
-  },
 }));
 
 const CustomCheckbox = (props) => {
@@ -48,17 +40,10 @@ const CustomCheckbox = (props) => {
   }
 };
 
-const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelectedShipment, setShipmentFilter }) => {
+const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelectedShipment }) => {
   const classes = useStyles();
 
   const [selected, setSelected] = useState(0);
-  const [cols, setCols] = useState(columns);
-  const subNav = [
-    { label: "Active", value: "Active" },
-    { label: "Completed", value: "Completed"},
-  ];
-  const typeFilter = (subNav.find(item => location.pathname.endsWith(item.value)) || subNav[0]).value;
-  const [selectedFilter, setSelectedFilter] = useState(typeFilter);
   const user = useContext(UserContext);
   const isAdmin = checkForGlobalAdmin(user);
   const options = {
@@ -77,17 +62,6 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
       setSelected(index);
       setSelectedShipment(rows[index]);
     },
-    // onFilterChange: (columnChanged, filterList,event) => {
-    //   if (columnChanged === 'type'){
-    //     let filteredValue = null
-    //     if (filterList[2].length === 1)
-    //       filteredValue = filterList[2][0]
-    //     onTypeFilter(event,filteredValue);
-    //   }
-    // },
-    // onTableInit: () => {
-    //   onTypeFilter(null,typeFilter);
-    // },
     textLabels: {
       body: {
         noMatch: "No data to display",
@@ -142,36 +116,8 @@ const ShipmentDataTable = ({ tileView, rows, editAction, deleteAction, setSelect
     }))
   ];
 
-  // useEffect(() => {
-  //   if (selectedFilter && rows.length) {
-  //     let selectedIndex = _.map(_.keys(_.pickBy(rows, {type: selectedFilter})), Number);
-  //     setSelected(selectedIndex[0]);
-  //   }
-  // })
-
-  const onTypeFilter = (event, value) => {
-    setSelectedFilter(value);
-    setShipmentFilter(value);
-    const filteredCols = columns;
-    if (value == "Active" || value == "Completed") {
-      let filterList = [value];
-      filteredCols[2].options.filterList = filterList;
-      setCols(filteredCols);
-    }
-    else {
-      filteredCols[2].options.filterList = [];
-      setCols(filteredCols);
-      setSelected(0);
-    }
-  };
-
   return (
     <div className={classes.root}>
-      {/* <Box mb={3} className={classes.tabContainer}>
-        <Tabs value={selectedFilter} onChange={onTypeFilter}>
-          {subNav.map((itemProps, index) => <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />)}
-        </Tabs>
-      </Box> */}
       <MUIDataTable
         data={rows}
         columns={columns}

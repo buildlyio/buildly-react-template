@@ -3,6 +3,8 @@ import { connect } from "react-redux";
 import _ from "lodash";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -89,6 +91,10 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginLeft: "auto",
   },
+  tabContainer: {
+    backgroundColor: "#383636",
+    margin: "0",
+  },
 }));
 
 function Shipment(props) {
@@ -111,9 +117,15 @@ function Shipment(props) {
   const classes = useStyles();
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
+  const [activeRows, setActiveRows] = useState([]);
+  const [completedRows, setCompletedRows] = useState([]);
   const [rows, setRows] = useState([]);
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [shipmentFilter, setShipmentFilter] = useState("Active");
+  const subNav = [
+    { label: "Active", value: "Active" },
+    { label: "Completed", value: "Completed" },
+  ];
   const [selectedMarker, setSelectedMarker] = useState({});
   const [markers, setMarkers] = useState([]);
   const [zoomLevel, setZoomLevel] = useState(12);
@@ -203,16 +215,19 @@ function Shipment(props) {
         sensorReportData,
       );
       setRows(formattedRows);
+      let activeRows = formattedRows.filter((row) => {
+        return row.type === "Active"
+      });
+      let completedRows = formattedRows.filter((row) => {
+        return row.type === "Completed"
+      });
+      setActiveRows(activeRows);
+      setCompletedRows(completedRows);
       if (!selectedShipment && formattedRows.length) {
-          if (shipmentFilter) {
-            let filteredFormattedRows = formattedRows.filter((row) => {
-              return row.type === shipmentFilter
-            });
-            setSelectedShipment(filteredFormattedRows[0]);
-          }
-          else {
-            setSelectedShipment(formattedRows[0]);
-          }
+        if (shipmentFilter === "Completed")
+          setSelectedShipment(completedRows[0]);
+        else
+          setSelectedShipment(activeRows[0]);
       }
     }
   }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData, sensorReportData]);
@@ -231,7 +246,7 @@ function Shipment(props) {
           report.report_entries.forEach((report_entry) => {
             try {
               const temperature = convertUnitsOfMeasure('celsius', report_entry.report_temp, temperatureUnit, 'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
-              const localDateTime = getLocalDateTime(report_entry.report_location.timeOfPosition)
+              const localDateTime = getLocalDateTime("report_timestamp" in report_entry ? report_entry.report_timestamp : report_entry.report_location.timeOfPosition)
               if (report_entry.report_location.locationMethod !== "NoPosition") {
                 const marker = {
                   lat: report_entry.report_location.latitude,
@@ -284,10 +299,16 @@ function Shipment(props) {
 
   useEffect(() => {
     if (shipmentFilter && rows.length > 0) {
-      let filteredFormattedRows = rows.filter((row) => {
-        return row.type === shipmentFilter
-      });
-      setSelectedShipment(filteredFormattedRows[0]);
+      // setActiveRows(rows.filter((row) => {
+      //   return row.type === "Active"
+      // }));
+      // setCompletedRows(rows.filter((row) => {
+      //   return row.type === "Completed"
+      // }));
+      if (shipmentFilter === "Completed")
+        setSelectedShipment(completedRows[0]);
+      else
+        setSelectedShipment(activeRows[0]);
     }
   }, [shipmentFilter])
 
@@ -314,6 +335,10 @@ function Shipment(props) {
   const handleConfirmModal = () => {
     dispatch(deleteShipment(deleteItemId, organization));
     setConfirmModal(false);
+  };
+
+  const filterTabClicked = (event, filter) => {
+    setShipmentFilter(filter);
   };
 
   return (
@@ -349,12 +374,16 @@ function Shipment(props) {
               </IconButton>
             </Hidden>
           </div>
+          <Box mb={3} className={classes.tabContainer}>
+            <Tabs value={shipmentFilter} onChange={filterTabClicked}>
+              {subNav.map((itemProps, index) => <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />)}
+            </Tabs>
+          </Box>
           <ShipmentDataTable
-            rows={rows}
+            rows={shipmentFilter === "Completed" ? completedRows : activeRows}
             editAction={handleEdit}
             deleteAction={handleDelete}
             setSelectedShipment={setSelectedShipment}
-            setShipmentFilter={setShipmentFilter}
             tileView={tileView}
           />
         </Grid>
