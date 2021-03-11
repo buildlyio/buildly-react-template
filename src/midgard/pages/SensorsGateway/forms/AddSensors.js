@@ -4,12 +4,12 @@ import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles , useTheme } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { validators } from "../../../utils/validators";
 import Modal from "../../../components/Modal/Modal";
 import MenuItem from "@material-ui/core/MenuItem";
-import { useTheme } from "@material-ui/core/styles";
+
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Select from "@material-ui/core/Select";
 import { useInput } from "../../../hooks/useInput";
@@ -320,6 +320,7 @@ function AddSensor({
                 <MapComponent
                   isMarkerShown
                   googleMapURL={MAP_API_URL}
+                  zoom={8}
                   loadingElement={<div style={{ height: `100%` }} />}
                   containerElement={<div style={{ height: `200px` }} />}
                   mapElement={<div style={{ height: `100%` }} />}

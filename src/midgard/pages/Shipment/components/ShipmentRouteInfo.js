@@ -3,8 +3,8 @@ import { http } from "midgard-core";
 import Geocode from "react-geocode";
 import { connect } from "react-redux";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { makeStyles } from "@material-ui/core/styles";
-import { useTheme } from "@material-ui/core/styles";
+import { makeStyles , useTheme } from "@material-ui/core/styles";
+
 import Button from "@material-ui/core/Button";
 import { Grid, Box, Typography, Card, CardContent } from "@material-ui/core";
 
@@ -39,6 +39,7 @@ export default function ShipmentRouteInfo(props) {
 
   const [rows, setRows] = useState([]);
   const [routes, setRoutes] = useState([]);
+  const [selectedMarker, setSelectedMarker] = useState({});
 
   useEffect(() => {
     if (
@@ -95,7 +96,10 @@ export default function ShipmentRouteInfo(props) {
           <CardContent>
             <MapComponent
               isMarkerShown
+              showPath={true}
               googleMapURL={MAP_API_URL}
+              zoom={8}
+              setSelectedMarker={setSelectedMarker}
               loadingElement={<div style={{ height: `100%` }} />}
               containerElement={<div style={{ height: `400px` }} />}
               mapElement={<div style={{ height: `100%` }} />}

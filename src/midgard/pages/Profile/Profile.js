@@ -188,6 +188,7 @@ function Profile({ dispatch, history, location }) {
             </div>
             <MapComponent
               isMarkerShown
+              zoom={8}
               googleMapURL={MAP_API_URL}
               loadingElement={<div style={{ height: `100%` }} />}
               containerElement={<div style={{ height: `500px` }} />}
