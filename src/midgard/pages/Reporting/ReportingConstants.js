@@ -213,13 +213,6 @@ export const getShipmentOverview = (
               }
               // Considered use case: If a shipment stays at some position for long, other value changes can be critical
               const markerFound = _.find(markersToSet, {
-                temperature: marker.temperature,
-                light: marker.light,
-                shock: marker.shock,
-                tilt: marker.tilt,
-                humidity: marker.humidity,
-                battery: marker.battery,
-                pressure: marker.pressure,
                 lat: marker.lat,
                 lng: marker.lng,
               });

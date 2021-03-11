@@ -86,7 +86,7 @@ const RenderedMap = withScriptjs(
                      </div>
                    ))}
                    <div style={{ boxSizing:"border-box",padding:"0.5em",display:"flex",alignItems:"center"}}>
-                     {getIcon({id:'time'},'black')} <span> : {mark.timestamp} UTC</span>
+                     {getIcon({id:'time'},'black')} <span> : {mark.timestamp}</span>
                    </div>
                  </div>
                 ): (
