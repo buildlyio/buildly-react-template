@@ -194,7 +194,7 @@ export const getShipmentOverview = (
           report.report_entries.forEach((report_entry) => {
             try {
               const temperature = convertUnitsOfMeasure('celsius', report_entry.report_temp, temperatureUnit, 'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
-              const localDateTime = getLocalDateTime(report_entry.report_location.timeOfPosition)
+              const localDateTime = getLocalDateTime("report_timestamp" in report_entry ? report_entry.report_timestamp : report_entry.report_location.timeOfPosition)
               if (report_entry.report_location.locationMethod !== "NoPosition") {
               const marker = {
                 lat: report_entry.report_location.latitude,
@@ -213,15 +213,10 @@ export const getShipmentOverview = (
               }
               // Considered use case: If a shipment stays at some position for long, other value changes can be critical
               const markerFound = _.find(markersToSet, {
-                temperature: marker.temperature,
-                light: marker.light,
-                shock: marker.shock,
-                tilt: marker.tilt,
-                humidity: marker.humidity,
-                battery: marker.battery,
-                pressure: marker.pressure,
                 lat: marker.lat,
                 lng: marker.lng,
+                temperature: marker.temperature,
+                humidity: marker.humidity,
               });
               if (!markerFound) {
                 markersToSet.push(marker);
@@ -244,7 +239,7 @@ export const getShipmentOverview = (
     }
 
     list["sensor_report"] = sensorReportInfo;
-    list["markers_to_set"] = _.orderBy(markersToSet, ['timestamp'], ['asc'])
+    list["markers_to_set"] = _.orderBy(markersToSet, (item) => {return moment(item.timestamp)}, ['asc'])
     list["temperature"] = temperatureData;
     list["light"] = lightData;
     list["shock"] = shockData;

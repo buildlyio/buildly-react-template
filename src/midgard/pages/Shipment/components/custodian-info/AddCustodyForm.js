@@ -382,6 +382,7 @@ function AddCustodyForm(props) {
                 <MapComponent
                   isMarkerShown
                   googleMapURL={MAP_API_URL}
+                  zoom={5}
                   loadingElement={<div style={{ height: `100%` }} />}
                   containerElement={<div style={{ height: `200px` }} />}
                   mapElement={<div style={{ height: `100%` }} />}
@@ -433,6 +434,7 @@ function AddCustodyForm(props) {
                 <MapComponent
                   isMarkerShown
                   googleMapURL={MAP_API_URL}
+                  zoom={5}
                   loadingElement={<div style={{ height: `100%` }} />}
                   containerElement={<div style={{ height: `200px` }} />}
                   mapElement={<div style={{ height: `100%` }} />}

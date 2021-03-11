@@ -78,6 +78,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     padding: theme.spacing(2),
     flexDirection: "column",
+    height: "100px",
   },
   gridContainer: {
     marginBottom: theme.spacing(4),
@@ -213,7 +214,7 @@ function Reporting(props) {
               className={classes.tileHeading}
               variant="h5">
               {selectedShipment && selectedShipment.name &&
-                `Map View for Shipment: ${selectedShipment.name}`}
+                `Map View - Shipment: ${selectedShipment.name}`}
               <CustomizedTooltips toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP} />
             </Typography>
             <Hidden smDown>
@@ -268,15 +269,17 @@ function Reporting(props) {
               </IconButton>
             </Hidden>
           </div>
-          <div style={{ height: 525 }} className={classes.greyBackground}>
+          <div style={{ height: 525, overflowX: "auto" }} className={classes.greyBackground}>
             <Grid container className={classes.gridContainer}>
               {selectedShipment ? (columns.map((column, index) => (
                 <Grid item
                   className={classes.infoSection} xs={10} md={6}
                   key={`col${index}:${column.name}`}>
-                  {column.name !== "custody_info" && (<Typography variant="h6">{column.label}</Typography>)}
+                  {column.name !== "custody_info" ?
+                  (<Typography variant="h6">{column.label}</Typography>) :
+                  (<Typography variant="h6">Custody Details</Typography>)}
                   {column.name === "custody_info"  && selectedShipment[column.name] ? selectedShipment[column.name].map((key, index) => (
-                    <div key={`custody_info_${index}`}>
+                    <div key={`custody_info_${index}`} style={{marginBottom:10}}>
                       <Typography variant="body1">Custody Type: {selectedShipment['custody_info'][index]['custody_type']}</Typography>
                       <Typography variant="body1">Custodian Address: {selectedShipment['contact_info'][index]['address']}</Typography>
                       </div>
@@ -300,7 +303,7 @@ function Reporting(props) {
             className={classes.tileHeading}
             variant="h5">
             {selectedShipment && selectedShipment.name &&
-              `Graph View for Shipment: ${selectedShipment.name}`}
+              `Graph View - Shipment: ${selectedShipment.name}`}
             <CustomizedTooltips toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP} />
           </Typography>
         </div>

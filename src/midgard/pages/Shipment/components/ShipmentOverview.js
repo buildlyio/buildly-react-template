@@ -1,8 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { makeStyles } from "@material-ui/core/styles";
-import { useTheme } from "@material-ui/core/styles";
+import { makeStyles , useTheme } from "@material-ui/core/styles";
+
 import Button from "@material-ui/core/Button";
 import {
   Grid,
@@ -192,6 +192,7 @@ function ShipmentOverview(props) {
               <MapComponent
                 isMarkerShown
                 googleMapURL={MAP_API_URL}
+                zoom={8}
                 loadingElement={<div style={{ height: `100%` }} />}
                 containerElement={<div style={{ height: `200px` }} />}
                 mapElement={<div style={{ height: `100%` }} />}

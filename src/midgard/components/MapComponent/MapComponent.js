@@ -57,8 +57,7 @@ export function MapComponent(props) {
 const RenderedMap = withScriptjs(
   withGoogleMap((props) => (
     <GoogleMap zoom={props.zoom} center={props.center}>
-        {props.isMarkerShown &&
-        props.markers && props.setSelectedMarker &&
+        {props.isMarkerShown && props.markers &&
         props.markers.map((mark, index) =>
           mark.label ? (
             <Marker
@@ -79,16 +78,21 @@ const RenderedMap = withScriptjs(
                 <InfoWindow
                 onCloseClick={() => props.onMarkerSelect(null)}
                 >
-                  <div style={{ color: "black",display: "flex",justifyContent:"flex-wrap",flexWrap:"wrap",flexDirection:"column",height:"80px",width:"200px"}}>
-                    {REPORT_TYPES.map((item, idx) => (
-                      <div key={`iconItem${idx}${item.id}`} style={{ boxSizing:"border-box",maxWidth:"50%",padding:"0.5em",display:"flex",alignItems:"center"}}>
-                        {getIcon(item,'black')} <span> : {mark[item.id]} {item.unit}</span>
-                      </div>
-                    ))}
-                    <div style={{ boxSizing:"border-box",padding:"0.5em",display:"flex",alignItems:"center"}}>
-                      {getIcon({id:'time'},'black')} <span> : {mark.timestamp}</span>
-                    </div>
-                  </div>
+                {mark.label === "Clustered" ? (
+                   <div style={{ color: "black",display: "flex",justifyContent:"flex-wrap",flexWrap:"wrap",flexDirection:"column",height:"80px",width:"200px"}}>
+                   {REPORT_TYPES.map((item, idx) => (
+                     <div key={`iconItem${idx}${item.id}`} style={{ boxSizing:"border-box",maxWidth:"50%",padding:"0.5em",display:"flex",alignItems:"center"}}>
+                       {getIcon(item,'black')} <span> : {mark[item.id]} {item.unit}</span>
+                     </div>
+                   ))}
+                   <div style={{ boxSizing:"border-box",padding:"0.5em",display:"flex",alignItems:"center"}}>
+                     {getIcon({id:'time'},'black')} <span> : {mark.timestamp}</span>
+                   </div>
+                 </div>
+                ): (
+                  <div style={{ color: "black"}}>{mark.label}</div>
+                )}
+
                 </InfoWindow>
               )}
             </Marker>
@@ -105,8 +109,7 @@ const RenderedMap = withScriptjs(
               />
             )
         )}
-      {props.isMarkerShown && props.setSelectedMarker &&
-        props.markers.length > 0 &&
+      {props.isMarkerShown && props.markers.length > 0 &&
         props.showPath && (
           <Polyline
             path={_.map(

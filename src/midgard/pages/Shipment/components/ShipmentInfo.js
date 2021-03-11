@@ -2,9 +2,9 @@ import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import moment from "moment";
 import Button from "@material-ui/core/Button";
-import { useTheme } from "@material-ui/core/styles";
+import { useTheme , makeStyles } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { makeStyles } from "@material-ui/core/styles";
+
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
@@ -23,7 +23,6 @@ import {
   Checkbox,
   InputAdornment,
 } from "@material-ui/core";
-import { MapComponent } from "../../../components/MapComponent/MapComponent";
 import { routes } from "../../../routes/routesConstants";
 import { MAP_API_URL, compareSort } from "../../../utils/utilMethods";
 import { useInput } from "../../../hooks/useInput";
