@@ -1,39 +1,46 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import {
   makeStyles,
   Typography,
   TextField,
   Box,
   Grid,
-} from "@material-ui/core";
-import { Edit as EditIcon } from "@material-ui/icons";
+} from '@material-ui/core';
+import { Edit as EditIcon } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   nonEditMode: {
-    display: "flex",
-    "&:hover": {
-      "& $editIcon": {
-        visibility: "visible"
-      }
-    }
+    display: 'flex',
+    '&:hover': {
+      '& $editIcon': {
+        visibility: 'visible',
+      },
+    },
   },
   editIcon: {
-    visibility: "hidden",
-    cursor: "pointer",
-    marginLeft: theme.spacing(1)
+    visibility: 'hidden',
+    cursor: 'pointer',
+    marginLeft: theme.spacing(1),
   },
   typography: {
-    margin: theme.spacing(0)
+    margin: theme.spacing(0),
   },
   placeholder: {
-    color: "#aaa"
-  }
+    color: theme.palette.common.grey,
+  },
 }));
 
 /**
  * Component for inline editing.
  */
-export function InlineEditor({id, tag, value, placeholder, disabled, onChange}) {
+export function InlineEditor({
+  id,
+  tag,
+  value,
+  placeholder,
+  disabled,
+  onChange,
+}) {
   const classes = useStyles();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value);
@@ -41,23 +48,23 @@ export function InlineEditor({id, tag, value, placeholder, disabled, onChange}) 
 
   useEffect(() => {
     if (editing) {
-      document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("keyup", handleKeyup);
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keyup', handleKeyup);
     } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keyup", handleKeyup);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keyup', handleKeyup);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keyup", handleKeyup);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keyup', handleKeyup);
     };
   }, [editing, text]);
 
   /**
    * Handles the keyup events for enter and escape.
    */
-  const handleKeyup = event => {
+  const handleKeyup = (event) => {
     switch (event.keyCode) {
       case 13: // Enter pressed
         update(event); // Update the text
@@ -69,12 +76,12 @@ export function InlineEditor({id, tag, value, placeholder, disabled, onChange}) 
       default:
         return;
     }
-  }
+  };
 
   /**
    * Handles the click event based on whether it is inside the reference node.
    */
-  const handleClickOutside = event => {
+  const handleClickOutside = (event) => {
     if (node.current.contains(event.target)) {
       return;
     }
@@ -84,37 +91,49 @@ export function InlineEditor({id, tag, value, placeholder, disabled, onChange}) 
   /**
    * Updates the text value.
    */
-  const update = event => {
+  const update = (event) => {
     onChange(text);
     setEditing(false);
-  }
+  };
 
   return (
-    <Box onClick={event => event.stopPropagation()}>
+    <Box onClick={(event) => event.stopPropagation()}>
       {editing ? (
         <TextField
           tag={tag}
-          size="small"
-          variant="outlined"
+          size='small'
+          variant='outlined'
           autoFocus={true}
           ref={node}
           name={`${id}`}
-          type="text"
+          type='text'
           placeholder={placeholder}
           value={text}
-          onChange={event => setText(event.target.value)} />
+          onChange={(event) => setText(event.target.value)}
+        />
       ) : (
-        <Grid container="true" direction="row" alignItems="center" className={`${classes.nonEditMode} ${!value && classes.placeholder}`} onDoubleClick={() => setEditing(true)}>
-          <Grid item="true">
-            <Typography className={classes.typography} variant={tag}>{value || placeholder}</Typography>
+        <Grid
+          container='true'
+          direction='row'
+          alignItems='center'
+          className={`${classes.nonEditMode} ${!value && classes.placeholder}`}
+          onDoubleClick={() => setEditing(true)}
+        >
+          <Grid item='true'>
+            <Typography className={classes.typography} variant={tag}>
+              {value || placeholder}
+            </Typography>
           </Grid>
           {!disabled && (
-            <Grid item="true">
-              <EditIcon className={classes.editIcon} onClick={() => setEditing(true)}></EditIcon>
+            <Grid item='true'>
+              <EditIcon
+                className={classes.editIcon}
+                onClick={() => setEditing(true)}
+              ></EditIcon>
             </Grid>
           )}
         </Grid>
       )}
     </Box>
-  )
+  );
 }
