@@ -14,7 +14,7 @@ import { routes } from './routes/routesConstants';
 import { PrivateRoute } from './routes/Private.route';
 import theme from './styles/theme';
 
-function App() {
+const App = () => {
   return (
     <Router>
       <ThemeProvider theme={theme}>
@@ -41,6 +41,6 @@ function App() {
       </ThemeProvider>
     </Router>
   );
-}
+};
 
 export default hot(module)(App);

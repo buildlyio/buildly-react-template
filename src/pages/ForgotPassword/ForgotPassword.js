@@ -8,7 +8,6 @@ import {
   Link,
   Grid,
   Card,
-  Box,
   CircularProgress,
   CardContent,
   Typography,
@@ -22,8 +21,8 @@ import { routes } from '@routes/routesConstants';
 import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(8),
+  container: {
+    marginBottom: theme.spacing(24),
   },
   paper: {
     display: 'flex',
@@ -39,11 +38,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    marginBottom: theme.spacing(2),
   },
   logo: {
-    width: '12.5rem',
-    maxWidth: '100%',
+    width: theme.spacing(15),
+    objectFit: 'contain',
+    margin: theme.spacing(2.5),
   },
   textField: {
     minHeight: '5rem',
@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ForgotPassword({ dispatch, loading, history }) {
+const ForgotPassword = ({ dispatch, loading, history }) => {
   const classes = useStyles();
   const email = useInput('', { required: true });
   const [error, setError] = useState({});
@@ -114,76 +114,76 @@ function ForgotPassword({ dispatch, loading, history }) {
   };
 
   return (
-    <Container component='main' maxWidth='xs'>
-      <CssBaseline />
-      <Card className={classes.root} variant='outlined'>
-        <CardContent>
-          <div className={classes.paper}>
-            <img src={logo} className={classes.logo} />
-            <Typography component='h1' variant='h5' gutterBottom>
-              Enter your registered Email
-            </Typography>
-            <form className={classes.form} noValidate onSubmit={handleSubmit}>
-              <TextField
-                variant='outlined'
-                margin='normal'
-                required
-                fullWidth
-                id='email'
-                label='Registered email'
-                name='email'
-                autoComplete='email'
-                className={classes.textField}
-                error={error.email && error.email.error}
-                helperText={error && error.email ? error.email.message : ''}
-                onBlur={(e) => handleBlur(e, 'email', email)}
-                {...email.bind}
-              />
-
-              <div className={classes.loadingWrapper}>
-                <Button
-                  type='submit'
+    <React.Fragment>
+      <img src={logo} className={classes.logo} />
+      <Container component='main' maxWidth='xs' className={classes.container}>
+        <CssBaseline />
+        <Card variant='outlined'>
+          <CardContent>
+            <div className={classes.paper}>
+              <Typography component='h1' variant='h5' gutterBottom>
+                Enter your registered Email
+              </Typography>
+              <form className={classes.form} noValidate onSubmit={handleSubmit}>
+                <TextField
+                  variant='outlined'
+                  margin='normal'
+                  required
                   fullWidth
-                  variant='contained'
-                  color='primary'
-                  className={classes.submit}
-                  disabled={loading || submitDisabled()}
-                >
-                  Submit
-                </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                )}
-              </div>
-              <Grid container>
-                <Grid item xs>
-                  <Link href={routes.LOGIN} variant='body2' color='secondary'>
-                    Go back to Sign in
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link
-                    href={routes.REGISTER}
-                    variant='body2'
-                    color='secondary'
+                  id='email'
+                  label='Registered email'
+                  name='email'
+                  autoComplete='email'
+                  className={classes.textField}
+                  error={error.email && error.email.error}
+                  helperText={error && error.email ? error.email.message : ''}
+                  onBlur={(e) => handleBlur(e, 'email', email)}
+                  {...email.bind}
+                />
+
+                <div className={classes.loadingWrapper}>
+                  <Button
+                    type='submit'
+                    fullWidth
+                    variant='contained'
+                    color='primary'
+                    className={classes.submit}
+                    disabled={loading || submitDisabled()}
                   >
-                    {"Don't have an account? Register"}
-                  </Link>
+                    Submit
+                  </Button>
+                  {loading && (
+                    <CircularProgress
+                      size={24}
+                      className={classes.buttonProgress}
+                    />
+                  )}
+                </div>
+                <Grid container>
+                  <Grid item xs>
+                    <Link href={routes.LOGIN} variant='body2' color='secondary'>
+                      Go back to Sign in
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Link
+                      href={routes.REGISTER}
+                      variant='body2'
+                      color='secondary'
+                    >
+                      {"Don't have an account? Register"}
+                    </Link>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </form>
-          </div>
-        </CardContent>
-      </Card>
-      <Box mt={8} mb={1}>
-        <Copyright />
-      </Box>
-    </Container>
+              </form>
+            </div>
+          </CardContent>
+        </Card>
+      </Container>
+      <Copyright />
+    </React.Fragment>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

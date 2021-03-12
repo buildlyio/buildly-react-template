@@ -16,7 +16,7 @@ const StyledContainer = withStyles((theme) => ({
   },
 }))(Box);
 
-export function StyledTable({ columns, rows, sortFn }) {
+export const StyledTable = ({ columns, rows, sortFn }) => {
   const header = columns.map((col, colIndex) => (
     <TableCell key={`tableCol${colIndex}:${col.prop}`}>{col.label}</TableCell>
   ));
@@ -41,4 +41,4 @@ export function StyledTable({ columns, rows, sortFn }) {
       </Table>
     </StyledContainer>
   );
-}
+};

@@ -33,9 +33,8 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Component for the top bar header.
  */
-function TopBar({ history, location, dispatch }) {
+const TopBar = ({ history, dispatch }) => {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleLogoutClick = () => {
     dispatch(logout());
@@ -66,7 +65,7 @@ function TopBar({ history, location, dispatch }) {
       </Toolbar>
     </AppBar>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

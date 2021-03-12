@@ -33,14 +33,14 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Component for inline editing.
  */
-export function InlineEditor({
+export const InlineEditor = ({
   id,
   tag,
   value,
   placeholder,
   disabled,
   onChange,
-}) {
+}) => {
   const classes = useStyles();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value);
@@ -136,4 +136,4 @@ export function InlineEditor({
       )}
     </Box>
   );
-}
+};

@@ -17,7 +17,7 @@ import Crud from '@modules/crud/Crud';
 /**
  * Manage user groups
  */
-function UserGroups() {
+const UserGroups = () => {
   // state to toggle actions menus
   const [menu, setMenu] = useState({ row: null, element: null });
   const user = useContext(UserContext);
@@ -188,6 +188,6 @@ function UserGroups() {
       </Crud>
     </Box>
   );
-}
+};
 
 export default UserGroups;

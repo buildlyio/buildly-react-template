@@ -4,9 +4,9 @@ import { makeStyles, Snackbar } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import { hideAlert } from '@redux/alert/actions/alert.actions';
 
-function Alert(props) {
+const Alert = (props) => {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
-}
+};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Alerts({ data, loading, loaded, dispatch }) {
+const Alerts = ({ data, dispatch }) => {
   const classes = useStyles();
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -41,7 +41,7 @@ function Alerts({ data, loading, loaded, dispatch }) {
       </Snackbar>
     </div>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

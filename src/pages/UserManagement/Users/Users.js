@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Current users list
  */
-function Users({ location, history, data, dispatch }) {
+const Users = ({ data, dispatch }) => {
   const classes = useStyles();
   // state to toggle actions menus
   const [menu, setMenu] = useState({ row: null, element: null });
@@ -234,7 +234,7 @@ function Users({ location, history, data, dispatch }) {
       </Crud>
     </Box>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...state.coregroupReducer,

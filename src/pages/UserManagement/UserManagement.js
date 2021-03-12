@@ -42,7 +42,14 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Outputs the user management page.
  */
-function UserManagement({ dispatch, loading, error, user, history, location }) {
+const UserManagement = ({
+  dispatch,
+  loading,
+  error,
+  user,
+  history,
+  location,
+}) => {
   const classes = useStyles();
   const email = useInput('', { required: true });
   const [inviteCall, setInviteCall] = useState(false);
@@ -162,7 +169,7 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
       <NotificationContainer />
     </Box>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
