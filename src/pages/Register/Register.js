@@ -15,6 +15,8 @@ import {
 } from '@material-ui/core';
 import logo from '@assets/buildly-logo.png';
 import Copyright from '@components/Copyright/Copyright';
+import GithubLogin from '@components/SocialLogin/GithubLogin';
+import { environment } from '@environments/environment';
 import { useInput } from '@hooks/useInput';
 import { register } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
@@ -56,6 +58,17 @@ const useStyles = makeStyles((theme) => ({
   loadingWrapper: {
     margin: theme.spacing(1),
     position: 'relative',
+  },
+  or: {
+    textAlign: 'center',
+    marginBottom: theme.spacing(1),
+  },
+  socialAuth: {
+    margin: theme.spacing(1),
+    position: 'relative',
+  },
+  link: {
+    margin: theme.spacing(1, 0, 0, 1),
   },
 }));
 
@@ -320,14 +333,30 @@ const Register = ({ dispatch, loading, history }) => {
                     />
                   )}
                 </div>
-                <Grid container>
-                  <Grid item>
-                    <Link href={routes.LOGIN} variant='body2' color='secondary'>
-                      {'Already have an account? Sign in'}
-                    </Link>
-                  </Grid>
-                </Grid>
               </form>
+              <Grid container>
+                <Grid item xs={12} className={classes.or}>
+                  <Typography variant='body1'>----OR----</Typography>
+                </Grid>
+                <Grid item xs={12} className={classes.socialAuth}>
+                  <GithubLogin
+                    clientId={environment.GITHUB_CLIENT_ID}
+                    onSuccess={(res) => console.log(res)}
+                    onError={(err) => console.log(err)}
+                  />
+                  {loading && (
+                    <CircularProgress
+                      size={24}
+                      className={classes.buttonProgress}
+                    />
+                  )}
+                </Grid>
+                <Grid item className={classes.link}>
+                  <Link href={routes.LOGIN} variant='body2' color='secondary'>
+                    {'Already have an account? Sign in'}
+                  </Link>
+                </Grid>
+              </Grid>
             </div>
           </CardContent>
         </Card>
