@@ -26,7 +26,7 @@ import {
   GET_ORGANIZATION,
   GET_ORGANIZATION_SUCCESS,
   GET_ORGANIZATION_FAILURE,
-} from "@redux/authuser/actions/authuser.actions";
+} from '@redux/authuser/actions/authuser.actions';
 
 const initialState = {
   loading: false,
@@ -62,7 +62,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
-    
+
     case SEND_PASSWORD_RESET_LINK:
       return {
         ...state,
@@ -134,7 +134,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
-    
+
     case REGISTER:
       return {
         ...state,
@@ -159,7 +159,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
-      
+
     case UPDATE_USER:
       return {
         ...state,

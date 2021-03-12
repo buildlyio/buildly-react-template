@@ -1,17 +1,17 @@
-import React from "react";
-import { connect } from "react-redux";
-import { makeStyles, Snackbar } from "@material-ui/core";
-import MuiAlert from "@material-ui/lab/Alert";
-import { hideAlert } from "@redux/alert/actions/alert.actions";
+import React from 'react';
+import { connect } from 'react-redux';
+import { makeStyles, Snackbar } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
+import { hideAlert } from '@redux/alert/actions/alert.actions';
 
 function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
+  return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "100%",
-    "& > * + *": {
+    width: '100%',
+    '& > * + *': {
       marginTop: theme.spacing(2),
     },
   },
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 function Alerts({ data, loading, loaded, dispatch }) {
   const classes = useStyles();
   const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
+    if (reason === 'clickaway') {
       return;
     }
     dispatch(hideAlert());
@@ -31,7 +31,7 @@ function Alerts({ data, loading, loaded, dispatch }) {
         open={data ? data.open : false}
         autoHideDuration={4000}
         onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         {data && (
           <Alert onClose={handleClose} severity={data.type}>

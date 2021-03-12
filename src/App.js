@@ -1,34 +1,34 @@
-import * as React from "react";
-import "react-notifications/lib/notifications.css";
-import { hot } from "react-hot-loader";
-import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
-import { ThemeProvider, CssBaseline } from "@material-ui/core";
-import Alerts from "./components/Alerts/Alerts";
-import ContainerDashboard from "./layout/Container/Container";
-import { oauthService } from "./modules/oauth/oauth.service";
-import Login from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
-import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword/ResetPassword";
-import { routes } from "./routes/routesConstants";
-import { PrivateRoute } from "./routes/Private.route";
-import theme from "./styles/theme";
+import * as React from 'react';
+import 'react-notifications/lib/notifications.css';
+import { hot } from 'react-hot-loader';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { ThemeProvider, CssBaseline } from '@material-ui/core';
+import Alerts from './components/Alerts/Alerts';
+import ContainerDashboard from './layout/Container/Container';
+import { oauthService } from './modules/oauth/oauth.service';
+import Login from './pages/Login/Login';
+import Register from './pages/Register/Register';
+import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
+import ResetPassword from './pages/ResetPassword/ResetPassword';
+import { routes } from './routes/routesConstants';
+import { PrivateRoute } from './routes/Private.route';
+import theme from './styles/theme';
 
 function App() {
   return (
     <Router>
       <ThemeProvider theme={theme}>
-        <div className="app">
+        <div className='app'>
           <CssBaseline />
           <Route
             exact
-            path="/"
+            path='/'
             render={() =>
               oauthService.hasValidAccessToken() ? (
                 <Redirect to={routes.DASHBOARD} />
               ) : (
-                  <Redirect to={routes.LOGIN} />
-                )
+                <Redirect to={routes.LOGIN} />
+              )
             }
           />
           <Route path={routes.LOGIN} component={Login} />

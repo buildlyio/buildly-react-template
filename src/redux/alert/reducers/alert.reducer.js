@@ -1,4 +1,4 @@
-import { SHOW_ALERT, HIDE_ALERT } from "@redux/alert/actions/alert.actions";
+import { SHOW_ALERT, HIDE_ALERT } from '@redux/alert/actions/alert.actions';
 
 const initialState = {
   data: {},

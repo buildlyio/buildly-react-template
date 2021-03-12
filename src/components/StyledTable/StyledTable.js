@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   withStyles,
   Table,
@@ -7,17 +7,19 @@ import {
   TableHead,
   TableBody,
   Box,
-} from "@material-ui/core";
+} from '@material-ui/core';
 
 const StyledContainer = withStyles((theme) => ({
   root: {
-    overflowX: "auto",
-    margin: theme.spacing(2, 0)
+    overflowX: 'auto',
+    margin: theme.spacing(2, 0),
   },
 }))(Box);
 
-export function StyledTable({columns, rows, sortFn}) {
-  const header = columns.map((col, colIndex) => <TableCell key={`tableCol${colIndex}:${col.prop}`}>{col.label}</TableCell>);
+export function StyledTable({ columns, rows, sortFn }) {
+  const header = columns.map((col, colIndex) => (
+    <TableCell key={`tableCol${colIndex}:${col.prop}`}>{col.label}</TableCell>
+  ));
   const sortedRows = sortFn ? rows.sort(sortFn) : rows;
   const content = sortedRows.map((row, rowIndex) => (
     <TableRow key={`tableRow${rowIndex}`}>
@@ -33,13 +35,9 @@ export function StyledTable({columns, rows, sortFn}) {
     <StyledContainer>
       <Table>
         <TableHead>
-          <TableRow>
-            {header}
-          </TableRow>
+          <TableRow>{header}</TableRow>
         </TableHead>
-        <TableBody>
-          {content}
-        </TableBody>
+        <TableBody>{content}</TableBody>
       </Table>
     </StyledContainer>
   );

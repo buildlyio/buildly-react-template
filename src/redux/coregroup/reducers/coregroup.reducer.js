@@ -1,34 +1,34 @@
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import {
   CREATE_COREGROUP_COMMIT,
   DELETE_COREGROUP_COMMIT,
   LOAD_DATA_COREGROUP_COMMIT,
   UPDATE_COREGROUP_COMMIT,
-} from "@redux/coregroup/actions/coregroup.actions";
-import {addAll, deleteOne, upsertOne} from "@redux/reducer.utils";
+} from '@redux/coregroup/actions/coregroup.actions';
+import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
 
 const initialState = {
   data: [],
   loaded: false,
   created: false,
   updated: false,
-  deleted: false
+  deleted: false,
 };
 
 export default function coregroupReducer(state = initialState, action) {
   switch (action.type) {
     case LOAD_DATA_COREGROUP_COMMIT:
       return addAll(state, action);
-      
+
     case CREATE_COREGROUP_COMMIT:
-      return upsertOne(state, action, "id");
+      return upsertOne(state, action, 'id');
 
     case UPDATE_COREGROUP_COMMIT:
-      return upsertOne(state, action, "id");
+      return upsertOne(state, action, 'id');
 
     case DELETE_COREGROUP_COMMIT:
-      return deleteOne(state, action, "id");
-      
+      return deleteOne(state, action, 'id');
+
     default:
       return state;
   }
@@ -44,13 +44,13 @@ coregroupReducer.propTypes = {
           create: PropTypes.string,
           update: PropTypes.string,
           delete: PropTypes.string,
-          read: PropTypes.string
-        })
-      }),
+          read: PropTypes.string,
+        }),
+      })
     ),
     loaded: PropTypes.bool,
     created: PropTypes.bool,
     updated: PropTypes.bool,
     deleted: PropTypes.bool,
-  })
-}
+  }),
+};
