@@ -268,8 +268,8 @@ function Shipment(props) {
                 const markerFound = _.find(markersToSet, {
                   lat: marker.lat,
                   lng: marker.lng,
-                  temperature: marker.temperature,
-                  humidity: marker.humidity,
+                  // temperature: marker.temperature,
+                  // humidity: marker.humidity,
                 });
 
                 if (!markerFound)
