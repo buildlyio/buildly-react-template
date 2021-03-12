@@ -15,7 +15,7 @@ file which contains actions to create, read, update and delete.
 
 Generator functions defined in the client's `.saga.js` file watch for actions to be
 dispatched. When this happens, they call another function that uses the services
-provided in `/src/midgard/modules`. These services are responsible for commnunicating
+provided in `/src/modules`. These services are responsible for commnunicating
 with the API. All sagas must be imported into the `index.js` file in this directory.
 
 The `.reducer.js` files update the state with the responses from the server. All
