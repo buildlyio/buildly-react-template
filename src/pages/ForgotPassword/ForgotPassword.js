@@ -29,10 +29,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
   },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
   form: {
     width: '100%',
     marginTop: theme.spacing(2),
@@ -161,7 +157,7 @@ const ForgotPassword = ({ dispatch, loading, history }) => {
                 </div>
                 <Grid container>
                   <Grid item xs>
-                    <Link href={routes.LOGIN} variant='body2' color='secondary'>
+                    <Link href={routes.LOGIN} variant='body2' color='primary'>
                       Go back to Sign in
                     </Link>
                   </Grid>
@@ -169,7 +165,7 @@ const ForgotPassword = ({ dispatch, loading, history }) => {
                     <Link
                       href={routes.REGISTER}
                       variant='body2'
-                      color='secondary'
+                      color='primary'
                     >
                       {"Don't have an account? Register"}
                     </Link>

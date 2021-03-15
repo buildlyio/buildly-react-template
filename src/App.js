@@ -10,6 +10,8 @@ import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
+import Help from './pages/Help/Help';
+import TicketStatus from './pages/TicketStatus/TicketStatus';
 import { routes } from './routes/routesConstants';
 import { PrivateRoute } from './routes/Private.route';
 import theme from './styles/theme';
@@ -35,6 +37,8 @@ const App = () => {
           <Route path={routes.REGISTER} component={Register} />
           <Route path={routes.FORGOT_PASSWORD} component={ForgotPassword} />
           <Route path={routes.RESET_PASSWORD} component={ResetPassword} />
+          <Route path={routes.HELP} component={Help} />
+          <Route path={routes.TICKET_STATUS} component={TicketStatus} />
           <PrivateRoute path={routes.APP} component={ContainerDashboard} />
         </div>
         <Alerts />

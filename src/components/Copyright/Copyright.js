@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, makeStyles, Typography } from '@material-ui/core';
+import { routes } from '@routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,15 +57,47 @@ const Copyright = () => {
       </div>
       <div className={classes.linksWrapper}>
         <div className={classes.links}>
-          <Link className={classes.link}>Request Help</Link>
-          <Link className={classes.link}>Status of Ticket</Link>
-          <Link className={classes.link}>Community</Link>
-          <Link className={classes.link}>Contact us</Link>
+          <Link className={classes.link} href={routes.HELP}>
+            Request Help
+          </Link>
+          <Link className={classes.link} href={routes.TICKET_STATUS}>
+            Status of Ticket
+          </Link>
+          <Link
+            className={classes.link}
+            href='https://buildly.io/developer-community/'
+            target='_blank'
+            rel='noopener'
+          >
+            Community
+          </Link>
+          <Link
+            className={classes.link}
+            href='https://buildly.io/contact-us/'
+            target='_blank'
+            rel='noopener'
+          >
+            Contact us
+          </Link>
           <Link className={classes.link}>Accessibility</Link>
         </div>
         <div className={classes.links}>
-          <Link className={classes.link}>Open Source</Link>
-          <Link className={classes.link}>Sales and Consulting</Link>
+          <Link
+            className={classes.link}
+            href='https://buildly.io/'
+            target='_blank'
+            rel='noopener'
+          >
+            Open Source
+          </Link>
+          <Link
+            className={classes.link}
+            href='https://buildly.io/'
+            target='_blank'
+            rel='noopener'
+          >
+            Sales and Consulting
+          </Link>
         </div>
       </div>
     </div>

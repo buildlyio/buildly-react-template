@@ -32,10 +32,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
   },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
   form: {
     width: '100%',
     marginTop: theme.spacing(2),
@@ -202,7 +198,7 @@ const Login = ({ dispatch, loading, history }) => {
                     <Link
                       href={routes.FORGOT_PASSWORD}
                       variant='body2'
-                      color='secondary'
+                      color='primary'
                     >
                       Forgot password?
                     </Link>
@@ -211,7 +207,7 @@ const Login = ({ dispatch, loading, history }) => {
                     <Link
                       href={routes.REGISTER}
                       variant='body2'
-                      color='secondary'
+                      color='primary'
                     >
                       {"Don't have an account? Register"}
                     </Link>

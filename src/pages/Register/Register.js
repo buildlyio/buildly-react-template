@@ -352,7 +352,7 @@ const Register = ({ dispatch, loading, history }) => {
                   )}
                 </Grid>
                 <Grid item className={classes.link}>
-                  <Link href={routes.LOGIN} variant='body2' color='secondary'>
+                  <Link href={routes.LOGIN} variant='body2' color='primary'>
                     {'Already have an account? Sign in'}
                   </Link>
                 </Grid>
