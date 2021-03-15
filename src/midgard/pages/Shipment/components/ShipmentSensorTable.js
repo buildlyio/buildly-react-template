@@ -69,6 +69,14 @@ const ShipmentSensorTable = (props) => {
         noMatch: "No data to display",
       },
     },
+    customSort: (data, colIndex, order, meta) => {
+      if (colIndex === 1) {
+        return _.orderBy(data, (item) => {return moment(item.data[colIndex])}, [order]);
+      }
+      return data.sort((a, b) => {
+        return (a.data[colIndex].length < b.data[colIndex].length ? -1: 1 ) * (order === 'desc' ? 1 : -1);
+      });
+    }
   };
 
   useEffect(() => {
@@ -80,7 +88,7 @@ const ShipmentSensorTable = (props) => {
 
   useEffect(() => {
     if (selectedMarker) {
-      const selectedIndex = _.map(_.keys(_.pickBy(sensorReport, {lat: selectedMarker.lat,lng:selectedMarker.lng})), Number);
+      const selectedIndex = _.map(_.keys(_.pickBy(rows, {lat: selectedMarker.lat,lng:selectedMarker.lng})), Number);
       setSelected(selectedIndex);
     }
     else

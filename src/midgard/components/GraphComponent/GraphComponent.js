@@ -12,7 +12,11 @@ export function GraphComponent(props) {
       xAxes: [{
         type: 'time',
         time: {
-          parser: 'MMMM DD, YYYY hh:mm:ss',
+          unit: 'day',
+          unitStepSize: 1,
+          displayFormats: {
+            'day': 'MMM DD'
+          },
           tooltipFormat: 'MMMM DD, YYYY hh:mm:ss'
         }
       }]
