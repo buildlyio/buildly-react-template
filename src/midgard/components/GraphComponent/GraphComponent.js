@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
+import moment from "moment";
 import { Scatter } from 'react-chartjs-2';
 import Typography from "@material-ui/core/Typography";
 
@@ -12,7 +13,11 @@ export function GraphComponent(props) {
       xAxes: [{
         type: 'time',
         time: {
-          parser: 'MMMM DD, YYYY hh:mm:ss',
+          unit: 'day',
+          unitStepSize: 1,
+          displayFormats: {
+            'day': 'MMM DD'
+          },
           tooltipFormat: 'MMMM DD, YYYY hh:mm:ss'
         }
       }]

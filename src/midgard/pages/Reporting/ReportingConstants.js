@@ -194,8 +194,13 @@ export const getShipmentOverview = (
           report.report_entries.forEach((report_entry) => {
             try {
               const temperature = convertUnitsOfMeasure('celsius', report_entry.report_temp, temperatureUnit, 'temperature');  // Data in ICLP is coming in Celsius, conversion to selected unit
-              const localDateTime = getLocalDateTime("report_timestamp" in report_entry ? report_entry.report_timestamp : report_entry.report_location.timeOfPosition)
-              if (report_entry.report_location.locationMethod !== "NoPosition") {
+              let localDateTime = getLocalDateTime(report_entry.report_location.timeOfPosition)
+
+              if ("report_timestamp" in report_entry) {
+                if (report_entry["report_timestamp"] !== null)
+                    localDateTime = getLocalDateTime(report_entry["report_timestamp"])
+              }
+             if (report_entry.report_location.locationMethod !== "NoPosition") {
               const marker = {
                 lat: report_entry.report_location.latitude,
                 lng: report_entry.report_location.longitude,
@@ -239,7 +244,7 @@ export const getShipmentOverview = (
     }
 
     list["sensor_report"] = sensorReportInfo;
-    list["markers_to_set"] = _.orderBy(markersToSet, (item) => {return moment(item.timestamp)}, ['asc'])
+    list["markers_to_set"] = _.orderBy(markersToSet, (item) => {return moment(item.timestamp)}, ['asc']);
     list["temperature"] = temperatureData;
     list["light"] = lightData;
     list["shock"] = shockData;

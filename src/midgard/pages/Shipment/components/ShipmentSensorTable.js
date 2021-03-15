@@ -80,7 +80,7 @@ const ShipmentSensorTable = (props) => {
 
   useEffect(() => {
     if (selectedMarker) {
-      const selectedIndex = _.map(_.keys(_.pickBy(sensorReport, {lat: selectedMarker.lat,lng:selectedMarker.lng})), Number);
+      const selectedIndex = _.map(_.keys(_.pickBy(rows, {lat: selectedMarker.lat,lng:selectedMarker.lng})), Number);
       setSelected(selectedIndex);
     }
     else
