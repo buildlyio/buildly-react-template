@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
-import moment from "moment";
 import { Scatter } from 'react-chartjs-2';
 import Typography from "@material-ui/core/Typography";
 
