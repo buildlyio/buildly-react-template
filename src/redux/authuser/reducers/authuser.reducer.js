@@ -26,6 +26,9 @@ import {
   GET_ORGANIZATION,
   GET_ORGANIZATION_SUCCESS,
   GET_ORGANIZATION_FAILURE,
+  SOCIAL_LOGIN,
+  SOCIAL_LOGIN_SUCCESS,
+  SOCIAL_LOGIN_FAIL,
 } from '@redux/authuser/actions/authuser.actions';
 
 const initialState = {
@@ -34,6 +37,7 @@ const initialState = {
   data: null,
   error: null,
   organizationData: null,
+  socialLogin: null,
 };
 
 // Reducer
@@ -259,6 +263,31 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         organizationData: null,
+        error: action.error,
+      };
+
+    case SOCIAL_LOGIN:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+        socialLogin: action.provider,
+      };
+
+    case SOCIAL_LOGIN_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        data: action.user,
+      };
+
+    case SOCIAL_LOGIN_FAIL:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
         error: action.error,
       };
 

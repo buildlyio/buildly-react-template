@@ -16,12 +16,12 @@ import {
 import logo from '@assets/buildly-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import GithubLogin from '@components/SocialLogin/GithubLogin';
-import { environment } from '@environments/environment';
 import { useInput } from '@hooks/useInput';
 import { register } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
 import { validators } from '@utils/validators';
 import { isMobile } from '@utils/mediaQuery';
+import { providers } from '@utils/socialLogin';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Register = ({ dispatch, loading, history }) => {
+const Register = ({ dispatch, loading, history, socialLogin }) => {
   const classes = useStyles();
   const email = useInput('', { required: true });
   const username = useInput('', { required: true });
@@ -326,7 +326,7 @@ const Register = ({ dispatch, loading, history }) => {
                   >
                     Register
                   </Button>
-                  {loading && (
+                  {loading && !socialLogin && (
                     <CircularProgress
                       size={24}
                       className={classes.buttonProgress}
@@ -340,16 +340,18 @@ const Register = ({ dispatch, loading, history }) => {
                 </Grid>
                 <Grid item xs={12} className={classes.socialAuth}>
                   <GithubLogin
-                    clientId={environment.GITHUB_CLIENT_ID}
-                    onSuccess={(res) => console.log(res)}
-                    onError={(err) => console.log(err)}
+                    dispatch={dispatch}
+                    history={history}
+                    disabled={loading && socialLogin}
                   />
-                  {loading && (
-                    <CircularProgress
-                      size={24}
-                      className={classes.buttonProgress}
-                    />
-                  )}
+                  {loading &&
+                    socialLogin &&
+                    socialLogin === providers.github && (
+                      <CircularProgress
+                        size={24}
+                        className={classes.buttonProgress}
+                      />
+                    )}
                 </Grid>
                 <Grid item className={classes.link}>
                   <Link href={routes.LOGIN} variant='body2' color='primary'>

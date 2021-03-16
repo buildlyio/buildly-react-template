@@ -53,3 +53,14 @@ describe('actions', () => {
     expect(actions.invite(data)).toEqual(expectedAction);
   });
 });
+
+describe('actions', () => {
+  it('should create an action to social login', () => {
+    const code = 'AUTH/SOCIAL_LOGIN';
+    const expectedAction = {
+      type: actions.SOCIAL_LOGIN,
+      code,
+    };
+    expect(actions.socialLogin(code)).toEqual(expectedAction);
+  });
+});

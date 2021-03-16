@@ -48,6 +48,10 @@ export const UPDATE_ORGANIZATION = 'AUTH/UPDATE_ORGANIZATION';
 export const UPDATE_ORGANIZATION_SUCCESS = 'AUTH/UPDATE_ORGANIZATION_SUCCESS';
 export const UPDATE_ORGANIZATION_FAILURE = 'AUTH/UPDATE_ORGANIZATION_FAILURE';
 
+export const SOCIAL_LOGIN = 'AUTH/SOCIAL_LOGIN';
+export const SOCIAL_LOGIN_SUCCESS = 'AUTH/SOCIAL_LOGIN_SUCCESS';
+export const SOCIAL_LOGIN_FAIL = 'AUTH/SOCIAL_LOGIN_FAIL';
+
 /**
  * Login action
  * @param {{ username, password }} credentials
@@ -126,4 +130,17 @@ export const getOrganization = (uuid) => ({
 export const updateOrganization = (uuid) => ({
   type: UPDATE_ORGANIZATION,
   uuid,
+});
+
+/**
+ * Social Login action
+ * @param code
+ * @param provider
+ * @param history
+ */
+export const socialLogin = (code, provider, history) => ({
+  type: SOCIAL_LOGIN,
+  code,
+  provider,
+  history,
 });

@@ -1,3 +1,7 @@
+export const providers = {
+  github: 'github',
+};
+
 export const toParams = (query) => {
   const q = query.replace(/^\??\//, '');
 

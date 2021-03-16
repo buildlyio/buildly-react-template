@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   LOGIN,
   LOGIN_SUCCESS,
@@ -30,6 +31,9 @@ import {
   GET_ORGANIZATION_FAILURE,
   GET_ORGANIZATION_SUCCESS,
   getOrganization,
+  SOCIAL_LOGIN,
+  SOCIAL_LOGIN_SUCCESS,
+  SOCIAL_LOGIN_FAIL,
 } from '@redux/authuser/actions/authuser.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
 import { environment } from '@environments/environment';
@@ -367,6 +371,51 @@ function* updateUser(payload) {
   }
 }
 
+function* socialLogin(payload) {
+  let { code, history, provider } = payload;
+  let url;
+  switch (provider) {
+    case 'github':
+      url = `${environment.API_URL}oauth/complete/github/?code=${code}`;
+  }
+
+  try {
+    const token = yield call(httpService.makeRequest, 'get', url);
+    yield call(oauthService.setAccessToken, token.data);
+    const user = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}coreuser/me/`
+    );
+    yield call(oauthService.setOauthUser, user, payload);
+    const coreuser = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}coreuser/`
+    );
+    yield call(oauthService.setCurrentCoreUser, coreuser, user);
+    yield [
+      yield put({ type: SOCIAL_LOGIN_SUCCESS, user }),
+      yield call(history.push, routes.DASHBOARD),
+    ];
+  } catch (error) {
+    console.log('error', error);
+    yield [
+      yield put({
+        type: SOCIAL_LOGIN_FAIL,
+        error: `Social Login via ${provider} failed`,
+      }),
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: `Sign in using ${_.capitalize(provider)} failed`,
+        })
+      ),
+    ];
+  }
+}
+
 function* getOrganizationData(payload) {
   let { uuid } = payload;
   try {
@@ -423,6 +472,10 @@ function* watchGetOrganization() {
   yield takeLatest(GET_ORGANIZATION, getOrganizationData);
 }
 
+function* watchSocialLogin() {
+  yield takeLatest(SOCIAL_LOGIN, socialLogin);
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
@@ -435,5 +488,6 @@ export default function* authSaga() {
     watchInvite(),
     watchGetUser(),
     watchGetOrganization(),
+    watchSocialLogin(),
   ]);
 }
