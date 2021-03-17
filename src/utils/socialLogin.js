@@ -1,5 +1,5 @@
 export const providers = {
-  github: 'github',
+  github: 'Github',
 };
 
 export const toParams = (query) => {
