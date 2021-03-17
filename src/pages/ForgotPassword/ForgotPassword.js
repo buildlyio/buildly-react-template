@@ -13,7 +13,7 @@ import {
   Typography,
   Container,
 } from '@material-ui/core';
-import logo from '@assets/buildly-logo.png';
+import logo from '@assets/light-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import { useInput } from '@hooks/useInput';
 import { sendPasswordResetLink } from '@redux/authuser/actions/authuser.actions';
@@ -21,8 +21,15 @@ import { routes } from '@routes/routesConstants';
 import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
-  container: {
-    marginBottom: theme.spacing(24),
+  logoDiv: {
+    width: theme.spacing(15),
+    margin: 'auto',
+    marginTop: theme.spacing(1.25),
+    marginBottom: theme.spacing(2.5),
+  },
+  logo: {
+    width: theme.spacing(15),
+    objectFit: 'contain',
   },
   paper: {
     display: 'flex',
@@ -35,11 +42,6 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     marginBottom: theme.spacing(2),
-  },
-  logo: {
-    width: theme.spacing(15),
-    objectFit: 'contain',
-    margin: theme.spacing(2.5),
   },
   textField: {
     minHeight: '5rem',
@@ -111,8 +113,10 @@ const ForgotPassword = ({ dispatch, loading, history }) => {
 
   return (
     <React.Fragment>
-      <img src={logo} className={classes.logo} />
-      <Container component='main' maxWidth='xs' className={classes.container}>
+      <div className={classes.logoDiv}>
+        <img src={logo} className={classes.logo} />
+      </div>
+      <Container component='main' maxWidth='xs'>
         <CssBaseline />
         <Card variant='outlined'>
           <CardContent>

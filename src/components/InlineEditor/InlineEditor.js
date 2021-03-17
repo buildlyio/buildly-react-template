@@ -26,7 +26,12 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0),
   },
   placeholder: {
-    color: theme.palette.common.grey,
+    color: theme.palette.secondary.light,
+  },
+  textField: {
+    '& input': {
+      color: theme.palette.secondary.contrastText,
+    },
   },
 }));
 
@@ -100,6 +105,7 @@ export const InlineEditor = ({
     <Box onClick={(event) => event.stopPropagation()}>
       {editing ? (
         <TextField
+          className={classes.textField}
           tag={tag}
           size='small'
           variant='outlined'

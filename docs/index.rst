@@ -4,7 +4,7 @@
 
 .. _buildly-react-template:
 
-.. image:: _static/images/buildly-logo.png
+.. image:: _static/images/dark-logo.png
     :alt: Buildly React Template: The Buildly Core Administrator
     :align: center
     :target: https://buildly.io/buildly-react-template

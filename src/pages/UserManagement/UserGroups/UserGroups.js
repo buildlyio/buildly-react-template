@@ -7,6 +7,7 @@ import {
   MenuItem,
   Switch,
   Box,
+  makeStyles,
 } from '@material-ui/core';
 import { AddCircle as AddIcon, MoreHoriz } from '@material-ui/icons';
 import { InlineEditor } from '@components/InlineEditor/InlineEditor';
@@ -14,10 +15,38 @@ import { StyledTable } from '@components/StyledTable/StyledTable';
 import { UserContext } from '@context/User.context';
 import Crud from '@modules/crud/Crud';
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    '& .MuiTableCell-root': {
+      color: `${theme.palette.secondary.contrastText} !important`,
+      '& .MuiSwitch-track': {
+        backgroundColor: theme.palette.secondary.light,
+      },
+      '& .MuiSwitch-colorPrimary.Mui-disabled': {
+        color: theme.palette.secondary.light,
+      },
+      '& .MuiSwitch-colorPrimary.Mui-disabled + .MuiSwitch-track': {
+        backgroundColor: theme.palette.secondary.light,
+      },
+      '& .MuiSwitch-colorPrimary.Mui-checked + .MuiSwitch-track': {
+        backgroundColor: theme.palette.primary.main,
+      },
+    },
+  },
+  icon: {
+    color: theme.palette.secondary.contrastText,
+    '&.Mui-disabled': {
+      color: theme.palette.secondary.light,
+    },
+  },
+}));
+
 /**
  * Manage user groups
  */
 const UserGroups = () => {
+  const classes = useStyles();
+
   // state to toggle actions menus
   const [menu, setMenu] = useState({ row: null, element: null });
   const user = useContext(UserContext);
@@ -66,13 +95,14 @@ const UserGroups = () => {
     return (
       <React.Fragment>
         <IconButton
+          className={classes.icon}
           aria-label='more'
           aria-controls={`groupActions${row.id}`}
           aria-haspopup='true'
           disabled={user.core_groups[0].id === row.id || !row.organization}
           onClick={handleMenuClick}
         >
-          <MoreHoriz />
+          <MoreHoriz color='inherit' />
         </IconButton>
         <Menu
           id={`groupActions${row.id}`}
@@ -113,7 +143,7 @@ const UserGroups = () => {
   };
 
   return (
-    <Box>
+    <Box className={classes.root}>
       <Crud
         deleteAction='DELETE_COREGROUP'
         updateAction='UPDATE_COREGROUP'

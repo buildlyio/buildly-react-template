@@ -13,7 +13,7 @@ import {
   Container,
   Grid,
 } from '@material-ui/core';
-import logo from '@assets/buildly-logo.png';
+import logo from '@assets/light-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import GithubLogin from '@components/SocialLogin/GithubLogin';
 import { useInput } from '@hooks/useInput';
@@ -24,8 +24,18 @@ import { isMobile } from '@utils/mediaQuery';
 import { providers } from '@utils/socialLogin';
 
 const useStyles = makeStyles((theme) => ({
+  logoDiv: {
+    width: theme.spacing(15),
+    margin: 'auto',
+    marginTop: theme.spacing(1.25),
+    marginBottom: theme.spacing(2.5),
+  },
+  logo: {
+    width: theme.spacing(15),
+    objectFit: 'contain',
+  },
   container: {
-    marginBottom: theme.spacing(24),
+    marginBottom: theme.spacing(15),
   },
   paper: {
     display: 'flex',
@@ -38,11 +48,6 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     marginBottom: theme.spacing(2),
-  },
-  logo: {
-    width: theme.spacing(15),
-    objectFit: 'contain',
-    margin: theme.spacing(2.5),
   },
   textField: {
     minHeight: '5rem',
@@ -150,7 +155,9 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
 
   return (
     <React.Fragment>
-      <img src={logo} className={classes.logo} />
+      <div className={classes.logoDiv}>
+        <img src={logo} className={classes.logo} />
+      </div>
       <Container component='main' maxWidth='sm' className={classes.container}>
         <CssBaseline />
         <Card variant='outlined'>

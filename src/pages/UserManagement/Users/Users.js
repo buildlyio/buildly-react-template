@@ -18,14 +18,33 @@ import Crud from '@modules/crud/Crud';
 import { getCoregroups } from '@redux/coregroup/actions/coregroup.actions';
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    '& .MuiTableCell-root': {
+      color: `${theme.palette.secondary.contrastText} !important`,
+    },
+  },
   btnPermission: {
     fontSize: rem(10),
+    '&.Mui-disabled': {
+      color: theme.palette.secondary.light,
+      borderColor: theme.palette.secondary.light,
+      '&.MuiButton-contained': {
+        backgroundColor: theme.palette.secondary.light,
+        color: theme.palette.secondary.main,
+      },
+    },
   },
   table: {
     marginTop: theme.spacing(2),
   },
   textDisabled: {
-    color: theme.palette.common.grey,
+    color: theme.palette.secondary.light,
+  },
+  icon: {
+    color: theme.palette.secondary.contrastText,
+    '&.Mui-disabled': {
+      color: theme.palette.secondary.light,
+    },
   },
 }));
 
@@ -113,13 +132,14 @@ const Users = ({ data, dispatch }) => {
     return (
       <React.Fragment>
         <IconButton
+          className={classes.icon}
           disabled={user.core_user_uuid === row.core_user_uuid}
           aria-label='more'
           aria-controls={`userActions${row.id}`}
           aria-haspopup='true'
           onClick={handleMenuClick}
         >
-          <MoreHoriz />
+          <MoreHoriz color='inherit' />
         </IconButton>
         <Menu
           id={`userActions${row.id}`}
@@ -144,7 +164,7 @@ const Users = ({ data, dispatch }) => {
   };
 
   return (
-    <Box>
+    <Box className={classes.root}>
       <Crud
         deleteAction='DELETE_COREUSER'
         updateAction='UPDATE_COREUSER'

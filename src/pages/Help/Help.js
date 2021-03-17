@@ -9,18 +9,20 @@ import {
   Typography,
   Container,
 } from '@material-ui/core';
-import logo from '@assets/buildly-logo.png';
+import logo from '@assets/light-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import { routes } from '@routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({
+  logoDiv: {
+    width: theme.spacing(15),
+    margin: 'auto',
+    marginTop: theme.spacing(1.25),
+    marginBottom: theme.spacing(2.5),
+  },
   logo: {
     width: theme.spacing(15),
     objectFit: 'contain',
-    margin: theme.spacing(2.5),
-  },
-  container: {
-    marginBottom: theme.spacing(24),
   },
   paper: {
     display: 'flex',
@@ -37,8 +39,10 @@ const Help = () => {
 
   return (
     <React.Fragment>
-      <img src={logo} className={classes.logo} />
-      <Container component='main' maxWidth='xs' className={classes.container}>
+      <div className={classes.logoDiv}>
+        <img src={logo} className={classes.logo} />
+      </div>
+      <Container component='main' maxWidth='xs'>
         <CssBaseline />
         <Card variant='outlined'>
           <CardContent>

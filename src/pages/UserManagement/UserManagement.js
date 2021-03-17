@@ -27,6 +27,7 @@ import UserGroups from './UserGroups/UserGroups';
 const useStyles = makeStyles((theme) => ({
   userManagementHeading: {
     margin: theme.spacing(3, 0),
+    color: theme.palette.secondary.contrastText,
   },
   textField: {
     minHeight: rem(5),
@@ -36,6 +37,17 @@ const useStyles = makeStyles((theme) => ({
   inviteForm: {
     padding: theme.spacing(3),
     minWidth: rem(25),
+  },
+  tabs: {
+    '& .MuiTabs-root': {
+      color: theme.palette.secondary.contrastText,
+      '& .Mui-selected': {
+        color: theme.palette.primary.main,
+      },
+      '& .MuiTabs-indicator': {
+        backgroundColor: theme.palette.secondary.light,
+      },
+    },
   },
 }));
 
@@ -156,7 +168,7 @@ const UserManagement = ({
         </Grid>
       </Grid>
       <Grid mb={3} container justify='center'>
-        <Grid item>
+        <Grid item className={classes.tabs}>
           <Tabs value={view} onChange={viewTabClicked}>
             {subNav.map((itemProps, index) => (
               <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
