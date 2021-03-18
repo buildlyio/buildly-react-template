@@ -92,7 +92,6 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
       allow_import_export: allowImportExport,
       radius: radius.value,
     };
-    console.log("Data: ", data)
     dispatch(updateOrganization(data));
   };
 
