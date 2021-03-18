@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core';
 import logo from '@assets/light-logo.png';
 import Copyright from '@components/Copyright/Copyright';
+import GithubLogin from '@components/SocialLogin/GithubLogin';
 import { useInput } from '@hooks/useInput';
 import {
   login,
@@ -22,6 +23,7 @@ import {
 } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
 import { validators } from '@utils/validators';
+import { providers } from '@utils/socialLogin';
 
 const useStyles = makeStyles((theme) => ({
   logoDiv: {
@@ -61,9 +63,20 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     position: 'relative',
   },
+  or: {
+    textAlign: 'center',
+    marginBottom: theme.spacing(1),
+  },
+  socialAuth: {
+    margin: theme.spacing(1),
+    position: 'relative',
+  },
+  link: {
+    margin: theme.spacing(1, 0, 0, 1),
+  },
 }));
 
-const Login = ({ dispatch, loading, history }) => {
+const Login = ({ dispatch, loading, history, socialLogin }) => {
   const classes = useStyles();
   const username = useInput('', { required: true });
   const password = useInput('', { required: true });
@@ -190,34 +203,48 @@ const Login = ({ dispatch, loading, history }) => {
                   >
                     Sign in
                   </Button>
-                  {loading && (
+                  {loading && !socialLogin && (
                     <CircularProgress
                       size={24}
                       className={classes.buttonProgress}
                     />
                   )}
                 </div>
-                <Grid container>
-                  <Grid item xs>
-                    <Link
-                      href={routes.FORGOT_PASSWORD}
-                      variant='body2'
-                      color='primary'
-                    >
-                      Forgot password?
-                    </Link>
-                  </Grid>
-                  <Grid item>
-                    <Link
-                      href={routes.REGISTER}
-                      variant='body2'
-                      color='primary'
-                    >
-                      {"Don't have an account? Register"}
-                    </Link>
-                  </Grid>
-                </Grid>
               </form>
+              <Grid container>
+                <Grid item xs={12} className={classes.or}>
+                  <Typography variant='body1'>----OR----</Typography>
+                </Grid>
+                <Grid item xs={12} className={classes.socialAuth}>
+                  <GithubLogin
+                    dispatch={dispatch}
+                    history={history}
+                    disabled={loading && socialLogin}
+                  />
+                  {loading &&
+                    socialLogin &&
+                    socialLogin === providers.github && (
+                      <CircularProgress
+                        size={24}
+                        className={classes.buttonProgress}
+                      />
+                    )}
+                </Grid>
+                <Grid item xs className={classes.link}>
+                  <Link
+                    href={routes.FORGOT_PASSWORD}
+                    variant='body2'
+                    color='primary'
+                  >
+                    Forgot password?
+                  </Link>
+                </Grid>
+                <Grid item className={classes.link}>
+                  <Link href={routes.REGISTER} variant='body2' color='primary'>
+                    {"Don't have an account? Register"}
+                  </Link>
+                </Grid>
+              </Grid>
             </div>
           </CardContent>
         </Card>

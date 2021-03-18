@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {
   LOGIN,
   LOGIN_SUCCESS,
@@ -41,6 +40,7 @@ import { oauthService } from '@modules/oauth/oauth.service';
 import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import { routes } from '@routes/routesConstants';
+import { providers } from '@utils/socialLogin';
 
 function* logout() {
   try {
@@ -375,7 +375,7 @@ function* socialLogin(payload) {
   let { code, history, provider } = payload;
   let url;
   switch (provider) {
-    case 'github':
+    case providers.github:
       url = `${environment.API_URL}oauth/complete/github/?code=${code}`;
   }
 
@@ -409,7 +409,7 @@ function* socialLogin(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: `Sign in using ${_.capitalize(provider)} failed`,
+          message: `Sign in using ${provider} failed`,
         })
       ),
     ];
