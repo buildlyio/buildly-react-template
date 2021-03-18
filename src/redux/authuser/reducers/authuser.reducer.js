@@ -26,7 +26,10 @@ import {
   GET_ORGANIZATION,
   GET_ORGANIZATION_SUCCESS,
   GET_ORGANIZATION_FAILURE,
-} from "@redux/authuser/actions/authuser.actions";
+  SOCIAL_LOGIN,
+  SOCIAL_LOGIN_SUCCESS,
+  SOCIAL_LOGIN_FAIL,
+} from '@redux/authuser/actions/authuser.actions';
 
 const initialState = {
   loading: false,
@@ -34,6 +37,7 @@ const initialState = {
   data: null,
   error: null,
   organizationData: null,
+  socialLogin: null,
 };
 
 // Reducer
@@ -62,7 +66,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
-    
+
     case SEND_PASSWORD_RESET_LINK:
       return {
         ...state,
@@ -134,7 +138,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
-    
+
     case REGISTER:
       return {
         ...state,
@@ -159,7 +163,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
-      
+
     case UPDATE_USER:
       return {
         ...state,
@@ -259,6 +263,31 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         organizationData: null,
+        error: action.error,
+      };
+
+    case SOCIAL_LOGIN:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+        socialLogin: action.provider,
+      };
+
+    case SOCIAL_LOGIN_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        data: action.user,
+      };
+
+    case SOCIAL_LOGIN_FAIL:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
         error: action.error,
       };
 

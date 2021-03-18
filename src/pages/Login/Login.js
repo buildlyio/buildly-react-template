@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import {
   makeStyles,
   Button,
@@ -7,75 +7,76 @@ import {
   TextField,
   Link,
   Grid,
-  Box,
   Card,
   CircularProgress,
   CardContent,
   Typography,
   Container,
-} from "@material-ui/core";
-import logo from "@assets/buildly-logo.png";
-import Copyright from "@components/Copyright/Copyright";
-import { useInput } from "@hooks/useInput";
+} from '@material-ui/core';
+import logo from '@assets/light-logo.png';
+import Copyright from '@components/Copyright/Copyright';
+import { useInput } from '@hooks/useInput';
 import {
   login,
-  validateResetPasswordToken
-} from "@redux/authuser/actions/authuser.actions";
-import { routes } from "@routes/routesConstants";
-import { validators } from "@utils/validators";
+  validateResetPasswordToken,
+} from '@redux/authuser/actions/authuser.actions';
+import { routes } from '@routes/routesConstants';
+import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(8),
+  logoDiv: {
+    width: theme.spacing(15),
+    margin: 'auto',
+    marginTop: theme.spacing(1.25),
+    marginBottom: theme.spacing(2.5),
+  },
+  logo: {
+    width: theme.spacing(15),
+    objectFit: 'contain',
   },
   paper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(2),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  logo: {
-    width: "12.5rem",
-    maxWidth: "100%",
+    marginBottom: theme.spacing(2),
   },
   textField: {
-    minHeight: "5rem",
-    margin: "0.25rem 0",
+    minHeight: '5rem',
+    margin: '0.25rem 0',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
     margin: theme.spacing(1),
-    position: "relative",
+    position: 'relative',
   },
 }));
 
-function Login({ dispatch, loading, history }) {
+const Login = ({ dispatch, loading, history }) => {
   const classes = useStyles();
-  const username = useInput("", { required: true });
-  const password = useInput("", { required: true });
+  const username = useInput('', { required: true });
+  const password = useInput('', { required: true });
   const [error, setError] = useState({});
 
   useEffect(() => {
-    const [uid, token] = location.pathname.substring(
-      location.pathname.indexOf(routes.RESET_PASSWORD) + 1,
-      location.pathname.lastIndexOf("/")
-    ).split("/").slice(1);
+    const [uid, token] = location.pathname
+      .substring(
+        location.pathname.indexOf(routes.RESET_PASSWORD) + 1,
+        location.pathname.lastIndexOf('/')
+      )
+      .split('/')
+      .slice(1);
     if (location.pathname.includes(routes.RESET_PASSWORD)) {
       const values = { uid, token };
       dispatch(validateResetPasswordToken(values, history));
@@ -115,7 +116,7 @@ function Login({ dispatch, loading, history }) {
         ...prevState,
         [e.target.id]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
   };
@@ -130,98 +131,101 @@ function Login({ dispatch, loading, history }) {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <Card className={classes.root} variant="outlined">
-        <CardContent>
-          <div className={classes.paper}>
-            <img src={logo} className={classes.logo} />
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
-            <form className={classes.form} noValidate onSubmit={handleSubmit}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
-                error={error.username && error.username.error}
-                helperText={
-                  error && error.username ? error.username.message : ""
-                }
-                className={classes.textField}
-                onBlur={(e) => handleBlur(e, "required", username)}
-                {...username.bind}
-              />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                error={error.password && error.password.error}
-                helperText={
-                  error && error.password ? error.password.message : ""
-                }
-                className={classes.textField}
-                onBlur={(e) => handleBlur(e, "required", password)}
-                {...password.bind}
-              />
-              <div className={classes.loadingWrapper}>
-                <Button
-                  type="submit"
+    <React.Fragment>
+      <div className={classes.logoDiv}>
+        <img src={logo} className={classes.logo} />
+      </div>
+      <Container component='main' maxWidth='xs'>
+        <CssBaseline />
+        <Card variant='outlined'>
+          <CardContent>
+            <div className={classes.paper}>
+              <Typography component='h1' variant='h5'>
+                Sign in
+              </Typography>
+              <form className={classes.form} noValidate onSubmit={handleSubmit}>
+                <TextField
+                  variant='outlined'
+                  margin='normal'
+                  required
                   fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  disabled={loading || submitDisabled()}
-                >
-                  Sign in
-                </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                )}
-              </div>
-              <Grid container>
-                <Grid item xs>
-                  <Link 
-                    href={routes.FORGOT_PASSWORD}
-                    variant="body2"
-                    color="secondary">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link
-                    href={routes.REGISTER}
-                    variant="body2"
-                    color="secondary"
+                  id='username'
+                  label='Username'
+                  name='username'
+                  autoComplete='username'
+                  error={error.username && error.username.error}
+                  helperText={
+                    error && error.username ? error.username.message : ''
+                  }
+                  className={classes.textField}
+                  onBlur={(e) => handleBlur(e, 'required', username)}
+                  {...username.bind}
+                />
+                <TextField
+                  variant='outlined'
+                  margin='normal'
+                  required
+                  fullWidth
+                  name='password'
+                  label='Password'
+                  type='password'
+                  id='password'
+                  autoComplete='current-password'
+                  error={error.password && error.password.error}
+                  helperText={
+                    error && error.password ? error.password.message : ''
+                  }
+                  className={classes.textField}
+                  onBlur={(e) => handleBlur(e, 'required', password)}
+                  {...password.bind}
+                />
+                <div className={classes.loadingWrapper}>
+                  <Button
+                    type='submit'
+                    fullWidth
+                    variant='contained'
+                    color='primary'
+                    className={classes.submit}
+                    disabled={loading || submitDisabled()}
                   >
-                    {"Don't have an account? Register"}
-                  </Link>
+                    Sign in
+                  </Button>
+                  {loading && (
+                    <CircularProgress
+                      size={24}
+                      className={classes.buttonProgress}
+                    />
+                  )}
+                </div>
+                <Grid container>
+                  <Grid item xs>
+                    <Link
+                      href={routes.FORGOT_PASSWORD}
+                      variant='body2'
+                      color='primary'
+                    >
+                      Forgot password?
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Link
+                      href={routes.REGISTER}
+                      variant='body2'
+                      color='primary'
+                    >
+                      {"Don't have an account? Register"}
+                    </Link>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </form>
-          </div>
-        </CardContent>
-      </Card>
-      <Box mt={8} mb={1}>
-        <Copyright />
-      </Box>
-    </Container>
+              </form>
+            </div>
+          </CardContent>
+        </Card>
+      </Container>
+      <Copyright />
+    </React.Fragment>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

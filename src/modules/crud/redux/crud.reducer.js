@@ -1,26 +1,41 @@
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import {
   CRUD_CREATE_COMMIT,
   CRUD_DELETE_COMMIT,
   CRUD_LOAD_DATA_COMMIT,
   CRUD_UPDATE_COMMIT,
-} from "./crud.actions";
-import {addAll, deleteOne, upsertOne} from "@redux/reducer.utils";
+} from './crud.actions';
+import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
 
 export default function crudDataReducer(state = {}, action) {
-  const newState = {...state};
+  const newState = { ...state };
   switch (action.type) {
     case CRUD_LOAD_DATA_COMMIT:
       newState[action.endpoint] = addAll(state[action.endpoint], action);
       return newState;
     case CRUD_DELETE_COMMIT:
-      newState[action.endpoint] = deleteOne(state[action.endpoint], action, action.idProp, action.dataProp);
+      newState[action.endpoint] = deleteOne(
+        state[action.endpoint],
+        action,
+        action.idProp,
+        action.dataProp
+      );
       return newState;
     case CRUD_CREATE_COMMIT:
-      newState[action.endpoint] = upsertOne(state[action.endpoint], action, action.idProp, action.dataProp);
+      newState[action.endpoint] = upsertOne(
+        state[action.endpoint],
+        action,
+        action.idProp,
+        action.dataProp
+      );
       return newState;
     case CRUD_UPDATE_COMMIT:
-      newState[action.endpoint] = upsertOne(state[action.endpoint], action, action.idProp, action.dataProp);
+      newState[action.endpoint] = upsertOne(
+        state[action.endpoint],
+        action,
+        action.idProp,
+        action.dataProp
+      );
       return newState;
     default:
       return state;
@@ -36,5 +51,5 @@ crudDataReducer.propTypes = {
       updated: PropTypes.bool,
       deleted: PropTypes.bool,
     })
-  )
-}
+  ),
+};

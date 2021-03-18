@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   LOGIN,
   LOGIN_SUCCESS,
@@ -30,20 +31,23 @@ import {
   GET_ORGANIZATION_FAILURE,
   GET_ORGANIZATION_SUCCESS,
   getOrganization,
-} from "@redux/authuser/actions/authuser.actions";
-import { put, takeLatest, all, call } from "redux-saga/effects";
-import { environment } from "@environments/environment";
-import { oauthService } from "@modules/oauth/oauth.service";
-import { httpService } from "@modules/http/http.service";
-import { showAlert } from "@redux/alert/actions/alert.actions";
-import { routes } from "@routes/routesConstants";
+  SOCIAL_LOGIN,
+  SOCIAL_LOGIN_SUCCESS,
+  SOCIAL_LOGIN_FAIL,
+} from '@redux/authuser/actions/authuser.actions';
+import { put, takeLatest, all, call } from 'redux-saga/effects';
+import { environment } from '@environments/environment';
+import { oauthService } from '@modules/oauth/oauth.service';
+import { httpService } from '@modules/http/http.service';
+import { showAlert } from '@redux/alert/actions/alert.actions';
+import { routes } from '@routes/routesConstants';
 
 function* logout() {
   try {
     yield call(oauthService.logout);
     yield [yield put({ type: LOGOUT_SUCCESS })];
   } catch (error) {
-    console.log("error", error);
+    console.log('error', error);
     yield put({ type: LOGOUT_FAIL });
   }
 }
@@ -58,13 +62,13 @@ function* login(payload) {
     yield call(oauthService.setAccessToken, token.data);
     const user = yield call(
       httpService.makeRequest,
-      "get",
+      'get',
       `${environment.API_URL}coreuser/me/`
     );
     yield call(oauthService.setOauthUser, user, payload);
     const coreuser = yield call(
       httpService.makeRequest,
-      "get",
+      'get',
       `${environment.API_URL}coreuser/`
     );
     yield call(oauthService.setCurrentCoreUser, coreuser, user);
@@ -73,14 +77,14 @@ function* login(payload) {
       yield call(history.push, routes.DASHBOARD),
     ];
   } catch (error) {
-    console.log("error", error);
+    console.log('error', error);
     yield [
-      yield put({ type: LOGIN_FAIL, error: "Invalid credentials given" }),
+      yield put({ type: LOGIN_FAIL, error: 'Invalid credentials given' }),
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Sign in failed",
+          message: 'Sign in failed',
         })
       ),
     ];
@@ -91,7 +95,7 @@ function* getUserDetails() {
   try {
     const user = yield call(
       httpService.makeRequest,
-      "get",
+      'get',
       `${environment.API_URL}coreuser/me/`
     );
     yield put({ type: GET_USER_SUCCESS, user });
@@ -100,12 +104,12 @@ function* getUserDetails() {
     }
   } catch (error) {
     yield [
-      yield put({ type: GET_USER_FAIL, error: "Error loading user data" }),
+      yield put({ type: GET_USER_FAIL, error: 'Error loading user data' }),
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Error loading user data",
+          message: 'Error loading user data',
         })
       ),
     ];
@@ -117,7 +121,7 @@ function* register(payload) {
   try {
     const user = yield call(
       httpService.makeRequest,
-      "post",
+      'post',
       `${environment.API_URL}coreuser/`,
       payload.data
     );
@@ -125,24 +129,24 @@ function* register(payload) {
       yield put({ type: REGISTER_SUCCESS, user }),
       yield put(
         showAlert({
-          type: "success",
+          type: 'success',
           open: true,
-          message: "Registration was successful",
+          message: 'Registration was successful',
         })
       ),
       yield call(history.push, routes.LOGIN),
     ];
   } catch (error) {
-    console.log("error", error);
+    console.log('error', error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Registration failed",
+          message: 'Registration failed',
         })
       ),
-      yield put({ type: REGISTER_FAIL, error: "Registration failed" }),
+      yield put({ type: REGISTER_FAIL, error: 'Registration failed' }),
     ];
   }
 }
@@ -152,16 +156,19 @@ function* sendPasswordResetLink(payload) {
   try {
     const response = yield call(
       httpService.makeRequest,
-      "post",
+      'post',
       `${environment.API_URL}coreuser/reset_password/`,
       payload.data
     );
     if (response.data && response.data.count) {
       yield [
-        yield put({ type: SEND_PASSWORD_RESET_LINK_SUCCESS, data: response.data }),
+        yield put({
+          type: SEND_PASSWORD_RESET_LINK_SUCCESS,
+          data: response.data,
+        }),
         yield put(
           showAlert({
-            type: "success",
+            type: 'success',
             open: true,
             message: response.data.detail,
           })
@@ -172,30 +179,30 @@ function* sendPasswordResetLink(payload) {
       yield [
         yield put(
           showAlert({
-            type: "error",
+            type: 'error',
             open: true,
-            message: "The email address entered does not exist",
+            message: 'The email address entered does not exist',
           })
         ),
         yield put({
           type: SEND_PASSWORD_RESET_LINK_FAIL,
-          error: "The email address entered does not exist",
+          error: 'The email address entered does not exist',
         }),
       ];
     }
   } catch (error) {
-    console.log("error", error);
+    console.log('error', error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Email could not be sent",
+          message: 'Email could not be sent',
         })
       ),
       yield put({
         type: SEND_PASSWORD_RESET_LINK_FAIL,
-        error: "Email could not be sent",
+        error: 'Email could not be sent',
       }),
     ];
   }
@@ -206,13 +213,16 @@ function* validateResetPasswordToken(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      "post",
+      'post',
       `${environment.API_URL}coreuser/reset_password_check/`,
       payload.data
     );
     if (data.data && data.data.success) {
       yield [
-        yield put({ type: VALIDATE_RESET_PASSWORD_TOKEN_SUCCESS, data: data.data }),
+        yield put({
+          type: VALIDATE_RESET_PASSWORD_TOKEN_SUCCESS,
+          data: data.data,
+        }),
         yield call(
           history.push,
           `${routes.RESET_PASSWORD}/${payload.data.uid}/${payload.data.token}/`
@@ -222,31 +232,33 @@ function* validateResetPasswordToken(payload) {
       yield [
         yield put(
           showAlert({
-            type: "error",
+            type: 'error',
             open: true,
-            message: "Invalid ID or token. Try sending resending the link to your email",
+            message:
+              'Invalid ID or token. Try sending resending the link to your email',
           })
         ),
         yield put({
           type: VALIDATE_RESET_PASSWORD_TOKEN_FAIL,
-          error: "Invalid ID or token. Try sending resending the link to your email",
+          error:
+            'Invalid ID or token. Try sending resending the link to your email',
         }),
         yield call(history.push, routes.LOGIN),
       ];
     }
   } catch (error) {
-    console.log("error", error);
+    console.log('error', error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Password reset failed",
+          message: 'Password reset failed',
         })
       ),
       yield put({
         type: VALIDATE_RESET_PASSWORD_TOKEN_FAIL,
-        error: "Password reset failed",
+        error: 'Password reset failed',
       }),
     ];
   }
@@ -257,16 +269,16 @@ function* resetPassword(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      "post",
+      'post',
       `${environment.API_URL}coreuser/reset_password_confirm/`,
       payload.data
     );
-    console.log("data", data);
+    console.log('data', data);
     yield [
       yield put({ type: RESET_PASSWORD_SUCCESS, data: data.data }),
       yield put(
         showAlert({
-          type: "success",
+          type: 'success',
           open: true,
           message: data.data.detail,
         })
@@ -274,18 +286,18 @@ function* resetPassword(payload) {
       yield call(history.push, routes.LOGIN),
     ];
   } catch (error) {
-    console.log("error", error);
+    console.log('error', error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Password reset failed",
+          message: 'Password reset failed',
         })
       ),
       yield put({
         type: RESET_PASSWORD_FAIL,
-        error: "Password reset failed",
+        error: 'Password reset failed',
       }),
     ];
   }
@@ -295,7 +307,7 @@ function* invite(payload) {
   try {
     const user = yield call(
       httpService.makeRequest,
-      "post",
+      'post',
       `${environment.API_URL}coreuser/invite/`,
       payload.data
     );
@@ -303,16 +315,16 @@ function* invite(payload) {
       yield put({ type: INVITE_SUCCESS, user }),
       yield put(
         showAlert({
-          type: "success",
+          type: 'success',
           open: true,
-          message: "Invitations sent successfully",
+          message: 'Invitations sent successfully',
         })
       ),
     ];
   } catch (error) {
     yield put({
       type: INVITE_FAIL,
-      error: "One or more email address is invalid",
+      error: 'One or more email address is invalid',
     });
   }
 }
@@ -321,13 +333,13 @@ function* updateUser(payload) {
   try {
     const user = yield call(
       httpService.makeRequest,
-      "patch",
+      'patch',
       `${environment.API_URL}coreuser/${payload.data.id}/`,
       payload.data
     );
     const data = yield call(
       httpService.makeRequest,
-      "put",
+      'put',
       `${environment.API_URL}organization/${payload.data.organization_uuid}/`,
       { name: payload.data.organization_name }
     );
@@ -336,9 +348,9 @@ function* updateUser(payload) {
       yield put({ type: GET_ORGANIZATION_SUCCESS, data }),
       yield put(
         showAlert({
-          type: "success",
+          type: 'success',
           open: true,
-          message: "Account details successfully updated",
+          message: 'Account details successfully updated',
         })
       ),
     ];
@@ -346,15 +358,60 @@ function* updateUser(payload) {
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Unable to update user details",
+          message: 'Unable to update user details',
         })
       ),
       yield put({
         type: UPDATE_USER_FAIL,
-        error: "Unable to update user details",
+        error: 'Unable to update user details',
       }),
+    ];
+  }
+}
+
+function* socialLogin(payload) {
+  let { code, history, provider } = payload;
+  let url;
+  switch (provider) {
+    case 'github':
+      url = `${environment.API_URL}oauth/complete/github/?code=${code}`;
+  }
+
+  try {
+    const token = yield call(httpService.makeRequest, 'get', url);
+    yield call(oauthService.setAccessToken, token.data);
+    const user = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}coreuser/me/`
+    );
+    yield call(oauthService.setOauthUser, user, payload);
+    const coreuser = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}coreuser/`
+    );
+    yield call(oauthService.setCurrentCoreUser, coreuser, user);
+    yield [
+      yield put({ type: SOCIAL_LOGIN_SUCCESS, user }),
+      yield call(history.push, routes.DASHBOARD),
+    ];
+  } catch (error) {
+    console.log('error', error);
+    yield [
+      yield put({
+        type: SOCIAL_LOGIN_FAIL,
+        error: `Social Login via ${provider} failed`,
+      }),
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: `Sign in using ${_.capitalize(provider)} failed`,
+        })
+      ),
     ];
   }
 }
@@ -364,7 +421,7 @@ function* getOrganizationData(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      "get",
+      'get',
       `${environment.API_URL}organization/${uuid}/`,
       null,
       true
@@ -415,6 +472,10 @@ function* watchGetOrganization() {
   yield takeLatest(GET_ORGANIZATION, getOrganizationData);
 }
 
+function* watchSocialLogin() {
+  yield takeLatest(SOCIAL_LOGIN, socialLogin);
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
@@ -427,5 +488,6 @@ export default function* authSaga() {
     watchInvite(),
     watchGetUser(),
     watchGetOrganization(),
+    watchSocialLogin(),
   ]);
 }

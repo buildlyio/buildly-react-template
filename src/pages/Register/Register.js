@@ -1,77 +1,95 @@
-import React, { useState } from "react";
-import { connect } from "react-redux";
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import {
   makeStyles,
   Button,
   CssBaseline,
   TextField,
   Link,
-  Box,
   Card,
   CircularProgress,
   CardContent,
   Typography,
   Container,
   Grid,
-} from "@material-ui/core";
-import logo from "@assets/buildly-logo.png";
-import Copyright from "@components/Copyright/Copyright";
-import { useInput } from "@hooks/useInput";
-import { register } from "@redux/authuser/actions/authuser.actions";
-import { routes } from "@routes/routesConstants";
-import { validators } from "@utils/validators";
-import { isMobile } from "@utils/mediaQuery";
+} from '@material-ui/core';
+import logo from '@assets/light-logo.png';
+import Copyright from '@components/Copyright/Copyright';
+import GithubLogin from '@components/SocialLogin/GithubLogin';
+import { useInput } from '@hooks/useInput';
+import { register } from '@redux/authuser/actions/authuser.actions';
+import { routes } from '@routes/routesConstants';
+import { validators } from '@utils/validators';
+import { isMobile } from '@utils/mediaQuery';
+import { providers } from '@utils/socialLogin';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(8),
+  logoDiv: {
+    width: theme.spacing(15),
+    margin: 'auto',
+    marginTop: theme.spacing(1.25),
+    marginBottom: theme.spacing(2.5),
+  },
+  logo: {
+    width: theme.spacing(15),
+    objectFit: 'contain',
+  },
+  container: {
+    marginBottom: theme.spacing(15),
   },
   paper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(2),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  logo: {
-    width: "12.5rem",
-    maxWidth: "100%",
+    marginBottom: theme.spacing(2),
   },
   textField: {
-    minHeight: "5rem",
-    margin: "0.25rem 0",
+    minHeight: '5rem',
+    margin: '0.25rem 0',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
     margin: theme.spacing(1),
-    position: "relative",
+    position: 'relative',
+  },
+  or: {
+    textAlign: 'center',
+    marginBottom: theme.spacing(1),
+  },
+  socialAuth: {
+    margin: theme.spacing(1),
+    position: 'relative',
+  },
+  link: {
+    margin: theme.spacing(1, 0, 0, 1),
   },
 }));
 
-function Register({ dispatch, loading, history, loaded, error }) {
+const Register = ({ dispatch, loading, history, socialLogin }) => {
   const classes = useStyles();
-  const email = useInput("", { required: true });
-  const username = useInput("", { required: true });
-  const password = useInput("", { required: true });
-  const re_password = useInput("", {
+  const email = useInput('', { required: true });
+  const username = useInput('', { required: true });
+  const password = useInput('', { required: true });
+  const re_password = useInput('', {
     required: true,
     confirm: true,
     matchField: password,
   });
-  const organization_name = useInput("", { required: true });
-  const first_name = useInput("", { required: true });
-  const last_name = useInput("");
+  const organization_name = useInput('', { required: true });
+  const first_name = useInput('', { required: true });
+  const last_name = useInput('');
   const [formError, setFormError] = useState({});
 
   /**
@@ -112,7 +130,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
         ...prevState,
         [e.target.id]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
   };
@@ -136,198 +154,226 @@ function Register({ dispatch, loading, history, loaded, error }) {
   };
 
   return (
-    <Container component="main" maxWidth="sm">
-      <CssBaseline />
-      <Card className={classes.root} variant="outlined">
-        <CardContent>
-          <div className={classes.paper}>
-            <img src={logo} className={classes.logo} />
-            <Typography component="h1" variant="h5">
-              Register
-            </Typography>
-            <form className={classes.form} noValidate onSubmit={handleSubmit}>
-              <Grid container spacing={isMobile() ? 0 : 3}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="first_name"
-                    label="First Name"
-                    name="first_name"
-                    autoComplete="first_name"
-                    error={formError.first_name && formError.first_name.error}
-                    helperText={
-                      formError.first_name ? formError.first_name.message : ""
-                    }
-                    className={classes.textField}
-                    onBlur={(e) => handleBlur(e, "required", first_name)}
-                    {...first_name.bind}
-                  />
+    <React.Fragment>
+      <div className={classes.logoDiv}>
+        <img src={logo} className={classes.logo} />
+      </div>
+      <Container component='main' maxWidth='sm' className={classes.container}>
+        <CssBaseline />
+        <Card variant='outlined'>
+          <CardContent>
+            <div className={classes.paper}>
+              <Typography component='h1' variant='h5'>
+                Register
+              </Typography>
+              <form className={classes.form} noValidate onSubmit={handleSubmit}>
+                <Grid container spacing={isMobile() ? 0 : 3}>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant='outlined'
+                      margin='normal'
+                      required
+                      fullWidth
+                      id='first_name'
+                      label='First Name'
+                      name='first_name'
+                      autoComplete='first_name'
+                      error={formError.first_name && formError.first_name.error}
+                      helperText={
+                        formError.first_name ? formError.first_name.message : ''
+                      }
+                      className={classes.textField}
+                      onBlur={(e) => handleBlur(e, 'required', first_name)}
+                      {...first_name.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant='outlined'
+                      margin='normal'
+                      fullWidth
+                      id='last_name'
+                      label='Last Name'
+                      name='last_name'
+                      autoComplete='last_name'
+                      error={formError.last_name && formError.last_name.error}
+                      helperText={
+                        formError.last_name ? formError.last_name.message : ''
+                      }
+                      className={classes.textField}
+                      onBlur={(e) => handleBlur(e)}
+                      {...last_name.bind}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="last_name"
-                    label="Last Name"
-                    name="last_name"
-                    autoComplete="last_name"
-                    error={formError.last_name && formError.last_name.error}
-                    helperText={
-                      formError.last_name ? formError.last_name.message : ""
-                    }
-                    className={classes.textField}
-                    onBlur={(e) => handleBlur(e)}
-                    {...last_name.bind}
-                  />
+                <Grid container spacing={isMobile() ? 0 : 3}>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant='outlined'
+                      margin='normal'
+                      required
+                      fullWidth
+                      id='username'
+                      label='Username'
+                      name='username'
+                      autoComplete='username'
+                      error={formError.username && formError.username.error}
+                      helperText={
+                        formError.username ? formError.username.message : ''
+                      }
+                      className={classes.textField}
+                      onBlur={(e) => handleBlur(e, 'required', username)}
+                      {...username.bind}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant='outlined'
+                      margin='normal'
+                      required
+                      fullWidth
+                      id='email'
+                      label='Email'
+                      name='email'
+                      autoComplete='email'
+                      type='email'
+                      error={formError.email && formError.email.error}
+                      helperText={
+                        formError.email ? formError.email.message : ''
+                      }
+                      className={classes.textField}
+                      onBlur={(e) => handleBlur(e, 'email', email)}
+                      {...email.bind}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-              <Grid container spacing={isMobile() ? 0 : 3}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="username"
-                    label="Username"
-                    name="username"
-                    autoComplete="username"
-                    error={formError.username && formError.username.error}
-                    helperText={
-                      formError.username ? formError.username.message : ""
-                    }
-                    className={classes.textField}
-                    onBlur={(e) => handleBlur(e, "required", username)}
-                    {...username.bind}
-                  />
+                <Grid container spacing={isMobile() ? 0 : 3}>
+                  <Grid item xs={12}>
+                    <TextField
+                      variant='outlined'
+                      margin='normal'
+                      required
+                      fullWidth
+                      id='organization_name'
+                      label='Organisation Name'
+                      name='organization_name'
+                      autoComplete='organization_name'
+                      error={
+                        formError.organization_name &&
+                        formError.organization_name.error
+                      }
+                      helperText={
+                        formError.organization_name
+                          ? formError.organization_name.message
+                          : ''
+                      }
+                      className={classes.textField}
+                      onBlur={(e) =>
+                        handleBlur(e, 'required', organization_name)
+                      }
+                      {...organization_name.bind}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email"
-                    name="email"
-                    autoComplete="email"
-                    type="email"
-                    error={formError.email && formError.email.error}
-                    helperText={formError.email ? formError.email.message : ""}
-                    className={classes.textField}
-                    onBlur={(e) => handleBlur(e, "email", email)}
-                    {...email.bind}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container spacing={isMobile() ? 0 : 3}>
-                <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="organization_name"
-                    label="Organisation Name"
-                    name="organization_name"
-                    autoComplete="organization_name"
-                    error={
-                      formError.organization_name &&
-                      formError.organization_name.error
-                    }
-                    helperText={
-                      formError.organization_name
-                        ? formError.organization_name.message
-                        : ""
-                    }
-                    className={classes.textField}
-                    onBlur={(e) => handleBlur(e, "required", organization_name)}
-                    {...organization_name.bind}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container spacing={isMobile() ? 0 : 3}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    error={formError.password && formError.password.error}
-                    helperText={
-                      formError.password ? formError.password.message : ""
-                    }
-                    className={classes.textField}
-                    onBlur={(e) => handleBlur(e, "required", password)}
-                    {...password.bind}
-                  />
-                </Grid>
+                <Grid container spacing={isMobile() ? 0 : 3}>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant='outlined'
+                      margin='normal'
+                      required
+                      fullWidth
+                      name='password'
+                      label='Password'
+                      type='password'
+                      id='password'
+                      autoComplete='current-password'
+                      error={formError.password && formError.password.error}
+                      helperText={
+                        formError.password ? formError.password.message : ''
+                      }
+                      className={classes.textField}
+                      onBlur={(e) => handleBlur(e, 'required', password)}
+                      {...password.bind}
+                    />
+                  </Grid>
 
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="re_password"
-                    label="Confirm Password"
-                    name="re_password"
-                    type="password"
-                    autoComplete="re_password"
-                    error={formError.re_password && formError.re_password.error}
-                    helperText={
-                      formError.re_password ? formError.re_password.message : ""
-                    }
-                    className={classes.textField}
-                    onBlur={(e) => handleBlur(e, "confirm", re_password)}
-                    {...re_password.bind}
-                  />
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      variant='outlined'
+                      margin='normal'
+                      required
+                      fullWidth
+                      id='re_password'
+                      label='Confirm Password'
+                      name='re_password'
+                      type='password'
+                      autoComplete='re_password'
+                      error={
+                        formError.re_password && formError.re_password.error
+                      }
+                      helperText={
+                        formError.re_password
+                          ? formError.re_password.message
+                          : ''
+                      }
+                      className={classes.textField}
+                      onBlur={(e) => handleBlur(e, 'confirm', re_password)}
+                      {...re_password.bind}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-              <div className={classes.loadingWrapper}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  disabled={loading || submitDisabled()}
-                >
-                  Register
-                </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                )}
-              </div>
+                <div className={classes.loadingWrapper}>
+                  <Button
+                    type='submit'
+                    fullWidth
+                    variant='contained'
+                    color='primary'
+                    className={classes.submit}
+                    disabled={loading || submitDisabled()}
+                  >
+                    Register
+                  </Button>
+                  {loading && !socialLogin && (
+                    <CircularProgress
+                      size={24}
+                      className={classes.buttonProgress}
+                    />
+                  )}
+                </div>
+              </form>
               <Grid container>
-                <Grid item>
-                  <Link href={routes.LOGIN} variant="body2" color="secondary">
-                    {"Already have an account? Sign in"}
+                <Grid item xs={12} className={classes.or}>
+                  <Typography variant='body1'>----OR----</Typography>
+                </Grid>
+                <Grid item xs={12} className={classes.socialAuth}>
+                  <GithubLogin
+                    dispatch={dispatch}
+                    history={history}
+                    disabled={loading && socialLogin}
+                  />
+                  {loading &&
+                    socialLogin &&
+                    socialLogin === providers.github && (
+                      <CircularProgress
+                        size={24}
+                        className={classes.buttonProgress}
+                      />
+                    )}
+                </Grid>
+                <Grid item className={classes.link}>
+                  <Link href={routes.LOGIN} variant='body2' color='primary'>
+                    {'Already have an account? Sign in'}
                   </Link>
                 </Grid>
               </Grid>
-            </form>
-          </div>
-        </CardContent>
-      </Card>
-      <Box mt={8} mb={1}>
-        <Copyright />
-      </Box>
-    </Container>
+            </div>
+          </CardContent>
+        </Card>
+      </Container>
+      <Copyright />
+    </React.Fragment>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

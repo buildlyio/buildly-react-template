@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { connect } from "react-redux";
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import {
   makeStyles,
   Button,
@@ -8,65 +8,61 @@ import {
   Link,
   Grid,
   Card,
-  Box,
   CircularProgress,
   CardContent,
   Typography,
   Container,
-} from "@material-ui/core";
-import logo from "@assets/buildly-logo.png";
-import Copyright from "@components/Copyright/Copyright";
-import { useInput } from "@hooks/useInput";
-import {
-  sendPasswordResetLink,
-} from "@redux/authuser/actions/authuser.actions";
-import { routes } from "@routes/routesConstants";
-import { validators } from "@utils/validators";
+} from '@material-ui/core';
+import logo from '@assets/light-logo.png';
+import Copyright from '@components/Copyright/Copyright';
+import { useInput } from '@hooks/useInput';
+import { sendPasswordResetLink } from '@redux/authuser/actions/authuser.actions';
+import { routes } from '@routes/routesConstants';
+import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(8),
+  logoDiv: {
+    width: theme.spacing(15),
+    margin: 'auto',
+    marginTop: theme.spacing(1.25),
+    marginBottom: theme.spacing(2.5),
+  },
+  logo: {
+    width: theme.spacing(15),
+    objectFit: 'contain',
   },
   paper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(2),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  logo: {
-    width: "12.5rem",
-    maxWidth: "100%",
+    marginBottom: theme.spacing(2),
   },
   textField: {
-    minHeight: "5rem",
-    margin: "0.25rem 0",
+    minHeight: '5rem',
+    margin: '0.25rem 0',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
     margin: theme.spacing(1),
-    position: "relative",
+    position: 'relative',
   },
 }));
 
-function ForgotPassword({ dispatch, loading, history }) {
+const ForgotPassword = ({ dispatch, loading, history }) => {
   const classes = useStyles();
-  const email = useInput("", { required: true });
+  const email = useInput('', { required: true });
   const [error, setError] = useState({});
 
   /**
@@ -101,7 +97,7 @@ function ForgotPassword({ dispatch, loading, history }) {
         ...prevState,
         [e.target.id]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
   };
@@ -116,76 +112,78 @@ function ForgotPassword({ dispatch, loading, history }) {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <Card className={classes.root} variant="outlined">
-        <CardContent>
-          <div className={classes.paper}>
-            <img src={logo} className={classes.logo} />
-            <Typography component="h1" variant="h5" gutterBottom>
-              Enter your registered Email
-            </Typography>
-            <form className={classes.form} noValidate onSubmit={handleSubmit}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Registered email"
-                name="email"
-                autoComplete="email"
-                className={classes.textField}
-                error={error.email && error.email.error}
-                helperText={error && error.email ? error.email.message : ""}
-                onBlur={(e) => handleBlur(e, "email", email)}
-                {...email.bind}
-              />
-
-              <div className={classes.loadingWrapper}>
-                <Button
-                  type="submit"
+    <React.Fragment>
+      <div className={classes.logoDiv}>
+        <img src={logo} className={classes.logo} />
+      </div>
+      <Container component='main' maxWidth='xs'>
+        <CssBaseline />
+        <Card variant='outlined'>
+          <CardContent>
+            <div className={classes.paper}>
+              <Typography component='h1' variant='h5' gutterBottom>
+                Enter your registered Email
+              </Typography>
+              <form className={classes.form} noValidate onSubmit={handleSubmit}>
+                <TextField
+                  variant='outlined'
+                  margin='normal'
+                  required
                   fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  disabled={loading || submitDisabled()}
-                >
-                  Submit
-                </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                )}
-              </div>
-              <Grid container>
-                <Grid item xs>
-                  <Link href={routes.LOGIN} variant="body2" color="secondary">
-                    Go back to Sign in
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link
-                    href={routes.REGISTER}
-                    variant="body2"
-                    color="secondary"
+                  id='email'
+                  label='Registered email'
+                  name='email'
+                  autoComplete='email'
+                  className={classes.textField}
+                  error={error.email && error.email.error}
+                  helperText={error && error.email ? error.email.message : ''}
+                  onBlur={(e) => handleBlur(e, 'email', email)}
+                  {...email.bind}
+                />
+
+                <div className={classes.loadingWrapper}>
+                  <Button
+                    type='submit'
+                    fullWidth
+                    variant='contained'
+                    color='primary'
+                    className={classes.submit}
+                    disabled={loading || submitDisabled()}
                   >
-                    {"Don't have an account? Register"}
-                  </Link>
+                    Submit
+                  </Button>
+                  {loading && (
+                    <CircularProgress
+                      size={24}
+                      className={classes.buttonProgress}
+                    />
+                  )}
+                </div>
+                <Grid container>
+                  <Grid item xs>
+                    <Link href={routes.LOGIN} variant='body2' color='primary'>
+                      Go back to Sign in
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Link
+                      href={routes.REGISTER}
+                      variant='body2'
+                      color='primary'
+                    >
+                      {"Don't have an account? Register"}
+                    </Link>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </form>
-          </div>
-        </CardContent>
-      </Card>
-      <Box mt={8} mb={1}>
-        <Copyright />
-      </Box>
-    </Container>
+              </form>
+            </div>
+          </CardContent>
+        </Card>
+      </Container>
+      <Copyright />
+    </React.Fragment>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

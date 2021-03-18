@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
-import { connect } from "react-redux";
-import { rem } from "polished";
+import React, { useState, useEffect, useContext } from 'react';
+import { connect } from 'react-redux';
+import { rem } from 'polished';
 import {
   makeStyles,
   Typography,
@@ -10,29 +10,48 @@ import {
   Menu,
   MenuItem,
   Box,
-} from "@material-ui/core";
-import { MoreHoriz } from "@material-ui/icons";
-import { StyledTable } from "@components/StyledTable/StyledTable";
-import { UserContext } from "@context/User.context";
-import Crud from "@modules/crud/Crud";
-import { getCoregroups } from "@redux/coregroup/actions/coregroup.actions"
+} from '@material-ui/core';
+import { MoreHoriz } from '@material-ui/icons';
+import { StyledTable } from '@components/StyledTable/StyledTable';
+import { UserContext } from '@context/User.context';
+import Crud from '@modules/crud/Crud';
+import { getCoregroups } from '@redux/coregroup/actions/coregroup.actions';
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    '& .MuiTableCell-root': {
+      color: `${theme.palette.secondary.contrastText} !important`,
+    },
+  },
   btnPermission: {
-    fontSize: rem(10)
+    fontSize: rem(10),
+    '&.Mui-disabled': {
+      color: theme.palette.secondary.light,
+      borderColor: theme.palette.secondary.light,
+      '&.MuiButton-contained': {
+        backgroundColor: theme.palette.secondary.light,
+        color: theme.palette.secondary.main,
+      },
+    },
   },
   table: {
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   textDisabled: {
-    color: "#aaaaaa"
-  }
+    color: theme.palette.secondary.light,
+  },
+  icon: {
+    color: theme.palette.secondary.contrastText,
+    '&.Mui-disabled': {
+      color: theme.palette.secondary.light,
+    },
+  },
 }));
 
 /**
  * Current users list
  */
-function Users({ location, history, data, dispatch }) {
+const Users = ({ data, dispatch }) => {
   const classes = useStyles();
   // state to toggle actions menus
   const [menu, setMenu] = useState({ row: null, element: null });
@@ -46,33 +65,49 @@ function Users({ location, history, data, dispatch }) {
       setCoregroupsLoaded(true);
     } else {
       // define permissions
-      setPermissions(data.map(coregroup => {
-        return {label: coregroup.name, value: coregroup.id}
-      }))
+      setPermissions(
+        data.map((coregroup) => {
+          return { label: coregroup.name, value: coregroup.id };
+        })
+      );
     }
   }, [data]);
-
 
   // table templates
   const permissionsTemplate = (row, crud, classes) => {
     if (coregroupsLoaded) {
-      const [active, setActive] = useState(row.core_groups[0] && row.core_groups[0].id || row.core_groups[0]);
-      return <ButtonGroup disableElevation color="primary" size="small" disabled={!row.is_active || user.core_user_uuid === row.core_user_uuid}>
-        {permissions.map((permission, index) => (
-          <Button
-            className={classes.btnPermission}
-            key={`btnGroup${index}`}
-            variant={permission.value === active ? "contained" : "outlined"}
-            onClick={() => {
-              setActive(permission.value);
-              crud.updateItem({ id: row.id, core_groups: [permission.value] });
-            }}>
-            {permission.label}
-          </Button>
-        ))}
-      </ButtonGroup>
+      const [active, setActive] = useState(
+        (row.core_groups[0] && row.core_groups[0].id) || row.core_groups[0]
+      );
+      return (
+        <ButtonGroup
+          disableElevation
+          color='primary'
+          size='small'
+          disabled={
+            !row.is_active || user.core_user_uuid === row.core_user_uuid
+          }
+        >
+          {permissions.map((permission, index) => (
+            <Button
+              className={classes.btnPermission}
+              key={`btnGroup${index}`}
+              variant={permission.value === active ? 'contained' : 'outlined'}
+              onClick={() => {
+                setActive(permission.value);
+                crud.updateItem({
+                  id: row.id,
+                  core_groups: [permission.value],
+                });
+              }}
+            >
+              {permission.label}
+            </Button>
+          ))}
+        </ButtonGroup>
+      );
     }
-  }
+  };
 
   const actionsTemplate = (row, crud) => {
     const handleMenuClick = (event) => {
@@ -80,9 +115,9 @@ function Users({ location, history, data, dispatch }) {
     };
 
     const handleMenuItemClick = (action) => {
-      if (action === "delete") {
+      if (action === 'delete') {
         crud.deleteItem(menu.row);
-      } else if (action === "deactivate") {
+      } else if (action === 'deactivate') {
         crud.updateItem({ id: menu.row.id, is_active: false });
       } else {
         crud.updateItem({ id: menu.row.id, is_active: true });
@@ -93,60 +128,62 @@ function Users({ location, history, data, dispatch }) {
     const handleMenuClose = () => {
       setMenu({ row: null, element: null });
     };
-  
+
     return (
       <React.Fragment>
         <IconButton
+          className={classes.icon}
           disabled={user.core_user_uuid === row.core_user_uuid}
-          aria-label="more"
+          aria-label='more'
           aria-controls={`userActions${row.id}`}
-          aria-haspopup="true"
+          aria-haspopup='true'
           onClick={handleMenuClick}
         >
-          <MoreHoriz />
+          <MoreHoriz color='inherit' />
         </IconButton>
         <Menu
           id={`userActions${row.id}`}
           anchorEl={menu.element}
           keepMounted
-          open={Boolean(menu.row && (menu.row.id === row.id))}
+          open={Boolean(menu.row && menu.row.id === row.id)}
           onClose={handleMenuClose}
         >
-          {row.actions.filter(
-            option => !(option.value === "delete" && row.is_active)
-          ).map((option) => (
-          <MenuItem
-            key={`userActions${row.id }:${option.value}`}
-            onClick={() => handleMenuItemClick(option.value)}
-          >
-            {option.label}
-          </MenuItem>))}
+          {row.actions
+            .filter((option) => !(option.value === 'delete' && row.is_active))
+            .map((option) => (
+              <MenuItem
+                key={`userActions${row.id}:${option.value}`}
+                onClick={() => handleMenuItemClick(option.value)}
+              >
+                {option.label}
+              </MenuItem>
+            ))}
         </Menu>
       </React.Fragment>
     );
   };
 
   return (
-    <Box>
+    <Box className={classes.root}>
       <Crud
-        deleteAction="DELETE_COREUSER"
-        updateAction="UPDATE_COREUSER"
-        createAction="CREATE_COREUSER"
-        loadAction="LOAD_DATA_COREUSER"
-        reducer="coreuserReducer"
+        deleteAction='DELETE_COREUSER'
+        updateAction='UPDATE_COREUSER'
+        createAction='CREATE_COREUSER'
+        loadAction='LOAD_DATA_COREUSER'
+        reducer='coreuserReducer'
       >
-        { crud => {
+        {(crud) => {
           if (crud.getData()) {
-            crud.getData().forEach(row => {
-              if(row.is_active) {
+            crud.getData().forEach((row) => {
+              if (row.is_active) {
                 row.actions = [
-                  { value: "deactivate", label: "Deactivate" },
-                  { value: "delete", label: "Delete" }
+                  { value: 'deactivate', label: 'Deactivate' },
+                  { value: 'delete', label: 'Delete' },
                 ];
               } else {
                 row.actions = [
-                  { value: "activate", label: "Activate" },
-                  { value: "delete", label: "Delete" }
+                  { value: 'activate', label: 'Activate' },
+                  { value: 'delete', label: 'Delete' },
                 ];
               }
             });
@@ -155,22 +192,73 @@ function Users({ location, history, data, dispatch }) {
             <StyledTable
               className={classes.table}
               columns={[
-                { label: "Full name", prop: "name", template: (row) => (<Typography variant="body1" className={row.is_active ? "" : classes.textDisabled}>{row.first_name} {row.last_name}</Typography>) },
-                { label: "Email", prop: "email", template: (row) => (<Typography variant="body2" className={row.is_active ? "" : classes.textDisabled}> {row.email}</Typography>) },
-                { label: "Last activity", prop: "activity", template: (row) => (<Typography variant="caption" className={classes.textDisabled}>Today</Typography>) },
-                { label: "Permissions", prop: "permission", template: (row) => permissionsTemplate(row, crud, classes) },
-                { label: "Actions", prop: "options", template: (row) => actionsTemplate(row, crud) },
+                {
+                  label: 'Full name',
+                  prop: 'name',
+                  template: (row) => (
+                    <Typography
+                      variant='body1'
+                      className={row.is_active ? '' : classes.textDisabled}
+                    >
+                      {row.first_name} {row.last_name}
+                    </Typography>
+                  ),
+                },
+                {
+                  label: 'Email',
+                  prop: 'email',
+                  template: (row) => (
+                    <Typography
+                      variant='body2'
+                      className={row.is_active ? '' : classes.textDisabled}
+                    >
+                      {' '}
+                      {row.email}
+                    </Typography>
+                  ),
+                },
+                {
+                  label: 'Last activity',
+                  prop: 'activity',
+                  template: (row) => (
+                    <Typography
+                      variant='caption'
+                      className={classes.textDisabled}
+                    >
+                      Today
+                    </Typography>
+                  ),
+                },
+                {
+                  label: 'Permissions',
+                  prop: 'permission',
+                  template: (row) => permissionsTemplate(row, crud, classes),
+                },
+                {
+                  label: 'Actions',
+                  prop: 'options',
+                  template: (row) => actionsTemplate(row, crud),
+                },
               ]}
               rows={crud.getData()}
-              sortFn={(a, b) => (a.core_user_uuid === user.core_user_uuid ? -1 : b.core_user_uuid === user.core_user_uuid ? 1 : 0)}
+              sortFn={(a, b) =>
+                a.core_user_uuid === user.core_user_uuid
+                  ? -1
+                  : b.core_user_uuid === user.core_user_uuid
+                  ? 1
+                  : 0
+              }
             />
-          )
+          );
         }}
       </Crud>
     </Box>
-  )
-}
+  );
+};
 
-const mapStateToProps = (state, ownProps) => ({...state.coregroupReducer, ...ownProps});
+const mapStateToProps = (state, ownProps) => ({
+  ...state.coregroupReducer,
+  ...ownProps,
+});
 
 export default connect(mapStateToProps)(Users);

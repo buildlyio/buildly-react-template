@@ -1,19 +1,19 @@
 // CRUD Action Types
-export const CRUD_LOAD_DATA = "CRUD_LOAD_DATA";
-export const CRUD_LOAD_DATA_COMMIT = "CRUD_LOAD_DATA_COMMIT";
-export const CRUD_LOAD_DATA_FAIL = "CRUD_LOAD_DATA_FAIL";
+export const CRUD_LOAD_DATA = 'CRUD_LOAD_DATA';
+export const CRUD_LOAD_DATA_COMMIT = 'CRUD_LOAD_DATA_COMMIT';
+export const CRUD_LOAD_DATA_FAIL = 'CRUD_LOAD_DATA_FAIL';
 
-export const CRUD_CREATE = "CRUD_CREATE";
-export const CRUD_CREATE_COMMIT = "CRUD_CREATE_COMMIT";
-export const CRUD_CREATE_FAIL = "CRUD_CREATE_FAIL";
+export const CRUD_CREATE = 'CRUD_CREATE';
+export const CRUD_CREATE_COMMIT = 'CRUD_CREATE_COMMIT';
+export const CRUD_CREATE_FAIL = 'CRUD_CREATE_FAIL';
 
-export const CRUD_UPDATE = "CRUD_UPDATE";
-export const CRUD_UPDATE_COMMIT = "CRUD_UPDATE_COMMIT";
-export const CRUD_UPDATE_FAIL = "CRUD_UPDATE_FAIL";
+export const CRUD_UPDATE = 'CRUD_UPDATE';
+export const CRUD_UPDATE_COMMIT = 'CRUD_UPDATE_COMMIT';
+export const CRUD_UPDATE_FAIL = 'CRUD_UPDATE_FAIL';
 
-export const CRUD_DELETE = "CRUD_DELETE";
-export const CRUD_DELETE_COMMIT = "CRUD_DELETE_COMMIT";
-export const CRUD_DELETE_FAIL = "CRUD_DELETE_FAIL";
+export const CRUD_DELETE = 'CRUD_DELETE';
+export const CRUD_DELETE_COMMIT = 'CRUD_DELETE_COMMIT';
+export const CRUD_DELETE_FAIL = 'CRUD_DELETE_FAIL';
 
 /**
  * function to call to load data.
@@ -26,7 +26,7 @@ export function crudLoadData(endpoint, idProp, dataProp) {
     type: CRUD_LOAD_DATA,
     endpoint,
     idProp,
-    dataProp
+    dataProp,
   };
 }
 
@@ -43,7 +43,7 @@ export function crudLoadDataCommit(data, endpoint, idProp, dataProp) {
     endpoint,
     idProp,
     dataProp,
-    data
+    data,
   };
 }
 
@@ -56,7 +56,7 @@ export function crudLoadDataFail(error, endpoint) {
   return {
     type: CRUD_LOAD_DATA_FAIL,
     endpoint,
-    error
+    error,
   };
 }
 
@@ -72,7 +72,7 @@ export function crudCreate(data, endpoint, idProp, dataProp) {
     endpoint,
     idProp,
     dataProp,
-    data
+    data,
   };
 }
 
@@ -89,7 +89,7 @@ export function crudCreateCommit(data, endpoint, idProp, dataProp) {
     endpoint,
     idProp,
     dataProp,
-    data
+    data,
   };
 }
 
@@ -98,11 +98,11 @@ export function crudCreateCommit(data, endpoint, idProp, dataProp) {
  * @param {string} endpoint - endpoint to make the call
  * @param {object} error
  */
-export function crudCreateFail(error, endpoint ) {
+export function crudCreateFail(error, endpoint) {
   return {
     type: CRUD_CREATE_FAIL,
     endpoint,
-    error
+    error,
   };
 }
 
@@ -119,7 +119,7 @@ export function crudUpdate(data, endpoint, idProp, dataProp) {
     endpoint,
     idProp,
     dataProp,
-    data
+    data,
   };
 }
 
@@ -149,7 +149,7 @@ export function crudUpdateFail(error, endpoint) {
   return {
     type: CRUD_UPDATE_FAIL,
     endpoint,
-    error
+    error,
   };
 }
 
@@ -196,6 +196,6 @@ export function crudDeleteFail(error, endpoint) {
   return {
     type: CRUD_DELETE_FAIL,
     endpoint,
-    error
+    error,
   };
 }

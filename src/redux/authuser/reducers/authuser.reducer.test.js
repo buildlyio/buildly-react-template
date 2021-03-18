@@ -1,116 +1,209 @@
-import * as actions from "@redux/authuser/actions/authuser.actions";
-import * as reducer from "./authuser.reducer";
+import * as actions from '@redux/authuser/actions/authuser.actions';
+import * as reducer from './authuser.reducer';
 
 const initialState = {
   loading: false,
   loaded: false,
   data: null,
   error: null,
+  socialLogin: null,
 };
 
-describe("Empty reducer", () => {
-  it("Empty Reducer", () => {
+describe('Empty reducer', () => {
+  it('Empty Reducer', () => {
     expect(reducer.default([], actions.LOGIN)).toEqual([]);
   });
 });
 
-describe("Login reducer", () => {
-  it("Empty Reducer", () => {
+describe('Login reducer', () => {
+  it('Empty Reducer', () => {
     expect(reducer.default(initialState, { type: actions.LOGIN })).toEqual({
       error: null,
       loaded: false,
       loading: true,
       data: null,
+      socialLogin: null,
     });
   });
 
-  it("login success Reducer", () => {
+  it('login success Reducer', () => {
     expect(reducer.default([], { type: actions.LOGIN_SUCCESS })).toEqual({
       loaded: true,
       loading: false,
       data: undefined,
+      error: null,
+      socialLogin: null,
     });
   });
-});
 
-describe("Login fail reducer", () => {
-  it("login fail Reducer", () => {
-    expect(
-      reducer.default(initialState, { type: actions.LOGIN_FAIL })
-    ).toEqual({ error: undefined, loaded: true, loading: false, data: null });
+  it('login fail Reducer', () => {
+    expect(reducer.default(initialState, { type: actions.LOGIN_FAIL })).toEqual(
+      {
+        error: undefined,
+        loaded: true,
+        loading: false,
+        data: null,
+        socialLogin: null,
+      }
+    );
   });
 });
 
-describe("Register reducer", () => {
-  it("Register Reducer", () => {
+describe('Register reducer', () => {
+  it('Register Reducer', () => {
     expect(reducer.default(initialState, { type: actions.REGISTER })).toEqual({
       error: null,
       loaded: false,
       loading: true,
       data: null,
+      socialLogin: null,
     });
   });
 
-  it("Register success Reducer", () => {
+  it('Register success Reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.REGISTER_SUCCESS })
-    ).toEqual({ error: null, loaded: true, loading: false, data: undefined });
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      data: undefined,
+      socialLogin: null,
+    });
   });
 
-  it("Register fail Reducer", () => {
+  it('Register fail Reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.REGISTER_FAIL })
-    ).toEqual({ error: undefined, loaded: true, loading: false, data: null });
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      data: null,
+      socialLogin: null,
+    });
   });
 });
 
-describe("logout success reducer", () => {
-  it("logout Reducer", () => {
+describe('logout success reducer', () => {
+  it('logout Reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.LOGOUT_SUCCESS })
     ).toEqual(initialState);
   });
 });
 
-describe("Update User reducer", () => {
-  it("update user Reducer", () => {
+describe('Update User reducer', () => {
+  it('update user Reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.UPDATE_USER })
-    ).toEqual({ error: null, loaded: false, loading: true, data: null });
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      data: null,
+      socialLogin: null,
+    });
   });
 
-  it("update user success Reducer", () => {
+  it('update user success Reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.UPDATE_USER_SUCCESS })
-    ).toEqual({ error: null, loaded: true, loading: false, data: undefined });
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      data: undefined,
+      socialLogin: null,
+    });
   });
 
-  it("update user fail Reducer", () => {
+  it('update user fail Reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.UPDATE_USER_FAIL })
-    ).toEqual({ error: undefined, loaded: true, loading: false, data: null });
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      data: null,
+      socialLogin: null,
+    });
   });
 });
 
-describe("invite User reducer", () => {
-  it("invite user Reducer", () => {
+describe('invite User reducer', () => {
+  it('invite user Reducer', () => {
     expect(reducer.default(initialState, { type: actions.INVITE })).toEqual({
       error: null,
       loaded: false,
       loading: true,
       data: null,
+      socialLogin: null,
     });
   });
 
-  it("invite user success Reducer", () => {
+  it('invite user success Reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.INVITE_SUCCESS })
-    ).toEqual({ error: null, loaded: true, loading: false, data: undefined });
+    ).toEqual({
+      error: null,
+      loaded: true,
+      loading: false,
+      data: undefined,
+      socialLogin: null,
+    });
   });
-  
-  it("invite user fail Reducer", () => {
+
+  it('invite user fail Reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.INVITE_FAIL })
-    ).toEqual({ error: undefined, loaded: true, loading: false, data: null });
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      data: null,
+      socialLogin: null,
+    });
+  });
+});
+
+describe('Social Login reducer', () => {
+  it('Empty Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.SOCIAL_LOGIN,
+        provider: 'github',
+      })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      data: null,
+      socialLogin: 'github',
+    });
+  });
+
+  it('social login success Reducer', () => {
+    expect(reducer.default([], { type: actions.SOCIAL_LOGIN_SUCCESS })).toEqual(
+      {
+        loaded: true,
+        loading: false,
+        data: undefined,
+        error: null,
+        socialLogin: null,
+      }
+    );
+  });
+
+  it('social login fail Reducer', () => {
+    expect(
+      reducer.default(initialState, { type: actions.SOCIAL_LOGIN_FAIL })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      data: null,
+      socialLogin: null,
+    });
   });
 });

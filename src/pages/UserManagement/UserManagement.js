@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import { Route } from "react-router-dom";
-import Popup from "reactjs-popup";
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { Route } from 'react-router-dom';
+import Popup from 'reactjs-popup';
 import {
   NotificationContainer,
   NotificationManager,
-} from "react-notifications";
-import { rem } from "polished";
+} from 'react-notifications';
+import { rem } from 'polished';
 import {
   makeStyles,
   Tabs,
@@ -16,41 +16,62 @@ import {
   Typography,
   Grid,
   Box,
-} from "@material-ui/core";
-import { Email as EmailIcon } from "@material-ui/icons";
-import { useInput } from "@hooks/useInput";
-import { invite } from "@redux/authuser/actions/authuser.actions";
-import { routes } from "@routes/routesConstants";
-import Users from "./Users/Users";
-import UserGroups from "./UserGroups/UserGroups";
+} from '@material-ui/core';
+import { Email as EmailIcon } from '@material-ui/icons';
+import { useInput } from '@hooks/useInput';
+import { invite } from '@redux/authuser/actions/authuser.actions';
+import { routes } from '@routes/routesConstants';
+import Users from './Users/Users';
+import UserGroups from './UserGroups/UserGroups';
 
 const useStyles = makeStyles((theme) => ({
   userManagementHeading: {
     margin: theme.spacing(3, 0),
+    color: theme.palette.secondary.contrastText,
   },
   textField: {
     minHeight: rem(5),
     margin: theme.spacing(1, 0),
-    width: "100%",
+    width: '100%',
   },
   inviteForm: {
     padding: theme.spacing(3),
-    minWidth: rem(25)
-  }
+    minWidth: rem(25),
+  },
+  tabs: {
+    '& .MuiTabs-root': {
+      color: theme.palette.secondary.contrastText,
+      '& .Mui-selected': {
+        color: theme.palette.primary.main,
+      },
+      '& .MuiTabs-indicator': {
+        backgroundColor: theme.palette.secondary.light,
+      },
+    },
+  },
 }));
 
 /**
  * Outputs the user management page.
  */
-function UserManagement({ dispatch, loading, error, user, history, location }) {
+const UserManagement = ({
+  dispatch,
+  loading,
+  error,
+  user,
+  history,
+  location,
+}) => {
   const classes = useStyles();
-  const email = useInput("", { required: true });
+  const email = useInput('', { required: true });
   const [inviteCall, setInviteCall] = useState(false);
   const subNav = [
-    { label: "Current users", value: "current-users" },
-    { label: "User groups", value: "groups" },
+    { label: 'Current users', value: 'current-users' },
+    { label: 'User groups', value: 'groups' },
   ];
-  const viewPath = (subNav.find(item => location.pathname.endsWith(item.value)) || subNav[0]).value;
+  const viewPath = (
+    subNav.find((item) => location.pathname.endsWith(item.value)) || subNav[0]
+  ).value;
   const [view, setView] = useState(viewPath);
 
   // this will be triggered whenever the content switcher is clicked to change the view
@@ -59,7 +80,7 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
   }, [view]);
 
   if (user && user.data && user.data.detail && inviteCall && !error) {
-    NotificationManager.success(user.data.detail, "Success");
+    NotificationManager.success(user.data.detail, 'Success');
     setInviteCall(false);
   }
 
@@ -74,8 +95,8 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
   };
 
   const getEmailsFromInputValue = (value) => {
-    return value.split(",").map((item) => item.trim());
-  }
+    return value.split(',').map((item) => item.trim());
+  };
 
   const viewTabClicked = (event, view) => {
     setView(view);
@@ -83,9 +104,9 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
 
   return (
     <Box mt={1} mb={3}>
-      <Grid container mb={3} justify="space-between" alignItems="center">
+      <Grid container mb={3} justify='space-between' alignItems='center'>
         <Grid item>
-          <Typography className={classes.userManagementHeading} variant={"h4"}>
+          <Typography className={classes.userManagementHeading} variant={'h4'}>
             People using this system
           </Typography>
         </Grid>
@@ -93,66 +114,65 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
           <Popup
             trigger={
               <Button
-                type="button"
-                variant="outlined"
-                size="small"
-                color="primary"
-                startIcon={<EmailIcon />}>
+                type='button'
+                variant='outlined'
+                size='small'
+                color='primary'
+                startIcon={<EmailIcon />}
+              >
                 Invite users
               </Button>
             }
-            position="bottom right"
-            on="click"
+            position='bottom right'
+            on='click'
             closeOnDocumentClick
             mouseLeaveDelay={300}
             mouseEnterDelay={0}
             contentStyle={{
               padding: 0,
-              border: "none",
-              width: "100%",
+              border: 'none',
+              width: '100%',
               minWidth: `${rem(250)}`,
-              maxWidth: `${rem(400)}`
+              maxWidth: `${rem(400)}`,
             }}
             arrow={false}
           >
-          <form className={classes.inviteForm}>
-            <Typography variant="h6">
-              Invite users to platform
-            </Typography>
-            <TextField
-              className={classes.textField}
-              label="Emails"
-              id="email"
-              variant="outlined"
-              placeholder="abc@xcy.com, 123@zxc.com"
-              error={error}
-              helperText={error}
-              {...email.bind}
-            />
-            <Grid
-              justify="flex-end"
-              container 
-              spacing={0}>
-              <Grid item>
-                <Button
-                  onClick={inviteUser}
-                  size="small"
-                  variant="contained"
-                  color="primary"
-                  disabled={loading}
-                  type="submit">
-                  Send
-                </Button>
+            <form className={classes.inviteForm}>
+              <Typography variant='h6'>Invite users to platform</Typography>
+              <TextField
+                className={classes.textField}
+                label='Emails'
+                id='email'
+                variant='outlined'
+                placeholder='abc@xcy.com, 123@zxc.com'
+                error={error}
+                helperText={error}
+                {...email.bind}
+              />
+              <Grid justify='flex-end' container spacing={0}>
+                <Grid item>
+                  <Button
+                    onClick={inviteUser}
+                    size='small'
+                    variant='contained'
+                    color='primary'
+                    disabled={loading}
+                    type='submit'
+                  >
+                    Send
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
-          </form>
+            </form>
           </Popup>
         </Grid>
       </Grid>
-      <Grid mb={3} container justify="center">
-        <Grid item>
+      <Grid mb={3} container justify='center'>
+        <Grid item className={classes.tabs}>
           <Tabs value={view} onChange={viewTabClicked}>
-            {subNav.map((itemProps, index) => <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />)}
+            {subNav.map((itemProps, index) => (
+              <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
+            ))}
           </Tabs>
         </Grid>
       </Grid>
@@ -161,7 +181,7 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
       <NotificationContainer />
     </Box>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

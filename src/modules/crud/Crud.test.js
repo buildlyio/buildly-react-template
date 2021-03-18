@@ -1,14 +1,14 @@
-import { Crud } from "./Crud";
-import { shallow } from "enzyme";
-import React from "react";
+import { Crud } from './Crud';
+import { shallow } from 'enzyme';
+import React from 'react';
 
 function setup() {
   const props = {
     dispatch: jest.fn(),
-    createAction: "CREATE_ACTION",
-    updateAction: "UPDATE_ACTION",
-    deleteAction: "DELETE_ACTION",
-    loadAction: "LOAD_ACTION",
+    createAction: 'CREATE_ACTION',
+    updateAction: 'UPDATE_ACTION',
+    deleteAction: 'DELETE_ACTION',
+    loadAction: 'LOAD_ACTION',
     children: jest.fn(),
   };
 
@@ -20,37 +20,37 @@ function setup() {
   };
 }
 
-describe("Crud", () => {
-  it("should dispatch an action to create an item", () => {
+describe('Crud', () => {
+  it('should dispatch an action to create an item', () => {
     const { enzymeWrapper, props } = setup();
     enzymeWrapper.instance().createItem({ id: 1 });
     expect(props.dispatch).toHaveBeenCalledWith({
-      type: "CREATE_ACTION",
+      type: 'CREATE_ACTION',
       data: { id: 1 },
     });
   });
 
-  it("should dispatch an action to update an item", () => {
+  it('should dispatch an action to update an item', () => {
     const { enzymeWrapper, props } = setup();
     enzymeWrapper.instance().updateItem({ id: 1 });
     expect(props.dispatch).toHaveBeenCalledWith({
-      type: "UPDATE_ACTION",
+      type: 'UPDATE_ACTION',
       data: { id: 1 },
     });
   });
 
-  it("should dispatch an action to delete an item", () => {
+  it('should dispatch an action to delete an item', () => {
     const { enzymeWrapper, props } = setup();
     enzymeWrapper.instance().deleteItem({ id: 1 });
     expect(props.dispatch).toHaveBeenCalledWith({
-      type: "DELETE_ACTION",
+      type: 'DELETE_ACTION',
       data: { id: 1 },
     });
   });
 
-  it("should dispatch an action to load the data", () => {
+  it('should dispatch an action to load the data', () => {
     const { enzymeWrapper, props } = setup();
     enzymeWrapper.instance().loadData();
-    expect(props.dispatch).toHaveBeenCalledWith({ type: "LOAD_ACTION" });
+    expect(props.dispatch).toHaveBeenCalledWith({ type: 'LOAD_ACTION' });
   });
 });
