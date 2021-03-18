@@ -7,6 +7,7 @@ const initialState = {
   data: null,
   error: null,
   socialLogin: null,
+  orgNames: null,
 };
 
 describe('Empty reducer', () => {
@@ -23,6 +24,7 @@ describe('Login reducer', () => {
       loading: true,
       data: null,
       socialLogin: null,
+      orgNames: null,
     });
   });
 
@@ -33,6 +35,7 @@ describe('Login reducer', () => {
       data: undefined,
       error: null,
       socialLogin: null,
+      orgNames: null,
     });
   });
 
@@ -44,6 +47,7 @@ describe('Login reducer', () => {
         loading: false,
         data: null,
         socialLogin: null,
+        orgNames: null,
       }
     );
   });
@@ -57,6 +61,7 @@ describe('Register reducer', () => {
       loading: true,
       data: null,
       socialLogin: null,
+      orgNames: null,
     });
   });
 
@@ -69,6 +74,7 @@ describe('Register reducer', () => {
       loading: false,
       data: undefined,
       socialLogin: null,
+      orgNames: null,
     });
   });
 
@@ -81,6 +87,7 @@ describe('Register reducer', () => {
       loading: false,
       data: null,
       socialLogin: null,
+      orgNames: null,
     });
   });
 });
@@ -103,6 +110,7 @@ describe('Update User reducer', () => {
       loading: true,
       data: null,
       socialLogin: null,
+      orgNames: null,
     });
   });
 
@@ -115,6 +123,7 @@ describe('Update User reducer', () => {
       loading: false,
       data: undefined,
       socialLogin: null,
+      orgNames: null,
     });
   });
 
@@ -127,6 +136,7 @@ describe('Update User reducer', () => {
       loading: false,
       data: null,
       socialLogin: null,
+      orgNames: null,
     });
   });
 });
@@ -139,6 +149,7 @@ describe('invite User reducer', () => {
       loading: true,
       data: null,
       socialLogin: null,
+      orgNames: null,
     });
   });
 
@@ -151,6 +162,7 @@ describe('invite User reducer', () => {
       loading: false,
       data: undefined,
       socialLogin: null,
+      orgNames: null,
     });
   });
 
@@ -163,6 +175,7 @@ describe('invite User reducer', () => {
       loading: false,
       data: null,
       socialLogin: null,
+      orgNames: null,
     });
   });
 });
@@ -180,6 +193,7 @@ describe('Social Login reducer', () => {
       loading: true,
       data: null,
       socialLogin: 'github',
+      orgNames: null,
     });
   });
 
@@ -191,6 +205,7 @@ describe('Social Login reducer', () => {
         data: undefined,
         error: null,
         socialLogin: null,
+        orgNames: null,
       }
     );
   });
@@ -204,6 +219,52 @@ describe('Social Login reducer', () => {
       loading: false,
       data: null,
       socialLogin: null,
+      orgNames: null,
+    });
+  });
+});
+
+describe('Load Organization Names reducer', () => {
+  it('Empty Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.LOAD_ORG_NAMES,
+      })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      data: null,
+      socialLogin: null,
+      orgNames: null,
+    });
+  });
+
+  it('load org names success Reducer', () => {
+    expect(
+      reducer.default([], { type: actions.LOAD_ORG_NAMES_SUCCESS })
+    ).toEqual({
+      loaded: true,
+      loading: false,
+      data: null,
+      error: null,
+      socialLogin: null,
+      orgNames: undefined,
+    });
+  });
+
+  it('load org names fail Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.LOAD_ORG_NAMES_FAILURE,
+      })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      data: null,
+      socialLogin: null,
+      orgNames: null,
     });
   });
 });

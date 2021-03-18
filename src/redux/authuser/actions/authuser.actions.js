@@ -52,6 +52,10 @@ export const SOCIAL_LOGIN = 'AUTH/SOCIAL_LOGIN';
 export const SOCIAL_LOGIN_SUCCESS = 'AUTH/SOCIAL_LOGIN_SUCCESS';
 export const SOCIAL_LOGIN_FAIL = 'AUTH/SOCIAL_LOGIN_FAIL';
 
+export const LOAD_ORG_NAMES = 'AUTH/LOAD_ORG_NAMES';
+export const LOAD_ORG_NAMES_SUCCESS = 'AUTH/LOAD_ORG_NAMES_SUCCESS';
+export const LOAD_ORG_NAMES_FAILURE = 'AUTH/LOAD_ORG_NAMES_FAILURE';
+
 /**
  * Login action
  * @param {{ username, password }} credentials
@@ -143,4 +147,8 @@ export const socialLogin = (code, provider, history) => ({
   code,
   provider,
   history,
+});
+
+export const loadOrgNames = () => ({
+  type: LOAD_ORG_NAMES,
 });

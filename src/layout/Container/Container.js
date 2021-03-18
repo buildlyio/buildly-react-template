@@ -5,6 +5,7 @@ import { UserContext, getUser } from '@context/User.context';
 import TopBar from '@layout/TopBar/TopBar';
 import Dashboard from '@pages/Dashboard/Dashboard';
 import UserManagement from '@pages/UserManagement/UserManagement';
+import MissingData from '@pages/MissingData/MissingData';
 import { routes } from '@routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({
@@ -39,6 +40,7 @@ const ContainerDashboard = ({ location, history }) => {
           />
           <Route path={routes.DASHBOARD} component={Dashboard} />
           <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
+          <Route path={routes.MISSING_DATA} component={MissingData} />
         </Container>
       </UserContext.Provider>
     </div>

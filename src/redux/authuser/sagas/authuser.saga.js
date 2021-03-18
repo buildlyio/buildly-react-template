@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   LOGIN,
   LOGIN_SUCCESS,
@@ -33,6 +34,10 @@ import {
   SOCIAL_LOGIN,
   SOCIAL_LOGIN_SUCCESS,
   SOCIAL_LOGIN_FAIL,
+  LOAD_ORG_NAMES,
+  LOAD_ORG_NAMES_SUCCESS,
+  LOAD_ORG_NAMES_FAILURE,
+  loadOrgNames,
 } from '@redux/authuser/actions/authuser.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
 import { environment } from '@environments/environment';
@@ -395,8 +400,9 @@ function* socialLogin(payload) {
     );
     yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield [
+      yield put(loadOrgNames()),
       yield put({ type: SOCIAL_LOGIN_SUCCESS, user }),
-      yield call(history.push, routes.DASHBOARD),
+      yield call(history.push, routes.MISSING_DATA),
     ];
   } catch (error) {
     console.log('error', error);
@@ -429,6 +435,22 @@ function* getOrganizationData(payload) {
     yield put({ type: GET_ORGANIZATION_SUCCESS, data });
   } catch (error) {
     yield put({ type: GET_ORGANIZATION_FAILURE, error });
+  }
+}
+
+function* loadOrganizationNames() {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}organization/`,
+      null,
+      true
+    );
+    const orgNames = _.map(data.data, 'name');
+    yield put({ type: LOAD_ORG_NAMES_SUCCESS, orgNames });
+  } catch (error) {
+    yield put({ type: LOAD_ORG_NAMES_FAILURE, error });
   }
 }
 
@@ -476,6 +498,10 @@ function* watchSocialLogin() {
   yield takeLatest(SOCIAL_LOGIN, socialLogin);
 }
 
+function* watchLoadOrganizationNames() {
+  yield takeLatest(LOAD_ORG_NAMES, loadOrganizationNames);
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
@@ -489,5 +515,6 @@ export default function* authSaga() {
     watchGetUser(),
     watchGetOrganization(),
     watchSocialLogin(),
+    watchLoadOrganizationNames(),
   ]);
 }

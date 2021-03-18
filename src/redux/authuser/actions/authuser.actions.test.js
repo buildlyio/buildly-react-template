@@ -64,3 +64,12 @@ describe('actions', () => {
     expect(actions.socialLogin(code)).toEqual(expectedAction);
   });
 });
+
+describe('actions', () => {
+  it('should create an action to load organizations', () => {
+    const expectedAction = {
+      type: actions.LOAD_ORG_NAMES,
+    };
+    expect(actions.loadOrgNames()).toEqual(expectedAction);
+  });
+});
