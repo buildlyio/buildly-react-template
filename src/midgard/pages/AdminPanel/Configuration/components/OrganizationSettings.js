@@ -12,6 +12,7 @@ import { validators } from "midgard/utils/validators";
 import {
   updateOrganization
 } from "midgard/redux/authuser/actions/authuser.actions";
+import { convertUnitsOfMeasure } from "midgard/utils/utilMethods";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,21 +64,26 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
   const [allowImportExport, setAllowImportExport] = useState(
     (organizationData && organizationData.allow_import_export) || false
   );
-  const radius = useInput((organizationData && organizationData.radius) || 0, {
-    required: true,
-  });
+
+  const [radius, setRadius] = useState(
+    (organizationData && organizationData.radius) || 0
+  );
+  // const radius = useInput((organizationData && organizationData.radius) || 0, {
+  //   required: true,
+  // });
 
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
     if (organizationData) {
       setAllowImportExport(organizationData.allow_import_export);
+      setRadius(convertUnitsOfMeasure('km',parseFloat(organizationData.radius),'miles','distance'));
     }
   }, [organizationData]);
 
   const resetValues = () => {
     setAllowImportExport(organizationData.allow_import_export);
-    radius.reset();
+    setRadius(convertUnitsOfMeasure('km',parseFloat(organizationData.radius),'miles','distance'));
   };
 
   /**
@@ -90,7 +96,7 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
       ...organizationData,
       edit_date: new Date(),
       allow_import_export: allowImportExport,
-      radius: radius.value,
+      radius: convertUnitsOfMeasure('miles',parseFloat(radius),'km','distance'),
     };
     dispatch(updateOrganization(data));
   };
@@ -123,7 +129,7 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if (!radius.value) return true;
+    if (!radius) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -152,16 +158,16 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
             required
             id="radius"
             fullWidth
-            label="Radius for Geofence"
+            label="Radius for Geofence (miles)"
             name="radius"
             autoComplete="radius"
+            value={radius}
             error={formError.radius && formError.radius.error}
             helperText={
               formError.radius ? formError.radius.message : ""
             }
             onBlur={(e) => handleBlur(e, "required", radius)}
-            {...radius.bind}
-          />
+            onChange={event => setRadius(event.target.value)} />
         </Grid>
         <Grid container spacing={2} justify="center">
           <Grid item xs={6} sm={4}>

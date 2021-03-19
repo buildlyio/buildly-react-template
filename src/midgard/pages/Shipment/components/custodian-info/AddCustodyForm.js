@@ -84,7 +84,8 @@ function AddCustodyForm(props) {
     editItem,
     setOpenModal,
     custodyOptions,
-    viewOnly
+    viewOnly,
+    organizationData,
   } = props;
   const classes = useStyles();
   const [custodianId, setCustodianId] = useState(
@@ -199,6 +200,7 @@ function AddCustodyForm(props) {
       has_current_custody: has_current_custody.value,
       first_custody: first_custody.value,
       last_custody: last_custody.value,
+      radius: organizationData.radius,
       ...(editItem !== null && { id: editItem.id }),
     };
     if (editItem !== null) {
@@ -382,7 +384,7 @@ function AddCustodyForm(props) {
                 <MapComponent
                   isMarkerShown
                   googleMapURL={MAP_API_URL}
-                  zoom={5}
+                  zoom={10}
                   loadingElement={<div style={{ height: `100%` }} />}
                   containerElement={<div style={{ height: `200px` }} />}
                   mapElement={<div style={{ height: `100%` }} />}
@@ -396,8 +398,10 @@ function AddCustodyForm(props) {
                         parseFloat(start_of_custody_location.split(",")[1]),
                       onMarkerDrag: setStartLocation,
                       draggable: true,
+                      radius : organizationData.radius,
                     },
                   ]}
+                  geofence={editItem && editItem.start_of_custody_location_geofence}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -434,7 +438,7 @@ function AddCustodyForm(props) {
                 <MapComponent
                   isMarkerShown
                   googleMapURL={MAP_API_URL}
-                  zoom={5}
+                  zoom={10}
                   loadingElement={<div style={{ height: `100%` }} />}
                   containerElement={<div style={{ height: `200px` }} />}
                   mapElement={<div style={{ height: `100%` }} />}
@@ -448,8 +452,10 @@ function AddCustodyForm(props) {
                         parseFloat(end_of_custody_location.split(",")[1]),
                       onMarkerDrag: setEndLocation,
                       draggable: true,
+                      radius : organizationData.radius,
                     },
                   ]}
+                  geofence={editItem && editItem.end_of_custody_location_geofence}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
