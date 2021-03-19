@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
-import { Scatter } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import Typography from "@material-ui/core/Typography";
 
 export function GraphComponent(props) {
@@ -19,7 +19,13 @@ export function GraphComponent(props) {
           },
           tooltipFormat: 'MMMM DD, YYYY hh:mm:ss'
         }
-      }]
+      }],
+      yAxes: [{
+        ticks: {
+          beginAtZero: true,
+        }
+      }
+      ]
     }
   }
   useEffect(() => {
@@ -56,7 +62,7 @@ export function GraphComponent(props) {
   return (
     <div>
       { data && data.length > 0 ? (
-        <Scatter data={dataChart} options={options} />
+        <Line data={dataChart} options={options} />
       ) :
         <Typography variant={"h4"} align={"center"}>No data to display</Typography>}
     </div>
