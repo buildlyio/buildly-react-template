@@ -119,19 +119,19 @@ export const InlineEditor = ({
         />
       ) : (
         <Grid
-          container='true'
+          container
           direction='row'
           alignItems='center'
           className={`${classes.nonEditMode} ${!value && classes.placeholder}`}
           onDoubleClick={() => setEditing(true)}
         >
-          <Grid item='true'>
+          <Grid item>
             <Typography className={classes.typography} variant={tag}>
               {value || placeholder}
             </Typography>
           </Grid>
           {!disabled && (
-            <Grid item='true'>
+            <Grid item>
               <EditIcon
                 className={classes.editIcon}
                 onClick={() => setEditing(true)}

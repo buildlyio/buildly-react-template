@@ -36,6 +36,9 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(15),
     objectFit: 'contain',
   },
+  container: {
+    marginBottom: theme.spacing(15),
+  },
   paper: {
     display: 'flex',
     flexDirection: 'column',
@@ -148,7 +151,7 @@ const Login = ({ dispatch, loading, history, socialLogin }) => {
       <div className={classes.logoDiv}>
         <img src={logo} className={classes.logo} />
       </div>
-      <Container component='main' maxWidth='xs'>
+      <Container component='main' maxWidth='xs' className={classes.container}>
         <CssBaseline />
         <Card variant='outlined'>
           <CardContent>

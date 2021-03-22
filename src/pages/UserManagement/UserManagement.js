@@ -57,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
 const UserManagement = ({
   dispatch,
   loading,
+  loaded,
   error,
   user,
   history,
@@ -145,7 +146,7 @@ const UserManagement = ({
                 id='email'
                 variant='outlined'
                 placeholder='abc@xcy.com, 123@zxc.com'
-                error={error}
+                error={Boolean(error)}
                 helperText={error}
                 {...email.bind}
               />
@@ -156,7 +157,7 @@ const UserManagement = ({
                     size='small'
                     variant='contained'
                     color='primary'
-                    disabled={loading}
+                    disabled={(loading && !loaded) || !email.value}
                     type='submit'
                   >
                     Send
@@ -183,8 +184,13 @@ const UserManagement = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
+const mapStateToProps = (state, ownProps) => {
+  const loaded = state.coreuserReducer.loaded && state.coregroupReducer.loaded;
+
+  return {
+    ...ownProps,
+    ...state.authReducer,
+    loaded,
+  };
+};
 export default connect(mapStateToProps)(UserManagement);

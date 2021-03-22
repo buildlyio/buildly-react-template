@@ -10,4 +10,5 @@ export const routes = {
   USER_GROUPS: '/app/profile/users/groups',
   HELP: '/help',
   TICKET_STATUS: '/ticket-status',
+  MISSING_DATA: '/app/missing-data',
 };
