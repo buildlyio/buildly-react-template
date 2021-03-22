@@ -112,14 +112,13 @@ export const convertUnitsOfMeasure = (sourceUnit, value, destinationUnit, _class
         value =  (value - 32) * 5 / 9;
       else if (sourceUnit === 'celsius' && destinationUnit === 'fahrenheit')
         value =  (value * 9 / 5) + 32;
-      break;
+      return value.toFixed(2);
     case 'distance':
       if (sourceUnit === 'km' && destinationUnit === 'miles')
         value = value * 0.6214;
       else if(sourceUnit == 'miles' && destinationUnit === 'km')
         value = value / 0.6214;
-      break;
-    return value.toFixed(2);
+      return value.toFixed(2);
   }
 }
 
