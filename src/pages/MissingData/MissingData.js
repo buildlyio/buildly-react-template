@@ -116,7 +116,7 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
 
   const handleRadio = (event) => {
     if (event.target.value === 'no') {
-      // dispatch(loadOrgNames());
+      dispatch(loadOrgNames());
     } else {
       setOrgName('default');
     }
@@ -187,6 +187,7 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
                     id='organization_name'
                     name='organization_name'
                     options={orgNames || []}
+                    getOptionLabel={(label) => _.capitalize(label)}
                     onChange={(e, newValue) => {
                       setOrgName(newValue || '');
                     }}
@@ -231,7 +232,6 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
-  orgNames: ['Default Organization', 'Buildly'],
 });
 
 export default connect(mapStateToProps)(MissingData);

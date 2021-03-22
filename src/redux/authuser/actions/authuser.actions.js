@@ -161,8 +161,9 @@ export const loadOrgNames = () => ({
  * Add organization to social user action
  * @param data
  */
-export const addOrgSocialUser = (data, history) => ({
+export const addOrgSocialUser = (data, existingOrg, history) => ({
   type: ADD_ORG_SOCIAL_USER,
   data,
+  existingOrg,
   history,
 });

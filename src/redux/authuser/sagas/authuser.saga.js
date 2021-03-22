@@ -493,7 +493,7 @@ function* addOrgSocialUser(payload) {
           })
         ),
       ];
-    } else {
+    } else if (!existingOrg && data.organization_name !== 'default') {
       yield [
         yield call(history.push, routes.DASHBOARD),
         yield put(
@@ -508,6 +508,8 @@ function* addOrgSocialUser(payload) {
       ];
     }
   } catch (error) {
+    console.log('error', error);
+
     yield [
       yield put(
         showAlert({
