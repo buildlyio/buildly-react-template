@@ -268,3 +268,44 @@ describe('Load Organization Names reducer', () => {
     });
   });
 });
+
+describe('Add Organization for Social User reducer', () => {
+  it('Empty Reducer', () => {
+    expect(
+      reducer.default(initialState, { type: actions.ADD_ORG_SOCIAL_USER })
+    ).toEqual({
+      error: null,
+      loaded: false,
+      loading: true,
+      data: null,
+      socialLogin: null,
+      orgNames: null,
+    });
+  });
+
+  it('add organization for social user success Reducer', () => {
+    expect(
+      reducer.default([], { type: actions.ADD_ORG_SOCIAL_USER_SUCCESS })
+    ).toEqual({
+      loaded: true,
+      loading: false,
+      data: undefined,
+      error: null,
+      socialLogin: null,
+      orgNames: null,
+    });
+  });
+
+  it('add organization for social user fail Reducer', () => {
+    expect(
+      reducer.default(initialState, { type: actions.ADD_ORG_SOCIAL_USER_FAIL })
+    ).toEqual({
+      error: undefined,
+      loaded: true,
+      loading: false,
+      data: null,
+      socialLogin: null,
+      orgNames: null,
+    });
+  });
+});

@@ -7,12 +7,20 @@ import {
   Grid,
   Button,
   TextField,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { UserContext } from '@context/User.context';
 import Modal from '@components/Modal/Modal';
 import { useInput } from '@hooks/useInput';
-import { loadOrgNames } from '@redux/authuser/actions/authuser.actions';
+import {
+  loadOrgNames,
+  addOrgSocialUser,
+} from '@redux/authuser/actions/authuser.actions';
 import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
@@ -25,12 +33,15 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '1em',
     textAlign: 'center',
   },
-  submit: {
-    marginBottom: theme.spacing(2),
+  radio: {
+    marginBottom: '0.75rem',
   },
   textField: {
     minHeight: '5rem',
     margin: '0.25rem 0',
+  },
+  submit: {
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -39,14 +50,9 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
   const user = useContext(UserContext);
 
   const email = useInput('', { required: true });
+  const [radioValue, setRadioValue] = useState(null);
   const [orgName, setOrgName] = useState('');
   const [formError, setFormError] = useState({});
-
-  useEffect(() => {
-    if (!orgNames) {
-      dispatch(loadOrgNames());
-    }
-  }, [orgNames]);
 
   /**
    * Submit the form to the backend and attempts to authenticate
@@ -54,8 +60,18 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log('Submit clicked');
-    console.log(email.value, orgName);
+    let updateForm = {
+      id: user.id,
+      organization_name: orgName,
+    };
+
+    if (email.value) {
+      updateForm['email'] = email.value;
+    }
+
+    dispatch(
+      addOrgSocialUser(updateForm, _.includes(orgNames, orgName), history)
+    );
   };
 
   /**
@@ -86,11 +102,26 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
   const submitDisabled = () => {
     let errorKeys = Object.keys(formError);
     let errorExists = false;
-    if ((!user.email && !email.value) || !orgName) return true;
+    if (
+      (!user.email && !email.value) ||
+      !radioValue ||
+      (radioValue === 'no' && !orgName)
+    )
+      return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
     return errorExists;
+  };
+
+  const handleRadio = (event) => {
+    if (event.target.value === 'no') {
+      // dispatch(loadOrgNames());
+    } else {
+      setOrgName('default');
+    }
+
+    setRadioValue(event.target.value);
   };
 
   return (
@@ -125,30 +156,56 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
                 </Grid>
               )}
               <Grid item xs={12}>
-                <Autocomplete
-                  freeSolo
-                  disableClearable
-                  id='organization_name'
-                  name='organization_name'
-                  options={orgNames || []}
-                  onChange={(e, newValue) => {
-                    setOrgName(newValue || '');
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      variant='outlined'
-                      margin='normal'
-                      required
-                      fullWidth
-                      label='Organisation Name'
-                      className={classes.textField}
-                      value={orgName}
-                      onChange={(e) => setOrgName(e.target.value)}
+                <FormControl component='fieldset' className={classes.radio}>
+                  <FormLabel component='legend'>
+                    Should you be added to the Default Organization?
+                  </FormLabel>
+                  <RadioGroup
+                    aria-label='use-default-org'
+                    name='use-default-org'
+                    value={radioValue}
+                    onChange={handleRadio}
+                  >
+                    <FormControlLabel
+                      value='yes'
+                      control={<Radio />}
+                      label='Yes'
                     />
-                  )}
-                />
+                    <FormControlLabel
+                      value='no'
+                      control={<Radio />}
+                      label='No'
+                    />
+                  </RadioGroup>
+                </FormControl>
               </Grid>
+              {radioValue === 'no' && (
+                <Grid item xs={12}>
+                  <Autocomplete
+                    freeSolo
+                    disableClearable
+                    id='organization_name'
+                    name='organization_name'
+                    options={orgNames || []}
+                    onChange={(e, newValue) => {
+                      setOrgName(newValue || '');
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant='outlined'
+                        margin='normal'
+                        required
+                        fullWidth
+                        label='Organisation Name'
+                        className={classes.textField}
+                        value={orgName}
+                        onChange={(e) => setOrgName(e.target.value)}
+                      />
+                    )}
+                  />
+                </Grid>
+              )}
             </Grid>
             <Grid container justify='center'>
               <Grid item>
@@ -174,6 +231,7 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
+  orgNames: ['Default Organization', 'Buildly'],
 });
 
 export default connect(mapStateToProps)(MissingData);

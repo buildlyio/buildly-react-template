@@ -56,6 +56,10 @@ export const LOAD_ORG_NAMES = 'AUTH/LOAD_ORG_NAMES';
 export const LOAD_ORG_NAMES_SUCCESS = 'AUTH/LOAD_ORG_NAMES_SUCCESS';
 export const LOAD_ORG_NAMES_FAILURE = 'AUTH/LOAD_ORG_NAMES_FAILURE';
 
+export const ADD_ORG_SOCIAL_USER = 'AUTH/ADD_ORG_SOCIAL_USER';
+export const ADD_ORG_SOCIAL_USER_SUCCESS = 'AUTH/ADD_ORG_SOCIAL_USER_SUCCESS';
+export const ADD_ORG_SOCIAL_USER_FAIL = 'AUTH/ADD_ORG_SOCIAL_USER_FAIL';
+
 /**
  * Login action
  * @param {{ username, password }} credentials
@@ -151,4 +155,14 @@ export const socialLogin = (code, provider, history) => ({
 
 export const loadOrgNames = () => ({
   type: LOAD_ORG_NAMES,
+});
+
+/**
+ * Add organization to social user action
+ * @param data
+ */
+export const addOrgSocialUser = (data, history) => ({
+  type: ADD_ORG_SOCIAL_USER,
+  data,
+  history,
 });

@@ -38,6 +38,9 @@ import {
   LOAD_ORG_NAMES_SUCCESS,
   LOAD_ORG_NAMES_FAILURE,
   loadOrgNames,
+  ADD_ORG_SOCIAL_USER,
+  ADD_ORG_SOCIAL_USER_SUCCESS,
+  ADD_ORG_SOCIAL_USER_FAIL,
 } from '@redux/authuser/actions/authuser.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
 import { environment } from '@environments/environment';
@@ -402,8 +405,13 @@ function* socialLogin(payload) {
     yield [
       yield put(loadOrgNames()),
       yield put({ type: SOCIAL_LOGIN_SUCCESS, user }),
-      yield call(history.push, routes.MISSING_DATA),
     ];
+
+    if (!user.data.email || !user.data.organization) {
+      yield call(history.push, routes.MISSING_DATA);
+    } else {
+      yield call(history.push, routes.DASHBOARD);
+    }
   } catch (error) {
     console.log('error', error);
     yield [
@@ -443,14 +451,76 @@ function* loadOrganizationNames() {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}organization/`,
+      `${environment.API_URL}organization/names/`,
       null,
       true
     );
-    const orgNames = _.map(data.data, 'name');
-    yield put({ type: LOAD_ORG_NAMES_SUCCESS, orgNames });
+    yield put({ type: LOAD_ORG_NAMES_SUCCESS, orgNames: data.data });
   } catch (error) {
     yield put({ type: LOAD_ORG_NAMES_FAILURE, error });
+  }
+}
+
+function* addOrgSocialUser(payload) {
+  const { data, existingOrg, history } = payload;
+  try {
+    const user = yield call(
+      httpService.makeRequest,
+      'patch',
+      `${environment.API_URL}coreuser/update_org/${data.id}/`,
+      data
+    );
+    yield call(oauthService.setOauthUser, user, payload);
+    const coreuser = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}coreuser/`
+    );
+    yield call(oauthService.setCurrentCoreUser, coreuser, user);
+    yield put({ type: ADD_ORG_SOCIAL_USER_SUCCESS, user });
+
+    if (existingOrg) {
+      yield [
+        yield put({ type: LOGOUT }),
+        yield call(history.push, '/'),
+        yield put(
+          showAlert({
+            type: 'success',
+            open: true,
+            message: `Added to Org ${_.capitalize(
+              user.data.organization.name
+            )}. You need to be approved by Org Admin to access the platform.`,
+          })
+        ),
+      ];
+    } else {
+      yield [
+        yield call(history.push, routes.DASHBOARD),
+        yield put(
+          showAlert({
+            type: 'success',
+            open: true,
+            message: `Created new Org ${_.capitalize(
+              user.data.organization.name
+            )} with you as Admin.`,
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Unable to update organization details',
+        })
+      ),
+      yield put({
+        type: ADD_ORG_SOCIAL_USER_FAIL,
+        error: 'Unable to update user details. Please try again.',
+      }),
+    ];
   }
 }
 
@@ -502,6 +572,10 @@ function* watchLoadOrganizationNames() {
   yield takeLatest(LOAD_ORG_NAMES, loadOrganizationNames);
 }
 
+function* watchAddOrgSocialUser() {
+  yield takeLatest(ADD_ORG_SOCIAL_USER, addOrgSocialUser);
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
@@ -516,5 +590,6 @@ export default function* authSaga() {
     watchGetOrganization(),
     watchSocialLogin(),
     watchLoadOrganizationNames(),
+    watchAddOrgSocialUser(),
   ]);
 }

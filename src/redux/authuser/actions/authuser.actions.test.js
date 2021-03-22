@@ -73,3 +73,14 @@ describe('actions', () => {
     expect(actions.loadOrgNames()).toEqual(expectedAction);
   });
 });
+
+describe('actions', () => {
+  it('should create an action to add organization to social user', () => {
+    const data = 'AUTH/ADD_ORG_SOCIAL_USER';
+    const expectedAction = {
+      type: actions.ADD_ORG_SOCIAL_USER,
+      data,
+    };
+    expect(actions.addOrgSocialUser(data)).toEqual(expectedAction);
+  });
+});

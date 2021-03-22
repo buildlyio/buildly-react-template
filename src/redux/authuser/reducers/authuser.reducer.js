@@ -32,6 +32,9 @@ import {
   LOAD_ORG_NAMES,
   LOAD_ORG_NAMES_SUCCESS,
   LOAD_ORG_NAMES_FAILURE,
+  ADD_ORG_SOCIAL_USER,
+  ADD_ORG_SOCIAL_USER_SUCCESS,
+  ADD_ORG_SOCIAL_USER_FAIL,
 } from '@redux/authuser/actions/authuser.actions';
 
 const initialState = {
@@ -312,6 +315,30 @@ export default (state = initialState, action) => {
       };
 
     case LOAD_ORG_NAMES_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case ADD_ORG_SOCIAL_USER:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case ADD_ORG_SOCIAL_USER_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        data: action.user,
+      };
+
+    case ADD_ORG_SOCIAL_USER_FAIL:
       return {
         ...state,
         loading: false,
