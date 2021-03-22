@@ -87,7 +87,8 @@ function CustodianInfo(props) {
     dispatch,
     contactInfo,
     custodyData,
-    viewOnly
+    viewOnly,
+    organizationData,
   } = props;
   const [itemIds, setItemIds] = useState(
     (shipmentFormData && shipmentFormData.custodian_ids) || []
@@ -264,6 +265,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
   ...state.shipmentReducer,
+  ...state.authReducer,
 });
 
 export default connect(mapStateToProps)(CustodianInfo);
