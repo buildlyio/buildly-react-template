@@ -10,3 +10,14 @@ describe('actions', () => {
     expect(actions.addData(data)).toEqual(expectedAction);
   });
 });
+
+describe('actions', () => {
+  it('should create an action to check filled', () => {
+    const name = 'Test User';
+    const expectedAction = {
+      type: actions.CHECK_FILLED,
+      name,
+    };
+    expect(actions.checkFilled(name)).toEqual(expectedAction);
+  });
+});

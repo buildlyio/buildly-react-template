@@ -1,9 +1,14 @@
+import _ from 'lodash';
 import {
   ADD_DATA,
   ADD_DATA_SUCCESS,
   ADD_DATA_FAIL,
+  CHECK_FILLED,
+  CHECK_FILLED_SUCCESS,
+  CHECK_FILLED_FAIL,
 } from '@redux/googleSheet/actions/googleSheet.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
+import { environment } from '@environments/environment';
 import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 
@@ -13,7 +18,7 @@ function* addData(payload) {
     const sheet = yield call(
       httpService.makeRequest,
       'post',
-      'https://sheet.best/api/sheets/fd4d0563-683c-4f3f-813c-526b5dc72606',
+      `${environment.FEEDBACK_SHEET}`,
       data
     );
 
@@ -45,10 +50,33 @@ function* addData(payload) {
   }
 }
 
+function* checkFilled(payload) {
+  const { name } = payload;
+  try {
+    const sheet = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.FEEDBACK_SHEET}`
+    );
+    const entry = _.find(sheet.data, { Name: name });
+    yield put({ type: CHECK_FILLED_SUCCESS, filled: Boolean(entry) });
+  } catch (error) {
+    console.log('error', error);
+    yield put({
+      type: CHECK_FILLED_FAIL,
+      error: 'Error checking data from google sheet',
+    });
+  }
+}
+
 function* watchAddData() {
   yield takeLatest(ADD_DATA, addData);
 }
 
+function* watchCheckFilled() {
+  yield takeLatest(CHECK_FILLED, checkFilled);
+}
+
 export default function* googleSheetSaga() {
-  yield all([watchAddData()]);
+  yield all([watchAddData(), watchCheckFilled()]);
 }
