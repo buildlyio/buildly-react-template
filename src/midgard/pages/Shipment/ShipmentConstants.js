@@ -272,7 +272,7 @@ export const getFormattedRow = (
   itemData,
   shipmentFlag,
   custodyData,
-  sensorReportData,
+  aggregateReportData,
 ) => {
   let shipmentList = [...shipmentData];
 
@@ -291,7 +291,7 @@ export const getFormattedRow = (
     let custodyInfo = [];
     let flag_list = [];
     let custodianName = "";
-    let sensorReportInfo = [];
+    let aggregateReportInfo = [];
 
     if (custodyRows.length > 0) {
       custodyRows.forEach((custody) => {
@@ -308,16 +308,16 @@ export const getFormattedRow = (
     else if (list.status.toLowerCase() === "completed" || list.status.toLowerCase() === "cancelled")
       list["type"] = "Completed";
 
-    if (sensorReportData && sensorReportData.length > 0) {
-      sensorReportData.forEach((report) => {
+    if (aggregateReportData && aggregateReportData.length > 0) {
+      aggregateReportData.forEach((report) => {
         if (report.shipment_id === list.partner_shipment_id &&
           report.report_entries.length > 0) {
-          sensorReportInfo.push(report);
+          aggregateReportInfo.push(report);
         }
       });
     }
 
-    list["sensor_report"] = sensorReportInfo;
+    list["sensor_report"] = aggregateReportInfo;
 
     if (itemData && list.items && list.items.length) {
       itemData.forEach((item) => {

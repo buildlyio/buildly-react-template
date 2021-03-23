@@ -29,7 +29,8 @@ import {
 import {
   getSensors,
   getSensorType,
-  getSensorReport,
+  getAggregateReport,
+  getSensorReportAlerts,
 } from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
 import {
   getShipmentDetails,
@@ -96,7 +97,7 @@ function Reporting(props) {
   const {
     dispatch,
     loading,
-    sensorReportData,
+    aggregateReportData,
     shipmentData,
     custodianData,
     custodyData,
@@ -143,8 +144,8 @@ function Reporting(props) {
     if (!shipmentData) {
       dispatch(getShipmentDetails(organization));
     }
-    if (!sensorReportData) {
-      dispatch(getSensorReport());
+    if (!aggregateReportData) {
+      dispatch(getAggregateReport(organization));
     }
     if (!custodianData) {
       dispatch(getCustodians(organization));
@@ -168,7 +169,7 @@ function Reporting(props) {
       shipmentData &&
       custodianData &&
       custodyData &&
-      sensorReportData &&
+      aggregateReportData &&
       contactInfo &&
       unitsOfMeasure
     ) {
@@ -176,7 +177,7 @@ function Reporting(props) {
         shipmentData,
         custodianData,
         custodyData,
-        sensorReportData,
+        aggregateReportData,
         contactInfo,
         unitsOfMeasure,
       );
@@ -186,7 +187,7 @@ function Reporting(props) {
         setSelectedShipment(overview[0]);
       }
     }
-  }, [shipmentData, custodianData, custodyData, sensorReportData]);
+  }, [shipmentData, custodianData, custodyData, aggregateReportData]);
 
   useEffect(() => {
     if (selectedShipment) {
@@ -279,7 +280,7 @@ function Reporting(props) {
                   (<Typography variant="h6">{column.label}</Typography>) :
                   (<Typography variant="h6">Custody Details</Typography>)}
                   {column.name === "custody_info"  && selectedShipment[column.name] ? selectedShipment[column.name].map((key, index) => (
-                    <div key={`custody_info_${index}`} style={{marginBottom:10}}>
+                    <div key={`custody_info_${index}`} style={{marginBottom:10, color: selectedShipment['custody_info'][index]['custody_type'] === 'Current' ? '#EBC645' : '#ffffff'}}>
                       <Typography variant="body1">Custody Type: {selectedShipment['custody_info'][index]['custody_type']}</Typography>
                       <Typography variant="body1">Custodian Address: {selectedShipment['contact_info'][index]['address']}</Typography>
                       </div>
@@ -334,7 +335,7 @@ function Reporting(props) {
         </Grid>
         </Grid>
         <ShipmentSensorTable
-          sensorReport={selectedShipment?.sensor_report}
+          aggregateReport={selectedShipment?.sensor_report}
           shipmentName={selectedShipment?.name}
           selectedMarker={selectedShipment && selectedMarker}
         />

@@ -124,7 +124,7 @@ export const getShipmentOverview = (
   shipmentData,
   custodianData,
   custodyData,
-  sensorReportData,
+  aggregateReportData,
   contactData,
   unitsOfMeasure,
 ) => {
@@ -142,7 +142,7 @@ export const getShipmentOverview = (
   shipmentList.forEach((list) => {
     let custodyInfo = [];
     let custodianName = "";
-    let sensorReportInfo = [];
+    let aggregateReportInfo = [];
     let contactInfo = [];
     let temperatureData = [];
     let lightData = [];
@@ -185,8 +185,8 @@ export const getShipmentOverview = (
     list["custody_info"] = custodyInfo;
     list["contact_info"] = contactInfo;
 
-    if (sensorReportData && sensorReportData.length > 0) {
-      sensorReportData.forEach((report) => {
+    if (aggregateReportData && aggregateReportData.length > 0) {
+      aggregateReportData.forEach((report) => {
         if (report.shipment_id === list.partner_shipment_id &&
           report.report_entries.length > 0) {
           const alert_status = report.excursion_flag ? "Excursion" : report.warning_flag ? "Warning" : "Normal";
@@ -226,7 +226,7 @@ export const getShipmentOverview = (
               if (!markerFound) {
                 markersToSet.push(marker);
               }
-              sensorReportInfo.push(marker);
+              aggregateReportInfo.push(marker);
               const graphPoint = _.find(temperatureData, {
                 x: localDateTime
               });
@@ -249,7 +249,7 @@ export const getShipmentOverview = (
       });
     }
 
-    list["sensor_report"] = sensorReportInfo;
+    list["sensor_report"] = aggregateReportInfo;
     list["markers_to_set"] = _.orderBy(markersToSet, (item) => {return moment(item.timestamp)}, ['asc']);
     list["temperature"] = temperatureData;
     list["light"] = lightData;

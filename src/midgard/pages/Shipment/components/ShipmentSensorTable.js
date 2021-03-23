@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ShipmentSensorTable = (props) => {
   const classes = useStyles();
-  const { sensorReport, shipmentName, selectedMarker } = props;
+  const { aggregateReport, shipmentName, selectedMarker } = props;
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
 
@@ -62,7 +62,7 @@ const ShipmentSensorTable = (props) => {
     selectableRowsHeader: false,
     selectableRowsHideCheckboxes: true,
     rowsPerPageOptions: [5, 10, 15],
-    downloadOptions: { filename: "SensorReportData.csv", separator: "," },
+    downloadOptions: { filename: "AggregateReportData.csv", separator: "," },
     rowsSelected: selected,
     textLabels: {
       body: {
@@ -80,11 +80,11 @@ const ShipmentSensorTable = (props) => {
   };
 
   useEffect(() => {
-    if (sensorReport) {
-      const sortedData = _.orderBy(sensorReport, (item) => {return moment(item.timestamp)}, ['desc']);
+    if (aggregateReport) {
+      const sortedData = _.orderBy(aggregateReport, (item) => {return moment(item.timestamp)}, ['desc']);
       setRows(sortedData);
     }
-  }, [sensorReport]);
+  }, [aggregateReport]);
 
   useEffect(() => {
     if (selectedMarker) {

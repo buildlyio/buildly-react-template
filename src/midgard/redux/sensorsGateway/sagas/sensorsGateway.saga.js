@@ -22,7 +22,8 @@ import {
   GET_SENSORS,
   SENSOR_SEARCH,
   GET_SENSORS_TYPE,
-  GET_SENSORS_REPORT,
+  GET_AGGREGATE_REPORT,
+  GET_SENSOR_REPORT,
   Add_SENSOR,
   DELETE_SENSOR,
   EDIT_SENSOR,
@@ -31,8 +32,10 @@ import {
   getSensors,
   GET_SENSORS_TYPE_SUCCESS,
   GET_SENSORS_TYPE_FAILURE,
-  GET_SENSORS_REPORT_SUCCESS,
-  GET_SENSORS_REPORT_FAILURE,
+  GET_AGGREGATE_REPORT_SUCCESS,
+  GET_AGGREGATE_REPORT_FAILURE,
+  GET_SENSOR_REPORT_SUCCESS,
+  GET_SENSOR_REPORT_FAILURE,
   DELETE_SENSOR_FAILURE,
   EDIT_SENSOR_SUCCESS,
   EDIT_SENSOR_FAILURE,
@@ -305,16 +308,16 @@ function* getSensorTypeList() {
   }
 }
 
-function* getSensorReportList(payload) {
+function* getAggregateReportList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${sensorApiEndPoint}aggregate_report/`, // aggregate_report
+      `${environment.API_URL}${sensorApiEndPoint}aggregate_report/?organization_uuid=${payload.organization_uuid}`,
       null,
       true
     );
-    yield [yield put({ type: GET_SENSORS_REPORT_SUCCESS, data: data.data })];
+    yield [yield put({ type: GET_AGGREGATE_REPORT_SUCCESS, data: data.data })];
   } catch (error) {
     console.log("error", error);
     yield [
@@ -326,7 +329,35 @@ function* getSensorReportList(payload) {
         })
       ),
       yield put({
-        type: GET_SENSORS_REPORT_FAILURE,
+        type: GET_AGGREGATE_REPORT_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
+function* getSensorReportAlerts(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "get",
+      `${environment.API_URL}${sensorApiEndPoint}sensor_report/?organization_uuid=${payload.organization_uuid}&shipment_custody_status=left,arriving,reached`,
+      null,
+      true
+    );
+    yield [yield put({ type: GET_SENSOR_REPORT_SUCCESS, data: data.data })];
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't load data due to some error!",
+        })
+      ),
+      yield put({
+        type: GET_SENSOR_REPORT_FAILURE,
         error: error,
       }),
     ];
@@ -745,8 +776,12 @@ function* watchGetSensorType() {
   yield takeLatest(GET_SENSORS_TYPE, getSensorTypeList);
 }
 
-function* watchGetSensorReport() {
-  yield takeLatest(GET_SENSORS_REPORT, getSensorReportList);
+function* watchGetAggregateReport() {
+  yield takeLatest(GET_AGGREGATE_REPORT, getAggregateReportList);
+}
+
+function* watchGetSensorReportAlerts() {
+  yield takeLatest(GET_SENSOR_REPORT,getSensorReportAlerts);
 }
 
 function* watchAddSensor() {
@@ -795,7 +830,8 @@ export default function* sensorsGatewaySaga() {
     watchEditGateway(),
     watchGetSensor(),
     watchGetSensorType(),
-    watchGetSensorReport(),
+    watchGetAggregateReport(),
+    watchGetSensorReportAlerts(),
     watchAddSensor(),
     watchEditSensor(),
     watchDeleteSensor(),

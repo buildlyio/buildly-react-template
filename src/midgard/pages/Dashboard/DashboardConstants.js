@@ -1,5 +1,5 @@
 import { numberWithCommas } from "../../utils/utilMethods";
-import { getFormattedCustodyRows, getFormattedSensorReportRow } from "../Shipment/ShipmentConstants";
+import { getFormattedCustodyRows, getFormattedAggregateReportRow } from "../Shipment/ShipmentConstants";
 
 export const DASHBOARD_MAP_TOOLTIP =
   "Start and end locations of custodians which have current custody of the shipments that are currently enroute.";
@@ -70,7 +70,7 @@ export const getFormattedShipmentRow = (
   itemData,
   shipmentFlag,
   custodyData,
-  sensorReportData
+  aggregateReportData
 ) => {
   let shipmentList = [...shipmentData];
   let custodyRows = [];
@@ -88,7 +88,7 @@ export const getFormattedShipmentRow = (
     let custodyInfo = [];
     let custodianName = "";
     let flag_list = [];
-    let sensorReportInfo = [];
+    let aggregateReportInfo = [];
 
     if (custodyRows.length > 0) {
       custodyRows.forEach((custody) => {
@@ -104,15 +104,15 @@ export const getFormattedShipmentRow = (
     list["custodian_name"] = custodianName;
     list["custody_info"] = custodyInfo;
 
-    if (sensorReportData && sensorReportData.length > 0) {
-      sensorReportData.forEach((report) => {
+    if (aggregateReportData && aggregateReportData.length > 0) {
+      aggregateReportData.forEach((report) => {
         if (report.shipment_id === list.partner_shipment_id) {
-          sensorReportInfo.push(report);
+          aggregateReportInfo.push(report);
         }
       });
     }
 
-    list["sensor_report"] = sensorReportInfo;
+    list["sensor_report"] = aggregateReportInfo;
 
     if (itemData && list.items && list.items.length) {
       itemData.forEach((item) => {

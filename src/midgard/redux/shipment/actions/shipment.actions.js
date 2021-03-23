@@ -27,7 +27,7 @@ export const GET_DASHBOARD_ITEMS_FAILURE =
   "SHIPMENT/GET_DASHBOARD_ITEMS_FAILURE";
 
 export const GET_ALERTS = "SHIPMENT/GET_ALERTS";
-export const SET_ALERTS = "SHIPMENT/SET_ALERTS";
+export const SET_SHIPMENT_ALERTS = "SHIPMENT/SET_ALERTS";
 export const EMAIL_ALERTS = "SHIPMENT/EMAIL_ALERTS";
 
 export const GET_SHIPMENT_OPTIONS = "ITEMS/GET_SHIPMENT_OPTIONS";
@@ -121,8 +121,8 @@ export const getDashboardItems = (organization_uuid) => ({
   organization_uuid,
 });
 
-export const setAlerts = (alerts) => ({
-  type: SET_ALERTS,
+export const setShipmentAlerts = (alerts) => ({
+  type: SET_SHIPMENT_ALERTS,
   alerts,
 });
 

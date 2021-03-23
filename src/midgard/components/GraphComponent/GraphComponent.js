@@ -64,7 +64,7 @@ export function GraphComponent(props) {
       { data && data.length > 0 ? (
         <Line data={dataChart} options={options} />
       ) :
-        <Typography variant={"h4"} align={"center"}>No data to display</Typography>}
+        <Typography variant={"body1"} align={"center"} style={{marginTop: 40}}>No data to display</Typography>}
     </div>
   );
 }

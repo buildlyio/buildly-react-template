@@ -20,7 +20,7 @@ import {
   GET_DASHBOARD_ITEMS_SUCCESS,
   GET_DASHBOARD_ITEMS_FAILURE,
   GET_ALERTS,
-  SET_ALERTS,
+  SET_SHIPMENT_ALERTS,
   GET_SHIPMENT_OPTIONS,
   GET_SHIPMENT_OPTIONS_SUCCESS,
   GET_SHIPMENT_OPTIONS_FAILURE,
@@ -196,7 +196,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
-    case SET_ALERTS:
+    case SET_SHIPMENT_ALERTS:
       return {
         ...state,
         loading: false,

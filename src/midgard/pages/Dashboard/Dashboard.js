@@ -34,7 +34,7 @@ import {
   getGatewayType,
   getSensors,
   getSensorType,
-  getSensorReport,
+  getAggregateReport,
 } from "../../redux/sensorsGateway/actions/sensorsGateway.actions";
 import { getFormattedRow, svgIcon } from "../Shipment/ShipmentConstants";
 import {
@@ -100,7 +100,7 @@ function Dashboard(props) {
     unitsOfMeasure,
     custodyData,
     sensorData,
-    sensorReportData,
+    aggregateReportData,
     loading,
     dashboardItems,
   } = props;
@@ -139,8 +139,8 @@ function Dashboard(props) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
-    if (!sensorReportData) {
-      dispatch(getSensorReport());
+    if (!aggregateReportData) {
+      dispatch(getAggregateReport(organization));
     }
     if (!dashboardItems) {
       dispatch(getDashboardItems(organization));
@@ -163,7 +163,7 @@ function Dashboard(props) {
       shipmentData &&
       custodianData &&
       custodyData &&
-      sensorReportData &&
+      aggregateReportData &&
       itemData &&
       shipmentFlag
     ) {
@@ -176,7 +176,7 @@ function Dashboard(props) {
         itemData,
         shipmentFlag,
         custodyData,
-        sensorReportData
+        aggregateReportData
       );
       formattedRow.forEach((row) => {
         if (row.custody_info && row.custody_info.length > 0) {
@@ -234,7 +234,7 @@ function Dashboard(props) {
       setDelayedRows(delayedInfo);
       setExcursionRows(excursionInfo);
     }
-  }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData, sensorReportData]);
+  }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData, aggregateReportData]);
 
   return (
     <Box mt={3} mb={3}>

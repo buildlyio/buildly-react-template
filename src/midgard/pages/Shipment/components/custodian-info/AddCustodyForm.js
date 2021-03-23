@@ -89,7 +89,7 @@ function AddCustodyForm(props) {
   } = props;
   const classes = useStyles();
   const [custodianId, setCustodianId] = useState(
-    (editItem && editItem.custodian_data.custodian_uuid) || ""
+    (editItem && editItem.custodian_data) || ""
   );
   const [custodianList, setCustodianList] = useState([]);
   const [start_of_custody, handleStartChange] = useState(
@@ -144,7 +144,7 @@ function AddCustodyForm(props) {
       if (custodianList.length > 0) {
         let selectedCustodian = "";
         custodianList.forEach((list) => {
-          if (list.custodian_uuid === value) {
+          if (list.custodian_uuid === value.custodian_uuid) {
             selectedCustodian = list;
           }
         });
@@ -194,8 +194,8 @@ function AddCustodyForm(props) {
       start_of_custody: start_of_custody,
       end_of_custody: end_of_custody,
       custodian: [custodianId.url],
-      start_of_custody_location: start_of_custody_location,
-      end_of_custody_location: end_of_custody_location,
+      start_of_custody_location: start_of_custody_location ? start_of_custody_location : null,
+      end_of_custody_location: end_of_custody_location ? end_of_custody_location : null,
       shipment_id: shipment.value,
       has_current_custody: has_current_custody.value,
       first_custody: first_custody.value,
@@ -314,7 +314,7 @@ function AddCustodyForm(props) {
                     custodianList
                       .sort(compareSort("name"))
                       .map((item, index) => (
-                        <MenuItem key={`custodian${index}:${item.id}`} value={item.custodian_uuid}>
+                        <MenuItem key={`custodian${index}:${item.id}`} value={item}>
                           {item.name}
                         </MenuItem>
                       ))}
