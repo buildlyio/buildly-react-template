@@ -132,7 +132,7 @@ function AlertInfo(props) {
         sensorReportAlerts && sensorReportAlerts.forEach((sensorReportAlert,index) => {
           if (element.partner_shipment_id === sensorReportAlert.shipment_id && sensorReportAlert.custodian_id){
             custodyRows && custodyRows.forEach((custody) => {
-              if (custody.shipment_id === element.shipment_uuid && custody.custodian_data.custodian_uuid === sensorReportAlert.custodian_id[0]) {
+              if (custody.shipment_id === element.shipment_uuid && custody.custody_uuid === sensorReportAlert.custodian_id[0]) {
                 currentCustody = custody
                 return
               }
