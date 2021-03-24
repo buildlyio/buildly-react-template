@@ -33,7 +33,7 @@ import {
   DELETE_SHIPMENT_FLAG_FAILURE,
 } from "../actions/shipment.actions";
 import { compareSort } from "../../../utils/utilMethods";
-import configureStore from "../../store";
+import { routes } from "../../../routes/routesConstants";
 
 const shipmentApiEndPoint = "shipment/";
 
@@ -126,7 +126,11 @@ function* editShipment(action) {
           message: "Shipment successfully Edited!",
         })
       ),
-      // yield call(history.push, redirectTo),
+      yield call(history.push, redirectTo, {
+        type: "edit",
+        data: data.data,
+        from: routes.SHIPMENT,
+      }),
     ];
   } catch (error) {
     yield [
