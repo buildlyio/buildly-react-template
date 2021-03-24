@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
 function AlertInfo(props) {
   let { shipmentData, shipmentFlag, dispatch, shipmentAlerts, sensorReportAlerts, custodyData, custodianData } = props;
   const [openShipmentAlerts, setOpenShipmentAlerts] = useState([]);
-  const [geofenceAlerts, setGeofenceAlerts] = useState({show: false, data : []});
+  const [geofenceAlerts, setGeofenceAlerts] = useState({ show: false, data: [] });
   const [openGeofenceAlerts, setOpenGeofenceAlerts] = useState([]);
   const user = useContext(UserContext);
 
@@ -119,7 +119,7 @@ function AlertInfo(props) {
       let alerts = [];
       let openAlerts = [];
       let messages = [];
-      let currentCustody = [];
+      let currentCustody = {};
       if (
         custodyData &&
         custodyData.length &&
@@ -129,42 +129,44 @@ function AlertInfo(props) {
         custodyRows = getFormattedCustodyRows(custodyData, custodianData);
       }
       shipmentData && shipmentData.forEach((element) => {
-        sensorReportAlerts && sensorReportAlerts.forEach((sensorReportAlert,index) => {
-          if (element.partner_shipment_id === sensorReportAlert.shipment_id && sensorReportAlert.custodian_id){
+        sensorReportAlerts && sensorReportAlerts.forEach((sensorReportAlert, index) => {
+          if (element.partner_shipment_id === sensorReportAlert.shipment_id && sensorReportAlert.custodian_id) {
             custodyRows && custodyRows.forEach((custody) => {
               if (custody.shipment_id === element.shipment_uuid && custody.custody_uuid === sensorReportAlert.custodian_id[0]) {
                 currentCustody = custody
                 return
               }
             })
-            let message = ''
-            switch(sensorReportAlert.shipment_custody_status) {
-              case 'left':
-                message = 'Has left start location'
-                break
-              case 'arriving':
-                message = 'Is arriving end location'
-                break
-              case 'reached':
-                message = 'Has reached end location'
-                break
+            if (currentCustody !== undefined && currentCustody.custody_uuid === sensorReportAlert.custodian_id[0]) {
+              let message = ''
+              switch (sensorReportAlert.shipment_custody_status) {
+                case 'left':
+                  message = 'Has left start location'
+                  break
+                case 'arriving':
+                  message = 'Is arriving end location'
+                  break
+                case 'reached':
+                  message = 'Has reached end location'
+                  break
+              }
+              alerts.push({
+                type: sensorReportAlert.shipment_custody_status,
+                name: `${message} : Shipment #${element.shipment_uuid} Custody : ${currentCustody.custodian_name}`,
+                shipment: element.shipment_uuid,
+                custody_at: sensorReportAlert.present_start_geofence ? "start" : "end",
+              });
+              openAlerts.push(index);
+              messages.push({
+                shipment_uuid: element.shipment_uuid,
+                alert_message: `Shipment ${message} of ${currentCustody.custodian_name}`,
+                date_time: sensorReportAlert.report_date_time,
+              })
             }
-            alerts.push({
-              type: sensorReportAlert.shipment_custody_status,
-              name: `${message} : Shipment #${element.shipment_uuid} Custody : ${currentCustody.custodian_name}`,
-              shipment: element.shipment_uuid,
-              custody_at: sensorReportAlert.present_start_geofence ? "start" : "end",
-            });
-            openAlerts.push(index);
-            messages.push({
-              shipment_uuid: element.shipment_uuid,
-              alert_message: `Shipment ${message} of ${currentCustody.custodian_name}`,
-              date_time: sensorReportAlert.report_date_time,
-            })
           }
         })
       });
-      setGeofenceAlerts({data: alerts, show: true});
+      setGeofenceAlerts({ data: alerts, show: true });
       if (user && user.email_alert_flag && messages.length > 0) {
         dispatch(emailAlerts({
           user_uuid: user.core_user_uuid,
@@ -174,7 +176,7 @@ function AlertInfo(props) {
         }))
       }
       setOpenGeofenceAlerts(openAlerts);
-  }
+    }
   }, [shipmentData, sensorReportAlerts]);
 
   const classes = useStyles();
@@ -209,7 +211,7 @@ function AlertInfo(props) {
               key={`shipmentAlert${index}:${alert.shipment}`}
               variant="filled"
               severity={alert.severity}
-              onClose={(e) => handleClose(e, index,"shipment")}
+              onClose={(e) => handleClose(e, index, "shipment")}
               classes={{ message: classes.message, root: classes.alert }}
               title={`${alert.name} ${alert.type.toLowerCase() === "warning" ? "Warning" : "Violation"
                 } Shipment#${alert.shipment}`}
