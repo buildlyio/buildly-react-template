@@ -57,6 +57,7 @@ export const getExportData = (model, fileType) => ({
  * @param {String} values_to_pick_response_from
  * @param {String} table_name
  * @param {Object} mapping
+ * @param {Object} platform_name
  */
 export const addApiSetup = (
   url,
@@ -66,6 +67,7 @@ export const addApiSetup = (
   values_to_pick_response_from,
   table_name,
   mapping,
+  platform_name,
 ) => ({
   type: ADD_API_SETUP,
   payload: {
@@ -76,5 +78,6 @@ export const addApiSetup = (
     values_to_pick_response_from,
     table_name,
     mapping,
+    platform_name,
   },
 });

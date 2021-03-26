@@ -23,6 +23,9 @@ function* addFromFile(payload) {
     case "item":
     case "product":
       endPoint = "shipment/file_upload/"
+    // case "sensor":
+    // case "gateway":
+    //   endPoint = "sensors/file_upload/"
   }
 
   try {
@@ -102,6 +105,9 @@ function* getExportData(payload) {
     case "item":
     case "product":
       endPoint = "shipment/file_export/"
+    // case "sensor":
+    // case "gateway":
+    //   endPoint = "sensors/file_export/"
   }
 
   try {
@@ -136,6 +142,11 @@ function* addApiSetup(action) {
     case "item":
     case "product":
       endPoint = "shipment/third_party_api_import/"
+      break
+    case "sensor":
+    case "gateway":
+      endPoint = "sensors/third_party_api_import/"
+      break
   }
 
   try {

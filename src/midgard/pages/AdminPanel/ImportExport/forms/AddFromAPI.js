@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { connect } from "react-redux";
 import _ from "lodash";
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,9 +21,16 @@ import {
   GET_PRODUCTS_OPTIONS_FAILURE,
 } from "midgard/redux/items/actions/items.actions";
 import {
+  GET_SENSOR_OPTIONS_SUCCESS,
+  GET_SENSOR_OPTIONS_FAILURE,
+  GET_GATEWAY_OPTIONS_SUCCESS,
+  GET_GATEWAY_OPTIONS_FAILURE,
+} from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
+import {
   getApiResponse,
   addApiSetup,
 } from "midgard/redux/importExport/actions/importExport.actions";
+import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -82,13 +89,19 @@ const AddFromAPI = ({
   dispatch,
   itemOptions,
   productOptions,
+  sensorOptions,
+  gatewayOptions,
   apiResponse,
 }) => {
   const classes = useStyles();
   const dataTypes = [
-    { name: "Items", value: "item", option: itemOptions },
-    { name: "Products", value: "product", option: productOptions },
+    { name: "Items", value: "item", option: itemOptions, externalProvider: [] },
+    { name: "Products", value: "product", option: productOptions, externalProvider: [] },
+    { name: "Sensors", value: "sensor", option: sensorOptions, externalProvider: [] },
+    { name: "Gateways", value: "gateway", option: gatewayOptions, externalProvider: ['Tive'] },
   ];
+
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   const [tableColumns, setTableColumns] = useState({});
   const [mapColumns, setMapColumns] = useState({});
@@ -104,6 +117,7 @@ const AddFromAPI = ({
   const [modalTitle, setModalTitle] = useState("");
   const [finalUrl, setFinalUrl] = useState("");
   const [reqHeader, setReqHeader] = useState("");
+  const [provider, setProvider] = useState({'name':null,'dataTypes':[],'apiResponseData':''});
 
   useEffect(() => {
     if (itemOptions === null) {
@@ -137,6 +151,38 @@ const AddFromAPI = ({
           dispatch({ type: GET_PRODUCTS_OPTIONS_FAILURE, error: err });
         });
     }
+
+    if (gatewayOptions === null) {
+      httpService
+        .makeOptionsRequest(
+          "options",
+          `${environment.API_URL}sensors/gateway/`,
+          true
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          dispatch({ type: GET_GATEWAY_OPTIONS_SUCCESS, data: res });
+        })
+        .catch((err) => {
+          dispatch({ type: GET_GATEWAY_OPTIONS_FAILURE, error: err });
+        });
+    }
+
+    if (sensorOptions === null) {
+      httpService
+        .makeOptionsRequest(
+          "options",
+          `${environment.API_URL}sensors/sensor/`,
+          true
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          dispatch({ type: GET_SENSOR_OPTIONS_SUCCESS, data: res });
+        })
+        .catch((err) => {
+          dispatch({ type: GET_SENSOR_OPTIONS_FAILURE, error: err });
+        });
+    }
   }, []);
 
   /**
@@ -146,18 +192,34 @@ const AddFromAPI = ({
   const handleSubmit = (event) => {
     event.preventDefault();
     let mapping = {};
-    _.forEach(mapColumns, (col, key) => {
-      mapping[key] = col.value
-    })
+    if (provider.name) {
+      if (provider.name === 'Tive' && dataFor.value === 'gateway') {
+        _.forEach(mapColumns, (col, key) => {
+          mapping[key] = ""
+        })
+        mapping['name'] = 'name';
+        mapping['imei_number'] = 'id';
+      }
+    }
+    else {
+      _.forEach(mapColumns, (col, key) => {
+        mapping[key] = col.value
+      })
+    }
+
+    if ('organization_uuid' in mapping) {
+      mapping['organization_uuid'] = organization
+    }
 
     dispatch(addApiSetup(
       apiURL.value,
       keyParamName.value,
       keyParamPlace.value,
       apiKey.value,
-      apiResponseData.value,
+      apiResponseData.value ? apiResponseData.value : provider.apiResponseData,
       dataFor.value,
       mapping,
+      provider.name ? provider.name : 'Default'
     ));
   };
 
@@ -201,7 +263,7 @@ const AddFromAPI = ({
         };
       });
 
-      if (_.isEmpty(apiColumns)) {
+      if (_.isEmpty(apiColumns) && !provider.name) {
         setAPIColumns(apiResponse[0]);
       }
 
@@ -211,9 +273,16 @@ const AddFromAPI = ({
 
     if (apiURL.value && keyParamName.value &&
       keyParamPlace.value && apiKey.value) {
-      const url = _.endsWith(apiURL.value, "/") 
-        ? apiURL.value 
+      const url = _.endsWith(apiURL.value, "/")
+        ? apiURL.value
         : `${apiURL.value}/`
+      if (url.includes('tive.co')) {
+        let providerDataType = dataTypes.filter(item =>  item.externalProvider.includes('Tive'));
+        setProvider({'name': 'Tive','dataTypes': providerDataType,'apiResponseData': 'result'});
+      }
+      else {
+        setProvider({'name':null,'dataTypes':[],'apiResponseData':''})
+      }
       const queryUrl = <>
         <Typography variant="body1">
           Is the below URL correct?
@@ -260,7 +329,7 @@ const AddFromAPI = ({
         setReqHeader(final.header);
         setModalTitle(final.title);
         setOpenModal(true);
-      };
+      }
     }
 
     if (e.target.id === "apiResponseData" && input.value) {
@@ -282,7 +351,7 @@ const AddFromAPI = ({
         check = check || !mapColumns[index].value
       }
     });
-    
+
     if (check) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
@@ -291,16 +360,17 @@ const AddFromAPI = ({
   };
 
   const handleConfirmModal = () => {
-    dispatch(getApiResponse(finalUrl, reqHeader));
+    if (!provider.name)
+      dispatch(getApiResponse(finalUrl, reqHeader));
     setOpenModal(false);
   };
 
   const handleMapColumn = (e, key) => {
     const present = _.find(mapColumns, { value: e.target.value });
-    
+
     if (present) {
-      setMapColumns({ 
-        ...mapColumns, 
+      setMapColumns({
+        ...mapColumns,
         [key]: { ...mapColumns[key], value: "" },
       });
       setFormError({
@@ -311,8 +381,8 @@ const AddFromAPI = ({
         },
       });
     } else {
-      setMapColumns({ 
-        ...mapColumns, 
+      setMapColumns({
+        ...mapColumns,
         [key]: { ...mapColumns[key], value: e.target.value },
       });
       setFormError({
@@ -322,7 +392,7 @@ const AddFromAPI = ({
           message: "",
         },
       });
-    };
+    }
   };
 
   return (
@@ -401,6 +471,34 @@ const AddFromAPI = ({
               {...apiKey.bind}
             />
           </Grid>
+          {provider.name &&
+          <Grid item xs={12}>
+            <Typography variant="body1">External Provider : {provider.name}</Typography>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                required
+                id="dataFor"
+                label="Import Provider Data For"
+                select
+                error={formError.dataFor && formError.dataFor.error}
+                helperText={
+                  formError.dataFor ? formError.dataFor.message : ""
+                }
+                onBlur={(e) => handleBlur(e, "required", dataFor, "dataFor")}
+                {...dataFor.bind}
+              >
+                <MenuItem value={""}>--------</MenuItem>
+                {provider.dataTypes.map((type, index) => (
+                    <MenuItem key={index} value={type.value}>
+                      {type.name}
+                    </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            </Grid>}
           {apiResponse &&
             <Grid item xs={12}>
               <Typography variant="h6">API Response</Typography>
@@ -409,7 +507,7 @@ const AddFromAPI = ({
               </pre>
             </Grid>
           }
-          {apiResponse && 
+          {apiResponse &&
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -456,7 +554,7 @@ const AddFromAPI = ({
           }
           {!_.isEmpty(tableColumns) &&
             !_.isEmpty(mapColumns) &&
-            !_.isEmpty(apiColumns) && 
+            !_.isEmpty(apiColumns) &&
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <Typography
@@ -470,7 +568,7 @@ const AddFromAPI = ({
                     <Typography variant="body1">
                       {column.label}
                     </Typography>
-                    {column.help_text && 
+                    {column.help_text &&
                       <CustomizedTooltips
                         toolTipText={column.help_text}
                       />
@@ -554,7 +652,8 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.itemsReducer,
   ...state.importExportReducer,
-  loading: state.itemsReducer.loading || state.importExportReducer.loading,
+  ...state.sensorsGatewayReducer,
+  loading: state.itemsReducer.loading || state.importExportReducer.loading || state.sensorsGatewayReducer.loading,
 });
 
 export default connect(mapStateToProps)(AddFromAPI);
