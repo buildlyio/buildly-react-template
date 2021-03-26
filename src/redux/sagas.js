@@ -4,7 +4,14 @@ import crudSaga from '@modules/crud/redux/crud.saga';
 import authSaga from './authuser/sagas/authuser.saga';
 import coregroupSaga from './coregroup/sagas/coregroup.saga';
 import coreuserSaga from './coreuser/coreuser.saga';
+import googleSheetSaga from './googleSheet/sagas/googleSheet.saga';
 
 export default function* rootSaga() {
-  yield all([authSaga(), coregroupSaga(), coreuserSaga(), crudSaga()]);
+  yield all([
+    authSaga(),
+    coregroupSaga(),
+    coreuserSaga(),
+    crudSaga(),
+    googleSheetSaga(),
+  ]);
 }

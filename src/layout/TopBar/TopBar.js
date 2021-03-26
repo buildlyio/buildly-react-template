@@ -9,6 +9,7 @@ import {
 import logo from '@assets/light-logo.png';
 import { UserContext } from '@context/User.context';
 import { logout } from '@redux/authuser/actions/authuser.actions';
+import { checkFilled } from '@redux/googleSheet/actions/googleSheet.actions';
 import { routes } from '@routes/routesConstants';
 import { hasGlobalAdminRights, hasAdminRights } from '@utils/permissions';
 
@@ -46,6 +47,7 @@ const TopBar = ({ location, history, dispatch }) => {
         history.push(routes.MISSING_DATA);
       }
     }
+    dispatch(checkFilled(`${user.first_name} ${user.last_name}`));
   }, []);
 
   const handleLogoutClick = () => {
@@ -84,6 +86,7 @@ const TopBar = ({ location, history, dispatch }) => {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
+  ...state.googleSheetReducer,
 });
 
 export default connect(mapStateToProps)(TopBar);

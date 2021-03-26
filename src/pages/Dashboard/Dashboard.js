@@ -1,20 +1,25 @@
-import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import React, { useContext } from 'react';
+import { connect } from 'react-redux';
+import { UserContext } from '@context/User.context';
+import Loader from '@components/Loader/Loader';
+import FeedbackForm from './FeedbackForm';
+import ThankYou from './ThankYou';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    color: theme.palette.secondary.contrastText,
-  },
-}));
-
-const Dashboard = () => {
-  const classes = useStyles();
+const Dashboard = ({ loading, loaded, filled }) => {
+  const user = useContext(UserContext);
 
   return (
-    <div className={classes.root}>
-      <Typography variant='body1'>Welcome to the Buildly Dashboard</Typography>
-    </div>
+    <React.Fragment>
+      {loading && <Loader open={loading} />}
+      {loaded && !filled && <FeedbackForm />}
+      {loaded && filled && <ThankYou />}
+    </React.Fragment>
   );
 };
 
-export default Dashboard;
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.googleSheetReducer,
+});
+
+export default connect(mapStateToProps)(Dashboard);
