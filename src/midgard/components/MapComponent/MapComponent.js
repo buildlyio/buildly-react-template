@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import {
   withScriptjs,
   withGoogleMap,
@@ -122,27 +122,6 @@ const RenderedMap = withScriptjs(
                 }
                 onDragEnd={(e) => props.onMarkerDrag(e, mark.onMarkerDrag)}
               >
-                {mark.radius && (
-                  <Fragment>
-                    <Circle
-                      defaultCenter={{
-                        lat: mark.lat,
-                        lng: mark.lng
-                      }}
-                      radius={mark.radius * 1000}
-                      options={{
-                        strokeColor: "#ff0000",
-                        strokeOpacity: 0.8,
-                        strokeWeight: 2,
-                        fillColor: "#ff0000",
-                        fillOpacity: 0.35,
-                      }}
-                    />
-                    <InfoWindow>
-                      <div style={{ color: "black" }}>Geofence of {convertUnitsOfMeasure('km', parseFloat(mark.radius), 'miles', 'distance')} miles</div>
-                    </InfoWindow>
-                  </Fragment>
-                )}
               </Marker>
             )
         )}
@@ -160,6 +139,50 @@ const RenderedMap = withScriptjs(
               strokeWeight: 1,
             }}
           />
+        )}
+      {props.isMarkerShown && props.markers &&
+        props.polygon.length > 0 && props.markers.map((mark, index) =>
+          mark.radius ? (
+            <Marker
+                key={mark.lat && mark.lng ? `marker${index}:${mark.lat},${mark.lng}` : `marker${index}`}
+                position={
+                  mark.lat && mark.lng
+                    ? { lat: mark.lat, lng: mark.lng }
+                    : props.center
+                }
+              >
+              <Circle
+                defaultCenter={{
+                  lat: mark.lat,
+                  lng: mark.lng
+                }}
+                radius={mark.radius * 1000}
+                options={{
+                  strokeColor: "#ff0000",
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                  fillColor: "#ff0000",
+                  fillOpacity: 0.35,
+                }}
+              />
+              <InfoWindow>
+                <div style={{ color: "black" }}>Geofence of {convertUnitsOfMeasure('km', parseFloat(mark.radius), 'miles', 'distance')} miles</div>
+              </InfoWindow>
+            </Marker>
+          ) : (
+            <Marker
+                key={mark.lat && mark.lng ? `marker${index}:${mark.lat},${mark.lng}` : `marker${index}`}
+                position={
+                  mark.lat && mark.lng
+                    ? { lat: mark.lat, lng: mark.lng }
+                    : props.center
+                }
+              >
+              <InfoWindow>
+                <div style={{ color: "black" }}>Configure radius for geofence</div>
+              </InfoWindow>
+              </Marker>
+            )
         )}
       {props.polygon && props.polygon.length > 0 && (
         <Polygon

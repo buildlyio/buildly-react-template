@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { http } from "midgard-core";
-import Geocode from "react-geocode";
 import { connect } from "react-redux";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles , useTheme } from "@material-ui/core/styles";

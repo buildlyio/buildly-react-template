@@ -38,6 +38,7 @@ export function GraphComponent(props) {
             data: data,
             fill: false,
             showLine: true,
+            spanGaps: true,
             borderColor: "#EBC645",
             backgroundColor: '#383636',
             borderCapStyle: 'butt',

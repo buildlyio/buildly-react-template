@@ -68,9 +68,6 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
   const [radius, setRadius] = useState(
     (organizationData && organizationData.radius) || 0
   );
-  // const radius = useInput((organizationData && organizationData.radius) || 0, {
-  //   required: true,
-  // });
 
   const [formError, setFormError] = useState({});
 
@@ -96,44 +93,9 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
       ...organizationData,
       edit_date: new Date(),
       allow_import_export: allowImportExport,
-      radius: convertUnitsOfMeasure('miles',parseFloat(radius),'km','distance'),
+      radius: radius ? convertUnitsOfMeasure('miles',parseFloat(radius),'km','distance') : 0,
     };
     dispatch(updateOrganization(data));
-  };
-
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
-
-  const handleBlur = (e, validation, input, parentId) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: validateObj,
-      });
-    else
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: {
-          error: false,
-          message: "",
-        },
-      });
-  };
-
-  const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
-    let errorExists = false;
-    if (!radius) return true;
-    errorKeys.forEach((key) => {
-      if (formError[key].error) errorExists = true;
-    });
-    return errorExists;
   };
 
   return (
@@ -155,7 +117,6 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
           <TextField
             variant="outlined"
             margin="normal"
-            required
             id="radius"
             fullWidth
             label="Radius for Geofence (miles)"
@@ -166,7 +127,6 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
             helperText={
               formError.radius ? formError.radius.message : ""
             }
-            onBlur={(e) => handleBlur(e, "required", radius)}
             onChange={event => setRadius(event.target.value)} />
         </Grid>
         <Grid container spacing={2} justify="center">
@@ -178,7 +138,7 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                disabled={loading || submitDisabled()}
+                disabled={loading}
               >
                 Save
                     </Button>

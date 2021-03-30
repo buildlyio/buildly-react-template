@@ -34,6 +34,7 @@ import {
 } from "../../../../utils/utilMethods";
 import { getFormattedRow } from "../../../Custodians/CustodianConstants";
 import CustomizedTooltips from "../../../../components/ToolTip/ToolTip";
+import _ from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -104,6 +105,13 @@ function AddCustodyForm(props) {
   const [end_of_custody_location, handleEndLocation] = useState(
     (editItem && editItem.end_of_custody_location) || ""
   );
+  const [start_of_custody_address,setStartAddress] = useState(
+    (editItem && editItem.start_of_custody_location) || ""
+  );
+  const [end_of_custody_address,setEndAddress] = useState(
+    (editItem && editItem.end_of_custody_location) || ""
+  );
+
   const shipment = useInput(
     shipmentFormData && shipmentFormData.shipment_uuid,
     "",
@@ -131,6 +139,13 @@ function AddCustodyForm(props) {
     }
   }, [custodianData, contactInfo]);
 
+  useEffect(() => {
+    if (editItem && editItem.start_of_custody_location)
+      getAddress(editItem.start_of_custody_location,'start')
+    if (editItem && editItem.end_of_custody_location)
+      getAddress(editItem.end_of_custody_location,'end')
+  },[editItem]);
+
   const submitDisabled = () => {
     if (!custodianId) return true;
   };
@@ -148,20 +163,10 @@ function AddCustodyForm(props) {
             selectedCustodian = list;
           }
         });
-        Geocode.setApiKey(GEO_CODE_API);
-        Geocode.setLanguage("en");
-        Geocode.fromAddress(selectedCustodian.location).then(
-          (response) => {
-            const { lat, lng } = response.results[0].geometry.location;
-            setEndLocation(`${lat},${lng}`);
-            setStartLocation(`${lat},${lng}`);
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
+        getLatLong(selectedCustodian.location,'start')
+        getLatLong(selectedCustodian.location,'end')
       }
-    } else {
+      } else {
       setCustodianId(value);
     }
   };
@@ -212,13 +217,57 @@ function AddCustodyForm(props) {
   };
 
   const setStartLocation = (value) => {
+    // getAddress(value,'start');
     handleStartLocation(value);
   };
 
   const setEndLocation = (value) => {
+    // getAddress(value,'end');
     handleEndLocation(value);
   };
 
+  const getLatLong = (address,pointer) => {
+    if (pointer === 'start') setStartAddress(address)
+    else if (pointer === 'end') setEndAddress(address)
+    if ((pointer === 'start' && address !== start_of_custody_address && address != "") ||
+    (pointer === 'end' && address !== end_of_custody_address && address != "")) {
+      Geocode.setApiKey(GEO_CODE_API);
+        Geocode.setLanguage("en");
+        Geocode.fromAddress(address).then(
+          (response) => {
+            const { lat, lng } = response.results[0].geometry.location;
+            if (pointer === 'start') setStartLocation(`${lat},${lng}`);
+            else if (pointer === 'end') setEndLocation(`${lat},${lng}`);
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+    }
+    }
+
+  const getAddress = (latlong,pointer) => {
+    Geocode.setApiKey(GEO_CODE_API);
+    Geocode.setLanguage("en");
+    latlong = latlong.split(',')
+    Geocode.fromLatLng(latlong[0],latlong[1]).then(
+      (response) => {
+        let filteredResult = {}
+        filteredResult = _.find(response.results,(item) => item.types.includes('establishment'))
+        if (!filteredResult)
+          filteredResult = _.find(response.results,(item) => item.types.includes('premise'))
+        if (!filteredResult)
+          filteredResult = response.results[0]
+        if (pointer === 'start')
+          setStartAddress(filteredResult.formatted_address)
+        else if (pointer === 'end')
+          setEndAddress(filteredResult.formatted_address)
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
   return (
     <Box mb={5} mt={3}>
       <form noValidate onSubmit={onAddCustodyClick}>
@@ -355,31 +404,13 @@ function AddCustodyForm(props) {
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  id="start_of_custody_location"
+                  id="start_of_custody_address"
                   label="Start of Custody location"
-                  name="start_of_custody_location"
-                  autoComplete="start_of_custody_location"
-                  value={start_of_custody_location}
-                  disabled={viewOnly}
-                  InputProps={
-                    custodyMetaData["start_of_custody_location"] &&
-                    custodyMetaData["start_of_custody_location"].help_text && {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          {custodyMetaData["start_of_custody_location"]
-                            .help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                custodyMetaData["start_of_custody_location"]
-                                  .help_text
-                              }
-                            />
-                          )}
-                        </InputAdornment>
-                      ),
-                    }
-                  }
-                  // onChange={(e) => setLastLocation(e.target.value)}
+                  name="start_of_custody_address"
+                  autoComplete="start_of_custody_address"
+                  value={start_of_custody_address}
+                  onChange={(e) => getLatLong(e.target.value,'start')}
+                  // onBlur={(e) => getLatLong(e.target.value,'start')}
                 />
                 <MapComponent
                   isMarkerShown
@@ -396,8 +427,8 @@ function AddCustodyForm(props) {
                       lng:
                         start_of_custody_location &&
                         parseFloat(start_of_custody_location.split(",")[1]),
-                      onMarkerDrag: setStartLocation,
-                      draggable: true,
+                      // onMarkerDrag: setStartLocation,
+                      // draggable: true,
                       radius : organizationData.radius,
                     },
                   ]}
@@ -409,31 +440,13 @@ function AddCustodyForm(props) {
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  id="end_of_custody_location"
+                  id="end_of_custody_address"
                   label="End of Custody location"
-                  name="end_of_custody_location"
-                  autoComplete="end_of_custody_location"
-                  value={end_of_custody_location}
-                  disabled={viewOnly}
-                  InputProps={
-                    custodyMetaData["end_of_custody_location"] &&
-                    custodyMetaData["end_of_custody_location"].help_text && {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          {custodyMetaData["end_of_custody_location"]
-                            .help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                custodyMetaData["end_of_custody_location"]
-                                  .help_text
-                              }
-                            />
-                          )}
-                        </InputAdornment>
-                      ),
-                    }
-                  }
-                  // onChange={(e) => setLastLocation(e.target.value)}
+                  name="end_of_custody_address"
+                  autoComplete="end_of_custody_address"
+                  value={end_of_custody_address}
+                  onChange={(e) => getLatLong(e.target.value,'end')}
+                  // onBlur={(e) => getLatLong(e.target.value,'end')}
                 />
                 <MapComponent
                   isMarkerShown
@@ -450,8 +463,8 @@ function AddCustodyForm(props) {
                       lng:
                         end_of_custody_location &&
                         parseFloat(end_of_custody_location.split(",")[1]),
-                      onMarkerDrag: setEndLocation,
-                      draggable: true,
+                      // onMarkerDrag: setEndLocation,
+                      // draggable: true,
                       radius : organizationData.radius,
                     },
                   ]}
