@@ -46,6 +46,10 @@ export const EDIT_CUSTODY = "CUSTODIAN/EDIT_CUSTODY";
 export const EDIT_CUSTODY_SUCCESS = "CUSTODIAN/EDIT_CUSTODY_SUCCESS";
 export const EDIT_CUSTODY_FAILURE = "CUSTODIAN/EDIT_CUSTODY_FAILURE";
 
+export const UPDATE_CUSTODY = "CUSTODIAN/UPDATE_CUSTODY";
+export const UPDATE_CUSTODY_SUCCESS = "CUSTODIAN/UPDATE_CUSTODY_SUCCESS";
+export const UPDATE_CUSTODY_FAILURE = "CUSTODIAN/UPDATE_CUSTODY_FAILURE";
+
 export const GET_CUSTODIAN_OPTIONS = "CUSTODIAN/GET_CUSTODIAN_OPTIONS";
 export const GET_CUSTODIAN_OPTIONS_SUCCESS =
   "CUSTODIAN/GET_CUSTODIAN_OPTIONS_SUCCESS";
@@ -155,6 +159,11 @@ export const addCustody = (payload) => ({
 
 export const editCustody = (payload) => ({
   type: EDIT_CUSTODY,
+  payload,
+});
+
+export const updateCustody = (payload) => ({
+  type: UPDATE_CUSTODY,
   payload,
 });
 

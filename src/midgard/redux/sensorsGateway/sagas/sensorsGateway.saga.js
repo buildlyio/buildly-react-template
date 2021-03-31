@@ -341,7 +341,7 @@ function* getSensorReportAlerts(payload) {
     const data = yield call(
       httpService.makeRequest,
       "get",
-      `${environment.API_URL}${sensorApiEndPoint}sensor_report/?organization_uuid=${payload.organization_uuid}&shipment_custody_status=left,arriving,reached`,
+      `${environment.API_URL}${sensorApiEndPoint}sensor_report/?organization_uuid=${payload.organization_uuid}&shipment_custody_status=present-start-geofence,left-start-geofence,arriving-end-geofence,present-end-geofence,reached-end-geofence,left-end-geofence`,
       null,
       true
     );

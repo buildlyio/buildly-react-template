@@ -29,6 +29,9 @@ import {
   EDIT_CUSTODY,
   EDIT_CUSTODY_SUCCESS,
   EDIT_CUSTODY_FAILURE,
+  UPDATE_CUSTODY,
+  UPDATE_CUSTODY_SUCCESS,
+  UPDATE_CUSTODY_FAILURE,
   GET_CUSTODIAN_OPTIONS,
   GET_CUSTODIAN_OPTIONS_SUCCESS,
   GET_CUSTODIAN_OPTIONS_FAILURE,
@@ -67,7 +70,7 @@ export default (state = initialState, action) => {
   if (typePresent) {
     deletedType = editedType;
     editedType = [ ...editedType, action.custodianType ];
-  };
+  }
 
   switch (action.type) {
     case GET_CUSTODIANS:
@@ -269,6 +272,27 @@ export default (state = initialState, action) => {
         custodyData: action.data,
       };
     case EDIT_CUSTODY_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+    case UPDATE_CUSTODY:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+    case UPDATE_CUSTODY_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodyData: action.data,
+      };
+    case UPDATE_CUSTODY_FAILURE:
       return {
         ...state,
         loading: false,

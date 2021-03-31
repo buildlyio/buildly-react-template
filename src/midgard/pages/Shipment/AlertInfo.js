@@ -5,6 +5,9 @@ import Alert from "@material-ui/lab/Alert";
 import { UserContext } from "midgard/context/User.context";
 import { setShipmentAlerts, emailAlerts } from "../../redux/shipment/actions/shipment.actions";
 import { getFormattedCustodyRows } from "./ShipmentConstants";
+import {
+  updateCustody
+} from "../../redux/custodian/actions/custodian.actions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,7 +59,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function AlertInfo(props) {
-  let { shipmentData, shipmentFlag, dispatch, shipmentAlerts, sensorReportAlerts, custodyData, custodianData } = props;
+  let {
+    shipmentData,
+    shipmentFlag,
+    dispatch,
+    shipmentAlerts,
+    sensorReportAlerts,
+    custodyData,
+    custodianData,
+  } = props;
   const [openShipmentAlerts, setOpenShipmentAlerts] = useState([]);
   const [geofenceAlerts, setGeofenceAlerts] = useState({ show: false, data: [] });
   const [openGeofenceAlerts, setOpenGeofenceAlerts] = useState([]);
@@ -120,6 +131,7 @@ function AlertInfo(props) {
       let openAlerts = [];
       let messages = [];
       let currentCustody = {};
+      let updatedCustodies = [];
       if (
         custodyData &&
         custodyData.length &&
@@ -130,24 +142,43 @@ function AlertInfo(props) {
       }
       shipmentData && shipmentData.forEach((element) => {
         sensorReportAlerts && sensorReportAlerts.forEach((sensorReportAlert, index) => {
-          if (element.partner_shipment_id === sensorReportAlert.shipment_id && sensorReportAlert.custodian_id) {
+          if (element.partner_shipment_id === sensorReportAlert.shipment_id &&
+            sensorReportAlert.custodian_id && sensorReportAlert.custodian_id.length > 0) {
+            let sensorCustodian = sensorReportAlert.custodian_id;
             custodyRows && custodyRows.forEach((custody) => {
-              if (custody.shipment_id === element.shipment_uuid && custody.custody_uuid === sensorReportAlert.custodian_id[0]) {
-                currentCustody = custody
+              if (custody.shipment_id === element.shipment_uuid &&
+                (sensorCustodian.includes(custody.custodian_data.custodian_uuid) ||
+                  sensorCustodian.includes(custody.custody_uuid))) {
+                if (custody.has_current_custody) {
+                  currentCustody = custody
+                  currentCustody['custodian_uuid'] = custody.custodian_data.custodian_uuid
+                }
+                else
+                  updatedCustodies.push(custody)
                 return
               }
             })
-            if (currentCustody !== undefined && currentCustody.custody_uuid === sensorReportAlert.custodian_id[0]) {
+            if (currentCustody !== undefined && (sensorCustodian.includes(currentCustody.custodian_uuid) ||
+              sensorCustodian.includes(currentCustody.custody_uuid))) {
               let message = ''
               switch (sensorReportAlert.shipment_custody_status) {
-                case 'left':
+                case 'present-start-geofence':
+                  message = 'Is present in start location'
+                  break
+                case 'left-start-geofence':
                   message = 'Has left start location'
                   break
-                case 'arriving':
+                case 'arriving-end-geofence':
                   message = 'Is arriving end location'
                   break
-                case 'reached':
+                case 'present-end-geofence':
+                  message = 'Is present in end location'
+                  break
+                case 'reached-end-geofence':
                   message = 'Has reached end location'
+                  break
+                case 'left-end-geofence':
+                  message = 'Custody Handoff'
                   break
               }
               alerts.push({
@@ -162,6 +193,25 @@ function AlertInfo(props) {
                 alert_message: `Shipment ${message} of ${currentCustody.custodian_name}`,
                 date_time: sensorReportAlert.report_date_time,
               })
+
+              if (sensorReportAlert.shipment_custody_status === 'left-end-geofence'  &&
+              currentCustody.custody_uuid !== sensorReportAlert.current_custody_id) {
+                updatedCustodies && updatedCustodies.forEach((custody) => {
+                  if (custody.custody_uuid === sensorReportAlert.current_custody_id) {
+                    // Update custody current one
+                    const custodyFormValues = {
+                      id: custody.id,
+                      has_current_custody: true,
+                    }
+                    dispatch(updateCustody(custodyFormValues));
+                  }
+                })
+                const previousCustody = {
+                  id: currentCustody.id,
+                  has_current_custody: false,
+                }
+                dispatch(updateCustody(previousCustody));
+              }
             }
           }
         })

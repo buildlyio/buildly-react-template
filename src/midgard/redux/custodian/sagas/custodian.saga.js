@@ -29,6 +29,8 @@ import {
   GET_CUSTODY,
   ADD_CUSTODY,
   EDIT_CUSTODY,
+  UPDATE_CUSTODY,
+  UPDATE_CUSTODY_FAILURE,
   EDIT_CUSTODY_FAILURE,
   ADD_CUSTODIAN_TYPE,
   ADD_CUSTODIAN_TYPE_SUCCESS,
@@ -415,6 +417,45 @@ function* editCustody(action) {
   }
 }
 
+function* updateCustody(action) {
+  let { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      "patch",
+      `${environment.API_URL}${custodiansApiEndPoint}custody/${payload.id}/`,
+      payload,
+    );
+    if (data && data.data) {
+      yield [
+        yield put(getCustody()),
+        yield put(
+          showAlert({
+            type: "success",
+            open: true,
+            message: "Successfully Edited Custody",
+          })
+        ),
+      ];
+    }
+  } catch (error) {
+    console.log("error", error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Edit Custody due to some error!",
+        })
+      ),
+      yield put({
+        type: UPDATE_CUSTODY_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* addCustodianType(action) {
   let { payload } = action;
   try {
@@ -427,7 +468,7 @@ function* addCustodianType(action) {
     );
     if (data && data.data) {
       yield [
-        yield put({ 
+        yield put({
           type: ADD_CUSTODIAN_TYPE_SUCCESS,
           custodianType: data.data,
         }),
@@ -470,7 +511,7 @@ function* editCustodianType(action) {
     );
     if (data && data.data) {
       yield [
-        yield put({ 
+        yield put({
           type: EDIT_CUSTODIAN_TYPE_SUCCESS,
           custodianType: data.data,
         }),
@@ -511,7 +552,7 @@ function* deleteCustodianType(payload) {
       true
     );
     yield [
-      yield put({ 
+      yield put({
         type: DELETE_CUSTODIAN_TYPE_SUCCESS,
         custodianType: { id: payload.id },
       }),
@@ -581,6 +622,10 @@ function* watchEditCustody() {
   yield takeLatest(EDIT_CUSTODY, editCustody);
 }
 
+function* watchUpdateCustody() {
+  yield takeLatest(UPDATE_CUSTODY, updateCustody);
+}
+
 function* watchAddCustodianType() {
   yield takeLatest(ADD_CUSTODIAN_TYPE, addCustodianType);
 }
@@ -605,6 +650,7 @@ export default function* custodianSaga() {
     watchGetCustody(),
     watchAddCustody(),
     watchEditCustody(),
+    watchUpdateCustody(),
     watchAddCustodianType(),
     watchEditCustodianType(),
     watchDeleteCustodianType(),
