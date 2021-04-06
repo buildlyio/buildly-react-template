@@ -1,4 +1,4 @@
-import { environment } from 'environments/environment';
+import { environment } from "environments/environment";
 
 export const MAP_API_KEY = environment.MAP_API_KEY;
 export const MAP_API_URL = environment.MAP_API_URL;
@@ -66,8 +66,12 @@ export const checkForGlobalAdmin = (userData) => {
   let isGlobalAdmin = false;
   if (userData && userData.core_groups) {
     userData.core_groups.map((group) => {
-      if (group.is_global &&
-        Object.keys(group.permissions).every((permission) => group.permissions[permission] === true)) {
+      if (
+        group.is_global &&
+        Object.keys(group.permissions).every(
+          (permission) => group.permissions[permission] === true
+        )
+      ) {
         isGlobalAdmin = true;
       }
     });
@@ -79,15 +83,19 @@ export const checkForAdmin = (userData) => {
   let isAdmin = false;
   if (userData && userData.core_groups) {
     userData.core_groups.map((group) => {
-      if (group.is_org_level &&
-        Object.keys(group.permissions).every((permission) => group.permissions[permission] === true) &&
-        !group.is_global) {
+      if (
+        group.is_org_level &&
+        Object.keys(group.permissions).every(
+          (permission) => group.permissions[permission] === true
+        ) &&
+        !group.is_global
+      ) {
         isAdmin = true;
       }
     });
   }
   return isAdmin;
-}
+};
 
 export const setOptionsData = (options, fieldName) => {
   let result = null;
@@ -105,26 +113,34 @@ export const setOptionsData = (options, fieldName) => {
  * @param {String} destinationUnit
  * @param {String} _class
  */
-export const convertUnitsOfMeasure = (sourceUnit, value, destinationUnit, _class) => {
-  switch(_class) {
-    case 'temperature':
-      if (sourceUnit === 'fahrenheit' && destinationUnit === 'celsius')
-        value =  (value - 32) * 5 / 9;
-      else if (sourceUnit === 'celsius' && destinationUnit === 'fahrenheit')
-        value =  (value * 9 / 5) + 32;
+export const convertUnitsOfMeasure = (
+  sourceUnit,
+  value,
+  destinationUnit,
+  _class
+) => {
+  switch (_class) {
+    case "temperature":
+      if (sourceUnit === "fahrenheit" && destinationUnit === "celsius")
+        value = ((value - 32) * 5) / 9;
+      else if (sourceUnit === "celsius" && destinationUnit === "fahrenheit")
+        value = (value * 9) / 5 + 32;
       return value.toFixed(2);
-    case 'distance':
-      if (sourceUnit === 'km' && destinationUnit === 'miles')
+    case "distance":
+      if (sourceUnit === "km" && destinationUnit === "miles")
         value = value * 0.6214;
-      else if(sourceUnit == 'miles' && destinationUnit === 'km')
+      else if (sourceUnit == "miles" && destinationUnit === "km")
         value = value / 0.6214;
       return value.toFixed(2);
   }
-}
+};
 
 export const getLocalDateTime = (value) => {
-  const displayDate = new Date(value).toLocaleDateString('en-US',
-  {year: 'numeric', month: 'short', day: 'numeric'});
+  const displayDate = new Date(value).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
   const displayTime = new Date(value).toLocaleTimeString();
-  return displayDate+" "+displayTime;
-}
+  return displayDate + " " + displayTime;
+};
