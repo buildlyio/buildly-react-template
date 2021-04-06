@@ -68,7 +68,7 @@ function* getShipmentList(payload) {
 }
 
 function* deleteShipment(payload) {
-  let { shipmentId,organization_uuid } = payload;
+  let { shipmentId, organization_uuid } = payload;
   try {
     yield call(
       httpService.makeRequest,
@@ -126,13 +126,16 @@ function* editShipment(action) {
           message: "Shipment successfully Edited!",
         })
       ),
-      yield call(history.push, redirectTo, {
-        type: "edit",
-        data: data.data,
-        from: routes.SHIPMENT,
-      }),
+      yield history && redirectTo
+        ? call(history.push, redirectTo, {
+            type: "edit",
+            data: data.data,
+            from: routes.SHIPMENT,
+          })
+        : () => {},
     ];
   } catch (error) {
+    console.log("Error: ", error);
     yield [
       yield put(
         showAlert({
@@ -324,7 +327,7 @@ function* addShipmentFlag(action) {
     );
     if (data && data.data) {
       yield [
-        yield put({ 
+        yield put({
           type: ADD_SHIPMENT_FLAG_SUCCESS,
           shipmentFlag: data.data,
         }),
@@ -367,7 +370,7 @@ function* editShipmentFlag(action) {
     );
     if (data && data.data) {
       yield [
-        yield put({ 
+        yield put({
           type: EDIT_SHIPMENT_FLAG_SUCCESS,
           shipmentFlag: data.data,
         }),
@@ -408,7 +411,7 @@ function* deleteShipmentFlag(payload) {
       true
     );
     yield [
-      yield put({ 
+      yield put({
         type: DELETE_SHIPMENT_FLAG_SUCCESS,
         shipmentFlag: { id: payload.id },
       }),

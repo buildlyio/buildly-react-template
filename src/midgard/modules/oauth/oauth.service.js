@@ -1,5 +1,5 @@
-import { oauth } from 'midgard-core';
-import { environment } from 'environments/environment';
+import { oauth } from "midgard-core";
+import { environment } from "environments/environment";
 
 export const oauthService = {
   authenticateWithPasswordFlow,
@@ -10,7 +10,7 @@ export const oauthService = {
   setAccessToken,
   getJwtToken,
   logout,
-  setCurrentCoreUser
+  setCurrentCoreUser,
 };
 
 /**
@@ -21,7 +21,7 @@ function authenticateWithPasswordFlow(credentials) {
   const oauthOptions = {
     clientId: environment.OAUTH_CLIENT_ID,
     tokenUrl: environment.OAUTH_TOKEN_URL,
-    returnPromise: true
+    returnPromise: true,
   };
   return oauth.authenticateWithCredentials(credentials, oauthOptions);
 }
@@ -31,7 +31,7 @@ function authenticateWithPasswordFlow(credentials) {
  * @returns {} oauthUser
  */
 function getOauthUser() {
-  const oauthUser = JSON.parse(localStorage.getItem('oauthUser'));
+  const oauthUser = JSON.parse(localStorage.getItem("oauthUser"));
   if (oauthUser) {
     return oauthUser;
   }
@@ -43,15 +43,15 @@ function getOauthUser() {
  * @returns {string}
  */
 function setOauthUser(oauthUser) {
-  localStorage.setItem('oauthUser', JSON.stringify(oauthUser));
+  localStorage.setItem("oauthUser", JSON.stringify(oauthUser));
   if (oauthUser) {
     return oauthUser;
   }
 }
 
 function setCurrentCoreUser(user, coreuser) {
-    let currentUser = user.data.filter(data => data.id === coreuser.data.id);
-    localStorage.setItem('currentUser', JSON.stringify(currentUser[0]));
+  let currentUser = user.data.filter((data) => data.id === coreuser.data.id);
+  localStorage.setItem("currentUser", JSON.stringify(currentUser[0]));
 }
 
 /**
@@ -59,7 +59,7 @@ function setCurrentCoreUser(user, coreuser) {
  */
 function hasValidAccessToken() {
   if (getAccessToken()) {
-    const expiresAt = localStorage.getItem('expires_at');
+    const expiresAt = localStorage.getItem("expires_at");
     const now = new Date();
     if (expiresAt && parseInt(expiresAt, 10) < now.getTime()) {
       return false;
@@ -75,13 +75,14 @@ function hasValidAccessToken() {
  */
 function setAccessToken(token) {
   if (token) {
-    localStorage.setItem('token', JSON.stringify(token));
+    localStorage.setItem("token", JSON.stringify(token));
     if (token.expires_in) {
-      const expiresInMilliSeconds = token.expires_in * environment.session_timeout;
+      const expiresInMilliSeconds =
+        token.expires_in * environment.session_timeout;
       const now = new Date();
       const expiresAt = now.getTime() + expiresInMilliSeconds;
-      localStorage.setItem('expires_at', expiresAt.toString());
-      localStorage.setItem('token_stored_at', now.toString());
+      localStorage.setItem("expires_at", expiresAt.toString());
+      localStorage.setItem("token_stored_at", now.toString());
     }
   }
 }
@@ -91,11 +92,13 @@ function setAccessToken(token) {
  */
 function logout() {
   if (getAccessToken()) {
-    localStorage.removeItem('token');
-    localStorage.removeItem('expires_at');
-    localStorage.removeItem('token_stored_at');
-    localStorage.removeItem('oauthUser');
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem("token");
+    localStorage.removeItem("expires_at");
+    localStorage.removeItem("token_stored_at");
+    localStorage.removeItem("oauthUser");
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("geofenceAlerts");
+    localStorage.removeItem("shipmentAlerts");
   }
 }
 
@@ -103,7 +106,7 @@ function logout() {
  * Returns the current access_token.
  */
 function getAccessToken() {
-  const tokenObj = JSON.parse(localStorage.getItem('token'));
+  const tokenObj = JSON.parse(localStorage.getItem("token"));
   if (tokenObj) {
     return tokenObj.access_token;
   }
@@ -113,7 +116,7 @@ function getAccessToken() {
  * Returns the current JWT token.
  */
 function getJwtToken() {
-  const tokenObj = JSON.parse(localStorage.getItem('token'));
+  const tokenObj = JSON.parse(localStorage.getItem("token"));
   if (tokenObj) {
     return tokenObj.access_token_jwt;
   }
