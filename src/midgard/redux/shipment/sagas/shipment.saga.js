@@ -135,7 +135,6 @@ function* editShipment(action) {
         : () => {},
     ];
   } catch (error) {
-    console.log("Error: ", error);
     yield [
       yield put(
         showAlert({

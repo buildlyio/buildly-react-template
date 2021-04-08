@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import moment from "moment";
 import Button from "@material-ui/core/Button";
-import { useTheme , makeStyles } from "@material-ui/core/styles";
+import { useTheme, makeStyles } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -26,7 +26,11 @@ import {
 import { routes } from "../../../routes/routesConstants";
 import { MAP_API_URL, compareSort } from "../../../utils/utilMethods";
 import { useInput } from "../../../hooks/useInput";
-import { SHIPMENT_STATUS, TRANSPORT_MODE } from "../../../utils/mock";
+import {
+  SHIPMENT_STATUS,
+  TRANSPORT_MODE,
+  SENSOR_PLATFORM,
+} from "../../../utils/mock";
 import DatePickerComponent from "../../../components/DatePicker/DatePicker";
 import { validators } from "../../../utils/validators";
 import {
@@ -132,6 +136,10 @@ function ShipmentInfo(props) {
   const [uom_distance, setUomDistance] = useState(
     (editData && editData.uom_distance) || ""
   );
+  const [platform_name, setPlatformName] = useState(
+    (editData && editData.platform_name) || "ICLP"
+  );
+
   const [formError, setFormError] = useState({});
   const [fieldsMetadata, setFieldsMetaData] = useState({
     shipment_name: "",
@@ -145,6 +153,7 @@ function ShipmentInfo(props) {
     uom_temp: "",
     uom_distance: "",
     uom_weight,
+    platform_name: "",
   });
   const organization = useContext(UserContext).organization.organization_uuid;
 
@@ -197,6 +206,10 @@ function ShipmentInfo(props) {
       metadata["uom_weight"] = setOptionsData(
         shipmentOptions.actions.POST,
         "uom_weight"
+      );
+      metadata["platform_name"] = setOptionsData(
+        shipmentOptions.actions.POST,
+        "platform_name"
       );
     }
 
@@ -286,6 +299,7 @@ function ShipmentInfo(props) {
       uom_temp: uom_temp,
       uom_weight: uom_weight,
       organization_uuid: organization,
+      platform_name: platform_name,
     };
 
     if (editPage && editData) {
@@ -313,25 +327,27 @@ function ShipmentInfo(props) {
   };
 
   checkIfShipmentInfoEdited = () => {
-    if (shipment_name.hasChanged() || lading_bill.hasChanged() || load_no.hasChanged() ||
-      shipment_status.hasChanged() || route_desc.hasChanged() || mode_type.hasChanged() || route_dist.hasChanged())
-      return true
-    else
-      return false
+    if (
+      shipment_name.hasChanged() ||
+      lading_bill.hasChanged() ||
+      load_no.hasChanged() ||
+      shipment_status.hasChanged() ||
+      route_desc.hasChanged() ||
+      mode_type.hasChanged() ||
+      route_dist.hasChanged()
+    )
+      return true;
+    else return false;
   };
 
   const onNextClick = () => {
-    if (checkIfShipmentInfoEdited() === true)
-      setConfirmModal(true)
-    else
-      handleNext()
+    if (checkIfShipmentInfoEdited() === true) setConfirmModal(true);
+    else handleNext();
   };
 
   const onCancelClick = () => {
-    if (checkIfShipmentInfoEdited() === true)
-      setConfirmModal(true)
-    else
-      handleCancel()
+    if (checkIfShipmentInfoEdited() === true) setConfirmModal(true);
+    else handleCancel();
   };
   return (
     <React.Fragment>
@@ -412,7 +428,6 @@ function ShipmentInfo(props) {
                       }
                     />
                   </Grid>
-
                   <Grid item xs={12}>
                     <TextField
                       variant="outlined"
@@ -444,7 +459,10 @@ function ShipmentInfo(props) {
                       {TRANSPORT_MODE &&
                         TRANSPORT_MODE.sort(compareSort("value")).map(
                           (item, index) => (
-                            <MenuItem key={`transportMode${index}:${item.value}`} value={item.value}>
+                            <MenuItem
+                              key={`transportMode${index}:${item.value}`}
+                              value={item.value}
+                            >
                               {item.label}
                             </MenuItem>
                           )
@@ -526,6 +544,48 @@ function ShipmentInfo(props) {
                           ))}
                     </TextField>
                   </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      required
+                      id="platform_name"
+                      select
+                      label="Sensor Platform"
+                      disabled={viewOnly}
+                      value={platform_name}
+                      onChange={(e) => setPlatformName(e.target.value)}
+                      InputProps={
+                        fieldsMetadata["platform_name"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="start">
+                              {fieldsMetadata["platform_name"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    fieldsMetadata["platform_name"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
+                    >
+                      <MenuItem value={""}>Select</MenuItem>
+                      {SENSOR_PLATFORM &&
+                        SENSOR_PLATFORM.sort(compareSort("value")).map(
+                          (item, index) => (
+                            <MenuItem
+                              key={`sensorPlatform${index}:${item.value}`}
+                              value={item.value}
+                            >
+                              {item.label}
+                            </MenuItem>
+                          )
+                        )}
+                    </TextField>
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -562,14 +622,16 @@ function ShipmentInfo(props) {
                       {SHIPMENT_STATUS &&
                         SHIPMENT_STATUS.sort(compareSort("value")).map(
                           (item, index) => (
-                            <MenuItem key={`shipmentStatus${index}:${item.value}`} value={item.value}>
+                            <MenuItem
+                              key={`shipmentStatus${index}:${item.value}`}
+                              value={item.value}
+                            >
                               {item.label}
                             </MenuItem>
                           )
                         )}
                     </TextField>
                   </Grid>
-
                   <Grid item xs={12}>
                     <DatePickerComponent
                       label={"Scheduled departure"}

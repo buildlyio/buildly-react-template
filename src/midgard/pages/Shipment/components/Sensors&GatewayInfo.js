@@ -24,8 +24,8 @@ import {
   getFormattedRow,
   sensorsColumns,
   getFormattedSensorRow,
+  getActiveGateways,
 } from "../../SensorsGateway/Constants";
-import { compareSort } from "../../../utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
 
 const useStyles = makeStyles((theme) => ({
@@ -81,12 +81,10 @@ function SensorsGatewayInfo(props) {
     dispatch,
     sensorData,
     sensorTypeList,
-    viewOnly
+    viewOnly,
   } = props;
   const [gatewayIds, setGatewayIds] = useState(
-    (shipmentFormData &&
-      shipmentFormData.gateway_ids) ||
-      []
+    (shipmentFormData && shipmentFormData.gateway_ids) || []
   );
   const classes = useStyles();
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -116,7 +114,7 @@ function SensorsGatewayInfo(props) {
   }
 
   const onInputChange = (value) => {
-    const gatewayIds = value.map(val => val.gateway_uuid);
+    const gatewayIds = value.map((val) => val.gateway_uuid);
     setGatewayIds(gatewayIds);
   };
 
@@ -155,11 +153,17 @@ function SensorsGatewayInfo(props) {
                   id="combo-box-demo"
                   disabled={viewOnly}
                   options={
-                    (gatewayData && gatewayData.sort(compareSort("name")) && gatewayData.filter(gateway => !gateway.is_active)) || []
+                    (gatewayData &&
+                      getActiveGateways(
+                        gatewayData,
+                        shipmentFormData.provider
+                          ? shipmentFormData.provider.toLowerCase()
+                          : "iclp",
+                        gatewayTypeList
+                      )) ||
+                    []
                   }
-                  getOptionLabel={(option) =>
-                    option && option.name
-                  }
+                  getOptionLabel={(option) => option && option.name}
                   filterSelectedOptions
                   onChange={(event, newValue) => onInputChange(newValue)}
                   defaultValue={rows}

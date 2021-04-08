@@ -159,6 +159,11 @@ export const TRANSPORT_MODE = [
   { value: "sea", label: "Sea" },
 ];
 
+export const SENSOR_PLATFORM = [
+  { value: "iclp", label: "ICLP" },
+  // { value: "tive", label: "Tive" },
+];
+
 export const associatedGatewayMock = [
   { id: 1, uuid: "GT123456", name: "Gateway 1" },
   { id: 1, uuid: "GT123457", name: "Gateway 2" },

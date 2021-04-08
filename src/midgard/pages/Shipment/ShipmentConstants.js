@@ -35,9 +35,8 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => value && value !== "-"
-        ? moment(value).format("MM/DD/yyyy")
-        : value
+      customBodyRender: (value) =>
+        value && value !== "-" ? moment(value).format("MM/DD/yyyy") : value,
     },
   },
   {
@@ -47,9 +46,19 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => value && value !== "-"
-        ? moment(value).format("MM/DD/yyyy")
-        : value
+      customBodyRender: (value) =>
+        value && value !== "-" ? moment(value).format("MM/DD/yyyy") : value,
+    },
+  },
+  {
+    name: "platform_name",
+    label: "Sensor Platform",
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) =>
+        value && value !== "" ? value.toUpperCase() : "ICLP",
     },
   },
   {
@@ -123,7 +132,7 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
           );
         }
         return value.toString();
-      }
+      },
     },
   },
   {
@@ -142,9 +151,8 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => value && value !== "-"
-        ? `$${numberWithCommas(value)}`
-        : value
+      customBodyRender: (value) =>
+        value && value !== "-" ? `$${numberWithCommas(value)}` : value,
     },
   },
 ];
@@ -167,11 +175,14 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => {
-        const displayDate = new Date(value).toLocaleDateString('en-US',
-          { year: 'numeric', month: 'short', day: 'numeric' });
+        const displayDate = new Date(value).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
         const displayTime = new Date(value).toLocaleTimeString();
-        return (`${displayDate} ${displayTime}`);
-      }
+        return `${displayDate} ${displayTime}`;
+      },
     },
   },
   {
@@ -181,7 +192,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(5)
+      customBodyRender: (value) => Number(value).toFixed(5),
     },
   },
   {
@@ -191,7 +202,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(5)
+      customBodyRender: (value) => Number(value).toFixed(5),
     },
   },
   {
@@ -201,7 +212,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2)
+      customBodyRender: (value) => Number(value).toFixed(2),
     },
   },
   {
@@ -211,7 +222,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2)
+      customBodyRender: (value) => Number(value).toFixed(2),
     },
   },
   {
@@ -221,7 +232,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2)
+      customBodyRender: (value) => Number(value).toFixed(2),
     },
   },
   {
@@ -231,7 +242,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2)
+      customBodyRender: (value) => Number(value).toFixed(2),
     },
   },
   {
@@ -241,7 +252,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2)
+      customBodyRender: (value) => Number(value).toFixed(2),
     },
   },
   {
@@ -251,7 +262,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2)
+      customBodyRender: (value) => Number(value).toFixed(2),
     },
   },
   {
@@ -261,7 +272,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2)
+      customBodyRender: (value) => Number(value).toFixed(2),
     },
   },
 ];
@@ -272,7 +283,7 @@ export const getFormattedRow = (
   itemData,
   shipmentFlag,
   custodyData,
-  aggregateReportData,
+  aggregateReportData
 ) => {
   let shipmentList = [...shipmentData];
 
@@ -303,15 +314,23 @@ export const getFormattedRow = (
     }
     list["custodian_name"] = custodianName;
     list["custody_info"] = custodyInfo;
-    if (list.status.toLowerCase() === "planned" || list.status.toLowerCase() === "enroute")
+    if (
+      list.status.toLowerCase() === "planned" ||
+      list.status.toLowerCase() === "enroute"
+    )
       list["type"] = "Active";
-    else if (list.status.toLowerCase() === "completed" || list.status.toLowerCase() === "cancelled")
+    else if (
+      list.status.toLowerCase() === "completed" ||
+      list.status.toLowerCase() === "cancelled"
+    )
       list["type"] = "Completed";
 
     if (aggregateReportData && aggregateReportData.length > 0) {
       aggregateReportData.forEach((report) => {
-        if (report.shipment_id === list.partner_shipment_id &&
-          report.report_entries.length > 0) {
+        if (
+          report.shipment_id === list.partner_shipment_id &&
+          report.report_entries.length > 0
+        ) {
           aggregateReportInfo.push(report);
         }
       });
@@ -431,7 +450,9 @@ export const getFormattedCustodianRow = (data, contactInfo, custodyData) => {
   if (data && data.length && contactInfo && contactInfo.length) {
     customizedRow.forEach((rowItem) => {
       let contactInfoItem = getUniqueContactInfo(rowItem, contactInfo);
-      rowItem["location"] = `${contactInfoItem.address1 && `${contactInfoItem.address1},`}
+      rowItem["location"] = `${
+        contactInfoItem.address1 && `${contactInfoItem.address1},`
+      }
             ${contactInfoItem.address2 && `${contactInfoItem.address2},`}
             ${contactInfoItem.city && `${contactInfoItem.city},`}
             ${contactInfoItem.state && `${contactInfoItem.state},`}
