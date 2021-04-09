@@ -115,9 +115,9 @@ function Sensors(props) {
   return (
     <DashboardWrapper
       loading={loading}
-      onAddButtonClick={onAddButtonClick}
+      // onAddButtonClick={onAddButtonClick}
       dashboardHeading={"Sensors"}
-      addButtonHeading={"Add Sensor"}
+      // addButtonHeading={"Add Sensor"}
       editAction={editSensor}
       deleteAction={deleteSensorItem}
       columns={sensorsColumns}

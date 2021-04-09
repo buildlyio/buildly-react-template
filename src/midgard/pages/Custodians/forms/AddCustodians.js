@@ -7,14 +7,14 @@ import Card from "@material-ui/core/Card";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import { validators } from "../../../utils/validators";
 import Modal from "../../../components/Modal/Modal";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import { useTheme } from "@material-ui/core/styles";
+
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Select from "@material-ui/core/Select";
 import { useInput } from "../../../hooks/useInput";
@@ -120,7 +120,7 @@ function AddCustodians({
   const address_2 = useInput(contactData.address2 || "");
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? "save" : "add custodian";
+  const buttonText = editPage ? "Save" : "Add Custodian";
   const formTitle = editPage ? "Edit Custodian" : "Add Custodian";
   const [custodianMetaData, setCustodianMetaData] = useState({});
   const [contactMetaData, setProductMetaData] = useState({});
@@ -554,7 +554,10 @@ function AddCustodians({
                     >
                       <MenuItem value={""}>Select</MenuItem>
                       {STATE_CHOICES.sort().map((value, index) => (
-                        <MenuItem key={`custodianState${index}${value}`} value={value}>
+                        <MenuItem
+                          key={`custodianState${index}${value}`}
+                          value={value}
+                        >
                           {value}
                         </MenuItem>
                       ))}
@@ -596,7 +599,10 @@ function AddCustodians({
                     >
                       <MenuItem value={""}>Select</MenuItem>
                       {COUNTRY_CHOICES.sort().map((value, index) => (
-                        <MenuItem key={`custodianCountry${index}${value}`} value={value}>
+                        <MenuItem
+                          key={`custodianCountry${index}${value}`}
+                          value={value}
+                        >
                           {value}
                         </MenuItem>
                       ))}

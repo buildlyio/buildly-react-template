@@ -49,16 +49,18 @@ function DashboardWrapper(props) {
     <Box mt={5} mb={3}>
       {loading && <Loader open={loading} />}
       <div className={classes.container}>
-        <Box mb={3}>
-          <Button
-            type="button"
-            variant="contained"
-            color="primary"
-            onClick={onAddButtonClick}
-          >
-            <AddIcon /> {addButtonHeading}
-          </Button>
-        </Box>
+        {addButtonHeading && (
+          <Box mb={3}>
+            <Button
+              type="button"
+              variant="contained"
+              color="primary"
+              onClick={onAddButtonClick}
+            >
+              <AddIcon /> {addButtonHeading}
+            </Button>
+          </Box>
+        )}
         {!redirectTo && (
           <Typography className={classes.dashboardHeading} variant={"h4"}>
             {dashboardHeading}

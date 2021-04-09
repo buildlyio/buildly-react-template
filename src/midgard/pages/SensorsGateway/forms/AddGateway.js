@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { makeStyles , useTheme } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { validators } from "../../../utils/validators";
 import Modal from "../../../components/Modal/Modal";
@@ -23,6 +23,7 @@ import {
 import { MAP_API_URL } from "../../../utils/utilMethods";
 import { MapComponent } from "../../../components/MapComponent/MapComponent";
 import { UserContext } from "midgard/context/User.context";
+import { GATEWAY_STATUS } from "../Constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -97,9 +98,12 @@ function AddGateway({
       ""
   );
   const gateway_uuid = useInput(editData.gateway_uuid || "");
+  const gateway_status = useInput(editData.gateway_status || "", {
+    required: true,
+  });
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? "save" : "Submit";
+  const buttonText = editPage ? "Save" : "Add Gateway";
   const formTitle = editPage ? "Edit Gateway" : "Add Gateway";
 
   const [gatewayMetaData, setGatewayMetaData] = useState({});
@@ -134,8 +138,10 @@ function AddGateway({
       last_known_battery_level: battery_level.value,
       ...(editPage && editData && { id: editData.id }),
       mac_address: mac_address.value,
-      last_known_location: [last_known_location],
-      last_known_battery_level: battery_level.value,
+      last_known_location: [
+        last_known_location === "" ? "null, null" : last_known_location,
+      ],
+      gateway_status: gateway_status.value,
       organization_uuid: organization,
     };
     if (editPage) {
@@ -292,6 +298,62 @@ function AddGateway({
                     </TextField>
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      required
+                      id="gateway_status"
+                      select
+                      label="Gateway Status"
+                      error={
+                        formError.gateway_status &&
+                        formError.gateway_status.error
+                      }
+                      helperText={
+                        formError.gateway_status
+                          ? formError.gateway_status.message
+                          : ""
+                      }
+                      onBlur={(e) =>
+                        handleBlur(
+                          e,
+                          "required",
+                          gateway_status,
+                          "gateway_status"
+                        )
+                      }
+                      {...gateway_status.bind}
+                      InputProps={
+                        gatewayMetaData["gateway_status"] &&
+                        gatewayMetaData["gateway_status"].help_text && {
+                          endAdornment: (
+                            <InputAdornment position="start">
+                              {gatewayMetaData["gateway_status"].help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    gatewayMetaData["gateway_status"].help_text
+                                  }
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        }
+                      }
+                    >
+                      <MenuItem value={""}>Select</MenuItem>
+                      {GATEWAY_STATUS &&
+                        GATEWAY_STATUS.map((item, index) => (
+                          <MenuItem
+                            key={`gatewayStatus${index}:${item.value}`}
+                            value={item.value}
+                          >
+                            {item.name}
+                          </MenuItem>
+                        ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
                     <DatePickerComponent
                       label={"Activated"}
                       selectedDate={activation_date}
@@ -400,7 +462,11 @@ function AddGateway({
                       label="Last Known Location"
                       name="last_known_location"
                       autoComplete="last_known_location"
-                      value={last_known_location}
+                      value={
+                        last_known_location === "null,null"
+                          ? ""
+                          : last_known_location
+                      }
                       InputProps={
                         gatewayMetaData["last_known_location"] &&
                         gatewayMetaData["last_known_location"].help_text && {

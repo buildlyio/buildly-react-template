@@ -11,6 +11,7 @@ function SensorsGateway(props) {
     sensorSearchedData,
     gatewayOptions,
     sensorOptions,
+    shipmentData,
   } = props;
   return (
     <React.Fragment>
@@ -23,6 +24,7 @@ function SensorsGateway(props) {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
+  ...state.shipmentReducer,
 });
 
 export default connect(mapStateToProps)(SensorsGateway);

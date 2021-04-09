@@ -31,6 +31,7 @@ function Gateway(props) {
     redirectTo,
     noSearch,
     gatewayOptions,
+    shipmentData,
   } = props;
   const addPath = redirectTo
     ? `${redirectTo}/gateways`
@@ -69,9 +70,16 @@ function Gateway(props) {
   }, []);
 
   useEffect(() => {
-    if (data && data.length && gatewayTypeList && gatewayTypeList.length) {
-      setRows(getFormattedRow(data, gatewayTypeList));
-      setFilteredRows(getFormattedRow(data, gatewayTypeList));
+    if (
+      data &&
+      data.length &&
+      gatewayTypeList &&
+      gatewayTypeList.length &&
+      shipmentData &&
+      shipmentData.length
+    ) {
+      setRows(getFormattedRow(data, gatewayTypeList, shipmentData));
+      setFilteredRows(getFormattedRow(data, gatewayTypeList, shipmentData));
     }
   }, [data, gatewayTypeList]);
 
@@ -103,6 +111,8 @@ function Gateway(props) {
       // "gateway_uuid",
       "gateway_type_value",
       "last_known_battery_level",
+      "gateway_status",
+      "shipment",
       "activation_date",
     ];
     setSearchValue(e.target.value);
@@ -116,9 +126,9 @@ function Gateway(props) {
   return (
     <DashboardWrapper
       loading={loading}
-      onAddButtonClick={onAddButtonClick}
+      // onAddButtonClick={onAddButtonClick}
       dashboardHeading={"Gateway"}
-      addButtonHeading={"Add Gateway"}
+      // addButtonHeading={"Add Gateway"}
       editAction={editGatewayAction}
       deleteAction={deleteGatewayAction}
       columns={gatewayColumns}

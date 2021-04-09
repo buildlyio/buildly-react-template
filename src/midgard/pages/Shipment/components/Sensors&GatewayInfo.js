@@ -24,7 +24,7 @@ import {
   getFormattedRow,
   sensorsColumns,
   getFormattedSensorRow,
-  getActiveGateways,
+  getAvailableGateways,
 } from "../../SensorsGateway/Constants";
 import { UserContext } from "midgard/context/User.context";
 
@@ -109,7 +109,7 @@ function SensorsGatewayInfo(props) {
         }
       }
     });
-    rows = getFormattedRow(selectedRows, gatewayTypeList);
+    rows = getFormattedRow(selectedRows, gatewayTypeList, shipmentData);
     sensorsRow = getFormattedSensorRow(selectedSensors, sensorTypeList);
   }
 
@@ -154,12 +154,13 @@ function SensorsGatewayInfo(props) {
                   disabled={viewOnly}
                   options={
                     (gatewayData &&
-                      getActiveGateways(
+                      getAvailableGateways(
                         gatewayData,
                         shipmentFormData.provider
                           ? shipmentFormData.provider.toLowerCase()
                           : "iclp",
-                        gatewayTypeList
+                        gatewayTypeList,
+                        shipmentData
                       )) ||
                     []
                   }

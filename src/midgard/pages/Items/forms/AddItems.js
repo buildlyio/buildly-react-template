@@ -3,13 +3,13 @@ import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Grid from "@material-ui/core/Grid";
 import { validators } from "../../../utils/validators";
 import Modal from "../../../components/Modal/Modal";
 import MenuItem from "@material-ui/core/MenuItem";
-import { useTheme } from "@material-ui/core/styles";
+
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useInput } from "../../../hooks/useInput";
 import { Card, CardContent, Typography } from "@material-ui/core";
@@ -114,7 +114,7 @@ function AddItems({
 
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? "save" : "add item";
+  const buttonText = editPage ? "Save" : "Add Item";
   const formTitle = editPage ? "Edit Item" : "Add Item";
   const [itemMetData, setItemMetaData] = useState({});
   const [productMetData, productMetaData] = useState({});
