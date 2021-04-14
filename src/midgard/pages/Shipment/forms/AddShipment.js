@@ -3,18 +3,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
 import Modal from "../../../components/Modal/Modal";
 import ShipmentInfo, {checkIfShipmentInfoEdited} from "../components/ShipmentInfo";
 import { Hidden, Grid } from "@material-ui/core";
-import MobileStepper from "@material-ui/core/MobileStepper";
-import { dispatch } from "../../../redux/store";
 import ViewDetailsWrapper from "../components/ViewDetailsWrapper";
-import Custodians from "../../Custodians/Custodians";
-import Items from "../../Items/Items";
 import { routes } from "../../../routes/routesConstants";
-import SensorsGateway from "../../SensorsGateway/SensorsGateway";
 import ItemInfo from "../components/ItemInfo";
 import { saveShipmentFormData } from "../../../redux/shipment/actions/shipment.actions";
 import { connect } from "react-redux";
@@ -24,6 +17,7 @@ import CustodianInfo from "../components/custodian-info/CustodianInfo";
 import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
 import { UserContext } from "midgard/context/User.context";
 import ConfirmModal from "../../../components/Modal/ConfirmModal";
+import ShipmentKeyInfo from "../components/ShipmentKeyInfo";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
 function getSteps() {
   return [
     "Shipment Details",
+    "Shipment Key",
     "Items",
     "Custodians",
     "Sensors & Gateways",
@@ -93,7 +88,26 @@ const getStepContent = (
           />
         </ViewDetailsWrapper>
       );
+
     case 1:
+      return (
+        <ViewDetailsWrapper
+          {...props}
+          handleBack={handleBack}
+          title={"Shipment Key"}
+          maxSteps={maxSteps}
+          activeStep={stepIndex}
+        >
+          <ShipmentKeyInfo
+            {...props}
+            viewOnly={viewOnly}
+            handleNext={handleNext}
+            handleCancel={handleCancel}
+          />
+        </ViewDetailsWrapper>
+      );
+
+    case 2:
       return (
         <ViewDetailsWrapper
           {...props}
@@ -112,7 +126,8 @@ const getStepContent = (
           />
         </ViewDetailsWrapper>
       );
-    case 2:
+
+    case 3:
       return (
         <ViewDetailsWrapper
           {...props}
@@ -132,7 +147,7 @@ const getStepContent = (
         </ViewDetailsWrapper>
       );
 
-    case 3:
+    case 4:
       return (
         <ViewDetailsWrapper
           {...props}
@@ -151,7 +166,8 @@ const getStepContent = (
           />
         </ViewDetailsWrapper>
       );
-    case 4:
+
+    case 5:
       return (
         <ViewDetailsWrapper
           {...props}
@@ -171,6 +187,7 @@ const getStepContent = (
           />
         </ViewDetailsWrapper>
       );
+
     default:
       return "Unknown stepIndex";
   }
@@ -243,6 +260,8 @@ function AddShipment(props) {
       case 3:
         return false;
       case 4:
+        return false;
+      case 5:
         return checkIfEnvironmentLimitsEdited();
     }
   };

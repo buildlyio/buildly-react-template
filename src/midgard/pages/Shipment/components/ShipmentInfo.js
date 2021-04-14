@@ -859,7 +859,7 @@ function ShipmentInfo(props) {
                 disabled={shipmentFormData === null}
                 className={classes.submit}
               >
-                {`Next: Items`}
+                {`Next: Shipment Key`}
               </Button>
             </Grid>
           </Grid>

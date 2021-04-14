@@ -26,6 +26,7 @@
     "moment": "^2.26.0",
     "mui-datatables": "^3.7.6",
     "npm": "^6.9.0",
+    "pdfjs-dist": "2.6.347",
     "polished": "^3.2.0",
     "react": "^16.7.0",
     "react-chartjs-2": "^2.11.1",
@@ -42,7 +43,8 @@
     "react-test-renderer": "^16.8.6",
     "reactjs-popup": "^1.4.0",
     "redux-saga": "^1.0.0",
-    "serve": "^11.0.0"
+    "serve": "^11.0.0",
+    "tesseract.js": "^2.1.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

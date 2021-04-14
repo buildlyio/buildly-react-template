@@ -33,6 +33,9 @@ import {
   DELETE_SHIPMENT_FLAG,
   DELETE_SHIPMENT_FLAG_SUCCESS,
   DELETE_SHIPMENT_FLAG_FAILURE,
+  ADD_PDF_IDENTIFIER,
+  ADD_PDF_IDENTIFIER_SUCCESS,
+  ADD_PDF_IDENTIFIER_FAILURE,
 } from "../actions/shipment.actions";
 
 const initialState = {
@@ -65,6 +68,7 @@ export default (state = initialState, action) => {
         error: null,
         shipmentFormData: action.formData,
       };
+
     case GET_SHIPMENTS:
       return {
         ...state,
@@ -72,6 +76,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_SHIPMENTS_SUCCESS:
       return {
         ...state,
@@ -79,6 +84,7 @@ export default (state = initialState, action) => {
         loaded: true,
         shipmentData: action.data,
       };
+
     case GET_SHIPMENTS_FAILURE:
       return {
         ...state,
@@ -86,6 +92,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case ADD_SHIPMENT:
       return {
         ...state,
@@ -93,6 +100,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case ADD_SHIPMENT_SUCCESS:
       return {
         ...state,
@@ -100,6 +108,7 @@ export default (state = initialState, action) => {
         loaded: true,
         shipmentData: action.data,
       };
+
     case ADD_SHIPMENT_FAILURE:
       return {
         ...state,
@@ -132,6 +141,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case DELETE_SHIPMENT:
       return {
         ...state,
@@ -139,6 +149,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case DELETE_SHIPMENT_SUCCESS:
       return {
         ...state,
@@ -146,6 +157,7 @@ export default (state = initialState, action) => {
         loaded: true,
         shipmentData: action.data,
       };
+
     case DELETE_SHIPMENT_FAILURE:
       return {
         ...state,
@@ -153,6 +165,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case GET_SHIPMENT_FLAG:
       return {
         ...state,
@@ -160,6 +173,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_SHIPMENT_FLAG_SUCCESS:
       return {
         ...state,
@@ -167,6 +181,7 @@ export default (state = initialState, action) => {
         loaded: true,
         shipmentFlag: action.data,
       };
+
     case GET_SHIPMENT_FLAG_FAILURE:
       return {
         ...state,
@@ -182,6 +197,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_DASHBOARD_ITEMS_SUCCESS:
       return {
         ...state,
@@ -189,6 +205,7 @@ export default (state = initialState, action) => {
         loaded: true,
         dashboardItems: action.data,
       };
+
     case GET_DASHBOARD_ITEMS_FAILURE:
       return {
         ...state,
@@ -196,6 +213,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case SET_SHIPMENT_ALERTS:
       return {
         ...state,
@@ -212,6 +230,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_SHIPMENT_OPTIONS_SUCCESS:
       return {
         ...state,
@@ -219,6 +238,7 @@ export default (state = initialState, action) => {
         loaded: true,
         shipmentOptions: action.data,
       };
+
     case GET_SHIPMENT_OPTIONS_FAILURE:
       return {
         ...state,
@@ -226,6 +246,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case ADD_SHIPMENT_FLAG:
     return {
       ...state,
@@ -233,64 +254,101 @@ export default (state = initialState, action) => {
       loaded: false,
       error: null,
     };
-  case ADD_SHIPMENT_FLAG_SUCCESS:
-    return {
-      ...state,
-      loading: false,
-      loaded: true,
-      shipmentFlag: [
-        ...state.shipmentFlag, action.shipmentFlag
-      ],
-    };
-  case ADD_SHIPMENT_FLAG_FAILURE:
-    return {
-      ...state,
-      loading: false,
-      loaded: true,
-      error: action.error,
-    };
-  case EDIT_SHIPMENT_FLAG:
-    return {
-      ...state,
-      loading: true,
-      loaded: false,
-      error: null,
-    };
-  case EDIT_SHIPMENT_FLAG_SUCCESS:
-    return {
-      ...state,
-      loading: false,
-      loaded: true,
-      shipmentFlag: editedShipmentFlag,
-    };
-  case EDIT_SHIPMENT_FLAG_FAILURE:
-    return {
-      ...state,
-      loading: false,
-      loaded: true,
-      error: action.error,
-    };
-  case DELETE_SHIPMENT_FLAG:
-    return {
-      ...state,
-      loading: true,
-      loaded: false,
-      error: null,
-    };
-  case DELETE_SHIPMENT_FLAG_SUCCESS:
-    return {
-      ...state,
-      loading: false,
-      loaded: true,
-      shipmentFlag: deletedShipmentFlag,
-    };
-  case DELETE_SHIPMENT_FLAG_FAILURE:
-    return {
-      ...state,
-      loading: false,
-      loaded: true,
-      error: action.error,
-    };
+
+    case ADD_SHIPMENT_FLAG_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        shipmentFlag: [
+          ...state.shipmentFlag, action.shipmentFlag
+        ],
+      };
+
+    case ADD_SHIPMENT_FLAG_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case EDIT_SHIPMENT_FLAG:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case EDIT_SHIPMENT_FLAG_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        shipmentFlag: editedShipmentFlag,
+      };
+
+    case EDIT_SHIPMENT_FLAG_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case DELETE_SHIPMENT_FLAG:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case DELETE_SHIPMENT_FLAG_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        shipmentFlag: deletedShipmentFlag,
+      };
+
+    case DELETE_SHIPMENT_FLAG_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case ADD_PDF_IDENTIFIER:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case ADD_PDF_IDENTIFIER_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        shipmentFormData: {
+          ...state.shipmentFormData,
+          uploaded_pdf: action.uploaded_pdf,
+          uploaded_pdf_link: action.uploaded_pdf_link,
+          unique_identifier: action.unique_identifier,
+        },
+      };
+      
+    case ADD_PDF_IDENTIFIER_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
 
     default:
       return state;

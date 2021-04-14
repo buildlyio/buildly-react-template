@@ -31,6 +31,9 @@ import {
   DELETE_SHIPMENT_FLAG,
   DELETE_SHIPMENT_FLAG_SUCCESS,
   DELETE_SHIPMENT_FLAG_FAILURE,
+  ADD_PDF_IDENTIFIER,
+  ADD_PDF_IDENTIFIER_SUCCESS,
+  ADD_PDF_IDENTIFIER_FAILURE,
 } from "../actions/shipment.actions";
 import { compareSort } from "../../../utils/utilMethods";
 import { routes } from "../../../routes/routesConstants";
@@ -50,6 +53,12 @@ function* getShipmentList(payload) {
       yield put(getShipmentFlag(payload.organization_uuid));
     }
     yield [yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data })];
+    if (payload.id) {
+      yield put(
+        saveShipmentFormData(
+          data.data.find(shipment => shipment.id === payload.id)
+        ))
+    }
   } catch (error) {
     yield [
       yield put(
@@ -117,8 +126,7 @@ function* editShipment(action) {
     );
 
     yield [
-      yield put(saveShipmentFormData(data.data)),
-      yield put(getShipmentDetails(payload.organization_uuid)),
+      yield put(getShipmentDetails(payload.organization_uuid, payload.id)),
       yield put(
         showAlert({
           type: "success",
@@ -169,8 +177,7 @@ function* addShipment(action) {
           message: "Successfully Added Shipment",
         })
       ),
-      yield put(saveShipmentFormData(data.data)),
-      yield put(getShipmentDetails(payload.organization_uuid)),
+      yield put(getShipmentDetails(payload.organization_uuid, data.data.id)),
     ];
     if (redirectTo) {
       yield call(history.push, redirectTo);
@@ -440,6 +447,68 @@ function* deleteShipmentFlag(payload) {
   }
 }
 
+function* pdfIdentifier(action) {
+  const { data, filename, identifier, payload, history, redirectTo, organization_uuid } = action
+  try {
+    const response = yield call(
+      httpService.makeRequest,
+      "post",
+      `${environment.API_URL}${shipmentApiEndPoint}upload_file/`,
+      data,
+      true
+    );
+    const uploaded_pdf = payload.uploaded_pdf
+      ? [...payload.uploaded_pdf, filename]
+      : [filename];
+    const uploaded_pdf_link = payload.uploaded_pdf_link
+      ? [...payload.uploaded_pdf_link, response.data['aws url']]
+      : [response.data['aws url']];
+    const unique_identifier = identifier ? identifier : payload.unique_identifier;
+    yield [
+      yield put({ 
+        type: ADD_PDF_IDENTIFIER_SUCCESS,
+        uploaded_pdf,
+        uploaded_pdf_link,
+        unique_identifier,
+      }),
+      yield put({
+        type: EDIT_SHIPMENT,
+        payload: {
+          ...payload,
+          uploaded_pdf,
+          uploaded_pdf_link,
+          unique_identifier,
+        },
+        history,
+        redirectTo,
+        organization_uuid,
+      }),
+      yield put(
+        showAlert({
+          type: "success",
+          open: true,
+          message: "Successfully Added PDF and Unique Identifer",
+        })
+      ),
+    ];
+  } catch (error) {
+    console.log(error);
+    yield [
+      yield put(
+        showAlert({
+          type: "error",
+          open: true,
+          message: "Couldn't Upload Bill due to some error!",
+        })
+      ),
+      yield put({
+        type: ADD_PDF_IDENTIFIER_FAILURE,
+        error: error,
+      }),
+    ];
+  }
+}
+
 function* watchGetShipment() {
   yield takeLatest(GET_SHIPMENTS, getShipmentList);
 }
@@ -480,6 +549,10 @@ function* watchDeleteShipmentFlag() {
   yield takeLatest(DELETE_SHIPMENT_FLAG, deleteShipmentFlag);
 }
 
+function* watchPdfIdentifier() {
+  yield takeLatest(ADD_PDF_IDENTIFIER, pdfIdentifier);
+}
+
 export default function* shipmentSaga() {
   yield all([
     watchGetShipment(),
@@ -492,5 +565,6 @@ export default function* shipmentSaga() {
     watchAddShipmentFlag(),
     watchEditShipmentFlag(),
     watchDeleteShipmentFlag(),
+    watchPdfIdentifier(),
   ]);
 }

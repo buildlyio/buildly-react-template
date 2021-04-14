@@ -48,6 +48,10 @@ export const DELETE_SHIPMENT_FLAG = "SHIPMENT/DELETE_SHIPMENT_FLAG";
 export const DELETE_SHIPMENT_FLAG_SUCCESS = "SHIPMENT/DELETE_SHIPMENT_FLAG_SUCCESS";
 export const DELETE_SHIPMENT_FLAG_FAILURE = "SHIPMENT/DELETE_SHIPMENT_FLAG_FAILURE";
 
+export const ADD_PDF_IDENTIFIER = "SHIPMENT/ADD_PDF_IDENTIFIER";
+export const ADD_PDF_IDENTIFIER_SUCCESS = "SHIPMENT/ADD_PDF_IDENTIFIER_SUCCESS";
+export const ADD_PDF_IDENTIFIER_FAILURE = "SHIPMENT/ADD_PDF_IDENTIFIER_FAILURE";
+
 /**
  *
  * @param {Object} formData
@@ -60,10 +64,12 @@ export const saveShipmentFormData = (formData) => ({
 /**
  * Get Shipment Details
  * @param {String} organization_uuid
+ * @param {Number} id
  */
-export const getShipmentDetails = (organization_uuid) => ({
+export const getShipmentDetails = (organization_uuid, id=null) => ({
   type: GET_SHIPMENTS,
   organization_uuid,
+  id,
 });
 
 /**
@@ -144,4 +150,17 @@ export const editShipmentFlag = (payload) => ({
 export const deleteShipmentFlag = (id) => ({
   type: DELETE_SHIPMENT_FLAG,
   id,
+});
+
+export const pdfIdentifier = (
+  data, filename, identifier, payload, history, redirectTo, organization_uuid
+) => ({
+  type: ADD_PDF_IDENTIFIER,
+  data,
+  filename,
+  identifier,
+  payload,
+  history,
+  redirectTo,
+  organization_uuid,
 });
