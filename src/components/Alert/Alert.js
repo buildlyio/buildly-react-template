@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { hideAlert } from '@redux/alert/actions/alert.actions';
 
 function AlertData(props) {
-  return <MuiAlert elevation={6} variant='filled' {...props} />;
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 const useStyles = makeStyles((theme) => ({

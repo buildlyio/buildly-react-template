@@ -69,7 +69,7 @@ function Login({ dispatch, loading, history }) {
   useEffect(() => {
     const [uid, token] = location.pathname.substring(
       location.pathname.indexOf(routes.RESET_PASSWORD) + 1,
-      location.pathname.lastIndexOf('/')
+      location.pathname.lastIndexOf('/'),
     ).split('/').slice(1);
     if (location.pathname.includes(routes.RESET_PASSWORD)) {
       const values = { uid, token };
@@ -98,14 +98,14 @@ function Login({ dispatch, loading, history }) {
    */
 
   const handleBlur = (e, validation, input) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...error };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...error };
+    if (validateObj && validateObj.error) {
       setError({
         ...prevState,
         [e.target.id]: validateObj,
       });
-    else
+    } else {
       setError({
         ...prevState,
         [e.target.id]: {
@@ -113,15 +113,19 @@ function Login({ dispatch, loading, history }) {
           message: '',
         },
       });
+    }
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(error);
-    if (!username.value || !password.value) return true;
+    const errorKeys = Object.keys(error);
+    if (!username.value || !password.value) {
+      return true;
+    }
+    let errorExists = false;
     errorKeys.forEach((key) => {
-      if (error[key].error) return true;
+      if (error[key].error) errorExists = true;
     });
-    return false;
+    return errorExists;
   };
 
   return (
@@ -130,7 +134,7 @@ function Login({ dispatch, loading, history }) {
       <Card className={classes.root} variant="outlined">
         <CardContent>
           <div className={classes.paper}>
-            <img src={logo} className={classes.logo} />
+            <img src={logo} className={classes.logo} alt="Company logo" />
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
@@ -190,10 +194,11 @@ function Login({ dispatch, loading, history }) {
               </div>
               <Grid container>
                 <Grid item xs>
-                  <Link 
+                  <Link
                     href={routes.FORGOT_PASSWORD}
                     variant="body2"
-                    color="secondary">
+                    color="secondary"
+                  >
                     Forgot password?
                   </Link>
                 </Grid>
@@ -203,7 +208,7 @@ function Login({ dispatch, loading, history }) {
                     variant="body2"
                     color="secondary"
                   >
-                    {"Don't have an account? Register"}
+                    Don't have an account? Register
                   </Link>
                 </Grid>
               </Grid>

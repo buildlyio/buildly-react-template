@@ -58,7 +58,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ResetPassword({ dispatch, loading, history, loaded, error, location }) {
+function ResetPassword({
+  dispatch, loading, history, loaded, error, location,
+}) {
   const classes = useStyles();
   const password = useInput('', { required: true });
   const re_password = useInput('', {
@@ -77,7 +79,7 @@ function ResetPassword({ dispatch, loading, history, loaded, error, location }) 
     event.preventDefault();
     const [uid, token] = location.pathname.substring(
       location.pathname.indexOf(routes.RESET_PASSWORD) + 1,
-      location.pathname.lastIndexOf('/')
+      location.pathname.lastIndexOf('/'),
     ).split('/').slice(1);
     if (location.pathname.includes(routes.RESET_PASSWORD)) {
       const resetPasswordFormValue = {
@@ -98,14 +100,14 @@ function ResetPassword({ dispatch, loading, history, loaded, error, location }) 
    */
 
   const handleBlur = (e, validation, input) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...formError };
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id]: validateObj,
       });
-    else
+    } else {
       setFormError({
         ...prevState,
         [e.target.id]: {
@@ -113,12 +115,15 @@ function ResetPassword({ dispatch, loading, history, loaded, error, location }) 
           message: '',
         },
       });
+    }
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
+    const errorKeys = Object.keys(formError);
+    if (!password.value || !re_password.value) {
+      return true;
+    }
     let errorExists = false;
-    if (!password.value || !re_password.value) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -131,7 +136,7 @@ function ResetPassword({ dispatch, loading, history, loaded, error, location }) 
       <Card variant="outlined">
         <CardContent>
           <div className={classes.paper}>
-            <img src={logo} className={classes.logo} />
+            <img src={logo} className={classes.logo} alt="Company logo" />
             <Typography component="h1" variant="h5">
               Reset your Password
             </Typography>

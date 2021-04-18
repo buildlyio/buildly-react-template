@@ -25,7 +25,7 @@ export function crudLoadData(endpoint, idProp, dataProp) {
     type: CRUD_LOAD_DATA,
     endpoint,
     idProp,
-    dataProp
+    dataProp,
   };
 }
 
@@ -42,7 +42,7 @@ export function crudLoadDataCommit(data, endpoint, idProp, dataProp) {
     endpoint,
     idProp,
     dataProp,
-    data
+    data,
   };
 }
 
@@ -55,7 +55,7 @@ export function crudLoadDataFail(error, endpoint) {
   return {
     type: CRUD_LOAD_DATA_FAIL,
     endpoint,
-    error
+    error,
   };
 }
 
@@ -71,7 +71,7 @@ export function crudCreate(data, endpoint, idProp, dataProp) {
     endpoint,
     idProp,
     dataProp,
-    data
+    data,
   };
 }
 
@@ -88,7 +88,7 @@ export function crudCreateCommit(data, endpoint, idProp, dataProp) {
     endpoint,
     idProp,
     dataProp,
-    data
+    data,
   };
 }
 
@@ -97,11 +97,11 @@ export function crudCreateCommit(data, endpoint, idProp, dataProp) {
  * @param {string} endpoint - endpoint to make the call
  * @param {object} error
  */
-export function crudCreateFail(error, endpoint ) {
+export function crudCreateFail(error, endpoint) {
   return {
     type: CRUD_CREATE_FAIL,
     endpoint,
-    error
+    error,
   };
 }
 
@@ -118,7 +118,7 @@ export function crudUpdate(data, endpoint, idProp, dataProp) {
     endpoint,
     idProp,
     dataProp,
-    data
+    data,
   };
 }
 
@@ -148,7 +148,7 @@ export function crudUpdateFail(error, endpoint) {
   return {
     type: CRUD_UPDATE_FAIL,
     endpoint,
-    error
+    error,
   };
 }
 
@@ -195,6 +195,6 @@ export function crudDeleteFail(error, endpoint) {
   return {
     type: CRUD_DELETE_FAIL,
     endpoint,
-    error
+    error,
   };
 }

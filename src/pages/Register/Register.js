@@ -57,7 +57,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Register({ dispatch, loading, history, loaded, error }) {
+function Register({
+  dispatch, loading, history, loaded, error,
+}) {
   const classes = useStyles();
   const email = useInput('', { required: true });
   const username = useInput('', { required: true });
@@ -98,14 +100,14 @@ function Register({ dispatch, loading, history, loaded, error }) {
    */
 
   const handleBlur = (e, validation, input) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...formError };
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id]: validateObj,
       });
-    else
+    } else {
       setFormError({
         ...prevState,
         [e.target.id]: {
@@ -113,20 +115,22 @@ function Register({ dispatch, loading, history, loaded, error }) {
           message: '',
         },
       });
+    }
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
-    let errorExists = false;
+    const errorKeys = Object.keys(formError);
     if (
-      !username.value ||
-      !password.value ||
-      !email.value ||
-      !re_password.value ||
-      !organization_name.value ||
-      !first_name.value
-    )
+      !username.value
+      || !password.value
+      || !email.value
+      || !re_password.value
+      || !organization_name.value
+      || !first_name.value
+    ) {
       return true;
+    }
+    let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -139,7 +143,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
       <Card className={classes.root} variant="outlined">
         <CardContent>
           <div className={classes.paper}>
-            <img src={logo} className={classes.logo} />
+            <img src={logo} className={classes.logo} alt="Company logo" />
             <Typography component="h1" variant="h5">
               Register
             </Typography>
@@ -234,13 +238,13 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     name="organization_name"
                     autoComplete="organization_name"
                     error={
-                      formError.organization_name &&
-                      formError.organization_name.error
+                      formError.organization_name
+                      && formError.organization_name.error
                     }
                     helperText={
                       formError.organization_name
                         ? formError.organization_name.message
-                        : ""
+                        : ''
                     }
                     className={classes.textField}
                     onBlur={(e) => handleBlur(e, 'required', organization_name)}
@@ -312,7 +316,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
               <Grid container>
                 <Grid item>
                   <Link href={routes.LOGIN} variant="body2" color="secondary">
-                    {"Already have an account? Sign in"}
+                    Already have an account? Sign in
                   </Link>
                 </Grid>
               </Grid>

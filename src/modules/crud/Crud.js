@@ -24,11 +24,10 @@ export class Crud extends React.Component {
   * @public
   */
   createItem = (item) => {
-    const {createAction, itemCreated, dispatch, endpoint} = this.props;
-      if (endpoint) {
-          dispatch(crudCreate(item.data, endpoint, item.idProp, item.dataProp));
-      }
-    else if (createAction) {
+    const { createAction, itemCreated, dispatch, endpoint } = this.props;
+    if (endpoint) {
+      dispatch(crudCreate(item.data, endpoint, item.idProp, item.dataProp));
+    } else if (createAction) {
       dispatch({type: createAction, data: item});
       return itemCreated
     }
@@ -39,11 +38,10 @@ export class Crud extends React.Component {
   * @param item - selected item
   */
   updateItem = (item) => {
-      const {updateAction, itemUpdated, dispatch, endpoint} = this.props;
-      if (endpoint) {
-          dispatch(crudUpdate(item.data, endpoint, item.idProp, item.dataProp));
-      }
-    else if (updateAction) {
+    const { updateAction, itemUpdated, dispatch, endpoint } = this.props;
+    if (endpoint) {
+      dispatch(crudUpdate(item.data, endpoint, item.idProp, item.dataProp));
+    } else if (updateAction) {
       dispatch({type: updateAction, data: item});
       return itemUpdated
     }
@@ -67,37 +65,36 @@ export class Crud extends React.Component {
   * load the data to the store and returns it
   */
   loadData = () => {
-    const {loadAction, data, dispatch, endpoint} = this.props;
+    const { loadAction, data, dispatch, endpoint } = this.props;
     if (endpoint) {
-        dispatch(crudLoadData(endpoint, null,null));
-    }
-    else if (loadAction && !this.state.dataLoaded) {
+      dispatch(crudLoadData(endpoint, null,null));
+    } else if (loadAction && !this.state.dataLoaded) {
       dispatch({type: loadAction});
     }
-      this.setState({
-          dataLoaded: true
-      });
-      return data;
+    this.setState({
+      dataLoaded: true
+    });
+    return data;
   };
   /**
    * gets the data from the store
    */
   getData = () => {
-      const { data, endpoint} = this.props;
+      const { data, endpoint } = this.props;
       if (endpoint && this.props[endpoint]) {
         return this.props[endpoint].data;
       }
-    return data
+    return data;
   };
 
   render() {
-    const {children} = this.props;
+    const { children } = this.props;
     return children({
-        createItem: this.createItem,
-        updateItem: this.updateItem,
-        deleteItem: this.deleteItem,
-        loadData: this.loadData,
-        getData: this.getData
+      createItem: this.createItem,
+      updateItem: this.updateItem,
+      deleteItem: this.deleteItem,
+      loadData: this.loadData,
+      getData: this.getData
     })
   };
 }

@@ -1,17 +1,39 @@
 import { oauth } from 'midgard-core';
 import { environment } from '@environments/environment';
 
-export const oauthService = {
-  authenticateWithPasswordFlow,
-  getOauthUser,
-  setOauthUser,
-  hasValidAccessToken,
-  getAccessToken,
-  setAccessToken,
-  getJwtToken,
-  logout,
-  setCurrentCoreUser
-};
+/**
+ * Returns the current access token.
+ */
+function getAccessToken() {
+  const tokenObj = JSON.parse(localStorage.getItem('token'));
+  if (tokenObj) {
+    return tokenObj.access_token;
+  }
+  return null;
+}
+
+/**
+ * Returns the current JWT token.
+ */
+function getJwtToken() {
+  const tokenObj = JSON.parse(localStorage.getItem('token'));
+  if (tokenObj) {
+    return tokenObj.access_token_jwt;
+  }
+  return null;
+}
+
+/**
+ * gets the oauthuser from localstorage
+ * @returns {object} oauthUser
+ */
+function getOauthUser() {
+  const oauthUser = JSON.parse(localStorage.getItem('oauthUser'));
+  if (oauthUser) {
+    return oauthUser;
+  }
+  return null;
+}
 
 /**
  * authenticates user using oauth password flow
@@ -21,20 +43,9 @@ function authenticateWithPasswordFlow(credentials) {
   const oauthOptions = {
     clientId: environment.OAUTH_CLIENT_ID,
     tokenUrl: environment.OAUTH_TOKEN_URL,
-    returnPromise: true
+    returnPromise: true,
   };
   return oauth.authenticateWithCredentials(credentials, oauthOptions);
-}
-
-/**
- * gets the oauthuser from localstorage
- * @returns {} oauthUser
- */
-function getOauthUser() {
-  const oauthUser = JSON.parse(localStorage.getItem('oauthUser'));
-  if (oauthUser) {
-    return oauthUser;
-  }
 }
 
 /**
@@ -47,11 +58,12 @@ function setOauthUser(oauthUser) {
   if (oauthUser) {
     return oauthUser;
   }
+  return null;
 }
 
 function setCurrentCoreUser(user, coreuser) {
-    let currentUser = user.data.filter(data => data.id === coreuser.data.id);
-    localStorage.setItem('currentUser', JSON.stringify(currentUser[0]));
+  const currentUser = user.data.filter((data) => data.id === coreuser.data.id);
+  localStorage.setItem('currentUser', JSON.stringify(currentUser[0]));
 }
 
 /**
@@ -70,7 +82,8 @@ function hasValidAccessToken() {
 }
 
 /**
- * sets access token in the local storage and adds expires_at key that indicates the token expiration unix timestamp
+ * sets access token in the local storage and adds expires_at key
+ * that indicates the token expiration unix timestamp
  * @param token - the token response
  */
 function setAccessToken(token) {
@@ -99,22 +112,14 @@ function logout() {
   }
 }
 
-/**
- * Returns the current access_token.
- */
-function getAccessToken() {
-  const tokenObj = JSON.parse(localStorage.getItem('token'));
-  if (tokenObj) {
-    return tokenObj.access_token;
-  }
-}
-
-/**
- * Returns the current JWT token.
- */
-function getJwtToken() {
-  const tokenObj = JSON.parse(localStorage.getItem('token'));
-  if (tokenObj) {
-    return tokenObj.access_token_jwt;
-  }
-}
+export const oauthService = {
+  authenticateWithPasswordFlow,
+  getOauthUser,
+  setOauthUser,
+  hasValidAccessToken,
+  getAccessToken,
+  setAccessToken,
+  getJwtToken,
+  logout,
+  setCurrentCoreUser,
+};

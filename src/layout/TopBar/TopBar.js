@@ -51,7 +51,7 @@ function TopBar({
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
         <Link to={routes.DASHBOARD}>
-          <img src={logo} className={classes.logo} />
+          <img src={logo} className={classes.logo} alt="Company text logo" />
         </Link>
 
         <div className={classes.menuRight}>

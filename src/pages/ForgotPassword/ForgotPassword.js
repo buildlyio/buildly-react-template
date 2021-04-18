@@ -87,14 +87,14 @@ function ForgotPassword({ dispatch, loading, history }) {
    */
 
   const handleBlur = (e, validation, input) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...error };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...error };
+    if (validateObj && validateObj.error) {
       setError({
         ...prevState,
         [e.target.id]: validateObj,
       });
-    else
+    } else {
       setError({
         ...prevState,
         [e.target.id]: {
@@ -102,15 +102,19 @@ function ForgotPassword({ dispatch, loading, history }) {
           message: '',
         },
       });
+    }
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(error);
-    if (!email.value) return true;
+    const errorKeys = Object.keys(error);
+    if (!email.value) {
+      return true;
+    }
+    let errorExists = false;
     errorKeys.forEach((key) => {
-      if (error[key].error) return true;
+      if (error[key].error) errorExists = true;
     });
-    return false;
+    return errorExists;
   };
 
   return (
@@ -119,7 +123,7 @@ function ForgotPassword({ dispatch, loading, history }) {
       <Card className={classes.root} variant="outlined">
         <CardContent>
           <div className={classes.paper}>
-            <img src={logo} className={classes.logo} />
+            <img src={logo} className={classes.logo} alt="Company logo" />
             <Typography component="h1" variant="h5" gutterBottom>
               Enter your registered Email
             </Typography>
@@ -170,7 +174,7 @@ function ForgotPassword({ dispatch, loading, history }) {
                     variant="body2"
                     color="secondary"
                   >
-                    {"Don't have an account? Register"}
+                    Don't have an account? Register
                   </Link>
                 </Grid>
               </Grid>

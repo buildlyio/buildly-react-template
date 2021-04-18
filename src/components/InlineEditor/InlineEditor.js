@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import EditIcon from '@material-ui/icons/Edit';
@@ -10,28 +10,30 @@ const useStyles = makeStyles((theme) => ({
   nonEditMode: {
     display: 'flex',
     '&:hover': {
-      "& $editIcon": {
-        visibility: 'visible'
-      }
-    }
+      '& $editIcon': {
+        visibility: 'visible',
+      },
+    },
   },
   editIcon: {
     visibility: 'hidden',
     cursor: 'pointer',
-    marginLeft: theme.spacing(1)
+    marginLeft: theme.spacing(1),
   },
   typography: {
-    margin: theme.spacing(0)
+    margin: theme.spacing(0),
   },
   placeholder: {
-    color: '#aaa'
-  }
+    color: '#aaa',
+  },
 }));
 
 /**
  * Component for inline editing.
  */
-export function InlineEditor({id, tag, value, placeholder, disabled, onChange}) {
+export function InlineEditor({
+  id, tag, value, placeholder, disabled, onChange,
+}) {
   const classes = useStyles();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value);
@@ -55,7 +57,7 @@ export function InlineEditor({id, tag, value, placeholder, disabled, onChange}) 
   /**
    * Handles the keyup events for enter and escape.
    */
-  const handleKeyup = event => {
+  const handleKeyup = (event) => {
     switch (event.keyCode) {
       case 13: // Enter pressed
         update(event); // Update the text
@@ -65,14 +67,13 @@ export function InlineEditor({id, tag, value, placeholder, disabled, onChange}) 
         setEditing(false); // Close the input
         break;
       default:
-        return;
     }
-  }
+  };
 
   /**
    * Handles the click event based on whether it is inside the reference node.
    */
-  const handleClickOutside = event => {
+  const handleClickOutside = (event) => {
     if (node.current.contains(event.target)) {
       return;
     }
@@ -82,37 +83,40 @@ export function InlineEditor({id, tag, value, placeholder, disabled, onChange}) 
   /**
    * Updates the text value.
    */
-  const update = event => {
+  const update = (event) => {
     onChange(text);
     setEditing(false);
-  }
+  };
 
   return (
-    <Box onClick={event => event.stopPropagation()}>
+    <Box onClick={(event) => event.stopPropagation()}>
       {editing ? (
         <TextField
           tag={tag}
           size="small"
           variant="outlined"
-          autoFocus={true}
+          autoFocus
           ref={node}
           name={`${id}`}
           type="text"
           placeholder={placeholder}
           value={text}
-          onChange={event => setText(event.target.value)} />
+          onChange={(event) => setText(event.target.value)}
+        />
       ) : (
-        <Grid container={true} direction="row" alignItems="center" className={`${classes.nonEditMode} ${!value && classes.placeholder}`} onDoubleClick={() => setEditing(true)}>
-          <Grid item={true}>
-            <Typography className={classes.typography} variant={tag}>{value || placeholder}</Typography>
+        <Grid container direction="row" alignItems="center" className={`${classes.nonEditMode} ${!value && classes.placeholder}`} onDoubleClick={() => setEditing(true)}>
+          <Grid item>
+            <Typography className={classes.typography} variant={tag}>
+              {value || placeholder}
+            </Typography>
           </Grid>
           {!disabled && (
-            <Grid item={true}>
-              <EditIcon className={classes.editIcon} onClick={() => setEditing(true)}></EditIcon>
+            <Grid item>
+              <EditIcon className={classes.editIcon} onClick={() => setEditing(true)} />
             </Grid>
           )}
         </Grid>
       )}
     </Box>
-  )
+  );
 }

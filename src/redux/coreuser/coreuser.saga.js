@@ -1,4 +1,9 @@
 import {
+  put, takeLatest, all, call,
+} from 'redux-saga/effects';
+import { httpService } from '@modules/http/http.service';
+import { environment } from '@environments/environment';
+import {
   LOAD_DATA_COREUSER,
   LOAD_DATA_COREUSER_COMMIT,
   LOAD_DATA_COREUSER_FAIL,
@@ -13,31 +18,27 @@ import {
   UPDATE_COREUSER_FAIL,
 
 } from './coreuser.actions';
-import { put, takeLatest, all, call } from 'redux-saga/effects';
-import { httpService } from '@modules/http/http.service';
-import { environment } from '@environments/environment';
 
 const endpoint = `${environment.API_URL}coreuser/`;
 
-
 function* loadCoreUsers() {
-    try {
-        const res = yield call(httpService.makeRequest, 'get', endpoint);
-        yield [
-            yield put({ type: LOAD_DATA_COREUSER_COMMIT, data: res.data })
-        ];
-    } catch(error) {
-        yield put({ type: LOAD_DATA_COREUSER_FAIL, error });
-    }
+  try {
+    const res = yield call(httpService.makeRequest, 'get', endpoint);
+    yield [
+      yield put({ type: LOAD_DATA_COREUSER_COMMIT, data: res.data }),
+    ];
+  } catch (error) {
+    yield put({ type: LOAD_DATA_COREUSER_FAIL, error });
+  }
 }
 
 function* createCoreUser(action) {
   try {
     const res = yield call(httpService.makeRequest, 'post', endpoint, action.data);
     yield [
-      yield put({ type: CREATE_COREUSER_COMMIT, data: res.data })
+      yield put({ type: CREATE_COREUSER_COMMIT, data: res.data }),
     ];
-  } catch(error) {
+  } catch (error) {
     yield put({ type: CREATE_COREUSER_FAIL, error });
   }
 }
@@ -46,38 +47,38 @@ function* updateCoreUser(action) {
   try {
     const res = yield call(httpService.makeRequest, 'patch', `${endpoint}${action.data.id}/`, action.data, true);
     yield [
-      yield put({ type: UPDATE_COREUSER_COMMIT, data: res.data})
+      yield put({ type: UPDATE_COREUSER_COMMIT, data: res.data }),
     ];
-  } catch(error) {
+  } catch (error) {
     yield put({ type: UPDATE_COREUSER_FAIL, error });
   }
 }
 
 function* deleteCoreUser(action) {
   try {
-    const res = yield call(httpService.makeRequest, 'delete', `${endpoint}${action.data.id}/`,  {}, true);
+    const res = yield call(httpService.makeRequest, 'delete', `${endpoint}${action.data.id}/`, {}, true);
     yield [
-      yield put({ type: DELETE_COREUSER_COMMIT, data: res.data})
+      yield put({ type: DELETE_COREUSER_COMMIT, data: res.data }),
     ];
-  } catch(error) {
+  } catch (error) {
     yield put({ type: DELETE_COREUSER_FAIL, error });
   }
 }
 
 function* watchLoadCoreUsers() {
-    yield takeLatest(LOAD_DATA_COREUSER, loadCoreUsers)
+  yield takeLatest(LOAD_DATA_COREUSER, loadCoreUsers);
 }
 
 function* watchCreateCoreUser() {
-  yield takeLatest(CREATE_COREUSER, createCoreUser)
+  yield takeLatest(CREATE_COREUSER, createCoreUser);
 }
 
 function* watchUpdateCoreUser() {
-  yield takeLatest(UPDATE_COREUSER, updateCoreUser)
+  yield takeLatest(UPDATE_COREUSER, updateCoreUser);
 }
 
 function* watchDeleteCoreUser() {
-  yield takeLatest(DELETE_COREUSER, deleteCoreUser)
+  yield takeLatest(DELETE_COREUSER, deleteCoreUser);
 }
 
 export default function* coreuserSaga() {
@@ -85,6 +86,6 @@ export default function* coreuserSaga() {
     watchLoadCoreUsers(),
     watchCreateCoreUser(),
     watchUpdateCoreUser(),
-    watchDeleteCoreUser()
+    watchDeleteCoreUser(),
   ]);
 }
