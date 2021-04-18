@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '@context/User.context';
 import { StyledTable } from '@components/StyledTable/StyledTable';
 import Crud from '@modules/crud/Crud';
-import { getCoregroups } from 'redux/coregroup/actions/coregroup.actions'
-import { connect } from 'react-redux'
+import { getCoregroups } from '@redux/coregroup/coregroup.actions';
+import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -17,20 +17,22 @@ import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   btnPermission: {
-    fontSize: rem(10)
+    fontSize: rem(10),
   },
   table: {
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   textDisabled: {
-    color: '#aaaaaa'
-  }
+    color: '#aaaaaa',
+  },
 }));
 
 /**
  * Current users list
  */
-function Users({ location, history, data, dispatch }) {
+function Users({
+  location, history, data, dispatch,
+}) {
   const classes = useStyles();
   // state to toggle actions menus
   const [menu, setMenu] = useState({ row: null, element: null });
@@ -44,37 +46,37 @@ function Users({ location, history, data, dispatch }) {
       setCoregroupsLoaded(true);
     } else {
       // define permissions
-      setPermissions(data.map(coregroup => {
-        return {label: coregroup.name, value: coregroup.id}
-      }))
+      setPermissions(data.map((coregroup) => ({ label: coregroup.name, value: coregroup.id })));
     }
   }, [data]);
-
 
   // table templates
   const permissionsTemplate = (row, crud, classes) => {
     if (coregroupsLoaded) {
       const [active, setActive] = useState(row.core_groups[0] && row.core_groups[0].id || row.core_groups[0]);
-      return <ButtonGroup disableElevation color="primary" size="small" disabled={!row.is_active || user.core_user_uuid === row.core_user_uuid}>
-        {permissions.map((permission, index) => (
-          <Button
-            className={classes.btnPermission}
-            key={`btnGroup${index}`}
-            variant={permission.value === active ? "contained" : "outlined"}
-            onClick={() => {
-              setActive(permission.value);
-              crud.updateItem({ id: row.id, core_groups: [permission.value] });
-            }}>
-            {permission.label}
-          </Button>
-        ))}
-      </ButtonGroup>
+      return (
+        <ButtonGroup disableElevation color="primary" size="small" disabled={!row.is_active || user.core_user_uuid === row.core_user_uuid}>
+          {permissions.map((permission, index) => (
+            <Button
+              className={classes.btnPermission}
+              key={`btnGroup${index}`}
+              variant={permission.value === active ? 'contained' : 'outlined'}
+              onClick={() => {
+                setActive(permission.value);
+                crud.updateItem({ id: row.id, core_groups: [permission.value] });
+              }}
+            >
+              {permission.label}
+            </Button>
+          ))}
+        </ButtonGroup>
+      );
     }
-  }
+  };
 
   const actionsTemplate = (row, crud) => {
     const handleMenuClick = (event) => {
-      setMenu({ row: row, element: event.currentTarget });
+      setMenu({ row, element: event.currentTarget });
     };
 
     const handleMenuItemClick = (action) => {
@@ -91,9 +93,9 @@ function Users({ location, history, data, dispatch }) {
     const handleMenuClose = () => {
       setMenu({ row: null, element: null });
     };
-  
+
     return (
-      <React.Fragment>
+      <>
         <IconButton
           disabled={user.core_user_uuid === row.core_user_uuid}
           aria-label="more"
@@ -111,16 +113,17 @@ function Users({ location, history, data, dispatch }) {
           onClose={handleMenuClose}
         >
           {row.actions.filter(
-            option => !(option.value === 'delete' && row.is_active)
+            (option) => !(option.value === 'delete' && row.is_active),
           ).map((option) => (
-          <MenuItem
-            key={`userActions${row.id }:${option.value}`}
-            onClick={() => handleMenuItemClick(option.value)}
-          >
-            {option.label}
-          </MenuItem>))}
+            <MenuItem
+              key={`userActions${row.id}:${option.value}`}
+              onClick={() => handleMenuItemClick(option.value)}
+            >
+              {option.label}
+            </MenuItem>
+          ))}
         </Menu>
-      </React.Fragment>
+      </>
     );
   };
 
@@ -133,18 +136,18 @@ function Users({ location, history, data, dispatch }) {
         loadAction="LOAD_DATA_COREUSER"
         reducer="coreuserReducer"
       >
-        { crud => {
+        { (crud) => {
           if (crud.getData()) {
-            crud.getData().forEach(row => {
-              if(row.is_active) {
+            crud.getData().forEach((row) => {
+              if (row.is_active) {
                 row.actions = [
                   { value: 'deactivate', label: 'Deactivate' },
-                  { value: 'delete', label: 'Delete' }
+                  { value: 'delete', label: 'Delete' },
                 ];
               } else {
                 row.actions = [
                   { value: 'activate', label: 'Activate' },
-                  { value: 'delete', label: 'Delete' }
+                  { value: 'delete', label: 'Delete' },
                 ];
               }
             });
@@ -153,8 +156,27 @@ function Users({ location, history, data, dispatch }) {
             <StyledTable
               className={classes.table}
               columns={[
-                { label: 'Full name', prop: 'name', template: (row) => (<Typography variant="body1" className={row.is_active ? '' : classes.textDisabled}>{row.first_name} {row.last_name}</Typography>) },
-                { label: 'Email', prop: 'email', template: (row) => (<Typography variant="body2" className={row.is_active ? '' : classes.textDisabled}> {row.email}</Typography>) },
+                {
+                  label: 'Full name',
+                  prop: 'name',
+                  template: (row) => (
+                    <Typography variant="body1" className={row.is_active ? '' : classes.textDisabled}>
+                      {row.first_name}
+                      {' '}
+                      {row.last_name}
+                    </Typography>
+                  ),
+                },
+                {
+                  label: 'Email',
+                  prop: 'email',
+                  template: (row) => (
+                    <Typography variant="body2" className={row.is_active ? '' : classes.textDisabled}>
+                      {' '}
+                      {row.email}
+                    </Typography>
+                  ),
+                },
                 { label: 'Last activity', prop: 'activity', template: (row) => (<Typography variant="caption" className={classes.textDisabled}>Today</Typography>) },
                 { label: 'Permissions', prop: 'permission', template: (row) => permissionsTemplate(row, crud, classes) },
                 { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud) },
@@ -162,13 +184,13 @@ function Users({ location, history, data, dispatch }) {
               rows={crud.getData()}
               sortFn={(a, b) => (a.core_user_uuid === user.core_user_uuid ? -1 : b.core_user_uuid === user.core_user_uuid ? 1 : 0)}
             />
-          )
+          );
         }}
       </Crud>
     </Box>
-  )
+  );
 }
 
-const mapStateToProps = (state, ownProps) => ({...state.coregroupReducer, ...ownProps});
+const mapStateToProps = (state, ownProps) => ({ ...state.coregroupReducer, ...ownProps });
 
 export default connect(mapStateToProps)(Users);

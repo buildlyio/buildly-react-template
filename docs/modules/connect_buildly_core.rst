@@ -7,8 +7,8 @@ Buildly React Template uses the Redux-Saga middleware library to handle interact
 Buildly Core. A store configuration is defined in the `/src/redux` directory and
 connected at the root level `index.js` file.
 
-The `/src/redux` directory contains the `/actions`, `/reducers` and `/sagas`
-sub-directories.
+The `/src/redux` directory contains sub-directories for each entity. These contains the related
+`.actions.js`, `.reducer.js` and `.sagas.js` files.
 
 Actions are dispatched directly by components. Each client has a separate `.actions.js`
 file which contains actions to create, read, update and delete.

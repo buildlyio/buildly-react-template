@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useInput } from '@hooks/useInput';
-import { login, validateResetPasswordToken } from '@redux/authuser/actions/authuser.actions';
+import { login, validateResetPasswordToken } from '@redux/authuser/authuser.actions';
 import { validators } from '@utils/validators';
 import logo from '@assets/buildly-logo.png';
 import { routes } from '@routes/routesConstants';

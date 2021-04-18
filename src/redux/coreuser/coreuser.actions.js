@@ -23,76 +23,76 @@ export function loadCoreuserData() {
 export function loadCoreuserDataCommit(data) {
   return {
     type: LOAD_DATA_COREUSER_COMMIT,
-    data
+    data,
   };
 }
 
 export function loadCoreuserDataFail(error) {
   return {
     type: LOAD_DATA_COREUSER_FAIL,
-    error
+    error,
   };
 }
 
 export function createCoreUser(data) {
   return {
     type: CREATE_COREUSER,
-    data
+    data,
   };
 }
 
 export function createCoreUserCommit(data) {
   return {
     type: CREATE_COREUSER_COMMIT,
-    data
+    data,
   };
 }
 
 export function createCoreUserFail(error) {
   return {
     type: CREATE_COREUSER_FAIL,
-    error
+    error,
   };
 }
 
 export function updateCoreUser(data) {
   return {
     type: UPDATE_COREUSER,
-    data
+    data,
   };
 }
 
 export function updateCoreUserCommit(data) {
   return {
     type: UPDATE_COREUSER_COMMIT,
-    data
+    data,
   };
 }
 
 export function updateCoreUserFail(error) {
   return {
     type: UPDATE_COREUSER_FAIL,
-    error
+    error,
   };
 }
 
 export function deleteCoreUser(data) {
   return {
     type: DELETE_COREUSER,
-    data
+    data,
   };
 }
 
 export function deleteCoreUserCommit(data) {
   return {
     type: DELETE_COREUSER_COMMIT,
-    data
+    data,
   };
 }
 
 export function deleteCoreUserFail(error) {
   return {
     type: DELETE_COREUSER_FAIL,
-    error
+    error,
   };
 }

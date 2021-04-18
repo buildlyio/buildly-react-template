@@ -15,7 +15,7 @@ import Container from '@material-ui/core/Container';
 import { useInput } from '@hooks/useInput';
 import {
   sendPasswordResetLink,
-} from '@redux/authuser/actions/authuser.actions';
+} from '@redux/authuser/authuser.actions';
 import { validators } from '@utils/validators';
 import logo from '@assets/buildly-logo.png';
 import { routes } from '@routes/routesConstants';

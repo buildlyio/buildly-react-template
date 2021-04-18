@@ -1,9 +1,10 @@
 import {
-    CREATE_COREGROUP_COMMIT,
-    DELETE_COREGROUP_COMMIT,
-    LOAD_DATA_COREGROUP_COMMIT, UPDATE_COREGROUP_COMMIT
-} from '@redux/coregroup/actions/coregroup.actions';
-import {addAll, deleteOne, upsertOne} from '@redux/reducer.utils';
+  CREATE_COREGROUP_COMMIT,
+  DELETE_COREGROUP_COMMIT,
+  LOAD_DATA_COREGROUP_COMMIT,
+  UPDATE_COREGROUP_COMMIT,
+} from '@redux/coregroup/coregroup.actions';
+import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
 import PropTypes from 'prop-types';
 
 const initialState = {
@@ -11,7 +12,7 @@ const initialState = {
   loaded: false,
   created: false,
   updated: false,
-  deleted: false
+  deleted: false,
 };
 
 export default function coregroupReducer(state = initialState, action) {
@@ -39,13 +40,13 @@ coregroupReducer.propTypes = {
           create: PropTypes.string,
           update: PropTypes.string,
           delete: PropTypes.string,
-          read: PropTypes.string
-        })
+          read: PropTypes.string,
+        }),
       }),
     ),
     loaded: PropTypes.bool,
     created: PropTypes.bool,
     updated: PropTypes.bool,
     deleted: PropTypes.bool,
-  })
-}
+  }),
+};

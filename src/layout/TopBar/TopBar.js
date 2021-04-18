@@ -8,7 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import GroupIcon from '@material-ui/icons/Group';
 import logo from '@assets/topbar-logo.png';
-import { logout } from '@redux/authuser/actions/authuser.actions';
+import { logout } from '@redux/authuser/authuser.actions';
 import { routes } from '@routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({

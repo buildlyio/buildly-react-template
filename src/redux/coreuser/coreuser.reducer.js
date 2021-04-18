@@ -1,17 +1,17 @@
+import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
+import PropTypes from 'prop-types';
 import {
   CREATE_COREUSER_COMMIT,
   DELETE_COREUSER_COMMIT,
-  LOAD_DATA_COREUSER_COMMIT, UPDATE_COREUSER_COMMIT
+  LOAD_DATA_COREUSER_COMMIT, UPDATE_COREUSER_COMMIT,
 } from './coreuser.actions';
-import {addAll, deleteOne, upsertOne} from '@redux/reducer.utils';
-import PropTypes from 'prop-types';
 
 const initialState = {
   data: [],
   loaded: false,
   created: false,
   updated: false,
-  deleted: false
+  deleted: false,
 };
 
 export default function coreuserReducer(state = initialState, action) {
@@ -53,12 +53,12 @@ coreuserReducer.propTypes = {
         privacy_disclaimer_accepted: PropTypes.bool,
         filter: PropTypes.string,
         create_date: PropTypes.string,
-        edit_date: PropTypes.string
+        edit_date: PropTypes.string,
       }),
     ),
     loaded: PropTypes.bool,
     created: PropTypes.bool,
     updated: PropTypes.bool,
     deleted: PropTypes.bool,
-  })
-}
+  }),
+};

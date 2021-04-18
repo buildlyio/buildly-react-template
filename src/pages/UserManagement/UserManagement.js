@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { invite } from "@redux/authuser/actions/authuser.actions";
+import { invite } from "@redux/authuser/authuser.actions";
 import { useInput } from "@hooks/useInput";
 import Popup from "reactjs-popup";
 import {
