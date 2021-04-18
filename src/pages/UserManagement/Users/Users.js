@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { UserContext } from "@context/User.context";
+import { UserContext } from '@context/User.context';
 import { StyledTable } from '@components/StyledTable/StyledTable';
 import Crud from '@modules/crud/Crud';
-import { getCoregroups } from '@redux/coregroup/actions/coregroup.actions'
+import { getCoregroups } from 'redux/coregroup/actions/coregroup.actions'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -10,7 +10,7 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreHoriz from '@material-ui/icons/MoreHoriz';
-import Box from "@material-ui/core/Box";
+import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import { rem } from 'polished';
 import { Typography } from '@material-ui/core';

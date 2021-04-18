@@ -6,12 +6,11 @@ import PropTypes from 'prop-types';
 * @param action - the returned action
 * @returns {{data; dataLoaded: boolean}}
 */
-export const addAll = (state, action) => {
-  return {...state, data: action.data, loaded: true};
-};
+export const addAll = (state, action) => ({ ...state, data: action.data, loaded: true });
 
 /**
- * it inserts an item to the state if it does not exist otherwise it will update the item with the passed action data
+ * it inserts an item to the state if it does not exist
+ * otherwise it will update the item with the passed action data
  * @param state - the current state
  * @param action - the returned action
  * @param {string} dataProp - property that stores the data
@@ -20,6 +19,7 @@ export const addAll = (state, action) => {
  */
 export const upsertOne = (state, action, idProp, dataProp) => {
   const dataObj = {};
+  let updatedState = state;
   let dataArr = [];
   if (dataProp) {
     dataArr = state.data[dataProp];
@@ -28,58 +28,65 @@ export const upsertOne = (state, action, idProp, dataProp) => {
   }
   if (Array.isArray(dataArr)) {
     // insert if item does not exist
-    if (!dataArr.find( item => item[idProp] === action.data[idProp])) {
+    if (!dataArr.find((item) => item[idProp] === action.data[idProp])) {
       if (action.index) {
-          const stateDataCopy = [...dataArr];
-          stateDataCopy.splice(action.index, 0, action.data);
-          if (dataProp) {
-            dataObj[dataProp] = stateDataCopy;
-            state = {...state, data: dataObj, loaded: true, created: true};
-          } else {
-            state = {...state, data: stateDataCopy, loaded: true, created: true};
-          }
-      } else {
+        const stateDataCopy = [...dataArr];
+        stateDataCopy.splice(action.index, 0, action.data);
         if (dataProp) {
-          dataObj[dataProp] = [...dataArr, action.data];
-          state = {...state, data: dataObj, loaded: true, created: true};
+          dataObj[dataProp] = stateDataCopy;
+          updatedState = {
+            ...state, data: dataObj, loaded: true, created: true,
+          };
         } else {
-          state = {...state, data: [...dataArr, action.data], loaded: true, created: true};
+          updatedState = {
+            ...state, data: stateDataCopy, loaded: true, created: true,
+          };
         }
-      }
-      return state;
-    } else { // update if item exists
-      if (dataProp) {
-        dataObj[dataProp] = dataArr.map (item => {
-          if (item[idProp] === action.data[idProp]) {
-            return action.data;
-          } else {
-            return item;
-          }
-        });
-        return {...state, data: dataObj, loaded: true, updated: true};
+      } else if (dataProp) {
+        dataObj[dataProp] = [...dataArr, action.data];
+        updatedState = {
+          ...state, data: dataObj, loaded: true, created: true,
+        };
       } else {
-        return {...state, data: dataArr.map (item => {
-            if (item[idProp] === action.data[idProp]) {
-              return action.data;
-            } else {
-              return item;
-            }
-          }), loaded: true, updated: true};
+        updatedState = {
+          ...state, data: [...dataArr, action.data], loaded: true, created: true,
+        };
       }
+      return updatedState;
+    } // update if item exists
+    if (dataProp) {
+      dataObj[dataProp] = dataArr.map((item) => {
+        if (item[idProp] === action.data[idProp]) {
+          return action.data;
+        }
+        return item;
+      });
+      return {
+        ...updatedState, data: dataObj, loaded: true, updated: true,
+      };
     }
-  } else {
-    if (!state.data) {
-      return {data : action.data, created: true, loaded: true};
-    } else {
-      return {data : action.data, updated: true};
-    }
+    return {
+      ...updatedState,
+      data: dataArr.map((item) => {
+        if (item[idProp] === action.data[idProp]) {
+          return action.data;
+        }
+        return item;
+      }),
+      loaded: true,
+      updated: true,
+    };
   }
+  if (!updatedState.data) {
+    return { data: action.data, created: true, loaded: true };
+  }
+  return { data: action.data, updated: true };
 };
 
 upsertOne.propTypes = {
   idProp: PropTypes.string,
-  dataProp: PropTypes.string
-}
+  dataProp: PropTypes.string,
+};
 
 /**
  * it deletes an from to the state if it does not exist otherwise it will return the curren state
@@ -90,22 +97,22 @@ upsertOne.propTypes = {
  * @returns {any}
  */
 export const deleteOne = (state, action, idProp, dataProp) => {
+  const updatedState = state;
   const dataObj = {};
   let dataArr = [];
   if (dataProp) {
-    dataArr = state.data[dataProp].filter (item => item[idProp] !== action.data[idProp]);
+    dataArr = updatedState.data[dataProp].filter((item) => item[idProp] !== action.data[idProp]);
     dataObj[dataProp] = dataArr;
-    return {...state, data: dataObj , deleted: true};
-  } else {
-    dataArr = state.data.filter (item => item[idProp] !== action.data[idProp]);
-    return {...state, data: dataArr, deleted: true};
+    return { ...updatedState, data: dataObj, deleted: true };
   }
+  dataArr = updatedState.data.filter((item) => item[idProp] !== action.data[idProp]);
+  return { ...updatedState, data: dataArr, deleted: true };
 };
 
 deleteOne.propTypes = {
   idProp: PropTypes.string,
-  dataProp: PropTypes.string
-}
+  dataProp: PropTypes.string,
+};
 
 /**
  * updates nested data in one reducer only one level of nested data supported
@@ -114,17 +121,19 @@ deleteOne.propTypes = {
  * @returns {{}}
  */
 export const updateNested = (state, action) => {
-  const parentIndex = state.data.findIndex( dataItem => dataItem.id.toString() === action.data[action.nested.parent].toString());
+  const updatedState = state;
+  const parentIndex = updatedState.data.findIndex(
+    (dataItem) => dataItem.id.toString() === action.data[action.nested.parent].toString(),
+  );
   if (parentIndex !== -1) {
-    state.data[parentIndex][action.nested.key].forEach( (item, index) => {
+    updatedState.data[parentIndex][action.nested.key].forEach((item, index) => {
       if (item.id.toString() === action.data.id.toString()) {
-        state.data[parentIndex][action.nested.key][index] = action.data;
-      } else {
-        return state;
+        updatedState.data[parentIndex][action.nested.key][index] = action.data;
       }
+      return updatedState;
     });
   }
-  return {...state};
+  return { ...updatedState };
 };
 
 /**
@@ -134,13 +143,16 @@ export const updateNested = (state, action) => {
  * @returns {{}}
  */
 export const addNested = (state, action) => {
-  const parentIndex = state.data.findIndex( dataItem => dataItem.id.toString() === action.data[action.nested.parent].toString());
-    if (parentIndex !== -1) {
-      state.data[parentIndex][action.nested.key].push(action.data);
-    } else {
-      return state;
-    }
-  return {...state};
+  const updatedState = state;
+  const parentIndex = updatedState.data.findIndex(
+    (dataItem) => dataItem.id.toString() === action.data[action.nested.parent].toString(),
+  );
+  if (parentIndex !== -1) {
+    updatedState.data[parentIndex][action.nested.key].push(action.data);
+  } else {
+    return updatedState;
+  }
+  return { ...updatedState };
 };
 
 /**
@@ -150,15 +162,21 @@ export const addNested = (state, action) => {
  * @returns {{}}
  */
 export const deleteNested = (state, action) => {
+  const updatedState = state;
   if (action.nested) {
-    const parentIndex = state.data.findIndex( dataItem => dataItem.id.toString() === action.data[action.nested.parent].toString());
+    const parentIndex = updatedState.data.findIndex(
+      (dataItem) => dataItem.id.toString() === action.data[action.nested.parent].toString(),
+    );
     if (parentIndex !== -1) {
-      state.data[parentIndex][action.nested.key] = state.data[parentIndex][action.nested.key].filter( (item) => {
-        return item.id.toString() !== action.data.id.toString();
-      });
+      updatedState
+        .data[parentIndex][action.nested.key] = updatedState.data[parentIndex][action.nested.key]
+          .filter(
+            (item) => item.id.toString() !== action.data.id.toString(),
+          );
     }
-    return {...state, deleted: true};
+    return { ...updatedState, deleted: true };
   }
+  return updatedState;
 };
 
 /**
@@ -168,21 +186,25 @@ export const deleteNested = (state, action) => {
  * @returns {any}
  */
 export const addFromGraphQl = (state, action, type) => {
-  Object.keys(action.data).forEach(key => {
+  let updatedState = state;
+  Object.keys(action.data).forEach((key) => {
+    // eslint-disable-next-line no-underscore-dangle
     if (action.data[key].__typename === type) {
-      const findItem = state.data.find( item => (item.id).toString() === (action.data[key].id).toString());
+      const findItem = updatedState.data.find(
+        (item) => (item.id).toString() === (action.data[key].id).toString(),
+      );
       if (!findItem) {
-        state = {...state, data: [...state.data, action.data[key]]};
+        updatedState = { ...updatedState, data: [...updatedState.data, action.data[key]] };
       }
     }
   });
 
-  return state;
+  return updatedState;
 };
 
 addFromGraphQl.propTypes = {
-  type: PropTypes.string
-}
+  type: PropTypes.string,
+};
 
 /**
  * it deletes one or more items from to the state if they exist in the state
@@ -191,9 +213,16 @@ addFromGraphQl.propTypes = {
  * @returns {any}
  */
 export const deleteMultiple = (state, action, idProp) => {
-  return {...state, data: state.data.filter (item => !action.data.find(element => element[idProp] === item[idProp])), deleted: true};
+  const updatedState = state;
+  return {
+    ...updatedState,
+    data: updatedState.data.filter(
+      (item) => !action.data.find((element) => element[idProp] === item[idProp]),
+    ),
+    deleted: true,
+  };
 };
 
 deleteMultiple.propTypes = {
-  idProp: PropTypes.string
-}
+  idProp: PropTypes.string,
+};

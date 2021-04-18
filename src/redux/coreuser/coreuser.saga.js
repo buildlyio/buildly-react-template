@@ -15,10 +15,10 @@ import {
 } from './coreuser.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
+import { environment } from '@environments/environment';
 
 const endpoint = `${environment.API_URL}coreuser/`;
 
-import { environment } from '@environments/environment';
 
 function* loadCoreUsers() {
     try {

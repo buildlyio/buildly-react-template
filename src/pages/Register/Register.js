@@ -1,23 +1,23 @@
-import React, { useState } from "react";
-import { connect } from "react-redux";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Link from "@material-ui/core/Link";
-import Box from "@material-ui/core/Box";
-import Card from "@material-ui/core/Card";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import { useInput } from "@hooks/useInput";
-import { register } from "@redux/authuser/actions/authuser.actions";
-import Grid from "@material-ui/core/Grid";
-import { validators } from "@utils/validators";
-import logo from "assets/buildly-logo.png";
-import { isMobile } from "@utils/mediaQuery";
-import { routes } from "@routes/routesConstants";
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import Link from '@material-ui/core/Link';
+import Box from '@material-ui/core/Box';
+import Card from '@material-ui/core/Card';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import { useInput } from '@hooks/useInput';
+import { register } from '@redux/authuser/actions/authuser.actions';
+import Grid from '@material-ui/core/Grid';
+import { validators } from '@utils/validators';
+import logo from '@assets/buildly-logo.png';
+import { isMobile } from '@utils/mediaQuery';
+import { routes } from '@routes/routesConstants';
 import Copyright from '@components/Copyright/Copyright';
 
 const useStyles = makeStyles((theme) => ({
@@ -25,51 +25,51 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(8),
   },
   paper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(2),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
   logo: {
-    width: "12.5rem",
-    maxWidth: "100%",
+    width: '12.5rem',
+    maxWidth: '100%',
   },
   textField: {
-    minHeight: "5rem",
-    margin: "0.25rem 0",
+    minHeight: '5rem',
+    margin: '0.25rem 0',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
     margin: theme.spacing(1),
-    position: "relative",
+    position: 'relative',
   },
 }));
 
 function Register({ dispatch, loading, history, loaded, error }) {
   const classes = useStyles();
-  const email = useInput("", { required: true });
-  const username = useInput("", { required: true });
-  const password = useInput("", { required: true });
-  const re_password = useInput("", {
+  const email = useInput('', { required: true });
+  const username = useInput('', { required: true });
+  const password = useInput('', { required: true });
+  const re_password = useInput('', {
     required: true,
     confirm: true,
     matchField: password,
   });
-  const organization_name = useInput("", { required: true });
-  const first_name = useInput("", { required: true });
-  const last_name = useInput("");
+  const organization_name = useInput('', { required: true });
+  const first_name = useInput('', { required: true });
+  const last_name = useInput('');
   const [formError, setFormError] = useState({});
 
   /**
@@ -110,7 +110,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
         ...prevState,
         [e.target.id]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
   };
@@ -157,10 +157,10 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     autoComplete="first_name"
                     error={formError.first_name && formError.first_name.error}
                     helperText={
-                      formError.first_name ? formError.first_name.message : ""
+                      formError.first_name ? formError.first_name.message : ''
                     }
                     className={classes.textField}
-                    onBlur={(e) => handleBlur(e, "required", first_name)}
+                    onBlur={(e) => handleBlur(e, 'required', first_name)}
                     {...first_name.bind}
                   />
                 </Grid>
@@ -175,7 +175,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     autoComplete="last_name"
                     error={formError.last_name && formError.last_name.error}
                     helperText={
-                      formError.last_name ? formError.last_name.message : ""
+                      formError.last_name ? formError.last_name.message : ''
                     }
                     className={classes.textField}
                     onBlur={(e) => handleBlur(e)}
@@ -196,10 +196,10 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     autoComplete="username"
                     error={formError.username && formError.username.error}
                     helperText={
-                      formError.username ? formError.username.message : ""
+                      formError.username ? formError.username.message : ''
                     }
                     className={classes.textField}
-                    onBlur={(e) => handleBlur(e, "required", username)}
+                    onBlur={(e) => handleBlur(e, 'required', username)}
                     {...username.bind}
                   />
                 </Grid>
@@ -215,9 +215,9 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     autoComplete="email"
                     type="email"
                     error={formError.email && formError.email.error}
-                    helperText={formError.email ? formError.email.message : ""}
+                    helperText={formError.email ? formError.email.message : ''}
                     className={classes.textField}
-                    onBlur={(e) => handleBlur(e, "email", email)}
+                    onBlur={(e) => handleBlur(e, 'email', email)}
                     {...email.bind}
                   />
                 </Grid>
@@ -243,7 +243,7 @@ function Register({ dispatch, loading, history, loaded, error }) {
                         : ""
                     }
                     className={classes.textField}
-                    onBlur={(e) => handleBlur(e, "required", organization_name)}
+                    onBlur={(e) => handleBlur(e, 'required', organization_name)}
                     {...organization_name.bind}
                   />
                 </Grid>
@@ -262,10 +262,10 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     autoComplete="current-password"
                     error={formError.password && formError.password.error}
                     helperText={
-                      formError.password ? formError.password.message : ""
+                      formError.password ? formError.password.message : ''
                     }
                     className={classes.textField}
-                    onBlur={(e) => handleBlur(e, "required", password)}
+                    onBlur={(e) => handleBlur(e, 'required', password)}
                     {...password.bind}
                   />
                 </Grid>
@@ -283,10 +283,10 @@ function Register({ dispatch, loading, history, loaded, error }) {
                     autoComplete="re_password"
                     error={formError.re_password && formError.re_password.error}
                     helperText={
-                      formError.re_password ? formError.re_password.message : ""
+                      formError.re_password ? formError.re_password.message : ''
                     }
                     className={classes.textField}
-                    onBlur={(e) => handleBlur(e, "confirm", re_password)}
+                    onBlur={(e) => handleBlur(e, 'confirm', re_password)}
                     {...re_password.bind}
                   />
                 </Grid>

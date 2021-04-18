@@ -1,33 +1,33 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import GroupIcon from "@material-ui/icons/Group";
-import logo from "assets/topbar-logo.png";
-import { logout } from "@redux/authuser/actions/authuser.actions";
-import { routes } from "@routes/routesConstants";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import GroupIcon from '@material-ui/icons/Group';
+import logo from '@assets/topbar-logo.png';
+import { logout } from '@redux/authuser/actions/authuser.actions';
+import { routes } from '@routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    backgroundColor: "#2A3744",
+    backgroundColor: '#2A3744',
     zIndex: theme.zIndex.drawer + 1,
   },
   logo: {
     maxWidth: 50,
-    objectFit: "contain",
+    objectFit: 'contain',
   },
   menuRight: {
-    marginLeft: "auto",
+    marginLeft: 'auto',
   },
   menuIcon: {
-    color: "#fff",
+    color: '#fff',
   },
   paper: {
-    border: "1px solid",
+    border: '1px solid',
   },
 }));
 
@@ -44,7 +44,7 @@ function TopBar({
 
   const handleLogoutClick = () => {
     dispatch(logout());
-    history.push("/");
+    history.push('/');
   };
 
   return (

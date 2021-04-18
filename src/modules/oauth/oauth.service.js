@@ -16,7 +16,6 @@ export const oauthService = {
 /**
  * authenticates user using oauth password flow
  * @param {{username: string; password: string}} credentials
- * @returns {Observable<any>}
  */
 function authenticateWithPasswordFlow(credentials) {
   const oauthOptions = {

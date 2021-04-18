@@ -1,23 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import EditIcon from "@material-ui/icons/Edit";
-import TextField from "@material-ui/core/TextField";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Box";
+import EditIcon from '@material-ui/icons/Edit';
+import TextField from '@material-ui/core/TextField';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles((theme) => ({
   nonEditMode: {
-    display: "flex",
-    "&:hover": {
+    display: 'flex',
+    '&:hover': {
       "& $editIcon": {
-        visibility: "visible"
+        visibility: 'visible'
       }
     }
   },
   editIcon: {
-    visibility: "hidden",
-    cursor: "pointer",
+    visibility: 'hidden',
+    cursor: 'pointer',
     marginLeft: theme.spacing(1)
   },
   typography: {
@@ -102,12 +102,12 @@ export function InlineEditor({id, tag, value, placeholder, disabled, onChange}) 
           value={text}
           onChange={event => setText(event.target.value)} />
       ) : (
-        <Grid container="true" direction="row" alignItems="center" className={`${classes.nonEditMode} ${!value && classes.placeholder}`} onDoubleClick={() => setEditing(true)}>
-          <Grid item="true">
+        <Grid container={true} direction="row" alignItems="center" className={`${classes.nonEditMode} ${!value && classes.placeholder}`} onDoubleClick={() => setEditing(true)}>
+          <Grid item={true}>
             <Typography className={classes.typography} variant={tag}>{value || placeholder}</Typography>
           </Grid>
           {!disabled && (
-            <Grid item="true">
+            <Grid item={true}>
               <EditIcon className={classes.editIcon} onClick={() => setEditing(true)}></EditIcon>
             </Grid>
           )}

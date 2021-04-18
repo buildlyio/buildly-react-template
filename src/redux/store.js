@@ -1,5 +1,5 @@
 import { redux } from 'midgard-core';
-import { compose, composeEnhancers } from 'redux';
+import { compose } from 'redux';
 
 import createSagaMiddleware from 'redux-saga';
 
@@ -9,6 +9,7 @@ import rootSaga from './sagas';
 const configureStore = () => {
   const sagaMiddleware = createSagaMiddleware();
   // redux devtools
+  // @ts-ignore
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
   return {
@@ -16,13 +17,13 @@ const configureStore = () => {
       rootReducer,
       composeEnhancers(
         redux.applyMiddleware(sagaMiddleware),
-      )
+      ),
     ),
-    runSaga: sagaMiddleware.run(rootSaga)
+    runSaga: sagaMiddleware.run(rootSaga),
   };
 };
 
-
-export const dispatch = type => store.dispatch({type});
+const store = configureStore();
+export const dispatch = (type) => store.dispatch({ type });
 
 export default configureStore;

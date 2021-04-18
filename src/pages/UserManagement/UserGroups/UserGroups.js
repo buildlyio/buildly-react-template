@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { UserContext } from "@context/User.context";
+import { UserContext } from '@context/User.context';
 import { InlineEditor } from '@components/InlineEditor/InlineEditor';
 import { StyledTable } from '@components/StyledTable/StyledTable';
 import Crud from '@modules/crud/Crud';
@@ -10,8 +10,8 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import Switch from '@material-ui/core/Switch';
-import Box from "@material-ui/core/Box";
-import AddIcon from "@material-ui/icons/AddCircle";
+import Box from '@material-ui/core/Box';
+import AddIcon from '@material-ui/icons/AddCircle';
 
 /**
  * Manage user groups

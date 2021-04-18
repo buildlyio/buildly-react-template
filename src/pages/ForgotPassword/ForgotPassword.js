@@ -1,24 +1,24 @@
-import React, { useState } from "react";
-import { connect } from "react-redux";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card";
-import Box from "@material-ui/core/Box";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import { useInput } from "@hooks/useInput";
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+import Card from '@material-ui/core/Card';
+import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import { useInput } from '@hooks/useInput';
 import {
   sendPasswordResetLink,
-} from "@redux/authuser/actions/authuser.actions";
-import { validators } from "@utils/validators";
-import logo from "assets/buildly-logo.png";
-import { routes } from "@routes/routesConstants";
+} from '@redux/authuser/actions/authuser.actions';
+import { validators } from '@utils/validators';
+import logo from '@assets/buildly-logo.png';
+import { routes } from '@routes/routesConstants';
 import Copyright from '@components/Copyright/Copyright';
 
 const useStyles = makeStyles((theme) => ({
@@ -26,45 +26,45 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(8),
   },
   paper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(2),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
   logo: {
-    width: "12.5rem",
-    maxWidth: "100%",
+    width: '12.5rem',
+    maxWidth: '100%',
   },
   textField: {
-    minHeight: "5rem",
-    margin: "0.25rem 0",
+    minHeight: '5rem',
+    margin: '0.25rem 0',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
     margin: theme.spacing(1),
-    position: "relative",
+    position: 'relative',
   },
 }));
 
 function ForgotPassword({ dispatch, loading, history }) {
   const classes = useStyles();
-  const email = useInput("", { required: true });
+  const email = useInput('', { required: true });
   const [error, setError] = useState({});
 
   /**
@@ -99,7 +99,7 @@ function ForgotPassword({ dispatch, loading, history }) {
         ...prevState,
         [e.target.id]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
   };
@@ -135,8 +135,8 @@ function ForgotPassword({ dispatch, loading, history }) {
                 autoComplete="email"
                 className={classes.textField}
                 error={error.email && error.email.error}
-                helperText={error && error.email ? error.email.message : ""}
-                onBlur={(e) => handleBlur(e, "email", email)}
+                helperText={error && error.email ? error.email.message : ''}
+                onBlur={(e) => handleBlur(e, 'email', email)}
                 {...email.bind}
               />
 
