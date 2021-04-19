@@ -1,40 +1,40 @@
-import { createMuiTheme, responsiveFontSizes } from "@material-ui/core/styles";
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
 
 const theme = createMuiTheme({
   palette: {
-    type: "dark",
+    type: 'dark',
     background: {
-      default: "#605e5e"
+      default: '#605e5e',
     },
     primary: {
-      main: "#EBC645",
-      contrastText: "#3B3A3A",
+      main: '#EBC645',
+      contrastText: '#3B3A3A',
     },
     secondary: {
-      main: "#fff",
-      contrastText: "#000",
+      main: '#fff',
+      contrastText: '#000',
     },
   },
   typography: {
     button: {
-      textTransform: "none"
+      textTransform: 'none',
     }
   },
   overrides: {
     MuiCssBaseline: {
-      "@global": {
+      '@global': {
         body: {
-          backgroundImage: "linear-gradient(45deg, #7C7A7A 30%, #3B3A3A 90%)",
-          backgroundColor: "transparent",
+          backgroundImage: 'linear-gradient(45deg, #7C7A7A 30%, #3B3A3A 90%)',
+          backgroundColor: 'transparent',
           padding: 0,
-          minHeight: "100vh"
+          minHeight: '100vh',
         },
         '.MuiTableRow-root.mui-row-selected': {
-          backgroundColor: "#a48a30 !important",
+          backgroundColor: '#a48a30 !important',
         },
-      }
-    }
-  }
+      },
+    },
+  },
 });
 
 export default responsiveFontSizes(theme);
