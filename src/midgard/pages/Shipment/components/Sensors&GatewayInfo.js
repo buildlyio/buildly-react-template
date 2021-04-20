@@ -156,8 +156,8 @@ function SensorsGatewayInfo(props) {
                     (gatewayData &&
                       getAvailableGateways(
                         gatewayData,
-                        shipmentFormData.provider
-                          ? shipmentFormData.provider.toLowerCase()
+                        shipmentFormData.platform_name
+                          ? shipmentFormData.platform_name.toLowerCase()
                           : "iclp",
                         gatewayTypeList,
                         shipmentData
