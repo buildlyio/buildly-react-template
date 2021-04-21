@@ -1,72 +1,77 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import Divider from "@material-ui/core/Divider";
-import Drawer from "@material-ui/core/Drawer";
-import Hidden from "@material-ui/core/Hidden";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { NAVIGATION_ITEMS } from "./NavBarConstants";
-import { isMobile } from "midgard/utils/mediaQuery";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import {
+  Divider,
+  Drawer,
+  Hidden,
+  List,
+  ListItem,
+  ListItemText,
+  makeStyles,
+  useTheme
+} from '@material-ui/core';
+import { NAVIGATION_ITEMS } from './NavBarConstants';
+import { isMobile } from '@utils/mediaQuery';
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
-    [theme.breakpoints.up("md")]: {
+    [theme.breakpoints.up('md')]: {
       width: 240,
       flexShrink: 0,
     },
-    backgroundColor: "#646262",
+    backgroundColor: '#646262',
   },
   drawerContainer: {
-    overflow: "auto",
+    overflow: 'auto',
   },
   appBar: {
-    [theme.breakpoints.up("md")]: {
+    [theme.breakpoints.up('md')]: {
       width: `calc(100% - ${240}px)`,
       marginLeft: 240,
     },
   },
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up("md")]: {
-      display: "none",
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
     },
   },
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: 240,
-    backgroundColor: "#383636",
-    color: "#fff",
+    backgroundColor: '#383636',
+    color: '#fff',
   },
   active: {
-    backgroundColor: "#887C5E !important",
+    backgroundColor: '#887C5E !important',
     borderRightColor: theme.palette.primary.main,
     borderRightWidth: 10,
-    borderRightStyle: "solid",
-    fontWeight: "bold",
+    borderRightStyle: 'solid',
+    fontWeight: 'bold',
   },
   navLink: {
-    display: "block",
-    textDecoration: "none",
-    color: "#fff",
+    display: 'block',
+    textDecoration: 'none',
+    color: '#fff',
   },
   navItems: {
     padding: theme.spacing(3, 4),
-    textAlign: "left",
+    textAlign: 'left',
   },
 }));
 
 /**
  * Component for the side navigation.
  */
-function NavBar({ navHidden, setNavHidden, location, history }) {
+const NavBar = ({ navHidden, setNavHidden, location, history }) => {
   const classes = useStyles();
   const theme = useTheme();
-  let isMobileDevice = isMobile();
+  const isMobileDevice = isMobile();
 
   const handleListItemClick = (event, index, item) => {
-    if (isMobileDevice) setNavHidden(!navHidden);
+    if (isMobileDevice) {
+      setNavHidden(!navHidden);
+    };
   };
 
   const drawer = (
@@ -84,7 +89,9 @@ function NavBar({ navHidden, setNavHidden, location, history }) {
               <ListItem
                 button
                 className={classes.navItems}
-                onClick={(event) => handleListItemClick(event, index, item)}
+                onClick={(event) => {
+                  handleListItemClick(event, index, item)
+                }}
               >
                 <ListItemText primary={item.name} />
               </ListItem>
@@ -95,16 +102,17 @@ function NavBar({ navHidden, setNavHidden, location, history }) {
       </List>
     </div>
   );
+  
   const handleDrawerToggle = () => {
     setNavHidden(!navHidden);
   };
 
   return (
-    <nav className={classes.drawer} aria-label="mailbox folders">
-      <Hidden smUp implementation="css">
+    <nav className={classes.drawer} aria-label='mailbox folders'>
+      <Hidden smUp implementation='css'>
         <Drawer
-          variant="temporary"
-          anchor={theme.direction === "rtl" ? "right" : "left"}
+          variant='temporary'
+          anchor={theme.direction === 'rtl' ? 'right' : 'left'}
           open={navHidden}
           onClose={handleDrawerToggle}
           classes={{
@@ -117,12 +125,12 @@ function NavBar({ navHidden, setNavHidden, location, history }) {
           {drawer}
         </Drawer>
       </Hidden>
-      <Hidden smDown implementation="css">
+      <Hidden smDown implementation='css'>
         <Drawer
           classes={{
             paper: classes.drawerPaper,
           }}
-          variant="permanent"
+          variant='permanent'
           open
         >
           {drawer}

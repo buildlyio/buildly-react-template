@@ -13,13 +13,13 @@ import {
   makeStyles,
   Container,
 } from '@material-ui/core';
+import logo from '@assets/tp-logo.png';
 import { useInput } from '@hooks/useInput';
 import {
   resetPassword,
 } from '@redux/authuser/actions/authuser.actions';
-import { validators } from '@utils/validators';
-import logo from '@assets/tp-logo.png';
 import { routes } from '@routes/routesConstants';
+import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const EmailForm = ({ dispatch, loading, history }) => {
+const EmailForm = ({ dispatch, loading }) => {
   const classes = useStyles();
   const email = useInput('', { required: true });
   const [error, setError] = useState({});
@@ -103,56 +103,72 @@ const EmailForm = ({ dispatch, loading, history }) => {
           message: '',
         },
       });
-    }
+    };
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(error);
     if (!email.value) {
       return true;
-    }
+    };
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (error[key].error) {
         errorExists = true;
-      }
+      };
     });
     return errorExists;
   };
 
   return (
-    <Container component="main" maxWidth="xs" className={classes.container}>
+    <Container
+      component='main'
+      maxWidth='xs'
+      className={classes.container}
+    >
       <CssBaseline />
-      <Card variant="outlined">
+      <Card variant='outlined'>
         <CardContent>
           <div className={classes.paper}>
-            <img src={logo} className={classes.logo} alt="Company logo" />
-            <Typography component="h1" variant="h5" gutterBottom>
+            <img
+              src={logo}
+              className={classes.logo}
+              alt='Company logo'
+            />
+            <Typography component='h1' variant='h5' gutterBottom>
               Enter your registered Email
             </Typography>
-            <form className={classes.form} noValidate onSubmit={handleSubmit}>
+            <form
+              className={classes.form}
+              noValidate
+              onSubmit={handleSubmit}
+            >
               <TextField
-                variant="outlined"
-                margin="normal"
+                variant='outlined'
+                margin='normal'
                 required
                 fullWidth
-                id="email"
-                label="Registered email"
-                name="email"
-                autoComplete="email"
+                id='email'
+                label='Registered email'
+                name='email'
+                autoComplete='email'
                 className={classes.textField}
                 error={error.email && error.email.error}
-                helperText={error && error.email ? error.email.message : ''}
+                helperText={
+                  error && error.email
+                  ? error.email.message
+                  : ''
+                }
                 onBlur={(e) => handleBlur(e, 'email', email)}
                 {...email.bind}
               />
 
               <div className={classes.loadingWrapper}>
                 <Button
-                  type="submit"
+                  type='submit'
                   fullWidth
-                  variant="contained"
-                  color="primary"
+                  variant='contained'
+                  color='primary'
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
@@ -167,7 +183,11 @@ const EmailForm = ({ dispatch, loading, history }) => {
               </div>
               <Grid container>
                 <Grid item xs>
-                  <Link href={routes.LOGIN} variant="body2" color="secondary">
+                  <Link
+                    href={routes.LOGIN}
+                    variant='body2'
+                    color='secondary'
+                  >
                     Go back to Sign in
                   </Link>
                 </Grid>

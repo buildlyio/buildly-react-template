@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useContext } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState, useContext } from 'react';
+import { Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 import {
   getProductType,
   deleteProductType,
-} from "midgard/redux/items/actions/items.actions";
-import DataTableWrapper from "midgard/components/DataTableWrapper/DataTableWrapper";
-import { PRODUCT_TYPE_COLUMNS } from "../ConfigurationConstants";
-import { routes } from "midgard/routes/routesConstants";
-import { Route } from "react-router-dom";
-import AddProductType from "../forms/AddProductType";
-import { UserContext } from "midgard/context/User.context";
+} from '@redux/items/actions/items.actions';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { PRODUCT_TYPE_COLUMNS } from '../ConfigurationConstants';
+import AddProductType from '../forms/AddProductType';
 
 const ProductType = (props) => {
   const { 
@@ -33,7 +33,7 @@ const ProductType = (props) => {
   useEffect(() => {
     if (!loading && !productType) {
       dispatch(getProductType(organization));
-    }
+    };
   }, [productType]);
 
   const onAddButtonClick = () => {
@@ -44,7 +44,7 @@ const ProductType = (props) => {
 
   const editType = (item) => {
     history.push(`${editPath}/:${item.id}`, {
-      type: "edit",
+      type: 'edit',
       from: redirectTo || routes.CONFIGURATION,
       data: item,
     });
@@ -65,15 +65,15 @@ const ProductType = (props) => {
       loading={loading}
       rows={productType || []}
       columns={PRODUCT_TYPE_COLUMNS}
-      filename="ProductType"
-      addButtonHeading="Product Type"
+      filename='ProductType'
+      addButtonHeading='Product Type'
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle={"Are you sure you want to Delete this Product Type?"}
+      confirmModalTitle='Are you sure you want to Delete this Product Type?'
     >
       <Route path={`${addPath}`} component={AddProductType} />
       <Route path={`${editPath}/:id`} component={AddProductType} />

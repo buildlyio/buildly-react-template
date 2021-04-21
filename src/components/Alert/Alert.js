@@ -5,7 +5,7 @@ import { Alert as MuiAlert } from '@material-ui/lab';
 import { hideAlert } from '@redux/alert/actions/alert.actions';
 
 const AlertData = (props) => {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
+  return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -21,7 +21,7 @@ const Alert = ({ data, dispatch })  => {
   const classes = useStyles();
   
   const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
+    if (reason === 'clickaway') {
       return;
     }
     dispatch(hideAlert());

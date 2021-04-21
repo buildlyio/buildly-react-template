@@ -1,25 +1,30 @@
-import moment from "moment";
+import moment from 'moment';
+
 export const custodianColumns = [
-  // { id: "id", label: "Custodian ID", minWidth: 150 },
-  { id: "name", label: "Name", minWidth: 150 },
+  // { id: 'id', label: 'Custodian ID', minWidth: 150 },
   {
-    id: "location",
-    label: "Location",
+    id: 'name',
+    label: 'Name',
+    minWidth: 150,
+  },
+  {
+    id: 'location',
+    label: 'Location',
     minWidth: 180,
   },
   {
-    id: "custodian_glns",
-    label: "GLN",
+    id: 'custodian_glns',
+    label: 'GLN',
     minWidth: 170,
   },
 ];
 
 export const getUniqueContactInfo = (rowItem, contactInfo) => {
-  let obj = "";
+  let obj = '';
   contactInfo.forEach((info) => {
     if (rowItem.contact_data[0] === info.url) {
       obj = info;
-    }
+    };
   });
   return obj;
 };
@@ -29,7 +34,7 @@ export const getFormattedRow = (data, contactInfo, custodyData) => {
   if (data && data.length && contactInfo && contactInfo.length) {
     customizedRow.forEach((rowItem) => {
       let contactInfoItem = getUniqueContactInfo(rowItem, contactInfo);
-      rowItem["location"] = `${
+      rowItem['location'] = `${
         contactInfoItem.address1 && `${contactInfoItem.address1},`
       }
             ${contactInfoItem.address2 && `${contactInfoItem.address2},`}
@@ -38,10 +43,10 @@ export const getFormattedRow = (data, contactInfo, custodyData) => {
             ${contactInfoItem.country && `${contactInfoItem.country},`}
             ${contactInfoItem.postal_code && `${contactInfoItem.postal_code}`}`;
     });
-  }
+  };
 
-  let sortedList = customizedRow.sort((a, b) => {
-    return moment.utc(a.create_date).diff(moment.utc(b.create_date));
-  });
+  let sortedList = customizedRow.sort((a, b) => 
+    moment.utc(a.create_date).diff(moment.utc(b.create_date))
+  );
   return sortedList;
 };

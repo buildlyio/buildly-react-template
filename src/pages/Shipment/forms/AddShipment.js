@@ -1,27 +1,34 @@
-import React, { useState, useContext } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import Modal from "../../../components/Modal/Modal";
-import ShipmentInfo, {checkIfShipmentInfoEdited} from "../components/ShipmentInfo";
-import { Hidden, Grid } from "@material-ui/core";
-import ViewDetailsWrapper from "../components/ViewDetailsWrapper";
-import { routes } from "../../../routes/routesConstants";
-import ItemInfo from "../components/ItemInfo";
-import { saveShipmentFormData } from "../../../redux/shipment/actions/shipment.actions";
-import { connect } from "react-redux";
-import SensorsGatewayInfo from "../components/Sensors&GatewayInfo";
-import EnvironmentalLimitsInfo, { checkIfEnvironmentLimitsEdited } from "../components/EnvironmentalLimitsInfo";
-import CustodianInfo from "../components/custodian-info/CustodianInfo";
-import { checkForGlobalAdmin } from "midgard/utils/utilMethods";
-import { UserContext } from "midgard/context/User.context";
-import ConfirmModal from "../../../components/Modal/ConfirmModal";
-import ShipmentKeyInfo from "../components/ShipmentKeyInfo";
+import React, { useState, useContext } from 'react';
+import { connect } from 'react-redux';
+import {
+  makeStyles,
+  Stepper,
+  Step,
+  StepLabel,
+  Hidden,
+  Grid,
+} from '@material-ui/core';
+import ConfirmModal from '@components/Modal/ConfirmModal';
+import Modal from '@components/Modal/Modal';
+import ViewDetailsWrapper from '../components/ViewDetailsWrapper';
+import { UserContext } from '@context/User.context';
+import { saveShipmentFormData } from '@redux/shipment/actions/shipment.actions';
+import { routes } from '@routes/routesConstants';
+import { checkForGlobalAdmin } from '@utils/utilMethods';
+import EnvironmentalLimitsInfo, {
+  checkIfEnvironmentLimitsEdited,
+} from '../components/EnvironmentalLimitsInfo';
+import CustodianInfo from '../components/custodian-info/CustodianInfo';
+import ItemInfo from '../components/ItemInfo';
+import SensorsGatewayInfo from '../components/Sensors&GatewayInfo';
+import ShipmentInfo, {
+  checkIfShipmentInfoEdited,
+} from '../components/ShipmentInfo';
+import ShipmentKeyInfo from '../components/ShipmentKeyInfo';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "100%",
+    width: '100%',
   },
   backButton: {
     marginRight: theme.spacing(1),
@@ -31,30 +38,28 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
   },
   submit: {
-    borderRadius: "18px",
+    borderRadius: '18px',
     fontSize: 11,
   },
   formTitle: {
-    fontWeight: "bold",
-    marginTop: "1em",
-    textAlign: "center",
+    fontWeight: 'bold',
+    marginTop: '1em',
+    textAlign: 'center',
   },
   step: {
-    cursor: "pointer",
+    cursor: 'pointer',
   },
 }));
 
-function getSteps() {
-  return [
-    "Shipment Details",
-    "Shipment Key",
-    "Items",
-    "Custodians",
-    "Sensors & Gateways",
-    // "Shipment Overview",
-    "Environmental Limits",
-  ];
-}
+const getSteps = () => ([
+  'Shipment Details',
+  'Shipment Key',
+  'Items',
+  'Custodians',
+  'Sensors & Gateways',
+  // 'Shipment Overview',
+  'Environmental Limits',
+])
 
 const getStepContent = (
   stepIndex,
@@ -72,7 +77,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title={"Shipment Details"}
+          title='Shipment Details'
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -94,7 +99,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title={"Shipment Key"}
+          title='Shipment Key'
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -112,7 +117,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title={"Items"}
+          title='Items'
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -132,7 +137,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title={"Custodians"}
+          title='Custodians'
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -152,7 +157,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title={"Sensors & Gateways"}
+          title='Sensors & Gateways'
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -172,7 +177,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title={"Environmental Limits"}
+          title='Environmental Limits'
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -189,28 +194,32 @@ const getStepContent = (
       );
 
     default:
-      return "Unknown stepIndex";
+      return 'Unknown stepIndex';
   }
 };
 
-function AddShipment(props) {
+const AddShipment = (props) => {
   const { location, history, shipmentFormData, dispatch } = props;
-  const editPage = location.state && location.state.type === "edit";
+  const editPage = location.state && location.state.type === 'edit';
   const editData = location.state && location.state.data;
   const user = useContext(UserContext);
   // For non-admins the forms becomes view-only once the shipment status is no longer just planned
-  const viewOnly = !(checkForGlobalAdmin(user)) && editPage && editData && editData.status && editData.status.toLowerCase() !== "planned";
+  const viewOnly = !(checkForGlobalAdmin(user))
+    && editPage
+    && editData
+    && editData.status
+    && editData.status.toLowerCase() !== 'planned';
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [openModal, toggleModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const steps = getSteps();
   const maxSteps = steps.length;
-  const formTitle = editPage
-    ? viewOnly
-      ? "View Shipment"
-      : "Edit Shipment"
-    : "Add Shipment";
+  const formTitle = !editPage
+    ? 'Add Shipment'
+    : viewOnly
+      ? 'View Shipment'
+      : 'Edit Shipment';
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -223,7 +232,7 @@ function AddShipment(props) {
   const handleStep = (step) => () => {
     if (shipmentFormData !== null) {
       setActiveStep(step);
-    }
+    };
   };
 
   const closeModal = () => {
@@ -232,7 +241,7 @@ function AddShipment(props) {
     else {
       handleConfirmModal();
       toggleModal(false);
-    }
+    };
   };
 
   const handleCancel = () => {
@@ -240,7 +249,7 @@ function AddShipment(props) {
       setConfirmModal(true);
     else {
       handleConfirmModal();
-    }
+    };
   };
 
   const handleConfirmModal = () => {
@@ -253,14 +262,19 @@ function AddShipment(props) {
     switch (activeStep) {
       case 0:
         return checkIfShipmentInfoEdited();
+
       case 1:
         return false;
+
       case 2:
         return false;
+
       case 3:
         return false;
+
       case 4:
         return false;
+
       case 5:
         return checkIfEnvironmentLimitsEdited();
     }
@@ -274,13 +288,17 @@ function AddShipment(props) {
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={"md"}
+          maxWidth={'md'}
         >
           <div className={classes.root}>
             <Hidden xsDown>
-              <Grid container alignItems="center" justify="center">
+              <Grid container alignItems='center' justify='center'>
                 <Grid item sm={10}>
-                  <Stepper activeStep={activeStep} alternativeLabel nonLinear>
+                  <Stepper
+                    activeStep={activeStep}
+                    alternativeLabel
+                    nonLinear
+                  >
                     {steps.map((label, index) => (
                       <Step
                         key={`step${index}:${label}`}
@@ -314,8 +332,8 @@ function AddShipment(props) {
                 open={openConfirmModal}
                 setOpen={setConfirmModal}
                 submitAction={handleConfirmModal}
-                title={"Your changes are unsaved and will be discarded. Are you sure to leave?"}
-                submitText={"Yes"}
+                title='Your changes are unsaved and will be discarded. Are you sure to leave?'
+                submitText='Yes'
               />
             </div>
           </div>

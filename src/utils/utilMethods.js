@@ -1,12 +1,12 @@
-import { environment } from "environments/environment";
+import { environment } from '@environments/environment';
 
 export const MAP_API_KEY = environment.MAP_API_KEY;
 export const MAP_API_URL = environment.MAP_API_URL;
 export const GEO_CODE_API = environment.GEO_CODE_API;
 
-export function numberWithCommas(x) {
-  if (!x) return "";
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+export const numberWithCommas = (x) => {
+  if (!x) return '';
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 export const compareSort = (propName) => {
@@ -47,7 +47,7 @@ export const searchFilter = (payload) => {
   let { searchItem, searchList, searchFields } = payload;
   let data = searchList.filter((item) => {
     let itemKeys = Object.keys(item);
-    let foundItem = "";
+    let foundItem = '';
     itemKeys.forEach((key) => {
       if (
         searchFields.includes(key) &&
@@ -120,27 +120,38 @@ export const convertUnitsOfMeasure = (
   _class
 ) => {
   switch (_class) {
-    case "temperature":
-      if (sourceUnit === "fahrenheit" && destinationUnit === "celsius")
+    case 'temperature':
+      if (
+        sourceUnit === 'fahrenheit'
+        && destinationUnit === 'celsius'
+      ) {
         value = ((value - 32) * 5) / 9;
-      else if (sourceUnit === "celsius" && destinationUnit === "fahrenheit")
+      };
+      if (
+        sourceUnit === 'celsius'
+        && destinationUnit === 'fahrenheit'
+      ) {
         value = (value * 9) / 5 + 32;
+      };
       return value.toFixed(2);
-    case "distance":
-      if (sourceUnit === "km" && destinationUnit === "miles")
+
+    case 'distance':
+      if (sourceUnit === 'km' && destinationUnit === 'miles') {
         value = value * 0.6214;
-      else if (sourceUnit == "miles" && destinationUnit === "km")
+      };
+      if (sourceUnit == 'miles' && destinationUnit === 'km') {
         value = value / 0.6214;
+      };
       return value.toFixed(2);
   }
 };
 
 export const getLocalDateTime = (value) => {
-  const displayDate = new Date(value).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
+  const displayDate = new Date(value).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
   });
   const displayTime = new Date(value).toLocaleTimeString();
-  return displayDate + " " + displayTime;
+  return displayDate + ' ' + displayTime;
 };

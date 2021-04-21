@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 import {
   getGatewayType,
   deleteGatewayType,
-} from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
-import DataTableWrapper from "midgard/components/DataTableWrapper/DataTableWrapper";
-import { GATEWAY_TYPE_COLUMNS } from "../ConfigurationConstants";
-import { routes } from "midgard/routes/routesConstants";
-import { Route } from "react-router-dom";
-import AddGatewayType from "../forms/AddGatewayType";
+} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { routes } from '@routes/routesConstants';
+import { GATEWAY_TYPE_COLUMNS } from '../ConfigurationConstants';
+import AddGatewayType from '../forms/AddGatewayType';
 
 const GatewayType = (props) => {
   const { 
@@ -31,7 +31,7 @@ const GatewayType = (props) => {
   useEffect(() => {
     if (!loading && !gatewayTypeList) {
       dispatch(getGatewayType());
-    }
+    };
   }, [gatewayTypeList]);
 
   const onAddButtonClick = () => {
@@ -42,7 +42,7 @@ const GatewayType = (props) => {
 
   const editType = (item) => {
     history.push(`${editPath}/:${item.id}`, {
-      type: "edit",
+      type: 'edit',
       from: redirectTo || routes.CONFIGURATION,
       data: item,
     });
@@ -63,15 +63,15 @@ const GatewayType = (props) => {
       loading={loading}
       rows={gatewayTypeList || []}
       columns={GATEWAY_TYPE_COLUMNS}
-      filename="GatewayType"
-      addButtonHeading="Gateway Type"
+      filename='GatewayType'
+      addButtonHeading='Gateway Type'
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle={"Are you sure you want to Delete this Gateway Type?"}
+      confirmModalTitle='Are you sure you want to Delete this Gateway Type?'
     >
       <Route path={`${addPath}`} component={AddGatewayType} />
       <Route path={`${editPath}/:id`} component={AddGatewayType} />

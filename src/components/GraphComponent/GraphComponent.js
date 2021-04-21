@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import _ from "lodash";
-import { Line } from "react-chartjs-2";
-import Typography from "@material-ui/core/Typography";
-import moment from "moment";
+import React, { useState, useEffect } from 'react';
+import _ from 'lodash';
+import { Line } from 'react-chartjs-2';
+import moment from 'moment';
+import { Typography } from '@material-ui/core';
 
-export function GraphComponent(props) {
+export const GraphComponent = (props) => {
   const { data, selectedGraph } = props;
   const [dataChart, setDataChart] = useState({});
   const options = {
@@ -12,14 +12,14 @@ export function GraphComponent(props) {
     scales: {
       xAxes: [
         {
-          type: "time",
+          type: 'time',
           time: {
-            unit: "minute",
+            unit: 'minute',
             unitStepSize: 1,
             displayFormats: {
-              minute: "MMM DD",
+              minute: 'MMM DD',
             },
-            tooltipFormat: "MMMM DD, YYYY HH:mm:ss",
+            tooltipFormat: 'MMMM DD, YYYY HH:mm:ss',
           },
         },
       ],
@@ -35,7 +35,7 @@ export function GraphComponent(props) {
   useEffect(() => {
     if (data && data.length > 0 && selectedGraph) {
       setDataChart({
-        labels: _.map(data, "x"),
+        labels: _.map(data, 'x'),
         datasets: [
           {
             label: selectedGraph.toUpperCase(),
@@ -44,23 +44,23 @@ export function GraphComponent(props) {
               (item) => {
                 return moment(item.x);
               },
-              ["asc"]
+              ['asc']
             ),
             fill: false,
             showLine: true,
             spanGaps: true,
-            borderColor: "#EBC645",
-            backgroundColor: "#383636",
-            borderCapStyle: "butt",
+            borderColor: '#EBC645',
+            backgroundColor: '#383636',
+            borderCapStyle: 'butt',
             borderDash: [],
             borderDashOffset: 0.0,
-            borderJoinStyle: "miter",
-            pointBorderColor: "#424242",
-            pointBackgroundColor: "#fff",
+            borderJoinStyle: 'miter',
+            pointBorderColor: '#424242',
+            pointBackgroundColor: '#fff',
             pointBorderWidth: 1,
             pointHoverRadius: 5,
-            pointHoverBackgroundColor: "#424242",
-            pointHoverBorderColor: "#EBC645",
+            pointHoverBackgroundColor: '#424242',
+            pointHoverBorderColor: '#EBC645',
             pointHoverBorderWidth: 2,
             pointRadius: 1,
             pointHitRadius: 10,
@@ -76,8 +76,8 @@ export function GraphComponent(props) {
         <Line data={dataChart} options={options} />
       ) : (
         <Typography
-          variant={"body1"}
-          align={"center"}
+          variant='body1'
+          align='center'
           style={{ marginTop: 40 }}
         >
           No data to display

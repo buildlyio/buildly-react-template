@@ -1,22 +1,24 @@
-import React, { useState, useEffect } from "react";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import AddIcon from "@material-ui/icons/Add";
-import ConfirmModal from "../Modal/ConfirmModal";
-import Loader from "../Loader/Loader";
-import DataTable from "../Table/Table";
+import React from 'react';
+import {
+  makeStyles,
+  Typography,
+  Box,
+  Grid,
+  Button,
+} from '@material-ui/core';
+import { Add as AddIcon } from '@material-ui/icons';
+import ConfirmModal from '@components/Modal/ConfirmModal';
+import Loader from '@components/Loader/Loader';
+import DataTable from '@components/Table/Table';
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
-    fontWeight: "bold",
-    marginBottom: "0.5em",
+    fontWeight: 'bold',
+    marginBottom: '0.5em',
   },
 }));
 
-function DashboardWrapper(props) {
+const DashboardWrapper = (props) => {
   const {
     loading,
     onAddButtonClick,
@@ -38,12 +40,17 @@ function DashboardWrapper(props) {
   const classes = useStyles();
   const actionsColumns = [
     {
-      id: "edit",
-      type: "edit",
+      id: 'edit',
+      type: 'edit',
       action: editAction,
-      label: "Edit",
+      label: 'Edit',
     },
-    { id: "delete", type: "delete", action: deleteAction, label: "Delete" },
+    {
+      id: 'delete',
+      type: 'delete',
+      action: deleteAction,
+      label: 'Delete',
+    },
   ];
   return (
     <Box mt={5} mb={3}>
@@ -52,9 +59,9 @@ function DashboardWrapper(props) {
         {addButtonHeading && (
           <Box mb={3}>
             <Button
-              type="button"
-              variant="contained"
-              color="primary"
+              type='button'
+              variant='contained'
+              color='primary'
               onClick={onAddButtonClick}
             >
               <AddIcon /> {addButtonHeading}
@@ -62,7 +69,10 @@ function DashboardWrapper(props) {
           </Box>
         )}
         {!redirectTo && (
-          <Typography className={classes.dashboardHeading} variant={"h4"}>
+          <Typography
+            className={classes.dashboardHeading}
+            variant='h4'
+          >
             {dashboardHeading}
           </Typography>
         )}
@@ -84,7 +94,7 @@ function DashboardWrapper(props) {
         setOpen={setConfirmModal}
         submitAction={handleConfirmModal}
         title={confirmModalTitle}
-        submitText={"Delete"}
+        submitText='Delete'
       />
       {children}
     </Box>

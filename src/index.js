@@ -6,6 +6,7 @@ import './i18n';
 import configureStore from './redux/store';
 
 const store = configureStore();
+
 ReactDOM.render(
   <Provider store={store}>
     <App />

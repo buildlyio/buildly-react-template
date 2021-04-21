@@ -1,101 +1,78 @@
-/* eslint-disable no-use-before-define */
-import React, { useState, useEffect, useContext } from "react";
-import { connect } from "react-redux";
-import moment from "moment";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
+import React, { useState, useEffect, useContext } from 'react';
+import { connect } from 'react-redux';
 import {
+  makeStyles,
   Box,
-  Checkbox,
-  Card,
-  CardContent,
   Typography,
   Grid,
   Button,
-  CircularProgress,
-} from "@material-ui/core";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import DataTable from "../../../../components/Table/Table";
-import { editShipment } from "../../../../redux/shipment/actions/shipment.actions";
-import { routes } from "../../../../routes/routesConstants";
-import DatePickerComponent from "../../../../components/DatePicker/DatePicker";
-import Modal from "../../../../components/Modal/Modal";
-import AddCustodyForm from "./AddCustodyForm";
+} from '@material-ui/core';
+import Modal from '@components/Modal/Modal';
+import DataTable from '@components/Table/Table';
+import { UserContext } from '@context/User.context';
+import { editShipment } from '@redux/shipment/actions/shipment.actions';
+import { routes } from '@routes/routesConstants';
+import AddCustodyForm from './AddCustodyForm';
 import {
-  getFormattedCustodianRow,
-  custodianColumns,
   getFormattedCustodyRows,
   custodyColumns,
-} from "../../ShipmentConstants";
-import { UserContext } from "midgard/context/User.context";
+} from '../../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    "& > * + *": {
+    '& > * + *': {
       marginTop: theme.spacing(3),
     },
   },
   buttonContainer: {
     margin: theme.spacing(8, 0),
-    textAlign: "center",
-    justifyContent: "center",
+    textAlign: 'center',
+    justifyContent: 'center',
   },
   alignRight: {
-    marginLeft: "auto",
+    marginLeft: 'auto',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
-  loadingWrapper: {
-    // margin: theme.spacing(1),
-    position: "relative",
-  },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {
-      width: "70%",
-      margin: "auto",
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
     },
   },
   submit: {
-    borderRadius: "18px",
+    borderRadius: '18px',
     fontSize: 11,
   },
   formTitle: {
-    fontWeight: "bold",
-    marginTop: "1em",
-    textAlign: "center",
+    fontWeight: 'bold',
+    marginTop: '1em',
+    textAlign: 'center',
   },
 }));
 
-function CustodianInfo(props) {
+const CustodianInfo = (props) => {
   const {
     custodianData,
     history,
-    redirectTo,
-    loading,
     handleNext,
     handleCancel,
     shipmentFormData,
     dispatch,
-    contactInfo,
     custodyData,
     viewOnly,
-    organizationData,
   } = props;
+  const classes = useStyles();
   const [itemIds, setItemIds] = useState(
     (shipmentFormData && shipmentFormData.custodian_ids) || []
   );
-
-  const classes = useStyles();
-
   const [openModal, setOpenModal] = useState(false);
   const [rows, setRows] = useState([]);
   const [editItem, setEditItem] = useState(null);
@@ -103,25 +80,27 @@ function CustodianInfo(props) {
 
   useEffect(() => {
     if (
-      custodyData &&
-      custodyData.length &&
-      custodianData &&
-      custodianData.length &&
-      shipmentFormData
+      custodyData
+      && custodyData.length
+      && custodianData
+      && custodianData.length
+      && shipmentFormData
     ) {
-      let filteredCustodyData = custodyData.filter((data) => {
-        return data.shipment_id === shipmentFormData.shipment_uuid;
-      });
-      let customizedRows = getFormattedCustodyRows(
+      const filteredCustodyData = custodyData.filter((data) =>
+        data.shipment_id === shipmentFormData.shipment_uuid
+      );
+      const customizedRows = getFormattedCustodyRows(
         filteredCustodyData,
         custodianData
       );
       setRows(customizedRows);
-    }
+    };
   }, [custodyData, custodianData, shipmentFormData]);
 
   const submitDisabled = () => {
-    if (!itemIds || custodianData === null) return true;
+    if (!itemIds || custodianData === null) {
+      return true;
+    };
   };
 
   /**
@@ -172,32 +151,32 @@ function CustodianInfo(props) {
   };
 
   const actionsColumns = [
-    // { id: "unlink", type: "unlink", action: deleteItem, label: "Unassociate" },
+    // { id: 'unlink', type: 'unlink', action: deleteItem, label: 'Unassociate' },
     {
-      id: "edit",
-      type: viewOnly ? "view" : "edit",
+      id: 'edit',
+      type: viewOnly ? 'view' : 'edit',
       action: editCustody,
-      label: viewOnly ? "View" : "Edit",
+      label: viewOnly ? 'View' : 'Edit',
     },
   ];
 
   return (
     <Box mb={5} mt={3}>
       <Button
-        variant="contained"
-        color="primary"
+        variant='contained'
+        color='primary'
         disabled={viewOnly}
         onClick={() => setOpenModal(true)}
         className={classes.submit}
       >
-        {`Add Custody`}
+        Add Custody
       </Button>
       <Box mt={3} mb={5}>
         <Grid container>
           {rows.length > 0 && (
             <Grid item xs={12}>
               <Box mt={5}>
-                <Typography gutterBottom variant="h5">
+                <Typography gutterBottom variant='h5'>
                   Associated Custodians
                 </Typography>
                 <DataTable
@@ -214,9 +193,15 @@ function CustodianInfo(props) {
           <Modal
             open={openModal}
             setOpen={() => oncloseModal()}
-            title={editItem ? viewOnly ? "View Custody" : "Edit Custody" : "Add Custody"}
+            title={
+              !editItem
+                ? 'Add Custody'
+                : viewOnly
+                  ? 'View Custody'
+                  : 'Edit Custody'
+              }
             titleClass={classes.formTitle}
-            maxWidth={"md"}
+            maxWidth={'md'}
           >
             <AddCustodyForm
               setItemIds={setItemIds}
@@ -230,14 +215,18 @@ function CustodianInfo(props) {
           </Modal>
         )}
       </Box>
-      <Grid container spacing={3} className={classes.buttonContainer}>
+      <Grid
+        container
+        spacing={3}
+        className={classes.buttonContainer}
+      >
           {viewOnly && (
             <Grid item xs={6} sm={2}>
               <Button
-                type="button"
+                type='button'
                 fullWidth
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 className={classes.submit}
                 onClick={handleCancel}
               >
@@ -247,8 +236,8 @@ function CustodianInfo(props) {
           )}
         <Grid item xs={12} sm={4}>
           <Button
-            variant="contained"
-            color="primary"
+            variant='contained'
+            color='primary'
             fullWidth
             onClick={handleNext}
             className={classes.submit}

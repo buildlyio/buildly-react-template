@@ -1,110 +1,113 @@
-import React, { useState, useEffect, useContext } from "react";
-import moment from "moment";
-import { connect } from "react-redux";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import { validators } from "../../../utils/validators";
-import Modal from "../../../components/Modal/Modal";
-import MenuItem from "@material-ui/core/MenuItem";
-
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import Select from "@material-ui/core/Select";
-import { useInput } from "../../../hooks/useInput";
-import Loader from "../../../components/Loader/Loader";
-import { Card, CardContent, Typography } from "@material-ui/core";
-import DatePickerComponent from "../../../components/DatePicker/DatePicker";
+import React, { useState, useEffect, useContext } from 'react';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import {
+  makeStyles,
+  useTheme,
+  Button,
+  TextField,
+  CircularProgress,
+  Grid,
+  MenuItem,
+  useMediaQuery,
+  Card,
+  CardContent,
+  Typography,
+} from '@material-ui/core';
+import DatePickerComponent from '@components/DatePicker/DatePicker';
+import { MapComponent } from '@components/MapComponent/MapComponent';
+import Modal from '@components/Modal/Modal';
+import { UserContext } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
 import {
   addGateway,
   editGateway,
-} from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
-import { MAP_API_URL } from "../../../utils/utilMethods";
-import { MapComponent } from "../../../components/MapComponent/MapComponent";
-import { UserContext } from "midgard/context/User.context";
-import { GATEWAY_STATUS } from "../Constants";
+} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+import { MAP_API_URL } from '@utils/utilMethods';
+import { validators } from '@utils/validators';
+import { GATEWAY_STATUS } from '../Constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(8),
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {
-      width: "70%",
-      margin: "auto",
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    borderRadius: "18px",
+    borderRadius: '18px',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
-    // margin: theme.spacing(1),
-    position: "relative",
+    position: 'relative',
   },
   cardItems: {
     marginTop: theme.spacing(4),
   },
   formTitle: {
-    fontWeight: "bold",
-    marginTop: "1em",
-    textAlign: "center",
+    fontWeight: 'bold',
+    marginTop: '1em',
+    textAlign: 'center',
   },
 }));
 
-function AddGateway({
+const AddGateway = ({
   dispatch,
   loading,
   history,
-  loaded,
-  error,
   location,
   gatewayTypeList,
   gatewayOptions,
-}) {
+}) => {
   const redirectTo = location.state && location.state.from;
-  const editPage = location.state && location.state.type === "edit";
-  const editData =
-    (location.state && location.state.type === "edit" && location.state.data) ||
-    {};
+  const editPage = location.state && location.state.type === 'edit';
+  const editData = (
+    location.state
+    && location.state.type === 'edit'
+    && location.state.data
+  ) || {};
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
-  const gateway_name = useInput(editData.name || "", {
+  const gateway_name = useInput(editData.name || '', {
     required: true,
   });
-  const gateway_type = useInput(editData.gateway_type || "", {
+  const gateway_type = useInput(editData.gateway_type || '', {
     required: true,
   });
   const [activation_date, handleDateChange] = useState(
     editData.activation_date || moment()
   );
-  const sim_card_id = useInput(editData.sim_card_id || "");
-  const battery_level = useInput(editData.last_known_battery_level || "");
-  const mac_address = useInput(editData.mac_address || "");
-  const [last_known_location, setLastLocation] = useState(
-    (editData &&
-      editData.last_known_location &&
-      editData.last_known_location[0]) ||
-      ""
+  const sim_card_id = useInput(editData.sim_card_id || '');
+  const battery_level = useInput(
+    editData.last_known_battery_level || ''
   );
-  const gateway_uuid = useInput(editData.gateway_uuid || "");
-  const gateway_status = useInput(editData.gateway_status || "", {
+  const mac_address = useInput(editData.mac_address || '');
+  const [last_known_location, setLastLocation] = useState(
+    (editData
+    && editData.last_known_location
+    && editData.last_known_location[0])
+    || ''
+  );
+  const gateway_uuid = useInput(editData.gateway_uuid || '');
+  const gateway_status = useInput(editData.gateway_status || '', {
     required: true,
   });
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? "Save" : "Add Gateway";
-  const formTitle = editPage ? "Edit Gateway" : "Add Gateway";
+  const buttonText = editPage ? 'Save' : 'Add Gateway';
+  const formTitle = editPage ? 'Edit Gateway' : 'Add Gateway';
 
   const [gatewayMetaData, setGatewayMetaData] = useState({});
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -112,14 +115,14 @@ function AddGateway({
   useEffect(() => {
     if (gatewayOptions && gatewayOptions.actions) {
       setGatewayMetaData(gatewayOptions.actions.POST);
-    }
+    };
   }, [gatewayOptions]);
 
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
       history.push(redirectTo);
-    }
+    };
   };
 
   /**
@@ -130,7 +133,7 @@ function AddGateway({
     event.preventDefault();
     const gatewayFormValues = {
       name: gateway_name.value,
-      sensors: "",
+      sensors: '',
       sim_card_id: sim_card_id.value,
       gateway_type: gateway_type.value,
       shipment_ids: [],
@@ -139,7 +142,7 @@ function AddGateway({
       ...(editPage && editData && { id: editData.id }),
       mac_address: mac_address.value,
       last_known_location: [
-        last_known_location === "" ? "null, null" : last_known_location,
+        last_known_location === '' ? 'null, null' : last_known_location,
       ],
       gateway_status: gateway_status.value,
       organization_uuid: organization,
@@ -148,7 +151,7 @@ function AddGateway({
       dispatch(editGateway(gatewayFormValues, history, redirectTo));
     } else {
       dispatch(addGateway(gatewayFormValues, history, redirectTo));
-    }
+    };
   };
 
   /**
@@ -159,35 +162,40 @@ function AddGateway({
    */
 
   const handleBlur = (e, validation, input, parentId) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...formError };
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: validateObj,
       });
-    else
+    } else {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
+    };
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
+    const errorKeys = Object.keys(formError);
+    if (!gateway_type.value || !gateway_name.value) {
+      return true;
+    };
     let errorExists = false;
-    if (!gateway_type.value || !gateway_name.value) return true;
     errorKeys.forEach((key) => {
-      if (formError[key].error) errorExists = true;
+      if (formError[key].error) {
+        errorExists = true;
+      };
     });
     return errorExists;
   };
 
   const theme = useTheme();
-  let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   const setLastKnownLocation = (value) => {
     setLastLocation(value);
@@ -201,34 +209,48 @@ function AddGateway({
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={"md"}
+          maxWidth={'md'}
         >
-          <form className={classes.form} noValidate onSubmit={handleSubmit}>
+          <form
+            className={classes.form}
+            noValidate
+            onSubmit={handleSubmit}
+          >
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   fullWidth
-                  id="gateway_name"
+                  id='gateway_name'
                   required
-                  label="Gateway Name"
-                  name="gateway_name"
-                  autoComplete="gateway_name"
-                  error={formError.gateway_name && formError.gateway_name.error}
-                  helperText={
-                    formError.gateway_name ? formError.gateway_name.message : ""
+                  label='Gateway Name'
+                  name='gateway_name'
+                  autoComplete='gateway_name'
+                  error={
+                    formError.gateway_name
+                    && formError.gateway_name.error
                   }
-                  onBlur={(e) => handleBlur(e, "required", gateway_name)}
+                  helperText={
+                    formError.gateway_name
+                    ? formError.gateway_name.message
+                    : ''
+                  }
+                  onBlur={(e) =>
+                    handleBlur(e, 'required', gateway_name)
+                  }
                   {...gateway_name.bind}
                   InputProps={
-                    gatewayMetaData["name"] &&
-                    gatewayMetaData["name"].help_text && {
+                    gatewayMetaData['name']
+                    && gatewayMetaData['name'].help_text
+                    && {
                       endAdornment: (
-                        <InputAdornment position="end">
-                          {gatewayMetaData["name"].help_text && (
+                        <InputAdornment position='end'>
+                          {gatewayMetaData['name'].help_text && (
                             <CustomizedTooltips
-                              toolTipText={gatewayMetaData["name"].help_text}
+                              toolTipText={
+                                gatewayMetaData['name'].help_text
+                              }
                             />
                           )}
                         </InputAdornment>
@@ -238,45 +260,47 @@ function AddGateway({
                 />
               </Grid>
             </Grid>
-            <Card variant="outlined" className={classes.cardItems}>
+            <Card variant='outlined' className={classes.cardItems}>
               <CardContent>
                 <Typography
                   className={classes.dashboardHeading}
-                  variant={"body1"}
+                  variant={'body1'}
                 >
                   Gateway Info
                 </Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
                       required
-                      id="gateway_type"
+                      id='gateway_type'
                       select
-                      label="Gateway Type"
+                      label='Gateway Type'
                       error={
-                        formError.gateway_type && formError.gateway_type.error
+                        formError.gateway_type
+                        && formError.gateway_type.error
                       }
                       helperText={
                         formError.gateway_type
-                          ? formError.gateway_type.message
-                          : ""
+                        ? formError.gateway_type.message
+                        : ''
                       }
                       onBlur={(e) =>
-                        handleBlur(e, "required", gateway_type, "gateway_type")
+                        handleBlur(e, 'required', gateway_type, 'gateway_type')
                       }
                       {...gateway_type.bind}
                       InputProps={
-                        gatewayMetaData["gateway_type"] &&
-                        gatewayMetaData["gateway_type"].help_text && {
+                        gatewayMetaData['gateway_type']
+                        && gatewayMetaData['gateway_type'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="start">
-                              {gatewayMetaData["gateway_type"].help_text && (
+                            <InputAdornment position='start'>
+                              {gatewayMetaData['gateway_type'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    gatewayMetaData["gateway_type"].help_text
+                                    gatewayMetaData['gateway_type'].help_text
                                   }
                                 />
                               )}
@@ -285,7 +309,7 @@ function AddGateway({
                         }
                       }
                     >
-                      <MenuItem value={""}>Select</MenuItem>
+                      <MenuItem value={''}>Select</MenuItem>
                       {gatewayTypeList &&
                         gatewayTypeList.map((item, index) => (
                           <MenuItem
@@ -299,40 +323,41 @@ function AddGateway({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
                       required
-                      id="gateway_status"
+                      id='gateway_status'
                       select
-                      label="Gateway Status"
+                      label='Gateway Status'
                       error={
-                        formError.gateway_status &&
-                        formError.gateway_status.error
+                        formError.gateway_status
+                        && formError.gateway_status.error
                       }
                       helperText={
                         formError.gateway_status
-                          ? formError.gateway_status.message
-                          : ""
+                        ? formError.gateway_status.message
+                        : ''
                       }
                       onBlur={(e) =>
                         handleBlur(
                           e,
-                          "required",
+                          'required',
                           gateway_status,
-                          "gateway_status"
+                          'gateway_status'
                         )
                       }
                       {...gateway_status.bind}
                       InputProps={
-                        gatewayMetaData["gateway_status"] &&
-                        gatewayMetaData["gateway_status"].help_text && {
+                        gatewayMetaData['gateway_status']
+                        && gatewayMetaData['gateway_status'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="start">
-                              {gatewayMetaData["gateway_status"].help_text && (
+                            <InputAdornment position='start'>
+                              {gatewayMetaData['gateway_status'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    gatewayMetaData["gateway_status"].help_text
+                                    gatewayMetaData['gateway_status'].help_text
                                   }
                                 />
                               )}
@@ -341,7 +366,7 @@ function AddGateway({
                         }
                       }
                     >
-                      <MenuItem value={""}>Select</MenuItem>
+                      <MenuItem value={''}>Select</MenuItem>
                       {GATEWAY_STATUS &&
                         GATEWAY_STATUS.map((item, index) => (
                           <MenuItem
@@ -355,36 +380,37 @@ function AddGateway({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <DatePickerComponent
-                      label={"Activated"}
+                      label={'Activated'}
                       selectedDate={activation_date}
                       handleDateChange={handleDateChange}
                       helpText={
-                        gatewayMetaData["activation_date"] &&
-                        gatewayMetaData["activation_date"].help_text
-                          ? gatewayMetaData["activation_date"].help_text
-                          : ""
+                        gatewayMetaData['activation_date']
+                        && gatewayMetaData['activation_date'].help_text
+                          ? gatewayMetaData['activation_date'].help_text
+                          : ''
                       }
                     />
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="sim_card_id"
-                      label="IMEI"
-                      name="sim_card_id"
-                      autoComplete="sim_card_id"
+                      id='sim_card_id'
+                      label='IMEI'
+                      name='sim_card_id'
+                      autoComplete='sim_card_id'
                       {...sim_card_id.bind}
                       InputProps={
-                        gatewayMetaData["sim_card_id"] &&
-                        gatewayMetaData["sim_card_id"].help_text && {
+                        gatewayMetaData['sim_card_id']
+                        && gatewayMetaData['sim_card_id'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {gatewayMetaData["sim_card_id"].help_text && (
+                            <InputAdornment position='end'>
+                              {gatewayMetaData['sim_card_id'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    gatewayMetaData["sim_card_id"].help_text
+                                    gatewayMetaData['sim_card_id'].help_text
                                   }
                                 />
                               )}
@@ -396,26 +422,25 @@ function AddGateway({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="battery_level"
-                      label="Battery(%)"
-                      name="battery_level"
-                      autoComplete="battery_level"
+                      id='battery_level'
+                      label='Battery(%)'
+                      name='battery_level'
+                      autoComplete='battery_level'
                       {...battery_level.bind}
                       InputProps={
-                        gatewayMetaData["last_known_battery_level"] &&
-                        gatewayMetaData["last_known_battery_level"]
-                          .help_text && {
+                        gatewayMetaData['last_known_battery_level']
+                        && gatewayMetaData['last_known_battery_level'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {gatewayMetaData["last_known_battery_level"]
+                            <InputAdornment position='end'>
+                              {gatewayMetaData['last_known_battery_level']
                                 .help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    gatewayMetaData["last_known_battery_level"]
-                                      .help_text
+                                    gatewayMetaData['last_known_battery_level'].help_text
                                   }
                                 />
                               )}
@@ -427,23 +452,24 @@ function AddGateway({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="mac_address"
-                      label="Mac Address"
-                      name="mac_address"
-                      autoComplete="mac_address"
+                      id='mac_address'
+                      label='Mac Address'
+                      name='mac_address'
+                      autoComplete='mac_address'
                       {...mac_address.bind}
                       InputProps={
-                        gatewayMetaData["mac_address"] &&
-                        gatewayMetaData["mac_address"].help_text && {
+                        gatewayMetaData['mac_address']
+                        && gatewayMetaData['mac_address'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {gatewayMetaData["mac_address"].help_text && (
+                            <InputAdornment position='end'>
+                              {gatewayMetaData['mac_address'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    gatewayMetaData["mac_address"].help_text
+                                    gatewayMetaData['mac_address'].help_text
                                   }
                                 />
                               )}
@@ -455,28 +481,29 @@ function AddGateway({
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="last_known_location"
-                      label="Last Known Location"
-                      name="last_known_location"
-                      autoComplete="last_known_location"
+                      id='last_known_location'
+                      label='Last Known Location'
+                      name='last_known_location'
+                      autoComplete='last_known_location'
                       value={
-                        last_known_location === "null,null"
-                          ? ""
+                        last_known_location === 'null,null'
+                          ? ''
                           : last_known_location
                       }
                       InputProps={
-                        gatewayMetaData["last_known_location"] &&
-                        gatewayMetaData["last_known_location"].help_text && {
+                        gatewayMetaData['last_known_location']
+                        && gatewayMetaData['last_known_location'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {gatewayMetaData["last_known_location"]
+                            <InputAdornment position='end'>
+                              {gatewayMetaData['last_known_location']
                                 .help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    gatewayMetaData["last_known_location"]
+                                    gatewayMetaData['last_known_location']
                                       .help_text
                                   }
                                 />
@@ -490,17 +517,25 @@ function AddGateway({
                       isMarkerShown
                       googleMapURL={MAP_API_URL}
                       zoom={8}
-                      loadingElement={<div style={{ height: `100%` }} />}
-                      containerElement={<div style={{ height: `200px` }} />}
-                      mapElement={<div style={{ height: `100%` }} />}
+                      loadingElement={
+                        <div style={{ height: `100%` }} />
+                      }
+                      containerElement={
+                        <div style={{ height: `200px` }} />
+                      }
+                      mapElement={
+                        <div style={{ height: `100%` }} />
+                      }
                       markers={[
                         {
-                          lat:
-                            last_known_location &&
-                            parseFloat(last_known_location.split(",")[0]),
-                          lng:
-                            last_known_location &&
-                            parseFloat(last_known_location.split(",")[1]),
+                          lat: last_known_location
+                          && parseFloat(
+                            last_known_location.split(',')[0]
+                          ),
+                          lng: last_known_location
+                          && parseFloat(
+                            last_known_location.split(',')[1]
+                          ),
                           onMarkerDrag: setLastKnownLocation,
                           draggable: true,
                         },
@@ -511,14 +546,14 @@ function AddGateway({
               </CardContent>
             </Card>
 
-            <Grid container spacing={2} justify="center">
+            <Grid container spacing={2} justify='center'>
               <Grid item xs={6} sm={4}>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type="submit"
+                    type='submit'
                     fullWidth
-                    variant="contained"
-                    color="primary"
+                    variant='contained'
+                    color='primary'
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
                   >
@@ -534,10 +569,10 @@ function AddGateway({
               </Grid>
               <Grid item xs={6} sm={4}>
                 <Button
-                  type="button"
+                  type='button'
                   fullWidth
-                  variant="contained"
-                  color="primary"
+                  variant='contained'
+                  color='primary'
                   onClick={() => closeModal()}
                   className={classes.submit}
                 >

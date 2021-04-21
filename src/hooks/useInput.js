@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-export const useInput = (initialValue = "", validators = {}) => {
+export const useInput = (initialValue = '', validators = {}) => {
   const [value, setValue] = useState(initialValue);
 
   return {
@@ -14,8 +14,8 @@ export const useInput = (initialValue = "", validators = {}) => {
       value,
       required: validators.required,
     },
-    clear: () => setValue(""),
+    clear: () => setValue(''),
     reset: () => setValue(initialValue),
-    hasChanged: () => initialValue !== value && value !== ""  ? true : false,
+    hasChanged: () => initialValue !== value && value !== ''  ? true : false,
   };
 };

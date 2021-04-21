@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   withScriptjs,
   withGoogleMap,
@@ -8,17 +8,20 @@ import {
   Polyline,
   Polygon,
   Circle,
-} from "react-google-maps";
-import _ from "lodash";
+} from 'react-google-maps';
+import _ from 'lodash';
 import {
   REPORT_TYPES,
   getIcon,
-} from "../../pages/Reporting/ReportingConstants";
-import { convertUnitsOfMeasure } from "midgard/utils/utilMethods";
+} from '@pages/Reporting/ReportingConstants';
+import { convertUnitsOfMeasure } from '@utils/utilMethods';
 
-export function MapComponent(props) {
+export const MapComponent = (props) => {
   const { markers, setSelectedMarker, geofence } = props;
-  const [center, setCenter] = useState({ lat: 47.606209, lng: -122.332069 });
+  const [center, setCenter] = useState({
+    lat: 47.606209,
+    lng: -122.332069,
+  });
   const [showInfoIndex, setShowInfoIndex] = useState({});
   const [polygon, setPolygon] = useState({});
 
@@ -34,35 +37,42 @@ export function MapComponent(props) {
         lng: _.last(markers).lng,
       });
       setShowInfoIndex(markers[markers.length - 1]);
-      if (setSelectedMarker) setSelectedMarker(markers[markers.length - 1]);
-    }
+      if (setSelectedMarker) {
+        setSelectedMarker(markers[markers.length - 1]);
+      };
+    };
 
     if (markers && !markers.length) {
       setCenter({ lat: 47.606209, lng: -122.332069 });
-    }
+    };
   }, [markers]);
 
   useEffect(() => {
     if (geofence && geofence.coordinates.length) {
       let coordinates = geofence.coordinates[0];
       let polygonPoints = [];
-      coordinates.map((coordinate) =>
-        polygonPoints.push({ lat: coordinate[0], lng: coordinate[1] })
-      );
+      coordinates.map((coordinate) => (
+        polygonPoints.push({
+          lat: coordinate[0],
+          lng: coordinate[1],
+        })
+      ));
       setPolygon(polygonPoints);
-    }
+    };
   }, [geofence]);
 
   const onMarkerDrag = (e, onMarkerDragAction) => {
     if (onMarkerDragAction) {
       onMarkerDragAction(`${e.latLng.lat()},${e.latLng.lng()}`);
       setPolygon({});
-    }
+    };
   };
 
   const onMarkerSelect = (marker) => {
     setShowInfoIndex(marker);
-    if (setSelectedMarker) setSelectedMarker(marker);
+    if (setSelectedMarker) {
+      setSelectedMarker(marker);
+    };
   };
 
   return (
@@ -89,42 +99,44 @@ const RenderedMap = withScriptjs(
               position={{ lat: mark.lat, lng: mark.lng }}
               icon={{
                 path:
-                  "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
+                  'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
                 fillColor: `${mark.color}`,
                 fillOpacity: 1,
-                strokeColor: "white",
+                strokeColor: 'white',
                 scale: 1.4,
                 anchor: { x: 12, y: 24 },
               }}
-              label={index + 1 + ""}
+              label={index + 1 + ''}
               onClick={() => props.onMarkerSelect(mark)}
             >
               {props.showInfoIndex === mark && (
-                <InfoWindow onCloseClick={() => props.onMarkerSelect(null)}>
-                  {mark.label === "Clustered" ? (
+                <InfoWindow
+                  onCloseClick={() => props.onMarkerSelect(null)}
+                >
+                  {mark.label === 'Clustered' ? (
                     <div
                       style={{
-                        color: "black",
-                        display: "flex",
-                        justifyContent: "flex-wrap",
-                        flexWrap: "wrap",
-                        flexDirection: "column",
-                        height: "80px",
-                        width: "200px",
+                        color: 'black',
+                        display: 'flex',
+                        justifyContent: 'flex-wrap',
+                        flexWrap: 'wrap',
+                        flexDirection: 'column',
+                        height: '80px',
+                        width: '200px',
                       }}
                     >
                       {REPORT_TYPES.map((item, idx) => (
                         <div
                           key={`iconItem${idx}${item.id}`}
                           style={{
-                            boxSizing: "border-box",
-                            maxWidth: "55%",
-                            padding: "0.5em",
-                            display: "flex",
-                            alignItems: "center",
+                            boxSizing: 'border-box',
+                            maxWidth: '55%',
+                            padding: '0.5em',
+                            display: 'flex',
+                            alignItems: 'center',
                           }}
                         >
-                          {getIcon(item, "black")} &nbsp;
+                          {getIcon(item, 'black')} &nbsp;
                           {mark[item.id] ? (
                             <span>
                               : {mark[item.id]} {item.unit}
@@ -136,18 +148,20 @@ const RenderedMap = withScriptjs(
                       ))}
                       <div
                         style={{
-                          boxSizing: "border-box",
-                          padding: "0.5em",
-                          display: "flex",
-                          alignItems: "center",
+                          boxSizing: 'border-box',
+                          padding: '0.5em',
+                          display: 'flex',
+                          alignItems: 'center',
                         }}
                       >
-                        {getIcon({ id: "time" }, "black")}{" "}
+                        {getIcon({ id: 'time' }, 'black')}{' '}
                         <span> : {mark.timestamp}</span>
                       </div>
                     </div>
                   ) : (
-                    <div style={{ color: "black" }}>{mark.label}</div>
+                    <div style={{ color: 'black' }}>
+                      {mark.label}
+                    </div>
                   )}
                 </InfoWindow>
               )}
@@ -169,7 +183,9 @@ const RenderedMap = withScriptjs(
             ></Marker>
           )
         )}
-      {props.isMarkerShown && props.markers.length > 0 && props.showPath && (
+      {props.isMarkerShown &&
+        props.markers.length > 0 &&
+        props.showPath && (
         <Polyline
           path={_.map(props.markers, (marker) => ({
             lat: marker.lat,
@@ -177,7 +193,7 @@ const RenderedMap = withScriptjs(
           }))}
           geodesic={true}
           options={{
-            strokeColor: "#424242",
+            strokeColor: '#424242',
             strokeOpacity: 0.75,
             strokeWeight: 1,
           }}
@@ -186,7 +202,7 @@ const RenderedMap = withScriptjs(
       {props.isMarkerShown &&
         props.markers &&
         props.polygon.length > 0 &&
-        props.markers.map((mark, index) =>
+        props.markers.map((mark, index) => (
           mark.radius ? (
             <Marker
               key={
@@ -207,22 +223,22 @@ const RenderedMap = withScriptjs(
                 }}
                 radius={mark.radius * 1000}
                 options={{
-                  strokeColor: "#ff0000",
+                  strokeColor: '#ff0000',
                   strokeOpacity: 0.8,
                   strokeWeight: 2,
-                  fillColor: "#ff0000",
+                  fillColor: '#ff0000',
                   fillOpacity: 0.35,
                 }}
               />
               <InfoWindow>
-                <div style={{ color: "black" }}>
-                  Geofence of{" "}
+                <div style={{ color: 'black' }}>
+                  Geofence of{' '}
                   {convertUnitsOfMeasure(
-                    "km",
+                    'km',
                     parseFloat(mark.radius),
-                    "miles",
-                    "distance"
-                  )}{" "}
+                    'miles',
+                    'distance'
+                  )}{' '}
                   miles
                 </div>
               </InfoWindow>
@@ -241,22 +257,23 @@ const RenderedMap = withScriptjs(
               }
             >
               <InfoWindow>
-                <div style={{ color: "black" }}>
+                <div style={{ color: 'black' }}>
                   Configure radius for geofence
                 </div>
               </InfoWindow>
             </Marker>
           )
-        )}
-      {props.polygon && props.polygon.length > 0 && (
+        ))}
+      {props.polygon &&
+        props.polygon.length > 0 && (
         <Polygon
           path={props.polygon}
           editable={false}
           options={{
-            strokeColor: "#424242",
+            strokeColor: '#424242',
             strokeOpacity: 0.8,
             strokeWeight: 2,
-            fillColor: "#424242",
+            fillColor: '#424242',
             fillOpacity: 0.35,
             polygonKey: 1,
           }}

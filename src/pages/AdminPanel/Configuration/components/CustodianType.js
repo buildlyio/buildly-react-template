@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 import {
   getCustodianType,
   deleteCustodianType,
-} from "midgard/redux/custodian/actions/custodian.actions";
-import DataTableWrapper from "midgard/components/DataTableWrapper/DataTableWrapper";
-import { CUSTODIAN_TYPE_COLUMNS } from "../ConfigurationConstants";
-import { routes } from "midgard/routes/routesConstants";
-import { Route } from "react-router-dom";
-import AddCustodianType from "../forms/AddCustodianType";
+} from '@redux/custodian/actions/custodian.actions';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { routes } from '@routes/routesConstants';
+import { CUSTODIAN_TYPE_COLUMNS } from '../ConfigurationConstants';
+import AddCustodianType from '../forms/AddCustodianType';
 
 const CustodianType = (props) => {
   const { 
@@ -31,7 +31,7 @@ const CustodianType = (props) => {
   useEffect(() => {
     if (!loading && !custodianTypeList) {
       dispatch(getCustodianType());
-    }
+    };
   }, [custodianTypeList]);
 
   const onAddButtonClick = () => {
@@ -42,7 +42,7 @@ const CustodianType = (props) => {
 
   const editType = (item) => {
     history.push(`${editPath}/:${item.id}`, {
-      type: "edit",
+      type: 'edit',
       from: redirectTo || routes.CONFIGURATION,
       data: item,
     });
@@ -63,15 +63,15 @@ const CustodianType = (props) => {
       loading={loading}
       rows={custodianTypeList || []}
       columns={CUSTODIAN_TYPE_COLUMNS}
-      filename="CustodianType"
-      addButtonHeading="Custodian Type"
+      filename='CustodianType'
+      addButtonHeading='Custodian Type'
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle={"Are you sure you want to Delete this Custodian Type?"}
+      confirmModalTitle='Are you sure you want to Delete this Custodian Type?'
     >
       <Route path={`${addPath}`} component={AddCustodianType} />
       <Route path={`${editPath}/:id`} component={AddCustodianType} />

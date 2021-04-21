@@ -1,44 +1,42 @@
-import React, { useState, useEffect, useContext } from "react";
-import moment from "moment";
-import { connect } from "react-redux";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { makeStyles , useTheme } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import { validators } from "../../../utils/validators";
-import Modal from "../../../components/Modal/Modal";
-import MenuItem from "@material-ui/core/MenuItem";
-
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import Select from "@material-ui/core/Select";
-import { useInput } from "../../../hooks/useInput";
-import Loader from "../../../components/Loader/Loader";
+import React, { useState, useEffect, useContext } from 'react';
+import { connect } from 'react-redux';
+import moment from 'moment';
 import {
+  makeStyles,
+  useTheme,
+  TextField,
+  Button,
+  CircularProgress,
+  Grid,
+  MenuItem,
+  useMediaQuery,
   Card,
   CardContent,
   Typography,
   Chip,
   InputAdornment,
-} from "@material-ui/core";
-import DatePickerComponent from "../../../components/DatePicker/DatePicker";
-import SearchModal from "../Sensors/SearchModal";
+} from '@material-ui/core';
+import DatePickerComponent from '@components/DatePicker/DatePicker';
+import { MapComponent } from '@components/MapComponent/MapComponent';
+import Modal from '@components/Modal/Modal';
+import CustomizedTooltips from '@components/ToolTip/ToolTip';
+import { UserContext } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
 import {
   editSensor,
   addSensor,
-} from "../../../redux/sensorsGateway/actions/sensorsGateway.actions";
-import { routes } from "../../../routes/routesConstants";
-import { MapComponent } from "../../../components/MapComponent/MapComponent";
-import { MAP_API_URL } from "../../../utils/utilMethods";
-import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
-import { UserContext } from "midgard/context/User.context";
+} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+import { routes } from '@routes/routesConstants';
+import { MAP_API_URL } from '@utils/utilMethods';
+import { validators } from '@utils/validators';
+import SearchModal from '../Sensors/SearchModal';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex",
-    justifyContent: "left",
-    flexWrap: "wrap",
-    listStyle: "none",
+    display: 'flex',
+    justifyContent: 'left',
+    flexWrap: 'wrap',
+    listStyle: 'none',
     padding: theme.spacing(0.5),
     margin: 0,
   },
@@ -46,89 +44,85 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0.5),
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {
-      width: "70%",
-      margin: "auto",
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    borderRadius: "18px",
+    borderRadius: '18px',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
-    // margin: theme.spacing(1),
-    position: "relative",
+    position: 'relative',
   },
   cardItems: {
     marginTop: theme.spacing(4),
   },
   formTitle: {
-    fontWeight: "bold",
-    marginTop: "1em",
-    textAlign: "center",
+    fontWeight: 'bold',
+    marginTop: '1em',
+    textAlign: 'center',
   },
 }));
 
-function AddSensor({
+const AddSensor = ({
   dispatch,
   loading,
   history,
-  loaded,
-  error,
   location,
   sensorTypeList,
   gatewayData,
-  data,
   sensorOptions,
-}) {
-  const editPage = location.state && location.state.type === "edit";
-  const editData =
-    (location.state && location.state.type === "edit" && location.state.data) ||
-    {};
+}) => {
+  const editPage = location.state && location.state.type === 'edit';
+  const editData = (
+    location.state
+    && location.state.type === 'edit'
+    && location.state.data
+  ) || {};
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
 
-  const sensor_name = useInput((editData && editData.name) || "", {
+  const sensor_name = useInput((editData && editData.name) || '', {
     required: true,
   });
-  const sensor_type = useInput((editData && editData.sensor_type) || "", {
-    required: true,
-  });
+  const sensor_type = useInput(
+    (editData && editData.sensor_type) || '',
+    { required: true }
+  );
   const [activation_date, handleDateChange] = useState(
     (editData && editData.activation_date) || new Date()
   );
-  const sim_card_id = useInput("");
-  const battery_level = useInput("");
-  const mac_address = useInput("");
+  const mac_address = useInput('');
   const [last_known_location, setLastLocation] = useState(
-    (editData &&
-      editData.last_known_location &&
-      editData.last_known_location[0]) ||
-      ""
+    (editData
+    && editData.last_known_location
+    && editData.last_known_location[0])
+    || ''
   );
-  const recharge_before = useInput("");
   const [last_report_date_time, handleLastReportDate] = useState(
     moment(new Date())
   );
-  const sensor_uuid = useInput("");
   const [formError, setFormError] = useState({});
-  const sensor_placed = useInput("");
+  const sensor_placed = useInput('');
   const [associatedGateway, setAccociatedGateway] = useState(null);
-  const [gateway, setGateway] = useState((editData && editData.gateway) || "");
-  const [environmentalModal, toggleEnvironmentalModal] = useState(false);
+  const [gateway, setGateway] = useState(
+    (editData && editData.gateway) || ''
+  );
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
-  const buttonText = editPage ? "Save" : "Add Sensor";
-  const formTitle = editPage ? "Edit Sensor" : "Add Sensor";
+  const buttonText = editPage ? 'Save' : 'Add Sensor';
+  const formTitle = editPage ? 'Edit Sensor' : 'Add Sensor';
 
   const [sensorMetaData, setSensorMetaData] = useState({});
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -136,29 +130,29 @@ function AddSensor({
   useEffect(() => {
     if (sensorOptions && sensorOptions.actions) {
       setSensorMetaData(sensorOptions.actions.POST);
-    }
+    };
   }, [sensorOptions]);
 
   useEffect(() => {
     if (
-      gatewayData &&
-      gatewayData.length &&
-      editData.gateway &&
-      associatedGateway === null
+      gatewayData
+      && gatewayData.length
+      && editData.gateway
+      && associatedGateway === null
     ) {
       gatewayData.forEach((gateway) => {
         if (gateway.url === editData.gateway) {
           setAccociatedGateway(gateway);
-        }
+        };
       });
-    }
+    };
   }, [gatewayData, gateway]);
 
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
       history.push(location.state.from);
-    }
+    };
   };
 
   const setGatewayUrl = (list) => {
@@ -176,7 +170,7 @@ function AddSensor({
       name: sensor_name.value,
       mac_address: mac_address.value,
       sensor_type: sensor_type.value,
-      estimated_eol: "",
+      estimated_eol: '',
       activation_date: activation_date,
       last_known_location: [last_known_location],
       gateway: gateway,
@@ -194,7 +188,7 @@ function AddSensor({
       dispatch(
         addSensor(sensorFormValues, history, `${routes.SENSORS_GATEWAY}`)
       );
-    }
+    };
   };
 
   /**
@@ -205,39 +199,48 @@ function AddSensor({
    */
 
   const handleBlur = (e, validation, input, parentId) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...formError };
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: validateObj,
       });
-    else
+    } else {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
+    };
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
+    const errorKeys = Object.keys(formError);
+    if (
+      !sensor_type.value
+      || !sensor_name.value
+      || !gateway
+    ) {
+      return true;
+    };
     let errorExists = false;
-    if (!sensor_type.value || !sensor_name.value || !gateway) return true;
     errorKeys.forEach((key) => {
-      if (formError[key].error) errorExists = true;
+      if (formError[key].error) {
+        errorExists = true;
+      };
     });
     return errorExists;
   };
 
   const theme = useTheme();
-  let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   const handleDelete = (chipToDelete) => () => {
     setAccociatedGateway(null);
-    setGateway("");
+    setGateway('');
   };
 
   const setLastKnownLocation = (value) => {
@@ -252,34 +255,48 @@ function AddSensor({
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={"md"}
+          maxWidth={'md'}
         >
-          <form className={classes.form} noValidate onSubmit={handleSubmit}>
+          <form
+            className={classes.form}
+            noValidate
+            onSubmit={handleSubmit}
+          >
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   fullWidth
                   required
-                  id="sensor_name"
-                  label="Sensor Name"
-                  name="sensor_name"
-                  autoComplete="sensor_name"
-                  error={formError.sensor_name && formError.sensor_name.error}
-                  helperText={
-                    formError.sensor_name ? formError.sensor_name.message : ""
+                  id='sensor_name'
+                  label='Sensor Name'
+                  name='sensor_name'
+                  autoComplete='sensor_name'
+                  error={
+                    formError.sensor_name
+                    && formError.sensor_name.error
                   }
-                  onBlur={(e) => handleBlur(e, "required", sensor_name)}
+                  helperText={
+                    formError.sensor_name
+                    ? formError.sensor_name.message
+                    : ''
+                  }
+                  onBlur={(e) =>
+                    handleBlur(e, 'required', sensor_name)
+                  }
                   {...sensor_name.bind}
                   InputProps={
-                    sensorMetaData["name"] &&
-                    sensorMetaData["name"].help_text && {
+                    sensorMetaData['name']
+                    && sensorMetaData['name'].help_text
+                    && {
                       endAdornment: (
-                        <InputAdornment position="end">
-                          {sensorMetaData["name"].help_text && (
+                        <InputAdornment position='end'>
+                          {sensorMetaData['name'].help_text && (
                             <CustomizedTooltips
-                              toolTipText={sensorMetaData["name"].help_text}
+                              toolTipText={
+                                sensorMetaData['name'].help_text
+                              }
                             />
                           )}
                         </InputAdornment>
@@ -291,23 +308,24 @@ function AddSensor({
 
               <Grid item xs={12}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   fullWidth
-                  id="last_known_location"
-                  label="Last Known Location"
-                  name="last_known_location"
-                  autoComplete="last_known_location"
+                  id='last_known_location'
+                  label='Last Known Location'
+                  name='last_known_location'
+                  autoComplete='last_known_location'
                   value={last_known_location}
                   InputProps={
-                    sensorMetaData["last_known_location"] &&
-                    sensorMetaData["last_known_location"].help_text && {
+                    sensorMetaData['last_known_location']
+                    && sensorMetaData['last_known_location'].help_text
+                    && {
                       endAdornment: (
-                        <InputAdornment position="end">
-                          {sensorMetaData["last_known_location"].help_text && (
+                        <InputAdornment position='end'>
+                          {sensorMetaData['last_known_location'].help_text && (
                             <CustomizedTooltips
                               toolTipText={
-                                sensorMetaData["last_known_location"].help_text
+                                sensorMetaData['last_known_location'].help_text
                               }
                             />
                           )}
@@ -315,23 +333,30 @@ function AddSensor({
                       ),
                     }
                   }
-                  // onChange={(e) => setLastLocation(e.target.value)}
                 />
                 <MapComponent
                   isMarkerShown
                   googleMapURL={MAP_API_URL}
                   zoom={8}
-                  loadingElement={<div style={{ height: `100%` }} />}
-                  containerElement={<div style={{ height: `200px` }} />}
-                  mapElement={<div style={{ height: `100%` }} />}
+                  loadingElement={
+                    <div style={{ height: `100%` }} />
+                  }
+                  containerElement={
+                    <div style={{ height: `200px` }} />
+                  }
+                  mapElement={
+                    <div style={{ height: `100%` }} />
+                  }
                   markers={[
                     {
-                      lat:
-                        last_known_location &&
-                        parseFloat(last_known_location.split(",")[0]),
-                      lng:
-                        last_known_location &&
-                        parseFloat(last_known_location.split(",")[1]),
+                      lat: last_known_location
+                      && parseFloat(
+                        last_known_location.split(',')[0]
+                      ),
+                      lng: last_known_location
+                      && parseFloat(
+                        last_known_location.split(',')[1]
+                      ),
                       onMarkerDrag: setLastKnownLocation,
                       draggable: true,
                     },
@@ -340,57 +365,59 @@ function AddSensor({
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant="filled"
+                  variant='filled'
                   disabled
-                  margin="normal"
+                  margin='normal'
                   fullWidth
-                  id="sensor_placed"
-                  label="Sensor Placed"
-                  name="sensor_placed"
-                  autoComplete="sensor_placed"
+                  id='sensor_placed'
+                  label='Sensor Placed'
+                  name='sensor_placed'
+                  autoComplete='sensor_placed'
                   {...sensor_placed.bind}
                 />
               </Grid>
             </Grid>
-            <Card variant="outlined" className={classes.cardItems}>
+            <Card variant='outlined' className={classes.cardItems}>
               <CardContent>
                 <Typography
                   className={classes.dashboardHeading}
-                  variant={"body1"}
+                  variant={'body1'}
                 >
                   Sensor Info
                 </Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
                       required
-                      id="sensor_type"
+                      id='sensor_type'
                       select
-                      label="Sensor Type"
+                      label='Sensor Type'
                       error={
-                        formError.sensor_type && formError.sensor_type.error
+                        formError.sensor_type
+                        && formError.sensor_type.error
                       }
                       helperText={
                         formError.sensor_type
-                          ? formError.sensor_type.message
-                          : ""
+                        ? formError.sensor_type.message
+                        : ''
                       }
                       onBlur={(e) =>
-                        handleBlur(e, "required", sensor_type, "sensor_type")
+                        handleBlur(e, 'required', sensor_type, 'sensor_type')
                       }
                       {...sensor_type.bind}
                       InputProps={
-                        sensorMetaData["sensor_type"] &&
-                        sensorMetaData["sensor_type"].help_text && {
+                        sensorMetaData['sensor_type']
+                        && sensorMetaData['sensor_type'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {sensorMetaData["sensor_type"].help_text && (
+                            <InputAdornment position='end'>
+                              {sensorMetaData['sensor_type'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    sensorMetaData["sensor_type"].help_text
+                                    sensorMetaData['sensor_type'].help_text
                                   }
                                 />
                               )}
@@ -399,7 +426,7 @@ function AddSensor({
                         }
                       }
                     >
-                      <MenuItem value={""}>Select</MenuItem>
+                      <MenuItem value={''}>Select</MenuItem>
                       {sensorTypeList &&
                         sensorTypeList.map((item, index) => (
                           <MenuItem
@@ -413,37 +440,38 @@ function AddSensor({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <DatePickerComponent
-                      label={"Activated"}
+                      label={'Activated'}
                       selectedDate={activation_date}
                       handleDateChange={handleDateChange}
                       helpText={
-                        sensorMetaData["activation_date"] &&
-                        sensorMetaData["activation_date"].help_text
-                          ? sensorMetaData["activation_date"].help_text
-                          : ""
+                        sensorMetaData['activation_date']
+                        && sensorMetaData['activation_date'].help_text
+                          ? sensorMetaData['activation_date'].help_text
+                          : ''
                       }
                     />
                   </Grid>
 
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="mac_address"
-                      label="Mac Address"
-                      name="mac_address"
-                      autoComplete="mac_address"
+                      id='mac_address'
+                      label='Mac Address'
+                      name='mac_address'
+                      autoComplete='mac_address'
                       {...mac_address.bind}
                       InputProps={
-                        sensorMetaData["mac_address"] &&
-                        sensorMetaData["mac_address"].help_text && {
+                        sensorMetaData['mac_address']
+                        && sensorMetaData['mac_address'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {sensorMetaData["mac_address"].help_text && (
+                            <InputAdornment position='end'>
+                              {sensorMetaData['mac_address'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    sensorMetaData["mac_address"].help_text
+                                    sensorMetaData['mac_address'].help_text
                                   }
                                 />
                               )}
@@ -458,10 +486,10 @@ function AddSensor({
             </Card>
             <Grid item xs={6} sm={4}>
               <Button
-                type="button"
+                type='button'
                 fullWidth
-                variant="contained"
-                color="secondary"
+                variant='contained'
+                color='secondary'
                 onClick={() => setSearchModalOpen(true)}
                 className={classes.submit}
               >
@@ -477,13 +505,13 @@ function AddSensor({
                 />
               )}
             </Grid>
-            <Grid container spacing={2} justify="center">
+            <Grid container spacing={2} justify='center'>
               <Grid item xs={6} sm={4}>
                 <Button
-                  type="button"
+                  type='button'
                   fullWidth
-                  variant="contained"
-                  color="primary"
+                  variant='contained'
+                  color='primary'
                   onClick={() => closeModal()}
                   className={classes.submit}
                 >
@@ -493,10 +521,10 @@ function AddSensor({
               <Grid item xs={6} sm={4}>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type="submit"
+                    type='submit'
                     fullWidth
-                    variant="contained"
-                    color="primary"
+                    variant='contained'
+                    color='primary'
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
                   >
@@ -516,20 +544,23 @@ function AddSensor({
             <SearchModal
               open={searchModalOpen}
               setOpen={setSearchModalOpen}
-              title={"Associate Gateway UUID"}
-              submitText={"Save"}
+              title={'Associate Gateway UUID'}
+              submitText={'Save'}
               submitAction={setGatewayUrl}
               selectedList={
-                gateway && associatedGateway ? associatedGateway : null
+                gateway && associatedGateway
+                ? associatedGateway
+                : null
               }
               listOfItems={gatewayData}
               helpText={
-                sensorMetaData["gateway"] && sensorMetaData["gateway"].help_text
-                  ? sensorMetaData["gateway"].help_text
-                  : ""
+                sensorMetaData['gateway']
+                && sensorMetaData['gateway'].help_text
+                  ? sensorMetaData['gateway'].help_text
+                  : ''
               }
-              searchFieldLabel={"Select Gateway UUID"}
-              searchFieldPlaceHolder={"Select the Value"}
+              searchFieldLabel={'Select Gateway UUID'}
+              searchFieldPlaceHolder={'Select the Value'}
             />
           )}
         </Modal>

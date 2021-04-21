@@ -1,58 +1,61 @@
-import React, { useState, useContext } from "react";
-import { connect } from "react-redux";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import Modal from "midgard/components/Modal/Modal";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import Grid from "@material-ui/core/Grid";
-import { useInput } from "midgard/hooks/useInput";
-import { validators } from "midgard/utils/validators";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import Checkbox from '@material-ui/core/Checkbox';
-import CircularProgress from "@material-ui/core/CircularProgress";
+import React, { useState, useContext } from 'react';
+import { connect } from 'react-redux';
+import {
+  makeStyles,
+  useTheme,
+  useMediaQuery,
+  Grid,
+  Button,
+  TextField,
+  Typography,
+  Checkbox,
+  CircularProgress,
+} from '@material-ui/core';
+import Modal from '@components/Modal/Modal';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
 import {
   addShipmentFlag,
   editShipmentFlag,
-} from "midgard/redux/shipment/actions/shipment.actions";
-import { UserContext } from "midgard/context/User.context";
+} from '@redux/shipment/actions/shipment.actions';
+import { UserContext } from '@context/User.context';
 
 const useStyles = makeStyles((theme) => ({
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {
-      width: "70%",
-      margin: "auto",
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    borderRadius: "18px",
+    borderRadius: '18px',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
-    position: "relative",
+    position: 'relative',
   },
   formTitle: {
-    fontWeight: "bold",
-    marginTop: "1em",
-    textAlign: "center",
+    fontWeight: 'bold',
+    marginTop: '1em',
+    textAlign: 'center',
   },
   checkbox: {
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
   },
   label: {
     marginLeft: `${theme.spacing(2)}px !important`,
-    fontSize: "0.9rem",
+    fontSize: '0.9rem',
   },
 }));
 
@@ -61,14 +64,16 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openModal, toggleModal] = useState(true);
 
-  const editPage = location.state && location.state.type === "edit";
-  const editData =
-    (location.state && location.state.type === "edit" && location.state.data) ||
-    {};
-  const name = useInput((editData && editData.name) || "", {
+  const editPage = location.state && location.state.type === 'edit';
+  const editData = (
+    location.state
+    && location.state.type === 'edit'
+    && location.state.data
+  ) || {};
+  const name = useInput((editData && editData.name) || '', {
     required: true,
   });
-  const type = useInput((editData && editData.type) || "", {
+  const type = useInput((editData && editData.type) || '', {
     required: true,
   });
   const [maxFlag, setMaxFlag] = useState((editData && editData.max_flag) || false);
@@ -76,16 +81,16 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
   const [formError, setFormError] = useState({});
   
   const theme = useTheme();
-  let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
-  const buttonText = editPage ? "Save" : "Add Shipment Flag";
-  const formTitle = editPage ? "Edit Shipment Flag" : "Add Shipment Flag";
+  const buttonText = editPage ? 'Save' : 'Add Shipment Flag';
+  const formTitle = editPage ? 'Edit Shipment Flag' : 'Add Shipment Flag';
 
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
       history.push(location.state.from);
-    }
+    };
   };
 
   /**
@@ -112,7 +117,7 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
         create_date: currentDateTime,
       };
       dispatch(addShipmentFlag(data));
-    }
+    };
     closeModal();
   };
 
@@ -124,29 +129,34 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
    */
 
   const handleBlur = (e, validation, input, parentId) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...formError };
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: validateObj,
       });
-    else
+    } else {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
+    };
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
+    const errorKeys = Object.keys(formError);
+    if (!name.value || !type.value) {
+      return true;
+    };
     let errorExists = false;
-    if (!name.value || !type.value) return true;
     errorKeys.forEach((key) => {
-      if (formError[key].error) errorExists = true;
+      if (formError[key].error) {
+        errorExists = true;
+      };
     });
     return errorExists;
   };
@@ -159,43 +169,47 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={"md"}
+          maxWidth={'md'}
         >
-          <form className={classes.form} noValidate onSubmit={handleSubmit}>
+          <form
+            className={classes.form}
+            noValidate
+            onSubmit={handleSubmit}
+          >
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   fullWidth
                   required
-                  id="name"
-                  label="Flag Name"
-                  name="name"
-                  autoComplete="name"
+                  id='name'
+                  label='Flag Name'
+                  name='name'
+                  autoComplete='name'
                   error={formError.name && formError.name.error}
                   helperText={
-                    formError.name ? formError.name.message : ""
+                    formError.name ? formError.name.message : ''
                   }
-                  onBlur={(e) => handleBlur(e, "required", name)}
+                  onBlur={(e) => handleBlur(e, 'required', name)}
                   {...name.bind}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   fullWidth
                   required
-                  id="type"
-                  label="Flag Type"
-                  name="type"
-                  autoComplete="type"
+                  id='type'
+                  label='Flag Type'
+                  name='type'
+                  autoComplete='type'
                   error={formError.type && formError.type.error}
                   helperText={
-                    formError.type ? formError.type.message : ""
+                    formError.type ? formError.type.message : ''
                   }
-                  onBlur={(e) => handleBlur(e, "required", type)}
+                  onBlur={(e) => handleBlur(e, 'required', type)}
                   {...type.bind}
                 />
               </Grid>
@@ -221,14 +235,14 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
                   </Typography>
                 </div>
               </Grid>
-              <Grid container spacing={2} justify="center">
+              <Grid container spacing={2} justify='center'>
                 <Grid item xs={6} sm={4}>
                   <div className={classes.loadingWrapper}>
                     <Button
-                      type="submit"
+                      type='submit'
                       fullWidth
-                      variant="contained"
-                      color="primary"
+                      variant='contained'
+                      color='primary'
                       className={classes.submit}
                       disabled={loading || submitDisabled()}
                     >
@@ -244,10 +258,10 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
                 </Grid>
                 <Grid item xs={6} sm={4}>
                   <Button
-                    type="button"
+                    type='button'
                     fullWidth
-                    variant="contained"
-                    color="primary"
+                    variant='contained'
+                    color='primary'
                     onClick={() => closeModal()}
                     className={classes.submit}
                   >

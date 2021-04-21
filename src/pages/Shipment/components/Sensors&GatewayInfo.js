@@ -1,10 +1,8 @@
-/* eslint-disable no-use-before-define */
-import React, { useState, useContext } from "react";
-import { connect } from "react-redux";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
+import React, { useState, useContext } from 'react';
+import { connect } from 'react-redux';
 import {
+  makeStyles,
+  TextField,
   Box,
   Checkbox,
   Card,
@@ -13,82 +11,82 @@ import {
   Grid,
   Button,
   CircularProgress,
-} from "@material-ui/core";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import DataTable from "../../../components/Table/Table";
-import { editShipment } from "../../../redux/shipment/actions/shipment.actions";
-import { routes } from "../../../routes/routesConstants";
+} from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+import {
+  CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
+  CheckBox as CheckBoxIcon,
+} from '@material-ui/icons';
+import DataTable from '@components/Table/Table';
+import { UserContext } from '@context/User.context';
 import {
   gatewayColumns,
   getFormattedRow,
   sensorsColumns,
   getFormattedSensorRow,
   getAvailableGateways,
-} from "../../SensorsGateway/Constants";
-import { UserContext } from "midgard/context/User.context";
+} from '@pages/SensorsGateway/Constants';
+import { editShipment } from '@redux/shipment/actions/shipment.actions';
+import { routes } from '@routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    "& > * + *": {
+    '& > * + *': {
       marginTop: theme.spacing(3),
     },
   },
   buttonContainer: {
     margin: theme.spacing(8, 0),
-    textAlign: "center",
-    justifyContent: "center",
+    textAlign: 'center',
+    justifyContent: 'center',
   },
   alignRight: {
-    marginLeft: "auto",
+    marginLeft: 'auto',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
-    // margin: theme.spacing(1),
-    position: "relative",
+    position: 'relative',
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {
-      width: "70%",
-      margin: "auto",
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
     },
   },
   submit: {
-    borderRadius: "18px",
+    borderRadius: '18px',
     fontSize: 11,
   },
 }));
 
-function SensorsGatewayInfo(props) {
-  const {
-    gatewayData,
-    gatewayTypeList,
-    shipmentData,
-    history,
-    redirectTo,
-    loading,
-    handleNext,
-    handleCancel,
-    shipmentFormData,
-    dispatch,
-    sensorData,
-    sensorTypeList,
-    viewOnly,
-  } = props;
+const SensorsGatewayInfo = ({
+  gatewayData,
+  gatewayTypeList,
+  shipmentData,
+  history,
+  loading,
+  handleNext,
+  handleCancel,
+  shipmentFormData,
+  dispatch,
+  sensorData,
+  sensorTypeList,
+  viewOnly,
+}) => {
+  const classes = useStyles();
   const [gatewayIds, setGatewayIds] = useState(
     (shipmentFormData && shipmentFormData.gateway_ids) || []
   );
-  const classes = useStyles();
-  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-  const checkedIcon = <CheckBoxIcon fontSize="small" />;
+  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
+  const checkedIcon = <CheckBoxIcon fontSize='small' />;
   const organization = useContext(UserContext).organization.organization_uuid;
 
   let rows = [];
@@ -104,14 +102,18 @@ function SensorsGatewayInfo(props) {
           sensorData.forEach((sensor) => {
             if (element.url === sensor.gateway) {
               selectedSensors.push(sensor);
-            }
+            };
           });
-        }
-      }
+        };
+      };
     });
-    rows = getFormattedRow(selectedRows, gatewayTypeList, shipmentData);
-    sensorsRow = getFormattedSensorRow(selectedSensors, sensorTypeList);
-  }
+    rows = getFormattedRow(
+      selectedRows, gatewayTypeList, shipmentData
+    );
+    sensorsRow = getFormattedSensorRow(
+      selectedSensors, sensorTypeList
+    );
+  };
 
   const onInputChange = (value) => {
     const gatewayIds = value.map((val) => val.gateway_uuid);
@@ -119,7 +121,9 @@ function SensorsGatewayInfo(props) {
   };
 
   const submitDisabled = () => {
-    if (!gatewayIds.length || gatewayData === null) return true;
+    if (!gatewayIds.length || gatewayData === null) {
+      return true;
+    };
   };
 
   /**
@@ -144,29 +148,31 @@ function SensorsGatewayInfo(props) {
   return (
     <Box mb={5} mt={3}>
       <form noValidate onSubmit={handleSubmit}>
-        <Card variant="outlined" className={classes.form}>
+        <Card variant='outlined' className={classes.form}>
           <CardContent>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Autocomplete
                   multiple
-                  id="combo-box-demo"
+                  id='combo-box-demo'
                   disabled={viewOnly}
                   options={
-                    (gatewayData &&
-                      getAvailableGateways(
+                    (gatewayData
+                      && getAvailableGateways(
                         gatewayData,
-                        shipmentFormData.provider
-                          ? shipmentFormData.provider.toLowerCase()
-                          : "iclp",
+                        shipmentFormData.platform_name
+                          ? shipmentFormData.platform_name.toLowerCase()
+                          : 'iclp',
                         gatewayTypeList,
                         shipmentData
-                      )) ||
-                    []
+                    ))
+                    || []
                   }
                   getOptionLabel={(option) => option && option.name}
                   filterSelectedOptions
-                  onChange={(event, newValue) => onInputChange(newValue)}
+                  onChange={(event, newValue) => 
+                    onInputChange(newValue)
+                  }
                   defaultValue={rows}
                   renderOption={(option, { selected }) => (
                     <React.Fragment>
@@ -183,9 +189,9 @@ function SensorsGatewayInfo(props) {
                     <TextField
                       {...params}
                       disabled={viewOnly}
-                      label="Associate to Gateway"
-                      variant="outlined"
-                      placeholder="Select a Gateway"
+                      label='Associate to Gateway'
+                      variant='outlined'
+                      placeholder='Select a Gateway'
                     />
                   )}
                 />
@@ -198,13 +204,12 @@ function SensorsGatewayInfo(props) {
             {rows.length > 0 && (
               <Grid item xs={12}>
                 <Box mt={5}>
-                  <Typography gutterBottom variant="h5">
+                  <Typography gutterBottom variant='h5'>
                     Associated Gateways
                   </Typography>
                   <DataTable
                     rows={rows || []}
                     columns={columns}
-                    // actionsColumns={actionsColumns}
                     hasSearch={false}
                   />
                 </Box>
@@ -213,13 +218,12 @@ function SensorsGatewayInfo(props) {
             {sensorsRow.length > 0 && (
               <Grid item xs={12}>
                 <Box mt={5}>
-                  <Typography gutterBottom variant="h5">
+                  <Typography gutterBottom variant='h5'>
                     Associated Sensors with Gateway
                   </Typography>
                   <DataTable
                     rows={sensorsRow || []}
                     columns={sensorsColumns}
-                    // actionsColumns={actionsColumns}
                     hasSearch={false}
                   />
                 </Box>
@@ -227,14 +231,18 @@ function SensorsGatewayInfo(props) {
             )}
           </Grid>
         </Box>
-        <Grid container spacing={3} className={classes.buttonContainer}>
+        <Grid
+          container
+          spacing={3}
+          className={classes.buttonContainer}
+        >
           <Grid item xs={6} sm={2}>
             {viewOnly ? (
               <Button
-                type="button"
+                type='button'
                 fullWidth
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 className={classes.submit}
                 onClick={handleCancel}
               >
@@ -243,10 +251,10 @@ function SensorsGatewayInfo(props) {
             ) : (
               <div className={classes.loadingWrapper}>
                 <Button
-                  type="submit"
+                  type='submit'
                   fullWidth
-                  variant="contained"
-                  color="primary"
+                  variant='contained'
+                  color='primary'
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
@@ -264,8 +272,8 @@ function SensorsGatewayInfo(props) {
 
           <Grid item xs={12} sm={4}>
             <Button
-              variant="contained"
-              color="primary"
+              variant='contained'
+              color='primary'
               fullWidth
               onClick={handleNext}
               className={classes.submit}

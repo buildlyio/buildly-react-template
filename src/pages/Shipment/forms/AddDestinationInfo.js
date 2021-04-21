@@ -1,104 +1,96 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import moment from "moment";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Box from "@material-ui/core/Box";
-import Card from "@material-ui/core/Card";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import { validators } from "../../../utils/validators";
-import Modal from "../../../components/Modal/Modal";
-import MenuItem from "@material-ui/core/MenuItem";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useInput } from "../../../hooks/useInput";
-import Loader from "../../../components/Loader/Loader";
-import { dispatch } from "../../../redux/store";
-import { STATE_CHOICES, COUNTRY_CHOICES } from "../../../utils/mock";
-import { routes } from "../../../routes/routesConstants";
-import DatePickerComponent from "../../../components/DatePicker/DatePicker";
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import {
+  makeStyles,
+  Button,
+  TextField,
+  Card,
+  CircularProgress,
+  CardContent,
+  Typography,
+  Grid,
+  MenuItem,
+  useTheme,
+  useMediaQuery,
+} from '@material-ui/core';
+import DatePickerComponent from '@components/DatePicker/DatePicker';
+import Modal from '@components/Modal/Modal';
+import { useInput } from '@hooks/useInput';
+import { routes } from '@routes/routesConstants';
+import { STATE_CHOICES, COUNTRY_CHOICES } from '@utils/mock';
+import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(8),
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {
-      width: "70%",
-      margin: "auto",
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    borderRadius: "18px",
+    borderRadius: '18px',
   },
   logo: {
-    width: "100%",
+    width: '100%',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
-    // margin: theme.spacing(1),
-    position: "relative",
+    position: 'relative',
   },
   addressContainer: {
     marginTop: theme.spacing(4),
   },
   formTitle: {
-    fontWeight: "bold",
-    marginTop: "1em",
-    textAlign: "center",
+    fontWeight: 'bold',
+    marginTop: '1em',
+    textAlign: 'center',
   },
 }));
 
-function AddDestinationInfo({
-  dispatch,
+const AddDestinationInfo = ({
   loading,
   history,
-  loaded,
-  error,
   location,
-}) {
-  const editPage = location.state && location.state.type === "edit";
+}) => {
+  const editPage = location.state && location.state.type === 'edit';
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
-  const company = useInput("", {
-    required: true,
-  });
-  const glnNumber = useInput("");
-  const city = useInput("");
-  const state = useInput("", {
-    required: true,
-  });
-  const country = useInput("", {
-    required: true,
-  });
-  const zip = useInput("");
-  const address_1 = useInput("", {
-    required: true,
-  });
-  const address_2 = useInput("");
+  const company = useInput('', { required: true });
+  const glnNumber = useInput('');
+  const city = useInput('');
+  const state = useInput('', { required: true });
+  const country = useInput('', { required: true });
+  const zip = useInput('');
+  const address_1 = useInput('', { required: true });
+  const address_2 = useInput('');
   const [scheduled_arrival, handleDateChange] = useState(moment());
   const [formError, setFormError] = useState({});
 
-  const buttonText = "Save & Close";
-  const formTitle = "Add Destination Info (3/3)";
+  const buttonText = 'Save & Close';
+  const formTitle = 'Add Destination Info (3/3)';
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+
   const closeModal = () => {
     toggleModal(false);
-    if (location && location.state) history.push(location.state.from);
-    else history.push(`${routes.SHIPMENT}/add`);
+    if (location && location.state) {
+      history.push(location.state.from);
+    } else {
+      history.push(`${routes.SHIPMENT}/add`);
+    };
   };
 
   /**
@@ -117,30 +109,39 @@ function AddDestinationInfo({
    */
 
   const handleBlur = (e, validation, input, parentId) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...formError };
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: validateObj,
       });
-    else
+    } else {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
+    };
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
-    let errorExists = false;
-    if (!company.value || !address_1.value || !state.value || !country.value)
+    const errorKeys = Object.keys(formError);
+    if (
+      !company.value
+      || !address_1.value
+      || !state.value
+      || !country.value
+    ){
       return true;
+    };
+    let errorExists = false;
     errorKeys.forEach((key) => {
-      if (formError[key].error) errorExists = true;
+      if (formError[key].error) {
+        errorExists = true;
+      };
     });
     return errorExists;
   };
@@ -154,11 +155,8 @@ function AddDestinationInfo({
   const handleBack = () => {
     if (location && location.state) {
       history.push(location.state.from);
-    }
+    };
   };
-
-  const theme = useTheme();
-  let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
   return (
     <div>
@@ -168,80 +166,101 @@ function AddDestinationInfo({
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={"md"}
+          maxWidth={'md'}
         >
-          <form className={classes.form} noValidate onSubmit={handleSubmit}>
+          <form
+            className={classes.form}
+            noValidate
+            onSubmit={handleSubmit}
+          >
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   required
                   fullWidth
-                  id="company"
-                  label="Destination Company"
-                  name="company"
-                  autoComplete="company"
-                  error={formError.company && formError.company.error}
-                  helperText={
-                    formError.company ? formError.company.message : ""
+                  id='company'
+                  label='Destination Company'
+                  name='company'
+                  autoComplete='company'
+                  error={
+                    formError.company
+                    && formError.company.error
                   }
-                  onBlur={(e) => handleBlur(e, "required", company)}
+                  helperText={
+                    formError.company
+                    ? formError.company.message
+                    : ''
+                  }
+                  onBlur={(e) => handleBlur(e, 'required', company)}
                   {...company.bind}
                 />
               </Grid>
               <Grid item xs={12}>
                 <DatePickerComponent
-                  label={"Scheduled Arrival"}
+                  label={'Scheduled Arrival'}
                   selectedDate={scheduled_arrival}
                   handleDateChange={handleDateChange}
                 />
               </Grid>
               <Grid item item xs={12}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   fullWidth
-                  id="glnNumber"
-                  label="GLN Number"
-                  name="glnNumber"
-                  autoComplete="glnNumber"
+                  id='glnNumber'
+                  label='GLN Number'
+                  name='glnNumber'
+                  autoComplete='glnNumber'
                   {...glnNumber.bind}
                 />
               </Grid>
             </Grid>
 
-            <Card variant="outlined" className={classes.addressContainer}>
+            <Card
+              variant='outlined'
+              className={classes.addressContainer}
+            >
               <CardContent>
-                <Typography variant="h6">Ship To Location</Typography>
+                <Typography variant='h6'>
+                  Ship To Location
+                </Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       required
                       fullWidth
-                      id="address_1"
-                      label="Address Line 1"
-                      name="address_1"
-                      autoComplete="address_1"
-                      error={formError.address_1 && formError.address_1.error}
-                      helperText={
-                        formError.address_1 ? formError.address_1.message : ""
+                      id='address_1'
+                      label='Address Line 1'
+                      name='address_1'
+                      autoComplete='address_1'
+                      error={
+                        formError.address_1
+                        && formError.address_1.error
                       }
-                      onBlur={(e) => handleBlur(e, "required", address_1)}
+                      helperText={
+                        formError.address_1
+                        ? formError.address_1.message
+                        : ''
+                      }
+                      onBlur={(e) =>
+                        handleBlur(e, 'required', address_1)
+                      }
                       {...address_1.bind}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="address_2"
-                      label="Address Line 2"
-                      name="address_2"
-                      autoComplete="address_2"
+                      id='address_2'
+                      label='Address Line 2'
+                      name='address_2'
+                      autoComplete='address_2'
                       {...address_2.bind}
                     />
                   </Grid>
@@ -249,33 +268,44 @@ function AddDestinationInfo({
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
-                      // required
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="city"
-                      label="City"
-                      name="city"
-                      autoComplete="city"
-                      error={formError.city && formError.city.error}
-                      helperText={formError.city ? formError.city.message : ""}
-                      onBlur={(e) => handleBlur(e, "required", city)}
+                      id='city'
+                      label='City'
+                      name='city'
+                      autoComplete='city'
+                      error={
+                        formError.city
+                        && formError.city.error
+                      }
+                      helperText={
+                        formError.city
+                        ? formError.city.message
+                        : ''
+                      }
+                      onBlur={(e) =>
+                        handleBlur(e, 'required', city)
+                      }
                       {...city.bind}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
-                      // required
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="zip"
-                      label="Zip"
-                      name="zip"
-                      autoComplete="zip"
+                      id='zip'
+                      label='Zip'
+                      name='zip'
+                      autoComplete='zip'
                       error={formError.zip && formError.zip.error}
-                      helperText={formError.zip ? formError.zip.message : ""}
-                      onBlur={(e) => handleBlur(e, "required", zip)}
+                      helperText={
+                        formError.zip
+                        ? formError.zip.message
+                        : ''
+                      }
+                      onBlur={(e) => handleBlur(e, 'required', zip)}
                       {...zip.bind}
                     />
                   </Grid>
@@ -283,23 +313,33 @@ function AddDestinationInfo({
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="state"
+                      id='state'
                       select
                       required
-                      label="State"
-                      error={formError.state && formError.state.error}
-                      helperText={
-                        formError.state ? formError.state.message : ""
+                      label='State'
+                      error={
+                        formError.state
+                        && formError.state.error
                       }
-                      onBlur={(e) => handleBlur(e, "required", state, "state")}
+                      helperText={
+                        formError.state
+                        ? formError.state.message
+                        : ''
+                      }
+                      onBlur={(e) =>
+                        handleBlur(e, 'required', state, 'state')
+                      }
                       {...state.bind}
                     >
-                      <MenuItem value={""}>Select</MenuItem>
+                      <MenuItem value={''}>Select</MenuItem>
                       {STATE_CHOICES.map((value, index) => (
-                        <MenuItem key={`destState${index}:${value}`} value={value}>
+                        <MenuItem
+                          key={`destState${index}:${value}`}
+                          value={value}
+                        >
                           {value}
                         </MenuItem>
                       ))}
@@ -307,25 +347,33 @@ function AddDestinationInfo({
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="country"
+                      id='country'
                       select
                       required
-                      label="Country"
-                      error={formError.country && formError.country.error}
+                      label='Country'
+                      error={
+                        formError.country
+                        && formError.country.error
+                      }
                       helperText={
-                        formError.country ? formError.country.message : ""
+                        formError.country
+                        ? formError.country.message
+                        : ''
                       }
                       onBlur={(e) =>
-                        handleBlur(e, "required", country, "country")
+                        handleBlur(e, 'required', country, 'country')
                       }
                       {...country.bind}
                     >
-                      <MenuItem value={""}>Select</MenuItem>
+                      <MenuItem value={''}>Select</MenuItem>
                       {COUNTRY_CHOICES.map((value, index) => (
-                        <MenuItem key={`destCountry${index}:${value}`} value={value}>
+                        <MenuItem
+                          key={`destCountry${index}:${value}`}
+                          value={value}
+                        >
                           {value}
                         </MenuItem>
                       ))}
@@ -335,13 +383,17 @@ function AddDestinationInfo({
               </CardContent>
             </Card>
 
-            <Grid container spacing={isDesktop ? 3 : 0} justify="center">
+            <Grid
+              container
+              spacing={isDesktop ? 3 : 0}
+              justify='center'
+            >
               <Grid item xs={12} sm={3}>
                 <Button
-                  type="button"
+                  type='button'
                   fullWidth
-                  variant="contained"
-                  color="primary"
+                  variant='contained'
+                  color='primary'
                   onClick={() => closeModal()}
                   className={classes.submit}
                 >
@@ -350,10 +402,10 @@ function AddDestinationInfo({
               </Grid>
               <Grid item xs={12} sm={3}>
                 <Button
-                  type="button"
+                  type='button'
                   fullWidth
-                  variant="contained"
-                  color="primary"
+                  variant='contained'
+                  color='primary'
                   onClick={() => handleBack()}
                   className={classes.submit}
                 >
@@ -363,10 +415,10 @@ function AddDestinationInfo({
               <Grid item xs={12} sm={6}>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type="button"
+                    type='button'
                     fullWidth
-                    variant="contained"
-                    color="primary"
+                    variant='contained'
+                    color='primary'
                     onClick={() => onNextClick()}
                     className={classes.submit}
                     disabled={loading || submitDisabled()}

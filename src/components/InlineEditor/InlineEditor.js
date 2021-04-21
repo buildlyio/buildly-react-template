@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import {
   makeStyles,
   Typography,
@@ -96,17 +96,17 @@ export const InlineEditor = ({
       {editing ? (
         <TextField
           tag={tag}
-          size="small"
-          variant="outlined"
+          size='small'
+          variant='outlined'
           autoFocus={true}
           ref={node}
           name={`${id}`}
-          type="text"
+          type='text'
           placeholder={placeholder}
           value={text}
           onChange={(event) => setText(event.target.value)} />
       ) : (
-        <Grid container direction="row" alignItems="center" className={`${classes.nonEditMode} ${!value && classes.placeholder}`} onDoubleClick={() => setEditing(true)}>
+        <Grid container direction='row' alignItems='center' className={`${classes.nonEditMode} ${!value && classes.placeholder}`} onDoubleClick={() => setEditing(true)}>
           <Grid item>
             <Typography className={classes.typography} variant={tag}>
               {value || placeholder}

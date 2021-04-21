@@ -1,58 +1,52 @@
-import React, { useState } from "react";
+import React from 'react';
+import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
   KeyboardDateTimePicker,
-  DateTimePicker,
-} from "@material-ui/pickers";
-import EventIcon from "@material-ui/icons/Event";
-import AlarmIcon from "@material-ui/icons/AddAlarm";
-import { IconButton, InputAdornment } from "@material-ui/core";
-import MomentUtils from "@date-io/moment";
-import DateFnsUtils from "@date-io/date-fns";
-import moment from "moment";
-import CustomizedTooltips from "../ToolTip/ToolTip";
+} from '@material-ui/pickers';
+import CustomizedTooltips from '@components/ToolTip/ToolTip';
 
-export default function DatePickerComponent({
+export default DatePickerComponent = ({
   selectedDate,
   handleDateChange,
   label,
   hasTime,
   helpText,
-  disabled
-}) {
+  disabled,
+}) => {
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         {hasTime ? (
           <KeyboardDateTimePicker
-            variant="inline"
-            inputVariant="outlined"
+            variant='inline'
+            inputVariant='outlined'
             ampm={false}
             fullWidth
-            margin="normal"
+            margin='normal'
             disabled={disabled}
             label={label}
             value={selectedDate}
             onChange={handleDateChange}
-            format="MM/dd/yyyy HH:mm:ss"
+            format='MM/dd/yyyy HH:mm:ss'
           />
         ) : (
           <KeyboardDatePicker
             // disableToolbar
             autoOk
             fullWidth
-            inputVariant="outlined"
-            variant="inline"
-            format="MM/dd/yyyy"
-            margin="normal"
+            inputVariant='outlined'
+            variant='inline'
+            format='MM/dd/yyyy'
+            margin='normal'
             disabled={disabled}
-            id="date-picker-inline"
+            id='date-picker-inline'
             label={label}
             value={selectedDate}
             onChange={handleDateChange}
             KeyboardButtonProps={{
-              "aria-label": "change date",
+              'aria-label': 'change date',
             }}
           />
         )}

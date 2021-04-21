@@ -1,10 +1,8 @@
-/* eslint-disable no-use-before-define */
-import React, { useState, useContext } from "react";
-import { connect } from "react-redux";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
+import React, { useState, useContext } from 'react';
+import { connect } from 'react-redux';
 import {
+  makeStyles,
+  TextField,
   Box,
   Checkbox,
   Card,
@@ -13,79 +11,77 @@ import {
   Grid,
   Button,
   CircularProgress,
-} from "@material-ui/core";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import { getFormattedRow, itemColumns } from "../../Items/ItemsConstants";
-import DataTable from "../../../components/Table/Table";
-import { editShipment } from "../../../redux/shipment/actions/shipment.actions";
-import { routes } from "../../../routes/routesConstants";
-import { compareSort } from "../../../utils/utilMethods";
-import { UserContext } from "midgard/context/User.context";
+} from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+import {
+  CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
+  CheckBox as CheckBoxIcon,
+} from '@material-ui/icons';
+import DataTable from '@components/Table/Table';
+import { UserContext } from '@context/User.context';
+import { getFormattedRow, itemColumns } from '@pages/Items/ItemsConstants';
+import { editShipment } from '@redux/shipment/actions/shipment.actions';
+import { routes } from '@routes/routesConstants';
+import { compareSort } from '@utils/utilMethods';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    "& > * + *": {
+    '& > * + *': {
       marginTop: theme.spacing(3),
     },
   },
   buttonContainer: {
     margin: theme.spacing(8, 0),
-    textAlign: "center",
-    justifyContent: "center",
+    textAlign: 'center',
+    justifyContent: 'center',
   },
   alignRight: {
-    marginLeft: "auto",
+    marginLeft: 'auto',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
-    // margin: theme.spacing(1),
-    position: "relative",
+    position: 'relative',
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {
-      width: "70%",
-      margin: "auto",
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
     },
   },
   submit: {
-    borderRadius: "18px",
+    borderRadius: '18px',
     fontSize: 11,
   },
 }));
 
-function ItemsInfo(props) {
-  const {
-    itemData,
-    itemTypeList,
-    shipmentData,
-    history,
-    redirectTo,
-    loading,
-    handleNext,
-    handleCancel,
-    shipmentFormData,
-    dispatch,
-    unitsOfMeasure,
-    viewOnly
-  } = props;
+const ItemsInfo = ({
+  itemData,
+  itemTypeList,
+  history,
+  loading,
+  handleNext,
+  handleCancel,
+  shipmentFormData,
+  dispatch,
+  unitsOfMeasure,
+  viewOnly
+}) => {
+  const classes = useStyles();
   const [itemIds, setItemIds] = useState(
     (shipmentFormData && shipmentFormData.items) || []
   );
   const organization = useContext(UserContext).organization.organization_uuid;
 
-  const classes = useStyles();
-
-  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-  const checkedIcon = <CheckBoxIcon fontSize="small" />;
+  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
+  const checkedIcon = <CheckBoxIcon fontSize='small' />;
   let rows = [];
   let columns = itemColumns;
   if (itemData && itemData.length) {
@@ -93,10 +89,10 @@ function ItemsInfo(props) {
     itemData.forEach((element) => {
       if (itemIds.indexOf(element.url) !== -1) {
         selectedRows.push(element);
-      }
+      };
     });
     rows = getFormattedRow(selectedRows, itemTypeList, unitsOfMeasure);
-  }
+  };
 
   const onInputChange = (value) => {
     let itemIdArray = [];
@@ -107,7 +103,9 @@ function ItemsInfo(props) {
   };
 
   const submitDisabled = () => {
-    if (itemIds.length === 0 || itemData === null) return true;
+    if (itemIds.length === 0 || itemData === null) {
+      return true;
+    };
   };
 
   /**
@@ -132,24 +130,25 @@ function ItemsInfo(props) {
   return (
     <Box mb={5} mt={3}>
       <form noValidate onSubmit={handleSubmit}>
-        <Card variant="outlined" className={classes.form}>
+        <Card variant='outlined' className={classes.form}>
           <CardContent>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Autocomplete
                   multiple
-                  id="tags-outlined"
+                  id='tags-outlined'
                   disabled={viewOnly}
                   options={
-                    (itemData && itemData.sort(compareSort("name"))) || []
+                    (itemData && itemData.sort(compareSort('name')))
+                    || []
                   }
                   getOptionLabel={(option) =>
                     option && option.name
                   }
                   filterSelectedOptions
-                  onChange={(event, newValue) => {
-                    onInputChange(newValue);
-                  }}
+                  onChange={(event, newValue) =>
+                    onInputChange(newValue)
+                  }
                   defaultValue={rows}
                   renderOption={(option, { selected }) => (
                     <React.Fragment>
@@ -166,9 +165,9 @@ function ItemsInfo(props) {
                     <TextField
                       {...params}
                       disabled={viewOnly}
-                      variant="outlined"
-                      label="Select items to be associated"
-                      placeholder="Select an item"
+                      variant='outlined'
+                      label='Select items to be associated'
+                      placeholder='Select an item'
                     />
                   )}
                 />
@@ -181,13 +180,12 @@ function ItemsInfo(props) {
             {rows.length > 0 && (
               <Grid item xs={12}>
                 <Box mt={5}>
-                  <Typography gutterBottom variant="h5">
+                  <Typography gutterBottom variant='h5'>
                     Associated Items
                   </Typography>
                   <DataTable
                     rows={rows || []}
                     columns={columns}
-                    // actionsColumns={actionsColumns}
                     hasSearch={false}
                     showTotal={true}
                   />
@@ -196,14 +194,18 @@ function ItemsInfo(props) {
             )}
           </Grid>
         </Box>
-        <Grid container spacing={3} className={classes.buttonContainer}>
+        <Grid
+          container
+          spacing={3}
+          className={classes.buttonContainer}
+        >
           <Grid item xs={6} sm={2}>
             {viewOnly ? (
               <Button
-                type="button"
+                type='button'
                 fullWidth
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 className={classes.submit}
                 onClick={handleCancel}
               >
@@ -212,10 +214,10 @@ function ItemsInfo(props) {
             ) : (
               <div className={classes.loadingWrapper}>
                 <Button
-                  type="submit"
+                  type='submit'
                   fullWidth
-                  variant="contained"
-                  color="primary"
+                  variant='contained'
+                  color='primary'
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
@@ -232,8 +234,8 @@ function ItemsInfo(props) {
           </Grid>
           <Grid item xs={12} sm={4}>
             <Button
-              variant="contained"
-              color="primary"
+              variant='contained'
+              color='primary'
               fullWidth
               onClick={handleNext}
               className={classes.submit}

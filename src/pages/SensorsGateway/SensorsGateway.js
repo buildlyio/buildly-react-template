@@ -1,9 +1,9 @@
-import React from "react";
-import { connect } from "react-redux";
-import Gateway from "./Gateway/Gateway";
-import Sensors from "./Sensors/Sensors";
+import React from 'react';
+import { connect } from 'react-redux';
+import Gateway from './Gateway/Gateway';
+import Sensors from './Sensors/Sensors';
 
-function SensorsGateway(props) {
+const SensorsGateway = (props) => {
   const {
     gatewayData,
     gatewaySearchedData,
@@ -15,8 +15,16 @@ function SensorsGateway(props) {
   } = props;
   return (
     <React.Fragment>
-      <Gateway data={gatewayData} searchData={gatewaySearchedData} {...props} />
-      <Sensors data={sensorData} searchData={sensorSearchedData} {...props} />
+      <Gateway
+        data={gatewayData}
+        searchData={gatewaySearchedData}
+        {...props}
+      />
+      <Sensors
+        data={sensorData}
+        searchData={sensorSearchedData}
+        {...props}
+      />
     </React.Fragment>
   );
 }

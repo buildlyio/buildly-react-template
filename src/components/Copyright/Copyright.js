@@ -6,13 +6,13 @@ const Copyright = () => {
   const { title } = useContext(AppContext);
 
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://example.com/" target="_blank">
+    <Typography variant='body2' color='textSecondary' align='center'>
+      {'Copyright © '}
+      <Link color='inherit' href='https://example.com/' target='_blank'>
         {title}
-      </Link>{" "}
+      </Link>{' '}
       {new Date().getFullYear()}
-      {"."}
+      {'.'}
     </Typography>
   );
 }

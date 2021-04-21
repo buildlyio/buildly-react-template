@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
-import { connect } from "react-redux";
-import { Route, Redirect } from "react-router-dom";
-import { routes } from "../../routes/routesConstants";
-import { environment } from "environments/environment";
-import AddItems from "./forms/AddItems";
-import { itemColumns, getFormattedRow } from "./ItemsConstants";
+import React, { useState, useEffect, useContext } from 'react';
+import { connect } from 'react-redux';
+import { Route } from 'react-router-dom';
+import { routes } from '@routes/routesConstants';
+import { environment } from '@environments/environment';
+import AddItems from './forms/AddItems';
+import { itemColumns, getFormattedRow } from './ItemsConstants';
 import {
   getItems,
   deleteItem,
@@ -17,19 +17,16 @@ import {
   getProductType,
   GET_PRODUCTS_OPTIONS_SUCCESS,
   GET_PRODUCTS_OPTIONS_FAILURE,
-} from "../../redux/items/actions/items.actions";
-import DashboardWrapper from "../../components/DashboardWrapper/DashboardWrapper";
-import { httpService } from "../../modules/http/http.service";
-import { UserContext } from "midgard/context/User.context";
+} from '@redux/items/actions/items.actions';
+import DashboardWrapper from '@components/DashboardWrapper/DashboardWrapper';
+import { httpService } from '@modules/http/http.service';
+import { UserContext } from '@context/User.context';
 
-function Items({
+const Items = ({
   dispatch,
   history,
-  location,
   itemData,
   loading,
-  loaded,
-  error,
   searchedData,
   itemTypeList,
   redirectTo,
@@ -38,7 +35,7 @@ function Items({
   products,
   itemOptions,
   productOptions,
-}) {
+}) => {
   const addItemPath = redirectTo
     ? `${redirectTo}/items`
     : `${routes.ITEMS}/add`;
@@ -48,8 +45,8 @@ function Items({
     : `${routes.ITEMS}/edit`;
 
   const [openConfirmModal, setConfirmModal] = useState(false);
-  const [deleteItemId, setDeleteItemId] = useState("");
-  const [searchValue, setSearchValue] = useState("");
+  const [deleteItemId, setDeleteItemId] = useState('');
+  const [searchValue, setSearchValue] = useState('');
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -58,90 +55,101 @@ function Items({
     if (itemData === null) {
       dispatch(getItems(organization));
       dispatch(getItemType(organization));
-    }
+    };
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
-    }
+    };
     if (products === null) {
       dispatch(getProducts(organization));
       dispatch(getProductType(organization));
-    }
+    };
     if (itemOptions === null) {
       httpService
         .makeOptionsRequest(
-          "options",
+          'options',
           `${environment.API_URL}shipment/item/`,
           true
         )
         .then((response) => response.json())
-        .then((res) => {
-          dispatch({ type: GET_ITEM_OPTIONS_SUCCESS, data: res });
+        .then((data) => {
+          dispatch({ type: GET_ITEM_OPTIONS_SUCCESS, data });
         })
-        .catch((err) => {
-          dispatch({ type: GET_ITEM_OPTIONS_FAILURE, error: err });
+        .catch((error) => {
+          dispatch({ type: GET_ITEM_OPTIONS_FAILURE, error });
         });
-    }
+    };
 
     if (productOptions === null) {
       httpService
         .makeOptionsRequest(
-          "options",
+          'options',
           `${environment.API_URL}shipment/product/`,
           true
         )
         .then((response) => response.json())
-        .then((res) => {
-          dispatch({ type: GET_PRODUCTS_OPTIONS_SUCCESS, data: res });
+        .then((data) => {
+          dispatch({ type: GET_PRODUCTS_OPTIONS_SUCCESS, data });
         })
-        .catch((err) => {
-          dispatch({ type: GET_PRODUCTS_OPTIONS_FAILURE, error: err });
+        .catch((error) => {
+          dispatch({ type: GET_PRODUCTS_OPTIONS_FAILURE, error });
         });
-    }
+    };
   }, []);
 
   useEffect(() => {
     if (
-      itemData &&
-      itemData.length &&
-      itemTypeList &&
-      itemTypeList.length &&
-      unitsOfMeasure &&
-      unitsOfMeasure.length
+      itemData
+      && itemData.length
+      && itemTypeList
+      && itemTypeList.length
+      && unitsOfMeasure
+      && unitsOfMeasure.length
     ) {
-      setRows(getFormattedRow(itemData, itemTypeList, unitsOfMeasure));
-      setFilteredRows(getFormattedRow(itemData, itemTypeList, unitsOfMeasure));
-    }
+      setRows(getFormattedRow(
+        itemData,
+        itemTypeList,
+        unitsOfMeasure,
+      ));
+      setFilteredRows(getFormattedRow(
+        itemData,
+        itemTypeList,
+        unitsOfMeasure,
+      ));
+    };
   }, [itemData, itemTypeList, unitsOfMeasure]);
 
   useEffect(() => {
     if (searchedData) {
       setFilteredRows(searchedData);
-    }
+    };
   }, [searchedData]);
 
   const editItem = (item) => {
     history.push(`${editItemPath}/:${item.id}`, {
-      type: "edit",
+      type: 'edit',
       from: redirectTo || routes.ITEMS,
       data: item,
     });
   };
+
   const deleteItems = (item) => {
     setDeleteItemId(item.id);
     setConfirmModal(true);
   };
+
   const handleConfirmModal = () => {
     dispatch(deleteItem(deleteItemId,organization));
     setConfirmModal(false);
   };
+  
   const searchTable = (e) => {
-    let searchFields = [
-      // "id",
-      "name",
-      "item_type_value",
-      "unitsMeasure",
-      "value",
-      "gross_weight",
+    const searchFields = [
+      // 'id',
+      'name',
+      'item_type_value',
+      'unitsMeasure',
+      'value',
+      'gross_weight',
     ];
     setSearchValue(e.target.value);
     dispatch(searchItem(e.target.value, rows, searchFields));
@@ -152,12 +160,13 @@ function Items({
       from: redirectTo || routes.ITEMS,
     });
   };
+
   return (
     <DashboardWrapper
       loading={loading}
       onAddButtonClick={onAddButtonClick}
-      dashboardHeading={"Items"}
-      addButtonHeading={"Add Item"}
+      dashboardHeading='Items'
+      addButtonHeading='Add Item'
       editAction={editItem}
       deleteAction={deleteItems}
       columns={itemColumns}
@@ -168,7 +177,7 @@ function Items({
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle={"Are you sure you want to delete this Item?"}
+      confirmModalTitle='Are you sure you want to delete this Item?'
     >
       <Route path={`${addItemPath}`} component={AddItems} />
       <Route path={`${editItemPath}/:id`} component={AddItems} />

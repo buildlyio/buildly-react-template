@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import { Route } from "react-router-dom";
-import { routes } from "midgard/routes/routesConstants";
-import Configuration from "./Configuration/Configuration";
-import ImportExport from "./ImportExport/ImportExport";
+import React, { useState, useEffect } from 'react';
+import { Route } from 'react-router-dom';
+import { connect } from 'react-redux';
+import {
+  makeStyles,
+  Box,
+  Typography,
+  Tabs,
+  Tab,
+} from '@material-ui/core';
+import { routes } from '@routes/routesConstants';
+import Configuration from './Configuration/Configuration';
+import ImportExport from './ImportExport/ImportExport';
 
 const useStyles = makeStyles((theme) => ({
   heading: {
-    fontWeight: "bold",
-    margin: "0.5em 0",
+    fontWeight: 'bold',
+    margin: '0.5em 0',
   },
 }));
 
@@ -24,11 +26,11 @@ const AdminPanel = ({ history, location, organizationData }) => {
   const classes = useStyles();
   const subNav = organizationData && organizationData.allow_import_export
     ? [
-      { label: "Configuration", value: "configuration" },
-      { label: "Import/Export", value: "import-export" },
+      { label: 'Configuration', value: 'configuration' },
+      { label: 'Import/Export', value: 'import-export' },
     ]
     : [
-      { label: "Configuration", value: "configuration" },
+      { label: 'Configuration', value: 'configuration' },
     ]
   const viewPath = (subNav.find(item => location.pathname.endsWith(item.value)) || subNav[0]).value;
   const [view, setView] = useState(viewPath);
@@ -45,20 +47,26 @@ const AdminPanel = ({ history, location, organizationData }) => {
   return (
     <Box mt={5} mb={5}>
       <Box mb={3}>
-        <Typography className={classes.heading} variant={"h4"}>
+        <Typography className={classes.heading} variant={'h4'}>
           Admin Panel
         </Typography>
       </Box>
       <Box mb={3}>
         <Tabs value={view} onChange={viewTabClicked}>
           {subNav.map((itemProps, index) => 
-            <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
+            <Tab
+              {...itemProps}
+              key={`tab${index}:${itemProps.value}`}
+            />
           )}
         </Tabs>
       </Box>
       <Route path={routes.CONFIGURATION} component={Configuration} />
       {organizationData && organizationData.allow_import_export && 
-      <Route path={routes.IMPORT_EXPORT} component={ImportExport} />
+        <Route
+          path={routes.IMPORT_EXPORT}
+          component={ImportExport}
+        />
       }
     </Box>
   )

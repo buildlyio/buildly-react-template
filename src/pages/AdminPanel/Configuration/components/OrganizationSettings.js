@@ -1,64 +1,66 @@
-import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Checkbox from "@material-ui/core/Checkbox";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import Loader from "midgard/components/Loader/Loader";
-import Button from "@material-ui/core/Button";
-import { useInput } from "midgard/hooks/useInput";
-import { validators } from "midgard/utils/validators";
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import {
+  makeStyles,
+  Grid,
+  Checkbox,
+  TextField,
+  Typography,
+  Button,
+} from '@material-ui/core';
+import Loader from '@components/Loader/Loader';
 import {
   updateOrganization
-} from "midgard/redux/authuser/actions/authuser.actions";
-import { convertUnitsOfMeasure } from "midgard/utils/utilMethods";
+} from '@redux/authuser/actions/authuser.actions';
+import { convertUnitsOfMeasure } from '@utils/utilMethods';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "100%",
-    backgroundColor: "#424242",
+    width: '100%',
+    backgroundColor: '#424242',
     margin: theme.spacing(0.25, 0, 0.25, 0.25),
   },
   checkbox: {
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
   },
   label: {
     marginLeft: `${theme.spacing(2)}px !important`,
-    fontSize: "0.9rem",
+    fontSize: '0.9rem',
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(2),
-    [theme.breakpoints.up("sm")]: {
-      width: "70%",
-      margin: "auto",
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    borderRadius: "18px",
+    borderRadius: '18px',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
-    position: "relative",
+    position: 'relative',
   },
   formTitle: {
-    fontWeight: "bold",
-    marginTop: "1em",
-    textAlign: "center",
+    fontWeight: 'bold',
+    marginTop: '1em',
+    textAlign: 'center',
   },
 }));
 
-const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
+const OrganizationSettings = ({
+  dispatch, loading, organizationData
+}) => {
   const classes = useStyles();
 
   const [allowImportExport, setAllowImportExport] = useState(
@@ -74,13 +76,23 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
   useEffect(() => {
     if (organizationData) {
       setAllowImportExport(organizationData.allow_import_export);
-      setRadius(convertUnitsOfMeasure('km',parseFloat(organizationData.radius),'miles','distance'));
-    }
+      setRadius(convertUnitsOfMeasure(
+        'km',
+        parseFloat(organizationData.radius),
+        'miles',
+        'distance'
+      ));
+    };
   }, [organizationData]);
 
   const resetValues = () => {
     setAllowImportExport(organizationData.allow_import_export);
-    setRadius(convertUnitsOfMeasure('km',parseFloat(organizationData.radius),'miles','distance'));
+    setRadius(convertUnitsOfMeasure(
+      'km',
+      parseFloat(organizationData.radius),
+      'miles',
+      'distance'
+    ));
   };
 
   /**
@@ -93,7 +105,14 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
       ...organizationData,
       edit_date: new Date(),
       allow_import_export: allowImportExport,
-      radius: radius ? convertUnitsOfMeasure('miles',parseFloat(radius),'km','distance') : 0,
+      radius: radius
+        ? convertUnitsOfMeasure(
+            'miles',
+            parseFloat(radius),
+            'km',
+            'distance'
+        )
+        : 0,
     };
     dispatch(updateOrganization(data));
   };
@@ -101,7 +120,11 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
   return (
     <Grid className={classes.root} container spacing={2}>
       {loading && <Loader open={loading} />}
-      <form className={classes.form} noValidate onSubmit={handleSubmit}>
+      <form
+        className={classes.form}
+        noValidate
+        onSubmit={handleSubmit}
+      >
         <Grid item xs={12}>
           <div className={classes.checkbox}>
             <Checkbox
@@ -115,46 +138,46 @@ const OrganizationSettings = ({ dispatch, loading, organizationData }) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            variant="outlined"
-            margin="normal"
-            id="radius"
+            variant='outlined'
+            margin='normal'
+            id='radius'
             fullWidth
-            label="Radius for Geofence (miles)"
-            name="radius"
-            autoComplete="radius"
+            label='Radius for Geofence (miles)'
+            name='radius'
+            autoComplete='radius'
             value={radius}
             error={formError.radius && formError.radius.error}
             helperText={
-              formError.radius ? formError.radius.message : ""
+              formError.radius ? formError.radius.message : ''
             }
             onChange={event => setRadius(event.target.value)} />
         </Grid>
-        <Grid container spacing={2} justify="center">
+        <Grid container spacing={2} justify='center'>
           <Grid item xs={6} sm={4}>
             <div className={classes.loadingWrapper}>
               <Button
-                type="submit"
+                type='submit'
                 fullWidth
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 className={classes.submit}
                 disabled={loading}
               >
                 Save
-                    </Button>
+              </Button>
             </div>
           </Grid>
           <Grid item xs={6} sm={4}>
             <Button
-              type="button"
+              type='button'
               fullWidth
-              variant="contained"
-              color="primary"
+              variant='contained'
+              color='primary'
               onClick={() => resetValues()}
               className={classes.submit}
             >
               Reset
-                  </Button>
+            </Button>
           </Grid>
         </Grid>
       </form>

@@ -1,67 +1,69 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Switch from '@material-ui/core/Switch';
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import { validators } from "../../../utils/validators";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useInput } from "../../../hooks/useInput";
-import { updateUser } from "../../../redux/authuser/actions/authuser.actions";
-import { setOptionsData } from "../../../utils/utilMethods";
-import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
-import { InputAdornment } from "@material-ui/core";
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import {
+  Button,
+  TextField,
+  Switch,
+  CircularProgress,
+  Typography,
+  makeStyles,
+  Grid,
+  useMediaQuery,
+  useTheme,
+  InputAdornment,
+} from '@material-ui/core';
+import CustomizedTooltips from '@components/ToolTip/ToolTip';
+import { useInput } from '@hooks/useInput';
+import { updateUser } from '@redux/authuser/actions/authuser.actions';
+import { setOptionsData } from '@utils/utilMethods';
+import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(8),
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {
-      width: "70%",
-      margin: "auto",
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    borderRadius: "18px",
+    borderRadius: '18px',
   },
   logo: {
-    width: "100%",
+    width: '100%',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
-    position: "relative",
+    position: 'relative',
   },
   addressContainer: {
     marginTop: theme.spacing(4),
   },
   formTitle: {
-    fontWeight: "bold",
-    marginTop: "1em",
-    textAlign: "center",
+    fontWeight: 'bold',
+    marginTop: '1em',
+    textAlign: 'center',
   },
   infoSection: {
-    display: "flex",
-    justifyContent: "space-between",
+    display: 'flex',
+    justifyContent: 'space-between',
     paddingBottom: theme.spacing(2),
-    alignItems: "center",
+    alignItems: 'center',
   },
 }));
 
-function EditProfileInfo({
+const EditProfileInfo = ({
   dispatch,
   loading,
   editData,
@@ -69,52 +71,55 @@ function EditProfileInfo({
   organizationData,
   userOptions,
   orgOptions,
-}) {
+}) => {
   const classes = useStyles();
-  const first_name = useInput((editData && editData.first_name) || "", {
-    required: true,
-  });
-  const last_name = useInput((editData && editData.last_name) || "");
-  const organisation_name = useInput(
-    (organizationData && organizationData.name) || ""
+  const first_name = useInput(
+    (editData && editData.first_name) || '',
+    { required: true }
   );
-  const email = useInput((editData && editData.email) || "");
-  const [emailAlertFlag, setEmailAlertFlag] = useState(editData && editData.email_alert_flag);
+  const last_name = useInput((editData && editData.last_name) || '');
+  const organisation_name = useInput(
+    (organizationData && organizationData.name) || ''
+  );
+  const email = useInput((editData && editData.email) || '');
+  const [emailAlertFlag, setEmailAlertFlag] = useState(
+    editData && editData.email_alert_flag
+  );
   const [formError, setFormError] = useState({});
   const [fieldsMetadata, setFieldsMetaData] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    organisation_name: "",
+    first_name: '',
+    last_name: '',
+    email: '',
+    organisation_name: '',
     email_alert_flag: false,
   });
 
   useEffect(() => {
     let metadata = { ...fieldsMetadata };
     if (userOptions && userOptions.actions) {
-      metadata["first_name"] = setOptionsData(
+      metadata['first_name'] = setOptionsData(
         userOptions.actions.POST,
-        "first_name"
+        'first_name'
       );
-      metadata["last_name"] = setOptionsData(
+      metadata['last_name'] = setOptionsData(
         userOptions.actions.POST,
-        "last_name"
+        'last_name'
       );
-      metadata["email"] = setOptionsData(
+      metadata['email'] = setOptionsData(
         userOptions.actions.POST,
-        "email"
+        'email'
       );
-      metadata["email_alert_flag"] = setOptionsData(
+      metadata['email_alert_flag'] = setOptionsData(
         userOptions.actions.POST,
-        "email_alert_flag"
+        'email_alert_flag'
       );
-    }
+    };
     if (orgOptions && orgOptions.actions) {
-      metadata["organisation_name"] = setOptionsData(
+      metadata['organisation_name'] = setOptionsData(
         orgOptions.actions.POST,
-        "name"
+        'name'
       );
-    }
+    };
     setFieldsMetaData(metadata);
   }, [userOptions, orgOptions]);
 
@@ -129,7 +134,9 @@ function EditProfileInfo({
       last_name: last_name.value,
       email: email.value,
       username: editData.username,
-      ...(organizationData && { organization_name: organisation_name.value }),
+      ...(organizationData && {
+        organization_name: organisation_name.value,
+      }),
       id: editData.id,
       ...(organizationData && {
         organization_uuid: organizationData.organization_uuid,
@@ -148,63 +155,79 @@ function EditProfileInfo({
    */
 
   const handleBlur = (e, validation, input, parentId) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...formError };
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: validateObj,
       });
-    else
+    } else {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
+    };
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
+    const errorKeys = Object.keys(formError);
+    if (!first_name.value) {
+      return true;
+    };
     let errorExists = false;
-    if (!first_name.value) return true;
     errorKeys.forEach((key) => {
-      if (formError[key].error) errorExists = true;
+      if (formError[key].error) {
+        errorExists = true;
+      };
     });
     return errorExists;
   };
 
   const theme = useTheme();
-  let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
     <div>
-      <form className={classes.form} noValidate onSubmit={handleSubmit}>
+      <form
+        className={classes.form}
+        noValidate
+        onSubmit={handleSubmit}
+      >
         <Grid container spacing={isDesktop ? 2 : 0}>
           <Grid item xs={12}>
             <TextField
-              variant="outlined"
-              margin="normal"
+              variant='outlined'
+              margin='normal'
               required
               fullWidth
-              id="first_name"
-              label="First Name"
-              name="first_name"
-              autoComplete="first_name"
-              error={formError.first_name && formError.first_name.error}
-              helperText={
-                formError.first_name ? formError.first_name.message : ""
+              id='first_name'
+              label='First Name'
+              name='first_name'
+              autoComplete='first_name'
+              error={
+                formError.first_name
+                && formError.first_name.error
               }
-              onBlur={(e) => handleBlur(e, "required", first_name)}
+              helperText={
+                formError.first_name
+                ? formError.first_name.message
+                : ''
+              }
+              onBlur={(e) => handleBlur(e, 'required', first_name)}
               {...first_name.bind}
               InputProps={
-                fieldsMetadata["first_name"].help_text && {
+                fieldsMetadata['first_name'].help_text && {
                   endAdornment: (
-                    <InputAdornment position="end">
-                      {fieldsMetadata["first_name"].help_text && (
+                    <InputAdornment position='end'>
+                      {fieldsMetadata['first_name'].help_text && (
                         <CustomizedTooltips
-                          toolTipText={fieldsMetadata["first_name"].help_text}
+                          toolTipText={
+                            fieldsMetadata['first_name'].help_text
+                          }
                         />
                       )}
                     </InputAdornment>
@@ -215,21 +238,23 @@ function EditProfileInfo({
           </Grid>
           <Grid item item xs={12}>
             <TextField
-              variant="outlined"
-              margin="normal"
+              variant='outlined'
+              margin='normal'
               fullWidth
-              id="last_name"
-              label="Last Name"
-              name="last_name"
-              autoComplete="last_name"
+              id='last_name'
+              label='Last Name'
+              name='last_name'
+              autoComplete='last_name'
               {...last_name.bind}
               InputProps={
-                fieldsMetadata["last_name"].help_text && {
+                fieldsMetadata['last_name'].help_text && {
                   endAdornment: (
-                    <InputAdornment position="end">
-                      {fieldsMetadata["last_name"].help_text && (
+                    <InputAdornment position='end'>
+                      {fieldsMetadata['last_name'].help_text && (
                         <CustomizedTooltips
-                          toolTipText={fieldsMetadata["last_name"].help_text}
+                          toolTipText={
+                            fieldsMetadata['last_name'].help_text
+                          }
                         />
                       )}
                     </InputAdornment>
@@ -242,25 +267,31 @@ function EditProfileInfo({
         <Grid container spacing={isDesktop ? 2 : 0}>
           <Grid item item xs={12}>
             <TextField
-              variant="outlined"
-              margin="normal"
+              variant='outlined'
+              margin='normal'
               fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              autoComplete="email"
-              type="email"
+              id='email'
+              label='Email'
+              name='email'
+              autoComplete='email'
+              type='email'
               error={formError.email && formError.email.error}
-              helperText={formError.email ? formError.email.message : ""}
-              onBlur={(e) => handleBlur(e, "email", email)}
+              helperText={
+                formError.email
+                ? formError.email.message
+                : ''
+              }
+              onBlur={(e) => handleBlur(e, 'email', email)}
               {...email.bind}
               InputProps={
-                fieldsMetadata["email"].help_text && {
+                fieldsMetadata['email'].help_text && {
                   endAdornment: (
-                    <InputAdornment position="end">
-                      {fieldsMetadata["email"].help_text && (
+                    <InputAdornment position='end'>
+                      {fieldsMetadata['email'].help_text && (
                         <CustomizedTooltips
-                          toolTipText={fieldsMetadata["email"].help_text}
+                          toolTipText={
+                            fieldsMetadata['email'].help_text
+                          }
                         />
                       )}
                     </InputAdornment>
@@ -272,32 +303,31 @@ function EditProfileInfo({
           {organizationData && (
             <Grid item item xs={12}>
               <TextField
-                variant="outlined"
-                margin="normal"
+                variant='outlined'
+                margin='normal'
                 fullWidth
-                id="organisation_name"
-                label="Organization Name"
-                name="organization_name"
-                autoComplete="organisation_name"
+                id='organisation_name'
+                label='Organization Name'
+                name='organization_name'
+                autoComplete='organisation_name'
                 error={
-                  formError.organisation_name &&
-                  formError.organisation_name.error
+                  formError.organisation_name
+                  && formError.organisation_name.error
                 }
                 helperText={
                   formError.organisation_name
-                    ? formError.organisation_name.message
-                    : ""
+                  ? formError.organisation_name.message
+                  : ''
                 }
-                // onBlur={(e) => handleBlur(e, "required", organisation_name)}
                 {...organisation_name.bind}
                 InputProps={
-                  fieldsMetadata["organisation_name"].help_text && {
+                  fieldsMetadata['organisation_name'].help_text && {
                     endAdornment: (
-                      <InputAdornment position="end">
-                        {fieldsMetadata["organisation_name"].help_text && (
+                      <InputAdornment position='end'>
+                        {fieldsMetadata['organisation_name'].help_text && (
                           <CustomizedTooltips
                             toolTipText={
-                              fieldsMetadata["organisation_name"].help_text
+                              fieldsMetadata['organisation_name'].help_text
                             }
                           />
                         )}
@@ -310,26 +340,32 @@ function EditProfileInfo({
           )}
           <Grid item xs={12}>
             <div className={classes.infoSection}>
-              <Typography variant="body2">Shipment Email Alerts:</Typography>
+              <Typography variant='body2'>
+                Shipment Email Alerts:
+              </Typography>
               <Switch
-                size="medium"
-                color="primary"
+                size='medium'
+                color='primary'
                 checked={emailAlertFlag}
-                onChange={() => {
+                onChange={(event) => {
                   setEmailAlertFlag(event.target.checked)
                 }}
               />
             </div>
           </Grid>
         </Grid>
-        <Grid container spacing={isDesktop ? 3 : 0} justify="center">
+        <Grid
+          container
+          spacing={isDesktop ? 3 : 0}
+          justify='center'
+        >
           <Grid item xs={12} sm={4}>
             <div className={classes.loadingWrapper}>
               <Button
-                type="submit"
+                type='submit'
                 fullWidth
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 className={classes.submit}
                 disabled={loading || submitDisabled()}
               >
@@ -345,10 +381,10 @@ function EditProfileInfo({
           </Grid>
           <Grid item xs={12} sm={4}>
             <Button
-              type="button"
+              type='button'
               fullWidth
-              variant="contained"
-              color="primary"
+              variant='contained'
+              color='primary'
               onClick={() => setModal(false)}
               className={classes.submit}
             >

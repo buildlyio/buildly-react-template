@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 import {
   getSensorType,
   deleteSensorType,
-} from "midgard/redux/sensorsGateway/actions/sensorsGateway.actions";
-import DataTableWrapper from "midgard/components/DataTableWrapper/DataTableWrapper";
-import { SENSOR_TYPE_COLUMNS } from "../ConfigurationConstants";
-import { routes } from "midgard/routes/routesConstants";
-import { Route } from "react-router-dom";
-import AddSensorType from "../forms/AddSensorType";
+} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { routes } from '@routes/routesConstants';
+import { SENSOR_TYPE_COLUMNS } from '../ConfigurationConstants';
+import AddSensorType from '../forms/AddSensorType';
 
 const SensorType = (props) => {
   const { 
@@ -31,7 +31,7 @@ const SensorType = (props) => {
   useEffect(() => {
     if (!loading && !sensorTypeList) {
       dispatch(getSensorType());
-    }
+    };
   }, [sensorTypeList]);
 
   const onAddButtonClick = () => {
@@ -42,7 +42,7 @@ const SensorType = (props) => {
 
   const editType = (item) => {
     history.push(`${editPath}/:${item.id}`, {
-      type: "edit",
+      type: 'edit',
       from: redirectTo || routes.CONFIGURATION,
       data: item,
     });
@@ -63,15 +63,15 @@ const SensorType = (props) => {
       loading={loading}
       rows={sensorTypeList || []}
       columns={SENSOR_TYPE_COLUMNS}
-      filename="SensorType"
-      addButtonHeading="Sensor Type"
+      filename='SensorType'
+      addButtonHeading='Sensor Type'
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle={"Are you sure you want to Delete this Sensor Type?"}
+      confirmModalTitle='Are you sure you want to Delete this Sensor Type?'
     >
       <Route path={`${addPath}`} component={AddSensorType} />
       <Route path={`${editPath}/:id`} component={AddSensorType} />

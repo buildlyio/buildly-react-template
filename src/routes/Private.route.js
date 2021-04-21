@@ -8,7 +8,7 @@ import { oauthService } from '@modules/oauth/oauth.service';
 export const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
-    render={props => (
+    render={(props) => (
       oauthService.hasValidAccessToken()
         ? <Component {...props} />
         : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />

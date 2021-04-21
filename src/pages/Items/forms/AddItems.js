@@ -1,67 +1,68 @@
-import React, { useState, useEffect, useContext } from "react";
-import { connect } from "react-redux";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Grid from "@material-ui/core/Grid";
-import { validators } from "../../../utils/validators";
-import Modal from "../../../components/Modal/Modal";
-import MenuItem from "@material-ui/core/MenuItem";
-
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useInput } from "../../../hooks/useInput";
-import { Card, CardContent, Typography } from "@material-ui/core";
-import { editItem, addItem } from "../../../redux/items/actions/items.actions";
-import { compareSort } from "../../../utils/utilMethods";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
-import { UserContext } from "midgard/context/User.context";
+import React, { useState, useEffect, useContext } from 'react';
+import { connect } from 'react-redux';
+import {
+  makeStyles,
+  useTheme,
+  Button,
+  TextField,
+  CircularProgress,
+  InputAdornment,
+  Grid,
+  MenuItem,
+  useMediaQuery,
+  Card,
+  CardContent,
+  Typography,
+} from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+import Modal from '@components/Modal/Modal';
+import CustomizedTooltips from '@components/ToolTip/ToolTip';
+import { UserContext } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { editItem, addItem } from '@redux/items/actions/items.actions';
+import { validators } from '@utils/validators';
+import { compareSort } from '@utils/utilMethods';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(8),
   },
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {
-      width: "70%",
-      margin: "auto",
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    borderRadius: "18px",
+    borderRadius: '18px',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
-    // margin: theme.spacing(1),
-    position: "relative",
+    position: 'relative',
   },
   cardItems: {
     margin: theme.spacing(4, 0),
   },
   formTitle: {
-    fontWeight: "bold",
-    marginTop: "1em",
-    textAlign: "center",
+    fontWeight: 'bold',
+    marginTop: '1em',
+    textAlign: 'center',
   },
 }));
 
-function AddItems({
+const AddItems = ({
   dispatch,
   loading,
   history,
-  loaded,
-  error,
   location,
   itemTypeList,
   unitsOfMeasure,
@@ -69,53 +70,63 @@ function AddItems({
   productType,
   productOptions,
   itemOptions,
-}) {
+}) => {
   const redirectTo = location.state && location.state.from;
-  const editPage = location.state && location.state.type === "edit";
-  const editData =
-    (location.state && location.state.type === "edit" && location.state.data) ||
-    {};
+  const editPage = location.state && location.state.type === 'edit';
+  const editData = (
+    location.state
+    && location.state.type === 'edit'
+    && location.state.data
+  ) || {};
   const [openModal, toggleModal] = useState(true);
   const classes = useStyles();
-  const item_desc = useInput(editData.container_description || "");
-  const item_name = useInput(editData.name || "", {
+  const item_desc = useInput(editData.container_description || '');
+  const item_name = useInput(editData.name || '', {
     required: true,
   });
   const [item_value, setItemValue] = useState(editData.value || 0);
-  const [item_weight, setItemWeight] = useState(editData.gross_weight || 0);
-  const [unit_of_measure, setUomContainer] = useState(
-    editData.unit_of_measure || ""
+  const [item_weight, setItemWeight] = useState(
+    editData.gross_weight || 0
   );
-  const [units, setContainerUnits] = useState(editData.number_of_units || 0);
-  const item_type = useInput(editData.item_type || "", {
+  const [unit_of_measure, setUomContainer] = useState(
+    editData.unit_of_measure || ''
+  );
+  const [units, setContainerUnits] = useState(
+    editData.number_of_units || 0
+  );
+  const item_type = useInput(editData.item_type || '', {
     required: true,
   });
-  const [gtin, setGtin] = useState(editData.gtin || "");
-  const [ean, setEan] = useState(editData.ean || "");
-  const [upc, setUpc] = useState(editData.upc || "");
-  const [paper_tag_no, setPaperTag] = useState(editData.paper_tag_number || "");
-  const [batch_id, setBatchId] = useState(editData.batch_run_id || "");
-  const [bin_id, setBinId] = useState(editData.bin_id || "");
-  const [product, setProduct] = useState("");
-  const [product_url, setProductUrl] = useState(editData.product || "");
-  const [product_type, setProductType] = useState("");
-  const [product_value, setProductValue] = useState("");
-  const [product_desc, setProductDesc] = useState("");
+  const [gtin, setGtin] = useState(editData.gtin || '');
+  const [ean, setEan] = useState(editData.ean || '');
+  const [upc, setUpc] = useState(editData.upc || '');
+  const [paper_tag_no, setPaperTag] = useState(
+    editData.paper_tag_number || ''
+  );
+  const [batch_id, setBatchId] = useState(editData.batch_run_id || '');
+  const [bin_id, setBinId] = useState(editData.bin_id || '');
+  const [product, setProduct] = useState('');
+  const [product_url, setProductUrl] = useState(
+    editData.product || ''
+  );
+  const [product_type, setProductType] = useState('');
+  const [product_value, setProductValue] = useState('');
+  const [product_desc, setProductDesc] = useState('');
   const [product_weight, setProductWeight] = useState(
-    editData.product_weight || ""
+    editData.product_weight || ''
   );
   const [product_uom, setProductUom] = useState(
-    editData.product_weight_unit_of_measure || ""
+    editData.product_weight_unit_of_measure || ''
   );
-  const [product_uom_name, setProductUomName] = useState("");
-  const container_name = useInput(editData.container_name || "", {
+  const [product_uom_name, setProductUomName] = useState('');
+  const container_name = useInput(editData.container_name || '', {
     required: true,
   });
 
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? "Save" : "Add Item";
-  const formTitle = editPage ? "Edit Item" : "Add Item";
+  const buttonText = editPage ? 'Save' : 'Add Item';
+  const formTitle = editPage ? 'Edit Item' : 'Add Item';
   const [itemMetData, setItemMetaData] = useState({});
   const [productMetData, productMetaData] = useState({});
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -123,33 +134,40 @@ function AddItems({
   useEffect(() => {
     if (itemOptions && itemOptions.actions) {
       setItemMetaData(itemOptions.actions.POST);
-    }
+    };
     if (productOptions && productOptions.actions) {
       productMetaData(productOptions.actions);
-    }
+    };
   }, [productOptions, itemOptions]);
 
   useEffect(() => {
-    if (editPage && editData && products && productType && unitsOfMeasure) {
-      let selectedProduct = "";
+    if (
+      editPage
+      && editData
+      && products
+      && productType
+      && unitsOfMeasure
+    ) {
+      let selectedProduct = '';
       products.forEach((obj) => {
         if (obj.url === editData.product[0]) {
           selectedProduct = obj;
-        }
+        };
       });
       if (selectedProduct) {
         onProductChange(selectedProduct);
-      }
+      };
       setContainerUnits(editData.number_of_units);
       setItemWeight(editData.gross_weight);
       setItemValue(editData.value);
-    }
+    };
   }, [editPage, editData, products, productType, unitsOfMeasure]);
+  
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
       history.push(redirectTo);
-    }
+    };
   };
 
   /**
@@ -183,7 +201,7 @@ function AddItems({
       dispatch(editItem(itemFormValue, history, redirectTo));
     } else {
       dispatch(addItem(itemFormValue, history, redirectTo));
-    }
+    };
   };
 
   /**
@@ -194,29 +212,38 @@ function AddItems({
    */
 
   const handleBlur = (e, validation, input, parentId) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...formError };
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: validateObj,
       });
-    else
+    } else {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
+    };
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
+    const errorKeys = Object.keys(formError);
+    if (
+      !item_type.value
+      || !item_name.value
+      || !product
+    ) {
+      return true;
+    };
     let errorExists = false;
-    if (!item_type.value || !item_name.value || !product) return true;
     errorKeys.forEach((key) => {
-      if (formError[key].error) errorExists = true;
+      if (formError[key].error) {
+        errorExists = true;
+      };
     });
     return errorExists;
   };
@@ -242,28 +269,28 @@ function AddItems({
           setProductUom(value.unit_of_measure);
           setProductUomName(unit.name);
           setUomContainer(value.unit_of_measure);
-        }
+        };
       });
-    }
+    };
     if (productType && productType.length) {
       productType.forEach((type) => {
         if (type.url === value.product_type) {
           setProductType(type.name);
-        }
+        };
       });
-    }
+    };
   };
 
   const onNumberOfUnitsChange = (e) => {
-    let previousValue = product_value;
-    let previousWeight = product_weight;
+    const previousValue = product_value;
+    const previousWeight = product_weight;
     setContainerUnits(e.target.value);
     setItemValue(e.target.value * previousValue);
     setItemWeight(e.target.value * previousWeight);
   };
 
   const theme = useTheme();
-  let isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
     <div>
@@ -273,34 +300,45 @@ function AddItems({
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={"md"}
+          maxWidth={'md'}
         >
-          <form className={classes.form} noValidate onSubmit={handleSubmit}>
+          <form
+            className={classes.form}
+            noValidate
+            onSubmit={handleSubmit}
+          >
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   required
                   fullWidth
-                  id="item_name"
-                  label="Item Name"
-                  name="item_name"
-                  autoComplete="item_name"
-                  error={formError.item_name && formError.item_name.error}
-                  helperText={
-                    formError.item_name ? formError.item_name.message : ""
+                  id='item_name'
+                  label='Item Name'
+                  name='item_name'
+                  autoComplete='item_name'
+                  error={
+                    formError.item_name
+                    && formError.item_name.error
                   }
-                  onBlur={(e) => handleBlur(e, "required", item_name)}
+                  helperText={
+                    formError.item_name
+                    ? formError.item_name.message
+                    : ''
+                  }
+                  onBlur={(e) => handleBlur(e, 'required', item_name)}
                   {...item_name.bind}
                   InputProps={
-                    itemMetData["name"] &&
-                    itemMetData["name"].help_text && {
+                    itemMetData['name'] &&
+                    itemMetData['name'].help_text && {
                       endAdornment: (
-                        <InputAdornment position="end">
-                          {itemMetData["name"].help_text && (
+                        <InputAdornment position='end'>
+                          {itemMetData['name'].help_text && (
                             <CustomizedTooltips
-                              toolTipText={itemMetData["name"].help_text}
+                              toolTipText={
+                                itemMetData['name'].help_text
+                              }
                             />
                           )}
                         </InputAdornment>
@@ -311,29 +349,36 @@ function AddItems({
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   fullWidth
                   required
-                  id="item_type"
+                  id='item_type'
                   select
-                  label="Item Type"
-                  error={formError.item_type && formError.item_type.error}
+                  label='Item Type'
+                  error={
+                    formError.item_type
+                    && formError.item_type.error
+                  }
                   helperText={
-                    formError.item_type ? formError.item_type.message : ""
+                    formError.item_type
+                    ? formError.item_type.message
+                    : ''
                   }
                   onBlur={(e) =>
-                    handleBlur(e, "required", item_type, "item_type")
+                    handleBlur(e, 'required', item_type, 'item_type')
                   }
                   {...item_type.bind}
                   InputProps={
-                    itemMetData["item_type"] &&
-                    itemMetData["item_type"].help_text && {
+                    itemMetData['item_type'] &&
+                    itemMetData['item_type'].help_text && {
                       endAdornment: (
-                        <InputAdornment position="start">
-                          {itemMetData["item_type"].help_text && (
+                        <InputAdornment position='start'>
+                          {itemMetData['item_type'].help_text && (
                             <CustomizedTooltips
-                              toolTipText={itemMetData["item_type"].help_text}
+                              toolTipText={
+                                itemMetData['item_type'].help_text
+                              }
                             />
                           )}
                         </InputAdornment>
@@ -341,10 +386,10 @@ function AddItems({
                     }
                   }
                 >
-                  <MenuItem value={""}>Select</MenuItem>
+                  <MenuItem value={''}>Select</MenuItem>
                   {itemTypeList &&
                     itemTypeList
-                      .sort(compareSort("name"))
+                      .sort(compareSort('name'))
                       .map((item, index) => (
                         <MenuItem
                           key={`itemType${index}:${item.id}`}
@@ -357,51 +402,60 @@ function AddItems({
               </Grid>
               {/* <Grid item item xs={12} sm={6}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   fullWidth
                   multiline
                   rows={4}
-                  id="item_desc"
-                  label="Container Description"
-                  name="item_desc"
-                  autoComplete="item_desc"
+                  id='item_desc'
+                  label='Container Description'
+                  name='item_desc'
+                  autoComplete='item_desc'
                   {...item_desc.bind}
                 />
               </Grid> */}
             </Grid>
-            <Card variant="outlined" className={classes.cardItems}>
+            <Card variant='outlined' className={classes.cardItems}>
               <CardContent>
-                <Typography variant="h6" gutterBottom>
+                <Typography variant='h6' gutterBottom>
                   Product Info
                 </Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12}>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
+                    >
                       <Autocomplete
-                        id="products"
+                        id='products'
                         options={products || []}
                         value={product}
-                        onChange={(event, newValue) => {
-                          onProductChange(newValue);
-                        }}
+                        onChange={(event, newValue) =>
+                          onProductChange(newValue)
+                        }
                         style={{ flex: 1 }}
-                        getOptionLabel={(option) => option && option.name}
+                        getOptionLabel={(option) => 
+                          option && option.name
+                        }
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             required
-                            label="Product"
-                            variant="outlined"
-                            margin="normal"
+                            label='Product'
+                            variant='outlined'
+                            margin='normal'
                             fullWidth
                           />
                         )}
                       />
-                      {productMetData["name"] &&
-                        productMetData["name"].help_text && (
+                      {productMetData['name'] &&
+                        productMetData['name'].help_text && (
                           <CustomizedTooltips
-                            toolTipText={productMetData["name"].help_text}
+                            toolTipText={
+                              productMetData['name'].help_text
+                            }
                           />
                         )}
                     </div>
@@ -409,25 +463,25 @@ function AddItems({
 
                   <Grid item item xs={12}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
                       multiline
                       rows={4}
-                      id="product_desc"
-                      label="Product Description"
-                      name="product_desc"
-                      autoComplete="product_desc"
+                      id='product_desc'
+                      label='Product Description'
+                      name='product_desc'
+                      autoComplete='product_desc'
                       value={product_desc}
                       InputProps={
-                        productMetData["description"] &&
-                        productMetData["description"].help_text && {
+                        productMetData['description'] &&
+                        productMetData['description'].help_text && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {productMetData["description"].help_text && (
+                            <InputAdornment position='end'>
+                              {productMetData['description'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    productMetData["description"].help_text
+                                    productMetData['description'].help_text
                                   }
                                 />
                               )}
@@ -439,21 +493,22 @@ function AddItems({
                   </Grid>
                   <Grid item item xs={12} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="product_type"
-                      label="Product Type"
+                      id='product_type'
+                      label='Product Type'
                       value={product_type}
                       InputProps={
-                        productMetData["product_type"] &&
-                        productMetData["product_type"].help_text && {
+                        productMetData['product_type']
+                        && productMetData['product_type'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {productMetData["product_type"].help_text && (
+                            <InputAdornment position='end'>
+                              {productMetData['product_type'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    productMetData["product_type"].help_text
+                                    productMetData['product_type'].help_text
                                   }
                                 />
                               )}
@@ -461,54 +516,58 @@ function AddItems({
                           ),
                         }
                       }
-                    ></TextField>
+                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      type="number"
-                      id="product_value"
-                      label="Product Value"
+                      type='number'
+                      id='product_value'
+                      label='Product Value'
                       value={product_value}
                       InputProps={{
                         startAdornment: (
-                          <InputAdornment position="start">$</InputAdornment>
+                          <InputAdornment position='start'>
+                            $
+                          </InputAdornment>
                         ),
                         endAdornment: (
-                          <InputAdornment position="end">
-                            {productMetData["value"] &&
-                              productMetData["value"].help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    productMetData["value"].help_text
-                                  }
-                                />
-                              )}
+                          <InputAdornment position='end'>
+                            {productMetData['value']
+                            && productMetData['value'].help_text
+                            && (
+                              <CustomizedTooltips
+                                toolTipText={
+                                  productMetData['value'].help_text
+                                }
+                              />
+                            )}
                           </InputAdornment>
                         ),
                       }}
-                    ></TextField>
+                    />
                   </Grid>
                   <Grid item item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      type="number"
-                      id="product_weight"
-                      label="Product Weight"
+                      type='number'
+                      id='product_weight'
+                      label='Product Weight'
                       value={product_weight}
                       InputProps={
-                        productMetData["gross_weight"] &&
-                        productMetData["gross_weight"].help_text && {
+                        productMetData['gross_weight']
+                        && productMetData['gross_weight'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {productMetData["gross_weight"].help_text && (
+                            <InputAdornment position='end'>
+                              {productMetData['gross_weight'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    productMetData["gross_weight"].help_text
+                                    productMetData['gross_weight'].help_text
                                   }
                                 />
                               )}
@@ -516,26 +575,26 @@ function AddItems({
                           ),
                         }
                       }
-                    ></TextField>
+                    />
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      // select
-                      id="product_uom"
-                      label="Units of Measure"
+                      id='product_uom'
+                      label='Units of Measure'
                       value={product_uom_name}
                       InputProps={
-                        productMetData["unit_of_measure"] &&
-                        productMetData["unit_of_measure"].help_text && {
+                        productMetData['unit_of_measure']
+                        && productMetData['unit_of_measure'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {productMetData["unit_of_measure"].help_text && (
+                            <InputAdornment position='end'>
+                              {productMetData['unit_of_measure'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    productMetData["unit_of_measure"].help_text
+                                    productMetData['unit_of_measure'].help_text
                                   }
                                 />
                               )}
@@ -543,28 +602,29 @@ function AddItems({
                           ),
                         }
                       }
-                    ></TextField>
+                    />
                   </Grid>
                 </Grid>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="gtin"
-                      label="GTIN"
-                      name="gtin"
-                      autoComplete="gtin"
+                      id='gtin'
+                      label='GTIN'
+                      name='gtin'
+                      autoComplete='gtin'
                       value={gtin}
                       InputProps={
-                        productMetData["gtin"] &&
-                        productMetData["gtin"].help_text && {
+                        productMetData['gtin']
+                        && productMetData['gtin'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {productMetData["gtin"].help_text && (
+                            <InputAdornment position='end'>
+                              {productMetData['gtin'].help_text && (
                                 <CustomizedTooltips
-                                  toolTipText={productMetData["gtin"].help_text}
+                                  toolTipText={productMetData['gtin'].help_text}
                                 />
                               )}
                             </InputAdornment>
@@ -575,22 +635,23 @@ function AddItems({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="upc"
-                      label="UPC"
-                      name="upc"
-                      autoComplete="upc"
+                      id='upc'
+                      label='UPC'
+                      name='upc'
+                      autoComplete='upc'
                       value={upc}
                       InputProps={
-                        productMetData["upc"] &&
-                        productMetData["upc"].help_text && {
+                        productMetData['upc']
+                        && productMetData['upc'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {productMetData["upc"].help_text && (
+                            <InputAdornment position='end'>
+                              {productMetData['upc'].help_text && (
                                 <CustomizedTooltips
-                                  toolTipText={productMetData["upc"].help_text}
+                                  toolTipText={productMetData['upc'].help_text}
                                 />
                               )}
                             </InputAdornment>
@@ -601,22 +662,23 @@ function AddItems({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="ean"
-                      label="EAN"
-                      name="ean"
-                      autoComplete="ean"
+                      id='ean'
+                      label='EAN'
+                      name='ean'
+                      autoComplete='ean'
                       value={ean}
                       InputProps={
-                        productMetData["ean"] &&
-                        productMetData["ean"].help_text && {
+                        productMetData['ean']
+                        && productMetData['ean'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {productMetData["ean"].help_text && (
+                            <InputAdornment position='end'>
+                              {productMetData['ean'].help_text && (
                                 <CustomizedTooltips
-                                  toolTipText={productMetData["ean"].help_text}
+                                  toolTipText={productMetData['ean'].help_text}
                                 />
                               )}
                             </InputAdornment>
@@ -627,23 +689,24 @@ function AddItems({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="paper_tag_no"
-                      label="Paper Tag Number"
-                      name="paper_tag_no"
-                      autoComplete="paper_tag_no"
+                      id='paper_tag_no'
+                      label='Paper Tag Number'
+                      name='paper_tag_no'
+                      autoComplete='paper_tag_no'
                       value={paper_tag_no}
                       InputProps={
-                        productMetData["paper_tag_number"] &&
-                        productMetData["paper_tag_number"].help_text && {
+                        productMetData['paper_tag_number']
+                        && productMetData['paper_tag_number'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {productMetData["paper_tag_number"].help_text && (
+                            <InputAdornment position='end'>
+                              {productMetData['paper_tag_number'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    productMetData["paper_tag_number"].help_text
+                                    productMetData['paper_tag_number'].help_text
                                   }
                                 />
                               )}
@@ -655,23 +718,24 @@ function AddItems({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="batch_id"
-                      label="Batch/Run ID"
-                      name="batch_id"
-                      autoComplete="batch_id"
+                      id='batch_id'
+                      label='Batch/Run ID'
+                      name='batch_id'
+                      autoComplete='batch_id'
                       value={batch_id}
                       InputProps={
-                        productMetData["batch_run_id"] &&
-                        productMetData["batch_run_id"].help_text && {
+                        productMetData['batch_run_id']
+                        && productMetData['batch_run_id'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {productMetData["batch_run_id"].help_text && (
+                            <InputAdornment position='end'>
+                              {productMetData['batch_run_id'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    productMetData["batch_run_id"].help_text
+                                    productMetData['batch_run_id'].help_text
                                   }
                                 />
                               )}
@@ -683,23 +747,24 @@ function AddItems({
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <TextField
-                      variant="outlined"
-                      margin="normal"
+                      variant='outlined'
+                      margin='normal'
                       fullWidth
-                      id="bin_id"
-                      label="BIN ID"
-                      name="bin_id"
-                      autoComplete="bin_id"
+                      id='bin_id'
+                      label='BIN ID'
+                      name='bin_id'
+                      autoComplete='bin_id'
                       value={bin_id}
                       InputProps={
-                        productMetData["bin_id"] &&
-                        productMetData["bin_id"].help_text && {
+                        productMetData['bin_id']
+                        && productMetData['bin_id'].help_text
+                        && {
                           endAdornment: (
-                            <InputAdornment position="end">
-                              {productMetData["bin_id"].help_text && (
+                            <InputAdornment position='end'>
+                              {productMetData['bin_id'].help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    productMetData["bin_id"].help_text
+                                    productMetData['bin_id'].help_text
                                   }
                                 />
                               )}
@@ -716,23 +781,24 @@ function AddItems({
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item item xs={12} md={6} sm={6}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   fullWidth
-                  id="units"
-                  type="number"
-                  label="# of Units"
+                  id='units'
+                  type='number'
+                  label='# of Units'
                   value={units}
                   onChange={(e) => onNumberOfUnitsChange(e)}
                   InputProps={
-                    itemMetData["number_of_units"] &&
-                    itemMetData["number_of_units"].help_text && {
+                    itemMetData['number_of_units']
+                    && itemMetData['number_of_units'].help_text
+                    && {
                       endAdornment: (
-                        <InputAdornment position="end">
-                          {itemMetData["number_of_units"].help_text && (
+                        <InputAdornment position='end'>
+                          {itemMetData['number_of_units'].help_text && (
                             <CustomizedTooltips
                               toolTipText={
-                                itemMetData["number_of_units"].help_text
+                                itemMetData['number_of_units'].help_text
                               }
                             />
                           )}
@@ -740,53 +806,59 @@ function AddItems({
                       ),
                     }
                   }
-                ></TextField>
+                />
               </Grid>
 
               <Grid item xs={12} md={6} sm={6}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   fullWidth
-                  type="number"
-                  id="item_value"
-                  label="Item Value"
+                  type='number'
+                  id='item_value'
+                  label='Item Value'
                   value={item_value}
                   InputProps={{
                     startAdornment: (
-                      <InputAdornment position="start">$</InputAdornment>
+                      <InputAdornment position='start'>
+                        $
+                      </InputAdornment>
                     ),
                     endAdornment: (
-                      <InputAdornment position="end">
-                        {itemMetData["value"] &&
-                          itemMetData["value"].help_text && (
-                            <CustomizedTooltips
-                              toolTipText={itemMetData["value"].help_text}
-                            />
-                          )}
+                      <InputAdornment position='end'>
+                        {itemMetData['value']
+                        && itemMetData['value'].help_text
+                        && (
+                          <CustomizedTooltips
+                            toolTipText={
+                              itemMetData['value'].help_text
+                            }
+                          />
+                        )}
                       </InputAdornment>
                     ),
                   }}
-                ></TextField>
+                />
               </Grid>
               <Grid item item xs={12} md={6} sm={6}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   fullWidth
-                  type="number"
-                  id="item_weight"
-                  label="Item Weight"
+                  type='number'
+                  id='item_weight'
+                  label='Item Weight'
                   value={item_weight}
                   InputProps={
-                    itemMetData["gross_weight"] &&
-                    itemMetData["gross_weight"].help_text && {
+                    itemMetData['gross_weight']
+                    && itemMetData['gross_weight'].help_text
+                    && {
                       endAdornment: (
-                        <InputAdornment position="end">
-                          {itemMetData["gross_weight"].help_text && (
+                        <InputAdornment position='end'>
+                          {itemMetData['gross_weight'].help_text && (
                             <CustomizedTooltips
                               toolTipText={
-                                itemMetData["gross_weight"].help_text
+                                itemMetData['gross_weight'].help_text
                               }
                             />
                           )}
@@ -794,27 +866,28 @@ function AddItems({
                       ),
                     }
                   }
-                ></TextField>
+                />
               </Grid>
               <Grid item xs={12} md={6} sm={6}>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
+                  variant='outlined'
+                  margin='normal'
                   fullWidth
-                  id="unit_of_measure"
+                  id='unit_of_measure'
                   select
-                  label="Units of Measure"
+                  label='Units of Measure'
                   value={unit_of_measure}
                   onChange={(e) => setUomContainer(e.target.value)}
                   InputProps={
-                    itemMetData["unit_of_measure"] &&
-                    itemMetData["unit_of_measure"].help_text && {
+                    itemMetData['unit_of_measure']
+                    && itemMetData['unit_of_measure'].help_text
+                    && {
                       endAdornment: (
-                        <InputAdornment position="start">
-                          {itemMetData["unit_of_measure"].help_text && (
+                        <InputAdornment position='start'>
+                          {itemMetData['unit_of_measure'].help_text && (
                             <CustomizedTooltips
                               toolTipText={
-                                itemMetData["unit_of_measure"].help_text
+                                itemMetData['unit_of_measure'].help_text
                               }
                             />
                           )}
@@ -823,13 +896,13 @@ function AddItems({
                     }
                   }
                 >
-                  <MenuItem value={""}>Select</MenuItem>
+                  <MenuItem value={''}>Select</MenuItem>
                   {unitsOfMeasure &&
                     unitsOfMeasure
-                      .filter((obj) => {
-                        return obj.supported_class === "Mass and Weight";
-                      })
-                      .sort(compareSort("name"))
+                      .filter((obj) =>
+                        obj.supported_class === 'Mass and Weight'
+                      )
+                      .sort(compareSort('name'))
                       .map((item, index) => (
                         <MenuItem
                           key={`weightUnit${index}:${item.id}`}
@@ -842,14 +915,18 @@ function AddItems({
               </Grid>
             </Grid>
 
-            <Grid container spacing={isDesktop ? 3 : 0} justify="center">
+            <Grid
+              container
+              spacing={isDesktop ? 3 : 0}
+              justify='center'
+            >
               <Grid item xs={12} sm={4}>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type="submit"
+                    type='submit'
                     fullWidth
-                    variant="contained"
-                    color="primary"
+                    variant='contained'
+                    color='primary'
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
                   >
@@ -865,10 +942,10 @@ function AddItems({
               </Grid>
               <Grid item xs={12} sm={4}>
                 <Button
-                  type="button"
+                  type='button'
                   fullWidth
-                  variant="contained"
-                  color="primary"
+                  variant='contained'
+                  color='primary'
                   onClick={() => closeModal()}
                   className={classes.submit}
                 >

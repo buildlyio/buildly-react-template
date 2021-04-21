@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useContext } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState, useContext } from 'react';
+import { Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 import {
   getShipmentFlag,
   deleteShipmentFlag,
-} from "midgard/redux/shipment/actions/shipment.actions";
-import DataTableWrapper from "midgard/components/DataTableWrapper/DataTableWrapper";
-import { SHIPMENT_FLAG_COLUMNS } from "../ConfigurationConstants";
-import { routes } from "midgard/routes/routesConstants";
-import { Route } from "react-router-dom";
-import AddShipmentFlag from "../forms/AddShipmentFlag";
-import { UserContext } from "midgard/context/User.context";
+} from '@redux/shipment/actions/shipment.actions';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { SHIPMENT_FLAG_COLUMNS } from '../ConfigurationConstants';
+import AddShipmentFlag from '../forms/AddShipmentFlag';
 
 const ShipmentFlag = (props) => {
   const { 
@@ -33,7 +33,7 @@ const ShipmentFlag = (props) => {
   useEffect(() => {
     if (!loading && !shipmentFlag) {
       dispatch(getShipmentFlag(organization));
-    }
+    };
   }, [shipmentFlag]);
 
   const onAddButtonClick = () => {
@@ -44,7 +44,7 @@ const ShipmentFlag = (props) => {
 
   const editType = (item) => {
     history.push(`${editPath}/:${item.id}`, {
-      type: "edit",
+      type: 'edit',
       from: redirectTo || routes.CONFIGURATION,
       data: item,
     });
@@ -65,15 +65,15 @@ const ShipmentFlag = (props) => {
       loading={loading}
       rows={shipmentFlag || []}
       columns={SHIPMENT_FLAG_COLUMNS}
-      filename="ShipmentFlag"
-      addButtonHeading="Shipment Flag"
+      filename='ShipmentFlag'
+      addButtonHeading='Shipment Flag'
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle={"Are you sure you want to Delete this Shipment Flag?"}
+      confirmModalTitle='Are you sure you want to Delete this Shipment Flag?'
     >
       <Route path={`${addPath}`} component={AddShipmentFlag} />
       <Route path={`${editPath}/:id`} component={AddShipmentFlag} />

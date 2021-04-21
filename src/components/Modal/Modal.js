@@ -1,14 +1,15 @@
-import React from "react";
-import { withStyles } from "@material-ui/core/styles";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import Typography from "@material-ui/core/Typography";
-import Container from "@material-ui/core/Container";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
+import React from 'react';
+import {
+  withStyles,
+  Dialog,
+  DialogContent,
+  DialogTitle as MuiDialogTitle,
+  IconButton,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@material-ui/core';
+import { Close as CloseIcon } from '@material-ui/icons';
 
 const styles = (theme) => ({
   root: {
@@ -16,7 +17,7 @@ const styles = (theme) => ({
     padding: theme.spacing(2),
   },
   closeButton: {
-    position: "absolute",
+    position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
     color: theme.palette.grey[500],
@@ -26,13 +27,17 @@ const styles = (theme) => ({
 const DialogTitle = withStyles(styles)((props) => {
   const { children, classes, onClose, titleClass, ...other } = props;
   return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <Typography className={titleClass} variant="h6">
+    <MuiDialogTitle
+      disableTypography
+      className={classes.root}
+      {...other}
+    >
+      <Typography className={titleClass} variant='h6'>
         {children}
       </Typography>
       {onClose ? (
         <IconButton
-          aria-label="close"
+          aria-label='close'
           className={classes.closeButton}
           onClick={onClose}
         >
@@ -43,10 +48,11 @@ const DialogTitle = withStyles(styles)((props) => {
   );
 });
 
-export default function Modal(props) {
-  let { open, setOpen, title, children, titleClass, maxWidth } = props;
+export default Modal = (props) => {
+  const { open, setOpen, title, children, titleClass, maxWidth } = props;
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
   const handleClose = () => {
     setOpen(false);
   };
@@ -59,16 +65,18 @@ export default function Modal(props) {
         fullWidth={true}
         fullScreen={isMobile}
         maxWidth={maxWidth}
-        aria-labelledby="form-dialog-title"
+        aria-labelledby='form-dialog-title'
       >
         <DialogTitle
-          id="customized-dialog-title"
+          id='customized-dialog-title'
           titleClass={titleClass}
           onClose={handleClose}
         >
           {title}
         </DialogTitle>
-        <DialogContent>{children}</DialogContent>
+        <DialogContent>
+          {children}
+        </DialogContent>
       </Dialog>
     </div>
   );

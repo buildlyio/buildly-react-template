@@ -1,19 +1,21 @@
-import React from "react";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import Slider from "@material-ui/core/Slider";
-import { Tooltip } from "@material-ui/core";
+import React from 'react';
+import {
+  makeStyles,
+  Typography,
+  Slider,
+  Tooltip,
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: "250px",
-    maxHeight: "250px",
-    textAlign: "center",
+    height: '250px',
+    maxHeight: '250px',
+    textAlign: 'center',
   },
   valueLabel: {
-    width: "20px",
-    height: "20px",
-    background: "red",
+    width: '20px',
+    height: '20px',
+    background: 'red',
   },
   arrow: {
     color: theme.palette.common.black,
@@ -25,18 +27,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function valuetext(value) {
+const valuetext = (value) => {
   return `${value}°C`;
 }
 
-function ValueLabelComponent(props) {
-  const { children, open, value } = props;
+const ValueLabelComponent = (props) => {
   const classes = useStyles();
+  const { children, open, value } = props;
+
   return (
     <Tooltip
       open={true}
       // enterTouchDelay={0}
-      placement="left"
+      placement='left'
       title={value}
       classes={{ tooltip: classes.tooltip, arrow: classes.arrow }}
       arrow
@@ -46,7 +49,7 @@ function ValueLabelComponent(props) {
   );
 }
 
-export default function RangeSlider({
+export default RangeSlider = ({
   value,
   setValue,
   rangeText,
@@ -56,26 +59,27 @@ export default function RangeSlider({
   handleSliderChange,
   marks,
   orientation,
-}) {
+}) => {
   const classes = useStyles();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  
   return (
     <div className={classes.root}>
       <Slider
         value={value}
         // track={false}
         orientation={orientation}
-        aria-labelledby="range-slider"
-        valueLabelDisplay="auto"
+        aria-labelledby='range-slider'
+        valueLabelDisplay='auto'
         // ValueLabelComponent={ValueLabelComponent}
         disabled={disabled}
         marks={marks}
         onChange={handleSliderChange}
       />
-      <Typography id="range-slider" gutterBottom>
+      <Typography id='range-slider' gutterBottom>
         {rangeText}
       </Typography>
     </div>

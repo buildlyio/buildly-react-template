@@ -27,11 +27,11 @@ const App = () => {
     <Router>
       <AppContext.Provider value={app}>
         <ThemeProvider theme={theme}>
-          <div className="app">
+          <div className='app'>
             <CssBaseline />
             {/* <Route
               exact
-              path="/"
+              path='/'
               render={() =>
                 oauthService.hasValidAccessToken() ? (
                   <Redirect to={routes.DASHBOARD} />
@@ -42,7 +42,7 @@ const App = () => {
             /> */}
             <Route
               exact
-              path="/"
+              path='/'
               render={() =>
                 oauthService.hasValidAccessToken() ? (
                   <Redirect to={routes.SHIPMENT} />
@@ -53,14 +53,20 @@ const App = () => {
             />
             <Route path={routes.LOGIN} component={Login} />
             <Route path={routes.REGISTER} component={Register} />
-            <Route path={routes.RESET_PASSWORD} component={EmailForm} />
+            <Route
+              path={routes.RESET_PASSWORD}
+              component={EmailForm}
+            />
             <Route
               path={routes.RESET_PASSWORD_CONFIRM}
               component={NewPasswordForm}
             />
-            <PrivateRoute path={routes.APP} component={ContainerDashboard} />
+            <PrivateRoute
+              path={routes.APP}
+              component={ContainerDashboard}
+            />
           </div>
-          <Alerts />
+          <Alert />
         </ThemeProvider>
       </AppContext.Provider>
     </Router>

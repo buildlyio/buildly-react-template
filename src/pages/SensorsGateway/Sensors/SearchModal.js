@@ -1,28 +1,26 @@
-/* eslint-disable no-use-before-define */
-import React from "react";
-import Chip from "@material-ui/core/Chip";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Button from "@material-ui/core/Button";
-import { useState } from "react";
-import CustomizedTooltips from "../../../components/ToolTip/ToolTip";
+import React, { useState } from 'react';
+import {
+  makeStyles,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+} from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+import CustomizedTooltips from '@components/ToolTip/ToolTip';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: 500,
-    "& > * + *": {
+    '& > * + *': {
       marginTop: theme.spacing(3),
     },
   },
 }));
 
-export default function SearchModal({
+export default SearchModal = ({
   open,
   setOpen,
   title,
@@ -33,45 +31,50 @@ export default function SearchModal({
   searchFieldPlaceHolder,
   selectedList,
   helpText,
-}) {
+}) => {
   const classes = useStyles();
   const [list, setList] = useState({});
+
   return (
     <Dialog
       open={open}
       onClose={() => setOpen(false)}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-      maxWidth={"md"}
+      aria-labelledby='alert-dialog-title'
+      aria-describedby='alert-dialog-description'
+      maxWidth={'md'}
     >
-      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+      <DialogTitle id='alert-dialog-title'>
+        {title}
+      </DialogTitle>
       <DialogContent className={classes.root}>
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <Autocomplete
-            id="tags-outlined"
+            id='tags-outlined'
             options={listOfItems}
             getOptionLabel={(option) =>
               option && `${option.name}:${option.gateway_uuid}`
             }
-            onChange={(event, newValue) => {
-              setList(newValue);
-            }}
+            onChange={(event, newValue) =>
+              setList(newValue)
+            }
             defaultValue={selectedList}
             style={{ flex: 1 }}
             renderInput={(params) => (
               <TextField
                 {...params}
-                variant="outlined"
+                variant='outlined'
                 label={searchFieldLabel}
                 placeholder={searchFieldPlaceHolder}
               />
             )}
           />
-          {helpText && <CustomizedTooltips toolTipText={helpText} />}
+          {helpText
+          && <CustomizedTooltips toolTipText={helpText} />
+          }
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setOpen(false)} color="primary">
+        <Button onClick={() => setOpen(false)} color='primary'>
           Cancel
         </Button>
         <Button
@@ -79,7 +82,7 @@ export default function SearchModal({
             submitAction(list);
             setOpen(false);
           }}
-          color="primary"
+          color='primary'
           autoFocus
         >
           {submitText}

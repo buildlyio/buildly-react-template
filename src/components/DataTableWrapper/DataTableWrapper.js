@@ -1,19 +1,23 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Loader from "../../components/Loader/Loader";
-import Grid from "@material-ui/core/Grid";
-import MUIDataTable from "mui-datatables";
-import Button from "@material-ui/core/Button";
-import AddIcon from "@material-ui/icons/Add";
-import IconButton from "@material-ui/core/IconButton";
-import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
-import ConfirmModal from "midgard/components/Modal/ConfirmModal";
+import React from 'react';
+import MUIDataTable from 'mui-datatables';
+import {
+  makeStyles,
+  Grid,
+  Button,
+  IconButton,
+} from '@material-ui/core';
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from '@material-ui/icons';
+import Loader from '@components/Loader/Loader';
+import ConfirmModal from '@components/Modal/ConfirmModal';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(1),
-    width: "100%"
+    width: '100%',
   },
   addButton: {
     marginBottom: theme.spacing(2),
@@ -21,26 +25,26 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flex: 1,
     padding: theme.spacing(1, 2),
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
     fontSize: 18,
-    display: "flex",
-    alignItems: "center",
+    display: 'flex',
+    alignItems: 'center',
   },
   leftHeader: {
     '& span': {
-      textAlign: "left",
+      textAlign: 'left',
     },
   },
   iconHeader: {
     '& div': {
-      textAlign: "center",
+      textAlign: 'center',
     },
   },
   icon: {
-    width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 }));
 
@@ -63,7 +67,7 @@ const DataTableWrapper = ({
 
   const formattedColumns = [
     {
-      name: "Edit",
+      name: 'Edit',
       options: {
         filter: false,
         sort: false,
@@ -82,7 +86,7 @@ const DataTableWrapper = ({
       }
     },
     {
-      name: "Delete",
+      name: 'Delete',
       options: {
         filter: false,
         sort: false,
@@ -108,18 +112,19 @@ const DataTableWrapper = ({
       },
     }))
   ];
+  
   const options = {
     filter: true,
-    filterType: "dropdown",
-    responsive: "standard",
-    tableBodyHeight: "300px",
-    tableBodyMaxHeight: "",
-    selectableRows: "none",
+    filterType: 'dropdown',
+    responsive: 'standard',
+    tableBodyHeight: '300px',
+    tableBodyMaxHeight: '',
+    selectableRows: 'none',
     rowsPerPageOptions: [5, 10, 15],
-    downloadOptions: { filename: `${filename}.csv`, separator: "," },
+    downloadOptions: { filename: `${filename}.csv`, separator: ',' },
     textLabels: {
       body: {
-        noMatch: "No data to display",
+        noMatch: 'No data to display',
       },
     },
   };
@@ -131,9 +136,9 @@ const DataTableWrapper = ({
         <Grid item xs={12}>
           <Button
             className={classes.addButton}
-            type="button"
-            variant="contained"
-            color="primary"
+            type='button'
+            variant='contained'
+            color='primary'
             onClick={onAddButtonClick}
           >
             <AddIcon /> {addButtonHeading}
@@ -151,7 +156,7 @@ const DataTableWrapper = ({
         setOpen={setConfirmModal}
         submitAction={handleConfirmModal}
         title={confirmModalTitle}
-        submitText={"Delete"}
+        submitText='Delete'
       />
     </div>
   )

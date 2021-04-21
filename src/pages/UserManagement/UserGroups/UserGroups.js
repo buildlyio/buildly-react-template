@@ -1,8 +1,4 @@
 import React, { useState, useContext } from 'react';
-import { UserContext } from '@context/User.context';
-import { InlineEditor } from '@components/InlineEditor/InlineEditor';
-import { PermissionsTable } from '@components/PermissionsTable/PermissionsTable';
-import Crud from '@modules/crud/Crud';
 import {
   Button,
   IconButton,
@@ -16,10 +12,14 @@ import {
   MoreHoriz,
   Add as AddIcon,
 } from '@material-ui/icons';
+import { InlineEditor } from '@components/InlineEditor/InlineEditor';
+import { PermissionsTable } from '@components/PermissionsTable/PermissionsTable';
+import { UserContext } from '@context/User.context';
+import Crud from '@modules/crud/Crud';
 
 const useStyles = makeStyles((theme) => ({
   addButton: {
-    marginBottom: "1.5em",
+    marginBottom: '1.5em',
   },
 }));
 
@@ -35,9 +35,12 @@ const UserGroups = () => {
   const permissionCellTemplate = (row, crud, operation) => {
     return (
       <Switch
-        size="small"
-        color="primary"
-        disabled={user.core_groups[0].id === row.id || !row.organization}
+        size='small'
+        color='primary'
+        disabled={
+          user.core_groups[0].id === row.id
+          || !row.organization
+        }
         checked={row.permissions[operation]}
         onChange={() => {
           row.permissions[operation] = !row.permissions[operation];
@@ -51,8 +54,8 @@ const UserGroups = () => {
    * Clears authentication and redirects to the login screen.
    */
   const addGroup = (crud) => {
-    let item = {
-      "name": "custom"
+    const item = {
+      'name': 'custom'
     };
     crud.createItem(item);
   };
@@ -65,7 +68,7 @@ const UserGroups = () => {
     const handleMenuItemClick = (action) => {
       if (action === 'delete') {
         crud.deleteItem(menu.row);
-      }
+      };
       setMenu({ row: null, element: null });
     };
 
@@ -76,10 +79,13 @@ const UserGroups = () => {
     return (
       <React.Fragment>
         <IconButton
-          aria-label="more"
+          aria-label='more'
           aria-controls={`groupActions${row.id}`}
-          aria-haspopup="true"
-          disabled={user.core_groups[0].id === row.id || !row.organization}
+          aria-haspopup='true'
+          disabled={
+            user.core_groups[0].id === row.id
+            || !row.organization
+          }
           onClick={handleMenuClick}
         >
           <MoreHoriz />
@@ -111,11 +117,11 @@ const UserGroups = () => {
   const nameTemplate = (row, crud) => {
     return (
       <InlineEditor
-        tag="body1"
+        tag='body1'
         id={row.id}
         disabled={!row.organization}
         value={row.name}
-        placeholder="Group type"
+        placeholder='Group type'
         onChange={(event) => update(crud, row, event)}
       />
     );
@@ -124,11 +130,11 @@ const UserGroups = () => {
   return (
     <Box>
       <Crud
-        deleteAction="DELETE_COREGROUP"
-        updateAction="UPDATE_COREGROUP"
-        createAction="CREATE_COREGROUP"
-        loadAction="LOAD_DATA_COREGROUP"
-        reducer="coreGroupReducer"
+        deleteAction='DELETE_COREGROUP'
+        updateAction='UPDATE_COREGROUP'
+        createAction='CREATE_COREGROUP'
+        loadAction='LOAD_DATA_COREGROUP'
+        reducer='coreGroupReducer'
       >
         {
           crud => {
@@ -140,21 +146,52 @@ const UserGroups = () => {
 
             return (
               <React.Fragment>
-                <Button className={classes.addButton} color="primary" variant="contained" onClick={() => addGroup(crud)}>
+                <Button
+                  className={classes.addButton}
+                  color='primary'
+                  variant='contained'
+                  onClick={() => addGroup(crud)}
+                >
                   <AddIcon /> Add Group
                 </Button>
                 <PermissionsTable
                   columns={[
-                    { label: 'Group type', prop: 'name', flex: '1', template: (row) => nameTemplate(row, crud ) },
-                    { label: 'Create', prop: 'Create', template: (row) => permissionCellTemplate(row, crud, 'create' ) },
-                    { label: 'Read', prop: 'Read', template: (row) => permissionCellTemplate(row, crud, 'read') },
-                    { label: 'Update', prop: 'Update', template: (row) => permissionCellTemplate(row, crud, 'update') },
-                    { label: 'Delete', prop: 'Delete', template: (row) => permissionCellTemplate(row, crud, 'delete'), flex: '2' },
+                    {
+                      label: 'Group type',
+                      prop: 'name',
+                      flex: '1',
+                      template: (row) => nameTemplate(row, crud),
+                    },
+                    {
+                      label: 'Create',
+                      prop: 'Create',
+                      template: (row) =>
+                        permissionCellTemplate(row, crud, 'create'),
+                    },
+                    {
+                      label: 'Read',
+                      prop: 'Read',
+                      template: (row) =>
+                        permissionCellTemplate(row, crud, 'read'),
+                    },
+                    {
+                      label: 'Update',
+                      prop: 'Update',
+                      template: (row) =>
+                        permissionCellTemplate(row, crud, 'update'),
+                    },
+                    {
+                      label: 'Delete',
+                      prop: 'Delete',
+                      flex: '2',
+                      template: (row) =>
+                        permissionCellTemplate(row, crud, 'delete'),
+                    },
                     {
                       label: 'Actions',
                       prop: 'options',
+                      flex: '1',
                       template: (row) => actionsTemplate(row, crud),
-                      flex: '1'
                     },
                   ]}
                   rows={crud.getData()}
