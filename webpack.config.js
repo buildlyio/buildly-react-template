@@ -1,8 +1,8 @@
 /* eslint-env node */
 
-const path = require("path");
-const webpack = require("webpack");
-const HtmlWebPackPlugin = require("html-webpack-plugin");
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebPackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const envConfig = require('./environments.config.json');
 
@@ -11,23 +11,23 @@ module.exports = (env, argv) => {
   if (env) {
     const configuration = envConfig.configurations[env.build];
     if (configuration && configuration.fileReplacements) {
-      for (const replacement of configuration.fileReplacements) {
+      configuration.fileReplacements.forEach((replacement) => {
         // create Webpack module rule
         const replace = {
           test: path.resolve(replacement.replace),
           loader: 'file-replace-loader',
           options: {
             replacement: path.resolve(replacement.with),
-            async: true
-          }
-        }
+            async: true,
+          },
+        };
         fileReplacements.push(replace);
-      }
+      });
     }
   }
 
   const webpackConfig = {
-    entry: ["babel-polyfill", "./src/index.js"],
+    entry: ['babel-polyfill', './src/index.js'],
     module: {
       rules: [
         {
@@ -39,38 +39,38 @@ module.exports = (env, argv) => {
             options: {
               presets: [
                 ['@babel/preset-env', {
-                  "targets": "defaults" 
+                  targets: 'defaults',
                 }],
-                '@babel/preset-react'
+                '@babel/preset-react',
               ],
               plugins: [
-                "@babel/plugin-proposal-class-properties"
-              ]
-            }
-          }]
+                '@babel/plugin-proposal-class-properties',
+              ],
+            },
+          }],
         },
         {
           test: /\.(js|jsx)$/,
           use: 'react-hot-loader/webpack',
-          include: /node_modules/
+          include: /node_modules/,
         },
         {
           test: /\.(css|scss)$/,
           use: [
-            "style-loader",
-            "css-loader",
-            "sass-loader"
-          ]
+            'style-loader',
+            'css-loader',
+            'sass-loader',
+          ],
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
           use: [
-            "file-loader",
+            'file-loader',
             {
-              loader: "image-webpack-loader",
+              loader: 'image-webpack-loader',
               options: {
                 bypassOnDebug: true,
-                disable: true
+                disable: true,
               },
             },
           ],
@@ -82,54 +82,55 @@ module.exports = (env, argv) => {
               loader: 'file-loader',
               options: {
                 name: '[name].[ext]',
-                outputPath: 'fonts/'
-              }
-            }
-          ]
+                outputPath: 'fonts/',
+              },
+            },
+          ],
         },
-        ...fileReplacements
-      ]
+        ...fileReplacements,
+      ],
     },
     resolve: {
-      extensions: ["*", ".js", ".jsx", ".ts", ".tsx"],
+      extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
       modules: [path.resolve(__dirname, './src'), 'node_modules'],
       alias: {
-        assets: path.resolve(__dirname, './src/assets'),
-        environments: path.resolve(__dirname, './src/environments'),
-        components: path.resolve(__dirname, './src/midgard/components'),
-        hooks: path.resolve(__dirname, './src/midgard/hooks'),
-        layout: path.resolve(__dirname, './src/midgard/layout'),
-        midgard: path.resolve(__dirname, './src/midgard'),
-        modules: path.resolve(__dirname, './src/midgard/modules'),
-        pages: path.resolve(__dirname, './src/midgard/pages'),
-        routes: path.resolve(__dirname, './src/midgard/routes'),
-        styles: path.resolve(__dirname, './src/styles'),
-        utils: path.resolve(__dirname, './src/midgard/utils')
-      }
+        '@assets': path.resolve(__dirname, './src/assets'),
+        '@components': path.resolve(__dirname, './src/components'),
+        '@context': path.resolve(__dirname, './src/context'),
+        '@environments': path.resolve(__dirname, './src/environments'),
+        '@hooks': path.resolve(__dirname, './src/hooks'),
+        '@layout': path.resolve(__dirname, './src/layout'),
+        '@modules': path.resolve(__dirname, './src/modules'),
+        '@pages': path.resolve(__dirname, './src/pages'),
+        '@redux': path.resolve(__dirname, './src/redux'),
+        '@routes': path.resolve(__dirname, './src/routes'),
+        '@styles': path.resolve(__dirname, './src/styles'),
+        '@utils': path.resolve(__dirname, './src/utils'),
+      },
     },
     output: {
-      path: path.resolve(__dirname, "dist/"),
+      path: path.resolve(__dirname, 'dist/'),
       publicPath: '/',
-      filename: "bundle.js"
+      filename: 'bundle.js',
     },
     devServer: {
-      contentBase: path.join(__dirname, "public/"),
+      contentBase: path.join(__dirname, 'public/'),
       port: 3000,
-      publicPath: "http://localhost:3000/",
+      publicPath: 'http://localhost:3000/',
       historyApiFallback: true,
-      hotOnly: true
+      hotOnly: true,
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
       new HtmlWebPackPlugin({
-          template: "./src/index.html",
-          filename: "./index.html",
-          favicon: './src/assets/favicon.ico',
+        template: './src/index.html',
+        filename: './index.html',
+        favicon: './src/assets/favicon.ico',
       }),
       new CopyPlugin([
         { from: 'window.environment.js', to: 'environment.js' },
       ]),
-    ]
+    ],
   };
 
   if (env && env.build === 'prod') {
@@ -138,7 +139,7 @@ module.exports = (env, argv) => {
     webpackConfig.performance = {
       hints: false,
       maxEntrypointSize: 512000,
-      maxAssetSize: 512000
+      maxAssetSize: 512000,
     };
     webpackConfig.optimization = {
       namedModules: false,
@@ -154,17 +155,17 @@ module.exports = (env, argv) => {
           commons: {
             test: /[\\/]node_modules[\\/]/,
             name: 'vendor',
-            chunks: 'all'
-          }
+            chunks: 'all',
+          },
         },
         minSize: 30000,
-        maxAsyncRequests: 3,   
+        maxAsyncRequests: 3,
       },
       noEmitOnErrors: true,
       minimize: true,
       removeAvailableModules: true,
       removeEmptyChunks: true,
-      mergeDuplicateChunks: true,    
+      mergeDuplicateChunks: true,
     };
   } else {
     webpackConfig.mode = 'development';
