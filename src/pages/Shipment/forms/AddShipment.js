@@ -10,11 +10,11 @@ import {
 } from '@material-ui/core';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 import Modal from '@components/Modal/Modal';
-import ViewDetailsWrapper from '../components/ViewDetailsWrapper';
 import { UserContext } from '@context/User.context';
 import { saveShipmentFormData } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
 import { checkForGlobalAdmin } from '@utils/utilMethods';
+import ViewDetailsWrapper from '../components/ViewDetailsWrapper';
 import EnvironmentalLimitsInfo, {
   checkIfEnvironmentLimitsEdited,
 } from '../components/EnvironmentalLimitsInfo';
@@ -59,7 +59,7 @@ const getSteps = () => ([
   'Sensors & Gateways',
   // 'Shipment Overview',
   'Environmental Limits',
-])
+]);
 
 const getStepContent = (
   stepIndex,
@@ -77,7 +77,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title='Shipment Details'
+          title="Shipment Details"
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -99,7 +99,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title='Shipment Key'
+          title="Shipment Key"
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -117,7 +117,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title='Items'
+          title="Items"
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -137,7 +137,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title='Custodians'
+          title="Custodians"
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -157,7 +157,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title='Sensors & Gateways'
+          title="Sensors & Gateways"
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -177,7 +177,7 @@ const getStepContent = (
         <ViewDetailsWrapper
           {...props}
           handleBack={handleBack}
-          title='Environmental Limits'
+          title="Environmental Limits"
           maxSteps={maxSteps}
           activeStep={stepIndex}
         >
@@ -199,7 +199,9 @@ const getStepContent = (
 };
 
 const AddShipment = (props) => {
-  const { location, history, shipmentFormData, dispatch } = props;
+  const {
+    location, history, shipmentFormData, dispatch,
+  } = props;
   const editPage = location.state && location.state.type === 'edit';
   const editData = location.state && location.state.data;
   const user = useContext(UserContext);
@@ -215,11 +217,14 @@ const AddShipment = (props) => {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const steps = getSteps();
   const maxSteps = steps.length;
-  const formTitle = !editPage
-    ? 'Add Shipment'
-    : viewOnly
-      ? 'View Shipment'
-      : 'Edit Shipment';
+  let formTitle;
+  if (!editPage) {
+    formTitle = 'Add Shipment';
+  } else if (viewOnly) {
+    formTitle = 'View Shipment';
+  } else {
+    formTitle = 'Edit Shipment';
+  }
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -232,24 +237,22 @@ const AddShipment = (props) => {
   const handleStep = (step) => () => {
     if (shipmentFormData !== null) {
       setActiveStep(step);
-    };
+    }
   };
 
   const closeModal = () => {
-    if (checkIfFormEdited(activeStep))
-      setConfirmModal(true);
+    if (checkIfFormEdited(activeStep)) setConfirmModal(true);
     else {
       handleConfirmModal();
       toggleModal(false);
-    };
+    }
   };
 
   const handleCancel = () => {
-    if (checkIfFormEdited(activeStep))
-      setConfirmModal(true);
+    if (checkIfFormEdited(activeStep)) setConfirmModal(true);
     else {
       handleConfirmModal();
-    };
+    }
   };
 
   const handleConfirmModal = () => {
@@ -258,8 +261,8 @@ const AddShipment = (props) => {
     history.push(routes.SHIPMENT);
   };
 
-  const checkIfFormEdited = (activeStep) => {
-    switch (activeStep) {
+  const checkIfFormEdited = (currentStep) => {
+    switch (currentStep) {
       case 0:
         return checkIfShipmentInfoEdited();
 
@@ -277,6 +280,9 @@ const AddShipment = (props) => {
 
       case 5:
         return checkIfEnvironmentLimitsEdited();
+
+      default:
+        return false;
     }
   };
 
@@ -288,11 +294,11 @@ const AddShipment = (props) => {
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={'md'}
+          maxWidth="md"
         >
           <div className={classes.root}>
             <Hidden xsDown>
-              <Grid container alignItems='center' justify='center'>
+              <Grid container alignItems="center" justify="center">
                 <Grid item sm={10}>
                   <Stepper
                     activeStep={activeStep}
@@ -332,8 +338,8 @@ const AddShipment = (props) => {
                 open={openConfirmModal}
                 setOpen={setConfirmModal}
                 submitAction={handleConfirmModal}
-                title='Your changes are unsaved and will be discarded. Are you sure to leave?'
-                submitText='Yes'
+                title="Your changes are unsaved and will be discarded. Are you sure to leave?"
+                submitText="Yes"
               />
             </div>
           </div>
@@ -341,7 +347,7 @@ const AddShipment = (props) => {
       )}
     </div>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

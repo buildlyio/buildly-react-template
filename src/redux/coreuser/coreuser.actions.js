@@ -14,85 +14,108 @@ export const DELETE_COREUSER = 'DELETE_COREUSER';
 export const DELETE_COREUSER_COMMIT = 'DELETE_COREUSER_COMMIT';
 export const DELETE_COREUSER_FAIL = 'DELETE_COREUSER_FAIL';
 
-export function loadCoreuserData() {
-  return {
-    type: LOAD_DATA_COREUSER,
-  };
-}
+/**
+ * Load Core User
+ */
+export const loadCoreuserData = () => ({
+  type: LOAD_DATA_COREUSER,
+});
 
-export function loadCoreuserDataCommit(data) {
-  return {
-    type: LOAD_DATA_COREUSER_COMMIT,
-    data,
-  };
-}
+/**
+ * Load Core User data commit
+ * @param {Object} data
+ */
+export const loadCoreuserDataCommit = (data) => ({
+  type: LOAD_DATA_COREUSER_COMMIT,
+  data,
+});
 
-export function loadCoreuserDataFail(error) {
-  return {
-    type: LOAD_DATA_COREUSER_FAIL,
-    error,
-  };
-}
+/**
+ * Load Core User data fail
+ * @param {String} error
+ */
+export const loadCoreuserDataFail = (error) => ({
+  type: LOAD_DATA_COREUSER_FAIL,
+  error,
+});
 
-export function createCoreUser(data) {
-  return {
-    type: CREATE_COREUSER,
-    data,
-  };
-}
+/**
+ * Create Core User
+ * @param {Object} data
+ */
+export const createCoreUser = (data) => ({
+  type: CREATE_COREUSER,
+  data,
+});
 
-export function createCoreUserCommit(data) {
-  return {
-    type: CREATE_COREUSER_COMMIT,
-    data,
-  };
-}
+/**
+ * Create Core User commit
+ * @param {Object} data
+ */
+export const createCoreUserCommit = (data) => ({
+  type: CREATE_COREUSER_COMMIT,
+  data,
+});
 
-export function createCoreUserFail(error) {
-  return {
-    type: CREATE_COREUSER_FAIL,
-    error,
-  };
-}
+/**
+ * Create Core User fail
+ * @param {String} error
+ */
+export const createCoreUserFail = (error) => ({
+  type: CREATE_COREUSER_FAIL,
+  error,
+});
 
-export function updateCoreUser(data) {
-  return {
-    type: UPDATE_COREUSER,
-    data,
-  };
-}
+/**
+ * Update Core User
+ * @param {Object} data
+ */
+export const updateCoreUser = (data) => ({
+  type: UPDATE_COREUSER,
+  data,
+});
 
-export function updateCoreUserCommit(data) {
-  return {
-    type: UPDATE_COREUSER_COMMIT,
-    data,
-  };
-}
+/**
+ * Update Core User commit
+ * @param {Object} data
+ */
+export const updateCoreUserCommit = (data) => ({
+  type: UPDATE_COREUSER_COMMIT,
+  data,
+});
 
-export function updateCoreUserFail(error) {
-  return {
-    type: UPDATE_COREUSER_FAIL,
-    error,
-  };
-}
+/**
+ * Update Core User fail
+ * @param {String} error
+ */
+export const updateCoreUserFail = (error) => ({
+  type: UPDATE_COREUSER_FAIL,
+  error,
+});
 
-export function deleteCoreUser(data) {
-  return {
-    type: DELETE_COREUSER,
-    data,
-  };
-}
+/**
+ * Delete Core User
+ * @param {Object} data
+ */
+export const deleteCoreUser = (data) => ({
+  type: DELETE_COREUSER,
+  data,
+});
 
-export function deleteCoreUserCommit(data) {
-  return {
-    type: DELETE_COREUSER_COMMIT,
-    data,
-  };
-}
+/**
+ * Delete Core User commit
+ * @param {Object} data
+ */
+export const deleteCoreUserCommit = (data) => ({
+  type: DELETE_COREUSER_COMMIT,
+  data,
+});
 
-export function deleteCoreUserFail(error) {
-  return {
-    type: DELETE_COREUSER_FAIL,
-    error,
-  };
-}
+/**
+ * Delete Core User fail
+ * @param {String} error
+ */
+export const deleteCoreUserFail = (error) => ({
+  type: DELETE_COREUSER_FAIL,
+  error,
+});

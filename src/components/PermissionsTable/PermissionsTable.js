@@ -49,7 +49,7 @@ export const PermissionsTable = ({ columns, rows, sortFn }) => {
       {col.label}
     </StyledTableHeadCell>
   ));
-  
+
   const sortedRows = sortFn ? rows.sort(sortFn) : rows;
   const content = sortedRows.map((row, rowIndex) => (
     <StyledTableRow key={`tableRow${rowIndex}`}>
@@ -75,4 +75,4 @@ export const PermissionsTable = ({ columns, rows, sortFn }) => {
       </Table>
     </StyledContainer>
   );
-}
+};

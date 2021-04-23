@@ -69,10 +69,10 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#4F4D4D',
-  }
+  },
 });
 
-export default DataTable = ({ ...props }) => {
+const DataTable = ({ ...props }) => {
   const {
     rows,
     columns,
@@ -85,8 +85,10 @@ export default DataTable = ({ ...props }) => {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [selectedRows, setSelectedRows] = React.useState(rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage))
-  
+  const [selectedRows, setSelectedRows] = React.useState(
+    rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+  );
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -98,9 +100,9 @@ export default DataTable = ({ ...props }) => {
 
   useEffect(() => {
     setSelectedRows(
-      rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+      rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     );
-  }, [rows, page, rowsPerPage])
+  }, [rows, page, rowsPerPage]);
 
   return (
     <Paper className={classes.root}>
@@ -116,15 +118,15 @@ export default DataTable = ({ ...props }) => {
         <Table
           stickyHeader
           className={classes.table}
-          aria-label='sticky table'
+          aria-label="sticky table"
         >
           <TableHead>
             <StyledTableRow>
-              {actionsColumns &&
-                actionsColumns.map((action, index) => (
+              {actionsColumns
+                && actionsColumns.map((action, index) => (
                   <StyledTableHead
                     key={`actionCol${index}:${action.id}`}
-                    align={'left'}
+                    align="left"
                     style={{ minWidth: 50 }}
                   >
                     {action.label}
@@ -145,35 +147,34 @@ export default DataTable = ({ ...props }) => {
             </StyledTableRow>
           </TableHead>
           <TableBody>
-            {rows.length > 0 &&
-              selectedRows.map((row, rowIndex) => (
+            {rows.length > 0
+              && selectedRows.map((row, rowIndex) => (
                 <StyledTableRow
                   hover
-                  role='checkbox'
+                  role="checkbox"
                   tabIndex={-1}
                   key={`tableRow${rowIndex}`}
                 >
-                  {actionsColumns &&
-                    actionsColumns.map((action, colIndex) => (
+                  {actionsColumns
+                    && actionsColumns.map((action, colIndex) => (
                       <StyledTableHead
                         key={`tableRow${rowIndex}:${colIndex}`}
-                        align={'left'}
+                        align="left"
                         style={{ minWidth: 50, width: 50 }}
                       >
                         <IconButton
                           className={classes.menuButton}
                           onClick={() => action.action(row)}
-                          color='secondary'
-                          aria-label='menu'
+                          color="secondary"
+                          aria-label="menu"
                         >
-                          {action.type === 'edit' 
-                            ? <EditIcon />
-                            : action.type === 'view' 
-                              ? <ViewIcon />
-                              : action.type === 'unlink'
-                                ? <LinkOffIcon />
-                                : <DeleteIcon />
-                          }
+                          {action.type === 'edit' && <EditIcon />}
+                          {action.type === 'view' && <ViewIcon />}
+                          {action.type === 'unlink' && <LinkOffIcon />}
+                          {action.type !== 'edit'
+                            && action.type !== 'view'
+                            && action.type !== 'unlink'
+                            && <DeleteIcon />}
                         </IconButton>
                       </StyledTableHead>
                     ))}
@@ -189,8 +190,7 @@ export default DataTable = ({ ...props }) => {
                     >
                       {column.format
                         ? column.format(row[column.id] || '-')
-                        : row[column.id] || '-'
-                      }
+                        : row[column.id] || '-'}
                     </TableCell>
                   ))}
                 </StyledTableRow>
@@ -199,7 +199,7 @@ export default DataTable = ({ ...props }) => {
             {rows.length === 0 && (
               <StyledTableRow>
                 <TableCell
-                  align='center'
+                  align="center"
                   colSpan={
                     actionsColumns
                       ? `${columns.length + actionsColumns.length}`
@@ -215,7 +215,7 @@ export default DataTable = ({ ...props }) => {
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[5, 10, 20]}
-        component='div'
+        component="div"
         count={rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
@@ -225,4 +225,6 @@ export default DataTable = ({ ...props }) => {
       />
     </Paper>
   );
-}
+};
+
+export default DataTable;

@@ -92,41 +92,42 @@ const ShipmentKeyInfo = ({
     await worker.load();
     await worker.loadLanguage('eng');
     await worker.initialize('eng');
-    const {data:{text}} = await worker.recognize(imageUrl);
-    setText(text);
+    const { data } = await worker.recognize(imageUrl);
+    setText(data.text);
     setLoadingText(false);
     await worker.terminate();
-  }
+  };
 
   const searchOnBlur = () => {
     if (key) {
-      const re = new RegExp('(.{0,20})' + key + '(.{0,20})', 'gi'), m;
-      let values = [];
+      const re = new RegExp(`(.{0,20})${key}(.{0,20})`, 'gi');
+      let m;
+      const values = [];
       while (m = re.exec(text)) {
         // let line = (m[1] ? '...' : '') + m[0] + (m[2] ? '...' : '');
         values.push(m[2]);
       }
-      let options = [];
-      values.forEach(value => {
+      let opts = [];
+      values.forEach((value) => {
         const segments = value[0] === ':' ? value.split(': ') : value.split(' ');
         const segment = segments[1]
           ? segments[1].split(' ')[0]
-          : segments[0].split(' ')[0]
+          : segments[0].split(' ')[0];
 
         if (segment.match('^[A-Za-z0-9]+$')) {
-          options = [ ...options, segment ];
-        };
+          opts = [...opts, segment];
+        }
       });
-      setOptions(options);
-    };
+      setOptions(opts);
+    }
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    let uploadFile = new FormData();
+    const uploadFile = new FormData();
     uploadFile.append('file', file, file.name);
     const identifier = key
-      ? JSON.stringify({[key]: keyValue})
+      ? JSON.stringify({ [key]: keyValue })
       : null;
 
     dispatch(pdfIdentifier(
@@ -154,35 +155,36 @@ const ShipmentKeyInfo = ({
         setFile(event.target.files[0]);
         setLoadingText(true);
       } else {
-        event.target.files=null;
-        event.target.value='';
+        event.target.files = null;
+        event.target.value = '';
         alert('File size is more that 2MB. Please upload another file.');
-      };
+      }
     } else {
-      event.target.files=null;
-      event.target.value='';
+      event.target.files = null;
+      event.target.value = '';
       alert('Only PDF files are allowed for upload.');
-    };
+    }
   };
 
   return (
-    <Container className={classes.root} maxWidth='sm'>
-      {loadingText && 
+    <Container className={classes.root} maxWidth="sm">
+      {loadingText
+        && (
         <Loader
           open={loadingText}
-          label='Extracting text from selected PDF'
+          label="Extracting text from selected PDF"
         />
-      }
+        )}
       <form noValidate onSubmit={handleSubmit}>
-        <Card variant='outlined'>
+        <Card variant="outlined">
           <CardContent>
             <TextField
-              variant='outlined'
+              variant="outlined"
               fullWidth
-              type='file'
-              id='key-file'
-              name='key-file'
-              label='Upload file for key'
+              type="file"
+              id="key-file"
+              name="key-file"
+              label="Upload file for key"
               className={classes.textfield}
               InputLabelProps={{ shrink: true }}
               onChange={fileChange}
@@ -193,91 +195,90 @@ const ShipmentKeyInfo = ({
                 && shipmentFormData.unique_identifier
                 && shipmentFormData.uploaded_pdf.length > 0
                 && shipmentFormData.uploaded_pdf_link.length > 0
-                ? (
-                  <React.Fragment>
-                    <span className={classes.caption}>
-                      <PictureAsPdfIcon
-                        className={classes.pdfIcon}
-                        fontSize='large'
-                      />
-                      <span>
-                        {'PDF(s) already uploaded for this shipment '}
-                        {_.map(
-                          shipmentFormData.uploaded_pdf,
-                          (pdfName, index) => (
-                            <React.Fragment key={index}>
-                              <Link
-                                color='primary'
-                                href={
+                  ? (
+                    <>
+                      <span className={classes.caption}>
+                        <PictureAsPdfIcon
+                          className={classes.pdfIcon}
+                          fontSize="large"
+                        />
+                        <span>
+                          {'PDF(s) already uploaded for this shipment '}
+                          {_.map(
+                            shipmentFormData.uploaded_pdf,
+                            (pdfName, index) => (
+                              <React.Fragment key={index}>
+                                <Link
+                                  color="primary"
+                                  href={
                                   shipmentFormData.uploaded_pdf_link[index]
                                 }
-                                target='_blank'
-                              >
-                                {pdfName}
-                              </Link>
-                              {index < shipmentFormData.uploaded_pdf.length-1
-                                && <span>{', '}</span>
-                              }
-                            </React.Fragment>
-                          )
-                        )}
+                                  target="_blank"
+                                >
+                                  {pdfName}
+                                </Link>
+                                {index < shipmentFormData.uploaded_pdf.length - 1
+                                && <span>{', '}</span>}
+                              </React.Fragment>
+                            ),
+                          )}
+                        </span>
                       </span>
-                    </span>
-                    <span>
-                      <em>Unique Identifier</em>
-                    </span>
-                    <br />
-                    <span>
-                      {`${_.keys(
-                        JSON.parse(
-                          shipmentFormData.unique_identifier
-                        ),
-                      )[0]}: ${_.values(
-                        JSON.parse(
-                          shipmentFormData.unique_identifier
-                        ),
-                      )[0]}`}
-                    </span>
-                  </React.Fragment>
-                )
-                : ''
+                      <span>
+                        <em>Unique Identifier</em>
+                      </span>
+                      <br />
+                      <span>
+                        {`${_.keys(
+                          JSON.parse(
+                            shipmentFormData.unique_identifier,
+                          ),
+                        )[0]}: ${_.values(
+                          JSON.parse(
+                            shipmentFormData.unique_identifier,
+                          ),
+                        )[0]}`}
+                      </span>
+                    </>
+                  )
+                  : ''
               }
             />
-            {file &&
+            {file
+            && (
             <TextField
               className={classes.textfield}
-              variant='outlined'
+              variant="outlined"
               fullWidth
-              id='file-search'
-              name='file-search'
-              label='Which should be the key?'
+              id="file-search"
+              name="file-search"
+              label="Which should be the key?"
               value={key}
-              onChange={e => setKey(e.target.value)}
+              onChange={(e) => setKey(e.target.value)}
               onBlur={searchOnBlur}
             />
-            }
-            {file && key &&
+            )}
+            {file && key
+              && (
               <Autocomplete
                 freeSolo
                 className={classes.autoComplete}
-                id='unique-identifier'
+                id="unique-identifier"
                 options={options}
                 value={keyValue}
-                onChange={(event, newValue) =>
-                  setKeyValue(newValue)
-                }
-                renderInput={params =>
+                onChange={(event, newValue) => setKeyValue(newValue)}
+                renderInput={(params) => (
                   <TextField
                     {...params}
-                    variant='outlined'
+                    variant="outlined"
                     required
                     fullWidth
-                    label='What should be the key value?'
+                    label="What should be the key value?"
                     onChange={(e) => setKeyValue(e.target.value)}
                   />
-                }
+                )}
               />
-            }
+              )}
           </CardContent>
         </Card>
         <Grid
@@ -288,10 +289,10 @@ const ShipmentKeyInfo = ({
           <Grid item xs={6} sm={2}>
             {viewOnly ? (
               <Button
-                type='button'
+                type="button"
                 fullWidth
-                variant='contained'
-                color='primary'
+                variant="contained"
+                color="primary"
                 className={classes.submit}
                 onClick={handleCancel}
               >
@@ -300,10 +301,10 @@ const ShipmentKeyInfo = ({
             ) : (
               <div className={classes.loadingWrapper}>
                 <Button
-                  type='submit'
+                  type="submit"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   className={classes.submit}
                   disabled={
                     Boolean(loading || !file || (key && !keyValue))
@@ -322,27 +323,28 @@ const ShipmentKeyInfo = ({
           </Grid>
           <Grid item xs={12} sm={4}>
             <Button
-              variant='contained'
-              color='primary'
+              variant="contained"
+              color="primary"
               fullWidth
               onClick={handleNext}
               className={classes.submit}
             >
-              {`Next: Items`}
+              Next: Items
             </Button>
           </Grid>
         </Grid>
       </form>
-      {file && 
+      {file
+        && (
         <PdfViewer
-          canvas={classes.preview}
+          canvasClass={classes.preview}
           url={URL.createObjectURL(file)}
           getPdfText={getPdfText}
         />
-      }
+        )}
     </Container>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

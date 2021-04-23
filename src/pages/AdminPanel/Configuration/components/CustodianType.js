@@ -11,12 +11,12 @@ import { CUSTODIAN_TYPE_COLUMNS } from '../ConfigurationConstants';
 import AddCustodianType from '../forms/AddCustodianType';
 
 const CustodianType = (props) => {
-  const { 
+  const {
     dispatch,
     loading,
     custodianTypeList,
     redirectTo,
-    history, 
+    history,
   } = props;
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -25,13 +25,13 @@ const CustodianType = (props) => {
     ? `${redirectTo}/custodian-type`
     : `${routes.CONFIGURATION}/custodian-type/add`;
   const editPath = redirectTo
-  ? `${redirectTo}/custodian-type`
-  : `${routes.CONFIGURATION}/custodian-type/edit`;
+    ? `${redirectTo}/custodian-type`
+    : `${routes.CONFIGURATION}/custodian-type/edit`;
 
   useEffect(() => {
     if (!loading && !custodianTypeList) {
       dispatch(getCustodianType());
-    };
+    }
   }, [custodianTypeList]);
 
   const onAddButtonClick = () => {
@@ -63,21 +63,21 @@ const CustodianType = (props) => {
       loading={loading}
       rows={custodianTypeList || []}
       columns={CUSTODIAN_TYPE_COLUMNS}
-      filename='CustodianType'
-      addButtonHeading='Custodian Type'
+      filename="CustodianType"
+      addButtonHeading="Custodian Type"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle='Are you sure you want to Delete this Custodian Type?'
+      confirmModalTitle="Are you sure you want to Delete this Custodian Type?"
     >
       <Route path={`${addPath}`} component={AddCustodianType} />
       <Route path={`${editPath}/:id`} component={AddCustodianType} />
     </DataTableWrapper>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

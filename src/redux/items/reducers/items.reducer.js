@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from 'lodash';
 import {
   GET_ITEMS,
   GET_ITEMS_SUCCESS,
@@ -67,7 +67,7 @@ import {
   DELETE_UNITS_OF_MEASURE,
   DELETE_UNITS_OF_MEASURE_SUCCESS,
   DELETE_UNITS_OF_MEASURE_FAILURE,
-} from "../actions/items.actions";
+} from '../actions/items.actions';
 
 const initialState = {
   loading: false,
@@ -86,35 +86,53 @@ const initialState = {
 export default (state = initialState, action) => {
   let deletedItemType;
   let editedItemType = state.itemTypeList;
-  let itemTypePresent = _.remove(editedItemType, { id: action.itemType?.id })[0];
+  const itemTypePresent = _.remove(
+    editedItemType,
+    { id: action.itemType?.id },
+  )[0];
   if (itemTypePresent) {
     deletedItemType = editedItemType;
-    editedItemType = [ ...editedItemType, action.itemType ];
-  };
+    editedItemType = [...editedItemType, action.itemType];
+  }
 
   let deletedProducts;
   let editedProducts = state.products;
-  let productsPresent = _.remove(editedProducts, { id: action.product?.id })[0];
+  const productsPresent = _.remove(
+    editedProducts,
+    { id: action.product?.id },
+  )[0];
   if (productsPresent) {
     deletedProducts = editedProducts;
-    editedProducts = [ ...editedProducts, action.product ];
-  };
+    editedProducts = [...editedProducts, action.product];
+  }
 
   let deletedProductType;
   let editedProductType = state.productType;
-  let ProductTypePresent = _.remove(editedProductType, { id: action.productType?.id })[0];
+  const ProductTypePresent = _.remove(
+    editedProductType,
+    { id: action.productType?.id },
+  )[0];
   if (ProductTypePresent) {
     deletedProductType = editedProductType;
-    editedProductType = [ ...editedProductType, action.productType ];
-  };
+    editedProductType = [
+      ...editedProductType,
+      action.productType,
+    ];
+  }
 
   let deletedUnitsOfMeasure;
   let editedUnitsOfMeasure = state.unitsOfMeasure;
-  let UnitsOfMeasurePresent = _.remove(editedUnitsOfMeasure, { id: action.unitsOfMeasure?.id })[0];
+  const UnitsOfMeasurePresent = _.remove(
+    editedUnitsOfMeasure,
+    { id: action.unitsOfMeasure?.id },
+  )[0];
   if (UnitsOfMeasurePresent) {
     deletedUnitsOfMeasure = editedUnitsOfMeasure;
-    editedUnitsOfMeasure = [ ...editedUnitsOfMeasure, action.unitsOfMeasure ];
-  };
+    editedUnitsOfMeasure = [
+      ...editedUnitsOfMeasure,
+      action.unitsOfMeasure,
+    ];
+  }
 
   switch (action.type) {
     case GET_ITEMS:
@@ -124,6 +142,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_ITEMS_SUCCESS:
       return {
         ...state,
@@ -131,6 +150,7 @@ export default (state = initialState, action) => {
         loaded: true,
         itemData: action.data,
       };
+
     case GET_ITEMS_FAILURE:
       return {
         ...state,
@@ -138,6 +158,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case ADD_ITEMS:
       return {
         ...state,
@@ -145,6 +166,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case ADD_ITEMS_SUCCESS:
       return {
         ...state,
@@ -152,6 +174,7 @@ export default (state = initialState, action) => {
         loaded: true,
         itemData: action.data,
       };
+
     case ADD_ITEMS_FAILURE:
       return {
         ...state,
@@ -184,6 +207,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case DELETE_ITEMS:
       return {
         ...state,
@@ -191,6 +215,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case DELETE_ITEMS_SUCCESS:
       return {
         ...state,
@@ -198,6 +223,7 @@ export default (state = initialState, action) => {
         loaded: true,
         itemData: action.data,
       };
+
     case DELETE_ITEMS_FAILURE:
       return {
         ...state,
@@ -205,11 +231,13 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case SEARCH:
       return {
         ...state,
         error: null,
       };
+
     case SEARCH_SUCCESS:
       return {
         ...state,
@@ -217,6 +245,7 @@ export default (state = initialState, action) => {
         loaded: true,
         searchedData: action.data,
       };
+
     case GET_ITEMS_TYPE:
       return {
         ...state,
@@ -224,6 +253,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_ITEMS_TYPE_SUCCESS:
       return {
         ...state,
@@ -231,6 +261,7 @@ export default (state = initialState, action) => {
         loaded: true,
         itemTypeList: action.data,
       };
+
     case GET_ITEMS_TYPE_FAILURE:
       return {
         ...state,
@@ -238,6 +269,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case GET_UNITS_OF_MEASURE:
       return {
         ...state,
@@ -245,6 +277,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_UNITS_OF_MEASURE_SUCCESS:
       return {
         ...state,
@@ -252,6 +285,7 @@ export default (state = initialState, action) => {
         loaded: true,
         unitsOfMeasure: action.data,
       };
+
     case GET_UNITS_OF_MEASURE_FAILURE:
       return {
         ...state,
@@ -259,6 +293,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case GET_ITEM_OPTIONS:
       return {
         ...state,
@@ -267,6 +302,7 @@ export default (state = initialState, action) => {
         itemOptions: null,
         error: null,
       };
+
     case GET_ITEM_OPTIONS_SUCCESS:
       return {
         ...state,
@@ -275,6 +311,7 @@ export default (state = initialState, action) => {
         itemOptions: action.data,
         error: null,
       };
+
     case GET_ITEM_OPTIONS_FAILURE:
       return {
         ...state,
@@ -283,6 +320,7 @@ export default (state = initialState, action) => {
         itemOptions: null,
         error: action.error,
       };
+
     case GET_PRODUCTS:
       return {
         ...state,
@@ -290,6 +328,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_PRODUCTS_SUCCESS:
       return {
         ...state,
@@ -297,6 +336,7 @@ export default (state = initialState, action) => {
         loaded: true,
         products: action.data,
       };
+
     case GET_PRODUCTS_FAILURE:
       return {
         ...state,
@@ -312,6 +352,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_PRODUCTS_TYPE_SUCCESS:
       return {
         ...state,
@@ -319,6 +360,7 @@ export default (state = initialState, action) => {
         loaded: true,
         productType: action.data,
       };
+
     case GET_PRODUCTS_TYPE_FAILURE:
       return {
         ...state,
@@ -326,6 +368,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case GET_PRODUCTS_OPTIONS_SUCCESS:
       return {
         ...state,
@@ -334,6 +377,7 @@ export default (state = initialState, action) => {
         productOptions: action.data,
         error: null,
       };
+
     case GET_PRODUCTS_OPTIONS_FAILURE:
       return {
         ...state,
@@ -342,6 +386,7 @@ export default (state = initialState, action) => {
         productOptions: null,
         error: action.error,
       };
+
     case ADD_ITEMS_TYPE:
       return {
         ...state,
@@ -349,15 +394,17 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case ADD_ITEMS_TYPE_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
         itemTypeList: [
-          ...state.itemTypeList, action.itemType
+          ...state.itemTypeList, action.itemType,
         ],
       };
+
     case ADD_ITEMS_TYPE_FAILURE:
       return {
         ...state,
@@ -365,6 +412,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case EDIT_ITEMS_TYPE:
       return {
         ...state,
@@ -372,6 +420,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case EDIT_ITEMS_TYPE_SUCCESS:
       return {
         ...state,
@@ -379,6 +428,7 @@ export default (state = initialState, action) => {
         loaded: true,
         itemTypeList: editedItemType,
       };
+
     case EDIT_ITEMS_TYPE_FAILURE:
       return {
         ...state,
@@ -386,6 +436,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case DELETE_ITEMS_TYPE:
       return {
         ...state,
@@ -393,6 +444,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case DELETE_ITEMS_TYPE_SUCCESS:
       return {
         ...state,
@@ -400,6 +452,7 @@ export default (state = initialState, action) => {
         loaded: true,
         itemTypeList: deletedItemType,
       };
+
     case DELETE_ITEMS_TYPE_FAILURE:
       return {
         ...state,
@@ -407,6 +460,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case ADD_PRODUCTS:
       return {
         ...state,
@@ -414,15 +468,17 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case ADD_PRODUCTS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
         products: [
-          ...state.products, action.product
+          ...state.products, action.product,
         ],
       };
+
     case ADD_PRODUCTS_FAILURE:
       return {
         ...state,
@@ -430,6 +486,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case EDIT_PRODUCTS:
       return {
         ...state,
@@ -437,6 +494,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case EDIT_PRODUCTS_SUCCESS:
       return {
         ...state,
@@ -444,6 +502,7 @@ export default (state = initialState, action) => {
         loaded: true,
         products: editedProducts,
       };
+
     case EDIT_PRODUCTS_FAILURE:
       return {
         ...state,
@@ -451,6 +510,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case DELETE_PRODUCTS:
       return {
         ...state,
@@ -458,6 +518,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case DELETE_PRODUCTS_SUCCESS:
       return {
         ...state,
@@ -465,6 +526,7 @@ export default (state = initialState, action) => {
         loaded: true,
         products: deletedProducts,
       };
+
     case DELETE_PRODUCTS_FAILURE:
       return {
         ...state,
@@ -472,6 +534,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case ADD_PRODUCTS_TYPE:
       return {
         ...state,
@@ -479,15 +542,17 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case ADD_PRODUCTS_TYPE_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
         productType: [
-          ...state.productType, action.productType
+          ...state.productType, action.productType,
         ],
       };
+
     case ADD_PRODUCTS_TYPE_FAILURE:
       return {
         ...state,
@@ -495,6 +560,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case EDIT_PRODUCTS_TYPE:
       return {
         ...state,
@@ -502,6 +568,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case EDIT_PRODUCTS_TYPE_SUCCESS:
       return {
         ...state,
@@ -509,6 +576,7 @@ export default (state = initialState, action) => {
         loaded: true,
         productType: editedProductType,
       };
+
     case EDIT_PRODUCTS_TYPE_FAILURE:
       return {
         ...state,
@@ -516,6 +584,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case DELETE_PRODUCTS_TYPE:
       return {
         ...state,
@@ -523,6 +592,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case DELETE_PRODUCTS_TYPE_SUCCESS:
       return {
         ...state,
@@ -530,6 +600,7 @@ export default (state = initialState, action) => {
         loaded: true,
         productType: deletedProductType,
       };
+
     case DELETE_PRODUCTS_TYPE_FAILURE:
       return {
         ...state,
@@ -537,6 +608,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case ADD_UNITS_OF_MEASURE:
       return {
         ...state,
@@ -544,15 +616,17 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case ADD_UNITS_OF_MEASURE_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
         unitsOfMeasure: [
-          ...state.unitsOfMeasure, action.unitsOfMeasure
+          ...state.unitsOfMeasure, action.unitsOfMeasure,
         ],
       };
+
     case ADD_UNITS_OF_MEASURE_FAILURE:
       return {
         ...state,
@@ -560,6 +634,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case EDIT_UNITS_OF_MEASURE:
       return {
         ...state,
@@ -567,6 +642,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case EDIT_UNITS_OF_MEASURE_SUCCESS:
       return {
         ...state,
@@ -574,6 +650,7 @@ export default (state = initialState, action) => {
         loaded: true,
         unitsOfMeasure: editedUnitsOfMeasure,
       };
+
     case EDIT_UNITS_OF_MEASURE_FAILURE:
       return {
         ...state,
@@ -581,6 +658,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case DELETE_UNITS_OF_MEASURE:
       return {
         ...state,
@@ -588,6 +666,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case DELETE_UNITS_OF_MEASURE_SUCCESS:
       return {
         ...state,
@@ -595,6 +674,7 @@ export default (state = initialState, action) => {
         loaded: true,
         unitsOfMeasure: deletedUnitsOfMeasure,
       };
+
     case DELETE_UNITS_OF_MEASURE_FAILURE:
       return {
         ...state,
@@ -602,6 +682,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     default:
       return state;
   }

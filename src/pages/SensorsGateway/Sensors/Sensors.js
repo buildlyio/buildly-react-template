@@ -46,22 +46,22 @@ const Sensors = ({
     if (data === null) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
-    };
+    }
     if (sensorOptions === null) {
       httpService
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}sensors/sensor/`,
-          true
+          true,
         )
         .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_SENSOR_OPTIONS_SUCCESS, data });
+        .then((res) => {
+          dispatch({ type: GET_SENSOR_OPTIONS_SUCCESS, data: res });
         })
         .catch((error) => {
           dispatch({ type: GET_SENSOR_OPTIONS_FAILURE, error });
         });
-    };
+    }
   }, []);
 
   useEffect(() => {
@@ -73,13 +73,13 @@ const Sensors = ({
     ) {
       setRows(getFormattedSensorRow(data, sensorTypeList, gatewayData));
       setFilteredRows(getFormattedSensorRow(data, sensorTypeList, gatewayData));
-    };
+    }
   }, [data, sensorTypeList]);
 
   useEffect(() => {
     if (searchData) {
       setFilteredRows(searchData);
-    };
+    }
   }, [searchData]);
 
   const editSensor = (item) => {
@@ -123,23 +123,23 @@ const Sensors = ({
     <DashboardWrapper
       loading={loading}
       // onAddButtonClick={onAddButtonClick}
-      dashboardHeading='Sensors'
+      dashboardHeading="Sensors"
       // addButtonHeading='Add Sensor'
       editAction={editSensor}
       deleteAction={deleteSensorItem}
       columns={sensorsColumns}
       redirectTo={redirectTo}
       rows={filteredRows}
-      hasSearch={noSearch ? false : true}
+      hasSearch={!noSearch}
       search={{ searchValue, searchAction: searchTable }}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle='Are you sure you want to Delete this Sensor?'
+      confirmModalTitle="Are you sure you want to Delete this Sensor?"
     >
       <Route path={`${addPath}`} component={AddSensors} />
       <Route path={`${editPath}/:id`} component={AddSensors} />
     </DashboardWrapper>
   );
-}
+};
 export default Sensors;

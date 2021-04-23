@@ -1,4 +1,11 @@
 import {
+  put, takeLatest, all, call,
+} from 'redux-saga/effects';
+import _ from 'lodash';
+import { httpService } from '@modules/http/http.service';
+import { environment } from '@environments/environment';
+import { showAlert } from '@redux/alert/actions/alert.actions';
+import {
   ADD_FROM_FILE,
   ADD_FROM_FILE_SUCCESS,
   ADD_FROM_FILE_FAILURE,
@@ -11,31 +18,33 @@ import {
   ADD_API_SETUP,
   ADD_API_SETUP_SUCCESS,
   ADD_API_SETUP_FAILURE,
-} from "../actions/importExport.actions";
-import { put, takeLatest, all, call } from "redux-saga/effects";
-import { httpService } from "../../../modules/http/http.service";
-import { environment } from "environments/environment";
-import { showAlert } from "../../alert/actions/alert.actions";
+} from '../actions/importExport.actions';
 
 function* addFromFile(payload) {
   let endPoint;
   switch (payload.model) {
-    case "item":
-    case "product":
-      endPoint = "shipment/file_upload/"
-    // case "sensor":
-    // case "gateway":
-    //   endPoint = "sensors/file_upload/"
+    case 'item':
+    case 'product':
+      endPoint = 'shipment/file_upload/';
+      break;
+
+      // case 'sensor':
+      // case 'gateway':
+      //   endPoint = 'sensors/file_upload/';
+      //   break;
+
+    default:
+      break;
   }
 
   try {
     const response = yield call(
       httpService.makeRequest,
-      "post",
+      'post',
       `${environment.API_URL}${endPoint}`,
       payload.formData,
       true,
-      'multipart/form-data'
+      'multipart/form-data',
     );
     if (response && response.data.status) {
       yield [
@@ -44,27 +53,26 @@ function* addFromFile(payload) {
         }),
         yield put(
           showAlert({
-            type: "success",
+            type: 'success',
             open: true,
             message: response.data.status,
-          })
+          }),
         ),
-      ]
+      ];
     }
   } catch (error) {
-    console.log(error);
     yield [
       yield put({
         type: ADD_FROM_FILE_FAILURE,
       }),
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
           message: `Couldn't import ${_.capitalize(payload.model)} Data due to some error!`,
-        })
+        }),
       ),
-    ]
+    ];
   }
 }
 
@@ -72,7 +80,7 @@ function* getApiResponse(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      "get",
+      'get',
       payload.url,
       null,
       null,
@@ -80,16 +88,15 @@ function* getApiResponse(payload) {
       null,
       payload.header,
     );
-    yield [yield put({ type: GET_API_RESPONSE_SUCCESS, res: data })];
+    yield put({ type: GET_API_RESPONSE_SUCCESS, res: data });
   } catch (error) {
-    console.log("error", error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Couldn't get api response due to some error!",
-        })
+          message: 'Couldn\'t get api response due to some error!',
+        }),
       ),
       yield put({
         type: GET_API_RESPONSE_FAILURE,
@@ -102,30 +109,38 @@ function* getApiResponse(payload) {
 function* getExportData(payload) {
   let endPoint;
   switch (payload.model) {
-    case "item":
-    case "product":
-      endPoint = "shipment/file_export/"
-    // case "sensor":
-    // case "gateway":
-    //   endPoint = "sensors/file_export/"
+    case 'item':
+    case 'product':
+      endPoint = 'shipment/file_export/';
+      break;
+
+      // case 'sensor':
+      // case 'gateway':
+      //   endPoint = 'sensors/file_export/';
+      //   break;
+
+    default:
+      break;
   }
 
   try {
     const response = yield call(
       httpService.makeRequest,
-      "get",
+      'get',
       `${environment.API_URL}${endPoint}?model=${payload.model}&file_type=${payload.fileType}`,
     );
-    yield [yield put({ type: GET_EXPORT_DATA_SUCCESS, data: response.data })];
+    yield put({
+      type: GET_EXPORT_DATA_SUCCESS,
+      data: response.data,
+    });
   } catch (error) {
-    console.log("error", error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Couldn't export data due to some error!",
-        })
+          message: 'Couldn\'t export data due to some error!',
+        }),
       ),
       yield put({
         type: GET_EXPORT_DATA_FAILURE,
@@ -139,42 +154,45 @@ function* addApiSetup(action) {
   const { payload } = action;
   let endPoint;
   switch (payload.table_name) {
-    case "item":
-    case "product":
-      endPoint = "shipment/third_party_api_import/"
-      break
-    case "sensor":
-    case "gateway":
-      endPoint = "sensors/third_party_api_import/"
-      break
+    case 'item':
+    case 'product':
+      endPoint = 'shipment/third_party_api_import/';
+      break;
+
+    case 'sensor':
+    case 'gateway':
+      endPoint = 'sensors/third_party_api_import/';
+      break;
+
+    default:
+      break;
   }
 
   try {
     const response = yield call(
       httpService.makeRequest,
-      "post",
+      'post',
       `${environment.API_URL}${endPoint}`,
-      payload
+      payload,
     );
     yield [
       yield put(
         showAlert({
-          type: "success",
+          type: 'success',
           open: true,
           message: response.data.status,
-        })
+        }),
       ),
-      yield put({ type: ADD_API_SETUP_SUCCESS })
+      yield put({ type: ADD_API_SETUP_SUCCESS }),
     ];
   } catch (error) {
-    console.log("error", error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Couldn't setup API due to some error!",
-        })
+          message: 'Couldn\'t setup API due to some error!',
+        }),
       ),
       yield put({
         type: ADD_API_SETUP_FAILURE,

@@ -21,20 +21,18 @@ export const itemColumns = [
     id: 'value',
     label: 'Value',
     minWidth: 150,
-    format: (value) =>
-      value && value !== '-'
+    format: (value) => (value && value !== '-'
       ? `$${numberWithCommas(value)}`
-      : value,
+      : value),
   },
   {
     id: 'gross_weight',
     label: 'Gross Weight',
     minWidth: 150,
     type: 'number',
-    format: (value) =>
-      value && value !== '-'
+    format: (value) => (value && value !== '-'
       ? `${numberWithCommas(value)}`
-      : value,
+      : value),
   },
   {
     id: 'unitsMeasure',
@@ -46,24 +44,22 @@ export const itemColumns = [
 
 export const getFormattedRow = (data, itemTypeList, unitsOfMeasure) => {
   if (data && itemTypeList) {
-    let formattedData = [...data];
+    const formattedData = [...data];
     formattedData.forEach((element) => {
       itemTypeList.forEach((type) => {
         if (type.url === element.item_type) {
-          element['item_type_value'] = type.name;
-        };
+          element.item_type_value = type.name;
+        }
       });
       if (unitsOfMeasure) {
         unitsOfMeasure.forEach((unit) => {
           if (unit.url === element.unit_of_measure) {
-            element['unitsMeasure'] = unit.name;
-          };
+            element.unitsMeasure = unit.name;
+          }
         });
-      };
+      }
     });
-    const sortedList = formattedData.sort((a, b) => 
-      moment.utc(a.create_date).diff(moment.utc(b.create_date))
-    );
+    const sortedList = formattedData.sort((a, b) => moment.utc(a.create_date).diff(moment.utc(b.create_date)));
     return sortedList;
   }
   return data;

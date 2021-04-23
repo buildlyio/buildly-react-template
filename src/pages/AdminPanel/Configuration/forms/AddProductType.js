@@ -48,7 +48,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddProductType = ({ history, location, loading, dispatch }) => {
+const AddProductType = ({
+  history, location, loading, dispatch,
+}) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openModal, toggleModal] = useState(true);
@@ -63,7 +65,7 @@ const AddProductType = ({ history, location, loading, dispatch }) => {
     required: true,
   });
   const [formError, setFormError] = useState({});
-  
+
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
@@ -74,7 +76,7 @@ const AddProductType = ({ history, location, loading, dispatch }) => {
     toggleModal(false);
     if (location && location.state) {
       history.push(location.state.from);
-    };
+    }
   };
 
   /**
@@ -94,11 +96,11 @@ const AddProductType = ({ history, location, loading, dispatch }) => {
       dispatch(editProductType(data));
     } else {
       data = {
-        ...data, 
+        ...data,
         create_date: currentDateTime,
       };
       dispatch(addProductType(data));
-    };
+    }
     closeModal();
   };
 
@@ -125,19 +127,19 @@ const AddProductType = ({ history, location, loading, dispatch }) => {
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     if (!name.value) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
@@ -150,7 +152,7 @@ const AddProductType = ({ history, location, loading, dispatch }) => {
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={'md'}
+          maxWidth="md"
         >
           <form
             className={classes.form}
@@ -160,14 +162,14 @@ const AddProductType = ({ history, location, loading, dispatch }) => {
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   required
-                  id='name'
-                  label='Product Type'
-                  name='name'
-                  autoComplete='name'
+                  id="name"
+                  label="Product Type"
+                  name="name"
+                  autoComplete="name"
                   error={formError.name && formError.name.error}
                   helperText={
                     formError.name ? formError.name.message : ''
@@ -176,14 +178,14 @@ const AddProductType = ({ history, location, loading, dispatch }) => {
                   {...name.bind}
                 />
               </Grid>
-              <Grid container spacing={2} justify='center'>
+              <Grid container spacing={2} justify="center">
                 <Grid item xs={6} sm={4}>
                   <div className={classes.loadingWrapper}>
                     <Button
-                      type='submit'
+                      type="submit"
                       fullWidth
-                      variant='contained'
-                      color='primary'
+                      variant="contained"
+                      color="primary"
                       className={classes.submit}
                       disabled={loading || submitDisabled()}
                     >
@@ -199,10 +201,10 @@ const AddProductType = ({ history, location, loading, dispatch }) => {
                 </Grid>
                 <Grid item xs={6} sm={4}>
                   <Button
-                    type='button'
+                    type="button"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     onClick={() => closeModal()}
                     className={classes.submit}
                   >
@@ -215,8 +217,8 @@ const AddProductType = ({ history, location, loading, dispatch }) => {
         </Modal>
       )}
     </div>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

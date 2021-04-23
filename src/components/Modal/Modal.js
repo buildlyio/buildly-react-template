@@ -25,19 +25,21 @@ const styles = (theme) => ({
 });
 
 const DialogTitle = withStyles(styles)((props) => {
-  const { children, classes, onClose, titleClass, ...other } = props;
+  const {
+    children, classes, onClose, titleClass, ...other
+  } = props;
   return (
     <MuiDialogTitle
       disableTypography
       className={classes.root}
       {...other}
     >
-      <Typography className={titleClass} variant='h6'>
+      <Typography className={titleClass} variant="h6">
         {children}
       </Typography>
       {onClose ? (
         <IconButton
-          aria-label='close'
+          aria-label="close"
           className={classes.closeButton}
           onClick={onClose}
         >
@@ -48,11 +50,13 @@ const DialogTitle = withStyles(styles)((props) => {
   );
 });
 
-export default Modal = (props) => {
-  const { open, setOpen, title, children, titleClass, maxWidth } = props;
+const Modal = (props) => {
+  const {
+    open, setOpen, title, children, titleClass, maxWidth,
+  } = props;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -62,13 +66,13 @@ export default Modal = (props) => {
       <Dialog
         open={open}
         onClose={handleClose}
-        fullWidth={true}
+        fullWidth
         fullScreen={isMobile}
         maxWidth={maxWidth}
-        aria-labelledby='form-dialog-title'
+        aria-labelledby="form-dialog-title"
       >
         <DialogTitle
-          id='customized-dialog-title'
+          id="customized-dialog-title"
           titleClass={titleClass}
           onClose={handleClose}
         >
@@ -80,4 +84,6 @@ export default Modal = (props) => {
       </Dialog>
     </div>
   );
-}
+};
+
+export default Modal;

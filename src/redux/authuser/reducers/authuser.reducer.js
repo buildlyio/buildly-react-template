@@ -2,7 +2,6 @@ import {
   LOGIN,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
-  LOGOUT_SUCCESS,
   REGISTER,
   REGISTER_SUCCESS,
   REGISTER_FAIL,
@@ -309,7 +308,7 @@ export default (state = initialState, action) => {
         orgOptions: action.data,
         error: null,
       };
-      
+
     case GET_ORGANIZATION_OPTIONS_FAILURE:
       return {
         ...state,

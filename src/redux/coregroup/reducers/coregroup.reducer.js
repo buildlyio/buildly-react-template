@@ -1,11 +1,11 @@
+import PropTypes from 'prop-types';
+import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
 import {
   CREATE_COREGROUP_COMMIT,
   DELETE_COREGROUP_COMMIT,
   LOAD_DATA_COREGROUP_COMMIT,
   UPDATE_COREGROUP_COMMIT,
 } from '@redux/coregroup/actions/coregroup.actions';
-import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
-import PropTypes from 'prop-types';
 
 const initialState = {
   data: [],
@@ -19,12 +19,16 @@ export default function coregroupReducer(state = initialState, action) {
   switch (action.type) {
     case LOAD_DATA_COREGROUP_COMMIT:
       return addAll(state, action);
+
     case CREATE_COREGROUP_COMMIT:
       return upsertOne(state, action, 'id');
+
     case UPDATE_COREGROUP_COMMIT:
       return upsertOne(state, action, 'id');
+
     case DELETE_COREGROUP_COMMIT:
       return deleteOne(state, action, 'id');
+
     default:
       return state;
   }

@@ -11,12 +11,12 @@ import { GATEWAY_TYPE_COLUMNS } from '../ConfigurationConstants';
 import AddGatewayType from '../forms/AddGatewayType';
 
 const GatewayType = (props) => {
-  const { 
+  const {
     dispatch,
     loading,
     gatewayTypeList,
     redirectTo,
-    history, 
+    history,
   } = props;
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -25,13 +25,13 @@ const GatewayType = (props) => {
     ? `${redirectTo}/gateway-type`
     : `${routes.CONFIGURATION}/gateway-type/add`;
   const editPath = redirectTo
-  ? `${redirectTo}/gateway-type`
-  : `${routes.CONFIGURATION}/gateway-type/edit`;
+    ? `${redirectTo}/gateway-type`
+    : `${routes.CONFIGURATION}/gateway-type/edit`;
 
   useEffect(() => {
     if (!loading && !gatewayTypeList) {
       dispatch(getGatewayType());
-    };
+    }
   }, [gatewayTypeList]);
 
   const onAddButtonClick = () => {
@@ -63,21 +63,21 @@ const GatewayType = (props) => {
       loading={loading}
       rows={gatewayTypeList || []}
       columns={GATEWAY_TYPE_COLUMNS}
-      filename='GatewayType'
-      addButtonHeading='Gateway Type'
+      filename="GatewayType"
+      addButtonHeading="Gateway Type"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle='Are you sure you want to Delete this Gateway Type?'
+      confirmModalTitle="Are you sure you want to Delete this Gateway Type?"
     >
       <Route path={`${addPath}`} component={AddGatewayType} />
       <Route path={`${editPath}/:id`} component={AddGatewayType} />
     </DataTableWrapper>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

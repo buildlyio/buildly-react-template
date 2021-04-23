@@ -48,33 +48,33 @@ const ViewDetailsWrapper = ({
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
-    <React.Fragment>
+    <>
       {!isDesktop && activeStep !== 0 && (
         <Box mb={5}>
           <Grid container spacing={2}>
             <Grid item xs={8}>
-              <Typography variant='h4'>
+              <Typography variant="h4">
                 {`${title} ${activeStep + 1}/${maxSteps}`}
               </Typography>
             </Grid>
             <Grid item xs={3}>
               <Button
                 fullWidth
-                variant='contained'
-                size='small'
-                color='primary'
+                variant="contained"
+                size="small"
+                color="primary"
                 onClick={handleBack}
                 className={classes.submit}
               >
-                {'Back'}
+                Back
               </Button>
             </Grid>
           </Grid>
         </Box>
       )}
       {children}
-    </React.Fragment>
+    </>
   );
-}
+};
 
 export default ViewDetailsWrapper;

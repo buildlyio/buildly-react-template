@@ -3,7 +3,7 @@ import {
   withStyles,
   makeStyles,
   Tooltip,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { Info as InfoIcon } from '@material-ui/icons';
 
@@ -28,24 +28,26 @@ const StyledToolTip = withStyles((theme) => ({
   },
 }))(Tooltip);
 
-export default CustomizedTooltips = (props) => {
+const CustomizedTooltips = (props) => {
   const { toolTipText, children } = props;
   const classes = useStyles();
 
   return (
     <StyledToolTip
       arrow
-      title={
-        <Typography color='inherit'>
+      title={(
+        <Typography color="inherit">
           {toolTipText}
         </Typography>
-      }
+      )}
     >
       <InfoIcon
-        color='action'
-        fontSize='small'
+        color="action"
+        fontSize="small"
         className={classes.infoToolTip}
       />
     </StyledToolTip>
   );
-}
+};
+
+export default CustomizedTooltips;

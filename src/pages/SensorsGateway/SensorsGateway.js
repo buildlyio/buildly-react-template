@@ -14,7 +14,7 @@ const SensorsGateway = (props) => {
     shipmentData,
   } = props;
   return (
-    <React.Fragment>
+    <>
       <Gateway
         data={gatewayData}
         searchData={gatewaySearchedData}
@@ -25,9 +25,9 @@ const SensorsGateway = (props) => {
         searchData={sensorSearchedData}
         {...props}
       />
-    </React.Fragment>
+    </>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

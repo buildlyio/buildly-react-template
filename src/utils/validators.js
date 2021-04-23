@@ -5,11 +5,12 @@ const requiredValidator = (input) => {
       error: true,
       message: 'This field is required',
     };
-  };
+  }
   return { error: false, message: '' };
 };
 
 const emailValidator = (input) => {
+  // eslint-disable-next-line no-useless-escape
   const pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   const { value, required } = input;
   if (!value && required) {
@@ -17,13 +18,13 @@ const emailValidator = (input) => {
       error: true,
       message: 'This field is required',
     };
-  };
+  }
   if (value && !pattern.test(value)) {
     return {
       error: true,
       message: 'You have entered an invalid email address!',
     };
-  };
+  }
   return { error: false, message: '' };
 };
 
@@ -34,13 +35,13 @@ const confirmValidator = (input) => {
       error: true,
       message: 'This field is required',
     };
-  };
+  }
   if (value && value !== matchField) {
     return {
       error: true,
       message: 'Field does not match!',
     };
-  };
+  }
   return { error: false, message: '' };
 };
 
@@ -57,5 +58,5 @@ export const validators = (type, input) => {
 
     default:
       return { error: false, message: '' };
-  };
+  }
 };

@@ -24,17 +24,17 @@ export const getUniqueContactInfo = (rowItem, contactInfo) => {
   contactInfo.forEach((info) => {
     if (rowItem.contact_data[0] === info.url) {
       obj = info;
-    };
+    }
   });
   return obj;
 };
 
 export const getFormattedRow = (data, contactInfo, custodyData) => {
-  let customizedRow = [...data];
+  const customizedRow = [...data];
   if (data && data.length && contactInfo && contactInfo.length) {
     customizedRow.forEach((rowItem) => {
-      let contactInfoItem = getUniqueContactInfo(rowItem, contactInfo);
-      rowItem['location'] = `${
+      const contactInfoItem = getUniqueContactInfo(rowItem, contactInfo);
+      rowItem.location = `${
         contactInfoItem.address1 && `${contactInfoItem.address1},`
       }
             ${contactInfoItem.address2 && `${contactInfoItem.address2},`}
@@ -43,10 +43,8 @@ export const getFormattedRow = (data, contactInfo, custodyData) => {
             ${contactInfoItem.country && `${contactInfoItem.country},`}
             ${contactInfoItem.postal_code && `${contactInfoItem.postal_code}`}`;
     });
-  };
+  }
 
-  let sortedList = customizedRow.sort((a, b) => 
-    moment.utc(a.create_date).diff(moment.utc(b.create_date))
-  );
+  const sortedList = customizedRow.sort((a, b) => moment.utc(a.create_date).diff(moment.utc(b.create_date)));
   return sortedList;
 };

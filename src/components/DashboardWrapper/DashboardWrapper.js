@@ -59,19 +59,20 @@ const DashboardWrapper = (props) => {
         {addButtonHeading && (
           <Box mb={3}>
             <Button
-              type='button'
-              variant='contained'
-              color='primary'
+              type="button"
+              variant="contained"
+              color="primary"
               onClick={onAddButtonClick}
             >
-              <AddIcon /> {addButtonHeading}
+              <AddIcon />
+              {addButtonHeading}
             </Button>
           </Box>
         )}
         {!redirectTo && (
           <Typography
             className={classes.dashboardHeading}
-            variant='h4'
+            variant="h4"
           >
             {dashboardHeading}
           </Typography>
@@ -94,10 +95,11 @@ const DashboardWrapper = (props) => {
         setOpen={setConfirmModal}
         submitAction={handleConfirmModal}
         title={confirmModalTitle}
-        submitText='Delete'
+        submitText="Delete"
       />
       {children}
     </Box>
   );
-}
+};
+
 export default DashboardWrapper;

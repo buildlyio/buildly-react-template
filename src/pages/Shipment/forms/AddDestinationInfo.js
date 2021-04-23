@@ -90,7 +90,7 @@ const AddDestinationInfo = ({
       history.push(location.state.from);
     } else {
       history.push(`${routes.SHIPMENT}/add`);
-    };
+    }
   };
 
   /**
@@ -124,7 +124,7 @@ const AddDestinationInfo = ({
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
@@ -134,14 +134,14 @@ const AddDestinationInfo = ({
       || !address_1.value
       || !state.value
       || !country.value
-    ){
+    ) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
@@ -155,7 +155,7 @@ const AddDestinationInfo = ({
   const handleBack = () => {
     if (location && location.state) {
       history.push(location.state.from);
-    };
+    }
   };
 
   return (
@@ -166,7 +166,7 @@ const AddDestinationInfo = ({
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={'md'}
+          maxWidth="md"
         >
           <form
             className={classes.form}
@@ -176,22 +176,22 @@ const AddDestinationInfo = ({
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
-                  id='company'
-                  label='Destination Company'
-                  name='company'
-                  autoComplete='company'
+                  id="company"
+                  label="Destination Company"
+                  name="company"
+                  autoComplete="company"
                   error={
                     formError.company
                     && formError.company.error
                   }
                   helperText={
                     formError.company
-                    ? formError.company.message
-                    : ''
+                      ? formError.company.message
+                      : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', company)}
                   {...company.bind}
@@ -199,68 +199,66 @@ const AddDestinationInfo = ({
               </Grid>
               <Grid item xs={12}>
                 <DatePickerComponent
-                  label={'Scheduled Arrival'}
+                  label="Scheduled Arrival"
                   selectedDate={scheduled_arrival}
                   handleDateChange={handleDateChange}
                 />
               </Grid>
-              <Grid item item xs={12}>
+              <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
-                  id='glnNumber'
-                  label='GLN Number'
-                  name='glnNumber'
-                  autoComplete='glnNumber'
+                  id="glnNumber"
+                  label="GLN Number"
+                  name="glnNumber"
+                  autoComplete="glnNumber"
                   {...glnNumber.bind}
                 />
               </Grid>
             </Grid>
 
             <Card
-              variant='outlined'
+              variant="outlined"
               className={classes.addressContainer}
             >
               <CardContent>
-                <Typography variant='h6'>
+                <Typography variant="h6">
                   Ship To Location
                 </Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       required
                       fullWidth
-                      id='address_1'
-                      label='Address Line 1'
-                      name='address_1'
-                      autoComplete='address_1'
+                      id="address_1"
+                      label="Address Line 1"
+                      name="address_1"
+                      autoComplete="address_1"
                       error={
                         formError.address_1
                         && formError.address_1.error
                       }
                       helperText={
                         formError.address_1
-                        ? formError.address_1.message
-                        : ''
+                          ? formError.address_1.message
+                          : ''
                       }
-                      onBlur={(e) =>
-                        handleBlur(e, 'required', address_1)
-                      }
+                      onBlur={(e) => handleBlur(e, 'required', address_1)}
                       {...address_1.bind}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       fullWidth
-                      id='address_2'
-                      label='Address Line 2'
-                      name='address_2'
-                      autoComplete='address_2'
+                      id="address_2"
+                      label="Address Line 2"
+                      name="address_2"
+                      autoComplete="address_2"
                       {...address_2.bind}
                     />
                   </Grid>
@@ -268,42 +266,40 @@ const AddDestinationInfo = ({
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       fullWidth
-                      id='city'
-                      label='City'
-                      name='city'
-                      autoComplete='city'
+                      id="city"
+                      label="City"
+                      name="city"
+                      autoComplete="city"
                       error={
                         formError.city
                         && formError.city.error
                       }
                       helperText={
                         formError.city
-                        ? formError.city.message
-                        : ''
+                          ? formError.city.message
+                          : ''
                       }
-                      onBlur={(e) =>
-                        handleBlur(e, 'required', city)
-                      }
+                      onBlur={(e) => handleBlur(e, 'required', city)}
                       {...city.bind}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       fullWidth
-                      id='zip'
-                      label='Zip'
-                      name='zip'
-                      autoComplete='zip'
+                      id="zip"
+                      label="Zip"
+                      name="zip"
+                      autoComplete="zip"
                       error={formError.zip && formError.zip.error}
                       helperText={
                         formError.zip
-                        ? formError.zip.message
-                        : ''
+                          ? formError.zip.message
+                          : ''
                       }
                       onBlur={(e) => handleBlur(e, 'required', zip)}
                       {...zip.bind}
@@ -313,28 +309,26 @@ const AddDestinationInfo = ({
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       fullWidth
-                      id='state'
+                      id="state"
                       select
                       required
-                      label='State'
+                      label="State"
                       error={
                         formError.state
                         && formError.state.error
                       }
                       helperText={
                         formError.state
-                        ? formError.state.message
-                        : ''
+                          ? formError.state.message
+                          : ''
                       }
-                      onBlur={(e) =>
-                        handleBlur(e, 'required', state, 'state')
-                      }
+                      onBlur={(e) => handleBlur(e, 'required', state, 'state')}
                       {...state.bind}
                     >
-                      <MenuItem value={''}>Select</MenuItem>
+                      <MenuItem value="">Select</MenuItem>
                       {STATE_CHOICES.map((value, index) => (
                         <MenuItem
                           key={`destState${index}:${value}`}
@@ -347,28 +341,26 @@ const AddDestinationInfo = ({
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       fullWidth
-                      id='country'
+                      id="country"
                       select
                       required
-                      label='Country'
+                      label="Country"
                       error={
                         formError.country
                         && formError.country.error
                       }
                       helperText={
                         formError.country
-                        ? formError.country.message
-                        : ''
+                          ? formError.country.message
+                          : ''
                       }
-                      onBlur={(e) =>
-                        handleBlur(e, 'required', country, 'country')
-                      }
+                      onBlur={(e) => handleBlur(e, 'required', country, 'country')}
                       {...country.bind}
                     >
-                      <MenuItem value={''}>Select</MenuItem>
+                      <MenuItem value="">Select</MenuItem>
                       {COUNTRY_CHOICES.map((value, index) => (
                         <MenuItem
                           key={`destCountry${index}:${value}`}
@@ -386,14 +378,14 @@ const AddDestinationInfo = ({
             <Grid
               container
               spacing={isDesktop ? 3 : 0}
-              justify='center'
+              justify="center"
             >
               <Grid item xs={12} sm={3}>
                 <Button
-                  type='button'
+                  type="button"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   onClick={() => closeModal()}
                   className={classes.submit}
                 >
@@ -402,10 +394,10 @@ const AddDestinationInfo = ({
               </Grid>
               <Grid item xs={12} sm={3}>
                 <Button
-                  type='button'
+                  type="button"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   onClick={() => handleBack()}
                   className={classes.submit}
                 >
@@ -415,10 +407,10 @@ const AddDestinationInfo = ({
               <Grid item xs={12} sm={6}>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type='button'
+                    type="button"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     onClick={() => onNextClick()}
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
@@ -439,7 +431,7 @@ const AddDestinationInfo = ({
       )}
     </div>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

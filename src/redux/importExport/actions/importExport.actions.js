@@ -1,33 +1,41 @@
-export const CLEAR_DATA = "IMPORT-EXPORT/CLEAR_DATA";
+export const CLEAR_DATA = 'IMPORT-EXPORT/CLEAR_DATA';
 
-export const ADD_FROM_FILE = "IMPORT-EXPORT/ADD_FROM_FILE";
-export const ADD_FROM_FILE_SUCCESS = "IMPORT-EXPORT/ADD_FROM_FILE_SUCCESS";
-export const ADD_FROM_FILE_FAILURE = "IMPORT-EXPORT/ADD_FROM_FILE_FAILURE";
+export const ADD_FROM_FILE = 'IMPORT-EXPORT/ADD_FROM_FILE';
+export const ADD_FROM_FILE_SUCCESS = 'IMPORT-EXPORT/ADD_FROM_FILE_SUCCESS';
+export const ADD_FROM_FILE_FAILURE = 'IMPORT-EXPORT/ADD_FROM_FILE_FAILURE';
 
-export const GET_API_RESPONSE = "IMPORT-EXPORT/GET_API_RESPONSE";
-export const GET_API_RESPONSE_SUCCESS = "IMPORT-EXPORT/GET_API_RESPONSE_SUCCESS";
-export const GET_API_RESPONSE_FAILURE = "IMPORT-EXPORT/GET_API_RESPONSE_FAILURE";
+export const GET_API_RESPONSE = 'IMPORT-EXPORT/GET_API_RESPONSE';
+export const GET_API_RESPONSE_SUCCESS = 'IMPORT-EXPORT/GET_API_RESPONSE_SUCCESS';
+export const GET_API_RESPONSE_FAILURE = 'IMPORT-EXPORT/GET_API_RESPONSE_FAILURE';
 
-export const GET_EXPORT_DATA = "IMPORT-EXPORT/GET_EXPORT_DATA";
-export const GET_EXPORT_DATA_SUCCESS = "IMPORT-EXPORT/GET_EXPORT_DATA_SUCCESS";
-export const GET_EXPORT_DATA_FAILURE = "IMPORT-EXPORT/GET_EXPORT_DATA_FAILURE";
+export const GET_EXPORT_DATA = 'IMPORT-EXPORT/GET_EXPORT_DATA';
+export const GET_EXPORT_DATA_SUCCESS = 'IMPORT-EXPORT/GET_EXPORT_DATA_SUCCESS';
+export const GET_EXPORT_DATA_FAILURE = 'IMPORT-EXPORT/GET_EXPORT_DATA_FAILURE';
 
-export const ADD_API_SETUP = "IMPORT-EXPORT/ADD_API_SETUP";
-export const ADD_API_SETUP_SUCCESS = "IMPORT-EXPORT/ADD_API_SETUP_SUCCESS";
-export const ADD_API_SETUP_FAILURE = "IMPORT-EXPORT/ADD_API_SETUP_FAILURE";
+export const ADD_API_SETUP = 'IMPORT-EXPORT/ADD_API_SETUP';
+export const ADD_API_SETUP_SUCCESS = 'IMPORT-EXPORT/ADD_API_SETUP_SUCCESS';
+export const ADD_API_SETUP_FAILURE = 'IMPORT-EXPORT/ADD_API_SETUP_FAILURE';
 
+/**
+ * Clear Import Export Reducer data
+ */
 export const clearData = () => ({
   type: CLEAR_DATA,
 });
 
- export const addFromFile = (model, formData) => ({
+/**
+ * Add data from file
+ * @param {String} model
+ * @param {FormData} formData
+ */
+export const addFromFile = (model, formData) => ({
   type: ADD_FROM_FILE,
   model,
   formData,
 });
 
 /**
- *Add API Setup
+ * Get API Response
  * @param {String} url
  * @param {String} header
  */
@@ -38,7 +46,7 @@ export const getApiResponse = (url, header) => ({
 });
 
 /**
- *Add API Setup
+ * Get data export in a file
  * @param {String} model
  * @param {String} fileType
  */
@@ -49,7 +57,7 @@ export const getExportData = (model, fileType) => ({
 });
 
 /**
- *Add API Setup
+ * Add API Setup
  * @param {String} url
  * @param {String} key_name
  * @param {String} key_placement

@@ -6,7 +6,11 @@ import PropTypes from 'prop-types';
 * @param action - the returned action
 * @returns {{data; dataLoaded: boolean}}
 */
-export const addAll = (state, action) => ({ ...state, data: action.data, loaded: true });
+export const addAll = (state, action) => ({
+  ...state,
+  data: action.data,
+  loaded: true,
+});
 
 /**
  * it inserts an item to the state if it does not exist
@@ -28,28 +32,41 @@ export const upsertOne = (state, action, idProp, dataProp) => {
   }
   if (Array.isArray(dataArr)) {
     // insert if item does not exist
-    if (!dataArr.find((item) => item[idProp] === action.data[idProp])) {
+    const found = dataArr.find((item) => item[idProp] === action.data[idProp]);
+    if (!found) {
       if (action.index) {
         const stateDataCopy = [...dataArr];
         stateDataCopy.splice(action.index, 0, action.data);
         if (dataProp) {
           dataObj[dataProp] = stateDataCopy;
           updatedState = {
-            ...state, data: dataObj, loaded: true, created: true,
+            ...state,
+            data: dataObj,
+            loaded: true,
+            created: true,
           };
         } else {
           updatedState = {
-            ...state, data: stateDataCopy, loaded: true, created: true,
+            ...state,
+            data: stateDataCopy,
+            loaded: true,
+            created: true,
           };
         }
       } else if (dataProp) {
         dataObj[dataProp] = [...dataArr, action.data];
         updatedState = {
-          ...state, data: dataObj, loaded: true, created: true,
+          ...state,
+          data: dataObj,
+          loaded: true,
+          created: true,
         };
       } else {
         updatedState = {
-          ...state, data: [...dataArr, action.data], loaded: true, created: true,
+          ...state,
+          data: [...dataArr, action.data],
+          loaded: true,
+          created: true,
         };
       }
       return updatedState;
@@ -62,7 +79,10 @@ export const upsertOne = (state, action, idProp, dataProp) => {
         return item;
       });
       return {
-        ...updatedState, data: dataObj, loaded: true, updated: true,
+        ...updatedState,
+        data: dataObj,
+        loaded: true,
+        updated: true,
       };
     }
     return {
@@ -122,16 +142,16 @@ deleteOne.propTypes = {
  */
 export const updateNested = (state, action) => {
   const updatedState = state;
-  const parentIndex = updatedState.data.findIndex(
-    (dataItem) => dataItem.id.toString() === action.data[action.nested.parent].toString(),
-  );
+  const parentIndex = updatedState.data.findIndex((dataItem) => dataItem.id.toString()
+      === action.data[action.nested.parent].toString());
   if (parentIndex !== -1) {
-    updatedState.data[parentIndex][action.nested.key].forEach((item, index) => {
-      if (item.id.toString() === action.data.id.toString()) {
-        updatedState.data[parentIndex][action.nested.key][index] = action.data;
-      }
-      return updatedState;
-    });
+    updatedState.data[parentIndex][action.nested.key]
+      .forEach((item, index) => {
+        if (item.id.toString() === action.data.id.toString()) {
+          updatedState.data[parentIndex][action.nested.key][index] = action.data;
+        }
+        return updatedState;
+      });
   }
   return { ...updatedState };
 };
@@ -144,11 +164,11 @@ export const updateNested = (state, action) => {
  */
 export const addNested = (state, action) => {
   const updatedState = state;
-  const parentIndex = updatedState.data.findIndex(
-    (dataItem) => dataItem.id.toString() === action.data[action.nested.parent].toString(),
-  );
+  const parentIndex = updatedState.data.findIndex((dataItem) => dataItem.id.toString()
+      === action.data[action.nested.parent].toString());
   if (parentIndex !== -1) {
-    updatedState.data[parentIndex][action.nested.key].push(action.data);
+    updatedState.data[parentIndex][action.nested.key]
+      .push(action.data);
   } else {
     return updatedState;
   }
@@ -165,14 +185,13 @@ export const deleteNested = (state, action) => {
   const updatedState = state;
   if (action.nested) {
     const parentIndex = updatedState.data.findIndex(
-      (dataItem) => dataItem.id.toString() === action.data[action.nested.parent].toString(),
+      (dataItem) => dataItem.id.toString()
+        === action.data[action.nested.parent].toString(),
     );
     if (parentIndex !== -1) {
       updatedState
         .data[parentIndex][action.nested.key] = updatedState.data[parentIndex][action.nested.key]
-          .filter(
-            (item) => item.id.toString() !== action.data.id.toString(),
-          );
+          .filter((item) => item.id.toString() !== action.data.id.toString());
     }
     return { ...updatedState, deleted: true };
   }
@@ -190,11 +209,16 @@ export const addFromGraphQl = (state, action, type) => {
   Object.keys(action.data).forEach((key) => {
     // eslint-disable-next-line no-underscore-dangle
     if (action.data[key].__typename === type) {
-      const findItem = updatedState.data.find(
-        (item) => (item.id).toString() === (action.data[key].id).toString(),
-      );
+      // eslint-disable-next-line max-len
+      const findItem = updatedState.data.find((item) => (item.id).toString() === (action.data[key].id).toString());
       if (!findItem) {
-        updatedState = { ...updatedState, data: [...updatedState.data, action.data[key]] };
+        updatedState = {
+          ...updatedState,
+          data: [
+            ...updatedState.data,
+            action.data[key],
+          ],
+        };
       }
     }
   });
@@ -216,9 +240,8 @@ export const deleteMultiple = (state, action, idProp) => {
   const updatedState = state;
   return {
     ...updatedState,
-    data: updatedState.data.filter(
-      (item) => !action.data.find((element) => element[idProp] === item[idProp]),
-    ),
+    // eslint-disable-next-line max-len
+    data: updatedState.data.filter((item) => !action.data.find((element) => element[idProp] === item[idProp])),
     deleted: true,
   };
 };

@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import Loader from '@components/Loader/Loader';
 import {
-  updateOrganization
+  updateOrganization,
 } from '@redux/authuser/actions/authuser.actions';
 import { convertUnitsOfMeasure } from '@utils/utilMethods';
 
@@ -59,16 +59,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const OrganizationSettings = ({
-  dispatch, loading, organizationData
+  dispatch, loading, organizationData,
 }) => {
   const classes = useStyles();
 
   const [allowImportExport, setAllowImportExport] = useState(
-    (organizationData && organizationData.allow_import_export) || false
+    (organizationData && organizationData.allow_import_export) || false,
   );
 
   const [radius, setRadius] = useState(
-    (organizationData && organizationData.radius) || 0
+    (organizationData && organizationData.radius) || 0,
   );
 
   const [formError, setFormError] = useState({});
@@ -80,9 +80,9 @@ const OrganizationSettings = ({
         'km',
         parseFloat(organizationData.radius),
         'miles',
-        'distance'
+        'distance',
       ));
-    };
+    }
   }, [organizationData]);
 
   const resetValues = () => {
@@ -91,7 +91,7 @@ const OrganizationSettings = ({
       'km',
       parseFloat(organizationData.radius),
       'miles',
-      'distance'
+      'distance',
     ));
   };
 
@@ -107,10 +107,10 @@ const OrganizationSettings = ({
       allow_import_export: allowImportExport,
       radius: radius
         ? convertUnitsOfMeasure(
-            'miles',
-            parseFloat(radius),
-            'km',
-            'distance'
+          'miles',
+          parseFloat(radius),
+          'km',
+          'distance',
         )
         : 0,
     };
@@ -129,37 +129,38 @@ const OrganizationSettings = ({
           <div className={classes.checkbox}>
             <Checkbox
               checked={allowImportExport}
-              onClick={e => setAllowImportExport(e.target.checked)}
+              onClick={(e) => setAllowImportExport(e.target.checked)}
             />
             <Typography className={classes.label}>
               Allow Import Export for this Organization?
-          </Typography>
+            </Typography>
           </div>
         </Grid>
         <Grid item xs={12}>
           <TextField
-            variant='outlined'
-            margin='normal'
-            id='radius'
+            variant="outlined"
+            margin="normal"
+            id="radius"
             fullWidth
-            label='Radius for Geofence (miles)'
-            name='radius'
-            autoComplete='radius'
+            label="Radius for Geofence (miles)"
+            name="radius"
+            autoComplete="radius"
             value={radius}
             error={formError.radius && formError.radius.error}
             helperText={
               formError.radius ? formError.radius.message : ''
             }
-            onChange={event => setRadius(event.target.value)} />
+            onChange={(event) => setRadius(event.target.value)}
+          />
         </Grid>
-        <Grid container spacing={2} justify='center'>
+        <Grid container spacing={2} justify="center">
           <Grid item xs={6} sm={4}>
             <div className={classes.loadingWrapper}>
               <Button
-                type='submit'
+                type="submit"
                 fullWidth
-                variant='contained'
-                color='primary'
+                variant="contained"
+                color="primary"
                 className={classes.submit}
                 disabled={loading}
               >
@@ -169,10 +170,10 @@ const OrganizationSettings = ({
           </Grid>
           <Grid item xs={6} sm={4}>
             <Button
-              type='button'
+              type="button"
               fullWidth
-              variant='contained'
-              color='primary'
+              variant="contained"
+              color="primary"
               onClick={() => resetValues()}
               className={classes.submit}
             >
@@ -182,8 +183,8 @@ const OrganizationSettings = ({
         </Grid>
       </form>
     </Grid>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

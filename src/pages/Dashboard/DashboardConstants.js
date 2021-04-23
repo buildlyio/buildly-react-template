@@ -1,11 +1,9 @@
 import { numberWithCommas } from '@utils/utilMethods';
 import { getFormattedCustodyRows } from '@pages/Shipment/ShipmentConstants';
 
-export const DASHBOARD_MAP_TOOLTIP =
-  'Start and end locations of custodians which have current custody of the shipments that are currently enroute.';
+export const DASHBOARD_MAP_TOOLTIP = 'Start and end locations of custodians which have current custody of the shipments that are currently enroute.';
 
-export const DASHBOARD_RECALL_TOOLTIP =
-  'Shipments which are either recalled or have violations such as temperature, humidity and delay';
+export const DASHBOARD_RECALL_TOOLTIP = 'Shipments which are either recalled or have violations such as temperature, humidity and delay';
 
 export const DASHBOARD_DELAY_TOOLTIP = 'Shipments which are delayed';
 
@@ -23,10 +21,10 @@ export const recallColumns = [
       if (value && value.length) {
         let flagName = '';
         value.forEach((flag) => {
-          flagName = flagName + flag.name + ', ';
+          flagName = `${flagName + flag.name}, `;
         });
         return flagName;
-      };
+      }
       return value;
     },
   },
@@ -62,10 +60,9 @@ export const delayColumns = [
     id: 'risk',
     label: 'Revenue Risk',
     minWidth: 170,
-    format: (value) =>
-      value && value !== '-'
+    format: (value) => (value && value !== '-'
       ? `$${numberWithCommas(value)}`
-      : value,
+      : value),
   },
   {
     id: 'custodian',
@@ -80,25 +77,25 @@ export const getFormattedShipmentRow = (
   itemData,
   shipmentFlag,
   custodyData,
-  aggregateReportData
+  aggregateReportData,
 ) => {
-  let shipmentList = [...shipmentData];
+  const shipmentList = [...shipmentData];
   let custodyRows = [];
   if (
-    custodyData 
+    custodyData
     && custodianData
     && custodyData.length
     && custodianData.length
   ) {
     custodyRows = getFormattedCustodyRows(custodyData, custodianData);
-  };
+  }
 
   shipmentList.forEach((list) => {
     let itemName = '';
-    let custodyInfo = [];
+    const custodyInfo = [];
     let custodianName = '';
-    let flag_list = [];
-    let aggregateReportInfo = [];
+    const flag_list = [];
+    const aggregateReportInfo = [];
 
     if (custodyRows.length > 0) {
       custodyRows.forEach((custody) => {
@@ -106,13 +103,13 @@ export const getFormattedShipmentRow = (
           custody.shipment_id === list.shipment_uuid
           && custody.has_current_custody
         ) {
-          custodianName = custodianName + custody.custodian_data.name + ',';
+          custodianName = `${custodianName + custody.custodian_data.name},`;
           custodyInfo.push(custody);
-        };
+        }
       });
-    };
-    list['custodian_name'] = custodianName;
-    list['custody_info'] = custodyInfo;
+    }
+    list.custodian_name = custodianName;
+    list.custody_info = custodyInfo;
 
     if (
       aggregateReportData
@@ -121,11 +118,11 @@ export const getFormattedShipmentRow = (
       aggregateReportData.forEach((report) => {
         if (report.shipment_id === list.partner_shipment_id) {
           aggregateReportInfo.push(report);
-        };
+        }
       });
-    };
+    }
 
-    list['sensor_report'] = aggregateReportInfo;
+    list.sensor_report = aggregateReportInfo;
 
     if (
       itemData
@@ -134,28 +131,24 @@ export const getFormattedShipmentRow = (
     ) {
       itemData.forEach((item) => {
         if (list.items.indexOf(item.url) !== -1) {
-          itemName = itemName + item.name + ', ';
-          list['itemNo'] = itemName;
-        };
+          itemName = `${itemName + item.name}, `;
+          list.itemNo = itemName;
+        }
       });
-    };
+    }
 
-    if (
-      shipmentFlag
-      && shipmentFlag.length
-    ) {
-      shipmentFlag 
-      && shipmentFlag.forEach((flag) => {
+    if (shipmentFlag && shipmentFlag.length) {
+      shipmentFlag.forEach((flag) => {
         if (
           list.flags.indexOf(flag.url) !== -1
           && flag.type !== 'None'
         ) {
           list[`${flag.name.toLowerCase()}_flag`] = true;
           flag_list.push(flag);
-        };
+        }
       });
     }
-    list['flag_list'] = flag_list;
+    list.flag_list = flag_list;
   });
   return shipmentList;
 };

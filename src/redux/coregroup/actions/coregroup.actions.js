@@ -15,24 +15,33 @@ export const DELETE_COREGROUP_COMMIT = 'DELETE_COREGROUP_COMMIT';
 export const DELETE_COREGROUP_FAIL = 'DELETE_COREGROUP_FAIL';
 
 /**
- * Get core groups action
+ * Get core group list
  */
 export const getCoregroups = () => ({ type: LOAD_DATA_COREGROUP });
 
 /**
- * create core groups action
- * @param {{ first_name, last_name}} data
+ * create core group
+ * @param {{name}} data
  */
-export const createCoregroups = (data) => ({ type: CREATE_COREGROUP, data });
+export const createCoregroups = (data) => ({
+  type: CREATE_COREGROUP,
+  data,
+});
 
 /**
- * update core groups action
- * @param {{ first_name, last_name}} data
+ * update core group
+ * @param {{name}} data
  */
-export const updateCoregroups = (data) => ({ type: UPDATE_COREGROUP, data });
+export const updateCoregroups = (data) => ({
+  type: UPDATE_COREGROUP,
+  data,
+});
 
 /**
- * delete core groups action
- * @param {{ first_name, last_name}} data
+ * delete core group
+ * @param {{id}} data
  */
-export const deleteCoregroups = (data) => ({ type: DELETE_COREGROUP, data });
+export const deleteCoregroups = (data) => ({
+  type: DELETE_COREGROUP,
+  data,
+});

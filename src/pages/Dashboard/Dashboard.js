@@ -91,8 +91,8 @@ const useStyles = makeStyles((theme) => ({
  * Outputs the profile page for the user.
  */
 const Dashboard = (props) => {
-const {
-  shipmentData,
+  const {
+    shipmentData,
     custodianData,
     dispatch,
     itemData,
@@ -116,36 +116,36 @@ const {
   useEffect(() => {
     if (shipmentData === null) {
       dispatch(getShipmentDetails(organization));
-    };
+    }
     if (custodianData === null) {
       dispatch(getCustodians(organization));
       dispatch(getCustodianType());
       dispatch(getContact(organization));
-    };
+    }
     if (itemData === null) {
       dispatch(getItems(organization));
       dispatch(getItemType(organization));
-    };
+    }
     if (gatewayData === null) {
       dispatch(getGateways(organization));
       dispatch(getGatewayType());
-    };
+    }
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
-    };
+    }
     if (!custodyData) {
       dispatch(getCustody());
-    };
+    }
     if (!sensorData) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
-    };
+    }
     if (!aggregateReportData) {
       dispatch(getAggregateReport(organization));
-    };
+    }
     if (!dashboardItems) {
       dispatch(getDashboardItems(organization));
-    };
+    }
   }, []);
 
   const returnIcon = (row) => {
@@ -155,7 +155,7 @@ const {
     if (shipmentFlags && shipmentFlags.length) {
       flagType = shipmentFlags[0].type;
       flag = shipmentFlags[0].name;
-    };
+    }
     return svgIcon(flagType, flag);
   };
 
@@ -168,18 +168,18 @@ const {
       && itemData
       && shipmentFlag
     ) {
-      let routesInfo = [];
-      let delayedInfo = [];
-      let excursionInfo = [];
-      let formattedRow = getFormattedShipmentRow(
+      const routesInfo = [];
+      const delayedInfo = [];
+      const excursionInfo = [];
+      const formattedRow = getFormattedShipmentRow(
         shipmentData,
         custodianData,
         itemData,
         shipmentFlag,
         custodyData,
-        aggregateReportData
+        aggregateReportData,
       );
-      
+
       formattedRow.forEach((row) => {
         if (
           row.custody_info
@@ -194,33 +194,33 @@ const {
                 routesInfo.push({
                   lat: custody.start_of_custody_location
                   && parseFloat(
-                    custody.start_of_custody_location.split(',')[0]
+                    custody.start_of_custody_location.split(',')[0],
                   ),
                   lng: custody.start_of_custody_location
                   && parseFloat(
-                    custody.start_of_custody_location.split(',')[1]
+                    custody.start_of_custody_location.split(',')[1],
                   ),
                   label: `${row.name}:${row.shipment_uuid}(Start Location)`,
                   icon: returnIcon(row),
                 });
-              };
+              }
               if (custody.end_of_custody_location) {
                 routesInfo.push({
                   lat: custody.end_of_custody_location
                   && parseFloat(
-                    custody.end_of_custody_location.split(',')[0]
+                    custody.end_of_custody_location.split(',')[0],
                   ),
                   lng: custody.end_of_custody_location
                   && parseFloat(
-                    custody.end_of_custody_location.split(',')[1]
+                    custody.end_of_custody_location.split(',')[1],
                   ),
                   label: `${row.name}:${row.shipment_uuid}(End Location)`,
                   icon: returnIcon(row),
                 });
-              };
-            };
+              }
+            }
           });
-        };
+        }
 
         if (row.flag_list) {
           row.flag_list.forEach((flag) => {
@@ -236,10 +236,10 @@ const {
                 && row.status.toLowerCase() !== 'planned'
               ) {
                 excursionInfo.push(row);
-              };
-            };
+              }
+            }
           });
-        };
+        }
       });
       setMarkers(routesInfo);
       setZoomLevel(12);
@@ -255,8 +255,8 @@ const {
         <Grid
           container
           spacing={2}
-          direction='row'
-          alignItems='center'
+          direction="row"
+          alignItems="center"
         >
           <Grid item>
             <AppsIcon className={classes.largeIcon} />
@@ -264,7 +264,7 @@ const {
           <Grid item>
             <Typography
               className={classes.dashboardHeading}
-              variant='h4'
+              variant="h4"
             >
               Producer Dashboard
             </Typography>
@@ -274,16 +274,16 @@ const {
           <Grid container className={classes.root} spacing={2}>
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
-                <Typography variant='h4'>
+                <Typography variant="h4">
                   {dashboardItems
                   && dashboardItems.items_in_transit
                     ? numberWithCommas(
-                      dashboardItems.items_in_transit
+                      dashboardItems.items_in_transit,
                     )
                     : '-'}
                 </Typography>
                 <Typography
-                  variant='subtitle2'
+                  variant="subtitle2"
                   className={classes.statisticTitle}
                 >
                   Items in transit
@@ -292,14 +292,14 @@ const {
             </Grid>
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
-                <Typography variant='h4'>
+                <Typography variant="h4">
                   {delayedRows
                   && delayedRows.length > 0
                     ? delayedRows.length
                     : 0}
                 </Typography>
                 <Typography
-                  variant='subtitle2'
+                  variant="subtitle2"
                   className={classes.statisticTitle}
                 >
                   Delayed Shipment
@@ -308,14 +308,14 @@ const {
             </Grid>
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
-                <Typography variant='h4'>
+                <Typography variant="h4">
                   {dashboardItems
                   && dashboardItems.items_at_risk
                     ? dashboardItems.items_at_risk
                     : '-'}
                 </Typography>
                 <Typography
-                  variant='subtitle2'
+                  variant="subtitle2"
                   className={classes.statisticTitle}
                 >
                   Items at risk
@@ -324,16 +324,16 @@ const {
             </Grid>
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
-                <Typography variant='h4'>
+                <Typography variant="h4">
                   {dashboardItems
                   && dashboardItems.items_at_risk_value
                     ? `$${numberWithCommas(
-                      dashboardItems.items_at_risk_value
+                      dashboardItems.items_at_risk_value,
                     )}`
                     : '-'}
                 </Typography>
                 <Typography
-                  variant='subtitle2'
+                  variant="subtitle2"
                   className={classes.statisticTitle}
                 >
                   Revenue Risk
@@ -342,10 +342,11 @@ const {
             </Grid>
             <Grid item md={3} xs={6}>
               <div className={classes.dashboardHeaderItems}>
-                <Typography variant='h4'>{'-'}</Typography>
+                <Typography variant="h4">-</Typography>
                 <Typography
-                  variant='subtitle2'
-                  className={classes.statisticTitle}>
+                  variant="subtitle2"
+                  className={classes.statisticTitle}
+                >
                   Perfect order rate
                 </Typography>
               </div>
@@ -358,7 +359,7 @@ const {
               <Grid item xs={12}>
                 <div className={classes.switchViewSection}>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     className={classes.tileHeading}
                   >
                     Delayed Shipments
@@ -370,12 +371,11 @@ const {
                     <IconButton
                       className={classes.menuButton}
                       onClick={() => setTileView(!tileView)}
-                      aria-label='menu'
+                      aria-label="menu"
                     >
                       {!tileView
                         ? <ViewCompactIcon />
-                        : <ViewComfyIcon />
-                      }
+                        : <ViewComfyIcon />}
                     </IconButton>
                   </Hidden>
                 </div>
@@ -389,7 +389,7 @@ const {
               <Grid item xs={12}>
                 <div className={classes.switchViewSection}>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     className={classes.tileHeading}
                   >
                     Recalls and Violations
@@ -401,12 +401,11 @@ const {
                     <IconButton
                       className={classes.menuButton}
                       onClick={() => setTileView(!tileView)}
-                      aria-label='menu'
+                      aria-label="menu"
                     >
                       {!tileView
                         ? <ViewCompactIcon />
-                        : <ViewComfyIcon />
-                      }
+                        : <ViewComfyIcon />}
                     </IconButton>
                   </Hidden>
                 </div>
@@ -421,7 +420,7 @@ const {
             <div className={classes.switchViewSection}>
               <Typography
                 className={classes.tileHeading}
-                variant='h5'
+                variant="h5"
               >
                 Current Shipments
                 <CustomizedTooltips
@@ -432,12 +431,11 @@ const {
                 <IconButton
                   className={classes.menuButton}
                   onClick={() => setTileView(!tileView)}
-                  aria-label='menu'
+                  aria-label="menu"
                 >
                   {!tileView
                     ? <ViewCompactIcon />
-                    : <ViewComfyIcon />
-                  }
+                    : <ViewComfyIcon />}
                 </IconButton>
               </Hidden>
             </div>
@@ -447,13 +445,13 @@ const {
               zoom={zoomLevel}
               googleMapURL={MAP_API_URL}
               loadingElement={
-                <div style={{ height: `100%` }} />
+                <div style={{ height: '100%' }} />
               }
               containerElement={
-                <div style={{ height: `620px` }} />
+                <div style={{ height: '620px' }} />
               }
               mapElement={
-                <div style={{ height: `100%` }} />
+                <div style={{ height: '100%' }} />
               }
             />
           </Grid>
@@ -461,7 +459,7 @@ const {
       </div>
     </Box>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from 'lodash';
 import {
   GET_GATEWAYS,
   GET_GATEWAYS_SUCCESS,
@@ -64,7 +64,7 @@ import {
   DELETE_SENSORS_TYPE,
   DELETE_SENSORS_TYPE_SUCCESS,
   DELETE_SENSORS_TYPE_FAILURE,
-} from "../actions/sensorsGateway.actions";
+} from '../actions/sensorsGateway.actions';
 
 const initialState = {
   loading: false,
@@ -84,18 +84,24 @@ const initialState = {
 export default (state = initialState, action) => {
   let deletedGatewayType;
   let editedGatewayType = state.gatewayTypeList;
-  let gatewayTypePresent = _.remove(editedGatewayType, { id: action.gatewayType?.id })[0];
+  const gatewayTypePresent = _.remove(
+    editedGatewayType,
+    { id: action.gatewayType?.id },
+  )[0];
   if (gatewayTypePresent) {
     deletedGatewayType = editedGatewayType;
-    editedGatewayType = [ ...editedGatewayType, action.gatewayType ];
+    editedGatewayType = [...editedGatewayType, action.gatewayType];
   }
 
   let deletedSensorType;
   let editedSensorType = state.sensorTypeList;
-  let sensorTypePresent = _.remove(editedSensorType, { id: action.sensorType?.id })[0];
+  const sensorTypePresent = _.remove(
+    editedSensorType,
+    { id: action.sensorType?.id },
+  )[0];
   if (sensorTypePresent) {
     deletedSensorType = editedSensorType;
-    editedSensorType = [ ...editedSensorType, action.sensorType ];
+    editedSensorType = [...editedSensorType, action.sensorType];
   }
 
   switch (action.type) {
@@ -106,6 +112,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_GATEWAYS_SUCCESS:
       return {
         ...state,
@@ -113,6 +120,7 @@ export default (state = initialState, action) => {
         loaded: true,
         gatewayData: action.data,
       };
+
     case GET_GATEWAYS_FAILURE:
       return {
         ...state,
@@ -120,6 +128,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case ADD_GATEWAY:
       return {
         ...state,
@@ -127,6 +136,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case ADD_GATEWAY_SUCCESS:
       return {
         ...state,
@@ -134,6 +144,7 @@ export default (state = initialState, action) => {
         loaded: true,
         gatewayData: action.data,
       };
+
     case ADD_GATEWAY_FAILURE:
       return {
         ...state,
@@ -166,6 +177,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case DELETE_GATEWAY:
       return {
         ...state,
@@ -173,6 +185,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case DELETE_GATEWAY_SUCCESS:
       return {
         ...state,
@@ -180,6 +193,7 @@ export default (state = initialState, action) => {
         loaded: true,
         gatewayData: action.data,
       };
+
     case DELETE_GATEWAY_FAILURE:
       return {
         ...state,
@@ -187,11 +201,13 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case GATEWAY_SEARCH:
       return {
         ...state,
         error: null,
       };
+
     case GATEWAY_SEARCH_SUCCESS:
       return {
         ...state,
@@ -199,6 +215,7 @@ export default (state = initialState, action) => {
         loaded: true,
         gatewaySearchedData: action.data,
       };
+
     case GET_GATEWAYS_TYPE:
       return {
         ...state,
@@ -206,6 +223,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_GATEWAYS_TYPE_SUCCESS:
       return {
         ...state,
@@ -213,6 +231,7 @@ export default (state = initialState, action) => {
         loaded: true,
         gatewayTypeList: action.data,
       };
+
     case GET_GATEWAYS_TYPE_FAILURE:
       return {
         ...state,
@@ -228,6 +247,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_SENSORS_SUCCESS:
       return {
         ...state,
@@ -235,6 +255,7 @@ export default (state = initialState, action) => {
         loaded: true,
         sensorData: action.data,
       };
+
     case GET_SENSORS_FAILURE:
       return {
         ...state,
@@ -242,6 +263,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case Add_SENSOR:
       return {
         ...state,
@@ -249,6 +271,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case Add_SENSOR_SUCCESS:
       return {
         ...state,
@@ -256,6 +279,7 @@ export default (state = initialState, action) => {
         loaded: true,
         sensorData: action.data,
       };
+
     case Add_SENSOR_FAILURE:
       return {
         ...state,
@@ -288,6 +312,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case DELETE_SENSOR:
       return {
         ...state,
@@ -295,6 +320,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case DELETE_SENSOR_SUCCESS:
       return {
         ...state,
@@ -302,6 +328,7 @@ export default (state = initialState, action) => {
         loaded: true,
         sensorData: action.data,
       };
+
     case DELETE_SENSOR_FAILURE:
       return {
         ...state,
@@ -309,11 +336,13 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case SENSOR_SEARCH:
       return {
         ...state,
         error: null,
       };
+
     case SENSOR_SEARCH_SUCCESS:
       return {
         ...state,
@@ -321,6 +350,7 @@ export default (state = initialState, action) => {
         loaded: true,
         sensorSearchedData: action.data,
       };
+
     case GET_SENSORS_TYPE:
       return {
         ...state,
@@ -328,6 +358,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_SENSORS_TYPE_SUCCESS:
       return {
         ...state,
@@ -335,6 +366,7 @@ export default (state = initialState, action) => {
         loaded: true,
         sensorTypeList: action.data,
       };
+
     case GET_SENSORS_TYPE_FAILURE:
       return {
         ...state,
@@ -342,6 +374,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case GET_SENSOR_REPORT:
       return {
         ...state,
@@ -349,6 +382,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_SENSOR_REPORT_SUCCESS:
       return {
         ...state,
@@ -356,6 +390,7 @@ export default (state = initialState, action) => {
         loaded: true,
         sensorReportAlerts: action.data,
       };
+
     case GET_SENSOR_REPORT_FAILURE:
       return {
         ...state,
@@ -363,6 +398,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case GET_AGGREGATE_REPORT:
       return {
         ...state,
@@ -370,6 +406,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_AGGREGATE_REPORT_SUCCESS:
       return {
         ...state,
@@ -377,6 +414,7 @@ export default (state = initialState, action) => {
         loaded: true,
         aggregateReportData: action.data,
       };
+
     case GET_AGGREGATE_REPORT_FAILURE:
       return {
         ...state,
@@ -384,7 +422,8 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
-      case GET_GATEWAY_OPTIONS:
+
+    case GET_GATEWAY_OPTIONS:
       return {
         ...state,
         loading: true,
@@ -392,6 +431,7 @@ export default (state = initialState, action) => {
         gatewayOptions: null,
         error: null,
       };
+
     case GET_GATEWAY_OPTIONS_SUCCESS:
       return {
         ...state,
@@ -400,6 +440,7 @@ export default (state = initialState, action) => {
         gatewayOptions: action.data,
         error: null,
       };
+
     case GET_GATEWAY_OPTIONS_FAILURE:
       return {
         ...state,
@@ -407,6 +448,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case GET_SENSOR_OPTIONS:
       return {
         ...state,
@@ -415,6 +457,7 @@ export default (state = initialState, action) => {
         sensorOptions: null,
         error: null,
       };
+
     case GET_SENSOR_OPTIONS_SUCCESS:
       return {
         ...state,
@@ -423,6 +466,7 @@ export default (state = initialState, action) => {
         sensorOptions: action.data,
         error: null,
       };
+
     case GET_SENSOR_OPTIONS_FAILURE:
       return {
         ...state,
@@ -430,6 +474,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case ADD_GATEWAYS_TYPE:
       return {
         ...state,
@@ -437,15 +482,17 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case ADD_GATEWAYS_TYPE_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
         gatewayTypeList: [
-          ...state.gatewayTypeList, action.gatewayType
+          ...state.gatewayTypeList, action.gatewayType,
         ],
       };
+
     case ADD_GATEWAYS_TYPE_FAILURE:
       return {
         ...state,
@@ -453,6 +500,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case EDIT_GATEWAYS_TYPE:
       return {
         ...state,
@@ -460,6 +508,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case EDIT_GATEWAYS_TYPE_SUCCESS:
       return {
         ...state,
@@ -467,6 +516,7 @@ export default (state = initialState, action) => {
         loaded: true,
         gatewayTypeList: editedGatewayType,
       };
+
     case EDIT_GATEWAYS_TYPE_FAILURE:
       return {
         ...state,
@@ -474,6 +524,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case DELETE_GATEWAYS_TYPE:
       return {
         ...state,
@@ -481,6 +532,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case DELETE_GATEWAYS_TYPE_SUCCESS:
       return {
         ...state,
@@ -488,6 +540,7 @@ export default (state = initialState, action) => {
         loaded: true,
         gatewayTypeList: deletedGatewayType,
       };
+
     case DELETE_GATEWAYS_TYPE_FAILURE:
       return {
         ...state,
@@ -495,6 +548,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case ADD_SENSORS_TYPE:
       return {
         ...state,
@@ -502,15 +556,17 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case ADD_SENSORS_TYPE_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
         sensorTypeList: [
-          ...state.sensorTypeList, action.sensorType
+          ...state.sensorTypeList, action.sensorType,
         ],
       };
+
     case ADD_SENSORS_TYPE_FAILURE:
       return {
         ...state,
@@ -518,6 +574,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case EDIT_SENSORS_TYPE:
       return {
         ...state,
@@ -525,6 +582,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case EDIT_SENSORS_TYPE_SUCCESS:
       return {
         ...state,
@@ -532,6 +590,7 @@ export default (state = initialState, action) => {
         loaded: true,
         sensorTypeList: editedSensorType,
       };
+
     case EDIT_SENSORS_TYPE_FAILURE:
       return {
         ...state,
@@ -539,6 +598,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case DELETE_SENSORS_TYPE:
       return {
         ...state,
@@ -546,6 +606,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case DELETE_SENSORS_TYPE_SUCCESS:
       return {
         ...state,
@@ -553,6 +614,7 @@ export default (state = initialState, action) => {
         loaded: true,
         sensorTypeList: deletedSensorType,
       };
+
     case DELETE_SENSORS_TYPE_FAILURE:
       return {
         ...state,
@@ -560,6 +622,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     default:
       return state;
   }

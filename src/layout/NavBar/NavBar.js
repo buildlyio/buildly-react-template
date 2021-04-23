@@ -8,10 +8,10 @@ import {
   ListItem,
   ListItemText,
   makeStyles,
-  useTheme
+  useTheme,
 } from '@material-ui/core';
-import { NAVIGATION_ITEMS } from './NavBarConstants';
 import { isMobile } from '@utils/mediaQuery';
+import { NAVIGATION_ITEMS } from './NavBarConstants';
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -63,7 +63,9 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Component for the side navigation.
  */
-const NavBar = ({ navHidden, setNavHidden, location, history }) => {
+const NavBar = ({
+  navHidden, setNavHidden, location, history,
+}) => {
   const classes = useStyles();
   const theme = useTheme();
   const isMobileDevice = isMobile();
@@ -71,7 +73,7 @@ const NavBar = ({ navHidden, setNavHidden, location, history }) => {
   const handleListItemClick = (event, index, item) => {
     if (isMobileDevice) {
       setNavHidden(!navHidden);
-    };
+    }
   };
 
   const drawer = (
@@ -90,7 +92,7 @@ const NavBar = ({ navHidden, setNavHidden, location, history }) => {
                 button
                 className={classes.navItems}
                 onClick={(event) => {
-                  handleListItemClick(event, index, item)
+                  handleListItemClick(event, index, item);
                 }}
               >
                 <ListItemText primary={item.name} />
@@ -102,16 +104,16 @@ const NavBar = ({ navHidden, setNavHidden, location, history }) => {
       </List>
     </div>
   );
-  
+
   const handleDrawerToggle = () => {
     setNavHidden(!navHidden);
   };
 
   return (
-    <nav className={classes.drawer} aria-label='mailbox folders'>
-      <Hidden smUp implementation='css'>
+    <nav className={classes.drawer} aria-label="mailbox folders">
+      <Hidden smUp implementation="css">
         <Drawer
-          variant='temporary'
+          variant="temporary"
           anchor={theme.direction === 'rtl' ? 'right' : 'left'}
           open={navHidden}
           onClose={handleDrawerToggle}
@@ -125,12 +127,12 @@ const NavBar = ({ navHidden, setNavHidden, location, history }) => {
           {drawer}
         </Drawer>
       </Hidden>
-      <Hidden smDown implementation='css'>
+      <Hidden smDown implementation="css">
         <Drawer
           classes={{
             paper: classes.drawerPaper,
           }}
-          variant='permanent'
+          variant="permanent"
           open
         >
           {drawer}
@@ -138,6 +140,6 @@ const NavBar = ({ navHidden, setNavHidden, location, history }) => {
       </Hidden>
     </nav>
   );
-}
+};
 
 export default NavBar;

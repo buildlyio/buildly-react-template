@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DataTableWrapper = ({ 
+const DataTableWrapper = ({
   loading,
   rows,
   columns,
@@ -72,7 +72,7 @@ const DataTableWrapper = ({
         filter: false,
         sort: false,
         empty: true,
-        setCellHeaderProps: () => ({ className: classes.iconHeader, }),
+        setCellHeaderProps: () => ({ className: classes.iconHeader }),
         customBodyRenderLite: (dataIndex) => {
           const row = rows[dataIndex];
           return (
@@ -82,8 +82,8 @@ const DataTableWrapper = ({
               </IconButton>
             </div>
           );
-        }
-      }
+        },
+      },
     },
     {
       name: 'Delete',
@@ -91,7 +91,7 @@ const DataTableWrapper = ({
         filter: false,
         sort: false,
         empty: true,
-        setCellHeaderProps: () => ({ className: classes.iconHeader, }),
+        setCellHeaderProps: () => ({ className: classes.iconHeader }),
         customBodyRenderLite: (dataIndex) => {
           const row = rows[dataIndex];
           return (
@@ -101,18 +101,18 @@ const DataTableWrapper = ({
               </IconButton>
             </div>
           );
-        }
-      }
+        },
+      },
     },
-    ...columns.map(column => ({
+    ...columns.map((column) => ({
       ...column,
       options: {
         ...column.options,
-        setCellHeaderProps: () => ({ className: classes.leftHeader, }),
+        setCellHeaderProps: () => ({ className: classes.leftHeader }),
       },
-    }))
+    })),
   ];
-  
+
   const options = {
     filter: true,
     filterType: 'dropdown',
@@ -136,12 +136,13 @@ const DataTableWrapper = ({
         <Grid item xs={12}>
           <Button
             className={classes.addButton}
-            type='button'
-            variant='contained'
-            color='primary'
+            type="button"
+            variant="contained"
+            color="primary"
             onClick={onAddButtonClick}
           >
-            <AddIcon /> {addButtonHeading}
+            <AddIcon />
+            {addButtonHeading}
           </Button>
           <MUIDataTable
             data={rows}
@@ -156,10 +157,10 @@ const DataTableWrapper = ({
         setOpen={setConfirmModal}
         submitAction={handleConfirmModal}
         title={confirmModalTitle}
-        submitText='Delete'
+        submitText="Delete"
       />
     </div>
-  )
-}
+  );
+};
 
 export default DataTableWrapper;

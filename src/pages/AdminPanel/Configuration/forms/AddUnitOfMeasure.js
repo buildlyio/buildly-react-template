@@ -59,7 +59,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
+const AddUnitOfMeasure = ({
+  history, location, loading, dispatch,
+}) => {
   const classes = useStyles();
   const [openModal, toggleModal] = useState(true);
 
@@ -74,13 +76,13 @@ const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
   });
   const unitClass = useInput(
     (editData && editData.supported_class) || '',
-    { required: true }
+    { required: true },
   );
   const [isDefault, setIsDefault] = useState(
-    (editData && editData.is_default_for_class) || false
+    (editData && editData.is_default_for_class) || false,
   );
   const [formError, setFormError] = useState({});
-  
+
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
@@ -91,7 +93,7 @@ const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
     toggleModal(false);
     if (location && location.state) {
       history.push(location.state.from);
-    };
+    }
   };
 
   /**
@@ -112,11 +114,11 @@ const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
       dispatch(editUnitsOfMeasure(data));
     } else {
       data = {
-        ...data, 
+        ...data,
         create_date: currentDateTime,
       };
       dispatch(addUnitsOfMeasure(data));
-    };
+    }
     closeModal();
   };
 
@@ -143,19 +145,19 @@ const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     if (!name.value || !unitClass.value) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
@@ -168,7 +170,7 @@ const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={'md'}
+          maxWidth="md"
         >
           <form
             className={classes.form}
@@ -178,14 +180,14 @@ const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   required
-                  id='name'
-                  label='Unit of Measure'
-                  name='name'
-                  autoComplete='name'
+                  id="name"
+                  label="Unit of Measure"
+                  name="name"
+                  autoComplete="name"
                   error={formError.name && formError.name.error}
                   helperText={
                     formError.name ? formError.name.message : ''
@@ -196,12 +198,12 @@ const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   required
-                  id='unitClass'
-                  label='Unit Class'
+                  id="unitClass"
+                  label="Unit Class"
                   select
                   error={
                     formError.unitClass
@@ -209,23 +211,23 @@ const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
                   }
                   helperText={
                     formError.unitClass
-                    ? formError.unitClass.message
-                    : ''
+                      ? formError.unitClass.message
+                      : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', unitClass)}
                   {...unitClass.bind}
                 >
-                  <MenuItem value={''}>--------</MenuItem>
-                  <MenuItem value={'Capacity and Volume'}>
+                  <MenuItem value="">--------</MenuItem>
+                  <MenuItem value="Capacity and Volume">
                     Capacity and Volume
                   </MenuItem>
-                  <MenuItem value={'Distance and Length'}>
+                  <MenuItem value="Distance and Length">
                     Distance and Length
                   </MenuItem>
-                  <MenuItem value={'Mass and Weight'}>
+                  <MenuItem value="Mass and Weight">
                     Mass and Weight
                   </MenuItem>
-                  <MenuItem value={'Temperature'}>
+                  <MenuItem value="Temperature">
                     Temperature
                   </MenuItem>
                 </TextField>
@@ -234,21 +236,21 @@ const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
                 <div className={classes.checkbox}>
                   <Checkbox
                     checked={isDefault}
-                    onClick={e => setIsDefault(e.target.checked)}
+                    onClick={(e) => setIsDefault(e.target.checked)}
                   />
                   <Typography className={classes.label}>
                     Is this default for Unit Class?
                   </Typography>
                 </div>
               </Grid>
-              <Grid container spacing={2} justify='center'>
+              <Grid container spacing={2} justify="center">
                 <Grid item xs={6} sm={4}>
                   <div className={classes.loadingWrapper}>
                     <Button
-                      type='submit'
+                      type="submit"
                       fullWidth
-                      variant='contained'
-                      color='primary'
+                      variant="contained"
+                      color="primary"
                       className={classes.submit}
                       disabled={loading || submitDisabled()}
                     >
@@ -264,10 +266,10 @@ const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
                 </Grid>
                 <Grid item xs={6} sm={4}>
                   <Button
-                    type='button'
+                    type="button"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     onClick={() => closeModal()}
                     className={classes.submit}
                   >
@@ -280,8 +282,8 @@ const AddUnitOfMeasure = ({ history, location, loading, dispatch }) => {
         </Modal>
       )}
     </div>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

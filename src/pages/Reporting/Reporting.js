@@ -120,7 +120,7 @@ const Reporting = ({
   const [tileView, setTileView] = useState(true);
   const [selectedGraph, setSelectedGraph] = useState('temperature');
   const [selectedShipment, setSelectedShipment] = useState(null);
-  const [shipment,setShipment] = useState('');
+  const [shipment, setShipment] = useState('');
   const [shipmentOverview, setShipmentOverview] = useState({});
   const [selectedMarker, setSelectedMarker] = useState({});
 
@@ -128,45 +128,47 @@ const Reporting = ({
     setSelectedGraph(index);
   };
 
-  const columns = SHIPMENT_OVERVIEW_COLUMNS.map(column => ({
+  const columns = SHIPMENT_OVERVIEW_COLUMNS.map((column) => ({
     ...column,
   }));
 
   const getShipmentValue = (value) => {
+    let returnValue;
     if (selectedShipment[value] !== null) {
       if (moment(selectedShipment[value], true).isValid()) {
-        return moment(selectedShipment[value])
+        returnValue = moment(selectedShipment[value])
           .format('MMMM DD, YYYY hh:mm:ss');
-      } else if (typeof(selectedShipment[value]) !== 'object') {
-        return selectedShipment[value];
-      };
+      } else if (typeof (selectedShipment[value]) !== 'object') {
+        returnValue = selectedShipment[value];
+      }
     } else {
-      return 'NA'
-    };
-  }
+      returnValue = 'NA';
+    }
+    return returnValue;
+  };
 
   useEffect(() => {
     if (!shipmentData) {
       dispatch(getShipmentDetails(organization));
-    };
+    }
     if (!aggregateReportData) {
       dispatch(getAggregateReport(organization));
-    };
+    }
     if (!custodianData) {
       dispatch(getCustodians(organization));
       dispatch(getCustodianType());
       dispatch(getContact(organization));
-    };
+    }
     if (!custodyData) {
       dispatch(getCustody());
-    };
+    }
     if (!sensorData) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
-    };
+    }
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
-    };
+    }
   }, []);
 
   useEffect(() => {
@@ -190,28 +192,28 @@ const Reporting = ({
 
       if (!selectedShipment && overview.length) {
         setSelectedShipment(overview[0]);
-      };
+      }
     }
   }, [shipmentData, custodianData, custodyData, aggregateReportData]);
 
   useEffect(() => {
     if (selectedShipment) {
       setShipment(selectedShipment.name);
-      setMarkers(selectedShipment['markers_to_set']);
+      setMarkers(selectedShipment.markers_to_set);
       setZoomLevel(12);
-    };
+    }
   }, [selectedShipment]);
 
   useEffect(() => {
     if (markers && markers.length > 0) {
       setTimeout(() => setMapLoaded(true), 1000);
-    };
-  })
+    }
+  });
 
   return (
     <Box mt={5} mb={5}>
       {loading && <Loader open={loading} />}
-      <Typography className={classes.dashboardHeading} variant='h4'>
+      <Typography className={classes.dashboardHeading} variant="h4">
         Reporting
       </Typography>
       <Grid container spacing={2}>
@@ -224,11 +226,11 @@ const Reporting = ({
           <div className={classes.switchViewSection}>
             <Typography
               className={classes.tileHeading}
-              variant='h5'>
+              variant="h5"
+            >
               {selectedShipment
-              && selectedShipment.name 
-              && `Map View - Shipment: ${selectedShipment.name}`
-              }
+              && selectedShipment.name
+              && `Map View - Shipment: ${selectedShipment.name}`}
               <CustomizedTooltips
                 toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
               />
@@ -237,50 +239,47 @@ const Reporting = ({
               <IconButton
                 className={classes.menuButton}
                 onClick={() => setTileView(!tileView)}
-                color='default'
-                aria-label='menu'
+                color="default"
+                aria-label="menu"
               >
                 {!tileView
                   ? <ViewCompactIcon />
-                  : <ViewComfyIcon />
-                }
+                  : <ViewComfyIcon />}
               </IconButton>
             </Hidden>
           </div>
           <MapComponent
             isMarkerShown={isMapLoaded}
-            showPath={true}
+            showPath
             markers={markers}
             googleMapURL={MAP_API_URL}
             zoom={zoomLevel}
             setSelectedMarker={setSelectedMarker}
             loadingElement={
-              <div style={{ height: `100%` }} />
+              <div style={{ height: '100%' }} />
             }
             containerElement={
-              <div style={{ height: `550px` }} />
+              <div style={{ height: '550px' }} />
             }
             mapElement={
-              <div style={{ height: `100%` }} />
+              <div style={{ height: '100%' }} />
             }
           />
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
             <Autocomplete
-              id='shipment-name'
+              id="shipment-name"
               options={shipmentData || []}
-              value={{name: shipment}}
+              value={{ name: shipment }}
               getOptionLabel={(option) => option && option.name}
               className={classes.dropDownSection}
-              onChange={(event, newValue) =>
-                setSelectedShipment(newValue)
-              }
+              onChange={(event, newValue) => setSelectedShipment(newValue)}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label='Shipment Name'
-                  variant='outlined'
+                  label="Shipment Name"
+                  variant="outlined"
                 />
               )}
             />
@@ -291,13 +290,12 @@ const Reporting = ({
               <IconButton
                 className={classes.menuButton}
                 onClick={() => setTileView(!tileView)}
-                color='default'
-                aria-label='menu'
+                color="default"
+                aria-label="menu"
               >
                 {!tileView
                   ? <ViewCompactIcon />
-                  : <ViewComfyIcon />
-                }
+                  : <ViewComfyIcon />}
               </IconButton>
             </Hidden>
           </div>
@@ -317,69 +315,68 @@ const Reporting = ({
                   >
                     {column.name !== 'custody_info'
                       ? (
-                        <Typography variant='h6'>
+                        <Typography variant="h6">
                           {column.label}
                         </Typography>
                       )
                       : (
-                        <Typography variant='h6'>
+                        <Typography variant="h6">
                           Custody Details
                         </Typography>
-                      )
-                    }
+                      )}
                     {column.name === 'custody_info'
                     && selectedShipment[column.name]
                       ? selectedShipment[column.name].map(
-                        (key, index) => (
-                        <div
-                          key={`custody_info_${index}`}
-                          style={{
-                            marginBottom:10,
-                            color: selectedShipment['custody_info'][index]['custody_type'] === 'Current'
-                              ? '#EBC645'
-                              : '#ffffff',
-                          }}
-                        >
-                          <Typography variant='body1'>
-                            Custody Type: {selectedShipment['custody_info'][index]['custody_type']}
-                          </Typography>
-                          <Typography variant='body1'>
-                            Custodian Address: {selectedShipment['contact_info'][index]['address']}
-                          </Typography>
-                        </div>
-                      ))
+                        (value, idx) => (
+                          <div
+                            key={`custody_info_${idx}`}
+                            style={{
+                              marginBottom: 10,
+                              color: selectedShipment.custody_info[idx].custody_type === 'Current'
+                                ? '#EBC645'
+                                : '#ffffff',
+                            }}
+                          >
+                            <Typography variant="body1">
+                              {`Custody Type: ${selectedShipment.custody_info[index].custody_type}`}
+                            </Typography>
+                            <Typography variant="body1">
+                              {`Custodian Address: ${selectedShipment.contact_info[index].address}`}
+                            </Typography>
+                          </div>
+                        ),
+                      )
                       : (
-                        <Typography variant='body1'>
+                        <Typography variant="body1">
                           {getShipmentValue(column.name)}
                         </Typography>
-                      )
-                    }
+                      )}
                   </Grid>
                 )))
                 : (
                   <Typography
-                    variant='h6'
+                    variant="h6"
                     className={classes.alignCenter}
                   >
                     {SHIPMENT_OVERVIEW_TOOL_TIP}
                   </Typography>
-                )
-              }
+                )}
             </Grid>
           </div>
         </Grid>
       </Grid>
       <Grid
         container
-        className={classes.gridContainer + ' ' + classes.greyBackground}>
+        className={`${classes.gridContainer} ${classes.greyBackground}`}
+      >
         <div className={classes.switchViewSection}>
           <Typography
             className={classes.tileHeading}
-            variant='h5'>
+            variant="h5"
+          >
             {selectedShipment
             && selectedShipment.name
-            && `Graph View - Shipment: ${selectedShipment.name}`
-            }
+            && `Graph View - Shipment: ${selectedShipment.name}`}
             <CustomizedTooltips
               toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
             />
@@ -387,8 +384,8 @@ const Reporting = ({
         </div>
         <Grid item xs={1} md={1}>
           <List
-            component='nav'
-            aria-label='main graph-type'
+            component="nav"
+            aria-label="main graph-type"
             className={classes.iconBar}
           >
             {REPORT_TYPES.map((item, index) => (
@@ -396,11 +393,9 @@ const Reporting = ({
                 <ListItem
                   button
                   selected={selectedGraph === item.id}
-                  onClick={(event) => 
-                    handleListItemClick(event, item.id)
-                  }
+                  onClick={(event) => handleListItemClick(event, item.id)}
                 >
-                  {getIcon(item,'white')}
+                  {getIcon(item, 'white')}
                 </ListItem>
               </React.Fragment>
             ))}
@@ -417,23 +412,22 @@ const Reporting = ({
             )
             : (
               <Typography
-                variant='h6'
+                variant="h6"
                 className={classes.alignCenter}
               >
                 {SHIPMENT_OVERVIEW_TOOL_TIP}
               </Typography>
-            )
-          }
+            )}
         </Grid>
-        </Grid>
-        <ShipmentSensorTable
-          aggregateReport={selectedShipment?.sensor_report}
-          shipmentName={selectedShipment?.name}
-          selectedMarker={selectedShipment && selectedMarker}
-        />
+      </Grid>
+      <ShipmentSensorTable
+        aggregateReport={selectedShipment?.sensor_report}
+        shipmentName={selectedShipment?.name}
+        selectedMarker={selectedShipment && selectedMarker}
+      />
     </Box>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

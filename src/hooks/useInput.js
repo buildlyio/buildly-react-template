@@ -7,8 +7,8 @@ export const useInput = (initialValue = '', validators = {}) => {
     value,
     required: validators.required,
     confirm: validators.confirm,
-    ...(validators.confirm &&
-      validators.matchField && { matchField: validators.matchField.value }),
+    ...(validators.confirm
+      && validators.matchField && { matchField: validators.matchField.value }),
     bind: {
       onChange: (e) => setValue(e.target.value),
       value,
@@ -16,6 +16,6 @@ export const useInput = (initialValue = '', validators = {}) => {
     },
     clear: () => setValue(''),
     reset: () => setValue(initialValue),
-    hasChanged: () => initialValue !== value && value !== ''  ? true : false,
+    hasChanged: () => (!!(initialValue !== value && value !== '')),
   };
 };

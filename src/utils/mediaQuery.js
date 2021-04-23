@@ -6,4 +6,4 @@ import {
 export const isMobile = () => {
   const theme = useTheme();
   return useMediaQuery(theme.breakpoints.down('sm'));
-}
+};

@@ -21,7 +21,7 @@ const theme = createMuiTheme({
   typography: {
     button: {
       textTransform: 'none',
-    }
+    },
   },
   overrides: {
     MuiCssBaseline: {

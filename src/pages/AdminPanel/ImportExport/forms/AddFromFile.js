@@ -49,10 +49,10 @@ const AddFromFile = ({ loading, dispatch }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    var formData = new FormData();
+    const formData = new FormData();
     formData.append('file', uploadFile, uploadFile.name);
     formData.append('model', uploadType.value);
-    
+
     dispatch(addFromFile(uploadType.value, formData));
   };
 
@@ -79,19 +79,19 @@ const AddFromFile = ({ loading, dispatch }) => {
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     if (!uploadType.value || !uploadFile) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
@@ -99,19 +99,19 @@ const AddFromFile = ({ loading, dispatch }) => {
   return (
     <form
       className={classes.form}
-      encType='multipart/form-data'
+      encType="multipart/form-data"
       noValidate
       onSubmit={handleSubmit}
     >
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
-            variant='outlined'
-            margin='normal'
+            variant="outlined"
+            margin="normal"
             fullWidth
             required
-            id='uploadType'
-            label='Upload Type'
+            id="uploadType"
+            label="Upload Type"
             select
             error={
               formError.uploadType
@@ -119,38 +119,38 @@ const AddFromFile = ({ loading, dispatch }) => {
             }
             helperText={
               formError.uploadType
-              ? formError.uploadType.message
-              : ''
+                ? formError.uploadType.message
+                : ''
             }
             onBlur={(e) => handleBlur(e, 'required', uploadType)}
             {...uploadType.bind}
           >
-            <MenuItem value={''}>--------</MenuItem>
-            <MenuItem value={'item'}>Items</MenuItem>
-            <MenuItem value={'product'}>Products</MenuItem>
+            <MenuItem value="">--------</MenuItem>
+            <MenuItem value="item">Items</MenuItem>
+            <MenuItem value="product">Products</MenuItem>
           </TextField>
         </Grid>
         <Grid item xs={12}>
           <TextField
-            variant='outlined'
-            margin='normal'
+            variant="outlined"
+            margin="normal"
             fullWidth
             required
-            id='uploadFile'
-            label='Upload File'
-            type='file'
+            id="uploadFile"
+            label="Upload File"
+            type="file"
             InputLabelProps={{ shrink: true }}
             onChange={(e) => setUploadFile(e.target.files[0])}
           />
         </Grid>
-        <Grid container spacing={2} justify='center'>
+        <Grid container spacing={2} justify="center">
           <Grid item xs={6} sm={4}>
             <div className={classes.loadingWrapper}>
               <Button
-                type='submit'
+                type="submit"
                 fullWidth
-                variant='contained'
-                color='primary'
+                variant="contained"
+                color="primary"
                 className={classes.submit}
                 disabled={loading || submitDisabled()}
               >
@@ -167,8 +167,8 @@ const AddFromFile = ({ loading, dispatch }) => {
         </Grid>
       </Grid>
     </form>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

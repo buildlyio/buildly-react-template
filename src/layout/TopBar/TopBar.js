@@ -23,11 +23,11 @@ import {
   GET_ORGANIZATION_OPTIONS_SUCCESS,
   GET_ORGANIZATION_OPTIONS_FAILURE,
 } from '@redux/authuser/actions/authuser.actions';
-import AccountMenu from './AccountMenu';
-import AdminMenu from './AdminMenu';
 import { routes } from '@routes/routesConstants';
 import { httpService } from '@modules/http/http.service';
 import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
+import AdminMenu from './AdminMenu';
+import AccountMenu from './AccountMenu';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -83,11 +83,11 @@ const TopBar = ({
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}coreuser/`,
-          true
+          true,
         )
         .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_USER_OPTIONS_SUCCESS, data });
+        .then((res) => {
+          dispatch({ type: GET_USER_OPTIONS_SUCCESS, data: res });
         })
         .catch((error) => {
           dispatch({ type: GET_USER_OPTIONS_FAILURE, error });
@@ -99,11 +99,11 @@ const TopBar = ({
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}organization/`,
-          true
+          true,
         )
         .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_ORGANIZATION_OPTIONS_SUCCESS, data });
+        .then((res) => {
+          dispatch({ type: GET_ORGANIZATION_OPTIONS_SUCCESS, data: res });
         })
         .catch((error) => {
           dispatch({ type: GET_ORGANIZATION_OPTIONS_FAILURE, error });
@@ -121,7 +121,7 @@ const TopBar = ({
 
   const refreshPage = () => {
     window.location.reload();
-  }
+  };
 
   const handleLogoutClick = () => {
     dispatch(logout());
@@ -144,15 +144,15 @@ const TopBar = ({
   };
 
   return (
-    <AppBar position='fixed' className={classes.appBar}>
+    <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
         <Hidden mdUp>
           <IconButton
-            edge='start'
+            edge="start"
             className={classes.menuButton}
             onClick={() => setNavHidden(!navHidden)}
-            color='default'
-            aria-label='menu'
+            color="default"
+            aria-label="menu"
           >
             <MenuIcon />
           </IconButton>
@@ -160,20 +160,22 @@ const TopBar = ({
         <img
           src={logo}
           className={classes.logo}
-          alt='Company text logo'
+          alt="Company text logo"
         />
 
         <div className={classes.menuRight}>
-          {isAdmin && 
+          {isAdmin
+          && (
           <IconButton
-            aria-label='admin section'
-            aria-controls='menu-appbar'
-            aria-haspopup='true'
+            aria-label="admin section"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
             onClick={settingMenu}
-            color='default'
+            color="default"
           >
-            <SettingsIcon fontSize='large' />
-          </IconButton>}
+            <SettingsIcon fontSize="large" />
+          </IconButton>
+          )}
           <AdminMenu
             settingEl={settingEl}
             setSettingEl={setSettingEl}
@@ -181,22 +183,22 @@ const TopBar = ({
             handleUserManagementClick={handleUserManagementClick}
           />
           <IconButton
-            aria-label='refresh-app'
-            aria-controls='menu-appbar'
-            aria-haspopup='false'
+            aria-label="refresh-app"
+            aria-controls="menu-appbar"
+            aria-haspopup="false"
             onClick={refreshPage}
-            color='default'
+            color="default"
           >
-            <RefreshIcon fontSize='large' />
+            <RefreshIcon fontSize="large" />
           </IconButton>
           <IconButton
-            aria-label='account of current user'
-            aria-controls='menu-appbar'
-            aria-haspopup='true'
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
             onClick={handleMenu}
-            color='default'
+            color="default"
           >
-            <AccountCircle fontSize='large' />
+            <AccountCircle fontSize="large" />
           </IconButton>
           <AccountMenu
             anchorEl={anchorEl}
@@ -210,7 +212,7 @@ const TopBar = ({
       </Toolbar>
     </AppBar>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

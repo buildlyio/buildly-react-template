@@ -46,17 +46,17 @@ const Gateway = ({
     if (data === null) {
       dispatch(getGateways(organization));
       dispatch(getGatewayType());
-    };
+    }
     if (gatewayOptions === null) {
       httpService
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}sensors/gateway/`,
-          true
+          true,
         )
         .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_GATEWAY_OPTIONS_SUCCESS, data });
+        .then((res) => {
+          dispatch({ type: GET_GATEWAY_OPTIONS_SUCCESS, data: res });
         })
         .catch((error) => {
           dispatch({ type: GET_GATEWAY_OPTIONS_FAILURE, error });
@@ -75,13 +75,13 @@ const Gateway = ({
     ) {
       setRows(getFormattedRow(data, gatewayTypeList, shipmentData));
       setFilteredRows(getFormattedRow(data, gatewayTypeList, shipmentData));
-    };
+    }
   }, [data, gatewayTypeList]);
 
   useEffect(() => {
     if (searchData) {
       setFilteredRows(searchData);
-    };
+    }
   }, [searchData]);
 
   const editGatewayAction = (item) => {
@@ -127,23 +127,23 @@ const Gateway = ({
     <DashboardWrapper
       loading={loading}
       // onAddButtonClick={onAddButtonClick}
-      dashboardHeading='Gateway'
+      dashboardHeading="Gateway"
       // addButtonHeading='Add Gateway'
       editAction={editGatewayAction}
       deleteAction={deleteGatewayAction}
       columns={gatewayColumns}
       rows={filteredRows}
       redirectTo={redirectTo}
-      hasSearch={noSearch ? false : true}
+      hasSearch={!noSearch}
       search={{ searchValue, searchAction: searchTable }}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle='Are your sure you want to Delete this Gateway?'
+      confirmModalTitle="Are your sure you want to Delete this Gateway?"
     >
       <Route path={`${addPath}`} component={AddGateway} />
       <Route path={`${editPath}/:id`} component={AddGateway} />
     </DashboardWrapper>
   );
-}
+};
 export default Gateway;

@@ -41,10 +41,8 @@ export const GraphComponent = (props) => {
             label: selectedGraph.toUpperCase(),
             data: _.orderBy(
               data,
-              (item) => {
-                return moment(item.x);
-              },
-              ['asc']
+              (item) => moment(item.x),
+              ['asc'],
             ),
             fill: false,
             showLine: true,
@@ -76,8 +74,8 @@ export const GraphComponent = (props) => {
         <Line data={dataChart} options={options} />
       ) : (
         <Typography
-          variant='body1'
-          align='center'
+          variant="body1"
+          align="center"
           style={{ marginTop: 40 }}
         >
           No data to display
@@ -85,4 +83,4 @@ export const GraphComponent = (props) => {
       )}
     </div>
   );
-}
+};

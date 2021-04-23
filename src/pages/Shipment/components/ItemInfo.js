@@ -72,41 +72,39 @@ const ItemsInfo = ({
   shipmentFormData,
   dispatch,
   unitsOfMeasure,
-  viewOnly
+  viewOnly,
 }) => {
   const classes = useStyles();
   const [itemIds, setItemIds] = useState(
-    (shipmentFormData && shipmentFormData.items) || []
+    (shipmentFormData && shipmentFormData.items) || [],
   );
   const organization = useContext(UserContext).organization.organization_uuid;
 
-  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
-  const checkedIcon = <CheckBoxIcon fontSize='small' />;
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+  const checkedIcon = <CheckBoxIcon fontSize="small" />;
   let rows = [];
-  let columns = itemColumns;
+  const columns = itemColumns;
   if (itemData && itemData.length) {
-    let selectedRows = [];
+    const selectedRows = [];
     itemData.forEach((element) => {
       if (itemIds.indexOf(element.url) !== -1) {
         selectedRows.push(element);
-      };
+      }
     });
     rows = getFormattedRow(selectedRows, itemTypeList, unitsOfMeasure);
-  };
+  }
 
   const onInputChange = (value) => {
-    let itemIdArray = [];
+    const itemIdArray = [];
     value.forEach((val) => {
       itemIdArray.push(val.url);
     });
     setItemIds(itemIdArray);
   };
 
-  const submitDisabled = () => {
-    if (itemIds.length === 0 || itemData === null) {
-      return true;
-    };
-  };
+  const submitDisabled = () => (
+    itemIds.length === 0 || itemData === null
+  );
 
   /**
    * Submit The form and add/edit custodian
@@ -122,36 +120,32 @@ const ItemsInfo = ({
         shipmentFormValue,
         history,
         `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
-        organization
-      )
+        organization,
+      ),
     );
   };
 
   return (
     <Box mb={5} mt={3}>
       <form noValidate onSubmit={handleSubmit}>
-        <Card variant='outlined' className={classes.form}>
+        <Card variant="outlined" className={classes.form}>
           <CardContent>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Autocomplete
                   multiple
-                  id='tags-outlined'
+                  id="tags-outlined"
                   disabled={viewOnly}
                   options={
                     (itemData && itemData.sort(compareSort('name')))
                     || []
                   }
-                  getOptionLabel={(option) =>
-                    option && option.name
-                  }
+                  getOptionLabel={(option) => option && option.name}
                   filterSelectedOptions
-                  onChange={(event, newValue) =>
-                    onInputChange(newValue)
-                  }
+                  onChange={(event, newValue) => onInputChange(newValue)}
                   defaultValue={rows}
                   renderOption={(option, { selected }) => (
-                    <React.Fragment>
+                    <>
                       <Checkbox
                         icon={icon}
                         checkedIcon={checkedIcon}
@@ -159,15 +153,15 @@ const ItemsInfo = ({
                         checked={selected}
                       />
                       {option.name}
-                    </React.Fragment>
+                    </>
                   )}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       disabled={viewOnly}
-                      variant='outlined'
-                      label='Select items to be associated'
-                      placeholder='Select an item'
+                      variant="outlined"
+                      label="Select items to be associated"
+                      placeholder="Select an item"
                     />
                   )}
                 />
@@ -180,14 +174,14 @@ const ItemsInfo = ({
             {rows.length > 0 && (
               <Grid item xs={12}>
                 <Box mt={5}>
-                  <Typography gutterBottom variant='h5'>
+                  <Typography gutterBottom variant="h5">
                     Associated Items
                   </Typography>
                   <DataTable
                     rows={rows || []}
                     columns={columns}
                     hasSearch={false}
-                    showTotal={true}
+                    showTotal
                   />
                 </Box>
               </Grid>
@@ -202,10 +196,10 @@ const ItemsInfo = ({
           <Grid item xs={6} sm={2}>
             {viewOnly ? (
               <Button
-                type='button'
+                type="button"
                 fullWidth
-                variant='contained'
-                color='primary'
+                variant="contained"
+                color="primary"
                 className={classes.submit}
                 onClick={handleCancel}
               >
@@ -214,10 +208,10 @@ const ItemsInfo = ({
             ) : (
               <div className={classes.loadingWrapper}>
                 <Button
-                  type='submit'
+                  type="submit"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
@@ -234,20 +228,20 @@ const ItemsInfo = ({
           </Grid>
           <Grid item xs={12} sm={4}>
             <Button
-              variant='contained'
-              color='primary'
+              variant="contained"
+              color="primary"
               fullWidth
               onClick={handleNext}
               className={classes.submit}
             >
-              {`Next: Custodians`}
+              Next: Custodians
             </Button>
           </Grid>
         </Grid>
       </form>
     </Box>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

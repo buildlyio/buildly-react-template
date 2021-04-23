@@ -76,7 +76,7 @@ const Login = ({ dispatch, loading, history }) => {
     if (location.pathname.includes(routes.RESET_PASSWORD_CONFIRM)) {
       const restPath = location.pathname.substring(
         location.pathname.indexOf(routes.RESET_PASSWORD_CONFIRM) + 1,
-        location.pathname.lastIndexOf('/')
+        location.pathname.lastIndexOf('/'),
       );
       const restPathArr = restPath.split('/');
       const resetCheckValues = {
@@ -84,7 +84,7 @@ const Login = ({ dispatch, loading, history }) => {
         token: restPathArr[2],
       };
       dispatch(resetPasswordCheck(resetCheckValues, history));
-    };
+    }
   }, []);
 
   /**
@@ -123,39 +123,39 @@ const Login = ({ dispatch, loading, history }) => {
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(error);
     if (!username.value || !password.value) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (error[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
 
   return (
     <Container
-      component='main'
-      maxWidth='xs'
+      component="main"
+      maxWidth="xs"
       className={classes.container}
     >
       <CssBaseline />
-      <Card variant='outlined'>
+      <Card variant="outlined">
         <CardContent>
           <div className={classes.paper}>
             <img
               src={logo}
               className={classes.logo}
-              alt='Company logo'
+              alt="Company logo"
             />
-            <Typography component='h1' variant='h5'>
+            <Typography component="h1" variant="h5">
               Sign in
             </Typography>
             <form
@@ -164,39 +164,39 @@ const Login = ({ dispatch, loading, history }) => {
               onSubmit={handleSubmit}
             >
               <TextField
-                variant='outlined'
-                margin='normal'
+                variant="outlined"
+                margin="normal"
                 required
                 fullWidth
-                id='username'
-                label='Username'
-                name='username'
-                autoComplete='username'
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
                 error={error.username && error.username.error}
                 helperText={
                   error && error.username
-                  ? error.username.message
-                  : ''
+                    ? error.username.message
+                    : ''
                 }
                 className={classes.textField}
                 onBlur={(e) => handleBlur(e, 'required', username)}
                 {...username.bind}
               />
               <TextField
-                variant='outlined'
-                margin='normal'
+                variant="outlined"
+                margin="normal"
                 required
                 fullWidth
-                name='password'
-                label='Password'
-                type='password'
-                id='password'
-                autoComplete='current-password'
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
                 error={error.password && error.password.error}
                 helperText={
                   error && error.password
-                  ? error.password.message
-                  : ''
+                    ? error.password.message
+                    : ''
                 }
                 className={classes.textField}
                 onBlur={(e) => handleBlur(e, 'required', password)}
@@ -204,10 +204,10 @@ const Login = ({ dispatch, loading, history }) => {
               />
               <div className={classes.loadingWrapper}>
                 <Button
-                  type='submit'
+                  type="submit"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
@@ -224,8 +224,8 @@ const Login = ({ dispatch, loading, history }) => {
                 <Grid item xs>
                   <Link
                     href={routes.RESET_PASSWORD}
-                    variant='body2'
-                    color='secondary'
+                    variant="body2"
+                    color="secondary"
                   >
                     Forgot password?
                   </Link>
@@ -233,8 +233,8 @@ const Login = ({ dispatch, loading, history }) => {
                 <Grid item>
                   <Link
                     href={routes.REGISTER}
-                    variant='body2'
-                    color='secondary'
+                    variant="body2"
+                    color="secondary"
                   >
                     Don't have an account? Register
                   </Link>
@@ -249,7 +249,7 @@ const Login = ({ dispatch, loading, history }) => {
       </Box>
     </Container>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

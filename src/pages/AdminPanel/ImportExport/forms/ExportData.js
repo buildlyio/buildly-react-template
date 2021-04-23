@@ -46,15 +46,15 @@ const ExportData = ({ dispatch, exportData }) => {
         const link = document.createElement('a');
         if (link.download !== undefined) { // feature detection
           // Browsers that support HTML5 download attribute
-          var url = URL.createObjectURL(blob);
+          const url = URL.createObjectURL(blob);
           link.setAttribute('href', url);
           link.setAttribute('download', fileName);
           link.style.visibility = 'hidden';
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-        };
-      };
+        }
+      }
       setReady(false);
     }
   }, [exportData, ready]);
@@ -74,50 +74,50 @@ const ExportData = ({ dispatch, exportData }) => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
-            variant='outlined'
-            margin='normal'
+            variant="outlined"
+            margin="normal"
             fullWidth
             required
-            id='exportTable'
-            label='Data to export'
+            id="exportTable"
+            label="Data to export"
             select
             value={exportTable}
-            onChange={e => {
-              dispatch(clearData())
-              setExportTable(e.target.value)
+            onChange={(e) => {
+              dispatch(clearData());
+              setExportTable(e.target.value);
             }}
           >
-            <MenuItem value={''}>--------</MenuItem>
-            <MenuItem value={'item'}>Items</MenuItem>
-            <MenuItem value={'product'}>Products</MenuItem>
+            <MenuItem value="">--------</MenuItem>
+            <MenuItem value="item">Items</MenuItem>
+            <MenuItem value="product">Products</MenuItem>
           </TextField>
         </Grid>
         <Grid item xs={12}>
           <TextField
-            variant='outlined'
-            margin='normal'
+            variant="outlined"
+            margin="normal"
             fullWidth
             required
-            id='exportType'
-            label='Export As'
+            id="exportType"
+            label="Export As"
             select
             value={exportType}
-            onChange={e => {
-              dispatch(clearData())
-              setExportType(e.target.value)
+            onChange={(e) => {
+              dispatch(clearData());
+              setExportType(e.target.value);
             }}
           >
-            <MenuItem value={''}>--------</MenuItem>
-            <MenuItem value={'csv'}>CSV</MenuItem>
+            <MenuItem value="">--------</MenuItem>
+            <MenuItem value="csv">CSV</MenuItem>
           </TextField>
         </Grid>
-        <Grid container spacing={2} justify='center'>
+        <Grid container spacing={2} justify="center">
           <Grid item xs={6} sm={4}>
             <Button
-              type='submit'
+              type="submit"
               fullWidth
-              variant='contained'
-              color='primary'
+              variant="contained"
+              color="primary"
               className={classes.button}
               disabled={!exportTable || !exportType}
             >
@@ -127,8 +127,8 @@ const ExportData = ({ dispatch, exportData }) => {
         </Grid>
       </Grid>
     </form>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

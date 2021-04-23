@@ -27,9 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const valuetext = (value) => {
-  return `${value}°C`;
-}
+const valuetext = (value) => `${value}°C`;
 
 const ValueLabelComponent = (props) => {
   const classes = useStyles();
@@ -37,9 +35,9 @@ const ValueLabelComponent = (props) => {
 
   return (
     <Tooltip
-      open={true}
+      open
       // enterTouchDelay={0}
-      placement='left'
+      placement="left"
       title={value}
       classes={{ tooltip: classes.tooltip, arrow: classes.arrow }}
       arrow
@@ -47,9 +45,9 @@ const ValueLabelComponent = (props) => {
       {children}
     </Tooltip>
   );
-}
+};
 
-export default RangeSlider = ({
+const RangeSlider = ({
   value,
   setValue,
   rangeText,
@@ -65,23 +63,25 @@ export default RangeSlider = ({
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  
+
   return (
     <div className={classes.root}>
       <Slider
         value={value}
         // track={false}
         orientation={orientation}
-        aria-labelledby='range-slider'
-        valueLabelDisplay='auto'
+        aria-labelledby="range-slider"
+        valueLabelDisplay="auto"
         // ValueLabelComponent={ValueLabelComponent}
         disabled={disabled}
         marks={marks}
         onChange={handleSliderChange}
       />
-      <Typography id='range-slider' gutterBottom>
+      <Typography id="range-slider" gutterBottom>
         {rangeText}
       </Typography>
     </div>
   );
-}
+};
+
+export default RangeSlider;

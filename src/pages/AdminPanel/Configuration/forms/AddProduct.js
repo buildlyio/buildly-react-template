@@ -49,7 +49,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) => {
+const AddProduct = ({
+  history, location, loading, dispatch, unitsOfMeasure,
+}) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openModal, toggleModal] = useState(true);
@@ -76,7 +78,7 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
     required: true,
   });
   const [formError, setFormError] = useState({});
-  
+
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
@@ -87,7 +89,7 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
     toggleModal(false);
     if (location && location.state) {
       history.push(location.state.from);
-    };
+    }
   };
 
   /**
@@ -111,11 +113,11 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
       dispatch(editProduct(data));
     } else {
       data = {
-        ...data, 
+        ...data,
         create_date: currentDateTime,
       };
       dispatch(addProduct(data));
-    };
+    }
     closeModal();
   };
 
@@ -142,25 +144,25 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     if (
-      !name.value || 
-      !description.value || 
-      !value.value || 
-      !grossWeight.value || 
-      !unit.value
+      !name.value
+      || !description.value
+      || !value.value
+      || !grossWeight.value
+      || !unit.value
     ) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
@@ -173,7 +175,7 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={'md'}
+          maxWidth="md"
         >
           <form
             className={classes.form}
@@ -183,14 +185,14 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   required
-                  id='name'
-                  label='Name'
-                  name='name'
-                  autoComplete='name'
+                  id="name"
+                  label="Name"
+                  name="name"
+                  autoComplete="name"
                   error={formError.name && formError.name.error}
                   helperText={
                     formError.name ? formError.name.message : ''
@@ -201,22 +203,22 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   required
-                  id='description'
-                  label='Description'
-                  name='description'
-                  autoComplete='description'
+                  id="description"
+                  label="Description"
+                  name="description"
+                  autoComplete="description"
                   error={
                     formError.description
                     && formError.description.error
                   }
                   helperText={
                     formError.description
-                    ? formError.description.message
-                    : ''
+                      ? formError.description.message
+                      : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', description)}
                   {...description.bind}
@@ -224,14 +226,14 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   required
-                  id='value'
-                  label='Value'
-                  name='name'
-                  autoComplete='value'
+                  id="value"
+                  label="Value"
+                  name="name"
+                  autoComplete="value"
                   error={formError.value && formError.value.error}
                   helperText={
                     formError.value ? formError.value.message : ''
@@ -242,22 +244,22 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   required
-                  id='grossWeight'
-                  label='Gross Weight'
-                  name='grossWeight'
-                  autoComplete='grossWeight'
+                  id="grossWeight"
+                  label="Gross Weight"
+                  name="grossWeight"
+                  autoComplete="grossWeight"
                   error={
                     formError.grossWeight
                     && formError.grossWeight.error
                   }
                   helperText={
                     formError.grossWeight
-                    ? formError.grossWeight.message
-                    : ''
+                      ? formError.grossWeight.message
+                      : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', grossWeight)}
                   {...grossWeight.bind}
@@ -265,12 +267,12 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   required
-                  id='unit'
-                  label='Unit of Measure'
+                  id="unit"
+                  label="Unit of Measure"
                   select
                   error={formError.unit && formError.unit.error}
                   helperText={
@@ -279,26 +281,25 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
                   onBlur={(e) => handleBlur(e, 'required', unit)}
                   {...unit.bind}
                 >
-                  <MenuItem value={''}>--------</MenuItem>
-                  {unitsOfMeasure && unitsOfMeasure.map((unit, index) => (
+                  <MenuItem value="">--------</MenuItem>
+                  {unitsOfMeasure && unitsOfMeasure.map((unitVal, index) => (
                     <MenuItem
                       key={`unit-${index}`}
-                      value={`${unit.url}`}
+                      value={`${unitVal.url}`}
                     >
-                      {`${unit.name}`}
+                      {`${unitVal.name}`}
                     </MenuItem>
-                  ))
-                  }
+                  ))}
                 </TextField>
               </Grid>
-              <Grid container spacing={2} justify='center'>
+              <Grid container spacing={2} justify="center">
                 <Grid item xs={6} sm={4}>
                   <div className={classes.loadingWrapper}>
                     <Button
-                      type='submit'
+                      type="submit"
                       fullWidth
-                      variant='contained'
-                      color='primary'
+                      variant="contained"
+                      color="primary"
                       className={classes.submit}
                       disabled={loading || submitDisabled()}
                     >
@@ -314,10 +315,10 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
                 </Grid>
                 <Grid item xs={6} sm={4}>
                   <Button
-                    type='button'
+                    type="button"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     onClick={() => closeModal()}
                     className={classes.submit}
                   >
@@ -330,8 +331,8 @@ const AddProduct = ({ history, location, loading, dispatch, unitsOfMeasure }) =>
         </Modal>
       )}
     </div>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

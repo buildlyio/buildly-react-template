@@ -48,7 +48,7 @@ const ShipmentSensorTable = ({
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
 
-  const columns = SHIPMENT_SENSOR_COLUMNS.map(column => ({
+  const columns = SHIPMENT_SENSOR_COLUMNS.map((column) => ({
     ...column,
     options: {
       ...column.options,
@@ -70,7 +70,7 @@ const ShipmentSensorTable = ({
     rowsPerPageOptions: [5, 10, 15],
     downloadOptions: {
       filename: 'AggregateReportData.csv',
-      separator: ','
+      separator: ',',
     },
     rowsSelected: selected,
     textLabels: {
@@ -83,16 +83,14 @@ const ShipmentSensorTable = ({
         return _.orderBy(
           data,
           (item) => moment(item.data[colIndex]),
-          [order]
+          [order],
         );
-      };
-      return data.sort((a, b) =>
-        (a.data[colIndex].length < b.data[colIndex].length
-          ? -1
-          : 1
-        ) * (order === 'desc' ? 1 : -1)
-      );
-    }
+      }
+      return data.sort((a, b) => (a.data[colIndex].length < b.data[colIndex].length
+        ? -1
+        : 1
+      ) * (order === 'desc' ? 1 : -1));
+    },
   };
 
   useEffect(() => {
@@ -100,7 +98,7 @@ const ShipmentSensorTable = ({
       const sortedData = _.orderBy(
         aggregateReport,
         (item) => moment(item.timestamp),
-        ['desc']
+        ['desc'],
       );
       setRows(sortedData);
     }
@@ -112,15 +110,15 @@ const ShipmentSensorTable = ({
         _.keys(
           _.pickBy(
             rows,
-            {lat: selectedMarker.lat,lng:selectedMarker.lng}
-          )
+            { lat: selectedMarker.lat, lng: selectedMarker.lng },
+          ),
         ),
-        Number
+        Number,
       );
       setSelected(selectedIndex);
     } else {
       setSelected([]);
-    };
+    }
   }, [selectedMarker]);
 
   return (
@@ -129,7 +127,7 @@ const ShipmentSensorTable = ({
         <div className={classes.tooltip}>
           <Typography
             className={classes.title}
-            variant='h5'
+            variant="h5"
           >
             {shipmentName
             && `Sensor Report - Shipment: ${shipmentName}`}
@@ -145,7 +143,7 @@ const ShipmentSensorTable = ({
         />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
 export default ShipmentSensorTable;

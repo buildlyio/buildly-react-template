@@ -6,7 +6,7 @@ import {
   GET_EXPORT_DATA,
   GET_EXPORT_DATA_SUCCESS,
   GET_EXPORT_DATA_FAILURE,
-} from "../actions/importExport.actions";
+} from '../actions/importExport.actions';
 
 const initialState = {
   loading: false,
@@ -73,4 +73,4 @@ export default (state = initialState, action) => {
     default:
       return state;
   }
-}
+};

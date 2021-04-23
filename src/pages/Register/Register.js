@@ -125,12 +125,12 @@ const Register = ({ dispatch, loading, history }) => {
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    
+
     if (
       !username.value
       || !password.value
@@ -140,32 +140,32 @@ const Register = ({ dispatch, loading, history }) => {
       || !first_name.value
     ) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
 
   return (
     <Container
-      component='main'
-      maxWidth='sm'
+      component="main"
+      maxWidth="sm"
       className={classes.container}
     >
       <CssBaseline />
-      <Card variant='outlined'>
+      <Card variant="outlined">
         <CardContent>
           <div className={classes.paper}>
             <img
               src={logo}
               className={classes.logo}
-              alt='Company logo'
+              alt="Company logo"
             />
-            <Typography component='h1' variant='h5'>
+            <Typography component="h1" variant="h5">
               Register
             </Typography>
             <form
@@ -176,47 +176,45 @@ const Register = ({ dispatch, loading, history }) => {
               <Grid container spacing={isMobile() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
-                    id='first_name'
-                    label='First Name'
-                    name='first_name'
-                    autoComplete='first_name'
+                    id="first_name"
+                    label="First Name"
+                    name="first_name"
+                    autoComplete="first_name"
                     error={
                       formError.first_name
                       && formError.first_name.error
                     }
                     helperText={
                       formError.first_name
-                      ? formError.first_name.message
-                      : ''
+                        ? formError.first_name.message
+                        : ''
                     }
                     className={classes.textField}
-                    onBlur={(e) => 
-                      handleBlur(e, 'required', first_name)
-                    }
+                    onBlur={(e) => handleBlur(e, 'required', first_name)}
                     {...first_name.bind}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     fullWidth
-                    id='last_name'
-                    label='Last Name'
-                    name='last_name'
-                    autoComplete='last_name'
+                    id="last_name"
+                    label="Last Name"
+                    name="last_name"
+                    autoComplete="last_name"
                     error={
                       formError.last_name
                       && formError.last_name.error
                     }
                     helperText={
                       formError.last_name
-                      ? formError.last_name.message
-                      : ''
+                        ? formError.last_name.message
+                        : ''
                     }
                     className={classes.textField}
                     onBlur={(e) => handleBlur(e)}
@@ -227,49 +225,47 @@ const Register = ({ dispatch, loading, history }) => {
               <Grid container spacing={isMobile() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
-                    id='username'
-                    label='Username'
-                    name='username'
-                    autoComplete='username'
+                    id="username"
+                    label="Username"
+                    name="username"
+                    autoComplete="username"
                     error={
                       formError.username
                       && formError.username.error
                     }
                     helperText={
                       formError.username
-                      ? formError.username.message
-                      : ''
+                        ? formError.username.message
+                        : ''
                     }
                     className={classes.textField}
-                    onBlur={(e) =>
-                      handleBlur(e, 'required', username)
-                    }
+                    onBlur={(e) => handleBlur(e, 'required', username)}
                     {...username.bind}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
-                    id='email'
-                    label='Email'
-                    name='email'
-                    autoComplete='email'
-                    type='email'
+                    id="email"
+                    label="Email"
+                    name="email"
+                    autoComplete="email"
+                    type="email"
                     error={
                       formError.email
                       && formError.email.error
                     }
                     helperText={
                       formError.email
-                      ? formError.email.message
-                      : ''
+                        ? formError.email.message
+                        : ''
                     }
                     className={classes.textField}
                     onBlur={(e) => handleBlur(e, 'email', email)}
@@ -280,27 +276,25 @@ const Register = ({ dispatch, loading, history }) => {
               <Grid container spacing={isMobile() ? 0 : 3}>
                 <Grid item xs={12}>
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
-                    id='organization_name'
-                    label='Organization Name'
-                    name='organization_name'
-                    autoComplete='organization_name'
+                    id="organization_name"
+                    label="Organization Name"
+                    name="organization_name"
+                    autoComplete="organization_name"
                     error={
                       formError.organization_name
                       && formError.organization_name.error
                     }
                     helperText={
                       formError.organization_name
-                      ? formError.organization_name.message
-                      : ''
+                        ? formError.organization_name.message
+                        : ''
                     }
                     className={classes.textField}
-                    onBlur={(e) =>
-                      handleBlur(e, 'required', organization_name)
-                    }
+                    onBlur={(e) => handleBlur(e, 'required', organization_name)}
                     {...organization_name.bind}
                   />
                 </Grid>
@@ -308,70 +302,66 @@ const Register = ({ dispatch, loading, history }) => {
               <Grid container spacing={isMobile() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
-                    name='password'
-                    label='Password'
-                    type='password'
-                    id='password'
-                    autoComplete='current-password'
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
                     error={
                       formError.password
                       && formError.password.error
                     }
                     helperText={
                       formError.password
-                      ? formError.password.message
-                      : ''
+                        ? formError.password.message
+                        : ''
                     }
                     className={classes.textField}
-                    onBlur={(e) =>
-                      handleBlur(e, 'required', password)
-                    }
+                    onBlur={(e) => handleBlur(e, 'required', password)}
                     {...password.bind}
                   />
                 </Grid>
 
                 <Grid item xs={12} md={6}>
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
-                    id='re_password'
-                    label='Confirm Password'
-                    name='re_password'
-                    type='password'
-                    autoComplete='re_password'
+                    id="re_password"
+                    label="Confirm Password"
+                    name="re_password"
+                    type="password"
+                    autoComplete="re_password"
                     error={
                       formError.re_password
                       && formError.re_password.error
                     }
                     helperText={
                       formError.re_password
-                      ? formError.re_password.message
-                      : ''
+                        ? formError.re_password.message
+                        : ''
                     }
                     className={classes.textField}
-                    onBlur={(e) =>
-                      handleBlur(e, 'confirm', re_password)
-                    }
+                    onBlur={(e) => handleBlur(e, 'confirm', re_password)}
                     {...re_password.bind}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <div className={classes.infoSection}>
-                    <Typography variant='body2'>
+                    <Typography variant="body2">
                       Shipment Email Alerts:
                     </Typography>
                     <Switch
-                      size='medium'
-                      color='primary'
+                      size="medium"
+                      color="primary"
                       checked={emailAlertFlag}
                       onChange={(event) => {
-                        setEmailAlertFlag(event.target.checked)
+                        setEmailAlertFlag(event.target.checked);
                       }}
                     />
                   </div>
@@ -379,10 +369,10 @@ const Register = ({ dispatch, loading, history }) => {
               </Grid>
               <div className={classes.loadingWrapper}>
                 <Button
-                  type='submit'
+                  type="submit"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
@@ -399,8 +389,8 @@ const Register = ({ dispatch, loading, history }) => {
                 <Grid item>
                   <Link
                     href={routes.LOGIN}
-                    variant='body2'
-                    color='secondary'
+                    variant="body2"
+                    color="secondary"
                   >
                     Already have an account? Sign in
                   </Link>
@@ -415,7 +405,7 @@ const Register = ({ dispatch, loading, history }) => {
       </Box>
     </Container>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

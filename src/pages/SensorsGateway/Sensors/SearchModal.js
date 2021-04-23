@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default SearchModal = ({
+const SearchModal = ({
   open,
   setOpen,
   title,
@@ -39,42 +39,37 @@ export default SearchModal = ({
     <Dialog
       open={open}
       onClose={() => setOpen(false)}
-      aria-labelledby='alert-dialog-title'
-      aria-describedby='alert-dialog-description'
-      maxWidth={'md'}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+      maxWidth="md"
     >
-      <DialogTitle id='alert-dialog-title'>
+      <DialogTitle id="alert-dialog-title">
         {title}
       </DialogTitle>
       <DialogContent className={classes.root}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Autocomplete
-            id='tags-outlined'
+            id="tags-outlined"
             options={listOfItems}
-            getOptionLabel={(option) =>
-              option && `${option.name}:${option.gateway_uuid}`
-            }
-            onChange={(event, newValue) =>
-              setList(newValue)
-            }
+            getOptionLabel={(option) => option && `${option.name}:${option.gateway_uuid}`}
+            onChange={(event, newValue) => setList(newValue)}
             defaultValue={selectedList}
             style={{ flex: 1 }}
             renderInput={(params) => (
               <TextField
                 {...params}
-                variant='outlined'
+                variant="outlined"
                 label={searchFieldLabel}
                 placeholder={searchFieldPlaceHolder}
               />
             )}
           />
           {helpText
-          && <CustomizedTooltips toolTipText={helpText} />
-          }
+          && <CustomizedTooltips toolTipText={helpText} />}
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setOpen(false)} color='primary'>
+        <Button onClick={() => setOpen(false)} color="primary">
           Cancel
         </Button>
         <Button
@@ -82,7 +77,7 @@ export default SearchModal = ({
             submitAction(list);
             setOpen(false);
           }}
-          color='primary'
+          color="primary"
           autoFocus
         >
           {submitText}
@@ -90,4 +85,6 @@ export default SearchModal = ({
       </DialogActions>
     </Dialog>
   );
-}
+};
+
+export default SearchModal;

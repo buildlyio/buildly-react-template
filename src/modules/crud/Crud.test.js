@@ -19,7 +19,7 @@ const setup = () => {
     props,
     enzymeWrapper,
   };
-}
+};
 
 describe('Crud', () => {
   it('should dispatch an action to create an item', () => {

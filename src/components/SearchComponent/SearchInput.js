@@ -2,7 +2,7 @@ import React from 'react';
 import {
   lighten,
   makeStyles,
-  InputBase
+  InputBase,
 } from '@material-ui/core';
 import { Search as SearchIcon } from '@material-ui/icons';
 
@@ -12,7 +12,6 @@ const useStyles = makeStyles((theme) => ({
   },
   search: {
     position: 'relative',
-    borderRadius: theme.shape.borderRadius,
     backgroundColor: '#fff',
     color: '#000',
     '&:hover': {
@@ -54,10 +53,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default SearchInput = ({ ...props }) => {
+const SearchInput = ({ ...props }) => {
   const classes = useStyles();
   const { customContainerClass, customSearchInputClass } = props;
-  
+
   return (
     <div
       className={`${classes.search} ${
@@ -65,10 +64,10 @@ export default SearchInput = ({ ...props }) => {
       }`}
     >
       <div className={classes.searchIcon}>
-        <SearchIcon color='inherit' />
+        <SearchIcon color="inherit" />
       </div>
       <InputBase
-        placeholder='Search…'
+        placeholder="Search…"
         classes={{
           root: classes.inputRoot,
           input: `${classes.inputInput} ${
@@ -81,4 +80,6 @@ export default SearchInput = ({ ...props }) => {
       />
     </div>
   );
-}
+};
+
+export default SearchInput;

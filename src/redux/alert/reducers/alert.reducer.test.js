@@ -1,22 +1,39 @@
-import * as actions from '@redux/alert/actions/alert.actions';
+import * as actions from '../actions/alert.actions';
 import * as reducer from './alert.reducer';
 
 const initialState = {
   data: null,
 };
 
+// Test Alert Reducer
 describe('Show Alert reducer', () => {
-  it('show alert Reducer', () => {
-    expect(reducer.default([], { type: actions.SHOW_ALERT })).toEqual({
-      data: undefined,
+  it('should update redux state with action data for show alert',
+    () => {
+      const action = {
+        type: actions.SHOW_ALERT,
+        data: {
+          type: 'success',
+          open: true,
+          message: 'Success message to be shown.',
+        },
+      };
+
+      expect(reducer.default(initialState, action))
+        .toEqual({
+          data: {
+            type: 'success',
+            open: true,
+            message: 'Success message to be shown.',
+          },
+        });
     });
-  });
 });
 
 describe('Hide alert reducer', () => {
-  it('hide alert∂ Reducer', () => {
-    expect(reducer.default(initialState, { type: actions.HIDE_ALERT })).toEqual(
-      initialState
-    );
-  });
+  it('should update redux state to remove data for hide alert ',
+    () => {
+      const action = { type: actions.HIDE_ALERT };
+      expect(reducer.default(initialState, action))
+        .toEqual(initialState);
+    });
 });

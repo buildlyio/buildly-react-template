@@ -94,7 +94,7 @@ const AddOriginInfo = ({
       history.push(location.state.from);
     } else {
       history.push(`${routes.SHIPMENT}/add`);
-    };
+    }
   };
 
   /**
@@ -115,7 +115,7 @@ const AddOriginInfo = ({
   const handleBlur = (e, validation, input, parentId) => {
     const validateObj = validators(validation, input);
     const prevState = { ...formError };
-    if (validateObj && validateObj.error){
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id || parentId]: validateObj,
@@ -128,7 +128,7 @@ const AddOriginInfo = ({
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
@@ -140,12 +140,12 @@ const AddOriginInfo = ({
       || !country.value
     ) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
@@ -164,7 +164,7 @@ const AddOriginInfo = ({
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={'md'}
+          maxWidth="md"
         >
           <form
             className={classes.form}
@@ -172,39 +172,37 @@ const AddOriginInfo = ({
             onSubmit={handleSubmit}
           >
             <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item item xs={12} md={6} sm={6}>
+              <Grid item xs={12} md={6} sm={6}>
                 <FormControlLabel
-                  control={
+                  control={(
                     <Checkbox
                       checked={custodian_info_check}
-                      onChange={(e) =>
-                        setCustodianInfoCheck(e.target.checked)
-                      }
-                      name='custodian_info'
-                      color='primary'
+                      onChange={(e) => setCustodianInfoCheck(e.target.checked)}
+                      name="custodian_info"
+                      color="primary"
                     />
-                  }
-                  label='Use My Custodian Info'
+                  )}
+                  label="Use My Custodian Info"
                 />
               </Grid>
               <Grid item xs={12} md={6} sm={6}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
-                  id='company'
-                  label='Custodian Name'
-                  name='company'
-                  autoComplete='company'
+                  id="company"
+                  label="Custodian Name"
+                  name="company"
+                  autoComplete="company"
                   error={
                     formError.company
                     && formError.company.error
                   }
                   helperText={
                     formError.company
-                    ? formError.company.message
-                    : ''
+                      ? formError.company.message
+                      : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', company)}
                   {...company.bind}
@@ -212,62 +210,60 @@ const AddOriginInfo = ({
               </Grid>
             </Grid>
             <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item item xs={12}>
+              <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
-                  id='glnNumber'
-                  label='GLN Number'
-                  name='glnNumber'
-                  autoComplete='glnNumber'
+                  id="glnNumber"
+                  label="GLN Number"
+                  name="glnNumber"
+                  autoComplete="glnNumber"
                   {...glnNumber.bind}
                 />
               </Grid>
             </Grid>
             <Card
-              variant='outlined'
+              variant="outlined"
               className={classes.addressContainer}
             >
               <CardContent>
-                <Typography variant='h6'>
+                <Typography variant="h6">
                   Ship From Location
                 </Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       required
                       fullWidth
-                      id='address_1'
-                      label='Address Line 1'
-                      name='address_1'
-                      autoComplete='address_1'
+                      id="address_1"
+                      label="Address Line 1"
+                      name="address_1"
+                      autoComplete="address_1"
                       error={
                         formError.address_1
                         && formError.address_1.error
                       }
                       helperText={
                         formError.address_1
-                        ? formError.address_1.message
-                        : ''
+                          ? formError.address_1.message
+                          : ''
                       }
-                      onBlur={(e) =>
-                        handleBlur(e, 'required', address_1)
-                      }
+                      onBlur={(e) => handleBlur(e, 'required', address_1)}
                       {...address_1.bind}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       fullWidth
-                      id='address_2'
-                      label='Address Line 2'
-                      name='address_2'
-                      autoComplete='address_2'
+                      id="address_2"
+                      label="Address Line 2"
+                      name="address_2"
+                      autoComplete="address_2"
                       {...address_2.bind}
                     />
                   </Grid>
@@ -275,19 +271,19 @@ const AddOriginInfo = ({
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       // required
                       fullWidth
-                      id='city'
-                      label='City'
-                      name='city'
-                      autoComplete='city'
+                      id="city"
+                      label="City"
+                      name="city"
+                      autoComplete="city"
                       error={formError.city && formError.city.error}
                       helperText={
                         formError.city
-                        ? formError.city.message
-                        : ''
+                          ? formError.city.message
+                          : ''
                       }
                       onBlur={(e) => handleBlur(e, 'required', city)}
                       {...city.bind}
@@ -295,19 +291,19 @@ const AddOriginInfo = ({
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       // required
                       fullWidth
-                      id='zip'
-                      label='Zip'
-                      name='zip'
-                      autoComplete='zip'
+                      id="zip"
+                      label="Zip"
+                      name="zip"
+                      autoComplete="zip"
                       error={formError.zip && formError.zip.error}
                       helperText={
                         formError.zip
-                        ? formError.zip.message
-                        : ''
+                          ? formError.zip.message
+                          : ''
                       }
                       onBlur={(e) => handleBlur(e, 'required', zip)}
                       {...zip.bind}
@@ -317,28 +313,26 @@ const AddOriginInfo = ({
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       fullWidth
-                      id='state'
+                      id="state"
                       select
                       required
-                      label='State'
+                      label="State"
                       error={
                         formError.state
                         && formError.state.error
                       }
                       helperText={
                         formError.state
-                        ? formError.state.message
-                        : ''
+                          ? formError.state.message
+                          : ''
                       }
-                      onBlur={(e) =>
-                        handleBlur(e, 'required', state, 'state')
-                      }
+                      onBlur={(e) => handleBlur(e, 'required', state, 'state')}
                       {...state.bind}
                     >
-                      <MenuItem value={''}>Select</MenuItem>
+                      <MenuItem value="">Select</MenuItem>
                       {STATE_CHOICES.map((value, index) => (
                         <MenuItem
                           key={`originState${index}:${value}`}
@@ -351,28 +345,26 @@ const AddOriginInfo = ({
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       fullWidth
-                      id='country'
+                      id="country"
                       select
                       required
-                      label='Country'
+                      label="Country"
                       error={
                         formError.country
                         && formError.country.error
                       }
                       helperText={
                         formError.country
-                        ? formError.country.message
-                        : ''
+                          ? formError.country.message
+                          : ''
                       }
-                      onBlur={(e) =>
-                        handleBlur(e, 'required', country, 'country')
-                      }
+                      onBlur={(e) => handleBlur(e, 'required', country, 'country')}
                       {...country.bind}
                     >
-                      <MenuItem value={''}>Select</MenuItem>
+                      <MenuItem value="">Select</MenuItem>
                       {COUNTRY_CHOICES.map((value, index) => (
                         <MenuItem
                           key={`originCountry${index}:${value}`}
@@ -390,14 +382,14 @@ const AddOriginInfo = ({
             <Grid
               container
               spacing={isDesktop ? 3 : 0}
-              justify='center'
+              justify="center"
             >
               <Grid item xs={12} sm={4}>
                 <Button
-                  type='button'
+                  type="button"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   onClick={() => closeModal()}
                   className={classes.submit}
                 >
@@ -407,10 +399,10 @@ const AddOriginInfo = ({
               <Grid item xs={12} sm={4}>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type='button'
+                    type="button"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     onClick={(e) => onNextClick(e)}
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
@@ -431,7 +423,7 @@ const AddOriginInfo = ({
       )}
     </div>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

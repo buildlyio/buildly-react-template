@@ -143,42 +143,42 @@ const Shipment = (props) => {
   useEffect(() => {
     if (shipmentData === null) {
       dispatch(getShipmentDetails(organization));
-    };
+    }
     if (custodianData === null) {
       dispatch(getCustodians(organization));
       dispatch(getCustodianType());
       dispatch(getContact(organization));
-    };
+    }
     if (itemData === null) {
       dispatch(getItems(organization));
       dispatch(getItemType(organization));
-    };
+    }
     if (gatewayData === null) {
       dispatch(getGateways(organization));
       dispatch(getGatewayType());
-    };
+    }
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
-    };
+    }
     if (!custodyData) {
       dispatch(getCustody());
-    };
+    }
     if (!sensorData) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
-    };
+    }
     if (!aggregateReportData) {
       dispatch(getAggregateReport(organization));
-    };
+    }
     if (!sensorReportAlerts) {
       dispatch(getSensorReportAlerts(organization));
-    };
+    }
     if (shipmentOptions === null) {
       httpService
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}shipment/shipment/`,
-          true
+          true,
         )
         .then((response) => response.json())
         .then((data) => {
@@ -194,7 +194,7 @@ const Shipment = (props) => {
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}custodian/custody/`,
-          true
+          true,
         )
         .then((response) => response.json())
         .then((data) => {
@@ -224,81 +224,75 @@ const Shipment = (props) => {
         aggregateReportData,
       );
       setRows(formattedRows);
-      const activeRows = formattedRows.filter((row) =>
-        row.type === 'Active'
-      );
-      const completedRows = formattedRows.filter((row) =>
-        row.type === 'Completed'
-      );
-      setActiveRows(activeRows);
-      setCompletedRows(completedRows);
+      setActiveRows(formattedRows.filter((row) => row.type === 'Active'));
+      setCompletedRows(formattedRows.filter((row) => row.type === 'Completed'));
       if (!selectedShipment && formattedRows.length) {
         if (shipmentFilter === 'Completed') {
           setSelectedShipment(completedRows[0]);
         } else {
           setSelectedShipment(activeRows[0]);
-        };
-      };
-    };
+        }
+      }
+    }
   }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData, aggregateReportData]);
 
   useEffect(() => {
     if (selectedShipment) {
-      let markersToSet = [];
-      let aggregateReportInfo = [];
-      const temperatureUnit = unitsOfMeasure.filter((obj) =>
-        obj.supported_class === 'Temperature'
-      )[0]['name'].toLowerCase();
+      const markersToSet = [];
+      const aggregateReportInfo = [];
+      const temperatureUnit = unitsOfMeasure.filter((obj) => obj.supported_class === 'Temperature')[0].name.toLowerCase();
 
       selectedShipment.sensor_report.forEach((report) => {
         if (report.report_entries.length > 0) {
-          const alert_status =
-            report.excursion_flag
-            ? 'Excursion'
-            : report.warning_flag
-              ? 'Warning'
-              : 'Normal';
-          const color =
-            report.excursion_flag
-            ? 'red'
-            : report.warning_flag
-              ? 'yellow'
-              : 'green';
+          let alert_status;
+          let color;
+          if (report.excursion_flag) {
+            alert_status = 'Excursion';
+            color = 'red';
+          } else if (report.warning_flag) {
+            alert_status = 'Warning';
+            color = 'yellow';
+          } else {
+            alert_status = 'Normal';
+            color = 'green';
+          }
           report.report_entries.forEach((report_entry) => {
             try {
               const temperature = convertUnitsOfMeasure(
                 'celsius',
                 report_entry.report_temp,
                 temperatureUnit,
-                'temperature'
-              );  // Data in ICLP is coming in Celsius, conversion to selected unit
+                'temperature',
+              ); // Data in ICLP is coming in Celsius, conversion to selected unit
               let localDateTime = getLocalDateTime(
-                report_entry.report_location.timeOfPosition
-              )
+                report_entry.report_location.timeOfPosition,
+              );
               if ('report_timestamp' in report_entry) {
-                if (report_entry['report_timestamp'] !== null) {
+                if (report_entry.report_timestamp !== null) {
                   localDateTime = getLocalDateTime(
-                    report_entry['report_timestamp']
+                    report_entry.report_timestamp,
                   );
-                };
-              };
+                }
+              }
               if (report_entry.report_location.locationMethod !== 'NoPosition') {
                 const marker = {
                   lat: report_entry.report_location.latitude,
                   lng: report_entry.report_location.longitude,
                   label: 'Clustered',
-                  temperature: temperature,
+                  temperature,
                   light: report_entry.report_light,
                   shock: report_entry.report_shock,
                   tilt: report_entry.report_tilt,
                   humidity: report_entry.report_humidity,
                   battery: report_entry.report_battery,
                   pressure: report_entry.report_pressure,
-                  color: color,
+                  color,
                   timestamp: localDateTime,
-                  alert_status: alert_status,
+                  alert_status,
                 };
-                // Considered use case: If a shipment stays at some position for long, other value changes can be critical
+                // Considered use case: If a shipment stays at some
+                // position for long, other value changes can be
+                // critical
                 const markerFound = _.find(markersToSet, {
                   lat: marker.lat,
                   lng: marker.lng,
@@ -308,30 +302,30 @@ const Shipment = (props) => {
 
                 if (!markerFound) {
                   markersToSet.push(marker);
-                };
+                }
                 aggregateReportInfo.push(marker);
-              };
+              }
             } catch (e) {
               console.log(e);
-            };
+            }
           });
-        };
+        }
       });
       setMarkers(_.orderBy(
         markersToSet,
         (item) => moment(item.timestamp),
-        ['asc']
+        ['asc'],
       ));
       setZoomLevel(12);
-      selectedShipment['sensor_report_info'] = aggregateReportInfo;
-    };
+      selectedShipment.sensor_report_info = aggregateReportInfo;
+    }
   }, [selectedShipment]);
 
   useEffect(() => {
     if (markers && markers.length > 0) {
       setTimeout(() => setMapLoaded(true), 1000);
-    };
-  })
+    }
+  });
 
   useEffect(() => {
     if (shipmentFilter && rows.length > 0) {
@@ -339,9 +333,9 @@ const Shipment = (props) => {
         setSelectedShipment(completedRows[0]);
       } else {
         setSelectedShipment(activeRows[0]);
-      };
-    };
-  }, [shipmentFilter])
+      }
+    }
+  }, [shipmentFilter]);
 
   const onAddButtonClick = () => {
     history.push(`${routes.SHIPMENT}/add`, {
@@ -378,18 +372,21 @@ const Shipment = (props) => {
       <AlertInfo {...props} />
       <Box mb={3} mt={2}>
         <Button
-          type='button'
-          variant='contained'
-          color='primary'
+          type="button"
+          variant="contained"
+          color="primary"
           className={classes.addButton}
           onClick={onAddButtonClick}
         >
-          <AddIcon /> Add Shipment
+          <AddIcon />
+          {' '}
+          Add Shipment
         </Button>
       </Box>
       <Typography
         className={classes.dashboardHeading}
-        variant='h4'>
+        variant="h4"
+      >
         Shipments
       </Typography>
       <Grid container spacing={2}>
@@ -402,13 +399,12 @@ const Shipment = (props) => {
               <IconButton
                 className={classes.menuButton}
                 onClick={() => setTileView(!tileView)}
-                color='default'
-                aria-label='menu'
+                color="default"
+                aria-label="menu"
               >
                 {!tileView
                   ? <ViewCompactIcon />
-                  : <ViewComfyIcon />
-                }
+                  : <ViewComfyIcon />}
               </IconButton>
             </Hidden>
           </div>
@@ -417,19 +413,19 @@ const Shipment = (props) => {
               value={shipmentFilter}
               onChange={filterTabClicked}
             >
-              {subNav.map((itemProps, index) => 
+              {subNav.map((itemProps, index) => (
                 <Tab
                   {...itemProps}
                   key={`tab${index}:${itemProps.value}`}
                 />
-              )}
+              ))}
             </Tabs>
           </Box>
           <ShipmentDataTable
             rows={
               shipmentFilter === 'Completed'
-              ? completedRows
-              : activeRows
+                ? completedRows
+                : activeRows
             }
             editAction={handleEdit}
             deleteAction={handleDelete}
@@ -444,7 +440,8 @@ const Shipment = (props) => {
                 ? (
                   <Typography
                     className={classes.tileHeading}
-                    variant='h5'>
+                    variant="h5"
+                  >
                     {selectedShipment.name}
                     <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
                   </Typography>
@@ -457,31 +454,30 @@ const Shipment = (props) => {
               <IconButton
                 className={classes.menuButton}
                 onClick={() => setTileView(!tileView)}
-                color='default'
-                aria-label='menu'
+                color="default"
+                aria-label="menu"
               >
                 {!tileView
                   ? <ViewCompactIcon />
-                  : <ViewComfyIcon />
-                }
+                  : <ViewComfyIcon />}
               </IconButton>
             </Hidden>
           </div>
           <MapComponent
             isMarkerShown={isMapLoaded}
-            showPath={true}
+            showPath
             markers={markers}
             googleMapURL={MAP_API_URL}
             zoom={zoomLevel}
             setSelectedMarker={setSelectedMarker}
             loadingElement={
-              <div style={{ height: `100%` }} />
+              <div style={{ height: '100%' }} />
             }
             containerElement={
-              <div style={{ height: `550px` }} />
+              <div style={{ height: '550px' }} />
             }
             mapElement={
-              <div style={{ height: `100%` }} />
+              <div style={{ height: '100%' }} />
             }
           />
         </Grid>
@@ -516,12 +512,12 @@ const Shipment = (props) => {
         open={openConfirmModal}
         setOpen={setConfirmModal}
         submitAction={handleConfirmModal}
-        title='Are You sure you want to Delete this Shipment? The shipment will be ended in other platforms'
-        submitText='Delete'
+        title="Are You sure you want to Delete this Shipment? The shipment will be ended in other platforms"
+        submitText="Delete"
       />
     </Box>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

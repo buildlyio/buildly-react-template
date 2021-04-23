@@ -32,10 +32,9 @@ const delayColumns = [
     id: 'risk',
     label: 'Revenue Risk',
     minWidth: 170,
-    format: (value) =>
-      value && value !== '-'
+    format: (value) => (value && value !== '-'
       ? `$${numberWithCommas(value)}`
-      : value,
+      : value),
   },
   { id: 'custodian', label: 'Current Custodians', minWidth: 170 },
 ];
@@ -82,7 +81,7 @@ const Profile = () => {
       <div className={classes.dashboardContainer}>
         <Typography
           className={classes.dashboardHeading}
-          variant='h4'
+          variant="h4"
         >
           Producer Dashboard
         </Typography>
@@ -96,10 +95,10 @@ const Profile = () => {
                 key={`dashboardItem${index}:${items.name}`}
               >
                 <div className={classes.dashboardHeaderItems}>
-                  <Typography variant='h4'>
+                  <Typography variant="h4">
                     {items.number}
                   </Typography>
-                  <Typography variant='subtitle2'>
+                  <Typography variant="subtitle2">
                     {items.name}
                   </Typography>
                 </div>
@@ -113,8 +112,8 @@ const Profile = () => {
               <Grid item xs={12}>
                 <div className={classes.switchViewSection}>
                   <Typography
-                    color='primary'
-                    variant='h5'
+                    color="primary"
+                    variant="h5"
                     className={classes.tileHeading}
                   >
                     Delayed Shipments
@@ -123,13 +122,12 @@ const Profile = () => {
                     <IconButton
                       className={classes.menuButton}
                       onClick={() => setTileView(!tileView)}
-                      color='primary'
-                      aria-label='menu'
+                      color="primary"
+                      aria-label="menu"
                     >
                       {!tileView
                         ? <ViewCompactIcon />
-                        : <ViewComfyIcon />
-                      }
+                        : <ViewComfyIcon />}
                     </IconButton>
                   </Hidden>
                 </div>
@@ -143,8 +141,8 @@ const Profile = () => {
               <Grid item xs={12}>
                 <div className={classes.switchViewSection}>
                   <Typography
-                    color='primary'
-                    variant='h5'
+                    color="primary"
+                    variant="h5"
                     className={classes.tileHeading}
                   >
                     Recalls and Excursions
@@ -153,13 +151,12 @@ const Profile = () => {
                     <IconButton
                       className={classes.menuButton}
                       onClick={() => setTileView(!tileView)}
-                      color='primary'
-                      aria-label='menu'
+                      color="primary"
+                      aria-label="menu"
                     >
                       {!tileView
                         ? <ViewCompactIcon />
-                        : <ViewComfyIcon />
-                      }
+                        : <ViewComfyIcon />}
                     </IconButton>
                   </Hidden>
                 </div>
@@ -174,8 +171,8 @@ const Profile = () => {
             <div className={classes.switchViewSection}>
               <Typography
                 className={classes.tileHeading}
-                color='primary'
-                variant='h5'
+                color="primary"
+                variant="h5"
               >
                 Current Shipments
               </Typography>
@@ -183,13 +180,12 @@ const Profile = () => {
                 <IconButton
                   className={classes.menuButton}
                   onClick={() => setTileView(!tileView)}
-                  color='primary'
-                  aria-label='menu'
+                  color="primary"
+                  aria-label="menu"
                 >
                   {!tileView
                     ? <ViewCompactIcon />
-                    : <ViewComfyIcon />
-                  }
+                    : <ViewComfyIcon />}
                 </IconButton>
               </Hidden>
             </div>
@@ -198,13 +194,13 @@ const Profile = () => {
               zoom={8}
               googleMapURL={MAP_API_URL}
               loadingElement={
-                <div style={{ height: `100%` }} />
+                <div style={{ height: '100%' }} />
               }
               containerElement={
-                <div style={{ height: `500px` }} />
+                <div style={{ height: '500px' }} />
               }
               mapElement={
-                <div style={{ height: `100%` }} />
+                <div style={{ height: '100%' }} />
               }
             />
           </Grid>
@@ -212,7 +208,7 @@ const Profile = () => {
       </div>
     </Box>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

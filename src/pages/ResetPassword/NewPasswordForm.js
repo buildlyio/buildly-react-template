@@ -12,6 +12,7 @@ import {
   makeStyles,
   Container,
   Grid,
+  Box,
 } from '@material-ui/core';
 import logo from '@assets/tp-logo.png';
 import Copyright from '@components/Copyright/Copyright';
@@ -59,7 +60,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NewPassword = ({ dispatch, loading, history, location }) => {
+const NewPassword = ({
+  dispatch, loading, history, location,
+}) => {
   const classes = useStyles();
   const password = useInput('', { required: true });
   const re_password = useInput('', {
@@ -79,7 +82,7 @@ const NewPassword = ({ dispatch, loading, history, location }) => {
     if (location.pathname.includes(routes.RESET_PASSWORD_CONFIRM)) {
       const restPath = location.pathname.substring(
         location.pathname.indexOf(routes.RESET_PASSWORD_CONFIRM) + 1,
-        location.pathname.lastIndexOf('/')
+        location.pathname.lastIndexOf('/'),
       );
       const restPathArr = restPath.split('/');
       const registerFormValue = {
@@ -115,39 +118,39 @@ const NewPassword = ({ dispatch, loading, history, location }) => {
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     if (!password.value || !re_password.value) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
 
   return (
     <Container
-      component='main'
-      maxWidth='xs'
+      component="main"
+      maxWidth="xs"
       className={classes.container}
     >
       <CssBaseline />
-      <Card variant='outlined'>
+      <Card variant="outlined">
         <CardContent>
           <div className={classes.paper}>
             <img
               src={logo}
               className={classes.logo}
-              alt='Company logo'
+              alt="Company logo"
             />
-            <Typography component='h1' variant='h5'>
+            <Typography component="h1" variant="h5">
               Reset your Password
             </Typography>
             <form
@@ -158,15 +161,15 @@ const NewPassword = ({ dispatch, loading, history, location }) => {
               <Grid container spacing={isMobile() ? 0 : 2}>
                 <Grid item xs={12}>
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
-                    name='password'
-                    label='New Password'
-                    type='password'
-                    id='password'
-                    autoComplete='current-password'
+                    name="password"
+                    label="New Password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
                     className={classes.textField}
                     error={
                       formError.password
@@ -174,26 +177,24 @@ const NewPassword = ({ dispatch, loading, history, location }) => {
                     }
                     helperText={
                       formError.password
-                      ? formError.password.message
-                      : ''
+                        ? formError.password.message
+                        : ''
                     }
-                    onBlur={(e) =>
-                      handleBlur(e, 'required', password)
-                    }
+                    onBlur={(e) => handleBlur(e, 'required', password)}
                     {...password.bind}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
-                    id='re_password'
-                    label='Confirm Password'
-                    name='re_password'
-                    type='password'
-                    autoComplete='re_password'
+                    id="re_password"
+                    label="Confirm Password"
+                    name="re_password"
+                    type="password"
+                    autoComplete="re_password"
                     className={classes.textField}
                     error={
                       formError.re_password
@@ -201,22 +202,20 @@ const NewPassword = ({ dispatch, loading, history, location }) => {
                     }
                     helperText={
                       formError.re_password
-                      ? formError.re_password.message
-                      : ''
+                        ? formError.re_password.message
+                        : ''
                     }
-                    onBlur={(e) =>
-                      handleBlur(e, 'confirm', re_password)
-                    }
+                    onBlur={(e) => handleBlur(e, 'confirm', re_password)}
                     {...re_password.bind}
                   />
                 </Grid>
               </Grid>
               <div className={classes.loadingWrapper}>
                 <Button
-                  type='submit'
+                  type="submit"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
@@ -233,8 +232,8 @@ const NewPassword = ({ dispatch, loading, history, location }) => {
                 <Grid item>
                   <Link
                     href={routes.LOGIN}
-                    variant='body2'
-                    color='secondary'
+                    variant="body2"
+                    color="secondary"
                   >
                     Go back to Sign in
                   </Link>
@@ -249,7 +248,7 @@ const NewPassword = ({ dispatch, loading, history, location }) => {
       </Box>
     </Container>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

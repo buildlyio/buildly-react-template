@@ -12,12 +12,12 @@ import { ITEM_TYPE_COLUMNS } from '../ConfigurationConstants';
 import AddItemType from '../forms/AddItemType';
 
 const ItemType = (props) => {
-  const { 
+  const {
     dispatch,
     loading,
     itemTypeList,
     redirectTo,
-    history, 
+    history,
   } = props;
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openConfirmModal, setConfirmModal] = useState(false);
@@ -27,13 +27,13 @@ const ItemType = (props) => {
     ? `${redirectTo}/item-type`
     : `${routes.CONFIGURATION}/item-type/add`;
   const editPath = redirectTo
-  ? `${redirectTo}/item-type`
-  : `${routes.CONFIGURATION}/item-type/edit`;
+    ? `${redirectTo}/item-type`
+    : `${routes.CONFIGURATION}/item-type/edit`;
 
   useEffect(() => {
     if (!loading && !itemTypeList) {
       dispatch(getItemType(organization));
-    };
+    }
   }, [itemTypeList]);
 
   const onAddButtonClick = () => {
@@ -65,21 +65,21 @@ const ItemType = (props) => {
       loading={loading}
       rows={itemTypeList || []}
       columns={ITEM_TYPE_COLUMNS}
-      filename='ItemType'
-      addButtonHeading='Item Type'
+      filename="ItemType"
+      addButtonHeading="Item Type"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle='Are you sure you want to Delete this Item Type?'
+      confirmModalTitle="Are you sure you want to Delete this Item Type?"
     >
       <Route path={`${addPath}`} component={AddItemType} />
       <Route path={`${editPath}/:id`} component={AddItemType} />
     </DataTableWrapper>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

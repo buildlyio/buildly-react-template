@@ -39,7 +39,7 @@ const StyledMenuItem = withStyles((theme) => ({
   },
 }))(MenuItem);
 
-export default AdminMenu = (props) => {
+const AdminMenu = (props) => {
   const {
     settingEl,
     setSettingEl,
@@ -53,19 +53,21 @@ export default AdminMenu = (props) => {
 
   return (
     <StyledMenu
-      id='customized-admin'
+      id="customized-admin"
       anchorEl={settingEl}
       keepMounted
       open={Boolean(settingEl)}
       onClose={handleClose}
     >
       <StyledMenuItem onClick={handleAdminPanelClick}>
-        <ListItemText primary='Admin Panel' />
+        <ListItemText primary="Admin Panel" />
       </StyledMenuItem>
       <Divider />
       <StyledMenuItem onClick={handleUserManagementClick}>
-        <ListItemText primary='User Management' />
+        <ListItemText primary="User Management" />
       </StyledMenuItem>
     </StyledMenu>
   );
-}
+};
+
+export default AdminMenu;

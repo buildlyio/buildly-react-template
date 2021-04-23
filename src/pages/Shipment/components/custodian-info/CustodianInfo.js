@@ -71,7 +71,7 @@ const CustodianInfo = (props) => {
   } = props;
   const classes = useStyles();
   const [itemIds, setItemIds] = useState(
-    (shipmentFormData && shipmentFormData.custodian_ids) || []
+    (shipmentFormData && shipmentFormData.custodian_ids) || [],
   );
   const [openModal, setOpenModal] = useState(false);
   const [rows, setRows] = useState([]);
@@ -86,22 +86,18 @@ const CustodianInfo = (props) => {
       && custodianData.length
       && shipmentFormData
     ) {
-      const filteredCustodyData = custodyData.filter((data) =>
-        data.shipment_id === shipmentFormData.shipment_uuid
-      );
+      const filteredCustodyData = custodyData.filter((data) => data.shipment_id === shipmentFormData.shipment_uuid);
       const customizedRows = getFormattedCustodyRows(
         filteredCustodyData,
-        custodianData
+        custodianData,
       );
       setRows(customizedRows);
-    };
+    }
   }, [custodyData, custodianData, shipmentFormData]);
 
-  const submitDisabled = () => {
-    if (!itemIds || custodianData === null) {
-      return true;
-    };
-  };
+  const submitDisabled = () => (
+    !itemIds || custodianData === null
+  );
 
   /**
    * Submit The form and add/edit custodian
@@ -117,15 +113,15 @@ const CustodianInfo = (props) => {
         shipmentFormValue,
         history,
         `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
-        organization
-      )
+        organization,
+      ),
     );
     setOpenModal(false);
   };
 
   const deleteItem = (item) => {
-    let index = itemIds.indexOf(item.custodian_uuid);
-    let newArr = itemIds.filter((item, idx) => idx !== index);
+    const index = itemIds.indexOf(item.custodian_uuid);
+    const newArr = itemIds.filter((value, idx) => idx !== index);
     const shipmentFormValue = {
       ...{ ...shipmentFormData, custodian_ids: newArr },
     };
@@ -134,8 +130,8 @@ const CustodianInfo = (props) => {
         shipmentFormValue,
         history,
         `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
-        organization
-      )
+        organization,
+      ),
     );
     setItemIds(newArr);
   };
@@ -163,8 +159,8 @@ const CustodianInfo = (props) => {
   return (
     <Box mb={5} mt={3}>
       <Button
-        variant='contained'
-        color='primary'
+        variant="contained"
+        color="primary"
         disabled={viewOnly}
         onClick={() => setOpenModal(true)}
         className={classes.submit}
@@ -176,7 +172,7 @@ const CustodianInfo = (props) => {
           {rows.length > 0 && (
             <Grid item xs={12}>
               <Box mt={5}>
-                <Typography gutterBottom variant='h5'>
+                <Typography gutterBottom variant="h5">
                   Associated Custodians
                 </Typography>
                 <DataTable
@@ -196,12 +192,10 @@ const CustodianInfo = (props) => {
             title={
               !editItem
                 ? 'Add Custody'
-                : viewOnly
-                  ? 'View Custody'
-                  : 'Edit Custody'
+                : `${viewOnly ? 'View' : 'Edit'} Custody`
               }
             titleClass={classes.formTitle}
-            maxWidth={'md'}
+            maxWidth="md"
           >
             <AddCustodyForm
               setItemIds={setItemIds}
@@ -220,35 +214,35 @@ const CustodianInfo = (props) => {
         spacing={3}
         className={classes.buttonContainer}
       >
-          {viewOnly && (
-            <Grid item xs={6} sm={2}>
-              <Button
-                type='button'
-                fullWidth
-                variant='contained'
-                color='primary'
-                className={classes.submit}
-                onClick={handleCancel}
-              >
-                Done
-              </Button>
-            </Grid>
-          )}
+        {viewOnly && (
+        <Grid item xs={6} sm={2}>
+          <Button
+            type="button"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            onClick={handleCancel}
+          >
+            Done
+          </Button>
+        </Grid>
+        )}
         <Grid item xs={12} sm={4}>
           <Button
-            variant='contained'
-            color='primary'
+            variant="contained"
+            color="primary"
             fullWidth
             onClick={handleNext}
             className={classes.submit}
           >
-            {`Next: Sensors & Gateways`}
+            Next: Sensors & Gateways
           </Button>
         </Grid>
       </Grid>
     </Box>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

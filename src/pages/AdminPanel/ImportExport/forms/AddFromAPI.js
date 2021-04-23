@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
@@ -151,7 +151,7 @@ const AddFromAPI = ({
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}shipment/item/`,
-          true
+          true,
         )
         .then((response) => response.json())
         .then((data) => {
@@ -167,7 +167,7 @@ const AddFromAPI = ({
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}shipment/product/`,
-          true
+          true,
         )
         .then((response) => response.json())
         .then((data) => {
@@ -183,7 +183,7 @@ const AddFromAPI = ({
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}sensors/gateway/`,
-          true
+          true,
         )
         .then((response) => response.json())
         .then((data) => {
@@ -199,7 +199,7 @@ const AddFromAPI = ({
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}sensors/sensor/`,
-          true
+          true,
         )
         .then((response) => response.json())
         .then((data) => {
@@ -217,31 +217,31 @@ const AddFromAPI = ({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    let mapping = {};
+    const mapping = {};
     if (provider.name) {
       if (provider.name === 'Tive' && dataFor.value === 'gateway') {
         _.forEach(mapColumns, (col, key) => {
-          mapping[key] = ''
+          mapping[key] = '';
         });
-        mapping['name'] = 'name';
-        mapping['imei_number'] = 'id';
-      };
+        mapping.name = 'name';
+        mapping.imei_number = 'id';
+      }
     } else {
       _.forEach(mapColumns, (col, key) => {
-        mapping[key] = col.value
+        mapping[key] = col.value;
       });
-    };
+    }
 
     if ('organization_uuid' in mapping) {
-      mapping['organization_uuid'] = organization;
-    };
+      mapping.organization_uuid = organization;
+    }
 
     dispatch(addApiSetup(
       apiURL.value,
       keyParamName.value,
       keyParamPlace.value,
       apiKey.value,
-      apiResponseData.value 
+      apiResponseData.value
         ? apiResponseData.value
         : provider.apiResponseData,
       dataFor.value,
@@ -257,7 +257,7 @@ const AddFromAPI = ({
    * @param {Object} input input field
    */
 
-  const handleBlur = (e, validation, input, parentId='') => {
+  const handleBlur = (e, validation, input, parentId = '') => {
     const validateObj = validators(validation, input);
     const prevState = { ...formError };
     if (validateObj && validateObj.error) {
@@ -273,7 +273,7 @@ const AddFromAPI = ({
           message: '',
         },
       });
-    };
+    }
 
     if (parentId === 'dataFor') {
       const table = _.find(dataTypes, { value: input.value });
@@ -293,11 +293,11 @@ const AddFromAPI = ({
 
       if (_.isEmpty(apiColumns) && !provider.name) {
         setAPIColumns(apiResponse[0]);
-      };
+      }
 
       setTableColumns(cols);
       setMapColumns(mapCols);
-    };
+    }
 
     if (
       apiURL.value
@@ -307,10 +307,10 @@ const AddFromAPI = ({
     ) {
       const url = _.endsWith(apiURL.value, '/')
         ? apiURL.value
-        : `${apiURL.value}/`
+        : `${apiURL.value}/`;
       if (url.includes('tive.co')) {
-        let providerDataType = dataTypes.filter(
-          item => item.externalProvider.includes('Tive')
+        const providerDataType = dataTypes.filter(
+          (item) => item.externalProvider.includes('Tive'),
         );
         setProvider({
           name: 'Tive',
@@ -322,32 +322,34 @@ const AddFromAPI = ({
           name: null,
           dataTypes: [],
           apiResponseData: '',
-        })
-      };
+        });
+      }
       const queryUrl = (
         <>
-          <Typography variant='body1'>
+          <Typography variant="body1">
             Is the below URL correct?
           </Typography>
-          <Typography variant='body1' style={{ marginTop: '8px' }}>
-            <strong><em>
-              {`'${url}?${keyParamName.value}=${apiKey.value}'`}
-            </em></strong>
+          <Typography variant="body1" style={{ marginTop: '8px' }}>
+            <strong>
+              <em>
+                {`'${url}?${keyParamName.value}=${apiKey.value}'`}
+              </em>
+            </strong>
           </Typography>
         </>
       );
       const headerUrl = (
         <>
-          <Typography variant='body1'>
+          <Typography variant="body1">
             Is the below URL and Header correct?
           </Typography>
-          <Typography variant='body1' style={{ marginTop: '8px' }}>
+          <Typography variant="body1" style={{ marginTop: '8px' }}>
             <em>
               <strong>URL:  </strong>
               {`'${url}'`}
             </em>
           </Typography>
-          <Typography variant='body1'>
+          <Typography variant="body1">
             <em>
               <strong>Header:  </strong>
               {`${keyParamName.value}='${apiKey.value}'`}
@@ -357,15 +359,15 @@ const AddFromAPI = ({
       );
       const final = keyParamPlace.value === 'queryParam'
         ? {
-            url: `${url}?${keyParamName.value}=${apiKey.value}`,
-            title: queryUrl,
-            header: '',
-          }
+          url: `${url}?${keyParamName.value}=${apiKey.value}`,
+          title: queryUrl,
+          header: '',
+        }
         : {
-            url,
-            title: headerUrl,
-            header: `${keyParamName.value}: ${apiKey.value}`,
-          }
+          url,
+          title: headerUrl,
+          header: `${keyParamName.value}: ${apiKey.value}`,
+        };
 
       if (
         (finalUrl !== final.url)
@@ -375,16 +377,16 @@ const AddFromAPI = ({
         setReqHeader(final.header);
         setModalTitle(final.title);
         setOpenModal(true);
-      };
-    };
+      }
+    }
 
     if (e.target.id === 'apiResponseData' && input.value) {
       const cols = apiResponse[input.value][0];
 
       if (_.isEmpty(apiColumns) || (apiColumns !== cols)) {
         setAPIColumns(cols);
-      };
-    };
+      }
+    }
   };
 
   const submitDisabled = () => {
@@ -399,17 +401,17 @@ const AddFromAPI = ({
     _.forEach(mapColumns, (col, index) => {
       if (col.required) {
         check = check || !mapColumns[index].value;
-      };
+      }
     });
 
     if (check) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
@@ -417,7 +419,7 @@ const AddFromAPI = ({
   const handleConfirmModal = () => {
     if (!provider.name) {
       dispatch(getApiResponse(finalUrl, reqHeader));
-    };
+    }
     setOpenModal(false);
   };
 
@@ -461,13 +463,13 @@ const AddFromAPI = ({
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
-              variant='outlined'
-              margin='normal'
+              variant="outlined"
+              margin="normal"
               fullWidth
               required
-              id='apiURL'
-              label='API Url to get data'
-              name='apiURL'
+              id="apiURL"
+              label="API Url to get data"
+              name="apiURL"
               error={formError.apiURL && formError.apiURL.error}
               helperText={
                 formError.apiURL ? formError.apiURL.message : ''
@@ -478,21 +480,21 @@ const AddFromAPI = ({
           </Grid>
           <Grid item xs={12}>
             <TextField
-              variant='outlined'
-              margin='normal'
+              variant="outlined"
+              margin="normal"
               fullWidth
               required
-              id='keyParamName'
-              label='API Key Param Name'
-              name='keyParamName'
+              id="keyParamName"
+              label="API Key Param Name"
+              name="keyParamName"
               error={
                 formError.keyParamName
                 && formError.keyParamName.error
               }
               helperText={
                 formError.keyParamName
-                ? formError.keyParamName.message
-                : ''
+                  ? formError.keyParamName.message
+                  : ''
               }
               onBlur={(e) => handleBlur(e, 'required', keyParamName)}
               {...keyParamName.bind}
@@ -500,12 +502,12 @@ const AddFromAPI = ({
           </Grid>
           <Grid item xs={12}>
             <TextField
-              variant='outlined'
-              margin='normal'
+              variant="outlined"
+              margin="normal"
               fullWidth
               required
-              id='keyParamPlace'
-              label='API Key Param Placement'
+              id="keyParamPlace"
+              label="API Key Param Placement"
               select
               error={
                 formError.keyParamPlace
@@ -513,26 +515,26 @@ const AddFromAPI = ({
               }
               helperText={
                 formError.keyParamPlace
-                ? formError.keyParamPlace.message
-                : ''
+                  ? formError.keyParamPlace.message
+                  : ''
               }
               onBlur={(e) => handleBlur(e, 'required', keyParamPlace, 'keyParamPlace')}
               {...keyParamPlace.bind}
             >
-              <MenuItem value={''}>--------</MenuItem>
-              <MenuItem value={'queryParam'}>Query Parameter</MenuItem>
-              <MenuItem value={'header'}>Header</MenuItem>
+              <MenuItem value="">--------</MenuItem>
+              <MenuItem value="queryParam">Query Parameter</MenuItem>
+              <MenuItem value="header">Header</MenuItem>
             </TextField>
           </Grid>
           <Grid item xs={12}>
             <TextField
-              variant='outlined'
-              margin='normal'
+              variant="outlined"
+              margin="normal"
               fullWidth
               required
-              id='apiKey'
-              label='API Key Value'
-              name='apiKey'
+              id="apiKey"
+              label="API Key Value"
+              name="apiKey"
               error={formError.apiKey && formError.apiKey.error}
               helperText={
                 formError.apiKey ? formError.apiKey.message : ''
@@ -541,19 +543,22 @@ const AddFromAPI = ({
               {...apiKey.bind}
             />
           </Grid>
-          {provider.name &&
+          {provider.name
+          && (
           <Grid item xs={12}>
-            <Typography variant='body1'>
-              External Provider : {provider.name}
+            <Typography variant="body1">
+              External Provider :
+              {' '}
+              {provider.name}
             </Typography>
             <Grid item xs={12}>
               <TextField
-                variant='outlined'
-                margin='normal'
+                variant="outlined"
+                margin="normal"
                 fullWidth
                 required
-                id='dataFor'
-                label='Import Provider Data For'
+                id="dataFor"
+                label="Import Provider Data For"
                 select
                 error={formError.dataFor && formError.dataFor.error}
                 helperText={
@@ -562,56 +567,60 @@ const AddFromAPI = ({
                 onBlur={(e) => handleBlur(e, 'required', dataFor, 'dataFor')}
                 {...dataFor.bind}
               >
-                <MenuItem value={''}>--------</MenuItem>
+                <MenuItem value="">--------</MenuItem>
                 {provider.dataTypes.map((type, index) => (
-                    <MenuItem key={index} value={type.value}>
-                      {type.name}
-                    </MenuItem>
+                  <MenuItem key={index} value={type.value}>
+                    {type.name}
+                  </MenuItem>
                 ))}
               </TextField>
             </Grid>
-            </Grid>}
-          {apiResponse &&
+          </Grid>
+          )}
+          {apiResponse
+            && (
             <Grid item xs={12}>
-              <Typography variant='h6'>API Response</Typography>
+              <Typography variant="h6">API Response</Typography>
               <pre className={classes.apiResponse}>
                 {JSON.stringify(apiResponse)}
               </pre>
             </Grid>
-          }
-          {apiResponse &&
+            )}
+          {apiResponse
+            && (
             <Grid item xs={12}>
               <TextField
-                variant='outlined'
-                margin='normal'
+                variant="outlined"
+                margin="normal"
                 fullWidth
                 required
-                id='apiResponseData'
-                label='Pick only this from response (Optional)'
-                name='apiResponseData'
+                id="apiResponseData"
+                label="Pick only this from response (Optional)"
+                name="apiResponseData"
                 error={
                   formError.apiResponseData
                   && formError.apiResponseData.error
                 }
                 helperText={
                   formError.apiResponseData
-                  ? formError.apiResponseData.message
-                  : ''
+                    ? formError.apiResponseData.message
+                    : ''
                 }
                 onBlur={(e) => handleBlur(e, '', apiResponseData)}
                 {...apiResponseData.bind}
               />
             </Grid>
-          }
-          {apiResponse &&
+            )}
+          {apiResponse
+            && (
             <Grid item xs={12}>
               <TextField
-                variant='outlined'
-                margin='normal'
+                variant="outlined"
+                margin="normal"
                 fullWidth
                 required
-                id='dataFor'
-                label='Import Data For'
+                id="dataFor"
+                label="Import Data For"
                 select
                 error={formError.dataFor && formError.dataFor.error}
                 helperText={
@@ -620,7 +629,7 @@ const AddFromAPI = ({
                 onBlur={(e) => handleBlur(e, 'required', dataFor, 'dataFor')}
                 {...dataFor.bind}
               >
-                <MenuItem value={''}>--------</MenuItem>
+                <MenuItem value="">--------</MenuItem>
                 {dataTypes.map((type, index) => (
                   <MenuItem key={index} value={type.value}>
                     {type.name}
@@ -628,35 +637,37 @@ const AddFromAPI = ({
                 ))}
               </TextField>
             </Grid>
-          }
-          {!_.isEmpty(tableColumns) &&
-            !_.isEmpty(mapColumns) &&
-            !_.isEmpty(apiColumns) &&
+            )}
+          {!_.isEmpty(tableColumns)
+            && !_.isEmpty(mapColumns)
+            && !_.isEmpty(apiColumns)
+            && (
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <Typography
                   className={classes.title}
-                  variant='h6'
+                  variant="h6"
                 >
                   Our Columns
                 </Typography>
                 {_.map(tableColumns, (column, key) => (
                   <div key={key} className={classes.tableColumn}>
-                    <Typography variant='body1'>
+                    <Typography variant="body1">
                       {column.label}
                     </Typography>
-                    {column.help_text &&
+                    {column.help_text
+                      && (
                       <CustomizedTooltips
                         toolTipText={column.help_text}
                       />
-                    }
+                      )}
                   </div>
                 ))}
               </Grid>
               <Grid item xs={6}>
                 <Typography
                   className={classes.title}
-                  variant='h6'
+                  variant="h6"
                 >
                   Mapping (From API Response)
                 </Typography>
@@ -664,24 +675,24 @@ const AddFromAPI = ({
                   <TextField
                     key={key}
                     className={classes.mapCol}
-                    variant='outlined'
+                    variant="outlined"
                     fullWidth
                     required={col.required}
                     id={col.name}
                     label={col.label}
                     select
                     value={col.value}
-                    onChange={e => handleMapColumn(e, key)}
+                    onChange={(e) => handleMapColumn(e, key)}
                     error={formError[key] && formError[key].error}
                     helperText={
                       formError[key] ? formError[key].message : ''
                     }
                   >
-                    <MenuItem value={''}>--------</MenuItem>
-                    {_.map(apiColumns, (col, key) => (
-                      <MenuItem key={key} value={key}>
+                    <MenuItem value="">--------</MenuItem>
+                    {_.map(apiColumns, (column, keyVal) => (
+                      <MenuItem key={keyVal} value={keyVal}>
                         <div className={classes.apiMenuItem}>
-                          {_.startCase(key)}
+                          {_.startCase(keyVal)}
                         </div>
                       </MenuItem>
                     ))}
@@ -689,15 +700,15 @@ const AddFromAPI = ({
                 ))}
               </Grid>
             </Grid>
-          }
-          <Grid container spacing={2} justify='center'>
+            )}
+          <Grid container spacing={2} justify="center">
             <Grid item xs={6} sm={4}>
               <div className={classes.loadingWrapper}>
                 <Button
-                  type='submit'
+                  type="submit"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
@@ -719,11 +730,11 @@ const AddFromAPI = ({
         setOpen={setOpenModal}
         submitAction={handleConfirmModal}
         title={modalTitle}
-        submitText={'Correct'}
+        submitText="Correct"
       />
     </>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

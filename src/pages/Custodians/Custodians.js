@@ -77,16 +77,16 @@ const Custodian = ({
       dispatch(getCustodians(organization));
       dispatch(getCustodianType());
       dispatch(getContact(organization));
-    };
+    }
     if (!custodyData) {
       dispatch(getCustody());
-    };
+    }
     if (custodianOptions === null) {
       httpService
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}custodian/custodian/`,
-          true
+          true,
         )
         .then((response) => response.json())
         .then((data) => {
@@ -95,13 +95,13 @@ const Custodian = ({
         .catch((error) => {
           dispatch({ type: GET_CUSTODIAN_OPTIONS_FAILURE, error });
         });
-    };
+    }
     if (contactOptions === null) {
       httpService
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}custodian/contact/`,
-          true
+          true,
         )
         .then((response) => response.json())
         .then((data) => {
@@ -110,20 +110,20 @@ const Custodian = ({
         .catch((error) => {
           dispatch({ type: GET_CONTACT_OPTIONS_FAILURE, error });
         });
-    };
+    }
   }, []);
 
   useEffect(() => {
     if (custodianData && custodianData.length && contactInfo) {
       setRows(getFormattedRow(custodianData, contactInfo));
       setFilteredRows(getFormattedRow(custodianData, contactInfo));
-    };
+    }
   }, [custodianData, contactInfo, custodyData]);
 
   useEffect(() => {
     if (searchedData) {
       setFilteredRows(searchedData);
-    };
+    }
   }, [searchedData]);
 
   const editItem = (item) => {
@@ -179,22 +179,22 @@ const Custodian = ({
       <div className={classes.container}>
         <Box mb={3} mt={2}>
           <Button
-            type='button'
-            variant='contained'
-            color='primary'
-            onClick={() =>
-              history.push(addCustodianPath, {
-                from: redirectTo || routes.CUSTODIANS,
-              })
-            }
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={() => history.push(addCustodianPath, {
+              from: redirectTo || routes.CUSTODIANS,
+            })}
           >
-            <AddIcon /> Add Custodian
+            <AddIcon />
+            {' '}
+            Add Custodian
           </Button>
         </Box>
         {!redirectTo && (
           <Typography
             className={classes.dashboardHeading}
-            variant='h4'
+            variant="h4"
           >
             Custodians
           </Typography>
@@ -205,7 +205,7 @@ const Custodian = ({
               rows={filteredRows}
               columns={custodianColumns}
               actionsColumns={actionsColumns}
-              hasSearch={noSearch ? false : true}
+              hasSearch={!noSearch}
               searchAction={searchTable}
               searchValue={searchValue} // To show the search field in table
             />
@@ -219,12 +219,12 @@ const Custodian = ({
         open={openConfirmModal}
         setOpen={setConfirmModal}
         submitAction={handleConfirmModal}
-        title='Are you sure you want to delete this item?'
-        submitText='Delete'
+        title="Are you sure you want to delete this item?"
+        submitText="Delete"
       />
     </Box>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

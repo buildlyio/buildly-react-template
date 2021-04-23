@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from 'lodash';
 import {
   SAVE_SHIPMENT_FORM_DATA,
   GET_SHIPMENTS,
@@ -19,7 +19,6 @@ import {
   GET_DASHBOARD_ITEMS,
   GET_DASHBOARD_ITEMS_SUCCESS,
   GET_DASHBOARD_ITEMS_FAILURE,
-  GET_ALERTS,
   SET_SHIPMENT_ALERTS,
   GET_SHIPMENT_OPTIONS,
   GET_SHIPMENT_OPTIONS_SUCCESS,
@@ -36,7 +35,7 @@ import {
   ADD_PDF_IDENTIFIER,
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
-} from "../actions/shipment.actions";
+} from '../actions/shipment.actions';
 
 const initialState = {
   loading: false,
@@ -53,11 +52,17 @@ const initialState = {
 export default (state = initialState, action) => {
   let deletedShipmentFlag;
   let editedShipmentFlag = state.shipmentFlag;
-  let shipmentFlagPresent = _.remove(editedShipmentFlag, { id: action.shipmentFlag?.id })[0];
+  const shipmentFlagPresent = _.remove(
+    editedShipmentFlag,
+    { id: action.shipmentFlag?.id },
+  )[0];
   if (shipmentFlagPresent) {
     deletedShipmentFlag = editedShipmentFlag;
-    editedShipmentFlag = [ ...editedShipmentFlag, action.shipmentFlag ];
-  };
+    editedShipmentFlag = [
+      ...editedShipmentFlag,
+      action.shipmentFlag,
+    ];
+  }
 
   switch (action.type) {
     case SAVE_SHIPMENT_FORM_DATA:
@@ -219,7 +224,10 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: false,
-        shipmentAlerts: { show: action.alerts.show, data: action.alerts.data },
+        shipmentAlerts: {
+          show: action.alerts.show,
+          data: action.alerts.data,
+        },
         error: null,
       };
 
@@ -248,12 +256,12 @@ export default (state = initialState, action) => {
       };
 
     case ADD_SHIPMENT_FLAG:
-    return {
-      ...state,
-      loading: true,
-      loaded: false,
-      error: null,
-    };
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
 
     case ADD_SHIPMENT_FLAG_SUCCESS:
       return {
@@ -261,7 +269,8 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         shipmentFlag: [
-          ...state.shipmentFlag, action.shipmentFlag
+          ...state.shipmentFlag,
+          action.shipmentFlag,
         ],
       };
 
@@ -341,7 +350,7 @@ export default (state = initialState, action) => {
           unique_identifier: action.unique_identifier,
         },
       };
-      
+
     case ADD_PDF_IDENTIFIER_FAILURE:
       return {
         ...state,

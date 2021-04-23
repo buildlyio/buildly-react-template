@@ -12,12 +12,12 @@ import { PRODUCT_TYPE_COLUMNS } from '../ConfigurationConstants';
 import AddProductType from '../forms/AddProductType';
 
 const ProductType = (props) => {
-  const { 
+  const {
     dispatch,
     loading,
     productType,
     redirectTo,
-    history, 
+    history,
   } = props;
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openConfirmModal, setConfirmModal] = useState(false);
@@ -27,13 +27,13 @@ const ProductType = (props) => {
     ? `${redirectTo}/product-type`
     : `${routes.CONFIGURATION}/product-type/add`;
   const editPath = redirectTo
-  ? `${redirectTo}/product-type`
-  : `${routes.CONFIGURATION}/product-type/edit`;
+    ? `${redirectTo}/product-type`
+    : `${routes.CONFIGURATION}/product-type/edit`;
 
   useEffect(() => {
     if (!loading && !productType) {
       dispatch(getProductType(organization));
-    };
+    }
   }, [productType]);
 
   const onAddButtonClick = () => {
@@ -65,21 +65,21 @@ const ProductType = (props) => {
       loading={loading}
       rows={productType || []}
       columns={PRODUCT_TYPE_COLUMNS}
-      filename='ProductType'
-      addButtonHeading='Product Type'
+      filename="ProductType"
+      addButtonHeading="Product Type"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle='Are you sure you want to Delete this Product Type?'
+      confirmModalTitle="Are you sure you want to Delete this Product Type?"
     >
       <Route path={`${addPath}`} component={AddProductType} />
       <Route path={`${editPath}/:id`} component={AddProductType} />
     </DataTableWrapper>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

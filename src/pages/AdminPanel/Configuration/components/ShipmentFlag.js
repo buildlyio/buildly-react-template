@@ -12,12 +12,12 @@ import { SHIPMENT_FLAG_COLUMNS } from '../ConfigurationConstants';
 import AddShipmentFlag from '../forms/AddShipmentFlag';
 
 const ShipmentFlag = (props) => {
-  const { 
+  const {
     dispatch,
     loading,
     shipmentFlag,
     redirectTo,
-    history, 
+    history,
   } = props;
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openConfirmModal, setConfirmModal] = useState(false);
@@ -27,13 +27,13 @@ const ShipmentFlag = (props) => {
     ? `${redirectTo}/shipment-flag`
     : `${routes.CONFIGURATION}/shipment-flag/add`;
   const editPath = redirectTo
-  ? `${redirectTo}/shipment-flag`
-  : `${routes.CONFIGURATION}/shipment-flag/edit`;
+    ? `${redirectTo}/shipment-flag`
+    : `${routes.CONFIGURATION}/shipment-flag/edit`;
 
   useEffect(() => {
     if (!loading && !shipmentFlag) {
       dispatch(getShipmentFlag(organization));
-    };
+    }
   }, [shipmentFlag]);
 
   const onAddButtonClick = () => {
@@ -65,21 +65,21 @@ const ShipmentFlag = (props) => {
       loading={loading}
       rows={shipmentFlag || []}
       columns={SHIPMENT_FLAG_COLUMNS}
-      filename='ShipmentFlag'
-      addButtonHeading='Shipment Flag'
+      filename="ShipmentFlag"
+      addButtonHeading="Shipment Flag"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle='Are you sure you want to Delete this Shipment Flag?'
+      confirmModalTitle="Are you sure you want to Delete this Shipment Flag?"
     >
       <Route path={`${addPath}`} component={AddShipmentFlag} />
       <Route path={`${editPath}/:id`} component={AddShipmentFlag} />
     </DataTableWrapper>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

@@ -81,45 +81,45 @@ const AddCustodyForm = ({
 }) => {
   const classes = useStyles();
   const [custodianId, setCustodianId] = useState(
-    (editItem && editItem.custodian_data) || ''
+    (editItem && editItem.custodian_data) || '',
   );
   const [custodianList, setCustodianList] = useState([]);
   const [start_of_custody, handleStartChange] = useState(
-    (editItem && editItem.start_of_custody) || new Date()
+    (editItem && editItem.start_of_custody) || new Date(),
   );
   const [end_of_custody, handleEndChange] = useState(
-    (editItem && editItem.end_of_custody) || new Date()
+    (editItem && editItem.end_of_custody) || new Date(),
   );
   const [start_of_custody_location, handleStartLocation] = useState(
-    (editItem && editItem.start_of_custody_location) || ''
+    (editItem && editItem.start_of_custody_location) || '',
   );
   const [end_of_custody_location, handleEndLocation] = useState(
-    (editItem && editItem.end_of_custody_location) || ''
+    (editItem && editItem.end_of_custody_location) || '',
   );
-  const [start_of_custody_address,setStartAddress] = useState(
-    (editItem && editItem.start_of_custody_location) || ''
+  const [start_of_custody_address, setStartAddress] = useState(
+    (editItem && editItem.start_of_custody_location) || '',
   );
-  const [end_of_custody_address,setEndAddress] = useState(
-    (editItem && editItem.end_of_custody_location) || ''
+  const [end_of_custody_address, setEndAddress] = useState(
+    (editItem && editItem.end_of_custody_location) || '',
   );
 
   const shipment = useInput(
     shipmentFormData && shipmentFormData.shipment_uuid,
     '',
-    { required: true }
+    { required: true },
   );
   const shipment_name = useInput(
     shipmentFormData && shipmentFormData.name,
-    ''
+    '',
   );
   const has_current_custody = useInput(
-    (editItem && editItem.has_current_custody) || false
+    (editItem && editItem.has_current_custody) || false,
   );
   const first_custody = useInput(
-    (editItem && editItem.first_custody) || false
+    (editItem && editItem.first_custody) || false,
   );
   const last_custody = useInput(
-    (editItem && editItem.last_custody) || false
+    (editItem && editItem.last_custody) || false,
   );
   const [formError, setFormError] = useState({});
 
@@ -128,32 +128,28 @@ const AddCustodyForm = ({
   useEffect(() => {
     if (custodyOptions && custodyOptions.actions) {
       setCustodyMetaData(custodyOptions.actions.POST);
-    };
+    }
   }, [custodyOptions]);
 
   useEffect(() => {
     if (custodianData && custodianData.length && contactInfo) {
       setCustodianList(getFormattedRow(custodianData, contactInfo));
-    };
+    }
   }, [custodianData, contactInfo]);
 
   useEffect(() => {
     if (editItem && editItem.start_of_custody_location) {
-      getAddress(editItem.start_of_custody_location,'start')
-    };
+      getAddress(editItem.start_of_custody_location, 'start');
+    }
     if (editItem && editItem.end_of_custody_location) {
-      getAddress(editItem.end_of_custody_location,'end')
-    };
-  },[editItem]);
+      getAddress(editItem.end_of_custody_location, 'end');
+    }
+  }, [editItem]);
 
-  const submitDisabled = () => {
-    if (!custodianId) {
-      return true;
-    };
-  };
+  const submitDisabled = () => (!custodianId);
 
   const onInputChange = (e) => {
-    const value = e.target.value;
+    const { value } = e.target;
     if (value) {
       setCustodianId(value);
       // if (itemIds.indexOf(value.custodian_uuid) === -1)
@@ -163,14 +159,14 @@ const AddCustodyForm = ({
         custodianList.forEach((list) => {
           if (list.custodian_uuid === value.custodian_uuid) {
             selectedCustodian = list;
-          };
+          }
         });
-        getLatLong(selectedCustodian.location,'start')
-        getLatLong(selectedCustodian.location,'end')
-      };
+        getLatLong(selectedCustodian.location, 'start');
+        getLatLong(selectedCustodian.location, 'end');
+      }
     } else {
       setCustodianId(value);
-    };
+    }
   };
 
   const handleBlur = (e, validation, input, parentId) => {
@@ -189,7 +185,7 @@ const AddCustodyForm = ({
           message: '',
         },
       });
-    };
+    }
   };
 
   /**
@@ -199,15 +195,11 @@ const AddCustodyForm = ({
   const onAddCustodyClick = (event) => {
     event.preventDefault();
     const custodyFormValues = {
-      start_of_custody: start_of_custody,
-      end_of_custody: end_of_custody,
+      start_of_custody,
+      end_of_custody,
       custodian: [custodianId.url],
-      start_of_custody_location: start_of_custody_location
-        ? start_of_custody_location
-        : null,
-      end_of_custody_location: end_of_custody_location
-        ? end_of_custody_location
-        : null,
+      start_of_custody_location: start_of_custody_location || null,
+      end_of_custody_location: end_of_custody_location || null,
       shipment_id: shipment.value,
       has_current_custody: has_current_custody.value,
       first_custody: first_custody.value,
@@ -219,7 +211,7 @@ const AddCustodyForm = ({
       dispatch(editCustody(custodyFormValues));
     } else {
       dispatch(addCustody(custodyFormValues));
-    };
+    }
     setOpenModal();
   };
 
@@ -233,22 +225,22 @@ const AddCustodyForm = ({
     handleEndLocation(value);
   };
 
-  const getLatLong = (address,pointer) => {
+  const getLatLong = (address, pointer) => {
     if (pointer === 'start') {
-      setStartAddress(address)
+      setStartAddress(address);
     } else if (pointer === 'end') {
-      setEndAddress(address)
-    };
+      setEndAddress(address);
+    }
     if (
       (
         pointer === 'start'
         && address !== start_of_custody_address
-        && address != ''
+        && address !== ''
       )
       || (
         pointer === 'end'
         && address !== end_of_custody_address
-        && address != ''
+        && address !== ''
       )
     ) {
       Geocode.setApiKey(GEO_CODE_API);
@@ -260,83 +252,75 @@ const AddCustodyForm = ({
             setStartLocation(`${lat},${lng}`);
           } else if (pointer === 'end') {
             setEndLocation(`${lat},${lng}`);
-          };
+          }
         },
         (error) => {
           console.error(error);
-        }
+        },
       );
     }
-    }
+  };
 
-  const getAddress = (latlong, pointer) => {
+  const getAddress = (latLong, pointer) => {
     Geocode.setApiKey(GEO_CODE_API);
     Geocode.setLanguage('en');
-    latlong = latlong.split(',')
-    Geocode.fromLatLng(latlong[0],latlong[1]).then(
+    const latlong = latLong.split(',');
+    Geocode.fromLatLng(latlong[0], latlong[1]).then(
       (response) => {
-        let filteredResult = {}
-        filteredResult = _.find(response.results, (item) =>
-          item.types.includes('establishment')
-        )
-        if (!filteredResult) {
-          filteredResult = _.find(response.results, (item) =>
-            item.types.includes('premise')
-          );
-        };
-        if (!filteredResult) {
-          filteredResult = response.results[0];
-        };
+        const { results } = response;
+        const establishment = _.find(results, (item) => item.types.includes('establishment'));
+        const premise = _.find(results, (item) => item.types.includes('premise'));
+        const filteredResult = establishment || premise || results[0];
         if (pointer === 'start') {
           setStartAddress(filteredResult.formatted_address);
         } else if (pointer === 'end') {
           setEndAddress(filteredResult.formatted_address);
-        };
+        }
       },
       (error) => {
         console.error(error);
-      }
+      },
     );
   };
 
   return (
     <Box mb={5} mt={3}>
       <form noValidate onSubmit={onAddCustodyClick}>
-        <Card variant='outlined' className={classes.form}>
+        <Card variant="outlined" className={classes.form}>
           <CardContent>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   required
                   disabled
-                  id='shipment'
-                  label='Shipment ID'
-                  name='shipment'
-                  autoComplete='shipment'
+                  id="shipment"
+                  label="Shipment ID"
+                  name="shipment"
+                  autoComplete="shipment"
                   error={
                     formError.shipment
                     && formError.shipment.error
                   }
                   helperText={
                     formError.shipment
-                    ? formError.shipment.message
-                    : ''
+                      ? formError.shipment.message
+                      : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', shipment)}
                   {...shipment.bind}
                   InputProps={
-                    custodyMetaData['shipment_id']
-                    && custodyMetaData['shipment_id'].help_text
+                    custodyMetaData.shipment_id
+                    && custodyMetaData.shipment_id.help_text
                     && {
                       endAdornment: (
-                        <InputAdornment position='end'>
-                          {custodyMetaData['shipment_id'].help_text && (
+                        <InputAdornment position="end">
+                          {custodyMetaData.shipment_id.help_text && (
                             <CustomizedTooltips
                               toolTipText={
-                                custodyMetaData['shipment_id'].help_text
+                                custodyMetaData.shipment_id.help_text
                               }
                             />
                           )}
@@ -348,26 +332,26 @@ const AddCustodyForm = ({
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   disabled
-                  id='shipment_name'
-                  label='Shipment name'
-                  name='shipment_name'
-                  autoComplete='shipment_name'
+                  id="shipment_name"
+                  label="Shipment name"
+                  name="shipment_name"
+                  autoComplete="shipment_name"
                   {...shipment_name.bind}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
-                  id='custodianId'
+                  id="custodianId"
                   select
                   required
-                  label='Custodian'
+                  label="Custodian"
                   disabled={viewOnly}
                   error={
                     formError.custodianId
@@ -375,24 +359,22 @@ const AddCustodyForm = ({
                   }
                   helperText={
                     formError.custodianId
-                    ? formError.custodianId.message
-                    : ''
+                      ? formError.custodianId.message
+                      : ''
                   }
-                  onBlur={(e) =>
-                    handleBlur(e, 'required', custodianId, 'custodianId')
-                  }
+                  onBlur={(e) => handleBlur(e, 'required', custodianId, 'custodianId')}
                   value={custodianId}
                   onChange={onInputChange}
                   InputProps={
-                    custodyMetaData['custodian']
-                    && custodyMetaData['custodian'].help_text
+                    custodyMetaData.custodian
+                    && custodyMetaData.custodian.help_text
                     && {
                       endAdornment: (
-                        <InputAdornment position='start'>
-                          {custodyMetaData['custodian'].help_text && (
+                        <InputAdornment position="start">
+                          {custodyMetaData.custodian.help_text && (
                             <CustomizedTooltips
                               toolTipText={
-                                custodyMetaData['custodian'].help_text
+                                custodyMetaData.custodian.help_text
                               }
                             />
                           )}
@@ -401,30 +383,30 @@ const AddCustodyForm = ({
                     }
                   }
                 >
-                  <MenuItem value={''}>Select</MenuItem>
+                  <MenuItem value="">Select</MenuItem>
                   {custodianList
                   && custodianList
-                      .sort(compareSort('name'))
-                      .map((item, index) => (
-                        <MenuItem
-                          key={`custodian${index}:${item.id}`}
-                          value={item}
-                        >
-                          {item.name}
-                        </MenuItem>
-                      ))}
+                    .sort(compareSort('name'))
+                    .map((item, index) => (
+                      <MenuItem
+                        key={`custodian${index}:${item.id}`}
+                        value={item}
+                      >
+                        {item.name}
+                      </MenuItem>
+                    ))}
                 </TextField>
               </Grid>
               <Grid item xs={12}>
                 <DatePickerComponent
-                  label='Start of Custody'
+                  label="Start of Custody"
                   selectedDate={start_of_custody}
-                  hasTime={true}
+                  hasTime
                   disabled={viewOnly}
                   helpText={
-                    custodyMetaData['start_of_custody']
-                    && custodyMetaData['start_of_custody'].help_text
-                      ? custodyMetaData['start_of_custody'].help_text
+                    custodyMetaData.start_of_custody
+                    && custodyMetaData.start_of_custody.help_text
+                      ? custodyMetaData.start_of_custody.help_text
                       : ''
                   }
                   handleDateChange={handleStartChange}
@@ -432,55 +414,55 @@ const AddCustodyForm = ({
               </Grid>
               <Grid item xs={12}>
                 <DatePickerComponent
-                  label='End of Custody'
+                  label="End of Custody"
                   selectedDate={end_of_custody}
-                  hasTime={true}
+                  hasTime
                   handleDateChange={handleEndChange}
                   disabled={viewOnly}
                   helpText={
-                    custodyMetaData['end_of_custody']
-                    && custodyMetaData['end_of_custody'].help_text
-                      ? custodyMetaData['end_of_custody'].help_text
+                    custodyMetaData.end_of_custody
+                    && custodyMetaData.end_of_custody.help_text
+                      ? custodyMetaData.end_of_custody.help_text
                       : ''
                   }
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
-                  id='start_of_custody_address'
-                  label='Start of Custody location'
-                  name='start_of_custody_address'
-                  autoComplete='start_of_custody_address'
+                  id="start_of_custody_address"
+                  label="Start of Custody location"
+                  name="start_of_custody_address"
+                  autoComplete="start_of_custody_address"
                   value={start_of_custody_address}
-                  onChange={(e) => getLatLong(e.target.value,'start')}
+                  onChange={(e) => getLatLong(e.target.value, 'start')}
                 />
                 <MapComponent
                   isMarkerShown
                   googleMapURL={MAP_API_URL}
                   zoom={10}
                   loadingElement={
-                    <div style={{ height: `100%` }} />
+                    <div style={{ height: '100%' }} />
                   }
                   containerElement={
-                    <div style={{ height: `200px` }} />
+                    <div style={{ height: '200px' }} />
                   }
                   mapElement={
-                    <div style={{ height: `100%` }} />
+                    <div style={{ height: '100%' }} />
                   }
                   markers={[
                     {
                       lat: start_of_custody_location
                       && parseFloat(
-                        start_of_custody_location.split(',')[0]
+                        start_of_custody_location.split(',')[0],
                       ),
-                      lng:start_of_custody_location
+                      lng: start_of_custody_location
                       && parseFloat(
-                        start_of_custody_location.split(',')[1]
+                        start_of_custody_location.split(',')[1],
                       ),
-                      radius : organizationData.radius,
+                      radius: organizationData.radius,
                     },
                   ]}
                   geofence={
@@ -491,40 +473,40 @@ const AddCustodyForm = ({
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
-                  id='end_of_custody_address'
-                  label='End of Custody location'
-                  name='end_of_custody_address'
-                  autoComplete='end_of_custody_address'
+                  id="end_of_custody_address"
+                  label="End of Custody location"
+                  name="end_of_custody_address"
+                  autoComplete="end_of_custody_address"
                   value={end_of_custody_address}
-                  onChange={(e) => getLatLong(e.target.value,'end')}
+                  onChange={(e) => getLatLong(e.target.value, 'end')}
                 />
                 <MapComponent
                   isMarkerShown
                   googleMapURL={MAP_API_URL}
                   zoom={10}
                   loadingElement={
-                    <div style={{ height: `100%` }} />
+                    <div style={{ height: '100%' }} />
                   }
                   containerElement={
-                    <div style={{ height: `200px` }} />
+                    <div style={{ height: '200px' }} />
                   }
                   mapElement={
-                    <div style={{ height: `100%` }} />
+                    <div style={{ height: '100%' }} />
                   }
                   markers={[
                     {
                       lat: end_of_custody_location
                       && parseFloat(
-                        end_of_custody_location.split(',')[0]
+                        end_of_custody_location.split(',')[0],
                       ),
                       lng: end_of_custody_location
                       && parseFloat(
-                        end_of_custody_location.split(',')[1]
+                        end_of_custody_location.split(',')[1],
                       ),
-                      radius : organizationData.radius,
+                      radius: organizationData.radius,
                     },
                   ]}
                   geofence={
@@ -535,24 +517,24 @@ const AddCustodyForm = ({
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
-                  id='has_current_custody'
+                  id="has_current_custody"
                   select
                   disabled={viewOnly}
-                  label='Has current Custody?'
+                  label="Has current Custody?"
                   {...has_current_custody.bind}
                   InputProps={
-                    custodyMetaData['has_current_custody']
-                    && custodyMetaData['has_current_custody'].help_text
+                    custodyMetaData.has_current_custody
+                    && custodyMetaData.has_current_custody.help_text
                     && {
                       endAdornment: (
-                        <InputAdornment position='start'>
-                          {custodyMetaData['has_current_custody'].help_text && (
+                        <InputAdornment position="start">
+                          {custodyMetaData.has_current_custody.help_text && (
                             <CustomizedTooltips
                               toolTipText={
-                                custodyMetaData['has_current_custody'].help_text
+                                custodyMetaData.has_current_custody.help_text
                               }
                             />
                           )}
@@ -561,30 +543,30 @@ const AddCustodyForm = ({
                     }
                   }
                 >
-                  <MenuItem value={true}>YES</MenuItem>
+                  <MenuItem value>YES</MenuItem>
                   <MenuItem value={false}>NO</MenuItem>
                 </TextField>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
-                  id='first_custody'
+                  id="first_custody"
                   select
                   disabled={viewOnly}
-                  label='Is first Custody?'
+                  label="Is first Custody?"
                   {...first_custody.bind}
                   InputProps={
-                    custodyMetaData['first_custody']
-                    && custodyMetaData['first_custody'].help_text
+                    custodyMetaData.first_custody
+                    && custodyMetaData.first_custody.help_text
                     && {
                       endAdornment: (
-                        <InputAdornment position='start'>
-                          {custodyMetaData['first_custody'].help_text && (
+                        <InputAdornment position="start">
+                          {custodyMetaData.first_custody.help_text && (
                             <CustomizedTooltips
                               toolTipText={
-                                custodyMetaData['first_custody'].help_text
+                                custodyMetaData.first_custody.help_text
                               }
                             />
                           )}
@@ -593,30 +575,30 @@ const AddCustodyForm = ({
                     }
                   }
                 >
-                  <MenuItem value={true}>YES</MenuItem>
+                  <MenuItem value>YES</MenuItem>
                   <MenuItem value={false}>NO</MenuItem>
                 </TextField>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
-                  id='last_custody'
+                  id="last_custody"
                   select
                   disabled={viewOnly}
-                  label='Is last Custody?'
+                  label="Is last Custody?"
                   {...last_custody.bind}
                   InputProps={
-                    custodyMetaData['last_custody']
-                    && custodyMetaData['last_custody'].help_text
+                    custodyMetaData.last_custody
+                    && custodyMetaData.last_custody.help_text
                     && {
                       endAdornment: (
-                        <InputAdornment position='start'>
-                          {custodyMetaData['last_custody'].help_text && (
+                        <InputAdornment position="start">
+                          {custodyMetaData.last_custody.help_text && (
                             <CustomizedTooltips
                               toolTipText={
-                                custodyMetaData['last_custody'].help_text
+                                custodyMetaData.last_custody.help_text
                               }
                             />
                           )}
@@ -625,12 +607,12 @@ const AddCustodyForm = ({
                     }
                   }
                 >
-                  <MenuItem value={true}>YES</MenuItem>
+                  <MenuItem value>YES</MenuItem>
                   <MenuItem value={false}>NO</MenuItem>
                 </TextField>
               </Grid>
             </Grid>
-            <Grid container spacing={3} justify='center'>
+            <Grid container spacing={3} justify="center">
               {/* <Grid item xs={6}>
                 <div className={classes.loadingWrapper}>
                   <Button
@@ -663,10 +645,10 @@ const AddCustodyForm = ({
           <Grid item xs={6}>
             {viewOnly ? (
               <Button
-                type='button'
+                type="button"
                 fullWidth
-                variant='contained'
-                color='primary'
+                variant="contained"
+                color="primary"
                 className={classes.submit}
                 onClick={setOpenModal}
               >
@@ -675,14 +657,14 @@ const AddCustodyForm = ({
             ) : (
               <div className={classes.loadingWrapper}>
                 <Button
-                  type='submit'
+                  type="submit"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
-                  {editItem ? 'Save' : `Add Custody`}
+                  {editItem ? 'Save' : 'Add Custody'}
                 </Button>
                 {loading && (
                   <CircularProgress
@@ -697,6 +679,6 @@ const AddCustodyForm = ({
       </form>
     </Box>
   );
-}
+};
 
 export default AddCustodyForm;

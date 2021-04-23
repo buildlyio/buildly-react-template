@@ -82,7 +82,7 @@ const AddShipperInfo = ({
       history.push(location.state.from);
     } else {
       history.push(`${routes.SHIPMENT}/add`);
-    };
+    }
   };
 
   /**
@@ -116,19 +116,19 @@ const AddShipperInfo = ({
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     if (!shipper_name.value) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
@@ -142,7 +142,7 @@ const AddShipperInfo = ({
   const handleBack = () => {
     if (location && location.state) {
       history.push(location.state.from);
-    };
+    }
   };
 
   return (
@@ -153,7 +153,7 @@ const AddShipperInfo = ({
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={'md'}
+          maxWidth="md"
         >
           <form
             className={classes.form}
@@ -163,82 +163,78 @@ const AddShipperInfo = ({
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
-                  id='shipper_name'
-                  label='Shipper Name'
-                  name='shipper_name'
-                  autoComplete='shipper_name'
+                  id="shipper_name"
+                  label="Shipper Name"
+                  name="shipper_name"
+                  autoComplete="shipper_name"
                   error={
                     formError.shipper_name
                     && formError.shipper_name.error
                   }
                   helperText={
                     formError.shipper_name
-                    ? formError.shipper_name.message
-                    : ''
+                      ? formError.shipper_name.message
+                      : ''
                   }
-                  onBlur={(e) =>
-                    handleBlur(e, 'required', shipper_name)
-                  }
+                  onBlur={(e) => handleBlur(e, 'required', shipper_name)}
                   {...shipper_name.bind}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   required
-                  id='mode_type'
+                  id="mode_type"
                   select
-                  label='Mode Type'
+                  label="Mode Type"
                   error={
                     formError.mode_type
                     && formError.mode_type.error
                   }
                   helperText={
                     formError.mode_type
-                    ? formError.mode_type.message
-                    : ''
+                      ? formError.mode_type.message
+                      : ''
                   }
-                  onBlur={(e) =>
-                    handleBlur(e, 'required', mode_type, 'mode_type')
-                  }
+                  onBlur={(e) => handleBlur(e, 'required', mode_type, 'mode_type')}
                   {...mode_type.bind}
                 >
-                  <MenuItem value={''}>Select</MenuItem>
+                  <MenuItem value="">Select</MenuItem>
                   {modeTypeList
                   && modeTypeList.map((item, index) => (
-                      <MenuItem
-                        key={`modeType${index}:${item.id}`}
-                        value={item.url}
-                      >
-                        {item.name}
-                      </MenuItem>
-                    ))}
+                    <MenuItem
+                      key={`modeType${index}:${item.id}`}
+                      value={item.url}
+                    >
+                      {item.name}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </Grid>
               <Grid item xs={12}>
                 <DatePickerComponent
-                  label={'Scheduled Departure'}
+                  label="Scheduled Departure"
                   selectedDate={scheduled_departure}
                   handleDateChange={handleDateChange}
                 />
               </Grid>
-              <Grid item item xs={12}>
+              <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   multiline
                   rows={4}
-                  id='route_desc'
-                  label='Route Description'
-                  name='route_desc'
-                  autoComplete='route_desc'
+                  id="route_desc"
+                  label="Route Description"
+                  name="route_desc"
+                  autoComplete="route_desc"
                   {...route_desc.bind}
                 />
               </Grid>
@@ -247,14 +243,14 @@ const AddShipperInfo = ({
             <Grid
               container
               spacing={isDesktop ? 3 : 0}
-              justify='center'
+              justify="center"
             >
               <Grid item xs={12} sm={3}>
                 <Button
-                  type='button'
+                  type="button"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   onClick={() => closeModal()}
                   className={classes.submit}
                 >
@@ -263,10 +259,10 @@ const AddShipperInfo = ({
               </Grid>
               <Grid item xs={12} sm={3}>
                 <Button
-                  type='button'
+                  type="button"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   onClick={() => handleBack()}
                   className={classes.submit}
                 >
@@ -276,10 +272,10 @@ const AddShipperInfo = ({
               <Grid item xs={12} sm={6}>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type='button'
+                    type="button"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     onClick={() => onNextClick()}
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
@@ -300,7 +296,7 @@ const AddShipperInfo = ({
       )}
     </div>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

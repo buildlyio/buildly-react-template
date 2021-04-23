@@ -11,12 +11,12 @@ import { SENSOR_TYPE_COLUMNS } from '../ConfigurationConstants';
 import AddSensorType from '../forms/AddSensorType';
 
 const SensorType = (props) => {
-  const { 
+  const {
     dispatch,
     loading,
     sensorTypeList,
     redirectTo,
-    history, 
+    history,
   } = props;
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -25,13 +25,13 @@ const SensorType = (props) => {
     ? `${redirectTo}/sensor-type`
     : `${routes.CONFIGURATION}/sensor-type/add`;
   const editPath = redirectTo
-  ? `${redirectTo}/sensor-type`
-  : `${routes.CONFIGURATION}/sensor-type/edit`;
+    ? `${redirectTo}/sensor-type`
+    : `${routes.CONFIGURATION}/sensor-type/edit`;
 
   useEffect(() => {
     if (!loading && !sensorTypeList) {
       dispatch(getSensorType());
-    };
+    }
   }, [sensorTypeList]);
 
   const onAddButtonClick = () => {
@@ -63,21 +63,21 @@ const SensorType = (props) => {
       loading={loading}
       rows={sensorTypeList || []}
       columns={SENSOR_TYPE_COLUMNS}
-      filename='SensorType'
-      addButtonHeading='Sensor Type'
+      filename="SensorType"
+      addButtonHeading="Sensor Type"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle='Are you sure you want to Delete this Sensor Type?'
+      confirmModalTitle="Are you sure you want to Delete this Sensor Type?"
     >
       <Route path={`${addPath}`} component={AddSensorType} />
       <Route path={`${editPath}/:id`} component={AddSensorType} />
     </DataTableWrapper>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

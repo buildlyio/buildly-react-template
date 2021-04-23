@@ -21,9 +21,9 @@ i18n
       escapeValue: false, // not needed for react as it escapes by default
     },
   });
- // load translations
- //  httpService.makeRequest('get', 'translation/main', {}, true).then(translations => {
- //    i18n.addResourceBundle('en', 'blueprint', translations);
- //  });
+// load translations
+//  httpService.makeRequest('get', 'translation/main', {}, true).then(translations => {
+//    i18n.addResourceBundle('en', 'blueprint', translations);
+//  });
 
 export default i18n;

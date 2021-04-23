@@ -15,15 +15,15 @@ function makeRequest(method, url, body, useJwt, contentType, responseType, reque
   let token;
   let tokenType;
   if (useJwt) {
-    tokenType = "JWT";
+    tokenType = 'JWT';
     token = oauthService.getJwtToken();
   } else {
-    tokenType = "Bearer";
+    tokenType = 'Bearer';
     token = oauthService.getAccessToken();
   }
   let headers = {
     Authorization: `${tokenType} ${token}`,
-    "Content-Type": contentType || 'application/json',
+    'Content-Type': contentType || 'application/json',
   };
   if (requestHeader) {
     headers = {
@@ -45,20 +45,20 @@ function makeOptionsRequest(method, url, useJwt) {
   let token;
   let tokenType;
   if (useJwt) {
-    tokenType = "JWT";
+    tokenType = 'JWT';
     token = oauthService.getJwtToken();
   }
   const headers = {
     Authorization: `${tokenType} ${token}`,
     // "Content-Type": "application/json",
   };
-  let body = {
-    jwt_iss: "Buildly",
+  const body = {
+    jwt_iss: 'Buildly',
   };
   const options = {
-    method: method,
+    method,
     // body: JSON.stringify(body),
-    headers: headers,
+    headers,
     returnPromise: true,
   };
   return fetch(url, options);

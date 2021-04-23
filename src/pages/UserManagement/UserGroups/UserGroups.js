@@ -32,56 +32,54 @@ const UserGroups = () => {
   const [menu, setMenu] = useState({ row: null, element: null });
   const user = useContext(UserContext);
 
-  const permissionCellTemplate = (row, crud, operation) => {
-    return (
-      <Switch
-        size='small'
-        color='primary'
-        disabled={
+  const permissionCellTemplate = (row, crud, operation) => (
+    <Switch
+      size="small"
+      color="primary"
+      disabled={
           user.core_groups[0].id === row.id
           || !row.organization
         }
-        checked={row.permissions[operation]}
-        onChange={() => {
-          row.permissions[operation] = !row.permissions[operation];
-          crud.updateItem(row);
-        }}
-      />
-    );
-  };
+      checked={row.permissions[operation]}
+      onChange={() => {
+        row.permissions[operation] = !row.permissions[operation];
+        crud.updateItem(row);
+      }}
+    />
+  );
 
   /**
    * Clears authentication and redirects to the login screen.
    */
   const addGroup = (crud) => {
     const item = {
-      'name': 'custom'
+      name: 'custom',
     };
     crud.createItem(item);
   };
 
   const actionsTemplate = (row, crud) => {
     const handleMenuClick = (event) => {
-      setMenu({ row: row, element: event.currentTarget });
+      setMenu({ row, element: event.currentTarget });
     };
 
     const handleMenuItemClick = (action) => {
       if (action === 'delete') {
         crud.deleteItem(menu.row);
-      };
+      }
       setMenu({ row: null, element: null });
     };
 
     const handleMenuClose = () => {
       setMenu({ row: null, element: null });
     };
-    
+
     return (
-      <React.Fragment>
+      <>
         <IconButton
-          aria-label='more'
+          aria-label="more"
           aria-controls={`groupActions${row.id}`}
-          aria-haspopup='true'
+          aria-haspopup="true"
           disabled={
             user.core_groups[0].id === row.id
             || !row.organization
@@ -94,18 +92,19 @@ const UserGroups = () => {
           id={`groupActions${row.id}`}
           anchorEl={menu.element}
           keepMounted
-          open={menu.row && (menu.row.id === row.id) || false}
+          open={(menu.row && (menu.row.id === row.id)) || false}
           onClose={handleMenuClose}
         >
           {row.actions.map((option) => (
-          <MenuItem
-            key={`groupActions${row.id}:${option.value}`}
-            onClick={() => handleMenuItemClick(option.value)}
-          >
-            {option.label}
-          </MenuItem>))}
+            <MenuItem
+              key={`groupActions${row.id}:${option.value}`}
+              onClick={() => handleMenuItemClick(option.value)}
+            >
+              {option.label}
+            </MenuItem>
+          ))}
         </Menu>
-      </React.Fragment>
+      </>
     );
   };
 
@@ -114,45 +113,45 @@ const UserGroups = () => {
     crud.updateItem(row);
   };
 
-  const nameTemplate = (row, crud) => {
-    return (
-      <InlineEditor
-        tag='body1'
-        id={row.id}
-        disabled={!row.organization}
-        value={row.name}
-        placeholder='Group type'
-        onChange={(event) => update(crud, row, event)}
-      />
-    );
-  };
+  const nameTemplate = (row, crud) => (
+    <InlineEditor
+      tag="body1"
+      id={row.id}
+      disabled={!row.organization}
+      value={row.name}
+      placeholder="Group type"
+      onChange={(event) => update(crud, row, event)}
+    />
+  );
 
   return (
     <Box>
       <Crud
-        deleteAction='DELETE_COREGROUP'
-        updateAction='UPDATE_COREGROUP'
-        createAction='CREATE_COREGROUP'
-        loadAction='LOAD_DATA_COREGROUP'
-        reducer='coreGroupReducer'
+        deleteAction="DELETE_COREGROUP"
+        updateAction="UPDATE_COREGROUP"
+        createAction="CREATE_COREGROUP"
+        loadAction="LOAD_DATA_COREGROUP"
+        reducer="coreGroupReducer"
       >
         {
-          crud => {
+          (crud) => {
             if (crud.getData()) {
-              crud.getData().forEach(row => {
-                row.actions = [{value: 'delete', label: 'Delete'}];
+              crud.getData().forEach((row) => {
+                row.actions = [{ value: 'delete', label: 'Delete' }];
               });
             }
 
             return (
-              <React.Fragment>
+              <>
                 <Button
                   className={classes.addButton}
-                  color='primary'
-                  variant='contained'
+                  color="primary"
+                  variant="contained"
                   onClick={() => addGroup(crud)}
                 >
-                  <AddIcon /> Add Group
+                  <AddIcon />
+                  {' '}
+                  Add Group
                 </Button>
                 <PermissionsTable
                   columns={[
@@ -165,27 +164,23 @@ const UserGroups = () => {
                     {
                       label: 'Create',
                       prop: 'Create',
-                      template: (row) =>
-                        permissionCellTemplate(row, crud, 'create'),
+                      template: (row) => permissionCellTemplate(row, crud, 'create'),
                     },
                     {
                       label: 'Read',
                       prop: 'Read',
-                      template: (row) =>
-                        permissionCellTemplate(row, crud, 'read'),
+                      template: (row) => permissionCellTemplate(row, crud, 'read'),
                     },
                     {
                       label: 'Update',
                       prop: 'Update',
-                      template: (row) =>
-                        permissionCellTemplate(row, crud, 'update'),
+                      template: (row) => permissionCellTemplate(row, crud, 'update'),
                     },
                     {
                       label: 'Delete',
                       prop: 'Delete',
                       flex: '2',
-                      template: (row) =>
-                        permissionCellTemplate(row, crud, 'delete'),
+                      template: (row) => permissionCellTemplate(row, crud, 'delete'),
                     },
                     {
                       label: 'Actions',
@@ -196,13 +191,13 @@ const UserGroups = () => {
                   ]}
                   rows={crud.getData()}
                 />
-              </React.Fragment>
+              </>
             );
           }
         }
       </Crud>
     </Box>
   );
-}
+};
 
 export default UserGroups;

@@ -19,11 +19,9 @@ import {
   getLocalDateTime,
 } from '@utils/utilMethods';
 
-export const SHIPMENT_OVERVIEW_TOOL_TIP =
-  'Select a shipment to view reporting data';
+export const SHIPMENT_OVERVIEW_TOOL_TIP = 'Select a shipment to view reporting data';
 
-export const NO_DATA =
-  'No data to display';
+export const NO_DATA = 'No data to display';
 
 export const SHIPMENT_OVERVIEW_COLUMNS = [
   {
@@ -51,10 +49,9 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) =>
-        value && value !== '-'
+      customBodyRender: (value) => (value && value !== '-'
         ? moment(value).format('MM/DD/yyyy')
-        : value,
+        : value),
     },
   },
   {
@@ -64,10 +61,9 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) =>
-        value && value !== '-'
+      customBodyRender: (value) => (value && value !== '-'
         ? moment(value).format('MM/DD/yyyy')
-        : value,
+        : value),
     },
   },
   {
@@ -77,10 +73,9 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) =>
-        value && value !== '-'
+      customBodyRender: (value) => (value && value !== '-'
         ? moment(value).format('MM/DD/yyyy')
-        : value,
+        : value),
     },
   },
   {
@@ -90,10 +85,9 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) =>
-        value && value !== '-'
+      customBodyRender: (value) => (value && value !== '-'
         ? moment(value).format('MM/DD/yyyy')
-        : value,
+        : value),
     },
   },
   {
@@ -119,29 +113,32 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
 export const getIcon = (item, color) => {
   switch (item.id) {
     case 'temperature':
-      return <TempIcon color={color} name={item.name} />
+      return <TempIcon color={color} name={item.name} />;
 
     case 'light':
-      return <LightIcon color={color} name={item.name} />
+      return <LightIcon color={color} name={item.name} />;
 
     case 'shock':
-      return <ShockIcon color={color} name={item.name} />
+      return <ShockIcon color={color} name={item.name} />;
 
     case 'tilt':
-      return <TiltIcon color={color} name={item.name} />
+      return <TiltIcon color={color} name={item.name} />;
 
     case 'humidity':
-      return <HumidIcon color={color} name={item.name} />
+      return <HumidIcon color={color} name={item.name} />;
 
     case 'battery':
-      return <BatteryIcon color={color} name={item.name} />
+      return <BatteryIcon color={color} name={item.name} />;
 
     case 'pressure':
-      return <PressureIcon color={color} name={item.name} />
+      return <PressureIcon color={color} name={item.name} />;
 
     case 'time':
-      return <AccessTimeIcon />
-  };
+      return <AccessTimeIcon />;
+
+    default:
+      return null;
+  }
 };
 
 export const getShipmentOverview = (
@@ -152,7 +149,7 @@ export const getShipmentOverview = (
   contactData,
   unitsOfMeasure,
 ) => {
-  let shipmentList = [...shipmentData];
+  const shipmentList = [...shipmentData];
   let custodyRows = [];
   if (
     custodyData
@@ -161,64 +158,62 @@ export const getShipmentOverview = (
     && custodianData.length
   ) {
     custodyRows = getFormattedCustodyRows(custodyData, custodianData);
-  };
+  }
 
   shipmentList.forEach((list) => {
-    let custodyInfo = [];
+    const custodyInfo = [];
     let custodianName = '';
-    let aggregateReportInfo = [];
-    let contactInfo = [];
-    let temperatureData = [];
-    let lightData = [];
-    let shockData = [];
-    let tiltData = [];
-    let humidityData = [];
-    let batteryData = [];
-    let pressureData = [];
-    let markersToSet = [];
+    const aggregateReportInfo = [];
+    const contactInfo = [];
+    const temperatureData = [];
+    const lightData = [];
+    const shockData = [];
+    const tiltData = [];
+    const humidityData = [];
+    const batteryData = [];
+    const pressureData = [];
+    const markersToSet = [];
 
-    let temperatureUnit = unitsOfMeasure.filter((obj) =>
-      obj.supported_class === 'Temperature'
-    )[0]['name'].toLowerCase()
+    const temperatureUnit = unitsOfMeasure.filter((obj) => obj.supported_class === 'Temperature')[0].name.toLowerCase();
 
     if (custodyRows.length > 0) {
       custodyRows.forEach((custody) => {
         if (custody.shipment_id === list.shipment_uuid) {
-          custodianName = custodianName + custody.custodian_data.name;
+          custodianName += custody.custodian_data.name;
           contactData.forEach((contact) => {
             if (custody.custodian_data.contact_data[0] === contact.url) {
-              contact['name'] = [
-                contact['first_name'],
-                contact['middle_name'],
-                contact['last_name']
+              contact.name = [
+                contact.first_name,
+                contact.middle_name,
+                contact.last_name,
               ].join(' ');
-              contact['address'] = [
-                contact['address1'],
-                contact['address2'],
-                contact['city'],
-                contact['postal_code'],
-                contact['state'],
-                contact['country']
-              ].join('\n')
+              contact.address = [
+                contact.address1,
+                contact.address2,
+                contact.city,
+                contact.postal_code,
+                contact.state,
+                contact.country,
+              ].join('\n');
               contactInfo.push(contact);
-            };
+            }
           });
-          if (custody['has_current_custody']) {
-            custody['custody_type'] = 'Current';
-          } else if (custody['first_custody']) {
-            custody['custody_type'] = 'First';
-          } else if (custody['last_custody']) {
-            custody['custody_type'] = 'Last';
+          if (custody.has_current_custody) {
+            custody.custody_type = 'Current';
+          } else if (custody.first_custody) {
+            custody.custody_type = 'First';
+          } else if (custody.last_custody) {
+            custody.custody_type = 'Last';
           } else {
-            custody['custody_type'] = 'NA';
-          };
+            custody.custody_type = 'NA';
+          }
           custodyInfo.push(custody);
-        };
+        }
       });
-    };
-    list['custodian_name'] = custodianName;
-    list['custody_info'] = custodyInfo;
-    list['contact_info'] = contactInfo;
+    }
+    list.custodian_name = custodianName;
+    list.custody_info = custodyInfo;
+    list.contact_info = contactInfo;
 
     if (aggregateReportData && aggregateReportData.length > 0) {
       aggregateReportData.forEach((report) => {
@@ -226,16 +221,18 @@ export const getShipmentOverview = (
           report.shipment_id === list.partner_shipment_id
           && report.report_entries.length > 0
         ) {
-          const alert_status = report.excursion_flag
-            ? 'Excursion'
-            : report.warning_flag
-              ? 'Warning'
-              : 'Normal';
-          const color = report.excursion_flag
-            ? 'red'
-            : report.warning_flag
-              ? 'yellow'
-              : 'green';
+          let alert_status;
+          let color;
+          if (report.excursion_flag) {
+            alert_status = 'Excursion';
+            color = 'red';
+          } else if (report.warning_flag) {
+            alert_status = 'Warning';
+            color = 'yellow';
+          } else {
+            alert_status = 'Normal';
+            color = 'green';
+          }
           report.report_entries.forEach((report_entry) => {
             try {
               const temperature = convertUnitsOfMeasure(
@@ -243,33 +240,33 @@ export const getShipmentOverview = (
                 report_entry.report_temp,
                 temperatureUnit,
                 'temperature',
-              );  // Data in ICLP is coming in Celsius, conversion to selected unit
+              ); // Data in ICLP is coming in Celsius, conversion to selected unit
               let localDateTime = getLocalDateTime(
-                report_entry.report_location.timeOfPosition
-              )
+                report_entry.report_location.timeOfPosition,
+              );
 
               if ('report_timestamp' in report_entry) {
-                if (report_entry['report_timestamp'] !== null) {
+                if (report_entry.report_timestamp !== null) {
                   localDateTime = getLocalDateTime(
-                    report_entry['report_timestamp']
-                  )
+                    report_entry.report_timestamp,
+                  );
                 }
-              };
+              }
               if (report_entry.report_location.locationMethod !== 'NoPosition') {
                 const marker = {
                   lat: report_entry.report_location.latitude,
                   lng: report_entry.report_location.longitude,
                   label: 'Clustered',
-                  temperature: temperature,
+                  temperature,
                   light: report_entry.report_light,
                   shock: report_entry.report_shock,
                   tilt: report_entry.report_tilt,
                   humidity: report_entry.report_humidity,
                   battery: report_entry.report_battery,
                   pressure: report_entry.report_pressure,
-                  color: color,
+                  color,
                   timestamp: localDateTime,
-                  alert_status: alert_status,
+                  alert_status,
                 };
                 // Considered use case: If a shipment stays at some position for long, other value changes can be critical
                 const markerFound = _.find(markersToSet, {
@@ -280,68 +277,66 @@ export const getShipmentOverview = (
                 });
                 if (!markerFound) {
                   markersToSet.push(marker);
-                };
+                }
                 aggregateReportInfo.push(marker);
                 const graphPoint = _.find(temperatureData, {
-                  x: localDateTime
+                  x: localDateTime,
                 });
                 if (!graphPoint) {
                   temperatureData.push({
-                    'x': localDateTime,
-                    'y': temperature
+                    x: localDateTime,
+                    y: temperature,
                   });
                   lightData.push({
-                    'x': localDateTime,
-                    'y': report_entry.report_light
+                    x: localDateTime,
+                    y: report_entry.report_light,
                   });
                   shockData.push({
-                    'x': localDateTime,
-                    'y': report_entry.report_shock
+                    x: localDateTime,
+                    y: report_entry.report_shock,
                   });
                   tiltData.push({
-                    'x': localDateTime,
-                    'y': report_entry.report_tilt
+                    x: localDateTime,
+                    y: report_entry.report_tilt,
                   });
                   humidityData.push({
-                    'x': localDateTime,
-                    'y': report_entry.report_humidity
+                    x: localDateTime,
+                    y: report_entry.report_humidity,
                   });
                   batteryData.push({
-                    'x': localDateTime,
-                    'y': report_entry.report_battery
+                    x: localDateTime,
+                    y: report_entry.report_battery,
                   });
                   pressureData.push({
-                    'x': localDateTime,
-                    'y': report_entry.report_pressure
+                    x: localDateTime,
+                    y: report_entry.report_pressure,
                   });
-                };
-              };
+                }
+              }
             } catch (e) {
               console.log(e);
             }
           });
-        };
+        }
       });
-    };
+    }
 
-    list['sensor_report'] = aggregateReportInfo;
-    list['markers_to_set'] = _.orderBy(
+    list.sensor_report = aggregateReportInfo;
+    list.markers_to_set = _.orderBy(
       markersToSet,
       (item) => moment(item.timestamp),
       ['asc'],
     );
-    list['temperature'] = temperatureData;
-    list['light'] = lightData;
-    list['shock'] = shockData;
-    list['tilt'] = tiltData;
-    list['humidity'] = humidityData;
-    list['battery'] = batteryData;
-    list['pressure'] = pressureData;
+    list.temperature = temperatureData;
+    list.light = lightData;
+    list.shock = shockData;
+    list.tilt = tiltData;
+    list.humidity = humidityData;
+    list.battery = batteryData;
+    list.pressure = pressureData;
   });
 
-  const sortedList = shipmentList.sort((a, b) =>
-    moment.utc(a.create_date).diff(moment.utc(b.create_date))
-  );
+  const sortedList = shipmentList.sort((a, b) => moment.utc(a.create_date).diff(moment.utc(b.create_date)));
   return sortedList;
 };
 

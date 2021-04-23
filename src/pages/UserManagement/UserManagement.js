@@ -59,9 +59,7 @@ const UserManagement = ({
     { label: 'User groups', value: 'groups' },
   ];
   const viewPath = (
-    subNav.find(item =>
-      location.pathname.endsWith(item.value)
-    ) || subNav[0]
+    subNav.find((item) => location.pathname.endsWith(item.value)) || subNav[0]
   ).value;
   const [view, setView] = useState(viewPath);
 
@@ -79,7 +77,7 @@ const UserManagement = ({
   ) {
     NotificationManager.success(user.data.detail, 'Success');
     setInviteCall(false);
-  };
+  }
 
   const inviteUser = (event) => {
     event.preventDefault();
@@ -95,81 +93,86 @@ const UserManagement = ({
     value.split(',').map((item) => item.trim())
   );
 
-  const viewTabClicked = (event, view) => {
-    setView(view);
+  const viewTabClicked = (event, newView) => {
+    setView(newView);
   };
 
   return (
     <Box mt={5} mb={3}>
       <Box mb={3}>
         <Popup
-          trigger={
+          trigger={(
             <Button
-              type='button'
-              variant='contained'
-              color='primary'>
-              <AddIcon /> Invite Users
+              type="button"
+              variant="contained"
+              color="primary"
+            >
+              <AddIcon />
+              {' '}
+              Invite Users
             </Button>
-          }
-          position='bottom left'
-          on='click'
+          )}
+          position="bottom left"
+          on="click"
           closeOnDocumentClick
           mouseLeaveDelay={300}
           mouseEnterDelay={0}
           contentStyle={{
             padding: '0px',
             border: 'none',
-            width: `{rem(250)}`,
+            width: '{rem(250)}',
           }}
           arrow={false}
         >
-        <form className={classes.inviteForm}>
-          <Typography variant='h6'>
-            Invite users to platform
-          </Typography>
-          <TextField
-            className={classes.textField}
-            label='Emails'
-            id='email'
-            variant='outlined' 
-            placeholder='abc@xcy.com, 123@zxc.com'
-            error={error}
-            helperText={error}
-            {...email.bind}
-          />
-          <Grid
-            justify='flex-end'
-            container 
-            spacing={0}>
-            <Grid item>
-              <Button
-                onClick={inviteUser}
-                size='small'
-                variant='contained'
-                color='primary'
-                disabled={loading}
-                type='submit'>
-                Send
-              </Button>
+          <form className={classes.inviteForm}>
+            <Typography variant="h6">
+              Invite users to platform
+            </Typography>
+            <TextField
+              className={classes.textField}
+              label="Emails"
+              id="email"
+              variant="outlined"
+              placeholder="abc@xcy.com, 123@zxc.com"
+              error={error}
+              helperText={error}
+              {...email.bind}
+            />
+            <Grid
+              justify="flex-end"
+              container
+              spacing={0}
+            >
+              <Grid item>
+                <Button
+                  onClick={inviteUser}
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  disabled={loading}
+                  type="submit"
+                >
+                  Send
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-        </form>
+          </form>
         </Popup>
         <Typography
           className={classes.userManagementHeading}
-          variant='h4'
+          variant="h4"
         >
           People using this system
         </Typography>
       </Box>
       <Box mb={3}>
         <Tabs value={view} onChange={viewTabClicked}>
-          {subNav.map((itemProps, index) => 
+          {subNav.map((itemProps, index) => (
             <Tab
               {...itemProps}
               key={`tab${index}:${itemProps.value}`}
             />
-          )}
+          ))}
         </Tabs>
       </Box>
       <Route path={routes.CURRENT_USERS} component={Users} />
@@ -177,7 +180,7 @@ const UserManagement = ({
       <NotificationContainer />
     </Box>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

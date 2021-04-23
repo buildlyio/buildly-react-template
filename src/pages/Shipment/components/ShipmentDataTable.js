@@ -34,17 +34,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CustomCheckbox = (props) => {
-  let newProps = Object.assign({}, props);
-  newProps.color =
-    props['data-description'] === 'row-select'
+  const newProps = { ...props };
+  const desc = props['data-description'];
+
+  newProps.color = desc === 'row-select'
     ? 'secondary'
     : 'primary';
 
-  if (props['data-description'] === 'row-select') {
-    return (<Radio {...newProps} />);
-  } else {
-    return (<Checkbox {...newProps} />);
-  };
+  return (
+    desc === 'row-select'
+      ? <Radio {...newProps} />
+      : <Checkbox {...newProps} />
+  );
 };
 
 const ShipmentDataTable = ({
@@ -96,17 +97,16 @@ const ShipmentDataTable = ({
           className: classes.centerHeader,
         }),
         customBodyRenderLite: (dataIndex) => (
-          <IconButton onClick={() => editAction(row)}>
+          <IconButton onClick={() => editAction(rows[dataIndex])}>
             {!isAdmin
             && rows[dataIndex]
             && rows[dataIndex].status
-            && row.status.toLowerCase() !== 'planned'
+            && rows[dataIndex].status.toLowerCase() !== 'planned'
               ? <ViewIcon />
-              : <EditIcon />
-            }
+              : <EditIcon />}
           </IconButton>
-        )
-      }
+        ),
+      },
     },
     {
       name: 'Delete',
@@ -123,10 +123,10 @@ const ShipmentDataTable = ({
           >
             <DeleteIcon />
           </IconButton>
-        )
-      }
+        ),
+      },
     },
-    ...SHIPMENT_DATA_TABLE_COLUMNS.map(column => ({
+    ...SHIPMENT_DATA_TABLE_COLUMNS.map((column) => ({
       ...column,
       options: {
         ...column.options,
@@ -134,7 +134,7 @@ const ShipmentDataTable = ({
           className: classes.leftHeader,
         }),
       },
-    }))
+    })),
   ];
 
   return (
@@ -148,7 +148,7 @@ const ShipmentDataTable = ({
         }}
       />
     </div>
-  )
-}
+  );
+};
 
 export default ShipmentDataTable;

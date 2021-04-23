@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from 'lodash';
 import {
   ADD_CUSTODIANS,
   ADD_CUSTODIANS_SUCCESS,
@@ -48,7 +48,7 @@ import {
   DELETE_CUSTODIAN_TYPE,
   DELETE_CUSTODIAN_TYPE_SUCCESS,
   DELETE_CUSTODIAN_TYPE_FAILURE,
-} from "../actions/custodian.actions";
+} from '../actions/custodian.actions';
 
 const initialState = {
   loading: false,
@@ -66,10 +66,13 @@ const initialState = {
 export default (state = initialState, action) => {
   let deletedType;
   let editedType = state.custodianTypeList;
-  let typePresent = _.remove(editedType, { id: action.custodianType?.id })[0];
+  const typePresent = _.remove(
+    editedType,
+    { id: action.custodianType?.id },
+  )[0];
   if (typePresent) {
     deletedType = editedType;
-    editedType = [ ...editedType, action.custodianType ];
+    editedType = [...editedType, action.custodianType];
   }
 
   switch (action.type) {
@@ -80,6 +83,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_CUSTODIANS_SUCCESS:
       return {
         ...state,
@@ -87,6 +91,7 @@ export default (state = initialState, action) => {
         loaded: true,
         custodianData: action.data,
       };
+
     case GET_CUSTODIANS_FAILURE:
       return {
         ...state,
@@ -94,6 +99,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case ADD_CUSTODIANS:
       return {
         ...state,
@@ -101,6 +107,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case ADD_CUSTODIANS_SUCCESS:
       return {
         ...state,
@@ -108,6 +115,7 @@ export default (state = initialState, action) => {
         loaded: true,
         custodianData: action.data,
       };
+
     case ADD_CUSTODIANS_FAILURE:
       return {
         ...state,
@@ -140,6 +148,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case DELETE_CUSTODIANS:
       return {
         ...state,
@@ -147,6 +156,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case DELETE_CUSTODIANS_SUCCESS:
       return {
         ...state,
@@ -154,6 +164,7 @@ export default (state = initialState, action) => {
         loaded: true,
         custodianData: action.data,
       };
+
     case DELETE_CUSTODIANS_FAILURE:
       return {
         ...state,
@@ -161,11 +172,13 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case SEARCH:
       return {
         ...state,
         error: null,
       };
+
     case SEARCH_SUCCESS:
       return {
         ...state,
@@ -173,6 +186,7 @@ export default (state = initialState, action) => {
         loaded: true,
         searchedData: action.data,
       };
+
     case GET_CUSTODIAN_TYPE:
       return {
         ...state,
@@ -180,13 +194,15 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_CUSTODIAN_TYPE_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        custodianTypeList: _.orderBy(action.data, ["id"], "asc"),
+        custodianTypeList: _.orderBy(action.data, ['id'], 'asc'),
       };
+
     case GET_CUSTODIAN_TYPE_FAILURE:
       return {
         ...state,
@@ -194,6 +210,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case GET_CONTACT:
       return {
         ...state,
@@ -201,6 +218,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_CONTACT_SUCCESS:
       return {
         ...state,
@@ -208,6 +226,7 @@ export default (state = initialState, action) => {
         loaded: true,
         contactInfo: action.data,
       };
+
     case GET_CONTACT_FAILURE:
       return {
         ...state,
@@ -215,6 +234,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case GET_CUSTODY:
       return {
         ...state,
@@ -222,6 +242,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case GET_CUSTODY_SUCCESS:
       return {
         ...state,
@@ -229,6 +250,7 @@ export default (state = initialState, action) => {
         loaded: true,
         custodyData: action.data,
       };
+
     case GET_CUSTODY_FAILURE:
       return {
         ...state,
@@ -236,6 +258,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case ADD_CUSTODY:
       return {
         ...state,
@@ -243,6 +266,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case ADD_CUSTODY_SUCCESS:
       return {
         ...state,
@@ -250,6 +274,7 @@ export default (state = initialState, action) => {
         loaded: true,
         custodyData: action.data,
       };
+
     case ADD_CUSTODY_FAILURE:
       return {
         ...state,
@@ -257,6 +282,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case EDIT_CUSTODY:
       return {
         ...state,
@@ -264,6 +290,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case EDIT_CUSTODY_SUCCESS:
       return {
         ...state,
@@ -271,6 +298,7 @@ export default (state = initialState, action) => {
         loaded: true,
         custodyData: action.data,
       };
+
     case EDIT_CUSTODY_FAILURE:
       return {
         ...state,
@@ -278,6 +306,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case UPDATE_CUSTODY:
       return {
         ...state,
@@ -285,6 +314,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case UPDATE_CUSTODY_SUCCESS:
       return {
         ...state,
@@ -292,6 +322,7 @@ export default (state = initialState, action) => {
         loaded: true,
         custodyData: action.data,
       };
+
     case UPDATE_CUSTODY_FAILURE:
       return {
         ...state,
@@ -299,6 +330,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case GET_CUSTODIAN_OPTIONS:
       return {
         ...state,
@@ -307,6 +339,7 @@ export default (state = initialState, action) => {
         custodianOptions: null,
         error: null,
       };
+
     case GET_CUSTODIAN_OPTIONS_SUCCESS:
       return {
         ...state,
@@ -315,6 +348,7 @@ export default (state = initialState, action) => {
         custodianOptions: action.data,
         error: null,
       };
+
     case GET_CUSTODIAN_OPTIONS_FAILURE:
       return {
         ...state,
@@ -332,6 +366,7 @@ export default (state = initialState, action) => {
         custodyOptions: action.data,
         error: null,
       };
+
     case GET_CUSTODY_OPTIONS_FAILURE:
       return {
         ...state,
@@ -349,6 +384,7 @@ export default (state = initialState, action) => {
         contactOptions: action.data,
         error: null,
       };
+
     case GET_CONTACT_OPTIONS_FAILURE:
       return {
         ...state,
@@ -357,6 +393,7 @@ export default (state = initialState, action) => {
         contactOptions: null,
         error: action.error,
       };
+
     case ADD_CUSTODIAN_TYPE:
       return {
         ...state,
@@ -364,15 +401,18 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case ADD_CUSTODIAN_TYPE_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
         custodianTypeList: [
-          ...state.custodianTypeList, action.custodianType
+          ...state.custodianTypeList,
+          action.custodianType,
         ],
       };
+
     case ADD_CUSTODIAN_TYPE_FAILURE:
       return {
         ...state,
@@ -380,6 +420,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case EDIT_CUSTODIAN_TYPE:
       return {
         ...state,
@@ -387,6 +428,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case EDIT_CUSTODIAN_TYPE_SUCCESS:
       return {
         ...state,
@@ -394,6 +436,7 @@ export default (state = initialState, action) => {
         loaded: true,
         custodianTypeList: editedType,
       };
+
     case EDIT_CUSTODIAN_TYPE_FAILURE:
       return {
         ...state,
@@ -401,6 +444,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     case DELETE_CUSTODIAN_TYPE:
       return {
         ...state,
@@ -408,6 +452,7 @@ export default (state = initialState, action) => {
         loaded: false,
         error: null,
       };
+
     case DELETE_CUSTODIAN_TYPE_SUCCESS:
       return {
         ...state,
@@ -415,6 +460,7 @@ export default (state = initialState, action) => {
         loaded: true,
         custodianTypeList: deletedType,
       };
+
     case DELETE_CUSTODIAN_TYPE_FAILURE:
       return {
         ...state,
@@ -422,6 +468,7 @@ export default (state = initialState, action) => {
         loaded: true,
         error: action.error,
       };
+
     default:
       return state;
   }

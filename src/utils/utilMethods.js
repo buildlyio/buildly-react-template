@@ -1,58 +1,49 @@
 import { environment } from '@environments/environment';
 
-export const MAP_API_KEY = environment.MAP_API_KEY;
-export const MAP_API_URL = environment.MAP_API_URL;
-export const GEO_CODE_API = environment.GEO_CODE_API;
+export const { MAP_API_KEY, MAP_API_URL, GEO_CODE_API } = environment;
 
 export const numberWithCommas = (x) => {
   if (!x) return '';
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
+};
 
-export const compareSort = (propName) => {
-  return function (a, b) {
-    if (isNaN(parseFloat(a[propName]))) {
-      if (
-        a[propName] &&
-        b[propName] &&
-        a[propName].toUpperCase() < b[propName].toUpperCase()
-      )
-        return -1;
-      if (
-        a[propName] &&
-        b[propName] &&
-        a[propName].toUpperCase() > b[propName].toUpperCase()
-      )
-        return 1;
-      return 0;
-    } else {
-      if (
-        a[propName] &&
-        b[propName] &&
-        parseFloat(a[propName]) < parseFloat(b[propName])
-      )
-        return -1;
-      if (
-        a[propName] &&
-        b[propName] &&
-        parseFloat(a[propName]) > parseFloat(b[propName])
-      )
-        return 1;
-      return 0;
-    }
-  };
+export const compareSort = (propName) => (a, b) => {
+  if (isNaN(parseFloat(a[propName]))) {
+    if (
+      a[propName]
+        && b[propName]
+        && a[propName].toUpperCase() < b[propName].toUpperCase()
+    ) return -1;
+    if (
+      a[propName]
+        && b[propName]
+        && a[propName].toUpperCase() > b[propName].toUpperCase()
+    ) return 1;
+    return 0;
+  }
+  if (
+    a[propName]
+        && b[propName]
+        && parseFloat(a[propName]) < parseFloat(b[propName])
+  ) return -1;
+  if (
+    a[propName]
+        && b[propName]
+        && parseFloat(a[propName]) > parseFloat(b[propName])
+  ) return 1;
+  return 0;
 };
 
 export const searchFilter = (payload) => {
-  let { searchItem, searchList, searchFields } = payload;
-  let data = searchList.filter((item) => {
-    let itemKeys = Object.keys(item);
+  const { searchItem, searchList, searchFields } = payload;
+  const data = searchList.filter((item) => {
+    const itemKeys = Object.keys(item);
     let foundItem = '';
     itemKeys.forEach((key) => {
       if (
-        searchFields.includes(key) &&
-        item[key] &&
-        item[key].toString().includes(searchItem)
+        searchFields.includes(key)
+        && item[key]
+        && item[key].toString().includes(searchItem)
       ) {
         foundItem = { ...item };
       }
@@ -65,11 +56,11 @@ export const searchFilter = (payload) => {
 export const checkForGlobalAdmin = (userData) => {
   let isGlobalAdmin = false;
   if (userData && userData.core_groups) {
-    userData.core_groups.map((group) => {
+    userData.core_groups.forEach((group) => {
       if (
-        group.is_global &&
-        Object.keys(group.permissions).every(
-          (permission) => group.permissions[permission] === true
+        group.is_global
+        && Object.keys(group.permissions).every(
+          (permission) => group.permissions[permission] === true,
         )
       ) {
         isGlobalAdmin = true;
@@ -82,13 +73,13 @@ export const checkForGlobalAdmin = (userData) => {
 export const checkForAdmin = (userData) => {
   let isAdmin = false;
   if (userData && userData.core_groups) {
-    userData.core_groups.map((group) => {
+    userData.core_groups.forEach((group) => {
       if (
-        group.is_org_level &&
-        Object.keys(group.permissions).every(
-          (permission) => group.permissions[permission] === true
-        ) &&
-        !group.is_global
+        group.is_org_level
+        && Object.keys(group.permissions).every(
+          (permission) => group.permissions[permission] === true,
+        )
+        && !group.is_global
       ) {
         isAdmin = true;
       }
@@ -98,8 +89,8 @@ export const checkForAdmin = (userData) => {
 };
 
 export const setOptionsData = (options, fieldName) => {
-  let result = null;
-  let optionKeys = Object.keys(options);
+  const result = null;
+  const optionKeys = Object.keys(options);
   if (optionKeys.includes(fieldName)) {
     return options[fieldName];
   }
@@ -117,7 +108,7 @@ export const convertUnitsOfMeasure = (
   sourceUnit,
   value,
   destinationUnit,
-  _class
+  _class,
 ) => {
   switch (_class) {
     case 'temperature':
@@ -125,24 +116,27 @@ export const convertUnitsOfMeasure = (
         sourceUnit === 'fahrenheit'
         && destinationUnit === 'celsius'
       ) {
-        value = ((value - 32) * 5) / 9;
-      };
+        return ((value - 32) * 5) / 9;
+      }
       if (
         sourceUnit === 'celsius'
         && destinationUnit === 'fahrenheit'
       ) {
-        value = (value * 9) / 5 + 32;
-      };
-      return value.toFixed(2);
+        return (value * 9) / 5 + 32;
+      }
+      return null;
 
     case 'distance':
       if (sourceUnit === 'km' && destinationUnit === 'miles') {
-        value = value * 0.6214;
-      };
-      if (sourceUnit == 'miles' && destinationUnit === 'km') {
-        value = value / 0.6214;
-      };
-      return value.toFixed(2);
+        return (value * 0.6214);
+      }
+      if (sourceUnit === 'miles' && destinationUnit === 'km') {
+        return (value / 0.6214);
+      }
+      return null;
+
+    default:
+      return null;
   }
 };
 
@@ -153,5 +147,5 @@ export const getLocalDateTime = (value) => {
     day: 'numeric',
   });
   const displayTime = new Date(value).toLocaleTimeString();
-  return displayDate + ' ' + displayTime;
+  return `${displayDate} ${displayTime}`;
 };

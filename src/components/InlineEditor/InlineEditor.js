@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
  * Component for inline editing.
  */
 export const InlineEditor = ({
-  id, tag, value, placeholder, disabled, onChange
+  id, tag, value, placeholder, disabled, onChange,
 }) => {
   const classes = useStyles();
   const [editing, setEditing] = useState(false);
@@ -69,7 +69,7 @@ export const InlineEditor = ({
         setEditing(false); // Close the input
         break;
       default:
-        return;
+        break;
     }
   };
 
@@ -96,17 +96,18 @@ export const InlineEditor = ({
       {editing ? (
         <TextField
           tag={tag}
-          size='small'
-          variant='outlined'
-          autoFocus={true}
+          size="small"
+          variant="outlined"
+          autoFocus
           ref={node}
           name={`${id}`}
-          type='text'
+          type="text"
           placeholder={placeholder}
           value={text}
-          onChange={(event) => setText(event.target.value)} />
+          onChange={(event) => setText(event.target.value)}
+        />
       ) : (
-        <Grid container direction='row' alignItems='center' className={`${classes.nonEditMode} ${!value && classes.placeholder}`} onDoubleClick={() => setEditing(true)}>
+        <Grid container direction="row" alignItems="center" className={`${classes.nonEditMode} ${!value && classes.placeholder}`} onDoubleClick={() => setEditing(true)}>
           <Grid item>
             <Typography className={classes.typography} variant={tag}>
               {value || placeholder}
@@ -121,4 +122,4 @@ export const InlineEditor = ({
       )}
     </Box>
   );
-}
+};

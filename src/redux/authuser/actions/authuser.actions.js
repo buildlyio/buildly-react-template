@@ -1,4 +1,4 @@
-// Auth action types
+// Auth actions
 export const LOGIN = 'AUTH/LOGIN';
 export const LOGIN_SUCCESS = 'AUTH/LOGIN_SUCCESS';
 export const LOGIN_FAIL = 'AUTH/LOGIN_FAIL';
@@ -40,15 +40,11 @@ export const RESET_PASSWORD_SUCCESS = 'AUTH/RESET_PASSWORD_SUCCESS';
 export const RESET_PASSWORD_FAILURE = 'AUTH/RESET_PASSWORD_FAILURE';
 
 export const RESET_PASSWORD_CONFIRM = 'AUTH/RESET_PASSWORD_CONFIRM';
-export const RESET_PASSWORD_CONFIRM_SUCCESS =
-  'AUTH/RESET_PASSWORD_CONFIRM_SUCCESS';
-export const RESET_PASSWORD_CONFIRM_FAILURE =
-  'AUTH/RESET_PASSWORD_CONFIRM_FAILURE';
+export const RESET_PASSWORD_CONFIRM_SUCCESS = 'AUTH/RESET_PASSWORD_CONFIRM_SUCCESS';
+export const RESET_PASSWORD_CONFIRM_FAILURE = 'AUTH/RESET_PASSWORD_CONFIRM_FAILURE';
 
-export const GET_ORGANIZATION_OPTIONS_SUCCESS =
-  'AUTH/GET_ORGANIZATION_OPTIONS_SUCCESS';
-export const GET_ORGANIZATION_OPTIONS_FAILURE =
-  'AUTH/GET_ORGANIZATION_OPTIONS_FAILURE';
+export const GET_ORGANIZATION_OPTIONS_SUCCESS = 'AUTH/GET_ORGANIZATION_OPTIONS_SUCCESS';
+export const GET_ORGANIZATION_OPTIONS_FAILURE = 'AUTH/GET_ORGANIZATION_OPTIONS_FAILURE';
 
 export const RESET_PASSWORD_CHECK = 'AUTH/RESET_PASSWORD_CHECK';
 export const RESET_PASSWORD_CHECK_SUCCESS = 'AUTH/RESET_PASSWORD_CHECK_SUCCESS';
@@ -57,6 +53,7 @@ export const RESET_PASSWORD_CHECK_FAILURE = 'AUTH/RESET_PASSWORD_CHECK_FAILURE';
 /**
  * Login action
  * @param {{ username, password }} credentials
+ * @param {Object} history
  */
 export const login = (credentials, history) => ({
   type: LOGIN,
@@ -72,8 +69,13 @@ export const logout = () => ({ type: LOGOUT });
 /**
  * Register action
  * @param {{ username, password, email, organization_name, first_name, last_name }} data
+ * @param {Object} history
  */
-export const register = (data, history) => ({ type: REGISTER, data, history });
+export const register = (data, history) => ({
+  type: REGISTER,
+  data,
+  history,
+});
 
 /**
  * Update user action
@@ -88,20 +90,31 @@ export const getUser = () => ({ type: GET_USER });
 
 /**
  * Invite user action
- * @param {{ first_name, last_name }} data
+ * @param {Array} data
  */
 export const invite = (data) => ({ type: INVITE, data });
 
+/**
+ * Get Organization action
+ * @param {String} uuid
+ */
 export const getOrganization = (uuid) => ({
   type: GET_ORGANIZATION,
   uuid,
 });
 
+/**
+ * Update Organization action
+ * @param {Object} data
+ */
 export const updateOrganization = (data) => ({
   type: UPDATE_ORGANIZATION,
   data,
 });
 
+/**
+ * Get User Options action
+ */
 export const getUserOptions = () => ({
   type: GET_USER_OPTIONS,
 });
@@ -118,6 +131,7 @@ export const resetPassword = (data) => ({
 /**
  * Reset password action
  * @param {{ new_password1, new_password2, uid, token }} data
+ * @param {Object} history
  */
 export const confirmResetPassword = (data, history) => ({
   type: RESET_PASSWORD_CONFIRM,
@@ -128,7 +142,7 @@ export const confirmResetPassword = (data, history) => ({
 /**
  * Validate reset password token action
  * @param {{ uid, token }} data
- * @param {*} history
+ * @param {Object} history
  */
 export const resetPasswordCheck = (data, history) => ({
   type: RESET_PASSWORD_CHECK,

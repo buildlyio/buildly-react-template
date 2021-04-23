@@ -12,13 +12,13 @@ import { PRODUCT_COLUMNS, unitMeasures } from '../ConfigurationConstants';
 import AddProduct from '../forms/AddProduct';
 
 const Product = (props) => {
-  const { 
+  const {
     dispatch,
     loading,
     products,
     unitsOfMeasure,
     redirectTo,
-    history, 
+    history,
   } = props;
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openConfirmModal, setConfirmModal] = useState(false);
@@ -28,19 +28,19 @@ const Product = (props) => {
     ? `${redirectTo}/product`
     : `${routes.CONFIGURATION}/product/add`;
   const editPath = redirectTo
-  ? `${redirectTo}/product`
-  : `${routes.CONFIGURATION}/product/edit`;
+    ? `${redirectTo}/product`
+    : `${routes.CONFIGURATION}/product/edit`;
 
   useEffect(() => {
     if (!loading && !products) {
       dispatch(getProducts(organization));
-    };
+    }
   }, [products]);
 
   useEffect(() => {
     if (!loading) {
       unitMeasures(unitsOfMeasure);
-    };
+    }
   }, [unitsOfMeasure]);
 
   const onAddButtonClick = () => {
@@ -72,21 +72,21 @@ const Product = (props) => {
       loading={loading}
       rows={products || []}
       columns={PRODUCT_COLUMNS}
-      filename='Products'
-      addButtonHeading='Product'
+      filename="Products"
+      addButtonHeading="Product"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle='Are you sure you want to Delete this Product?'
+      confirmModalTitle="Are you sure you want to Delete this Product?"
     >
       <Route path={`${addPath}`} component={AddProduct} />
       <Route path={`${editPath}/:id`} component={AddProduct} />
     </DataTableWrapper>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

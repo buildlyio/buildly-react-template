@@ -107,6 +107,6 @@ const ContainerDashboard = ({ location, history }) => {
       </UserContext.Provider>
     </div>
   );
-}
+};
 
 export default ContainerDashboard;

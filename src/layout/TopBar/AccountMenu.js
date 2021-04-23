@@ -42,7 +42,7 @@ const StyledMenuItem = withStyles((theme) => ({
   },
 }))(MenuItem);
 
-export default AccountMenu = (props) => {
+const AccountMenu = (props) => {
   const {
     anchorEl,
     setAnchorEl,
@@ -59,7 +59,7 @@ export default AccountMenu = (props) => {
   return (
     <div>
       <StyledMenu
-        id='customized-menu'
+        id="customized-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
@@ -68,17 +68,17 @@ export default AccountMenu = (props) => {
         <Box
           mb={2}
           p={2}
-          justifyContent='center'
-          textAlign='center'
+          justifyContent="center"
+          textAlign="center"
         >
-          <Typography variant='h6'>
+          <Typography variant="h6">
             {user && `${user.first_name} ${user.last_name}`}
           </Typography>
-          <Typography variant='body2'>
+          <Typography variant="body2">
             {user && `${user.email}`}
           </Typography>
           {organizationData && (
-            <Typography variant='body1'>
+            <Typography variant="body1">
               {`Works at: ${organizationData.name}`}
             </Typography>
           )}
@@ -86,13 +86,15 @@ export default AccountMenu = (props) => {
 
         <Divider />
         <StyledMenuItem onClick={handleMyAccountClick}>
-          <ListItemText primary='My Account' />
+          <ListItemText primary="My Account" />
         </StyledMenuItem>
         <Divider />
         <StyledMenuItem onClick={handleLogoutClick}>
-          <ListItemText primary='Logout' />
+          <ListItemText primary="Logout" />
         </StyledMenuItem>
       </StyledMenu>
     </div>
   );
-}
+};
+
+export default AccountMenu;

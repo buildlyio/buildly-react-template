@@ -31,8 +31,8 @@ const AdminPanel = ({ history, location, organizationData }) => {
     ]
     : [
       { label: 'Configuration', value: 'configuration' },
-    ]
-  const viewPath = (subNav.find(item => location.pathname.endsWith(item.value)) || subNav[0]).value;
+    ];
+  const viewPath = (subNav.find((item) => location.pathname.endsWith(item.value)) || subNav[0]).value;
   const [view, setView] = useState(viewPath);
 
   // this will be triggered whenever the content switcher is clicked to change the view
@@ -40,37 +40,37 @@ const AdminPanel = ({ history, location, organizationData }) => {
     history.push(`${routes.ADMIN_PANEL}/${view || location.state}`);
   }, [view]);
 
-  const viewTabClicked = (event, view) => {
-    setView(view);
+  const viewTabClicked = (event, newView) => {
+    setView(newView);
   };
 
   return (
     <Box mt={5} mb={5}>
       <Box mb={3}>
-        <Typography className={classes.heading} variant={'h4'}>
+        <Typography className={classes.heading} variant="h4">
           Admin Panel
         </Typography>
       </Box>
       <Box mb={3}>
         <Tabs value={view} onChange={viewTabClicked}>
-          {subNav.map((itemProps, index) => 
+          {subNav.map((itemProps, index) => (
             <Tab
               {...itemProps}
               key={`tab${index}:${itemProps.value}`}
             />
-          )}
+          ))}
         </Tabs>
       </Box>
       <Route path={routes.CONFIGURATION} component={Configuration} />
-      {organizationData && organizationData.allow_import_export && 
+      {organizationData && organizationData.allow_import_export && (
         <Route
           path={routes.IMPORT_EXPORT}
           component={ImportExport}
         />
-      }
+      )}
     </Box>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

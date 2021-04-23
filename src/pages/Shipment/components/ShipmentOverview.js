@@ -36,19 +36,19 @@ const ShipmentOverview = () => {
   const classes = useStyles();
 
   return (
-    <React.Fragment>
+    <>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Box mb={2}>
-            <Typography variant='body1'>
+            <Typography variant="body1">
               Shipment Info
             </Typography>
           </Box>
-          <TableContainer component={Card} variant='outlined'>
+          <TableContainer component={Card} variant="outlined">
             <Table
               className={classes.table}
-              size='small'
-              aria-label='a dense table'
+              size="small"
+              aria-label="a dense table"
             >
               <TableHead>
                 <TableRow>
@@ -65,7 +65,7 @@ const ShipmentOverview = () => {
                   <TableCell
                     style={{ borderBottom: 'none', width: 100 }}
                   >
-                    Quantity{' '}
+                    Quantity
                   </TableCell>
                   <TableCell
                     style={{ borderBottom: 'none', width: 100 }}
@@ -95,14 +95,14 @@ const ShipmentOverview = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Box mb={2}>
-                <Typography variant='body1'>
+                <Typography variant="body1">
                   Origin Info
                 </Typography>
-                <TableContainer component={Paper} variant='outlined'>
+                <TableContainer component={Paper} variant="outlined">
                   <Table
                     className={classes.table}
-                    size='small'
-                    aria-label='a dense table'
+                    size="small"
+                    aria-label="a dense table"
                   >
                     <TableHead>
                       <TableRow>
@@ -119,7 +119,7 @@ const ShipmentOverview = () => {
                         <TableCell
                           style={{ borderBottom: 'none', width: 50 }}
                         >
-                          Quantity{' '}
+                          Quantity
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -135,14 +135,14 @@ const ShipmentOverview = () => {
               </Box>
 
               <Box mb={2}>
-                <Typography variant='body1'>
+                <Typography variant="body1">
                   Shipper Info
                 </Typography>
-                <TableContainer component={Paper} variant='outlined'>
+                <TableContainer component={Paper} variant="outlined">
                   <Table
                     className={classes.table}
-                    size='small'
-                    aria-label='a dense table'
+                    size="small"
+                    aria-label="a dense table"
                   >
                     <TableHead>
                       <TableRow>
@@ -159,7 +159,7 @@ const ShipmentOverview = () => {
                         <TableCell
                           style={{ borderBottom: 'none', width: 100 }}
                         >
-                          Quantity{' '}
+                          Quantity
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -175,14 +175,14 @@ const ShipmentOverview = () => {
               </Box>
 
               <Box mb={2}>
-                <Typography variant='body1'>
+                <Typography variant="body1">
                   Destination Info
                 </Typography>
-                <TableContainer component={Paper} variant='outlined'>
+                <TableContainer component={Paper} variant="outlined">
                   <Table
                     className={classes.table}
-                    size='small'
-                    aria-label='a dense table'
+                    size="small"
+                    aria-label="a dense table"
                   >
                     <TableHead>
                       <TableRow>
@@ -199,7 +199,7 @@ const ShipmentOverview = () => {
                         <TableCell
                           style={{ borderBottom: 'none', width: 100 }}
                         >
-                          Quantity{' '}
+                          Quantity
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -220,21 +220,21 @@ const ShipmentOverview = () => {
                 googleMapURL={MAP_API_URL}
                 zoom={8}
                 loadingElement={
-                  <div style={{ height: `100%` }} />
+                  <div style={{ height: '100%' }} />
                 }
                 containerElement={
-                  <div style={{ height: `200px` }} />
+                  <div style={{ height: '200px' }} />
                 }
                 mapElement={
-                  <div style={{ height: `100%` }} />
+                  <div style={{ height: '100%' }} />
                 }
               />
             </Grid>
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </>
   );
-}
+};
 
 export default ShipmentOverview;

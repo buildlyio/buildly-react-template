@@ -22,14 +22,13 @@ import { PrivateRoute } from './routes/Private.route';
 import { routes } from './routes/routesConstants';
 import theme from './styles/theme';
 
-const App = () => {
-  return (
-    <Router>
-      <AppContext.Provider value={app}>
-        <ThemeProvider theme={theme}>
-          <div className='app'>
-            <CssBaseline />
-            {/* <Route
+const App = () => (
+  <Router>
+    <AppContext.Provider value={app}>
+      <ThemeProvider theme={theme}>
+        <div className="app">
+          <CssBaseline />
+          {/* <Route
               exact
               path='/'
               render={() =>
@@ -40,37 +39,34 @@ const App = () => {
                 )
               }
             /> */}
-            <Route
-              exact
-              path='/'
-              render={() =>
-                oauthService.hasValidAccessToken() ? (
-                  <Redirect to={routes.SHIPMENT} />
-                ) : (
-                  <Redirect to={routes.LOGIN} />
-                )
-              }
-            />
-            <Route path={routes.LOGIN} component={Login} />
-            <Route path={routes.REGISTER} component={Register} />
-            <Route
-              path={routes.RESET_PASSWORD}
-              component={EmailForm}
-            />
-            <Route
-              path={routes.RESET_PASSWORD_CONFIRM}
-              component={NewPasswordForm}
-            />
-            <PrivateRoute
-              path={routes.APP}
-              component={ContainerDashboard}
-            />
-          </div>
-          <Alert />
-        </ThemeProvider>
-      </AppContext.Provider>
-    </Router>
-  );
-}
+          <Route
+            exact
+            path="/"
+            render={() => (oauthService.hasValidAccessToken() ? (
+              <Redirect to={routes.SHIPMENT} />
+            ) : (
+              <Redirect to={routes.LOGIN} />
+            ))}
+          />
+          <Route path={routes.LOGIN} component={Login} />
+          <Route path={routes.REGISTER} component={Register} />
+          <Route
+            path={routes.RESET_PASSWORD}
+            component={EmailForm}
+          />
+          <Route
+            path={routes.RESET_PASSWORD_CONFIRM}
+            component={NewPasswordForm}
+          />
+          <PrivateRoute
+            path={routes.APP}
+            component={ContainerDashboard}
+          />
+        </div>
+        <Alert />
+      </ThemeProvider>
+    </AppContext.Provider>
+  </Router>
+);
 
 export default hot(module)(App);

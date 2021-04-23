@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
 import { routes } from '@routes/routesConstants';
 import { environment } from '@environments/environment';
-import AddItems from './forms/AddItems';
-import { itemColumns, getFormattedRow } from './ItemsConstants';
 import {
   getItems,
   deleteItem,
@@ -21,6 +19,8 @@ import {
 import DashboardWrapper from '@components/DashboardWrapper/DashboardWrapper';
 import { httpService } from '@modules/http/http.service';
 import { UserContext } from '@context/User.context';
+import { itemColumns, getFormattedRow } from './ItemsConstants';
+import AddItems from './forms/AddItems';
 
 const Items = ({
   dispatch,
@@ -55,20 +55,20 @@ const Items = ({
     if (itemData === null) {
       dispatch(getItems(organization));
       dispatch(getItemType(organization));
-    };
+    }
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
-    };
+    }
     if (products === null) {
       dispatch(getProducts(organization));
       dispatch(getProductType(organization));
-    };
+    }
     if (itemOptions === null) {
       httpService
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}shipment/item/`,
-          true
+          true,
         )
         .then((response) => response.json())
         .then((data) => {
@@ -77,14 +77,14 @@ const Items = ({
         .catch((error) => {
           dispatch({ type: GET_ITEM_OPTIONS_FAILURE, error });
         });
-    };
+    }
 
     if (productOptions === null) {
       httpService
         .makeOptionsRequest(
           'options',
           `${environment.API_URL}shipment/product/`,
-          true
+          true,
         )
         .then((response) => response.json())
         .then((data) => {
@@ -93,7 +93,7 @@ const Items = ({
         .catch((error) => {
           dispatch({ type: GET_PRODUCTS_OPTIONS_FAILURE, error });
         });
-    };
+    }
   }, []);
 
   useEffect(() => {
@@ -115,13 +115,13 @@ const Items = ({
         itemTypeList,
         unitsOfMeasure,
       ));
-    };
+    }
   }, [itemData, itemTypeList, unitsOfMeasure]);
 
   useEffect(() => {
     if (searchedData) {
       setFilteredRows(searchedData);
-    };
+    }
   }, [searchedData]);
 
   const editItem = (item) => {
@@ -138,10 +138,10 @@ const Items = ({
   };
 
   const handleConfirmModal = () => {
-    dispatch(deleteItem(deleteItemId,organization));
+    dispatch(deleteItem(deleteItemId, organization));
     setConfirmModal(false);
   };
-  
+
   const searchTable = (e) => {
     const searchFields = [
       // 'id',
@@ -165,25 +165,25 @@ const Items = ({
     <DashboardWrapper
       loading={loading}
       onAddButtonClick={onAddButtonClick}
-      dashboardHeading='Items'
-      addButtonHeading='Add Item'
+      dashboardHeading="Items"
+      addButtonHeading="Add Item"
       editAction={editItem}
       deleteAction={deleteItems}
       columns={itemColumns}
       redirectTo={redirectTo}
       rows={filteredRows}
-      hasSearch={noSearch ? false : true}
+      hasSearch={!noSearch}
       search={{ searchValue, searchAction: searchTable }}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle='Are you sure you want to delete this Item?'
+      confirmModalTitle="Are you sure you want to delete this Item?"
     >
       <Route path={`${addItemPath}`} component={AddItems} />
       <Route path={`${editItemPath}/:id`} component={AddItems} />
     </DashboardWrapper>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

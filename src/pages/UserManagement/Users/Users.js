@@ -11,7 +11,7 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core';
-import {MoreHoriz} from '@material-ui/icons';
+import { MoreHoriz } from '@material-ui/icons';
 import {
   PermissionsTable,
 } from '@components/PermissionsTable/PermissionsTable';
@@ -40,62 +40,61 @@ const Users = ({ data, dispatch }) => {
   // to get currently logged in user
   const user = useContext(UserContext);
   const isOrganizationAdmin = checkForAdmin(user);
- 
+
   useEffect(() => {
     if (!coreGroupsLoaded) {
       dispatch(getCoregroups());
       setCoreGroupsLoaded(true);
     } else {
       // define permissions
-      setPermissions(data.map(coregroup => ({
+      setPermissions(data.map((coregroup) => ({
         label: coregroup.name,
         value: coregroup.id,
-      })))
-    };
+      })));
+    }
   }, [data]);
 
-
   // table templates
-  const permissionsTemplate = (row, crud, classes) => {
-    if (coreGroupsLoaded) {
-      const [active, setActive] = useState(
-        row.core_groups[0]
-        && row.core_groups[0].id
-        || row.core_groups[0]
-      );
+  const permissionsTemplate = (row, crud) => {
+    const [active, setActive] = useState(
+      (row.core_groups[0] && row.core_groups[0].id)
+      || row.core_groups[0],
+    );
 
-      return (
-        <ButtonGroup
-          disableElevation
-          color='primary'
-          size='small'
-          disabled={
-            !row.is_active
-            || user.core_user_uuid === row.core_user_uuid
-          }
-        >
-          {permissions.map((permission, index) => (
-            <Button
-              className={classes.btnPermission}
-              key={`btnGroup${index}`}
-              variant={
-                permission.value === active
+    return coreGroupsLoaded ? (
+      <ButtonGroup
+        disableElevation
+        color="primary"
+        size="small"
+        disabled={
+          !row.is_active
+          || user.core_user_uuid === row.core_user_uuid
+        }
+      >
+        {permissions.map((permission, index) => (
+          <Button
+            className={classes.btnPermission}
+            key={`btnGroup${index}`}
+            variant={
+              permission.value === active
                 ? 'contained'
                 : 'outlined'
-              }
-              onClick={() => {
-                setActive(permission.value);
-                crud.updateItem({
-                  id: row.id,
-                  core_groups: [permission.value],
-                });
-              }}>
-              {permission.label}
-            </Button>
-          ))}
-        </ButtonGroup>
-      );
-    };
+            }
+            onClick={() => {
+              setActive(permission.value);
+              crud.updateItem({
+                id: row.id,
+                core_groups: [permission.value],
+              });
+            }}
+          >
+            {permission.label}
+          </Button>
+        ))}
+      </ButtonGroup>
+    ) : (
+      <></>
+    );
   };
 
   const actionsTemplate = (row, crud) => {
@@ -107,24 +106,24 @@ const Users = ({ data, dispatch }) => {
       if (action === 'delete') {
         crud.deleteItem(menu.row);
       } else if (action === 'deactivate') {
-        crud.updateItem({id: menu.row.id, is_active: false});
+        crud.updateItem({ id: menu.row.id, is_active: false });
       } else {
-        crud.updateItem({id: menu.row.id, is_active: true});
-      };
+        crud.updateItem({ id: menu.row.id, is_active: true });
+      }
       setMenu({ row: null, element: null });
     };
 
     const handleMenuClose = () => {
       setMenu({ row: null, element: null });
     };
-  
+
     return (
       <>
         <IconButton
           disabled={user.core_user_uuid === row.core_user_uuid}
-          aria-label='more'
+          aria-label="more"
           aria-controls={`userActions${row.id}`}
-          aria-haspopup='true'
+          aria-haspopup="true"
           onClick={handleMenuClick}
         >
           <MoreHoriz />
@@ -136,11 +135,9 @@ const Users = ({ data, dispatch }) => {
           open={Boolean(menu.row && (menu.row.id === row.id))}
           onClose={handleMenuClose}
         >
-          {row.actions.filter((option) =>
-            !(option.value === 'delete' && row.is_active),
-          ).map((option) => (
+          {row.actions.filter((option) => !(option.value === 'delete' && row.is_active)).map((option) => (
             <MenuItem
-              key={`userActions${row.id }:${option.value}`}
+              key={`userActions${row.id}:${option.value}`}
               onClick={() => handleMenuItemClick(option.value)}
             >
               {option.label}
@@ -154,11 +151,11 @@ const Users = ({ data, dispatch }) => {
   return (
     <Box>
       <Crud
-        deleteAction='DELETE_COREUSER'
-        updateAction='UPDATE_COREUSER'
-        createAction='CREATE_COREUSER'
-        loadAction='LOAD_DATA_COREUSER'
-        reducer='coreuserReducer'
+        deleteAction="DELETE_COREUSER"
+        updateAction="UPDATE_COREUSER"
+        createAction="CREATE_COREUSER"
+        loadAction="LOAD_DATA_COREUSER"
+        reducer="coreuserReducer"
       >
         { (crud) => {
           if (crud.getData()) {
@@ -173,183 +170,200 @@ const Users = ({ data, dispatch }) => {
                   { value: 'activate', label: 'Activate' },
                   { value: 'delete', label: 'Delete' },
                 ];
-              };
+              }
             });
-          };
+          }
 
           return (
             isOrganizationAdmin
-            ? (
-              <PermissionsTable
-                columns={[
-                  {
-                    label: 'Full name',
-                    prop: 'name',
-                    flex: '1',
-                    template: (row) => (
-                      <Typography
-                        variant='body1'
-                        style={
-                          !row.is_active
-                          ? {'color': '#aaa'}
-                          : null
-                        }
-                      >
-                        {row.first_name} {row.last_name}
-                      </Typography>
-                    ),
-                  },
-                  {
-                    label: 'Email',
-                    prop: 'email',
-                    flex: '2',
-                    template: (row) => (
-                      <Typography
-                        variant='body2'
-                        style={
-                          !row.is_active
-                          ? {'color': '#aaa'}
-                          : null
-                        }
-                      >
-                        {row.email}
-                      </Typography>
-                    ),
-                  },
-                  {
-                    label: 'Last activity',
-                    prop: 'activity',
-                    flex: '1',
-                    template: (row) => (
-                      <Typography
-                        variant='caption'
-                        style={{'color': '#aaa'}}
-                      >
-                        Today
-                      </Typography>
-                    ),
-                  },
-                  {
-                    label: 'Permissions',
-                    prop: 'permission',
-                    flex: '2',
-                    template: (row) =>
-                      permissionsTemplate(row, crud, classes),
-                  },
-                  {
-                    label: 'Actions',
-                    prop: 'options',
-                    flex: '1',
-                    template: (row) => actionsTemplate(row, crud),
-                  },
-                ]}
-                rows={crud.getData()}
-                sortFn={(a, b) => (
-                  a.core_user_uuid === user.core_user_uuid
-                    ? -1
-                    : b.core_user_uuid === user.core_user_uuid
-                      ? 1
-                      : 0
-                )}
-              />
-            )
-            : (
-              <PermissionsTable
-                columns={[
-                  {
-                    label: 'Full name',
-                    prop: 'name',
-                    flex: '1',
-                    template: (row) => (
-                      <Typography
-                        variant='body1'
-                        style={
-                          !row.is_active
-                          ? {'color': '#aaa'}
-                          : null
-                        }
-                      >
-                        {row.first_name} {row.last_name}
-                      </Typography>
-                    ),
-                  },
-                  {
-                    label: 'Email',
-                    prop: 'email',
-                    flex: '2',
-                    template: (row) => (
-                      <Typography
-                        variant='body2'
-                        style={
-                          !row.is_active
-                          ? {'color': '#aaa'}
-                          : null
-                        }
-                      >
-                        {row.email}
-                      </Typography>
-                    ),
-                  },
-                  {
-                    label: 'Organization name',
-                    prop: 'organization',
-                    flex: '2',
-                    template: (row) => (
-                      <Typography
-                        variant='body2'
-                        style={
-                          !row.is_active
-                          ? {'color': '#aaa'}
-                          : null
-                        }
-                      >
-                        {row.organization.name}
-                      </Typography>
-                    ),
-                  },
-                  {
-                    label: 'Last activity',
-                    prop: 'activity',
-                    flex: '1',
-                    template: (row) => (
-                      <Typography
-                        variant='caption'
-                        style={{'color': '#aaa'}}
-                      >
-                        Today
-                      </Typography>
-                    ),
-                  },
-                  {
-                    label: 'Permissions',
-                    prop: 'permission',
-                    flex: '2',
-                    template: (row) =>
-                      permissionsTemplate(row, crud, classes),
-                  },
-                  {
-                    label: 'Actions',
-                    prop: 'options',
-                    flex: '1',
-                    template: (row) => actionsTemplate(row, crud),
-                  },
-                ]}
-                rows={crud.getData()}
-                sortFn={(a, b) => (
-                  a.core_user_uuid === user.core_user_uuid
-                    ? -1
-                    : b.core_user_uuid === user.core_user_uuid
-                      ? 1
-                      : 0
-                )}
-              />
-            )
+              ? (
+                <PermissionsTable
+                  columns={[
+                    {
+                      label: 'Full name',
+                      prop: 'name',
+                      flex: '1',
+                      template: (row) => {
+                        const { is_active, first_name, last_name } = row;
+                        return (
+                          <Typography
+                            variant="body1"
+                            style={
+                              !is_active
+                                ? { color: '#aaa' }
+                                : null
+                            }
+                          >
+                            {`${first_name} ${last_name}`}
+                          </Typography>
+                        );
+                      },
+                    },
+                    {
+                      label: 'Email',
+                      prop: 'email',
+                      flex: '2',
+                      template: (row) => {
+                        const { is_active, email } = row;
+                        return (
+                          <Typography
+                            variant="body2"
+                            style={
+                            !is_active
+                              ? { color: '#aaa' }
+                              : null
+                          }
+                          >
+                            {email}
+                          </Typography>
+                        );
+                      },
+                    },
+                    {
+                      label: 'Last activity',
+                      prop: 'activity',
+                      flex: '1',
+                      template: (row) => (
+                        <Typography
+                          variant="caption"
+                          style={{ color: '#aaa' }}
+                        >
+                          Today
+                        </Typography>
+                      ),
+                    },
+                    {
+                      label: 'Permissions',
+                      prop: 'permission',
+                      flex: '2',
+                      template: (row) => permissionsTemplate(row, crud, classes),
+                    },
+                    {
+                      label: 'Actions',
+                      prop: 'options',
+                      flex: '1',
+                      template: (row) => actionsTemplate(row, crud),
+                    },
+                  ]}
+                  rows={crud.getData()}
+                  sortFn={(a, b) => {
+                    if (a.core_user_uuid === user.core_user_uuid) {
+                      return -1;
+                    }
+                    if (b.core_user_uuid === user.core_user_uuid) {
+                      return 1;
+                    }
+                    return 0;
+                  }}
+                />
+              )
+              : (
+                <PermissionsTable
+                  columns={[
+                    {
+                      label: 'Full name',
+                      prop: 'name',
+                      flex: '1',
+                      template: (row) => {
+                        const { is_active, first_name, last_name } = row;
+                        return (
+                          <Typography
+                            variant="body1"
+                            style={
+                            !is_active
+                              ? { color: '#aaa' }
+                              : null
+                          }
+                          >
+                            {`${first_name} ${last_name}`}
+                          </Typography>
+                        );
+                      },
+                    },
+                    {
+                      label: 'Email',
+                      prop: 'email',
+                      flex: '2',
+                      template: (row) => {
+                        const { is_active, email } = row;
+                        return (
+                          <Typography
+                            variant="body2"
+                            style={
+                            !is_active
+                              ? { color: '#aaa' }
+                              : null
+                          }
+                          >
+                            {email}
+                          </Typography>
+                        );
+                      },
+                    },
+                    {
+                      label: 'Organization name',
+                      prop: 'organization',
+                      flex: '2',
+                      template: (row) => {
+                        const { is_active, organization } = row;
+                        return (
+                          <Typography
+                            variant="body2"
+                            style={
+                            !is_active
+                              ? { color: '#aaa' }
+                              : null
+                          }
+                          >
+                            {organization.name}
+                          </Typography>
+                        );
+                      },
+                    },
+                    {
+                      label: 'Last activity',
+                      prop: 'activity',
+                      flex: '1',
+                      template: (row) => (
+                        <Typography
+                          variant="caption"
+                          style={{ color: '#aaa' }}
+                        >
+                          Today
+                        </Typography>
+                      ),
+                    },
+                    {
+                      label: 'Permissions',
+                      prop: 'permission',
+                      flex: '2',
+                      template: (row) => permissionsTemplate(row, crud, classes),
+                    },
+                    {
+                      label: 'Actions',
+                      prop: 'options',
+                      flex: '1',
+                      template: (row) => actionsTemplate(row, crud),
+                    },
+                  ]}
+                  rows={crud.getData()}
+                  sortFn={(a, b) => {
+                    if (a.core_user_uuid === user.core_user_uuid) {
+                      return -1;
+                    }
+                    if (b.core_user_uuid === user.core_user_uuid) {
+                      return 1;
+                    }
+                    return 0;
+                  }}
+                />
+              )
           );
         }}
       </Crud>
-  </Box>
+    </Box>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

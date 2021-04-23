@@ -33,10 +33,10 @@ const ImportExport = () => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls='import-file-content'
-          id='import-file-header'
+          aria-controls="import-file-content"
+          id="import-file-header"
         >
-          <Typography variant='h5'>
+          <Typography variant="h5">
             Import from File
           </Typography>
         </AccordionSummary>
@@ -49,10 +49,10 @@ const ImportExport = () => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls='import-api-content'
-          id='import-api-header'
+          aria-controls="import-api-content"
+          id="import-api-header"
         >
-          <Typography variant='h5'>
+          <Typography variant="h5">
             Import from API
           </Typography>
         </AccordionSummary>
@@ -65,10 +65,10 @@ const ImportExport = () => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls='export-content'
-          id='export-header'
+          aria-controls="export-content"
+          id="export-header"
         >
-          <Typography variant='h5'>
+          <Typography variant="h5">
             Export Data
           </Typography>
         </AccordionSummary>
@@ -79,7 +79,7 @@ const ImportExport = () => {
         </AccordionDetails>
       </Accordion>
     </Box>
-  )
-}
+  );
+};
 
 export default ImportExport;

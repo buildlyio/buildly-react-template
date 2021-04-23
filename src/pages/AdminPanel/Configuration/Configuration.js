@@ -49,10 +49,10 @@ const Configuration = (props) => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls='organization-setting-content'
-          id='organization-setting-header'
+          aria-controls="organization-setting-content"
+          id="organization-setting-header"
         >
-          <Typography variant='h5'>
+          <Typography variant="h5">
             Organization Settings
             <CustomizedTooltips toolTipText={ORG_SETTINGS_TOOLTIP} />
           </Typography>
@@ -64,10 +64,10 @@ const Configuration = (props) => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls='custodian-type-content'
-          id='custodian-type-header'
+          aria-controls="custodian-type-content"
+          id="custodian-type-header"
         >
-          <Typography variant='h5'>
+          <Typography variant="h5">
             Custodian Type
             <CustomizedTooltips toolTipText={CUSTODIAN_TYPE_TOOLTIP} />
           </Typography>
@@ -79,10 +79,10 @@ const Configuration = (props) => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls='gateway-type-content'
-          id='gateway-type-header'
+          aria-controls="gateway-type-content"
+          id="gateway-type-header"
         >
-          <Typography variant='h5'>
+          <Typography variant="h5">
             Gateway Type
             <CustomizedTooltips toolTipText={GATEWAY_TYPE_TOOLTIP} />
           </Typography>
@@ -94,10 +94,10 @@ const Configuration = (props) => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls='item-type-content'
-          id='item-type-header'
+          aria-controls="item-type-content"
+          id="item-type-header"
         >
-          <Typography variant='h5'>
+          <Typography variant="h5">
             Item Type
             <CustomizedTooltips toolTipText={ITEM_TYPE_TOOLTIP} />
           </Typography>
@@ -109,10 +109,10 @@ const Configuration = (props) => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls='product-content'
-          id='product-header'
+          aria-controls="product-content"
+          id="product-header"
         >
-          <Typography variant='h5'>
+          <Typography variant="h5">
             Products
             <CustomizedTooltips toolTipText={PRODUCT_TOOLTIP} />
           </Typography>
@@ -124,10 +124,10 @@ const Configuration = (props) => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls='product-type-content'
-          id='product-type-header'
+          aria-controls="product-type-content"
+          id="product-type-header"
         >
-          <Typography variant='h5'>
+          <Typography variant="h5">
             Product Type
             <CustomizedTooltips toolTipText={PRODUCT_TYPE_TOOLTIP} />
           </Typography>
@@ -139,10 +139,10 @@ const Configuration = (props) => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls='sensor-type-content'
-          id='sensor-type-header'
+          aria-controls="sensor-type-content"
+          id="sensor-type-header"
         >
-          <Typography variant='h5'>
+          <Typography variant="h5">
             Sensor Type
             <CustomizedTooltips toolTipText={SENSOR_TYPE_TOOLTIP} />
           </Typography>
@@ -154,10 +154,10 @@ const Configuration = (props) => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls='shipment-flag-content'
-          id='shipment-flag-header'
+          aria-controls="shipment-flag-content"
+          id="shipment-flag-header"
         >
-          <Typography variant='h5'>
+          <Typography variant="h5">
             Shipment Flag
             <CustomizedTooltips toolTipText={SHIPMENT_FLAG_TOOLTIP} />
           </Typography>
@@ -169,10 +169,10 @@ const Configuration = (props) => {
       <Accordion className={classes.accordian}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls='unit-of-measure-content'
-          id='unit-of-measure-header'
+          aria-controls="unit-of-measure-content"
+          id="unit-of-measure-header"
         >
-          <Typography variant='h5'>
+          <Typography variant="h5">
             Units of Measure
             <CustomizedTooltips
               toolTipText={UNITS_OF_MEASURE_TOOLTIP}
@@ -184,8 +184,8 @@ const Configuration = (props) => {
         </AccordionDetails>
       </Accordion>
     </div>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

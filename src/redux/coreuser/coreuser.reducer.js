@@ -1,11 +1,11 @@
+import PropTypes from 'prop-types';
+import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
 import {
   CREATE_COREUSER_COMMIT,
   DELETE_COREUSER_COMMIT,
   LOAD_DATA_COREUSER_COMMIT,
   UPDATE_COREUSER_COMMIT,
 } from './coreuser.actions';
-import {addAll, deleteOne, upsertOne} from '@redux/reducer.utils';
-import PropTypes from 'prop-types';
 
 const initialState = {
   data: [],
@@ -19,12 +19,16 @@ export default function coreuserReducer(state = initialState, action) {
   switch (action.type) {
     case LOAD_DATA_COREUSER_COMMIT:
       return addAll(state, action);
+
     case CREATE_COREUSER_COMMIT:
       return upsertOne(state, action, 'id');
+
     case UPDATE_COREUSER_COMMIT:
       return upsertOne(state, action, 'id');
+
     case DELETE_COREUSER_COMMIT:
       return deleteOne(state, action, 'id');
+
     default:
       return state;
   }

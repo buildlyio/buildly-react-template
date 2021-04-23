@@ -21,10 +21,11 @@ export const gatewayColumns = [
     id: 'gateway_status',
     label: 'Status',
     minWidth: 150,
-    format: (value) =>
+    format: (value) => (
       value && value !== '-'
-      ? value.charAt(0).toUpperCase() + value.substr(1)
-      : value,
+        ? value.charAt(0).toUpperCase() + value.substr(1)
+        : value
+    ),
   },
   {
     id: 'shipment',
@@ -35,10 +36,11 @@ export const gatewayColumns = [
     id: 'activation_date',
     label: 'Activation',
     minWidth: 180,
-    format: (value) =>
+    format: (value) => (
       value && value !== '-'
-      ? returnFormattedData(value)
-      : value,
+        ? returnFormattedData(value)
+        : value
+    ),
   },
 ];
 
@@ -54,30 +56,28 @@ export const getFormattedRow = (data, itemTypeList, shipmentData) => {
   ) {
     const formattedData = [...data];
     formattedData.forEach((element) => {
-      element['shipment'] = [];
+      element.shipment = [];
       itemTypeList.forEach((type) => {
         if (type.url === element.gateway_type) {
-          element['gateway_type_value'] = type.name;
-        };
+          element.gateway_type_value = type.name;
+        }
       });
       shipmentData.forEach((shipment) => {
         if (
           element.shipment_ids
           && element.shipment_ids.includes(shipment.partner_shipment_id)
         ) {
-          element['shipment'].push(shipment.name);
-        };
+          element.shipment.push(shipment.name);
+        }
       });
-      if (element['shipment'].length === 0) {
-        element['shipment'] = '-';
-      };
+      if (element.shipment.length === 0) {
+        element.shipment = '-';
+      }
     });
 
-    const sortedList = formattedData.sort((a, b) =>
-      moment.utc(a.create_date).diff(moment.utc(b.create_date))
-    );
+    const sortedList = formattedData.sort((a, b) => moment.utc(a.create_date).diff(moment.utc(b.create_date)));
     return sortedList;
-  };
+  }
   return data;
 };
 
@@ -98,10 +98,11 @@ export const sensorsColumns = [
     id: 'activation_date',
     label: 'Activated',
     minWidth: 150,
-    format: (value) =>
+    format: (value) => (
       value && value !== '-'
-      ? returnFormattedData(value)
-      : value,
+        ? returnFormattedData(value)
+        : value
+    ),
   },
   {
     id: 'associated_gateway',
@@ -117,23 +118,21 @@ export const getFormattedSensorRow = (data, sensorTypeList, gatewayData) => {
     formattedData.forEach((element) => {
       sensorTypeList.forEach((type) => {
         if (type.url === element.sensor_type) {
-          element['sensor_type_value'] = type.name;
-        };
+          element.sensor_type_value = type.name;
+        }
       });
       if (gatewayData && gatewayData.length) {
         gatewayData.forEach((gateway) => {
           if (gateway.url === element.gateway) {
-            element['associated_gateway'] = gateway.name;
-          };
+            element.associated_gateway = gateway.name;
+          }
         });
-      };
+      }
     });
 
-    const sortedList = formattedData.sort((a, b) =>
-      moment.utc(a.create_date).diff(moment.utc(b.create_date))
-    );
+    const sortedList = formattedData.sort((a, b) => moment.utc(a.create_date).diff(moment.utc(b.create_date)));
     return sortedList;
-  };
+  }
   return data;
 };
 
@@ -148,14 +147,12 @@ export const getAvailableGateways = (
   data,
   gateway_type,
   gatewayTypeList,
-  shipmentData
+  shipmentData,
 ) => {
   const gatewayData = getFormattedRow(data, gatewayTypeList, shipmentData);
   return (
     gatewayData.sort(compareSort('name'))
-    && gatewayData.filter((gateway) =>
-      gateway.gateway_status === 'available'
-      && gateway.gateway_type_value.toLowerCase().includes(gateway_type)
-    )
+    && gatewayData.filter((gateway) => gateway.gateway_status === 'available'
+      && gateway.gateway_type_value.toLowerCase().includes(gateway_type))
   );
 };

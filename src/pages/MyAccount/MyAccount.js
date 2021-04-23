@@ -81,37 +81,37 @@ const MyAccount = ({
   let user;
   if (data && data.data) {
     user = data.data;
-  };
+  }
 
   return (
-    <Box mt={3} textAlign='center'>
+    <Box mt={3} textAlign="center">
       {loading && <Loader open={loading} />}
-      <Typography className={classes.pageHeading} variant='h5'>
+      <Typography className={classes.pageHeading} variant="h5">
         Accounts and Settings
       </Typography>
-      <Grid container spacing={4} justify='center'>
+      <Grid container spacing={4} justify="center">
         <Grid item md={contactInfo ? 6 : 8} xs={12}>
-          <Typography variant='h6'>Account Info</Typography>
-          <Card variant='outlined'>
+          <Typography variant="h6">Account Info</Typography>
+          <Card variant="outlined">
             <CardContent>
               <div className={classes.iconRight}>
                 <IconButton
-                  edge='end'
-                  color='secondary'
-                  aria-label='edit'
+                  edge="end"
+                  color="secondary"
+                  aria-label="edit"
                   onClick={() => setModal(true)}
                 >
                   <EditIcon />
                 </IconButton>
               </div>
-              <Grid container spacing={3} justify='center'>
+              <Grid container spacing={3} justify="center">
                 <Grid item xs={12}>
                   <Avatar
-                    alt='Remy Sharp'
+                    alt="Remy Sharp"
                     src={profile}
                     className={classes.large}
                   />
-                  <Typography variant='h6'>
+                  <Typography variant="h6">
                     {user && user.username}
                   </Typography>
                 </Grid>
@@ -119,10 +119,10 @@ const MyAccount = ({
                   <Grid container spacing={5}>
                     <Grid item xs={12}>
                       <div className={classes.infoSection}>
-                        <Typography variant='body2'>
+                        <Typography variant="body2">
                           First Name:
                         </Typography>
-                        <Typography variant='body1'>
+                        <Typography variant="body1">
                           {user && user.first_name}
                         </Typography>
                       </div>
@@ -130,10 +130,10 @@ const MyAccount = ({
                     </Grid>
                     <Grid item xs={12}>
                       <div className={classes.infoSection}>
-                        <Typography variant='body2'>
+                        <Typography variant="body2">
                           Last Name:
                         </Typography>
-                        <Typography variant='body1'>
+                        <Typography variant="body1">
                           {user && user.last_name}
                         </Typography>
                       </div>
@@ -141,10 +141,10 @@ const MyAccount = ({
                     </Grid>
                     <Grid item xs={12}>
                       <div className={classes.infoSection}>
-                        <Typography variant='body2'>
+                        <Typography variant="body2">
                           Customer ID:
                         </Typography>
-                        <Typography variant='body1'>
+                        <Typography variant="body1">
                           {user && user.core_user_uuid}
                         </Typography>
                       </div>
@@ -153,10 +153,10 @@ const MyAccount = ({
                     {organizationData && (
                       <Grid item xs={12}>
                         <div className={classes.infoSection}>
-                          <Typography variant='body2'>
+                          <Typography variant="body2">
                             Company:
                           </Typography>
-                          <Typography variant='body1'>
+                          <Typography variant="body1">
                             {organizationData.name}
                           </Typography>
                         </div>
@@ -165,10 +165,10 @@ const MyAccount = ({
                     )}
                     <Grid item xs={12}>
                       <div className={classes.infoSection}>
-                        <Typography variant='body2'>
+                        <Typography variant="body2">
                           Email:
                         </Typography>
-                        <Typography variant='body1'>
+                        <Typography variant="body1">
                           {user && user.email}
                         </Typography>
                       </div>
@@ -176,14 +176,13 @@ const MyAccount = ({
                     </Grid>
                     <Grid item xs={12}>
                       <div className={classes.infoSection}>
-                        <Typography variant='body2'>
+                        <Typography variant="body2">
                           Shipment Email Alerts:
                         </Typography>
-                        <Typography variant='body1'>
+                        <Typography variant="body1">
                           {user && user.email_alert_flag
                             ? 'Yes'
-                            : 'No'
-                          }
+                            : 'No'}
                         </Typography>
                       </div>
                       <Divider />
@@ -196,14 +195,14 @@ const MyAccount = ({
         </Grid>
         {contactInfo && (
           <Grid item md={6} xs={12}>
-            <Card variant='outlined'>Contact info</Card>
+            <Card variant="outlined">Contact info</Card>
           </Grid>
         )}
       </Grid>
       <Button
-        type='button'
-        variant='contained'
-        color='primary'
+        type="button"
+        variant="contained"
+        color="primary"
         onClick={() => history.push(routes.SHIPMENT)}
         className={classes.backButton}
       >
@@ -213,9 +212,9 @@ const MyAccount = ({
         <Modal
           open={openModal}
           setOpen={() => setModal(!openModal)}
-          title='Edit Profile Info'
+          title="Edit Profile Info"
           titleClass={classes.formTitle}
-          maxWidth='sm'
+          maxWidth="sm"
         >
           <EditProfileInfo
             editData={user}
@@ -226,7 +225,7 @@ const MyAccount = ({
       )}
     </Box>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

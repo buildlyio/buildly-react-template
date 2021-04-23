@@ -1,7 +1,11 @@
-import { put, takeLatest, all, call } from "redux-saga/effects";
-import { httpService } from "../../../modules/http/http.service";
-import { environment } from "environments/environment";
-import { showAlert } from "../../alert/actions/alert.actions";
+import {
+  put, takeLatest, all, call,
+} from 'redux-saga/effects';
+import { httpService } from '@modules/http/http.service';
+import { environment } from '@environments/environment';
+import { showAlert } from '@redux/alert/actions/alert.actions';
+import { routes } from '@routes/routesConstants';
+import { compareSort } from '@utils/utilMethods';
 import {
   ADD_SHIPMENT,
   DELETE_SHIPMENT,
@@ -34,233 +38,198 @@ import {
   ADD_PDF_IDENTIFIER,
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
-} from "../actions/shipment.actions";
-import { compareSort } from "../../../utils/utilMethods";
-import { routes } from "../../../routes/routesConstants";
+} from '../actions/shipment.actions';
 
-const shipmentApiEndPoint = "shipment/";
+const shipmentApiEndPoint = 'shipment/';
 
 function* getShipmentList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      "get",
+      'get',
       `${environment.API_URL}${shipmentApiEndPoint}shipment/?organization_uuid=${payload.organization_uuid}`,
       null,
-      true
+      true,
     );
     if (data && data.data) {
       yield put(getShipmentFlag(payload.organization_uuid));
     }
-    yield [yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data })];
+    yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data });
     if (payload.id) {
       yield put(
         saveShipmentFormData(
-          data.data.find(shipment => shipment.id === payload.id)
-        ))
+          data.data.find((shipment) => shipment.id === payload.id),
+        ),
+      );
     }
   } catch (error) {
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Couldn't load data due to some error!",
-        })
+          message: 'Couldn\'t load data due to some error!',
+        }),
       ),
       yield put({
         type: GET_SHIPMENTS_FAILURE,
-        error: error,
+        error,
       }),
     ];
   }
 }
 
 function* deleteShipment(payload) {
-  let { shipmentId, organization_uuid } = payload;
+  const { shipmentId, organization_uuid } = payload;
   try {
     yield call(
       httpService.makeRequest,
-      "delete",
+      'delete',
       `${environment.API_URL}${shipmentApiEndPoint}shipment/${shipmentId}/`,
       null,
-      true
+      true,
     );
     yield [
       yield put(
         showAlert({
-          type: "success",
+          type: 'success',
           open: true,
-          message: "Shipment deleted successfully!",
-        })
+          message: 'Shipment deleted successfully!',
+        }),
       ),
       yield put(getShipmentDetails(organization_uuid)),
     ];
   } catch (error) {
-    console.log("error", error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Error in deleting Shipment!",
-        })
+          message: 'Error in deleting Shipment!',
+        }),
       ),
       yield put({
         type: DELETE_SHIPMENT_FAILURE,
-        error: error,
+        error,
       }),
     ];
   }
 }
 
 function* editShipment(action) {
-  let { payload, history, redirectTo } = action;
+  const { payload, history, redirectTo } = action;
   try {
-    let data = yield call(
+    const data = yield call(
       httpService.makeRequest,
-      "put",
+      'put',
       `${environment.API_URL}${shipmentApiEndPoint}shipment/${payload.id}/`,
       payload,
-      true
+      true,
     );
-
     yield [
-      yield put(getShipmentDetails(payload.organization_uuid, payload.id)),
+      yield put(
+        getShipmentDetails(payload.organization_uuid, payload.id),
+      ),
       yield put(
         showAlert({
-          type: "success",
+          type: 'success',
           open: true,
-          message: "Shipment successfully Edited!",
-        })
+          message: 'Shipment successfully Edited!',
+        }),
       ),
-      yield history && redirectTo
-        ? call(history.push, redirectTo, {
-            type: "edit",
-            data: data.data,
-            from: routes.SHIPMENT,
-          })
-        : () => {},
     ];
+    if (history && redirectTo) {
+      yield call(history.push, redirectTo, {
+        type: 'edit',
+        data: data.data,
+        from: routes.SHIPMENT,
+      });
+    }
   } catch (error) {
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Error in Updating Shipment!",
-        })
+          message: 'Error in Updating Shipment!',
+        }),
       ),
       yield put({
         type: EDIT_SHIPMENT_FAILURE,
-        error: error,
+        error,
       }),
     ];
   }
 }
 
 function* addShipment(action) {
-  let { history, payload, redirectTo } = action;
+  const { history, payload, redirectTo } = action;
   try {
-    let data = yield call(
+    const data = yield call(
       httpService.makeRequest,
-      "post",
+      'post',
       `${environment.API_URL}${shipmentApiEndPoint}shipment/`,
       payload,
-      true
+      true,
     );
     yield [
       yield put(
         showAlert({
-          type: "success",
+          type: 'success',
           open: true,
-          message: "Successfully Added Shipment",
-        })
+          message: 'Successfully Added Shipment',
+        }),
       ),
-      yield put(getShipmentDetails(payload.organization_uuid, data.data.id)),
+      yield put(
+        getShipmentDetails(payload.organization_uuid, data.data.id),
+      ),
     ];
-    if (redirectTo) {
+    if (history && redirectTo) {
       yield call(history.push, redirectTo);
     }
   } catch (error) {
-    console.log("error", error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Error in creating Shipment",
-        })
+          message: 'Error in creating Shipment',
+        }),
       ),
       yield put({
         type: ADD_SHIPMENT_FAILURE,
-        error: error,
+        error,
       }),
     ];
   }
 }
 
-const alertFilter = (filterObject, list) => {
-  let { temp, humid, recall, delay } = filterObject;
-  let filter = [];
-  let filteredList = [];
-  if (
-    (temp && humid && recall && delay) ||
-    (!temp && !humid && !recall && !delay)
-  ) {
-    return list;
-  }
-
-  if (filterObject.temp) filter.push("temperature");
-  if (filterObject.humid) filter.push("humidity");
-  if (filterObject.delay) filter.push("delay");
-  if (filterObject.recall) filter.push("recall");
-
-  list.forEach((shipment) => {
-    let flags = [];
-    if (shipment.flag_list) {
-      shipment.flag_list.forEach((flag) => {
-        flags.push(flag.name.toLowerCase());
-      });
-    }
-    if (flags.length > 0 && filter.every((val) => flags.includes(val)))
-      filteredList.push(shipment);
-  });
-
-  // filteredList = list.filter((item) => {
-  //   return (
-  //     item.shipment_flag &&
-  //     filter.indexOf(item.shipment_flag.toLowerCase()) !== -1
-  //   );
-  // });
-  return filteredList;
-};
-
 function* getShipmentFlagList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      "get",
+      'get',
       `${environment.API_URL}${shipmentApiEndPoint}shipment_flag/?organization_uuid=${payload.organization_uuid}`,
       null,
-      true
+      true,
     );
-    let sortedData = data.data.sort(compareSort("name"));
-
-    yield [yield put({ type: GET_SHIPMENT_FLAG_SUCCESS, data: sortedData })];
+    const sortedData = data.data.sort(compareSort('name'));
+    yield put({
+      type: GET_SHIPMENT_FLAG_SUCCESS,
+      data: sortedData,
+    });
   } catch (error) {
-    console.log("error", error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Couldn't load data due to some error!",
-        })
+          message: 'Couldn\'t load data due to some error!',
+        }),
       ),
       yield put({
         type: GET_SHIPMENT_FLAG_FAILURE,
-        error: error,
+        error,
       }),
     ];
   }
@@ -270,25 +239,27 @@ function* getDashboard(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      "get",
+      'get',
       `${environment.API_URL}${shipmentApiEndPoint}dashboard/?organization_uuid=${payload.organization_uuid}`,
       null,
-      true
+      true,
     );
-    yield [yield put({ type: GET_DASHBOARD_ITEMS_SUCCESS, data: data.data })];
+    yield put({
+      type: GET_DASHBOARD_ITEMS_SUCCESS,
+      data: data.data,
+    });
   } catch (error) {
-    console.log("error", error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Couldn't load data due to some error!",
-        })
+          message: 'Couldn\'t load data due to some error!',
+        }),
       ),
       yield put({
         type: GET_DASHBOARD_ITEMS_FAILURE,
-        error: error,
+        error,
       }),
     ];
   }
@@ -298,38 +269,37 @@ function* sendEmailAlerts(payload) {
   try {
     const alerts = yield call(
       httpService.makeRequest,
-      "post",
+      'post',
       `${environment.API_URL}coreuser/alert/`,
-      payload.alerts
+      payload.alerts,
     );
     yield put(
       showAlert({
-        type: "info",
+        type: 'info',
         open: true,
-        message: "Email alerts sent successfully",
-      })
+        message: 'Email alerts sent successfully',
+      }),
     );
   } catch (error) {
-    console.log("error", error);
     yield put(
       showAlert({
-        type: "error",
+        type: 'error',
         open: true,
-        message: "Couldn't send email alerts due to some error!",
-      })
+        message: 'Couldn\'t send email alerts due to some error!',
+      }),
     );
   }
 }
 
 function* addShipmentFlag(action) {
-  let { payload } = action;
+  const { payload } = action;
   try {
     const data = yield call(
       httpService.makeRequest,
-      "post",
+      'post',
       `${environment.API_URL}${shipmentApiEndPoint}shipment_flag/`,
       payload,
-      true
+      true,
     );
     if (data && data.data) {
       yield [
@@ -339,40 +309,39 @@ function* addShipmentFlag(action) {
         }),
         yield put(
           showAlert({
-            type: "success",
+            type: 'success',
             open: true,
-            message: "Successfully Added Shipment Flag",
-          })
+            message: 'Successfully Added Shipment Flag',
+          }),
         ),
       ];
     }
   } catch (error) {
-    console.log(error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Couldn't Add Shipment Flag due to some error!",
-        })
+          message: 'Couldn\'t Add Shipment Flag due to some error!',
+        }),
       ),
       yield put({
         type: ADD_SHIPMENT_FLAG_FAILURE,
-        error: error,
+        error,
       }),
     ];
   }
 }
 
 function* editShipmentFlag(action) {
-  let { payload } = action;
+  const { payload } = action;
   try {
     const data = yield call(
       httpService.makeRequest,
-      "put",
+      'put',
       `${environment.API_URL}${shipmentApiEndPoint}shipment_flag/${payload.id}`,
       payload,
-      true
+      true,
     );
     if (data && data.data) {
       yield [
@@ -382,26 +351,25 @@ function* editShipmentFlag(action) {
         }),
         yield put(
           showAlert({
-            type: "success",
+            type: 'success',
             open: true,
-            message: "Successfully Edited Shipment Flag",
-          })
+            message: 'Successfully Edited Shipment Flag',
+          }),
         ),
       ];
     }
   } catch (error) {
-    console.log(error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Couldn't Edit Shipment Flag due to some error!",
-        })
+          message: 'Couldn\'t Edit Shipment Flag due to some error!',
+        }),
       ),
       yield put({
         type: EDIT_SHIPMENT_FLAG_FAILURE,
-        error: error,
+        error,
       }),
     ];
   }
@@ -411,10 +379,10 @@ function* deleteShipmentFlag(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      "delete",
+      'delete',
       `${environment.API_URL}${shipmentApiEndPoint}shipment_flag/${payload.id}`,
       null,
-      true
+      true,
     );
     yield [
       yield put({
@@ -423,39 +391,46 @@ function* deleteShipmentFlag(payload) {
       }),
       yield put(
         showAlert({
-          type: "success",
+          type: 'success',
           open: true,
-          message: "Successfully Deleted Shipment Flag",
-        })
+          message: 'Successfully Deleted Shipment Flag',
+        }),
       ),
     ];
   } catch (error) {
-    console.log(error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Couldn't Delete Shipment Flag due to some error!",
-        })
+          message: 'Couldn\'t Delete Shipment Flag due to some error!',
+        }),
       ),
       yield put({
         type: DELETE_SHIPMENT_FLAG_FAILURE,
-        error: error,
+        error,
       }),
     ];
   }
 }
 
 function* pdfIdentifier(action) {
-  const { data, filename, identifier, payload, history, redirectTo, organization_uuid } = action
+  const {
+    data,
+    filename,
+    identifier,
+    payload,
+    history,
+    redirectTo,
+    organization_uuid,
+  } = action;
   try {
     const response = yield call(
       httpService.makeRequest,
-      "post",
+      'post',
       `${environment.API_URL}${shipmentApiEndPoint}upload_file/`,
       data,
-      true
+      true,
     );
     const uploaded_pdf = payload.uploaded_pdf
       ? [...payload.uploaded_pdf, filename]
@@ -463,9 +438,9 @@ function* pdfIdentifier(action) {
     const uploaded_pdf_link = payload.uploaded_pdf_link
       ? [...payload.uploaded_pdf_link, response.data['aws url']]
       : [response.data['aws url']];
-    const unique_identifier = identifier ? identifier : payload.unique_identifier;
+    const unique_identifier = identifier || payload.unique_identifier;
     yield [
-      yield put({ 
+      yield put({
         type: ADD_PDF_IDENTIFIER_SUCCESS,
         uploaded_pdf,
         uploaded_pdf_link,
@@ -485,25 +460,24 @@ function* pdfIdentifier(action) {
       }),
       yield put(
         showAlert({
-          type: "success",
+          type: 'success',
           open: true,
-          message: "Successfully Added PDF and Unique Identifer",
-        })
+          message: 'Successfully Added PDF and Unique Identifer',
+        }),
       ),
     ];
   } catch (error) {
-    console.log(error);
     yield [
       yield put(
         showAlert({
-          type: "error",
+          type: 'error',
           open: true,
-          message: "Couldn't Upload Bill due to some error!",
-        })
+          message: 'Couldn\'t Upload Bill due to some error!',
+        }),
       ),
       yield put({
         type: ADD_PDF_IDENTIFIER_FAILURE,
-        error: error,
+        error,
       }),
     ];
   }

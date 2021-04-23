@@ -125,17 +125,17 @@ const AddCustodians = ({
   useEffect(() => {
     if (custodianOptions && custodianOptions.actions) {
       setCustodianMetaData(custodianOptions.actions.POST);
-    };
+    }
     if (contactOptions && contactOptions.actions) {
       setProductMetaData(contactOptions.actions);
-    };
+    }
   }, [contactOptions, custodianOptions]);
 
   const closeModal = () => {
     toggleModal(false);
     if (location && location.state) {
       history.push(redirectTo);
-    };
+    }
   };
 
   /**
@@ -144,7 +144,7 @@ const AddCustodians = ({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    let contact_obj = {
+    const contact_obj = {
       country: country.value,
       state: state.value,
       address1: address_1.value,
@@ -161,7 +161,7 @@ const AddCustodians = ({
       custodian_type: custodianType.value,
       name: company.value,
       custodian_glns: glnNumber.value,
-      contact_obj: contact_obj,
+      contact_obj,
       ...(editPage && { url: editData.url }),
       ...(editPage && { id: editData.id }),
       organization_uuid: organization,
@@ -178,7 +178,7 @@ const AddCustodians = ({
         history,
         redirectTo,
       ));
-    };
+    }
   };
 
   /**
@@ -204,25 +204,25 @@ const AddCustodians = ({
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     if (
-      !company.value ||
-      !custodianType.value ||
-      !address_1.value ||
-      !state.value ||
-      !country.value
+      !company.value
+      || !custodianType.value
+      || !address_1.value
+      || !state.value
+      || !country.value
     ) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
@@ -238,7 +238,7 @@ const AddCustodians = ({
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={'md'}
+          maxWidth="md"
         >
           <form
             className={classes.form}
@@ -248,34 +248,34 @@ const AddCustodians = ({
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12} md={6} sm={6}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
-                  id='company'
-                  label='Company Name'
-                  name='company'
-                  autoComplete='company'
+                  id="company"
+                  label="Company Name"
+                  name="company"
+                  autoComplete="company"
                   error={
                     formError.company
                     && formError.company.error
                   }
                   helperText={
                     formError.company
-                    ? formError.company.message
-                    : ''
+                      ? formError.company.message
+                      : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', company)}
                   {...company.bind}
                   InputProps={
-                    custodianMetaData['name'] &&
-                    custodianMetaData['name'].help_text && {
+                    custodianMetaData.name
+                    && custodianMetaData.name.help_text && {
                       endAdornment: (
-                        <InputAdornment position='end'>
-                          {custodianMetaData['name'].help_text && (
+                        <InputAdornment position="end">
+                          {custodianMetaData.name.help_text && (
                             <CustomizedTooltips
                               toolTipText={
-                                custodianMetaData['name'].help_text
+                                custodianMetaData.name.help_text
                               }
                             />
                           )}
@@ -285,26 +285,26 @@ const AddCustodians = ({
                   }
                 />
               </Grid>
-              <Grid item item xs={12} md={6} sm={6}>
+              <Grid item xs={12} md={6} sm={6}>
                 <TextField
-                  variant='filled'
-                  margin='normal'
+                  variant="filled"
+                  margin="normal"
                   fullWidth
                   disabled
-                  id='alias'
-                  label='Alias'
-                  name='alias'
-                  autoComplete='alias'
+                  id="alias"
+                  label="Alias"
+                  name="alias"
+                  autoComplete="alias"
                   {...alias.bind}
                   InputProps={
-                    custodianMetaData['alias'] &&
-                    custodianMetaData['alias'].help_text && {
+                    custodianMetaData.alias
+                    && custodianMetaData.alias.help_text && {
                       endAdornment: (
-                        <InputAdornment position='end'>
-                          {custodianMetaData['alias'].help_text && (
+                        <InputAdornment position="end">
+                          {custodianMetaData.alias.help_text && (
                             <CustomizedTooltips
                               toolTipText={
-                                custodianMetaData['alias'].help_text
+                                custodianMetaData.alias.help_text
                               }
                             />
                           )}
@@ -318,35 +318,33 @@ const AddCustodians = ({
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12} md={6} sm={6}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
-                  id='custodianType'
+                  id="custodianType"
                   select
                   required
-                  label='Custodian Type'
+                  label="Custodian Type"
                   error={
                     formError.custodianType
                     && formError.custodianType.error
                   }
                   helperText={
                     formError.custodianType
-                    ? formError.custodianType.message
-                    : ''
+                      ? formError.custodianType.message
+                      : ''
                   }
-                  onBlur={(e) =>
-                    handleBlur(e, 'required', custodianType, 'custodianType')
-                  }
+                  onBlur={(e) => handleBlur(e, 'required', custodianType, 'custodianType')}
                   {...custodianType.bind}
                   InputProps={
-                    custodianMetaData['custodian_type'] &&
-                    custodianMetaData['custodian_type'].help_text && {
+                    custodianMetaData.custodian_type
+                    && custodianMetaData.custodian_type.help_text && {
                       endAdornment: (
-                        <InputAdornment position='start'>
-                          {custodianMetaData['custodian_type'].help_text && (
+                        <InputAdornment position="start">
+                          {custodianMetaData.custodian_type.help_text && (
                             <CustomizedTooltips
                               toolTipText={
-                                custodianMetaData['custodian_type'].help_text
+                                custodianMetaData.custodian_type.help_text
                               }
                             />
                           )}
@@ -355,9 +353,9 @@ const AddCustodians = ({
                     }
                   }
                 >
-                  <MenuItem value={''}>Select</MenuItem>
-                  {custodianTypeList &&
-                    custodianTypeList
+                  <MenuItem value="">Select</MenuItem>
+                  {custodianTypeList
+                    && custodianTypeList
                       .sort(compareSort('name'))
                       .map((item, index) => (
                         <MenuItem
@@ -369,84 +367,82 @@ const AddCustodians = ({
                       ))}
                 </TextField>
               </Grid>
-              <Grid item item xs={12} md={6} sm={6}>
+              <Grid item xs={12} md={6} sm={6}>
                 <TextField
-                  variant='filled'
-                  margin='normal'
+                  variant="filled"
+                  margin="normal"
                   fullWidth
                   disabled
-                  id='consortium'
+                  id="consortium"
                   select
-                  label='Consortium'
+                  label="Consortium"
                   error={
                     formError.consortium
                     && formError.consortium.error
                   }
                   helperText={
                     formError.consortium
-                    ? formError.consortium.message
-                    : ''
+                      ? formError.consortium.message
+                      : ''
                   }
-                  onBlur={(e) =>
-                    handleBlur(e, 'required', consortium, 'consortium')
-                  }
+                  onBlur={(e) => handleBlur(e, 'required', consortium, 'consortium')}
                   {...consortium.bind}
                 >
-                  <MenuItem value={''}>Select</MenuItem>
-                  <MenuItem value={'type1'}>Type 1</MenuItem>
-                  <MenuItem value={'type2'}>Type 2</MenuItem>
+                  <MenuItem value="">Select</MenuItem>
+                  <MenuItem value="type1">Type 1</MenuItem>
+                  <MenuItem value="type2">Type 2</MenuItem>
                 </TextField>
               </Grid>
             </Grid>
             <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item item xs={12}>
+              <Grid item xs={12}>
                 <TextField
-                  variant='filled'
-                  margin='normal'
+                  variant="filled"
+                  margin="normal"
                   disabled
                   fullWidth
-                  id='glnNumber'
-                  label='GLN Number'
-                  name='glnNumber'
-                  autoComplete='glnNumber'
+                  id="glnNumber"
+                  label="GLN Number"
+                  name="glnNumber"
+                  autoComplete="glnNumber"
                   {...glnNumber.bind}
                 />
               </Grid>
             </Grid>
-            <Card variant='outlined' className={classes.addressContainer}>
+            <Card variant="outlined" className={classes.addressContainer}>
               <CardContent>
-                <Typography variant='h6'>Contact Info</Typography>
+                <Typography variant="h6">Contact Info</Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       required
                       fullWidth
-                      id='address_1'
-                      label='Address Line 1'
-                      name='address_1'
-                      autoComplete='address_1'
+                      id="address_1"
+                      label="Address Line 1"
+                      name="address_1"
+                      autoComplete="address_1"
                       error={
                         formError.address_1
                         && formError.address_1.error
                       }
                       helperText={
                         formError.address_1
-                        ? formError.address_1.message
-                        : ''
+                          ? formError.address_1.message
+                          : ''
                       }
                       onBlur={(e) => handleBlur(e, 'required', address_1)}
                       {...address_1.bind}
                       InputProps={
-                        contactMetaData['address1'] &&
-                        contactMetaData['address1'].help_text && {
+                        contactMetaData.address1
+                        && contactMetaData.address1.help_text && {
                           endAdornment: (
-                            <InputAdornment position='end'>
-                              {contactMetaData['address1'].help_text && (
+                            <InputAdornment position="end">
+                              {contactMetaData.address1.help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    contactMetaData['address1'].help_text
+                                    contactMetaData.address1.help_text
                                   }
                                 />
                               )}
@@ -458,23 +454,23 @@ const AddCustodians = ({
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       fullWidth
-                      id='address_2'
-                      label='Address Line 2'
-                      name='address_2'
-                      autoComplete='address_2'
+                      id="address_2"
+                      label="Address Line 2"
+                      name="address_2"
+                      autoComplete="address_2"
                       {...address_2.bind}
                       InputProps={
-                        contactMetaData['address2'] &&
-                        contactMetaData['address2'].help_text && {
+                        contactMetaData.address2
+                        && contactMetaData.address2.help_text && {
                           endAdornment: (
-                            <InputAdornment position='end'>
-                              {contactMetaData['address2'].help_text && (
+                            <InputAdornment position="end">
+                              {contactMetaData.address2.help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    contactMetaData['address2'].help_text
+                                    contactMetaData.address2.help_text
                                   }
                                 />
                               )}
@@ -488,31 +484,31 @@ const AddCustodians = ({
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       // required
                       fullWidth
-                      id='city'
-                      label='City'
-                      name='city'
-                      autoComplete='city'
+                      id="city"
+                      label="City"
+                      name="city"
+                      autoComplete="city"
                       error={formError.city && formError.city.error}
                       helperText={
                         formError.city
-                        ? formError.city.message
-                        : ''
+                          ? formError.city.message
+                          : ''
                       }
                       onBlur={(e) => handleBlur(e, 'required', city)}
                       {...city.bind}
                       InputProps={
-                        contactMetaData['city'] &&
-                        contactMetaData['city'].help_text && {
+                        contactMetaData.city
+                        && contactMetaData.city.help_text && {
                           endAdornment: (
-                            <InputAdornment position='end'>
-                              {contactMetaData['city'].help_text && (
+                            <InputAdornment position="end">
+                              {contactMetaData.city.help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    contactMetaData['city'].help_text
+                                    contactMetaData.city.help_text
                                   }
                                 />
                               )}
@@ -524,31 +520,31 @@ const AddCustodians = ({
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       // required
                       fullWidth
-                      id='zip'
-                      label='Zip Code'
-                      name='zip'
-                      autoComplete='zip'
+                      id="zip"
+                      label="Zip Code"
+                      name="zip"
+                      autoComplete="zip"
                       error={formError.zip && formError.zip.error}
                       helperText={
                         formError.zip
-                        ? formError.zip.message
-                        : ''
+                          ? formError.zip.message
+                          : ''
                       }
                       onBlur={(e) => handleBlur(e, 'required', zip)}
                       {...zip.bind}
                       InputProps={
-                        contactMetaData['postal_code'] &&
-                        contactMetaData['postal_code'].help_text && {
+                        contactMetaData.postal_code
+                        && contactMetaData.postal_code.help_text && {
                           endAdornment: (
-                            <InputAdornment position='end'>
-                              {contactMetaData['postal_code'].help_text && (
+                            <InputAdornment position="end">
+                              {contactMetaData.postal_code.help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    contactMetaData['postal_code'].help_text
+                                    contactMetaData.postal_code.help_text
                                   }
                                 />
                               )}
@@ -562,33 +558,33 @@ const AddCustodians = ({
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       fullWidth
-                      id='state'
+                      id="state"
                       select
                       required
-                      label='State'
+                      label="State"
                       error={
                         formError.state
                         && formError.state.error
                       }
                       helperText={
                         formError.state
-                        ? formError.state.message
-                        : ''
+                          ? formError.state.message
+                          : ''
                       }
                       onBlur={(e) => handleBlur(e, 'required', state, 'state')}
                       {...state.bind}
                       InputProps={
-                        contactMetaData['state'] &&
-                        contactMetaData['state'].help_text && {
+                        contactMetaData.state
+                        && contactMetaData.state.help_text && {
                           endAdornment: (
-                            <InputAdornment position='start'>
-                              {contactMetaData['state'].help_text && (
+                            <InputAdornment position="start">
+                              {contactMetaData.state.help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    contactMetaData['state'].help_text
+                                    contactMetaData.state.help_text
                                   }
                                 />
                               )}
@@ -597,7 +593,7 @@ const AddCustodians = ({
                         }
                       }
                     >
-                      <MenuItem value={''}>Select</MenuItem>
+                      <MenuItem value="">Select</MenuItem>
                       {STATE_CHOICES.sort().map((value, index) => (
                         <MenuItem
                           key={`custodianState${index}${value}`}
@@ -610,35 +606,33 @@ const AddCustodians = ({
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       fullWidth
-                      id='country'
+                      id="country"
                       select
                       required
-                      label='Country'
+                      label="Country"
                       error={
                         formError.country
                         && formError.country.error
                       }
                       helperText={
                         formError.country
-                        ? formError.country.message
-                        : ''
+                          ? formError.country.message
+                          : ''
                       }
-                      onBlur={(e) =>
-                        handleBlur(e, 'required', country, 'country')
-                      }
+                      onBlur={(e) => handleBlur(e, 'required', country, 'country')}
                       {...country.bind}
                       InputProps={
-                        contactMetaData['country'] &&
-                        contactMetaData['country'].help_text && {
+                        contactMetaData.country
+                        && contactMetaData.country.help_text && {
                           endAdornment: (
-                            <InputAdornment position='start'>
-                              {contactMetaData['country'].help_text && (
+                            <InputAdornment position="start">
+                              {contactMetaData.country.help_text && (
                                 <CustomizedTooltips
                                   toolTipText={
-                                    contactMetaData['country'].help_text
+                                    contactMetaData.country.help_text
                                   }
                                 />
                               )}
@@ -647,7 +641,7 @@ const AddCustodians = ({
                         }
                       }
                     >
-                      <MenuItem value={''}>Select</MenuItem>
+                      <MenuItem value="">Select</MenuItem>
                       {COUNTRY_CHOICES.sort().map((value, index) => (
                         <MenuItem
                           key={`custodianCountry${index}${value}`}
@@ -665,15 +659,15 @@ const AddCustodians = ({
             <Grid
               container
               spacing={isDesktop ? 3 : 0}
-              justify='center'
+              justify="center"
             >
               <Grid item xs={12} sm={4}>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type='submit'
+                    type="submit"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
                   >
@@ -689,10 +683,10 @@ const AddCustodians = ({
               </Grid>
               <Grid item xs={12} sm={4}>
                 <Button
-                  type='button'
+                  type="button"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   onClick={() => closeModal()}
                   className={classes.submit}
                 >
@@ -705,7 +699,7 @@ const AddCustodians = ({
       )}
     </div>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

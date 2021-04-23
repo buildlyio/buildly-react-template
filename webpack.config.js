@@ -41,7 +41,7 @@ module.exports = (env, argv) => {
                 ['@babel/preset-env', {
                   targets: 'defaults',
                 }],
-                '@babel/preset-react'
+                '@babel/preset-react',
               ],
               plugins: [
                 '@babel/plugin-proposal-class-properties',
@@ -95,16 +95,17 @@ module.exports = (env, argv) => {
       modules: [path.resolve(__dirname, './src'), 'node_modules'],
       alias: {
         '@assets': path.resolve(__dirname, './src/assets'),
+        '@components': path.resolve(__dirname, './src/components'),
+        '@context': path.resolve(__dirname, './src/context'),
         '@environments': path.resolve(__dirname, './src/environments'),
-        '@components': path.resolve(__dirname, './src/midgard/components'),
-        '@hooks': path.resolve(__dirname, './src/midgard/hooks'),
-        '@layout': path.resolve(__dirname, './src/midgard/layout'),
-        '@midgard': path.resolve(__dirname, './src/midgard'),
-        '@modules': path.resolve(__dirname, './src/midgard/modules'),
-        '@pages': path.resolve(__dirname, './src/midgard/pages'),
-        '@routes': path.resolve(__dirname, './src/midgard/routes'),
+        '@hooks': path.resolve(__dirname, './src/hooks'),
+        '@layout': path.resolve(__dirname, './src/layout'),
+        '@modules': path.resolve(__dirname, './src/modules'),
+        '@pages': path.resolve(__dirname, './src/pages'),
+        '@redux': path.resolve(__dirname, './src/redux'),
+        '@routes': path.resolve(__dirname, './src/routes'),
         '@styles': path.resolve(__dirname, './src/styles'),
-        '@utils': path.resolve(__dirname, './src/midgard/utils'),
+        '@utils': path.resolve(__dirname, './src/utils'),
       },
     },
     output: {
@@ -122,10 +123,10 @@ module.exports = (env, argv) => {
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
       new HtmlWebPackPlugin({
-          template: './src/index.html',
-          filename: './index.html',
-          favicon: './src/assets/favicon.ico',
-          hash: true,
+        template: './src/index.html',
+        filename: './index.html',
+        favicon: './src/assets/favicon.ico',
+        hash: true,
       }),
       new CopyPlugin([
         { from: 'window.environment.js', to: 'environment.js' },

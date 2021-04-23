@@ -11,12 +11,12 @@ import { UNITS_OF_MEASURE_COLUMNS } from '../ConfigurationConstants';
 import AddUnitOfMeasure from '../forms/AddUnitOfMeasure';
 
 const UnitOfMeasure = (props) => {
-  const { 
+  const {
     dispatch,
     loading,
     unitsOfMeasure,
     redirectTo,
-    history, 
+    history,
   } = props;
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -25,13 +25,13 @@ const UnitOfMeasure = (props) => {
     ? `${redirectTo}/unit-of-measure`
     : `${routes.CONFIGURATION}/unit-of-measure/add`;
   const editPath = redirectTo
-  ? `${redirectTo}/unit-of-measure`
-  : `${routes.CONFIGURATION}/unit-of-measure/edit`;
+    ? `${redirectTo}/unit-of-measure`
+    : `${routes.CONFIGURATION}/unit-of-measure/edit`;
 
   useEffect(() => {
     if (!loading && !unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
-    };
+    }
   }, [unitsOfMeasure]);
 
   const onAddButtonClick = () => {
@@ -63,21 +63,21 @@ const UnitOfMeasure = (props) => {
       loading={loading}
       rows={unitsOfMeasure || []}
       columns={UNITS_OF_MEASURE_COLUMNS}
-      filename='UnitsOfMeasure'
-      addButtonHeading='Unit of Measure'
+      filename="UnitsOfMeasure"
+      addButtonHeading="Unit of Measure"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle='Are you sure you want to Delete this Unit of Measure?'
+      confirmModalTitle="Are you sure you want to Delete this Unit of Measure?"
     >
       <Route path={`${addPath}`} component={AddUnitOfMeasure} />
       <Route path={`${editPath}/:id`} component={AddUnitOfMeasure} />
     </DataTableWrapper>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

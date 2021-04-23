@@ -59,7 +59,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
+const AddShipmentFlag = ({
+  history, location, loading, dispatch,
+}) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openModal, toggleModal] = useState(true);
@@ -79,7 +81,7 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
   const [maxFlag, setMaxFlag] = useState((editData && editData.max_flag) || false);
   const [minFlag, setMinFlag] = useState((editData && editData.min_flag) || false);
   const [formError, setFormError] = useState({});
-  
+
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
@@ -90,7 +92,7 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
     toggleModal(false);
     if (location && location.state) {
       history.push(location.state.from);
-    };
+    }
   };
 
   /**
@@ -113,11 +115,11 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
       dispatch(editShipmentFlag(data));
     } else {
       data = {
-        ...data, 
+        ...data,
         create_date: currentDateTime,
       };
       dispatch(addShipmentFlag(data));
-    };
+    }
     closeModal();
   };
 
@@ -144,19 +146,19 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     if (!name.value || !type.value) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (formError[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
@@ -169,7 +171,7 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
           setOpen={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
-          maxWidth={'md'}
+          maxWidth="md"
         >
           <form
             className={classes.form}
@@ -179,14 +181,14 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   required
-                  id='name'
-                  label='Flag Name'
-                  name='name'
-                  autoComplete='name'
+                  id="name"
+                  label="Flag Name"
+                  name="name"
+                  autoComplete="name"
                   error={formError.name && formError.name.error}
                   helperText={
                     formError.name ? formError.name.message : ''
@@ -197,14 +199,14 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
                   required
-                  id='type'
-                  label='Flag Type'
-                  name='type'
-                  autoComplete='type'
+                  id="type"
+                  label="Flag Type"
+                  name="type"
+                  autoComplete="type"
                   error={formError.type && formError.type.error}
                   helperText={
                     formError.type ? formError.type.message : ''
@@ -217,7 +219,7 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
                 <div className={classes.checkbox}>
                   <Checkbox
                     checked={maxFlag}
-                    onClick={e => setMaxFlag(e.target.checked)}
+                    onClick={(e) => setMaxFlag(e.target.checked)}
                   />
                   <Typography className={classes.label}>
                     Is this Maximum Limit Flag?
@@ -228,21 +230,21 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
                 <div className={classes.checkbox}>
                   <Checkbox
                     checked={minFlag}
-                    onClick={e => setMinFlag(e.target.checked)}
+                    onClick={(e) => setMinFlag(e.target.checked)}
                   />
                   <Typography className={classes.label}>
                     Is this Minimum Limit Flag?
                   </Typography>
                 </div>
               </Grid>
-              <Grid container spacing={2} justify='center'>
+              <Grid container spacing={2} justify="center">
                 <Grid item xs={6} sm={4}>
                   <div className={classes.loadingWrapper}>
                     <Button
-                      type='submit'
+                      type="submit"
                       fullWidth
-                      variant='contained'
-                      color='primary'
+                      variant="contained"
+                      color="primary"
                       className={classes.submit}
                       disabled={loading || submitDisabled()}
                     >
@@ -258,10 +260,10 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
                 </Grid>
                 <Grid item xs={6} sm={4}>
                   <Button
-                    type='button'
+                    type="button"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     onClick={() => closeModal()}
                     className={classes.submit}
                   >
@@ -274,8 +276,8 @@ const AddShipmentFlag = ({ history, location, loading, dispatch }) => {
         </Modal>
       )}
     </div>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

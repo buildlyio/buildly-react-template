@@ -14,14 +14,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default Loader = (props) => {
+const Loader = (props) => {
   const classes = useStyles();
   const { open, setOpen, label } = props;
 
   const handleClose = () => {
     setOpen(false);
   };
-  
+
   const handleToggle = () => {
     setOpen(!open);
   };
@@ -29,22 +29,24 @@ export default Loader = (props) => {
   return (
     <div>
       <Backdrop className={classes.backdrop} open={open}>
-        <CircularProgress color='inherit' />
+        <CircularProgress color="inherit" />
         <Box
           top={-80}
           left={0}
           bottom={0}
           right={0}
-          position='absolute'
-          display='flex'
-          alignItems='center'
-          justifyContent='center'
+          position="absolute"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
         >
-          <Typography variant='h6' color='inherit'>
+          <Typography variant="h6" color="inherit">
             {label}
           </Typography>
         </Box>
       </Backdrop>
     </div>
   );
-}
+};
+
+export default Loader;

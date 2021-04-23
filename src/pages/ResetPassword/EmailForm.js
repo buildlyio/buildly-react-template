@@ -103,39 +103,39 @@ const EmailForm = ({ dispatch, loading }) => {
           message: '',
         },
       });
-    };
+    }
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(error);
     if (!email.value) {
       return true;
-    };
+    }
     let errorExists = false;
     errorKeys.forEach((key) => {
       if (error[key].error) {
         errorExists = true;
-      };
+      }
     });
     return errorExists;
   };
 
   return (
     <Container
-      component='main'
-      maxWidth='xs'
+      component="main"
+      maxWidth="xs"
       className={classes.container}
     >
       <CssBaseline />
-      <Card variant='outlined'>
+      <Card variant="outlined">
         <CardContent>
           <div className={classes.paper}>
             <img
               src={logo}
               className={classes.logo}
-              alt='Company logo'
+              alt="Company logo"
             />
-            <Typography component='h1' variant='h5' gutterBottom>
+            <Typography component="h1" variant="h5" gutterBottom>
               Enter your registered Email
             </Typography>
             <form
@@ -144,20 +144,20 @@ const EmailForm = ({ dispatch, loading }) => {
               onSubmit={handleSubmit}
             >
               <TextField
-                variant='outlined'
-                margin='normal'
+                variant="outlined"
+                margin="normal"
                 required
                 fullWidth
-                id='email'
-                label='Registered email'
-                name='email'
-                autoComplete='email'
+                id="email"
+                label="Registered email"
+                name="email"
+                autoComplete="email"
                 className={classes.textField}
                 error={error.email && error.email.error}
                 helperText={
                   error && error.email
-                  ? error.email.message
-                  : ''
+                    ? error.email.message
+                    : ''
                 }
                 onBlur={(e) => handleBlur(e, 'email', email)}
                 {...email.bind}
@@ -165,10 +165,10 @@ const EmailForm = ({ dispatch, loading }) => {
 
               <div className={classes.loadingWrapper}>
                 <Button
-                  type='submit'
+                  type="submit"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >
@@ -185,8 +185,8 @@ const EmailForm = ({ dispatch, loading }) => {
                 <Grid item xs>
                   <Link
                     href={routes.LOGIN}
-                    variant='body2'
-                    color='secondary'
+                    variant="body2"
+                    color="secondary"
                   >
                     Go back to Sign in
                   </Link>
@@ -198,7 +198,7 @@ const EmailForm = ({ dispatch, loading }) => {
       </Card>
     </Container>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
