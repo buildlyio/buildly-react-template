@@ -1,11 +1,11 @@
 import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
+import _ from 'lodash';
 import { httpService } from '@modules/http/http.service';
 import { environment } from '@environments/environment';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import { routes } from '@routes/routesConstants';
-import { compareSort } from '@utils/utilMethods';
 import {
   ADD_SHIPMENT,
   DELETE_SHIPMENT,
@@ -213,7 +213,7 @@ function* getShipmentFlagList(payload) {
       null,
       true,
     );
-    const sortedData = data.data.sort(compareSort('name'));
+    const sortedData = _.orderBy(data.data, ['name'], ['asc']);
     yield put({
       type: GET_SHIPMENT_FLAG_SUCCESS,
       data: sortedData,

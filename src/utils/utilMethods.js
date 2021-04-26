@@ -7,33 +7,6 @@ export const numberWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
-export const compareSort = (propName) => (a, b) => {
-  if (isNaN(parseFloat(a[propName]))) {
-    if (
-      a[propName]
-        && b[propName]
-        && a[propName].toUpperCase() < b[propName].toUpperCase()
-    ) return -1;
-    if (
-      a[propName]
-        && b[propName]
-        && a[propName].toUpperCase() > b[propName].toUpperCase()
-    ) return 1;
-    return 0;
-  }
-  if (
-    a[propName]
-        && b[propName]
-        && parseFloat(a[propName]) < parseFloat(b[propName])
-  ) return -1;
-  if (
-    a[propName]
-        && b[propName]
-        && parseFloat(a[propName]) > parseFloat(b[propName])
-  ) return 1;
-  return 0;
-};
-
 export const searchFilter = (payload) => {
   const { searchItem, searchList, searchFields } = payload;
   const data = searchList.filter((item) => {

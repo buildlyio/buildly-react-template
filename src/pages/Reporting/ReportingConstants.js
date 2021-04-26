@@ -263,7 +263,9 @@ export const getShipmentOverview = (
                   timestamp,
                   alert_status,
                 };
-                // Considered use case: If a shipment stays at some position for long, other value changes can be critical
+                // Considered use case: If a shipment stays at some
+                // position for long, other value changes can be
+                // critical
                 const markerFound = _.find(markersToSet, {
                   lat: marker.lat,
                   lng: marker.lng,
@@ -274,36 +276,37 @@ export const getShipmentOverview = (
                   markersToSet.push(marker);
                 }
                 aggregateReportInfo.push(marker);
+                const UTCDateTime = moment.utc(timestamp).format('MMM DD YYYY, h:mm:ss a');
                 const graphPoint = _.find(temperatureData, {
-                  x: localDateTime,
+                  x: UTCDateTime,
                 });
                 if (!graphPoint) {
                   temperatureData.push({
-                    x: localDateTime,
+                    x: UTCDateTime,
                     y: temperature,
                   });
                   lightData.push({
-                    x: localDateTime,
+                    x: UTCDateTime,
                     y: report_entry.report_light,
                   });
                   shockData.push({
-                    x: localDateTime,
+                    x: UTCDateTime,
                     y: report_entry.report_shock,
                   });
                   tiltData.push({
-                    x: localDateTime,
+                    x: UTCDateTime,
                     y: report_entry.report_tilt,
                   });
                   humidityData.push({
-                    x: localDateTime,
+                    x: UTCDateTime,
                     y: report_entry.report_humidity,
                   });
                   batteryData.push({
-                    x: localDateTime,
+                    x: UTCDateTime,
                     y: report_entry.report_battery,
                   });
                   pressureData.push({
-                    x: localDateTime,
+                    x: UTCDateTime,
                     y: report_entry.report_pressure,
                   });
                 }
@@ -331,8 +334,7 @@ export const getShipmentOverview = (
     list.pressure = pressureData;
   });
 
-  const sortedList = shipmentList.sort((a, b) => moment.utc(a.create_date).diff(moment.utc(b.create_date)));
-  return sortedList;
+  return _.orderBy(shipmentList, ['create_date'], ['asc']);
 };
 
 export const REPORT_TYPES = [

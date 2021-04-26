@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   makeStyles,
   TextField,
@@ -22,7 +23,6 @@ import { UserContext } from '@context/User.context';
 import { getFormattedRow, itemColumns } from '@pages/Items/ItemsConstants';
 import { editShipment } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
-import { compareSort } from '@utils/utilMethods';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -137,7 +137,7 @@ const ItemsInfo = ({
                   id="tags-outlined"
                   disabled={viewOnly}
                   options={
-                    (itemData && itemData.sort(compareSort('name')))
+                    (itemData && _.orderBy(itemData, ['name'], ['asc']))
                     || []
                   }
                   getOptionLabel={(option) => option && option.name}

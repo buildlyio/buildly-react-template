@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   Button,
   useTheme,
@@ -34,7 +35,7 @@ import {
   TRANSPORT_MODE,
   SENSOR_PLATFORM,
 } from '@utils/mock';
-import { compareSort, setOptionsData } from '@utils/utilMethods';
+import { setOptionsData } from '@utils/utilMethods';
 import { validators } from '@utils/validators';
 import ShipmentRouteInfo from './ShipmentRouteInfo';
 
@@ -483,18 +484,17 @@ const ShipmentInfo = (props) => {
                     >
                       <MenuItem value="">Select</MenuItem>
                       {TRANSPORT_MODE
-                      && TRANSPORT_MODE
-                        .sort(compareSort('value'))
-                        .map(
-                          (item, index) => (
-                            <MenuItem
-                              key={`transportMode${index}:${item.value}`}
-                              value={item.value}
-                            >
-                              {item.label}
-                            </MenuItem>
-                          ),
-                        )}
+                      && _.map(
+                        _.orderBy(TRANSPORT_MODE, ['value'], ['asc']),
+                        (item, index) => (
+                          <MenuItem
+                            key={`transportMode${index}:${item.value}`}
+                            value={item.value}
+                          >
+                            {item.label}
+                          </MenuItem>
+                        ),
+                      )}
                     </TextField>
                   </Grid>
                   <Grid item xs={12}>
@@ -557,17 +557,21 @@ const ShipmentInfo = (props) => {
                     >
                       <MenuItem value="">Select</MenuItem>
                       {unitsOfMeasure
-                      && unitsOfMeasure
-                        .filter((obj) => obj.supported_class === 'Temperature')
-                        .sort(compareSort('name'))
-                        .map((item, index) => (
+                      && _.map(
+                        _.orderBy(
+                          _.filter(unitsOfMeasure, { supported_class: 'Temperature' }),
+                          ['name'],
+                          ['asc'],
+                        ),
+                        (item, index) => (
                           <MenuItem
                             key={`temperature${index}:${item.id}`}
                             value={item.url}
                           >
                             {item.name}
                           </MenuItem>
-                        ))}
+                        ),
+                      )}
                     </TextField>
                   </Grid>
                   <Grid item xs={12}>
@@ -600,18 +604,17 @@ const ShipmentInfo = (props) => {
                     >
                       <MenuItem value="">Select</MenuItem>
                       {SENSOR_PLATFORM
-                      && SENSOR_PLATFORM
-                        .sort(compareSort('value'))
-                        .map(
-                          (item, index) => (
-                            <MenuItem
-                              key={`sensorPlatform${index}:${item.value}`}
-                              value={item.value}
-                            >
-                              {item.label}
-                            </MenuItem>
-                          ),
-                        )}
+                      && _.map(
+                        _.orderBy(SENSOR_PLATFORM, ['value'], ['asc']),
+                        (item, index) => (
+                          <MenuItem
+                            key={`sensorPlatform${index}:${item.value}`}
+                            value={item.value}
+                          >
+                            {item.label}
+                          </MenuItem>
+                        ),
+                      )}
                     </TextField>
                   </Grid>
                 </Grid>
@@ -648,18 +651,17 @@ const ShipmentInfo = (props) => {
                     >
                       <MenuItem value="">Select</MenuItem>
                       {SHIPMENT_STATUS
-                      && SHIPMENT_STATUS
-                        .sort(compareSort('value'))
-                        .map(
-                          (item, index) => (
-                            <MenuItem
-                              key={`shipmentStatus${index}:${item.value}`}
-                              value={item.value}
-                            >
-                              {item.label}
-                            </MenuItem>
-                          ),
-                        )}
+                      && _.map(
+                        _.orderBy(SHIPMENT_STATUS, ['value'], ['asc']),
+                        (item, index) => (
+                          <MenuItem
+                            key={`shipmentStatus${index}:${item.value}`}
+                            value={item.value}
+                          >
+                            {item.label}
+                          </MenuItem>
+                        ),
+                      )}
                     </TextField>
                   </Grid>
                   <Grid item xs={12}>
@@ -773,17 +775,21 @@ const ShipmentInfo = (props) => {
                     >
                       <MenuItem value="">Select</MenuItem>
                       {unitsOfMeasure
-                      && unitsOfMeasure
-                        .filter((obj) => obj.supported_class === 'Distance and Length')
-                        .sort(compareSort('name'))
-                        .map((item, index) => (
+                      && _.map(
+                        _.orderBy(
+                          _.filter(unitsOfMeasure, { supported_class: 'Distance and Length' }),
+                          ['name'],
+                          ['asc'],
+                        ),
+                        (item, index) => (
                           <MenuItem
                             key={`lengthUnit${index}:${item.id}`}
                             value={item.url}
                           >
                             {item.name}
                           </MenuItem>
-                        ))}
+                        ),
+                      )}
                     </TextField>
                   </Grid>
                   <Grid item xs={12}>
@@ -816,17 +822,21 @@ const ShipmentInfo = (props) => {
                     >
                       <MenuItem value="">Select</MenuItem>
                       {unitsOfMeasure
-                      && unitsOfMeasure
-                        .filter((obj) => obj.supported_class === 'Mass and Weight')
-                        .sort(compareSort('name'))
-                        .map((item, index) => (
+                      && _.map(
+                        _.orderBy(
+                          _.filter(unitsOfMeasure, { supported_class: 'Mass and Weight' }),
+                          ['name'],
+                          ['asc'],
+                        ),
+                        (item, index) => (
                           <MenuItem
                             key={`weightUnit${index}:${item.id}`}
                             value={item.url}
                           >
                             {item.name}
                           </MenuItem>
-                        ))}
+                        ),
+                      )}
                     </TextField>
                   </Grid>
                 </Grid>

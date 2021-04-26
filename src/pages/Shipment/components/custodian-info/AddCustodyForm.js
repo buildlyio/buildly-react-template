@@ -26,7 +26,6 @@ import { validators } from '@utils/validators';
 import {
   MAP_API_URL,
   GEO_CODE_API,
-  compareSort,
 } from '@utils/utilMethods';
 
 const useStyles = makeStyles((theme) => ({
@@ -385,16 +384,17 @@ const AddCustodyForm = ({
                 >
                   <MenuItem value="">Select</MenuItem>
                   {custodianList
-                  && custodianList
-                    .sort(compareSort('name'))
-                    .map((item, index) => (
+                  && _.map(
+                    _.orderBy(custodianList, ['name'], ['asc']),
+                    (item, index) => (
                       <MenuItem
                         key={`custodian${index}:${item.id}`}
                         value={item}
                       >
                         {item.name}
                       </MenuItem>
-                    ))}
+                    ),
+                  )}
                 </TextField>
               </Grid>
               <Grid item xs={12}>

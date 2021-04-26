@@ -357,8 +357,12 @@ export const getFormattedRow = (
     }
     list.flag_list = flag_list;
   });
-  const sortedList = shipmentList.sort((a, b) => moment.utc(a.create_date).diff(moment.utc(b.create_date)));
-  return sortedList;
+  
+  return _.orderBy(
+    shipmentList,
+    ['estimated_time_of_departure', 'create_date'],
+    ['desc', 'desc'],
+  );
 };
 
 export const custodianColumns = [
@@ -485,10 +489,7 @@ export const getFormattedCustodianRow = (data, contactInfo, custodyData) => {
     });
   }
 
-  const sortedList = customizedRow.sort((a, b) => moment
-    .utc(a.start_of_custody)
-    .diff(moment.utc(b.start_of_custody)));
-  return sortedList;
+  return _.orderBy(customizedRow, ['start_of_custody'], ['asc']);
 };
 
 export const getFormattedCustodyRows = (
@@ -507,10 +508,7 @@ export const getFormattedCustodyRows = (
     });
   }
 
-  const sortedList = customizedRows.sort((a, b) => moment
-    .utc(a.start_of_custody)
-    .diff(moment.utc(b.start_of_custody)));
-  return sortedList;
+  return _.orderBy(customizedRows, ['start_of_custody'], ['asc']);
 };
 
 export const svgIcon = (flagType, flag) => {

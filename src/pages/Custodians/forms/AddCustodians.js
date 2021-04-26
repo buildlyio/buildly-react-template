@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   Button,
   TextField,
@@ -26,7 +27,6 @@ import {
   STATE_CHOICES,
   COUNTRY_CHOICES,
 } from '@utils/mock';
-import { compareSort } from '@utils/utilMethods';
 import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
@@ -355,8 +355,7 @@ const AddCustodians = ({
                 >
                   <MenuItem value="">Select</MenuItem>
                   {custodianTypeList
-                    && custodianTypeList
-                      .sort(compareSort('name'))
+                    && _.orderBy(custodianTypeList, ['name'], ['asc'])
                       .map((item, index) => (
                         <MenuItem
                           key={`custodianType${index}:${item.id}`}
@@ -594,14 +593,17 @@ const AddCustodians = ({
                       }
                     >
                       <MenuItem value="">Select</MenuItem>
-                      {STATE_CHOICES.sort().map((value, index) => (
-                        <MenuItem
-                          key={`custodianState${index}${value}`}
-                          value={value}
-                        >
-                          {value}
-                        </MenuItem>
-                      ))}
+                      {_.map(
+                        _.sortBy(STATE_CHOICES),
+                        (value, index) => (
+                          <MenuItem
+                            key={`custodianState${index}${value}`}
+                            value={value}
+                          >
+                            {value}
+                          </MenuItem>
+                        ),
+                      )}
                     </TextField>
                   </Grid>
                   <Grid item xs={12} md={6}>
@@ -642,14 +644,17 @@ const AddCustodians = ({
                       }
                     >
                       <MenuItem value="">Select</MenuItem>
-                      {COUNTRY_CHOICES.sort().map((value, index) => (
-                        <MenuItem
-                          key={`custodianCountry${index}${value}`}
-                          value={value}
-                        >
-                          {value}
-                        </MenuItem>
-                      ))}
+                      {_.map(
+                        _.sortBy(COUNTRY_CHOICES),
+                        (value, index) => (
+                          <MenuItem
+                            key={`custodianCountry${index}${value}`}
+                            value={value}
+                          >
+                            {value}
+                          </MenuItem>
+                        ),
+                      )}
                     </TextField>
                   </Grid>
                 </Grid>
