@@ -334,13 +334,16 @@ const AddItems = ({
                     && itemMetData.name.help_text && {
                       endAdornment: (
                         <InputAdornment position="end">
-                          {itemMetData.name.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                itemMetData.name.help_text
-                              }
-                            />
-                          )}
+                          {itemMetData.name.help_text
+                            ? (
+                              <CustomizedTooltips
+                                toolTipText={
+                                  itemMetData.name.help_text
+                                }
+                              />
+                            ) : (
+                              <></>
+                            )}
                         </InputAdornment>
                       ),
                     }

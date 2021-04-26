@@ -5,13 +5,13 @@ import {
   AppBar,
   Toolbar,
   IconButton,
-  Menu as MenuIcon,
   Hidden,
 } from '@material-ui/core';
 import {
   AccountCircle,
   Refresh as RefreshIcon,
   Settings as SettingsIcon,
+  Menu as MenuIcon,
 } from '@material-ui/icons';
 import { environment } from '@environments/environment';
 import logo from '@assets/tp-logo.png';

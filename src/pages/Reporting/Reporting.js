@@ -332,16 +332,16 @@ const Reporting = ({
                             key={`custody_info_${idx}`}
                             style={{
                               marginBottom: 10,
-                              color: selectedShipment.custody_info[idx].custody_type === 'Current'
+                              color: value.custody_type === 'Current'
                                 ? '#EBC645'
                                 : '#ffffff',
                             }}
                           >
                             <Typography variant="body1">
-                              {`Custody Type: ${selectedShipment.custody_info[index].custody_type}`}
+                              {`Custody Type: ${value.custody_type}`}
                             </Typography>
                             <Typography variant="body1">
-                              {`Custodian Address: ${selectedShipment.contact_info[index].address}`}
+                              {`Custodian Address: ${selectedShipment.contact_info[idx].address}`}
                             </Typography>
                           </div>
                         ),
