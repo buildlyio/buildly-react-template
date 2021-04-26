@@ -26,8 +26,8 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
     },
   },
   {
-    name: 'estimated_time_of_arrival',
-    label: 'Estimated Arrival Date',
+    name: 'estimated_time_of_departure',
+    label: 'Estimated Departure Date',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -38,8 +38,8 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
     },
   },
   {
-    name: 'estimated_time_of_departure',
-    label: 'Estimated Departure Date',
+    name: 'estimated_time_of_arrival',
+    label: 'Estimated Arrival Date',
     options: {
       sort: true,
       sortThirdClickReset: true,
