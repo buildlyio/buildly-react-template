@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { httpService } from 'midgard/modules/http/http.service';
+
 // not like to use this?
 // have a look at the Quick start guide
 // for passing in lng and translations on init
@@ -19,12 +19,11 @@ i18n
     debug: true,
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
-    }
+    },
   });
- // load translations
- //  httpService.makeRequest('get', 'translation/main', {}, true).then(translations => {
- //    i18n.addResourceBundle('en', 'blueprint', translations);
- //  });
-
+// load translations
+//  httpService.makeRequest('get', 'translation/main', {}, true).then(translations => {
+//    i18n.addResourceBundle('en', 'blueprint', translations);
+//  });
 
 export default i18n;
