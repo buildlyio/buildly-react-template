@@ -175,18 +175,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => {
-        const displayDate = new Date(value).toLocaleDateString(
-          'en-US',
-          {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          },
-        );
-        const displayTime = new Date(value).toLocaleTimeString();
-        return `${displayDate} ${displayTime}`;
-      },
+      customBodyRender: (value) => moment.utc(value).format('MMM DD YYYY, h:mm:ss a'),
     },
   },
   {

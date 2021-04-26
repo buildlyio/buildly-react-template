@@ -47,7 +47,7 @@ import {
   getAggregateReport,
   getSensorReportAlerts,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { MAP_API_URL, convertUnitsOfMeasure, getLocalDateTime } from '@utils/utilMethods';
+import { MAP_API_URL, convertUnitsOfMeasure } from '@utils/utilMethods';
 import {
   getShipmentDetails,
   deleteShipment,
@@ -263,15 +263,11 @@ const Shipment = (props) => {
                 report_entry.report_temp,
                 temperatureUnit,
                 'temperature',
-              ); // Data in ICLP is coming in Celsius, conversion to selected unit
-              let localDateTime = getLocalDateTime(
-                report_entry.report_location.timeOfPosition,
               );
+              let timestamp = report_entry.report_location.timeOfPosition;
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
-                  localDateTime = getLocalDateTime(
-                    report_entry.report_timestamp,
-                  );
+                  timestamp = report_entry.report_timestamp;
                 }
               }
               if (report_entry.report_location.locationMethod !== 'NoPosition') {
@@ -287,7 +283,7 @@ const Shipment = (props) => {
                   battery: report_entry.report_battery,
                   pressure: report_entry.report_pressure,
                   color,
-                  timestamp: localDateTime,
+                  timestamp,
                   alert_status,
                 };
                 // Considered use case: If a shipment stays at some
