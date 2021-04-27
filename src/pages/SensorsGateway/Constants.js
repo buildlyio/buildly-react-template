@@ -75,7 +75,11 @@ export const getFormattedRow = (data, itemTypeList, shipmentData) => {
       }
     });
 
-    return _.orderBy(formattedData, ['create_date'], ['asc']);
+    return _.orderBy(
+      formattedData,
+      (rowData) => moment(rowData.create_date),
+      ['asc'],
+    );
   }
   return data;
 };
@@ -129,7 +133,11 @@ export const getFormattedSensorRow = (data, sensorTypeList, gatewayData) => {
       }
     });
 
-    return _.orderBy(formattedData, ['create_date'], ['asc']);
+    return _.orderBy(
+      formattedData,
+      (dataRow) => moment(dataRow.create_date),
+      ['asc'],
+    );
   }
   return data;
 };

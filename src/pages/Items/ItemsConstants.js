@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 import { numberWithCommas } from '@utils/utilMethods';
 
 export const itemColumns = [
@@ -60,7 +61,11 @@ export const getFormattedRow = (data, itemTypeList, unitsOfMeasure) => {
       }
     });
 
-    return _.orderBy(formattedData, ['create_date'], ['asc']);
+    return _.orderBy(
+      formattedData,
+      (dataRow) => moment(dataRow.create_date),
+      ['asc'],
+    );
   }
   return data;
 };

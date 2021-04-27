@@ -337,7 +337,11 @@ export const getShipmentOverview = (
     list.pressure = pressureData;
   });
 
-  return _.orderBy(shipmentList, ['create_date'], ['asc']);
+  return _.orderBy(
+    shipmentList,
+    (shipment) => moment(shipment.create_date),
+    ['asc'],
+  );
 };
 
 export const REPORT_TYPES = [

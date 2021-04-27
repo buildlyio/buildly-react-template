@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 export const custodianColumns = [
   // { id: 'id', label: 'Custodian ID', minWidth: 150 },
@@ -45,5 +46,9 @@ export const getFormattedRow = (data, contactInfo, custodyData) => {
     });
   }
 
-  return _.orderBy(customizedRow, ['create_date'], ['asc']);
+  return _.orderBy(
+    customizedRow,
+    (row) => moment(row.create_date),
+    ['asc'],
+  );
 };
