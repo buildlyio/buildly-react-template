@@ -126,12 +126,14 @@ const Shipment = (props) => {
   const [deleteItemId, setDeleteItemId] = useState('');
   const [activeRows, setActiveRows] = useState([]);
   const [completedRows, setCompletedRows] = useState([]);
+  const [cancelledRows, setCancelledRows] = useState([]);
   const [rows, setRows] = useState([]);
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [shipmentFilter, setShipmentFilter] = useState('Active');
   const subNav = [
     { label: 'Active', value: 'Active' },
     { label: 'Completed', value: 'Completed' },
+    { label: 'Cancelled', value: 'Cancelled' },
   ];
   const [selectedMarker, setSelectedMarker] = useState({});
   const [markers, setMarkers] = useState([]);
@@ -224,10 +226,13 @@ const Shipment = (props) => {
         aggregateReportData,
       );
       setRows(formattedRows);
-      setActiveRows(formattedRows.filter((row) => row.type === 'Active'));
-      setCompletedRows(formattedRows.filter((row) => row.type === 'Completed'));
+      setActiveRows(_.filter(formattedRows, { type: 'Active' }));
+      setCompletedRows(_.filter(formattedRows, { type: 'Completed' }));
+      setCancelledRows(_.filter(formattedRows, { type: 'Cancelled' }));
       if (!selectedShipment && formattedRows.length) {
-        if (shipmentFilter === 'Completed') {
+        if (shipmentFilter === 'Cancelled') {
+          setSelectedShipment(cancelledRows[0]);
+        } else if (shipmentFilter === 'Completed') {
           setSelectedShipment(completedRows[0]);
         } else {
           setSelectedShipment(activeRows[0]);
@@ -325,7 +330,9 @@ const Shipment = (props) => {
 
   useEffect(() => {
     if (shipmentFilter && rows.length > 0) {
-      if (shipmentFilter === 'Completed') {
+      if (shipmentFilter === 'Cancelled') {
+        setSelectedShipment(cancelledRows[0]);
+      } else if (shipmentFilter === 'Completed') {
         setSelectedShipment(completedRows[0]);
       } else {
         setSelectedShipment(activeRows[0]);
@@ -419,9 +426,11 @@ const Shipment = (props) => {
           </Box>
           <ShipmentDataTable
             rows={
-              shipmentFilter === 'Completed'
-                ? completedRows
-                : activeRows
+              shipmentFilter === 'Cancelled'
+                ? cancelledRows
+                : shipmentFilter === 'Completed'
+                  ? completedRows
+                  : activeRows
             }
             editAction={handleEdit}
             deleteAction={handleDelete}

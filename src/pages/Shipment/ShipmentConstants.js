@@ -315,9 +315,12 @@ export const getFormattedRow = (
       list.type = 'Active';
     } else if (
       list.status.toLowerCase() === 'completed'
-      || list.status.toLowerCase() === 'cancelled'
     ) {
       list.type = 'Completed';
+    } else if (
+      list.status.toLowerCase() === 'cancelled'
+    ) {
+      list.type = 'Cancelled';
     }
 
     if (aggregateReportData && aggregateReportData.length > 0) {
