@@ -47,7 +47,7 @@ import {
   getAggregateReport,
   getSensorReportAlerts,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { MAP_API_URL, convertUnitsOfMeasure, getLocalDateTime } from '@utils/utilMethods';
+import { MAP_API_URL, convertUnitsOfMeasure } from '@utils/utilMethods';
 import {
   getShipmentDetails,
   deleteShipment,
@@ -126,12 +126,14 @@ const Shipment = (props) => {
   const [deleteItemId, setDeleteItemId] = useState('');
   const [activeRows, setActiveRows] = useState([]);
   const [completedRows, setCompletedRows] = useState([]);
+  const [cancelledRows, setCancelledRows] = useState([]);
   const [rows, setRows] = useState([]);
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [shipmentFilter, setShipmentFilter] = useState('Active');
   const subNav = [
     { label: 'Active', value: 'Active' },
     { label: 'Completed', value: 'Completed' },
+    { label: 'Cancelled', value: 'Cancelled' },
   ];
   const [selectedMarker, setSelectedMarker] = useState({});
   const [markers, setMarkers] = useState([]);
@@ -224,10 +226,13 @@ const Shipment = (props) => {
         aggregateReportData,
       );
       setRows(formattedRows);
-      setActiveRows(formattedRows.filter((row) => row.type === 'Active'));
-      setCompletedRows(formattedRows.filter((row) => row.type === 'Completed'));
+      setActiveRows(_.filter(formattedRows, { type: 'Active' }));
+      setCompletedRows(_.filter(formattedRows, { type: 'Completed' }));
+      setCancelledRows(_.filter(formattedRows, { type: 'Cancelled' }));
       if (!selectedShipment && formattedRows.length) {
-        if (shipmentFilter === 'Completed') {
+        if (shipmentFilter === 'Cancelled') {
+          setSelectedShipment(cancelledRows[0]);
+        } else if (shipmentFilter === 'Completed') {
           setSelectedShipment(completedRows[0]);
         } else {
           setSelectedShipment(activeRows[0]);
@@ -263,15 +268,15 @@ const Shipment = (props) => {
                 report_entry.report_temp,
                 temperatureUnit,
                 'temperature',
-              ); // Data in ICLP is coming in Celsius, conversion to selected unit
-              let localDateTime = getLocalDateTime(
-                report_entry.report_location.timeOfPosition,
               );
+              let localDateTime = moment(
+                report_entry.report_location.timeOfPosition,
+              ).format('MMM DD YYYY, h:mm:ss a');
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
-                  localDateTime = getLocalDateTime(
+                  localDateTime = moment(
                     report_entry.report_timestamp,
-                  );
+                  ).format('MMM DD YYYY, h:mm:ss a');
                 }
               }
               if (report_entry.report_location.locationMethod !== 'NoPosition') {
@@ -329,7 +334,9 @@ const Shipment = (props) => {
 
   useEffect(() => {
     if (shipmentFilter && rows.length > 0) {
-      if (shipmentFilter === 'Completed') {
+      if (shipmentFilter === 'Cancelled') {
+        setSelectedShipment(cancelledRows[0]);
+      } else if (shipmentFilter === 'Completed') {
         setSelectedShipment(completedRows[0]);
       } else {
         setSelectedShipment(activeRows[0]);
@@ -423,9 +430,11 @@ const Shipment = (props) => {
           </Box>
           <ShipmentDataTable
             rows={
-              shipmentFilter === 'Completed'
-                ? completedRows
-                : activeRows
+              shipmentFilter === 'Cancelled'
+                ? cancelledRows
+                : shipmentFilter === 'Completed'
+                  ? completedRows
+                  : activeRows
             }
             editAction={handleEdit}
             deleteAction={handleDelete}

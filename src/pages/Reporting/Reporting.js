@@ -89,10 +89,12 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     height: '100px',
   },
-  gridContainer: {
-    marginBottom: theme.spacing(4),
-  },
   greyBackground: {
+    backgroundColor: '#424242',
+  },
+  reportContainer: {
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(3),
     backgroundColor: '#424242',
   },
   alignCenter: {
@@ -221,7 +223,6 @@ const Reporting = ({
           item
           xs={12}
           md={tileView ? 6 : 12}
-          className={classes.gridContainer}
         >
           <div className={classes.switchViewSection}>
             <Typography
@@ -303,7 +304,7 @@ const Reporting = ({
             style={{ height: 525, overflowX: 'auto' }}
             className={classes.greyBackground}
           >
-            <Grid container className={classes.gridContainer}>
+            <Grid container>
               {selectedShipment
                 ? (columns.map((column, index) => (
                   <Grid
@@ -365,10 +366,7 @@ const Reporting = ({
           </div>
         </Grid>
       </Grid>
-      <Grid
-        container
-        className={`${classes.gridContainer} ${classes.greyBackground}`}
-      >
+      <Grid container className={classes.reportContainer}>
         <div className={classes.switchViewSection}>
           <Typography
             className={classes.tileHeading}

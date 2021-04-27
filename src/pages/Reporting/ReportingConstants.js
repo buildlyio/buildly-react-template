@@ -16,7 +16,6 @@ import {
 } from '@pages/Shipment/ShipmentConstants';
 import {
   convertUnitsOfMeasure,
-  getLocalDateTime,
 } from '@utils/utilMethods';
 
 export const SHIPMENT_OVERVIEW_TOOL_TIP = 'Select a shipment to view reporting data';
@@ -240,16 +239,16 @@ export const getShipmentOverview = (
                 report_entry.report_temp,
                 temperatureUnit,
                 'temperature',
-              ); // Data in ICLP is coming in Celsius, conversion to selected unit
-              let localDateTime = getLocalDateTime(
-                report_entry.report_location.timeOfPosition,
               );
+              let localDateTime = moment(
+                report_entry.report_location.timeOfPosition,
+              ).format('MMM DD YYYY, h:mm:ss a');
 
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
-                  localDateTime = getLocalDateTime(
+                  localDateTime = moment(
                     report_entry.report_timestamp,
-                  );
+                  ).format('MMM DD YYYY, h:mm:ss a');
                 }
               }
               if (report_entry.report_location.locationMethod !== 'NoPosition') {
@@ -268,7 +267,9 @@ export const getShipmentOverview = (
                   timestamp: localDateTime,
                   alert_status,
                 };
-                // Considered use case: If a shipment stays at some position for long, other value changes can be critical
+                // Considered use case: If a shipment stays at some
+                // position for long, other value changes can be
+                // critical
                 const markerFound = _.find(markersToSet, {
                   lat: marker.lat,
                   lng: marker.lng,
@@ -336,8 +337,11 @@ export const getShipmentOverview = (
     list.pressure = pressureData;
   });
 
-  const sortedList = shipmentList.sort((a, b) => moment.utc(a.create_date).diff(moment.utc(b.create_date)));
-  return sortedList;
+  return _.orderBy(
+    shipmentList,
+    (shipment) => moment(shipment.create_date),
+    ['asc'],
+  );
 };
 
 export const REPORT_TYPES = [

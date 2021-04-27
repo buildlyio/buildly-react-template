@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { compareSort } from '@utils/utilMethods';
+import _ from 'lodash';
 
 export const gatewayColumns = [
   {
@@ -75,8 +75,11 @@ export const getFormattedRow = (data, itemTypeList, shipmentData) => {
       }
     });
 
-    const sortedList = formattedData.sort((a, b) => moment.utc(a.create_date).diff(moment.utc(b.create_date)));
-    return sortedList;
+    return _.orderBy(
+      formattedData,
+      (rowData) => moment(rowData.create_date),
+      ['asc'],
+    );
   }
   return data;
 };
@@ -130,8 +133,11 @@ export const getFormattedSensorRow = (data, sensorTypeList, gatewayData) => {
       }
     });
 
-    const sortedList = formattedData.sort((a, b) => moment.utc(a.create_date).diff(moment.utc(b.create_date)));
-    return sortedList;
+    return _.orderBy(
+      formattedData,
+      (dataRow) => moment(dataRow.create_date),
+      ['asc'],
+    );
   }
   return data;
 };
@@ -151,8 +157,8 @@ export const getAvailableGateways = (
 ) => {
   const gatewayData = getFormattedRow(data, gatewayTypeList, shipmentData);
   return (
-    gatewayData.sort(compareSort('name'))
-    && gatewayData.filter((gateway) => gateway.gateway_status === 'available'
+    _.orderBy(gatewayData, ['name'], ['asc'])
+    && _.filter(gatewayData, (gateway) => gateway.gateway_status === 'available'
       && gateway.gateway_type_value.toLowerCase().includes(gateway_type))
   );
 };

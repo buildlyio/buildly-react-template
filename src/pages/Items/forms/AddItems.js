@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   makeStyles,
   useTheme,
@@ -21,7 +22,6 @@ import { UserContext } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
 import { editItem, addItem } from '@redux/items/actions/items.actions';
 import { validators } from '@utils/validators';
-import { compareSort } from '@utils/utilMethods';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -389,16 +389,17 @@ const AddItems = ({
                 >
                   <MenuItem value="">Select</MenuItem>
                   {itemTypeList
-                    && itemTypeList
-                      .sort(compareSort('name'))
-                      .map((item, index) => (
+                    && _.map(
+                      _.orderBy(itemTypeList, ['name'], ['asc']),
+                      (item, index) => (
                         <MenuItem
                           key={`itemType${index}:${item.id}`}
                           value={item.url}
                         >
                           {item.name}
                         </MenuItem>
-                      ))}
+                      ),
+                    )}
                 </TextField>
               </Grid>
               {/* <Grid item item xs={12} sm={6}>
@@ -895,17 +896,21 @@ const AddItems = ({
                 >
                   <MenuItem value="">Select</MenuItem>
                   {unitsOfMeasure
-                    && unitsOfMeasure
-                      .filter((obj) => obj.supported_class === 'Mass and Weight')
-                      .sort(compareSort('name'))
-                      .map((item, index) => (
+                    && _.map(
+                      _.orderBy(
+                        _.filter(unitsOfMeasure, { supported_class: 'Mass and Weight' }),
+                        ['name'],
+                        ['asc'],
+                      ),
+                      (item, index) => (
                         <MenuItem
                           key={`weightUnit${index}:${item.id}`}
                           value={item.url}
                         >
                           {item.name}
                         </MenuItem>
-                      ))}
+                      ),
+                    )}
                 </TextField>
               </Grid>
             </Grid>

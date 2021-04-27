@@ -26,8 +26,8 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
     },
   },
   {
-    name: 'estimated_time_of_arrival',
-    label: 'Estimated Arrival Date',
+    name: 'estimated_time_of_departure',
+    label: 'Estimated Departure Date',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -38,8 +38,8 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
     },
   },
   {
-    name: 'estimated_time_of_departure',
-    label: 'Estimated Departure Date',
+    name: 'estimated_time_of_arrival',
+    label: 'Estimated Arrival Date',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -170,23 +170,11 @@ export const SHIPMENT_SENSOR_COLUMNS = [
   },
   {
     name: 'timestamp',
-    label: 'Tag Captured Timestamp (UTC)',
+    label: 'Tag Captured Timestamp (Local TimeZone)',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => {
-        const displayDate = new Date(value).toLocaleDateString(
-          'en-US',
-          {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          },
-        );
-        const displayTime = new Date(value).toLocaleTimeString();
-        return `${displayDate} ${displayTime}`;
-      },
     },
   },
   {
@@ -326,9 +314,12 @@ export const getFormattedRow = (
       list.type = 'Active';
     } else if (
       list.status.toLowerCase() === 'completed'
-      || list.status.toLowerCase() === 'cancelled'
     ) {
       list.type = 'Completed';
+    } else if (
+      list.status.toLowerCase() === 'cancelled'
+    ) {
+      list.type = 'Cancelled';
     }
 
     if (aggregateReportData && aggregateReportData.length > 0) {
@@ -368,8 +359,15 @@ export const getFormattedRow = (
     }
     list.flag_list = flag_list;
   });
-  const sortedList = shipmentList.sort((a, b) => moment.utc(a.create_date).diff(moment.utc(b.create_date)));
-  return sortedList;
+
+  return _.orderBy(
+    shipmentList,
+    (shipment) => (
+      moment(shipment.estimated_time_of_departure)
+      && moment(shipment.create_date)
+    ),
+    ['desc'],
+  );
 };
 
 export const custodianColumns = [
@@ -496,10 +494,11 @@ export const getFormattedCustodianRow = (data, contactInfo, custodyData) => {
     });
   }
 
-  const sortedList = customizedRow.sort((a, b) => moment
-    .utc(a.start_of_custody)
-    .diff(moment.utc(b.start_of_custody)));
-  return sortedList;
+  return _.orderBy(
+    customizedRow,
+    (row) => moment(row.start_of_custody),
+    ['asc'],
+  );
 };
 
 export const getFormattedCustodyRows = (
@@ -518,10 +517,11 @@ export const getFormattedCustodyRows = (
     });
   }
 
-  const sortedList = customizedRows.sort((a, b) => moment
-    .utc(a.start_of_custody)
-    .diff(moment.utc(b.start_of_custody)));
-  return sortedList;
+  return _.orderBy(
+    customizedRows,
+    (row) => moment(row.start_of_custody),
+    ['asc'],
+  );
 };
 
 export const svgIcon = (flagType, flag) => {

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import moment from 'moment';
 import { numberWithCommas } from '@utils/utilMethods';
 
@@ -59,8 +60,12 @@ export const getFormattedRow = (data, itemTypeList, unitsOfMeasure) => {
         });
       }
     });
-    const sortedList = formattedData.sort((a, b) => moment.utc(a.create_date).diff(moment.utc(b.create_date)));
-    return sortedList;
+
+    return _.orderBy(
+      formattedData,
+      (dataRow) => moment(dataRow.create_date),
+      ['asc'],
+    );
   }
   return data;
 };
