@@ -170,12 +170,11 @@ export const SHIPMENT_SENSOR_COLUMNS = [
   },
   {
     name: 'timestamp',
-    label: 'Tag Captured Timestamp (UTC)',
+    label: 'Tag Captured Timestamp (Local TimeZone)',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => moment.utc(value).format('MMM DD YYYY, h:mm:ss a'),
     },
   },
   {

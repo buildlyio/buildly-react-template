@@ -269,10 +269,14 @@ const Shipment = (props) => {
                 temperatureUnit,
                 'temperature',
               );
-              let timestamp = report_entry.report_location.timeOfPosition;
+              let localDateTime = moment(
+                report_entry.report_location.timeOfPosition,
+              ).format('MMM DD YYYY, h:mm:ss a');
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
-                  timestamp = report_entry.report_timestamp;
+                  localDateTime = moment(
+                    report_entry.report_timestamp,
+                  ).format('MMM DD YYYY, h:mm:ss a');
                 }
               }
               if (report_entry.report_location.locationMethod !== 'NoPosition') {
@@ -288,7 +292,7 @@ const Shipment = (props) => {
                   battery: report_entry.report_battery,
                   pressure: report_entry.report_pressure,
                   color,
-                  timestamp,
+                  timestamp: localDateTime,
                   alert_status,
                 };
                 // Considered use case: If a shipment stays at some

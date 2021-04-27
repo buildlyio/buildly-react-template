@@ -240,11 +240,15 @@ export const getShipmentOverview = (
                 temperatureUnit,
                 'temperature',
               );
-              let timestamp = report_entry.report_location.timeOfPosition;
+              let localDateTime = moment(
+                report_entry.report_location.timeOfPosition,
+              ).format('MMM DD YYYY, h:mm:ss a');
 
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
-                  timestamp = report_entry.report_timestamp;
+                  localDateTime = moment(
+                    report_entry.report_timestamp,
+                  ).format('MMM DD YYYY, h:mm:ss a');
                 }
               }
               if (report_entry.report_location.locationMethod !== 'NoPosition') {
@@ -260,7 +264,7 @@ export const getShipmentOverview = (
                   battery: report_entry.report_battery,
                   pressure: report_entry.report_pressure,
                   color,
-                  timestamp,
+                  timestamp: localDateTime,
                   alert_status,
                 };
                 // Considered use case: If a shipment stays at some
@@ -276,37 +280,36 @@ export const getShipmentOverview = (
                   markersToSet.push(marker);
                 }
                 aggregateReportInfo.push(marker);
-                const UTCDateTime = moment.utc(timestamp).format('MMM DD YYYY, h:mm:ss a');
                 const graphPoint = _.find(temperatureData, {
-                  x: UTCDateTime,
+                  x: localDateTime,
                 });
                 if (!graphPoint) {
                   temperatureData.push({
-                    x: UTCDateTime,
+                    x: localDateTime,
                     y: temperature,
                   });
                   lightData.push({
-                    x: UTCDateTime,
+                    x: localDateTime,
                     y: report_entry.report_light,
                   });
                   shockData.push({
-                    x: UTCDateTime,
+                    x: localDateTime,
                     y: report_entry.report_shock,
                   });
                   tiltData.push({
-                    x: UTCDateTime,
+                    x: localDateTime,
                     y: report_entry.report_tilt,
                   });
                   humidityData.push({
-                    x: UTCDateTime,
+                    x: localDateTime,
                     y: report_entry.report_humidity,
                   });
                   batteryData.push({
-                    x: UTCDateTime,
+                    x: localDateTime,
                     y: report_entry.report_battery,
                   });
                   pressureData.push({
-                    x: UTCDateTime,
+                    x: localDateTime,
                     y: report_entry.report_pressure,
                   });
                 }
