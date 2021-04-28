@@ -33,7 +33,6 @@ import {
 import {
   getSensors,
   getSensorType,
-  getAggregateReport,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
@@ -151,10 +150,12 @@ const Reporting = ({
 
   useEffect(() => {
     if (!shipmentData) {
-      dispatch(getShipmentDetails(organization));
-    }
-    if (!aggregateReportData) {
-      dispatch(getAggregateReport(organization));
+      const aggregate = !aggregateReportData;
+      dispatch(getShipmentDetails(
+        organization,
+        null,
+        aggregate,
+      ));
     }
     if (!custodianData) {
       dispatch(getCustodians(organization));

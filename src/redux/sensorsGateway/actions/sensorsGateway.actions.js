@@ -256,20 +256,20 @@ export const getSensorType = () => ({
 
 /**
  * Get Aggregate Report
- * @param {String} organization_uuid
+ * @param {Array} partnerShipmentIds
  */
-export const getAggregateReport = (organization_uuid) => ({
+export const getAggregateReport = (partnerShipmentIds) => ({
   type: GET_AGGREGATE_REPORT,
-  organization_uuid,
+  partnerShipmentIds,
 });
 
 /**
  * Get Sensor Report Alerts
- * @param {String} organization_uuid
+ * @param {Array} partnerShipmentIds
  */
-export const getSensorReportAlerts = (organization_uuid) => ({
+export const getSensorReportAlerts = (partnerShipmentIds) => ({
   type: GET_SENSOR_REPORT,
-  organization_uuid,
+  partnerShipmentIds,
 });
 
 /**

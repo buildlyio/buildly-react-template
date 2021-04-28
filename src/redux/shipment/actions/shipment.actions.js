@@ -61,11 +61,20 @@ export const saveShipmentFormData = (formData) => ({
  * Get Shipment Details
  * @param {String} organization_uuid
  * @param {Number} id
+ * @param {Boolean} getAggregateReport
+ * @param {Boolean} getReportAlerts
  */
-export const getShipmentDetails = (organization_uuid, id = null) => ({
+export const getShipmentDetails = (
+  organization_uuid,
+  id = null,
+  getAggregateReport = false,
+  getReportAlerts = false,
+) => ({
   type: GET_SHIPMENTS,
   organization_uuid,
   id,
+  getAggregateReport,
+  getReportAlerts,
 });
 
 /**

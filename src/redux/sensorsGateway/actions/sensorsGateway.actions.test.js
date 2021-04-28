@@ -253,12 +253,12 @@ describe('Delete Sensor Type action', () => {
 // Test Get Aggregate Report
 describe('Get Aggregate Report action', () => {
   it('should create an action to get aggregate report', () => {
-    const organization_uuid = '224761f5-0010-4a46-d92a4fdc1d21';
+    const partnerShipmentIds = ['1', '2', '3'];
     const expectedAction = {
       type: actions.GET_AGGREGATE_REPORT,
-      organization_uuid,
+      partnerShipmentIds,
     };
-    expect(actions.getAggregateReport(organization_uuid))
+    expect(actions.getAggregateReport(partnerShipmentIds))
       .toEqual(expectedAction);
   });
 });
@@ -266,12 +266,12 @@ describe('Get Aggregate Report action', () => {
 // Test Get Sensor Report Alerts
 describe('Get Sensor Report Alerts action', () => {
   it('should create an action to get sensor report alerts', () => {
-    const organization_uuid = '224761f5-0010-4a46-d92a4fdc1d21';
+    const partnerShipmentIds = ['1', '2', '3'];
     const expectedAction = {
       type: actions.GET_SENSOR_REPORT,
-      organization_uuid,
+      partnerShipmentIds,
     };
-    expect(actions.getSensorReportAlerts(organization_uuid))
+    expect(actions.getSensorReportAlerts(partnerShipmentIds))
       .toEqual(expectedAction);
   });
 });

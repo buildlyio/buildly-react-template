@@ -39,7 +39,6 @@ import {
   getGatewayType,
   getSensors,
   getSensorType,
-  getAggregateReport,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { numberWithCommas, MAP_API_URL } from '@utils/utilMethods';
 import {
@@ -115,7 +114,12 @@ const Dashboard = (props) => {
 
   useEffect(() => {
     if (shipmentData === null) {
-      dispatch(getShipmentDetails(organization));
+      const aggregate = !aggregateReportData;
+      dispatch(getShipmentDetails(
+        organization,
+        null,
+        aggregate,
+      ));
     }
     if (custodianData === null) {
       dispatch(getCustodians(organization));
@@ -139,9 +143,6 @@ const Dashboard = (props) => {
     if (!sensorData) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
-    }
-    if (!aggregateReportData) {
-      dispatch(getAggregateReport(organization));
     }
     if (!dashboardItems) {
       dispatch(getDashboardItems(organization));

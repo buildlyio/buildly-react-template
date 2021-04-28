@@ -18,13 +18,21 @@ describe('Get Shipment Details action', () => {
   it('should create an action to get shipment details', () => {
     const organization_uuid = 'gweiug-3t2igf-3yfhf-329hgds73';
     const id = 1;
+    const getAggregateReport = true;
+    const getReportAlerts = true;
     const expectedAction = {
       type: actions.GET_SHIPMENTS,
       organization_uuid,
       id,
+      getAggregateReport,
+      getReportAlerts,
     };
-    expect(actions.getShipmentDetails(organization_uuid, id))
-      .toEqual(expectedAction);
+    expect(actions.getShipmentDetails(
+      organization_uuid,
+      id,
+      getAggregateReport,
+      getReportAlerts,
+    )).toEqual(expectedAction);
   });
 });
 

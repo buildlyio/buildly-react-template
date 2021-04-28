@@ -44,8 +44,6 @@ import {
   getGatewayType,
   getSensors,
   getSensorType,
-  getAggregateReport,
-  getSensorReportAlerts,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { MAP_API_URL, convertUnitsOfMeasure } from '@utils/utilMethods';
 import {
@@ -144,7 +142,14 @@ const Shipment = (props) => {
 
   useEffect(() => {
     if (shipmentData === null) {
-      dispatch(getShipmentDetails(organization));
+      const aggregate = !aggregateReportData;
+      const alerts = !sensorReportAlerts;
+      dispatch(getShipmentDetails(
+        organization,
+        null,
+        aggregate,
+        alerts,
+      ));
     }
     if (custodianData === null) {
       dispatch(getCustodians(organization));
@@ -168,12 +173,6 @@ const Shipment = (props) => {
     if (!sensorData) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
-    }
-    if (!aggregateReportData) {
-      dispatch(getAggregateReport(organization));
-    }
-    if (!sensorReportAlerts) {
-      dispatch(getSensorReportAlerts(organization));
     }
     if (shipmentOptions === null) {
       httpService

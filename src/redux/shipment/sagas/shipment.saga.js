@@ -5,6 +5,10 @@ import _ from 'lodash';
 import { httpService } from '@modules/http/http.service';
 import { environment } from '@environments/environment';
 import { showAlert } from '@redux/alert/actions/alert.actions';
+import {
+  getAggregateReport,
+  getSensorReportAlerts,
+} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { routes } from '@routes/routesConstants';
 import {
   ADD_SHIPMENT,
@@ -52,15 +56,28 @@ function* getShipmentList(payload) {
       true,
     );
     if (data && data.data) {
-      yield put(getShipmentFlag(payload.organization_uuid));
-    }
-    yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data });
-    if (payload.id) {
-      yield put(
-        saveShipmentFormData(
-          data.data.find((shipment) => shipment.id === payload.id),
-        ),
+      yield [
+        yield put(getShipmentFlag(payload.organization_uuid)),
+        yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data }),
+      ];
+      if (payload.id) {
+        yield put(
+          saveShipmentFormData(
+            data.data.find((shipment) => shipment.id === payload.id),
+          ),
+        );
+      }
+
+      const ids = _.toString(
+        _.map(data.data, 'partner_shipment_id'),
       );
+      const encodedIds = encodeURIComponent(ids);
+      if (payload.getAggregateReport) {
+        yield put(getAggregateReport(encodedIds));
+      }
+      if (payload.getReportAlerts) {
+        yield put(getSensorReportAlerts(encodedIds));
+      }
     }
   } catch (error) {
     yield [
