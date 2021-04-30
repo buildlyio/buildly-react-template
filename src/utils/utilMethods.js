@@ -85,26 +85,20 @@ export const convertUnitsOfMeasure = (
 ) => {
   switch (_class) {
     case 'temperature':
-      if (
-        sourceUnit === 'fahrenheit'
-        && destinationUnit === 'celsius'
-      ) {
-        return ((value - 32) * 5) / 9;
+      if (sourceUnit === 'fahrenheit' && destinationUnit === 'celsius') {
+        return (((value - 32) * 5) / 9).toFixed(2);
       }
-      if (
-        sourceUnit === 'celsius'
-        && destinationUnit === 'fahrenheit'
-      ) {
-        return (value * 9) / 5 + 32;
+      if (sourceUnit === 'celsius' && destinationUnit === 'fahrenheit') {
+        return ((value * 9) / 5 + 32).toFixed(2);
       }
       return null;
 
     case 'distance':
       if (sourceUnit === 'km' && destinationUnit === 'miles') {
-        return (value * 0.6214);
+        return (value * 0.6214).toFixed(2);
       }
       if (sourceUnit === 'miles' && destinationUnit === 'km') {
-        return (value / 0.6214);
+        return (value / 0.6214).toFixed(2);
       }
       return null;
 
