@@ -216,7 +216,7 @@ const AddCustodians = ({
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
@@ -352,15 +352,21 @@ const AddCustodians = ({
                 >
                   <MenuItem value="">Select</MenuItem>
                   {custodianTypeList
-                    && _.orderBy(custodianTypeList, ['name'], ['asc'])
-                      .map((item, index) => (
+                    && _.map(
+                      _.orderBy(
+                        custodianTypeList,
+                        ['name'],
+                        ['asc'],
+                      ),
+                      (item, index) => (
                         <MenuItem
                           key={`custodianType${index}:${item.id}`}
                           value={item.url}
                         >
                           {item.name}
                         </MenuItem>
-                      ))}
+                      ),
+                    )}
                 </TextField>
               </Grid>
               <Grid item xs={12} md={6} sm={6}>

@@ -130,6 +130,8 @@ const AddItems = ({
   const [itemMetData, setItemMetaData] = useState({});
   const [productMetData, productMetaData] = useState({});
   const organization = useContext(UserContext).organization.organization_uuid;
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
     if (itemOptions && itemOptions.actions) {
@@ -149,7 +151,7 @@ const AddItems = ({
       && unitsOfMeasure
     ) {
       let selectedProduct = '';
-      products.forEach((obj) => {
+      _.forEach(products, (obj) => {
         if (obj.url === editData.product[0]) {
           selectedProduct = obj;
         }
@@ -240,7 +242,7 @@ const AddItems = ({
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
@@ -264,7 +266,7 @@ const AddItems = ({
     setItemWeight(value.gross_weight);
     setItemValue(value.value);
     if (unitsOfMeasure && unitsOfMeasure.length) {
-      unitsOfMeasure.forEach((unit) => {
+      _.forEach(unitsOfMeasure, (unit) => {
         if (unit.url === value.unit_of_measure) {
           setProductUom(value.unit_of_measure);
           setProductUomName(unit.name);
@@ -273,7 +275,7 @@ const AddItems = ({
       });
     }
     if (productType && productType.length) {
-      productType.forEach((type) => {
+      _.forEach(productType, (type) => {
         if (type.url === value.product_type) {
           setProductType(type.name);
         }
@@ -288,9 +290,6 @@ const AddItems = ({
     setItemValue(e.target.value * previousValue);
     setItemWeight(e.target.value * previousWeight);
   };
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
     <div>
@@ -463,6 +462,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       multiline
                       rows={4}
                       id="product_desc"
@@ -492,6 +492,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="product_type"
                       label="Product Type"
                       value={product_type}
@@ -517,6 +518,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       type="number"
                       id="product_value"
                       label="Product Value"
@@ -546,6 +548,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       type="number"
                       id="product_weight"
                       label="Product Weight"
@@ -572,6 +575,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="product_uom"
                       label="Units of Measure"
                       value={product_uom_name}
@@ -599,6 +603,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="gtin"
                       label="GTIN"
                       name="gtin"
@@ -624,6 +629,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="upc"
                       label="UPC"
                       name="upc"
@@ -649,6 +655,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="ean"
                       label="EAN"
                       name="ean"
@@ -674,6 +681,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="paper_tag_no"
                       label="Paper Tag Number"
                       name="paper_tag_no"
@@ -701,6 +709,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="batch_id"
                       label="Batch/Run ID"
                       name="batch_id"
@@ -728,6 +737,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="bin_id"
                       label="BIN ID"
                       name="bin_id"
@@ -788,6 +798,7 @@ const AddItems = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
+                  disabled
                   type="number"
                   id="item_value"
                   label="Item Value"
@@ -817,6 +828,7 @@ const AddItems = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
+                  disabled
                   type="number"
                   id="item_weight"
                   label="Item Weight"
