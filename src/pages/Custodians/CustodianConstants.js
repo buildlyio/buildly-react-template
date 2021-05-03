@@ -2,27 +2,39 @@ import _ from 'lodash';
 import moment from 'moment';
 
 export const custodianColumns = [
-  // { id: 'id', label: 'Custodian ID', minWidth: 150 },
   {
-    id: 'name',
+    name: 'name',
     label: 'Name',
-    minWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
   {
-    id: 'location',
+    name: 'location',
     label: 'Location',
-    minWidth: 180,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
   {
-    id: 'custodian_glns',
+    name: 'custodian_glns',
     label: 'GLN',
-    minWidth: 170,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => value || '-',
+    },
   },
 ];
 
 export const getUniqueContactInfo = (rowItem, contactInfo) => {
   let obj = '';
-  contactInfo.forEach((info) => {
+  _.forEach(contactInfo, (info) => {
     if (rowItem.contact_data[0] === info.url) {
       obj = info;
     }
@@ -36,13 +48,24 @@ export const getFormattedRow = (data, contactInfo, custodyData) => {
     customizedRow.forEach((rowItem) => {
       const contactInfoItem = getUniqueContactInfo(rowItem, contactInfo);
       rowItem.location = `${
-        contactInfoItem.address1 && `${contactInfoItem.address1},`
-      }
-            ${contactInfoItem.address2 && `${contactInfoItem.address2},`}
-            ${contactInfoItem.city && `${contactInfoItem.city},`}
-            ${contactInfoItem.state && `${contactInfoItem.state},`}
-            ${contactInfoItem.country && `${contactInfoItem.country},`}
-            ${contactInfoItem.postal_code && `${contactInfoItem.postal_code}`}`;
+        contactInfoItem.address1
+        && `${contactInfoItem.address1},`
+      } ${
+        contactInfoItem.address2
+        && `${contactInfoItem.address2},`
+      } ${
+        contactInfoItem.city
+        && `${contactInfoItem.city},`
+      } ${
+        contactInfoItem.state
+        && `${contactInfoItem.state},`
+      } ${
+        contactInfoItem.country
+        && `${contactInfoItem.country},`
+      } ${
+        contactInfoItem.postal_code
+        && `${contactInfoItem.postal_code}`
+      }`;
     });
   }
 

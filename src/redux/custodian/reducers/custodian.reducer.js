@@ -12,8 +12,6 @@ import {
   DELETE_CUSTODIANS,
   DELETE_CUSTODIANS_FAILURE,
   DELETE_CUSTODIANS_SUCCESS,
-  SEARCH,
-  SEARCH_SUCCESS,
   GET_CUSTODIAN_TYPE,
   GET_CUSTODIAN_TYPE_SUCCESS,
   GET_CUSTODIAN_TYPE_FAILURE,
@@ -32,11 +30,6 @@ import {
   UPDATE_CUSTODY,
   UPDATE_CUSTODY_SUCCESS,
   UPDATE_CUSTODY_FAILURE,
-  GET_CUSTODIAN_OPTIONS,
-  GET_CUSTODIAN_OPTIONS_SUCCESS,
-  GET_CUSTODIAN_OPTIONS_FAILURE,
-  GET_CONTACT_OPTIONS_SUCCESS,
-  GET_CONTACT_OPTIONS_FAILURE,
   GET_CUSTODY_OPTIONS_SUCCESS,
   GET_CUSTODY_OPTIONS_FAILURE,
   ADD_CUSTODIAN_TYPE,
@@ -57,9 +50,7 @@ const initialState = {
   error: null,
   custodianTypeList: null,
   contactInfo: null,
-  custodianOptions: null,
   custodyOptions: null,
-  contactOptions: null,
 };
 
 // Reducer
@@ -171,20 +162,6 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         error: action.error,
-      };
-
-    case SEARCH:
-      return {
-        ...state,
-        error: null,
-      };
-
-    case SEARCH_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        searchedData: action.data,
       };
 
     case GET_CUSTODIAN_TYPE:
@@ -331,33 +308,6 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case GET_CUSTODIAN_OPTIONS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        custodianOptions: null,
-        error: null,
-      };
-
-    case GET_CUSTODIAN_OPTIONS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        custodianOptions: action.data,
-        error: null,
-      };
-
-    case GET_CUSTODIAN_OPTIONS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        userOptions: null,
-        error: action.error,
-      };
-
     case GET_CUSTODY_OPTIONS_SUCCESS:
       return {
         ...state,
@@ -373,24 +323,6 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         custodyOptions: null,
-        error: action.error,
-      };
-
-    case GET_CONTACT_OPTIONS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        contactOptions: action.data,
-        error: null,
-      };
-
-    case GET_CONTACT_OPTIONS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        contactOptions: null,
         error: action.error,
       };
 

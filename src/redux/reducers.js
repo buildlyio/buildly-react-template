@@ -8,6 +8,7 @@ import coreuserReducer from './coreuser/coreuser.reducer';
 import custodianReducer from './custodian/reducers/custodian.reducer';
 import importExportReducer from './importExport/reducers/importExport.reducer';
 import itemsReducer from './items/reducers/items.reducer';
+import optionsReducer from './options/reducers/options.reducer';
 import sensorsGatewayReducer from './sensorsGateway/reducers/sensorsGateway.reducer';
 import shipmentReducer from './shipment/reducers/shipment.reducers';
 import { LOGOUT_SUCCESS } from './authuser/actions/authuser.actions';
@@ -21,6 +22,7 @@ const appReducer = combineReducers({
   custodianReducer,
   importExportReducer,
   itemsReducer,
+  optionsReducer,
   sensorsGatewayReducer,
   shipmentReducer,
 });

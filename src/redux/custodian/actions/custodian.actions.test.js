@@ -67,23 +67,6 @@ describe('Delete Custodian action', () => {
   });
 });
 
-// Test Search Custodian action
-describe('Search Custodian action', () => {
-  it('should create an action to search custodian', () => {
-    const searchItem = 'abc';
-    const searchList = [{ id: '123', name: 'abc' }];
-    const searchFields = ['id', 'name'];
-    const expectedAction = {
-      type: actions.SEARCH,
-      searchItem,
-      searchList,
-      searchFields,
-    };
-    expect(actions.searchCustodian(searchItem, searchList, searchFields))
-      .toEqual(expectedAction);
-  });
-});
-
 // Test Get Custodian Type action
 describe('Get Custodian Type action', () => {
   it('should create an action to get custodian type', () => {

@@ -8,9 +8,7 @@ const initialState = {
   error: null,
   custodianTypeList: null,
   contactInfo: null,
-  custodianOptions: null,
   custodyOptions: null,
-  contactOptions: null,
 };
 
 describe('Get custodian reducer', () => {
@@ -153,27 +151,6 @@ describe('Delete Custodian reducer', () => {
       error: undefined,
       loaded: true,
       loading: false,
-    });
-  });
-});
-
-describe('Search reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.SEARCH },
-    )).toEqual(initialState);
-  });
-
-  it('Search success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.SEARCH_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      searchedData: undefined,
     });
   });
 });

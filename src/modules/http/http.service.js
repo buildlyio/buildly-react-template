@@ -50,14 +50,12 @@ function makeOptionsRequest(method, url, useJwt) {
   }
   const headers = {
     Authorization: `${tokenType} ${token}`,
-    // "Content-Type": "application/json",
   };
   const body = {
     jwt_iss: 'Buildly',
   };
   const options = {
     method,
-    // body: JSON.stringify(body),
     headers,
     returnPromise: true,
   };

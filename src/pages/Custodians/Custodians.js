@@ -1,32 +1,34 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
+import MUIDataTable from 'mui-datatables';
 import {
   makeStyles,
   Typography,
   Box,
   Grid,
   Button,
+  IconButton,
 } from '@material-ui/core';
-import { Add as AddIcon } from '@material-ui/icons';
-import { environment } from '@environments/environment';
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from '@material-ui/icons';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 import Loader from '@components/Loader/Loader';
-import DataTable from '@components/Table/Table';
 import { UserContext } from '@context/User.context';
-import { httpService } from '@modules/http/http.service';
 import {
-  searchCustodian,
   getCustodians,
   getCustodianType,
   deleteCustodian,
   getContact,
   getCustody,
-  GET_CUSTODIAN_OPTIONS_SUCCESS,
-  GET_CUSTODIAN_OPTIONS_FAILURE,
-  GET_CONTACT_OPTIONS_SUCCESS,
-  GET_CONTACT_OPTIONS_FAILURE,
 } from '@redux/custodian/actions/custodian.actions';
+import {
+  getCustodianOptions,
+  getContactOptions,
+} from '@redux/options/actions/options.actions';
 import { routes } from '@routes/routesConstants';
 import {
   custodianColumns,
@@ -40,6 +42,28 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginBottom: '0.5em',
   },
+  iconButton: {
+    padding: theme.spacing(1.5, 0),
+  },
+  dataTableBody: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: '#4F4D4D',
+    },
+    '&:nth-of-type(even)': {
+      backgroundColor: '#383636',
+    },
+    '&:hover': {
+      backgroundColor: '#000 !important',
+    },
+  },
+  dataTable: {
+    '& .MuiPaper-root': {
+      backgroundColor: '#383636',
+    },
+    '& tr > th': {
+      backgroundColor: '#383636',
+    },
+  },
 }));
 
 const Custodian = ({
@@ -48,8 +72,6 @@ const Custodian = ({
   custodianData,
   loading,
   contactInfo,
-  searchedData,
-  noSearch,
   redirectTo,
   custodyData,
   custodianOptions,
@@ -58,9 +80,7 @@ const Custodian = ({
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
   const [deleteContactObjId, setDeleteContactObjId] = useState('');
-  const [searchValue, setSearchValue] = useState('');
   const [rows, setRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
 
@@ -72,6 +92,29 @@ const Custodian = ({
     ? `${redirectTo}/custodian`
     : `${routes.CUSTODIANS}/edit`;
 
+  const options = {
+    filter: true,
+    filterType: 'multiselect',
+    responsive: 'standard',
+    tableBodyHeight: '500px',
+    tableBodyMaxHeight: '',
+    selectableRows: 'none',
+    selectToolbarPlacement: 'none',
+    rowsPerPageOptions: [5, 10, 15],
+    downloadOptions: {
+      filename: 'CustodianData.csv',
+      separator: ',',
+    },
+    textLabels: {
+      body: {
+        noMatch: 'No data to display',
+      },
+    },
+    setRowProps: (row, dataIndex, rowIndex) => ({
+      className: classes.dataTableBody,
+    }),
+  };
+
   useEffect(() => {
     if (custodianData === null) {
       dispatch(getCustodians(organization));
@@ -82,49 +125,18 @@ const Custodian = ({
       dispatch(getCustody());
     }
     if (custodianOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}custodian/custodian/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_CUSTODIAN_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_CUSTODIAN_OPTIONS_FAILURE, error });
-        });
+      dispatch(getCustodianOptions());
     }
     if (contactOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}custodian/contact/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_CONTACT_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_CONTACT_OPTIONS_FAILURE, error });
-        });
+      dispatch(getContactOptions());
     }
   }, []);
 
   useEffect(() => {
     if (custodianData && custodianData.length && contactInfo) {
       setRows(getFormattedRow(custodianData, contactInfo));
-      setFilteredRows(getFormattedRow(custodianData, contactInfo));
     }
   }, [custodianData, contactInfo, custodyData]);
-
-  useEffect(() => {
-    if (searchedData) {
-      setFilteredRows(searchedData);
-    }
-  }, [searchedData]);
 
   const editItem = (item) => {
     const contactObj = getUniqueContactInfo(item, contactInfo);
@@ -152,25 +164,39 @@ const Custodian = ({
     setConfirmModal(false);
   };
 
-  const searchTable = (e) => {
-    const searchFields = ['name', 'location'];
-    setSearchValue(e.target.value);
-    dispatch(searchCustodian(e.target.value, rows, searchFields));
-  };
-
-  const actionsColumns = [
+  const columns = [
     {
-      id: 'edit',
-      type: 'edit',
-      action: editItem,
-      label: 'Edit',
+      name: 'Edit',
+      options: {
+        filter: false,
+        sort: false,
+        empty: true,
+        customBodyRenderLite: (dataIndex) => (
+          <IconButton
+            className={classes.iconButton}
+            onClick={() => editItem(rows[dataIndex])}
+          >
+            <EditIcon />
+          </IconButton>
+        ),
+      },
     },
     {
-      id: 'delete',
-      type: 'delete',
-      action: deletItem,
-      label: 'Delete',
+      name: 'Delete',
+      options: {
+        filter: false,
+        sort: false,
+        empty: true,
+        customBodyRenderLite: (dataIndex) => (
+          <IconButton
+            onClick={() => deletItem(rows[dataIndex])}
+          >
+            <DeleteIcon />
+          </IconButton>
+        ),
+      },
     },
+    ...custodianColumns,
   ];
 
   return (
@@ -199,15 +225,16 @@ const Custodian = ({
             Custodians
           </Typography>
         )}
-        <Grid container spacing={2}>
+        <Grid
+          className={classes.dataTable}
+          container
+          spacing={2}
+        >
           <Grid item xs={12}>
-            <DataTable
-              rows={filteredRows}
-              columns={custodianColumns}
-              actionsColumns={actionsColumns}
-              hasSearch={!noSearch}
-              searchAction={searchTable}
-              searchValue={searchValue} // To show the search field in table
+            <MUIDataTable
+              data={rows}
+              columns={columns}
+              options={options}
             />
           </Grid>
         </Grid>
@@ -229,5 +256,8 @@ const Custodian = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
+  ...state.optionsReducer,
+  loading: state.custodianReducer.loading || state.optionsReducer.loading,
 });
+
 export default connect(mapStateToProps)(Custodian);

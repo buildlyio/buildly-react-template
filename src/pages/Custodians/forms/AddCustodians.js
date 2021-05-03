@@ -56,7 +56,6 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: -12,
   },
   loadingWrapper: {
-    // margin: theme.spacing(1),
     position: 'relative',
   },
   addressContainer: {
@@ -73,8 +72,6 @@ const AddCustodians = ({
   dispatch,
   loading,
   history,
-  loaded,
-  error,
   location,
   custodianTypeList,
   custodianOptions,
@@ -709,6 +706,8 @@ const AddCustodians = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
+  ...state.optionsReducer,
+  loading: state.custodianReducer.loading || state.optionsReducer.loading,
 });
 
 export default connect(mapStateToProps)(AddCustodians);
