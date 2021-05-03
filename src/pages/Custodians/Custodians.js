@@ -77,11 +77,11 @@ const Custodian = ({
   custodianOptions,
   contactOptions,
 }) => {
+  const classes = useStyles();
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
   const [deleteContactObjId, setDeleteContactObjId] = useState('');
   const [rows, setRows] = useState([]);
-  const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
 
   const addCustodianPath = redirectTo
@@ -96,8 +96,6 @@ const Custodian = ({
     filter: true,
     filterType: 'multiselect',
     responsive: 'standard',
-    tableBodyHeight: '500px',
-    tableBodyMaxHeight: '',
     selectableRows: 'none',
     selectToolbarPlacement: 'none',
     rowsPerPageOptions: [5, 10, 15],
@@ -148,7 +146,7 @@ const Custodian = ({
     });
   };
 
-  const deletItem = (item) => {
+  const deleteItem = (item) => {
     const contactObj = getUniqueContactInfo(item, contactInfo);
     setDeleteItemId(item.id);
     setDeleteContactObjId(contactObj.id);
@@ -189,7 +187,7 @@ const Custodian = ({
         empty: true,
         customBodyRenderLite: (dataIndex) => (
           <IconButton
-            onClick={() => deletItem(rows[dataIndex])}
+            onClick={() => deleteItem(rows[dataIndex])}
           >
             <DeleteIcon />
           </IconButton>
@@ -202,7 +200,7 @@ const Custodian = ({
   return (
     <Box mt={5} mb={5}>
       {loading && <Loader open={loading} />}
-      <div className={classes.container}>
+      <div>
         <Box mb={3} mt={2}>
           <Button
             type="button"

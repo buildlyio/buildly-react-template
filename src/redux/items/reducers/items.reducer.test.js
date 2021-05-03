@@ -7,10 +7,8 @@ const initialState = {
   itemData: null,
   error: null,
   itemTypeList: null,
-  itemOptions: null,
   products: null,
   productType: null,
-  productOptions: null,
   unitsOfMeasure: null,
 };
 

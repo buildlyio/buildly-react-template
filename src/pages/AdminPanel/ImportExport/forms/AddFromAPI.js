@@ -17,11 +17,9 @@ import { validators } from '@utils/validators';
 import { httpService } from '@modules/http/http.service';
 import { environment } from '@environments/environment';
 import {
-  GET_ITEM_OPTIONS_SUCCESS,
-  GET_ITEM_OPTIONS_FAILURE,
-  GET_PRODUCTS_OPTIONS_SUCCESS,
-  GET_PRODUCTS_OPTIONS_FAILURE,
-} from '@redux/items/actions/items.actions';
+  getItemsOptions,
+  getProductsOptions,
+} from '@redux/options/actions/options.actions';
 import {
   GET_SENSOR_OPTIONS_SUCCESS,
   GET_SENSOR_OPTIONS_FAILURE,
@@ -147,35 +145,10 @@ const AddFromAPI = ({
 
   useEffect(() => {
     if (itemOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}shipment/item/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_ITEM_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_ITEM_OPTIONS_FAILURE, error });
-        });
+      dispatch(getItemsOptions());
     }
-
     if (productOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}shipment/product/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_PRODUCTS_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_PRODUCTS_OPTIONS_FAILURE, error });
-        });
+      dispatch(getProductsOptions());
     }
 
     if (gatewayOptions === null) {

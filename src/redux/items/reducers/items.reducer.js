@@ -20,17 +20,12 @@ import {
   GET_UNITS_OF_MEASURE,
   GET_UNITS_OF_MEASURE_SUCCESS,
   GET_UNITS_OF_MEASURE_FAILURE,
-  GET_ITEM_OPTIONS,
-  GET_ITEM_OPTIONS_SUCCESS,
-  GET_ITEM_OPTIONS_FAILURE,
   GET_PRODUCTS,
   GET_PRODUCTS_SUCCESS,
   GET_PRODUCTS_FAILURE,
   GET_PRODUCTS_TYPE,
   GET_PRODUCTS_TYPE_SUCCESS,
   GET_PRODUCTS_TYPE_FAILURE,
-  GET_PRODUCTS_OPTIONS_SUCCESS,
-  GET_PRODUCTS_OPTIONS_FAILURE,
   ADD_ITEMS_TYPE,
   ADD_ITEMS_TYPE_SUCCESS,
   ADD_ITEMS_TYPE_FAILURE,
@@ -75,10 +70,8 @@ const initialState = {
   itemData: null,
   error: null,
   itemTypeList: null,
-  itemOptions: null,
   products: null,
   productType: null,
-  productOptions: null,
   unitsOfMeasure: null,
 };
 
@@ -294,33 +287,6 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case GET_ITEM_OPTIONS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        itemOptions: null,
-        error: null,
-      };
-
-    case GET_ITEM_OPTIONS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        itemOptions: action.data,
-        error: null,
-      };
-
-    case GET_ITEM_OPTIONS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        itemOptions: null,
-        error: action.error,
-      };
-
     case GET_PRODUCTS:
       return {
         ...state,
@@ -366,24 +332,6 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        error: action.error,
-      };
-
-    case GET_PRODUCTS_OPTIONS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        productOptions: action.data,
-        error: null,
-      };
-
-    case GET_PRODUCTS_OPTIONS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        productOptions: null,
         error: action.error,
       };
 

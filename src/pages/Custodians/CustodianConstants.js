@@ -43,11 +43,11 @@ export const getUniqueContactInfo = (rowItem, contactInfo) => {
 };
 
 export const getFormattedRow = (data, contactInfo, custodyData) => {
-  const customizedRow = [...data];
   if (data && data.length && contactInfo && contactInfo.length) {
-    customizedRow.forEach((rowItem) => {
+    let customizedRow = [];
+    _.forEach(data, (rowItem) => {
       const contactInfoItem = getUniqueContactInfo(rowItem, contactInfo);
-      rowItem.location = `${
+      const location = `${
         contactInfoItem.address1
         && `${contactInfoItem.address1},`
       } ${
@@ -66,12 +66,15 @@ export const getFormattedRow = (data, contactInfo, custodyData) => {
         contactInfoItem.postal_code
         && `${contactInfoItem.postal_code}`
       }`;
+      const editedData = { ...rowItem, location };
+      customizedRow = [...customizedRow, editedData];
     });
-  }
 
-  return _.orderBy(
-    customizedRow,
-    (row) => moment(row.create_date),
-    ['asc'],
-  );
+    return _.orderBy(
+      customizedRow,
+      (row) => moment(row.create_date),
+      ['asc'],
+    );
+  }
+  return data;
 };

@@ -4,61 +4,95 @@ import { numberWithCommas } from '@utils/utilMethods';
 
 export const itemColumns = [
   {
-    id: 'name',
+    name: 'name',
     label: 'Item Name',
-    minWidth: 180,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
   {
-    id: 'number_of_units',
+    name: 'number_of_units',
     label: '# of Units',
-    minWidth: 100,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
   {
-    id: 'item_type_value',
+    name: 'item_type_value',
     label: 'Item Type',
-    minWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
   {
-    id: 'value',
+    name: 'value',
     label: 'Value',
-    minWidth: 150,
-    format: (value) => (value && value !== '-'
-      ? `$${numberWithCommas(value)}`
-      : value),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? `$${numberWithCommas(value)}`
+          : value
+      ),
+    },
   },
   {
-    id: 'gross_weight',
+    name: 'gross_weight',
     label: 'Gross Weight',
-    minWidth: 150,
-    type: 'number',
-    format: (value) => (value && value !== '-'
-      ? `${numberWithCommas(value)}`
-      : value),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? `${numberWithCommas(value)}`
+          : value
+      ),
+    },
   },
   {
-    id: 'unitsMeasure',
+    name: 'unitsMeasure',
     label: 'Units of Measure',
-    minWidth: 50,
-    type: 'number',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
 ];
 
 export const getFormattedRow = (data, itemTypeList, unitsOfMeasure) => {
   if (data && itemTypeList) {
-    const formattedData = [...data];
-    formattedData.forEach((element) => {
-      itemTypeList.forEach((type) => {
+    let formattedData = [];
+    _.forEach(data, (element) => {
+      let editedData = element;
+      _.forEach(itemTypeList, (type) => {
         if (type.url === element.item_type) {
-          element.item_type_value = type.name;
+          editedData = {
+            ...editedData,
+            item_type_value: type.name,
+          };
         }
       });
       if (unitsOfMeasure) {
-        unitsOfMeasure.forEach((unit) => {
+        _.forEach(unitsOfMeasure, (unit) => {
           if (unit.url === element.unit_of_measure) {
-            element.unitsMeasure = unit.name;
+            editedData = {
+              ...editedData,
+              unitsMeasure: unit.name,
+            };
           }
         });
       }
+      formattedData = [...formattedData, editedData];
     });
 
     return _.orderBy(
