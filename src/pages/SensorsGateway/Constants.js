@@ -3,76 +3,107 @@ import _ from 'lodash';
 
 export const gatewayColumns = [
   {
-    id: 'name',
+    name: 'name',
     label: 'Gateway Name',
-    minWidth: 200,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
   {
-    id: 'gateway_type_value',
+    name: 'gateway_type_value',
     label: 'Type',
-    minWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
   {
-    id: 'last_known_battery_level',
+    name: 'last_known_battery_level',
     label: 'Battery',
-    minWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
   {
-    id: 'gateway_status',
+    name: 'gateway_status',
     label: 'Status',
-    minWidth: 150,
-    format: (value) => (
-      value && value !== '-'
-        ? value.charAt(0).toUpperCase() + value.substr(1)
-        : value
-    ),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? _.capitalize(value)
+          : value
+      ),
+    },
   },
   {
-    id: 'shipment',
+    name: 'shipment',
     label: 'Shipments',
-    minWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
   {
-    id: 'activation_date',
+    name: 'activation_date',
     label: 'Activation',
-    minWidth: 180,
-    format: (value) => (
-      value && value !== '-'
-        ? returnFormattedData(value)
-        : value
-    ),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? moment(value).format('MM/DD/yyyy')
+          : value
+      ),
+    },
   },
 ];
-
-const returnFormattedData = (value) => (
-  moment(value).format('MM/DD/yyyy')
-);
 
 export const getFormattedRow = (data, itemTypeList, shipmentData) => {
   if (
     data
     && itemTypeList
-    && shipmentData
   ) {
-    const formattedData = [...data];
-    formattedData.forEach((element) => {
-      element.shipment = [];
-      itemTypeList.forEach((type) => {
+    let formattedData = [];
+    _.forEach(data, (element) => {
+      let edited = { ...element, shipment: [] };
+      _.forEach(itemTypeList, (type) => {
         if (type.url === element.gateway_type) {
-          element.gateway_type_value = type.name;
+          edited = {
+            ...edited,
+            gateway_type_value: type.name,
+          };
         }
       });
-      shipmentData.forEach((shipment) => {
-        if (
-          element.shipment_ids
-          && element.shipment_ids.includes(shipment.partner_shipment_id)
-        ) {
-          element.shipment.push(shipment.name);
-        }
-      });
-      if (element.shipment.length === 0) {
-        element.shipment = '-';
+      if (shipmentData && shipmentData.length) {
+        _.forEach(shipmentData, (shipment) => {
+          if (
+            element.shipment_ids
+            && element.shipment_ids.includes(shipment.partner_shipment_id)
+          ) {
+            edited = {
+              ...edited,
+              shipment: [
+                ...edited.shipment,
+                shipment.name,
+              ],
+            };
+          }
+        });
       }
+      if (edited.shipment.length === 0) {
+        edited.shipment = '-';
+      }
+      formattedData = [...formattedData, edited];
     });
 
     return _.orderBy(
@@ -86,51 +117,72 @@ export const getFormattedRow = (data, itemTypeList, shipmentData) => {
 
 export const sensorsColumns = [
   {
-    id: 'name',
+    name: 'name',
     label: 'Sensor Name',
-    minWidth: 150,
-    maxWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
   {
-    id: 'sensor_type_value',
+    name: 'sensor_type_value',
     label: 'Type',
-    minWidth: 150,
-    maxWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
   {
-    id: 'activation_date',
+    name: 'activation_date',
     label: 'Activated',
-    minWidth: 150,
-    format: (value) => (
-      value && value !== '-'
-        ? returnFormattedData(value)
-        : value
-    ),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? moment(value).format('MM/DD/yyyy')
+          : value
+      ),
+    },
   },
   {
-    id: 'associated_gateway',
+    name: 'associated_gateway',
     label: 'Associated Gateway',
-    minWidth: 150,
-    maxWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
   },
 ];
 
 export const getFormattedSensorRow = (data, sensorTypeList, gatewayData) => {
   if (data && sensorTypeList) {
-    const formattedData = [...data];
-    formattedData.forEach((element) => {
-      sensorTypeList.forEach((type) => {
+    let formattedData = [];
+    _.forEach(data, (element) => {
+      let edited = element;
+      _.forEach(sensorTypeList, (type) => {
         if (type.url === element.sensor_type) {
-          element.sensor_type_value = type.name;
+          edited = {
+            ...edited,
+            sensor_type_value: type.name,
+          };
         }
       });
       if (gatewayData && gatewayData.length) {
-        gatewayData.forEach((gateway) => {
+        _.forEach(gatewayData, (gateway) => {
           if (gateway.url === element.gateway) {
-            element.associated_gateway = gateway.name;
+            edited = {
+              ...edited,
+              associated_gateway: gateway.name,
+            };
           }
         });
       }
+      formattedData = [...formattedData, edited];
     });
 
     return _.orderBy(

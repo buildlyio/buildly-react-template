@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import moment from 'moment';
 import {
   makeStyles,
@@ -140,7 +141,7 @@ const AddSensor = ({
       && editData.gateway
       && associatedGateway === null
     ) {
-      gatewayData.forEach((gtwy) => {
+      _.forEach(gatewayData, (gtwy) => {
         if (gtwy.url === editData.gateway) {
           setAccociatedGateway(gtwy);
         }
@@ -227,7 +228,7 @@ const AddSensor = ({
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
@@ -424,14 +425,17 @@ const AddSensor = ({
                     >
                       <MenuItem value="">Select</MenuItem>
                       {sensorTypeList
-                        && sensorTypeList.map((item, index) => (
-                          <MenuItem
-                            key={`sensorType${index}:${item.id}`}
-                            value={item.url}
-                          >
-                            {item.name}
-                          </MenuItem>
-                        ))}
+                        && _.map(
+                          sensorTypeList,
+                          (item, index) => (
+                            <MenuItem
+                              key={`sensorType${index}:${item.id}`}
+                              value={item.url}
+                            >
+                              {item.name}
+                            </MenuItem>
+                          ),
+                        )}
                     </TextField>
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
@@ -568,6 +572,8 @@ const AddSensor = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
+  ...state.optionsReducer,
+  loading: state.sensorsGatewayReducer.loading || state.optionsReducer.loading,
 });
 
 export default connect(mapStateToProps)(AddSensor);

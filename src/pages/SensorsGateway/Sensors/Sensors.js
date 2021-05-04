@@ -1,33 +1,80 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import { environment } from '@environments/environment';
-import DashboardWrapper from '@components/DashboardWrapper/DashboardWrapper';
+import MUIDataTable from 'mui-datatables';
+import {
+  makeStyles,
+  Typography,
+  Box,
+  Grid,
+  Button,
+  IconButton,
+} from '@material-ui/core';
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from '@material-ui/icons';
+import ConfirmModal from '@components/Modal/ConfirmModal';
+import Loader from '@components/Loader/Loader';
 import { UserContext } from '@context/User.context';
-import { httpService } from '@modules/http/http.service';
 import {
   getSensors,
   getSensorType,
   deleteSensor,
-  searchSensorItem,
-  GET_SENSOR_OPTIONS_SUCCESS,
-  GET_SENSOR_OPTIONS_FAILURE,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+import {
+  getSensorOptions,
+} from '@redux/options/actions/options.actions';
 import { routes } from '@routes/routesConstants';
 import { sensorsColumns, getFormattedSensorRow } from '../Constants';
 import AddSensors from '../forms/AddSensors';
 
+const useStyles = makeStyles((theme) => ({
+  dashboardHeading: {
+    fontWeight: 'bold',
+    marginBottom: '0.5em',
+  },
+  iconButton: {
+    padding: theme.spacing(1.5, 0),
+  },
+  dataTableBody: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: '#4F4D4D',
+    },
+    '&:nth-of-type(even)': {
+      backgroundColor: '#383636',
+    },
+    '&:hover': {
+      backgroundColor: '#000 !important',
+    },
+  },
+  dataTable: {
+    '& .MuiPaper-root': {
+      backgroundColor: '#383636',
+    },
+    '& tr > th': {
+      backgroundColor: '#383636',
+    },
+  },
+}));
+
 const Sensors = ({
   dispatch,
   history,
-  data,
+  sensorData,
   loading,
-  searchData,
   sensorTypeList,
   redirectTo,
-  noSearch,
   gatewayData,
   sensorOptions,
 }) => {
+  const classes = useStyles();
+  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [deleteSensorId, setDeleteSensorId] = useState('');
+  const [rows, setRows] = useState([]);
+  const organization = useContext(UserContext).organization.organization_uuid;
+
   const addPath = redirectTo
     ? `${redirectTo}/sensors`
     : `${routes.SENSORS_GATEWAY}/sensor/add`;
@@ -35,52 +82,48 @@ const Sensors = ({
   const editPath = redirectTo
     ? `${redirectTo}/sensors`
     : `${routes.SENSORS_GATEWAY}/sensor/edit`;
-  const [openConfirmModal, setConfirmModal] = useState(false);
-  const [deleteSensorId, setDeleteSensorId] = useState('');
-  const [searchValue, setSearchValue] = useState('');
-  const [rows, setRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
-  const organization = useContext(UserContext).organization.organization_uuid;
+
+  const options = {
+    filter: true,
+    filterType: 'multiselect',
+    responsive: 'standard',
+    selectableRows: 'none',
+    selectToolbarPlacement: 'none',
+    rowsPerPageOptions: [5, 10, 15],
+    downloadOptions: {
+      filename: 'SensorData.csv',
+      separator: ',',
+    },
+    textLabels: {
+      body: {
+        noMatch: 'No data to display',
+      },
+    },
+    setRowProps: (row, dataIndex, rowIndex) => ({
+      className: classes.dataTableBody,
+    }),
+  };
 
   useEffect(() => {
-    if (data === null) {
+    if (sensorData === null) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
     if (sensorOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}sensors/sensor/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((res) => {
-          dispatch({ type: GET_SENSOR_OPTIONS_SUCCESS, data: res });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_SENSOR_OPTIONS_FAILURE, error });
-        });
+      dispatch(getSensorOptions());
     }
   }, []);
 
   useEffect(() => {
     if (
-      data
-      && data.length
+      sensorData
+      && sensorData.length
       && sensorTypeList
       && sensorTypeList.length
     ) {
-      setRows(getFormattedSensorRow(data, sensorTypeList, gatewayData));
-      setFilteredRows(getFormattedSensorRow(data, sensorTypeList, gatewayData));
+      setRows(getFormattedSensorRow(sensorData, sensorTypeList, gatewayData));
     }
-  }, [data, sensorTypeList]);
-
-  useEffect(() => {
-    if (searchData) {
-      setFilteredRows(searchData);
-    }
-  }, [searchData]);
+  }, [sensorData, sensorTypeList]);
 
   const editSensor = (item) => {
     history.push(`${editPath}/:${item.id}`, {
@@ -100,46 +143,100 @@ const Sensors = ({
     setConfirmModal(false);
   };
 
-  const searchTable = (e) => {
-    const searchFields = [
-      'id',
-      'name',
-      // 'sensor_uuid',
-      'activation_date',
-      'sensor_type_value',
-      'associated_gateway',
-    ];
-    setSearchValue(e.target.value);
-    dispatch(searchSensorItem(e.target.value, rows, searchFields));
-  };
-
-  const onAddButtonClick = () => {
-    history.push(`${addPath}`, {
-      from: redirectTo || routes.SENSORS_GATEWAY,
-    });
-  };
+  const columns = [
+    {
+      name: 'Edit',
+      options: {
+        filter: false,
+        sort: false,
+        empty: true,
+        customBodyRenderLite: (dataIndex) => (
+          <IconButton
+            className={classes.iconButton}
+            onClick={() => editSensor(rows[dataIndex])}
+          >
+            <EditIcon />
+          </IconButton>
+        ),
+      },
+    },
+    {
+      name: 'Delete',
+      options: {
+        filter: false,
+        sort: false,
+        empty: true,
+        customBodyRenderLite: (dataIndex) => (
+          <IconButton
+            onClick={() => deleteSensorItem(rows[dataIndex])}
+          >
+            <DeleteIcon />
+          </IconButton>
+        ),
+      },
+    },
+    ...sensorsColumns,
+  ];
 
   return (
-    <DashboardWrapper
-      loading={loading}
-      // onAddButtonClick={onAddButtonClick}
-      dashboardHeading="Sensors"
-      // addButtonHeading='Add Sensor'
-      editAction={editSensor}
-      deleteAction={deleteSensorItem}
-      columns={sensorsColumns}
-      redirectTo={redirectTo}
-      rows={filteredRows}
-      hasSearch={!noSearch}
-      search={{ searchValue, searchAction: searchTable }}
-      openConfirmModal={openConfirmModal}
-      setConfirmModal={setConfirmModal}
-      handleConfirmModal={handleConfirmModal}
-      confirmModalTitle="Are you sure you want to Delete this Sensor?"
-    >
-      <Route path={`${addPath}`} component={AddSensors} />
-      <Route path={`${editPath}/:id`} component={AddSensors} />
-    </DashboardWrapper>
+    <Box mt={5} mb={5}>
+      {loading && <Loader open={loading} />}
+      <div>
+        {/* <Box mb={3} mt={2}>
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={() => history.push(addPath, {
+              from: redirectTo || routes.SENSORS_GATEWAY,
+            })}
+          >
+            <AddIcon />
+            {' '}
+            Add Sensor
+          </Button>
+        </Box> */}
+        {!redirectTo && (
+          <Typography
+            className={classes.dashboardHeading}
+            variant="h4"
+          >
+            Sensors
+          </Typography>
+        )}
+        <Grid
+          className={classes.dataTable}
+          container
+          spacing={2}
+        >
+          <Grid item xs={12}>
+            <MUIDataTable
+              data={rows}
+              columns={columns}
+              options={options}
+            />
+          </Grid>
+        </Grid>
+        <Route path={`${addPath}`} component={AddSensors} />
+        <Route path={`${editPath}/:id`} component={AddSensors} />
+      </div>
+
+      <ConfirmModal
+        open={openConfirmModal}
+        setOpen={setConfirmModal}
+        submitAction={handleConfirmModal}
+        title="Are you sure you want to Delete this Sensor?"
+        submitText="Delete"
+      />
+    </Box>
   );
 };
-export default Sensors;
+
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.sensorsGatewayReducer,
+  ...state.optionsReducer,
+  loading: state.sensorsGatewayReducer.loading || state.optionsReducer.loading,
+});
+
+export default connect(mapStateToProps)(Sensors);

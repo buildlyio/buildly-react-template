@@ -11,6 +11,12 @@ import {
   GET_PRODUCTS_OPTIONS,
   GET_PRODUCTS_OPTIONS_SUCCESS,
   GET_PRODUCTS_OPTIONS_FAILURE,
+  GET_GATEWAY_OPTIONS,
+  GET_GATEWAY_OPTIONS_SUCCESS,
+  GET_GATEWAY_OPTIONS_FAILURE,
+  GET_SENSOR_OPTIONS,
+  GET_SENSOR_OPTIONS_SUCCESS,
+  GET_SENSOR_OPTIONS_FAILURE,
 } from '../actions/options.actions';
 
 const initialState = {
@@ -21,6 +27,8 @@ const initialState = {
   contactOptions: null,
   itemOptions: null,
   productOptions: null,
+  gatewayOptions: null,
+  sensorOptions: null,
 };
 
 // Reducer
@@ -131,6 +139,58 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         productOptions: null,
+        error: action.error,
+      };
+
+    case GET_GATEWAY_OPTIONS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        gatewayOptions: null,
+        error: null,
+      };
+
+    case GET_GATEWAY_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        gatewayOptions: action.data,
+        error: null,
+      };
+
+    case GET_GATEWAY_OPTIONS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_SENSOR_OPTIONS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        sensorOptions: null,
+        error: null,
+      };
+
+    case GET_SENSOR_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorOptions: action.data,
+        error: null,
+      };
+
+    case GET_SENSOR_OPTIONS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
         error: action.error,
       };
 

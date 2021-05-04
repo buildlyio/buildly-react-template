@@ -4,11 +4,8 @@ import {
 import { httpService } from '@modules/http/http.service';
 import { environment } from '@environments/environment';
 import { showAlert } from '@redux/alert/actions/alert.actions';
-import { searchFilter } from '@utils/utilMethods';
 import {
   GET_GATEWAYS,
-  GATEWAY_SEARCH_SUCCESS,
-  GATEWAY_SEARCH,
   GET_GATEWAYS_TYPE,
   ADD_GATEWAY,
   DELETE_GATEWAY,
@@ -22,7 +19,6 @@ import {
   EDIT_GATEWAY_FAILURE,
   ADD_GATEWAY_FAILURE,
   GET_SENSORS,
-  SENSOR_SEARCH,
   GET_SENSORS_TYPE,
   GET_AGGREGATE_REPORT,
   GET_SENSOR_REPORT,
@@ -41,7 +37,6 @@ import {
   DELETE_SENSOR_FAILURE,
   EDIT_SENSOR_FAILURE,
   Add_SENSOR_FAILURE,
-  SENSOR_SEARCH_SUCCESS,
   ADD_GATEWAYS_TYPE,
   ADD_GATEWAYS_TYPE_SUCCESS,
   ADD_GATEWAYS_TYPE_FAILURE,
@@ -235,18 +230,6 @@ function* addGateway(action) {
         error,
       }),
     ];
-  }
-}
-
-function* searchGateway(payload) {
-  try {
-    const filteredData = searchFilter(payload);
-    yield put({ type: GATEWAY_SEARCH_SUCCESS, data: filteredData });
-  } catch (error) {
-    // yield put({
-    //   type: UPDATE_USER_FAIL,
-    //   error: 'Updating user fields failed',
-    // });
   }
 }
 
@@ -478,18 +461,6 @@ function* addSensor(action) {
         error,
       }),
     ];
-  }
-}
-
-function* searchSensors(payload) {
-  try {
-    const filteredData = searchFilter(payload);
-    yield put({ type: SENSOR_SEARCH_SUCCESS, data: filteredData });
-  } catch (error) {
-    // yield put({
-    //   type: UPDATE_USER_FAIL,
-    //   error: 'Updating user fields failed',
-    // });
   }
 }
 
@@ -743,10 +714,6 @@ function* watchGetGateway() {
   yield takeLatest(GET_GATEWAYS, getGatewayList);
 }
 
-function* watchGatewaySearch() {
-  yield takeLatest(GATEWAY_SEARCH, searchGateway);
-}
-
 function* watchGetGatewayType() {
   yield takeLatest(GET_GATEWAYS_TYPE, getGatewayTypeList);
 }
@@ -765,10 +732,6 @@ function* watchEditGateway() {
 
 function* watchGetSensor() {
   yield takeLatest(GET_SENSORS, getSensorList);
-}
-
-function* watchSensorSearch() {
-  yield takeLatest(SENSOR_SEARCH, searchSensors);
 }
 
 function* watchGetSensorType() {
@@ -821,7 +784,6 @@ function* watchDeleteSensorType() {
 
 export default function* sensorsGatewaySaga() {
   yield all([
-    watchGatewaySearch(),
     watchGetGateway(),
     watchGetGatewayType(),
     watchAddGateway(),
@@ -834,7 +796,6 @@ export default function* sensorsGatewaySaga() {
     watchAddSensor(),
     watchEditSensor(),
     watchDeleteSensor(),
-    watchSensorSearch(),
     watchAddGatewayType(),
     watchEditGatewayType(),
     watchDeleteGatewayType(),

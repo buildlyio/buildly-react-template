@@ -156,27 +156,6 @@ describe('Delete Item reducer', () => {
   });
 });
 
-describe('Search reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.SEARCH },
-    )).toEqual(initialState);
-  });
-
-  it('Search success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.SEARCH_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      searchedData: undefined,
-    });
-  });
-});
-
 describe('Get Item type reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(

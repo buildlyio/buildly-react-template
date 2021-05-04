@@ -14,18 +14,12 @@ import ConfirmModal from '@components/Modal/ConfirmModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
-import { httpService } from '@modules/http/http.service';
-import { environment } from '@environments/environment';
 import {
   getItemsOptions,
   getProductsOptions,
+  getGatewayOptions,
+  getSensorOptions,
 } from '@redux/options/actions/options.actions';
-import {
-  GET_SENSOR_OPTIONS_SUCCESS,
-  GET_SENSOR_OPTIONS_FAILURE,
-  GET_GATEWAY_OPTIONS_SUCCESS,
-  GET_GATEWAY_OPTIONS_FAILURE,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getApiResponse,
   addApiSetup,
@@ -150,37 +144,11 @@ const AddFromAPI = ({
     if (productOptions === null) {
       dispatch(getProductsOptions());
     }
-
     if (gatewayOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}sensors/gateway/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_GATEWAY_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_GATEWAY_OPTIONS_FAILURE, error });
-        });
+      dispatch(getGatewayOptions());
     }
-
     if (sensorOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}sensors/sensor/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_SENSOR_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_SENSOR_OPTIONS_FAILURE, error });
-        });
+      dispatch(getSensorOptions());
     }
   }, []);
 

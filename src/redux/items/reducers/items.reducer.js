@@ -14,8 +14,6 @@ import {
   GET_ITEMS_TYPE,
   GET_ITEMS_TYPE_SUCCESS,
   GET_ITEMS_TYPE_FAILURE,
-  SEARCH,
-  SEARCH_SUCCESS,
   DELETE_ITEMS_FAILURE,
   GET_UNITS_OF_MEASURE,
   GET_UNITS_OF_MEASURE_SUCCESS,
@@ -223,20 +221,6 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         error: action.error,
-      };
-
-    case SEARCH:
-      return {
-        ...state,
-        error: null,
-      };
-
-    case SEARCH_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        searchedData: action.data,
       };
 
     case GET_ITEMS_TYPE:

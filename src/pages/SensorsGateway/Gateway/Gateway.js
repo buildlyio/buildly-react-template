@@ -1,33 +1,80 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import { environment } from '@environments/environment';
-import DashboardWrapper from '@components/DashboardWrapper/DashboardWrapper';
+import MUIDataTable from 'mui-datatables';
+import {
+  makeStyles,
+  Typography,
+  Box,
+  Grid,
+  Button,
+  IconButton,
+} from '@material-ui/core';
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from '@material-ui/icons';
+import ConfirmModal from '@components/Modal/ConfirmModal';
+import Loader from '@components/Loader/Loader';
 import { UserContext } from '@context/User.context';
-import { httpService } from '@modules/http/http.service';
 import {
   getGateways,
   getGatewayType,
   deleteGateway,
-  searchGatewayItem,
-  GET_GATEWAY_OPTIONS_FAILURE,
-  GET_GATEWAY_OPTIONS_SUCCESS,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+import {
+  getGatewayOptions,
+} from '@redux/options/actions/options.actions';
 import { routes } from '@routes/routesConstants';
 import { gatewayColumns, getFormattedRow } from '../Constants';
 import AddGateway from '../forms/AddGateway';
 
+const useStyles = makeStyles((theme) => ({
+  dashboardHeading: {
+    fontWeight: 'bold',
+    marginBottom: '0.5em',
+  },
+  iconButton: {
+    padding: theme.spacing(1.5, 0),
+  },
+  dataTableBody: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: '#4F4D4D',
+    },
+    '&:nth-of-type(even)': {
+      backgroundColor: '#383636',
+    },
+    '&:hover': {
+      backgroundColor: '#000 !important',
+    },
+  },
+  dataTable: {
+    '& .MuiPaper-root': {
+      backgroundColor: '#383636',
+    },
+    '& tr > th': {
+      backgroundColor: '#383636',
+    },
+  },
+}));
+
 const Gateway = ({
   dispatch,
   history,
-  data,
+  gatewayData,
   loading,
-  searchData,
   gatewayTypeList,
   redirectTo,
-  noSearch,
   gatewayOptions,
   shipmentData,
 }) => {
+  const classes = useStyles();
+  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [deleteGatewayId, setDeleteGatewayId] = useState('');
+  const [rows, setRows] = useState([]);
+  const organization = useContext(UserContext).organization.organization_uuid;
+
   const addPath = redirectTo
     ? `${redirectTo}/gateways`
     : `${routes.SENSORS_GATEWAY}/gateway/add`;
@@ -35,54 +82,48 @@ const Gateway = ({
   const editPath = redirectTo
     ? `${redirectTo}/gateways`
     : `${routes.SENSORS_GATEWAY}/gateway/edit`;
-  const [openConfirmModal, setConfirmModal] = useState(false);
-  const [deleteGatewayId, setDeleteGatewayId] = useState('');
-  const [searchValue, setSearchValue] = useState('');
-  const [rows, setRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
-  const organization = useContext(UserContext).organization.organization_uuid;
+
+  const options = {
+    filter: true,
+    filterType: 'multiselect',
+    responsive: 'standard',
+    selectableRows: 'none',
+    selectToolbarPlacement: 'none',
+    rowsPerPageOptions: [5, 10, 15],
+    downloadOptions: {
+      filename: 'GatewayData.csv',
+      separator: ',',
+    },
+    textLabels: {
+      body: {
+        noMatch: 'No data to display',
+      },
+    },
+    setRowProps: (row, dataIndex, rowIndex) => ({
+      className: classes.dataTableBody,
+    }),
+  };
 
   useEffect(() => {
-    if (data === null) {
+    if (gatewayData === null) {
       dispatch(getGateways(organization));
       dispatch(getGatewayType());
     }
     if (gatewayOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}sensors/gateway/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((res) => {
-          dispatch({ type: GET_GATEWAY_OPTIONS_SUCCESS, data: res });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_GATEWAY_OPTIONS_FAILURE, error });
-        });
+      dispatch(getGatewayOptions());
     }
   }, []);
 
   useEffect(() => {
     if (
-      data
-      && data.length
+      gatewayData
+      && gatewayData.length
       && gatewayTypeList
       && gatewayTypeList.length
-      && shipmentData
-      && shipmentData.length
     ) {
-      setRows(getFormattedRow(data, gatewayTypeList, shipmentData));
-      setFilteredRows(getFormattedRow(data, gatewayTypeList, shipmentData));
+      setRows(getFormattedRow(gatewayData, gatewayTypeList, shipmentData));
     }
-  }, [data, gatewayTypeList]);
-
-  useEffect(() => {
-    if (searchData) {
-      setFilteredRows(searchData);
-    }
-  }, [searchData]);
+  }, [gatewayData, gatewayTypeList, shipmentData]);
 
   const editGatewayAction = (item) => {
     history.push(`${editPath}/:${item.id}`, {
@@ -102,48 +143,105 @@ const Gateway = ({
     setConfirmModal(false);
   };
 
-  const searchTable = (e) => {
-    const searchFields = [
-      'id',
-      'name',
-      // 'gateway_uuid',
-      'gateway_type_value',
-      'last_known_battery_level',
-      'gateway_status',
-      'shipment',
-      'activation_date',
-    ];
-    setSearchValue(e.target.value);
-    dispatch(searchGatewayItem(e.target.value, rows, searchFields));
-  };
-
-  const onAddButtonClick = () => {
-    history.push(`${addPath}`, {
-      from: redirectTo || routes.SENSORS_GATEWAY,
-    });
-  };
+  const columns = [
+    {
+      name: 'Edit',
+      options: {
+        filter: false,
+        sort: false,
+        empty: true,
+        customBodyRenderLite: (dataIndex) => (
+          <IconButton
+            className={classes.iconButton}
+            onClick={() => editGatewayAction(rows[dataIndex])}
+          >
+            <EditIcon />
+          </IconButton>
+        ),
+      },
+    },
+    {
+      name: 'Delete',
+      options: {
+        filter: false,
+        sort: false,
+        empty: true,
+        customBodyRenderLite: (dataIndex) => (
+          <IconButton
+            onClick={() => deleteGatewayAction(rows[dataIndex])}
+          >
+            <DeleteIcon />
+          </IconButton>
+        ),
+      },
+    },
+    ...gatewayColumns,
+  ];
 
   return (
-    <DashboardWrapper
-      loading={loading}
-      // onAddButtonClick={onAddButtonClick}
-      dashboardHeading="Gateway"
-      // addButtonHeading='Add Gateway'
-      editAction={editGatewayAction}
-      deleteAction={deleteGatewayAction}
-      columns={gatewayColumns}
-      rows={filteredRows}
-      redirectTo={redirectTo}
-      hasSearch={!noSearch}
-      search={{ searchValue, searchAction: searchTable }}
-      openConfirmModal={openConfirmModal}
-      setConfirmModal={setConfirmModal}
-      handleConfirmModal={handleConfirmModal}
-      confirmModalTitle="Are your sure you want to Delete this Gateway?"
-    >
-      <Route path={`${addPath}`} component={AddGateway} />
-      <Route path={`${editPath}/:id`} component={AddGateway} />
-    </DashboardWrapper>
+    <Box mt={5} mb={5}>
+      {loading && <Loader open={loading} />}
+      <div>
+        {/* <Box mb={3} mt={2}>
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={() => history.push(addPath, {
+              from: redirectTo || routes.SENSORS_GATEWAY,
+            })}
+          >
+            <AddIcon />
+            {' '}
+            Add Gateway
+          </Button>
+        </Box> */}
+        {!redirectTo && (
+          <Typography
+            className={classes.dashboardHeading}
+            variant="h4"
+          >
+            Gateway
+          </Typography>
+        )}
+        <Grid
+          className={classes.dataTable}
+          container
+          spacing={2}
+        >
+          <Grid item xs={12}>
+            <MUIDataTable
+              data={rows}
+              columns={columns}
+              options={options}
+            />
+          </Grid>
+        </Grid>
+        <Route path={`${addPath}`} component={AddGateway} />
+        <Route path={`${editPath}/:id`} component={AddGateway} />
+      </div>
+
+      <ConfirmModal
+        open={openConfirmModal}
+        setOpen={setConfirmModal}
+        submitAction={handleConfirmModal}
+        title="Are your sure you want to Delete this Gateway?"
+        submitText="Delete"
+      />
+    </Box>
   );
 };
-export default Gateway;
+
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.sensorsGatewayReducer,
+  ...state.optionsReducer,
+  ...state.shipmentReducer,
+  loading: (
+    state.sensorsGatewayReducer.loading
+    || state.optionsReducer.loading
+    || state.shipmentReducer.loading
+  ),
+});
+
+export default connect(mapStateToProps)(Gateway);

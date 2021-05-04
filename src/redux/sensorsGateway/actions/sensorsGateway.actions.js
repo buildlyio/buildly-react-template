@@ -15,16 +15,9 @@ export const DELETE_GATEWAY = 'SENSORS/DELETE_GATEWAY';
 export const DELETE_GATEWAY_SUCCESS = 'SENSORS/DELETE_GATEWAY_SUCCESS';
 export const DELETE_GATEWAY_FAILURE = 'SENSORS/DELETE_GATEWAY_FAILURE';
 
-export const GATEWAY_SEARCH = 'SENSORS/GATEWAY_SEARCH';
-export const GATEWAY_SEARCH_SUCCESS = 'SENSORS/GATEWAY_SEARCH_SUCCESS';
-
 export const GET_GATEWAYS_TYPE = 'SENSORS/GET_GATEWAYS_TYPE';
 export const GET_GATEWAYS_TYPE_SUCCESS = 'SENSORS/GET_GATEWAYS_TYPE_SUCCESS';
 export const GET_GATEWAYS_TYPE_FAILURE = 'SENSORS/GET_GATEWAYS_TYPE_FAILURE';
-
-export const GET_GATEWAY_OPTIONS = 'ITEMS/GET_GATEWAY_OPTIONS';
-export const GET_GATEWAY_OPTIONS_SUCCESS = 'ITEMS/GET_GATEWAY_OPTIONS_SUCCESS';
-export const GET_GATEWAY_OPTIONS_FAILURE = 'ITEMS/GET_GATEWAY_OPTIONS_FAILURE';
 
 export const ADD_GATEWAYS_TYPE = 'SENSORS/ADD_GATEWAYS_TYPE';
 export const ADD_GATEWAYS_TYPE_SUCCESS = 'SENSORS/ADD_GATEWAYS_TYPE_SUCCESS';
@@ -55,9 +48,6 @@ export const DELETE_SENSOR = 'SENSORS/DELETE_SENSOR';
 export const DELETE_SENSOR_SUCCESS = 'SENSORS/DELETE_SENSOR_SUCCESS';
 export const DELETE_SENSOR_FAILURE = 'SENSORS/DELETE_SENSOR_FAILURE';
 
-export const SENSOR_SEARCH = 'SENSORS/SENSOR_SEARCH';
-export const SENSOR_SEARCH_SUCCESS = 'SENSORS/SENSOR_SEARCH_SUCCESS';
-
 export const GET_SENSORS_TYPE = 'SENSORS/GET_SENSORS_TYPE';
 export const GET_SENSORS_TYPE_SUCCESS = 'SENSORS/GET_SENSORS_TYPE_SUCCESS';
 export const GET_SENSORS_TYPE_FAILURE = 'SENSORS/GET_SENSORS_TYPE_FAILURE';
@@ -69,10 +59,6 @@ export const GET_AGGREGATE_REPORT_FAILURE = 'SENSORS/GET_AGGREGATE_REPORT_FAILUR
 export const GET_SENSOR_REPORT = 'SENSORS/GET_SENSOR_REPORT';
 export const GET_SENSOR_REPORT_SUCCESS = 'SENSORS/GET_SENSOR_REPORT_SUCCESS';
 export const GET_SENSOR_REPORT_FAILURE = 'SENSORS/GET_SENSOR_REPORT_FAILURE';
-
-export const GET_SENSOR_OPTIONS = 'ITEMS/GET_SENSOR_OPTIONS';
-export const GET_SENSOR_OPTIONS_SUCCESS = 'ITEMS/GET_SENSOR_OPTIONS_SUCCESS';
-export const GET_SENSOR_OPTIONS_FAILURE = 'ITEMS/GET_SENSOR_OPTIONS_FAILURE';
 
 export const ADD_SENSORS_TYPE = 'SENSORS/ADD_SENSORS_TYPE';
 export const ADD_SENSORS_TYPE_SUCCESS = 'SENSORS/ADD_SENSORS_TYPE_SUCCESS';
@@ -130,23 +116,6 @@ export const deleteGateway = (gatewayId, organization_uuid) => ({
   type: DELETE_GATEWAY,
   gatewayId,
   organization_uuid,
-});
-
-/**
- *  Search for Gateway Item
- * @param {String} searchItem
- * @param {Array} searchList
- * @param {Array} searchFields
- */
-export const searchGatewayItem = (
-  searchItem,
-  searchList,
-  searchFields,
-) => ({
-  type: GATEWAY_SEARCH,
-  searchItem,
-  searchList,
-  searchFields,
 });
 
 /**
@@ -228,23 +197,6 @@ export const deleteSensor = (sensorId, organization_uuid) => ({
   type: DELETE_SENSOR,
   sensorId,
   organization_uuid,
-});
-
-/**
- * Search Sensor Item
- * @param {String} searchItem
- * @param {Array} searchList
- * @param {Array} searchFields
- */
-export const searchSensorItem = (
-  searchItem,
-  searchList,
-  searchFields,
-) => ({
-  type: SENSOR_SEARCH,
-  searchItem,
-  searchList,
-  searchFields,
 });
 
 /**

@@ -15,9 +15,6 @@ export const DELETE_ITEMS = 'ITEMS/DELETE_ITEMS';
 export const DELETE_ITEMS_SUCCESS = 'ITEMS/DELETE_ITEMS_SUCCESS';
 export const DELETE_ITEMS_FAILURE = 'ITEMS/DELETE_ITEMS_FAILURE';
 
-export const SEARCH = 'ITEMS/SEARCH';
-export const SEARCH_SUCCESS = 'ITEMS/SEARCH_SUCCESS';
-
 export const GET_ITEMS_TYPE = 'ITEMS/GET_ITEMS_TYPE';
 export const GET_ITEMS_TYPE_SUCCESS = 'ITEMS/GET_ITEMS_TYPE_SUCCESS';
 export const GET_ITEMS_TYPE_FAILURE = 'ITEMS/GET_ITEMS_TYPE_FAILURE';
@@ -126,23 +123,6 @@ export const deleteItem = (itemId, organization_uuid) => ({
   type: DELETE_ITEMS,
   itemId,
   organization_uuid,
-});
-
-/**
- * Search Item
- * @param {String} searchItem
- * @param {Array} searchList
- * @param {Array} searchFields
- */
-export const searchItem = (
-  search,
-  searchList,
-  searchFields,
-) => ({
-  type: SEARCH,
-  searchItem: search,
-  searchList,
-  searchFields,
 });
 
 /**

@@ -61,23 +61,6 @@ describe('Delete Item action', () => {
   });
 });
 
-// Test Search Item
-describe('Search Item action', () => {
-  it('should create an action to search item', () => {
-    const searchItem = 'abc';
-    const searchList = [{ id: '123', name: 'abc' }];
-    const searchFields = ['id', 'name'];
-    const expectedAction = {
-      type: actions.SEARCH,
-      searchItem,
-      searchList,
-      searchFields,
-    };
-    expect(actions.searchItem(searchItem, searchList, searchFields))
-      .toEqual(expectedAction);
-  });
-});
-
 // Test Get Item Type
 describe('Get Item Type action', () => {
   it('should create an action to get item type', () => {

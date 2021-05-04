@@ -4,7 +4,6 @@ import {
 import { httpService } from '@modules/http/http.service';
 import { environment } from '@environments/environment';
 import { showAlert } from '@redux/alert/actions/alert.actions';
-import { searchFilter } from '@utils/utilMethods';
 import {
   getItems,
   GET_ITEMS,
@@ -19,8 +18,6 @@ import {
   GET_ITEMS_TYPE_SUCCESS,
   GET_ITEMS_TYPE_FAILURE,
   DELETE_ITEMS_FAILURE,
-  SEARCH_SUCCESS,
-  SEARCH,
   GET_UNITS_OF_MEASURE,
   GET_UNITS_OF_MEASURE_FAILURE,
   GET_UNITS_OF_MEASURE_SUCCESS,
@@ -271,18 +268,6 @@ function* getUnits() {
         error,
       }),
     ];
-  }
-}
-
-function* searchItem(payload) {
-  try {
-    const filteredData = searchFilter(payload);
-    yield put({ type: SEARCH_SUCCESS, data: filteredData });
-  } catch (error) {
-    // yield put({
-    //   type: UPDATE_USER_FAIL,
-    //   error: 'Updating user fields failed',
-    // });
   }
 }
 
@@ -844,10 +829,6 @@ function* watchGetItem() {
   yield takeLatest(GET_ITEMS, getItemsList);
 }
 
-function* watchSearchItem() {
-  yield takeLatest(SEARCH, searchItem);
-}
-
 function* watchGetItemType() {
   yield takeLatest(GET_ITEMS_TYPE, getItemType);
 }
@@ -918,7 +899,6 @@ function* watchDeleteUnitsOfMeasure() {
 
 export default function* itemSaga() {
   yield all([
-    watchSearchItem(),
     watchGetItem(),
     watchGetItemType(),
     watchAddItem(),

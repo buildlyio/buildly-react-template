@@ -10,8 +10,6 @@ const initialState = {
   sensorData: null,
   sensorTypeList: null,
   aggregateReportData: null,
-  gatewayOptions: null,
-  sensorOptions: null,
   sensorReportAlerts: null,
 };
 
@@ -155,27 +153,6 @@ describe('Delete Gateway reducer', () => {
       error: undefined,
       loaded: true,
       loading: false,
-    });
-  });
-});
-
-describe('Search Gateway reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GATEWAY_SEARCH },
-    )).toEqual(initialState);
-  });
-
-  it('Search success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GATEWAY_SEARCH_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      gatewaySearchedData: undefined,
     });
   });
 });
@@ -470,27 +447,6 @@ describe('Delete Sensor reducer', () => {
       error: undefined,
       loaded: true,
       loading: false,
-    });
-  });
-});
-
-describe('Search Sensor reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.SENSOR_SEARCH },
-    )).toEqual(initialState);
-  });
-
-  it('Search sensor success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.SENSOR_SEARCH_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      sensorSearchedData: undefined,
     });
   });
 });

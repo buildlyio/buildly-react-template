@@ -15,13 +15,12 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
 } from '@material-ui/icons';
-import { UserContext } from '@context/User.context';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 import Loader from '@components/Loader/Loader';
+import { UserContext } from '@context/User.context';
 import {
   getItems,
   deleteItem,
-  searchItem,
   getItemType,
   getUnitsOfMeasure,
   getProducts,

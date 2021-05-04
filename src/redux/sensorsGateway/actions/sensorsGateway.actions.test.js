@@ -62,23 +62,6 @@ describe('Delete Gateway action', () => {
   });
 });
 
-// Test Search Gateway
-describe('Search Gateway action', () => {
-  it('should create an action to search Gateway', () => {
-    const searchItem = 'abc';
-    const searchList = [{ id: '123', name: 'abc' }];
-    const searchFields = ['id', 'name'];
-    const expectedAction = {
-      type: actions.GATEWAY_SEARCH,
-      searchItem,
-      searchList,
-      searchFields,
-    };
-    expect(actions.searchGatewayItem(searchItem, searchList, searchFields))
-      .toEqual(expectedAction);
-  });
-});
-
 // Test Get Gateway Type
 describe('Get Gateway Type action', () => {
   it('should create an action to get Gateway type', () => {
@@ -183,23 +166,6 @@ describe('Delete Sensor action', () => {
       organization_uuid,
     };
     expect(actions.deleteSensor(sensorId, organization_uuid))
-      .toEqual(expectedAction);
-  });
-});
-
-// Test Search Sensor
-describe('Search Sensor action', () => {
-  it('should create an action to search Sensor', () => {
-    const searchItem = 'abc';
-    const searchList = [{ id: '123', name: 'abc' }];
-    const searchFields = ['id', 'name'];
-    const expectedAction = {
-      type: actions.SENSOR_SEARCH,
-      searchItem,
-      searchList,
-      searchFields,
-    };
-    expect(actions.searchSensorItem(searchItem, searchList, searchFields))
       .toEqual(expectedAction);
   });
 });
