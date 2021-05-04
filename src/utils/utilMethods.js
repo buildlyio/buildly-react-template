@@ -7,25 +7,6 @@ export const numberWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
-export const searchFilter = (payload) => {
-  const { searchItem, searchList, searchFields } = payload;
-  const data = searchList.filter((item) => {
-    const itemKeys = Object.keys(item);
-    let foundItem = '';
-    itemKeys.forEach((key) => {
-      if (
-        searchFields.includes(key)
-        && item[key]
-        && item[key].toString().includes(searchItem)
-      ) {
-        foundItem = { ...item };
-      }
-    });
-    return foundItem && foundItem.id === item.id;
-  });
-  return data;
-};
-
 export const checkForGlobalAdmin = (userData) => {
   let isGlobalAdmin = false;
   if (userData && userData.core_groups) {

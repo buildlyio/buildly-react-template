@@ -231,4 +231,5 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
 });
+
 export default connect(mapStateToProps)(MyAccount);

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   Button,
   TextField,
@@ -179,7 +180,7 @@ const EditProfileInfo = ({
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
@@ -220,16 +221,16 @@ const EditProfileInfo = ({
               onBlur={(e) => handleBlur(e, 'required', first_name)}
               {...first_name.bind}
               InputProps={
-                fieldsMetadata.first_name.help_text && {
+                fieldsMetadata.first_name
+                && fieldsMetadata.first_name.help_text
+                && {
                   endAdornment: (
                     <InputAdornment position="end">
-                      {fieldsMetadata.first_name.help_text && (
-                        <CustomizedTooltips
-                          toolTipText={
-                            fieldsMetadata.first_name.help_text
-                          }
-                        />
-                      )}
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.first_name.help_text
+                        }
+                      />
                     </InputAdornment>
                   ),
                 }
@@ -247,16 +248,16 @@ const EditProfileInfo = ({
               autoComplete="last_name"
               {...last_name.bind}
               InputProps={
-                fieldsMetadata.last_name.help_text && {
+                fieldsMetadata.last_name
+                && fieldsMetadata.last_name.help_text
+                && {
                   endAdornment: (
                     <InputAdornment position="end">
-                      {fieldsMetadata.last_name.help_text && (
-                        <CustomizedTooltips
-                          toolTipText={
-                            fieldsMetadata.last_name.help_text
-                          }
-                        />
-                      )}
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.last_name.help_text
+                        }
+                      />
                     </InputAdornment>
                   ),
                 }
@@ -284,16 +285,16 @@ const EditProfileInfo = ({
               onBlur={(e) => handleBlur(e, 'email', email)}
               {...email.bind}
               InputProps={
-                fieldsMetadata.email.help_text && {
+                fieldsMetadata.email
+                && fieldsMetadata.email.help_text
+                && {
                   endAdornment: (
                     <InputAdornment position="end">
-                      {fieldsMetadata.email.help_text && (
-                        <CustomizedTooltips
-                          toolTipText={
-                            fieldsMetadata.email.help_text
-                          }
-                        />
-                      )}
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.email.help_text
+                        }
+                      />
                     </InputAdornment>
                   ),
                 }
@@ -321,16 +322,16 @@ const EditProfileInfo = ({
                 }
                 {...organisation_name.bind}
                 InputProps={
-                  fieldsMetadata.organisation_name.help_text && {
+                  fieldsMetadata.organisation_name
+                  && fieldsMetadata.organisation_name.help_text
+                  && {
                     endAdornment: (
                       <InputAdornment position="end">
-                        {fieldsMetadata.organisation_name.help_text && (
-                          <CustomizedTooltips
-                            toolTipText={
-                              fieldsMetadata.organisation_name.help_text
-                            }
-                          />
-                        )}
+                        <CustomizedTooltips
+                          toolTipText={
+                            fieldsMetadata.organisation_name.help_text
+                          }
+                        />
                       </InputAdornment>
                     ),
                   }
