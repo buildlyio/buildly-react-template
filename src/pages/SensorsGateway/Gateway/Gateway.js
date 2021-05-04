@@ -1,22 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import MUIDataTable from 'mui-datatables';
-import {
-  makeStyles,
-  Typography,
-  Box,
-  Grid,
-  Button,
-  IconButton,
-} from '@material-ui/core';
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-} from '@material-ui/icons';
-import ConfirmModal from '@components/Modal/ConfirmModal';
-import Loader from '@components/Loader/Loader';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
 import {
   getGateways,
@@ -30,35 +15,6 @@ import { routes } from '@routes/routesConstants';
 import { gatewayColumns, getFormattedRow } from '../Constants';
 import AddGateway from '../forms/AddGateway';
 
-const useStyles = makeStyles((theme) => ({
-  dashboardHeading: {
-    fontWeight: 'bold',
-    marginBottom: '0.5em',
-  },
-  iconButton: {
-    padding: theme.spacing(1.5, 0),
-  },
-  dataTableBody: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: '#4F4D4D',
-    },
-    '&:nth-of-type(even)': {
-      backgroundColor: '#383636',
-    },
-    '&:hover': {
-      backgroundColor: '#000 !important',
-    },
-  },
-  dataTable: {
-    '& .MuiPaper-root': {
-      backgroundColor: '#383636',
-    },
-    '& tr > th': {
-      backgroundColor: '#383636',
-    },
-  },
-}));
-
 const Gateway = ({
   dispatch,
   history,
@@ -69,7 +25,6 @@ const Gateway = ({
   gatewayOptions,
   shipmentData,
 }) => {
-  const classes = useStyles();
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteGatewayId, setDeleteGatewayId] = useState('');
   const [rows, setRows] = useState([]);
@@ -82,27 +37,6 @@ const Gateway = ({
   const editPath = redirectTo
     ? `${redirectTo}/gateways`
     : `${routes.SENSORS_GATEWAY}/gateway/edit`;
-
-  const options = {
-    filter: true,
-    filterType: 'multiselect',
-    responsive: 'standard',
-    selectableRows: 'none',
-    selectToolbarPlacement: 'none',
-    rowsPerPageOptions: [5, 10, 15],
-    downloadOptions: {
-      filename: 'GatewayData.csv',
-      separator: ',',
-    },
-    textLabels: {
-      body: {
-        noMatch: 'No data to display',
-      },
-    },
-    setRowProps: (row, dataIndex, rowIndex) => ({
-      className: classes.dataTableBody,
-    }),
-  };
 
   useEffect(() => {
     if (gatewayData === null) {
@@ -143,92 +77,32 @@ const Gateway = ({
     setConfirmModal(false);
   };
 
-  const columns = [
-    {
-      name: 'Edit',
-      options: {
-        filter: false,
-        sort: false,
-        empty: true,
-        customBodyRenderLite: (dataIndex) => (
-          <IconButton
-            className={classes.iconButton}
-            onClick={() => editGatewayAction(rows[dataIndex])}
-          >
-            <EditIcon />
-          </IconButton>
-        ),
-      },
-    },
-    {
-      name: 'Delete',
-      options: {
-        filter: false,
-        sort: false,
-        empty: true,
-        customBodyRenderLite: (dataIndex) => (
-          <IconButton
-            onClick={() => deleteGatewayAction(rows[dataIndex])}
-          >
-            <DeleteIcon />
-          </IconButton>
-        ),
-      },
-    },
-    ...gatewayColumns,
-  ];
+  const onAddButtonClick = () => {
+    history.push(addPath, {
+      from: redirectTo || routes.SENSORS_GATEWAY,
+    });
+  };
 
   return (
-    <Box mt={5} mb={5}>
-      {loading && <Loader open={loading} />}
-      <div>
-        {/* <Box mb={3} mt={2}>
-          <Button
-            type="button"
-            variant="contained"
-            color="primary"
-            onClick={() => history.push(addPath, {
-              from: redirectTo || routes.SENSORS_GATEWAY,
-            })}
-          >
-            <AddIcon />
-            {' '}
-            Add Gateway
-          </Button>
-        </Box> */}
-        {!redirectTo && (
-          <Typography
-            className={classes.dashboardHeading}
-            variant="h4"
-          >
-            Gateway
-          </Typography>
-        )}
-        <Grid
-          className={classes.dataTable}
-          container
-          spacing={2}
-        >
-          <Grid item xs={12}>
-            <MUIDataTable
-              data={rows}
-              columns={columns}
-              options={options}
-            />
-          </Grid>
-        </Grid>
-        <Route path={`${addPath}`} component={AddGateway} />
-        <Route path={`${editPath}/:id`} component={AddGateway} />
-      </div>
-
-      <ConfirmModal
-        open={openConfirmModal}
-        setOpen={setConfirmModal}
-        submitAction={handleConfirmModal}
-        title="Are your sure you want to Delete this Gateway?"
-        submitText="Delete"
-      />
-    </Box>
+    <DataTableWrapper
+      loading={loading}
+      rows={rows || []}
+      columns={gatewayColumns}
+      filename="GatewayData"
+      addButtonHeading="Add Gateway"
+      onAddButtonClick={onAddButtonClick}
+      editAction={editGatewayAction}
+      deleteAction={deleteGatewayAction}
+      openConfirmModal={openConfirmModal}
+      setConfirmModal={setConfirmModal}
+      handleConfirmModal={handleConfirmModal}
+      confirmModalTitle="Are you sure you want to delete this Gateway?"
+      tableHeader="Gateway"
+      hideAddButton
+    >
+      <Route path={`${addPath}`} component={AddGateway} />
+      <Route path={`${editPath}/:id`} component={AddGateway} />
+    </DataTableWrapper>
   );
 };
 

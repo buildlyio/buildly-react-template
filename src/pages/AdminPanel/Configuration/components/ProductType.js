@@ -11,14 +11,13 @@ import { routes } from '@routes/routesConstants';
 import { PRODUCT_TYPE_COLUMNS } from '../ConfigurationConstants';
 import AddProductType from '../forms/AddProductType';
 
-const ProductType = (props) => {
-  const {
-    dispatch,
-    loading,
-    productType,
-    redirectTo,
-    history,
-  } = props;
+const ProductType = ({
+  dispatch,
+  loading,
+  productType,
+  redirectTo,
+  history,
+}) => {
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -26,6 +25,7 @@ const ProductType = (props) => {
   const addPath = redirectTo
     ? `${redirectTo}/product-type`
     : `${routes.CONFIGURATION}/product-type/add`;
+
   const editPath = redirectTo
     ? `${redirectTo}/product-type`
     : `${routes.CONFIGURATION}/product-type/edit`;
@@ -74,6 +74,7 @@ const ProductType = (props) => {
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
       confirmModalTitle="Are you sure you want to Delete this Product Type?"
+      tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddProductType} />
       <Route path={`${editPath}/:id`} component={AddProductType} />

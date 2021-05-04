@@ -249,9 +249,10 @@ const AddFromAPI = ({
       const url = _.endsWith(apiURL.value, '/')
         ? apiURL.value
         : `${apiURL.value}/`;
-      if (url.includes('tive.co')) {
-        const providerDataType = dataTypes.filter(
-          (item) => item.externalProvider.includes('Tive'),
+      if (_.includes(url, 'tive.co')) {
+        const providerDataType = _.filter(
+          dataTypes,
+          (item) => _.includes(item.externalProvider, 'Tive'),
         );
         setProvider({
           name: 'Tive',
@@ -349,7 +350,7 @@ const AddFromAPI = ({
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
@@ -509,11 +510,17 @@ const AddFromAPI = ({
                 {...dataFor.bind}
               >
                 <MenuItem value="">--------</MenuItem>
-                {provider.dataTypes.map((type, index) => (
-                  <MenuItem key={index} value={type.value}>
-                    {type.name}
-                  </MenuItem>
-                ))}
+                {_.map(
+                  provider.dataTypes,
+                  (type, index) => (
+                    <MenuItem
+                      key={index}
+                      value={type.value}
+                    >
+                      {type.name}
+                    </MenuItem>
+                  ),
+                )}
               </TextField>
             </Grid>
           </Grid>
@@ -571,7 +578,7 @@ const AddFromAPI = ({
                 {...dataFor.bind}
               >
                 <MenuItem value="">--------</MenuItem>
-                {dataTypes.map((type, index) => (
+                {_.map(dataTypes, (type, index) => (
                   <MenuItem key={index} value={type.value}>
                     {type.name}
                   </MenuItem>

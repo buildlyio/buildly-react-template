@@ -10,20 +10,20 @@ import { routes } from '@routes/routesConstants';
 import { SENSOR_TYPE_COLUMNS } from '../ConfigurationConstants';
 import AddSensorType from '../forms/AddSensorType';
 
-const SensorType = (props) => {
-  const {
-    dispatch,
-    loading,
-    sensorTypeList,
-    redirectTo,
-    history,
-  } = props;
+const SensorType = ({
+  dispatch,
+  loading,
+  sensorTypeList,
+  redirectTo,
+  history,
+}) => {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
   const addPath = redirectTo
     ? `${redirectTo}/sensor-type`
     : `${routes.CONFIGURATION}/sensor-type/add`;
+
   const editPath = redirectTo
     ? `${redirectTo}/sensor-type`
     : `${routes.CONFIGURATION}/sensor-type/edit`;
@@ -72,6 +72,7 @@ const SensorType = (props) => {
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
       confirmModalTitle="Are you sure you want to Delete this Sensor Type?"
+      tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddSensorType} />
       <Route path={`${editPath}/:id`} component={AddSensorType} />

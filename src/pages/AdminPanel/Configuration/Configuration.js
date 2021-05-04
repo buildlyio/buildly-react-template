@@ -36,8 +36,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(6),
   },
   accordian: {
-    backgroundColor: '#393636',
+    backgroundColor: '#4F4D4D',
     marginBottom: theme.spacing(4),
+    overflowX: 'scroll',
   },
 }));
 

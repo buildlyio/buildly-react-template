@@ -59,29 +59,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const OrganizationSettings = ({
-  dispatch, loading, organizationData,
+  dispatch,
+  loading,
+  organizationData,
 }) => {
   const classes = useStyles();
-
   const [allowImportExport, setAllowImportExport] = useState(
-    (organizationData && organizationData.allow_import_export) || false,
+    (organizationData
+      && organizationData.allow_import_export) || false,
   );
-
   const [radius, setRadius] = useState(
     (organizationData && organizationData.radius) || 0,
   );
 
-  const [formError, setFormError] = useState({});
-
   useEffect(() => {
     if (organizationData) {
-      setAllowImportExport(organizationData.allow_import_export);
-      setRadius(convertUnitsOfMeasure(
-        'km',
-        parseFloat(organizationData.radius),
-        'miles',
-        'distance',
-      ));
+      resetValues();
     }
   }, [organizationData]);
 
@@ -146,10 +139,6 @@ const OrganizationSettings = ({
             name="radius"
             autoComplete="radius"
             value={radius}
-            error={formError.radius && formError.radius.error}
-            helperText={
-              formError.radius ? formError.radius.message : ''
-            }
             onChange={(event) => setRadius(event.target.value)}
           />
         </Grid>

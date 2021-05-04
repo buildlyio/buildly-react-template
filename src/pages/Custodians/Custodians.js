@@ -1,22 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import MUIDataTable from 'mui-datatables';
-import {
-  makeStyles,
-  Typography,
-  Box,
-  Grid,
-  Button,
-  IconButton,
-} from '@material-ui/core';
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-} from '@material-ui/icons';
-import ConfirmModal from '@components/Modal/ConfirmModal';
-import Loader from '@components/Loader/Loader';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
 import {
   getCustodians,
@@ -37,35 +22,6 @@ import {
 } from './CustodianConstants';
 import AddCustodians from './forms/AddCustodians';
 
-const useStyles = makeStyles((theme) => ({
-  dashboardHeading: {
-    fontWeight: 'bold',
-    marginBottom: '0.5em',
-  },
-  iconButton: {
-    padding: theme.spacing(1.5, 0),
-  },
-  dataTableBody: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: '#4F4D4D',
-    },
-    '&:nth-of-type(even)': {
-      backgroundColor: '#383636',
-    },
-    '&:hover': {
-      backgroundColor: '#000 !important',
-    },
-  },
-  dataTable: {
-    '& .MuiPaper-root': {
-      backgroundColor: '#383636',
-    },
-    '& tr > th': {
-      backgroundColor: '#383636',
-    },
-  },
-}));
-
 const Custodian = ({
   dispatch,
   history,
@@ -77,7 +33,6 @@ const Custodian = ({
   custodianOptions,
   contactOptions,
 }) => {
-  const classes = useStyles();
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
   const [deleteContactObjId, setDeleteContactObjId] = useState('');
@@ -91,27 +46,6 @@ const Custodian = ({
   const editCustodianPath = redirectTo
     ? `${redirectTo}/custodian`
     : `${routes.CUSTODIANS}/edit`;
-
-  const options = {
-    filter: true,
-    filterType: 'multiselect',
-    responsive: 'standard',
-    selectableRows: 'none',
-    selectToolbarPlacement: 'none',
-    rowsPerPageOptions: [5, 10, 15],
-    downloadOptions: {
-      filename: 'CustodianData.csv',
-      separator: ',',
-    },
-    textLabels: {
-      body: {
-        noMatch: 'No data to display',
-      },
-    },
-    setRowProps: (row, dataIndex, rowIndex) => ({
-      className: classes.dataTableBody,
-    }),
-  };
 
   useEffect(() => {
     if (custodianData === null) {
@@ -162,92 +96,31 @@ const Custodian = ({
     setConfirmModal(false);
   };
 
-  const columns = [
-    {
-      name: 'Edit',
-      options: {
-        filter: false,
-        sort: false,
-        empty: true,
-        customBodyRenderLite: (dataIndex) => (
-          <IconButton
-            className={classes.iconButton}
-            onClick={() => editItem(rows[dataIndex])}
-          >
-            <EditIcon />
-          </IconButton>
-        ),
-      },
-    },
-    {
-      name: 'Delete',
-      options: {
-        filter: false,
-        sort: false,
-        empty: true,
-        customBodyRenderLite: (dataIndex) => (
-          <IconButton
-            onClick={() => deleteItem(rows[dataIndex])}
-          >
-            <DeleteIcon />
-          </IconButton>
-        ),
-      },
-    },
-    ...custodianColumns,
-  ];
+  const onAddButtonClick = () => {
+    history.push(addCustodianPath, {
+      from: redirectTo || routes.CUSTODIANS,
+    });
+  };
 
   return (
-    <Box mt={5} mb={5}>
-      {loading && <Loader open={loading} />}
-      <div>
-        <Box mb={3} mt={2}>
-          <Button
-            type="button"
-            variant="contained"
-            color="primary"
-            onClick={() => history.push(addCustodianPath, {
-              from: redirectTo || routes.CUSTODIANS,
-            })}
-          >
-            <AddIcon />
-            {' '}
-            Add Custodian
-          </Button>
-        </Box>
-        {!redirectTo && (
-          <Typography
-            className={classes.dashboardHeading}
-            variant="h4"
-          >
-            Custodians
-          </Typography>
-        )}
-        <Grid
-          className={classes.dataTable}
-          container
-          spacing={2}
-        >
-          <Grid item xs={12}>
-            <MUIDataTable
-              data={rows}
-              columns={columns}
-              options={options}
-            />
-          </Grid>
-        </Grid>
-        <Route path={addCustodianPath} component={AddCustodians} />
-        <Route path={`${editCustodianPath}/:id`} component={AddCustodians} />
-      </div>
-
-      <ConfirmModal
-        open={openConfirmModal}
-        setOpen={setConfirmModal}
-        submitAction={handleConfirmModal}
-        title="Are you sure you want to delete this item?"
-        submitText="Delete"
-      />
-    </Box>
+    <DataTableWrapper
+      loading={loading}
+      rows={rows || []}
+      columns={custodianColumns}
+      filename="CustodianData"
+      addButtonHeading="Add Custodian"
+      onAddButtonClick={onAddButtonClick}
+      editAction={editItem}
+      deleteAction={deleteItem}
+      openConfirmModal={openConfirmModal}
+      setConfirmModal={setConfirmModal}
+      handleConfirmModal={handleConfirmModal}
+      confirmModalTitle="Are you sure you want to delete this Custodian?"
+      tableHeader="Custodians"
+    >
+      <Route path={addCustodianPath} component={AddCustodians} />
+      <Route path={`${editCustodianPath}/:id`} component={AddCustodians} />
+    </DataTableWrapper>
   );
 };
 

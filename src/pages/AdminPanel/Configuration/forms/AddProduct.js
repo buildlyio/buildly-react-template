@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   makeStyles,
   useTheme,
@@ -50,7 +51,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddProduct = ({
-  history, location, loading, dispatch, unitsOfMeasure,
+  history,
+  location,
+  loading,
+  dispatch,
+  unitsOfMeasure,
 }) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -159,7 +164,7 @@ const AddProduct = ({
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
@@ -282,14 +287,18 @@ const AddProduct = ({
                   {...unit.bind}
                 >
                   <MenuItem value="">--------</MenuItem>
-                  {unitsOfMeasure && unitsOfMeasure.map((unitVal, index) => (
-                    <MenuItem
-                      key={`unit-${index}`}
-                      value={`${unitVal.url}`}
-                    >
-                      {`${unitVal.name}`}
-                    </MenuItem>
-                  ))}
+                  {unitsOfMeasure
+                  && _.map(
+                    unitsOfMeasure,
+                    (unitVal, index) => (
+                      <MenuItem
+                        key={`unit-${index}`}
+                        value={`${unitVal.url}`}
+                      >
+                        {`${unitVal.name}`}
+                      </MenuItem>
+                    ),
+                  )}
                 </TextField>
               </Grid>
               <Grid container spacing={2} justify="center">

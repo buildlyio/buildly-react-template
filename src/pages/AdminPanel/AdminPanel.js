@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   makeStyles,
   Box,
@@ -32,7 +33,10 @@ const AdminPanel = ({ history, location, organizationData }) => {
     : [
       { label: 'Configuration', value: 'configuration' },
     ];
-  const viewPath = (subNav.find((item) => location.pathname.endsWith(item.value)) || subNav[0]).value;
+  const viewPath = (_.find(
+    subNav,
+    (item) => _.endsWith(location.pathname, item.value),
+  ) || subNav[0]).value;
   const [view, setView] = useState(viewPath);
 
   // this will be triggered whenever the content switcher is clicked to change the view
@@ -53,7 +57,7 @@ const AdminPanel = ({ history, location, organizationData }) => {
       </Box>
       <Box mb={3}>
         <Tabs value={view} onChange={viewTabClicked}>
-          {subNav.map((itemProps, index) => (
+          {_.map(subNav, (itemProps, index) => (
             <Tab
               {...itemProps}
               key={`tab${index}:${itemProps.value}`}
@@ -62,7 +66,9 @@ const AdminPanel = ({ history, location, organizationData }) => {
         </Tabs>
       </Box>
       <Route path={routes.CONFIGURATION} component={Configuration} />
-      {organizationData && organizationData.allow_import_export && (
+      {organizationData
+      && organizationData.allow_import_export
+      && (
         <Route
           path={routes.IMPORT_EXPORT}
           component={ImportExport}

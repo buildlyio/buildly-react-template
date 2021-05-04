@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   makeStyles,
   Grid,
@@ -88,7 +89,7 @@ const AddFromFile = ({ loading, dispatch }) => {
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }

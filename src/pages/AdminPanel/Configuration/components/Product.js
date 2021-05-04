@@ -11,15 +11,14 @@ import { routes } from '@routes/routesConstants';
 import { PRODUCT_COLUMNS, unitMeasures } from '../ConfigurationConstants';
 import AddProduct from '../forms/AddProduct';
 
-const Product = (props) => {
-  const {
-    dispatch,
-    loading,
-    products,
-    unitsOfMeasure,
-    redirectTo,
-    history,
-  } = props;
+const Product = ({
+  dispatch,
+  loading,
+  products,
+  unitsOfMeasure,
+  redirectTo,
+  history,
+}) => {
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -27,6 +26,7 @@ const Product = (props) => {
   const addPath = redirectTo
     ? `${redirectTo}/product`
     : `${routes.CONFIGURATION}/product/add`;
+
   const editPath = redirectTo
     ? `${redirectTo}/product`
     : `${routes.CONFIGURATION}/product/edit`;
@@ -81,6 +81,7 @@ const Product = (props) => {
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
       confirmModalTitle="Are you sure you want to Delete this Product?"
+      tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddProduct} />
       <Route path={`${editPath}/:id`} component={AddProduct} />
