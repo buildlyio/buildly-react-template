@@ -33,10 +33,16 @@ const Alert = ({ data, dispatch }) => {
         open={data ? data.open : false}
         autoHideDuration={4000}
         onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
       >
         {data && (
-          <AlertData onClose={handleClose} severity={data.type}>
+          <AlertData
+            onClose={handleClose}
+            severity={data.type}
+          >
             {data.message}
           </AlertData>
         )}

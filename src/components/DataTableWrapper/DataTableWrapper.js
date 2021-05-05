@@ -65,7 +65,7 @@ const DataTableWrapper = ({
 }) => {
   const classes = useStyles();
 
-  const formattedColumns = [
+  const finalColumns = [
     {
       name: 'Edit',
       options: {
@@ -155,7 +155,7 @@ const DataTableWrapper = ({
           <Grid item xs={12}>
             <MUIDataTable
               data={rows}
-              columns={formattedColumns}
+              columns={finalColumns}
               options={options}
             />
           </Grid>

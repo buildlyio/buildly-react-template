@@ -28,7 +28,6 @@ import {
   GET_ORGANIZATION,
   GET_ORGANIZATION_FAILURE,
   GET_ORGANIZATION_SUCCESS,
-  getOrganization,
   RESET_PASSWORD,
   RESET_PASSWORD_CONFIRM,
   RESET_PASSWORD_SUCCESS,
@@ -102,9 +101,10 @@ function* getUserDetails() {
     );
     yield put({ type: GET_USER_SUCCESS, user });
     if (user && user.data && user.data.organization) {
-      yield put(
-        getOrganization(user.data.organization.organization_uuid),
-      );
+      yield put({
+        type: GET_ORGANIZATION,
+        uuid: user.data.organization.organization_uuid,
+      });
     }
   } catch (error) {
     yield [
@@ -367,12 +367,12 @@ function* resetPasswordCheck(payload) {
           showAlert({
             type: 'error',
             open: true,
-            message: 'Invalid ID or token. Try sending resending the link to your email',
+            message: 'Invalid ID or token. Try resending the link to your email',
           }),
         ),
         yield put({
           type: RESET_PASSWORD_CHECK_FAILURE,
-          error: 'Invalid ID or token. Try sending resending the link to your email',
+          error: 'Invalid ID or token. Try resending the link to your email',
         }),
         yield call(history.push, routes.LOGIN),
       ];

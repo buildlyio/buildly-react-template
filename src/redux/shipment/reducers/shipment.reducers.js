@@ -16,13 +16,6 @@ import {
   GET_SHIPMENT_FLAG,
   GET_SHIPMENT_FLAG_SUCCESS,
   GET_SHIPMENT_FLAG_FAILURE,
-  GET_DASHBOARD_ITEMS,
-  GET_DASHBOARD_ITEMS_SUCCESS,
-  GET_DASHBOARD_ITEMS_FAILURE,
-  SET_SHIPMENT_ALERTS,
-  GET_SHIPMENT_OPTIONS,
-  GET_SHIPMENT_OPTIONS_SUCCESS,
-  GET_SHIPMENT_OPTIONS_FAILURE,
   ADD_SHIPMENT_FLAG,
   ADD_SHIPMENT_FLAG_SUCCESS,
   ADD_SHIPMENT_FLAG_FAILURE,
@@ -32,6 +25,10 @@ import {
   DELETE_SHIPMENT_FLAG,
   DELETE_SHIPMENT_FLAG_SUCCESS,
   DELETE_SHIPMENT_FLAG_FAILURE,
+  GET_DASHBOARD_ITEMS,
+  GET_DASHBOARD_ITEMS_SUCCESS,
+  GET_DASHBOARD_ITEMS_FAILURE,
+  SET_SHIPMENT_ALERTS,
   ADD_PDF_IDENTIFIER,
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
@@ -41,11 +38,10 @@ const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  shipmentData: null,
   shipmentFormData: null,
-  shipmentAlerts: { show: true, data: [] },
-  shipmentOptions: null,
+  shipmentData: null,
   shipmentFlag: null,
+  shipmentAlerts: { show: true, data: [] },
 };
 
 // Reducer
@@ -195,66 +191,6 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case GET_DASHBOARD_ITEMS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case GET_DASHBOARD_ITEMS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        dashboardItems: action.data,
-      };
-
-    case GET_DASHBOARD_ITEMS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case SET_SHIPMENT_ALERTS:
-      return {
-        ...state,
-        loading: false,
-        loaded: false,
-        shipmentAlerts: {
-          show: action.alerts.show,
-          data: action.alerts.data,
-        },
-        error: null,
-      };
-
-    case GET_SHIPMENT_OPTIONS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case GET_SHIPMENT_OPTIONS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        shipmentOptions: action.data,
-      };
-
-    case GET_SHIPMENT_OPTIONS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
     case ADD_SHIPMENT_FLAG:
       return {
         ...state,
@@ -328,6 +264,42 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         error: action.error,
+      };
+
+    case GET_DASHBOARD_ITEMS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case GET_DASHBOARD_ITEMS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        dashboardItems: action.data,
+      };
+
+    case GET_DASHBOARD_ITEMS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case SET_SHIPMENT_ALERTS:
+      return {
+        ...state,
+        loading: false,
+        loaded: false,
+        shipmentAlerts: {
+          show: action.alerts.show,
+          data: action.alerts.data,
+        },
+        error: null,
       };
 
     case ADD_PDF_IDENTIFIER:

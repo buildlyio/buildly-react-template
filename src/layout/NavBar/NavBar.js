@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import _ from 'lodash';
 import {
   Divider,
   Drawer,
@@ -20,21 +21,6 @@ const useStyles = makeStyles((theme) => ({
       flexShrink: 0,
     },
     backgroundColor: '#646262',
-  },
-  drawerContainer: {
-    overflow: 'auto',
-  },
-  appBar: {
-    [theme.breakpoints.up('md')]: {
-      width: `calc(100% - ${240}px)`,
-      marginLeft: 240,
-    },
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up('md')]: {
-      display: 'none',
-    },
   },
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
@@ -63,9 +49,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Component for the side navigation.
  */
-const NavBar = ({
-  navHidden, setNavHidden, location, history,
-}) => {
+const NavBar = ({ navHidden, setNavHidden }) => {
   const classes = useStyles();
   const theme = useTheme();
   const isMobileDevice = isMobile();
@@ -80,8 +64,10 @@ const NavBar = ({
     <div>
       <div className={classes.toolbar} />
       <List>
-        {NAVIGATION_ITEMS.map((item, index) => (
-          <React.Fragment key={`navItem${index}${item.id}`}>
+        {_.map(NAVIGATION_ITEMS, (item, index) => (
+          <React.Fragment
+            key={`navItem${index}${item.id}`}
+          >
             <NavLink
               to={item.link}
               activeClassName={classes.active}
@@ -110,11 +96,18 @@ const NavBar = ({
   };
 
   return (
-    <nav className={classes.drawer} aria-label="mailbox folders">
+    <nav
+      className={classes.drawer}
+      aria-label="mailbox folders"
+    >
       <Hidden smUp implementation="css">
         <Drawer
           variant="temporary"
-          anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+          anchor={
+            theme.direction === 'rtl'
+              ? 'right'
+              : 'left'
+          }
           open={navHidden}
           onClose={handleDrawerToggle}
           classes={{

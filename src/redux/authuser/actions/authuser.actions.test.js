@@ -112,16 +112,6 @@ describe('Update Organization action', () => {
   });
 });
 
-// Test Get User Options Action
-describe('Get User Options action', () => {
-  it('should create an action to Get User Options', () => {
-    const expectedAction = {
-      type: actions.GET_USER_OPTIONS,
-    };
-    expect(actions.getUserOptions()).toEqual(expectedAction);
-  });
-});
-
 // Test Send Reset Password Link Action
 describe('Send Reset Password Link action', () => {
   it('should create an action to Send Reset Password Link', () => {

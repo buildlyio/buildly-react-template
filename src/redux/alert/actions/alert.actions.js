@@ -1,6 +1,6 @@
 // Alert action types
-export const SHOW_ALERT = 'ALERT/SHOW_ALERT';
-export const HIDE_ALERT = 'ALERT/HIDE_ALERT';
+export const SHOW_ALERT = 'ALERTS/SHOW_ALERT';
+export const HIDE_ALERT = 'ALERTS/HIDE_ALERT';
 
 /**
  * Show Alert action

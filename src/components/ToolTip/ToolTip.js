@@ -28,8 +28,7 @@ const StyledToolTip = withStyles((theme) => ({
   },
 }))(Tooltip);
 
-const CustomizedTooltips = (props) => {
-  const { toolTipText, children } = props;
+const CustomizedTooltips = ({ toolTipText }) => {
   const classes = useStyles();
 
   return (

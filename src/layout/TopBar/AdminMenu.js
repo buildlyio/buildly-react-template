@@ -39,14 +39,12 @@ const StyledMenuItem = withStyles((theme) => ({
   },
 }))(MenuItem);
 
-const AdminMenu = (props) => {
-  const {
-    settingEl,
-    setSettingEl,
-    handleUserManagementClick,
-    handleAdminPanelClick,
-  } = props;
-
+const AdminMenu = ({
+  settingEl,
+  setSettingEl,
+  handleUserManagementClick,
+  handleAdminPanelClick,
+}) => {
   const handleClose = () => {
     setSettingEl(null);
   };

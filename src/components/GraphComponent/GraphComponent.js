@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import _ from 'lodash';
 import { Line } from 'react-chartjs-2';
+import _ from 'lodash';
 import moment from 'moment';
-import { Typography } from '@material-ui/core';
+import {
+  makeStyles,
+  Typography,
+} from '@material-ui/core';
 
-export const GraphComponent = (props) => {
-  const { data, selectedGraph } = props;
+const useStyles = makeStyles((theme) => ({
+  typography: {
+    marginTop: theme.spacing(5),
+    textAlign: 'center',
+  },
+}));
+
+const GraphComponent = ({ data, selectedGraph }) => {
+  const classes = useStyles();
   const [dataChart, setDataChart] = useState({});
+
   const options = {
     responsive: true,
     scales: {
@@ -32,13 +43,14 @@ export const GraphComponent = (props) => {
       ],
     },
   };
+
   useEffect(() => {
     if (data && data.length > 0 && selectedGraph) {
       setDataChart({
         labels: _.map(data, 'x'),
         datasets: [
           {
-            label: selectedGraph.toUpperCase(),
+            label: _.upperCase(selectedGraph),
             data: _.orderBy(
               data,
               (item) => moment(item.x),
@@ -75,8 +87,7 @@ export const GraphComponent = (props) => {
       ) : (
         <Typography
           variant="body1"
-          align="center"
-          style={{ marginTop: 40 }}
+          className={classes.typography}
         >
           No data to display
         </Typography>
@@ -84,3 +95,5 @@ export const GraphComponent = (props) => {
     </div>
   );
 };
+
+export default GraphComponent;

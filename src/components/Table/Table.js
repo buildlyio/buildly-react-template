@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import _ from 'lodash';
 import {
   makeStyles,
   withStyles,
@@ -64,29 +65,25 @@ const useStyles = makeStyles({
     minHeight: '40px',
     alignItems: 'center',
   },
-  nodata: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#4F4D4D',
-  },
 });
 
-const DataTable = ({ ...props }) => {
-  const {
-    rows,
-    columns,
-    actionsColumns,
-    hasSearch,
-    searchValue,
-    searchAction,
-    showTotal,
-  } = props;
+const DataTable = ({
+  rows,
+  columns,
+  actionsColumns,
+  hasSearch,
+  searchValue,
+  searchAction,
+}) => {
   const classes = useStyles();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [selectedRows, setSelectedRows] = React.useState(
-    rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedRows, setSelectedRows] = useState(
+    _.slice(
+      rows,
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage,
+    ),
   );
 
   const handleChangePage = (event, newPage) => {
@@ -100,7 +97,11 @@ const DataTable = ({ ...props }) => {
 
   useEffect(() => {
     setSelectedRows(
-      rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+      _.slice(
+        rows,
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage,
+      ),
     );
   }, [rows, page, rowsPerPage]);
 
@@ -123,7 +124,9 @@ const DataTable = ({ ...props }) => {
           <TableHead>
             <StyledTableRow>
               {actionsColumns
-                && actionsColumns.map((action, index) => (
+              && _.map(
+                actionsColumns,
+                (action, index) => (
                   <StyledTableHead
                     key={`actionCol${index}:${action.id}`}
                     align="left"
@@ -131,8 +134,9 @@ const DataTable = ({ ...props }) => {
                   >
                     {action.label}
                   </StyledTableHead>
-                ))}
-              {columns.map((column, index) => (
+                ),
+              )}
+              {_.map(columns, (column, index) => (
                 <StyledTableHead
                   key={`col${index}:${column.id}`}
                   align={column.align}
@@ -148,7 +152,9 @@ const DataTable = ({ ...props }) => {
           </TableHead>
           <TableBody>
             {rows.length > 0
-              && selectedRows.map((row, rowIndex) => (
+            && _.map(
+              selectedRows,
+              (row, rowIndex) => (
                 <StyledTableRow
                   hover
                   role="checkbox"
@@ -156,7 +162,9 @@ const DataTable = ({ ...props }) => {
                   key={`tableRow${rowIndex}`}
                 >
                   {actionsColumns
-                    && actionsColumns.map((action, colIndex) => (
+                  && _.map(
+                    actionsColumns,
+                    (action, colIndex) => (
                       <StyledTableHead
                         key={`tableRow${rowIndex}:${colIndex}`}
                         align="left"
@@ -177,8 +185,9 @@ const DataTable = ({ ...props }) => {
                             && <DeleteIcon />}
                         </IconButton>
                       </StyledTableHead>
-                    ))}
-                  {columns.map((column, colIndex) => (
+                    ),
+                  )}
+                  {_.map(columns, (column, colIndex) => (
                     <TableCell
                       key={`col${colIndex}:${column.id}`}
                       align={column.align}
@@ -194,9 +203,11 @@ const DataTable = ({ ...props }) => {
                     </TableCell>
                   ))}
                 </StyledTableRow>
-              ))}
+              ),
+            )}
 
-            {rows.length === 0 && (
+            {rows.length === 0
+            && (
               <StyledTableRow>
                 <TableCell
                   align="center"

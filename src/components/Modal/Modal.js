@@ -50,10 +50,14 @@ const DialogTitle = withStyles(styles)((props) => {
   );
 });
 
-const Modal = (props) => {
-  const {
-    open, setOpen, title, children, titleClass, maxWidth,
-  } = props;
+const Modal = ({
+  open,
+  setOpen,
+  title,
+  children,
+  titleClass,
+  maxWidth,
+}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 

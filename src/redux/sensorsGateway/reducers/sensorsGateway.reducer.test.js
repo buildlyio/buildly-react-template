@@ -5,12 +5,12 @@ const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  gatewayTypeList: null,
   gatewayData: null,
+  gatewayTypeList: null,
   sensorData: null,
   sensorTypeList: null,
-  aggregateReportData: null,
   sensorReportAlerts: null,
+  aggregateReportData: null,
 };
 
 describe('Get Gateway reducer', () => {
@@ -601,42 +601,6 @@ describe('Delete Sensor type reducer', () => {
   });
 });
 
-describe('Get Aggregate Report reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_AGGREGATE_REPORT },
-    )).toEqual({
-      ...initialState,
-      loading: true,
-    });
-  });
-
-  it('Get Aggregate Report success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_AGGREGATE_REPORT_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      aggregateReportData: undefined,
-    });
-  });
-
-  it('Get Aggregate Report fail Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_AGGREGATE_REPORT_FAILURE },
-    )).toEqual({
-      ...initialState,
-      error: undefined,
-      loaded: true,
-      loading: false,
-    });
-  });
-});
-
 describe('Get Sensor Report Alerts reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(
@@ -664,6 +628,42 @@ describe('Get Sensor Report Alerts reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.GET_SENSOR_REPORT_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});
+
+describe('Get Aggregate Report reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_AGGREGATE_REPORT },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('Get Aggregate Report success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_AGGREGATE_REPORT_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      aggregateReportData: undefined,
+    });
+  });
+
+  it('Get Aggregate Report fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_AGGREGATE_REPORT_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,

@@ -14,19 +14,10 @@ import {
   EDIT_ITEMS,
   EDIT_ITEMS_FAILURE,
   DELETE_ITEMS,
+  DELETE_ITEMS_FAILURE,
   GET_ITEMS_TYPE,
   GET_ITEMS_TYPE_SUCCESS,
   GET_ITEMS_TYPE_FAILURE,
-  DELETE_ITEMS_FAILURE,
-  GET_UNITS_OF_MEASURE,
-  GET_UNITS_OF_MEASURE_FAILURE,
-  GET_UNITS_OF_MEASURE_SUCCESS,
-  GET_PRODUCTS_SUCCESS,
-  GET_PRODUCTS_FAILURE,
-  GET_PRODUCTS,
-  GET_PRODUCTS_TYPE,
-  GET_PRODUCTS_TYPE_SUCCESS,
-  GET_PRODUCTS_TYPE_FAILURE,
   ADD_ITEMS_TYPE,
   ADD_ITEMS_TYPE_SUCCESS,
   ADD_ITEMS_TYPE_FAILURE,
@@ -36,6 +27,9 @@ import {
   DELETE_ITEMS_TYPE,
   DELETE_ITEMS_TYPE_SUCCESS,
   DELETE_ITEMS_TYPE_FAILURE,
+  GET_PRODUCTS,
+  GET_PRODUCTS_SUCCESS,
+  GET_PRODUCTS_FAILURE,
   ADD_PRODUCTS,
   ADD_PRODUCTS_SUCCESS,
   ADD_PRODUCTS_FAILURE,
@@ -45,6 +39,9 @@ import {
   DELETE_PRODUCTS,
   DELETE_PRODUCTS_SUCCESS,
   DELETE_PRODUCTS_FAILURE,
+  GET_PRODUCTS_TYPE,
+  GET_PRODUCTS_TYPE_SUCCESS,
+  GET_PRODUCTS_TYPE_FAILURE,
   ADD_PRODUCTS_TYPE,
   ADD_PRODUCTS_TYPE_SUCCESS,
   ADD_PRODUCTS_TYPE_FAILURE,
@@ -54,6 +51,9 @@ import {
   DELETE_PRODUCTS_TYPE,
   DELETE_PRODUCTS_TYPE_SUCCESS,
   DELETE_PRODUCTS_TYPE_FAILURE,
+  GET_UNITS_OF_MEASURE,
+  GET_UNITS_OF_MEASURE_SUCCESS,
+  GET_UNITS_OF_MEASURE_FAILURE,
   ADD_UNITS_OF_MEASURE,
   ADD_UNITS_OF_MEASURE_SUCCESS,
   ADD_UNITS_OF_MEASURE_FAILURE,
@@ -88,113 +88,6 @@ function* getItemsList(payload) {
       ),
       yield put({
         type: GET_ITEMS_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* getItemType(payload) {
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'get',
-      `${environment.API_URL}${shipmentApiEndPoint}item_type/?organization_uuid=${payload.organization_uuid}`,
-      null,
-      true,
-    );
-    yield put({
-      type: GET_ITEMS_TYPE_SUCCESS,
-      data: data.data,
-    });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t load data due to some error!',
-        }),
-      ),
-      yield put({
-        type: GET_ITEMS_TYPE_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* deleteItem(payload) {
-  const { itemId, organization_uuid } = payload;
-  try {
-    yield call(
-      httpService.makeRequest,
-      'delete',
-      `${environment.API_URL}${shipmentApiEndPoint}item/${itemId}/`,
-      null,
-      true,
-    );
-    yield [
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Item deleted successfully!',
-        }),
-      ),
-      yield put(getItems(organization_uuid)),
-    ];
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Error in deleting Item!',
-        }),
-      ),
-      yield put({
-        type: DELETE_ITEMS_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* editItem(action) {
-  const { payload, history, redirectTo } = action;
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'put',
-      `${environment.API_URL}${shipmentApiEndPoint}item/${payload.id}/`,
-      payload,
-      true,
-    );
-    yield [
-      yield put(getItems(payload.organization_uuid)),
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Item successfully Edited!',
-        }),
-      ),
-    ];
-    if (history && redirectTo) {
-      yield call(history.push, redirectTo);
-    }
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t edit Item!',
-        }),
-      ),
-      yield put({
-        type: EDIT_ITEMS_FAILURE,
         error,
       }),
     ];
@@ -241,17 +134,94 @@ function* addItem(action) {
   }
 }
 
-function* getUnits() {
+function* editItem(action) {
+  const { payload, history, redirectTo } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'put',
+      `${environment.API_URL}${shipmentApiEndPoint}item/${payload.id}/`,
+      payload,
+      true,
+    );
+    yield [
+      yield put(getItems(payload.organization_uuid)),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Item successfully Edited!',
+        }),
+      ),
+    ];
+    if (history && redirectTo) {
+      yield call(history.push, redirectTo);
+    }
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t edit Item!',
+        }),
+      ),
+      yield put({
+        type: EDIT_ITEMS_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* deleteItem(payload) {
+  const { itemId, organization_uuid } = payload;
+  try {
+    yield call(
+      httpService.makeRequest,
+      'delete',
+      `${environment.API_URL}${shipmentApiEndPoint}item/${itemId}/`,
+      null,
+      true,
+    );
+    yield [
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Item deleted successfully!',
+        }),
+      ),
+      yield put(getItems(organization_uuid)),
+    ];
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Error in deleting Item!',
+        }),
+      ),
+      yield put({
+        type: DELETE_ITEMS_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* getItemType(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${shipmentApiEndPoint}unit_of_measure/`,
+      `${environment.API_URL}${shipmentApiEndPoint}item_type/?organization_uuid=${payload.organization_uuid}`,
       null,
       true,
     );
     yield put({
-      type: GET_UNITS_OF_MEASURE_SUCCESS,
+      type: GET_ITEMS_TYPE_SUCCESS,
       data: data.data,
     });
   } catch (error) {
@@ -264,61 +234,7 @@ function* getUnits() {
         }),
       ),
       yield put({
-        type: GET_UNITS_OF_MEASURE_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* getProductList(payload) {
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'get',
-      `${environment.API_URL}${shipmentApiEndPoint}product/?organization_uuid=${payload.organization_uuid}`,
-      null,
-      true,
-    );
-    yield put({ type: GET_PRODUCTS_SUCCESS, data: data.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t load data due to some error!',
-        }),
-      ),
-      yield put({
-        type: GET_PRODUCTS_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* getProductTypeList(payload) {
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'get',
-      `${environment.API_URL}${shipmentApiEndPoint}product_type/?organization_uuid=${payload.organization_uuid}`,
-      null,
-      true,
-    );
-    yield put({ type: GET_PRODUCTS_TYPE_SUCCESS, data: data.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t load data due to some error!',
-        }),
-      ),
-      yield put({
-        type: GET_PRODUCTS_TYPE_FAILURE,
+        type: GET_ITEMS_TYPE_FAILURE,
         error,
       }),
     ];
@@ -448,6 +364,33 @@ function* deleteItemType(payload) {
   }
 }
 
+function* getProductList(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}${shipmentApiEndPoint}product/?organization_uuid=${payload.organization_uuid}`,
+      null,
+      true,
+    );
+    yield put({ type: GET_PRODUCTS_SUCCESS, data: data.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t load data due to some error!',
+        }),
+      ),
+      yield put({
+        type: GET_PRODUCTS_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
 function* addProducts(action) {
   const { payload } = action;
   try {
@@ -565,6 +508,33 @@ function* deleteProducts(payload) {
       ),
       yield put({
         type: DELETE_PRODUCTS_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* getProductTypeList(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}${shipmentApiEndPoint}product_type/?organization_uuid=${payload.organization_uuid}`,
+      null,
+      true,
+    );
+    yield put({ type: GET_PRODUCTS_TYPE_SUCCESS, data: data.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t load data due to some error!',
+        }),
+      ),
+      yield put({
+        type: GET_PRODUCTS_TYPE_FAILURE,
         error,
       }),
     ];
@@ -694,6 +664,36 @@ function* deleteProductType(payload) {
   }
 }
 
+function* getUnits() {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}${shipmentApiEndPoint}unit_of_measure/`,
+      null,
+      true,
+    );
+    yield put({
+      type: GET_UNITS_OF_MEASURE_SUCCESS,
+      data: data.data,
+    });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t load data due to some error!',
+        }),
+      ),
+      yield put({
+        type: GET_UNITS_OF_MEASURE_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
 function* addUnitsOfMeasure(action) {
   const { payload } = action;
   try {
@@ -817,36 +817,24 @@ function* deleteUnitsOfMeasure(payload) {
   }
 }
 
-function* watchGetProductsList() {
-  yield takeLatest(GET_PRODUCTS, getProductList);
-}
-
-function* watchGetProductTypeList() {
-  yield takeLatest(GET_PRODUCTS_TYPE, getProductTypeList);
-}
-
 function* watchGetItem() {
   yield takeLatest(GET_ITEMS, getItemsList);
-}
-
-function* watchGetItemType() {
-  yield takeLatest(GET_ITEMS_TYPE, getItemType);
 }
 
 function* watchAddItem() {
   yield takeLatest(ADD_ITEMS, addItem);
 }
 
-function* watchDeleteItem() {
-  yield takeLatest(DELETE_ITEMS, deleteItem);
-}
-
 function* watchEditItem() {
   yield takeLatest(EDIT_ITEMS, editItem);
 }
 
-function* watchGetUnitsOfMeasure() {
-  yield takeLatest(GET_UNITS_OF_MEASURE, getUnits);
+function* watchDeleteItem() {
+  yield takeLatest(DELETE_ITEMS, deleteItem);
+}
+
+function* watchGetItemType() {
+  yield takeLatest(GET_ITEMS_TYPE, getItemType);
 }
 
 function* watchAddItemType() {
@@ -861,6 +849,10 @@ function* watchDeleteItemType() {
   yield takeLatest(DELETE_ITEMS_TYPE, deleteItemType);
 }
 
+function* watchGetProductsList() {
+  yield takeLatest(GET_PRODUCTS, getProductList);
+}
+
 function* watchAddProducts() {
   yield takeLatest(ADD_PRODUCTS, addProducts);
 }
@@ -873,6 +865,10 @@ function* watchDeleteProducts() {
   yield takeLatest(DELETE_PRODUCTS, deleteProducts);
 }
 
+function* watchGetProductTypeList() {
+  yield takeLatest(GET_PRODUCTS_TYPE, getProductTypeList);
+}
+
 function* watchAddProductType() {
   yield takeLatest(ADD_PRODUCTS_TYPE, addProductType);
 }
@@ -883,6 +879,10 @@ function* watchEditProductType() {
 
 function* watchDeleteProductType() {
   yield takeLatest(DELETE_PRODUCTS_TYPE, deleteProductType);
+}
+
+function* watchGetUnitsOfMeasure() {
+  yield takeLatest(GET_UNITS_OF_MEASURE, getUnits);
 }
 
 function* watchAddUnitsOfMeasure() {
@@ -900,22 +900,22 @@ function* watchDeleteUnitsOfMeasure() {
 export default function* itemSaga() {
   yield all([
     watchGetItem(),
-    watchGetItemType(),
     watchAddItem(),
-    watchDeleteItem(),
     watchEditItem(),
-    watchGetUnitsOfMeasure(),
-    watchGetProductsList(),
-    watchGetProductTypeList(),
+    watchDeleteItem(),
+    watchGetItemType(),
     watchAddItemType(),
     watchEditItemType(),
     watchDeleteItemType(),
+    watchGetProductsList(),
     watchAddProducts(),
     watchEditProducts(),
     watchDeleteProducts(),
+    watchGetProductTypeList(),
     watchAddProductType(),
     watchEditProductType(),
     watchDeleteProductType(),
+    watchGetUnitsOfMeasure(),
     watchAddUnitsOfMeasure(),
     watchEditUnitsOfMeasure(),
     watchDeleteUnitsOfMeasure(),

@@ -18,11 +18,12 @@ import {
   ViewCompact as ViewCompactIcon,
 } from '@material-ui/icons';
 import { Autocomplete } from '@material-ui/lab';
-import { GraphComponent } from '@components/GraphComponent/GraphComponent';
+import GraphComponent from '@components/GraphComponent/GraphComponent';
 import Loader from '@components/Loader/Loader';
 import { MapComponent } from '@components/MapComponent/MapComponent';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
+import { environment } from '@environments/environment';
 import ShipmentSensorTable from '@pages/Shipment/components/ShipmentSensorTable';
 import {
   getCustodians,
@@ -40,7 +41,6 @@ import {
 import {
   getUnitsOfMeasure,
 } from '@redux/items/actions/items.actions';
-import { MAP_API_URL } from '@utils/utilMethods';
 import {
   getShipmentOverview,
   SHIPMENT_OVERVIEW_COLUMNS,
@@ -254,7 +254,7 @@ const Reporting = ({
             isMarkerShown={isMapLoaded}
             showPath
             markers={markers}
-            googleMapURL={MAP_API_URL}
+            googleMapURL={environment.MAP_API_URL}
             zoom={zoomLevel}
             setSelectedMarker={setSelectedMarker}
             loadingElement={

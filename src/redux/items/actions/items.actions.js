@@ -19,18 +19,6 @@ export const GET_ITEMS_TYPE = 'ITEMS/GET_ITEMS_TYPE';
 export const GET_ITEMS_TYPE_SUCCESS = 'ITEMS/GET_ITEMS_TYPE_SUCCESS';
 export const GET_ITEMS_TYPE_FAILURE = 'ITEMS/GET_ITEMS_TYPE_FAILURE';
 
-export const GET_UNITS_OF_MEASURE = 'ITEMS/GET_UNITS_OF_MEASURE';
-export const GET_UNITS_OF_MEASURE_SUCCESS = 'ITEMS/GET_UNITS_OF_MEASURE_SUCCESS';
-export const GET_UNITS_OF_MEASURE_FAILURE = 'ITEMS/GET_UNITS_OF_MEASURE_FAILURE';
-
-export const GET_PRODUCTS = 'ITEM/GET_PRODUCTS';
-export const GET_PRODUCTS_SUCCESS = 'ITEMS/GET_PRODUCTS_SUCCESS';
-export const GET_PRODUCTS_FAILURE = 'ITEMS/GET_PRODUCTS_FAILURE';
-
-export const GET_PRODUCTS_TYPE = 'ITEM/GET_PRODUCTS_TYPE';
-export const GET_PRODUCTS_TYPE_SUCCESS = 'ITEMS/GET_PRODUCTS_TYPE_SUCCESS';
-export const GET_PRODUCTS_TYPE_FAILURE = 'ITEMS/GET_PRODUCTS_TYPE_FAILURE';
-
 export const ADD_ITEMS_TYPE = 'ITEMS/ADD_ITEMS_TYPE';
 export const ADD_ITEMS_TYPE_SUCCESS = 'ITEMS/ADD_ITEMS_TYPE_SUCCESS';
 export const ADD_ITEMS_TYPE_FAILURE = 'ITEMS/ADD_ITEMS_TYPE_FAILURE';
@@ -42,6 +30,26 @@ export const EDIT_ITEMS_TYPE_FAILURE = 'ITEMS/EDIT_ITEMS_TYPE_FAILURE';
 export const DELETE_ITEMS_TYPE = 'ITEMS/DELETE_ITEMS_TYPE';
 export const DELETE_ITEMS_TYPE_SUCCESS = 'ITEMS/DELETE_ITEMS_TYPE_SUCCESS';
 export const DELETE_ITEMS_TYPE_FAILURE = 'ITEMS/DELETE_ITEMS_TYPE_FAILURE';
+
+export const GET_PRODUCTS = 'ITEM/GET_PRODUCTS';
+export const GET_PRODUCTS_SUCCESS = 'ITEMS/GET_PRODUCTS_SUCCESS';
+export const GET_PRODUCTS_FAILURE = 'ITEMS/GET_PRODUCTS_FAILURE';
+
+export const ADD_PRODUCTS = 'ITEM/ADD_PRODUCTS';
+export const ADD_PRODUCTS_SUCCESS = 'ITEMS/ADD_PRODUCTS_SUCCESS';
+export const ADD_PRODUCTS_FAILURE = 'ITEMS/ADD_PRODUCTS_FAILURE';
+
+export const EDIT_PRODUCTS = 'ITEM/EDIT_PRODUCTS';
+export const EDIT_PRODUCTS_SUCCESS = 'ITEMS/EDIT_PRODUCTS_SUCCESS';
+export const EDIT_PRODUCTS_FAILURE = 'ITEMS/EDIT_PRODUCTS_FAILURE';
+
+export const DELETE_PRODUCTS = 'ITEM/DELETE_PRODUCTS';
+export const DELETE_PRODUCTS_SUCCESS = 'ITEMS/DELETE_PRODUCTS_SUCCESS';
+export const DELETE_PRODUCTS_FAILURE = 'ITEMS/DELETE_PRODUCTS_FAILURE';
+
+export const GET_PRODUCTS_TYPE = 'ITEM/GET_PRODUCTS_TYPE';
+export const GET_PRODUCTS_TYPE_SUCCESS = 'ITEMS/GET_PRODUCTS_TYPE_SUCCESS';
+export const GET_PRODUCTS_TYPE_FAILURE = 'ITEMS/GET_PRODUCTS_TYPE_FAILURE';
 
 export const ADD_PRODUCTS_TYPE = 'ITEMS/ADD_PRODUCTS_TYPE';
 export const ADD_PRODUCTS_TYPE_SUCCESS = 'ITEMS/ADD_PRODUCTS_TYPE_SUCCESS';
@@ -55,17 +63,9 @@ export const DELETE_PRODUCTS_TYPE = 'ITEMS/DELETE_PRODUCTS_TYPE';
 export const DELETE_PRODUCTS_TYPE_SUCCESS = 'ITEMS/DELETE_PRODUCTS_TYPE_SUCCESS';
 export const DELETE_PRODUCTS_TYPE_FAILURE = 'ITEMS/DELETE_PRODUCTS_TYPE_FAILURE';
 
-export const ADD_PRODUCTS = 'ITEM/ADD_PRODUCTS';
-export const ADD_PRODUCTS_SUCCESS = 'ITEMS/ADD_PRODUCTS_SUCCESS';
-export const ADD_PRODUCTS_FAILURE = 'ITEMS/ADD_PRODUCTS_FAILURE';
-
-export const EDIT_PRODUCTS = 'ITEM/EDIT_PRODUCTS';
-export const EDIT_PRODUCTS_SUCCESS = 'ITEMS/EDIT_PRODUCTS_SUCCESS';
-export const EDIT_PRODUCTS_FAILURE = 'ITEMS/EDIT_PRODUCTS_FAILURE';
-
-export const DELETE_PRODUCTS = 'ITEM/DELETE_PRODUCTS';
-export const DELETE_PRODUCTS_SUCCESS = 'ITEMS/DELETE_PRODUCTS_SUCCESS';
-export const DELETE_PRODUCTS_FAILURE = 'ITEMS/DELETE_PRODUCTS_FAILURE';
+export const GET_UNITS_OF_MEASURE = 'ITEMS/GET_UNITS_OF_MEASURE';
+export const GET_UNITS_OF_MEASURE_SUCCESS = 'ITEMS/GET_UNITS_OF_MEASURE_SUCCESS';
+export const GET_UNITS_OF_MEASURE_FAILURE = 'ITEMS/GET_UNITS_OF_MEASURE_FAILURE';
 
 export const ADD_UNITS_OF_MEASURE = 'ITEMS/ADD_UNITS_OF_MEASURE';
 export const ADD_UNITS_OF_MEASURE_SUCCESS = 'ITEMS/ADD_UNITS_OF_MEASURE_SUCCESS';
@@ -135,31 +135,6 @@ export const getItemType = (organization_uuid) => ({
 });
 
 /**
- * Get Unit of Measure
- */
-export const getUnitsOfMeasure = () => ({
-  type: GET_UNITS_OF_MEASURE,
-});
-
-/**
- * Get Product List
- * @param {String} organization_uuid
- */
-export const getProducts = (organization_uuid) => ({
-  type: GET_PRODUCTS,
-  organization_uuid,
-});
-
-/**
- * Get Product Type
- * @param {String} organization_uuid
- */
-export const getProductType = (organization_uuid) => ({
-  type: GET_PRODUCTS_TYPE,
-  organization_uuid,
-});
-
-/**
  * Add Item Type
  * @param {Object} payload
  */
@@ -184,6 +159,15 @@ export const editItemType = (payload) => ({
 export const deleteItemType = (id) => ({
   type: DELETE_ITEMS_TYPE,
   id,
+});
+
+/**
+ * Get Product List
+ * @param {String} organization_uuid
+ */
+export const getProducts = (organization_uuid) => ({
+  type: GET_PRODUCTS,
+  organization_uuid,
 });
 
 /**
@@ -214,6 +198,15 @@ export const deleteProduct = (id) => ({
 });
 
 /**
+ * Get Product Type
+ * @param {String} organization_uuid
+ */
+export const getProductType = (organization_uuid) => ({
+  type: GET_PRODUCTS_TYPE,
+  organization_uuid,
+});
+
+/**
  * Add Product Type
  * @param {Object} payload
  */
@@ -238,6 +231,13 @@ export const editProductType = (payload) => ({
 export const deleteProductType = (id) => ({
   type: DELETE_PRODUCTS_TYPE,
   id,
+});
+
+/**
+ * Get Unit of Measure
+ */
+export const getUnitsOfMeasure = () => ({
+  type: GET_UNITS_OF_MEASURE,
 });
 
 /**

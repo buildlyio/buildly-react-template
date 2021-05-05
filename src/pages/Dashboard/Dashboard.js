@@ -18,6 +18,7 @@ import { MapComponent } from '@components/MapComponent/MapComponent';
 import DataTable from '@components/Table/Table';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
+import { environment } from '@environments/environment';
 import { svgIcon } from '@pages/Shipment/ShipmentConstants';
 import {
   getShipmentDetails,
@@ -40,7 +41,7 @@ import {
   getSensors,
   getSensorType,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { numberWithCommas, MAP_API_URL } from '@utils/utilMethods';
+import { numberWithCommas } from '@utils/utilMethods';
 import {
   recallColumns,
   delayColumns,
@@ -444,7 +445,7 @@ const Dashboard = (props) => {
               isMarkerShown
               markers={markers}
               zoom={zoomLevel}
-              googleMapURL={MAP_API_URL}
+              googleMapURL={environment.MAP_API_URL}
               loadingElement={
                 <div style={{ height: '100%' }} />
               }

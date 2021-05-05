@@ -42,16 +42,14 @@ const StyledMenuItem = withStyles((theme) => ({
   },
 }))(MenuItem);
 
-const AccountMenu = (props) => {
-  const {
-    anchorEl,
-    setAnchorEl,
-    user,
-    handleLogoutClick,
-    handleMyAccountClick,
-    organizationData,
-  } = props;
-
+const AccountMenu = ({
+  anchorEl,
+  setAnchorEl,
+  user,
+  handleLogoutClick,
+  handleMyAccountClick,
+  organizationData,
+}) => {
   const handleClose = () => {
     setAnchorEl(null);
   };

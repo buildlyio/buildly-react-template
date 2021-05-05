@@ -5,11 +5,10 @@ const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  shipmentData: null,
   shipmentFormData: null,
-  shipmentAlerts: { show: true, data: [] },
-  shipmentOptions: null,
+  shipmentData: null,
   shipmentFlag: null,
+  shipmentAlerts: { show: true, data: [] },
 };
 
 describe('Save Shipment Form Data reducer', () => {
@@ -61,42 +60,6 @@ describe('Get Shipment Details reducer', () => {
   });
 });
 
-describe('Edit Shipment reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.EDIT_SHIPMENT },
-    )).toEqual({
-      ...initialState,
-      loading: true,
-    });
-  });
-
-  it('Edit Shipment success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.EDIT_SHIPMENT_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      shipmentData: undefined,
-    });
-  });
-
-  it('Edit Shipment fail Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.EDIT_SHIPMENT_FAILURE },
-    )).toEqual({
-      ...initialState,
-      error: undefined,
-      loaded: true,
-      loading: false,
-    });
-  });
-});
-
 describe('Add Shipment reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(
@@ -124,6 +87,42 @@ describe('Add Shipment reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.ADD_SHIPMENT_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});
+
+describe('Edit Shipment reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.EDIT_SHIPMENT },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('Edit Shipment success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.EDIT_SHIPMENT_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      shipmentData: undefined,
+    });
+  });
+
+  it('Edit Shipment fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.EDIT_SHIPMENT_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,
@@ -201,58 +200,6 @@ describe('Get Shipment Flag reducer', () => {
       error: undefined,
       loaded: true,
       loading: false,
-    });
-  });
-});
-
-describe('Get DashBoard Items reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_DASHBOARD_ITEMS },
-    )).toEqual({
-      ...initialState,
-      loading: true,
-    });
-  });
-
-  it('Get DashBoard Items success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_DASHBOARD_ITEMS_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      dashboardItems: undefined,
-    });
-  });
-
-  it('Get DashBoard Items fail Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_DASHBOARD_ITEMS_FAILURE },
-    )).toEqual({
-      ...initialState,
-      error: undefined,
-      loaded: true,
-      loading: false,
-    });
-  });
-});
-
-describe('Set Shipment Alerts reducer', () => {
-  it('Empty Reducer', () => {
-    const alerts = {};
-    expect(reducer.default(
-      initialState,
-      { type: actions.SET_SHIPMENT_ALERTS, alerts },
-    )).toEqual({
-      ...initialState,
-      shipmentAlerts: {
-        show: undefined,
-        data: undefined,
-      },
     });
   });
 });
@@ -367,6 +314,58 @@ describe('Delete Shipment Flag reducer', () => {
       error: undefined,
       loaded: true,
       loading: false,
+    });
+  });
+});
+
+describe('Get DashBoard Items reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_DASHBOARD_ITEMS },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('Get DashBoard Items success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_DASHBOARD_ITEMS_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      dashboardItems: undefined,
+    });
+  });
+
+  it('Get DashBoard Items fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_DASHBOARD_ITEMS_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});
+
+describe('Set Shipment Alerts reducer', () => {
+  it('Empty Reducer', () => {
+    const alerts = {};
+    expect(reducer.default(
+      initialState,
+      { type: actions.SET_SHIPMENT_ALERTS, alerts },
+    )).toEqual({
+      ...initialState,
+      shipmentAlerts: {
+        show: undefined,
+        data: undefined,
+      },
     });
   });
 });

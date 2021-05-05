@@ -11,31 +11,10 @@ import {
   EDIT_GATEWAY_FAILURE,
   DELETE_GATEWAY,
   DELETE_GATEWAY_SUCCESS,
+  DELETE_GATEWAY_FAILURE,
   GET_GATEWAYS_TYPE,
   GET_GATEWAYS_TYPE_SUCCESS,
   GET_GATEWAYS_TYPE_FAILURE,
-  DELETE_GATEWAY_FAILURE,
-  GET_SENSORS,
-  GET_SENSORS_SUCCESS,
-  GET_SENSORS_FAILURE,
-  Add_SENSOR,
-  Add_SENSOR_SUCCESS,
-  Add_SENSOR_FAILURE,
-  EDIT_SENSOR,
-  EDIT_SENSOR_SUCCESS,
-  EDIT_SENSOR_FAILURE,
-  DELETE_SENSOR,
-  DELETE_SENSOR_SUCCESS,
-  DELETE_SENSOR_FAILURE,
-  GET_SENSORS_TYPE,
-  GET_SENSORS_TYPE_SUCCESS,
-  GET_SENSORS_TYPE_FAILURE,
-  GET_AGGREGATE_REPORT,
-  GET_AGGREGATE_REPORT_SUCCESS,
-  GET_AGGREGATE_REPORT_FAILURE,
-  GET_SENSOR_REPORT,
-  GET_SENSOR_REPORT_SUCCESS,
-  GET_SENSOR_REPORT_FAILURE,
   ADD_GATEWAYS_TYPE,
   ADD_GATEWAYS_TYPE_SUCCESS,
   ADD_GATEWAYS_TYPE_FAILURE,
@@ -45,6 +24,21 @@ import {
   DELETE_GATEWAYS_TYPE,
   DELETE_GATEWAYS_TYPE_SUCCESS,
   DELETE_GATEWAYS_TYPE_FAILURE,
+  GET_SENSORS,
+  GET_SENSORS_SUCCESS,
+  GET_SENSORS_FAILURE,
+  ADD_SENSOR,
+  ADD_SENSOR_SUCCESS,
+  ADD_SENSOR_FAILURE,
+  EDIT_SENSOR,
+  EDIT_SENSOR_SUCCESS,
+  EDIT_SENSOR_FAILURE,
+  DELETE_SENSOR,
+  DELETE_SENSOR_SUCCESS,
+  DELETE_SENSOR_FAILURE,
+  GET_SENSORS_TYPE,
+  GET_SENSORS_TYPE_SUCCESS,
+  GET_SENSORS_TYPE_FAILURE,
   ADD_SENSORS_TYPE,
   ADD_SENSORS_TYPE_SUCCESS,
   ADD_SENSORS_TYPE_FAILURE,
@@ -54,18 +48,24 @@ import {
   DELETE_SENSORS_TYPE,
   DELETE_SENSORS_TYPE_SUCCESS,
   DELETE_SENSORS_TYPE_FAILURE,
+  GET_SENSOR_REPORT,
+  GET_SENSOR_REPORT_SUCCESS,
+  GET_SENSOR_REPORT_FAILURE,
+  GET_AGGREGATE_REPORT,
+  GET_AGGREGATE_REPORT_SUCCESS,
+  GET_AGGREGATE_REPORT_FAILURE,
 } from '../actions/sensorsGateway.actions';
 
 const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  gatewayTypeList: null,
   gatewayData: null,
+  gatewayTypeList: null,
   sensorData: null,
   sensorTypeList: null,
-  aggregateReportData: null,
   sensorReportAlerts: null,
+  aggregateReportData: null,
 };
 
 // Reducer
@@ -214,6 +214,80 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
+    case ADD_GATEWAYS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case ADD_GATEWAYS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        gatewayTypeList: [
+          ...state.gatewayTypeList, action.gatewayType,
+        ],
+      };
+
+    case ADD_GATEWAYS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case EDIT_GATEWAYS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case EDIT_GATEWAYS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        gatewayTypeList: editedGatewayType,
+      };
+
+    case EDIT_GATEWAYS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case DELETE_GATEWAYS_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case DELETE_GATEWAYS_TYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        gatewayTypeList: deletedGatewayType,
+      };
+
+    case DELETE_GATEWAYS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
     case GET_SENSORS:
       return {
         ...state,
@@ -238,7 +312,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case Add_SENSOR:
+    case ADD_SENSOR:
       return {
         ...state,
         loading: true,
@@ -246,7 +320,7 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case Add_SENSOR_SUCCESS:
+    case ADD_SENSOR_SUCCESS:
       return {
         ...state,
         loading: false,
@@ -254,7 +328,7 @@ export default (state = initialState, action) => {
         sensorData: action.data,
       };
 
-    case Add_SENSOR_FAILURE:
+    case ADD_SENSOR_FAILURE:
       return {
         ...state,
         loading: false,
@@ -335,128 +409,6 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case GET_SENSOR_REPORT:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case GET_SENSOR_REPORT_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        sensorReportAlerts: action.data,
-      };
-
-    case GET_SENSOR_REPORT_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case GET_AGGREGATE_REPORT:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case GET_AGGREGATE_REPORT_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        aggregateReportData: action.data,
-      };
-
-    case GET_AGGREGATE_REPORT_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case ADD_GATEWAYS_TYPE:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case ADD_GATEWAYS_TYPE_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        gatewayTypeList: [
-          ...state.gatewayTypeList, action.gatewayType,
-        ],
-      };
-
-    case ADD_GATEWAYS_TYPE_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case EDIT_GATEWAYS_TYPE:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case EDIT_GATEWAYS_TYPE_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        gatewayTypeList: editedGatewayType,
-      };
-
-    case EDIT_GATEWAYS_TYPE_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case DELETE_GATEWAYS_TYPE:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case DELETE_GATEWAYS_TYPE_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        gatewayTypeList: deletedGatewayType,
-      };
-
-    case DELETE_GATEWAYS_TYPE_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
     case ADD_SENSORS_TYPE:
       return {
         ...state,
@@ -524,6 +476,54 @@ export default (state = initialState, action) => {
       };
 
     case DELETE_SENSORS_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_SENSOR_REPORT:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case GET_SENSOR_REPORT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorReportAlerts: action.data,
+      };
+
+    case GET_SENSOR_REPORT_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_AGGREGATE_REPORT:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case GET_AGGREGATE_REPORT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        aggregateReportData: action.data,
+      };
+
+    case GET_AGGREGATE_REPORT_FAILURE:
       return {
         ...state,
         loading: false,

@@ -7,9 +7,6 @@ import {
 import { Search as SearchIcon } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
-  grow: {
-    flexGrow: 1,
-  },
   search: {
     position: 'relative',
     backgroundColor: '#fff',
@@ -43,7 +40,6 @@ const useStyles = makeStyles((theme) => ({
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create('width'),
     width: '100%',
@@ -53,9 +49,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SearchInput = ({ ...props }) => {
+const SearchInput = ({
+  customContainerClass,
+  customSearchInputClass,
+  searchValue,
+  searchAction,
+}) => {
   const classes = useStyles();
-  const { customContainerClass, customSearchInputClass } = props;
 
   return (
     <div
@@ -71,11 +71,12 @@ const SearchInput = ({ ...props }) => {
         classes={{
           root: classes.inputRoot,
           input: `${classes.inputInput} ${
-            customSearchInputClass && customSearchInputClass
+            customSearchInputClass
+            && customSearchInputClass
           }`,
         }}
-        value={props.searchValue}
-        onChange={(e) => props.searchAction(e)}
+        value={searchValue}
+        onChange={searchAction}
         inputProps={{ 'aria-label': 'search' }}
       />
     </div>

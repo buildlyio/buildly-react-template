@@ -110,6 +110,42 @@ describe('Get Shipment Flag action', () => {
   });
 });
 
+// Test Add Shipment Flag action
+describe('Add Shipment Flag action', () => {
+  it('should create an action to add shipment flag', () => {
+    const payload = { name: 'Test Shipment Flag' };
+    const expectedAction = {
+      type: actions.ADD_SHIPMENT_FLAG,
+      payload,
+    };
+    expect(actions.addShipmentFlag(payload)).toEqual(expectedAction);
+  });
+});
+
+// Test Edit Shipment Flag action
+describe('Edit Shipment Flag action', () => {
+  it('should create an action to edit shipment flag', () => {
+    const payload = { name: 'Test Shipment Flag Edited' };
+    const expectedAction = {
+      type: actions.EDIT_SHIPMENT_FLAG,
+      payload,
+    };
+    expect(actions.editShipmentFlag(payload)).toEqual(expectedAction);
+  });
+});
+
+// Test Delete Shipment Flag action
+describe('Delete Shipment Flag action', () => {
+  it('should create an action to delete shipment flag', () => {
+    const id = 1;
+    const expectedAction = {
+      type: actions.DELETE_SHIPMENT_FLAG,
+      id,
+    };
+    expect(actions.deleteShipmentFlag(id)).toEqual(expectedAction);
+  });
+});
+
 // Test Get DashBoard Items action
 describe('Get DashBoard Items action', () => {
   it('should create an action to get dashboard items', () => {
@@ -146,42 +182,6 @@ describe('Email Alerts action', () => {
     };
     expect(actions.emailAlerts(alerts))
       .toEqual(expectedAction);
-  });
-});
-
-// Test Add Shipment Flag action
-describe('Add Shipment Flag action', () => {
-  it('should create an action to add shipment flag', () => {
-    const payload = { name: 'Test Shipment Flag' };
-    const expectedAction = {
-      type: actions.ADD_SHIPMENT_FLAG,
-      payload,
-    };
-    expect(actions.addShipmentFlag(payload)).toEqual(expectedAction);
-  });
-});
-
-// Test Edit Shipment Flag action
-describe('Edit Shipment Flag action', () => {
-  it('should create an action to edit shipment flag', () => {
-    const payload = { name: 'Test Shipment Flag Edited' };
-    const expectedAction = {
-      type: actions.EDIT_SHIPMENT_FLAG,
-      payload,
-    };
-    expect(actions.editShipmentFlag(payload)).toEqual(expectedAction);
-  });
-});
-
-// Test Delete Shipment Flag action
-describe('Delete Shipment Flag action', () => {
-  it('should create an action to delete shipment flag', () => {
-    const id = 1;
-    const expectedAction = {
-      type: actions.DELETE_SHIPMENT_FLAG,
-      id,
-    };
-    expect(actions.deleteShipmentFlag(id)).toEqual(expectedAction);
   });
 });
 

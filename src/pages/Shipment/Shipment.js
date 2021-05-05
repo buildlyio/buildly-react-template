@@ -19,20 +19,17 @@ import {
   ViewComfy as ViewComfyIcon,
   ViewCompact as ViewCompactIcon,
 } from '@material-ui/icons';
-import { environment } from '@environments/environment';
 import Loader from '@components/Loader/Loader';
 import { MapComponent } from '@components/MapComponent/MapComponent';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
-import { httpService } from '@modules/http/http.service';
+import { environment } from '@environments/environment';
 import {
   getCustodians,
   getCustodianType,
   getContact,
   getCustody,
-  GET_CUSTODY_OPTIONS_SUCCESS,
-  GET_CUSTODY_OPTIONS_FAILURE,
 } from '@redux/custodian/actions/custodian.actions';
 import {
   getItems,
@@ -40,17 +37,19 @@ import {
   getUnitsOfMeasure,
 } from '@redux/items/actions/items.actions';
 import {
+  getCustodyOptions,
+  getShipmentOptions,
+} from '@redux/options/actions/options.actions';
+import {
   getGateways,
   getGatewayType,
   getSensors,
   getSensorType,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { MAP_API_URL, convertUnitsOfMeasure } from '@utils/utilMethods';
+import { convertUnitsOfMeasure } from '@utils/utilMethods';
 import {
   getShipmentDetails,
   deleteShipment,
-  GET_SHIPMENT_OPTIONS_SUCCESS,
-  GET_SHIPMENT_OPTIONS_FAILURE,
 } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
 import {
@@ -175,35 +174,10 @@ const Shipment = (props) => {
       dispatch(getSensorType());
     }
     if (shipmentOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}shipment/shipment/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_SHIPMENT_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_SHIPMENT_OPTIONS_FAILURE, error });
-        });
+      dispatch(getShipmentOptions());
     }
-
     if (custodyOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}custodian/custody/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_CUSTODY_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_CUSTODY_OPTIONS_FAILURE, error });
-        });
+      dispatch(getCustodyOptions());
     }
   }, []);
 
@@ -475,7 +449,7 @@ const Shipment = (props) => {
             isMarkerShown={isMapLoaded}
             showPath
             markers={markers}
-            googleMapURL={MAP_API_URL}
+            googleMapURL={environment.MAP_API_URL}
             zoom={zoomLevel}
             setSelectedMarker={setSelectedMarker}
             loadingElement={
@@ -533,6 +507,14 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.custodianReducer,
   ...state.itemsReducer,
   ...state.sensorsGatewayReducer,
+  ...state.optionsReducer,
+  loading: (
+    state.shipmentReducer.loading
+    || state.custodianReducer.loading
+    || state.itemsReducer.loading
+    || state.sensorsGatewayReducer.loading
+    || state.optionsReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(Shipment);

@@ -21,12 +21,12 @@ import { MapComponent } from '@components/MapComponent/MapComponent';
 import Modal from '@components/Modal/Modal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
+import { environment } from '@environments/environment';
 import { useInput } from '@hooks/useInput';
 import {
   addGateway,
   editGateway,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { MAP_API_URL } from '@utils/utilMethods';
 import { validators } from '@utils/validators';
 import { GATEWAY_STATUS } from '../Constants';
 
@@ -502,7 +502,7 @@ const AddGateway = ({
                     />
                     <MapComponent
                       isMarkerShown
-                      googleMapURL={MAP_API_URL}
+                      googleMapURL={environment.MAP_API_URL}
                       zoom={8}
                       loadingElement={
                         <div style={{ height: '100%' }} />

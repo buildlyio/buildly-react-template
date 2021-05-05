@@ -36,9 +36,9 @@ export const GET_SENSORS = 'SENSORS/GET_SENSORS';
 export const GET_SENSORS_SUCCESS = 'SENSORS/GET_SENSORS_SUCCESS';
 export const GET_SENSORS_FAILURE = 'SENSORS/GET_SENSORS_FAILURE';
 
-export const Add_SENSOR = 'SENSORS/Add_SENSOR';
-export const Add_SENSOR_SUCCESS = 'SENSORS/Add_SENSOR_SUCCESS';
-export const Add_SENSOR_FAILURE = 'SENSORS/Add_SENSOR_FAILURE';
+export const ADD_SENSOR = 'SENSORS/ADD_SENSOR';
+export const ADD_SENSOR_SUCCESS = 'SENSORS/ADD_SENSOR_SUCCESS';
+export const ADD_SENSOR_FAILURE = 'SENSORS/ADD_SENSOR_FAILURE';
 
 export const EDIT_SENSOR = 'SENSORS/EDIT_SENSOR';
 export const EDIT_SENSOR_SUCCESS = 'SENSORS/EDIT_SENSOR_SUCCESS';
@@ -52,14 +52,6 @@ export const GET_SENSORS_TYPE = 'SENSORS/GET_SENSORS_TYPE';
 export const GET_SENSORS_TYPE_SUCCESS = 'SENSORS/GET_SENSORS_TYPE_SUCCESS';
 export const GET_SENSORS_TYPE_FAILURE = 'SENSORS/GET_SENSORS_TYPE_FAILURE';
 
-export const GET_AGGREGATE_REPORT = 'SENSORS/GET_AGGREGATE_REPORT';
-export const GET_AGGREGATE_REPORT_SUCCESS = 'SENSORS/GET_AGGREGATE_REPORT_SUCCESS';
-export const GET_AGGREGATE_REPORT_FAILURE = 'SENSORS/GET_AGGREGATE_REPORT_FAILURE';
-
-export const GET_SENSOR_REPORT = 'SENSORS/GET_SENSOR_REPORT';
-export const GET_SENSOR_REPORT_SUCCESS = 'SENSORS/GET_SENSOR_REPORT_SUCCESS';
-export const GET_SENSOR_REPORT_FAILURE = 'SENSORS/GET_SENSOR_REPORT_FAILURE';
-
 export const ADD_SENSORS_TYPE = 'SENSORS/ADD_SENSORS_TYPE';
 export const ADD_SENSORS_TYPE_SUCCESS = 'SENSORS/ADD_SENSORS_TYPE_SUCCESS';
 export const ADD_SENSORS_TYPE_FAILURE = 'SENSORS/ADD_SENSORS_TYPE_FAILURE';
@@ -71,6 +63,14 @@ export const EDIT_SENSORS_TYPE_FAILURE = 'SENSORS/EDIT_SENSORS_TYPE_FAILURE';
 export const DELETE_SENSORS_TYPE = 'SENSORS/DELETE_SENSORS_TYPE';
 export const DELETE_SENSORS_TYPE_SUCCESS = 'SENSORS/DELETE_SENSORS_TYPE_SUCCESS';
 export const DELETE_SENSORS_TYPE_FAILURE = 'SENSORS/DELETE_SENSORS_TYPE_FAILURE';
+
+export const GET_SENSOR_REPORT = 'SENSORS/GET_SENSOR_REPORT';
+export const GET_SENSOR_REPORT_SUCCESS = 'SENSORS/GET_SENSOR_REPORT_SUCCESS';
+export const GET_SENSOR_REPORT_FAILURE = 'SENSORS/GET_SENSOR_REPORT_FAILURE';
+
+export const GET_AGGREGATE_REPORT = 'SENSORS/GET_AGGREGATE_REPORT';
+export const GET_AGGREGATE_REPORT_SUCCESS = 'SENSORS/GET_AGGREGATE_REPORT_SUCCESS';
+export const GET_AGGREGATE_REPORT_FAILURE = 'SENSORS/GET_AGGREGATE_REPORT_FAILURE';
 
 // Gateway action functions
 /**
@@ -169,7 +169,7 @@ export const getSensors = (organization_uuid) => ({
  * @param {String} redirectTo
  */
 export const addSensor = (payload, history, redirectTo) => ({
-  type: Add_SENSOR,
+  type: ADD_SENSOR,
   payload,
   history,
   redirectTo,
@@ -207,24 +207,6 @@ export const getSensorType = () => ({
 });
 
 /**
- * Get Aggregate Report
- * @param {Array} partnerShipmentIds
- */
-export const getAggregateReport = (partnerShipmentIds) => ({
-  type: GET_AGGREGATE_REPORT,
-  partnerShipmentIds,
-});
-
-/**
- * Get Sensor Report Alerts
- * @param {Array} partnerShipmentIds
- */
-export const getSensorReportAlerts = (partnerShipmentIds) => ({
-  type: GET_SENSOR_REPORT,
-  partnerShipmentIds,
-});
-
-/**
  * Add Sensor Type
  * @param {Object} payload
  */
@@ -249,4 +231,22 @@ export const editSensorType = (payload) => ({
 export const deleteSensorType = (id) => ({
   type: DELETE_SENSORS_TYPE,
   id,
+});
+
+/**
+ * Get Sensor Report Alerts
+ * @param {Array} partnerShipmentIds
+ */
+export const getSensorReportAlerts = (partnerShipmentIds) => ({
+  type: GET_SENSOR_REPORT,
+  partnerShipmentIds,
+});
+
+/**
+ * Get Aggregate Report
+ * @param {Array} partnerShipmentIds
+ */
+export const getAggregateReport = (partnerShipmentIds) => ({
+  type: GET_AGGREGATE_REPORT,
+  partnerShipmentIds,
 });
