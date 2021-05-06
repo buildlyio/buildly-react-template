@@ -25,7 +25,7 @@ function* loadCoreUsers() {
     const res = yield call(
       httpService.makeRequest,
       'get',
-      endpoint.replace,
+      endpoint,
     );
     yield put({ type: LOAD_DATA_COREUSER_COMMIT, data: res.data });
   } catch (error) {
