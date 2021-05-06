@@ -198,17 +198,30 @@ const Shipment = (props) => {
         custodyData,
         aggregateReportData,
       );
+      const ACTIVE_ROWS = _.filter(
+        formattedRows,
+        { type: 'Active' },
+      );
+      const COMPLETED_ROWS = _.filter(
+        formattedRows,
+        { type: 'Completed' },
+      );
+      const CANCELLED_ROWS = _.filter(
+        formattedRows,
+        { type: 'Cancelled' },
+      );
+
       setRows(formattedRows);
-      setActiveRows(_.filter(formattedRows, { type: 'Active' }));
-      setCompletedRows(_.filter(formattedRows, { type: 'Completed' }));
-      setCancelledRows(_.filter(formattedRows, { type: 'Cancelled' }));
+      setActiveRows(ACTIVE_ROWS);
+      setCompletedRows(COMPLETED_ROWS);
+      setCancelledRows(CANCELLED_ROWS);
       if (!selectedShipment && formattedRows.length) {
         if (shipmentFilter === 'Cancelled') {
-          setSelectedShipment(cancelledRows[0]);
+          setSelectedShipment(CANCELLED_ROWS[0]);
         } else if (shipmentFilter === 'Completed') {
-          setSelectedShipment(completedRows[0]);
+          setSelectedShipment(COMPLETED_ROWS[0]);
         } else {
-          setSelectedShipment(activeRows[0]);
+          setSelectedShipment(ACTIVE_ROWS[0]);
         }
       }
     }
