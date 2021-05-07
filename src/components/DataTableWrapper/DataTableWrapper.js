@@ -5,6 +5,8 @@ import {
   Grid,
   Button,
   IconButton,
+  Box,
+  Typography,
 } from '@material-ui/core';
 import {
   Add as AddIcon,
@@ -15,36 +17,31 @@ import Loader from '@components/Loader/Loader';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(1),
-    width: '100%',
+  dashboardHeading: {
+    fontWeight: 'bold',
+    marginBottom: '0.5em',
   },
-  addButton: {
-    marginBottom: theme.spacing(2),
+  iconButton: {
+    padding: theme.spacing(1.5, 0),
   },
-  title: {
-    flex: 1,
-    padding: theme.spacing(1, 2),
-    textTransform: 'uppercase',
-    fontSize: 18,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  leftHeader: {
-    '& span': {
-      textAlign: 'left',
+  dataTableBody: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: '#4F4D4D',
+    },
+    '&:nth-of-type(even)': {
+      backgroundColor: '#383636',
+    },
+    '&:hover': {
+      backgroundColor: '#000 !important',
     },
   },
-  iconHeader: {
-    '& div': {
-      textAlign: 'center',
+  dataTable: {
+    '& .MuiPaper-root': {
+      backgroundColor: '#383636',
     },
-  },
-  icon: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    '& tr > th': {
+      backgroundColor: '#383636',
+    },
   },
 }));
 
@@ -62,27 +59,27 @@ const DataTableWrapper = ({
   setConfirmModal,
   handleConfirmModal,
   confirmModalTitle,
+  tableHeight,
+  tableHeader,
+  hideAddButton,
 }) => {
   const classes = useStyles();
 
-  const formattedColumns = [
+  const finalColumns = [
     {
       name: 'Edit',
       options: {
         filter: false,
         sort: false,
         empty: true,
-        setCellHeaderProps: () => ({ className: classes.iconHeader }),
-        customBodyRenderLite: (dataIndex) => {
-          const row = rows[dataIndex];
-          return (
-            <div className={classes.icon}>
-              <IconButton onClick={() => editAction(row)}>
-                <EditIcon />
-              </IconButton>
-            </div>
-          );
-        },
+        customBodyRenderLite: (dataIndex) => (
+          <IconButton
+            className={classes.iconButton}
+            onClick={() => editAction(rows[dataIndex])}
+          >
+            <EditIcon />
+          </IconButton>
+        ),
       },
     },
     {
@@ -91,67 +88,81 @@ const DataTableWrapper = ({
         filter: false,
         sort: false,
         empty: true,
-        setCellHeaderProps: () => ({ className: classes.iconHeader }),
-        customBodyRenderLite: (dataIndex) => {
-          const row = rows[dataIndex];
-          return (
-            <div className={classes.icon}>
-              <IconButton onClick={() => deleteAction(row)}>
-                <DeleteIcon />
-              </IconButton>
-            </div>
-          );
-        },
+        customBodyRenderLite: (dataIndex) => (
+          <IconButton
+            onClick={() => deleteAction(rows[dataIndex])}
+          >
+            <DeleteIcon />
+          </IconButton>
+        ),
       },
     },
-    ...columns.map((column) => ({
-      ...column,
-      options: {
-        ...column.options,
-        setCellHeaderProps: () => ({ className: classes.leftHeader }),
-      },
-    })),
+    ...columns,
   ];
 
   const options = {
     filter: true,
-    filterType: 'dropdown',
+    filterType: 'multiselect',
     responsive: 'standard',
-    tableBodyHeight: '300px',
-    tableBodyMaxHeight: '',
     selectableRows: 'none',
+    selectToolbarPlacement: 'none',
+    tableBodyHeight: tableHeight || '',
     rowsPerPageOptions: [5, 10, 15],
-    downloadOptions: { filename: `${filename}.csv`, separator: ',' },
+    downloadOptions: {
+      filename: `${filename}.csv`,
+      separator: ',',
+    },
     textLabels: {
       body: {
         noMatch: 'No data to display',
       },
     },
+    setRowProps: (row, dataIndex, rowIndex) => ({
+      className: classes.dataTableBody,
+    }),
   };
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={2}>
-        {loading && <Loader open={loading} />}
-        <Grid item xs={12}>
-          <Button
-            className={classes.addButton}
-            type="button"
-            variant="contained"
-            color="primary"
-            onClick={onAddButtonClick}
+    <Box mt={5} mb={5}>
+      {loading && <Loader open={loading} />}
+      <div>
+        {!hideAddButton && (
+          <Box mb={3} mt={2}>
+            <Button
+              type="button"
+              variant="contained"
+              color="primary"
+              onClick={onAddButtonClick}
+            >
+              <AddIcon />
+              {` ${addButtonHeading}`}
+            </Button>
+          </Box>
+        )}
+        {tableHeader && (
+          <Typography
+            className={classes.dashboardHeading}
+            variant="h4"
           >
-            <AddIcon />
-            {addButtonHeading}
-          </Button>
-          <MUIDataTable
-            data={rows}
-            columns={formattedColumns}
-            options={options}
-          />
-          {children}
+            {tableHeader}
+          </Typography>
+        )}
+        <Grid
+          className={classes.dataTable}
+          container
+          spacing={2}
+        >
+          <Grid item xs={12}>
+            <MUIDataTable
+              data={rows}
+              columns={finalColumns}
+              options={options}
+            />
+          </Grid>
         </Grid>
-      </Grid>
+        {children}
+      </div>
+
       <ConfirmModal
         open={openConfirmModal}
         setOpen={setConfirmModal}
@@ -159,7 +170,7 @@ const DataTableWrapper = ({
         title={confirmModalTitle}
         submitText="Delete"
       />
-    </div>
+    </Box>
   );
 };
 

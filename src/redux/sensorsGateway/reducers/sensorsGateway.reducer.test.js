@@ -5,14 +5,12 @@ const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  gatewayTypeList: null,
   gatewayData: null,
+  gatewayTypeList: null,
   sensorData: null,
   sensorTypeList: null,
-  aggregateReportData: null,
-  gatewayOptions: null,
-  sensorOptions: null,
   sensorReportAlerts: null,
+  aggregateReportData: null,
 };
 
 describe('Get Gateway reducer', () => {
@@ -155,27 +153,6 @@ describe('Delete Gateway reducer', () => {
       error: undefined,
       loaded: true,
       loading: false,
-    });
-  });
-});
-
-describe('Search Gateway reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GATEWAY_SEARCH },
-    )).toEqual(initialState);
-  });
-
-  it('Search success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GATEWAY_SEARCH_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      gatewaySearchedData: undefined,
     });
   });
 });
@@ -474,27 +451,6 @@ describe('Delete Sensor reducer', () => {
   });
 });
 
-describe('Search Sensor reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.SENSOR_SEARCH },
-    )).toEqual(initialState);
-  });
-
-  it('Search sensor success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.SENSOR_SEARCH_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      sensorSearchedData: undefined,
-    });
-  });
-});
-
 describe('Get Sensor type reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(
@@ -645,42 +601,6 @@ describe('Delete Sensor type reducer', () => {
   });
 });
 
-describe('Get Aggregate Report reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_AGGREGATE_REPORT },
-    )).toEqual({
-      ...initialState,
-      loading: true,
-    });
-  });
-
-  it('Get Aggregate Report success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_AGGREGATE_REPORT_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      aggregateReportData: undefined,
-    });
-  });
-
-  it('Get Aggregate Report fail Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_AGGREGATE_REPORT_FAILURE },
-    )).toEqual({
-      ...initialState,
-      error: undefined,
-      loaded: true,
-      loading: false,
-    });
-  });
-});
-
 describe('Get Sensor Report Alerts reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(
@@ -708,6 +628,42 @@ describe('Get Sensor Report Alerts reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.GET_SENSOR_REPORT_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});
+
+describe('Get Aggregate Report reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_AGGREGATE_REPORT },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('Get Aggregate Report success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_AGGREGATE_REPORT_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      aggregateReportData: undefined,
+    });
+  });
+
+  it('Get Aggregate Report fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_AGGREGATE_REPORT_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,

@@ -10,20 +10,20 @@ import { routes } from '@routes/routesConstants';
 import { CUSTODIAN_TYPE_COLUMNS } from '../ConfigurationConstants';
 import AddCustodianType from '../forms/AddCustodianType';
 
-const CustodianType = (props) => {
-  const {
-    dispatch,
-    loading,
-    custodianTypeList,
-    redirectTo,
-    history,
-  } = props;
+const CustodianType = ({
+  dispatch,
+  loading,
+  custodianTypeList,
+  redirectTo,
+  history,
+}) => {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
   const addPath = redirectTo
     ? `${redirectTo}/custodian-type`
     : `${routes.CONFIGURATION}/custodian-type/add`;
+
   const editPath = redirectTo
     ? `${redirectTo}/custodian-type`
     : `${routes.CONFIGURATION}/custodian-type/edit`;
@@ -72,6 +72,7 @@ const CustodianType = (props) => {
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
       confirmModalTitle="Are you sure you want to Delete this Custodian Type?"
+      tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddCustodianType} />
       <Route path={`${editPath}/:id`} component={AddCustodianType} />

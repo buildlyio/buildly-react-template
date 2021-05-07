@@ -11,14 +11,13 @@ import { routes } from '@routes/routesConstants';
 import { SHIPMENT_FLAG_COLUMNS } from '../ConfigurationConstants';
 import AddShipmentFlag from '../forms/AddShipmentFlag';
 
-const ShipmentFlag = (props) => {
-  const {
-    dispatch,
-    loading,
-    shipmentFlag,
-    redirectTo,
-    history,
-  } = props;
+const ShipmentFlag = ({
+  dispatch,
+  loading,
+  shipmentFlag,
+  redirectTo,
+  history,
+}) => {
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -26,6 +25,7 @@ const ShipmentFlag = (props) => {
   const addPath = redirectTo
     ? `${redirectTo}/shipment-flag`
     : `${routes.CONFIGURATION}/shipment-flag/add`;
+
   const editPath = redirectTo
     ? `${redirectTo}/shipment-flag`
     : `${routes.CONFIGURATION}/shipment-flag/edit`;
@@ -74,6 +74,7 @@ const ShipmentFlag = (props) => {
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
       confirmModalTitle="Are you sure you want to Delete this Shipment Flag?"
+      tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddShipmentFlag} />
       <Route path={`${editPath}/:id`} component={AddShipmentFlag} />

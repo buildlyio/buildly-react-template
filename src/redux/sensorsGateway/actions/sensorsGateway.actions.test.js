@@ -62,23 +62,6 @@ describe('Delete Gateway action', () => {
   });
 });
 
-// Test Search Gateway
-describe('Search Gateway action', () => {
-  it('should create an action to search Gateway', () => {
-    const searchItem = 'abc';
-    const searchList = [{ id: '123', name: 'abc' }];
-    const searchFields = ['id', 'name'];
-    const expectedAction = {
-      type: actions.GATEWAY_SEARCH,
-      searchItem,
-      searchList,
-      searchFields,
-    };
-    expect(actions.searchGatewayItem(searchItem, searchList, searchFields))
-      .toEqual(expectedAction);
-  });
-});
-
 // Test Get Gateway Type
 describe('Get Gateway Type action', () => {
   it('should create an action to get Gateway type', () => {
@@ -145,7 +128,7 @@ describe('Add Sensor action', () => {
     const history = {};
     const redirectTo = '/test';
     const expectedAction = {
-      type: actions.Add_SENSOR,
+      type: actions.ADD_SENSOR,
       payload,
       history,
       redirectTo,
@@ -183,23 +166,6 @@ describe('Delete Sensor action', () => {
       organization_uuid,
     };
     expect(actions.deleteSensor(sensorId, organization_uuid))
-      .toEqual(expectedAction);
-  });
-});
-
-// Test Search Sensor
-describe('Search Sensor action', () => {
-  it('should create an action to search Sensor', () => {
-    const searchItem = 'abc';
-    const searchList = [{ id: '123', name: 'abc' }];
-    const searchFields = ['id', 'name'];
-    const expectedAction = {
-      type: actions.SENSOR_SEARCH,
-      searchItem,
-      searchList,
-      searchFields,
-    };
-    expect(actions.searchSensorItem(searchItem, searchList, searchFields))
       .toEqual(expectedAction);
   });
 });
@@ -250,19 +216,6 @@ describe('Delete Sensor Type action', () => {
   });
 });
 
-// Test Get Aggregate Report
-describe('Get Aggregate Report action', () => {
-  it('should create an action to get aggregate report', () => {
-    const partnerShipmentIds = ['1', '2', '3'];
-    const expectedAction = {
-      type: actions.GET_AGGREGATE_REPORT,
-      partnerShipmentIds,
-    };
-    expect(actions.getAggregateReport(partnerShipmentIds))
-      .toEqual(expectedAction);
-  });
-});
-
 // Test Get Sensor Report Alerts
 describe('Get Sensor Report Alerts action', () => {
   it('should create an action to get sensor report alerts', () => {
@@ -272,6 +225,19 @@ describe('Get Sensor Report Alerts action', () => {
       partnerShipmentIds,
     };
     expect(actions.getSensorReportAlerts(partnerShipmentIds))
+      .toEqual(expectedAction);
+  });
+});
+
+// Test Get Aggregate Report
+describe('Get Aggregate Report action', () => {
+  it('should create an action to get aggregate report', () => {
+    const partnerShipmentIds = ['1', '2', '3'];
+    const expectedAction = {
+      type: actions.GET_AGGREGATE_REPORT,
+      partnerShipmentIds,
+    };
+    expect(actions.getAggregateReport(partnerShipmentIds))
       .toEqual(expectedAction);
   });
 });

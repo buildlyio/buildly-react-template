@@ -15,17 +15,6 @@ export const DELETE_CUSTODIANS = 'CUSTODIAN/DELETE_CUSTODIANS';
 export const DELETE_CUSTODIANS_SUCCESS = 'CUSTODIAN/DELETE_CUSTODIANS_SUCCESS';
 export const DELETE_CUSTODIANS_FAILURE = 'CUSTODIAN/DELETE_CUSTODIANS_FAILURE';
 
-export const SEARCH = 'CUSTODIAN/SEARCH';
-export const SEARCH_SUCCESS = 'CUSTODIAN/SEARCH_SUCCESS';
-
-export const GET_CUSTODIAN_TYPE = 'CUSTODIAN/GET_CUSTODIAN_TYPE';
-export const GET_CUSTODIAN_TYPE_SUCCESS = 'CUSTODIAN/GET_CUSTODIAN_TYPE_SUCCESS';
-export const GET_CUSTODIAN_TYPE_FAILURE = 'CUSTODIAN/GET_CUSTODIAN_TYPE_FAILURE';
-
-export const GET_CONTACT = 'CUSTODIAN/GET_CONTACT';
-export const GET_CONTACT_SUCCESS = 'CUSTODIAN/GET_CONTACT_SUCCESS';
-export const GET_CONTACT_FAILURE = 'CUSTODIAN/GET_CONTACT_FAILURE';
-
 export const GET_CUSTODY = 'CUSTODIAN/GET_CUSTODY';
 export const GET_CUSTODY_SUCCESS = 'CUSTODIAN/GET_CUSTODY_SUCCESS';
 export const GET_CUSTODY_FAILURE = 'CUSTODIAN/GET_CUSTODY_FAILURE';
@@ -42,17 +31,9 @@ export const UPDATE_CUSTODY = 'CUSTODIAN/UPDATE_CUSTODY';
 export const UPDATE_CUSTODY_SUCCESS = 'CUSTODIAN/UPDATE_CUSTODY_SUCCESS';
 export const UPDATE_CUSTODY_FAILURE = 'CUSTODIAN/UPDATE_CUSTODY_FAILURE';
 
-export const GET_CUSTODIAN_OPTIONS = 'CUSTODIAN/GET_CUSTODIAN_OPTIONS';
-export const GET_CUSTODIAN_OPTIONS_SUCCESS = 'CUSTODIAN/GET_CUSTODIAN_OPTIONS_SUCCESS';
-export const GET_CUSTODIAN_OPTIONS_FAILURE = 'CUSTODIAN/GET_CUSTODIAN_OPTIONS_FAILURE';
-
-export const GET_CONTACT_OPTIONS = 'CUSTODIAN/GET_CONTACT_OPTIONS';
-export const GET_CONTACT_OPTIONS_SUCCESS = 'CUSTODIAN/GET_CONTACT_OPTIONS_SUCCESS';
-export const GET_CONTACT_OPTIONS_FAILURE = 'CUSTODIAN/GET_CONTACT_OPTIONS_FAILURE';
-
-export const GET_CUSTODY_OPTIONS = 'CUSTODIAN/GET_CUSTODY_OPTIONS';
-export const GET_CUSTODY_OPTIONS_SUCCESS = 'CUSTODIAN/GET_CUSTODY_OPTIONS_SUCCESS';
-export const GET_CUSTODY_OPTIONS_FAILURE = 'CUSTODIAN/GET_CUSTODY_OPTIONS_FAILURE';
+export const GET_CUSTODIAN_TYPE = 'CUSTODIAN/GET_CUSTODIAN_TYPE';
+export const GET_CUSTODIAN_TYPE_SUCCESS = 'CUSTODIAN/GET_CUSTODIAN_TYPE_SUCCESS';
+export const GET_CUSTODIAN_TYPE_FAILURE = 'CUSTODIAN/GET_CUSTODIAN_TYPE_FAILURE';
 
 export const ADD_CUSTODIAN_TYPE = 'CUSTODIAN/ADD_CUSTODIAN_TYPE';
 export const ADD_CUSTODIAN_TYPE_SUCCESS = 'CUSTODIAN/ADD_CUSTODIAN_TYPE_SUCCESS';
@@ -65,6 +46,10 @@ export const EDIT_CUSTODIAN_TYPE_FAILURE = 'CUSTODIAN/EDIT_CUSTODIAN_TYPE_FAILUR
 export const DELETE_CUSTODIAN_TYPE = 'CUSTODIAN/DELETE_CUSTODIAN_TYPE';
 export const DELETE_CUSTODIAN_TYPE_SUCCESS = 'CUSTODIAN/DELETE_CUSTODIAN_TYPE_SUCCESS';
 export const DELETE_CUSTODIAN_TYPE_FAILURE = 'CUSTODIAN/DELETE_CUSTODIAN_TYPE_FAILURE';
+
+export const GET_CONTACT = 'CUSTODIAN/GET_CONTACT';
+export const GET_CONTACT_SUCCESS = 'CUSTODIAN/GET_CONTACT_SUCCESS';
+export const GET_CONTACT_FAILURE = 'CUSTODIAN/GET_CONTACT_FAILURE';
 
 /**
  * Get Custodian List
@@ -116,35 +101,6 @@ export const deleteCustodian = (
 });
 
 /**
- * Search Custodian
- * @param {String} searchItem
- * @param {Array} searchList
- * @param {Array} searchFields
- */
-export const searchCustodian = (searchItem, searchList, searchFields) => ({
-  type: SEARCH,
-  searchItem,
-  searchList,
-  searchFields,
-});
-
-/**
- * Get Custodian Type
- */
-export const getCustodianType = () => ({
-  type: GET_CUSTODIAN_TYPE,
-});
-
-/**
- * Get Contact
- * @param {String} organization_uuid
- */
-export const getContact = (organization_uuid) => ({
-  type: GET_CONTACT,
-  organization_uuid,
-});
-
-/**
  * Get Custody
  */
 export const getCustody = () => ({
@@ -179,6 +135,13 @@ export const updateCustody = (payload) => ({
 });
 
 /**
+ * Get Custodian Type
+ */
+export const getCustodianType = () => ({
+  type: GET_CUSTODIAN_TYPE,
+});
+
+/**
  * Add Custodian Type
  * @param {Object} payload
  */
@@ -203,4 +166,13 @@ export const editCustodianType = (payload) => ({
 export const deleteCustodianType = (id) => ({
   type: DELETE_CUSTODIAN_TYPE,
   id,
+});
+
+/**
+ * Get Contact
+ * @param {String} organization_uuid
+ */
+export const getContact = (organization_uuid) => ({
+  type: GET_CONTACT,
+  organization_uuid,
 });

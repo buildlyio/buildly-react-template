@@ -1,333 +1,322 @@
-import _ from 'lodash';
 import {
-  SAVE_SHIPMENT_FORM_DATA,
-  GET_SHIPMENTS,
-  GET_SHIPMENTS_FAILURE,
-  GET_SHIPMENTS_SUCCESS,
-  ADD_SHIPMENT,
-  ADD_SHIPMENT_SUCCESS,
-  ADD_SHIPMENT_FAILURE,
-  EDIT_SHIPMENT,
-  EDIT_SHIPMENT_SUCCESS,
-  EDIT_SHIPMENT_FAILURE,
-  DELETE_SHIPMENT,
-  DELETE_SHIPMENT_SUCCESS,
-  DELETE_SHIPMENT_FAILURE,
-  GET_SHIPMENT_FLAG,
-  GET_SHIPMENT_FLAG_SUCCESS,
-  GET_SHIPMENT_FLAG_FAILURE,
-  ADD_SHIPMENT_FLAG,
-  ADD_SHIPMENT_FLAG_SUCCESS,
-  ADD_SHIPMENT_FLAG_FAILURE,
-  EDIT_SHIPMENT_FLAG,
-  EDIT_SHIPMENT_FLAG_SUCCESS,
-  EDIT_SHIPMENT_FLAG_FAILURE,
-  DELETE_SHIPMENT_FLAG,
-  DELETE_SHIPMENT_FLAG_SUCCESS,
-  DELETE_SHIPMENT_FLAG_FAILURE,
-  GET_DASHBOARD_ITEMS,
-  GET_DASHBOARD_ITEMS_SUCCESS,
-  GET_DASHBOARD_ITEMS_FAILURE,
-  SET_SHIPMENT_ALERTS,
-  ADD_PDF_IDENTIFIER,
-  ADD_PDF_IDENTIFIER_SUCCESS,
-  ADD_PDF_IDENTIFIER_FAILURE,
-} from '../actions/shipment.actions';
+  GET_USER_OPTIONS,
+  GET_USER_OPTIONS_SUCCESS,
+  GET_USER_OPTIONS_FAILURE,
+  GET_ORGANIZATION_OPTIONS,
+  GET_ORGANIZATION_OPTIONS_SUCCESS,
+  GET_ORGANIZATION_OPTIONS_FAILURE,
+  GET_CUSTODIAN_OPTIONS,
+  GET_CUSTODIAN_OPTIONS_SUCCESS,
+  GET_CUSTODIAN_OPTIONS_FAILURE,
+  GET_CUSTODY_OPTIONS,
+  GET_CUSTODY_OPTIONS_SUCCESS,
+  GET_CUSTODY_OPTIONS_FAILURE,
+  GET_CONTACT_OPTIONS,
+  GET_CONTACT_OPTIONS_SUCCESS,
+  GET_CONTACT_OPTIONS_FAILURE,
+  GET_ITEM_OPTIONS,
+  GET_ITEM_OPTIONS_SUCCESS,
+  GET_ITEM_OPTIONS_FAILURE,
+  GET_PRODUCTS_OPTIONS,
+  GET_PRODUCTS_OPTIONS_SUCCESS,
+  GET_PRODUCTS_OPTIONS_FAILURE,
+  GET_GATEWAY_OPTIONS,
+  GET_GATEWAY_OPTIONS_SUCCESS,
+  GET_GATEWAY_OPTIONS_FAILURE,
+  GET_SENSOR_OPTIONS,
+  GET_SENSOR_OPTIONS_SUCCESS,
+  GET_SENSOR_OPTIONS_FAILURE,
+  GET_SHIPMENT_OPTIONS,
+  GET_SHIPMENT_OPTIONS_SUCCESS,
+  GET_SHIPMENT_OPTIONS_FAILURE,
+} from '../actions/options.actions';
 
 const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  shipmentFormData: null,
-  shipmentData: null,
-  shipmentFlag: null,
-  shipmentAlerts: { show: true, data: [] },
+  userOptions: null,
+  orgOptions: null,
+  custodianOptions: null,
+  custodyOptions: null,
+  contactOptions: null,
+  itemOptions: null,
+  productOptions: null,
+  gatewayOptions: null,
+  sensorOptions: null,
+  shipmentOptions: null,
 };
 
 // Reducer
 export default (state = initialState, action) => {
-  let deletedShipmentFlag;
-  let editedShipmentFlag = state.shipmentFlag;
-  const shipmentFlagPresent = _.remove(
-    editedShipmentFlag,
-    { id: action.shipmentFlag?.id },
-  )[0];
-  if (shipmentFlagPresent) {
-    deletedShipmentFlag = editedShipmentFlag;
-    editedShipmentFlag = [
-      ...editedShipmentFlag,
-      action.shipmentFlag,
-    ];
-  }
-
   switch (action.type) {
-    case SAVE_SHIPMENT_FORM_DATA:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: null,
-        shipmentFormData: action.formData,
-      };
-
-    case GET_SHIPMENTS:
+    case GET_USER_OPTIONS:
       return {
         ...state,
         loading: true,
         loaded: false,
+        userOptions: null,
         error: null,
       };
 
-    case GET_SHIPMENTS_SUCCESS:
+    case GET_USER_OPTIONS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        shipmentData: action.data,
+        userOptions: action.data,
+        error: null,
       };
 
-    case GET_SHIPMENTS_FAILURE:
+    case GET_USER_OPTIONS_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
+        userOptions: null,
         error: action.error,
       };
 
-    case ADD_SHIPMENT:
+    case GET_ORGANIZATION_OPTIONS:
       return {
         ...state,
         loading: true,
         loaded: false,
+        orgOptions: null,
         error: null,
       };
 
-    case ADD_SHIPMENT_SUCCESS:
+    case GET_ORGANIZATION_OPTIONS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        shipmentData: action.data,
+        orgOptions: action.data,
+        error: null,
       };
 
-    case ADD_SHIPMENT_FAILURE:
+    case GET_ORGANIZATION_OPTIONS_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
+        orgOptions: null,
         error: action.error,
       };
 
-    case EDIT_SHIPMENT:
+    case GET_CUSTODIAN_OPTIONS:
       return {
         ...state,
         loading: true,
         loaded: false,
+        custodianOptions: null,
         error: null,
       };
 
-    case EDIT_SHIPMENT_SUCCESS:
+    case GET_CUSTODIAN_OPTIONS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        shipmentData: action.data,
+        custodianOptions: action.data,
         error: null,
       };
 
-    case EDIT_SHIPMENT_FAILURE:
+    case GET_CUSTODIAN_OPTIONS_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
+        custodianOptions: null,
         error: action.error,
       };
 
-    case DELETE_SHIPMENT:
+    case GET_CUSTODY_OPTIONS:
       return {
         ...state,
         loading: true,
         loaded: false,
+        custodyOptions: null,
         error: null,
       };
 
-    case DELETE_SHIPMENT_SUCCESS:
+    case GET_CUSTODY_OPTIONS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        shipmentData: action.data,
+        custodyOptions: action.data,
+        error: null,
       };
 
-    case DELETE_SHIPMENT_FAILURE:
+    case GET_CUSTODY_OPTIONS_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
+        custodyOptions: null,
         error: action.error,
       };
 
-    case GET_SHIPMENT_FLAG:
+    case GET_CONTACT_OPTIONS:
       return {
         ...state,
         loading: true,
         loaded: false,
+        contactOptions: null,
         error: null,
       };
 
-    case GET_SHIPMENT_FLAG_SUCCESS:
+    case GET_CONTACT_OPTIONS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        shipmentFlag: action.data,
+        contactOptions: action.data,
+        error: null,
       };
 
-    case GET_SHIPMENT_FLAG_FAILURE:
+    case GET_CONTACT_OPTIONS_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
+        contactOptions: null,
         error: action.error,
       };
 
-    case ADD_SHIPMENT_FLAG:
+    case GET_ITEM_OPTIONS:
       return {
         ...state,
         loading: true,
         loaded: false,
+        itemOptions: null,
         error: null,
       };
 
-    case ADD_SHIPMENT_FLAG_SUCCESS:
+    case GET_ITEM_OPTIONS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        shipmentFlag: [
-          ...state.shipmentFlag,
-          action.shipmentFlag,
-        ],
+        itemOptions: action.data,
+        error: null,
       };
 
-    case ADD_SHIPMENT_FLAG_FAILURE:
+    case GET_ITEM_OPTIONS_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
+        itemOptions: null,
         error: action.error,
       };
 
-    case EDIT_SHIPMENT_FLAG:
+    case GET_PRODUCTS_OPTIONS:
       return {
         ...state,
         loading: true,
         loaded: false,
+        productOptions: null,
         error: null,
       };
 
-    case EDIT_SHIPMENT_FLAG_SUCCESS:
+    case GET_PRODUCTS_OPTIONS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        shipmentFlag: editedShipmentFlag,
+        productOptions: action.data,
+        error: null,
       };
 
-    case EDIT_SHIPMENT_FLAG_FAILURE:
+    case GET_PRODUCTS_OPTIONS_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
+        productOptions: null,
         error: action.error,
       };
 
-    case DELETE_SHIPMENT_FLAG:
+    case GET_GATEWAY_OPTIONS:
       return {
         ...state,
         loading: true,
         loaded: false,
+        gatewayOptions: null,
         error: null,
       };
 
-    case DELETE_SHIPMENT_FLAG_SUCCESS:
+    case GET_GATEWAY_OPTIONS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        shipmentFlag: deletedShipmentFlag,
+        gatewayOptions: action.data,
+        error: null,
       };
 
-    case DELETE_SHIPMENT_FLAG_FAILURE:
+    case GET_GATEWAY_OPTIONS_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
+        gatewayOptions: null,
         error: action.error,
       };
 
-    case GET_DASHBOARD_ITEMS:
+    case GET_SENSOR_OPTIONS:
       return {
         ...state,
         loading: true,
         loaded: false,
+        sensorOptions: null,
         error: null,
       };
 
-    case GET_DASHBOARD_ITEMS_SUCCESS:
+    case GET_SENSOR_OPTIONS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        dashboardItems: action.data,
+        sensorOptions: action.data,
+        error: null,
       };
 
-    case GET_DASHBOARD_ITEMS_FAILURE:
+    case GET_SENSOR_OPTIONS_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
+        sensorOptions: null,
         error: action.error,
       };
 
-    case SET_SHIPMENT_ALERTS:
-      return {
-        ...state,
-        loading: false,
-        loaded: false,
-        shipmentAlerts: {
-          show: action.alerts.show,
-          data: action.alerts.data,
-        },
-        error: null,
-      };
-
-    case ADD_PDF_IDENTIFIER:
+    case GET_SHIPMENT_OPTIONS:
       return {
         ...state,
         loading: true,
         loaded: false,
+        shipmentOptions: null,
         error: null,
       };
 
-    case ADD_PDF_IDENTIFIER_SUCCESS:
+    case GET_SHIPMENT_OPTIONS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        shipmentFormData: {
-          ...state.shipmentFormData,
-          uploaded_pdf: action.uploaded_pdf,
-          uploaded_pdf_link: action.uploaded_pdf_link,
-          unique_identifier: action.unique_identifier,
-        },
+        shipmentOptions: action.data,
+        error: null,
       };
 
-    case ADD_PDF_IDENTIFIER_FAILURE:
+    case GET_SHIPMENT_OPTIONS_FAILURE:
       return {
         ...state,
         loading: false,
         loaded: true,
+        shipmentOptions: null,
         error: action.error,
       };
 

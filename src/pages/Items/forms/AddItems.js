@@ -130,6 +130,8 @@ const AddItems = ({
   const [itemMetData, setItemMetaData] = useState({});
   const [productMetData, productMetaData] = useState({});
   const organization = useContext(UserContext).organization.organization_uuid;
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
     if (itemOptions && itemOptions.actions) {
@@ -149,7 +151,7 @@ const AddItems = ({
       && unitsOfMeasure
     ) {
       let selectedProduct = '';
-      products.forEach((obj) => {
+      _.forEach(products, (obj) => {
         if (obj.url === editData.product[0]) {
           selectedProduct = obj;
         }
@@ -240,7 +242,7 @@ const AddItems = ({
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
@@ -264,7 +266,7 @@ const AddItems = ({
     setItemWeight(value.gross_weight);
     setItemValue(value.value);
     if (unitsOfMeasure && unitsOfMeasure.length) {
-      unitsOfMeasure.forEach((unit) => {
+      _.forEach(unitsOfMeasure, (unit) => {
         if (unit.url === value.unit_of_measure) {
           setProductUom(value.unit_of_measure);
           setProductUomName(unit.name);
@@ -273,7 +275,7 @@ const AddItems = ({
       });
     }
     if (productType && productType.length) {
-      productType.forEach((type) => {
+      _.forEach(productType, (type) => {
         if (type.url === value.product_type) {
           setProductType(type.name);
         }
@@ -288,9 +290,6 @@ const AddItems = ({
     setItemValue(e.target.value * previousValue);
     setItemWeight(e.target.value * previousWeight);
   };
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
     <div>
@@ -331,19 +330,15 @@ const AddItems = ({
                   {...item_name.bind}
                   InputProps={
                     itemMetData.name
-                    && itemMetData.name.help_text && {
+                    && itemMetData.name.help_text
+                    && {
                       endAdornment: (
                         <InputAdornment position="end">
-                          {itemMetData.name.help_text
-                            ? (
-                              <CustomizedTooltips
-                                toolTipText={
-                                  itemMetData.name.help_text
-                                }
-                              />
-                            ) : (
-                              <></>
-                            )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              itemMetData.name.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -372,16 +367,15 @@ const AddItems = ({
                   {...item_type.bind}
                   InputProps={
                     itemMetData.item_type
-                    && itemMetData.item_type.help_text && {
+                    && itemMetData.item_type.help_text
+                    && {
                       endAdornment: (
                         <InputAdornment position="start">
-                          {itemMetData.item_type.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                itemMetData.item_type.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              itemMetData.item_type.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -417,7 +411,10 @@ const AddItems = ({
                 />
               </Grid> */}
             </Grid>
-            <Card variant="outlined" className={classes.cardItems}>
+            <Card
+              variant="outlined"
+              className={classes.cardItems}
+            >
               <CardContent>
                 <Typography variant="h6" gutterBottom>
                   Product Info
@@ -449,13 +446,14 @@ const AddItems = ({
                         )}
                       />
                       {productMetData.name
-                        && productMetData.name.help_text && (
+                        && productMetData.name.help_text
+                        && (
                           <CustomizedTooltips
                             toolTipText={
                               productMetData.name.help_text
                             }
                           />
-                      )}
+                        )}
                     </div>
                   </Grid>
 
@@ -464,6 +462,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       multiline
                       rows={4}
                       id="product_desc"
@@ -473,16 +472,15 @@ const AddItems = ({
                       value={product_desc}
                       InputProps={
                         productMetData.description
-                        && productMetData.description.help_text && {
+                        && productMetData.description.help_text
+                        && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {productMetData.description.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    productMetData.description.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  productMetData.description.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -494,6 +492,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="product_type"
                       label="Product Type"
                       value={product_type}
@@ -503,13 +502,11 @@ const AddItems = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {productMetData.product_type.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    productMetData.product_type.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  productMetData.product_type.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -521,6 +518,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       type="number"
                       id="product_value"
                       label="Product Value"
@@ -531,17 +529,15 @@ const AddItems = ({
                             $
                           </InputAdornment>
                         ),
-                        endAdornment: (
+                        endAdornment: productMetData.value
+                        && productMetData.value.help_text
+                        && (
                           <InputAdornment position="end">
-                            {productMetData.value
-                            && productMetData.value.help_text
-                            && (
-                              <CustomizedTooltips
-                                toolTipText={
-                                  productMetData.value.help_text
-                                }
-                              />
-                            )}
+                            <CustomizedTooltips
+                              toolTipText={
+                                productMetData.value.help_text
+                              }
+                            />
                           </InputAdornment>
                         ),
                       }}
@@ -552,6 +548,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       type="number"
                       id="product_weight"
                       label="Product Weight"
@@ -562,13 +559,11 @@ const AddItems = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {productMetData.gross_weight.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    productMetData.gross_weight.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  productMetData.gross_weight.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -580,6 +575,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="product_uom"
                       label="Units of Measure"
                       value={product_uom_name}
@@ -589,13 +585,11 @@ const AddItems = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {productMetData.unit_of_measure.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    productMetData.unit_of_measure.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  productMetData.unit_of_measure.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -609,6 +603,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="gtin"
                       label="GTIN"
                       name="gtin"
@@ -620,11 +615,9 @@ const AddItems = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {productMetData.gtin.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={productMetData.gtin.help_text}
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={productMetData.gtin.help_text}
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -636,6 +629,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="upc"
                       label="UPC"
                       name="upc"
@@ -647,11 +641,9 @@ const AddItems = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {productMetData.upc.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={productMetData.upc.help_text}
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={productMetData.upc.help_text}
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -663,6 +655,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="ean"
                       label="EAN"
                       name="ean"
@@ -674,11 +667,9 @@ const AddItems = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {productMetData.ean.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={productMetData.ean.help_text}
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={productMetData.ean.help_text}
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -690,6 +681,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="paper_tag_no"
                       label="Paper Tag Number"
                       name="paper_tag_no"
@@ -701,13 +693,11 @@ const AddItems = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {productMetData.paper_tag_number.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    productMetData.paper_tag_number.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  productMetData.paper_tag_number.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -719,6 +709,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="batch_id"
                       label="Batch/Run ID"
                       name="batch_id"
@@ -730,13 +721,11 @@ const AddItems = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {productMetData.batch_run_id.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    productMetData.batch_run_id.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  productMetData.batch_run_id.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -748,6 +737,7 @@ const AddItems = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled
                       id="bin_id"
                       label="BIN ID"
                       name="bin_id"
@@ -759,13 +749,11 @@ const AddItems = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {productMetData.bin_id.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    productMetData.bin_id.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  productMetData.bin_id.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -793,13 +781,11 @@ const AddItems = ({
                     && {
                       endAdornment: (
                         <InputAdornment position="end">
-                          {itemMetData.number_of_units.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                itemMetData.number_of_units.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              itemMetData.number_of_units.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -812,6 +798,7 @@ const AddItems = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
+                  disabled
                   type="number"
                   id="item_value"
                   label="Item Value"
@@ -822,17 +809,15 @@ const AddItems = ({
                         $
                       </InputAdornment>
                     ),
-                    endAdornment: (
+                    endAdornment: itemMetData.value
+                    && itemMetData.value.help_text
+                    && (
                       <InputAdornment position="end">
-                        {itemMetData.value
-                        && itemMetData.value.help_text
-                        && (
-                          <CustomizedTooltips
-                            toolTipText={
-                              itemMetData.value.help_text
-                            }
-                          />
-                        )}
+                        <CustomizedTooltips
+                          toolTipText={
+                            itemMetData.value.help_text
+                          }
+                        />
                       </InputAdornment>
                     ),
                   }}
@@ -843,6 +828,7 @@ const AddItems = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
+                  disabled
                   type="number"
                   id="item_weight"
                   label="Item Weight"
@@ -853,13 +839,11 @@ const AddItems = ({
                     && {
                       endAdornment: (
                         <InputAdornment position="end">
-                          {itemMetData.gross_weight.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                itemMetData.gross_weight.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              itemMetData.gross_weight.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -882,13 +866,11 @@ const AddItems = ({
                     && {
                       endAdornment: (
                         <InputAdornment position="start">
-                          {itemMetData.unit_of_measure.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                itemMetData.unit_of_measure.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              itemMetData.unit_of_measure.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -963,6 +945,8 @@ const AddItems = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.itemsReducer,
+  ...state.optionsReducer,
+  loading: state.itemsReducer.loading || state.optionsReducer.loading,
 });
 
 export default connect(mapStateToProps)(AddItems);

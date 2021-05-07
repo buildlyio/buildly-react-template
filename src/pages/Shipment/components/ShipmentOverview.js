@@ -14,7 +14,7 @@ import {
   Paper,
 } from '@material-ui/core';
 import { MapComponent } from '@components/MapComponent/MapComponent';
-import { MAP_API_URL } from '@utils/utilMethods';
+import { environment } from '@environments/environment';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -217,7 +217,7 @@ const ShipmentOverview = () => {
             <Grid item xs={12} sm={6}>
               <MapComponent
                 isMarkerShown
-                googleMapURL={MAP_API_URL}
+                googleMapURL={environment.MAP_API_URL}
                 zoom={8}
                 loadingElement={
                   <div style={{ height: '100%' }} />

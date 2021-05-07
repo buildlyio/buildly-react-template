@@ -17,7 +17,9 @@ export const DELETE_COREGROUP_FAIL = 'DELETE_COREGROUP_FAIL';
 /**
  * Get core group list
  */
-export const getCoregroups = () => ({ type: LOAD_DATA_COREGROUP });
+export const getCoregroups = () => ({
+  type: LOAD_DATA_COREGROUP,
+});
 
 /**
  * create core group

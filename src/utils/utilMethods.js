@@ -1,29 +1,6 @@
-import { environment } from '@environments/environment';
-
-export const { MAP_API_KEY, MAP_API_URL, GEO_CODE_API } = environment;
-
 export const numberWithCommas = (x) => {
   if (!x) return '';
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-};
-
-export const searchFilter = (payload) => {
-  const { searchItem, searchList, searchFields } = payload;
-  const data = searchList.filter((item) => {
-    const itemKeys = Object.keys(item);
-    let foundItem = '';
-    itemKeys.forEach((key) => {
-      if (
-        searchFields.includes(key)
-        && item[key]
-        && item[key].toString().includes(searchItem)
-      ) {
-        foundItem = { ...item };
-      }
-    });
-    return foundItem && foundItem.id === item.id;
-  });
-  return data;
 };
 
 export const checkForGlobalAdmin = (userData) => {
@@ -49,10 +26,10 @@ export const checkForAdmin = (userData) => {
     userData.core_groups.forEach((group) => {
       if (
         group.is_org_level
+        && !group.is_global
         && Object.keys(group.permissions).every(
           (permission) => group.permissions[permission] === true,
         )
-        && !group.is_global
       ) {
         isAdmin = true;
       }
@@ -62,10 +39,10 @@ export const checkForAdmin = (userData) => {
 };
 
 export const setOptionsData = (options, fieldName) => {
-  const result = null;
+  let result = null;
   const optionKeys = Object.keys(options);
   if (optionKeys.includes(fieldName)) {
-    return options[fieldName];
+    result = options[fieldName];
   }
   return result;
 };
@@ -83,26 +60,40 @@ export const convertUnitsOfMeasure = (
   destinationUnit,
   _class,
 ) => {
+  let returnValue = null;
   switch (_class) {
     case 'temperature':
-      if (sourceUnit === 'fahrenheit' && destinationUnit === 'celsius') {
-        return (((value - 32) * 5) / 9).toFixed(2);
+      if (
+        sourceUnit === 'fahrenheit'
+        && destinationUnit === 'celsius'
+      ) {
+        returnValue = (((value - 32) * 5) / 9).toFixed(2);
       }
-      if (sourceUnit === 'celsius' && destinationUnit === 'fahrenheit') {
-        return ((value * 9) / 5 + 32).toFixed(2);
+      if (
+        sourceUnit === 'celsius'
+        && destinationUnit === 'fahrenheit'
+      ) {
+        returnValue = ((value * 9) / 5 + 32).toFixed(2);
       }
-      return null;
+      break;
 
     case 'distance':
-      if (sourceUnit === 'km' && destinationUnit === 'miles') {
-        return (value * 0.6214).toFixed(2);
+      if (
+        sourceUnit === 'km'
+        && destinationUnit === 'miles'
+      ) {
+        returnValue = (value * 0.6214).toFixed(2);
       }
-      if (sourceUnit === 'miles' && destinationUnit === 'km') {
-        return (value / 0.6214).toFixed(2);
+      if (
+        sourceUnit === 'miles'
+        && destinationUnit === 'km'
+      ) {
+        returnValue = (value / 0.6214).toFixed(2);
       }
-      return null;
+      break;
 
     default:
-      return null;
+      break;
   }
+  return returnValue;
 };

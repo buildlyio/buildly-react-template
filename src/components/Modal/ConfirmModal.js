@@ -4,15 +4,16 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
 } from '@material-ui/core';
 
-const ConfirmModal = (props) => {
-  const {
-    open, setOpen, submitAction, title, submitText,
-  } = props;
-
+const ConfirmModal = ({
+  open,
+  setOpen,
+  submitAction,
+  title,
+  submitText,
+}) => {
   const handleClose = () => {
     setOpen(false);
   };
@@ -25,17 +26,19 @@ const ConfirmModal = (props) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
-        <DialogContent>
-          {/* <DialogContentText id='alert-dialog-description'>
-            {title}
-          </DialogContentText> */}
-        </DialogContent>
+        <DialogTitle id="alert-dialog-title">
+          {title}
+        </DialogTitle>
+        <DialogContent />
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={submitAction} color="primary" autoFocus>
+          <Button
+            onClick={submitAction}
+            color="primary"
+            autoFocus
+          >
             {submitText}
           </Button>
         </DialogActions>

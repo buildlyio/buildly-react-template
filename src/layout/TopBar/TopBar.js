@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
   makeStyles,
@@ -18,14 +18,17 @@ import logo from '@assets/tp-logo.png';
 import {
   logout,
   getUser,
-  GET_USER_OPTIONS_SUCCESS,
-  GET_USER_OPTIONS_FAILURE,
-  GET_ORGANIZATION_OPTIONS_SUCCESS,
-  GET_ORGANIZATION_OPTIONS_FAILURE,
 } from '@redux/authuser/actions/authuser.actions';
+import {
+  getUserOptions,
+  getOrganizationOptions,
+} from '@redux/options/actions/options.actions';
 import { routes } from '@routes/routesConstants';
 import { httpService } from '@modules/http/http.service';
-import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
+import {
+  checkForAdmin,
+  checkForGlobalAdmin,
+} from '@utils/utilMethods';
 import AdminMenu from './AdminMenu';
 import AccountMenu from './AccountMenu';
 
@@ -37,17 +40,11 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: theme.spacing(2),
   },
-  title: {
-    flexGrow: 1,
-  },
   logo: {
     maxWidth: 250,
   },
   menuRight: {
     marginLeft: 'auto',
-  },
-  paper: {
-    border: '1px solid',
   },
 }));
 
@@ -65,8 +62,8 @@ const TopBar = ({
   orgOptions,
 }) => {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [settingEl, setSettingEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [settingEl, setSettingEl] = useState(null);
 
   let user;
   let isAdmin = false;
@@ -79,35 +76,10 @@ const TopBar = ({
   useEffect(() => {
     dispatch(getUser());
     if (userOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}coreuser/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((res) => {
-          dispatch({ type: GET_USER_OPTIONS_SUCCESS, data: res });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_USER_OPTIONS_FAILURE, error });
-        });
+      dispatch(getUserOptions());
     }
-
     if (orgOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}organization/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((res) => {
-          dispatch({ type: GET_ORGANIZATION_OPTIONS_SUCCESS, data: res });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_ORGANIZATION_OPTIONS_FAILURE, error });
-        });
+      dispatch(getOrganizationOptions());
     }
   }, []);
 
@@ -217,6 +189,7 @@ const TopBar = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
+  ...state.optionsReducer,
 });
 
 export default connect(mapStateToProps)(TopBar);

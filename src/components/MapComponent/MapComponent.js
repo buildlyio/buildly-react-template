@@ -18,7 +18,10 @@ import { convertUnitsOfMeasure } from '@utils/utilMethods';
 
 export const MapComponent = (props) => {
   const { markers, setSelectedMarker, geofence } = props;
-  const [center, setCenter] = useState({ lat: 47.606209, lng: -122.332069 });
+  const [center, setCenter] = useState({
+    lat: 47.606209,
+    lng: -122.332069,
+  });
   const [showInfoIndex, setShowInfoIndex] = useState({});
   const [polygon, setPolygon] = useState({});
 
@@ -34,7 +37,9 @@ export const MapComponent = (props) => {
         lng: _.last(markers).lng,
       });
       setShowInfoIndex(markers[markers.length - 1]);
-      if (setSelectedMarker) setSelectedMarker(markers[markers.length - 1]);
+      if (setSelectedMarker) {
+        setSelectedMarker(markers[markers.length - 1]);
+      }
     }
 
     if (markers && !markers.length) {
@@ -46,8 +51,11 @@ export const MapComponent = (props) => {
     if (geofence && geofence.coordinates.length) {
       const coordinates = geofence.coordinates[0];
       const polygonPoints = [];
-      coordinates.forEach((coordinate) => {
-        polygonPoints.push({ lat: coordinate[0], lng: coordinate[1] });
+      _.forEach(coordinates, (coordinate) => {
+        polygonPoints.push({
+          lat: coordinate[0],
+          lng: coordinate[1],
+        });
       });
       setPolygon(polygonPoints);
     }
@@ -62,7 +70,9 @@ export const MapComponent = (props) => {
 
   const onMarkerSelect = (marker) => {
     setShowInfoIndex(marker);
-    if (setSelectedMarker) setSelectedMarker(marker);
+    if (setSelectedMarker) {
+      setSelectedMarker(marker);
+    }
   };
 
   return (
@@ -81,14 +91,16 @@ const RenderedMap = withScriptjs(
   withGoogleMap((props) => (
     <GoogleMap zoom={props.zoom} center={props.center}>
       {props.isMarkerShown
-        && props.markers
-        && props.markers.map((mark, index) => (mark.label ? (
+      && props.markers
+      && _.map(
+        props.markers,
+        (mark, index) => (mark.label ? (
           <Marker
             key={index}
             position={{ lat: mark.lat, lng: mark.lng }}
             icon={{
               path:
-                  'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
+                'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
               fillColor: `${mark.color}`,
               fillOpacity: 1,
               strokeColor: 'white',
@@ -99,7 +111,11 @@ const RenderedMap = withScriptjs(
             onClick={() => props.onMarkerSelect(mark)}
           >
             {props.showInfoIndex === mark && (
-            <InfoWindow onCloseClick={() => props.onMarkerSelect(null)}>
+            <InfoWindow
+              onCloseClick={() => {
+                props.onMarkerSelect(null);
+              }}
+            >
               {mark.label === 'Clustered' ? (
                 <div
                   style={{
@@ -112,7 +128,7 @@ const RenderedMap = withScriptjs(
                     width: '200px',
                   }}
                 >
-                  {REPORT_TYPES.map((item, idx) => (
+                  {_.map(REPORT_TYPES, (item, idx) => (
                     <div
                       key={`iconItem${idx}${item.id}`}
                       style={{
@@ -125,14 +141,10 @@ const RenderedMap = withScriptjs(
                     >
                       {getIcon(item, 'black')}
                       {' '}
-&nbsp;
+                        &nbsp;
                       {mark[item.id] ? (
                         <span>
-                          :
-                          {' '}
-                          {mark[item.id]}
-                          {' '}
-                          {item.unit}
+                          {`: ${mark[item.id]} ${item.unit}`}
                         </span>
                       ) : (
                         <span> : NA</span>
@@ -150,15 +162,14 @@ const RenderedMap = withScriptjs(
                     {getIcon({ id: 'time' }, 'black')}
                     {' '}
                     <span>
-                      {' '}
-                      :
-                      {' '}
-                      {mark.timestamp}
+                      {` : ${mark.timestamp}`}
                     </span>
                   </div>
                 </div>
               ) : (
-                <div style={{ color: 'black' }}>{mark.label}</div>
+                <div style={{ color: 'black' }}>
+                  {mark.label}
+                </div>
               )}
             </InfoWindow>
             )}
@@ -176,10 +187,16 @@ const RenderedMap = withScriptjs(
                   ? { lat: mark.lat, lng: mark.lng }
                   : props.center
               }
-            onDragEnd={(e) => props.onMarkerDrag(e, mark.onMarkerDrag)}
+            onDragEnd={(e) => {
+              props.onMarkerDrag(e, mark.onMarkerDrag);
+            }}
           />
-        )))}
-      {props.isMarkerShown && props.markers.length > 0 && props.showPath && (
+        )),
+      )}
+      {props.isMarkerShown
+      && props.markers.length > 0
+      && props.showPath
+      && (
         <Polyline
           path={_.map(props.markers, (marker) => ({
             lat: marker.lat,
@@ -194,20 +211,22 @@ const RenderedMap = withScriptjs(
         />
       )}
       {props.isMarkerShown
-        && props.markers
-        && props.polygon.length > 0
-        && props.markers.map((mark, index) => (mark.radius ? (
+      && props.markers
+      && props.polygon.length > 0
+      && _.map(
+        props.markers,
+        (mark, index) => (mark.radius ? (
           <Marker
             key={
-                mark.lat && mark.lng
-                  ? `marker${index}:${mark.lat},${mark.lng}`
-                  : `marker${index}`
-              }
+            mark.lat && mark.lng
+              ? `marker${index}:${mark.lat},${mark.lng}`
+              : `marker${index}`
+          }
             position={
-                mark.lat && mark.lng
-                  ? { lat: mark.lat, lng: mark.lng }
-                  : props.center
-              }
+            mark.lat && mark.lng
+              ? { lat: mark.lat, lng: mark.lng }
+              : props.center
+          }
           >
             <Circle
               defaultCenter={{
@@ -225,31 +244,27 @@ const RenderedMap = withScriptjs(
             />
             <InfoWindow>
               <div style={{ color: 'black' }}>
-                Geofence of
-                {' '}
-                {convertUnitsOfMeasure(
+                {`Geofence of ${convertUnitsOfMeasure(
                   'km',
                   parseFloat(mark.radius),
                   'miles',
                   'distance',
-                )}
-                {' '}
-                miles
+                )} miles`}
               </div>
             </InfoWindow>
           </Marker>
         ) : (
           <Marker
             key={
-                mark.lat && mark.lng
-                  ? `marker${index}:${mark.lat},${mark.lng}`
-                  : `marker${index}`
-              }
+            mark.lat && mark.lng
+              ? `marker${index}:${mark.lat},${mark.lng}`
+              : `marker${index}`
+          }
             position={
-                mark.lat && mark.lng
-                  ? { lat: mark.lat, lng: mark.lng }
-                  : props.center
-              }
+            mark.lat && mark.lng
+              ? { lat: mark.lat, lng: mark.lng }
+              : props.center
+          }
           >
             <InfoWindow>
               <div style={{ color: 'black' }}>
@@ -257,8 +272,11 @@ const RenderedMap = withScriptjs(
               </div>
             </InfoWindow>
           </Marker>
-        )))}
-      {props.polygon && props.polygon.length > 0 && (
+        )),
+      )}
+      {props.polygon
+      && props.polygon.length > 0
+      && (
         <Polygon
           path={props.polygon}
           editable={false}

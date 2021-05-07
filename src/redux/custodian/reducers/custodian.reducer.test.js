@@ -4,13 +4,10 @@ import * as reducer from './custodian.reducer';
 const initialState = {
   loading: false,
   loaded: false,
-  custodianData: null,
   error: null,
+  custodianData: null,
   custodianTypeList: null,
   contactInfo: null,
-  custodianOptions: null,
-  custodyOptions: null,
-  contactOptions: null,
 };
 
 describe('Get custodian reducer', () => {
@@ -157,99 +154,6 @@ describe('Delete Custodian reducer', () => {
   });
 });
 
-describe('Search reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.SEARCH },
-    )).toEqual(initialState);
-  });
-
-  it('Search success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.SEARCH_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      searchedData: undefined,
-    });
-  });
-});
-
-describe('Get Custodian type reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_CUSTODIAN_TYPE },
-    )).toEqual({
-      ...initialState,
-      loading: true,
-    });
-  });
-
-  it('Get Custodian typen success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_CUSTODIAN_TYPE_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      custodianTypeList: [],
-    });
-  });
-
-  it('Get Custodian type fail Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_CUSTODIAN_TYPE_FAILURE },
-    )).toEqual({
-      ...initialState,
-      error: undefined,
-      loaded: true,
-      loading: false,
-    });
-  });
-});
-
-describe('Get contact info reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_CONTACT },
-    )).toEqual({
-      ...initialState,
-      loading: true,
-    });
-  });
-
-  it('Get contact info success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_CONTACT_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      contactInfo: undefined,
-    });
-  });
-
-  it('Get contact info fail Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_CONTACT_FAILURE },
-    )).toEqual({
-      ...initialState,
-      error: undefined,
-      loaded: true,
-      loading: false,
-    });
-  });
-});
-
 describe('Get custody reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(
@@ -349,6 +253,42 @@ describe('Edit custody reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.EDIT_CUSTODY_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});
+
+describe('Get Custodian type reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_CUSTODIAN_TYPE },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('Get Custodian typen success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_CUSTODIAN_TYPE_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      custodianTypeList: [],
+    });
+  });
+
+  it('Get Custodian type fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_CUSTODIAN_TYPE_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,
@@ -463,6 +403,42 @@ describe('Delete Custodian type reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.DELETE_CUSTODIAN_TYPE_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});
+
+describe('Get contact info reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_CONTACT },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('Get contact info success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_CONTACT_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      contactInfo: undefined,
+    });
+  });
+
+  it('Get contact info fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_CONTACT_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,

@@ -14,17 +14,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Loader = (props) => {
+const Loader = ({ open, setOpen, label }) => {
   const classes = useStyles();
-  const { open, setOpen, label } = props;
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleToggle = () => {
-    setOpen(!open);
-  };
 
   return (
     <div>

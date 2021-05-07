@@ -20,18 +20,6 @@ export const GET_SHIPMENT_FLAG = 'SHIPMENT/GET_SHIPMENT_FLAG';
 export const GET_SHIPMENT_FLAG_SUCCESS = 'SHIPMENT/GET_SHIPMENT_FLAG_SUCCESS';
 export const GET_SHIPMENT_FLAG_FAILURE = 'SHIPMENT/GET_SHIPMENT_FLAG_FAILURE';
 
-export const GET_DASHBOARD_ITEMS = 'SHIPMENT/GET_DASHBOARD_ITEMS';
-export const GET_DASHBOARD_ITEMS_SUCCESS = 'SHIPMENT/GET_DASHBOARD_ITEMS_SUCCESS';
-export const GET_DASHBOARD_ITEMS_FAILURE = 'SHIPMENT/GET_DASHBOARD_ITEMS_FAILURE';
-
-export const GET_ALERTS = 'SHIPMENT/GET_ALERTS';
-export const SET_SHIPMENT_ALERTS = 'SHIPMENT/SET_ALERTS';
-export const EMAIL_ALERTS = 'SHIPMENT/EMAIL_ALERTS';
-
-export const GET_SHIPMENT_OPTIONS = 'ITEMS/GET_SHIPMENT_OPTIONS';
-export const GET_SHIPMENT_OPTIONS_SUCCESS = 'ITEMS/GET_SHIPMENT_OPTIONS_SUCCESS';
-export const GET_SHIPMENT_OPTIONS_FAILURE = 'ITEMS/GET_SHIPMENT_OPTIONS_FAILURE';
-
 export const ADD_SHIPMENT_FLAG = 'SHIPMENT/ADD_SHIPMENT_FLAG';
 export const ADD_SHIPMENT_FLAG_SUCCESS = 'SHIPMENT/ADD_SHIPMENT_FLAG_SUCCESS';
 export const ADD_SHIPMENT_FLAG_FAILURE = 'SHIPMENT/ADD_SHIPMENT_FLAG_FAILURE';
@@ -43,6 +31,14 @@ export const EDIT_SHIPMENT_FLAG_FAILURE = 'SHIPMENT/EDIT_SHIPMENT_FLAG_FAILURE';
 export const DELETE_SHIPMENT_FLAG = 'SHIPMENT/DELETE_SHIPMENT_FLAG';
 export const DELETE_SHIPMENT_FLAG_SUCCESS = 'SHIPMENT/DELETE_SHIPMENT_FLAG_SUCCESS';
 export const DELETE_SHIPMENT_FLAG_FAILURE = 'SHIPMENT/DELETE_SHIPMENT_FLAG_FAILURE';
+
+export const GET_DASHBOARD_ITEMS = 'SHIPMENT/GET_DASHBOARD_ITEMS';
+export const GET_DASHBOARD_ITEMS_SUCCESS = 'SHIPMENT/GET_DASHBOARD_ITEMS_SUCCESS';
+export const GET_DASHBOARD_ITEMS_FAILURE = 'SHIPMENT/GET_DASHBOARD_ITEMS_FAILURE';
+
+export const GET_ALERTS = 'SHIPMENT/GET_ALERTS';
+export const SET_SHIPMENT_ALERTS = 'SHIPMENT/SET_ALERTS';
+export const EMAIL_ALERTS = 'SHIPMENT/EMAIL_ALERTS';
 
 export const ADD_PDF_IDENTIFIER = 'SHIPMENT/ADD_PDF_IDENTIFIER';
 export const ADD_PDF_IDENTIFIER_SUCCESS = 'SHIPMENT/ADD_PDF_IDENTIFIER_SUCCESS';
@@ -138,10 +134,37 @@ export const getShipmentFlag = (organization_uuid) => ({
 });
 
 /**
+ * Add Shipment Flag
+ * @param {Object} payload
+ */
+export const addShipmentFlag = (payload) => ({
+  type: ADD_SHIPMENT_FLAG,
+  payload,
+});
+
+/**
+ * Edit Shipment Flag
+ * @param {Object} payload
+ */
+export const editShipmentFlag = (payload) => ({
+  type: EDIT_SHIPMENT_FLAG,
+  payload,
+});
+
+/**
+ * Delete Shipment Flag
+ * @param {Number} id
+ */
+export const deleteShipmentFlag = (id) => ({
+  type: DELETE_SHIPMENT_FLAG,
+  id,
+});
+
+/**
  * Get Dashboard Items
  * @param {String} organization_uuid
  */
-export const getDashboardItems = (organization_uuid) => ({
+ export const getDashboardItems = (organization_uuid) => ({
   type: GET_DASHBOARD_ITEMS,
   organization_uuid,
 });
@@ -162,33 +185,6 @@ export const setShipmentAlerts = (alerts) => ({
 export const emailAlerts = (alerts) => ({
   type: EMAIL_ALERTS,
   alerts,
-});
-
-/**
- * Add Shipment Flad
- * @param {Object} payload
- */
-export const addShipmentFlag = (payload) => ({
-  type: ADD_SHIPMENT_FLAG,
-  payload,
-});
-
-/**
- * Edit Shipment Flad
- * @param {Object} payload
- */
-export const editShipmentFlag = (payload) => ({
-  type: EDIT_SHIPMENT_FLAG,
-  payload,
-});
-
-/**
- * Delete Shipment Flad
- * @param {Number} id
- */
-export const deleteShipmentFlag = (id) => ({
-  type: DELETE_SHIPMENT_FLAG,
-  id,
 });
 
 /**

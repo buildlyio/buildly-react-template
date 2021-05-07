@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   makeStyles,
   useTheme,
@@ -60,7 +61,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddUnitOfMeasure = ({
-  history, location, loading, dispatch,
+  history,
+  location,
+  loading,
+  dispatch,
 }) => {
   const classes = useStyles();
   const [openModal, toggleModal] = useState(true);
@@ -154,7 +158,7 @@ const AddUnitOfMeasure = ({
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }

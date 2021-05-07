@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import moment from 'moment';
 import {
   makeStyles,
@@ -21,13 +22,13 @@ import { MapComponent } from '@components/MapComponent/MapComponent';
 import Modal from '@components/Modal/Modal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
+import { environment } from '@environments/environment';
 import { useInput } from '@hooks/useInput';
 import {
   editSensor,
   addSensor,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { routes } from '@routes/routesConstants';
-import { MAP_API_URL } from '@utils/utilMethods';
 import { validators } from '@utils/validators';
 import SearchModal from '../Sensors/SearchModal';
 
@@ -140,7 +141,7 @@ const AddSensor = ({
       && editData.gateway
       && associatedGateway === null
     ) {
-      gatewayData.forEach((gtwy) => {
+      _.forEach(gatewayData, (gtwy) => {
         if (gtwy.url === editData.gateway) {
           setAccociatedGateway(gtwy);
         }
@@ -227,7 +228,7 @@ const AddSensor = ({
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
@@ -334,7 +335,7 @@ const AddSensor = ({
                 />
                 <MapComponent
                   isMarkerShown
-                  googleMapURL={MAP_API_URL}
+                  googleMapURL={environment.MAP_API_URL}
                   zoom={8}
                   loadingElement={
                     <div style={{ height: '100%' }} />
@@ -424,14 +425,17 @@ const AddSensor = ({
                     >
                       <MenuItem value="">Select</MenuItem>
                       {sensorTypeList
-                        && sensorTypeList.map((item, index) => (
-                          <MenuItem
-                            key={`sensorType${index}:${item.id}`}
-                            value={item.url}
-                          >
-                            {item.name}
-                          </MenuItem>
-                        ))}
+                        && _.map(
+                          sensorTypeList,
+                          (item, index) => (
+                            <MenuItem
+                              key={`sensorType${index}:${item.id}`}
+                              value={item.url}
+                            >
+                              {item.name}
+                            </MenuItem>
+                          ),
+                        )}
                     </TextField>
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
@@ -568,6 +572,8 @@ const AddSensor = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
+  ...state.optionsReducer,
+  loading: state.sensorsGatewayReducer.loading || state.optionsReducer.loading,
 });
 
 export default connect(mapStateToProps)(AddSensor);

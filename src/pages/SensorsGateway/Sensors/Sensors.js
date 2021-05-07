@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import { environment } from '@environments/environment';
-import DashboardWrapper from '@components/DashboardWrapper/DashboardWrapper';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
-import { httpService } from '@modules/http/http.service';
 import {
   getSensors,
   getSensorType,
   deleteSensor,
-  searchSensorItem,
-  GET_SENSOR_OPTIONS_SUCCESS,
-  GET_SENSOR_OPTIONS_FAILURE,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+import {
+  getSensorOptions,
+} from '@redux/options/actions/options.actions';
 import { routes } from '@routes/routesConstants';
 import { sensorsColumns, getFormattedSensorRow } from '../Constants';
 import AddSensors from '../forms/AddSensors';
@@ -19,15 +18,18 @@ import AddSensors from '../forms/AddSensors';
 const Sensors = ({
   dispatch,
   history,
-  data,
+  sensorData,
   loading,
-  searchData,
   sensorTypeList,
   redirectTo,
-  noSearch,
   gatewayData,
   sensorOptions,
 }) => {
+  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [deleteSensorId, setDeleteSensorId] = useState('');
+  const [rows, setRows] = useState([]);
+  const organization = useContext(UserContext).organization.organization_uuid;
+
   const addPath = redirectTo
     ? `${redirectTo}/sensors`
     : `${routes.SENSORS_GATEWAY}/sensor/add`;
@@ -35,54 +37,29 @@ const Sensors = ({
   const editPath = redirectTo
     ? `${redirectTo}/sensors`
     : `${routes.SENSORS_GATEWAY}/sensor/edit`;
-  const [openConfirmModal, setConfirmModal] = useState(false);
-  const [deleteSensorId, setDeleteSensorId] = useState('');
-  const [searchValue, setSearchValue] = useState('');
-  const [rows, setRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
-  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
-    if (data === null) {
+    if (sensorData === null) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
     if (sensorOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}sensors/sensor/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((res) => {
-          dispatch({ type: GET_SENSOR_OPTIONS_SUCCESS, data: res });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_SENSOR_OPTIONS_FAILURE, error });
-        });
+      dispatch(getSensorOptions());
     }
   }, []);
 
   useEffect(() => {
     if (
-      data
-      && data.length
+      sensorData
+      && sensorData.length
       && sensorTypeList
       && sensorTypeList.length
     ) {
-      setRows(getFormattedSensorRow(data, sensorTypeList, gatewayData));
-      setFilteredRows(getFormattedSensorRow(data, sensorTypeList, gatewayData));
+      setRows(getFormattedSensorRow(sensorData, sensorTypeList, gatewayData));
     }
-  }, [data, sensorTypeList]);
+  }, [sensorData, sensorTypeList]);
 
-  useEffect(() => {
-    if (searchData) {
-      setFilteredRows(searchData);
-    }
-  }, [searchData]);
-
-  const editSensor = (item) => {
+  const editSensorItem = (item) => {
     history.push(`${editPath}/:${item.id}`, {
       type: 'edit',
       from: redirectTo || routes.SENSORS_GATEWAY,
@@ -100,46 +77,40 @@ const Sensors = ({
     setConfirmModal(false);
   };
 
-  const searchTable = (e) => {
-    const searchFields = [
-      'id',
-      'name',
-      // 'sensor_uuid',
-      'activation_date',
-      'sensor_type_value',
-      'associated_gateway',
-    ];
-    setSearchValue(e.target.value);
-    dispatch(searchSensorItem(e.target.value, rows, searchFields));
-  };
-
   const onAddButtonClick = () => {
-    history.push(`${addPath}`, {
+    history.push(addPath, {
       from: redirectTo || routes.SENSORS_GATEWAY,
     });
   };
 
   return (
-    <DashboardWrapper
+    <DataTableWrapper
       loading={loading}
-      // onAddButtonClick={onAddButtonClick}
-      dashboardHeading="Sensors"
-      // addButtonHeading='Add Sensor'
-      editAction={editSensor}
-      deleteAction={deleteSensorItem}
+      rows={rows || []}
       columns={sensorsColumns}
-      redirectTo={redirectTo}
-      rows={filteredRows}
-      hasSearch={!noSearch}
-      search={{ searchValue, searchAction: searchTable }}
+      filename="SensorData"
+      addButtonHeading="Add Sensor"
+      onAddButtonClick={onAddButtonClick}
+      editAction={editSensorItem}
+      deleteAction={deleteSensorItem}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle="Are you sure you want to Delete this Sensor?"
+      confirmModalTitle="Are you sure you want to delete this Sensor?"
+      tableHeader="Sensors"
+      hideAddButton
     >
       <Route path={`${addPath}`} component={AddSensors} />
       <Route path={`${editPath}/:id`} component={AddSensors} />
-    </DashboardWrapper>
+    </DataTableWrapper>
   );
 };
-export default Sensors;
+
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.sensorsGatewayReducer,
+  ...state.optionsReducer,
+  loading: state.sensorsGatewayReducer.loading || state.optionsReducer.loading,
+});
+
+export default connect(mapStateToProps)(Sensors);

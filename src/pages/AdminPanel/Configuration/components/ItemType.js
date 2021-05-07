@@ -11,14 +11,13 @@ import { routes } from '@routes/routesConstants';
 import { ITEM_TYPE_COLUMNS } from '../ConfigurationConstants';
 import AddItemType from '../forms/AddItemType';
 
-const ItemType = (props) => {
-  const {
-    dispatch,
-    loading,
-    itemTypeList,
-    redirectTo,
-    history,
-  } = props;
+const ItemType = ({
+  dispatch,
+  loading,
+  itemTypeList,
+  redirectTo,
+  history,
+}) => {
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -26,6 +25,7 @@ const ItemType = (props) => {
   const addPath = redirectTo
     ? `${redirectTo}/item-type`
     : `${routes.CONFIGURATION}/item-type/add`;
+
   const editPath = redirectTo
     ? `${redirectTo}/item-type`
     : `${routes.CONFIGURATION}/item-type/edit`;
@@ -74,6 +74,7 @@ const ItemType = (props) => {
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
       confirmModalTitle="Are you sure you want to Delete this Item Type?"
+      tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddItemType} />
       <Route path={`${editPath}/:id`} component={AddItemType} />

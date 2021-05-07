@@ -28,28 +28,20 @@ const App = () => (
       <ThemeProvider theme={theme}>
         <div className="app">
           <CssBaseline />
-          {/* <Route
-              exact
-              path='/'
-              render={() =>
-                oauthService.hasValidAccessToken() ? (
-                  <Redirect to={routes.DASHBOARD} />
-                ) : (
-                  <Redirect to={routes.LOGIN} />
-                )
-              }
-            /> */}
           <Route
             exact
             path="/"
-            render={() => (oauthService.hasValidAccessToken() ? (
-              <Redirect to={routes.SHIPMENT} />
-            ) : (
-              <Redirect to={routes.LOGIN} />
-            ))}
+            render={() => (
+              oauthService.hasValidAccessToken()
+                ? <Redirect to={routes.SHIPMENT} />
+                : <Redirect to={routes.LOGIN} />
+            )}
           />
           <Route path={routes.LOGIN} component={Login} />
-          <Route path={routes.REGISTER} component={Register} />
+          <Route
+            path={routes.REGISTER}
+            component={Register}
+          />
           <Route
             path={routes.RESET_PASSWORD}
             component={EmailForm}

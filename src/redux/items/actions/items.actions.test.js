@@ -61,23 +61,6 @@ describe('Delete Item action', () => {
   });
 });
 
-// Test Search Item
-describe('Search Item action', () => {
-  it('should create an action to search item', () => {
-    const searchItem = 'abc';
-    const searchList = [{ id: '123', name: 'abc' }];
-    const searchFields = ['id', 'name'];
-    const expectedAction = {
-      type: actions.SEARCH,
-      searchItem,
-      searchList,
-      searchFields,
-    };
-    expect(actions.searchItem(searchItem, searchList, searchFields))
-      .toEqual(expectedAction);
-  });
-});
-
 // Test Get Item Type
 describe('Get Item Type action', () => {
   it('should create an action to get item type', () => {
@@ -87,42 +70,6 @@ describe('Get Item Type action', () => {
       organization_uuid,
     };
     expect(actions.getItemType(organization_uuid))
-      .toEqual(expectedAction);
-  });
-});
-
-// Test Get Units of Measure
-describe('Get Units of Measure action', () => {
-  it('should create an action to get units of measure', () => {
-    const expectedAction = {
-      type: actions.GET_UNITS_OF_MEASURE,
-    };
-    expect(actions.getUnitsOfMeasure()).toEqual(expectedAction);
-  });
-});
-
-// Test Get Products
-describe('Get Products action', () => {
-  it('should create an action to get products', () => {
-    const organization_uuid = '224761f5-0010-4a46-d92a4fdc1d21';
-    const expectedAction = {
-      type: actions.GET_PRODUCTS,
-      organization_uuid,
-    };
-    expect(actions.getProducts(organization_uuid))
-      .toEqual(expectedAction);
-  });
-});
-
-// Test Get Product Type
-describe('Get Product Type action', () => {
-  it('should create an action to get product type', () => {
-    const organization_uuid = '224761f5-0010-4a46-d92a4fdc1d21';
-    const expectedAction = {
-      type: actions.GET_PRODUCTS_TYPE,
-      organization_uuid,
-    };
-    expect(actions.getProductType(organization_uuid))
       .toEqual(expectedAction);
   });
 });
@@ -170,6 +117,19 @@ describe('Delete Item Type action', () => {
   });
 });
 
+// Test Get Products
+describe('Get Products action', () => {
+  it('should create an action to get products', () => {
+    const organization_uuid = '224761f5-0010-4a46-d92a4fdc1d21';
+    const expectedAction = {
+      type: actions.GET_PRODUCTS,
+      organization_uuid,
+    };
+    expect(actions.getProducts(organization_uuid))
+      .toEqual(expectedAction);
+  });
+});
+
 // Test Add Product
 describe('Add Product action', () => {
   it('should create an action to add product', () => {
@@ -210,6 +170,19 @@ describe('Delete Product action', () => {
       id,
     };
     expect(actions.deleteProduct(id)).toEqual(expectedAction);
+  });
+});
+
+// Test Get Product Type
+describe('Get Product Type action', () => {
+  it('should create an action to get product type', () => {
+    const organization_uuid = '224761f5-0010-4a46-d92a4fdc1d21';
+    const expectedAction = {
+      type: actions.GET_PRODUCTS_TYPE,
+      organization_uuid,
+    };
+    expect(actions.getProductType(organization_uuid))
+      .toEqual(expectedAction);
   });
 });
 
@@ -256,7 +229,17 @@ describe('Delete Product Type action', () => {
   });
 });
 
-// Test Add Units pf Measure
+// Test Get Units of Measure
+describe('Get Units of Measure action', () => {
+  it('should create an action to get units of measure', () => {
+    const expectedAction = {
+      type: actions.GET_UNITS_OF_MEASURE,
+    };
+    expect(actions.getUnitsOfMeasure()).toEqual(expectedAction);
+  });
+});
+
+// Test Add Units of Measure
 describe('Add Units of Measure action', () => {
   it('should create an action to add units of measure', () => {
     const payload = {
@@ -272,7 +255,7 @@ describe('Add Units of Measure action', () => {
   });
 });
 
-// Test Edit Units pf Measure
+// Test Edit Units of Measure
 describe('Edit Units of Measure action', () => {
   it('should create an action to edit units of measure', () => {
     const payload = {
@@ -287,7 +270,7 @@ describe('Edit Units of Measure action', () => {
   });
 });
 
-// Test Delete Units pf Measure
+// Test Delete Units of Measure
 describe('Delete Units of Measure action', () => {
   it('should create an action to delete units of measure', () => {
     const id = 1;

@@ -14,20 +14,12 @@ import ConfirmModal from '@components/Modal/ConfirmModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
-import { httpService } from '@modules/http/http.service';
-import { environment } from '@environments/environment';
 import {
-  GET_ITEM_OPTIONS_SUCCESS,
-  GET_ITEM_OPTIONS_FAILURE,
-  GET_PRODUCTS_OPTIONS_SUCCESS,
-  GET_PRODUCTS_OPTIONS_FAILURE,
-} from '@redux/items/actions/items.actions';
-import {
-  GET_SENSOR_OPTIONS_SUCCESS,
-  GET_SENSOR_OPTIONS_FAILURE,
-  GET_GATEWAY_OPTIONS_SUCCESS,
-  GET_GATEWAY_OPTIONS_FAILURE,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+  getItemsOptions,
+  getProductsOptions,
+  getGatewayOptions,
+  getSensorOptions,
+} from '@redux/options/actions/options.actions';
 import {
   getApiResponse,
   addApiSetup,
@@ -147,67 +139,16 @@ const AddFromAPI = ({
 
   useEffect(() => {
     if (itemOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}shipment/item/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_ITEM_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_ITEM_OPTIONS_FAILURE, error });
-        });
+      dispatch(getItemsOptions());
     }
-
     if (productOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}shipment/product/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_PRODUCTS_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_PRODUCTS_OPTIONS_FAILURE, error });
-        });
+      dispatch(getProductsOptions());
     }
-
     if (gatewayOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}sensors/gateway/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_GATEWAY_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_GATEWAY_OPTIONS_FAILURE, error });
-        });
+      dispatch(getGatewayOptions());
     }
-
     if (sensorOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}sensors/sensor/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_SENSOR_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_SENSOR_OPTIONS_FAILURE, error });
-        });
+      dispatch(getSensorOptions());
     }
   }, []);
 
@@ -308,9 +249,10 @@ const AddFromAPI = ({
       const url = _.endsWith(apiURL.value, '/')
         ? apiURL.value
         : `${apiURL.value}/`;
-      if (url.includes('tive.co')) {
-        const providerDataType = dataTypes.filter(
-          (item) => item.externalProvider.includes('Tive'),
+      if (_.includes(url, 'tive.co')) {
+        const providerDataType = _.filter(
+          dataTypes,
+          (item) => _.includes(item.externalProvider, 'Tive'),
         );
         setProvider({
           name: 'Tive',
@@ -408,7 +350,7 @@ const AddFromAPI = ({
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
@@ -568,11 +510,17 @@ const AddFromAPI = ({
                 {...dataFor.bind}
               >
                 <MenuItem value="">--------</MenuItem>
-                {provider.dataTypes.map((type, index) => (
-                  <MenuItem key={index} value={type.value}>
-                    {type.name}
-                  </MenuItem>
-                ))}
+                {_.map(
+                  provider.dataTypes,
+                  (type, index) => (
+                    <MenuItem
+                      key={index}
+                      value={type.value}
+                    >
+                      {type.name}
+                    </MenuItem>
+                  ),
+                )}
               </TextField>
             </Grid>
           </Grid>
@@ -630,7 +578,7 @@ const AddFromAPI = ({
                 {...dataFor.bind}
               >
                 <MenuItem value="">--------</MenuItem>
-                {dataTypes.map((type, index) => (
+                {_.map(dataTypes, (type, index) => (
                   <MenuItem key={index} value={type.value}>
                     {type.name}
                   </MenuItem>

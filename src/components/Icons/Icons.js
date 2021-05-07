@@ -1,13 +1,5 @@
 import React from 'react';
-import { makeStyles, SvgIcon } from '@material-ui/core';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > svg': {
-      margin: theme.spacing(2),
-    },
-  },
-}));
+import { SvgIcon } from '@material-ui/core';
 
 export const HumidIcon = (props) => {
   const { color, name } = props;

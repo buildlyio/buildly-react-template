@@ -7,7 +7,6 @@ const initialState = {
   data: null,
   error: null,
   organizationData: null,
-  userOptions: null,
 };
 
 describe('Empty reducer', () => {
@@ -268,42 +267,6 @@ describe('Update Organization reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.UPDATE_ORGANIZATION_FAILURE },
-    )).toEqual({
-      ...initialState,
-      error: undefined,
-      loaded: true,
-      loading: false,
-    });
-  });
-});
-
-describe('Get User Options reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_USER_OPTIONS },
-    )).toEqual({
-      ...initialState,
-      loading: true,
-    });
-  });
-
-  it('get user options success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_USER_OPTIONS_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      userOptions: undefined,
-    });
-  });
-
-  it('get user options fail Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_USER_OPTIONS_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,

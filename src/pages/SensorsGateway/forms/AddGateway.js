@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import moment from 'moment';
 import {
   makeStyles,
@@ -20,12 +21,12 @@ import { MapComponent } from '@components/MapComponent/MapComponent';
 import Modal from '@components/Modal/Modal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
+import { environment } from '@environments/environment';
 import { useInput } from '@hooks/useInput';
 import {
   addGateway,
   editGateway,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { MAP_API_URL } from '@utils/utilMethods';
 import { validators } from '@utils/validators';
 import { GATEWAY_STATUS } from '../Constants';
 
@@ -188,7 +189,7 @@ const AddGateway = ({
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
@@ -246,13 +247,11 @@ const AddGateway = ({
                     && {
                       endAdornment: (
                         <InputAdornment position="end">
-                          {gatewayMetaData.name.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                gatewayMetaData.name.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              gatewayMetaData.name.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -295,13 +294,11 @@ const AddGateway = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="start">
-                              {gatewayMetaData.gateway_type.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    gatewayMetaData.gateway_type.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  gatewayMetaData.gateway_type.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -309,14 +306,17 @@ const AddGateway = ({
                     >
                       <MenuItem value="">Select</MenuItem>
                       {gatewayTypeList
-                        && gatewayTypeList.map((item, index) => (
-                          <MenuItem
-                            key={`gatewayType${index}:${item.id}`}
-                            value={item.url}
-                          >
-                            {item.name}
-                          </MenuItem>
-                        ))}
+                        && _.map(
+                          gatewayTypeList,
+                          (item, index) => (
+                            <MenuItem
+                              key={`gatewayType${index}:${item.id}`}
+                              value={item.url}
+                            >
+                              {item.name}
+                            </MenuItem>
+                          ),
+                        )}
                     </TextField>
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
@@ -350,13 +350,11 @@ const AddGateway = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="start">
-                              {gatewayMetaData.gateway_status.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    gatewayMetaData.gateway_status.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  gatewayMetaData.gateway_status.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -364,14 +362,17 @@ const AddGateway = ({
                     >
                       <MenuItem value="">Select</MenuItem>
                       {GATEWAY_STATUS
-                        && GATEWAY_STATUS.map((item, index) => (
-                          <MenuItem
-                            key={`gatewayStatus${index}:${item.value}`}
-                            value={item.value}
-                          >
-                            {item.name}
-                          </MenuItem>
-                        ))}
+                        && _.map(
+                          GATEWAY_STATUS,
+                          (item, index) => (
+                            <MenuItem
+                              key={`gatewayStatus${index}:${item.value}`}
+                              value={item.value}
+                            >
+                              {item.name}
+                            </MenuItem>
+                          ),
+                        )}
                     </TextField>
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
@@ -403,13 +404,11 @@ const AddGateway = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {gatewayMetaData.sim_card_id.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    gatewayMetaData.sim_card_id.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  gatewayMetaData.sim_card_id.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -432,14 +431,11 @@ const AddGateway = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {gatewayMetaData.last_known_battery_level
-                                .help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    gatewayMetaData.last_known_battery_level.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  gatewayMetaData.last_known_battery_level.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -462,13 +458,11 @@ const AddGateway = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {gatewayMetaData.mac_address.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    gatewayMetaData.mac_address.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  gatewayMetaData.mac_address.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -495,15 +489,12 @@ const AddGateway = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {gatewayMetaData.last_known_location
-                                .help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    gatewayMetaData.last_known_location
-                                      .help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  gatewayMetaData.last_known_location
+                                    .help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -511,7 +502,7 @@ const AddGateway = ({
                     />
                     <MapComponent
                       isMarkerShown
-                      googleMapURL={MAP_API_URL}
+                      googleMapURL={environment.MAP_API_URL}
                       zoom={8}
                       loadingElement={
                         <div style={{ height: '100%' }} />
@@ -586,6 +577,8 @@ const AddGateway = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
+  ...state.optionsReducer,
+  loading: state.sensorsGatewayReducer.loading || state.optionsReducer.loading,
 });
 
 export default connect(mapStateToProps)(AddGateway);

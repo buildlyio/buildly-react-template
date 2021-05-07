@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { Route, Redirect } from 'react-router-dom';
+import _ from 'lodash';
 import {
   Container,
   makeStyles,
 } from '@material-ui/core';
-import { UserContext, getUser } from '@context/User.context';
+import {
+  UserContext,
+  getUser,
+} from '@context/User.context';
 import NavBar from '@layout/NavBar/NavBar';
 import TopBar from '@layout/TopBar/TopBar';
 import Custodians from '@pages/Custodians/Custodians';
@@ -13,11 +17,13 @@ import MyAccount from '@pages/MyAccount/MyAccount';
 import Items from '@pages/Items/Items';
 import SensorsGateway from '@pages/SensorsGateway/SensorsGateway';
 import Shipment from '@pages/Shipment/Shipment';
-import Dashboard from '@pages/Dashboard/Dashboard';
 import Reporting from '@pages/Reporting/Reporting';
 import AdminPanel from '@pages/AdminPanel/AdminPanel';
 import { routes } from '@routes/routesConstants';
-import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
+import {
+  checkForAdmin,
+  checkForGlobalAdmin,
+} from '@utils/utilMethods';
 import { isMobile } from '@utils/mediaQuery';
 
 const useStyles = makeStyles((theme) => ({
@@ -43,13 +49,12 @@ const useStyles = makeStyles((theme) => ({
  * Container for the app layout when the user is authenticated.
  */
 const ContainerDashboard = ({ location, history }) => {
-  const [navHidden, setNavHidden] = useState(false);
-  const routeItems = [];
   const classes = useStyles();
   const userData = getUser();
+  const [navHidden, setNavHidden] = useState(false);
   let subNavItems = [];
 
-  if (location.pathname.includes('profile')) {
+  if (_.includes(location.pathname, 'profile')) {
     subNavItems = [
       { label: 'Dashboard', value: 'dashboard' },
       { label: 'Custodians', value: 'custodians' },
@@ -66,7 +71,8 @@ const ContainerDashboard = ({ location, history }) => {
           location={location}
           history={history}
         />
-        {!location.pathname.includes(routes.MY_ACCOUNT) && (
+        {!_.includes(location.pathname, routes.MY_ACCOUNT)
+        && (
           <NavBar
             navHidden={navHidden}
             setNavHidden={setNavHidden}
@@ -74,36 +80,51 @@ const ContainerDashboard = ({ location, history }) => {
             history={history}
           />
         )}
-        <Container className={`${classes.content} ${!isMobile() && classes.contentMaxWidth}`}>
-          {/* <Route
-            exact
-            path={routes.APP}
-            render={() => <Redirect to={routes.DASHBOARD} />}
-          /> */}
+        <Container
+          className={`${classes.content} ${!isMobile() && classes.contentMaxWidth}`}
+        >
           <Route
             exact
             path={routes.APP}
             render={() => <Redirect to={routes.SHIPMENT} />}
           />
-          {/* <Route path={routes.DASHBOARD} component={Dashboard} /> */}
-          {(checkForAdmin(userData) || checkForGlobalAdmin(userData)) && (
+          {(checkForAdmin(userData)
+          || checkForGlobalAdmin(userData))
+          && (
             <Route
               path={routes.USER_MANAGEMENT}
               component={UserManagement}
             />
           )}
-          <Route path={routes.CUSTODIANS} component={Custodians} />
-          <Route path={routes.MY_ACCOUNT} component={MyAccount} />
-          <Route path={routes.ITEMS} component={Items} />
+          <Route
+            path={routes.CUSTODIANS}
+            component={Custodians}
+          />
+          <Route
+            path={routes.MY_ACCOUNT}
+            component={MyAccount}
+          />
+          <Route
+            path={routes.ITEMS}
+            component={Items}
+          />
           <Route
             path={routes.SENSORS_GATEWAY}
             component={SensorsGateway}
           />
-          <Route path={routes.SHIPMENT} component={Shipment} />
-          <Route path={routes.REPORTING} component={Reporting} />
-          <Route path={routes.ADMIN_PANEL} component={AdminPanel} />
+          <Route
+            path={routes.SHIPMENT}
+            component={Shipment}
+          />
+          <Route
+            path={routes.REPORTING}
+            component={Reporting}
+          />
+          <Route
+            path={routes.ADMIN_PANEL}
+            component={AdminPanel}
+          />
         </Container>
-        {routeItems}
       </UserContext.Provider>
     </div>
   );

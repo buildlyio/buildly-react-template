@@ -11,25 +11,21 @@ import {
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { routes } from '@routes/routesConstants';
 import {
-  ADD_SHIPMENT,
-  DELETE_SHIPMENT,
-  EDIT_SHIPMENT,
+  saveShipmentFormData,
+  GET_SHIPMENTS,
   GET_SHIPMENTS_SUCCESS,
   GET_SHIPMENTS_FAILURE,
   getShipmentDetails,
+  ADD_SHIPMENT,
   ADD_SHIPMENT_FAILURE,
+  EDIT_SHIPMENT,
   EDIT_SHIPMENT_FAILURE,
+  DELETE_SHIPMENT,
   DELETE_SHIPMENT_FAILURE,
-  GET_SHIPMENTS,
-  saveShipmentFormData,
   GET_SHIPMENT_FLAG,
   GET_SHIPMENT_FLAG_FAILURE,
   GET_SHIPMENT_FLAG_SUCCESS,
-  GET_DASHBOARD_ITEMS,
-  GET_DASHBOARD_ITEMS_SUCCESS,
-  GET_DASHBOARD_ITEMS_FAILURE,
   getShipmentFlag,
-  EMAIL_ALERTS,
   ADD_SHIPMENT_FLAG,
   ADD_SHIPMENT_FLAG_SUCCESS,
   ADD_SHIPMENT_FLAG_FAILURE,
@@ -39,6 +35,10 @@ import {
   DELETE_SHIPMENT_FLAG,
   DELETE_SHIPMENT_FLAG_SUCCESS,
   DELETE_SHIPMENT_FLAG_FAILURE,
+  GET_DASHBOARD_ITEMS,
+  GET_DASHBOARD_ITEMS_SUCCESS,
+  GET_DASHBOARD_ITEMS_FAILURE,
+  EMAIL_ALERTS,
   ADD_PDF_IDENTIFIER,
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
@@ -96,14 +96,14 @@ function* getShipmentList(payload) {
   }
 }
 
-function* deleteShipment(payload) {
-  const { shipmentId, organization_uuid } = payload;
+function* addShipment(action) {
+  const { history, payload, redirectTo } = action;
   try {
-    yield call(
+    const data = yield call(
       httpService.makeRequest,
-      'delete',
-      `${environment.API_URL}${shipmentApiEndPoint}shipment/${shipmentId}/`,
-      null,
+      'post',
+      `${environment.API_URL}${shipmentApiEndPoint}shipment/`,
+      payload,
       true,
     );
     yield [
@@ -111,22 +111,27 @@ function* deleteShipment(payload) {
         showAlert({
           type: 'success',
           open: true,
-          message: 'Shipment deleted successfully!',
+          message: 'Successfully Added Shipment',
         }),
       ),
-      yield put(getShipmentDetails(organization_uuid)),
+      yield put(
+        getShipmentDetails(payload.organization_uuid, data.data.id),
+      ),
     ];
+    if (history && redirectTo) {
+      yield call(history.push, redirectTo);
+    }
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Error in deleting Shipment!',
+          message: 'Error in creating Shipment',
         }),
       ),
       yield put({
-        type: DELETE_SHIPMENT_FAILURE,
+        type: ADD_SHIPMENT_FAILURE,
         error,
       }),
     ];
@@ -179,14 +184,14 @@ function* editShipment(action) {
   }
 }
 
-function* addShipment(action) {
-  const { history, payload, redirectTo } = action;
+function* deleteShipment(payload) {
+  const { shipmentId, organization_uuid } = payload;
   try {
-    const data = yield call(
+    yield call(
       httpService.makeRequest,
-      'post',
-      `${environment.API_URL}${shipmentApiEndPoint}shipment/`,
-      payload,
+      'delete',
+      `${environment.API_URL}${shipmentApiEndPoint}shipment/${shipmentId}/`,
+      null,
       true,
     );
     yield [
@@ -194,27 +199,22 @@ function* addShipment(action) {
         showAlert({
           type: 'success',
           open: true,
-          message: 'Successfully Added Shipment',
+          message: 'Shipment deleted successfully!',
         }),
       ),
-      yield put(
-        getShipmentDetails(payload.organization_uuid, data.data.id),
-      ),
+      yield put(getShipmentDetails(organization_uuid)),
     ];
-    if (history && redirectTo) {
-      yield call(history.push, redirectTo);
-    }
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Error in creating Shipment',
+          message: 'Error in deleting Shipment!',
         }),
       ),
       yield put({
-        type: ADD_SHIPMENT_FAILURE,
+        type: DELETE_SHIPMENT_FAILURE,
         error,
       }),
     ];
@@ -249,62 +249,6 @@ function* getShipmentFlagList(payload) {
         error,
       }),
     ];
-  }
-}
-
-function* getDashboard(payload) {
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'get',
-      `${environment.API_URL}${shipmentApiEndPoint}dashboard/?organization_uuid=${payload.organization_uuid}`,
-      null,
-      true,
-    );
-    yield put({
-      type: GET_DASHBOARD_ITEMS_SUCCESS,
-      data: data.data,
-    });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t load data due to some error!',
-        }),
-      ),
-      yield put({
-        type: GET_DASHBOARD_ITEMS_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* sendEmailAlerts(payload) {
-  try {
-    const alerts = yield call(
-      httpService.makeRequest,
-      'post',
-      `${environment.API_URL}coreuser/alert/`,
-      payload.alerts,
-    );
-    yield put(
-      showAlert({
-        type: 'info',
-        open: true,
-        message: 'Email alerts sent successfully',
-      }),
-    );
-  } catch (error) {
-    yield put(
-      showAlert({
-        type: 'error',
-        open: true,
-        message: 'Couldn\'t send email alerts due to some error!',
-      }),
-    );
   }
 }
 
@@ -431,6 +375,62 @@ function* deleteShipmentFlag(payload) {
   }
 }
 
+function* getDashboard(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}${shipmentApiEndPoint}dashboard/?organization_uuid=${payload.organization_uuid}`,
+      null,
+      true,
+    );
+    yield put({
+      type: GET_DASHBOARD_ITEMS_SUCCESS,
+      data: data.data,
+    });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t load data due to some error!',
+        }),
+      ),
+      yield put({
+        type: GET_DASHBOARD_ITEMS_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* sendEmailAlerts(payload) {
+  try {
+    const alerts = yield call(
+      httpService.makeRequest,
+      'post',
+      `${environment.API_URL}coreuser/alert/`,
+      payload.alerts,
+    );
+    yield put(
+      showAlert({
+        type: 'info',
+        open: true,
+        message: 'Email alerts sent successfully',
+      }),
+    );
+  } catch (error) {
+    yield put(
+      showAlert({
+        type: 'error',
+        open: true,
+        message: 'Couldn\'t send email alerts due to some error!',
+      }),
+    );
+  }
+}
+
 function* pdfIdentifier(action) {
   const {
     data,
@@ -508,24 +508,16 @@ function* watchAddShipment() {
   yield takeLatest(ADD_SHIPMENT, addShipment);
 }
 
-function* watchDeleteShipment() {
-  yield takeLatest(DELETE_SHIPMENT, deleteShipment);
-}
-
 function* watchEditShipment() {
   yield takeLatest(EDIT_SHIPMENT, editShipment);
 }
 
+function* watchDeleteShipment() {
+  yield takeLatest(DELETE_SHIPMENT, deleteShipment);
+}
+
 function* watchGetShipmentFlag() {
   yield takeLatest(GET_SHIPMENT_FLAG, getShipmentFlagList);
-}
-
-function* watchGetDashboardItems() {
-  yield takeLatest(GET_DASHBOARD_ITEMS, getDashboard);
-}
-
-function* watchEmailAlerts() {
-  yield takeLatest(EMAIL_ALERTS, sendEmailAlerts);
 }
 
 function* watchAddShipmentFlag() {
@@ -540,6 +532,14 @@ function* watchDeleteShipmentFlag() {
   yield takeLatest(DELETE_SHIPMENT_FLAG, deleteShipmentFlag);
 }
 
+function* watchGetDashboardItems() {
+  yield takeLatest(GET_DASHBOARD_ITEMS, getDashboard);
+}
+
+function* watchEmailAlerts() {
+  yield takeLatest(EMAIL_ALERTS, sendEmailAlerts);
+}
+
 function* watchPdfIdentifier() {
   yield takeLatest(ADD_PDF_IDENTIFIER, pdfIdentifier);
 }
@@ -551,11 +551,11 @@ export default function* shipmentSaga() {
     watchDeleteShipment(),
     watchEditShipment(),
     watchGetShipmentFlag(),
-    watchGetDashboardItems(),
-    watchEmailAlerts(),
     watchAddShipmentFlag(),
     watchEditShipmentFlag(),
     watchDeleteShipmentFlag(),
+    watchGetDashboardItems(),
+    watchEmailAlerts(),
     watchPdfIdentifier(),
   ]);
 }

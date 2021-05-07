@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import { environment } from '@environments/environment';
-import DashboardWrapper from '@components/DashboardWrapper/DashboardWrapper';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
-import { httpService } from '@modules/http/http.service';
 import {
   getGateways,
   getGatewayType,
   deleteGateway,
-  searchGatewayItem,
-  GET_GATEWAY_OPTIONS_FAILURE,
-  GET_GATEWAY_OPTIONS_SUCCESS,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+import {
+  getGatewayOptions,
+} from '@redux/options/actions/options.actions';
 import { routes } from '@routes/routesConstants';
 import { gatewayColumns, getFormattedRow } from '../Constants';
 import AddGateway from '../forms/AddGateway';
@@ -19,15 +18,18 @@ import AddGateway from '../forms/AddGateway';
 const Gateway = ({
   dispatch,
   history,
-  data,
+  gatewayData,
   loading,
-  searchData,
   gatewayTypeList,
   redirectTo,
-  noSearch,
   gatewayOptions,
   shipmentData,
 }) => {
+  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [deleteGatewayId, setDeleteGatewayId] = useState('');
+  const [rows, setRows] = useState([]);
+  const organization = useContext(UserContext).organization.organization_uuid;
+
   const addPath = redirectTo
     ? `${redirectTo}/gateways`
     : `${routes.SENSORS_GATEWAY}/gateway/add`;
@@ -35,54 +37,27 @@ const Gateway = ({
   const editPath = redirectTo
     ? `${redirectTo}/gateways`
     : `${routes.SENSORS_GATEWAY}/gateway/edit`;
-  const [openConfirmModal, setConfirmModal] = useState(false);
-  const [deleteGatewayId, setDeleteGatewayId] = useState('');
-  const [searchValue, setSearchValue] = useState('');
-  const [rows, setRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
-  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
-    if (data === null) {
+    if (gatewayData === null) {
       dispatch(getGateways(organization));
       dispatch(getGatewayType());
     }
     if (gatewayOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}sensors/gateway/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((res) => {
-          dispatch({ type: GET_GATEWAY_OPTIONS_SUCCESS, data: res });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_GATEWAY_OPTIONS_FAILURE, error });
-        });
+      dispatch(getGatewayOptions());
     }
   }, []);
 
   useEffect(() => {
     if (
-      data
-      && data.length
+      gatewayData
+      && gatewayData.length
       && gatewayTypeList
       && gatewayTypeList.length
-      && shipmentData
-      && shipmentData.length
     ) {
-      setRows(getFormattedRow(data, gatewayTypeList, shipmentData));
-      setFilteredRows(getFormattedRow(data, gatewayTypeList, shipmentData));
+      setRows(getFormattedRow(gatewayData, gatewayTypeList, shipmentData));
     }
-  }, [data, gatewayTypeList]);
-
-  useEffect(() => {
-    if (searchData) {
-      setFilteredRows(searchData);
-    }
-  }, [searchData]);
+  }, [gatewayData, gatewayTypeList, shipmentData]);
 
   const editGatewayAction = (item) => {
     history.push(`${editPath}/:${item.id}`, {
@@ -102,48 +77,45 @@ const Gateway = ({
     setConfirmModal(false);
   };
 
-  const searchTable = (e) => {
-    const searchFields = [
-      'id',
-      'name',
-      // 'gateway_uuid',
-      'gateway_type_value',
-      'last_known_battery_level',
-      'gateway_status',
-      'shipment',
-      'activation_date',
-    ];
-    setSearchValue(e.target.value);
-    dispatch(searchGatewayItem(e.target.value, rows, searchFields));
-  };
-
   const onAddButtonClick = () => {
-    history.push(`${addPath}`, {
+    history.push(addPath, {
       from: redirectTo || routes.SENSORS_GATEWAY,
     });
   };
 
   return (
-    <DashboardWrapper
+    <DataTableWrapper
       loading={loading}
-      // onAddButtonClick={onAddButtonClick}
-      dashboardHeading="Gateway"
-      // addButtonHeading='Add Gateway'
+      rows={rows || []}
+      columns={gatewayColumns}
+      filename="GatewayData"
+      addButtonHeading="Add Gateway"
+      onAddButtonClick={onAddButtonClick}
       editAction={editGatewayAction}
       deleteAction={deleteGatewayAction}
-      columns={gatewayColumns}
-      rows={filteredRows}
-      redirectTo={redirectTo}
-      hasSearch={!noSearch}
-      search={{ searchValue, searchAction: searchTable }}
       openConfirmModal={openConfirmModal}
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
-      confirmModalTitle="Are your sure you want to Delete this Gateway?"
+      confirmModalTitle="Are you sure you want to delete this Gateway?"
+      tableHeader="Gateway"
+      hideAddButton
     >
       <Route path={`${addPath}`} component={AddGateway} />
       <Route path={`${editPath}/:id`} component={AddGateway} />
-    </DashboardWrapper>
+    </DataTableWrapper>
   );
 };
-export default Gateway;
+
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.sensorsGatewayReducer,
+  ...state.optionsReducer,
+  ...state.shipmentReducer,
+  loading: (
+    state.sensorsGatewayReducer.loading
+    || state.optionsReducer.loading
+    || state.shipmentReducer.loading
+  ),
+});
+
+export default connect(mapStateToProps)(Gateway);

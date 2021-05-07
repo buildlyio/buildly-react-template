@@ -10,20 +10,20 @@ import { routes } from '@routes/routesConstants';
 import { UNITS_OF_MEASURE_COLUMNS } from '../ConfigurationConstants';
 import AddUnitOfMeasure from '../forms/AddUnitOfMeasure';
 
-const UnitOfMeasure = (props) => {
-  const {
-    dispatch,
-    loading,
-    unitsOfMeasure,
-    redirectTo,
-    history,
-  } = props;
+const UnitOfMeasure = ({
+  dispatch,
+  loading,
+  unitsOfMeasure,
+  redirectTo,
+  history,
+}) => {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
   const addPath = redirectTo
     ? `${redirectTo}/unit-of-measure`
     : `${routes.CONFIGURATION}/unit-of-measure/add`;
+
   const editPath = redirectTo
     ? `${redirectTo}/unit-of-measure`
     : `${routes.CONFIGURATION}/unit-of-measure/edit`;
@@ -72,6 +72,7 @@ const UnitOfMeasure = (props) => {
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
       confirmModalTitle="Are you sure you want to Delete this Unit of Measure?"
+      tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddUnitOfMeasure} />
       <Route path={`${editPath}/:id`} component={AddUnitOfMeasure} />

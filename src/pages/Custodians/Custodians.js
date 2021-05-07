@@ -1,32 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import {
-  makeStyles,
-  Typography,
-  Box,
-  Grid,
-  Button,
-} from '@material-ui/core';
-import { Add as AddIcon } from '@material-ui/icons';
-import { environment } from '@environments/environment';
-import ConfirmModal from '@components/Modal/ConfirmModal';
-import Loader from '@components/Loader/Loader';
-import DataTable from '@components/Table/Table';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
-import { httpService } from '@modules/http/http.service';
 import {
-  searchCustodian,
   getCustodians,
   getCustodianType,
   deleteCustodian,
   getContact,
   getCustody,
-  GET_CUSTODIAN_OPTIONS_SUCCESS,
-  GET_CUSTODIAN_OPTIONS_FAILURE,
-  GET_CONTACT_OPTIONS_SUCCESS,
-  GET_CONTACT_OPTIONS_FAILURE,
 } from '@redux/custodian/actions/custodian.actions';
+import {
+  getCustodianOptions,
+  getContactOptions,
+} from '@redux/options/actions/options.actions';
 import { routes } from '@routes/routesConstants';
 import {
   custodianColumns,
@@ -35,21 +22,12 @@ import {
 } from './CustodianConstants';
 import AddCustodians from './forms/AddCustodians';
 
-const useStyles = makeStyles((theme) => ({
-  dashboardHeading: {
-    fontWeight: 'bold',
-    marginBottom: '0.5em',
-  },
-}));
-
 const Custodian = ({
   dispatch,
   history,
   custodianData,
   loading,
   contactInfo,
-  searchedData,
-  noSearch,
   redirectTo,
   custodyData,
   custodianOptions,
@@ -58,10 +36,7 @@ const Custodian = ({
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
   const [deleteContactObjId, setDeleteContactObjId] = useState('');
-  const [searchValue, setSearchValue] = useState('');
   const [rows, setRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
-  const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
 
   const addCustodianPath = redirectTo
@@ -82,49 +57,18 @@ const Custodian = ({
       dispatch(getCustody());
     }
     if (custodianOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}custodian/custodian/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_CUSTODIAN_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_CUSTODIAN_OPTIONS_FAILURE, error });
-        });
+      dispatch(getCustodianOptions());
     }
     if (contactOptions === null) {
-      httpService
-        .makeOptionsRequest(
-          'options',
-          `${environment.API_URL}custodian/contact/`,
-          true,
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          dispatch({ type: GET_CONTACT_OPTIONS_SUCCESS, data });
-        })
-        .catch((error) => {
-          dispatch({ type: GET_CONTACT_OPTIONS_FAILURE, error });
-        });
+      dispatch(getContactOptions());
     }
   }, []);
 
   useEffect(() => {
     if (custodianData && custodianData.length && contactInfo) {
       setRows(getFormattedRow(custodianData, contactInfo));
-      setFilteredRows(getFormattedRow(custodianData, contactInfo));
     }
   }, [custodianData, contactInfo, custodyData]);
-
-  useEffect(() => {
-    if (searchedData) {
-      setFilteredRows(searchedData);
-    }
-  }, [searchedData]);
 
   const editItem = (item) => {
     const contactObj = getUniqueContactInfo(item, contactInfo);
@@ -136,7 +80,7 @@ const Custodian = ({
     });
   };
 
-  const deletItem = (item) => {
+  const deleteItem = (item) => {
     const contactObj = getUniqueContactInfo(item, contactInfo);
     setDeleteItemId(item.id);
     setDeleteContactObjId(contactObj.id);
@@ -152,82 +96,39 @@ const Custodian = ({
     setConfirmModal(false);
   };
 
-  const searchTable = (e) => {
-    const searchFields = ['name', 'location'];
-    setSearchValue(e.target.value);
-    dispatch(searchCustodian(e.target.value, rows, searchFields));
+  const onAddButtonClick = () => {
+    history.push(addCustodianPath, {
+      from: redirectTo || routes.CUSTODIANS,
+    });
   };
 
-  const actionsColumns = [
-    {
-      id: 'edit',
-      type: 'edit',
-      action: editItem,
-      label: 'Edit',
-    },
-    {
-      id: 'delete',
-      type: 'delete',
-      action: deletItem,
-      label: 'Delete',
-    },
-  ];
-
   return (
-    <Box mt={5} mb={5}>
-      {loading && <Loader open={loading} />}
-      <div className={classes.container}>
-        <Box mb={3} mt={2}>
-          <Button
-            type="button"
-            variant="contained"
-            color="primary"
-            onClick={() => history.push(addCustodianPath, {
-              from: redirectTo || routes.CUSTODIANS,
-            })}
-          >
-            <AddIcon />
-            {' '}
-            Add Custodian
-          </Button>
-        </Box>
-        {!redirectTo && (
-          <Typography
-            className={classes.dashboardHeading}
-            variant="h4"
-          >
-            Custodians
-          </Typography>
-        )}
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <DataTable
-              rows={filteredRows}
-              columns={custodianColumns}
-              actionsColumns={actionsColumns}
-              hasSearch={!noSearch}
-              searchAction={searchTable}
-              searchValue={searchValue} // To show the search field in table
-            />
-          </Grid>
-        </Grid>
-        <Route path={addCustodianPath} component={AddCustodians} />
-        <Route path={`${editCustodianPath}/:id`} component={AddCustodians} />
-      </div>
-
-      <ConfirmModal
-        open={openConfirmModal}
-        setOpen={setConfirmModal}
-        submitAction={handleConfirmModal}
-        title="Are you sure you want to delete this item?"
-        submitText="Delete"
-      />
-    </Box>
+    <DataTableWrapper
+      loading={loading}
+      rows={rows || []}
+      columns={custodianColumns}
+      filename="CustodianData"
+      addButtonHeading="Add Custodian"
+      onAddButtonClick={onAddButtonClick}
+      editAction={editItem}
+      deleteAction={deleteItem}
+      openConfirmModal={openConfirmModal}
+      setConfirmModal={setConfirmModal}
+      handleConfirmModal={handleConfirmModal}
+      confirmModalTitle="Are you sure you want to delete this Custodian?"
+      tableHeader="Custodians"
+    >
+      <Route path={addCustodianPath} component={AddCustodians} />
+      <Route path={`${editCustodianPath}/:id`} component={AddCustodians} />
+    </DataTableWrapper>
   );
 };
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
+  ...state.optionsReducer,
+  loading: state.custodianReducer.loading || state.optionsReducer.loading,
 });
+
 export default connect(mapStateToProps)(Custodian);

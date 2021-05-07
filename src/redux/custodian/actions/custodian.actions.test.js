@@ -67,46 +67,6 @@ describe('Delete Custodian action', () => {
   });
 });
 
-// Test Search Custodian action
-describe('Search Custodian action', () => {
-  it('should create an action to search custodian', () => {
-    const searchItem = 'abc';
-    const searchList = [{ id: '123', name: 'abc' }];
-    const searchFields = ['id', 'name'];
-    const expectedAction = {
-      type: actions.SEARCH,
-      searchItem,
-      searchList,
-      searchFields,
-    };
-    expect(actions.searchCustodian(searchItem, searchList, searchFields))
-      .toEqual(expectedAction);
-  });
-});
-
-// Test Get Custodian Type action
-describe('Get Custodian Type action', () => {
-  it('should create an action to get custodian type', () => {
-    const expectedAction = {
-      type: actions.GET_CUSTODIAN_TYPE,
-    };
-    expect(actions.getCustodianType()).toEqual(expectedAction);
-  });
-});
-
-// Test Get Contact action
-describe('Get Contact action', () => {
-  it('should create an action to get contact', () => {
-    const organization_uuid = '224761f5-0010-4a46-ba2f-d92a4c1d21';
-    const expectedAction = {
-      type: actions.GET_CONTACT,
-      organization_uuid,
-    };
-    expect(actions.getContact(organization_uuid))
-      .toEqual(expectedAction);
-  });
-});
-
 // Test Get Custody action
 describe('Get Custody action', () => {
   it('should create an action to get custody', () => {
@@ -142,6 +102,16 @@ describe('Edit Custody action', () => {
       payload,
     };
     expect(actions.editCustody(payload)).toEqual(expectedAction);
+  });
+});
+
+// Test Get Custodian Type action
+describe('Get Custodian Type action', () => {
+  it('should create an action to get custodian type', () => {
+    const expectedAction = {
+      type: actions.GET_CUSTODIAN_TYPE,
+    };
+    expect(actions.getCustodianType()).toEqual(expectedAction);
   });
 });
 
@@ -187,5 +157,18 @@ describe('Delete Custodian Type action', () => {
       id,
     };
     expect(actions.deleteCustodianType(id)).toEqual(expectedAction);
+  });
+});
+
+// Test Get Contact action
+describe('Get Contact action', () => {
+  it('should create an action to get contact', () => {
+    const organization_uuid = '224761f5-0010-4a46-ba2f-d92a4c1d21';
+    const expectedAction = {
+      type: actions.GET_CONTACT,
+      organization_uuid,
+    };
+    expect(actions.getContact(organization_uuid))
+      .toEqual(expectedAction);
   });
 });

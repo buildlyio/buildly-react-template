@@ -1,38 +1,34 @@
-import { put, takeLatest, all, call } from 'redux-saga/effects';
+import {
+  put, takeLatest, all, call,
+} from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
 import { environment } from '@environments/environment';
 import { showAlert } from '@redux/alert/actions/alert.actions';
-import { searchFilter } from '@utils/utilMethods';
 import {
+  GET_CUSTODIANS,
+  GET_CUSTODIANS_SUCCESS,
+  GET_CUSTODIANS_FAILURE,
   ADD_CUSTODIANS,
   ADD_CUSTODIANS_FAILURE,
-  GET_CUSTODIANS,
-  GET_CUSTODIANS_FAILURE,
-  GET_CUSTODIANS_SUCCESS,
   EDIT_CUSTODIANS,
   EDIT_CUSTODIANS_FAILURE,
   DELETE_CUSTODIANS,
   DELETE_CUSTODIANS_FAILURE,
-  SEARCH,
-  SEARCH_SUCCESS,
-  GET_CUSTODIAN_TYPE_SUCCESS,
-  GET_CUSTODIAN_TYPE_FAILURE,
-  GET_CUSTODIAN_TYPE,
-  GET_CONTACT,
-  GET_CONTACT_SUCCESS,
-  GET_CONTACT_FAILURE,
   getContact,
   getCustodians,
+  GET_CUSTODY,
   GET_CUSTODY_SUCCESS,
   GET_CUSTODY_FAILURE,
   getCustody,
-  ADD_CUSTODY_FAILURE,
-  GET_CUSTODY,
   ADD_CUSTODY,
+  ADD_CUSTODY_FAILURE,
   EDIT_CUSTODY,
+  EDIT_CUSTODY_FAILURE,
   UPDATE_CUSTODY,
   UPDATE_CUSTODY_FAILURE,
-  EDIT_CUSTODY_FAILURE,
+  GET_CUSTODIAN_TYPE,
+  GET_CUSTODIAN_TYPE_SUCCESS,
+  GET_CUSTODIAN_TYPE_FAILURE,
   ADD_CUSTODIAN_TYPE,
   ADD_CUSTODIAN_TYPE_SUCCESS,
   ADD_CUSTODIAN_TYPE_FAILURE,
@@ -42,6 +38,9 @@ import {
   DELETE_CUSTODIAN_TYPE,
   DELETE_CUSTODIAN_TYPE_SUCCESS,
   DELETE_CUSTODIAN_TYPE_FAILURE,
+  GET_CONTACT,
+  GET_CONTACT_SUCCESS,
+  GET_CONTACT_FAILURE,
 } from '../actions/custodian.actions';
 
 const custodiansApiEndPoint = 'custodian/';
@@ -53,7 +52,7 @@ function* getCustodiansList(payload) {
       'get',
       `${environment.API_URL}${custodiansApiEndPoint}custodian/?organization_uuid=${payload.organization_uuid}`,
       null,
-      true
+      true,
     );
     yield put({ type: GET_CUSTODIANS_SUCCESS, data: data.data });
   } catch (error) {
@@ -63,74 +62,59 @@ function* getCustodiansList(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: `Couldn't load data due to some error!`,
-        })
+          message: 'Couldn\'t load data due to some error!',
+        }),
       ),
       yield put({
         type: GET_CUSTODIANS_FAILURE,
-        error: error,
+        error,
       }),
     ];
-  };
-};
+  }
+}
 
-function* getCustodianType() {
+function* addCustodian(action) {
+  const { history, payload, redirectTo } = action;
   try {
-    const data = yield call(
+    const contactData = yield call(
       httpService.makeRequest,
-      'get',
-      `${environment.API_URL}${custodiansApiEndPoint}custodian_type/`,
-      null,
-      true
+      'post',
+      `${environment.API_URL}${custodiansApiEndPoint}contact/`,
+      payload.contact_obj,
+      true,
     );
-    yield put({
-      type: GET_CUSTODIAN_TYPE_SUCCESS,
-      data: data.data,
-    });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: `Couldn't load data due to some error!`,
-        })
-      ),
-      yield put({
-        type: GET_CUSTODIAN_TYPE_FAILURE,
-        error: error,
-      }),
-    ];
-  };
-};
-
-function* deleteCustodian(payload) {
-  const { custodianId, contactObjId, organization_uuid } = payload;
-  try {
-    yield call(
-      httpService.makeRequest,
-      'delete',
-      `${environment.API_URL}${custodiansApiEndPoint}custodian/${custodianId}/`,
-      null,
-      true
-    );
-    yield call(
-      httpService.makeRequest,
-      'delete',
-      `${environment.API_URL}custodian/contact/${contactObjId}/`,
-      null,
-      true
-    );
-    yield [
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Custodian deleted successfully!',
-        })
-      ),
-      yield put(getCustodians(organization_uuid)),
-    ];
+    if (contactData && contactData.data) {
+      const contactInfo = contactData.data.url;
+      const custodianPayload = {
+        name: payload.name,
+        custodian_type: payload.custodian_type,
+        contact_data: [contactInfo],
+        organization_uuid: payload.organization_uuid,
+      };
+      const data = yield call(
+        httpService.makeRequest,
+        'post',
+        `${environment.API_URL}${custodiansApiEndPoint}custodian/`,
+        custodianPayload,
+        true,
+      );
+      if (data && data.data) {
+        yield [
+          yield put(
+            showAlert({
+              type: 'success',
+              open: true,
+              message: 'Successfully Added Custodian',
+            }),
+          ),
+          yield put(getCustodians(payload.organization_uuid)),
+          yield put(getContact(payload.organization_uuid)),
+        ];
+        if (history && redirectTo) {
+          yield call(history.push, redirectTo);
+        }
+      }
+    }
   } catch (error) {
     console.log('error', error);
     yield [
@@ -138,16 +122,16 @@ function* deleteCustodian(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Error in deleting CUstodian!',
-        })
+          message: 'Error in creating custodian',
+        }),
       ),
       yield put({
-        type: DELETE_CUSTODIANS_FAILURE,
-        error: error,
+        type: ADD_CUSTODIANS_FAILURE,
+        error,
       }),
     ];
-  };
-};
+  }
+}
 
 function* editCustodian(action) {
   const { payload, history, redirectTo } = action;
@@ -157,7 +141,7 @@ function* editCustodian(action) {
       'put',
       `${environment.API_URL}${custodiansApiEndPoint}contact/${payload.contact_obj.id}/`,
       payload.contact_obj,
-      true
+      true,
     );
     if (contactData && contactData.data) {
       const contactInfo = contactData.data.url;
@@ -173,7 +157,7 @@ function* editCustodian(action) {
         'put',
         `${environment.API_URL}${custodiansApiEndPoint}custodian/${payload.id}/`,
         custodianPayload,
-        true
+        true,
       );
       if (data && data.data) {
         yield [
@@ -184,73 +168,58 @@ function* editCustodian(action) {
               type: 'success',
               open: true,
               message: 'Custodian successfully Edited!',
-            })
+            }),
           ),
         ];
         if (history && redirectTo) {
           yield call(history.push, redirectTo);
-        };
-      };
-    };
+        }
+      }
+    }
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: `Couldn't edit Custodian!`,
-        })
+          message: 'Couldn\'t edit Custodian!',
+        }),
       ),
       yield put({
         type: EDIT_CUSTODIANS_FAILURE,
-        error: error,
+        error,
       }),
     ];
-  };
-};
+  }
+}
 
-function* addCustodian(action) {
-  const { history, payload, redirectTo } = action;
+function* deleteCustodian(payload) {
+  const { custodianId, contactObjId, organization_uuid } = payload;
   try {
-    const contactData = yield call(
+    yield call(
       httpService.makeRequest,
-      'post',
-      `${environment.API_URL}${custodiansApiEndPoint}contact/`,
-      payload.contact_obj,
-      true
+      'delete',
+      `${environment.API_URL}${custodiansApiEndPoint}custodian/${custodianId}/`,
+      null,
+      true,
     );
-    if (contactData && contactData.data) {
-      const contactInfo = contactData.data.url;
-      const custodianPayload = {
-        name: payload.name,
-        custodian_type: payload.custodian_type,
-        contact_data: [contactInfo],
-        organization_uuid: payload.organization_uuid,
-      };
-      const data = yield call(
-        httpService.makeRequest,
-        'post',
-        `${environment.API_URL}${custodiansApiEndPoint}custodian/`,
-        custodianPayload,
-        true
-      );
-      if (data && data.data) {
-        yield [
-          yield put(
-            showAlert({
-              type: 'success',
-              open: true,
-              message: 'Successfully Added Custodian',
-            })
-          ),
-          yield put(getCustodians(payload.organization_uuid)),
-          yield put(getContact(payload.organization_uuid)),
-        ];
-        if (history && redirectTo) {
-          yield call(history.push, redirectTo);
-        };
-      };
-    };
+    yield call(
+      httpService.makeRequest,
+      'delete',
+      `${environment.API_URL}custodian/contact/${contactObjId}/`,
+      null,
+      true,
+    );
+    yield [
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Custodian deleted successfully!',
+        }),
+      ),
+      yield put(getCustodians(organization_uuid)),
+    ];
   } catch (error) {
     console.log('error', error);
     yield [
@@ -258,55 +227,16 @@ function* addCustodian(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Error in creating custodian',
-        })
+          message: 'Error in deleting CUstodian!',
+        }),
       ),
       yield put({
-        type: ADD_CUSTODIANS_FAILURE,
-        error: error,
+        type: DELETE_CUSTODIANS_FAILURE,
+        error,
       }),
     ];
-  };
-};
-
-function* searchCustodian(payload) {
-  try {
-    const filteredData = searchFilter(payload);
-    yield put({ type: SEARCH_SUCCESS, data: filteredData });
-  } catch (error) {
-    // yield put({
-    //   type: UPDATE_USER_FAIL,
-    //   error: 'Updating user fields failed',
-    // });
   }
 }
-
-function* getContactInfo(payload) {
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'get',
-      `${environment.API_URL}${custodiansApiEndPoint}contact/?organization_uuid=${payload.organization_uuid}`,
-      null,
-      true
-    );
-    yield put({ type: GET_CONTACT_SUCCESS, data: data.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: `Couldn't load contact info!`,
-        })
-      ),
-      yield put({
-        type: GET_CONTACT_FAILURE,
-        error: error,
-      }),
-    ];
-  };
-};
 
 function* getCustodyList() {
   try {
@@ -315,7 +245,7 @@ function* getCustodyList() {
       'get',
       `${environment.API_URL}${custodiansApiEndPoint}custody/`,
       null,
-      true
+      true,
     );
     yield put({ type: GET_CUSTODY_SUCCESS, data: data.data });
   } catch (error) {
@@ -325,16 +255,16 @@ function* getCustodyList() {
         showAlert({
           type: 'error',
           open: true,
-          message: `Couldn't load data due to some error!`,
-        })
+          message: 'Couldn\'t load data due to some error!',
+        }),
       ),
       yield put({
         type: GET_CUSTODY_FAILURE,
-        error: error,
+        error,
       }),
     ];
-  };
-};
+  }
+}
 
 function* addCustody(action) {
   const { payload } = action;
@@ -344,7 +274,7 @@ function* addCustody(action) {
       'post',
       `${environment.API_URL}${custodiansApiEndPoint}custody/`,
       payload,
-      true
+      true,
     );
     if (data && data.data) {
       yield [
@@ -354,10 +284,10 @@ function* addCustody(action) {
             type: 'success',
             open: true,
             message: 'Successfully Added Custody',
-          })
+          }),
         ),
       ];
-    };
+    }
   } catch (error) {
     console.log('error', error);
     yield [
@@ -365,16 +295,16 @@ function* addCustody(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: `Couldn't Add Custody due to some error!`,
-        })
+          message: 'Couldn\'t Add Custody due to some error!',
+        }),
       ),
       yield put({
         type: ADD_CUSTODY_FAILURE,
-        error: error,
+        error,
       }),
     ];
-  };
-};
+  }
+}
 
 function* editCustody(action) {
   const { payload } = action;
@@ -384,7 +314,7 @@ function* editCustody(action) {
       'put',
       `${environment.API_URL}${custodiansApiEndPoint}custody/${payload.id}`,
       payload,
-      true
+      true,
     );
     if (data && data.data) {
       yield [
@@ -394,10 +324,10 @@ function* editCustody(action) {
             type: 'success',
             open: true,
             message: 'Successfully Edited Custody',
-          })
+          }),
         ),
       ];
-    };
+    }
   } catch (error) {
     console.log('error', error);
     yield [
@@ -405,16 +335,16 @@ function* editCustody(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: `Couldn't Edit Custody due to some error!`,
-        })
+          message: 'Couldn\'t Edit Custody due to some error!',
+        }),
       ),
       yield put({
         type: EDIT_CUSTODY_FAILURE,
-        error: error,
+        error,
       }),
     ];
-  };
-};
+  }
+}
 
 function* updateCustody(action) {
   const { payload } = action;
@@ -433,10 +363,10 @@ function* updateCustody(action) {
             type: 'success',
             open: true,
             message: 'Successfully Edited Custody',
-          })
+          }),
         ),
       ];
-    };
+    }
   } catch (error) {
     console.log('error', error);
     yield [
@@ -444,16 +374,46 @@ function* updateCustody(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: `Couldn't Edit Custody due to some error!`,
-        })
+          message: 'Couldn\'t Edit Custody due to some error!',
+        }),
       ),
       yield put({
         type: UPDATE_CUSTODY_FAILURE,
-        error: error,
+        error,
       }),
     ];
-  };
-};
+  }
+}
+
+function* getCustodianType() {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}${custodiansApiEndPoint}custodian_type/`,
+      null,
+      true,
+    );
+    yield put({
+      type: GET_CUSTODIAN_TYPE_SUCCESS,
+      data: data.data,
+    });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t load data due to some error!',
+        }),
+      ),
+      yield put({
+        type: GET_CUSTODIAN_TYPE_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
 
 function* addCustodianType(action) {
   const { payload } = action;
@@ -463,7 +423,7 @@ function* addCustodianType(action) {
       'post',
       `${environment.API_URL}${custodiansApiEndPoint}custodian_type/`,
       payload,
-      true
+      true,
     );
     if (data && data.data) {
       yield [
@@ -476,10 +436,10 @@ function* addCustodianType(action) {
             type: 'success',
             open: true,
             message: 'Successfully Added Custodian Type',
-          })
+          }),
         ),
       ];
-    };
+    }
   } catch (error) {
     console.log(error);
     yield [
@@ -487,16 +447,16 @@ function* addCustodianType(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: `Couldn't Add Custodian Type due to some error!`,
-        })
+          message: 'Couldn\'t Add Custodian Type due to some error!',
+        }),
       ),
       yield put({
         type: ADD_CUSTODIAN_TYPE_FAILURE,
-        error: error,
+        error,
       }),
     ];
-  };
-};
+  }
+}
 
 function* editCustodianType(action) {
   const { payload } = action;
@@ -506,7 +466,7 @@ function* editCustodianType(action) {
       'put',
       `${environment.API_URL}${custodiansApiEndPoint}custodian_type/${payload.id}`,
       payload,
-      true
+      true,
     );
     if (data && data.data) {
       yield [
@@ -519,10 +479,10 @@ function* editCustodianType(action) {
             type: 'success',
             open: true,
             message: 'Successfully Edited Custodian Type',
-          })
+          }),
         ),
       ];
-    };
+    }
   } catch (error) {
     console.log(error);
     yield [
@@ -530,16 +490,16 @@ function* editCustodianType(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: `Couldn't Edit Custodian Type due to some error!`,
-        })
+          message: 'Couldn\'t Edit Custodian Type due to some error!',
+        }),
       ),
       yield put({
         type: EDIT_CUSTODIAN_TYPE_FAILURE,
-        error: error,
+        error,
       }),
     ];
-  };
-};
+  }
+}
 
 function* deleteCustodianType(payload) {
   try {
@@ -548,7 +508,7 @@ function* deleteCustodianType(payload) {
       'delete',
       `${environment.API_URL}${custodiansApiEndPoint}custodian_type/${payload.id}`,
       null,
-      true
+      true,
     );
     yield [
       yield put({
@@ -560,7 +520,7 @@ function* deleteCustodianType(payload) {
           type: 'success',
           open: true,
           message: 'Successfully Deleted Custodian Type',
-        })
+        }),
       ),
     ];
   } catch (error) {
@@ -570,88 +530,109 @@ function* deleteCustodianType(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: `Couldn't Delete Custodian Type due to some error!`,
-        })
+          message: 'Couldn\'t Delete Custodian Type due to some error!',
+        }),
       ),
       yield put({
         type: DELETE_CUSTODIAN_TYPE_FAILURE,
-        error: error,
+        error,
       }),
     ];
-  };
-};
+  }
+}
+
+function* getContactInfo(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}${custodiansApiEndPoint}contact/?organization_uuid=${payload.organization_uuid}`,
+      null,
+      true,
+    );
+    yield put({ type: GET_CONTACT_SUCCESS, data: data.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t load contact info!',
+        }),
+      ),
+      yield put({
+        type: GET_CONTACT_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
 
 function* watchGetCustodian() {
   yield takeLatest(GET_CUSTODIANS, getCustodiansList);
-};
-
-function* watchSearchCustodian() {
-  yield takeLatest(SEARCH, searchCustodian);
-};
-
-function* watchGetCustodianType() {
-  yield takeLatest(GET_CUSTODIAN_TYPE, getCustodianType);
-};
-
+}
 function* watchAddCustodian() {
   yield takeLatest(ADD_CUSTODIANS, addCustodian);
-};
-
-function* watchDeleteCustodian() {
-  yield takeLatest(DELETE_CUSTODIANS, deleteCustodian);
-};
+}
 
 function* watchEditCustodian() {
   yield takeLatest(EDIT_CUSTODIANS, editCustodian);
-};
+}
 
-function* watchGetContact() {
-  yield takeLatest(GET_CONTACT, getContactInfo);
-};
+function* watchDeleteCustodian() {
+  yield takeLatest(DELETE_CUSTODIANS, deleteCustodian);
+}
 
 function* watchGetCustody() {
   yield takeLatest(GET_CUSTODY, getCustodyList);
-};
+}
 
 function* watchAddCustody() {
   yield takeLatest(ADD_CUSTODY, addCustody);
-};
+}
 
 function* watchEditCustody() {
   yield takeLatest(EDIT_CUSTODY, editCustody);
-};
+}
 
 function* watchUpdateCustody() {
   yield takeLatest(UPDATE_CUSTODY, updateCustody);
-};
+}
+
+function* watchGetCustodianType() {
+  yield takeLatest(GET_CUSTODIAN_TYPE, getCustodianType);
+}
 
 function* watchAddCustodianType() {
   yield takeLatest(ADD_CUSTODIAN_TYPE, addCustodianType);
-};
+}
 
 function* watchEditCustodianType() {
   yield takeLatest(EDIT_CUSTODIAN_TYPE, editCustodianType);
-};
+}
 
 function* watchDeleteCustodianType() {
   yield takeLatest(DELETE_CUSTODIAN_TYPE, deleteCustodianType);
-};
+}
+
+function* watchGetContact() {
+  yield takeLatest(GET_CONTACT, getContactInfo);
+}
 
 export default function* custodianSaga() {
   yield all([
-    watchSearchCustodian(),
     watchGetCustodian(),
-    watchGetCustodianType(),
     watchAddCustodian(),
-    watchDeleteCustodian(),
     watchEditCustodian(),
-    watchGetContact(),
+    watchDeleteCustodian(),
     watchGetCustody(),
     watchAddCustody(),
     watchEditCustody(),
     watchUpdateCustody(),
+    watchGetCustodianType(),
     watchAddCustodianType(),
     watchEditCustodianType(),
     watchDeleteCustodianType(),
+    watchGetContact(),
   ]);
-};
+}

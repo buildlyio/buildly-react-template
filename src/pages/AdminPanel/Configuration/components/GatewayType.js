@@ -10,20 +10,20 @@ import { routes } from '@routes/routesConstants';
 import { GATEWAY_TYPE_COLUMNS } from '../ConfigurationConstants';
 import AddGatewayType from '../forms/AddGatewayType';
 
-const GatewayType = (props) => {
-  const {
-    dispatch,
-    loading,
-    gatewayTypeList,
-    redirectTo,
-    history,
-  } = props;
+const GatewayType = ({
+  dispatch,
+  loading,
+  gatewayTypeList,
+  redirectTo,
+  history,
+}) => {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
   const addPath = redirectTo
     ? `${redirectTo}/gateway-type`
     : `${routes.CONFIGURATION}/gateway-type/add`;
+
   const editPath = redirectTo
     ? `${redirectTo}/gateway-type`
     : `${routes.CONFIGURATION}/gateway-type/edit`;
@@ -72,6 +72,7 @@ const GatewayType = (props) => {
       setConfirmModal={setConfirmModal}
       handleConfirmModal={handleConfirmModal}
       confirmModalTitle="Are you sure you want to Delete this Gateway Type?"
+      tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddGatewayType} />
       <Route path={`${editPath}/:id`} component={AddGatewayType} />

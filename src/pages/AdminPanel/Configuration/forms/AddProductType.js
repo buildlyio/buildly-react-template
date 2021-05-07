@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   makeStyles,
   useTheme,
@@ -49,7 +50,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddProductType = ({
-  history, location, loading, dispatch,
+  history,
+  location,
+  loading,
+  dispatch,
 }) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -136,7 +140,7 @@ const AddProductType = ({
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }

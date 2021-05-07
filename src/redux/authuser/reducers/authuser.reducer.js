@@ -17,9 +17,6 @@ import {
   GET_ORGANIZATION,
   GET_ORGANIZATION_SUCCESS,
   GET_ORGANIZATION_FAILURE,
-  GET_USER_OPTIONS,
-  GET_USER_OPTIONS_SUCCESS,
-  GET_USER_OPTIONS_FAILURE,
   RESET_PASSWORD,
   RESET_PASSWORD_SUCCESS,
   RESET_PASSWORD_FAILURE,
@@ -29,8 +26,6 @@ import {
   RESET_PASSWORD_CHECK,
   RESET_PASSWORD_CHECK_SUCCESS,
   RESET_PASSWORD_CHECK_FAILURE,
-  GET_ORGANIZATION_OPTIONS_SUCCESS,
-  GET_ORGANIZATION_OPTIONS_FAILURE,
   UPDATE_ORGANIZATION,
   UPDATE_ORGANIZATION_SUCCESS,
   UPDATE_ORGANIZATION_FAILURE,
@@ -42,8 +37,6 @@ const initialState = {
   data: null,
   error: null,
   organizationData: null,
-  userOptions: null,
-  orgOptions: null,
 };
 
 // Reducer
@@ -200,33 +193,6 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case GET_USER_OPTIONS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        userOptions: null,
-        error: null,
-      };
-
-    case GET_USER_OPTIONS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        userOptions: action.data,
-        error: null,
-      };
-
-    case GET_USER_OPTIONS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        userOptions: null,
-        error: action.error,
-      };
-
     case RESET_PASSWORD:
       return {
         ...state,
@@ -297,24 +263,6 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        error: action.error,
-      };
-
-    case GET_ORGANIZATION_OPTIONS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        orgOptions: action.data,
-        error: null,
-      };
-
-    case GET_ORGANIZATION_OPTIONS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        orgOptions: null,
         error: action.error,
       };
 
