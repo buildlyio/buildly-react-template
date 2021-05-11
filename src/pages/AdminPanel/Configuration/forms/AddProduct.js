@@ -11,7 +11,7 @@ import {
   CircularProgress,
   MenuItem,
 } from '@material-ui/core';
-import Modal from '@components/Modal/Modal';
+import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 import {
@@ -59,7 +59,8 @@ const AddProduct = ({
 }) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
-  const [openModal, toggleModal] = useState(true);
+  const [openFormModal, setFormModal] = useState(true);
+  const [openConfirmModal, setConfirmModal] = useState(false);
 
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -67,6 +68,7 @@ const AddProduct = ({
     && location.state.type === 'edit'
     && location.state.data
   ) || {};
+
   const name = useInput((editData && editData.name) || '', {
     required: true,
   });
@@ -84,14 +86,34 @@ const AddProduct = ({
   });
   const [formError, setFormError] = useState({});
 
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
-
   const buttonText = editPage ? 'Save' : 'Add Product';
   const formTitle = editPage ? 'Edit Product' : 'Add Product';
 
-  const closeModal = () => {
-    toggleModal(false);
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+
+  const closeFormModal = () => {
+    const dataHasChanged = (
+      name.hasChanged()
+      || description.hasChanged()
+      || value.hasChanged()
+      || grossWeight.hasChanged()
+      || unit.hasChanged()
+    );
+
+    if (dataHasChanged) {
+      setConfirmModal(true);
+    } else {
+      setFormModal(false);
+      if (location && location.state) {
+        history.push(location.state.from);
+      }
+    }
+  };
+
+  const discardFormData = () => {
+    setConfirmModal(false);
+    setFormModal(false);
     if (location && location.state) {
       history.push(location.state.from);
     }
@@ -108,8 +130,8 @@ const AddProduct = ({
       ...editData,
       name: name.value,
       description: description.value,
-      value: Number(value.value),
-      gross_weight: Number(grossWeight.value),
+      value: value.value,
+      gross_weight: grossWeight.value,
       unit_of_measure: unit.value,
       organization_uuid: organization,
       edit_date: currentDateTime,
@@ -123,7 +145,10 @@ const AddProduct = ({
       };
       dispatch(addProduct(data));
     }
-    closeModal();
+    setFormModal(false);
+    if (location && location.state) {
+      history.push(location.state.from);
+    }
   };
 
   /**
@@ -174,13 +199,16 @@ const AddProduct = ({
 
   return (
     <div>
-      {openModal && (
-        <Modal
-          open={openModal}
-          setOpen={closeModal}
+      {openFormModal && (
+        <FormModal
+          open={openFormModal}
+          handleClose={closeFormModal}
           title={formTitle}
           titleClass={classes.formTitle}
           maxWidth="md"
+          openConfirmModal={openConfirmModal}
+          setConfirmModal={setConfirmModal}
+          handleConfirmModal={discardFormData}
         >
           <form
             className={classes.form}
@@ -235,6 +263,7 @@ const AddProduct = ({
                   margin="normal"
                   fullWidth
                   required
+                  type="number"
                   id="value"
                   label="Value"
                   name="name"
@@ -253,6 +282,7 @@ const AddProduct = ({
                   margin="normal"
                   fullWidth
                   required
+                  type="number"
                   id="grossWeight"
                   label="Gross Weight"
                   name="grossWeight"
@@ -328,7 +358,7 @@ const AddProduct = ({
                     fullWidth
                     variant="contained"
                     color="primary"
-                    onClick={() => closeModal()}
+                    onClick={discardFormData}
                     className={classes.submit}
                   >
                     Cancel
@@ -337,7 +367,7 @@ const AddProduct = ({
               </Grid>
             </Grid>
           </form>
-        </Modal>
+        </FormModal>
       )}
     </div>
   );

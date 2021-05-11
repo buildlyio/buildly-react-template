@@ -33,7 +33,7 @@ const Custodian = ({
   custodianOptions,
   contactOptions,
 }) => {
-  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
   const [deleteContactObjId, setDeleteContactObjId] = useState('');
   const [rows, setRows] = useState([]);
@@ -84,16 +84,16 @@ const Custodian = ({
     const contactObj = getUniqueContactInfo(item, contactInfo);
     setDeleteItemId(item.id);
     setDeleteContactObjId(contactObj.id);
-    setConfirmModal(true);
+    setDeleteModal(true);
   };
 
-  const handleConfirmModal = () => {
+  const handleDeleteModal = () => {
     dispatch(deleteCustodian(
       deleteItemId,
       deleteContactObjId,
       organization,
     ));
-    setConfirmModal(false);
+    setDeleteModal(false);
   };
 
   const onAddButtonClick = () => {
@@ -112,10 +112,10 @@ const Custodian = ({
       onAddButtonClick={onAddButtonClick}
       editAction={editItem}
       deleteAction={deleteItem}
-      openConfirmModal={openConfirmModal}
-      setConfirmModal={setConfirmModal}
-      handleConfirmModal={handleConfirmModal}
-      confirmModalTitle="Are you sure you want to delete this Custodian?"
+      openDeleteModal={openDeleteModal}
+      setDeleteModal={setDeleteModal}
+      handleDeleteModal={handleDeleteModal}
+      deleteModalTitle="Are you sure you want to delete this Custodian?"
       tableHeader="Custodians"
     >
       <Route path={addCustodianPath} component={AddCustodians} />

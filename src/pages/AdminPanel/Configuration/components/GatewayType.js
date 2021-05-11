@@ -17,7 +17,7 @@ const GatewayType = ({
   redirectTo,
   history,
 }) => {
-  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
   const addPath = redirectTo
@@ -50,12 +50,12 @@ const GatewayType = ({
 
   const deleteType = (item) => {
     setDeleteId(item.id);
-    setConfirmModal(true);
+    setDeleteModal(true);
   };
 
-  const handleConfirmModal = () => {
+  const handleDeleteModal = () => {
     dispatch(deleteGatewayType(deleteId));
-    setConfirmModal(false);
+    setDeleteModal(false);
   };
 
   return (
@@ -68,10 +68,10 @@ const GatewayType = ({
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
-      openConfirmModal={openConfirmModal}
-      setConfirmModal={setConfirmModal}
-      handleConfirmModal={handleConfirmModal}
-      confirmModalTitle="Are you sure you want to Delete this Gateway Type?"
+      openDeleteModal={openDeleteModal}
+      setDeleteModal={setDeleteModal}
+      handleDeleteModal={handleDeleteModal}
+      deleteModalTitle="Are you sure you want to Delete this Gateway Type?"
       tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddGatewayType} />

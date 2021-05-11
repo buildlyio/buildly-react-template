@@ -24,24 +24,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginBottom: theme.spacing(5),
   },
-  tileView: {
-    display: 'flex',
-  },
-  rowView: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  switchViewSection: {
-    background: '#383636',
-    width: '100%',
-    display: 'flex',
-    minHeight: '40px',
-    alignItems: 'center',
-  },
-  tileHeading: {
-    flex: 1,
-    padding: '8px',
-  },
   iconRight: {
     textAlign: 'right',
   },
@@ -58,11 +40,6 @@ const useStyles = makeStyles((theme) => ({
   backButton: {
     margin: theme.spacing(3, 0),
   },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
 }));
 
 /**
@@ -76,7 +53,7 @@ const MyAccount = ({
   loading,
 }) => {
   const classes = useStyles();
-  const [openModal, setModal] = useState(false);
+  const [openFormModal, setFormModal] = useState(false);
 
   let user;
   if (data && data.data) {
@@ -99,7 +76,7 @@ const MyAccount = ({
                   edge="end"
                   color="secondary"
                   aria-label="edit"
-                  onClick={() => setModal(true)}
+                  onClick={() => setFormModal(true)}
                 >
                   <EditIcon />
                 </IconButton>
@@ -208,20 +185,13 @@ const MyAccount = ({
       >
         Back To Shipment Page
       </Button>
-      {openModal && (
-        <Modal
-          open={openModal}
-          setOpen={() => setModal(!openModal)}
-          title="Edit Profile Info"
-          titleClass={classes.formTitle}
-          maxWidth="sm"
-        >
-          <EditProfileInfo
-            editData={user}
-            setModal={setModal}
-            organizationData={organizationData}
-          />
-        </Modal>
+      {openFormModal && (
+        <EditProfileInfo
+          editData={user}
+          openFormModal={openFormModal}
+          setFormModal={setFormModal}
+          organizationData={organizationData}
+        />
       )}
     </Box>
   );

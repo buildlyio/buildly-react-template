@@ -16,7 +16,7 @@ import {
   InputAdornment,
 } from '@material-ui/core';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import Modal from '@components/Modal/Modal';
+import FormModal from '@components/Modal/FormModal';
 import { UserContext } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
 import {
@@ -77,6 +77,10 @@ const AddCustodians = ({
   custodianOptions,
   contactOptions,
 }) => {
+  const classes = useStyles();
+  const [openFormModal, setFormModal] = useState(true);
+  const [openConfirmModal, setConfirmModal] = useState(false);
+
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
     location.state
@@ -85,8 +89,7 @@ const AddCustodians = ({
   ) || {};
   const redirectTo = location.state && location.state.from;
   const contactData = editPage && location.state.contactData;
-  const [openModal, toggleModal] = useState(true);
-  const classes = useStyles();
+
   const company = useInput(editData.name || '', {
     required: true,
   });
@@ -96,9 +99,6 @@ const AddCustodians = ({
   });
   const consortium = useInput('');
   const glnNumber = useInput(editData.custodian_glns || '');
-  const address = useInput(editData.custodian_contact_info || '', {
-    required: true,
-  });
   const city = useInput(contactData.city || '');
   const state = useInput(contactData.state || '', {
     required: true,
@@ -115,6 +115,7 @@ const AddCustodians = ({
 
   const buttonText = editPage ? 'Save' : 'Add Custodian';
   const formTitle = editPage ? 'Edit Custodian' : 'Add Custodian';
+
   const [custodianMetaData, setCustodianMetaData] = useState({});
   const [contactMetaData, setProductMetaData] = useState({});
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -128,8 +129,31 @@ const AddCustodians = ({
     }
   }, [contactOptions, custodianOptions]);
 
-  const closeModal = () => {
-    toggleModal(false);
+  const closeFormModal = () => {
+    const dataHasChanged = (
+      company.hasChanged()
+      || custodianType.hasChanged()
+      || city.hasChanged()
+      || state.hasChanged()
+      || country.hasChanged()
+      || zip.hasChanged()
+      || address_1.hasChanged()
+      || address_2.hasChanged()
+    );
+
+    if (dataHasChanged) {
+      setConfirmModal(true);
+    } else {
+      setFormModal(false);
+      if (location && location.state) {
+        history.push(redirectTo);
+      }
+    }
+  };
+
+  const discardFormData = () => {
+    setConfirmModal(false);
+    setFormModal(false);
     if (location && location.state) {
       history.push(redirectTo);
     }
@@ -229,13 +253,16 @@ const AddCustodians = ({
 
   return (
     <div>
-      {openModal && (
-        <Modal
-          open={openModal}
-          setOpen={closeModal}
+      {openFormModal && (
+        <FormModal
+          open={openFormModal}
+          handleClose={closeFormModal}
           title={formTitle}
           titleClass={classes.formTitle}
           maxWidth="md"
+          openConfirmModal={openConfirmModal}
+          setConfirmModal={setConfirmModal}
+          handleConfirmModal={discardFormData}
         >
           <form
             className={classes.form}
@@ -269,13 +296,11 @@ const AddCustodians = ({
                     && custodianMetaData.name.help_text && {
                       endAdornment: (
                         <InputAdornment position="end">
-                          {custodianMetaData.name.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                custodianMetaData.name.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              custodianMetaData.name.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -298,13 +323,11 @@ const AddCustodians = ({
                     && custodianMetaData.alias.help_text && {
                       endAdornment: (
                         <InputAdornment position="end">
-                          {custodianMetaData.alias.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                custodianMetaData.alias.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              custodianMetaData.alias.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -338,13 +361,11 @@ const AddCustodians = ({
                     && custodianMetaData.custodian_type.help_text && {
                       endAdornment: (
                         <InputAdornment position="start">
-                          {custodianMetaData.custodian_type.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                custodianMetaData.custodian_type.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              custodianMetaData.custodian_type.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -441,13 +462,11 @@ const AddCustodians = ({
                         && contactMetaData.address1.help_text && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {contactMetaData.address1.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    contactMetaData.address1.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  contactMetaData.address1.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -469,13 +488,11 @@ const AddCustodians = ({
                         && contactMetaData.address2.help_text && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {contactMetaData.address2.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    contactMetaData.address2.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  contactMetaData.address2.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -507,13 +524,11 @@ const AddCustodians = ({
                         && contactMetaData.city.help_text && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {contactMetaData.city.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    contactMetaData.city.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  contactMetaData.city.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -543,13 +558,11 @@ const AddCustodians = ({
                         && contactMetaData.postal_code.help_text && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {contactMetaData.postal_code.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    contactMetaData.postal_code.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  contactMetaData.postal_code.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -583,13 +596,11 @@ const AddCustodians = ({
                         && contactMetaData.state.help_text && {
                           endAdornment: (
                             <InputAdornment position="start">
-                              {contactMetaData.state.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    contactMetaData.state.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  contactMetaData.state.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -634,13 +645,11 @@ const AddCustodians = ({
                         && contactMetaData.country.help_text && {
                           endAdornment: (
                             <InputAdornment position="start">
-                              {contactMetaData.country.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    contactMetaData.country.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  contactMetaData.country.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -695,7 +704,7 @@ const AddCustodians = ({
                   fullWidth
                   variant="contained"
                   color="primary"
-                  onClick={() => closeModal()}
+                  onClick={discardFormData}
                   className={classes.submit}
                 >
                   Cancel
@@ -703,7 +712,7 @@ const AddCustodians = ({
               </Grid>
             </Grid>
           </form>
-        </Modal>
+        </FormModal>
       )}
     </div>
   );

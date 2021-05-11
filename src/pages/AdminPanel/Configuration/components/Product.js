@@ -20,7 +20,7 @@ const Product = ({
   history,
 }) => {
   const organization = useContext(UserContext).organization.organization_uuid;
-  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
   const addPath = redirectTo
@@ -59,12 +59,12 @@ const Product = ({
 
   const deleteType = (item) => {
     setDeleteId(item.id);
-    setConfirmModal(true);
+    setDeleteModal(true);
   };
 
-  const handleConfirmModal = () => {
+  const handleDeleteModal = () => {
     dispatch(deleteProduct(deleteId));
-    setConfirmModal(false);
+    setDeleteModal(false);
   };
 
   return (
@@ -77,10 +77,10 @@ const Product = ({
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
-      openConfirmModal={openConfirmModal}
-      setConfirmModal={setConfirmModal}
-      handleConfirmModal={handleConfirmModal}
-      confirmModalTitle="Are you sure you want to Delete this Product?"
+      openDeleteModal={openDeleteModal}
+      setDeleteModal={setDeleteModal}
+      handleDeleteModal={handleDeleteModal}
+      deleteModalTitle="Are you sure you want to Delete this Product?"
       tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddProduct} />

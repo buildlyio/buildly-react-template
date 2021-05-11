@@ -13,6 +13,7 @@ import {
   useTheme,
   InputAdornment,
 } from '@material-ui/core';
+import FormModal from '@components/Modal/FormModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { useInput } from '@hooks/useInput';
 import { updateUser } from '@redux/authuser/actions/authuser.actions';
@@ -20,9 +21,6 @@ import { setOptionsData } from '@utils/utilMethods';
 import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(8),
-  },
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
@@ -35,9 +33,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
     borderRadius: '18px',
   },
-  logo: {
-    width: '100%',
-  },
   buttonProgress: {
     position: 'absolute',
     top: '50%',
@@ -47,9 +42,6 @@ const useStyles = makeStyles((theme) => ({
   },
   loadingWrapper: {
     position: 'relative',
-  },
-  addressContainer: {
-    marginTop: theme.spacing(4),
   },
   formTitle: {
     fontWeight: 'bold',
@@ -68,12 +60,15 @@ const EditProfileInfo = ({
   dispatch,
   loading,
   editData,
-  setModal,
+  openFormModal,
+  setFormModal,
   organizationData,
   userOptions,
   orgOptions,
 }) => {
   const classes = useStyles();
+  const [openConfirmModal, setConfirmModal] = useState(false);
+
   const first_name = useInput(
     (editData && editData.first_name) || '',
     { required: true },
@@ -87,6 +82,7 @@ const EditProfileInfo = ({
     editData && editData.email_alert_flag,
   );
   const [formError, setFormError] = useState({});
+
   const [fieldsMetadata, setFieldsMetaData] = useState({
     first_name: '',
     last_name: '',
@@ -94,6 +90,9 @@ const EditProfileInfo = ({
     organisation_name: '',
     email_alert_flag: false,
   });
+
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
     const metadata = { ...fieldsMetadata };
@@ -145,7 +144,7 @@ const EditProfileInfo = ({
       email_alert_flag: emailAlertFlag,
     };
     dispatch(updateUser(editUserFormValue));
-    setModal(false);
+    setFormModal(false);
   };
 
   /**
@@ -188,11 +187,38 @@ const EditProfileInfo = ({
     return errorExists;
   };
 
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+  const closeFormModal = () => {
+    const dataHasChanged = (
+      first_name.hasChanged()
+      || last_name.hasChanged()
+      || organisation_name.hasChanged()
+      || email.hasChanged()
+      || (emailAlertFlag !== editData.email_alert_flag)
+    );
+
+    if (dataHasChanged) {
+      setConfirmModal(true);
+    } else {
+      setFormModal(false);
+    }
+  };
+
+  const discardFormData = () => {
+    setConfirmModal(false);
+    setFormModal(false);
+  };
 
   return (
-    <div>
+    <FormModal
+      open={openFormModal}
+      handleClose={closeFormModal}
+      title="Edit Profile Info"
+      titleClass={classes.formTitle}
+      maxWidth="sm"
+      openConfirmModal={openConfirmModal}
+      setConfirmModal={setConfirmModal}
+      handleConfirmModal={discardFormData}
+    >
       <form
         className={classes.form}
         noValidate
@@ -386,7 +412,7 @@ const EditProfileInfo = ({
               fullWidth
               variant="contained"
               color="primary"
-              onClick={() => setModal(false)}
+              onClick={discardFormData}
               className={classes.submit}
             >
               Cancel
@@ -394,7 +420,7 @@ const EditProfileInfo = ({
           </Grid>
         </Grid>
       </form>
-    </div>
+    </FormModal>
   );
 };
 

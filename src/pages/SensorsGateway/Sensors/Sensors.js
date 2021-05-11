@@ -25,7 +25,7 @@ const Sensors = ({
   gatewayData,
   sensorOptions,
 }) => {
-  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteSensorId, setDeleteSensorId] = useState('');
   const [rows, setRows] = useState([]);
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -69,12 +69,12 @@ const Sensors = ({
 
   const deleteSensorItem = (item) => {
     setDeleteSensorId(item.id);
-    setConfirmModal(true);
+    setDeleteModal(true);
   };
 
-  const handleConfirmModal = () => {
+  const handleDeleteModal = () => {
     dispatch(deleteSensor(deleteSensorId, organization));
-    setConfirmModal(false);
+    setDeleteModal(false);
   };
 
   const onAddButtonClick = () => {
@@ -93,10 +93,10 @@ const Sensors = ({
       onAddButtonClick={onAddButtonClick}
       editAction={editSensorItem}
       deleteAction={deleteSensorItem}
-      openConfirmModal={openConfirmModal}
-      setConfirmModal={setConfirmModal}
-      handleConfirmModal={handleConfirmModal}
-      confirmModalTitle="Are you sure you want to delete this Sensor?"
+      openDeleteModal={openDeleteModal}
+      setDeleteModal={setDeleteModal}
+      handleDeleteModal={handleDeleteModal}
+      deleteModalTitle="Are you sure you want to delete this Sensor?"
       tableHeader="Sensors"
       hideAddButton
     >

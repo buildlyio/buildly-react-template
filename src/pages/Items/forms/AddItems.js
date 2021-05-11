@@ -16,7 +16,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import Modal from '@components/Modal/Modal';
+import FormModal from '@components/Modal/FormModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
@@ -24,9 +24,6 @@ import { editItem, addItem } from '@redux/items/actions/items.actions';
 import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(8),
-  },
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
@@ -71,6 +68,10 @@ const AddItems = ({
   productOptions,
   itemOptions,
 }) => {
+  const classes = useStyles();
+  const [openFormModal, setFormModal] = useState(true);
+  const [openConfirmModal, setConfirmModal] = useState(false);
+
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -78,9 +79,7 @@ const AddItems = ({
     && location.state.type === 'edit'
     && location.state.data
   ) || {};
-  const [openModal, toggleModal] = useState(true);
-  const classes = useStyles();
-  const item_desc = useInput(editData.container_description || '');
+
   const item_name = useInput(editData.name || '', {
     required: true,
   });
@@ -119,14 +118,12 @@ const AddItems = ({
     editData.product_weight_unit_of_measure || '',
   );
   const [product_uom_name, setProductUomName] = useState('');
-  const container_name = useInput(editData.container_name || '', {
-    required: true,
-  });
 
   const [formError, setFormError] = useState({});
 
   const buttonText = editPage ? 'Save' : 'Add Item';
   const formTitle = editPage ? 'Edit Item' : 'Add Item';
+
   const [itemMetData, setItemMetaData] = useState({});
   const [productMetData, productMetaData] = useState({});
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -165,8 +162,27 @@ const AddItems = ({
     }
   }, [editPage, editData, products, productType, unitsOfMeasure]);
 
-  const closeModal = () => {
-    toggleModal(false);
+  const closeFormModal = () => {
+    const dataHasChanged = (
+      item_name.hasChanged()
+      || item_type.hasChanged()
+      || (product.url !== (editData.product[0] || ''))
+      || (units !== (editData.number_of_units || 1))
+    );
+
+    if (dataHasChanged) {
+      setConfirmModal(true);
+    } else {
+      setFormModal(false);
+      if (location && location.state) {
+        history.push(redirectTo);
+      }
+    }
+  };
+
+  const discardFormData = () => {
+    setConfirmModal(false);
+    setFormModal(false);
     if (location && location.state) {
       history.push(redirectTo);
     }
@@ -193,7 +209,6 @@ const AddItems = ({
       batch_run_id: batch_id,
       paper_tag_number: paper_tag_no,
       product_weight,
-      // container_name: container_name,
       product_value,
       product: [product_url],
       ...(editPage && editData && { id: editData.id }),
@@ -293,13 +308,16 @@ const AddItems = ({
 
   return (
     <div>
-      {openModal && (
-        <Modal
-          open={openModal}
-          setOpen={closeModal}
+      {openFormModal && (
+        <FormModal
+          open={openFormModal}
+          handleClose={closeFormModal}
           title={formTitle}
           titleClass={classes.formTitle}
           maxWidth="md"
+          openConfirmModal={openConfirmModal}
+          setConfirmModal={setConfirmModal}
+          handleConfirmModal={discardFormData}
         >
           <form
             className={classes.form}
@@ -396,20 +414,6 @@ const AddItems = ({
                     )}
                 </TextField>
               </Grid>
-              {/* <Grid item item xs={12} sm={6}>
-                <TextField
-                  variant='outlined'
-                  margin='normal'
-                  fullWidth
-                  multiline
-                  rows={4}
-                  id='item_desc'
-                  label='Container Description'
-                  name='item_desc'
-                  autoComplete='item_desc'
-                  {...item_desc.bind}
-                />
-              </Grid> */}
             </Grid>
             <Card
               variant="outlined"
@@ -617,7 +621,9 @@ const AddItems = ({
                           endAdornment: (
                             <InputAdornment position="end">
                               <CustomizedTooltips
-                                toolTipText={productMetData.gtin.help_text}
+                                toolTipText={
+                                  productMetData.gtin.help_text
+                                }
                               />
                             </InputAdornment>
                           ),
@@ -643,7 +649,9 @@ const AddItems = ({
                           endAdornment: (
                             <InputAdornment position="end">
                               <CustomizedTooltips
-                                toolTipText={productMetData.upc.help_text}
+                                toolTipText={
+                                  productMetData.upc.help_text
+                                }
                               />
                             </InputAdornment>
                           ),
@@ -669,7 +677,9 @@ const AddItems = ({
                           endAdornment: (
                             <InputAdornment position="end">
                               <CustomizedTooltips
-                                toolTipText={productMetData.ean.help_text}
+                                toolTipText={
+                                  productMetData.ean.help_text
+                                }
                               />
                             </InputAdornment>
                           ),
@@ -929,7 +939,7 @@ const AddItems = ({
                   fullWidth
                   variant="contained"
                   color="primary"
-                  onClick={() => closeModal()}
+                  onClick={discardFormData}
                   className={classes.submit}
                 >
                   Cancel
@@ -937,7 +947,7 @@ const AddItems = ({
               </Grid>
             </Grid>
           </form>
-        </Modal>
+        </FormModal>
       )}
     </div>
   );

@@ -17,7 +17,7 @@ const SensorType = ({
   redirectTo,
   history,
 }) => {
-  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
   const addPath = redirectTo
@@ -50,12 +50,12 @@ const SensorType = ({
 
   const deleteType = (item) => {
     setDeleteId(item.id);
-    setConfirmModal(true);
+    setDeleteModal(true);
   };
 
-  const handleConfirmModal = () => {
+  const handleDeleteModal = () => {
     dispatch(deleteSensorType(deleteId));
-    setConfirmModal(false);
+    setDeleteModal(false);
   };
 
   return (
@@ -68,10 +68,10 @@ const SensorType = ({
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
-      openConfirmModal={openConfirmModal}
-      setConfirmModal={setConfirmModal}
-      handleConfirmModal={handleConfirmModal}
-      confirmModalTitle="Are you sure you want to Delete this Sensor Type?"
+      openDeleteModal={openDeleteModal}
+      setDeleteModal={setDeleteModal}
+      handleDeleteModal={handleDeleteModal}
+      deleteModalTitle="Are you sure you want to Delete this Sensor Type?"
       tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddSensorType} />

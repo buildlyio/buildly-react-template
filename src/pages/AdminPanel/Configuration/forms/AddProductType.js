@@ -10,7 +10,7 @@ import {
   TextField,
   CircularProgress,
 } from '@material-ui/core';
-import Modal from '@components/Modal/Modal';
+import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 import {
@@ -57,7 +57,8 @@ const AddProductType = ({
 }) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
-  const [openModal, toggleModal] = useState(true);
+  const [openFormModal, setFormModal] = useState(true);
+  const [openConfirmModal, setConfirmModal] = useState(false);
 
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -65,19 +66,32 @@ const AddProductType = ({
     && location.state.type === 'edit'
     && location.state.data
   ) || {};
+
   const name = useInput((editData && editData.name) || '', {
     required: true,
   });
   const [formError, setFormError] = useState({});
 
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
-
   const buttonText = editPage ? 'Save' : 'Add Product Type';
   const formTitle = editPage ? 'Edit Product Type' : 'Add Product Type';
 
-  const closeModal = () => {
-    toggleModal(false);
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+
+  const closeFormModal = () => {
+    if (name.hasChanged()) {
+      setConfirmModal(true);
+    } else {
+      setFormModal(false);
+      if (location && location.state) {
+        history.push(location.state.from);
+      }
+    }
+  };
+
+  const discardFormData = () => {
+    setConfirmModal(false);
+    setFormModal(false);
     if (location && location.state) {
       history.push(location.state.from);
     }
@@ -105,7 +119,10 @@ const AddProductType = ({
       };
       dispatch(addProductType(data));
     }
-    closeModal();
+    setFormModal(false);
+    if (location && location.state) {
+      history.push(location.state.from);
+    }
   };
 
   /**
@@ -150,13 +167,16 @@ const AddProductType = ({
 
   return (
     <div>
-      {openModal && (
-        <Modal
-          open={openModal}
-          setOpen={closeModal}
+      {openFormModal && (
+        <FormModal
+          open={openFormModal}
+          handleClose={closeFormModal}
           title={formTitle}
           titleClass={classes.formTitle}
           maxWidth="md"
+          openConfirmModal={openConfirmModal}
+          setConfirmModal={setConfirmModal}
+          handleConfirmModal={discardFormData}
         >
           <form
             className={classes.form}
@@ -209,7 +229,7 @@ const AddProductType = ({
                     fullWidth
                     variant="contained"
                     color="primary"
-                    onClick={() => closeModal()}
+                    onClick={discardFormData}
                     className={classes.submit}
                   >
                     Cancel
@@ -218,7 +238,7 @@ const AddProductType = ({
               </Grid>
             </Grid>
           </form>
-        </Modal>
+        </FormModal>
       )}
     </div>
   );

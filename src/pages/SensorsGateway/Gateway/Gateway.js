@@ -25,7 +25,7 @@ const Gateway = ({
   gatewayOptions,
   shipmentData,
 }) => {
-  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteGatewayId, setDeleteGatewayId] = useState('');
   const [rows, setRows] = useState([]);
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -69,12 +69,12 @@ const Gateway = ({
 
   const deleteGatewayAction = (item) => {
     setDeleteGatewayId(item.id);
-    setConfirmModal(true);
+    setDeleteModal(true);
   };
 
-  const handleConfirmModal = () => {
+  const handleDeleteModal = () => {
     dispatch(deleteGateway(deleteGatewayId, organization));
-    setConfirmModal(false);
+    setDeleteModal(false);
   };
 
   const onAddButtonClick = () => {
@@ -93,10 +93,10 @@ const Gateway = ({
       onAddButtonClick={onAddButtonClick}
       editAction={editGatewayAction}
       deleteAction={deleteGatewayAction}
-      openConfirmModal={openConfirmModal}
-      setConfirmModal={setConfirmModal}
-      handleConfirmModal={handleConfirmModal}
-      confirmModalTitle="Are you sure you want to delete this Gateway?"
+      openDeleteModal={openDeleteModal}
+      setDeleteModal={setDeleteModal}
+      handleDeleteModal={handleDeleteModal}
+      deleteModalTitle="Are you sure you want to delete this Gateway?"
       tableHeader="Gateway"
       hideAddButton
     >

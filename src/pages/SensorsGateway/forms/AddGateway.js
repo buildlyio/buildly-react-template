@@ -18,7 +18,7 @@ import {
 } from '@material-ui/core';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { MapComponent } from '@components/MapComponent/MapComponent';
-import Modal from '@components/Modal/Modal';
+import FormModal from '@components/Modal/FormModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
 import { environment } from '@environments/environment';
@@ -31,9 +31,6 @@ import { validators } from '@utils/validators';
 import { GATEWAY_STATUS } from '../Constants';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(8),
-  },
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
@@ -74,6 +71,10 @@ const AddGateway = ({
   gatewayTypeList,
   gatewayOptions,
 }) => {
+  const classes = useStyles();
+  const [openFormModal, setFormModal] = useState(true);
+  const [openConfirmModal, setConfirmModal] = useState(false);
+
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -81,8 +82,7 @@ const AddGateway = ({
     && location.state.type === 'edit'
     && location.state.data
   ) || {};
-  const [openModal, toggleModal] = useState(true);
-  const classes = useStyles();
+
   const gateway_name = useInput(editData.name || '', {
     required: true,
   });
@@ -103,7 +103,6 @@ const AddGateway = ({
     && editData.last_known_location[0])
     || '',
   );
-  const gateway_uuid = useInput(editData.gateway_uuid || '');
   const gateway_status = useInput(editData.gateway_status || '', {
     required: true,
   });
@@ -121,8 +120,31 @@ const AddGateway = ({
     }
   }, [gatewayOptions]);
 
-  const closeModal = () => {
-    toggleModal(false);
+  const closeFormModal = () => {
+    const dataHasChanged = (
+      gateway_name.hasChanged()
+      || gateway_type.hasChanged()
+      || sim_card_id.hasChanged()
+      || battery_level.hasChanged()
+      || mac_address.hasChanged()
+      || gateway_status.hasChanged()
+      || (moment(activation_date).format('l') !== (moment(editData.activation_date || moment()).format('l')))
+      || (last_known_location !== ((editData.last_known_location && editData.last_known_location[0]) || 'null, null'))
+    );
+
+    if (dataHasChanged) {
+      setConfirmModal(true);
+    } else {
+      setFormModal(false);
+      if (location && location.state) {
+        history.push(redirectTo);
+      }
+    }
+  };
+
+  const discardFormData = () => {
+    setConfirmModal(false);
+    setFormModal(false);
     if (location && location.state) {
       history.push(redirectTo);
     }
@@ -206,13 +228,16 @@ const AddGateway = ({
 
   return (
     <div>
-      {openModal && (
-        <Modal
-          open={openModal}
-          setOpen={closeModal}
+      {openFormModal && (
+        <FormModal
+          open={openFormModal}
+          handleClose={closeFormModal}
           title={formTitle}
           titleClass={classes.formTitle}
           maxWidth="md"
+          openConfirmModal={openConfirmModal}
+          setConfirmModal={setConfirmModal}
+          handleConfirmModal={discardFormData}
         >
           <form
             className={classes.form}
@@ -491,8 +516,7 @@ const AddGateway = ({
                             <InputAdornment position="end">
                               <CustomizedTooltips
                                 toolTipText={
-                                  gatewayMetaData.last_known_location
-                                    .help_text
+                                  gatewayMetaData.last_known_location.help_text
                                 }
                               />
                             </InputAdornment>
@@ -560,7 +584,7 @@ const AddGateway = ({
                   fullWidth
                   variant="contained"
                   color="primary"
-                  onClick={() => closeModal()}
+                  onClick={discardFormData}
                   className={classes.submit}
                 >
                   Cancel
@@ -568,7 +592,7 @@ const AddGateway = ({
               </Grid>
             </Grid>
           </form>
-        </Modal>
+        </FormModal>
       )}
     </div>
   );

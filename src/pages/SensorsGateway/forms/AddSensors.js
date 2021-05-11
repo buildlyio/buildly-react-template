@@ -19,7 +19,7 @@ import {
 } from '@material-ui/core';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { MapComponent } from '@components/MapComponent/MapComponent';
-import Modal from '@components/Modal/Modal';
+import FormModal from '@components/Modal/FormModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
 import { environment } from '@environments/environment';
@@ -33,14 +33,6 @@ import { validators } from '@utils/validators';
 import SearchModal from '../Sensors/SearchModal';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    justifyContent: 'left',
-    flexWrap: 'wrap',
-    listStyle: 'none',
-    padding: theme.spacing(0.5),
-    margin: 0,
-  },
   chip: {
     margin: theme.spacing(0.5),
   },
@@ -85,14 +77,16 @@ const AddSensor = ({
   gatewayData,
   sensorOptions,
 }) => {
+  const classes = useStyles();
+  const [openFormModal, setFormModal] = useState(true);
+  const [openConfirmModal, setConfirmModal] = useState(false);
+
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
     location.state
     && location.state.type === 'edit'
     && location.state.data
   ) || {};
-  const [openModal, toggleModal] = useState(true);
-  const classes = useStyles();
 
   const sensor_name = useInput((editData && editData.name) || '', {
     required: true,
@@ -102,7 +96,7 @@ const AddSensor = ({
     { required: true },
   );
   const [activation_date, handleDateChange] = useState(
-    (editData && editData.activation_date) || new Date(),
+    (editData && editData.activation_date) || moment(),
   );
   const mac_address = useInput('');
   const [last_known_location, setLastLocation] = useState(
@@ -111,11 +105,9 @@ const AddSensor = ({
     && editData.last_known_location[0])
     || '',
   );
-  const [last_report_date_time, handleLastReportDate] = useState(
-    moment(new Date()),
-  );
-  const [formError, setFormError] = useState({});
   const sensor_placed = useInput('');
+  const [formError, setFormError] = useState({});
+
   const [associatedGateway, setAccociatedGateway] = useState(null);
   const [gateway, setGateway] = useState(
     (editData && editData.gateway) || '',
@@ -127,6 +119,8 @@ const AddSensor = ({
 
   const [sensorMetaData, setSensorMetaData] = useState({});
   const organization = useContext(UserContext).organization.organization_uuid;
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
     if (sensorOptions && sensorOptions.actions) {
@@ -149,8 +143,29 @@ const AddSensor = ({
     }
   }, [gatewayData, gateway]);
 
-  const closeModal = () => {
-    toggleModal(false);
+  const closeFormModal = () => {
+    const dataHasChanged = (
+      sensor_name.hasChanged()
+      || sensor_type.hasChanged()
+      || mac_address.hasChanged()
+      || (moment(activation_date).format('l') !== (moment(editData.activation_date || moment()).format('l')))
+      || (last_known_location !== ((editData.last_known_location && editData.last_known_location[0]) || 'null, null'))
+      || (gateway !== (editData.gateway || ''))
+    );
+
+    if (dataHasChanged) {
+      setConfirmModal(true);
+    } else {
+      setFormModal(false);
+      if (location && location.state) {
+        history.push(location.state.from);
+      }
+    }
+  };
+
+  const discardFormData = () => {
+    setConfirmModal(false);
+    setFormModal(false);
     if (location && location.state) {
       history.push(location.state.from);
     }
@@ -175,7 +190,6 @@ const AddSensor = ({
       activation_date,
       last_known_location: [last_known_location],
       gateway,
-      // last_report_date_time: last_report_date_time,
       associated_sensors_ids: [],
       associated_shipment_item_ids: [],
       ...(editPage && editData && { id: editData.id }),
@@ -236,9 +250,6 @@ const AddSensor = ({
     return errorExists;
   };
 
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
-
   const handleDelete = (chipToDelete) => () => {
     setAccociatedGateway(null);
     setGateway('');
@@ -250,13 +261,16 @@ const AddSensor = ({
 
   return (
     <div>
-      {openModal && (
-        <Modal
-          open={openModal}
-          setOpen={closeModal}
+      {openFormModal && (
+        <FormModal
+          open={openFormModal}
+          handleClose={closeFormModal}
           title={formTitle}
           titleClass={classes.formTitle}
           maxWidth="md"
+          openConfirmModal={openConfirmModal}
+          setConfirmModal={setConfirmModal}
+          handleConfirmModal={discardFormData}
         >
           <form
             className={classes.form}
@@ -291,13 +305,11 @@ const AddSensor = ({
                     && {
                       endAdornment: (
                         <InputAdornment position="end">
-                          {sensorMetaData.name.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                sensorMetaData.name.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              sensorMetaData.name.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -321,13 +333,11 @@ const AddSensor = ({
                     && {
                       endAdornment: (
                         <InputAdornment position="end">
-                          {sensorMetaData.last_known_location.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                sensorMetaData.last_known_location.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              sensorMetaData.last_known_location.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -411,13 +421,11 @@ const AddSensor = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {sensorMetaData.sensor_type.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    sensorMetaData.sensor_type.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  sensorMetaData.sensor_type.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -468,13 +476,11 @@ const AddSensor = ({
                         && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {sensorMetaData.mac_address.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    sensorMetaData.mac_address.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  sensorMetaData.mac_address.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -512,7 +518,7 @@ const AddSensor = ({
                   fullWidth
                   variant="contained"
                   color="primary"
-                  onClick={() => closeModal()}
+                  onClick={discardFormData}
                   className={classes.submit}
                 >
                   Cancel
@@ -563,7 +569,7 @@ const AddSensor = ({
               searchFieldPlaceHolder="Select the Value"
             />
           )}
-        </Modal>
+        </FormModal>
       )}
     </div>
   );

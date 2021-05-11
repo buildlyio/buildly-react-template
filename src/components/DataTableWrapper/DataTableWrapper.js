@@ -55,10 +55,10 @@ const DataTableWrapper = ({
   children,
   editAction,
   deleteAction,
-  openConfirmModal,
-  setConfirmModal,
-  handleConfirmModal,
-  confirmModalTitle,
+  openDeleteModal,
+  setDeleteModal,
+  handleDeleteModal,
+  deleteModalTitle,
   tableHeight,
   tableHeader,
   hideAddButton,
@@ -164,10 +164,10 @@ const DataTableWrapper = ({
       </div>
 
       <ConfirmModal
-        open={openConfirmModal}
-        setOpen={setConfirmModal}
-        submitAction={handleConfirmModal}
-        title={confirmModalTitle}
+        open={openDeleteModal}
+        setOpen={setDeleteModal}
+        submitAction={handleDeleteModal}
+        title={deleteModalTitle}
         submitText="Delete"
       />
     </Box>

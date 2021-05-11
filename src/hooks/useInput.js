@@ -21,8 +21,12 @@ export const useInput = (
     },
     clear: () => setValue(''),
     reset: () => setValue(initialValue),
-    hasChanged: () => (
-      !!(initialValue !== value && value !== '')
-    ),
+    hasChanged: () => {
+      let newValue = value;
+      if (typeof (initialValue) === 'number') {
+        newValue = Number(value);
+      }
+      return !!(initialValue !== newValue);
+    },
   };
 };
