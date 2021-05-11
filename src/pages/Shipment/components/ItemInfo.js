@@ -20,9 +20,10 @@ import {
 } from '@material-ui/icons';
 import DataTable from '@components/Table/Table';
 import { UserContext } from '@context/User.context';
-import { getFormattedRow, itemColumns } from '@pages/Items/ItemsConstants';
+import { getFormattedRow } from '@pages/Items/ItemsConstants';
 import { editShipment } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
+import { itemColumns } from '../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,6 +63,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// eslint-disable-next-line import/no-mutable-exports
+export let checkIfItemInfoEdited;
+
 const ItemsInfo = ({
   itemData,
   itemTypeList,
@@ -73,6 +77,8 @@ const ItemsInfo = ({
   dispatch,
   unitsOfMeasure,
   viewOnly,
+  setConfirmModal,
+  setConfirmModalFor,
 }) => {
   const classes = useStyles();
   const [itemIds, setItemIds] = useState(
@@ -102,10 +108,9 @@ const ItemsInfo = ({
     setItemIds(itemIdArray);
   };
 
-  const submitDisabled = () => (
-    itemIds.length === 0 || itemData === null
-  );
+  const submitDisabled = () => itemIds.length === 0 || itemData === null;
 
+  checkIfItemInfoEdited = () => Boolean(itemIds.length !== shipmentFormData.items.length);
   /**
    * Submit The form and add/edit custodian
    * @param {Event} event the default submit event
@@ -125,6 +130,24 @@ const ItemsInfo = ({
     );
   };
 
+  const onNextClick = (event) => {
+    if (checkIfItemInfoEdited()) {
+      // setConfirmModalFor('next');
+      // setConfirmModal(true);
+      handleSubmit(event);
+    }
+    handleNext();
+  };
+
+  const onCancelClick = () => {
+    if (checkIfItemInfoEdited()) {
+      setConfirmModalFor('close');
+      setConfirmModal(true);
+    } else {
+      handleCancel();
+    }
+  };
+
   return (
     <Box mb={5} mt={3}>
       <form noValidate onSubmit={handleSubmit}>
@@ -137,10 +160,10 @@ const ItemsInfo = ({
                   id="tags-outlined"
                   disabled={viewOnly}
                   options={
-                    (itemData && _.orderBy(itemData, ['name'], ['asc']))
-                    || []
+                    (itemData && _.orderBy(itemData, ['name'], ['asc'])) || []
                   }
                   getOptionLabel={(option) => option && option.name}
+                  getOptionSelected={(option, value) => option.name === value.name}
                   filterSelectedOptions
                   onChange={(event, newValue) => onInputChange(newValue)}
                   defaultValue={rows}
@@ -188,11 +211,7 @@ const ItemsInfo = ({
             )}
           </Grid>
         </Box>
-        <Grid
-          container
-          spacing={3}
-          className={classes.buttonContainer}
-        >
+        <Grid container spacing={3} className={classes.buttonContainer}>
           <Grid item xs={6} sm={2}>
             {viewOnly ? (
               <Button
@@ -201,7 +220,7 @@ const ItemsInfo = ({
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                onClick={handleCancel}
+                onClick={onCancelClick}
               >
                 Done
               </Button>
@@ -218,10 +237,10 @@ const ItemsInfo = ({
                   Save
                 </Button>
                 {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
+                <CircularProgress
+                  size={24}
+                  className={classes.buttonProgress}
+                />
                 )}
               </div>
             )}
@@ -231,10 +250,10 @@ const ItemsInfo = ({
               variant="contained"
               color="primary"
               fullWidth
-              onClick={handleNext}
+              onClick={onNextClick}
               className={classes.submit}
             >
-              Next: Custodians
+              Save & Next: Custodians
             </Button>
           </Grid>
         </Grid>

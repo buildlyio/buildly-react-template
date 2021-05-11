@@ -20,14 +20,14 @@ import {
 import DataTable from '@components/Table/Table';
 import { UserContext } from '@context/User.context';
 import {
-  gatewayColumns,
   getFormattedRow,
-  sensorsColumns,
   getFormattedSensorRow,
   getAvailableGateways,
 } from '@pages/SensorsGateway/Constants';
 import { editShipment } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
+import { checkIfCustodianInfoEdited } from './custodian-info/AddCustodyForm';
+import { gatewayColumns, sensorsColumns } from '../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,6 +67,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// eslint-disable-next-line import/no-mutable-exports
+export let checkIfSensorGatewayEdited = () => false;
+
 const SensorsGatewayInfo = ({
   gatewayData,
   gatewayTypeList,
@@ -80,6 +83,8 @@ const SensorsGatewayInfo = ({
   sensorData,
   sensorTypeList,
   viewOnly,
+  setConfirmModal,
+  setConfirmModalFor,
 }) => {
   const classes = useStyles();
   const [gatewayIds, setGatewayIds] = useState(
@@ -107,21 +112,18 @@ const SensorsGatewayInfo = ({
         }
       }
     });
-    rows = getFormattedRow(
-      selectedRows, gatewayTypeList, shipmentData,
-    );
-    sensorsRow = getFormattedSensorRow(
-      selectedSensors, sensorTypeList,
-    );
+    rows = getFormattedRow(selectedRows, gatewayTypeList, shipmentData);
+    sensorsRow = getFormattedSensorRow(selectedSensors, sensorTypeList);
   }
 
   const onInputChange = (value) => {
     setGatewayIds(value.map((val) => val.gateway_uuid));
   };
 
-  const submitDisabled = () => (
-    !gatewayIds.length || gatewayData === null
-  );
+  const submitDisabled = () => !gatewayIds.length || gatewayData === null;
+
+  // eslint-disable-next-line max-len
+  checkIfSensorGatewayEdited = () => Boolean(gatewayIds.length !== shipmentFormData.gateway_ids.length);
 
   /**
    * Submit The form and add/edit custodian
@@ -142,6 +144,23 @@ const SensorsGatewayInfo = ({
     );
   };
 
+  const onNextClick = (event) => {
+    if (checkIfSensorGatewayEdited()) {
+      // setConfirmModalFor('next');
+      // setConfirmModal(true);
+      handleSubmit(event);
+    }
+    handleNext();
+  };
+
+  const onCancelClick = () => {
+    if (checkIfSensorGatewayEdited()) {
+      setConfirmModalFor('close');
+      setConfirmModal(true);
+    } else {
+      handleCancel();
+    }
+  };
   return (
     <Box mb={5} mt={3}>
       <form noValidate onSubmit={handleSubmit}>
@@ -166,6 +185,7 @@ const SensorsGatewayInfo = ({
                     || []
                   }
                   getOptionLabel={(option) => option && option.name}
+                  getOptionSelected={(option, value) => option.name === value.name}
                   filterSelectedOptions
                   onChange={(event, newValue) => onInputChange(newValue)}
                   defaultValue={rows}
@@ -226,11 +246,7 @@ const SensorsGatewayInfo = ({
             )}
           </Grid>
         </Box>
-        <Grid
-          container
-          spacing={3}
-          className={classes.buttonContainer}
-        >
+        <Grid container spacing={3} className={classes.buttonContainer}>
           <Grid item xs={6} sm={2}>
             {viewOnly ? (
               <Button
@@ -239,7 +255,7 @@ const SensorsGatewayInfo = ({
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                onClick={handleCancel}
+                onClick={onCancelClick}
               >
                 Done
               </Button>
@@ -256,10 +272,10 @@ const SensorsGatewayInfo = ({
                   Save
                 </Button>
                 {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
+                <CircularProgress
+                  size={24}
+                  className={classes.buttonProgress}
+                />
                 )}
               </div>
             )}
@@ -270,10 +286,10 @@ const SensorsGatewayInfo = ({
               variant="contained"
               color="primary"
               fullWidth
-              onClick={handleNext}
+              onClick={onNextClick}
               className={classes.submit}
             >
-              Next: Environmental Limits
+              Save & Next: Environmental Limits
             </Button>
           </Grid>
         </Grid>

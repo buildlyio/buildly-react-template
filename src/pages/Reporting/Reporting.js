@@ -275,6 +275,7 @@ const Reporting = ({
               options={shipmentData || []}
               value={{ name: shipment }}
               getOptionLabel={(option) => option && option.name}
+              getOptionSelected={(option, value) => option.name === value.name}
               className={classes.dropDownSection}
               onChange={(event, newValue) => setSelectedShipment(newValue)}
               renderInput={(params) => (

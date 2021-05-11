@@ -72,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// eslint-disable-next-line import/no-mutable-exports
 export let checkIfEnvironmentLimitsEdited;
 
 const EnvironmentalLimitsInfo = ({
@@ -83,6 +84,7 @@ const EnvironmentalLimitsInfo = ({
   shipmentOptions,
   viewOnly,
   setConfirmModal,
+  setConfirmModalFor,
 }) => {
   const theme = useTheme();
   const classes = useStyles();
@@ -109,12 +111,10 @@ const EnvironmentalLimitsInfo = ({
   );
 
   const [min_humid_val, changeMinHumidVal] = useState(
-    (shipmentFormData && shipmentFormData.min_excursion_humidity)
-    || 0,
+    (shipmentFormData && shipmentFormData.min_excursion_humidity) || 0,
   );
   const [max_humid_val, changeMaxHumidVal] = useState(
-    (shipmentFormData && shipmentFormData.max_excursion_humidity)
-    || 100,
+    (shipmentFormData && shipmentFormData.max_excursion_humidity) || 100,
   );
   const [minMaxHumidValue, setMinMaxHumidValue] = useState(
     shipmentFormData && [
@@ -125,12 +125,10 @@ const EnvironmentalLimitsInfo = ({
     ],
   );
   const [low_humid_val, changeLowHumidVal] = useState(
-    (shipmentFormData && shipmentFormData.min_warning_humidity)
-    || 35,
+    (shipmentFormData && shipmentFormData.min_warning_humidity) || 35,
   );
   const [high_humid_val, changeHighHumidVal] = useState(
-    (shipmentFormData && shipmentFormData.max_warning_humidity)
-    || 75,
+    (shipmentFormData && shipmentFormData.max_warning_humidity) || 75,
   );
 
   const [shipmentMetaData, setShipmentMetaData] = useState({});
@@ -187,19 +185,26 @@ const EnvironmentalLimitsInfo = ({
     );
   };
 
-  checkIfEnvironmentLimitsEdited = () => (
-    high_temp_val !== shipmentFormData.max_warning_temp
-    || low_temp_val !== shipmentFormData.min_warning_temp
-    || max_temp_val !== shipmentFormData.max_excursion_temp
-    || min_temp_val !== shipmentFormData.min_excursion_temp
-    || high_humid_val !== shipmentFormData.max_warning_humidity
-    || low_humid_val !== shipmentFormData.min_warning_humidity
-    || max_humid_val !== shipmentFormData.max_excursion_humidity
-    || min_humid_val !== shipmentFormData.min_excursion_humidity
-  );
+  const shipmentFormMinMaxHumid = [
+    shipmentFormData.min_excursion_humidity || 0,
+    shipmentFormData.min_warning_humidity || 35,
+    shipmentFormData.max_warning_humidity || 75,
+    shipmentFormData.max_excursion_humidity || 100,
+  ];
+  const shipmentFormMinMaxTemp = [
+    shipmentFormData.min_excursion_temp || 0,
+    shipmentFormData.min_warning_temp || 35,
+    shipmentFormData.max_warning_temp || 75,
+    shipmentFormData.max_excursion_temp || 100,
+  ];
+  checkIfEnvironmentLimitsEdited = () => !(minMaxTempValue.length === shipmentFormMinMaxTemp.length
+    && shipmentFormMinMaxTemp.every((item) => minMaxTempValue.indexOf(item) > -1)) || !(
+    minMaxHumidValue.length === shipmentFormMinMaxHumid.length
+      && shipmentFormMinMaxHumid.every((item) => minMaxHumidValue.indexOf(item) > -1));
 
   const onCancelClick = () => {
     if (checkIfEnvironmentLimitsEdited() === true) {
+      setConfirmModalFor('close');
       setConfirmModal(true);
     } else {
       handleCancel();
@@ -207,18 +212,11 @@ const EnvironmentalLimitsInfo = ({
   };
 
   return (
-    <form
-      className={classes.form}
-      noValidate
-      onSubmit={handleSubmit}
-    >
+    <form className={classes.form} noValidate onSubmit={handleSubmit}>
       <Grid container spacing={4}>
         <Grid item xs={12} md={6} sm={6}>
           <Card variant="outlined">
-            <Typography
-              className={classes.boxHeading}
-              variant="body2"
-            >
+            <Typography className={classes.boxHeading} variant="body2">
               Temperature settings
             </Typography>
             <CardContent>
@@ -236,8 +234,7 @@ const EnvironmentalLimitsInfo = ({
                     disabled={viewOnly}
                     InputProps={
                       shipmentMetaData.max_excursion_temp
-                      && shipmentMetaData.max_excursion_temp.help_text
-                      && {
+                      && shipmentMetaData.max_excursion_temp.help_text && {
                         endAdornment: (
                           <InputAdornment position="end">
                             {shipmentMetaData.max_excursion_temp.help_text && (
@@ -264,8 +261,7 @@ const EnvironmentalLimitsInfo = ({
                     disabled={viewOnly}
                     InputProps={
                       shipmentMetaData.max_warning_temp
-                      && shipmentMetaData.max_warning_temp.help_text
-                      && {
+                      && shipmentMetaData.max_warning_temp.help_text && {
                         endAdornment: (
                           <InputAdornment position="end">
                             {shipmentMetaData.max_warning_temp.help_text && (
@@ -292,8 +288,7 @@ const EnvironmentalLimitsInfo = ({
                     disabled={viewOnly}
                     InputProps={
                       shipmentMetaData.min_warning_temp
-                      && shipmentMetaData.min_warning_temp.help_text
-                      && {
+                      && shipmentMetaData.min_warning_temp.help_text && {
                         endAdornment: (
                           <InputAdornment position="end">
                             {shipmentMetaData.min_warning_temp.help_text && (
@@ -320,8 +315,7 @@ const EnvironmentalLimitsInfo = ({
                     disabled={viewOnly}
                     InputProps={
                       shipmentMetaData.min_excursion_temp
-                      && shipmentMetaData.min_excursion_temp.help_text
-                      && {
+                      && shipmentMetaData.min_excursion_temp.help_text && {
                         endAdornment: (
                           <InputAdornment position="end">
                             {shipmentMetaData.min_excursion_temp.help_text && (
@@ -364,10 +358,7 @@ const EnvironmentalLimitsInfo = ({
         </Grid>
         <Grid item xs={12} md={6} sm={6}>
           <Card variant="outlined">
-            <Typography
-              className={classes.boxHeading}
-              variant="body2"
-            >
+            <Typography className={classes.boxHeading} variant="body2">
               Humidity settings (%)
             </Typography>
             <CardContent>
@@ -385,16 +376,17 @@ const EnvironmentalLimitsInfo = ({
                     disabled={viewOnly}
                     InputProps={
                       shipmentMetaData.max_excursion_humidity
-                      && shipmentMetaData.max_excursion_humidity.help_text
-                      && {
+                      && shipmentMetaData.max_excursion_humidity.help_text && {
                         endAdornment: (
                           <InputAdornment position="end">
-                            {shipmentMetaData.max_excursion_humidity.help_text && (
-                              <CustomizedTooltips
-                                toolTipText={
-                                  shipmentMetaData.max_excursion_humidity.help_text
-                                }
-                              />
+                            {shipmentMetaData.max_excursion_humidity
+                              .help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    shipmentMetaData.max_excursion_humidity
+                                      .help_text
+                                  }
+                                />
                             )}
                           </InputAdornment>
                         ),
@@ -413,16 +405,17 @@ const EnvironmentalLimitsInfo = ({
                     disabled={viewOnly}
                     InputProps={
                       shipmentMetaData.max_warning_humidity
-                      && shipmentMetaData.max_warning_humidity.help_text
-                      && {
+                      && shipmentMetaData.max_warning_humidity.help_text && {
                         endAdornment: (
                           <InputAdornment position="end">
-                            {shipmentMetaData.max_warning_humidity.help_text && (
-                              <CustomizedTooltips
-                                toolTipText={
-                                  shipmentMetaData.max_warning_humidity.help_text
-                                }
-                              />
+                            {shipmentMetaData.max_warning_humidity
+                              .help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    shipmentMetaData.max_warning_humidity
+                                      .help_text
+                                  }
+                                />
                             )}
                           </InputAdornment>
                         ),
@@ -441,16 +434,17 @@ const EnvironmentalLimitsInfo = ({
                     disabled={viewOnly}
                     InputProps={
                       shipmentMetaData.min_warning_humidity
-                      && shipmentMetaData.min_warning_humidity.help_text
-                      && {
+                      && shipmentMetaData.min_warning_humidity.help_text && {
                         endAdornment: (
                           <InputAdornment position="end">
-                            {shipmentMetaData.min_warning_humidity.help_text && (
-                              <CustomizedTooltips
-                                toolTipText={
-                                  shipmentMetaData.min_warning_humidity.help_text
-                                }
-                              />
+                            {shipmentMetaData.min_warning_humidity
+                              .help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    shipmentMetaData.min_warning_humidity
+                                      .help_text
+                                  }
+                                />
                             )}
                           </InputAdornment>
                         ),
@@ -469,16 +463,17 @@ const EnvironmentalLimitsInfo = ({
                     disabled={viewOnly}
                     InputProps={
                       shipmentMetaData.min_excursion_humidity
-                      && shipmentMetaData.min_excursion_humidity.help_text
-                      && {
+                      && shipmentMetaData.min_excursion_humidity.help_text && {
                         endAdornment: (
                           <InputAdornment position="end">
-                            {shipmentMetaData.min_excursion_humidity.help_text && (
-                              <CustomizedTooltips
-                                toolTipText={
-                                  shipmentMetaData.min_excursion_humidity.help_text
-                                }
-                              />
+                            {shipmentMetaData.min_excursion_humidity
+                              .help_text && (
+                                <CustomizedTooltips
+                                  toolTipText={
+                                    shipmentMetaData.min_excursion_humidity
+                                      .help_text
+                                  }
+                                />
                             )}
                           </InputAdornment>
                         ),
@@ -561,6 +556,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
   ...state.shipmentReducer,
+  ...state.optionsReducer,
 });
 
 export default connect(mapStateToProps)(EnvironmentalLimitsInfo);

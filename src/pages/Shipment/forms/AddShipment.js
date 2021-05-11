@@ -19,12 +19,16 @@ import EnvironmentalLimitsInfo, {
   checkIfEnvironmentLimitsEdited,
 } from '../components/EnvironmentalLimitsInfo';
 import CustodianInfo from '../components/custodian-info/CustodianInfo';
-import ItemInfo from '../components/ItemInfo';
-import SensorsGatewayInfo from '../components/Sensors&GatewayInfo';
+import ItemInfo, { checkIfItemInfoEdited } from '../components/ItemInfo';
+import SensorsGatewayInfo, {
+  checkIfSensorGatewayEdited,
+} from '../components/Sensors&GatewayInfo';
 import ShipmentInfo, {
   checkIfShipmentInfoEdited,
 } from '../components/ShipmentInfo';
-import ShipmentKeyInfo from '../components/ShipmentKeyInfo';
+import ShipmentKeyInfo, {
+  checkIfShipmentKeyEdited,
+} from '../components/ShipmentKeyInfo';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const getSteps = () => ([
+const getSteps = () => [
   'Shipment Details',
   'Shipment Key',
   'Items',
@@ -59,7 +63,7 @@ const getSteps = () => ([
   'Sensors & Gateways',
   // 'Shipment Overview',
   'Environmental Limits',
-]);
+];
 
 const getStepContent = (
   stepIndex,
@@ -70,6 +74,7 @@ const getStepContent = (
   maxSteps,
   handleCancel,
   setConfirmModal,
+  setConfirmModalFor,
 ) => {
   switch (stepIndex) {
     case 0:
@@ -90,6 +95,7 @@ const getStepContent = (
             handleCancel={handleCancel}
             redirectTo={`${routes.SHIPMENT}`}
             setConfirmModal={setConfirmModal}
+            setConfirmModalFor={setConfirmModalFor}
           />
         </ViewDetailsWrapper>
       );
@@ -108,6 +114,8 @@ const getStepContent = (
             viewOnly={viewOnly}
             handleNext={handleNext}
             handleCancel={handleCancel}
+            setConfirmModal={setConfirmModal}
+            setConfirmModalFor={setConfirmModalFor}
           />
         </ViewDetailsWrapper>
       );
@@ -128,6 +136,8 @@ const getStepContent = (
             redirectTo={`${routes.SHIPMENT}/add`}
             handleNext={handleNext}
             handleCancel={handleCancel}
+            setConfirmModal={setConfirmModal}
+            setConfirmModalFor={setConfirmModalFor}
           />
         </ViewDetailsWrapper>
       );
@@ -148,6 +158,8 @@ const getStepContent = (
             redirectTo={`${routes.SHIPMENT}/add`}
             handleNext={handleNext}
             handleCancel={handleCancel}
+            setConfirmModal={setConfirmModal}
+            setConfirmModalFor={setConfirmModalFor}
           />
         </ViewDetailsWrapper>
       );
@@ -168,6 +180,8 @@ const getStepContent = (
             redirectTo={`${routes.SHIPMENT}/add`}
             handleNext={handleNext}
             handleCancel={handleCancel}
+            setConfirmModal={setConfirmModal}
+            setConfirmModalFor={setConfirmModalFor}
           />
         </ViewDetailsWrapper>
       );
@@ -189,6 +203,7 @@ const getStepContent = (
             handleNext={handleNext}
             handleCancel={handleCancel}
             setConfirmModal={setConfirmModal}
+            setConfirmModalFor={setConfirmModalFor}
           />
         </ViewDetailsWrapper>
       );
@@ -206,7 +221,7 @@ const AddShipment = (props) => {
   const editData = location.state && location.state.data;
   const user = useContext(UserContext);
   // For non-admins the forms becomes view-only once the shipment status is no longer just planned
-  const viewOnly = !(checkForGlobalAdmin(user))
+  const viewOnly = !checkForGlobalAdmin(user)
     && editPage
     && editData
     && editData.status
@@ -215,6 +230,8 @@ const AddShipment = (props) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [openModal, toggleModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
+  const [confirmModalFor, setConfirmModalFor] = useState('');
+
   const steps = getSteps();
   const maxSteps = steps.length;
   let formTitle;
@@ -235,30 +252,52 @@ const AddShipment = (props) => {
   };
 
   const handleStep = (step) => () => {
-    if (shipmentFormData !== null) {
-      setActiveStep(step);
+    if (checkIfFormEdited(activeStep)) {
+      setConfirmModalFor(`step-${step}`);
+      setConfirmModal(true);
+    } else {
+      handleConfirmModal();
+      if (shipmentFormData !== null) {
+        setActiveStep(step);
+      }
     }
   };
 
   const closeModal = () => {
-    if (checkIfFormEdited(activeStep)) setConfirmModal(true);
-    else {
-      handleConfirmModal();
+    if (checkIfFormEdited(activeStep)) {
+      setConfirmModalFor('close');
+      setConfirmModal(true);
+    } else {
       toggleModal(false);
+      dispatch(saveShipmentFormData(null));
+      history.push(routes.SHIPMENT);
     }
   };
 
   const handleCancel = () => {
-    if (checkIfFormEdited(activeStep)) setConfirmModal(true);
-    else {
-      handleConfirmModal();
+    if (checkIfFormEdited(activeStep)) {
+      setConfirmModalFor('close');
+      setConfirmModal(true);
+    } else {
+      dispatch(saveShipmentFormData(null));
+      history.push(routes.SHIPMENT);
     }
   };
 
   const handleConfirmModal = () => {
     setConfirmModal(false);
-    dispatch(saveShipmentFormData(null));
-    history.push(routes.SHIPMENT);
+    if (confirmModalFor === 'close') {
+      dispatch(saveShipmentFormData(null));
+      history.push(routes.SHIPMENT);
+    } else if (confirmModalFor === 'next') {
+      handleNext();
+    } else if (confirmModalFor.includes('step')) {
+      // eslint-disable-next-line radix
+      const step = parseInt(confirmModalFor.split('-')[1]);
+      if (shipmentFormData !== null) {
+        setActiveStep(step);
+      }
+    }
   };
 
   const checkIfFormEdited = (currentStep) => {
@@ -267,16 +306,16 @@ const AddShipment = (props) => {
         return checkIfShipmentInfoEdited();
 
       case 1:
-        return false;
+        return checkIfShipmentKeyEdited();
 
       case 2:
-        return false;
+        return checkIfItemInfoEdited();
 
       case 3:
-        return false;
+        return false; // Handled in Custody Info
 
       case 4:
-        return false;
+        return checkIfSensorGatewayEdited();
 
       case 5:
         return checkIfEnvironmentLimitsEdited();
@@ -300,16 +339,11 @@ const AddShipment = (props) => {
             <Hidden xsDown>
               <Grid container alignItems="center" justify="center">
                 <Grid item sm={10}>
-                  <Stepper
-                    activeStep={activeStep}
-                    alternativeLabel
-                    nonLinear
-                  >
+                  <Stepper activeStep={activeStep} alternativeLabel nonLinear>
                     {steps.map((label, index) => (
                       <Step
                         key={`step${index}:${label}`}
-                        className={`${
-                          shipmentFormData !== null && classes.step
+                        className={`${shipmentFormData !== null && classes.step
                         }`}
                         onClick={handleStep(index)}
                       >
@@ -332,6 +366,7 @@ const AddShipment = (props) => {
                   maxSteps,
                   handleCancel,
                   setConfirmModal,
+                  setConfirmModalFor,
                 )}
               </div>
               <ConfirmModal

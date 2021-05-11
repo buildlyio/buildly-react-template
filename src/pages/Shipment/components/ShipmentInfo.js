@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -81,6 +82,7 @@ const useStyles = makeStyles((theme) => ({
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
+// eslint-disable-next-line import/no-mutable-exports
 export let checkIfShipmentInfoEdited;
 
 const ShipmentInfo = (props) => {
@@ -97,6 +99,7 @@ const ShipmentInfo = (props) => {
     shipmentOptions,
     viewOnly,
     setConfirmModal,
+    setConfirmModalFor,
   } = props;
   const classes = useStyles();
   const theme = useTheme();
@@ -343,6 +346,7 @@ const ShipmentInfo = (props) => {
     }
     setFlags(flagsUrl);
   };
+  const shipmentFlags = (editData && editData.flags) || [];
 
   checkIfShipmentInfoEdited = () => (
     shipment_name.hasChanged()
@@ -352,18 +356,21 @@ const ShipmentInfo = (props) => {
     || route_desc.hasChanged()
     || mode_type.hasChanged()
     || route_dist.hasChanged()
+    || (flags.length !== shipmentFlags.length)
   );
 
-  const onNextClick = () => {
+  const onNextClick = (event) => {
     if (checkIfShipmentInfoEdited() === true) {
-      setConfirmModal(true);
-    } else {
-      handleNext();
+      // setConfirmModalFor('next');
+      // setConfirmModal(true);
+      handleSubmit(event);
     }
+    handleNext();
   };
 
   const onCancelClick = () => {
     if (checkIfShipmentInfoEdited() === true) {
+      setConfirmModalFor('close');
       setConfirmModal(true);
     } else {
       handleCancel();
@@ -711,6 +718,7 @@ const ShipmentInfo = (props) => {
                             ? `${option.name} (${option.type})`
                             : ''
                         )}
+                        getOptionSelected={(option, value) => `${option.name} (${option.type})` === `${value.name} (${value.type})`}
                         style={{ flex: 1 }}
                         onChange={(event, newValue) => onShipmentFlagChange(newValue)}
                         value={
@@ -898,7 +906,7 @@ const ShipmentInfo = (props) => {
                 disabled={shipmentFormData === null}
                 className={classes.submit}
               >
-                Next: Shipment Key
+                Save & Next: Shipment Key
               </Button>
             </Grid>
           </Grid>
@@ -913,6 +921,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.shipmentReducer,
   ...state.itemsReducer,
   ...state.custodianReducer,
+  ...state.optionsReducer,
 });
 
 export default connect(mapStateToProps)(ShipmentInfo);

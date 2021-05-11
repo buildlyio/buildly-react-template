@@ -23,6 +23,7 @@ const ShipmentRouteInfo = ({
       && custodianData.length
       && shipmentFormData
     ) {
+      // eslint-disable-next-line max-len
       const filteredCustodyData = custodyData.filter((data) => data.shipment_id === shipmentFormData.shipment_uuid);
       const customizedRows = getFormattedCustodyRows(
         filteredCustodyData,

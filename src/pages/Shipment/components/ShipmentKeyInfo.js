@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -14,13 +15,9 @@ import {
   Link,
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import {
-  PictureAsPdf as PictureAsPdfIcon,
-} from '@material-ui/icons';
+import { PictureAsPdf as PictureAsPdfIcon } from '@material-ui/icons';
 import Loader from '@components/Loader/Loader';
-import {
-  pdfIdentifier,
-} from '@redux/shipment/actions/shipment.actions';
+import { pdfIdentifier } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
 import PdfViewer from './PDFViewer';
 
@@ -67,6 +64,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// eslint-disable-next-line import/no-mutable-exports
+export let checkIfShipmentKeyEdited;
+
 const ShipmentKeyInfo = ({
   dispatch,
   shipmentFormData,
@@ -75,9 +75,12 @@ const ShipmentKeyInfo = ({
   handleNext,
   handleCancel,
   history,
+  setConfirmModal,
+  setConfirmModalFor,
 }) => {
   const classes = useStyles();
   const worker = createWorker({
+    // eslint-disable-next-line no-console
     logger: (m) => console.log(m),
   });
 
@@ -103,7 +106,8 @@ const ShipmentKeyInfo = ({
       const re = new RegExp(`(.{0,20})${key}(.{0,20})`, 'gi');
       let m;
       const values = [];
-      while (m = re.exec(text)) {
+      // eslint-disable-next-line no-cond-assign
+      while ((m = re.exec(text))) {
         // let line = (m[1] ? '...' : '') + m[0] + (m[2] ? '...' : '');
         values.push(m[2]);
       }
@@ -126,19 +130,19 @@ const ShipmentKeyInfo = ({
     event.preventDefault();
     const uploadFile = new FormData();
     uploadFile.append('file', file, file.name);
-    const identifier = key
-      ? JSON.stringify({ [key]: keyValue })
-      : null;
+    const identifier = key ? JSON.stringify({ [key]: keyValue }) : null;
 
-    dispatch(pdfIdentifier(
-      uploadFile,
-      file.name,
-      identifier,
-      shipmentFormData,
-      history,
-      `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
-      shipmentFormData.organization_uuid,
-    ));
+    dispatch(
+      pdfIdentifier(
+        uploadFile,
+        file.name,
+        identifier,
+        shipmentFormData,
+        history,
+        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
+        shipmentFormData.organization_uuid,
+      ),
+    );
 
     const fileInput = document.getElementById('key-file');
     setFile(null);
@@ -147,34 +151,53 @@ const ShipmentKeyInfo = ({
     fileInput.value = '';
     fileInput.files = null;
   };
-
+  let fileChanged = false;
   const fileChange = (event) => {
     const maxAllowedSize = 2 * 1024 * 1024;
     if (event.target.files[0].type === 'application/pdf') {
       if (event.target.files[0].size < maxAllowedSize) {
         setFile(event.target.files[0]);
         setLoadingText(true);
+        fileChanged = true;
       } else {
         event.target.files = null;
         event.target.value = '';
+        // eslint-disable-next-line no-alert
         alert('File size is more that 2MB. Please upload another file.');
       }
     } else {
       event.target.files = null;
       event.target.value = '';
+      // eslint-disable-next-line no-alert
       alert('Only PDF files are allowed for upload.');
+    }
+  };
+
+  checkIfShipmentKeyEdited = () => fileChanged || Boolean(key || keyValue);
+
+  const onNextClick = (event) => {
+    if (checkIfShipmentKeyEdited()) {
+      // setConfirmModalFor('next');
+      // setConfirmModal(true);
+      handleSubmit(event);
+    }
+    handleNext();
+  };
+
+  const onCancelClick = () => {
+    if (checkIfShipmentKeyEdited()) {
+      setConfirmModalFor('close');
+      setConfirmModal(true);
+    } else {
+      handleCancel();
     }
   };
 
   return (
     <Container className={classes.root} maxWidth="sm">
-      {loadingText
-        && (
-        <Loader
-          open={loadingText}
-          label="Extracting text from selected PDF"
-        />
-        )}
+      {loadingText && (
+        <Loader open={loadingText} label="Extracting text from selected PDF" />
+      )}
       <form noValidate onSubmit={handleSubmit}>
         <Card variant="outlined">
           <CardContent>
@@ -190,12 +213,11 @@ const ShipmentKeyInfo = ({
               onChange={fileChange}
               helperText={
                 shipmentFormData
-                && shipmentFormData.uploaded_pdf
-                && shipmentFormData.uploaded_pdf_link
-                && shipmentFormData.unique_identifier
-                && shipmentFormData.uploaded_pdf.length > 0
-                && shipmentFormData.uploaded_pdf_link.length > 0
-                  ? (
+                  && shipmentFormData.uploaded_pdf
+                  && shipmentFormData.uploaded_pdf_link
+                  && shipmentFormData.unique_identifier
+                  && shipmentFormData.uploaded_pdf.length > 0
+                  && shipmentFormData.uploaded_pdf_link.length > 0 ? (
                     <>
                       <span className={classes.caption}>
                         <PictureAsPdfIcon
@@ -210,15 +232,15 @@ const ShipmentKeyInfo = ({
                               <React.Fragment key={index}>
                                 <Link
                                   color="primary"
-                                  href={
-                                  shipmentFormData.uploaded_pdf_link[index]
-                                }
+                                  href={shipmentFormData.uploaded_pdf_link[index]}
                                   target="_blank"
                                 >
                                   {pdfName}
                                 </Link>
-                                {index < shipmentFormData.uploaded_pdf.length - 1
-                                && <span>{', '}</span>}
+                                {index
+                                  < shipmentFormData.uploaded_pdf.length - 1 && (
+                                    <span>{', '}</span>
+                                )}
                               </React.Fragment>
                             ),
                           )}
@@ -230,36 +252,33 @@ const ShipmentKeyInfo = ({
                       <br />
                       <span>
                         {`${_.keys(
-                          JSON.parse(
-                            shipmentFormData.unique_identifier,
-                          ),
-                        )[0]}: ${_.values(
-                          JSON.parse(
-                            shipmentFormData.unique_identifier,
-                          ),
-                        )[0]}`}
+                          JSON.parse(shipmentFormData.unique_identifier),
+                        )[0]
+                        }: ${_.values(
+                          JSON.parse(shipmentFormData.unique_identifier),
+                        )[0]
+                        }`}
                       </span>
                     </>
+                  ) : (
+                    ''
                   )
-                  : ''
               }
             />
-            {file
-            && (
-            <TextField
-              className={classes.textfield}
-              variant="outlined"
-              fullWidth
-              id="file-search"
-              name="file-search"
-              label="Which should be the key?"
-              value={key}
-              onChange={(e) => setKey(e.target.value)}
-              onBlur={searchOnBlur}
-            />
+            {file && (
+              <TextField
+                className={classes.textfield}
+                variant="outlined"
+                fullWidth
+                id="file-search"
+                name="file-search"
+                label="Which should be the key?"
+                value={key}
+                onChange={(e) => setKey(e.target.value)}
+                onBlur={searchOnBlur}
+              />
             )}
-            {file && key
-              && (
+            {file && key && (
               <Autocomplete
                 freeSolo
                 className={classes.autoComplete}
@@ -278,14 +297,10 @@ const ShipmentKeyInfo = ({
                   />
                 )}
               />
-              )}
+            )}
           </CardContent>
         </Card>
-        <Grid
-          className={classes.buttonContainer}
-          container
-          spacing={3}
-        >
+        <Grid className={classes.buttonContainer} container spacing={3}>
           <Grid item xs={6} sm={2}>
             {viewOnly ? (
               <Button
@@ -294,7 +309,7 @@ const ShipmentKeyInfo = ({
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                onClick={handleCancel}
+                onClick={onCancelClick}
               >
                 Done
               </Button>
@@ -306,17 +321,15 @@ const ShipmentKeyInfo = ({
                   variant="contained"
                   color="primary"
                   className={classes.submit}
-                  disabled={
-                    Boolean(loading || !file || (key && !keyValue))
-                  }
+                  disabled={Boolean(loading || !file || (key && !keyValue))}
                 >
                   Save
                 </Button>
                 {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
+                <CircularProgress
+                  size={24}
+                  className={classes.buttonProgress}
+                />
                 )}
               </div>
             )}
@@ -326,22 +339,21 @@ const ShipmentKeyInfo = ({
               variant="contained"
               color="primary"
               fullWidth
-              onClick={handleNext}
+              onClick={onNextClick}
               className={classes.submit}
             >
-              Next: Items
+              Save & Next: Items
             </Button>
           </Grid>
         </Grid>
       </form>
-      {file
-        && (
+      {file && (
         <PdfViewer
           canvasClass={classes.preview}
           url={URL.createObjectURL(file)}
           getPdfText={getPdfText}
         />
-        )}
+      )}
     </Container>
   );
 };
