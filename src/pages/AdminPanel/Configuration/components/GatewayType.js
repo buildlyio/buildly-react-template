@@ -60,6 +60,7 @@ const GatewayType = ({
 
   return (
     <DataTableWrapper
+      noSpace
       loading={loading}
       rows={gatewayTypeList || []}
       columns={GATEWAY_TYPE_COLUMNS}

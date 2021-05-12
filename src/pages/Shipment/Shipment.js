@@ -25,6 +25,7 @@ import ConfirmModal from '@components/Modal/ConfirmModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
 import { environment } from '@environments/environment';
+import SensorReport from '@pages/Reporting/components/SensorReport';
 import {
   getCustodians,
   getCustodianType,
@@ -56,10 +57,8 @@ import {
   getFormattedRow,
   MAP_TOOLTIP,
   SHIPMENT_DATA_TABLE_TOOLTIP,
-  SHIPMENT_SENSOR_COLUMNS,
 } from './ShipmentConstants';
 import AlertInfo from './AlertInfo';
-import ShipmentSensorTable from './components/ShipmentSensorTable';
 import ShipmentDataTable from './components/ShipmentDataTable';
 import AddShipment from './forms/AddShipment';
 import AddOriginInfo from './forms/AddOriginInfo';
@@ -477,11 +476,11 @@ const Shipment = (props) => {
           />
         </Grid>
       </Grid>
-      <ShipmentSensorTable
+      <SensorReport
+        loading={loading}
         aggregateReport={selectedShipment?.sensor_report_info}
         shipmentName={selectedShipment?.name}
         selectedMarker={selectedShipment && selectedMarker}
-        cols={SHIPMENT_SENSOR_COLUMNS}
       />
       <Route
         path={`${routes.SHIPMENT}/add`}

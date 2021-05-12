@@ -13,8 +13,6 @@ export const MAP_TOOLTIP = 'Locations of the shipment from starting point till c
 
 export const SHIPMENT_DATA_TABLE_TOOLTIP = 'Click on a shipment to view it on the map';
 
-export const SHIPMENT_SENSOR_REPORT_TOOLTIP = 'Shipment Sensor Report till current time';
-
 export const SHIPMENT_DATA_TABLE_COLUMNS = [
   {
     name: 'name',
@@ -149,117 +147,6 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (value && value !== '-' ? `$${numberWithCommas(value)}` : value),
-    },
-  },
-];
-
-export const SHIPMENT_SENSOR_COLUMNS = [
-  {
-    name: 'alert_status',
-    label: 'Alert Status',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
-  },
-  {
-    name: 'timestamp',
-    label: 'Tag Captured Timestamp (Local TimeZone)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
-  },
-  {
-    name: 'lat',
-    label: 'Location (Latitude)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => Number(value).toFixed(5),
-    },
-  },
-  {
-    name: 'lng',
-    label: 'Location (Longitude)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => Number(value).toFixed(5),
-    },
-  },
-  {
-    name: 'light',
-    label: 'Light (lux)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
-    },
-  },
-  {
-    name: 'humidity',
-    label: 'Humidity (%)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
-    },
-  },
-  {
-    name: 'temperature',
-    label: 'Temperature (\u00b0F)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
-    },
-  },
-  {
-    name: 'shock',
-    label: 'Shock (mg)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
-    },
-  },
-  {
-    name: 'tilt',
-    label: 'Tilt (deg)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
-    },
-  },
-  {
-    name: 'battery',
-    label: 'Battery (%)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
-    },
-  },
-  {
-    name: 'pressure',
-    label: 'Pressure (Pa)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
     },
   },
 ];

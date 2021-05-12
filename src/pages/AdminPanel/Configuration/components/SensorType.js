@@ -60,6 +60,7 @@ const SensorType = ({
 
   return (
     <DataTableWrapper
+      noSpace
       loading={loading}
       rows={sensorTypeList || []}
       columns={SENSOR_TYPE_COLUMNS}

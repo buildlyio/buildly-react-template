@@ -24,7 +24,6 @@ import { MapComponent } from '@components/MapComponent/MapComponent';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
 import { environment } from '@environments/environment';
-import ShipmentSensorTable from '@pages/Shipment/components/ShipmentSensorTable';
 import {
   getCustodians,
   getCustodianType,
@@ -41,6 +40,7 @@ import {
 import {
   getUnitsOfMeasure,
 } from '@redux/items/actions/items.actions';
+import SensorReport from './components/SensorReport';
 import {
   getShipmentOverview,
   SHIPMENT_OVERVIEW_COLUMNS,
@@ -414,7 +414,8 @@ const Reporting = ({
             )}
         </Grid>
       </Grid>
-      <ShipmentSensorTable
+      <SensorReport
+        loading={loading}
         aggregateReport={selectedShipment?.sensor_report}
         shipmentName={selectedShipment?.name}
         selectedMarker={selectedShipment && selectedMarker}

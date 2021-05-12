@@ -62,51 +62,67 @@ const DataTableWrapper = ({
   tableHeight,
   tableHeader,
   hideAddButton,
+  selectable,
+  selected,
+  customSort,
+  noCustomTheme,
+  noSpace,
 }) => {
   const classes = useStyles();
 
-  const finalColumns = [
-    {
-      name: 'Edit',
-      options: {
-        filter: false,
-        sort: false,
-        empty: true,
-        customBodyRenderLite: (dataIndex) => (
-          <IconButton
-            className={classes.iconButton}
-            onClick={() => editAction(rows[dataIndex])}
-          >
-            <EditIcon />
-          </IconButton>
-        ),
+  const finalColumns = editAction && deleteAction
+    ? [
+      {
+        name: 'Edit',
+        options: {
+          filter: false,
+          sort: false,
+          empty: true,
+          customBodyRenderLite: (dataIndex) => (
+            <IconButton
+              className={classes.iconButton}
+              onClick={() => editAction(rows[dataIndex])}
+            >
+              <EditIcon />
+            </IconButton>
+          ),
+        },
       },
-    },
-    {
-      name: 'Delete',
-      options: {
-        filter: false,
-        sort: false,
-        empty: true,
-        customBodyRenderLite: (dataIndex) => (
-          <IconButton
-            onClick={() => deleteAction(rows[dataIndex])}
-          >
-            <DeleteIcon />
-          </IconButton>
-        ),
+      {
+        name: 'Delete',
+        options: {
+          filter: false,
+          sort: false,
+          empty: true,
+          customBodyRenderLite: (dataIndex) => (
+            <IconButton
+              onClick={() => deleteAction(rows[dataIndex])}
+            >
+              <DeleteIcon />
+            </IconButton>
+          ),
+        },
       },
-    },
-    ...columns,
-  ];
+      ...columns,
+    ]
+    : [...columns];
 
   const options = {
     filter: true,
     filterType: 'multiselect',
     responsive: 'standard',
-    selectableRows: 'none',
-    selectToolbarPlacement: 'none',
     tableBodyHeight: tableHeight || '',
+    selectableRows: selectable && selectable.rows
+      ? selectable.rows
+      : 'none',
+    selectToolbarPlacement: 'none',
+    selectableRowsHeader: selectable && selectable.rowsHeader
+      ? selectable.rowsHeader
+      : true,
+    selectableRowsHideCheckboxes: selectable && selectable.rowsHideCheckboxes
+      ? selectable.rowsHideCheckboxes
+      : false,
+    rowsSelected: selected || [],
     rowsPerPageOptions: [5, 10, 15],
     downloadOptions: {
       filename: `${filename}.csv`,
@@ -117,13 +133,14 @@ const DataTableWrapper = ({
         noMatch: 'No data to display',
       },
     },
-    setRowProps: (row, dataIndex, rowIndex) => ({
+    setRowProps: (row, dataIndex, rowIndex) => !noCustomTheme && ({
       className: classes.dataTableBody,
     }),
+    customSort,
   };
 
   return (
-    <Box mt={5} mb={5}>
+    <Box mt={noSpace ? 0 : 5} mb={noSpace ? 0 : 5}>
       {loading && <Loader open={loading} />}
       <div>
         {!hideAddButton && (
@@ -148,7 +165,7 @@ const DataTableWrapper = ({
           </Typography>
         )}
         <Grid
-          className={classes.dataTable}
+          className={`${!noCustomTheme && classes.dataTable}`}
           container
           spacing={2}
         >
@@ -163,6 +180,7 @@ const DataTableWrapper = ({
         {children}
       </div>
 
+      {deleteAction && (
       <ConfirmModal
         open={openDeleteModal}
         setOpen={setDeleteModal}
@@ -170,6 +188,7 @@ const DataTableWrapper = ({
         title={deleteModalTitle}
         submitText="Delete"
       />
+      )}
     </Box>
   );
 };

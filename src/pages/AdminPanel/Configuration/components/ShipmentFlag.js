@@ -62,6 +62,7 @@ const ShipmentFlag = ({
 
   return (
     <DataTableWrapper
+      noSpace
       loading={loading}
       rows={shipmentFlag || []}
       columns={SHIPMENT_FLAG_COLUMNS}

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
 import {
   makeStyles,
   Grid,
   Typography,
 } from '@material-ui/core';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import {
-  SHIPMENT_SENSOR_COLUMNS,
-  SHIPMENT_SENSOR_REPORT_TOOLTIP,
-} from '../ShipmentConstants';
+  SENSOR_REPORT_COLUMNS,
+  SENSOR_REPORT_TOOLTIP,
+} from '../ReportingConstants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,7 +39,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ShipmentSensorTable = ({
+const SensorReport = ({
+  loading,
   aggregateReport,
   shipmentName,
   selectedMarker,
@@ -48,50 +49,18 @@ const ShipmentSensorTable = ({
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
 
-  const columns = SHIPMENT_SENSOR_COLUMNS.map((column) => ({
-    ...column,
-    options: {
-      ...column.options,
-      setCellHeaderProps: () => ({
-        className: classes.leftHeader,
-      }),
-    },
-  }));
-  const options = {
-    filter: true,
-    filterType: 'dropdown',
-    responsive: 'standard',
-    tableBodyHeight: '500px',
-    tableBodyMaxHeight: '',
-    selectableRows: 'multiple',
-    selectToolbarPlacement: 'none',
-    selectableRowsHeader: false,
-    selectableRowsHideCheckboxes: true,
-    rowsPerPageOptions: [5, 10, 15],
-    downloadOptions: {
-      filename: 'AggregateReportData.csv',
-      separator: ',',
-    },
-    rowsSelected: selected,
-    textLabels: {
-      body: {
-        noMatch: 'No data to display',
+  const columns = _.map(
+    SENSOR_REPORT_COLUMNS,
+    (column) => ({
+      ...column,
+      options: {
+        ...column.options,
+        setCellHeaderProps: () => ({
+          className: classes.leftHeader,
+        }),
       },
-    },
-    customSort: (data, colIndex, order, meta) => {
-      if (colIndex === 1) {
-        return _.orderBy(
-          data,
-          (item) => moment(item.data[colIndex]),
-          [order],
-        );
-      }
-      return data.sort((a, b) => (a.data[colIndex].length < b.data[colIndex].length
-        ? -1
-        : 1
-      ) * (order === 'desc' ? 1 : -1));
-    },
-  };
+    }),
+  );
 
   useEffect(() => {
     if (aggregateReport) {
@@ -121,6 +90,20 @@ const ShipmentSensorTable = ({
     }
   }, [selectedMarker]);
 
+  const customSort = (data, colIndex, order, meta) => {
+    if (colIndex === 1) {
+      return _.orderBy(
+        data,
+        (item) => moment(item.data[colIndex]),
+        [order],
+      );
+    }
+    return data.sort((a, b) => (a.data[colIndex].length < b.data[colIndex].length
+      ? -1
+      : 1
+    ) * (order === 'desc' ? 1 : -1));
+  };
+
   return (
     <Grid className={classes.root} container spacing={2}>
       <Grid item xs={12}>
@@ -132,18 +115,30 @@ const ShipmentSensorTable = ({
             {shipmentName
             && `Sensor Report - Shipment: ${shipmentName}`}
             <CustomizedTooltips
-              toolTipText={SHIPMENT_SENSOR_REPORT_TOOLTIP}
+              toolTipText={SENSOR_REPORT_TOOLTIP}
             />
           </Typography>
         </div>
-        <MUIDataTable
-          data={rows}
+        <DataTableWrapper
+          noCustomTheme
+          noSpace
+          loading={loading}
+          rows={rows}
           columns={columns}
-          options={options}
+          filename="AggregateReportData"
+          tableHeight="500px"
+          hideAddButton
+          selectable={{
+            rows: 'multiple',
+            rowsHeader: false,
+            rowsHideCheckboxes: true,
+          }}
+          selected={selected}
+          customSort={customSort}
         />
       </Grid>
     </Grid>
   );
 };
 
-export default ShipmentSensorTable;
+export default SensorReport;

@@ -60,6 +60,7 @@ const UnitOfMeasure = ({
 
   return (
     <DataTableWrapper
+      noSpace
       loading={loading}
       rows={unitsOfMeasure || []}
       columns={UNITS_OF_MEASURE_COLUMNS}

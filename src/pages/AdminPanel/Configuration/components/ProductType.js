@@ -62,6 +62,7 @@ const ProductType = ({
 
   return (
     <DataTableWrapper
+      noSpace
       loading={loading}
       rows={productType || []}
       columns={PRODUCT_TYPE_COLUMNS}
