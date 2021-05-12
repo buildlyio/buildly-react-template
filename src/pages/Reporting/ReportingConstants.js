@@ -1,7 +1,9 @@
 import React from 'react';
 import moment from 'moment';
 import _ from 'lodash';
-import { AccessTime as AccessTimeIcon } from '@material-ui/icons';
+import {
+  AccessTime as AccessTimeIcon,
+} from '@material-ui/icons';
 import {
   TempIcon,
   HumidIcon,
@@ -148,7 +150,7 @@ export const getShipmentOverview = (
   contactData,
   unitsOfMeasure,
 ) => {
-  const shipmentList = [...shipmentData];
+  let shipmentList = [];
   let custodyRows = [];
   if (
     custodyData
@@ -159,34 +161,42 @@ export const getShipmentOverview = (
     custodyRows = getFormattedCustodyRows(custodyData, custodianData);
   }
 
-  shipmentList.forEach((list) => {
-    const custodyInfo = [];
+  _.forEach(shipmentData, (shipment) => {
+    const editedShipment = shipment;
+    let custodyInfo = [];
     let custodianName = '';
-    const aggregateReportInfo = [];
-    const contactInfo = [];
-    const temperatureData = [];
-    const lightData = [];
-    const shockData = [];
-    const tiltData = [];
-    const humidityData = [];
-    const batteryData = [];
-    const pressureData = [];
-    const markersToSet = [];
+    let aggregateReportInfo = [];
+    let contactInfo = [];
+    let temperatureData = [];
+    let lightData = [];
+    let shockData = [];
+    let tiltData = [];
+    let humidityData = [];
+    let batteryData = [];
+    let pressureData = [];
+    let markersToSet = [];
 
-    const temperatureUnit = unitsOfMeasure.filter((obj) => obj.supported_class === 'Temperature')[0].name.toLowerCase();
+    const temperatureUnit = _.lowerCase(
+      _.find(
+        unitsOfMeasure,
+        { supported_class: 'Temperature' },
+      ).name,
+    );
 
     if (custodyRows.length > 0) {
-      custodyRows.forEach((custody) => {
-        if (custody.shipment_id === list.shipment_uuid) {
+      _.forEach(custodyRows, (custody) => {
+        const editedCustody = custody;
+        if (custody.shipment_id === shipment.shipment_uuid) {
           custodianName += custody.custodian_data.name;
-          contactData.forEach((contact) => {
+          _.forEach(contactData, (contact) => {
+            const editedContact = contact;
             if (custody.custodian_data.contact_data[0] === contact.url) {
-              contact.name = [
+              editedContact.name = [
                 contact.first_name,
                 contact.middle_name,
                 contact.last_name,
               ].join(' ');
-              contact.address = [
+              editedContact.address = [
                 contact.address1,
                 contact.address2,
                 contact.city,
@@ -194,30 +204,33 @@ export const getShipmentOverview = (
                 contact.state,
                 contact.country,
               ].join('\n');
-              contactInfo.push(contact);
+              contactInfo = [...contactInfo, editedContact];
             }
           });
           if (custody.has_current_custody) {
-            custody.custody_type = 'Current';
+            editedCustody.custody_type = 'Current';
           } else if (custody.first_custody) {
-            custody.custody_type = 'First';
+            editedCustody.custody_type = 'First';
           } else if (custody.last_custody) {
-            custody.custody_type = 'Last';
+            editedCustody.custody_type = 'Last';
           } else {
-            custody.custody_type = 'NA';
+            editedCustody.custody_type = 'NA';
           }
-          custodyInfo.push(custody);
+          custodyInfo = [...custodyInfo, editedCustody];
         }
       });
     }
-    list.custodian_name = custodianName;
-    list.custody_info = custodyInfo;
-    list.contact_info = contactInfo;
+    editedShipment.custodian_name = custodianName;
+    editedShipment.custody_info = custodyInfo;
+    editedShipment.contact_info = contactInfo;
 
-    if (aggregateReportData && aggregateReportData.length > 0) {
-      aggregateReportData.forEach((report) => {
+    if (
+      aggregateReportData
+      && aggregateReportData.length > 0
+    ) {
+      _.forEach(aggregateReportData, (report) => {
         if (
-          report.shipment_id === list.partner_shipment_id
+          report.shipment_id === shipment.partner_shipment_id
           && report.report_entries.length > 0
         ) {
           let alert_status;
@@ -232,7 +245,7 @@ export const getShipmentOverview = (
             alert_status = 'Normal';
             color = 'green';
           }
-          report.report_entries.forEach((report_entry) => {
+          _.forEach(report.report_entries, (report_entry) => {
             try {
               const temperature = convertUnitsOfMeasure(
                 'celsius',
@@ -277,41 +290,62 @@ export const getShipmentOverview = (
                   // humidity: marker.humidity,
                 });
                 if (!markerFound) {
-                  markersToSet.push(marker);
+                  markersToSet = [...markersToSet, marker];
                 }
-                aggregateReportInfo.push(marker);
+                aggregateReportInfo = [...aggregateReportInfo, marker];
                 const graphPoint = _.find(temperatureData, {
                   x: localDateTime,
                 });
                 if (!graphPoint) {
-                  temperatureData.push({
-                    x: localDateTime,
-                    y: temperature,
-                  });
-                  lightData.push({
-                    x: localDateTime,
-                    y: report_entry.report_light,
-                  });
-                  shockData.push({
-                    x: localDateTime,
-                    y: report_entry.report_shock,
-                  });
-                  tiltData.push({
-                    x: localDateTime,
-                    y: report_entry.report_tilt,
-                  });
-                  humidityData.push({
-                    x: localDateTime,
-                    y: report_entry.report_humidity,
-                  });
-                  batteryData.push({
-                    x: localDateTime,
-                    y: report_entry.report_battery,
-                  });
-                  pressureData.push({
-                    x: localDateTime,
-                    y: report_entry.report_pressure,
-                  });
+                  temperatureData = [
+                    ...temperatureData,
+                    {
+                      x: localDateTime,
+                      y: temperature,
+                    },
+                  ];
+                  lightData = [
+                    ...lightData,
+                    {
+                      x: localDateTime,
+                      y: report_entry.report_light,
+                    },
+                  ];
+                  shockData = [
+                    ...shockData,
+                    {
+                      x: localDateTime,
+                      y: report_entry.report_shock,
+                    },
+                  ];
+                  tiltData = [
+                    ...tiltData,
+                    {
+                      x: localDateTime,
+                      y: report_entry.report_tilt,
+                    },
+                  ];
+                  humidityData = [
+                    ...humidityData,
+                    {
+                      x: localDateTime,
+                      y: report_entry.report_humidity,
+                    },
+                  ];
+                  batteryData = [
+                    ...batteryData,
+                    {
+                      x: localDateTime,
+                      y: report_entry.report_battery,
+                    },
+                  ];
+                  pressureData = [
+                    ...pressureData,
+                    {
+                      x: localDateTime,
+                      y: report_entry.report_pressure,
+                    },
+                  ];
                 }
               }
             } catch (e) {
@@ -322,19 +356,21 @@ export const getShipmentOverview = (
       });
     }
 
-    list.sensor_report = aggregateReportInfo;
-    list.markers_to_set = _.orderBy(
+    editedShipment.sensor_report = aggregateReportInfo;
+    editedShipment.markers_to_set = _.orderBy(
       markersToSet,
       (item) => moment(item.timestamp),
       ['asc'],
     );
-    list.temperature = temperatureData;
-    list.light = lightData;
-    list.shock = shockData;
-    list.tilt = tiltData;
-    list.humidity = humidityData;
-    list.battery = batteryData;
-    list.pressure = pressureData;
+    editedShipment.temperature = temperatureData;
+    editedShipment.light = lightData;
+    editedShipment.shock = shockData;
+    editedShipment.tilt = tiltData;
+    editedShipment.humidity = humidityData;
+    editedShipment.battery = batteryData;
+    editedShipment.pressure = pressureData;
+
+    shipmentList = [...shipmentList, editedShipment];
   });
 
   return _.orderBy(
