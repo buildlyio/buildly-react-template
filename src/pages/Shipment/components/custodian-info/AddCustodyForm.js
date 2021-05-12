@@ -151,7 +151,7 @@ const AddCustodyForm = ({
       if (custodianList.length > 0) {
         let selectedCustodian = '';
         custodianList.forEach((list) => {
-          if (list.custodian_uuid === value) {
+          if (list.url === value) {
             selectedCustodian = list;
           }
         });
@@ -384,7 +384,7 @@ const AddCustodyForm = ({
                       (item, index) => (
                         <MenuItem
                           key={`custodian${index}:${item.id}`}
-                          value={item.custodian_uuid}
+                          value={item.url}
                         >
                           {item.name}
                         </MenuItem>
