@@ -1,48 +1,25 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   makeStyles, Box, Typography, Grid, Button,
 } from '@material-ui/core';
-import Modal from '@components/Modal/Modal';
+import FormModal from '@components/Modal/FormModal';
 import DataTable from '@components/Table/Table';
 import { UserContext } from '@context/User.context';
-import { editShipment } from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
-import ConfirmModal from '@components/Modal/ConfirmModal';
-import AddCustodyForm, { checkIfCustodianInfoEdited } from './AddCustodyForm';
+import AddCustodyForm, {
+  checkIfCustodianInfoEdited,
+} from './AddCustodyForm';
 import {
   getFormattedCustodyRows,
   custodyColumns,
 } from '../../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > * + *': {
-      marginTop: theme.spacing(3),
-    },
-  },
   buttonContainer: {
     margin: theme.spacing(8, 0),
     textAlign: 'center',
     justifyContent: 'center',
-  },
-  alignRight: {
-    marginLeft: 'auto',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
   },
   submit: {
     borderRadius: '18px',
@@ -84,8 +61,9 @@ const CustodianInfo = (props) => {
       && custodianData.length
       && shipmentFormData
     ) {
-      const filteredCustodyData = custodyData.filter(
-        (data) => data.shipment_id === shipmentFormData.shipment_uuid,
+      const filteredCustodyData = _.filter(
+        custodyData,
+        { shipment_id: shipmentFormData.shipment_uuid },
       );
       const customizedRows = getFormattedCustodyRows(
         filteredCustodyData,
@@ -94,45 +72,6 @@ const CustodianInfo = (props) => {
       setRows(customizedRows);
     }
   }, [custodyData, custodianData, shipmentFormData]);
-
-  const submitDisabled = () => !itemIds || custodianData === null;
-
-  /**
-   * Submit The form and add/edit custodian
-   * @param {Event} event the default submit event
-   */
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const shipmentFormValue = {
-      ...{ ...shipmentFormData, custodian_ids: itemIds },
-    };
-    dispatch(
-      editShipment(
-        shipmentFormValue,
-        history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
-        organization,
-      ),
-    );
-    setOpenModal(false);
-  };
-
-  const deleteItem = (item) => {
-    const index = itemIds.indexOf(item.custodian_uuid);
-    const newArr = itemIds.filter((value, idx) => idx !== index);
-    const shipmentFormValue = {
-      ...{ ...shipmentFormData, custodian_ids: newArr },
-    };
-    dispatch(
-      editShipment(
-        shipmentFormValue,
-        history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
-        organization,
-      ),
-    );
-    setItemIds(newArr);
-  };
 
   const handleConfirmModal = () => {
     setConfirmModal(false);
@@ -154,7 +93,6 @@ const CustodianInfo = (props) => {
   };
 
   const actionsColumns = [
-    // { id: 'unlink', type: 'unlink', action: deleteItem, label: 'Unassociate' },
     {
       id: 'edit',
       type: viewOnly ? 'view' : 'edit',
@@ -176,7 +114,7 @@ const CustodianInfo = (props) => {
       </Button>
       <Box mt={3} mb={5}>
         <Grid container>
-          {rows.length > 0 && (
+          {rows.length && (
             <Grid item xs={12}>
               <Box mt={5}>
                 <Typography gutterBottom variant="h5">
@@ -192,9 +130,9 @@ const CustodianInfo = (props) => {
           )}
         </Grid>
         {openModal && (
-          <Modal
+          <FormModal
             open={openModal}
-            setOpen={() => oncloseModal()}
+            handleClose={oncloseModal}
             title={
               !editItem
                 ? 'Add Custody'
@@ -202,17 +140,20 @@ const CustodianInfo = (props) => {
             }
             titleClass={classes.formTitle}
             maxWidth="md"
+            openConfirmModal={openConfirmModal}
+            setConfirmModal={setConfirmModal}
+            handleConfirmModal={handleConfirmModal}
           >
             <AddCustodyForm
               setItemIds={setItemIds}
               itemIds={itemIds}
-              setOpenModal={() => oncloseModal()}
+              setOpenModal={oncloseModal}
               rows={rows}
               viewOnly={viewOnly}
               editItem={editItem}
               {...props}
             />
-          </Modal>
+          </FormModal>
         )}
       </Box>
       <Grid container spacing={3} className={classes.buttonContainer}>
@@ -242,13 +183,6 @@ const CustodianInfo = (props) => {
           </Button>
         </Grid>
       </Grid>
-      <ConfirmModal
-        open={openConfirmModal}
-        setOpen={setConfirmModal}
-        submitAction={handleConfirmModal}
-        title="Your changes are unsaved and will be discarded. Are you sure to leave?"
-        submitText="Yes"
-      />
     </Box>
   );
 };

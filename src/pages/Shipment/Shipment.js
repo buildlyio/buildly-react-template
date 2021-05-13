@@ -61,9 +61,6 @@ import {
 import AlertInfo from './AlertInfo';
 import ShipmentDataTable from './components/ShipmentDataTable';
 import AddShipment from './forms/AddShipment';
-import AddOriginInfo from './forms/AddOriginInfo';
-import AddShipperInfo from './forms/AddShipperInfo';
-import AddDestinationInfo from './forms/AddDestinationInfo';
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -485,7 +482,7 @@ const Shipment = (props) => {
               <div style={{ height: '100%' }} />
             }
             containerElement={
-              <div style={{ height: '550px' }} />
+              <div style={{ height: '600px' }} />
             }
             mapElement={
               <div style={{ height: '100%' }} />
@@ -502,18 +499,6 @@ const Shipment = (props) => {
       <Route
         path={`${routes.SHIPMENT}/add`}
         component={AddShipment}
-      />
-      <Route
-        path={`${routes.SHIPMENT}/add/origin`}
-        component={AddOriginInfo}
-      />
-      <Route
-        path={`${routes.SHIPMENT}/add/shipper`}
-        component={AddShipperInfo}
-      />
-      <Route
-        path={`${routes.SHIPMENT}/add/destination`}
-        component={AddDestinationInfo}
       />
       <Route
         path={`${routes.SHIPMENT}/edit/:id`}

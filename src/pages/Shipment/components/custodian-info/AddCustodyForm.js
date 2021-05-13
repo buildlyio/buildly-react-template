@@ -79,6 +79,8 @@ const AddCustodyForm = ({
   rows,
 }) => {
   const classes = useStyles();
+  let latLongChanged = false;
+
   const [custodianURL, setCustodianURL] = useState(
     (editItem && editItem.custodian_data && editItem.custodian_data.url) || '',
   );
@@ -146,8 +148,6 @@ const AddCustodyForm = ({
     const { value } = e.target;
     if (value) {
       setCustodianURL(value);
-      // if (itemIds.indexOf(value.custodian_uuid) === -1)
-      //   setItemIds([...itemIds, value.custodian_uuid]);
       if (custodianList.length > 0) {
         let selectedCustodian = '';
         custodianList.forEach((list) => {
@@ -279,16 +279,16 @@ const AddCustodyForm = ({
       },
     );
   };
-  let latLongChanged = false;
+
   checkIfCustodianInfoEdited = () => (
-    load_id.hasChanged()
-    || shipment.hasChanged()
-    || shipment_name.hasChanged()
+    custodianURL !== (editItem && editItem.custodian_data && editItem.custodian_data.url) || ''
+    || load_id.hasChanged()
+    || new Date(start_of_custody).toJSON() !== (editItem.start_of_custody || new Date().toJSON())
+    || new Date(end_of_custody).toJSON() !== (editItem.end_of_custody || new Date().toJSON())
+    || latLongChanged
     || has_current_custody.hasChanged()
     || first_custody.hasChanged()
     || last_custody.hasChanged()
-    || latLongChanged
-    || custodianURL !== (editItem && editItem.custodian_data && editItem.custodian_data.url) || ''
   );
 
   return (
@@ -316,16 +316,15 @@ const AddCustodyForm = ({
                   {...shipment.bind}
                   InputProps={
                     custodyMetaData.shipment_id
-                    && custodyMetaData.shipment_id.help_text && {
+                    && custodyMetaData.shipment_id.help_text
+                    && {
                       endAdornment: (
                         <InputAdornment position="end">
-                          {custodyMetaData.shipment_id.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                custodyMetaData.shipment_id.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              custodyMetaData.shipment_id.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -398,6 +397,7 @@ const AddCustodyForm = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
+                  disabled={viewOnly}
                   id="load_id"
                   label="Custody Order"
                   name="load_id"
@@ -445,6 +445,7 @@ const AddCustodyForm = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
+                  disabled={viewOnly}
                   id="start_of_custody_address"
                   label="Start of Custody location"
                   name="start_of_custody_address"
@@ -480,6 +481,7 @@ const AddCustodyForm = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
+                  disabled={viewOnly}
                   id="end_of_custody_address"
                   label="End of Custody location"
                   name="end_of_custody_address"
@@ -515,23 +517,22 @@ const AddCustodyForm = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  id="has_current_custody"
-                  select
                   disabled={viewOnly}
+                  select
+                  id="has_current_custody"
                   label="Has current Custody?"
                   {...has_current_custody.bind}
                   InputProps={
                     custodyMetaData.has_current_custody
-                    && custodyMetaData.has_current_custody.help_text && {
+                    && custodyMetaData.has_current_custody.help_text
+                    && {
                       endAdornment: (
                         <InputAdornment position="start">
-                          {custodyMetaData.has_current_custody.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                custodyMetaData.has_current_custody.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              custodyMetaData.has_current_custody.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -546,23 +547,22 @@ const AddCustodyForm = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  id="first_custody"
-                  select
                   disabled={viewOnly}
+                  select
+                  id="first_custody"
                   label="Is first Custody?"
                   {...first_custody.bind}
                   InputProps={
                     custodyMetaData.first_custody
-                    && custodyMetaData.first_custody.help_text && {
+                    && custodyMetaData.first_custody.help_text
+                    && {
                       endAdornment: (
                         <InputAdornment position="start">
-                          {custodyMetaData.first_custody.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                custodyMetaData.first_custody.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              custodyMetaData.first_custody.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }
@@ -577,23 +577,22 @@ const AddCustodyForm = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  id="last_custody"
-                  select
                   disabled={viewOnly}
+                  select
+                  id="last_custody"
                   label="Is last Custody?"
                   {...last_custody.bind}
                   InputProps={
                     custodyMetaData.last_custody
-                    && custodyMetaData.last_custody.help_text && {
+                    && custodyMetaData.last_custody.help_text
+                    && {
                       endAdornment: (
                         <InputAdornment position="start">
-                          {custodyMetaData.last_custody.help_text && (
-                            <CustomizedTooltips
-                              toolTipText={
-                                custodyMetaData.last_custody.help_text
-                              }
-                            />
-                          )}
+                          <CustomizedTooltips
+                            toolTipText={
+                              custodyMetaData.last_custody.help_text
+                            }
+                          />
                         </InputAdornment>
                       ),
                     }

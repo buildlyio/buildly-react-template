@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import React from 'react';
 import moment from 'moment';
 import _ from 'lodash';

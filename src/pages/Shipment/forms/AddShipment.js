@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   makeStyles,
   Stepper,
@@ -8,8 +9,7 @@ import {
   Hidden,
   Grid,
 } from '@material-ui/core';
-import ConfirmModal from '@components/Modal/ConfirmModal';
-import Modal from '@components/Modal/Modal';
+import FormModal from '@components/Modal/FormModal';
 import { UserContext } from '@context/User.context';
 import { saveShipmentFormData } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
@@ -34,17 +34,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
   },
-  backButton: {
-    marginRight: theme.spacing(1),
-  },
-  instructions: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-  submit: {
-    borderRadius: '18px',
-    fontSize: 11,
-  },
   formTitle: {
     fontWeight: 'bold',
     marginTop: '1em',
@@ -61,7 +50,6 @@ const getSteps = () => [
   'Items',
   'Custodians',
   'Sensors & Gateways',
-  // 'Shipment Overview',
   'Environmental Limits',
 ];
 
@@ -217,23 +205,26 @@ const AddShipment = (props) => {
   const {
     location, history, shipmentFormData, dispatch,
   } = props;
+  const classes = useStyles();
+  const user = useContext(UserContext);
+
   const editPage = location.state && location.state.type === 'edit';
   const editData = location.state && location.state.data;
-  const user = useContext(UserContext);
   // For non-admins the forms becomes view-only once the shipment status is no longer just planned
   const viewOnly = !checkForGlobalAdmin(user)
     && editPage
     && editData
     && editData.status
-    && editData.status.toLowerCase() !== 'planned';
-  const classes = useStyles();
+    && _.lowerCase(editData.status) !== 'planned';
+
   const [activeStep, setActiveStep] = React.useState(0);
-  const [openModal, toggleModal] = useState(true);
+  const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [confirmModalFor, setConfirmModalFor] = useState('');
 
   const steps = getSteps();
   const maxSteps = steps.length;
+
   let formTitle;
   if (!editPage) {
     formTitle = 'Add Shipment';
@@ -268,7 +259,7 @@ const AddShipment = (props) => {
       setConfirmModalFor('close');
       setConfirmModal(true);
     } else {
-      toggleModal(false);
+      setFormModal(false);
       dispatch(saveShipmentFormData(null));
       history.push(routes.SHIPMENT);
     }
@@ -327,20 +318,31 @@ const AddShipment = (props) => {
 
   return (
     <div>
-      {openModal && (
-        <Modal
-          open={openModal}
-          setOpen={closeModal}
+      {openFormModal && (
+        <FormModal
+          open={openFormModal}
+          handleClose={closeModal}
           title={formTitle}
           titleClass={classes.formTitle}
           maxWidth="md"
+          openConfirmModal={openConfirmModal}
+          setConfirmModal={setConfirmModal}
+          handleConfirmModal={handleConfirmModal}
         >
           <div className={classes.root}>
             <Hidden xsDown>
-              <Grid container alignItems="center" justify="center">
+              <Grid
+                container
+                alignItems="center"
+                justify="center"
+              >
                 <Grid item sm={10}>
-                  <Stepper activeStep={activeStep} alternativeLabel nonLinear>
-                    {steps.map((label, index) => (
+                  <Stepper
+                    activeStep={activeStep}
+                    alternativeLabel
+                    nonLinear
+                  >
+                    {_.map(steps, (label, index) => (
                       <Step
                         key={`step${index}:${label}`}
                         className={`${shipmentFormData !== null && classes.step
@@ -369,16 +371,9 @@ const AddShipment = (props) => {
                   setConfirmModalFor,
                 )}
               </div>
-              <ConfirmModal
-                open={openConfirmModal}
-                setOpen={setConfirmModal}
-                submitAction={handleConfirmModal}
-                title="Your changes are unsaved and will be discarded. Are you sure to leave?"
-                submitText="Yes"
-              />
             </div>
           </div>
-        </Modal>
+        </FormModal>
       )}
     </div>
   );

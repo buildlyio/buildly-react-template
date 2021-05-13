@@ -204,6 +204,7 @@ const ShipmentKeyInfo = ({
             <TextField
               variant="outlined"
               fullWidth
+              disabled={viewOnly}
               type="file"
               id="key-file"
               name="key-file"
