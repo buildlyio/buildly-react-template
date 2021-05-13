@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import React, { useState, useEffect, useContext } from 'react';
 import _ from 'lodash';
 import moment from 'moment';
@@ -19,17 +18,6 @@ const useStyles = makeStyles((theme) => ({
       marginTop: theme.spacing(2),
     },
     position: 'relative',
-  },
-  snackbar: {
-    position: 'absolute',
-    [theme.breakpoints.down('xs')]: {
-      top: '-40px',
-    },
-    top: 0,
-    [theme.breakpoints.up('sm')]: {
-      width: '50%',
-    },
-    margin: '0',
   },
   alert: {
     width: '100%',
@@ -86,45 +74,65 @@ const AlertInfo = ({
       && shipmentData.length
       && shipmentAlerts.show
     ) {
-      const alerts = [];
-      const openAlerts = [];
-      const messages = [];
+      let alerts = [];
+      let openAlerts = [];
+      let messages = [];
       const viewedShipmentAlerts = localStorage.getItem('shipmentAlerts')
         ? JSON.parse(localStorage.getItem('shipmentAlerts'))
         : [];
 
-      shipmentData
-        && shipmentData.forEach((element, index) => {
-          shipmentFlag
-            && shipmentFlag.forEach((flag) => {
-              if (
-                element.flags.indexOf(flag.url) !== -1
-                && flag.type !== 'None'
-                && (element.status.toLowerCase() === 'planned'
-                  || element.status.toLowerCase() === 'enroute')
-                && !viewedShipmentAlerts.includes(
-                  `${element.shipment_uuid}-${flag.id}`,
-                )
-              ) {
-                alerts.push({
+      if (shipmentFlag && shipmentFlag.length) {
+        _.forEach(shipmentData, (shipment, index) => {
+          _.forEach(shipmentFlag, (flag) => {
+            if (
+              _.indexOf(shipment.flags, flag.url) !== -1
+              && flag.type !== 'None'
+              && (
+                _.lowerCase(shipment.status) === 'planned'
+                || _.lowerCase(shipment.status) === 'enroute'
+              ) && !_.includes(
+                viewedShipmentAlerts,
+                `${shipment.shipment_uuid}-${flag.id}`,
+              )
+            ) {
+              alerts = [
+                ...alerts,
+                {
                   type: flag.type,
                   name: flag.name,
-                  shipment: element.name,
-                  url: `${element.shipment_uuid}-${flag.id}`,
-                  severity:
-                    flag.type.toLowerCase() === 'warning' ? 'warning' : 'error',
-                });
-                openAlerts.push(index);
-                messages.push({
-                  shipment_uuid: element.name,
+                  shipment: shipment.name,
+                  url: `${shipment.shipment_uuid}-${flag.id}`,
+                  severity: _.lowerCase(flag.type) === 'warning'
+                    ? 'warning'
+                    : 'error',
+                },
+              ];
+              openAlerts = [...openAlerts, index];
+              messages = [
+                ...messages,
+                {
+                  shipment_uuid: shipment.name,
                   alert_message: flag.name,
                   date_time: new Date().toJSON(),
-                });
-              }
-            });
+                },
+              ];
+            }
+          });
         });
-      dispatch(setShipmentAlerts({ show: true, data: alerts }));
-      if (user && user.email_alert_flag && messages.length > 0) {
+      }
+
+      if (alerts.length) {
+        dispatch(setShipmentAlerts({
+          show: true,
+          data: alerts,
+        }));
+      }
+
+      if (
+        user
+        && user.email_alert_flag
+        && messages.length
+      ) {
         dispatch(
           emailAlerts({
             user_uuid: user.core_user_uuid,
@@ -134,172 +142,188 @@ const AlertInfo = ({
           }),
         );
       }
-      setOpenShipmentAlerts(openAlerts);
+
+      if (openAlerts.length) {
+        setOpenShipmentAlerts(openAlerts);
+      }
     }
   }, [shipmentData, shipmentFlag]);
 
   useEffect(() => {
     if (
       shipmentData
-      && shipmentData.length
       && custodyData
-      && custodyData.length
       && sensorReportAlerts
+      && shipmentData.length
+      && custodyData.length
     ) {
       let custodyRows = [];
       let alerts = [];
-      const openAlerts = [];
-      const messages = [];
+      let openAlerts = [];
+      let messages = [];
       let currentCustody = {};
-      const updatedCustodies = [];
+      let updatedCustodies = [];
       const viewedGeoAlerts = localStorage.getItem('geofenceAlerts')
         ? JSON.parse(localStorage.getItem('geofenceAlerts'))
         : [];
 
-      if (
-        custodyData
-        && custodyData.length
-        && custodianData
-        && custodianData.length
-      ) {
+      if (custodianData && custodianData.length) {
         custodyRows = getFormattedCustodyRows(custodyData, custodianData);
       }
-      shipmentData
-        && shipmentData.forEach((element) => {
-          sensorReportAlerts
-            && sensorReportAlerts.forEach((sensorReportAlert, index) => {
-              if (
-                element.partner_shipment_id === sensorReportAlert.shipment_id
-                && (element.status.toLowerCase() === 'planned'
-                  || element.status.toLowerCase() === 'enroute')
-                && sensorReportAlert.custodian_id
-                && sensorReportAlert.custodian_id.length > 0
-              ) {
-                const sensorCustodian = sensorReportAlert.custodian_id;
-                custodyRows
-                  && custodyRows.forEach((custody) => {
-                    if (
-                      custody.shipment_id === element.shipment_uuid
-                      && (sensorCustodian.includes(
-                        custody.custodian_data.custodian_uuid,
-                      )
-                        || sensorCustodian.includes(custody.custody_uuid))
-                    ) {
-                      if (custody.has_current_custody) {
-                        currentCustody = custody;
-                        currentCustody.custodian_uuid = custody.custodian_data.custodian_uuid;
-                      } else {
-                        updatedCustodies.push(custody);
-                      }
-                    }
-                  });
+
+      _.forEach(shipmentData, (shipment) => {
+        _.forEach(sensorReportAlerts, (alert, index) => {
+          if (
+            shipment.partner_shipment_id === alert.shipment_id
+            && (
+              _.lowerCase(shipment.status) === 'planned'
+              || _.lowerCase(shipment.status) === 'enroute'
+            ) && alert.custodian_id
+            && alert.custodian_id.length
+          ) {
+            const sensorCustodian = alert.custodian_id;
+            if (custodyRows && custodyRows.length) {
+              _.forEach(custodyRows, (custody) => {
                 if (
-                  currentCustody !== undefined
-                  && (sensorCustodian.includes(currentCustody.custodian_uuid)
-                    || sensorCustodian.includes(currentCustody.custody_uuid))
+                  custody.shipment_id === shipment.shipment_uuid
+                  && (
+                    _.includes(
+                      sensorCustodian,
+                      custody.custodian_data.custodian_uuid,
+                    )
+                    || _.includes(
+                      sensorCustodian,
+                      custody.custody_uuid,
+                    )
+                  )
                 ) {
-                  let message = '';
-                  switch (sensorReportAlert.shipment_custody_status) {
-                    case 'present-start-geofence':
-                      message = 'At start location';
-                      break;
-
-                    case 'left-start-geofence':
-                      message = 'Left start location';
-                      break;
-
-                    case 'arriving-end-geofence':
-                      message = 'Arriving end location';
-                      break;
-
-                    case 'present-end-geofence':
-                      message = 'At end location';
-                      break;
-
-                    case 'reached-end-geofence':
-                      message = 'Reached end location';
-                      break;
-
-                    case 'left-end-geofence':
-                      message = 'Custody Handoff';
-                      break;
-
-                    default:
-                      break;
-                  }
-                  if (
-                    !viewedGeoAlerts.includes(sensorReportAlert.id)
-                    && moment().diff(sensorReportAlert.report_date_time, 'h') <= 24
-                  ) {
-                    alerts.push({
-                      type: sensorReportAlert.shipment_custody_status,
-                      name: `${message} : ${currentCustody.custodian_name} -  Shipment ${element.name}`,
-                      shipment: element.name,
-                      id: sensorReportAlert.id,
-                      date_time: sensorReportAlert.report_date_time,
-                    });
-                    openAlerts.push(index);
-                    messages.push({
-                      shipment_uuid: element.name,
-                      alert_message: `Shipment ${message} of ${currentCustody.custodian_name}`,
-                      date_time: sensorReportAlert.report_date_time,
-                    });
-
-                    if (
-                      sensorReportAlert.shipment_custody_status
-                      === 'left-end-geofence'
-                      && currentCustody.custody_uuid
-                      !== sensorReportAlert.current_custody_id
-                    ) {
-                      updatedCustodies
-                        && updatedCustodies.forEach((custody) => {
-                          if (
-                            custody.custody_uuid
-                            === sensorReportAlert.current_custody_id
-                          ) {
-                            // Update custody current one
-                            const custodyFormValues = {
-                              id: custody.id,
-                              has_current_custody: true,
-                            };
-                            dispatch(updateCustody(custodyFormValues));
-                          }
-                        });
-                      const previousCustody = {
-                        id: currentCustody.id,
-                        has_current_custody: false,
-                      };
-                      dispatch(updateCustody(previousCustody));
-                    }
-
-                    // if (
-                    //   sensorReportAlert.shipment_custody_status
-                    //     === 'present-end-geofence'
-                    //   || (
-                    //     sensorReportAlert.shipment_custody_status
-                    //       === 'reached-end-geofence'
-                    //     && currentCustody.custody_uuid
-                    //       === sensorReportAlert.current_custody_id
-                    //   )
-                    // ) {
-                    //   element.status = 'Completed';
-                    //   dispatch(
-                    //     editShipment(
-                    //       element,
-                    //       null,
-                    //       null,
-                    //       element.organization_uuid,
-                    //     ),
-                    //   );
-                    // }
+                  if (custody.has_current_custody) {
+                    currentCustody = custody;
+                    currentCustody.custodian_uuid = custody.custodian_data.custodian_uuid;
+                  } else {
+                    updatedCustodies = [...updatedCustodies, custody];
                   }
                 }
+              });
+            }
+
+            if (
+              currentCustody !== undefined
+              && (
+                _.includes(
+                  sensorCustodian,
+                  currentCustody.custodian_uuid,
+                )
+                || _.includes(
+                  sensorCustodian,
+                  currentCustody.custody_uuid,
+                )
+              )
+            ) {
+              let message = '';
+              switch (alert.shipment_custody_status) {
+                case 'present-start-geofence':
+                  message = 'At start location';
+                  break;
+
+                case 'left-start-geofence':
+                  message = 'Left start location';
+                  break;
+
+                case 'arriving-end-geofence':
+                  message = 'Arriving end location';
+                  break;
+
+                case 'present-end-geofence':
+                  message = 'At end location';
+                  break;
+
+                case 'reached-end-geofence':
+                  message = 'Reached end location';
+                  break;
+
+                case 'left-end-geofence':
+                  message = 'Custody Handoff';
+                  break;
+
+                default:
+                  break;
               }
-            });
+
+              if (
+                !_.includes(viewedGeoAlerts, alert.id)
+                && moment().diff(alert.report_date_time, 'h') <= 24
+              ) {
+                alerts = [
+                  ...alerts,
+                  {
+                    type: alert.shipment_custody_status,
+                    name: `${message} : ${currentCustody.custodian_name} -  Shipment ${shipment.name}`,
+                    shipment: shipment.name,
+                    id: alert.id,
+                    date_time: alert.report_date_time,
+                  },
+                ];
+                openAlerts = [...openAlerts, index];
+                messages = [
+                  ...messages,
+                  {
+                    shipment_uuid: shipment.name,
+                    alert_message: `Shipment ${message} of ${currentCustody.custodian_name}`,
+                    date_time: alert.report_date_time,
+                  },
+                ];
+
+                if (
+                  alert.shipment_custody_status === 'left-end-geofence'
+                  && currentCustody.custody_uuid !== alert.current_custody_id
+                ) {
+                  if (
+                    updatedCustodies
+                    && updatedCustodies.length
+                  ) {
+                    _.forEach(updatedCustodies, (custody) => {
+                      if (custody.custody_uuid === alert.current_custody_id) {
+                        // Update custody current one
+                        const custodyFormValues = {
+                          id: custody.id,
+                          has_current_custody: true,
+                        };
+                        dispatch(updateCustody(custodyFormValues));
+                      }
+                    });
+                  }
+
+                  const previousCustody = {
+                    id: currentCustody.id,
+                    has_current_custody: false,
+                  };
+                  dispatch(updateCustody(previousCustody));
+                }
+              }
+            }
+          }
         });
-      alerts = _.orderBy(alerts, (item) => moment(item.date_time), ['asc']);
-      setGeofenceAlerts({ data: alerts, show: true });
-      if (user && user.email_alert_flag && messages.length > 0) {
+      });
+
+      alerts = _.orderBy(
+        alerts,
+        (item) => moment(item.date_time),
+        ['asc'],
+      );
+
+      if (alerts && alerts.length) {
+        setGeofenceAlerts({
+          data: alerts,
+          show: true,
+        });
+      }
+
+      if (
+        user
+        && user.email_alert_flag
+        && messages.length
+      ) {
         dispatch(
           emailAlerts({
             user_uuid: user.core_user_uuid,
@@ -309,7 +333,10 @@ const AlertInfo = ({
           }),
         );
       }
-      setOpenGeofenceAlerts(openAlerts);
+
+      if (openAlerts && openAlerts.length) {
+        setOpenGeofenceAlerts(openAlerts);
+      }
     }
   }, [shipmentData, sensorReportAlerts]);
 
@@ -317,30 +344,46 @@ const AlertInfo = ({
     event.stopPropagation();
     event.preventDefault();
     if (type === 'shipment') {
-      const open = shipmentAlerts.data.filter((item, idx) => idx !== index);
+      const open = _.filter(
+        shipmentAlerts.data,
+        (item, idx) => (idx !== index),
+      );
       const current = shipmentAlerts.data[index];
-      const viewedShipmentAlerts = localStorage.getItem('shipmentAlerts')
+
+      let viewedShipmentAlerts = localStorage.getItem('shipmentAlerts')
         ? JSON.parse(localStorage.getItem('shipmentAlerts'))
         : [];
-      viewedShipmentAlerts.push(current.url);
+      viewedShipmentAlerts = [...viewedShipmentAlerts, current.url];
       localStorage.setItem(
         'shipmentAlerts',
         JSON.stringify(viewedShipmentAlerts),
       );
+
       if (open.length === 0) {
-        dispatch(setShipmentAlerts({ show: false, data: open }));
+        dispatch(setShipmentAlerts({
+          show: false,
+          data: open,
+        }));
       } else {
-        dispatch(setShipmentAlerts({ show: true, data: open }));
+        dispatch(setShipmentAlerts({
+          show: true,
+          data: open,
+        }));
       }
       setOpenShipmentAlerts(open);
     } else if (type === 'geofence') {
-      const open = geofenceAlerts.data.filter((item, idx) => idx !== index);
+      const open = _.filter(
+        geofenceAlerts.data,
+        (item, idx) => (idx !== index),
+      );
       const current = geofenceAlerts.data[index];
-      const viewedGeoAlerts = localStorage.getItem('geofenceAlerts')
+
+      let viewedGeoAlerts = localStorage.getItem('geofenceAlerts')
         ? JSON.parse(localStorage.getItem('geofenceAlerts'))
         : [];
-      viewedGeoAlerts.push(current.id);
+      viewedGeoAlerts = [...viewedGeoAlerts, current.id];
       localStorage.setItem('geofenceAlerts', JSON.stringify(viewedGeoAlerts));
+
       if (open.length === 0) {
         setGeofenceAlerts({ show: false, data: open });
       } else {
@@ -353,37 +396,48 @@ const AlertInfo = ({
   return (
     <div className={classes.root}>
       {shipmentAlerts
-        && shipmentAlerts.data.map((alert, index) => (
-          <Alert
-            key={`shipmentAlert${index}:${alert.shipment}`}
-            variant="filled"
-            severity={alert.severity}
-            onClose={(e) => handleClose(e, index, 'shipment')}
-            classes={{
-              message: classes.message,
-              root: classes.alert,
-            }}
-            title={`${alert.name} ${alert.type.toLowerCase() === 'warning' ? 'Warning' : 'Violation'} Shipment ${alert.shipment}`}
-          >
-            {`${alert.name} ${alert.type.toLowerCase() === 'warning' ? 'Warning' : 'Violation'} Shipment ${alert.shipment}`}
-          </Alert>
-        ))}
+      && shipmentAlerts.length
+      && _.map(shipmentAlerts.data, (alert, index) => (
+        <Alert
+          key={`shipmentAlert${index}:${alert.shipment}`}
+          variant="filled"
+          severity={alert.severity}
+          onClose={(e) => handleClose(e, index, 'shipment')}
+          classes={{
+            message: classes.message,
+            root: classes.alert,
+          }}
+          title={`${alert.name} ${
+            _.lowerCase(alert.type) === 'warning'
+              ? 'Warning'
+              : 'Violation'
+          } Shipment ${alert.shipment}`}
+        >
+          {`${alert.name} ${
+            _.lowerCase(alert.type) === 'warning'
+              ? 'Warning'
+              : 'Violation'
+          } Shipment ${alert.shipment}`}
+        </Alert>
+      ))}
+
       {geofenceAlerts
-        && geofenceAlerts.data.map((alert, index) => (
-          <Alert
-            key={`sensorReportAlert${index}:${alert.shipment}`}
-            variant="filled"
-            severity="info"
-            onClose={(e) => handleClose(e, index, 'geofence')}
-            classes={{
-              message: classes.message,
-              root: classes.alert,
-            }}
-            title={`${alert.name}`}
-          >
-            {`${alert.name} | ${moment(alert.date_time).fromNow()}`}
-          </Alert>
-        ))}
+      && geofenceAlerts.length
+      && _.map(geofenceAlerts.data, (alert, index) => (
+        <Alert
+          key={`sensorReportAlert${index}:${alert.shipment}`}
+          variant="filled"
+          severity="info"
+          onClose={(e) => handleClose(e, index, 'geofence')}
+          classes={{
+            message: classes.message,
+            root: classes.alert,
+          }}
+          title={`${alert.name}`}
+        >
+          {`${alert.name} | ${moment(alert.date_time).fromNow()}`}
+        </Alert>
+      ))}
     </div>
   );
 };
