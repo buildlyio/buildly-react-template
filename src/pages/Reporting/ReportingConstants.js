@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React from 'react';
 import moment from 'moment';
 import _ from 'lodash';
@@ -240,21 +241,27 @@ export const getShipmentOverview = (
                 temperatureUnit,
                 'temperature',
               );
-              let localDateTime = moment(
-                report_entry.report_location.timeOfPosition,
-              ).format('MMM DD YYYY, h:mm:ss a');
-
+              let localDateTime = '';
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
                   localDateTime = moment(
                     report_entry.report_timestamp,
                   ).format('MMM DD YYYY, h:mm:ss a');
                 }
+              } else if ('report_location' in report_entry) {
+                localDateTime = moment(
+                  report_entry.report_location.timeOfPosition,
+                ).format('MMM DD YYYY, h:mm:ss a');
               }
-              if (report_entry.report_location.locationMethod !== 'NoPosition') {
+              // For a valid (latitude, longitude) pair: -90<=X<=+90 and -180<=Y<=180
+              const latitude = report_entry.report_latitude
+                || report_entry.report_location.latitude;
+              const longitude = report_entry.report_longitude
+                || report_entry.report_location.longitude;
+              if ((latitude >= -90 && latitude <= 90) && (longitude >= -180 && longitude <= 180) && localDateTime !== '') {
                 const marker = {
-                  lat: report_entry.report_location.latitude,
-                  lng: report_entry.report_location.longitude,
+                  lat: latitude,
+                  lng: longitude,
                   label: 'Clustered',
                   temperature,
                   light: report_entry.report_light,
@@ -315,6 +322,7 @@ export const getShipmentOverview = (
                 }
               }
             } catch (e) {
+              // eslint-disable-next-line no-console
               console.log(e);
             }
           });
@@ -339,8 +347,9 @@ export const getShipmentOverview = (
 
   return _.orderBy(
     shipmentList,
-    (shipment) => moment(shipment.create_date),
-    ['asc'],
+    (shipment) => moment(shipment.estimated_time_of_departure)
+    && moment(shipment.create_date),
+    ['desc'],
   );
 };
 

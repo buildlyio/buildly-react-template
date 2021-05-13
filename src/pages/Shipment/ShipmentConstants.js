@@ -1,3 +1,6 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable consistent-return */
+/* eslint-disable array-callback-return */
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
@@ -199,7 +202,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
+      customBodyRender: (value) => (isNaN(value) ? '-' : Number(value).toFixed(2)),
     },
   },
   {
@@ -209,7 +212,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
+      customBodyRender: (value) => (isNaN(value) ? '-' : Number(value).toFixed(2)),
     },
   },
   {
@@ -219,7 +222,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
+      customBodyRender: (value) => (isNaN(value) ? '-' : Number(value).toFixed(2)),
     },
   },
   {
@@ -229,7 +232,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
+      customBodyRender: (value) => (isNaN(value) ? '-' : Number(value).toFixed(2)),
     },
   },
   {
@@ -239,7 +242,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
+      customBodyRender: (value) => (isNaN(value) ? '-' : Number(value).toFixed(2)),
     },
   },
   {
@@ -249,7 +252,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
+      customBodyRender: (value) => (isNaN(value) ? '-' : Number(value).toFixed(2)),
     },
   },
   {
@@ -259,7 +262,7 @@ export const SHIPMENT_SENSOR_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(2),
+      customBodyRender: (value) => (isNaN(value) ? '-' : Number(value).toFixed(2)),
     },
   },
 ];
@@ -336,6 +339,7 @@ export const getFormattedRow = (
     }
     list.shipment_flag = [];
     if (shipmentFlag && shipmentFlag.length) {
+      // eslint-disable-next-line no-unused-expressions
       shipmentFlag
         && shipmentFlag.forEach((flag) => {
           if (list.flags.indexOf(flag.url) !== -1 && flag.type !== 'None') {
