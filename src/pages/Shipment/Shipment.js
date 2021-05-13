@@ -254,20 +254,35 @@ const Shipment = (props) => {
                 temperatureUnit,
                 'temperature',
               );
-              let localDateTime = moment(
-                report_entry.report_location.timeOfPosition,
-              ).format('MMM DD YYYY, h:mm:ss a');
+
+              let localDateTime;
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
                   localDateTime = moment(
                     report_entry.report_timestamp,
                   ).format('MMM DD YYYY, h:mm:ss a');
                 }
+              } else if ('report_location' in report_entry) {
+                localDateTime = moment(
+                  report_entry.report_location.timeOfPosition,
+                ).format('MMM DD YYYY, h:mm:ss a');
               }
-              if (report_entry.report_location.locationMethod !== 'NoPosition') {
+
+              // For a valid (latitude, longitude) pair: -90<=X<=+90 and -180<=Y<=180
+              const latitude = report_entry.report_latitude
+                || report_entry.report_location.latitude;
+              const longitude = report_entry.report_longitude
+                || report_entry.report_location.longitude;
+              if (
+                (latitude >= -90
+                  && latitude <= 90)
+                && (longitude >= -180
+                  && longitude <= 180)
+                && localDateTime !== ''
+              ) {
                 const marker = {
-                  lat: report_entry.report_location.latitude,
-                  lng: report_entry.report_location.longitude,
+                  lat: latitude,
+                  lng: longitude,
                   label: 'Clustered',
                   temperature,
                   light: report_entry.report_light,
@@ -296,6 +311,7 @@ const Shipment = (props) => {
                 aggregateReportInfo.push(marker);
               }
             } catch (e) {
+              // eslint-disable-next-line no-console
               console.log(e);
             }
           });
@@ -415,6 +431,7 @@ const Shipment = (props) => {
           </Box>
           <ShipmentDataTable
             rows={
+              // eslint-disable-next-line no-nested-ternary
               shipmentFilter === 'Cancelled'
                 ? cancelledRows
                 : shipmentFilter === 'Completed'
