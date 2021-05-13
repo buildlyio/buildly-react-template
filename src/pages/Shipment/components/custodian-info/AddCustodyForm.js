@@ -207,6 +207,7 @@ const AddCustodyForm = ({
     } else {
       dispatch(addCustody(custodyFormValues));
     }
+    checkIfCustodianInfoEdited = () => false;
     setOpenModal();
   };
 

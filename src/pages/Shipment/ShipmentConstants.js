@@ -349,36 +349,6 @@ export const getUniqueContactInfo = (rowItem, contactInfo) => {
   return obj;
 };
 
-// export const getFormattedCustodyRows = (custodyData, custodianData) => {
-//   const customizedRows = [...custodyData];
-//   let counter = 2;
-//   if (customizedRows && custodianData) {
-//     const custodyLength = customizedRows.length;
-//     customizedRows.forEach((custody) => {
-//       if (!custody.load_id) {
-//         if (custody.first_custody) custody.load_id = 1;
-//         else if (custody.last_custody) custody.load_id = custodyLength;
-//         else {
-//           custody.load_id = counter;
-//           counter += 1;
-//         }
-//       }
-//       custodianData.forEach((custodian) => {
-//         if (custody.custodian[0] === custodian.url) {
-//           custody.custodian_name = custodian.name;
-//           custody.custodian_data = custodian;
-//         }
-//       });
-//     });
-//   }
-
-//   return _.orderBy(
-//     customizedRows,
-//     (row) => [row.load_id, moment(row.start_of_custody)],
-//     ['asc', 'asc'],
-//   );
-// };
-
 export const getFormattedCustodyRows = (custodyData, custodianData) => {
   let customizedRows = [];
   let counter = 2;

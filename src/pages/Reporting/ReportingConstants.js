@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React from 'react';
 import moment from 'moment';
 import _ from 'lodash';
@@ -394,7 +395,7 @@ export const getShipmentOverview = (
     shipmentList,
     (shipment) => moment(shipment.estimated_time_of_departure)
     && moment(shipment.create_date),
-    ['asc'],
+    ['desc'],
   );
 };
 
