@@ -19,7 +19,6 @@ import {
   Delete as DeleteIcon,
   LinkOff as LinkOffIcon,
 } from '@material-ui/icons';
-import SearchInput from '@components/SearchComponent/SearchInput';
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
@@ -58,22 +57,12 @@ const useStyles = makeStyles({
   container: {
     maxHeight: 440,
   },
-  searchSection: {
-    background: '#383636',
-    width: '100%',
-    display: 'flex',
-    minHeight: '40px',
-    alignItems: 'center',
-  },
 });
 
 const DataTable = ({
   rows,
   columns,
   actionsColumns,
-  hasSearch,
-  searchValue,
-  searchAction,
 }) => {
   const classes = useStyles();
   const [page, setPage] = useState(0);
@@ -107,14 +96,6 @@ const DataTable = ({
 
   return (
     <Paper className={classes.root}>
-      {hasSearch && (
-        <div className={classes.searchSection}>
-          <SearchInput
-            searchValue={searchValue}
-            searchAction={searchAction}
-          />
-        </div>
-      )}
       <TableContainer className={classes.container}>
         <Table
           stickyHeader

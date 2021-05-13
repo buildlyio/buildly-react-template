@@ -203,8 +203,6 @@ const ItemsInfo = ({
                   <DataTable
                     rows={rows || []}
                     columns={columns}
-                    hasSearch={false}
-                    showTotal
                   />
                 </Box>
               </Grid>

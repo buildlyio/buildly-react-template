@@ -225,7 +225,6 @@ const SensorsGatewayInfo = ({
                   <DataTable
                     rows={rows || []}
                     columns={columns}
-                    hasSearch={false}
                   />
                 </Box>
               </Grid>
@@ -239,7 +238,6 @@ const SensorsGatewayInfo = ({
                   <DataTable
                     rows={sensorsRow || []}
                     columns={sensorsColumns}
-                    hasSearch={false}
                   />
                 </Box>
               </Grid>

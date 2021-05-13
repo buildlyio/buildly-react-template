@@ -186,7 +186,6 @@ const CustodianInfo = (props) => {
                   rows={rows || []}
                   columns={custodyColumns}
                   actionsColumns={actionsColumns}
-                  hasSearch={false}
                 />
               </Box>
             </Grid>
