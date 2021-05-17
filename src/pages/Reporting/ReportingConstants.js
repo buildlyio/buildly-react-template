@@ -249,12 +249,14 @@ export const getShipmentOverview = (
           }
           _.forEach(report.report_entries, (report_entry) => {
             try {
-              const temperature = convertUnitsOfMeasure(
-                'celsius',
-                report_entry.report_temp,
-                temperatureUnit,
-                'temperature',
-              );
+              const temperature = editedShipment.platform_name === 'tive'
+                ? report_entry.report_temp
+                : convertUnitsOfMeasure(
+                  'celsius',
+                  report_entry.report_temp,
+                  temperatureUnit,
+                  'temperature',
+                );
 
               let localDateTime = '';
               if ('report_timestamp' in report_entry) {
