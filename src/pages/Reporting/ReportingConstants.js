@@ -235,12 +235,14 @@ export const getShipmentOverview = (
           }
           report.report_entries.forEach((report_entry) => {
             try {
-              const temperature = convertUnitsOfMeasure(
-                'celsius',
-                report_entry.report_temp,
-                temperatureUnit,
-                'temperature',
-              );
+              const temperature = list.platform_name === 'tive'
+                ? report_entry.report_temp
+                : convertUnitsOfMeasure(
+                  'celsius',
+                  report_entry.report_temp,
+                  temperatureUnit,
+                  'temperature',
+                );
               let localDateTime = '';
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
