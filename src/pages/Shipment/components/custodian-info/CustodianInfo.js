@@ -5,7 +5,7 @@ import {
   makeStyles, Box, Typography, Grid, Button,
 } from '@material-ui/core';
 import FormModal from '@components/Modal/FormModal';
-import DataTable from '@components/Table/Table';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
 import AddCustodyForm, {
   checkIfCustodianInfoEdited,
@@ -42,6 +42,7 @@ const CustodianInfo = (props) => {
     dispatch,
     custodyData,
     viewOnly,
+    loading,
   } = props;
   const classes = useStyles();
   const [itemIds, setItemIds] = useState(
@@ -113,22 +114,26 @@ const CustodianInfo = (props) => {
         Add Custody
       </Button>
       <Box mt={3} mb={5}>
+        {rows.length > 0 && (
         <Grid container>
-          {rows.length && (
-            <Grid item xs={12}>
-              <Box mt={5}>
-                <Typography gutterBottom variant="h5">
-                  Associated Custodians
-                </Typography>
-                <DataTable
-                  rows={rows || []}
-                  columns={custodyColumns}
-                  actionsColumns={actionsColumns}
-                />
-              </Box>
-            </Grid>
-          )}
+          <Grid item xs={12}>
+            <Box mt={5}>
+              <Typography gutterBottom variant="h5">
+                Associated Custodians
+              </Typography>
+              <DataTableWrapper
+                loading={loading}
+                rows={rows}
+                columns={custodyColumns}
+                editAction={editCustody}
+                hideAddButton
+                noOptionsIcon
+                noSpace
+              />
+            </Box>
+          </Grid>
         </Grid>
+        )}
         {openModal && (
           <FormModal
             open={openModal}

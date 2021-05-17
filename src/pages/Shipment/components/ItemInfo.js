@@ -18,7 +18,7 @@ import {
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   CheckBox as CheckBoxIcon,
 } from '@material-ui/icons';
-import DataTable from '@components/Table/Table';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
 import { getFormattedRow } from '@pages/Items/ItemsConstants';
 import { editShipment } from '@redux/shipment/actions/shipment.actions';
@@ -193,21 +193,25 @@ const ItemsInfo = ({
           </CardContent>
         </Card>
         <Box mt={3} mb={5}>
+          {rows.length > 0 && (
           <Grid container>
-            {rows.length > 0 && (
-              <Grid item xs={12}>
-                <Box mt={5}>
-                  <Typography gutterBottom variant="h5">
-                    Associated Items
-                  </Typography>
-                  <DataTable
-                    rows={rows || []}
-                    columns={columns}
-                  />
-                </Box>
-              </Grid>
-            )}
+            <Grid item xs={12}>
+              <Box mt={5}>
+                <Typography gutterBottom variant="h5">
+                  Associated Items
+                </Typography>
+                <DataTableWrapper
+                  loading={loading}
+                  rows={rows}
+                  columns={itemColumns}
+                  hideAddButton
+                  noOptionsIcon
+                  noSpace
+                />
+              </Box>
+            </Grid>
           </Grid>
+          )}
         </Box>
         <Grid container spacing={3} className={classes.buttonContainer}>
           <Grid item xs={6} sm={2}>

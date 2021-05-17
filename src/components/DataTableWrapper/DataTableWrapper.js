@@ -67,11 +67,14 @@ const DataTableWrapper = ({
   customSort,
   noCustomTheme,
   noSpace,
+  noOptionsIcon,
 }) => {
   const classes = useStyles();
 
-  const finalColumns = editAction && deleteAction
-    ? [
+  let finalColumns = [];
+  if (editAction) {
+    finalColumns = [
+      ...finalColumns,
       {
         name: 'Edit',
         options: {
@@ -88,6 +91,11 @@ const DataTableWrapper = ({
           ),
         },
       },
+    ];
+  }
+  if (deleteAction) {
+    finalColumns = [
+      ...finalColumns,
       {
         name: 'Delete',
         options: {
@@ -103,12 +111,19 @@ const DataTableWrapper = ({
           ),
         },
       },
-      ...columns,
-    ]
-    : [...columns];
+    ];
+  }
+  finalColumns = [
+    ...finalColumns,
+    ...columns,
+  ];
 
   const options = {
-    filter: true,
+    download: !noOptionsIcon,
+    print: !noOptionsIcon,
+    search: !noOptionsIcon,
+    viewColumns: !noOptionsIcon,
+    filter: !noOptionsIcon,
     filterType: 'multiselect',
     responsive: 'standard',
     tableBodyHeight: tableHeight || '',
@@ -124,10 +139,15 @@ const DataTableWrapper = ({
       : false,
     rowsSelected: selected || [],
     rowsPerPageOptions: [5, 10, 15],
-    downloadOptions: {
-      filename: `${filename}.csv`,
-      separator: ',',
-    },
+    downloadOptions: noOptionsIcon
+      ? {
+        filename: 'nothing.csv',
+        separator: ',',
+      }
+      : {
+        filename: `${filename}.csv`,
+        separator: ',',
+      },
     textLabels: {
       body: {
         noMatch: 'No data to display',

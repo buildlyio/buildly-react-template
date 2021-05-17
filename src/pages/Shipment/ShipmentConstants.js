@@ -291,51 +291,87 @@ export const custodianColumns = [
 
 export const custodyColumns = [
   {
-    id: 'custodian_name',
+    name: 'custodian_name',
     label: 'Custodian Name',
-    minWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'start_of_custody',
+    name: 'start_of_custody',
     label: 'Start of Custody',
-    minWidth: 180,
-    format: (value) => (value && value !== '-' ? moment(value).format('MM/DD/yyyy') : value),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? moment(value).format('MM/DD/yyyy')
+          : value
+      ),
+    },
   },
   {
-    id: 'end_of_custody',
+    name: 'end_of_custody',
     label: 'End of Custody',
-    minWidth: 180,
-    format: (value) => (value && value !== '-' ? moment(value).format('MM/DD/yyyy') : value),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? moment(value).format('MM/DD/yyyy')
+          : value
+      ),
+    },
   },
   {
-    id: 'start_of_custody_location',
+    name: 'start_of_custody_location',
     label: 'Start Location',
-    minWidth: 150,
-    maxWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'end_of_custody_location',
+    name: 'end_of_custody_location',
     label: 'End Location',
-    minWidth: 150,
-    maxWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'first_custody',
+    name: 'first_custody',
     label: 'First Custody',
-    minWidth: 100,
-    format: (value) => (value === true ? 'YES' : 'NO'),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      customBodyRender: (value) => (
+        value === true ? 'YES' : 'NO'
+      ),
+    },
   },
   {
-    id: 'has_current_custody',
+    name: 'has_current_custody',
     label: 'Current Custody',
-    minWidth: 100,
-    format: (value) => (value === true ? 'YES' : 'NO'),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      customBodyRender: (value) => (
+        value === true ? 'YES' : 'NO'
+      ),
+    },
   },
   {
-    id: 'last_custody',
+    name: 'last_custody',
     label: 'Last Custody',
-    minWidth: 100,
-    format: (value) => (value === true ? 'YES' : 'NO'),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      customBodyRender: (value) => (
+        value === true ? 'YES' : 'NO'
+      ),
+    },
   },
 ];
 
@@ -431,115 +467,162 @@ export const svgIcon = (flagType, flag) => {
 
 export const itemColumns = [
   {
-    id: 'name',
+    name: 'name',
     label: 'Item Name',
-    minWidth: 180,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'number_of_units',
+    name: 'number_of_units',
     label: '# of Units',
-    minWidth: 100,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'item_type_value',
+    name: 'item_type_value',
     label: 'Item Type',
-    minWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'value',
+    name: 'value',
     label: 'Value',
-    minWidth: 150,
-    format: (value) => (value && value !== '-'
-      ? `$${numberWithCommas(value)}`
-      : value),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? `$${numberWithCommas(value)}`
+          : value
+      ),
+    },
   },
   {
-    id: 'gross_weight',
+    name: 'gross_weight',
     label: 'Gross Weight',
-    minWidth: 150,
-    type: 'number',
-    format: (value) => (value && value !== '-'
-      ? `${numberWithCommas(value)}`
-      : value),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? `$${numberWithCommas(value)}`
+          : value
+      ),
+    },
   },
   {
-    id: 'unitsMeasure',
+    name: 'unitsMeasure',
     label: 'Units of Measure',
-    minWidth: 50,
-    type: 'number',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
 ];
 
 export const gatewayColumns = [
   {
-    id: 'name',
+    name: 'name',
     label: 'Gateway Name',
-    minWidth: 200,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'gateway_type_value',
+    name: 'gateway_type_value',
     label: 'Type',
-    minWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'last_known_battery_level',
+    name: 'last_known_battery_level',
     label: 'Battery',
-    minWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'gateway_status',
+    name: 'gateway_status',
     label: 'Status',
-    minWidth: 150,
-    format: (value) => (
-      value && value !== '-'
-        ? value.charAt(0).toUpperCase() + value.substr(1)
-        : value
-    ),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? _.capitalize(value)
+          : value
+      ),
+    },
   },
   {
-    id: 'shipment',
+    name: 'shipment',
     label: 'Shipments',
-    minWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'activation_date',
+    name: 'activation_date',
     label: 'Activation',
-    minWidth: 180,
-    format: (value) => (
-      value && value !== '-'
-        ? moment(value).format('MM/DD/yyyy')
-        : value
-    ),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? moment(value).format('MM/DD/yyyy')
+          : value
+      ),
+    },
   },
 ];
 
 export const sensorsColumns = [
   {
-    id: 'name',
+    name: 'name',
     label: 'Sensor Name',
-    minWidth: 150,
-    maxWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'sensor_type_value',
+    name: 'sensor_type_value',
     label: 'Type',
-    minWidth: 150,
-    maxWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'activation_date',
+    name: 'activation_date',
     label: 'Activated',
-    minWidth: 150,
-    format: (value) => (
-      value && value !== '-'
-        ? moment(value).format('MM/DD/yyyy')
-        : value
-    ),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? moment(value).format('MM/DD/yyyy')
+          : value
+      ),
+    },
   },
   {
-    id: 'associated_gateway',
+    name: 'associated_gateway',
     label: 'Associated Gateway',
-    minWidth: 150,
-    maxWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
 ];

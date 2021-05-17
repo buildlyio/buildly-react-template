@@ -15,7 +15,7 @@ import {
 } from '@material-ui/icons';
 import Loader from '@components/Loader/Loader';
 import { MapComponent } from '@components/MapComponent/MapComponent';
-import DataTable from '@components/Table/Table';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
 import { environment } from '@environments/environment';
@@ -381,9 +381,13 @@ const Dashboard = (props) => {
                     </IconButton>
                   </Hidden>
                 </div>
-                <DataTable
+                <DataTableWrapper
+                  loading={loading}
                   rows={delayedRows}
                   columns={delayColumns}
+                  hideAddButton
+                  noOptionsIcon
+                  noSpace
                 />
               </Grid>
             </Grid>
@@ -411,9 +415,13 @@ const Dashboard = (props) => {
                     </IconButton>
                   </Hidden>
                 </div>
-                <DataTable
+                <DataTableWrapper
+                  loading={loading}
                   rows={excursionRows}
                   columns={recallColumns}
+                  hideAddButton
+                  noOptionsIcon
+                  noSpace
                 />
               </Grid>
             </Grid>

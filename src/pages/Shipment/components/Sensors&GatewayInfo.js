@@ -17,7 +17,7 @@ import {
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   CheckBox as CheckBoxIcon,
 } from '@material-ui/icons';
-import DataTable from '@components/Table/Table';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
 import {
   getFormattedRow,
@@ -26,7 +26,6 @@ import {
 } from '@pages/SensorsGateway/Constants';
 import { editShipment } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
-import { checkIfCustodianInfoEdited } from './custodian-info/AddCustodyForm';
 import { gatewayColumns, sensorsColumns } from '../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
@@ -96,7 +95,7 @@ const SensorsGatewayInfo = ({
 
   let rows = [];
   let sensorsRow = [];
-  const columns = gatewayColumns;
+
   if (gatewayData && gatewayData.length) {
     const selectedRows = [];
     const selectedSensors = [];
@@ -222,9 +221,13 @@ const SensorsGatewayInfo = ({
                   <Typography gutterBottom variant="h5">
                     Associated Gateways
                   </Typography>
-                  <DataTable
-                    rows={rows || []}
-                    columns={columns}
+                  <DataTableWrapper
+                    loading={loading}
+                    rows={rows}
+                    columns={gatewayColumns}
+                    hideAddButton
+                    noOptionsIcon
+                    noSpace
                   />
                 </Box>
               </Grid>
@@ -235,9 +238,13 @@ const SensorsGatewayInfo = ({
                   <Typography gutterBottom variant="h5">
                     Associated Sensors with Gateway
                   </Typography>
-                  <DataTable
-                    rows={sensorsRow || []}
+                  <DataTableWrapper
+                    loading={loading}
+                    rows={sensorsRow}
                     columns={sensorsColumns}
+                    hideAddButton
+                    noOptionsIcon
+                    noSpace
                   />
                 </Box>
               </Grid>
