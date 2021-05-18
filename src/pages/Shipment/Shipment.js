@@ -115,6 +115,7 @@ const Shipment = (props) => {
     sensorReportAlerts,
   } = props;
   const classes = useStyles();
+
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
   const [activeRows, setActiveRows] = useState([]);
@@ -123,16 +124,16 @@ const Shipment = (props) => {
   const [rows, setRows] = useState([]);
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [shipmentFilter, setShipmentFilter] = useState('Active');
+  const [selectedMarker, setSelectedMarker] = useState({});
+  const [markers, setMarkers] = useState([]);
+  const [tileView, setTileView] = useState(true);
+  const [isMapLoaded, setMapLoaded] = useState(false);
+
   const subNav = [
     { label: 'Active', value: 'Active' },
     { label: 'Completed', value: 'Completed' },
     { label: 'Cancelled', value: 'Cancelled' },
   ];
-  const [selectedMarker, setSelectedMarker] = useState({});
-  const [markers, setMarkers] = useState([]);
-  const [zoomLevel, setZoomLevel] = useState(12);
-  const [tileView, setTileView] = useState(true);
-  const [isMapLoaded, setMapLoaded] = useState(false);
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
@@ -225,11 +226,14 @@ const Shipment = (props) => {
 
   useEffect(() => {
     if (selectedShipment) {
-      const markersToSet = [];
-      const aggregateReportInfo = [];
-      const temperatureUnit = unitsOfMeasure.filter((obj) => obj.supported_class === 'Temperature')[0].name.toLowerCase();
+      let markersToSet = [];
+      let aggregateReportInfo = [];
+      const temperatureUnit = _.filter(
+        unitsOfMeasure,
+        { supported_class: 'Temperature' },
+      )[0].name.toLowerCase();
 
-      selectedShipment.sensor_report.forEach((report) => {
+      _.forEach(selectedShipment.sensor_report, (report) => {
         if (report.report_entries.length > 0) {
           let alert_status;
           let color;
@@ -243,7 +247,7 @@ const Shipment = (props) => {
             alert_status = 'Normal';
             color = 'green';
           }
-          report.report_entries.forEach((report_entry) => {
+          _.forEach(report.report_entries, (report_entry) => {
             try {
               const temperature = selectedShipment.platform_name === 'tive'
                 ? report_entry.report_temp
@@ -305,9 +309,12 @@ const Shipment = (props) => {
                 });
 
                 if (!markerFound) {
-                  markersToSet.push(marker);
+                  markersToSet = [...markersToSet, marker];
                 }
-                aggregateReportInfo.push(marker);
+                aggregateReportInfo = [
+                  ...aggregateReportInfo,
+                  marker,
+                ];
               }
             } catch (e) {
               // eslint-disable-next-line no-console
@@ -321,7 +328,6 @@ const Shipment = (props) => {
         (item) => moment(item.timestamp),
         ['asc'],
       ));
-      setZoomLevel(12);
       selectedShipment.sensor_report_info = aggregateReportInfo;
     }
   }, [selectedShipment]);
@@ -478,7 +484,7 @@ const Shipment = (props) => {
             showPath
             markers={markers}
             googleMapURL={environment.MAP_API_URL}
-            zoom={zoomLevel}
+            zoom={12}
             setSelectedMarker={setSelectedMarker}
             loadingElement={
               <div style={{ height: '100%' }} />

@@ -26,18 +26,10 @@ import {
 import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > * + *': {
-      marginTop: theme.spacing(3),
-    },
-  },
   buttonContainer: {
     textAlign: 'center',
     justifyContent: 'center',
     margin: theme.spacing(3, 0),
-  },
-  alignRight: {
-    marginLeft: 'auto',
   },
   buttonProgress: {
     position: 'absolute',
@@ -62,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 11,
   },
 }));
+
 // eslint-disable-next-line import/no-mutable-exports
 export let checkIfCustodianInfoEdited;
 
@@ -91,10 +84,10 @@ const AddCustodyForm = ({
   const [end_of_custody, handleEndChange] = useState(
     (editItem && editItem.end_of_custody) || new Date(),
   );
-  const [start_of_custody_location, handleStartLocation] = useState(
+  const [start_of_custody_location, setStartLocation] = useState(
     (editItem && editItem.start_of_custody_location) || '',
   );
-  const [end_of_custody_location, handleEndLocation] = useState(
+  const [end_of_custody_location, setEndLocation] = useState(
     (editItem && editItem.end_of_custody_location) || '',
   );
   const [start_of_custody_address, setStartAddress] = useState(
@@ -128,17 +121,30 @@ const AddCustodyForm = ({
   }, [custodyOptions]);
 
   useEffect(() => {
-    if (custodianData && custodianData.length && contactInfo) {
-      setCustodianList(getFormattedRow(custodianData, contactInfo));
+    if (
+      custodianData
+      && contactInfo
+      && custodianData.length
+    ) {
+      setCustodianList(getFormattedRow(
+        custodianData,
+        contactInfo,
+      ));
     }
   }, [custodianData, contactInfo]);
 
   useEffect(() => {
     if (editItem && editItem.start_of_custody_location) {
-      getAddress(editItem.start_of_custody_location, 'start');
+      getAddress(
+        editItem.start_of_custody_location,
+        'start',
+      );
     }
     if (editItem && editItem.end_of_custody_location) {
-      getAddress(editItem.end_of_custody_location, 'end');
+      getAddress(
+        editItem.end_of_custody_location,
+        'end',
+      );
     }
   }, [editItem]);
 
@@ -150,7 +156,7 @@ const AddCustodyForm = ({
       setCustodianURL(value);
       if (custodianList.length > 0) {
         let selectedCustodian = '';
-        custodianList.forEach((list) => {
+        _.forEach(custodianList, (list) => {
           if (list.url === value) {
             selectedCustodian = list;
           }
@@ -211,16 +217,6 @@ const AddCustodyForm = ({
     setOpenModal();
   };
 
-  const setStartLocation = (value) => {
-    // getAddress(value,'start');
-    handleStartLocation(value);
-  };
-
-  const setEndLocation = (value) => {
-    // getAddress(value,'end');
-    handleEndLocation(value);
-  };
-
   const getLatLong = (address, pointer) => {
     if (pointer === 'start') {
       latLongChanged = true;
@@ -264,8 +260,14 @@ const AddCustodyForm = ({
     Geocode.fromLatLng(latlong[0], latlong[1]).then(
       (response) => {
         const { results } = response;
-        const establishment = _.find(results, (item) => item.types.includes('establishment'));
-        const premise = _.find(results, (item) => item.types.includes('premise'));
+        const establishment = _.find(
+          results,
+          (item) => _.includes(item.types, 'establishment'),
+        );
+        const premise = _.find(
+          results,
+          (item) => _.includes(item.types, 'premise'),
+        );
         const filteredResult = establishment || premise || results[0];
         if (pointer === 'start') {
           setStartAddress(filteredResult.formatted_address);
@@ -281,7 +283,7 @@ const AddCustodyForm = ({
   };
 
   checkIfCustodianInfoEdited = () => (
-    custodianURL !== (editItem && editItem.custodian_data && editItem.custodian_data.url) || ''
+    custodianURL !== (editItem.custodian_data.url || '')
     || load_id.hasChanged()
     || new Date(start_of_custody).toJSON() !== (editItem.start_of_custody || new Date().toJSON())
     || new Date(end_of_custody).toJSON() !== (editItem.end_of_custody || new Date().toJSON())
@@ -308,9 +310,14 @@ const AddCustodyForm = ({
                   label="Shipment ID"
                   name="shipment"
                   autoComplete="shipment"
-                  error={formError.shipment && formError.shipment.error}
+                  error={
+                    formError.shipment
+                    && formError.shipment.error
+                  }
                   helperText={
-                    formError.shipment ? formError.shipment.message : ''
+                    formError.shipment
+                      ? formError.shipment.message
+                      : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', shipment)}
                   {...shipment.bind}
@@ -354,9 +361,14 @@ const AddCustodyForm = ({
                   required
                   label="Custodian"
                   disabled={viewOnly}
-                  error={formError.custodianURL && formError.custodianURL.error}
+                  error={
+                    formError.custodianURL
+                    && formError.custodianURL.error
+                  }
                   helperText={
-                    formError.custodianURL ? formError.custodianURL.message : ''
+                    formError.custodianURL
+                      ? formError.custodianURL.message
+                      : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', custodianURL, 'custodianURL')}
                   value={custodianURL}
@@ -402,9 +414,14 @@ const AddCustodyForm = ({
                   label="Custody Order"
                   name="load_id"
                   autoComplete="load_id"
-                  error={formError.load_id && formError.load_id.error}
+                  error={
+                    formError.load_id
+                    && formError.load_id.error
+                  }
                   helperText={
-                    formError.load_id ? formError.load_id.message : ''
+                    formError.load_id
+                      ? formError.load_id.message
+                      : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', load_id)}
                   {...load_id.bind}
@@ -418,7 +435,7 @@ const AddCustodyForm = ({
                   disabled={viewOnly}
                   helpText={
                     custodyMetaData.start_of_custody
-                      && custodyMetaData.start_of_custody.help_text
+                    && custodyMetaData.start_of_custody.help_text
                       ? custodyMetaData.start_of_custody.help_text
                       : ''
                   }
@@ -434,7 +451,7 @@ const AddCustodyForm = ({
                   disabled={viewOnly}
                   helpText={
                     custodyMetaData.end_of_custody
-                      && custodyMetaData.end_of_custody.help_text
+                    && custodyMetaData.end_of_custody.help_text
                       ? custodyMetaData.end_of_custody.help_text
                       : ''
                   }
@@ -457,22 +474,27 @@ const AddCustodyForm = ({
                   isMarkerShown
                   googleMapURL={environment.MAP_API_URL}
                   zoom={10}
-                  loadingElement={<div style={{ height: '100%' }} />}
-                  containerElement={<div style={{ height: '200px' }} />}
-                  mapElement={<div style={{ height: '100%' }} />}
+                  loadingElement={
+                    <div style={{ height: '100%' }} />
+                  }
+                  containerElement={
+                    <div style={{ height: '200px' }} />
+                  }
+                  mapElement={
+                    <div style={{ height: '100%' }} />
+                  }
                   markers={[
                     {
-                      lat:
-                        start_of_custody_location
-                        && parseFloat(start_of_custody_location.split(',')[0]),
-                      lng:
-                        start_of_custody_location
-                        && parseFloat(start_of_custody_location.split(',')[1]),
+                      lat: start_of_custody_location
+                      && parseFloat(start_of_custody_location.split(',')[0]),
+                      lng: start_of_custody_location
+                      && parseFloat(start_of_custody_location.split(',')[1]),
                       radius: organizationData.radius,
                     },
                   ]}
                   geofence={
-                    editItem && editItem.start_of_custody_location_geofence
+                    editItem
+                    && editItem.start_of_custody_location_geofence
                   }
                 />
               </Grid>
@@ -493,22 +515,27 @@ const AddCustodyForm = ({
                   isMarkerShown
                   googleMapURL={environment.MAP_API_URL}
                   zoom={10}
-                  loadingElement={<div style={{ height: '100%' }} />}
-                  containerElement={<div style={{ height: '200px' }} />}
-                  mapElement={<div style={{ height: '100%' }} />}
+                  loadingElement={
+                    <div style={{ height: '100%' }} />
+                  }
+                  containerElement={
+                    <div style={{ height: '200px' }} />
+                  }
+                  mapElement={
+                    <div style={{ height: '100%' }} />
+                  }
                   markers={[
                     {
-                      lat:
-                        end_of_custody_location
-                        && parseFloat(end_of_custody_location.split(',')[0]),
-                      lng:
-                        end_of_custody_location
-                        && parseFloat(end_of_custody_location.split(',')[1]),
+                      lat: end_of_custody_location
+                      && parseFloat(end_of_custody_location.split(',')[0]),
+                      lng: end_of_custody_location
+                      && parseFloat(end_of_custody_location.split(',')[1]),
                       radius: organizationData.radius,
                     },
                   ]}
                   geofence={
-                    editItem && editItem.end_of_custody_location_geofence
+                    editItem
+                    && editItem.end_of_custody_location_geofence
                   }
                 />
               </Grid>
@@ -605,7 +632,11 @@ const AddCustodyForm = ({
             </Grid>
           </CardContent>
         </Card>
-        <Grid container spacing={3} className={classes.buttonContainer}>
+        <Grid
+          container
+          spacing={3}
+          className={classes.buttonContainer}
+        >
           <Grid item xs={6}>
             {viewOnly ? (
               <Button

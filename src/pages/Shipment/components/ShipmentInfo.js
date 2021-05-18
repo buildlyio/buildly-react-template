@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -17,10 +16,6 @@ import {
   InputAdornment,
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import {
-  CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
-  CheckBox as CheckBoxIcon,
-} from '@material-ui/icons';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
@@ -41,9 +36,6 @@ import { validators } from '@utils/validators';
 import ShipmentRouteInfo from './ShipmentRouteInfo';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(8),
-  },
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
@@ -56,16 +48,10 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '18px',
     fontSize: 11,
   },
-  cardItems: {
-    marginTop: theme.spacing(4),
-  },
   buttonContainer: {
     margin: theme.spacing(8, 0),
     textAlign: 'center',
     justifyContent: 'center',
-  },
-  alignRight: {
-    marginLeft: 'auto',
   },
   buttonProgress: {
     position: 'absolute',
@@ -78,9 +64,6 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
   },
 }));
-
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 // eslint-disable-next-line import/no-mutable-exports
 export let checkIfShipmentInfoEdited;
@@ -165,6 +148,8 @@ const ShipmentInfo = (props) => {
     uom_weight,
     platform_name: '',
   });
+
+  const shipmentFlags = (editData && editData.flags) || [];
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
@@ -231,20 +216,26 @@ const ShipmentInfo = (props) => {
 
   useEffect(() => {
     if (unitsOfMeasure && unitsOfMeasure.length) {
-      unitsOfMeasure.forEach((unit) => {
+      _.forEach(unitsOfMeasure, (unit) => {
         if (
-          unit.supported_class.toLowerCase().includes('temp')
-          && unit.is_default_for_class
+          _.includes(
+            _.lowerCase(unit.supported_class),
+            'temp',
+          ) && unit.is_default_for_class
         ) {
           setUomTemp(unit.url);
         } else if (
-          unit.supported_class.toLowerCase().includes('distance')
-          && unit.is_default_for_class
+          _.includes(
+            _.lowerCase(unit.supported_class),
+            'distance',
+          ) && unit.is_default_for_class
         ) {
           setUomDistance(unit.url);
         } else if (
-          unit.supported_class.toLowerCase().includes('weight')
-          && unit.is_default_for_class
+          _.includes(
+            _.lowerCase(unit.supported_class),
+            'weight',
+          ) && unit.is_default_for_class
         ) {
           setUomWeight(unit.url);
         }
@@ -284,7 +275,7 @@ const ShipmentInfo = (props) => {
       return true;
     }
     let errorExists = false;
-    errorKeys.forEach((key) => {
+    _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
@@ -338,15 +329,8 @@ const ShipmentInfo = (props) => {
   };
 
   const onShipmentFlagChange = (value) => {
-    const flagsUrl = [];
-    if (value) {
-      value.forEach((val) => {
-        flagsUrl.push(val.url);
-      });
-    }
-    setFlags(flagsUrl);
+    setFlags(_.map(value, 'url'));
   };
-  const shipmentFlags = (editData && editData.flags) || [];
 
   checkIfShipmentInfoEdited = () => (
     shipment_name.hasChanged()
@@ -361,8 +345,6 @@ const ShipmentInfo = (props) => {
 
   const onNextClick = (event) => {
     if (checkIfShipmentInfoEdited() === true) {
-      // setConfirmModalFor('next');
-      // setConfirmModal(true);
       handleSubmit(event);
     }
     handleNext();
@@ -394,7 +376,10 @@ const ShipmentInfo = (props) => {
           <Box mb={2}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <Grid container spacing={isDesktop ? 2 : 0}>
+                <Grid
+                  container
+                  spacing={isDesktop ? 2 : 0}
+                >
                   <Grid item xs={12}>
                     <TextField
                       variant="outlined"
@@ -418,16 +403,15 @@ const ShipmentInfo = (props) => {
                       onBlur={(e) => handleBlur(e, 'required', shipment_name)}
                       {...shipment_name.bind}
                       InputProps={
-                        fieldsMetadata.shipment_name.help_text && {
+                        fieldsMetadata.shipment_name.help_text
+                        && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {fieldsMetadata.shipment_name.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    fieldsMetadata.shipment_name.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  fieldsMetadata.shipment_name.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -446,16 +430,15 @@ const ShipmentInfo = (props) => {
                       disabled={viewOnly}
                       {...lading_bill.bind}
                       InputProps={
-                        fieldsMetadata.lading_bill.help_text && {
+                        fieldsMetadata.lading_bill.help_text
+                        && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {fieldsMetadata.lading_bill.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    fieldsMetadata.lading_bill.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  fieldsMetadata.lading_bill.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -474,16 +457,15 @@ const ShipmentInfo = (props) => {
                       disabled={viewOnly}
                       {...mode_type.bind}
                       InputProps={
-                        fieldsMetadata.mode_type.help_text && {
+                        fieldsMetadata.mode_type.help_text
+                        && {
                           endAdornment: (
                             <InputAdornment position="start">
-                              {fieldsMetadata.mode_type.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    fieldsMetadata.mode_type.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  fieldsMetadata.mode_type.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -518,16 +500,15 @@ const ShipmentInfo = (props) => {
                       disabled={viewOnly}
                       {...route_desc.bind}
                       InputProps={
-                        fieldsMetadata.route_desc.help_text && {
+                        fieldsMetadata.route_desc.help_text
+                        && {
                           endAdornment: (
                             <InputAdornment position="end">
-                              {fieldsMetadata.route_desc.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    fieldsMetadata.route_desc.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  fieldsMetadata.route_desc.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -547,16 +528,15 @@ const ShipmentInfo = (props) => {
                       value={uom_temp}
                       onChange={(e) => setUomTemp(e.target.value)}
                       InputProps={
-                        fieldsMetadata.uom_temp.help_text && {
+                        fieldsMetadata.uom_temp.help_text
+                        && {
                           endAdornment: (
                             <InputAdornment position="start">
-                              {fieldsMetadata.uom_temp.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    fieldsMetadata.uom_temp.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  fieldsMetadata.uom_temp.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -594,16 +574,15 @@ const ShipmentInfo = (props) => {
                       value={platform_name}
                       onChange={(e) => setPlatformName(e.target.value)}
                       InputProps={
-                        fieldsMetadata.platform_name.help_text && {
+                        fieldsMetadata.platform_name.help_text
+                        && {
                           endAdornment: (
                             <InputAdornment position="start">
-                              {fieldsMetadata.platform_name.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    fieldsMetadata.platform_name.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  fieldsMetadata.platform_name.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -641,16 +620,15 @@ const ShipmentInfo = (props) => {
                       disabled={viewOnly}
                       {...shipment_status.bind}
                       InputProps={
-                        fieldsMetadata.shipment_status.help_text && {
+                        fieldsMetadata.shipment_status.help_text
+                        && {
                           endAdornment: (
                             <InputAdornment position="start">
-                              {fieldsMetadata.shipment_status.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    fieldsMetadata.shipment_status.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  fieldsMetadata.shipment_status.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -722,8 +700,13 @@ const ShipmentInfo = (props) => {
                         style={{ flex: 1 }}
                         onChange={(event, newValue) => onShipmentFlagChange(newValue)}
                         value={
-                          (shipmentFlag
-                            && shipmentFlag.filter((flag) => flags.indexOf(flag.url) !== -1)) || []
+                          (
+                            shipmentFlag
+                            && _.filter(
+                              shipmentFlag,
+                              (flag) => _.indexOf(flags, flag.url) !== -1,
+                            )
+                          ) || []
                         }
                         renderOption={(option, { selected }) => (
                           <>
@@ -746,9 +729,12 @@ const ShipmentInfo = (props) => {
                         )}
                       />
                       {fieldsMetadata.flags
-                      && fieldsMetadata.flags.help_text && (
+                      && fieldsMetadata.flags.help_text
+                      && (
                         <CustomizedTooltips
-                          toolTipText={fieldsMetadata.flags.help_text}
+                          toolTipText={
+                            fieldsMetadata.flags.help_text
+                          }
                         />
                       )}
                     </div>
@@ -766,16 +752,15 @@ const ShipmentInfo = (props) => {
                       disabled={viewOnly}
                       onChange={(e) => setUomDistance(e.target.value)}
                       InputProps={
-                        fieldsMetadata.uom_distance.help_text && {
+                        fieldsMetadata.uom_distance.help_text
+                        && {
                           endAdornment: (
                             <InputAdornment position="start">
-                              {fieldsMetadata.uom_distance.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    fieldsMetadata.uom_distance.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  fieldsMetadata.uom_distance.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -813,16 +798,15 @@ const ShipmentInfo = (props) => {
                       disabled={viewOnly}
                       onChange={(e) => setUomWeight(e.target.value)}
                       InputProps={
-                        fieldsMetadata.uom_weight.help_text && {
+                        fieldsMetadata.uom_weight.help_text
+                        && {
                           endAdornment: (
                             <InputAdornment position="start">
-                              {fieldsMetadata.uom_weight.help_text && (
-                                <CustomizedTooltips
-                                  toolTipText={
-                                    fieldsMetadata.uom_weight.help_text
-                                  }
-                                />
-                              )}
+                              <CustomizedTooltips
+                                toolTipText={
+                                  fieldsMetadata.uom_weight.help_text
+                                }
+                              />
                             </InputAdornment>
                           ),
                         }
@@ -851,10 +835,7 @@ const ShipmentInfo = (props) => {
               </Grid>
               {(shipmentFormData || editPage) && (
                 <Grid item xs={12}>
-                  <ShipmentRouteInfo
-                    {...props}
-                    editData={editData}
-                  />
+                  <ShipmentRouteInfo {...props} />
                 </Grid>
               )}
             </Grid>
@@ -922,6 +903,12 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.itemsReducer,
   ...state.custodianReducer,
   ...state.optionsReducer,
+  loading: (
+    state.shipmentReducer.loading
+    || state.itemsReducer.loading
+    || state.custodianReducer.loading
+    || state.optionsReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(ShipmentInfo);

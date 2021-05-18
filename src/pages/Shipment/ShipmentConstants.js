@@ -260,35 +260,6 @@ export const getFormattedRow = (
   );
 };
 
-export const custodianColumns = [
-  {
-    id: 'id',
-    label: 'Custodian ID',
-    minWidth: 150,
-  },
-  {
-    id: 'name',
-    label: 'Name',
-    minWidth: 150,
-  },
-  {
-    id: 'location',
-    label: 'Location',
-    minWidth: 180,
-  },
-  {
-    id: 'custodian_glns',
-    label: 'GLN',
-    minWidth: 170,
-  },
-  {
-    id: 'start_of_custody',
-    label: 'Start Of Custody',
-    minWidth: 170,
-    format: (value) => (value && value !== '-' ? moment(value).format('MM/DD/yyyy') : value),
-  },
-];
-
 export const custodyColumns = [
   {
     name: 'custodian_name',

@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import MUIDataTable from 'mui-datatables';
+import _ from 'lodash';
 import {
   makeStyles,
   Checkbox,
@@ -35,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CustomCheckbox = (props) => {
   const newProps = { ...props };
+  // eslint-disable-next-line react/destructuring-assignment
   const desc = props['data-description'];
 
   newProps.color = desc === 'row-select'
@@ -101,7 +103,7 @@ const ShipmentDataTable = ({
             {!isAdmin
             && rows[dataIndex]
             && rows[dataIndex].status
-            && rows[dataIndex].status.toLowerCase() !== 'planned'
+            && _.lowerCase(rows[dataIndex].status) !== 'planned'
               ? <ViewIcon />
               : <EditIcon />}
           </IconButton>
@@ -126,7 +128,7 @@ const ShipmentDataTable = ({
         ),
       },
     },
-    ...SHIPMENT_DATA_TABLE_COLUMNS.map((column) => ({
+    ..._.map(SHIPMENT_DATA_TABLE_COLUMNS, (column) => ({
       ...column,
       options: {
         ...column.options,

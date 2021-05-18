@@ -83,6 +83,7 @@ const ShipmentKeyInfo = ({
     // eslint-disable-next-line no-console
     logger: (m) => console.log(m),
   });
+  let fileChanged = false;
 
   const [file, setFile] = useState(null);
   const [text, setText] = useState(null);
@@ -105,14 +106,14 @@ const ShipmentKeyInfo = ({
     if (key) {
       const re = new RegExp(`(.{0,20})${key}(.{0,20})`, 'gi');
       let m;
-      const values = [];
+      let values = [];
       // eslint-disable-next-line no-cond-assign
       while ((m = re.exec(text))) {
         // let line = (m[1] ? '...' : '') + m[0] + (m[2] ? '...' : '');
-        values.push(m[2]);
+        values = [...values, m[2]];
       }
       let opts = [];
-      values.forEach((value) => {
+      _.forEach(values, (value) => {
         const segments = value[0] === ':' ? value.split(': ') : value.split(' ');
         const segment = segments[1]
           ? segments[1].split(' ')[0]
@@ -130,7 +131,9 @@ const ShipmentKeyInfo = ({
     event.preventDefault();
     const uploadFile = new FormData();
     uploadFile.append('file', file, file.name);
-    const identifier = key ? JSON.stringify({ [key]: keyValue }) : null;
+    const identifier = key
+      ? JSON.stringify({ [key]: keyValue })
+      : null;
 
     dispatch(
       pdfIdentifier(
@@ -151,7 +154,7 @@ const ShipmentKeyInfo = ({
     fileInput.value = '';
     fileInput.files = null;
   };
-  let fileChanged = false;
+
   const fileChange = (event) => {
     const maxAllowedSize = 2 * 1024 * 1024;
     if (event.target.files[0].type === 'application/pdf') {
@@ -177,8 +180,6 @@ const ShipmentKeyInfo = ({
 
   const onNextClick = (event) => {
     if (checkIfShipmentKeyEdited()) {
-      // setConfirmModalFor('next');
-      // setConfirmModal(true);
       handleSubmit(event);
     }
     handleNext();
@@ -196,7 +197,10 @@ const ShipmentKeyInfo = ({
   return (
     <Container className={classes.root} maxWidth="sm">
       {loadingText && (
-        <Loader open={loadingText} label="Extracting text from selected PDF" />
+      <Loader
+        open={loadingText}
+        label="Extracting text from selected PDF"
+      />
       )}
       <form noValidate onSubmit={handleSubmit}>
         <Card variant="outlined">
@@ -214,11 +218,12 @@ const ShipmentKeyInfo = ({
               onChange={fileChange}
               helperText={
                 shipmentFormData
-                  && shipmentFormData.uploaded_pdf
-                  && shipmentFormData.uploaded_pdf_link
-                  && shipmentFormData.unique_identifier
-                  && shipmentFormData.uploaded_pdf.length > 0
-                  && shipmentFormData.uploaded_pdf_link.length > 0 ? (
+                && shipmentFormData.uploaded_pdf
+                && shipmentFormData.uploaded_pdf_link
+                && shipmentFormData.unique_identifier
+                && shipmentFormData.uploaded_pdf.length > 0
+                && shipmentFormData.uploaded_pdf_link.length > 0
+                  ? (
                     <>
                       <span className={classes.caption}>
                         <PictureAsPdfIcon
@@ -238,9 +243,8 @@ const ShipmentKeyInfo = ({
                                 >
                                   {pdfName}
                                 </Link>
-                                {index
-                                  < shipmentFormData.uploaded_pdf.length - 1 && (
-                                    <span>{', '}</span>
+                                {index < shipmentFormData.uploaded_pdf.length - 1 && (
+                                  <span>{', '}</span>
                                 )}
                               </React.Fragment>
                             ),
@@ -280,24 +284,24 @@ const ShipmentKeyInfo = ({
               />
             )}
             {file && key && (
-              <Autocomplete
-                freeSolo
-                className={classes.autoComplete}
-                id="unique-identifier"
-                options={options}
-                value={keyValue}
-                onChange={(event, newValue) => setKeyValue(newValue)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    required
-                    fullWidth
-                    label="What should be the key value?"
-                    onChange={(e) => setKeyValue(e.target.value)}
-                  />
-                )}
-              />
+            <Autocomplete
+              freeSolo
+              className={classes.autoComplete}
+              id="unique-identifier"
+              options={options}
+              value={keyValue}
+              onChange={(event, newValue) => setKeyValue(newValue)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  required
+                  fullWidth
+                  label="What should be the key value?"
+                  onChange={(e) => setKeyValue(e.target.value)}
+                />
+              )}
+            />
             )}
           </CardContent>
         </Card>

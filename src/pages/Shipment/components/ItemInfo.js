@@ -12,6 +12,7 @@ import {
   Grid,
   Button,
   CircularProgress,
+  Chip,
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import {
@@ -26,18 +27,10 @@ import { routes } from '@routes/routesConstants';
 import { itemColumns } from '../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > * + *': {
-      marginTop: theme.spacing(3),
-    },
-  },
   buttonContainer: {
     margin: theme.spacing(8, 0),
     textAlign: 'center',
     justifyContent: 'center',
-  },
-  alignRight: {
-    marginLeft: 'auto',
   },
   buttonProgress: {
     position: 'absolute',
@@ -89,26 +82,36 @@ const ItemsInfo = ({
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
   let rows = [];
-  const columns = itemColumns;
+
   if (itemData && itemData.length) {
-    const selectedRows = [];
-    itemData.forEach((element) => {
-      if (itemIds.indexOf(element.url) !== -1) {
-        selectedRows.push(element);
+    let selectedRows = [];
+    _.forEach(itemData, (item) => {
+      if (_.indexOf(itemIds, item.url) !== -1) {
+        selectedRows = [...selectedRows, item];
       }
     });
     rows = getFormattedRow(selectedRows, itemTypeList, unitsOfMeasure);
   }
 
   const onInputChange = (value) => {
-    const itemIdArray = [];
-    value.forEach((val) => {
-      itemIdArray.push(val.url);
-    });
-    setItemIds(itemIdArray);
+    switch (true) {
+      case (value.length > itemIds.length):
+        setItemIds([...itemIds, _.last(value).url]);
+        break;
+
+      case (value.length < itemIds.length):
+        setItemIds(value);
+        break;
+
+      default:
+        break;
+    }
   };
 
-  const submitDisabled = () => itemIds.length === 0 || itemData === null;
+  const submitDisabled = () => (
+    itemIds.length === 0
+    || itemData === null
+  );
 
   checkIfItemInfoEdited = () => Boolean(itemIds.length !== shipmentFormData.items.length);
   /**
@@ -132,8 +135,6 @@ const ItemsInfo = ({
 
   const onNextClick = (event) => {
     if (checkIfItemInfoEdited()) {
-      // setConfirmModalFor('next');
-      // setConfirmModal(true);
       handleSubmit(event);
     }
     handleNext();
@@ -160,13 +161,38 @@ const ItemsInfo = ({
                   id="tags-outlined"
                   disabled={viewOnly}
                   options={
-                    (itemData && _.orderBy(itemData, ['name'], ['asc'])) || []
+                    (
+                      itemData
+                      && _.orderBy(
+                        itemData,
+                        ['name'],
+                        ['asc'],
+                      )
+                    ) || []
                   }
-                  getOptionLabel={(option) => option && option.name}
-                  getOptionSelected={(option, value) => option.name === value.name}
+                  getOptionLabel={(option) => (
+                    option
+                    && option.name
+                  )}
+                  getOptionSelected={(option, value) => (
+                    option.url === value
+                  )}
                   filterSelectedOptions
+                  value={itemIds}
                   onChange={(event, newValue) => onInputChange(newValue)}
-                  defaultValue={rows}
+                  renderTags={(value, getTagProps) => (
+                    _.map(value, (option, index) => (
+                      <Chip
+                        variant="default"
+                        label={
+                          itemData
+                            ? _.find(itemData, { url: option })?.name
+                            : ''
+                        }
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  )}
                   renderOption={(option, { selected }) => (
                     <>
                       <Checkbox
@@ -213,7 +239,11 @@ const ItemsInfo = ({
           </Grid>
           )}
         </Box>
-        <Grid container spacing={3} className={classes.buttonContainer}>
+        <Grid
+          container
+          spacing={3}
+          className={classes.buttonContainer}
+        >
           <Grid item xs={6} sm={2}>
             {viewOnly ? (
               <Button
@@ -268,6 +298,10 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.itemsReducer,
   ...state.shipmentReducer,
+  loading: (
+    state.itemsReducer.loading
+    || state.shipmentReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(ItemsInfo);

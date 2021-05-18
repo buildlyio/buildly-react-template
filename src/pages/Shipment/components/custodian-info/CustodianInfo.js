@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
@@ -6,7 +6,6 @@ import {
 } from '@material-ui/core';
 import FormModal from '@components/Modal/FormModal';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '@context/User.context';
 import AddCustodyForm, {
   checkIfCustodianInfoEdited,
 } from './AddCustodyForm';
@@ -35,11 +34,9 @@ const useStyles = makeStyles((theme) => ({
 const CustodianInfo = (props) => {
   const {
     custodianData,
-    history,
     handleNext,
     handleCancel,
     shipmentFormData,
-    dispatch,
     custodyData,
     viewOnly,
     loading,
@@ -48,11 +45,10 @@ const CustodianInfo = (props) => {
   const [itemIds, setItemIds] = useState(
     (shipmentFormData && shipmentFormData.custodian_ids) || [],
   );
-  const [openModal, setOpenModal] = useState(false);
+  const [openFormModal, setFormModal] = useState(false);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [rows, setRows] = useState([]);
   const [editItem, setEditItem] = useState(null);
-  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (
@@ -76,7 +72,7 @@ const CustodianInfo = (props) => {
 
   const handleConfirmModal = () => {
     setConfirmModal(false);
-    setOpenModal(false);
+    setFormModal(false);
   };
 
   const oncloseModal = () => {
@@ -84,23 +80,14 @@ const CustodianInfo = (props) => {
       setConfirmModal(true);
     } else {
       setEditItem(null);
-      setOpenModal(false);
+      setFormModal(false);
     }
   };
 
   const editCustody = (item) => {
     setEditItem(item);
-    setOpenModal(true);
+    setFormModal(true);
   };
-
-  const actionsColumns = [
-    {
-      id: 'edit',
-      type: viewOnly ? 'view' : 'edit',
-      action: editCustody,
-      label: viewOnly ? 'View' : 'Edit',
-    },
-  ];
 
   return (
     <Box mb={5} mt={3}>
@@ -108,7 +95,7 @@ const CustodianInfo = (props) => {
         variant="contained"
         color="primary"
         disabled={viewOnly}
-        onClick={() => setOpenModal(true)}
+        onClick={() => setFormModal(true)}
         className={classes.submit}
       >
         Add Custody
@@ -134,9 +121,9 @@ const CustodianInfo = (props) => {
           </Grid>
         </Grid>
         )}
-        {openModal && (
+        {openFormModal && (
           <FormModal
-            open={openModal}
+            open={openFormModal}
             handleClose={oncloseModal}
             title={
               !editItem
@@ -152,7 +139,7 @@ const CustodianInfo = (props) => {
             <AddCustodyForm
               setItemIds={setItemIds}
               itemIds={itemIds}
-              setOpenModal={oncloseModal}
+              setFormModal={oncloseModal}
               rows={rows}
               viewOnly={viewOnly}
               editItem={editItem}
@@ -161,7 +148,11 @@ const CustodianInfo = (props) => {
           </FormModal>
         )}
       </Box>
-      <Grid container spacing={3} className={classes.buttonContainer}>
+      <Grid
+        container
+        spacing={3}
+        className={classes.buttonContainer}
+      >
         {viewOnly && (
           <Grid item xs={6} sm={2}>
             <Button
@@ -196,7 +187,10 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
   ...state.shipmentReducer,
-  ...state.authReducer,
+  loading: (
+    state.custodianReducer.loading
+    || state.shipmentReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(CustodianInfo);
