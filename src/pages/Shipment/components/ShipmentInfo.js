@@ -130,7 +130,7 @@ const ShipmentInfo = (props) => {
     (editData && editData.uom_distance) || '',
   );
   const [platform_name, setPlatformName] = useState(
-    (editData && editData.platform_name) || 'ICLP',
+    (editData && editData.platform_name) || 'iclp',
   );
 
   const [formError, setFormError] = useState({});

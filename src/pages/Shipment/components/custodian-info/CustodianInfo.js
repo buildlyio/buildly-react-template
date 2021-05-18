@@ -139,7 +139,7 @@ const CustodianInfo = (props) => {
             <AddCustodyForm
               setItemIds={setItemIds}
               itemIds={itemIds}
-              setFormModal={oncloseModal}
+              setOpenModal={oncloseModal}
               rows={rows}
               viewOnly={viewOnly}
               editItem={editItem}
@@ -187,9 +187,11 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
   ...state.shipmentReducer,
+  ...state.authReducer,
   loading: (
     state.custodianReducer.loading
     || state.shipmentReducer.loading
+    || state.authReducer.loading
   ),
 });
 
