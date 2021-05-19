@@ -6,7 +6,6 @@ import {
   Card,
   CardContent,
   Typography,
-  InputAdornment,
   Button,
   TextField,
   CircularProgress,
@@ -54,6 +53,10 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     fontSize: '14px',
     textAlign: 'center',
+  },
+  inputWithTooltip: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -220,110 +223,94 @@ const EnvironmentalLimitsInfo = ({
             <CardContent>
               <Grid container spacing={2}>
                 <Grid item xs={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="max_temp_val"
-                    label="Max"
-                    name="max_temp_val"
-                    autoComplete="max_temp_val"
-                    value={max_temp_val}
-                    disabled={viewOnly}
-                    InputProps={
-                      shipmentMetaData.max_excursion_temp
-                      && shipmentMetaData.max_excursion_temp.help_text
-                      && {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <CustomizedTooltips
-                              toolTipText={
-                                shipmentMetaData.max_excursion_temp.help_text
-                              }
-                            />
-                          </InputAdornment>
-                        ),
-                      }
-                    }
-                  />
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="high_temp_val"
-                    label="Warning high"
-                    name="high_temp_val"
-                    autoComplete="high_temp_val"
-                    value={high_temp_val}
-                    disabled={viewOnly}
-                    InputProps={
-                      shipmentMetaData.max_warning_temp
-                      && shipmentMetaData.max_warning_temp.help_text
-                      && {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <CustomizedTooltips
-                              toolTipText={
-                                shipmentMetaData.max_warning_temp.help_text
-                              }
-                            />
-                          </InputAdornment>
-                        ),
-                      }
-                    }
-                  />
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="low_temp_val"
-                    label="Warning low"
-                    name="low_temp_val"
-                    autoComplete="low_temp_val"
-                    value={low_temp_val}
-                    disabled={viewOnly}
-                    InputProps={
-                      shipmentMetaData.min_warning_temp
-                      && shipmentMetaData.min_warning_temp.help_text
-                      && {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <CustomizedTooltips
-                              toolTipText={
-                                shipmentMetaData.min_warning_temp.help_text
-                              }
-                            />
-                          </InputAdornment>
-                        ),
-                      }
-                    }
-                  />
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="min_temp_val"
-                    label="Min"
-                    name="min_temp_val"
-                    autoComplete="min_temp_val"
-                    value={min_temp_val}
-                    disabled={viewOnly}
-                    InputProps={
-                      shipmentMetaData.min_excursion_temp
-                      && shipmentMetaData.min_excursion_temp.help_text
-                      && {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <CustomizedTooltips
-                              toolTipText={
-                                shipmentMetaData.min_excursion_temp.help_text
-                              }
-                            />
-                          </InputAdornment>
-                        ),
-                      }
-                    }
-                  />
+                  <div className={classes.inputWithTooltip}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="max_temp_val"
+                      label="Max"
+                      name="max_temp_val"
+                      autoComplete="max_temp_val"
+                      value={max_temp_val}
+                      disabled={viewOnly}
+                    />
+                    {shipmentMetaData.max_excursion_temp
+                    && shipmentMetaData.max_excursion_temp.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          shipmentMetaData.max_excursion_temp.help_text
+                        }
+                      />
+                    )}
+                  </div>
+                  <div className={classes.inputWithTooltip}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="high_temp_val"
+                      label="Warning high"
+                      name="high_temp_val"
+                      autoComplete="high_temp_val"
+                      value={high_temp_val}
+                      disabled={viewOnly}
+                    />
+                    {shipmentMetaData.max_warning_temp
+                    && shipmentMetaData.max_warning_temp.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          shipmentMetaData.max_warning_temp.help_text
+                        }
+                      />
+                    )}
+                  </div>
+                  <div className={classes.inputWithTooltip}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="low_temp_val"
+                      label="Warning low"
+                      name="low_temp_val"
+                      autoComplete="low_temp_val"
+                      value={low_temp_val}
+                      disabled={viewOnly}
+                    />
+                    {shipmentMetaData.min_warning_temp
+                    && shipmentMetaData.min_warning_temp.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          shipmentMetaData.min_warning_temp.help_text
+                        }
+                      />
+                    )}
+                  </div>
+                  <div className={classes.inputWithTooltip}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="min_temp_val"
+                      label="Min"
+                      name="min_temp_val"
+                      autoComplete="min_temp_val"
+                      value={min_temp_val}
+                      disabled={viewOnly}
+                    />
+                    {shipmentMetaData.min_excursion_temp
+                    && shipmentMetaData.min_excursion_temp.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          shipmentMetaData.min_excursion_temp.help_text
+                        }
+                      />
+                    )}
+                  </div>
                 </Grid>
                 <Grid
                   item
@@ -365,110 +352,94 @@ const EnvironmentalLimitsInfo = ({
             <CardContent>
               <Grid container spacing={4}>
                 <Grid item xs={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="max_humid_val"
-                    label="Max"
-                    name="max_humid_val"
-                    autoComplete="max_humid_val"
-                    value={max_humid_val}
-                    disabled={viewOnly}
-                    InputProps={
-                      shipmentMetaData.max_excursion_humidity
-                      && shipmentMetaData.max_excursion_humidity.help_text
-                      && {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <CustomizedTooltips
-                              toolTipText={
-                                shipmentMetaData.max_excursion_humidity.help_text
-                              }
-                            />
-                          </InputAdornment>
-                        ),
-                      }
-                    }
-                  />
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="high_humid_val"
-                    label="Warning high"
-                    name="high_humid_val"
-                    autoComplete="high_humid_val"
-                    value={high_humid_val}
-                    disabled={viewOnly}
-                    InputProps={
-                      shipmentMetaData.max_warning_humidity
-                      && shipmentMetaData.max_warning_humidity.help_text
-                      && {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <CustomizedTooltips
-                              toolTipText={
-                                shipmentMetaData.max_warning_humidity.help_text
-                              }
-                            />
-                          </InputAdornment>
-                        ),
-                      }
-                    }
-                  />
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="low_humid_val"
-                    label="Warning low"
-                    name="low_humid_val"
-                    autoComplete="low_humid_val"
-                    value={low_humid_val}
-                    disabled={viewOnly}
-                    InputProps={
-                      shipmentMetaData.min_warning_humidity
-                      && shipmentMetaData.min_warning_humidity.help_text
-                      && {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <CustomizedTooltips
-                              toolTipText={
-                                shipmentMetaData.min_warning_humidity.help_text
-                              }
-                            />
-                          </InputAdornment>
-                        ),
-                      }
-                    }
-                  />
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="min_humid_val"
-                    label="Min"
-                    name="min_humid_val"
-                    autoComplete="min_humid_val"
-                    value={min_humid_val}
-                    disabled={viewOnly}
-                    InputProps={
-                      shipmentMetaData.min_excursion_humidity
-                      && shipmentMetaData.min_excursion_humidity.help_text
-                      && {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <CustomizedTooltips
-                              toolTipText={
-                                shipmentMetaData.min_excursion_humidity.help_text
-                              }
-                            />
-                          </InputAdornment>
-                        ),
-                      }
-                    }
-                  />
+                  <div className={classes.inputWithTooltip}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="max_humid_val"
+                      label="Max"
+                      name="max_humid_val"
+                      autoComplete="max_humid_val"
+                      value={max_humid_val}
+                      disabled={viewOnly}
+                    />
+                    {shipmentMetaData.max_excursion_humidity
+                    && shipmentMetaData.max_excursion_humidity.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          shipmentMetaData.max_excursion_humidity.help_text
+                        }
+                      />
+                    )}
+                  </div>
+                  <div className={classes.inputWithTooltip}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="high_humid_val"
+                      label="Warning high"
+                      name="high_humid_val"
+                      autoComplete="high_humid_val"
+                      value={high_humid_val}
+                      disabled={viewOnly}
+                    />
+                    {shipmentMetaData.max_warning_humidity
+                    && shipmentMetaData.max_warning_humidity.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          shipmentMetaData.max_warning_humidity.help_text
+                        }
+                      />
+                    )}
+                  </div>
+                  <div className={classes.inputWithTooltip}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="low_humid_val"
+                      label="Warning low"
+                      name="low_humid_val"
+                      autoComplete="low_humid_val"
+                      value={low_humid_val}
+                      disabled={viewOnly}
+                    />
+                    {shipmentMetaData.min_warning_humidity
+                    && shipmentMetaData.min_warning_humidity.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          shipmentMetaData.min_warning_humidity.help_text
+                        }
+                      />
+                    )}
+                  </div>
+                  <div className={classes.inputWithTooltip}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="min_humid_val"
+                      label="Min"
+                      name="min_humid_val"
+                      autoComplete="min_humid_val"
+                      value={min_humid_val}
+                      disabled={viewOnly}
+                    />
+                    {shipmentMetaData.min_excursion_humidity
+                    && shipmentMetaData.min_excursion_humidity.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          shipmentMetaData.min_excursion_humidity.help_text
+                        }
+                      />
+                    )}
+                  </div>
                 </Grid>
                 <Grid
                   item

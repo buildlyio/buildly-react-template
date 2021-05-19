@@ -54,6 +54,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '1em',
     textAlign: 'center',
   },
+  inputWithTooltip: {
+    display: 'flex',
+    alignItems: 'center',
+  },
 }));
 
 const AddItems = ({
@@ -166,8 +170,9 @@ const AddItems = ({
     const dataHasChanged = (
       item_name.hasChanged()
       || item_type.hasChanged()
-      || (product.url !== (editData.product[0] || ''))
-      || (units !== (editData.number_of_units || 1))
+      || ((product && product.url) !== (
+        (editData.product && editData.product[0]) || ''))
+      || (units !== (editData.number_of_units || 0))
     );
 
     if (dataHasChanged) {
@@ -325,7 +330,7 @@ const AddItems = ({
             onSubmit={handleSubmit}
           >
             <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item xs={12}>
+              <Grid className={classes.inputWithTooltip} item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -346,24 +351,18 @@ const AddItems = ({
                   }
                   onBlur={(e) => handleBlur(e, 'required', item_name)}
                   {...item_name.bind}
-                  InputProps={
-                    itemMetData.name
-                    && itemMetData.name.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <CustomizedTooltips
-                            toolTipText={
-                              itemMetData.name.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 />
+                {itemMetData.name
+                && itemMetData.name.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      itemMetData.name.help_text
+                    }
+                  />
+                )}
               </Grid>
-              <Grid item xs={12}>
+              <Grid className={classes.inputWithTooltip} item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -383,21 +382,6 @@ const AddItems = ({
                   }
                   onBlur={(e) => handleBlur(e, 'required', item_type, 'item_type')}
                   {...item_type.bind}
-                  InputProps={
-                    itemMetData.item_type
-                    && itemMetData.item_type.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="start">
-                          <CustomizedTooltips
-                            toolTipText={
-                              itemMetData.item_type.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 >
                   <MenuItem value="">Select</MenuItem>
                   {itemTypeList
@@ -413,6 +397,15 @@ const AddItems = ({
                       ),
                     )}
                 </TextField>
+                {itemMetData.item_type
+                && itemMetData.item_type.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      itemMetData.item_type.help_text
+                    }
+                  />
+                )}
               </Grid>
             </Grid>
             <Card
@@ -425,12 +418,7 @@ const AddItems = ({
                 </Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
                   <Grid item xs={12}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                    >
+                    <div className={classes.inputWithTooltip}>
                       <Autocomplete
                         id="products"
                         options={products || []}
@@ -462,7 +450,11 @@ const AddItems = ({
                     </div>
                   </Grid>
 
-                  <Grid item xs={12}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -475,24 +467,23 @@ const AddItems = ({
                       name="product_desc"
                       autoComplete="product_desc"
                       value={product_desc}
-                      InputProps={
-                        productMetData.description
-                        && productMetData.description.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  productMetData.description.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {productMetData.description
+                    && productMetData.description.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          productMetData.description.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -501,24 +492,23 @@ const AddItems = ({
                       id="product_type"
                       label="Product Type"
                       value={product_type}
-                      InputProps={
-                        productMetData.product_type
-                        && productMetData.product_type.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  productMetData.product_type.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {productMetData.product_type
+                    && productMetData.product_type.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          productMetData.product_type.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -534,21 +524,25 @@ const AddItems = ({
                             $
                           </InputAdornment>
                         ),
-                        endAdornment: productMetData.value
-                        && productMetData.value.help_text
-                        && (
-                          <InputAdornment position="end">
-                            <CustomizedTooltips
-                              toolTipText={
-                                productMetData.value.help_text
-                              }
-                            />
-                          </InputAdornment>
-                        ),
                       }}
                     />
+                    {productMetData.value
+                    && productMetData.value.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          productMetData.value.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -558,24 +552,24 @@ const AddItems = ({
                       id="product_weight"
                       label="Product Weight"
                       value={product_weight}
-                      InputProps={
-                        productMetData.gross_weight
-                        && productMetData.gross_weight.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  productMetData.gross_weight.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {productMetData.gross_weight
+                    && productMetData.gross_weight.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          productMetData.gross_weight.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -584,26 +578,26 @@ const AddItems = ({
                       id="product_uom"
                       label="Units of Measure"
                       value={product_uom_name}
-                      InputProps={
-                        productMetData.unit_of_measure
-                        && productMetData.unit_of_measure.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  productMetData.unit_of_measure.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {productMetData.unit_of_measure
+                    && productMetData.unit_of_measure.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          productMetData.unit_of_measure.help_text
+                        }
+                      />
+                    )}
                   </Grid>
                 </Grid>
                 <Grid container spacing={isDesktop ? 2 : 0}>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -614,24 +608,24 @@ const AddItems = ({
                       name="gtin"
                       autoComplete="gtin"
                       value={gtin}
-                      InputProps={
-                        productMetData.gtin
-                        && productMetData.gtin.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  productMetData.gtin.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {productMetData.gtin
+                    && productMetData.gtin.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          productMetData.gtin.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -642,24 +636,24 @@ const AddItems = ({
                       name="upc"
                       autoComplete="upc"
                       value={upc}
-                      InputProps={
-                        productMetData.upc
-                        && productMetData.upc.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  productMetData.upc.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {productMetData.upc
+                    && productMetData.upc.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          productMetData.upc.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -670,24 +664,24 @@ const AddItems = ({
                       name="ean"
                       autoComplete="ean"
                       value={ean}
-                      InputProps={
-                        productMetData.ean
-                        && productMetData.ean.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  productMetData.ean.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {productMetData.ean
+                    && productMetData.ean.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          productMetData.ean.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -698,24 +692,24 @@ const AddItems = ({
                       name="paper_tag_no"
                       autoComplete="paper_tag_no"
                       value={paper_tag_no}
-                      InputProps={
-                        productMetData.paper_tag_number
-                        && productMetData.paper_tag_number.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  productMetData.paper_tag_number.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {productMetData.paper_tag_number
+                    && productMetData.paper_tag_number.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          productMetData.paper_tag_number.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -726,24 +720,24 @@ const AddItems = ({
                       name="batch_id"
                       autoComplete="batch_id"
                       value={batch_id}
-                      InputProps={
-                        productMetData.batch_run_id
-                        && productMetData.batch_run_id.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  productMetData.batch_run_id.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {productMetData.batch_run_id
+                    && productMetData.batch_run_id.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          productMetData.batch_run_id.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -754,29 +748,29 @@ const AddItems = ({
                       name="bin_id"
                       autoComplete="bin_id"
                       value={bin_id}
-                      InputProps={
-                        productMetData.bin_id
-                        && productMetData.bin_id.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  productMetData.bin_id.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {productMetData.bin_id
+                    && productMetData.bin_id.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          productMetData.bin_id.help_text
+                        }
+                      />
+                    )}
                   </Grid>
                 </Grid>
               </CardContent>
             </Card>
 
             <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item xs={12} md={6} sm={6}>
+              <Grid
+                className={classes.inputWithTooltip}
+                item
+                xs={12}
+                md={6}
+                sm={6}
+              >
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -786,25 +780,25 @@ const AddItems = ({
                   label="# of Units"
                   value={units}
                   onChange={(e) => onNumberOfUnitsChange(e)}
-                  InputProps={
-                    itemMetData.number_of_units
-                    && itemMetData.number_of_units.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <CustomizedTooltips
-                            toolTipText={
-                              itemMetData.number_of_units.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 />
+                {itemMetData.number_of_units
+                && itemMetData.number_of_units.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      itemMetData.number_of_units.help_text
+                    }
+                  />
+                )}
               </Grid>
 
-              <Grid item xs={12} md={6} sm={6}>
+              <Grid
+                className={classes.inputWithTooltip}
+                item
+                xs={12}
+                md={6}
+                sm={6}
+              >
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -820,21 +814,25 @@ const AddItems = ({
                         $
                       </InputAdornment>
                     ),
-                    endAdornment: itemMetData.value
-                    && itemMetData.value.help_text
-                    && (
-                      <InputAdornment position="end">
-                        <CustomizedTooltips
-                          toolTipText={
-                            itemMetData.value.help_text
-                          }
-                        />
-                      </InputAdornment>
-                    ),
                   }}
                 />
+                {itemMetData.value
+                && itemMetData.value.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      itemMetData.value.help_text
+                    }
+                  />
+                )}
               </Grid>
-              <Grid item xs={12} md={6} sm={6}>
+              <Grid
+                className={classes.inputWithTooltip}
+                item
+                xs={12}
+                md={6}
+                sm={6}
+              >
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -844,24 +842,24 @@ const AddItems = ({
                   id="item_weight"
                   label="Item Weight"
                   value={item_weight}
-                  InputProps={
-                    itemMetData.gross_weight
-                    && itemMetData.gross_weight.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <CustomizedTooltips
-                            toolTipText={
-                              itemMetData.gross_weight.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 />
+                {itemMetData.gross_weight
+                && itemMetData.gross_weight.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      itemMetData.gross_weight.help_text
+                    }
+                  />
+                )}
               </Grid>
-              <Grid item xs={12} md={6} sm={6}>
+              <Grid
+                className={classes.inputWithTooltip}
+                item
+                xs={12}
+                md={6}
+                sm={6}
+              >
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -871,21 +869,6 @@ const AddItems = ({
                   label="Units of Measure"
                   value={unit_of_measure}
                   onChange={(e) => setUomContainer(e.target.value)}
-                  InputProps={
-                    itemMetData.unit_of_measure
-                    && itemMetData.unit_of_measure.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="start">
-                          <CustomizedTooltips
-                            toolTipText={
-                              itemMetData.unit_of_measure.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 >
                   <MenuItem value="">Select</MenuItem>
                   {unitsOfMeasure
@@ -905,6 +888,15 @@ const AddItems = ({
                       ),
                     )}
                 </TextField>
+                {itemMetData.unit_of_measure
+                && itemMetData.unit_of_measure.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      itemMetData.unit_of_measure.help_text
+                    }
+                  />
+                )}
               </Grid>
             </Grid>
 
@@ -957,7 +949,10 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.itemsReducer,
   ...state.optionsReducer,
-  loading: state.itemsReducer.loading || state.optionsReducer.loading,
+  loading: (
+    state.itemsReducer.loading
+    || state.optionsReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(AddItems);

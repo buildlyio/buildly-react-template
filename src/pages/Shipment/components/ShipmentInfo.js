@@ -13,7 +13,6 @@ import {
   MenuItem,
   CircularProgress,
   Checkbox,
-  InputAdornment,
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
@@ -62,6 +61,10 @@ const useStyles = makeStyles((theme) => ({
   },
   loadingWrapper: {
     position: 'relative',
+  },
+  inputWithTooltip: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -358,6 +361,7 @@ const ShipmentInfo = (props) => {
       handleCancel();
     }
   };
+
   return (
     <>
       <div>
@@ -380,7 +384,11 @@ const ShipmentInfo = (props) => {
                   container
                   spacing={isDesktop ? 2 : 0}
                 >
-                  <Grid item xs={12}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -402,23 +410,21 @@ const ShipmentInfo = (props) => {
                       }
                       onBlur={(e) => handleBlur(e, 'required', shipment_name)}
                       {...shipment_name.bind}
-                      InputProps={
-                        fieldsMetadata.shipment_name.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  fieldsMetadata.shipment_name.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {fieldsMetadata.shipment_name.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.shipment_name.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -429,23 +435,21 @@ const ShipmentInfo = (props) => {
                       autoComplete="lading_bill"
                       disabled={viewOnly}
                       {...lading_bill.bind}
-                      InputProps={
-                        fieldsMetadata.lading_bill.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  fieldsMetadata.lading_bill.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {fieldsMetadata.lading_bill.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.lading_bill.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -456,20 +460,6 @@ const ShipmentInfo = (props) => {
                       label="Mode type"
                       disabled={viewOnly}
                       {...mode_type.bind}
-                      InputProps={
-                        fieldsMetadata.mode_type.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  fieldsMetadata.mode_type.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       {TRANSPORT_MODE
@@ -485,8 +475,20 @@ const ShipmentInfo = (props) => {
                         ),
                       )}
                     </TextField>
+                    {fieldsMetadata.mode_type.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.mode_type.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -499,23 +501,21 @@ const ShipmentInfo = (props) => {
                       autoComplete="route_desc"
                       disabled={viewOnly}
                       {...route_desc.bind}
-                      InputProps={
-                        fieldsMetadata.route_desc.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  fieldsMetadata.route_desc.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {fieldsMetadata.route_desc.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.route_desc.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -527,20 +527,6 @@ const ShipmentInfo = (props) => {
                       disabled={viewOnly}
                       value={uom_temp}
                       onChange={(e) => setUomTemp(e.target.value)}
-                      InputProps={
-                        fieldsMetadata.uom_temp.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  fieldsMetadata.uom_temp.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       {unitsOfMeasure
@@ -560,8 +546,20 @@ const ShipmentInfo = (props) => {
                         ),
                       )}
                     </TextField>
+                    {fieldsMetadata.uom_temp.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.uom_temp.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -573,20 +571,6 @@ const ShipmentInfo = (props) => {
                       disabled={viewOnly}
                       value={platform_name}
                       onChange={(e) => setPlatformName(e.target.value)}
-                      InputProps={
-                        fieldsMetadata.platform_name.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  fieldsMetadata.platform_name.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       {SENSOR_PLATFORM
@@ -602,12 +586,24 @@ const ShipmentInfo = (props) => {
                         ),
                       )}
                     </TextField>
+                    {fieldsMetadata.platform_name.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.platform_name.help_text
+                        }
+                      />
+                    )}
                   </Grid>
                 </Grid>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Grid container spacing={2}>
-                  <Grid item xs={12}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -619,20 +615,6 @@ const ShipmentInfo = (props) => {
                       label="Shipment status"
                       disabled={viewOnly}
                       {...shipment_status.bind}
-                      InputProps={
-                        fieldsMetadata.shipment_status.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  fieldsMetadata.shipment_status.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       {SHIPMENT_STATUS
@@ -648,6 +630,14 @@ const ShipmentInfo = (props) => {
                         ),
                       )}
                     </TextField>
+                    {fieldsMetadata.shipment_status.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.shipment_status.help_text
+                        }
+                      />
+                    )}
                   </Grid>
                   <Grid item xs={12}>
                     <DatePickerComponent
@@ -680,12 +670,7 @@ const ShipmentInfo = (props) => {
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                    >
+                    <div className={classes.inputWithTooltip}>
                       <Autocomplete
                         multiple
                         id="tags-outlined"
@@ -739,7 +724,11 @@ const ShipmentInfo = (props) => {
                       )}
                     </div>
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -751,20 +740,6 @@ const ShipmentInfo = (props) => {
                       value={uom_distance}
                       disabled={viewOnly}
                       onChange={(e) => setUomDistance(e.target.value)}
-                      InputProps={
-                        fieldsMetadata.uom_distance.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  fieldsMetadata.uom_distance.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       {unitsOfMeasure
@@ -784,8 +759,20 @@ const ShipmentInfo = (props) => {
                         ),
                       )}
                     </TextField>
+                    {fieldsMetadata.uom_distance.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.uom_distance.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -797,20 +784,6 @@ const ShipmentInfo = (props) => {
                       value={uom_weight}
                       disabled={viewOnly}
                       onChange={(e) => setUomWeight(e.target.value)}
-                      InputProps={
-                        fieldsMetadata.uom_weight.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  fieldsMetadata.uom_weight.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       {unitsOfMeasure
@@ -830,6 +803,14 @@ const ShipmentInfo = (props) => {
                         ),
                       )}
                     </TextField>
+                    {fieldsMetadata.uom_weight.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.uom_weight.help_text
+                        }
+                      />
+                    )}
                   </Grid>
                 </Grid>
               </Grid>

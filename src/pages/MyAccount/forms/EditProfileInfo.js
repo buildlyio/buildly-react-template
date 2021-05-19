@@ -11,7 +11,6 @@ import {
   Grid,
   useMediaQuery,
   useTheme,
-  InputAdornment,
 } from '@material-ui/core';
 import FormModal from '@components/Modal/FormModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
@@ -52,6 +51,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     paddingBottom: theme.spacing(2),
+    alignItems: 'center',
+  },
+  inputWithTooltip: {
+    display: 'flex',
     alignItems: 'center',
   },
 }));
@@ -225,7 +228,7 @@ const EditProfileInfo = ({
         onSubmit={handleSubmit}
       >
         <Grid container spacing={isDesktop ? 2 : 0}>
-          <Grid item xs={12}>
+          <Grid className={classes.inputWithTooltip} item xs={12}>
             <TextField
               variant="outlined"
               margin="normal"
@@ -246,24 +249,18 @@ const EditProfileInfo = ({
               }
               onBlur={(e) => handleBlur(e, 'required', first_name)}
               {...first_name.bind}
-              InputProps={
-                fieldsMetadata.first_name
-                && fieldsMetadata.first_name.help_text
-                && {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <CustomizedTooltips
-                        toolTipText={
-                          fieldsMetadata.first_name.help_text
-                        }
-                      />
-                    </InputAdornment>
-                  ),
-                }
-              }
             />
+            {fieldsMetadata.first_name
+            && fieldsMetadata.first_name.help_text
+            && (
+              <CustomizedTooltips
+                toolTipText={
+                  fieldsMetadata.first_name.help_text
+                }
+              />
+            )}
           </Grid>
-          <Grid item xs={12}>
+          <Grid className={classes.inputWithTooltip} item xs={12}>
             <TextField
               variant="outlined"
               margin="normal"
@@ -273,26 +270,20 @@ const EditProfileInfo = ({
               name="last_name"
               autoComplete="last_name"
               {...last_name.bind}
-              InputProps={
-                fieldsMetadata.last_name
-                && fieldsMetadata.last_name.help_text
-                && {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <CustomizedTooltips
-                        toolTipText={
-                          fieldsMetadata.last_name.help_text
-                        }
-                      />
-                    </InputAdornment>
-                  ),
-                }
-              }
             />
+            {fieldsMetadata.last_name
+            && fieldsMetadata.last_name.help_text
+            && (
+              <CustomizedTooltips
+                toolTipText={
+                  fieldsMetadata.last_name.help_text
+                }
+              />
+            )}
           </Grid>
         </Grid>
         <Grid container spacing={isDesktop ? 2 : 0}>
-          <Grid item xs={12}>
+          <Grid className={classes.inputWithTooltip} item xs={12}>
             <TextField
               variant="outlined"
               margin="normal"
@@ -310,25 +301,19 @@ const EditProfileInfo = ({
               }
               onBlur={(e) => handleBlur(e, 'email', email)}
               {...email.bind}
-              InputProps={
-                fieldsMetadata.email
-                && fieldsMetadata.email.help_text
-                && {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <CustomizedTooltips
-                        toolTipText={
-                          fieldsMetadata.email.help_text
-                        }
-                      />
-                    </InputAdornment>
-                  ),
-                }
-              }
             />
+            {fieldsMetadata.email
+            && fieldsMetadata.email.help_text
+            && (
+              <CustomizedTooltips
+                toolTipText={
+                  fieldsMetadata.email.help_text
+                }
+              />
+            )}
           </Grid>
           {organizationData && (
-            <Grid item xs={12}>
+            <Grid className={classes.inputWithTooltip} item xs={12}>
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -347,22 +332,16 @@ const EditProfileInfo = ({
                     : ''
                 }
                 {...organisation_name.bind}
-                InputProps={
-                  fieldsMetadata.organisation_name
-                  && fieldsMetadata.organisation_name.help_text
-                  && {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <CustomizedTooltips
-                          toolTipText={
-                            fieldsMetadata.organisation_name.help_text
-                          }
-                        />
-                      </InputAdornment>
-                    ),
-                  }
-                }
               />
+              {fieldsMetadata.organisation_name
+              && fieldsMetadata.organisation_name.help_text
+              && (
+                <CustomizedTooltips
+                  toolTipText={
+                    fieldsMetadata.organisation_name.help_text
+                  }
+                />
+              )}
             </Grid>
           )}
           <Grid item xs={12}>
@@ -427,6 +406,11 @@ const EditProfileInfo = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
+  ...state.optionsReducer,
+  loading: (
+    state.authReducer.loading
+    || state.optionsReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(EditProfileInfo);

@@ -188,10 +188,12 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.custodianReducer,
   ...state.shipmentReducer,
   ...state.authReducer,
+  ...state.optionsReducer,
   loading: (
     state.custodianReducer.loading
     || state.shipmentReducer.loading
     || state.authReducer.loading
+    || state.optionsReducer.loading
   ),
 });
 

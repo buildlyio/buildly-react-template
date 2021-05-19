@@ -686,13 +686,11 @@ const AddFromAPI = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.itemsReducer,
+  ...state.optionsReducer,
   ...state.importExportReducer,
-  ...state.sensorsGatewayReducer,
   loading: (
-    state.itemsReducer.loading
+    state.optionsReducer.loading
     || state.importExportReducer.loading
-    || state.sensorsGatewayReducer.loading
   ),
 });
 

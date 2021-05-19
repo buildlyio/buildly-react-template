@@ -13,7 +13,6 @@ import {
   Grid,
   MenuItem,
   useMediaQuery,
-  InputAdornment,
 } from '@material-ui/core';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import FormModal from '@components/Modal/FormModal';
@@ -65,6 +64,10 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginTop: '1em',
     textAlign: 'center',
+  },
+  inputWithTooltip: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -270,7 +273,13 @@ const AddCustodians = ({
             onSubmit={handleSubmit}
           >
             <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item xs={12} md={6} sm={6}>
+              <Grid
+                className={classes.inputWithTooltip}
+                item
+                xs={12}
+                md={6}
+                sm={6}
+              >
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -291,23 +300,24 @@ const AddCustodians = ({
                   }
                   onBlur={(e) => handleBlur(e, 'required', company)}
                   {...company.bind}
-                  InputProps={
-                    custodianMetaData.name
-                    && custodianMetaData.name.help_text && {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <CustomizedTooltips
-                            toolTipText={
-                              custodianMetaData.name.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 />
+                {custodianMetaData.name
+                && custodianMetaData.name.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      custodianMetaData.name.help_text
+                    }
+                  />
+                )}
               </Grid>
-              <Grid item xs={12} md={6} sm={6}>
+              <Grid
+                className={classes.inputWithTooltip}
+                item
+                xs={12}
+                md={6}
+                sm={6}
+              >
                 <TextField
                   variant="filled"
                   margin="normal"
@@ -318,25 +328,26 @@ const AddCustodians = ({
                   name="alias"
                   autoComplete="alias"
                   {...alias.bind}
-                  InputProps={
-                    custodianMetaData.alias
-                    && custodianMetaData.alias.help_text && {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <CustomizedTooltips
-                            toolTipText={
-                              custodianMetaData.alias.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 />
+                {custodianMetaData.alias
+                && custodianMetaData.alias.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      custodianMetaData.alias.help_text
+                    }
+                  />
+                )}
               </Grid>
             </Grid>
             <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item xs={12} md={6} sm={6}>
+              <Grid
+                className={classes.inputWithTooltip}
+                item
+                xs={12}
+                md={6}
+                sm={6}
+              >
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -356,20 +367,6 @@ const AddCustodians = ({
                   }
                   onBlur={(e) => handleBlur(e, 'required', custodianType, 'custodianType')}
                   {...custodianType.bind}
-                  InputProps={
-                    custodianMetaData.custodian_type
-                    && custodianMetaData.custodian_type.help_text && {
-                      endAdornment: (
-                        <InputAdornment position="start">
-                          <CustomizedTooltips
-                            toolTipText={
-                              custodianMetaData.custodian_type.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 >
                   <MenuItem value="">Select</MenuItem>
                   {custodianTypeList
@@ -389,6 +386,15 @@ const AddCustodians = ({
                       ),
                     )}
                 </TextField>
+                {custodianMetaData.custodian_type
+                && custodianMetaData.custodian_type.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      custodianMetaData.custodian_type.help_text
+                    }
+                  />
+                )}
               </Grid>
               <Grid item xs={12} md={6} sm={6}>
                 <TextField
@@ -436,7 +442,12 @@ const AddCustodians = ({
               <CardContent>
                 <Typography variant="h6">Contact Info</Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
-                  <Grid item xs={12} md={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -457,23 +468,23 @@ const AddCustodians = ({
                       }
                       onBlur={(e) => handleBlur(e, 'required', address_1)}
                       {...address_1.bind}
-                      InputProps={
-                        contactMetaData.address1
-                        && contactMetaData.address1.help_text && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  contactMetaData.address1.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {contactMetaData.address1
+                    && contactMetaData.address1.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          contactMetaData.address1.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -483,29 +494,28 @@ const AddCustodians = ({
                       name="address_2"
                       autoComplete="address_2"
                       {...address_2.bind}
-                      InputProps={
-                        contactMetaData.address2
-                        && contactMetaData.address2.help_text && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  contactMetaData.address2.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {contactMetaData.address2
+                    && contactMetaData.address2.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          contactMetaData.address2.help_text
+                        }
+                      />
+                    )}
                   </Grid>
                 </Grid>
                 <Grid container spacing={isDesktop ? 2 : 0}>
-                  <Grid item xs={12} md={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
-                      // required
                       fullWidth
                       id="city"
                       label="City"
@@ -519,27 +529,26 @@ const AddCustodians = ({
                       }
                       onBlur={(e) => handleBlur(e, 'required', city)}
                       {...city.bind}
-                      InputProps={
-                        contactMetaData.city
-                        && contactMetaData.city.help_text && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  contactMetaData.city.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {contactMetaData.city
+                    && contactMetaData.city.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          contactMetaData.city.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
-                      // required
                       fullWidth
                       id="zip"
                       label="Zip Code"
@@ -553,25 +562,25 @@ const AddCustodians = ({
                       }
                       onBlur={(e) => handleBlur(e, 'required', zip)}
                       {...zip.bind}
-                      InputProps={
-                        contactMetaData.postal_code
-                        && contactMetaData.postal_code.help_text && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  contactMetaData.postal_code.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {contactMetaData.postal_code
+                    && contactMetaData.postal_code.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          contactMetaData.postal_code.help_text
+                        }
+                      />
+                    )}
                   </Grid>
                 </Grid>
                 <Grid container spacing={isDesktop ? 2 : 0}>
-                  <Grid item xs={12} md={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -591,20 +600,6 @@ const AddCustodians = ({
                       }
                       onBlur={(e) => handleBlur(e, 'required', state, 'state')}
                       {...state.bind}
-                      InputProps={
-                        contactMetaData.state
-                        && contactMetaData.state.help_text && {
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  contactMetaData.state.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       {_.map(
@@ -619,8 +614,22 @@ const AddCustodians = ({
                         ),
                       )}
                     </TextField>
+                    {contactMetaData.state
+                    && contactMetaData.state.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          contactMetaData.state.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -640,20 +649,6 @@ const AddCustodians = ({
                       }
                       onBlur={(e) => handleBlur(e, 'required', country, 'country')}
                       {...country.bind}
-                      InputProps={
-                        contactMetaData.country
-                        && contactMetaData.country.help_text && {
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  contactMetaData.country.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       {_.map(
@@ -668,6 +663,15 @@ const AddCustodians = ({
                         ),
                       )}
                     </TextField>
+                    {contactMetaData.country
+                    && contactMetaData.country.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          contactMetaData.country.help_text
+                        }
+                      />
+                    )}
                   </Grid>
                 </Grid>
               </CardContent>
@@ -722,7 +726,10 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
   ...state.optionsReducer,
-  loading: state.custodianReducer.loading || state.optionsReducer.loading,
+  loading: (
+    state.custodianReducer.loading
+    || state.optionsReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(AddCustodians);
