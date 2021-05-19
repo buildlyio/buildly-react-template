@@ -62,6 +62,7 @@ const ItemType = ({
 
   return (
     <DataTableWrapper
+      noSpace
       loading={loading}
       rows={itemTypeList || []}
       columns={ITEM_TYPE_COLUMNS}

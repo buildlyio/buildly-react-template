@@ -1,5 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   makeStyles,
   TextField,
@@ -11,13 +12,14 @@ import {
   Grid,
   Button,
   CircularProgress,
+  Chip,
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import {
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   CheckBox as CheckBoxIcon,
 } from '@material-ui/icons';
-import DataTable from '@components/Table/Table';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
 import {
   getFormattedRow,
@@ -26,22 +28,13 @@ import {
 } from '@pages/SensorsGateway/Constants';
 import { editShipment } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
-import { checkIfCustodianInfoEdited } from './custodian-info/AddCustodyForm';
 import { gatewayColumns, sensorsColumns } from '../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > * + *': {
-      marginTop: theme.spacing(3),
-    },
-  },
   buttonContainer: {
     margin: theme.spacing(8, 0),
     textAlign: 'center',
     justifyContent: 'center',
-  },
-  alignRight: {
-    marginLeft: 'auto',
   },
   buttonProgress: {
     position: 'absolute',
@@ -90,23 +83,25 @@ const SensorsGatewayInfo = ({
   const [gatewayIds, setGatewayIds] = useState(
     (shipmentFormData && shipmentFormData.gateway_ids) || [],
   );
+  const [options, setOptions] = useState([]);
+
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
   const organization = useContext(UserContext).organization.organization_uuid;
 
   let rows = [];
   let sensorsRow = [];
-  const columns = gatewayColumns;
+
   if (gatewayData && gatewayData.length) {
-    const selectedRows = [];
-    const selectedSensors = [];
-    gatewayData.forEach((element) => {
-      if (gatewayIds.indexOf(element.gateway_uuid) !== -1) {
-        selectedRows.push(element);
+    let selectedRows = [];
+    let selectedSensors = [];
+    _.forEach(gatewayData, (element) => {
+      if (_.indexOf(gatewayIds, element.gateway_uuid) !== -1) {
+        selectedRows = [...selectedRows, element];
         if (sensorData && sensorData.length) {
-          sensorData.forEach((sensor) => {
+          _.forEach(sensorData, (sensor) => {
             if (element.url === sensor.gateway) {
-              selectedSensors.push(sensor);
+              selectedSensors = [...selectedSensors, sensor];
             }
           });
         }
@@ -116,8 +111,41 @@ const SensorsGatewayInfo = ({
     sensorsRow = getFormattedSensorRow(selectedSensors, sensorTypeList);
   }
 
+  useEffect(() => {
+    if (
+      gatewayData
+      && gatewayData.length
+      && shipmentFormData
+      && gatewayTypeList
+      && gatewayTypeList.length
+      && shipmentData
+      && shipmentData.length
+    ) {
+      const opts = getAvailableGateways(
+        gatewayData,
+        shipmentFormData.platform_name
+          ? _.lowerCase(shipmentFormData.platform_name)
+          : 'iclp',
+        gatewayTypeList,
+        shipmentData,
+      );
+      setOptions(opts);
+    }
+  }, [gatewayData, shipmentFormData, gatewayTypeList, shipmentData]);
+
   const onInputChange = (value) => {
-    setGatewayIds(value.map((val) => val.gateway_uuid));
+    switch (true) {
+      case (value.length > gatewayIds.length):
+        setGatewayIds([...gatewayIds, _.last(value).gateway_uuid]);
+        break;
+
+      case (value.length < gatewayIds.length):
+        setGatewayIds(value);
+        break;
+
+      default:
+        break;
+    }
   };
 
   const submitDisabled = () => !gatewayIds.length || gatewayData === null;
@@ -146,8 +174,6 @@ const SensorsGatewayInfo = ({
 
   const onNextClick = (event) => {
     if (checkIfSensorGatewayEdited()) {
-      // setConfirmModalFor('next');
-      // setConfirmModal(true);
       handleSubmit(event);
     }
     handleNext();
@@ -172,23 +198,30 @@ const SensorsGatewayInfo = ({
                   multiple
                   id="combo-box-demo"
                   disabled={viewOnly}
-                  options={
-                    (gatewayData
-                      && getAvailableGateways(
-                        gatewayData,
-                        shipmentFormData.platform_name
-                          ? shipmentFormData.platform_name.toLowerCase()
-                          : 'iclp',
-                        gatewayTypeList,
-                        shipmentData,
-                      ))
-                    || []
-                  }
-                  getOptionLabel={(option) => option && option.name}
-                  getOptionSelected={(option, value) => option.name === value.name}
+                  options={options}
+                  getOptionLabel={(option) => (
+                    option
+                    && option.name
+                  )}
+                  getOptionSelected={(option, value) => (
+                    option.gateway_uuid === value
+                  )}
                   filterSelectedOptions
+                  value={gatewayIds}
                   onChange={(event, newValue) => onInputChange(newValue)}
-                  defaultValue={rows}
+                  renderTags={(value, getTagProps) => (
+                    _.map(value, (option, index) => (
+                      <Chip
+                        variant="default"
+                        label={
+                          options
+                            ? _.find(options, { gateway_uuid: option })?.name
+                            : ''
+                        }
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  )}
                   renderOption={(option, { selected }) => (
                     <>
                       <Checkbox
@@ -222,10 +255,13 @@ const SensorsGatewayInfo = ({
                   <Typography gutterBottom variant="h5">
                     Associated Gateways
                   </Typography>
-                  <DataTable
-                    rows={rows || []}
-                    columns={columns}
-                    hasSearch={false}
+                  <DataTableWrapper
+                    loading={loading}
+                    rows={rows}
+                    columns={gatewayColumns}
+                    hideAddButton
+                    noOptionsIcon
+                    noSpace
                   />
                 </Box>
               </Grid>
@@ -236,17 +272,24 @@ const SensorsGatewayInfo = ({
                   <Typography gutterBottom variant="h5">
                     Associated Sensors with Gateway
                   </Typography>
-                  <DataTable
-                    rows={sensorsRow || []}
+                  <DataTableWrapper
+                    loading={loading}
+                    rows={sensorsRow}
                     columns={sensorsColumns}
-                    hasSearch={false}
+                    hideAddButton
+                    noOptionsIcon
+                    noSpace
                   />
                 </Box>
               </Grid>
             )}
           </Grid>
         </Box>
-        <Grid container spacing={3} className={classes.buttonContainer}>
+        <Grid
+          container
+          spacing={3}
+          className={classes.buttonContainer}
+        >
           <Grid item xs={6} sm={2}>
             {viewOnly ? (
               <Button
@@ -302,6 +345,10 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
   ...state.shipmentReducer,
+  loading: (
+    state.sensorsGatewayReducer.loading
+    || state.shipmentReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(SensorsGatewayInfo);

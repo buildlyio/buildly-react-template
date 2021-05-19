@@ -503,11 +503,7 @@ const AddGateway = ({
                       label="Last Known Location"
                       name="last_known_location"
                       autoComplete="last_known_location"
-                      value={
-                        last_known_location === 'null,null'
-                          ? ''
-                          : last_known_location
-                      }
+                      value={last_known_location}
                       InputProps={
                         gatewayMetaData.last_known_location
                         && gatewayMetaData.last_known_location.help_text

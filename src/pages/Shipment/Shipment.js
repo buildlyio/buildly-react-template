@@ -25,6 +25,7 @@ import ConfirmModal from '@components/Modal/ConfirmModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
 import { environment } from '@environments/environment';
+import SensorReport from '@pages/Reporting/components/SensorReport';
 import {
   getCustodians,
   getCustodianType,
@@ -56,15 +57,10 @@ import {
   getFormattedRow,
   MAP_TOOLTIP,
   SHIPMENT_DATA_TABLE_TOOLTIP,
-  SHIPMENT_SENSOR_COLUMNS,
 } from './ShipmentConstants';
 import AlertInfo from './AlertInfo';
-import ShipmentSensorTable from './components/ShipmentSensorTable';
 import ShipmentDataTable from './components/ShipmentDataTable';
 import AddShipment from './forms/AddShipment';
-import AddOriginInfo from './forms/AddOriginInfo';
-import AddShipperInfo from './forms/AddShipperInfo';
-import AddDestinationInfo from './forms/AddDestinationInfo';
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -119,6 +115,7 @@ const Shipment = (props) => {
     sensorReportAlerts,
   } = props;
   const classes = useStyles();
+
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
   const [activeRows, setActiveRows] = useState([]);
@@ -127,16 +124,16 @@ const Shipment = (props) => {
   const [rows, setRows] = useState([]);
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [shipmentFilter, setShipmentFilter] = useState('Active');
+  const [selectedMarker, setSelectedMarker] = useState({});
+  const [markers, setMarkers] = useState([]);
+  const [tileView, setTileView] = useState(true);
+  const [isMapLoaded, setMapLoaded] = useState(false);
+
   const subNav = [
     { label: 'Active', value: 'Active' },
     { label: 'Completed', value: 'Completed' },
     { label: 'Cancelled', value: 'Cancelled' },
   ];
-  const [selectedMarker, setSelectedMarker] = useState({});
-  const [markers, setMarkers] = useState([]);
-  const [zoomLevel, setZoomLevel] = useState(12);
-  const [tileView, setTileView] = useState(true);
-  const [isMapLoaded, setMapLoaded] = useState(false);
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
@@ -229,11 +226,14 @@ const Shipment = (props) => {
 
   useEffect(() => {
     if (selectedShipment) {
-      const markersToSet = [];
-      const aggregateReportInfo = [];
-      const temperatureUnit = unitsOfMeasure.filter((obj) => obj.supported_class === 'Temperature')[0].name.toLowerCase();
+      let markersToSet = [];
+      let aggregateReportInfo = [];
+      const temperatureUnit = _.filter(
+        unitsOfMeasure,
+        { supported_class: 'Temperature' },
+      )[0].name.toLowerCase();
 
-      selectedShipment.sensor_report.forEach((report) => {
+      _.forEach(selectedShipment.sensor_report, (report) => {
         if (report.report_entries.length > 0) {
           let alert_status;
           let color;
@@ -247,7 +247,7 @@ const Shipment = (props) => {
             alert_status = 'Normal';
             color = 'green';
           }
-          report.report_entries.forEach((report_entry) => {
+          _.forEach(report.report_entries, (report_entry) => {
             try {
               const temperature = selectedShipment.platform_name === 'tive'
                 ? report_entry.report_temp
@@ -257,6 +257,7 @@ const Shipment = (props) => {
                   temperatureUnit,
                   'temperature',
                 );
+
               let localDateTime;
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
@@ -269,12 +270,19 @@ const Shipment = (props) => {
                   report_entry.report_location.timeOfPosition,
                 ).format('MMM DD YYYY, h:mm:ss a');
               }
+
               // For a valid (latitude, longitude) pair: -90<=X<=+90 and -180<=Y<=180
               const latitude = report_entry.report_latitude
                 || report_entry.report_location.latitude;
               const longitude = report_entry.report_longitude
                 || report_entry.report_location.longitude;
-              if ((latitude >= -90 && latitude <= 90) && (longitude >= -180 && longitude <= 180) && localDateTime !== '') {
+              if (
+                (latitude >= -90
+                  && latitude <= 90)
+                && (longitude >= -180
+                  && longitude <= 180)
+                && localDateTime !== ''
+              ) {
                 const marker = {
                   lat: latitude,
                   lng: longitude,
@@ -301,9 +309,12 @@ const Shipment = (props) => {
                 });
 
                 if (!markerFound) {
-                  markersToSet.push(marker);
+                  markersToSet = [...markersToSet, marker];
                 }
-                aggregateReportInfo.push(marker);
+                aggregateReportInfo = [
+                  ...aggregateReportInfo,
+                  marker,
+                ];
               }
             } catch (e) {
               // eslint-disable-next-line no-console
@@ -317,7 +328,6 @@ const Shipment = (props) => {
         (item) => moment(item.timestamp),
         ['asc'],
       ));
-      setZoomLevel(12);
       selectedShipment.sensor_report_info = aggregateReportInfo;
     }
   }, [selectedShipment]);
@@ -474,13 +484,13 @@ const Shipment = (props) => {
             showPath
             markers={markers}
             googleMapURL={environment.MAP_API_URL}
-            zoom={zoomLevel}
+            zoom={12}
             setSelectedMarker={setSelectedMarker}
             loadingElement={
               <div style={{ height: '100%' }} />
             }
             containerElement={
-              <div style={{ height: '550px' }} />
+              <div style={{ height: '600px' }} />
             }
             mapElement={
               <div style={{ height: '100%' }} />
@@ -488,27 +498,15 @@ const Shipment = (props) => {
           />
         </Grid>
       </Grid>
-      <ShipmentSensorTable
+      <SensorReport
+        loading={loading}
         aggregateReport={selectedShipment?.sensor_report_info}
         shipmentName={selectedShipment?.name}
         selectedMarker={selectedShipment && selectedMarker}
-        cols={SHIPMENT_SENSOR_COLUMNS}
       />
       <Route
         path={`${routes.SHIPMENT}/add`}
         component={AddShipment}
-      />
-      <Route
-        path={`${routes.SHIPMENT}/add/origin`}
-        component={AddOriginInfo}
-      />
-      <Route
-        path={`${routes.SHIPMENT}/add/shipper`}
-        component={AddShipperInfo}
-      />
-      <Route
-        path={`${routes.SHIPMENT}/add/destination`}
-        component={AddDestinationInfo}
       />
       <Route
         path={`${routes.SHIPMENT}/edit/:id`}

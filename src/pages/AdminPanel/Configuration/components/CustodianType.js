@@ -60,6 +60,7 @@ const CustodianType = ({
 
   return (
     <DataTableWrapper
+      noSpace
       loading={loading}
       rows={custodianTypeList || []}
       columns={CUSTODIAN_TYPE_COLUMNS}

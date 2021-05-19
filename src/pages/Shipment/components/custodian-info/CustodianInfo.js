@@ -1,48 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   makeStyles, Box, Typography, Grid, Button,
 } from '@material-ui/core';
-import Modal from '@components/Modal/Modal';
-import DataTable from '@components/Table/Table';
-import { UserContext } from '@context/User.context';
-import { editShipment } from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
-import ConfirmModal from '@components/Modal/ConfirmModal';
-import AddCustodyForm, { checkIfCustodianInfoEdited } from './AddCustodyForm';
+import FormModal from '@components/Modal/FormModal';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import AddCustodyForm, {
+  checkIfCustodianInfoEdited,
+} from './AddCustodyForm';
 import {
   getFormattedCustodyRows,
   custodyColumns,
 } from '../../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > * + *': {
-      marginTop: theme.spacing(3),
-    },
-  },
   buttonContainer: {
     margin: theme.spacing(8, 0),
     textAlign: 'center',
     justifyContent: 'center',
-  },
-  alignRight: {
-    marginLeft: 'auto',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
   },
   submit: {
     borderRadius: '18px',
@@ -58,23 +34,21 @@ const useStyles = makeStyles((theme) => ({
 const CustodianInfo = (props) => {
   const {
     custodianData,
-    history,
     handleNext,
     handleCancel,
     shipmentFormData,
-    dispatch,
     custodyData,
     viewOnly,
+    loading,
   } = props;
   const classes = useStyles();
   const [itemIds, setItemIds] = useState(
     (shipmentFormData && shipmentFormData.custodian_ids) || [],
   );
-  const [openModal, setOpenModal] = useState(false);
+  const [openFormModal, setFormModal] = useState(false);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [rows, setRows] = useState([]);
   const [editItem, setEditItem] = useState(null);
-  const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
     if (
@@ -84,8 +58,9 @@ const CustodianInfo = (props) => {
       && custodianData.length
       && shipmentFormData
     ) {
-      const filteredCustodyData = custodyData.filter(
-        (data) => data.shipment_id === shipmentFormData.shipment_uuid,
+      const filteredCustodyData = _.filter(
+        custodyData,
+        { shipment_id: shipmentFormData.shipment_uuid },
       );
       const customizedRows = getFormattedCustodyRows(
         filteredCustodyData,
@@ -95,48 +70,9 @@ const CustodianInfo = (props) => {
     }
   }, [custodyData, custodianData, shipmentFormData]);
 
-  const submitDisabled = () => !itemIds || custodianData === null;
-
-  /**
-   * Submit The form and add/edit custodian
-   * @param {Event} event the default submit event
-   */
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const shipmentFormValue = {
-      ...{ ...shipmentFormData, custodian_ids: itemIds },
-    };
-    dispatch(
-      editShipment(
-        shipmentFormValue,
-        history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
-        organization,
-      ),
-    );
-    setOpenModal(false);
-  };
-
-  const deleteItem = (item) => {
-    const index = itemIds.indexOf(item.custodian_uuid);
-    const newArr = itemIds.filter((value, idx) => idx !== index);
-    const shipmentFormValue = {
-      ...{ ...shipmentFormData, custodian_ids: newArr },
-    };
-    dispatch(
-      editShipment(
-        shipmentFormValue,
-        history,
-        `${routes.SHIPMENT}/edit/:${shipmentFormData.id}`,
-        organization,
-      ),
-    );
-    setItemIds(newArr);
-  };
-
   const handleConfirmModal = () => {
     setConfirmModal(false);
-    setOpenModal(false);
+    setFormModal(false);
   };
 
   const oncloseModal = () => {
@@ -144,24 +80,14 @@ const CustodianInfo = (props) => {
       setConfirmModal(true);
     } else {
       setEditItem(null);
-      setOpenModal(false);
+      setFormModal(false);
     }
   };
 
   const editCustody = (item) => {
     setEditItem(item);
-    setOpenModal(true);
+    setFormModal(true);
   };
-
-  const actionsColumns = [
-    // { id: 'unlink', type: 'unlink', action: deleteItem, label: 'Unassociate' },
-    {
-      id: 'edit',
-      type: viewOnly ? 'view' : 'edit',
-      action: editCustody,
-      label: viewOnly ? 'View' : 'Edit',
-    },
-  ];
 
   return (
     <Box mb={5} mt={3}>
@@ -169,33 +95,36 @@ const CustodianInfo = (props) => {
         variant="contained"
         color="primary"
         disabled={viewOnly}
-        onClick={() => setOpenModal(true)}
+        onClick={() => setFormModal(true)}
         className={classes.submit}
       >
         Add Custody
       </Button>
       <Box mt={3} mb={5}>
+        {rows.length > 0 && (
         <Grid container>
-          {rows.length > 0 && (
-            <Grid item xs={12}>
-              <Box mt={5}>
-                <Typography gutterBottom variant="h5">
-                  Associated Custodians
-                </Typography>
-                <DataTable
-                  rows={rows || []}
-                  columns={custodyColumns}
-                  actionsColumns={actionsColumns}
-                  hasSearch={false}
-                />
-              </Box>
-            </Grid>
-          )}
+          <Grid item xs={12}>
+            <Box mt={5}>
+              <Typography gutterBottom variant="h5">
+                Associated Custodians
+              </Typography>
+              <DataTableWrapper
+                loading={loading}
+                rows={rows}
+                columns={custodyColumns}
+                editAction={editCustody}
+                hideAddButton
+                noOptionsIcon
+                noSpace
+              />
+            </Box>
+          </Grid>
         </Grid>
-        {openModal && (
-          <Modal
-            open={openModal}
-            setOpen={() => oncloseModal()}
+        )}
+        {openFormModal && (
+          <FormModal
+            open={openFormModal}
+            handleClose={oncloseModal}
             title={
               !editItem
                 ? 'Add Custody'
@@ -203,20 +132,27 @@ const CustodianInfo = (props) => {
             }
             titleClass={classes.formTitle}
             maxWidth="md"
+            openConfirmModal={openConfirmModal}
+            setConfirmModal={setConfirmModal}
+            handleConfirmModal={handleConfirmModal}
           >
             <AddCustodyForm
               setItemIds={setItemIds}
               itemIds={itemIds}
-              setOpenModal={() => oncloseModal()}
+              setOpenModal={oncloseModal}
               rows={rows}
               viewOnly={viewOnly}
               editItem={editItem}
               {...props}
             />
-          </Modal>
+          </FormModal>
         )}
       </Box>
-      <Grid container spacing={3} className={classes.buttonContainer}>
+      <Grid
+        container
+        spacing={3}
+        className={classes.buttonContainer}
+      >
         {viewOnly && (
           <Grid item xs={6} sm={2}>
             <Button
@@ -243,13 +179,6 @@ const CustodianInfo = (props) => {
           </Button>
         </Grid>
       </Grid>
-      <ConfirmModal
-        open={openConfirmModal}
-        setOpen={setConfirmModal}
-        submitAction={handleConfirmModal}
-        title="Your changes are unsaved and will be discarded. Are you sure to leave?"
-        submitText="Yes"
-      />
     </Box>
   );
 };
@@ -259,6 +188,11 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.custodianReducer,
   ...state.shipmentReducer,
   ...state.authReducer,
+  loading: (
+    state.custodianReducer.loading
+    || state.shipmentReducer.loading
+    || state.authReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(CustodianInfo);

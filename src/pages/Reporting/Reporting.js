@@ -12,19 +12,18 @@ import {
   TextField,
   IconButton,
   Hidden,
+  MenuItem,
 } from '@material-ui/core';
 import {
   ViewComfy as ViewComfyIcon,
   ViewCompact as ViewCompactIcon,
 } from '@material-ui/icons';
-import { Autocomplete } from '@material-ui/lab';
 import GraphComponent from '@components/GraphComponent/GraphComponent';
 import Loader from '@components/Loader/Loader';
 import { MapComponent } from '@components/MapComponent/MapComponent';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
 import { environment } from '@environments/environment';
-import ShipmentSensorTable from '@pages/Shipment/components/ShipmentSensorTable';
 import {
   getCustodians,
   getCustodianType,
@@ -41,6 +40,7 @@ import {
 import {
   getUnitsOfMeasure,
 } from '@redux/items/actions/items.actions';
+import SensorReport from './components/SensorReport';
 import {
   getShipmentOverview,
   SHIPMENT_OVERVIEW_COLUMNS,
@@ -62,19 +62,12 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
-  dropDownSection: {
-    padding: theme.spacing(1, 2),
-    width: '100%',
-  },
   switchViewSection: {
     background: '#383636',
     width: '100%',
     display: 'flex',
     minHeight: '40px',
     alignItems: 'center',
-  },
-  menuButton: {
-    marginLeft: 'auto',
   },
   iconBar: {
     '& svg': {
@@ -88,7 +81,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     height: '100px',
   },
-  greyBackground: {
+  infoContainer: {
+    height: '525px',
+    overflowX: 'auto',
     backgroundColor: '#424242',
   },
   reportContainer: {
@@ -96,9 +91,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
     backgroundColor: '#424242',
   },
-  alignCenter: {
-    marginLeft: 'auto',
-    marginRight: 'auto',
+  selectInput: {
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -115,23 +109,12 @@ const Reporting = ({
 }) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
-  const [isMapLoaded, setMapLoaded] = useState(true);
-  const [markers, setMarkers] = useState([]);
-  const [zoomLevel, setZoomLevel] = useState(12);
   const [tileView, setTileView] = useState(true);
   const [selectedGraph, setSelectedGraph] = useState('temperature');
   const [selectedShipment, setSelectedShipment] = useState(null);
-  const [shipment, setShipment] = useState('');
-  const [shipmentOverview, setShipmentOverview] = useState({});
+  const [isMapLoaded, setMapLoaded] = useState(true);
+  const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState({});
-
-  const handleListItemClick = (event, index) => {
-    setSelectedGraph(index);
-  };
-
-  const columns = SHIPMENT_OVERVIEW_COLUMNS.map((column) => ({
-    ...column,
-  }));
 
   const getShipmentValue = (value) => {
     let returnValue;
@@ -191,7 +174,6 @@ const Reporting = ({
         contactInfo,
         unitsOfMeasure,
       );
-      setShipmentOverview(overview);
 
       if (!selectedShipment && overview.length) {
         setSelectedShipment(overview[0]);
@@ -201,9 +183,7 @@ const Reporting = ({
 
   useEffect(() => {
     if (selectedShipment) {
-      setShipment(selectedShipment.name);
       setMarkers(selectedShipment.markers_to_set);
-      setZoomLevel(12);
     }
   }, [selectedShipment]);
 
@@ -220,11 +200,7 @@ const Reporting = ({
         Reporting
       </Typography>
       <Grid container spacing={2}>
-        <Grid
-          item
-          xs={12}
-          md={tileView ? 6 : 12}
-        >
+        <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
             <Typography
               className={classes.tileHeading}
@@ -239,7 +215,6 @@ const Reporting = ({
             </Typography>
             <Hidden smDown>
               <IconButton
-                className={classes.menuButton}
                 onClick={() => setTileView(!tileView)}
                 color="default"
                 aria-label="menu"
@@ -255,7 +230,7 @@ const Reporting = ({
             showPath
             markers={markers}
             googleMapURL={environment.MAP_API_URL}
-            zoom={zoomLevel}
+            zoom={12}
             setSelectedMarker={setSelectedMarker}
             loadingElement={
               <div style={{ height: '100%' }} />
@@ -270,28 +245,45 @@ const Reporting = ({
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
-            <Autocomplete
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
               id="shipment-name"
-              options={shipmentData || []}
-              value={{ name: shipment }}
-              getOptionLabel={(option) => option && option.name}
-              getOptionSelected={(option, value) => option.name === value.name}
-              className={classes.dropDownSection}
-              onChange={(event, newValue) => setSelectedShipment(newValue)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Shipment Name"
-                  variant="outlined"
-                />
+              select
+              required
+              className={classes.selectInput}
+              label="Shipment Name"
+              value={
+                selectedShipment
+                  ? selectedShipment.id
+                  : ''
+              }
+              onChange={(e) => {
+                const selected = _.find(shipmentData, { id: e.target.value });
+                setSelectedShipment(selected);
+              }}
+            >
+              <MenuItem value="">Select</MenuItem>
+              {shipmentData
+              && shipmentData.length > 0
+              && _.map(
+                shipmentData,
+                (shipment, index) => (
+                  <MenuItem
+                    key={index}
+                    value={shipment.id}
+                  >
+                    {shipment.name}
+                  </MenuItem>
+                ),
               )}
-            />
+            </TextField>
             <CustomizedTooltips
               toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
             />
             <Hidden smDown>
               <IconButton
-                className={classes.menuButton}
                 onClick={() => setTileView(!tileView)}
                 color="default"
                 aria-label="menu"
@@ -302,64 +294,64 @@ const Reporting = ({
               </IconButton>
             </Hidden>
           </div>
-          <div
-            style={{ height: 525, overflowX: 'auto' }}
-            className={classes.greyBackground}
-          >
+          <div className={classes.infoContainer}>
             <Grid container>
               {selectedShipment
-                ? (columns.map((column, index) => (
-                  <Grid
-                    item
-                    className={classes.infoSection}
-                    xs={10}
-                    md={6}
-                    key={`col${index}:${column.name}`}
-                  >
-                    {column.name !== 'custody_info'
-                      ? (
-                        <Typography variant="h6">
-                          {column.label}
-                        </Typography>
-                      )
-                      : (
-                        <Typography variant="h6">
-                          Custody Details
-                        </Typography>
-                      )}
-                    {column.name === 'custody_info'
-                    && selectedShipment[column.name]
-                      ? selectedShipment[column.name].map(
-                        (value, idx) => (
-                          <div
-                            key={`custody_info_${idx}`}
-                            style={{
-                              marginBottom: 10,
-                              color: value.custody_type === 'Current'
-                                ? '#EBC645'
-                                : '#ffffff',
-                            }}
-                          >
-                            <Typography variant="body1">
-                              {`Custody Type: ${value.custody_type}`}
-                            </Typography>
-                            <Typography variant="body1">
-                              {`Custodian Address: ${selectedShipment.contact_info[idx].address}`}
-                            </Typography>
-                          </div>
-                        ),
-                      )
-                      : (
-                        <Typography variant="body1">
-                          {getShipmentValue(column.name)}
-                        </Typography>
-                      )}
-                  </Grid>
-                )))
+                ? (_.map(
+                  SHIPMENT_OVERVIEW_COLUMNS,
+                  (column, index) => (
+                    <Grid
+                      item
+                      className={classes.infoSection}
+                      xs={10}
+                      md={6}
+                      key={`col${index}:${column.name}`}
+                    >
+                      {column.name !== 'custody_info'
+                        ? (
+                          <Typography variant="h6">
+                            {column.label}
+                          </Typography>
+                        )
+                        : (
+                          <Typography variant="h6">
+                            Custody Details
+                          </Typography>
+                        )}
+                      {column.name === 'custody_info'
+                      && selectedShipment[column.name]
+                        ? _.map(
+                          selectedShipment[column.name],
+                          (value, idx) => (
+                            <div
+                              key={`custody_info_${idx}`}
+                              style={{
+                                marginBottom: 10,
+                                color: value.custody_type === 'Current'
+                                  ? '#EBC645'
+                                  : '#ffffff',
+                              }}
+                            >
+                              <Typography variant="body1">
+                                {`Custody Type: ${value.custody_type}`}
+                              </Typography>
+                              <Typography variant="body1">
+                                {`Custodian Address: ${selectedShipment.contact_info[idx].address}`}
+                              </Typography>
+                            </div>
+                          ),
+                        ) : (
+                          <Typography variant="body1">
+                            {getShipmentValue(column.name)}
+                          </Typography>
+                        )}
+                    </Grid>
+                  ),
+                ))
                 : (
                   <Typography
                     variant="h6"
-                    className={classes.alignCenter}
+                    align="center"
                   >
                     {SHIPMENT_OVERVIEW_TOOL_TIP}
                   </Typography>
@@ -388,12 +380,14 @@ const Reporting = ({
             aria-label="main graph-type"
             className={classes.iconBar}
           >
-            {REPORT_TYPES.map((item, index) => (
-              <React.Fragment key={`iconItem${index}${item.id}`}>
+            {_.map(REPORT_TYPES, (item, index) => (
+              <React.Fragment
+                key={`iconItem${index}${item.id}`}
+              >
                 <ListItem
                   button
                   selected={selectedGraph === item.id}
-                  onClick={(event) => handleListItemClick(event, item.id)}
+                  onClick={() => setSelectedGraph(item.id)}
                 >
                   {getIcon(item, 'white')}
                 </ListItem>
@@ -413,14 +407,15 @@ const Reporting = ({
             : (
               <Typography
                 variant="h6"
-                className={classes.alignCenter}
+                align="center"
               >
                 {SHIPMENT_OVERVIEW_TOOL_TIP}
               </Typography>
             )}
         </Grid>
       </Grid>
-      <ShipmentSensorTable
+      <SensorReport
+        loading={loading}
         aggregateReport={selectedShipment?.sensor_report}
         shipmentName={selectedShipment?.name}
         selectedMarker={selectedShipment && selectedMarker}

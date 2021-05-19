@@ -15,7 +15,6 @@ import {
 import { Edit as EditIcon } from '@material-ui/icons';
 import profile from '@assets/profile.png';
 import Loader from '@components/Loader/Loader';
-import Modal from '@components/Modal/Modal';
 import { routes } from '@routes/routesConstants';
 import EditProfileInfo from './forms/EditProfileInfo';
 

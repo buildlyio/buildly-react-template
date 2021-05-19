@@ -69,6 +69,7 @@ const Product = ({
 
   return (
     <DataTableWrapper
+      noSpace
       loading={loading}
       rows={products || []}
       columns={PRODUCT_COLUMNS}

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { numberWithCommas } from '@utils/utilMethods';
 import { getFormattedCustodyRows } from '@pages/Shipment/ShipmentConstants';
 
@@ -9,65 +10,96 @@ export const DASHBOARD_DELAY_TOOLTIP = 'Shipments which are delayed';
 
 export const recallColumns = [
   {
-    id: 'shipment_uuid',
-    label: 'Shipment ID',
-    minWidth: 180,
-  },
-  {
-    id: 'flag_list',
-    label: 'Issue',
-    minWidth: 150,
-    format: (value) => {
-      if (value && value.length) {
-        let flagName = '';
-        value.forEach((flag) => {
-          flagName = `${flagName + flag.name}, `;
-        });
-        return flagName;
-      }
-      return value;
+    name: 'name',
+    label: 'Shipment Name',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
     },
   },
   {
-    id: 'itemNo',
-    label: 'Affected Items',
-    minWidth: 150,
+    name: 'flag_list',
+    label: 'Issue',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      customBodyRender: (value) => {
+        if (value && value.length) {
+          let flagName = '';
+          _.forEach(value, (flag) => {
+            flagName = flagName
+              ? `${flagName}, ${flag.name}`
+              : `${flag.name}`;
+          });
+          return flagName;
+        }
+        return value;
+      },
+    },
   },
   {
-    id: 'custodian_name',
+    name: 'itemNo',
+    label: 'Affected Items',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
+  },
+  {
+    name: 'custodian_name',
     label: 'Current Custodians',
-    minWidth: 180,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
 ];
 
 export const delayColumns = [
   {
-    id: 'shipment_uuid',
-    label: 'Shipment ID',
-    minWidth: 180,
+    name: 'name',
+    label: 'Shipment Name',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'delay',
+    name: 'delay',
     label: 'Delay(hrs)',
-    minWidth: 150,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'itemNo',
+    name: 'itemNo',
     label: 'Items',
-    minWidth: 170,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
   {
-    id: 'risk',
+    name: 'risk',
     label: 'Revenue Risk',
-    minWidth: 170,
-    format: (value) => (value && value !== '-'
-      ? `$${numberWithCommas(value)}`
-      : value),
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? `$${numberWithCommas(value)}`
+          : value
+      ),
+    },
   },
   {
-    id: 'custodian',
+    name: 'custodian',
     label: 'Current Custodians',
-    minWidth: 170,
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
   },
 ];
 
@@ -79,7 +111,7 @@ export const getFormattedShipmentRow = (
   custodyData,
   aggregateReportData,
 ) => {
-  const shipmentList = [...shipmentData];
+  let shipmentList = [];
   let custodyRows = [];
   if (
     custodyData
@@ -90,65 +122,73 @@ export const getFormattedShipmentRow = (
     custodyRows = getFormattedCustodyRows(custodyData, custodianData);
   }
 
-  shipmentList.forEach((list) => {
+  _.forEach(shipmentData, (shipment) => {
+    const editedShipment = shipment;
     let itemName = '';
-    const custodyInfo = [];
+    let custodyInfo = [];
     let custodianName = '';
-    const flag_list = [];
-    const aggregateReportInfo = [];
+    let flag_list = [];
+    let aggregateReportInfo = [];
 
     if (custodyRows.length > 0) {
-      custodyRows.forEach((custody) => {
+      _.forEach(custodyRows, (custody) => {
         if (
-          custody.shipment_id === list.shipment_uuid
+          custody.shipment_id === shipment.shipment_uuid
           && custody.has_current_custody
         ) {
-          custodianName = `${custodianName + custody.custodian_data.name},`;
-          custodyInfo.push(custody);
+          custodianName = custodianName
+            ? `${custodianName}, ${custody.custodian_data.name}`
+            : custody.custodian_data.name;
+          custodyInfo = [...custodyInfo, custody];
         }
       });
     }
-    list.custodian_name = custodianName;
-    list.custody_info = custodyInfo;
+    editedShipment.custodian_name = custodianName;
+    editedShipment.custody_info = custodyInfo;
 
     if (
       aggregateReportData
       && aggregateReportData.length > 0
     ) {
-      aggregateReportData.forEach((report) => {
-        if (report.shipment_id === list.partner_shipment_id) {
-          aggregateReportInfo.push(report);
+      _.forEach(aggregateReportData, (report) => {
+        if (report.shipment_id === shipment.partner_shipment_id) {
+          aggregateReportInfo = [
+            ...aggregateReportInfo,
+            report,
+          ];
         }
       });
     }
 
-    list.sensor_report = aggregateReportInfo;
+    editedShipment.sensor_report = aggregateReportInfo;
 
     if (
       itemData
-      && list.items
-      && list.items.length
+      && shipment.items
+      && shipment.items.length
     ) {
-      itemData.forEach((item) => {
-        if (list.items.indexOf(item.url) !== -1) {
+      _.forEach(itemData, (item) => {
+        if (_.indexOf(shipment.items, item.url) !== -1) {
           itemName = `${itemName + item.name}, `;
-          list.itemNo = itemName;
+          editedShipment.itemNo = itemName;
         }
       });
     }
 
     if (shipmentFlag && shipmentFlag.length) {
-      shipmentFlag.forEach((flag) => {
+      _.forEach(shipmentFlag, (flag) => {
         if (
-          list.flags.indexOf(flag.url) !== -1
+          _.indexOf(shipment.flags, flag.url) !== -1
           && flag.type !== 'None'
         ) {
-          list[`${flag.name.toLowerCase()}_flag`] = true;
-          flag_list.push(flag);
+          editedShipment[`${_.lowerCase(flag.name)}_flag`] = true;
+          flag_list = [...flag_list, flag];
         }
       });
     }
-    list.flag_list = flag_list;
+    editedShipment.flag_list = flag_list;
+
+    shipmentList = [...shipmentList, editedShipment];
   });
   return shipmentList;
 };
