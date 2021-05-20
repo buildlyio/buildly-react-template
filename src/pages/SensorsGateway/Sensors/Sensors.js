@@ -110,7 +110,10 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
   ...state.optionsReducer,
-  loading: state.sensorsGatewayReducer.loading || state.optionsReducer.loading,
+  loading: (
+    state.sensorsGatewayReducer.loading
+    || state.optionsReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(Sensors);

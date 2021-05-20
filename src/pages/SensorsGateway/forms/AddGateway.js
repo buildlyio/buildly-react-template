@@ -14,7 +14,6 @@ import {
   Card,
   CardContent,
   Typography,
-  InputAdornment,
 } from '@material-ui/core';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { MapComponent } from '@components/MapComponent/MapComponent';
@@ -60,6 +59,10 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginTop: '1em',
     textAlign: 'center',
+  },
+  inputWithTooltip: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -245,7 +248,7 @@ const AddGateway = ({
             onSubmit={handleSubmit}
           >
             <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item xs={12}>
+              <Grid className={classes.inputWithTooltip} item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -266,22 +269,16 @@ const AddGateway = ({
                   }
                   onBlur={(e) => handleBlur(e, 'required', gateway_name)}
                   {...gateway_name.bind}
-                  InputProps={
-                    gatewayMetaData.name
-                    && gatewayMetaData.name.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <CustomizedTooltips
-                            toolTipText={
-                              gatewayMetaData.name.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 />
+                {gatewayMetaData.name
+                && gatewayMetaData.name.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      gatewayMetaData.name.help_text
+                    }
+                  />
+                )}
               </Grid>
             </Grid>
             <Card variant="outlined" className={classes.cardItems}>
@@ -293,7 +290,13 @@ const AddGateway = ({
                   Gateway Info
                 </Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -313,21 +316,6 @@ const AddGateway = ({
                       }
                       onBlur={(e) => handleBlur(e, 'required', gateway_type, 'gateway_type')}
                       {...gateway_type.bind}
-                      InputProps={
-                        gatewayMetaData.gateway_type
-                        && gatewayMetaData.gateway_type.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  gatewayMetaData.gateway_type.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       {gatewayTypeList
@@ -343,8 +331,23 @@ const AddGateway = ({
                           ),
                         )}
                     </TextField>
+                    {gatewayMetaData.gateway_type
+                    && gatewayMetaData.gateway_type.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          gatewayMetaData.gateway_type.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -369,21 +372,6 @@ const AddGateway = ({
                         'gateway_status',
                       )}
                       {...gateway_status.bind}
-                      InputProps={
-                        gatewayMetaData.gateway_status
-                        && gatewayMetaData.gateway_status.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  gatewayMetaData.gateway_status.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       {GATEWAY_STATUS
@@ -399,6 +387,15 @@ const AddGateway = ({
                           ),
                         )}
                     </TextField>
+                    {gatewayMetaData.gateway_status
+                    && gatewayMetaData.gateway_status.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          gatewayMetaData.gateway_status.help_text
+                        }
+                      />
+                    )}
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <DatePickerComponent
@@ -413,7 +410,13 @@ const AddGateway = ({
                       }
                     />
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -423,24 +426,24 @@ const AddGateway = ({
                       name="sim_card_id"
                       autoComplete="sim_card_id"
                       {...sim_card_id.bind}
-                      InputProps={
-                        gatewayMetaData.sim_card_id
-                        && gatewayMetaData.sim_card_id.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  gatewayMetaData.sim_card_id.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {gatewayMetaData.sim_card_id
+                    && gatewayMetaData.sim_card_id.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          gatewayMetaData.sim_card_id.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -450,24 +453,24 @@ const AddGateway = ({
                       name="battery_level"
                       autoComplete="battery_level"
                       {...battery_level.bind}
-                      InputProps={
-                        gatewayMetaData.last_known_battery_level
-                        && gatewayMetaData.last_known_battery_level.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  gatewayMetaData.last_known_battery_level.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {gatewayMetaData.last_known_battery_level
+                    && gatewayMetaData.last_known_battery_level.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          gatewayMetaData.last_known_battery_level.help_text
+                        }
+                      />
+                    )}
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -477,49 +480,39 @@ const AddGateway = ({
                       name="mac_address"
                       autoComplete="mac_address"
                       {...mac_address.bind}
-                      InputProps={
-                        gatewayMetaData.mac_address
-                        && gatewayMetaData.mac_address.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  gatewayMetaData.mac_address.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {gatewayMetaData.mac_address
+                    && gatewayMetaData.mac_address.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          gatewayMetaData.mac_address.help_text
+                        }
+                      />
+                    )}
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="last_known_location"
-                      label="Last Known Location"
-                      name="last_known_location"
-                      autoComplete="last_known_location"
-                      value={last_known_location}
-                      InputProps={
-                        gatewayMetaData.last_known_location
-                        && gatewayMetaData.last_known_location.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  gatewayMetaData.last_known_location.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
-                    />
+                    <div className={classes.inputWithTooltip}>
+                      <TextField
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        id="last_known_location"
+                        label="Last Known Location"
+                        name="last_known_location"
+                        autoComplete="last_known_location"
+                        value={last_known_location}
+                      />
+                      {gatewayMetaData.last_known_location
+                      && gatewayMetaData.last_known_location.help_text
+                      && (
+                        <CustomizedTooltips
+                          toolTipText={
+                            gatewayMetaData.last_known_location.help_text
+                          }
+                        />
+                      )}
+                    </div>
                     <MapComponent
                       isMarkerShown
                       googleMapURL={environment.MAP_API_URL}
@@ -598,7 +591,10 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
   ...state.optionsReducer,
-  loading: state.sensorsGatewayReducer.loading || state.optionsReducer.loading,
+  loading: (
+    state.sensorsGatewayReducer.loading
+    || state.optionsReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(AddGateway);

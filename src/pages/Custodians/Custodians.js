@@ -128,7 +128,10 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
   ...state.optionsReducer,
-  loading: state.custodianReducer.loading || state.optionsReducer.loading,
+  loading: (
+    state.custodianReducer.loading
+    || state.optionsReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(Custodian);

@@ -164,7 +164,7 @@ export const deleteShipmentFlag = (id) => ({
  * Get Dashboard Items
  * @param {String} organization_uuid
  */
- export const getDashboardItems = (organization_uuid) => ({
+export const getDashboardItems = (organization_uuid) => ({
   type: GET_DASHBOARD_ITEMS,
   organization_uuid,
 });

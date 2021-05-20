@@ -131,6 +131,9 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.itemsReducer,
   ...state.optionsReducer,
-  loading: state.itemsReducer.loading || state.optionsReducer.loading,
+  loading: (
+    state.itemsReducer.loading
+    || state.optionsReducer.loading
+  ),
 });
 export default connect(mapStateToProps)(Items);

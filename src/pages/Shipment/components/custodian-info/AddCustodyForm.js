@@ -11,7 +11,6 @@ import {
   Button,
   CircularProgress,
   MenuItem,
-  InputAdornment,
 } from '@material-ui/core';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { MapComponent } from '@components/MapComponent/MapComponent';
@@ -52,6 +51,10 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     borderRadius: '18px',
     fontSize: 11,
+  },
+  inputWithTooltip: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -283,10 +286,14 @@ const AddCustodyForm = ({
   };
 
   checkIfCustodianInfoEdited = () => (
-    custodianURL !== (editItem.custodian_data.url || '')
+    custodianURL !== (
+      (editItem && editItem.custodian_data && editItem.custodian_data.url)
+      || '')
     || load_id.hasChanged()
-    || new Date(start_of_custody).toJSON() !== (editItem.start_of_custody || new Date().toJSON())
-    || new Date(end_of_custody).toJSON() !== (editItem.end_of_custody || new Date().toJSON())
+    || new Date(start_of_custody).toJSON() !== (
+      (editItem && editItem.start_of_custody) || new Date().toJSON())
+    || new Date(end_of_custody).toJSON() !== (
+      (editItem && editItem.end_of_custody) || new Date().toJSON())
     || latLongChanged
     || has_current_custody.hasChanged()
     || first_custody.hasChanged()
@@ -299,7 +306,7 @@ const AddCustodyForm = ({
         <Card variant="outlined" className={classes.form}>
           <CardContent>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid className={classes.inputWithTooltip} item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -321,22 +328,16 @@ const AddCustodyForm = ({
                   }
                   onBlur={(e) => handleBlur(e, 'required', shipment)}
                   {...shipment.bind}
-                  InputProps={
-                    custodyMetaData.shipment_id
-                    && custodyMetaData.shipment_id.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <CustomizedTooltips
-                            toolTipText={
-                              custodyMetaData.shipment_id.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 />
+                {custodyMetaData.shipment_id
+                && custodyMetaData.shipment_id.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      custodyMetaData.shipment_id.help_text
+                    }
+                  />
+                )}
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -351,7 +352,7 @@ const AddCustodyForm = ({
                   {...shipment_name.bind}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid className={classes.inputWithTooltip} item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -373,21 +374,6 @@ const AddCustodyForm = ({
                   onBlur={(e) => handleBlur(e, 'required', custodianURL, 'custodianURL')}
                   value={custodianURL}
                   onChange={onInputChange}
-                  InputProps={
-                    custodyMetaData.custodian
-                    && custodyMetaData.custodian.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="start">
-                          <CustomizedTooltips
-                            toolTipText={
-                              custodyMetaData.custodian.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 >
                   <MenuItem value="">Select</MenuItem>
                   {custodianList
@@ -403,6 +389,15 @@ const AddCustodyForm = ({
                       ),
                     )}
                 </TextField>
+                {custodyMetaData.custodian
+                && custodyMetaData.custodian.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      custodyMetaData.custodian.help_text
+                    }
+                  />
+                )}
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -539,7 +534,12 @@ const AddCustodyForm = ({
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                className={classes.inputWithTooltip}
+                item
+                xs={12}
+                sm={6}
+              >
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -549,27 +549,26 @@ const AddCustodyForm = ({
                   id="has_current_custody"
                   label="Has current Custody?"
                   {...has_current_custody.bind}
-                  InputProps={
-                    custodyMetaData.has_current_custody
-                    && custodyMetaData.has_current_custody.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="start">
-                          <CustomizedTooltips
-                            toolTipText={
-                              custodyMetaData.has_current_custody.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 >
                   <MenuItem value>YES</MenuItem>
                   <MenuItem value={false}>NO</MenuItem>
                 </TextField>
+                {custodyMetaData.has_current_custody
+                && custodyMetaData.has_current_custody.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      custodyMetaData.has_current_custody.help_text
+                    }
+                  />
+                )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                className={classes.inputWithTooltip}
+                item
+                xs={12}
+                sm={6}
+              >
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -579,27 +578,26 @@ const AddCustodyForm = ({
                   id="first_custody"
                   label="Is first Custody?"
                   {...first_custody.bind}
-                  InputProps={
-                    custodyMetaData.first_custody
-                    && custodyMetaData.first_custody.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="start">
-                          <CustomizedTooltips
-                            toolTipText={
-                              custodyMetaData.first_custody.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 >
                   <MenuItem value>YES</MenuItem>
                   <MenuItem value={false}>NO</MenuItem>
                 </TextField>
+                {custodyMetaData.first_custody
+                && custodyMetaData.first_custody.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      custodyMetaData.first_custody.help_text
+                    }
+                  />
+                )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                className={classes.inputWithTooltip}
+                item
+                xs={12}
+                sm={6}
+              >
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -609,25 +607,19 @@ const AddCustodyForm = ({
                   id="last_custody"
                   label="Is last Custody?"
                   {...last_custody.bind}
-                  InputProps={
-                    custodyMetaData.last_custody
-                    && custodyMetaData.last_custody.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="start">
-                          <CustomizedTooltips
-                            toolTipText={
-                              custodyMetaData.last_custody.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 >
                   <MenuItem value>YES</MenuItem>
                   <MenuItem value={false}>NO</MenuItem>
                 </TextField>
+                {custodyMetaData.last_custody
+                && custodyMetaData.last_custody.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      custodyMetaData.last_custody.help_text
+                    }
+                  />
+                )}
               </Grid>
             </Grid>
           </CardContent>

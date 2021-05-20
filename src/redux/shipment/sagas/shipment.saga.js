@@ -150,7 +150,7 @@ function* editShipment(action) {
     );
     yield [
       yield put(
-        getShipmentDetails(payload.organization_uuid, payload.id),
+        getShipmentDetails(payload.organization_uuid, payload.id, true, true),
       ),
       yield put(
         showAlert({
@@ -202,7 +202,7 @@ function* deleteShipment(payload) {
           message: 'Shipment deleted successfully!',
         }),
       ),
-      yield put(getShipmentDetails(organization_uuid)),
+      yield put(getShipmentDetails(organization_uuid, null, true, true)),
     ];
   } catch (error) {
     yield [

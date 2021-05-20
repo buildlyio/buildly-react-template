@@ -15,7 +15,6 @@ import {
   CardContent,
   Typography,
   Chip,
-  InputAdornment,
 } from '@material-ui/core';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { MapComponent } from '@components/MapComponent/MapComponent';
@@ -65,6 +64,10 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginTop: '1em',
     textAlign: 'center',
+  },
+  inputWithTooltip: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -278,7 +281,7 @@ const AddSensor = ({
             onSubmit={handleSubmit}
           >
             <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item xs={12}>
+              <Grid className={classes.inputWithTooltip} item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -299,50 +302,40 @@ const AddSensor = ({
                   }
                   onBlur={(e) => handleBlur(e, 'required', sensor_name)}
                   {...sensor_name.bind}
-                  InputProps={
-                    sensorMetaData.name
-                    && sensorMetaData.name.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <CustomizedTooltips
-                            toolTipText={
-                              sensorMetaData.name.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
                 />
+                {sensorMetaData.name
+                && sensorMetaData.name.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      sensorMetaData.name.help_text
+                    }
+                  />
+                )}
               </Grid>
 
               <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  id="last_known_location"
-                  label="Last Known Location"
-                  name="last_known_location"
-                  autoComplete="last_known_location"
-                  value={last_known_location}
-                  InputProps={
-                    sensorMetaData.last_known_location
-                    && sensorMetaData.last_known_location.help_text
-                    && {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <CustomizedTooltips
-                            toolTipText={
-                              sensorMetaData.last_known_location.help_text
-                            }
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-                  }
-                />
+                <div className={classes.inputWithTooltip}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    id="last_known_location"
+                    label="Last Known Location"
+                    name="last_known_location"
+                    autoComplete="last_known_location"
+                    value={last_known_location}
+                  />
+                  {sensorMetaData.last_known_location
+                  && sensorMetaData.last_known_location.help_text
+                  && (
+                    <CustomizedTooltips
+                      toolTipText={
+                        sensorMetaData.last_known_location.help_text
+                      }
+                    />
+                  )}
+                </div>
                 <MapComponent
                   isMarkerShown
                   googleMapURL={environment.MAP_API_URL}
@@ -395,7 +388,13 @@ const AddSensor = ({
                   Sensor Info
                 </Typography>
                 <Grid container spacing={isDesktop ? 2 : 0}>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -415,21 +414,6 @@ const AddSensor = ({
                       }
                       onBlur={(e) => handleBlur(e, 'required', sensor_type, 'sensor_type')}
                       {...sensor_type.bind}
-                      InputProps={
-                        sensorMetaData.sensor_type
-                        && sensorMetaData.sensor_type.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  sensorMetaData.sensor_type.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       {sensorTypeList
@@ -445,6 +429,15 @@ const AddSensor = ({
                           ),
                         )}
                     </TextField>
+                    {sensorMetaData.sensor_type
+                    && sensorMetaData.sensor_type.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          sensorMetaData.sensor_type.help_text
+                        }
+                      />
+                    )}
                   </Grid>
                   <Grid item xs={12} md={6} sm={6}>
                     <DatePickerComponent
@@ -460,7 +453,13 @@ const AddSensor = ({
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                    md={6}
+                    sm={6}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -470,22 +469,16 @@ const AddSensor = ({
                       name="mac_address"
                       autoComplete="mac_address"
                       {...mac_address.bind}
-                      InputProps={
-                        sensorMetaData.mac_address
-                        && sensorMetaData.mac_address.help_text
-                        && {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CustomizedTooltips
-                                toolTipText={
-                                  sensorMetaData.mac_address.help_text
-                                }
-                              />
-                            </InputAdornment>
-                          ),
-                        }
-                      }
                     />
+                    {sensorMetaData.mac_address
+                    && sensorMetaData.mac_address.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          sensorMetaData.mac_address.help_text
+                        }
+                      />
+                    )}
                   </Grid>
                 </Grid>
               </CardContent>
@@ -579,7 +572,10 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
   ...state.optionsReducer,
-  loading: state.sensorsGatewayReducer.loading || state.optionsReducer.loading,
+  loading: (
+    state.sensorsGatewayReducer.loading
+    || state.optionsReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(AddSensor);

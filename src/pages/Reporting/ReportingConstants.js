@@ -437,9 +437,9 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        isNaN(value)
-          ? '-'
-          : Number(value).toFixed(2)
+        _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : '-'
       ),
     },
   },
@@ -451,9 +451,9 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        isNaN(value)
-          ? '-'
-          : Number(value).toFixed(2)
+        _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : '-'
       ),
     },
   },
@@ -465,9 +465,9 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        isNaN(value)
-          ? '-'
-          : Number(value).toFixed(2)
+        _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : '-'
       ),
     },
   },
@@ -479,9 +479,9 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        isNaN(value)
-          ? '-'
-          : Number(value).toFixed(2)
+        _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : '-'
       ),
     },
   },
@@ -493,9 +493,9 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        isNaN(value)
-          ? '-'
-          : Number(value).toFixed(2)
+        _.isNumber(Number(value))
+          ? _.round(value, 2).toFixed(2)
+          : '-'
       ),
     },
   },
@@ -507,9 +507,9 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        isNaN(value)
-          ? '-'
-          : Number(value).toFixed(2)
+        _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : '-'
       ),
     },
   },
@@ -521,9 +521,9 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        isNaN(value)
-          ? '-'
-          : Number(value).toFixed(2)
+        _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : '-'
       ),
     },
   },
@@ -535,9 +535,9 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        isNaN(value)
-          ? '-'
-          : Number(value).toFixed(2)
+        _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : '-'
       ),
     },
   },
@@ -549,9 +549,9 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        isNaN(value)
-          ? '-'
-          : Number(value).toFixed(2)
+        _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : '-'
       ),
     },
   },
