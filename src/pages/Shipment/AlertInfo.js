@@ -396,7 +396,9 @@ const AlertInfo = ({
   return (
     <div className={classes.root}>
       {shipmentAlerts
-      && shipmentAlerts.length
+      && shipmentAlerts.show
+      && shipmentAlerts.data
+      && shipmentAlerts.data.length > 0
       && _.map(shipmentAlerts.data, (alert, index) => (
         <Alert
           key={`shipmentAlert${index}:${alert.shipment}`}
@@ -422,7 +424,9 @@ const AlertInfo = ({
       ))}
 
       {geofenceAlerts
-      && geofenceAlerts.length
+      && geofenceAlerts.show
+      && geofenceAlerts.data
+      && geofenceAlerts.data.length > 0
       && _.map(geofenceAlerts.data, (alert, index) => (
         <Alert
           key={`sensorReportAlert${index}:${alert.shipment}`}
