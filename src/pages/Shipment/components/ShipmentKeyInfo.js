@@ -57,10 +57,12 @@ const useStyles = makeStyles((theme) => ({
   caption: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: theme.spacing(2),
   },
   pdfIcon: {
     marginRight: theme.spacing(1),
+  },
+  identifier: {
+    marginTop: theme.spacing(1),
   },
 }));
 
@@ -103,7 +105,7 @@ const ShipmentKeyInfo = ({
   };
 
   const searchOnBlur = () => {
-    if (key) {
+    if (key && file) {
       const re = new RegExp(`(.{0,20})${key}(.{0,20})`, 'gi');
       let m;
       let values = [];
@@ -129,8 +131,13 @@ const ShipmentKeyInfo = ({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const uploadFile = new FormData();
-    uploadFile.append('file', file, file.name);
+    let uploadFile = null;
+
+    if (file) {
+      uploadFile = new FormData();
+      uploadFile.append('file', file, file.name);
+    }
+
     const identifier = key
       ? JSON.stringify({ [key]: keyValue })
       : null;
@@ -138,7 +145,7 @@ const ShipmentKeyInfo = ({
     dispatch(
       pdfIdentifier(
         uploadFile,
-        file.name,
+        file ? file.name : null,
         identifier,
         shipmentFormData,
         history,
@@ -151,6 +158,8 @@ const ShipmentKeyInfo = ({
     setFile(null);
     setText(null);
     setKey('');
+    setKeyValue('');
+    setOptions([]);
     fileInput.value = '';
     fileInput.files = null;
   };
@@ -176,7 +185,12 @@ const ShipmentKeyInfo = ({
     }
   };
 
-  checkIfShipmentKeyEdited = () => fileChanged || Boolean(key || keyValue);
+  checkIfShipmentKeyEdited = () => (
+    fileChanged
+    || file !== null
+    || key !== ''
+    || keyValue !== ''
+  );
 
   const onNextClick = (event) => {
     if (checkIfShipmentKeyEdited()) {
@@ -220,7 +234,6 @@ const ShipmentKeyInfo = ({
                 shipmentFormData
                 && shipmentFormData.uploaded_pdf
                 && shipmentFormData.uploaded_pdf_link
-                && shipmentFormData.unique_identifier
                 && shipmentFormData.uploaded_pdf.length > 0
                 && shipmentFormData.uploaded_pdf_link.length > 0
                   ? (
@@ -251,39 +264,42 @@ const ShipmentKeyInfo = ({
                           )}
                         </span>
                       </span>
-                      <span>
-                        <em>Unique Identifier</em>
-                      </span>
-                      <br />
-                      <span>
-                        {`${_.keys(
-                          JSON.parse(shipmentFormData.unique_identifier),
-                        )[0]
-                        }: ${_.values(
-                          JSON.parse(shipmentFormData.unique_identifier),
-                        )[0]
-                        }`}
-                      </span>
                     </>
                   ) : (
                     ''
                   )
               }
             />
-            {file && (
-              <TextField
-                className={classes.textfield}
-                variant="outlined"
-                fullWidth
-                id="file-search"
-                name="file-search"
-                label="Which should be the key?"
-                value={key}
-                onChange={(e) => setKey(e.target.value)}
-                onBlur={searchOnBlur}
-              />
-            )}
-            {file && key && (
+            <TextField
+              className={classes.textfield}
+              variant="outlined"
+              fullWidth
+              id="file-search"
+              name="file-search"
+              label="Which should be the key?"
+              value={key}
+              onChange={(e) => setKey(e.target.value)}
+              onBlur={searchOnBlur}
+              helperText={
+                shipmentFormData
+                && shipmentFormData.unique_identifier
+                  ? (
+                    <span className={classes.identifier}>
+                      <em>Unique Identifier  --  </em>
+                      {`${_.keys(
+                        JSON.parse(shipmentFormData.unique_identifier),
+                      )[0]
+                      }: ${_.values(
+                        JSON.parse(shipmentFormData.unique_identifier),
+                      )[0]
+                      }`}
+                    </span>
+                  ) : (
+                    ''
+                  )
+              }
+            />
+            {key && (
             <Autocomplete
               freeSolo
               className={classes.autoComplete}
@@ -326,7 +342,7 @@ const ShipmentKeyInfo = ({
                   variant="contained"
                   color="primary"
                   className={classes.submit}
-                  disabled={Boolean(loading || !file || (key && !keyValue))}
+                  disabled={Boolean(loading || (key && !keyValue))}
                 >
                   Save
                 </Button>
@@ -345,6 +361,7 @@ const ShipmentKeyInfo = ({
               color="primary"
               fullWidth
               onClick={onNextClick}
+              disabled={Boolean(key && !keyValue)}
               className={classes.submit}
             >
               Save & Next: Items

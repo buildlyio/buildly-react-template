@@ -442,19 +442,23 @@ function* pdfIdentifier(action) {
     organization_uuid,
   } = action;
   try {
-    const response = yield call(
-      httpService.makeRequest,
-      'post',
-      `${environment.API_URL}${shipmentApiEndPoint}upload_file/`,
-      data,
-      true,
-    );
-    const uploaded_pdf = payload.uploaded_pdf
-      ? [...payload.uploaded_pdf, filename]
-      : [filename];
-    const uploaded_pdf_link = payload.uploaded_pdf_link
-      ? [...payload.uploaded_pdf_link, response.data['aws url']]
-      : [response.data['aws url']];
+    let { uploaded_pdf, uploaded_pdf_link } = payload;
+    if (data && filename) {
+      const response = yield call(
+        httpService.makeRequest,
+        'post',
+        `${environment.API_URL}${shipmentApiEndPoint}upload_file/`,
+        data,
+        true,
+      );
+      uploaded_pdf = payload.uploaded_pdf
+        ? [...payload.uploaded_pdf, filename]
+        : [filename];
+      uploaded_pdf_link = payload.uploaded_pdf_link
+        ? [...payload.uploaded_pdf_link, response.data['aws url']]
+        : [response.data['aws url']];
+    }
+
     const unique_identifier = identifier || payload.unique_identifier;
     yield [
       yield put({
