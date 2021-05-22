@@ -290,10 +290,8 @@ const AddCustodyForm = ({
       (editItem && editItem.custodian_data && editItem.custodian_data.url)
       || '')
     || load_id.hasChanged()
-    || new Date(start_of_custody).toJSON() !== (
-      (editItem && editItem.start_of_custody) || new Date().toJSON())
-    || new Date(end_of_custody).toJSON() !== (
-      (editItem && editItem.end_of_custody) || new Date().toJSON())
+    || (editItem && (start_of_custody !== editItem.start_of_custody))
+    || (editItem && (end_of_custody !== editItem.end_of_custody))
     || latLongChanged
     || has_current_custody.hasChanged()
     || first_custody.hasChanged()

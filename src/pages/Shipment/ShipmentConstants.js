@@ -387,8 +387,8 @@ export const getFormattedCustodyRows = (custodyData, custodianData) => {
 
   return _.orderBy(
     customizedRows,
-    (row) => [row.load_id, moment(row.start_of_custody)],
-    ['asc', 'asc'],
+    ['custodian_name'],
+    ['asc'],
   );
 };
 

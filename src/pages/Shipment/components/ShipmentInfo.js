@@ -113,11 +113,11 @@ const ShipmentInfo = (props) => {
   );
   const route_dist = useInput('');
   const [scheduled_departure, handleDepartureDateChange] = useState(
-    (editData && new Date(editData.estimated_time_of_departure))
+    (editData && editData.estimated_time_of_departure)
     || new Date(),
   );
   const [scheduled_arrival, handleScheduledDateChange] = useState(
-    (editData && new Date(editData.estimated_time_of_arrival))
+    (editData && editData.estimated_time_of_arrival)
     || new Date(),
   );
   const [flags, setFlags] = useState(
