@@ -14,7 +14,7 @@ import {
 } from '@material-ui/icons';
 import { UserContext } from '@context/User.context';
 import { checkForGlobalAdmin } from '@utils/utilMethods';
-import { SHIPMENT_DATA_TABLE_COLUMNS } from '../ShipmentConstants';
+import { getShipmentDataTableColumns } from '../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,6 +56,7 @@ const ShipmentDataTable = ({
   editAction,
   deleteAction,
   setSelectedShipment,
+  showUTC,
 }) => {
   const classes = useStyles();
   const [selected, setSelected] = useState(0);
@@ -128,7 +129,7 @@ const ShipmentDataTable = ({
         ),
       },
     },
-    ..._.map(SHIPMENT_DATA_TABLE_COLUMNS, (column) => ({
+    ..._.map(getShipmentDataTableColumns(showUTC), (column) => ({
       ...column,
       options: {
         ...column.options,

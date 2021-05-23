@@ -6,6 +6,8 @@ import {
   Toolbar,
   IconButton,
   Hidden,
+  Typography,
+  Switch,
 } from '@material-ui/core';
 import {
   AccountCircle,
@@ -13,7 +15,6 @@ import {
   Settings as SettingsIcon,
   Menu as MenuIcon,
 } from '@material-ui/icons';
-import { environment } from '@environments/environment';
 import logo from '@assets/tp-logo.png';
 import {
   logout,
@@ -22,9 +23,10 @@ import {
 import {
   getUserOptions,
   getOrganizationOptions,
+  showUTCTime,
+  showLocaleTime,
 } from '@redux/options/actions/options.actions';
 import { routes } from '@routes/routesConstants';
-import { httpService } from '@modules/http/http.service';
 import {
   checkForAdmin,
   checkForGlobalAdmin,
@@ -45,6 +47,12 @@ const useStyles = makeStyles((theme) => ({
   },
   menuRight: {
     marginLeft: 'auto',
+    display: 'flex',
+  },
+  timezone: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
 }));
 
@@ -60,6 +68,7 @@ const TopBar = ({
   organizationData,
   userOptions,
   orgOptions,
+  showUTC,
 }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -136,6 +145,20 @@ const TopBar = ({
         />
 
         <div className={classes.menuRight}>
+          <div className={classes.timezone}>
+            <Typography color="textPrimary" variant="caption">
+              Show UTC Time
+            </Typography>
+            <Switch
+              checked={showUTC}
+              onChange={(e) => (
+                e.target.checked
+                  ? dispatch(showUTCTime())
+                  : dispatch(showLocaleTime())
+              )}
+              color="primary"
+            />
+          </div>
           {isAdmin
           && (
           <IconButton

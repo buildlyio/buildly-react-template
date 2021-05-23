@@ -106,12 +106,14 @@ const Reporting = ({
   sensorData,
   contactInfo,
   unitsOfMeasure,
+  showUTC,
 }) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
   const [tileView, setTileView] = useState(true);
   const [selectedGraph, setSelectedGraph] = useState('temperature');
   const [selectedShipment, setSelectedShipment] = useState(null);
+  const [shipmentOverview, setShipmentOverview] = useState([]);
   const [isMapLoaded, setMapLoaded] = useState(true);
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState({});
@@ -120,8 +122,10 @@ const Reporting = ({
     let returnValue;
     if (selectedShipment[value] !== null) {
       if (moment(selectedShipment[value], true).isValid()) {
-        returnValue = moment(selectedShipment[value])
-          .format('MMMM DD, YYYY hh:mm:ss');
+        const dateTime = showUTC
+          ? moment.utc(selectedShipment[value])
+          : moment(selectedShipment[value]);
+        returnValue = dateTime.format('MMMM DD, YYYY hh:mm:ss a');
       } else if (typeof (selectedShipment[value]) !== 'object') {
         returnValue = selectedShipment[value];
       }
@@ -173,13 +177,16 @@ const Reporting = ({
         aggregateReportData,
         contactInfo,
         unitsOfMeasure,
+        showUTC,
       );
-
-      if (!selectedShipment && overview.length) {
+      if (overview.length > 0) {
+        setShipmentOverview(overview);
+      }
+      if (!selectedShipment && overview.length > 0) {
         setSelectedShipment(overview[0]);
       }
     }
-  }, [shipmentData, custodianData, custodyData, aggregateReportData]);
+  }, [shipmentData, custodianData, custodyData, aggregateReportData, showUTC]);
 
   useEffect(() => {
     if (selectedShipment) {
@@ -260,7 +267,7 @@ const Reporting = ({
                   : ''
               }
               onChange={(e) => {
-                const selected = _.find(shipmentData, { id: e.target.value });
+                const selected = _.find(shipmentOverview, { id: e.target.value });
                 setSelectedShipment(selected);
               }}
             >
@@ -430,6 +437,14 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.sensorsGatewayReducer,
   ...state.custodianReducer,
   ...state.itemsReducer,
+  ...state.optionsReducer,
+  loading: (
+    state.shipmentReducer.loading
+    || state.sensorsGatewayReducer.loading
+    || state.custodianReducer.loading
+    || state.itemsReducer.loading
+    || state.optionsReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(Reporting);

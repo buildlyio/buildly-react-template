@@ -7,7 +7,7 @@ import {
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { routes } from '@routes/routesConstants';
-import { SENSOR_TYPE_COLUMNS } from '../ConfigurationConstants';
+import { getSensorTypeColumns } from '../ConfigurationConstants';
 import AddSensorType from '../forms/AddSensorType';
 
 const SensorType = ({
@@ -16,6 +16,7 @@ const SensorType = ({
   sensorTypeList,
   redirectTo,
   history,
+  showUTC,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -63,7 +64,7 @@ const SensorType = ({
       noSpace
       loading={loading}
       rows={sensorTypeList || []}
-      columns={SENSOR_TYPE_COLUMNS}
+      columns={getSensorTypeColumns(showUTC)}
       filename="SensorType"
       addButtonHeading="Sensor Type"
       onAddButtonClick={onAddButtonClick}
@@ -84,6 +85,7 @@ const SensorType = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
+  ...state.optionsReducer,
 });
 
 export default connect(mapStateToProps)(SensorType);

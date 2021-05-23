@@ -7,7 +7,7 @@ import {
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { routes } from '@routes/routesConstants';
-import { GATEWAY_TYPE_COLUMNS } from '../ConfigurationConstants';
+import { getGatewayTypeColumns } from '../ConfigurationConstants';
 import AddGatewayType from '../forms/AddGatewayType';
 
 const GatewayType = ({
@@ -16,6 +16,7 @@ const GatewayType = ({
   gatewayTypeList,
   redirectTo,
   history,
+  showUTC,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -63,7 +64,7 @@ const GatewayType = ({
       noSpace
       loading={loading}
       rows={gatewayTypeList || []}
-      columns={GATEWAY_TYPE_COLUMNS}
+      columns={getGatewayTypeColumns(showUTC)}
       filename="GatewayType"
       addButtonHeading="Gateway Type"
       onAddButtonClick={onAddButtonClick}
@@ -84,6 +85,7 @@ const GatewayType = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
+  ...state.optionsReducer,
 });
 
 export default connect(mapStateToProps)(GatewayType);

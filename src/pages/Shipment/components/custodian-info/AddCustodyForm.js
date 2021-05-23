@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Geocode from 'react-geocode';
 import _ from 'lodash';
+import moment from 'moment';
 import {
   makeStyles,
   TextField,
@@ -73,6 +74,7 @@ const AddCustodyForm = ({
   viewOnly,
   organizationData,
   rows,
+  showUTC,
 }) => {
   const classes = useStyles();
   let latLongChanged = false;
@@ -423,7 +425,13 @@ const AddCustodyForm = ({
               <Grid item xs={12}>
                 <DatePickerComponent
                   label="Start of Custody"
-                  selectedDate={start_of_custody}
+                  selectedDate={
+                    showUTC
+                      ? moment.utc(start_of_custody)
+                        .format('MMMM DD, YYYY HH:mm:ss')
+                      : moment(start_of_custody)
+                        .format('MMMM DD, YYYY HH:mm:ss')
+                  }
                   hasTime
                   disabled={viewOnly}
                   helpText={
@@ -438,7 +446,13 @@ const AddCustodyForm = ({
               <Grid item xs={12}>
                 <DatePickerComponent
                   label="End of Custody"
-                  selectedDate={end_of_custody}
+                  selectedDate={
+                    showUTC
+                      ? moment.utc(end_of_custody)
+                        .format('MMMM DD, YYYY HH:mm:ss')
+                      : moment(end_of_custody)
+                        .format('MMMM DD, YYYY HH:mm:ss')
+                  }
                   hasTime
                   handleDateChange={handleEndChange}
                   disabled={viewOnly}

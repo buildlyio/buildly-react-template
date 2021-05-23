@@ -113,6 +113,7 @@ const Shipment = (props) => {
     shipmentOptions,
     custodyOptions,
     sensorReportAlerts,
+    showUTC,
   } = props;
   const classes = useStyles();
 
@@ -258,17 +259,23 @@ const Shipment = (props) => {
                   'temperature',
                 );
 
-              let localDateTime;
+              let dateTime;
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
-                  localDateTime = moment(
-                    report_entry.report_timestamp,
-                  ).format('MMM DD YYYY, h:mm:ss a');
+                  const dt1 = showUTC
+                    ? moment.utc(report_entry.report_timestamp)
+                    : moment(report_entry.report_timestamp);
+                  dateTime = dt1.format('MMM DD YYYY, h:mm:ss a');
                 }
               } else if ('report_location' in report_entry) {
-                localDateTime = moment(
-                  report_entry.report_location.timeOfPosition,
-                ).format('MMM DD YYYY, h:mm:ss a');
+                const dt2 = showUTC
+                  ? moment.utc(
+                    report_entry.report_location.timeOfPosition,
+                  )
+                  : moment(
+                    report_entry.report_location.timeOfPosition,
+                  );
+                dateTime = dt2.format('MMM DD YYYY, h:mm:ss a');
               }
 
               // For a valid (latitude, longitude) pair: -90<=X<=+90 and -180<=Y<=180
@@ -281,7 +288,7 @@ const Shipment = (props) => {
                   && latitude <= 90)
                 && (longitude >= -180
                   && longitude <= 180)
-                && localDateTime !== ''
+                && dateTime !== ''
               ) {
                 const marker = {
                   lat: latitude,
@@ -295,7 +302,7 @@ const Shipment = (props) => {
                   battery: report_entry.report_battery,
                   pressure: report_entry.report_pressure,
                   color,
-                  timestamp: localDateTime,
+                  timestamp: dateTime,
                   alert_status,
                 };
                 // Considered use case: If a shipment stays at some
@@ -330,7 +337,7 @@ const Shipment = (props) => {
       ));
       selectedShipment.sensor_report_info = aggregateReportInfo;
     }
-  }, [selectedShipment]);
+  }, [selectedShipment, showUTC]);
 
   useEffect(() => {
     if (markers && markers.length > 0) {
@@ -447,6 +454,7 @@ const Shipment = (props) => {
             deleteAction={handleDelete}
             setSelectedShipment={setSelectedShipment}
             tileView={tileView}
+            showUTC={showUTC}
           />
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>

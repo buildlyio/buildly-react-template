@@ -1,4 +1,6 @@
 import {
+  SHOW_UTC_TIME,
+  SHOW_LOCALE_TIME,
   GET_USER_OPTIONS,
   GET_USER_OPTIONS_SUCCESS,
   GET_USER_OPTIONS_FAILURE,
@@ -35,6 +37,7 @@ const initialState = {
   loading: false,
   loaded: false,
   error: null,
+  showUTC: false,
   userOptions: null,
   orgOptions: null,
   custodianOptions: null,
@@ -50,6 +53,18 @@ const initialState = {
 // Reducer
 export default (state = initialState, action) => {
   switch (action.type) {
+    case SHOW_UTC_TIME:
+      return {
+        ...state,
+        showUTC: true,
+      };
+
+    case SHOW_LOCALE_TIME:
+      return {
+        ...state,
+        showUTC: false,
+      };
+
     case GET_USER_OPTIONS:
       return {
         ...state,

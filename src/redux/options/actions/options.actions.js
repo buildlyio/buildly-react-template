@@ -2,6 +2,9 @@ import { environment } from '@environments/environment';
 import { httpService } from '@modules/http/http.service';
 
 // Options Actions Types
+export const SHOW_UTC_TIME = 'OPTIONS/SHOW_UTC_TIME';
+export const SHOW_LOCALE_TIME = 'OPTIONS/SHOW_LOCALE_TIME';
+
 export const GET_USER_OPTIONS = 'OPTIONS/GET_USER_OPTIONS';
 export const GET_USER_OPTIONS_SUCCESS = 'OPTIONS/GET_USER_OPTIONS_SUCCESS';
 export const GET_USER_OPTIONS_FAILURE = 'OPTIONS/GET_USER_OPTIONS_FAILURE';
@@ -41,6 +44,16 @@ export const GET_SENSOR_OPTIONS_FAILURE = 'OPTIONS/GET_SENSOR_OPTIONS_FAILURE';
 export const GET_SHIPMENT_OPTIONS = 'ITEMS/GET_SHIPMENT_OPTIONS';
 export const GET_SHIPMENT_OPTIONS_SUCCESS = 'ITEMS/GET_SHIPMENT_OPTIONS_SUCCESS';
 export const GET_SHIPMENT_OPTIONS_FAILURE = 'ITEMS/GET_SHIPMENT_OPTIONS_FAILURE';
+
+// Show UTC Time
+export const showUTCTime = () => ({
+  type: SHOW_UTC_TIME,
+});
+
+// Show Locale Time
+export const showLocaleTime = () => ({
+  type: SHOW_LOCALE_TIME,
+});
 
 // User Options call
 export const getUserOptions = () => (dispatch) => {

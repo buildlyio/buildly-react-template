@@ -8,7 +8,7 @@ import {
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
 import { routes } from '@routes/routesConstants';
-import { SHIPMENT_FLAG_COLUMNS } from '../ConfigurationConstants';
+import { getShipmentFlagColumns } from '../ConfigurationConstants';
 import AddShipmentFlag from '../forms/AddShipmentFlag';
 
 const ShipmentFlag = ({
@@ -17,6 +17,7 @@ const ShipmentFlag = ({
   shipmentFlag,
   redirectTo,
   history,
+  showUTC,
 }) => {
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
@@ -65,7 +66,7 @@ const ShipmentFlag = ({
       noSpace
       loading={loading}
       rows={shipmentFlag || []}
-      columns={SHIPMENT_FLAG_COLUMNS}
+      columns={getShipmentFlagColumns(showUTC)}
       filename="ShipmentFlag"
       addButtonHeading="Shipment Flag"
       onAddButtonClick={onAddButtonClick}
@@ -86,6 +87,7 @@ const ShipmentFlag = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.shipmentReducer,
+  ...state.optionsReducer,
 });
 
 export default connect(mapStateToProps)(ShipmentFlag);
