@@ -6,6 +6,7 @@ import { Alert } from '@material-ui/lab';
 import { UserContext } from '@context/User.context';
 import { updateCustody } from '@redux/custodian/actions/custodian.actions';
 import {
+  editShipment,
   setShipmentAlerts,
   emailAlerts,
 } from '@redux/shipment/actions/shipment.actions';
@@ -154,8 +155,9 @@ const AlertInfo = ({
       shipmentData
       && custodyData
       && sensorReportAlerts
-      && shipmentData.length
-      && custodyData.length
+      && shipmentData.length > 0
+      && custodyData.length > 0
+      && sensorReportAlerts.length > 0
     ) {
       let custodyRows = [];
       let alerts = [];
@@ -173,6 +175,27 @@ const AlertInfo = ({
 
       _.forEach(shipmentData, (shipment) => {
         _.forEach(sensorReportAlerts, (alert, index) => {
+          if (
+            shipment.partner_shipment_id === alert.shipment_id
+            && alert.shipment_custody_status === 'left-start-geofence'
+          ) {
+            const custody = _.find(
+              custodyData,
+              { custody_uuid: alert.current_custody_id },
+            );
+            if (
+              custody
+              && custody.first_custody
+              && shipment.shipment_uuid === custody.shipment_id
+              && _.lowerCase(shipment.status) === 'planned'
+            ) {
+              dispatch(editShipment({
+                ...shipment,
+                status: 'Enroute',
+              }));
+            }
+          }
+
           if (
             shipment.partner_shipment_id === alert.shipment_id
             && (

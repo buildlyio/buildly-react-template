@@ -3,6 +3,19 @@ import _ from 'lodash';
 
 let units = [];
 
+const showValue = (value, showUTC) => {
+  if (value && value !== '-') {
+    let returnValue = value;
+    if (showUTC) {
+      returnValue = moment.utc(value);
+    } else {
+      returnValue = moment(value);
+    }
+    return returnValue.format('MMM DD YYYY, h:mm a');
+  }
+  return value;
+};
+
 export const ORG_SETTINGS_TOOLTIP = 'Setting(s) for the Organization';
 
 export const CUSTODIAN_TYPE_TOOLTIP = 'Custodian Type(s) available in the system';
@@ -21,7 +34,7 @@ export const SHIPMENT_FLAG_TOOLTIP = 'Shipment Flag(s) available in the system';
 
 export const UNITS_OF_MEASURE_TOOLTIP = 'Unit(s) of Measure available in the system';
 
-export const CUSTODIAN_TYPE_COLUMNS = [
+export const getCustodianTypeColumns = (showUTC) => ([
   {
     name: 'name',
     label: 'Name',
@@ -38,9 +51,7 @@ export const CUSTODIAN_TYPE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
   {
@@ -50,14 +61,12 @@ export const CUSTODIAN_TYPE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
-];
+]);
 
-export const GATEWAY_TYPE_COLUMNS = [
+export const getGatewayTypeColumns = (showUTC) => ([
   {
     name: 'name',
     label: 'Name',
@@ -74,9 +83,7 @@ export const GATEWAY_TYPE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
   {
@@ -86,14 +93,12 @@ export const GATEWAY_TYPE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
-];
+]);
 
-export const ITEM_TYPE_COLUMNS = [
+export const getItemTypeColumns = (showUTC) => ([
   {
     name: 'name',
     label: 'Name',
@@ -110,9 +115,7 @@ export const ITEM_TYPE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
   {
@@ -122,14 +125,12 @@ export const ITEM_TYPE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
-];
+]);
 
-export const PRODUCT_COLUMNS = [
+export const getProductColumns = (showUTC) => ([
   {
     name: 'name',
     label: 'Name',
@@ -188,9 +189,7 @@ export const PRODUCT_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
   {
@@ -200,14 +199,12 @@ export const PRODUCT_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
-];
+]);
 
-export const PRODUCT_TYPE_COLUMNS = [
+export const getProductTypeColumns = (showUTC) => ([
   {
     name: 'name',
     label: 'Name',
@@ -224,9 +221,7 @@ export const PRODUCT_TYPE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
   {
@@ -236,14 +231,12 @@ export const PRODUCT_TYPE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
-];
+]);
 
-export const SENSOR_TYPE_COLUMNS = [
+export const getSensorTypeColumns = (showUTC) => ([
   {
     name: 'name',
     label: 'Name',
@@ -260,9 +253,7 @@ export const SENSOR_TYPE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
   {
@@ -272,14 +263,12 @@ export const SENSOR_TYPE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
-];
+]);
 
-export const SHIPMENT_FLAG_COLUMNS = [
+export const getShipmentFlagColumns = (showUTC) => ([
   {
     name: 'name',
     label: 'Flag Name',
@@ -326,9 +315,7 @@ export const SHIPMENT_FLAG_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
   {
@@ -338,14 +325,12 @@ export const SHIPMENT_FLAG_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
-];
+]);
 
-export const UNITS_OF_MEASURE_COLUMNS = [
+export const getUnitsOfMeasureColumns = (showUTC) => ([
   {
     name: 'name',
     label: 'Unit of Measure',
@@ -381,9 +366,7 @@ export const UNITS_OF_MEASURE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
   {
@@ -393,12 +376,10 @@ export const UNITS_OF_MEASURE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MMM DD YYYY, h:mm a')
-        : value),
+      customBodyRender: (value) => showValue(value, showUTC),
     },
   },
-];
+]);
 
 export const unitMeasures = (data) => {
   units = data;

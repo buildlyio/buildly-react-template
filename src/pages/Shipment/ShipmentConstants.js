@@ -13,7 +13,7 @@ export const MAP_TOOLTIP = 'Locations of the shipment from starting point till c
 
 export const SHIPMENT_DATA_TABLE_TOOLTIP = 'Click on a shipment to view it on the map';
 
-export const SHIPMENT_DATA_TABLE_COLUMNS = [
+export const getShipmentDataTableColumns = (showUTC) => ([
   {
     name: 'name',
     label: 'Shipment Name',
@@ -25,22 +25,44 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
   },
   {
     name: 'estimated_time_of_departure',
-    label: 'Estimated Departure Date',
+    label: 'Estimated Departure DateTime',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-' ? moment(value).format('MM/DD/yyyy') : value),
+      customBodyRender: (value) => {
+        if (value && value !== '-') {
+          let returnValue = value;
+          if (showUTC) {
+            returnValue = moment.utc(value);
+          } else {
+            returnValue = moment(value);
+          }
+          return returnValue.format('MMMM DD, YYYY hh:mm:ss a');
+        }
+        return value;
+      },
     },
   },
   {
     name: 'estimated_time_of_arrival',
-    label: 'Estimated Arrival Date',
+    label: 'Estimated Arrival DateTime',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '-' ? moment(value).format('MM/DD/yyyy') : value),
+      customBodyRender: (value) => {
+        if (value && value !== '-') {
+          let returnValue = value;
+          if (showUTC) {
+            returnValue = moment.utc(value);
+          } else {
+            returnValue = moment(value);
+          }
+          return returnValue.format('MMMM DD, YYYY hh:mm:ss a');
+        }
+        return value;
+      },
     },
   },
   {
@@ -50,7 +72,11 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value && value !== '' ? value.toUpperCase() : 'ICLP'),
+      customBodyRender: (value) => (
+        value && value !== ''
+          ? _.upperCase(value)
+          : 'ICLP'
+      ),
     },
   },
   {
@@ -142,7 +168,7 @@ export const SHIPMENT_DATA_TABLE_COLUMNS = [
       customBodyRender: (value) => (value && value !== '-' ? `$${numberWithCommas(value)}` : value),
     },
   },
-];
+]);
 
 export const getFormattedRow = (
   shipmentData,
@@ -387,8 +413,8 @@ export const getFormattedCustodyRows = (custodyData, custodianData) => {
 
   return _.orderBy(
     customizedRows,
-    (row) => [row.load_id, moment(row.start_of_custody)],
-    ['asc', 'asc'],
+    ['custodian_name'],
+    ['asc'],
   );
 };
 

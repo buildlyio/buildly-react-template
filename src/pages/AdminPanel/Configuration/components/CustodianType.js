@@ -7,7 +7,7 @@ import {
 } from '@redux/custodian/actions/custodian.actions';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { routes } from '@routes/routesConstants';
-import { CUSTODIAN_TYPE_COLUMNS } from '../ConfigurationConstants';
+import { getCustodianTypeColumns } from '../ConfigurationConstants';
 import AddCustodianType from '../forms/AddCustodianType';
 
 const CustodianType = ({
@@ -16,6 +16,7 @@ const CustodianType = ({
   custodianTypeList,
   redirectTo,
   history,
+  showUTC,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -63,7 +64,7 @@ const CustodianType = ({
       noSpace
       loading={loading}
       rows={custodianTypeList || []}
-      columns={CUSTODIAN_TYPE_COLUMNS}
+      columns={getCustodianTypeColumns(showUTC)}
       filename="CustodianType"
       addButtonHeading="Custodian Type"
       onAddButtonClick={onAddButtonClick}
@@ -84,6 +85,7 @@ const CustodianType = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
+  ...state.optionsReducer,
 });
 
 export default connect(mapStateToProps)(CustodianType);

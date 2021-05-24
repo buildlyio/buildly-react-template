@@ -7,7 +7,7 @@ import {
 } from '@redux/items/actions/items.actions';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { routes } from '@routes/routesConstants';
-import { UNITS_OF_MEASURE_COLUMNS } from '../ConfigurationConstants';
+import { getUnitsOfMeasureColumns } from '../ConfigurationConstants';
 import AddUnitOfMeasure from '../forms/AddUnitOfMeasure';
 
 const UnitOfMeasure = ({
@@ -16,6 +16,7 @@ const UnitOfMeasure = ({
   unitsOfMeasure,
   redirectTo,
   history,
+  showUTC,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -63,7 +64,7 @@ const UnitOfMeasure = ({
       noSpace
       loading={loading}
       rows={unitsOfMeasure || []}
-      columns={UNITS_OF_MEASURE_COLUMNS}
+      columns={getUnitsOfMeasureColumns(showUTC)}
       filename="UnitsOfMeasure"
       addButtonHeading="Unit of Measure"
       onAddButtonClick={onAddButtonClick}
@@ -84,6 +85,7 @@ const UnitOfMeasure = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.itemsReducer,
+  ...state.optionsReducer,
 });
 
 export default connect(mapStateToProps)(UnitOfMeasure);

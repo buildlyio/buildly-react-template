@@ -8,7 +8,7 @@ import {
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
 import { routes } from '@routes/routesConstants';
-import { ITEM_TYPE_COLUMNS } from '../ConfigurationConstants';
+import { getItemTypeColumns } from '../ConfigurationConstants';
 import AddItemType from '../forms/AddItemType';
 
 const ItemType = ({
@@ -17,6 +17,7 @@ const ItemType = ({
   itemTypeList,
   redirectTo,
   history,
+  showUTC,
 }) => {
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
@@ -65,7 +66,7 @@ const ItemType = ({
       noSpace
       loading={loading}
       rows={itemTypeList || []}
-      columns={ITEM_TYPE_COLUMNS}
+      columns={getItemTypeColumns(showUTC)}
       filename="ItemType"
       addButtonHeading="Item Type"
       onAddButtonClick={onAddButtonClick}
@@ -86,6 +87,7 @@ const ItemType = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.itemsReducer,
+  ...state.optionsReducer,
 });
 
 export default connect(mapStateToProps)(ItemType);

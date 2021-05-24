@@ -151,6 +151,7 @@ export const getShipmentOverview = (
   aggregateReportData,
   contactData,
   unitsOfMeasure,
+  showUTC,
 ) => {
   let shipmentList = [];
   let custodyRows = [];
@@ -258,17 +259,23 @@ export const getShipmentOverview = (
                   'temperature',
                 );
 
-              let localDateTime = '';
+              let dateTime = '';
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
-                  localDateTime = moment(
-                    report_entry.report_timestamp,
-                  ).format('MMM DD YYYY, h:mm:ss a');
+                  const dt1 = showUTC
+                    ? moment.utc(report_entry.report_timestamp)
+                    : moment(report_entry.report_timestamp);
+                  dateTime = dt1.format('MMM DD YYYY, h:mm:ss a');
                 }
               } else if ('report_location' in report_entry) {
-                localDateTime = moment(
-                  report_entry.report_location.timeOfPosition,
-                ).format('MMM DD YYYY, h:mm:ss a');
+                const dt2 = showUTC
+                  ? moment.utc(
+                    report_entry.report_location.timeOfPosition,
+                  )
+                  : moment(
+                    report_entry.report_location.timeOfPosition,
+                  );
+                dateTime = dt2.format('MMM DD YYYY, h:mm:ss a');
               }
 
               // For a valid (latitude, longitude) pair: -90<=X<=+90 and -180<=Y<=180
@@ -281,7 +288,7 @@ export const getShipmentOverview = (
                   && latitude <= 90)
                 && (longitude >= -180
                   && longitude <= 180)
-                && localDateTime !== ''
+                && dateTime !== ''
               ) {
                 const marker = {
                   lat: latitude,
@@ -295,7 +302,7 @@ export const getShipmentOverview = (
                   battery: report_entry.report_battery,
                   pressure: report_entry.report_pressure,
                   color,
-                  timestamp: localDateTime,
+                  timestamp: dateTime,
                   alert_status,
                 };
                 // Considered use case: If a shipment stays at some
@@ -312,55 +319,55 @@ export const getShipmentOverview = (
                 }
                 aggregateReportInfo = [...aggregateReportInfo, marker];
                 const graphPoint = _.find(temperatureData, {
-                  x: localDateTime,
+                  x: dateTime,
                 });
                 if (!graphPoint) {
                   temperatureData = [
                     ...temperatureData,
                     {
-                      x: localDateTime,
+                      x: dateTime,
                       y: temperature,
                     },
                   ];
                   lightData = [
                     ...lightData,
                     {
-                      x: localDateTime,
+                      x: dateTime,
                       y: report_entry.report_light,
                     },
                   ];
                   shockData = [
                     ...shockData,
                     {
-                      x: localDateTime,
+                      x: dateTime,
                       y: report_entry.report_shock,
                     },
                   ];
                   tiltData = [
                     ...tiltData,
                     {
-                      x: localDateTime,
+                      x: dateTime,
                       y: report_entry.report_tilt,
                     },
                   ];
                   humidityData = [
                     ...humidityData,
                     {
-                      x: localDateTime,
+                      x: dateTime,
                       y: report_entry.report_humidity,
                     },
                   ];
                   batteryData = [
                     ...batteryData,
                     {
-                      x: localDateTime,
+                      x: dateTime,
                       y: report_entry.report_battery,
                     },
                   ];
                   pressureData = [
                     ...pressureData,
                     {
-                      x: localDateTime,
+                      x: dateTime,
                       y: report_entry.report_pressure,
                     },
                   ];
@@ -422,7 +429,7 @@ export const SENSOR_REPORT_COLUMNS = [
   },
   {
     name: 'timestamp',
-    label: 'Tag Captured Timestamp (Local TimeZone)',
+    label: 'Tag Captured Timestamp',
     options: {
       sort: true,
       sortThirdClickReset: true,

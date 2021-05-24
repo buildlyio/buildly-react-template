@@ -26,6 +26,7 @@ import {
   getFormattedSensorRow,
   getAvailableGateways,
 } from '@pages/SensorsGateway/Constants';
+import { editGateway } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { editShipment } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
 import { gatewayColumns, sensorsColumns } from '../ShipmentConstants';
@@ -162,6 +163,7 @@ const SensorsGatewayInfo = ({
     const shipmentFormValue = {
       ...{ ...shipmentFormData, gateway_ids: gatewayIds },
     };
+    const updateGateway = _.find(gatewayData, { gateway_uuid: gatewayIds[0] });
     dispatch(
       editShipment(
         shipmentFormValue,
@@ -170,6 +172,10 @@ const SensorsGatewayInfo = ({
         organization,
       ),
     );
+    dispatch(editGateway({
+      ...updateGateway,
+      gateway_status: 'assigned',
+    }));
   };
 
   const onNextClick = (event) => {
@@ -187,6 +193,7 @@ const SensorsGatewayInfo = ({
       handleCancel();
     }
   };
+
   return (
     <Box mb={5} mt={3}>
       <form noValidate onSubmit={handleSubmit}>
@@ -197,7 +204,13 @@ const SensorsGatewayInfo = ({
                 <Autocomplete
                   multiple
                   id="combo-box-demo"
-                  disabled={viewOnly}
+                  disabled={
+                    viewOnly
+                    || (shipmentFormData
+                      && shipmentFormData.gateway_ids
+                      && shipmentFormData.gateway_ids.length > 0
+                    )
+                  }
                   options={options}
                   getOptionLabel={(option) => (
                     option
@@ -214,8 +227,8 @@ const SensorsGatewayInfo = ({
                       <Chip
                         variant="default"
                         label={
-                          options
-                            ? _.find(options, { gateway_uuid: option })?.name
+                          gatewayData
+                            ? _.find(gatewayData, { gateway_uuid: option })?.name
                             : ''
                         }
                         {...getTagProps({ index })}
@@ -240,6 +253,13 @@ const SensorsGatewayInfo = ({
                       label="Associate to Gateway"
                       variant="outlined"
                       placeholder="Select a Gateway"
+                      helperText={
+                        shipmentFormData
+                        && shipmentFormData.gateway_ids
+                        && shipmentFormData.gateway_ids.length === 0
+                          ? '**You can attach gateway/sensor only once per shipment.'
+                          : '**In case you want to change the gateway/sensor, please cancel this shipment and create a new one.'
+                      }
                     />
                   )}
                 />
