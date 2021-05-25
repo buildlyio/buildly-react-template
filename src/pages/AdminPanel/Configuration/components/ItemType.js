@@ -17,7 +17,7 @@ const ItemType = ({
   itemTypeList,
   redirectTo,
   history,
-  showUTC,
+  timezone,
 }) => {
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
@@ -66,7 +66,7 @@ const ItemType = ({
       noSpace
       loading={loading}
       rows={itemTypeList || []}
-      columns={getItemTypeColumns(showUTC)}
+      columns={getItemTypeColumns(timezone)}
       filename="ItemType"
       addButtonHeading="Item Type"
       onAddButtonClick={onAddButtonClick}

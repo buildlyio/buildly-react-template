@@ -382,6 +382,7 @@ const AddShipment = (props) => {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.shipmentReducer,
+  ...state.optionsReducer,
 });
 
 export default connect(mapStateToProps)(AddShipment);

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment-timezone';
+import _ from 'lodash';
 import {
   makeStyles,
   AppBar,
@@ -23,8 +25,7 @@ import {
 import {
   getUserOptions,
   getOrganizationOptions,
-  showUTCTime,
-  showLocaleTime,
+  setTimezone,
 } from '@redux/options/actions/options.actions';
 import { routes } from '@routes/routesConstants';
 import {
@@ -50,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
   },
   timezone: {
-    width: 150,
+    width: theme.spacing(20),
     marginTop: theme.spacing(1.5),
     '& .MuiOutlinedInput-input': {
       padding: theme.spacing(1, 3.5, 1, 2),
@@ -70,7 +71,7 @@ const TopBar = ({
   organizationData,
   userOptions,
   orgOptions,
-  showUTC,
+  timezone,
 }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -126,21 +127,6 @@ const TopBar = ({
     setSettingEl(null);
   };
 
-  const handleTimezone = (event) => {
-    switch (event.target.value) {
-      case 'locale':
-        dispatch(showLocaleTime());
-        break;
-
-      case 'utc':
-        dispatch(showUTCTime());
-        break;
-
-      default:
-        break;
-    }
-  };
-
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
@@ -169,13 +155,14 @@ const TopBar = ({
             id="timezone"
             label="Timezone"
             select
-            value={showUTC ? 'utc' : 'locale'}
-            onChange={handleTimezone}
+            value={timezone}
+            onChange={(e) => dispatch(setTimezone(e.target.value))}
           >
-            <MenuItem value="locale">
-              {Intl.DateTimeFormat().resolvedOptions().timeZone}
-            </MenuItem>
-            <MenuItem value="utc">UTC</MenuItem>
+            {_.map(moment.tz.names(), (name, index) => (
+              <MenuItem key={`${name}-${index}`} value={name}>
+                {name}
+              </MenuItem>
+            ))}
           </TextField>
           {isAdmin
           && (

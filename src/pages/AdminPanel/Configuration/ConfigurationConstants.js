@@ -1,20 +1,13 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import _ from 'lodash';
 
 let units = [];
 
-const showValue = (value, showUTC) => {
-  if (value && value !== '-') {
-    let returnValue = value;
-    if (showUTC) {
-      returnValue = moment.utc(value);
-    } else {
-      returnValue = moment(value);
-    }
-    return returnValue.format('MMM DD YYYY, h:mm a');
-  }
-  return value;
-};
+const showValue = (value, timezone) => (
+  value && value !== '-'
+    ? moment(value).tz(timezone).format('MMM DD YYYY, h:mm a')
+    : value
+);
 
 export const ORG_SETTINGS_TOOLTIP = 'Setting(s) for the Organization';
 
@@ -34,7 +27,7 @@ export const SHIPMENT_FLAG_TOOLTIP = 'Shipment Flag(s) available in the system';
 
 export const UNITS_OF_MEASURE_TOOLTIP = 'Unit(s) of Measure available in the system';
 
-export const getCustodianTypeColumns = (showUTC) => ([
+export const getCustodianTypeColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Name',
@@ -51,7 +44,7 @@ export const getCustodianTypeColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
   {
@@ -61,12 +54,12 @@ export const getCustodianTypeColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
 ]);
 
-export const getGatewayTypeColumns = (showUTC) => ([
+export const getGatewayTypeColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Name',
@@ -83,7 +76,7 @@ export const getGatewayTypeColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
   {
@@ -93,12 +86,12 @@ export const getGatewayTypeColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
 ]);
 
-export const getItemTypeColumns = (showUTC) => ([
+export const getItemTypeColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Name',
@@ -115,7 +108,7 @@ export const getItemTypeColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
   {
@@ -125,12 +118,12 @@ export const getItemTypeColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
 ]);
 
-export const getProductColumns = (showUTC) => ([
+export const getProductColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Name',
@@ -189,7 +182,7 @@ export const getProductColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
   {
@@ -199,12 +192,12 @@ export const getProductColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
 ]);
 
-export const getProductTypeColumns = (showUTC) => ([
+export const getProductTypeColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Name',
@@ -221,7 +214,7 @@ export const getProductTypeColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
   {
@@ -231,12 +224,12 @@ export const getProductTypeColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
 ]);
 
-export const getSensorTypeColumns = (showUTC) => ([
+export const getSensorTypeColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Name',
@@ -253,7 +246,7 @@ export const getSensorTypeColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
   {
@@ -263,12 +256,12 @@ export const getSensorTypeColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
 ]);
 
-export const getShipmentFlagColumns = (showUTC) => ([
+export const getShipmentFlagColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Flag Name',
@@ -315,7 +308,7 @@ export const getShipmentFlagColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
   {
@@ -325,12 +318,12 @@ export const getShipmentFlagColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
 ]);
 
-export const getUnitsOfMeasureColumns = (showUTC) => ([
+export const getUnitsOfMeasureColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Unit of Measure',
@@ -366,7 +359,7 @@ export const getUnitsOfMeasureColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
   {
@@ -376,7 +369,7 @@ export const getUnitsOfMeasureColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, showUTC),
+      customBodyRender: (value) => showValue(value, timezone),
     },
   },
 ]);

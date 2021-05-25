@@ -24,6 +24,7 @@ const Gateway = ({
   redirectTo,
   gatewayOptions,
   shipmentData,
+  timezone,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteGatewayId, setDeleteGatewayId] = useState('');
@@ -87,7 +88,7 @@ const Gateway = ({
     <DataTableWrapper
       loading={loading}
       rows={rows || []}
-      columns={gatewayColumns}
+      columns={gatewayColumns(timezone)}
       filename="GatewayData"
       addButtonHeading="Add Gateway"
       onAddButtonClick={onAddButtonClick}

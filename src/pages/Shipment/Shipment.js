@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import {
   makeStyles,
   Typography,
@@ -113,7 +113,7 @@ const Shipment = (props) => {
     shipmentOptions,
     custodyOptions,
     sensorReportAlerts,
-    showUTC,
+    timezone,
   } = props;
   const classes = useStyles();
 
@@ -262,20 +262,13 @@ const Shipment = (props) => {
               let dateTime;
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
-                  const dt1 = showUTC
-                    ? moment.utc(report_entry.report_timestamp)
-                    : moment(report_entry.report_timestamp);
-                  dateTime = dt1.format('MMM DD YYYY, h:mm:ss a');
+                  dateTime = moment(report_entry.report_timestamp)
+                    .tz(timezone).format('MMM DD YYYY, h:mm:ss a');
                 }
               } else if ('report_location' in report_entry) {
-                const dt2 = showUTC
-                  ? moment.utc(
-                    report_entry.report_location.timeOfPosition,
-                  )
-                  : moment(
-                    report_entry.report_location.timeOfPosition,
-                  );
-                dateTime = dt2.format('MMM DD YYYY, h:mm:ss a');
+                dateTime = moment(
+                  report_entry.report_location.timeOfPosition,
+                ).tz(timezone).format('MMM DD YYYY, h:mm:ss a');
               }
 
               // For a valid (latitude, longitude) pair: -90<=X<=+90 and -180<=Y<=180
@@ -337,7 +330,7 @@ const Shipment = (props) => {
       ));
       selectedShipment.sensor_report_info = aggregateReportInfo;
     }
-  }, [selectedShipment, showUTC]);
+  }, [selectedShipment, timezone]);
 
   useEffect(() => {
     if (markers && markers.length > 0) {
@@ -454,7 +447,7 @@ const Shipment = (props) => {
             deleteAction={handleDelete}
             setSelectedShipment={setSelectedShipment}
             tileView={tileView}
-            showUTC={showUTC}
+            timezone={timezone}
           />
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>

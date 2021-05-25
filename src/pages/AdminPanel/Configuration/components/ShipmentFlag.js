@@ -17,7 +17,7 @@ const ShipmentFlag = ({
   shipmentFlag,
   redirectTo,
   history,
-  showUTC,
+  timezone,
 }) => {
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
@@ -66,7 +66,7 @@ const ShipmentFlag = ({
       noSpace
       loading={loading}
       rows={shipmentFlag || []}
-      columns={getShipmentFlagColumns(showUTC)}
+      columns={getShipmentFlagColumns(timezone)}
       filename="ShipmentFlag"
       addButtonHeading="Shipment Flag"
       onAddButtonClick={onAddButtonClick}

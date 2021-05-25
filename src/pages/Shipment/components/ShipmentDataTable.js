@@ -56,7 +56,7 @@ const ShipmentDataTable = ({
   editAction,
   deleteAction,
   setSelectedShipment,
-  showUTC,
+  timezone,
 }) => {
   const classes = useStyles();
   const [selected, setSelected] = useState(0);
@@ -129,7 +129,7 @@ const ShipmentDataTable = ({
         ),
       },
     },
-    ..._.map(getShipmentDataTableColumns(showUTC), (column) => ({
+    ..._.map(getShipmentDataTableColumns(timezone), (column) => ({
       ...column,
       options: {
         ...column.options,

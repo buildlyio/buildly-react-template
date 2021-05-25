@@ -24,6 +24,7 @@ const Sensors = ({
   redirectTo,
   gatewayData,
   sensorOptions,
+  timezone,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteSensorId, setDeleteSensorId] = useState('');
@@ -87,7 +88,7 @@ const Sensors = ({
     <DataTableWrapper
       loading={loading}
       rows={rows || []}
-      columns={sensorsColumns}
+      columns={sensorsColumns(timezone)}
       filename="SensorData"
       addButtonHeading="Add Sensor"
       onAddButtonClick={onAddButtonClick}

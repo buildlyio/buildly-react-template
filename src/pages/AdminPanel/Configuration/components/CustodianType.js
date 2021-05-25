@@ -16,7 +16,7 @@ const CustodianType = ({
   custodianTypeList,
   redirectTo,
   history,
-  showUTC,
+  timezone,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -64,7 +64,7 @@ const CustodianType = ({
       noSpace
       loading={loading}
       rows={custodianTypeList || []}
-      columns={getCustodianTypeColumns(showUTC)}
+      columns={getCustodianTypeColumns(timezone)}
       filename="CustodianType"
       addButtonHeading="Custodian Type"
       onAddButtonClick={onAddButtonClick}

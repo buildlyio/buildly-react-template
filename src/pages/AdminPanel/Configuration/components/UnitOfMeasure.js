@@ -16,7 +16,7 @@ const UnitOfMeasure = ({
   unitsOfMeasure,
   redirectTo,
   history,
-  showUTC,
+  timezone,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -64,7 +64,7 @@ const UnitOfMeasure = ({
       noSpace
       loading={loading}
       rows={unitsOfMeasure || []}
-      columns={getUnitsOfMeasureColumns(showUTC)}
+      columns={getUnitsOfMeasureColumns(timezone)}
       filename="UnitsOfMeasure"
       addButtonHeading="Unit of Measure"
       onAddButtonClick={onAddButtonClick}
