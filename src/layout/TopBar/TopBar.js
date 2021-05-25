@@ -6,8 +6,8 @@ import {
   Toolbar,
   IconButton,
   Hidden,
-  Typography,
-  Switch,
+  TextField,
+  MenuItem,
 } from '@material-ui/core';
 import {
   AccountCircle,
@@ -50,9 +50,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
   },
   timezone: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    width: 150,
+    marginTop: theme.spacing(1.5),
+    '& .MuiOutlinedInput-input': {
+      padding: theme.spacing(1, 3.5, 1, 2),
+    },
   },
 }));
 
@@ -124,6 +126,21 @@ const TopBar = ({
     setSettingEl(null);
   };
 
+  const handleTimezone = (event) => {
+    switch (event.target.value) {
+      case 'locale':
+        dispatch(showLocaleTime());
+        break;
+
+      case 'utc':
+        dispatch(showUTCTime());
+        break;
+
+      default:
+        break;
+    }
+  };
+
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
@@ -145,20 +162,21 @@ const TopBar = ({
         />
 
         <div className={classes.menuRight}>
-          <div className={classes.timezone}>
-            <Typography color="textPrimary" variant="caption">
-              Show UTC Time
-            </Typography>
-            <Switch
-              checked={showUTC}
-              onChange={(e) => (
-                e.target.checked
-                  ? dispatch(showUTCTime())
-                  : dispatch(showLocaleTime())
-              )}
-              color="primary"
-            />
-          </div>
+          <TextField
+            className={classes.timezone}
+            variant="outlined"
+            fullWidth
+            id="timezone"
+            label="Timezone"
+            select
+            value={showUTC ? 'utc' : 'locale'}
+            onChange={handleTimezone}
+          >
+            <MenuItem value="locale">
+              {Intl.DateTimeFormat().resolvedOptions().timeZone}
+            </MenuItem>
+            <MenuItem value="utc">UTC</MenuItem>
+          </TextField>
           {isAdmin
           && (
           <IconButton
