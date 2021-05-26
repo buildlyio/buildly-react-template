@@ -36,8 +36,6 @@ export const GET_DASHBOARD_ITEMS = 'SHIPMENT/GET_DASHBOARD_ITEMS';
 export const GET_DASHBOARD_ITEMS_SUCCESS = 'SHIPMENT/GET_DASHBOARD_ITEMS_SUCCESS';
 export const GET_DASHBOARD_ITEMS_FAILURE = 'SHIPMENT/GET_DASHBOARD_ITEMS_FAILURE';
 
-export const GET_ALERTS = 'SHIPMENT/GET_ALERTS';
-export const SET_SHIPMENT_ALERTS = 'SHIPMENT/SET_ALERTS';
 export const EMAIL_ALERTS = 'SHIPMENT/EMAIL_ALERTS';
 
 export const ADD_PDF_IDENTIFIER = 'SHIPMENT/ADD_PDF_IDENTIFIER';
@@ -57,20 +55,17 @@ export const saveShipmentFormData = (formData) => ({
  * Get Shipment Details
  * @param {String} organization_uuid
  * @param {Number} id
- * @param {Boolean} getAggregateReport
- * @param {Boolean} getReportAlerts
+ * @param {Boolean} getUpdatedSensorData
  */
 export const getShipmentDetails = (
   organization_uuid,
   id = null,
-  getAggregateReport = false,
-  getReportAlerts = false,
+  getUpdatedSensorData = false,
 ) => ({
   type: GET_SHIPMENTS,
   organization_uuid,
   id,
-  getAggregateReport,
-  getReportAlerts,
+  getUpdatedSensorData,
 });
 
 /**
@@ -167,15 +162,6 @@ export const deleteShipmentFlag = (id) => ({
 export const getDashboardItems = (organization_uuid) => ({
   type: GET_DASHBOARD_ITEMS,
   organization_uuid,
-});
-
-/**
- * Set Shipment Alerts
- * @param {Object} alerts
- */
-export const setShipmentAlerts = (alerts) => ({
-  type: SET_SHIPMENT_ALERTS,
-  alerts,
 });
 
 /**

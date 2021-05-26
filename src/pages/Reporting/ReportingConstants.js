@@ -236,16 +236,12 @@ export const getShipmentOverview = (
           report.shipment_id === shipment.partner_shipment_id
           && report.report_entries.length > 0
         ) {
-          let alert_status;
           let color;
           if (report.excursion_flag) {
-            alert_status = 'Excursion';
             color = 'red';
           } else if (report.warning_flag) {
-            alert_status = 'Warning';
             color = 'yellow';
           } else {
-            alert_status = 'Normal';
             color = 'green';
           }
           _.forEach(report.report_entries, (report_entry) => {
@@ -296,7 +292,6 @@ export const getShipmentOverview = (
                   pressure: report_entry.report_pressure,
                   color,
                   timestamp: dateTime,
-                  alert_status,
                 };
                 // Considered use case: If a shipment stays at some
                 // position for long, other value changes can be

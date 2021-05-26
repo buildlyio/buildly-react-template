@@ -49,12 +49,15 @@ import {
   DELETE_SENSORS_TYPE,
   DELETE_SENSORS_TYPE_SUCCESS,
   DELETE_SENSORS_TYPE_FAILURE,
-  GET_SENSOR_REPORT,
-  GET_SENSOR_REPORT_SUCCESS,
-  GET_SENSOR_REPORT_FAILURE,
+  GET_GEOFENCE_ALERTS,
+  GET_GEOFENCE_ALERTS_SUCCESS,
+  GET_GEOFENCE_ALERTS_FAILURE,
   GET_AGGREGATE_REPORT,
   GET_AGGREGATE_REPORT_SUCCESS,
   GET_AGGREGATE_REPORT_FAILURE,
+  GET_SENSOR_ALERTS,
+  GET_SENSOR_ALERTS_SUCCESS,
+  GET_SENSOR_ALERTS_FAILURE,
 } from '../actions/sensorsGateway.actions';
 
 const sensorApiEndPoint = 'sensors/';
@@ -653,7 +656,7 @@ function* deleteSensorType(payload) {
   }
 }
 
-function* getSensorReportAlerts(payload) {
+function* getGeofenceAlerts(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
@@ -662,7 +665,7 @@ function* getSensorReportAlerts(payload) {
       null,
       true,
     );
-    yield put({ type: GET_SENSOR_REPORT_SUCCESS, data: data.data });
+    yield put({ type: GET_GEOFENCE_ALERTS_SUCCESS, data: data.data });
   } catch (error) {
     yield [
       yield put(
@@ -673,7 +676,7 @@ function* getSensorReportAlerts(payload) {
         }),
       ),
       yield put({
-        type: GET_SENSOR_REPORT_FAILURE,
+        type: GET_GEOFENCE_ALERTS_FAILURE,
         error,
       }),
     ];
@@ -704,6 +707,40 @@ function* getAggregateReportList(payload) {
       ),
       yield put({
         type: GET_AGGREGATE_REPORT_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* getSensorAlerts(payload) {
+  let finalURL = `${environment.API_URL}${sensorApiEndPoint}sensor_report_alert/?shipment_id=${payload.partnerShipmentIds}`;
+  if (payload.hourRange > 0) {
+    finalURL = `${finalURL}&hours_range=${payload.hourRange}`;
+  }
+  try {
+    const response = yield call(
+      httpService.makeRequest,
+      'get',
+      finalURL,
+      null,
+      true,
+    );
+    yield put({
+      type: GET_SENSOR_ALERTS_SUCCESS,
+      data: response.data,
+    });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t load sensor alerts due to some error!',
+        }),
+      ),
+      yield put({
+        type: GET_SENSOR_ALERTS_FAILURE,
         error,
       }),
     ];
@@ -774,12 +811,16 @@ function* watchDeleteSensorType() {
   yield takeLatest(DELETE_SENSORS_TYPE, deleteSensorType);
 }
 
-function* watchGetSensorReportAlerts() {
-  yield takeLatest(GET_SENSOR_REPORT, getSensorReportAlerts);
+function* watchGetGeofenceAlerts() {
+  yield takeLatest(GET_GEOFENCE_ALERTS, getGeofenceAlerts);
 }
 
 function* watchGetAggregateReport() {
   yield takeLatest(GET_AGGREGATE_REPORT, getAggregateReportList);
+}
+
+function* watchGetSensorAlerts() {
+  yield takeLatest(GET_SENSOR_ALERTS, getSensorAlerts);
 }
 
 export default function* sensorsGatewaySaga() {
@@ -800,7 +841,8 @@ export default function* sensorsGatewaySaga() {
     watchAddSensorType(),
     watchEditSensorType(),
     watchDeleteSensorType(),
-    watchGetSensorReportAlerts(),
+    watchGetGeofenceAlerts(),
     watchGetAggregateReport(),
+    watchGetSensorAlerts(),
   ]);
 }

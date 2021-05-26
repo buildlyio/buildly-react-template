@@ -46,6 +46,7 @@ import {
   getGatewayType,
   getSensors,
   getSensorType,
+  getSensorAlerts,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { convertUnitsOfMeasure } from '@utils/utilMethods';
 import {
@@ -112,8 +113,9 @@ const Shipment = (props) => {
     loading,
     shipmentOptions,
     custodyOptions,
-    sensorReportAlerts,
+    geofenceAlerts,
     timezone,
+    sensorAlerts,
   } = props;
   const classes = useStyles();
 
@@ -139,14 +141,20 @@ const Shipment = (props) => {
 
   useEffect(() => {
     if (shipmentData === null) {
-      const aggregate = !aggregateReportData;
-      const alerts = !sensorReportAlerts;
+      const getUpdatedSensorData = !aggregateReportData
+        || !geofenceAlerts
+        || !sensorAlerts;
       dispatch(getShipmentDetails(
         organization,
         null,
-        aggregate,
-        alerts,
+        getUpdatedSensorData,
       ));
+    } else {
+      const ids = _.toString(
+        _.map(shipmentData, 'partner_shipment_id'),
+      );
+      const encodedIds = encodeURIComponent(ids);
+      dispatch(getSensorAlerts(encodedIds, 24));
     }
     if (custodianData === null) {
       dispatch(getCustodians(organization));
@@ -236,16 +244,12 @@ const Shipment = (props) => {
 
       _.forEach(selectedShipment.sensor_report, (report) => {
         if (report.report_entries.length > 0) {
-          let alert_status;
           let color;
           if (report.excursion_flag) {
-            alert_status = 'Excursion';
             color = 'red';
           } else if (report.warning_flag) {
-            alert_status = 'Warning';
             color = 'yellow';
           } else {
-            alert_status = 'Normal';
             color = 'green';
           }
           _.forEach(report.report_entries, (report_entry) => {
@@ -296,7 +300,6 @@ const Shipment = (props) => {
                   pressure: report_entry.report_pressure,
                   color,
                   timestamp: dateTime,
-                  alert_status,
                 };
                 // Considered use case: If a shipment stays at some
                 // position for long, other value changes can be
@@ -304,8 +307,6 @@ const Shipment = (props) => {
                 const markerFound = _.find(markersToSet, {
                   lat: marker.lat,
                   lng: marker.lng,
-                  // temperature: marker.temperature,
-                  // humidity: marker.humidity,
                 });
 
                 if (!markerFound) {

@@ -48,12 +48,15 @@ import {
   DELETE_SENSORS_TYPE,
   DELETE_SENSORS_TYPE_SUCCESS,
   DELETE_SENSORS_TYPE_FAILURE,
-  GET_SENSOR_REPORT,
-  GET_SENSOR_REPORT_SUCCESS,
-  GET_SENSOR_REPORT_FAILURE,
+  GET_GEOFENCE_ALERTS,
+  GET_GEOFENCE_ALERTS_SUCCESS,
+  GET_GEOFENCE_ALERTS_FAILURE,
   GET_AGGREGATE_REPORT,
   GET_AGGREGATE_REPORT_SUCCESS,
   GET_AGGREGATE_REPORT_FAILURE,
+  GET_SENSOR_ALERTS,
+  GET_SENSOR_ALERTS_SUCCESS,
+  GET_SENSOR_ALERTS_FAILURE,
 } from '../actions/sensorsGateway.actions';
 
 const initialState = {
@@ -64,8 +67,9 @@ const initialState = {
   gatewayTypeList: null,
   sensorData: null,
   sensorTypeList: null,
-  sensorReportAlerts: null,
+  geofenceAlerts: null,
   aggregateReportData: null,
+  sensorAlerts: null,
 };
 
 // Reducer
@@ -483,7 +487,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case GET_SENSOR_REPORT:
+    case GET_GEOFENCE_ALERTS:
       return {
         ...state,
         loading: true,
@@ -491,15 +495,15 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case GET_SENSOR_REPORT_SUCCESS:
+    case GET_GEOFENCE_ALERTS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        sensorReportAlerts: action.data,
+        geofenceAlerts: action.data,
       };
 
-    case GET_SENSOR_REPORT_FAILURE:
+    case GET_GEOFENCE_ALERTS_FAILURE:
       return {
         ...state,
         loading: false,
@@ -524,6 +528,30 @@ export default (state = initialState, action) => {
       };
 
     case GET_AGGREGATE_REPORT_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_SENSOR_ALERTS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case GET_SENSOR_ALERTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorAlerts: action.data,
+      };
+
+    case GET_SENSOR_ALERTS_FAILURE:
       return {
         ...state,
         loading: false,

@@ -8,7 +8,6 @@ const initialState = {
   shipmentFormData: null,
   shipmentData: null,
   shipmentFlag: null,
-  shipmentAlerts: { show: true, data: [] },
 };
 
 describe('Save Shipment Form Data reducer', () => {
@@ -350,22 +349,6 @@ describe('Get DashBoard Items reducer', () => {
       error: undefined,
       loaded: true,
       loading: false,
-    });
-  });
-});
-
-describe('Set Shipment Alerts reducer', () => {
-  it('Empty Reducer', () => {
-    const alerts = {};
-    expect(reducer.default(
-      initialState,
-      { type: actions.SET_SHIPMENT_ALERTS, alerts },
-    )).toEqual({
-      ...initialState,
-      shipmentAlerts: {
-        show: undefined,
-        data: undefined,
-      },
     });
   });
 });

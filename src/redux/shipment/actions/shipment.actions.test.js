@@ -18,20 +18,15 @@ describe('Get Shipment Details action', () => {
   it('should create an action to get shipment details', () => {
     const organization_uuid = 'gweiug-3t2igf-3yfhf-329hgds73';
     const id = 1;
-    const getAggregateReport = true;
-    const getReportAlerts = true;
     const expectedAction = {
       type: actions.GET_SHIPMENTS,
       organization_uuid,
       id,
-      getAggregateReport,
-      getReportAlerts,
+      getUpdatedSensorData: false,
     };
     expect(actions.getShipmentDetails(
       organization_uuid,
       id,
-      getAggregateReport,
-      getReportAlerts,
     )).toEqual(expectedAction);
   });
 });
@@ -155,19 +150,6 @@ describe('Get DashBoard Items action', () => {
       organization_uuid,
     };
     expect(actions.getDashboardItems(organization_uuid))
-      .toEqual(expectedAction);
-  });
-});
-
-// Test Set Shipment Alerts action
-describe('Set Shipment Alerts action', () => {
-  it('should create an action to set shipment alerts', () => {
-    const alerts = { message: 'Alert message' };
-    const expectedAction = {
-      type: actions.SET_SHIPMENT_ALERTS,
-      alerts,
-    };
-    expect(actions.setShipmentAlerts(alerts))
       .toEqual(expectedAction);
   });
 });
