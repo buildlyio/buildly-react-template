@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import {
   Button,
   useTheme,
@@ -87,7 +87,7 @@ const ShipmentInfo = (props) => {
     viewOnly,
     setConfirmModal,
     setConfirmModalFor,
-    showUTC,
+    timezone,
   } = props;
   const classes = useStyles();
   const theme = useTheme();
@@ -645,11 +645,8 @@ const ShipmentInfo = (props) => {
                     <DatePickerComponent
                       label="Scheduled departure"
                       selectedDate={
-                        showUTC
-                          ? moment.utc(scheduled_departure)
-                            .format('MMMM DD, YYYY HH:mm:ss')
-                          : moment(scheduled_departure)
-                            .format('MMMM DD, YYYY HH:mm:ss')
+                        moment(scheduled_departure).tz(timezone)
+                          .format('MMMM DD, YYYY HH:mm:ss')
                       }
                       hasTime
                       handleDateChange={handleDepartureDateChange}
@@ -666,11 +663,8 @@ const ShipmentInfo = (props) => {
                     <DatePickerComponent
                       label="Scheduled arrival"
                       selectedDate={
-                        showUTC
-                          ? moment.utc(scheduled_arrival)
-                            .format('MMMM DD, YYYY HH:mm:ss')
-                          : moment(scheduled_arrival)
-                            .format('MMMM DD, YYYY HH:mm:ss')
+                        moment(scheduled_arrival).tz(timezone)
+                          .format('MMMM DD, YYYY HH:mm:ss')
                       }
                       hasTime
                       handleDateChange={handleScheduledDateChange}

@@ -16,7 +16,7 @@ const SensorType = ({
   sensorTypeList,
   redirectTo,
   history,
-  showUTC,
+  timezone,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -64,7 +64,7 @@ const SensorType = ({
       noSpace
       loading={loading}
       rows={sensorTypeList || []}
-      columns={getSensorTypeColumns(showUTC)}
+      columns={getSensorTypeColumns(timezone)}
       filename="SensorType"
       addButtonHeading="Sensor Type"
       onAddButtonClick={onAddButtonClick}

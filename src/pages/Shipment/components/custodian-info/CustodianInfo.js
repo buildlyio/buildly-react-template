@@ -40,6 +40,7 @@ const CustodianInfo = (props) => {
     custodyData,
     viewOnly,
     loading,
+    timezone,
   } = props;
   const classes = useStyles();
   const [itemIds, setItemIds] = useState(
@@ -111,7 +112,7 @@ const CustodianInfo = (props) => {
               <DataTableWrapper
                 loading={loading}
                 rows={rows}
-                columns={custodyColumns}
+                columns={custodyColumns(timezone)}
                 editAction={editCustody}
                 hideAddButton
                 noOptionsIcon

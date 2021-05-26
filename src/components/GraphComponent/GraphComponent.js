@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import _ from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import {
   makeStyles,
   Typography,

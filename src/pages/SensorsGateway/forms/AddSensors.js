@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import {
   makeStyles,
   useTheme,
@@ -79,6 +79,7 @@ const AddSensor = ({
   sensorTypeList,
   gatewayData,
   sensorOptions,
+  timezone,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
@@ -442,7 +443,11 @@ const AddSensor = ({
                   <Grid item xs={12} md={6} sm={6}>
                     <DatePickerComponent
                       label="Activated"
-                      selectedDate={activation_date}
+                      selectedDate={
+                        moment(activation_date)
+                          .tz(timezone)
+                          .formzt('l')
+                      }
                       handleDateChange={handleDateChange}
                       helpText={
                         sensorMetaData.activation_date

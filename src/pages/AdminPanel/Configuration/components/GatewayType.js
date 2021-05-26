@@ -16,7 +16,7 @@ const GatewayType = ({
   gatewayTypeList,
   redirectTo,
   history,
-  showUTC,
+  timezone,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -64,7 +64,7 @@ const GatewayType = ({
       noSpace
       loading={loading}
       rows={gatewayTypeList || []}
-      columns={getGatewayTypeColumns(showUTC)}
+      columns={getGatewayTypeColumns(timezone)}
       filename="GatewayType"
       addButtonHeading="Gateway Type"
       onAddButtonClick={onAddButtonClick}

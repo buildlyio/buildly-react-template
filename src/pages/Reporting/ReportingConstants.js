@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import _ from 'lodash';
 import {
   AccessTime as AccessTimeIcon,
@@ -26,7 +26,7 @@ export const NO_DATA = 'No data to display';
 
 export const SENSOR_REPORT_TOOLTIP = 'Shipment Sensor Report till current time';
 
-export const SHIPMENT_OVERVIEW_COLUMNS = [
+export const getShipmentOverviewColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Shipment Name',
@@ -53,7 +53,7 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MM/DD/yyyy')
+        ? moment(value).tz(timezone).format('MM/DD/yyyy')
         : value),
     },
   },
@@ -65,7 +65,7 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MM/DD/yyyy')
+        ? moment(value).tz(timezone).format('MM/DD/yyyy')
         : value),
     },
   },
@@ -77,7 +77,7 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MM/DD/yyyy')
+        ? moment(value).tz(timezone).format('MM/DD/yyyy')
         : value),
     },
   },
@@ -89,7 +89,7 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).format('MM/DD/yyyy')
+        ? moment(value).tz(timezone).format('MM/DD/yyyy')
         : value),
     },
   },
@@ -111,7 +111,7 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
       filter: true,
     },
   },
-];
+]);
 
 export const getIcon = (item, color) => {
   switch (item.id) {
@@ -151,7 +151,7 @@ export const getShipmentOverview = (
   aggregateReportData,
   contactData,
   unitsOfMeasure,
-  showUTC,
+  timezone,
 ) => {
   let shipmentList = [];
   let custodyRows = [];
@@ -262,20 +262,13 @@ export const getShipmentOverview = (
               let dateTime = '';
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
-                  const dt1 = showUTC
-                    ? moment.utc(report_entry.report_timestamp)
-                    : moment(report_entry.report_timestamp);
-                  dateTime = dt1.format('MMM DD YYYY, h:mm:ss a');
+                  dateTime = moment(report_entry.report_timestamp)
+                    .tz(timezone).format('MMM DD YYYY, h:mm:ss a');
                 }
               } else if ('report_location' in report_entry) {
-                const dt2 = showUTC
-                  ? moment.utc(
-                    report_entry.report_location.timeOfPosition,
-                  )
-                  : moment(
-                    report_entry.report_location.timeOfPosition,
-                  );
-                dateTime = dt2.format('MMM DD YYYY, h:mm:ss a');
+                dateTime = moment(
+                  report_entry.report_location.timeOfPosition,
+                ).tz(timezone).format('MMM DD YYYY, h:mm:ss a');
               }
 
               // For a valid (latitude, longitude) pair: -90<=X<=+90 and -180<=Y<=180

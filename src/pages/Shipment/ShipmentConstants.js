@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import {
   TempIcon,
   HumidIcon,
@@ -13,7 +13,7 @@ export const MAP_TOOLTIP = 'Locations of the shipment from starting point till c
 
 export const SHIPMENT_DATA_TABLE_TOOLTIP = 'Click on a shipment to view it on the map';
 
-export const getShipmentDataTableColumns = (showUTC) => ([
+export const getShipmentDataTableColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Shipment Name',
@@ -30,18 +30,12 @@ export const getShipmentDataTableColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => {
-        if (value && value !== '-') {
-          let returnValue = value;
-          if (showUTC) {
-            returnValue = moment.utc(value);
-          } else {
-            returnValue = moment(value);
-          }
-          return returnValue.format('MMMM DD, YYYY hh:mm:ss a');
-        }
-        return value;
-      },
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? moment(value).tz(timezone)
+            .format('MMMM DD, YYYY hh:mm:ss a')
+          : value
+      ),
     },
   },
   {
@@ -51,18 +45,12 @@ export const getShipmentDataTableColumns = (showUTC) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => {
-        if (value && value !== '-') {
-          let returnValue = value;
-          if (showUTC) {
-            returnValue = moment.utc(value);
-          } else {
-            returnValue = moment(value);
-          }
-          return returnValue.format('MMMM DD, YYYY hh:mm:ss a');
-        }
-        return value;
-      },
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? moment(value).tz(timezone)
+            .format('MMMM DD, YYYY hh:mm:ss a')
+          : value
+      ),
     },
   },
   {
@@ -286,7 +274,7 @@ export const getFormattedRow = (
   );
 };
 
-export const custodyColumns = [
+export const custodyColumns = (timezone) => ([
   {
     name: 'custodian_name',
     label: 'Custodian Name',
@@ -303,7 +291,7 @@ export const custodyColumns = [
       sortThirdClickReset: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? moment(value).format('MM/DD/yyyy')
+          ? moment(value).tz(timezone).format('MM/DD/yyyy')
           : value
       ),
     },
@@ -316,7 +304,7 @@ export const custodyColumns = [
       sortThirdClickReset: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? moment(value).format('MM/DD/yyyy')
+          ? moment(value).tz(timezone).format('MM/DD/yyyy')
           : value
       ),
     },
@@ -370,7 +358,7 @@ export const custodyColumns = [
       ),
     },
   },
-];
+]);
 
 export const getUniqueContactInfo = (rowItem, contactInfo) => {
   let obj = '';
@@ -523,7 +511,7 @@ export const itemColumns = [
   },
 ];
 
-export const gatewayColumns = [
+export const gatewayColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Gateway Name',
@@ -577,14 +565,14 @@ export const gatewayColumns = [
       sortThirdClickReset: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? moment(value).format('MM/DD/yyyy')
+          ? moment(value).tz(timezone).format('MM/DD/yyyy')
           : value
       ),
     },
   },
-];
+]);
 
-export const sensorsColumns = [
+export const sensorsColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Sensor Name',
@@ -609,7 +597,7 @@ export const sensorsColumns = [
       sortThirdClickReset: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? moment(value).format('MM/DD/yyyy')
+          ? moment(value).tz(timezone).format('MM/DD/yyyy')
           : value
       ),
     },
@@ -622,4 +610,4 @@ export const sensorsColumns = [
       sortThirdClickReset: true,
     },
   },
-];
+]);

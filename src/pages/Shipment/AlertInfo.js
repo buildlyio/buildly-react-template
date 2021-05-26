@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import _ from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { UserContext } from '@context/User.context';

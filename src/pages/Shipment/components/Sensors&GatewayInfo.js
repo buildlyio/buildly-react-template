@@ -79,6 +79,7 @@ const SensorsGatewayInfo = ({
   viewOnly,
   setConfirmModal,
   setConfirmModalFor,
+  timezone,
 }) => {
   const classes = useStyles();
   const [gatewayIds, setGatewayIds] = useState(
@@ -278,7 +279,7 @@ const SensorsGatewayInfo = ({
                   <DataTableWrapper
                     loading={loading}
                     rows={rows}
-                    columns={gatewayColumns}
+                    columns={gatewayColumns(timezone)}
                     hideAddButton
                     noOptionsIcon
                     noSpace
@@ -295,7 +296,7 @@ const SensorsGatewayInfo = ({
                   <DataTableWrapper
                     loading={loading}
                     rows={sensorsRow}
-                    columns={sensorsColumns}
+                    columns={sensorsColumns(timezone)}
                     hideAddButton
                     noOptionsIcon
                     noSpace

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import {
   makeStyles,
   Box,
@@ -43,7 +43,7 @@ import {
 import SensorReport from './components/SensorReport';
 import {
   getShipmentOverview,
-  SHIPMENT_OVERVIEW_COLUMNS,
+  getShipmentOverviewColumns,
   SHIPMENT_OVERVIEW_TOOL_TIP,
   REPORT_TYPES,
   getIcon,
@@ -106,7 +106,7 @@ const Reporting = ({
   sensorData,
   contactInfo,
   unitsOfMeasure,
-  showUTC,
+  timezone,
 }) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -122,10 +122,8 @@ const Reporting = ({
     let returnValue;
     if (selectedShipment[value] !== null) {
       if (moment(selectedShipment[value], true).isValid()) {
-        const dateTime = showUTC
-          ? moment.utc(selectedShipment[value])
-          : moment(selectedShipment[value]);
-        returnValue = dateTime.format('MMMM DD, YYYY hh:mm:ss a');
+        returnValue = moment(selectedShipment[value])
+          .tz(timezone).format('MMMM DD, YYYY hh:mm:ss a');
       } else if (typeof (selectedShipment[value]) !== 'object') {
         returnValue = selectedShipment[value];
       }
@@ -177,7 +175,7 @@ const Reporting = ({
         aggregateReportData,
         contactInfo,
         unitsOfMeasure,
-        showUTC,
+        timezone,
       );
       if (overview.length > 0) {
         setShipmentOverview(overview);
@@ -186,7 +184,7 @@ const Reporting = ({
         setSelectedShipment(overview[0]);
       }
     }
-  }, [shipmentData, custodianData, custodyData, aggregateReportData, showUTC]);
+  }, [shipmentData, custodianData, custodyData, aggregateReportData, timezone]);
 
   useEffect(() => {
     if (selectedShipment) {
@@ -305,7 +303,7 @@ const Reporting = ({
             <Grid container>
               {selectedShipment
                 ? (_.map(
-                  SHIPMENT_OVERVIEW_COLUMNS,
+                  getShipmentOverviewColumns(timezone),
                   (column, index) => (
                     <Grid
                       item

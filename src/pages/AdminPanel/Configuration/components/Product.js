@@ -18,7 +18,7 @@ const Product = ({
   unitsOfMeasure,
   redirectTo,
   history,
-  showUTC,
+  timezone,
 }) => {
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
@@ -73,7 +73,7 @@ const Product = ({
       noSpace
       loading={loading}
       rows={products || []}
-      columns={getProductColumns(showUTC)}
+      columns={getProductColumns(timezone)}
       filename="Products"
       addButtonHeading="Product"
       onAddButtonClick={onAddButtonClick}
