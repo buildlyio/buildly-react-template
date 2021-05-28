@@ -70,6 +70,7 @@ const initialState = {
   geofenceAlerts: null,
   aggregateReportData: null,
   sensorAlerts: null,
+  allAlerts: null,
 };
 
 // Reducer
@@ -548,7 +549,12 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        sensorAlerts: action.data,
+        sensorAlerts: action.filteredData
+          ? action.filteredData
+          : state.sensorAlerts,
+        allAlerts: action.allData
+          ? action.allData
+          : state.allAlerts,
       };
 
     case GET_SENSOR_ALERTS_FAILURE:

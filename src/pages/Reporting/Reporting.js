@@ -33,6 +33,7 @@ import {
 import {
   getSensors,
   getSensorType,
+  getSensorAlerts,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
@@ -40,10 +41,11 @@ import {
 import {
   getUnitsOfMeasure,
 } from '@redux/items/actions/items.actions';
+import AlertsReport from './components/AlertsReport';
 import SensorReport from './components/SensorReport';
 import {
   getShipmentOverview,
-  getShipmentOverviewColumns,
+  SHIPMENT_OVERVIEW_COLUMNS,
   SHIPMENT_OVERVIEW_TOOL_TIP,
   REPORT_TYPES,
   getIcon,
@@ -107,6 +109,7 @@ const Reporting = ({
   contactInfo,
   unitsOfMeasure,
   timezone,
+  allAlerts,
 }) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -125,7 +128,13 @@ const Reporting = ({
         returnValue = moment(selectedShipment[value])
           .tz(timezone).format('MMMM DD, YYYY hh:mm:ss a');
       } else if (typeof (selectedShipment[value]) !== 'object') {
-        returnValue = selectedShipment[value];
+        if (value === 'had_alert') {
+          returnValue = selectedShipment[value]
+            ? 'YES'
+            : 'NO';
+        } else {
+          returnValue = selectedShipment[value];
+        }
       }
     } else {
       returnValue = 'NA';
@@ -183,6 +192,13 @@ const Reporting = ({
       if (!selectedShipment && overview.length > 0) {
         setSelectedShipment(overview[0]);
       }
+    }
+
+    if (shipmentData) {
+      const ships = _.filter(shipmentData, { had_alert: true });
+      const ids = _.toString(_.map(ships, 'partner_shipment_id'));
+      const encodedIds = encodeURIComponent(ids);
+      dispatch(getSensorAlerts(encodedIds));
     }
   }, [shipmentData, custodianData, custodyData, aggregateReportData, timezone]);
 
@@ -303,7 +319,7 @@ const Reporting = ({
             <Grid container>
               {selectedShipment
                 ? (_.map(
-                  getShipmentOverviewColumns(timezone),
+                  SHIPMENT_OVERVIEW_COLUMNS,
                   (column, index) => (
                     <Grid
                       item
@@ -312,17 +328,9 @@ const Reporting = ({
                       md={6}
                       key={`col${index}:${column.name}`}
                     >
-                      {column.name !== 'custody_info'
-                        ? (
-                          <Typography variant="h6">
-                            {column.label}
-                          </Typography>
-                        )
-                        : (
-                          <Typography variant="h6">
-                            Custody Details
-                          </Typography>
-                        )}
+                      <Typography variant="h6">
+                        {column.label}
+                      </Typography>
                       {column.name === 'custody_info'
                       && selectedShipment[column.name]
                         ? _.map(
@@ -424,6 +432,15 @@ const Reporting = ({
         aggregateReport={selectedShipment?.sensor_report}
         shipmentName={selectedShipment?.name}
         selectedMarker={selectedShipment && selectedMarker}
+      />
+      <AlertsReport
+        loading={loading}
+        alerts={_.filter(
+          allAlerts,
+          { shipment_id: selectedShipment?.partner_shipment_id },
+        )}
+        shipmentName={selectedShipment?.name}
+        timezone={timezone}
       />
     </Box>
   );

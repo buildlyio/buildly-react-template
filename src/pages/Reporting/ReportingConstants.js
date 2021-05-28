@@ -26,92 +26,46 @@ export const NO_DATA = 'No data to display';
 
 export const SENSOR_REPORT_TOOLTIP = 'Shipment Sensor Report till current time';
 
-export const getShipmentOverviewColumns = (timezone) => ([
+export const ALERTS_REPORT_TOOLTIP = 'Shipment Alerts till current time';
+
+export const SHIPMENT_OVERVIEW_COLUMNS = [
   {
     name: 'name',
     label: 'Shipment Name',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
   },
   {
     name: 'status',
     label: 'Shipment Status',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
   },
   {
     name: 'estimated_time_of_departure',
     label: 'Estimated Pickup Time',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).tz(timezone).format('MM/DD/yyyy')
-        : value),
-    },
   },
   {
     name: 'actual_time_of_departure',
     label: 'Actual Pickup Time',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).tz(timezone).format('MM/DD/yyyy')
-        : value),
-    },
   },
   {
     name: 'estimated_time_of_arrival',
     label: 'Estimated Arrival Time',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).tz(timezone).format('MM/DD/yyyy')
-        : value),
-    },
   },
   {
     name: 'actual_time_of_arrival',
     label: 'Actual Arrival Time',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (value && value !== '-'
-        ? moment(value).tz(timezone).format('MM/DD/yyyy')
-        : value),
-    },
+  },
+  {
+    name: 'had_alert',
+    label: 'Had Alerts(s)',
   },
   {
     name: 'custodian_name',
     label: 'Custodian Name',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
   },
   {
     name: 'custody_info',
-    label: 'Custodian Details',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
+    label: 'Custody Details',
   },
-]);
+];
 
 export const getIcon = (item, color) => {
   switch (item.id) {
@@ -551,3 +505,79 @@ export const SENSOR_REPORT_COLUMNS = [
     },
   },
 ];
+
+export const getAlertsReportColumns = (timezone) => ([
+  {
+    name: 'parameter_type',
+    label: 'Parameter Type',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? _.capitalize(value)
+          : '-'
+      ),
+    },
+  },
+  {
+    name: 'alert_type',
+    label: 'Alert Message',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => {
+        let returnValue = value;
+        if (value && value !== '-') {
+          switch (value) {
+            case 'min-warning':
+              returnValue = 'Minimum Warning';
+              break;
+
+            case 'min-excursion':
+              returnValue = 'Minimum Excursion';
+              break;
+
+            case 'max-warning':
+              returnValue = 'Maximum Excursion';
+              break;
+
+            case 'max-excursion':
+              returnValue = 'Maximum Excursion';
+              break;
+
+            default:
+              break;
+          }
+        }
+        return returnValue;
+      },
+    },
+  },
+  {
+    name: 'is_recovered',
+    label: 'Is Recovered',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (value ? 'YES' : 'NO'),
+    },
+  },
+  {
+    name: 'timestamp',
+    label: 'Alert Timestamp',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? moment(value).tz(timezone).format('MMM DD YYYY, h:mm:ss a')
+          : value
+      ),
+    },
+  },
+]);

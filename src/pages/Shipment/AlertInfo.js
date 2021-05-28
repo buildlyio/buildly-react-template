@@ -61,7 +61,6 @@ const AlertInfo = ({
   const classes = useStyles();
   const [senAlerts, setSenAlerts] = useState([]);
   const [geoAlerts, setGeoAlerts] = useState([]);
-  const [emailMsgs, setEmailMsgs] = useState([]);
   const user = useContext(UserContext);
 
   useEffect(() => {
@@ -144,9 +143,6 @@ const AlertInfo = ({
       if (alerts && alerts.length) {
         setSenAlerts(alerts);
       }
-      if (messages && messages.length) {
-        setEmailMsgs([...emailMsgs, ...messages]);
-      }
       if (shipmentIds && shipmentIds.length) {
         const ids = _.uniq(shipmentIds);
         _.forEach(ids, (id) => {
@@ -158,6 +154,46 @@ const AlertInfo = ({
             }));
           }
         });
+      }
+      if (
+        user
+        && user.email_alert_flag
+        && messages.length > 0
+      ) {
+        const lastSensorEmail = localStorage.getItem('lastSensorEmail');
+        const now = moment();
+        const sensorMsgs = _.filter(messages, (msg) => (
+          msg.type === 'sensor'
+          && moment(msg.date_time).unix() > lastSensorEmail
+        ));
+        const recoverMsgs = _.filter(messages, (msg) => (
+          msg.type === 'recover'
+          && moment(msg.date_time).unix() > lastSensorEmail
+        ));
+
+        if (sensorMsgs && sensorMsgs.length > 0) {
+          dispatch(
+            emailAlerts({
+              user_uuid: user.core_user_uuid,
+              messages: sensorMsgs,
+              date_time: now.toJSON(),
+              subject_line: 'Warning / Excursion Alerts',
+            }),
+          );
+          localStorage.setItem('lastSensorEmail', now.unix());
+        }
+
+        if (recoverMsgs && recoverMsgs.length > 0) {
+          dispatch(
+            emailAlerts({
+              user_uuid: user.core_user_uuid,
+              messages: recoverMsgs,
+              date_time: now.toJSON(),
+              subject_line: 'Recovery Alerts',
+            }),
+          );
+          localStorage.setItem('lastSensorEmail', now.unix());
+        }
       }
     }
   }, [shipmentData, shipmentFlag, sensorAlerts]);
@@ -348,67 +384,32 @@ const AlertInfo = ({
       if (alerts && alerts.length) {
         setGeoAlerts(alerts);
       }
-      if (messages && messages.length) {
-        setEmailMsgs([...emailMsgs, ...messages]);
+      if (
+        user
+        && user.email_alert_flag
+        && messages.length > 0
+      ) {
+        const lastGeofenceEmail = localStorage.getItem('lastGeofenceEmail');
+        const now = moment();
+        const geoMsgs = _.filter(messages, (msg) => (
+          msg.type === 'geofence'
+          && moment(msg.date_time).unix() > lastGeofenceEmail
+        ));
+
+        if (geoMsgs && geoMsgs.length > 0) {
+          dispatch(
+            emailAlerts({
+              user_uuid: user.core_user_uuid,
+              messages: geoMsgs,
+              date_time: now.toJSON(),
+              subject_line: 'Geofence Alerts',
+            }),
+          );
+          localStorage.setItem('lastGeofenceEmail', now.unix());
+        }
       }
     }
   }, [shipmentData, geofenceAlerts]);
-
-  useEffect(() => {
-    if (
-      user
-      && user.email_alert_flag
-      && emailMsgs.length > 0
-    ) {
-      const lastEmailTime = localStorage.getItem('lastEmailTime');
-      const now = moment();
-      const sensorMsgs = _.filter(emailMsgs, (msg) => (
-        msg.type === 'sensor'
-        && moment(msg.date_time).unix() > lastEmailTime
-      ));
-      const geoMsgs = _.filter(emailMsgs, (msg) => (
-        msg.type === 'geofence'
-        && moment(msg.date_time).unix() > lastEmailTime
-      ));
-      const recoverMsgs = _.filter(emailMsgs, (msg) => (
-        msg.type === 'recover'
-        && moment(msg.date_time).unix() > lastEmailTime
-      ));
-
-      if (sensorMsgs && sensorMsgs.length > 0) {
-        dispatch(
-          emailAlerts({
-            user_uuid: user.core_user_uuid,
-            messages: sensorMsgs,
-            date_time: now.toJSON(),
-            subject_line: 'Warning / Excursion Alerts',
-          }),
-        );
-      }
-      if (geoMsgs && geoMsgs.length > 0) {
-        dispatch(
-          emailAlerts({
-            user_uuid: user.core_user_uuid,
-            messages: geoMsgs,
-            date_time: now.toJSON(),
-            subject_line: 'Geofence Alerts',
-          }),
-        );
-      }
-      if (recoverMsgs && recoverMsgs.length > 0) {
-        dispatch(
-          emailAlerts({
-            user_uuid: user.core_user_uuid,
-            messages: recoverMsgs,
-            date_time: now.toJSON(),
-            subject_line: 'Recovery Alerts',
-          }),
-        );
-      }
-
-      localStorage.setItem('lastEmailTime', now.unix());
-    }
-  }, [emailMsgs]);
 
   const handleClose = (event, index, type) => {
     event.stopPropagation();

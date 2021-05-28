@@ -726,10 +726,17 @@ function* getSensorAlerts(payload) {
       null,
       true,
     );
-    yield put({
-      type: GET_SENSOR_ALERTS_SUCCESS,
-      data: response.data,
-    });
+    if (payload.hourRange > 0) {
+      yield put({
+        type: GET_SENSOR_ALERTS_SUCCESS,
+        filteredData: response.data,
+      });
+    } else {
+      yield put({
+        type: GET_SENSOR_ALERTS_SUCCESS,
+        allData: response.data,
+      });
+    }
   } catch (error) {
     yield [
       yield put(

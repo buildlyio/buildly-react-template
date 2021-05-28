@@ -12,6 +12,7 @@ const initialState = {
   geofenceAlerts: null,
   aggregateReportData: null,
   sensorAlerts: null,
+  allAlerts: null,
 };
 
 describe('Get Gateway reducer', () => {
@@ -694,6 +695,7 @@ describe('Get Sensor Alerts reducer', () => {
       loaded: true,
       loading: false,
       sensorAlerts: undefined,
+      allAlerts: undefined,
     });
   });
 
