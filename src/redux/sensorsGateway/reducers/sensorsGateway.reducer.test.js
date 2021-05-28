@@ -9,8 +9,10 @@ const initialState = {
   gatewayTypeList: null,
   sensorData: null,
   sensorTypeList: null,
-  sensorReportAlerts: null,
+  geofenceAlerts: null,
   aggregateReportData: null,
+  sensorAlerts: null,
+  allAlerts: null,
 };
 
 describe('Get Gateway reducer', () => {
@@ -601,33 +603,33 @@ describe('Delete Sensor type reducer', () => {
   });
 });
 
-describe('Get Sensor Report Alerts reducer', () => {
+describe('Get Geofence Alerts reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_SENSOR_REPORT },
+      { type: actions.GET_GEOFENCE_ALERTS },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('Get Sensor Report Alerts success Reducer', () => {
+  it('Get Geofence Alerts success Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_SENSOR_REPORT_SUCCESS },
+      { type: actions.GET_GEOFENCE_ALERTS_SUCCESS },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      sensorReportAlerts: undefined,
+      geofenceAlerts: undefined,
     });
   });
 
-  it('Get Sensor Report Alerts fail Reducer', () => {
+  it('Get Geofence Alerts fail Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_SENSOR_REPORT_FAILURE },
+      { type: actions.GET_GEOFENCE_ALERTS_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,
@@ -664,6 +666,43 @@ describe('Get Aggregate Report reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.GET_AGGREGATE_REPORT_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});
+
+describe('Get Sensor Alerts reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_SENSOR_ALERTS },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('Get Sensor Alerts success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_SENSOR_ALERTS_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      sensorAlerts: undefined,
+      allAlerts: undefined,
+    });
+  });
+
+  it('Get Sensor Alerts fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_SENSOR_ALERTS_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,

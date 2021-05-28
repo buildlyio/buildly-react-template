@@ -7,7 +7,6 @@ import { UserContext } from '@context/User.context';
 import { updateCustody } from '@redux/custodian/actions/custodian.actions';
 import {
   editShipment,
-  setShipmentAlerts,
   emailAlerts,
 } from '@redux/shipment/actions/shipment.actions';
 import { getFormattedCustodyRows } from './ShipmentConstants';
@@ -54,114 +53,162 @@ const AlertInfo = ({
   shipmentData,
   shipmentFlag,
   dispatch,
-  shipmentAlerts,
-  sensorReportAlerts,
+  geofenceAlerts,
   custodyData,
   custodianData,
+  sensorAlerts,
 }) => {
   const classes = useStyles();
-  const [openShipmentAlerts, setOpenShipmentAlerts] = useState([]);
-  const [geofenceAlerts, setGeofenceAlerts] = useState({
-    show: false,
-    data: [],
-  });
-  const [openGeofenceAlerts, setOpenGeofenceAlerts] = useState([]);
+  const [senAlerts, setSenAlerts] = useState([]);
+  const [geoAlerts, setGeoAlerts] = useState([]);
   const user = useContext(UserContext);
 
   useEffect(() => {
     if (
       shipmentData
-      && shipmentAlerts
-      && shipmentData.length
-      && shipmentAlerts.show
+      && shipmentFlag
+      && sensorAlerts
+      && shipmentData.length > 0
+      && shipmentFlag.length > 0
+      && sensorAlerts.length > 0
     ) {
       let alerts = [];
-      let openAlerts = [];
       let messages = [];
-      const viewedShipmentAlerts = localStorage.getItem('shipmentAlerts')
-        ? JSON.parse(localStorage.getItem('shipmentAlerts'))
+      let shipmentIds = [];
+      const viewedSensorAlerts = localStorage.getItem('sensorAlerts')
+        ? JSON.parse(localStorage.getItem('sensorAlerts'))
         : [];
 
-      if (shipmentFlag && shipmentFlag.length) {
-        _.forEach(shipmentData, (shipment, index) => {
-          _.forEach(shipmentFlag, (flag) => {
-            if (
-              _.indexOf(shipment.flags, flag.url) !== -1
-              && flag.type !== 'None'
-              && (
-                _.lowerCase(shipment.status) === 'planned'
-                || _.lowerCase(shipment.status) === 'enroute'
-              ) && !_.includes(
-                viewedShipmentAlerts,
-                `${shipment.shipment_uuid}-${flag.id}`,
-              )
-            ) {
-              alerts = [
-                ...alerts,
-                {
-                  type: flag.type,
-                  name: flag.name,
-                  shipment: shipment.name,
-                  url: `${shipment.shipment_uuid}-${flag.id}`,
-                  severity: _.lowerCase(flag.type) === 'warning'
+      _.forEach(shipmentData, (shipment) => {
+        const shipmentAlerts = _.filter(
+          sensorAlerts,
+          { shipment_id: shipment.partner_shipment_id },
+        );
+        _.forEach(shipment.flags, (shipFlag) => {
+          const flag = _.find(shipmentFlag, { url: shipFlag });
+          if (flag) {
+            const alertType = flag.max_flag
+              ? `max-${flag.type}`
+              : `min-${flag.type}`;
+            _.forEach(shipmentAlerts, (shipAlert) => {
+              if (
+                shipAlert.alert_type === alertType
+                && _.includes(
+                  _.lowerCase(flag.name),
+                  _.lowerCase(shipAlert.parameter_type),
+                )
+                && !_.includes(viewedSensorAlerts, shipAlert.id)
+              ) {
+                let severity;
+                if (shipAlert.is_recovered) {
+                  severity = 'success';
+                } else {
+                  severity = _.lowerCase(flag.type) === 'warning'
                     ? 'warning'
-                    : 'error',
-                },
-              ];
-              openAlerts = [...openAlerts, index];
-              messages = [
-                ...messages,
-                {
-                  shipment_uuid: shipment.name,
-                  alert_message: flag.name,
-                  date_time: new Date().toJSON(),
-                },
-              ];
-            }
-          });
+                    : 'error';
+                }
+
+                alerts = [
+                  ...alerts,
+                  {
+                    name: shipAlert.is_recovered
+                      ? `Recovered - ${flag.name}`
+                      : flag.name,
+                    shipment: shipment.name,
+                    id: shipAlert.id,
+                    severity,
+                    date_time: shipAlert.timestamp,
+                  },
+                ];
+                messages = [
+                  ...messages,
+                  {
+                    type: shipAlert.is_recovered
+                      ? 'recover'
+                      : 'sensor',
+                    shipment_uuid: shipment.name,
+                    alert_message: shipAlert.is_recovered
+                      ? `Recovered ${flag.name}`
+                      : flag.name,
+                    date_time: shipAlert.timestamp,
+                  },
+                ];
+                shipmentIds = [...shipmentIds, shipment.id];
+              }
+            });
+          }
+        });
+      });
+
+      if (alerts && alerts.length) {
+        setSenAlerts(alerts);
+      }
+      if (shipmentIds && shipmentIds.length) {
+        const ids = _.uniq(shipmentIds);
+        _.forEach(ids, (id) => {
+          const shipment = _.find(shipmentData, { id });
+          if (shipment && !shipment.had_alert) {
+            dispatch(editShipment({
+              ...shipment,
+              had_alert: true,
+            }));
+          }
         });
       }
-
-      if (alerts.length) {
-        dispatch(setShipmentAlerts({
-          show: true,
-          data: alerts,
-        }));
-      }
-
       if (
         user
         && user.email_alert_flag
-        && messages.length
+        && messages.length > 0
       ) {
-        dispatch(
-          emailAlerts({
-            user_uuid: user.core_user_uuid,
-            messages,
-            date_time: new Date().toJSON(),
-            subject_line: 'Warning / Excursion Alert',
-          }),
-        );
-      }
+        const lastSensorEmail = localStorage.getItem('lastSensorEmail');
+        const now = moment();
+        const sensorMsgs = _.filter(messages, (msg) => (
+          msg.type === 'sensor'
+          && moment(msg.date_time).unix() > lastSensorEmail
+        ));
+        const recoverMsgs = _.filter(messages, (msg) => (
+          msg.type === 'recover'
+          && moment(msg.date_time).unix() > lastSensorEmail
+        ));
 
-      if (openAlerts.length) {
-        setOpenShipmentAlerts(openAlerts);
+        if (sensorMsgs && sensorMsgs.length > 0) {
+          dispatch(
+            emailAlerts({
+              user_uuid: user.core_user_uuid,
+              messages: sensorMsgs,
+              date_time: now.toJSON(),
+              subject_line: 'Warning / Excursion Alerts',
+            }),
+          );
+          localStorage.setItem('lastSensorEmail', now.unix());
+        }
+
+        if (recoverMsgs && recoverMsgs.length > 0) {
+          dispatch(
+            emailAlerts({
+              user_uuid: user.core_user_uuid,
+              messages: recoverMsgs,
+              date_time: now.toJSON(),
+              subject_line: 'Recovery Alerts',
+            }),
+          );
+          localStorage.setItem('lastSensorEmail', now.unix());
+        }
       }
     }
-  }, [shipmentData, shipmentFlag]);
+  }, [shipmentData, shipmentFlag, sensorAlerts]);
 
   useEffect(() => {
     if (
       shipmentData
       && custodyData
-      && sensorReportAlerts
+      && geofenceAlerts
       && shipmentData.length > 0
       && custodyData.length > 0
-      && sensorReportAlerts.length > 0
+      && geofenceAlerts.length > 0
     ) {
       let custodyRows = [];
       let alerts = [];
-      let openAlerts = [];
       let messages = [];
       let currentCustody = {};
       let updatedCustodies = [];
@@ -174,7 +221,7 @@ const AlertInfo = ({
       }
 
       _.forEach(shipmentData, (shipment) => {
-        _.forEach(sensorReportAlerts, (alert, index) => {
+        _.forEach(geofenceAlerts, (alert, index) => {
           if (
             shipment.partner_shipment_id === alert.shipment_id
             && alert.shipment_custody_status === 'left-start-geofence'
@@ -280,17 +327,16 @@ const AlertInfo = ({
                 alerts = [
                   ...alerts,
                   {
-                    type: alert.shipment_custody_status,
                     name: `${message} : ${currentCustody.custodian_name} -  Shipment ${shipment.name}`,
                     shipment: shipment.name,
                     id: alert.id,
                     date_time: alert.report_date_time,
                   },
                 ];
-                openAlerts = [...openAlerts, index];
                 messages = [
                   ...messages,
                   {
+                    type: 'geofence',
                     shipment_uuid: shipment.name,
                     alert_message: `Shipment ${message} of ${currentCustody.custodian_name}`,
                     date_time: alert.report_date_time,
@@ -336,70 +382,61 @@ const AlertInfo = ({
       );
 
       if (alerts && alerts.length) {
-        setGeofenceAlerts({
-          data: alerts,
-          show: true,
-        });
+        setGeoAlerts(alerts);
       }
-
       if (
         user
         && user.email_alert_flag
-        && messages.length
+        && messages.length > 0
       ) {
-        dispatch(
-          emailAlerts({
-            user_uuid: user.core_user_uuid,
-            messages,
-            date_time: new Date().toJSON(),
-            subject_line: 'Geofence Alert',
-          }),
-        );
-      }
+        const lastGeofenceEmail = localStorage.getItem('lastGeofenceEmail');
+        const now = moment();
+        const geoMsgs = _.filter(messages, (msg) => (
+          msg.type === 'geofence'
+          && moment(msg.date_time).unix() > lastGeofenceEmail
+        ));
 
-      if (openAlerts && openAlerts.length) {
-        setOpenGeofenceAlerts(openAlerts);
+        if (geoMsgs && geoMsgs.length > 0) {
+          dispatch(
+            emailAlerts({
+              user_uuid: user.core_user_uuid,
+              messages: geoMsgs,
+              date_time: now.toJSON(),
+              subject_line: 'Geofence Alerts',
+            }),
+          );
+          localStorage.setItem('lastGeofenceEmail', now.unix());
+        }
       }
     }
-  }, [shipmentData, sensorReportAlerts]);
+  }, [shipmentData, geofenceAlerts]);
 
   const handleClose = (event, index, type) => {
     event.stopPropagation();
     event.preventDefault();
-    if (type === 'shipment') {
+    if (type === 'sensor') {
       const open = _.filter(
-        shipmentAlerts.data,
+        senAlerts,
         (item, idx) => (idx !== index),
       );
-      const current = shipmentAlerts.data[index];
+      const current = senAlerts[index];
 
-      let viewedShipmentAlerts = localStorage.getItem('shipmentAlerts')
-        ? JSON.parse(localStorage.getItem('shipmentAlerts'))
+      let viewedSensorAlerts = localStorage.getItem('sensorAlerts')
+        ? JSON.parse(localStorage.getItem('sensorAlerts'))
         : [];
-      viewedShipmentAlerts = [...viewedShipmentAlerts, current.url];
+      viewedSensorAlerts = [...viewedSensorAlerts, current.id];
       localStorage.setItem(
-        'shipmentAlerts',
-        JSON.stringify(viewedShipmentAlerts),
+        'sensorAlerts',
+        JSON.stringify(viewedSensorAlerts),
       );
 
-      if (open.length === 0) {
-        dispatch(setShipmentAlerts({
-          show: false,
-          data: open,
-        }));
-      } else {
-        dispatch(setShipmentAlerts({
-          show: true,
-          data: open,
-        }));
-      }
-      setOpenShipmentAlerts(open);
+      setSenAlerts(open);
     } else if (type === 'geofence') {
       const open = _.filter(
-        geofenceAlerts.data,
+        geoAlerts,
         (item, idx) => (idx !== index),
       );
-      const current = geofenceAlerts.data[index];
+      const current = geoAlerts[index];
 
       let viewedGeoAlerts = localStorage.getItem('geofenceAlerts')
         ? JSON.parse(localStorage.getItem('geofenceAlerts'))
@@ -407,52 +444,39 @@ const AlertInfo = ({
       viewedGeoAlerts = [...viewedGeoAlerts, current.id];
       localStorage.setItem('geofenceAlerts', JSON.stringify(viewedGeoAlerts));
 
-      if (open.length === 0) {
-        setGeofenceAlerts({ show: false, data: open });
-      } else {
-        setGeofenceAlerts({ show: true, data: open });
-      }
-      setOpenGeofenceAlerts(open);
+      setGeoAlerts(open);
     }
   };
 
   return (
     <div className={classes.root}>
-      {shipmentAlerts
-      && shipmentAlerts.show
-      && shipmentAlerts.data
-      && shipmentAlerts.data.length > 0
-      && _.map(shipmentAlerts.data, (alert, index) => (
+      {senAlerts
+      && senAlerts.length > 0
+      && _.map(senAlerts, (alert, index) => (
         <Alert
-          key={`shipmentAlert${index}:${alert.shipment}`}
+          key={`sensorAlert${index}:${alert.shipment}`}
           variant="filled"
           severity={alert.severity}
-          onClose={(e) => handleClose(e, index, 'shipment')}
+          onClose={(e) => handleClose(e, index, 'sensor')}
           classes={{
             message: classes.message,
             root: classes.alert,
           }}
-          title={`${alert.name} ${
-            _.lowerCase(alert.type) === 'warning'
-              ? 'Warning'
-              : 'Violation'
-          } Shipment ${alert.shipment}`}
+          title={`${alert.name} | Shipment: ${
+            alert.shipment
+          } | ${moment(alert.date_time).fromNow()}`}
         >
-          {`${alert.name} ${
-            _.lowerCase(alert.type) === 'warning'
-              ? 'Warning'
-              : 'Violation'
-          } Shipment ${alert.shipment}`}
+          {`${alert.name} | Shipment: ${
+            alert.shipment
+          } | ${moment(alert.date_time).fromNow()}`}
         </Alert>
       ))}
 
-      {geofenceAlerts
-      && geofenceAlerts.show
-      && geofenceAlerts.data
-      && geofenceAlerts.data.length > 0
-      && _.map(geofenceAlerts.data, (alert, index) => (
+      {geoAlerts
+      && geoAlerts.length > 0
+      && _.map(geoAlerts, (alert, index) => (
         <Alert
-          key={`sensorReportAlert${index}:${alert.shipment}`}
+          key={`geofenceAlert${index}:${alert.shipment}`}
           variant="filled"
           severity="info"
           onClose={(e) => handleClose(e, index, 'geofence')}

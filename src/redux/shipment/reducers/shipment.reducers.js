@@ -28,7 +28,6 @@ import {
   GET_DASHBOARD_ITEMS,
   GET_DASHBOARD_ITEMS_SUCCESS,
   GET_DASHBOARD_ITEMS_FAILURE,
-  SET_SHIPMENT_ALERTS,
   ADD_PDF_IDENTIFIER,
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
@@ -41,7 +40,6 @@ const initialState = {
   shipmentFormData: null,
   shipmentData: null,
   shipmentFlag: null,
-  shipmentAlerts: { show: true, data: [] },
 };
 
 // Reducer
@@ -288,18 +286,6 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         error: action.error,
-      };
-
-    case SET_SHIPMENT_ALERTS:
-      return {
-        ...state,
-        loading: false,
-        loaded: false,
-        shipmentAlerts: {
-          show: action.alerts.show,
-          data: action.alerts.data,
-        },
-        error: null,
       };
 
     case ADD_PDF_IDENTIFIER:

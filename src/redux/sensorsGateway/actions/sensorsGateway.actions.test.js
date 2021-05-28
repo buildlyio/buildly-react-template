@@ -216,15 +216,15 @@ describe('Delete Sensor Type action', () => {
   });
 });
 
-// Test Get Sensor Report Alerts
-describe('Get Sensor Report Alerts action', () => {
-  it('should create an action to get sensor report alerts', () => {
+// Test Get Geofence Alerts
+describe('Get Geofence Alerts action', () => {
+  it('should create an action to get geofence alerts', () => {
     const partnerShipmentIds = ['1', '2', '3'];
     const expectedAction = {
-      type: actions.GET_SENSOR_REPORT,
+      type: actions.GET_GEOFENCE_ALERTS,
       partnerShipmentIds,
     };
-    expect(actions.getSensorReportAlerts(partnerShipmentIds))
+    expect(actions.getGeofenceAlerts(partnerShipmentIds))
       .toEqual(expectedAction);
   });
 });
@@ -238,6 +238,20 @@ describe('Get Aggregate Report action', () => {
       partnerShipmentIds,
     };
     expect(actions.getAggregateReport(partnerShipmentIds))
+      .toEqual(expectedAction);
+  });
+});
+
+// Test Get Sensor Alerts
+describe('Get Sensor Alerts action', () => {
+  it('should create an action to get sensor alerts', () => {
+    const partnerShipmentIds = ['1', '2', '3'];
+    const expectedAction = {
+      type: actions.GET_SENSOR_ALERTS,
+      partnerShipmentIds,
+      hourRange: 24,
+    };
+    expect(actions.getSensorAlerts(partnerShipmentIds, 24))
       .toEqual(expectedAction);
   });
 });

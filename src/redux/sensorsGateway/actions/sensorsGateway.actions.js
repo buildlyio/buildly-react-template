@@ -64,13 +64,17 @@ export const DELETE_SENSORS_TYPE = 'SENSORS/DELETE_SENSORS_TYPE';
 export const DELETE_SENSORS_TYPE_SUCCESS = 'SENSORS/DELETE_SENSORS_TYPE_SUCCESS';
 export const DELETE_SENSORS_TYPE_FAILURE = 'SENSORS/DELETE_SENSORS_TYPE_FAILURE';
 
-export const GET_SENSOR_REPORT = 'SENSORS/GET_SENSOR_REPORT';
-export const GET_SENSOR_REPORT_SUCCESS = 'SENSORS/GET_SENSOR_REPORT_SUCCESS';
-export const GET_SENSOR_REPORT_FAILURE = 'SENSORS/GET_SENSOR_REPORT_FAILURE';
+export const GET_GEOFENCE_ALERTS = 'SENSORS/GET_GEOFENCE_ALERTS';
+export const GET_GEOFENCE_ALERTS_SUCCESS = 'SENSORS/GET_GEOFENCE_ALERTS_SUCCESS';
+export const GET_GEOFENCE_ALERTS_FAILURE = 'SENSORS/GET_GEOFENCE_ALERTS_FAILURE';
 
 export const GET_AGGREGATE_REPORT = 'SENSORS/GET_AGGREGATE_REPORT';
 export const GET_AGGREGATE_REPORT_SUCCESS = 'SENSORS/GET_AGGREGATE_REPORT_SUCCESS';
 export const GET_AGGREGATE_REPORT_FAILURE = 'SENSORS/GET_AGGREGATE_REPORT_FAILURE';
+
+export const GET_SENSOR_ALERTS = 'SENSORS/GET_SENSOR_ALERTS';
+export const GET_SENSOR_ALERTS_SUCCESS = 'SENSORS/GET_SENSOR_ALERTS_SUCCESS';
+export const GET_SENSOR_ALERTS_FAILURE = 'SENSORS/GET_SENSOR_ALERTS_FAILURE';
 
 // Gateway action functions
 /**
@@ -237,8 +241,8 @@ export const deleteSensorType = (id) => ({
  * Get Sensor Report Alerts
  * @param {Array} partnerShipmentIds
  */
-export const getSensorReportAlerts = (partnerShipmentIds) => ({
-  type: GET_SENSOR_REPORT,
+export const getGeofenceAlerts = (partnerShipmentIds) => ({
+  type: GET_GEOFENCE_ALERTS,
   partnerShipmentIds,
 });
 
@@ -249,4 +253,14 @@ export const getSensorReportAlerts = (partnerShipmentIds) => ({
 export const getAggregateReport = (partnerShipmentIds) => ({
   type: GET_AGGREGATE_REPORT,
   partnerShipmentIds,
+});
+
+/**
+ * Get Sensor Alerts
+ * @param {Array} partnerShipmentIds
+ */
+export const getSensorAlerts = (partnerShipmentIds, hourRange = 0) => ({
+  type: GET_SENSOR_ALERTS,
+  partnerShipmentIds,
+  hourRange,
 });

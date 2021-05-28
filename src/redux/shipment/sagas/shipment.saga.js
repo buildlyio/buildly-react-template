@@ -7,7 +7,8 @@ import { environment } from '@environments/environment';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import {
   getAggregateReport,
-  getSensorReportAlerts,
+  getGeofenceAlerts,
+  getSensorAlerts,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { routes } from '@routes/routesConstants';
 import {
@@ -72,11 +73,12 @@ function* getShipmentList(payload) {
         _.map(data.data, 'partner_shipment_id'),
       );
       const encodedIds = encodeURIComponent(ids);
-      if (payload.getAggregateReport) {
-        yield put(getAggregateReport(encodedIds));
-      }
-      if (payload.getReportAlerts) {
-        yield put(getSensorReportAlerts(encodedIds));
+      if (payload.getUpdatedSensorData) {
+        yield [
+          yield put(getAggregateReport(encodedIds)),
+          yield put(getGeofenceAlerts(encodedIds)),
+          yield put(getSensorAlerts(encodedIds, 24)),
+        ];
       }
     }
   } catch (error) {
@@ -115,7 +117,10 @@ function* addShipment(action) {
         }),
       ),
       yield put(
-        getShipmentDetails(payload.organization_uuid, data.data.id),
+        getShipmentDetails(
+          payload.organization_uuid,
+          data.data.id,
+        ),
       ),
     ];
     if (history && redirectTo) {
@@ -150,7 +155,11 @@ function* editShipment(action) {
     );
     yield [
       yield put(
-        getShipmentDetails(payload.organization_uuid, payload.id, true, true),
+        getShipmentDetails(
+          payload.organization_uuid,
+          payload.id,
+          true,
+        ),
       ),
       yield put(
         showAlert({
@@ -202,7 +211,11 @@ function* deleteShipment(payload) {
           message: 'Shipment deleted successfully!',
         }),
       ),
-      yield put(getShipmentDetails(organization_uuid, null, true, true)),
+      yield put(getShipmentDetails(
+        organization_uuid,
+        null,
+        true,
+      )),
     ];
   } catch (error) {
     yield [
