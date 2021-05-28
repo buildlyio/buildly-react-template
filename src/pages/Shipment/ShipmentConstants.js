@@ -138,6 +138,16 @@ export const getShipmentDataTableColumns = (timezone) => ([
     },
   },
   {
+    name: 'had_alert',
+    label: 'Had Alert(s)',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (value ? 'YES' : 'NO'),
+    },
+  },
+  {
     name: 'custodian_name',
     label: 'Custodian Name',
     options: {

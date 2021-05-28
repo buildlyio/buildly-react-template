@@ -75,6 +75,7 @@ const AlertInfo = ({
     ) {
       let alerts = [];
       let messages = [];
+      let shipmentIds = [];
       const viewedSensorAlerts = localStorage.getItem('sensorAlerts')
         ? JSON.parse(localStorage.getItem('sensorAlerts'))
         : [];
@@ -133,6 +134,7 @@ const AlertInfo = ({
                     date_time: shipAlert.timestamp,
                   },
                 ];
+                shipmentIds = [...shipmentIds, shipment.id];
               }
             });
           }
@@ -144,6 +146,18 @@ const AlertInfo = ({
       }
       if (messages && messages.length) {
         setEmailMsgs([...emailMsgs, ...messages]);
+      }
+      if (shipmentIds && shipmentIds.length) {
+        const ids = _.uniq(shipmentIds);
+        _.forEach(ids, (id) => {
+          const shipment = _.find(shipmentData, { id });
+          if (shipment && !shipment.had_alert) {
+            dispatch(editShipment({
+              ...shipment,
+              had_alert: true,
+            }));
+          }
+        });
       }
     }
   }, [shipmentData, shipmentFlag, sensorAlerts]);
