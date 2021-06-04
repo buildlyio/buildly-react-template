@@ -557,18 +557,8 @@ export const getAlertsReportColumns = (timezone) => ([
     },
   },
   {
-    name: 'is_recovered',
-    label: 'Is Recovered',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (value ? 'YES' : 'NO'),
-    },
-  },
-  {
-    name: 'timestamp',
-    label: 'Alert Timestamp',
+    name: 'create_date',
+    label: 'Alert Created At',
     options: {
       sort: true,
       sortThirdClickReset: true,

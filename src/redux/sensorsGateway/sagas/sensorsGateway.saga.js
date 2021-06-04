@@ -714,7 +714,7 @@ function* getAggregateReportList(payload) {
 }
 
 function* getSensorAlerts(payload) {
-  let finalURL = `${environment.API_URL}${sensorApiEndPoint}sensor_report_alert/?shipment_id=${payload.partnerShipmentIds}`;
+  let finalURL = `${environment.API_URL}${sensorApiEndPoint}sensor_report_alert/?shipment_ids=${payload.partnerShipmentIds}`;
   if (payload.hourRange > 0) {
     finalURL = `${finalURL}&hours_range=${payload.hourRange}`;
   }

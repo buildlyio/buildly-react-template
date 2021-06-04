@@ -47,7 +47,7 @@ const AlertsReport = ({
     if (alerts) {
       const sortedData = _.orderBy(
         alerts,
-        (item) => moment(item.timestamp),
+        (item) => moment(item.create_date),
         ['desc'],
       );
       setRows(sortedData);
