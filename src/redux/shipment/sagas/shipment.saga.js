@@ -7,7 +7,6 @@ import { environment } from '@environments/environment';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import {
   getAggregateReport,
-  getGeofenceAlerts,
   getSensorAlerts,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { routes } from '@routes/routesConstants';
@@ -39,7 +38,6 @@ import {
   GET_DASHBOARD_ITEMS,
   GET_DASHBOARD_ITEMS_SUCCESS,
   GET_DASHBOARD_ITEMS_FAILURE,
-  EMAIL_ALERTS,
   ADD_PDF_IDENTIFIER,
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
@@ -76,7 +74,6 @@ function* getShipmentList(payload) {
       if (payload.getUpdatedSensorData) {
         yield [
           yield put(getAggregateReport(encodedIds)),
-          yield put(getGeofenceAlerts(encodedIds)),
           yield put(getSensorAlerts(encodedIds, 24)),
         ];
       }
@@ -418,32 +415,6 @@ function* getDashboard(payload) {
   }
 }
 
-function* sendEmailAlerts(payload) {
-  try {
-    const alerts = yield call(
-      httpService.makeRequest,
-      'post',
-      `${environment.API_URL}coreuser/alert/`,
-      payload.alerts,
-    );
-    yield put(
-      showAlert({
-        type: 'info',
-        open: true,
-        message: 'Email alerts sent successfully',
-      }),
-    );
-  } catch (error) {
-    yield put(
-      showAlert({
-        type: 'error',
-        open: true,
-        message: 'Couldn\'t send email alerts due to some error!',
-      }),
-    );
-  }
-}
-
 function* pdfIdentifier(action) {
   const {
     data,
@@ -553,10 +524,6 @@ function* watchGetDashboardItems() {
   yield takeLatest(GET_DASHBOARD_ITEMS, getDashboard);
 }
 
-function* watchEmailAlerts() {
-  yield takeLatest(EMAIL_ALERTS, sendEmailAlerts);
-}
-
 function* watchPdfIdentifier() {
   yield takeLatest(ADD_PDF_IDENTIFIER, pdfIdentifier);
 }
@@ -572,7 +539,6 @@ export default function* shipmentSaga() {
     watchEditShipmentFlag(),
     watchDeleteShipmentFlag(),
     watchGetDashboardItems(),
-    watchEmailAlerts(),
     watchPdfIdentifier(),
   ]);
 }

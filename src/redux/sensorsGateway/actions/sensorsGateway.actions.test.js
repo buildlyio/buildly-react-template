@@ -216,19 +216,6 @@ describe('Delete Sensor Type action', () => {
   });
 });
 
-// Test Get Geofence Alerts
-describe('Get Geofence Alerts action', () => {
-  it('should create an action to get geofence alerts', () => {
-    const partnerShipmentIds = ['1', '2', '3'];
-    const expectedAction = {
-      type: actions.GET_GEOFENCE_ALERTS,
-      partnerShipmentIds,
-    };
-    expect(actions.getGeofenceAlerts(partnerShipmentIds))
-      .toEqual(expectedAction);
-  });
-});
-
 // Test Get Aggregate Report
 describe('Get Aggregate Report action', () => {
   it('should create an action to get aggregate report', () => {

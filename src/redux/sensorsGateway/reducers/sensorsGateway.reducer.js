@@ -48,9 +48,6 @@ import {
   DELETE_SENSORS_TYPE,
   DELETE_SENSORS_TYPE_SUCCESS,
   DELETE_SENSORS_TYPE_FAILURE,
-  GET_GEOFENCE_ALERTS,
-  GET_GEOFENCE_ALERTS_SUCCESS,
-  GET_GEOFENCE_ALERTS_FAILURE,
   GET_AGGREGATE_REPORT,
   GET_AGGREGATE_REPORT_SUCCESS,
   GET_AGGREGATE_REPORT_FAILURE,
@@ -67,7 +64,6 @@ const initialState = {
   gatewayTypeList: null,
   sensorData: null,
   sensorTypeList: null,
-  geofenceAlerts: null,
   aggregateReportData: null,
   sensorAlerts: null,
   allAlerts: null,
@@ -481,30 +477,6 @@ export default (state = initialState, action) => {
       };
 
     case DELETE_SENSORS_TYPE_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case GET_GEOFENCE_ALERTS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case GET_GEOFENCE_ALERTS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        geofenceAlerts: action.data,
-      };
-
-    case GET_GEOFENCE_ALERTS_FAILURE:
       return {
         ...state,
         loading: false,

@@ -113,7 +113,6 @@ const Shipment = (props) => {
     loading,
     shipmentOptions,
     custodyOptions,
-    geofenceAlerts,
     timezone,
     sensorAlerts,
   } = props;
@@ -141,9 +140,7 @@ const Shipment = (props) => {
 
   useEffect(() => {
     if (shipmentData === null) {
-      const getUpdatedSensorData = !aggregateReportData
-        || !geofenceAlerts
-        || !sensorAlerts;
+      const getUpdatedSensorData = !aggregateReportData || !sensorAlerts;
       dispatch(getShipmentDetails(
         organization,
         null,

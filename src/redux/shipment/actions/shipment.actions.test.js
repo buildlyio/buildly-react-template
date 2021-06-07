@@ -154,19 +154,6 @@ describe('Get DashBoard Items action', () => {
   });
 });
 
-// Test Email Alerts action
-describe('Email Alerts action', () => {
-  it('should create an action to email alerts', () => {
-    const alerts = { message: 'Alert message' };
-    const expectedAction = {
-      type: actions.EMAIL_ALERTS,
-      alerts,
-    };
-    expect(actions.emailAlerts(alerts))
-      .toEqual(expectedAction);
-  });
-});
-
 // Test Add PDF Identifier action
 describe('Add PDF Identifier action', () => {
   it('should create an action to add PDF identifier', () => {

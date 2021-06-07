@@ -194,7 +194,7 @@ const Reporting = ({
       }
     }
 
-    if (shipmentData) {
+    if (shipmentData && shipmentData.length) {
       const ships = _.filter(shipmentData, { had_alert: true });
       const ids = _.toString(_.map(ships, 'partner_shipment_id'));
       const encodedIds = encodeURIComponent(ids);
