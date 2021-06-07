@@ -508,6 +508,14 @@ export const SENSOR_REPORT_COLUMNS = [
 
 export const getAlertsReportColumns = (timezone) => ([
   {
+    name: 'id',
+    label: 'Alert ID',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+    },
+  },
+  {
     name: 'parameter_type',
     label: 'Parameter Type',
     options: {
@@ -554,6 +562,26 @@ export const getAlertsReportColumns = (timezone) => ([
         }
         return returnValue;
       },
+    },
+  },
+  {
+    name: 'recovered_alert_id',
+    label: 'Recovered',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (value ? 'YES' : 'NO'),
+    },
+  },
+  {
+    name: 'recovered_alert_id',
+    label: 'Recovered Alert ID',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (value || '-'),
     },
   },
   {

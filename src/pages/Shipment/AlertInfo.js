@@ -28,12 +28,12 @@ const useStyles = makeStyles((theme) => ({
       transform: 'translateX(-50%)',
     },
     [theme.breakpoints.up('md')]: {
+      width: '60%',
       left: '55%',
-      width: 'max-content',
       transform: 'translateX(-50%)',
     },
     [theme.breakpoints.down('xs')]: {
-      top: '60px',
+      top: '16px',
       width: '50%',
       left: '60%',
       transform: 'translateX(-40%)',
@@ -61,7 +61,7 @@ const AlertInfo = ({
   const classes = useStyles();
   const [senAlerts, setSenAlerts] = useState([]);
   const [geoAlerts, setGeoAlerts] = useState([]);
-  const user = useContext(UserContext);
+  const { organization_uuid } = useContext(UserContext).organization;
 
   useEffect(() => {
     if (
@@ -316,14 +316,10 @@ const AlertInfo = ({
       if (alerts && alerts.length) {
         setGeoAlerts(alerts);
       }
-      if (
-        user
-        && user.email_alert_flag
-        && messages.length > 0
-      ) {
+      if (messages.length > 0) {
         dispatch(
           emailAlerts({
-            user_uuid: user.core_user_uuid,
+            organization_uuid,
             messages,
             date_time: moment().toJSON(),
             subject_line: 'Geofence Alerts',
