@@ -45,8 +45,12 @@ const AlertsReport = ({
 
   useEffect(() => {
     if (alerts) {
-      const sortedData = _.orderBy(
+      const filteredData = _.filter(
         alerts,
+        (alert) => alert.parameter_type !== 'location',
+      );
+      const sortedData = _.orderBy(
+        filteredData,
         (item) => moment(item.create_date),
         ['desc'],
       );

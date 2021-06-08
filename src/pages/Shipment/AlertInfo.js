@@ -78,10 +78,7 @@ const AlertInfo = ({
       _.forEach(shipmentData, (shipment) => {
         const shipmentAlerts = _.filter(
           sensorAlerts,
-          { 
-            shipment_id: shipment.partner_shipment_id,
-            shipment_name: shipment.name,
-          },
+          { shipment_id: shipment.partner_shipment_id },
         );
         let flags = [];
 
@@ -102,68 +99,61 @@ const AlertInfo = ({
         });
 
         _.forEach(shipmentAlerts, (alert) => {
-          if (alert.parameter_type === 'geofence') {
-            // const currentCustody = _.find(custodyRows, (custody) => (
-            //   custody.shipment_id === shipment.shipment_uuid
-            //   && custody.has_current_custody
-            //   && (
-            //     _.includes(
-            //       alert.current_custody_id,
-            //       custody.custodian_data.custodian_uuid,
-            //     )
-            //     || _.includes(
-            //       alert.current_custody_id,
-            //       custody.custody_uuid,
-            //     )
-            //   )
-            // ));
-            // if (
-            //   currentCustody !== undefined
-            //   && !_.includes(viewedAlerts, alert.id)
-            // ) {
-            //   let message = '';
-            //   switch (alert.shipment_custody_status) {
-            //     case 'present-start-geofence':
-            //       message = 'At start location';
-            //       break;
+          if (alert.parameter_type === 'location') {
+            const currentCustody = _.find(custodyRows, (custody) => (
+              custody.shipment_id === shipment.shipment_uuid
+              && _.includes(
+                alert.current_custody_id,
+                custody.custody_uuid,
+              )
+            ));
+            if (
+              currentCustody !== undefined
+              && !_.includes(viewedAlerts, alert.id)
+            ) {
+              let message = '';
+              switch (alert.alert_type) {
+                case 'present-start-geofence':
+                  message = 'At start location';
+                  break;
 
-            //     case 'left-start-geofence':
-            //       message = 'Left start location';
-            //       break;
+                case 'left-start-geofence':
+                  message = 'Left start location';
+                  break;
 
-            //     case 'arriving-end-geofence':
-            //       message = 'Arriving end location';
-            //       break;
+                case 'arriving-end-geofence':
+                  message = 'Arriving end location';
+                  break;
 
-            //     case 'present-end-geofence':
-            //       message = 'At end location';
-            //       break;
+                case 'present-end-geofence':
+                  message = 'At end location';
+                  break;
 
-            //     case 'reached-end-geofence':
-            //       message = 'Reached end location';
-            //       break;
+                case 'reached-end-geofence':
+                  message = 'Reached end location';
+                  break;
 
-            //     case 'left-end-geofence':
-            //       message = 'Custody Handoff';
-            //       break;
+                case 'left-end-geofence':
+                  message = 'Custody Handoff';
+                  break;
 
-            //     default:
-            //       break;
-            //   }
+                default:
+                  break;
+              }
 
-            //   alertsArray = [
-            //     ...alertsArray,
-            //     {
-            //       name: `${message} : ${
-            //         currentCustody.custodian_name
-            //       } -  Shipment ${shipment.name}`,
-            //       severity: 'info',
-            //       shipment: shipment.name,
-            //       id: alert.id,
-            //       date_time: alert.create_date,
-            //     },
-            //   ];
-            // }
+              alertsArray = [
+                ...alertsArray,
+                {
+                  name: `${message} : ${
+                    currentCustody.custodian_name
+                  } | Shipment ${shipment.name}`,
+                  severity: 'info',
+                  shipment: shipment.name,
+                  id: alert.id,
+                  date_time: alert.create_date,
+                },
+              ];
+            }
           } else {
             const flag = _.find(flags, (flg) => (
               alert.alert_type === flg.alertType
