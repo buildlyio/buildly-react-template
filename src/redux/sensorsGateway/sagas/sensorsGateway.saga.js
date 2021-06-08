@@ -49,9 +49,6 @@ import {
   DELETE_SENSORS_TYPE,
   DELETE_SENSORS_TYPE_SUCCESS,
   DELETE_SENSORS_TYPE_FAILURE,
-  GET_GEOFENCE_ALERTS,
-  GET_GEOFENCE_ALERTS_SUCCESS,
-  GET_GEOFENCE_ALERTS_FAILURE,
   GET_AGGREGATE_REPORT,
   GET_AGGREGATE_REPORT_SUCCESS,
   GET_AGGREGATE_REPORT_FAILURE,
@@ -656,33 +653,6 @@ function* deleteSensorType(payload) {
   }
 }
 
-function* getGeofenceAlerts(payload) {
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'get',
-      `${environment.API_URL}${sensorApiEndPoint}sensor_report/?shipment_id=${payload.partnerShipmentIds}&shipment_custody_status=present-start-geofence,left-start-geofence,arriving-end-geofence,present-end-geofence,reached-end-geofence,left-end-geofence`,
-      null,
-      true,
-    );
-    yield put({ type: GET_GEOFENCE_ALERTS_SUCCESS, data: data.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t load data due to some error!',
-        }),
-      ),
-      yield put({
-        type: GET_GEOFENCE_ALERTS_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
 function* getAggregateReportList(payload) {
   try {
     const data = yield call(
@@ -818,10 +788,6 @@ function* watchDeleteSensorType() {
   yield takeLatest(DELETE_SENSORS_TYPE, deleteSensorType);
 }
 
-function* watchGetGeofenceAlerts() {
-  yield takeLatest(GET_GEOFENCE_ALERTS, getGeofenceAlerts);
-}
-
 function* watchGetAggregateReport() {
   yield takeLatest(GET_AGGREGATE_REPORT, getAggregateReportList);
 }
@@ -848,7 +814,6 @@ export default function* sensorsGatewaySaga() {
     watchAddSensorType(),
     watchEditSensorType(),
     watchDeleteSensorType(),
-    watchGetGeofenceAlerts(),
     watchGetAggregateReport(),
     watchGetSensorAlerts(),
   ]);

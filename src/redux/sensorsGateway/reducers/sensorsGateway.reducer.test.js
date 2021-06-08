@@ -9,7 +9,6 @@ const initialState = {
   gatewayTypeList: null,
   sensorData: null,
   sensorTypeList: null,
-  geofenceAlerts: null,
   aggregateReportData: null,
   sensorAlerts: null,
   allAlerts: null,
@@ -594,42 +593,6 @@ describe('Delete Sensor type reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.DELETE_SENSORS_TYPE_FAILURE },
-    )).toEqual({
-      ...initialState,
-      error: undefined,
-      loaded: true,
-      loading: false,
-    });
-  });
-});
-
-describe('Get Geofence Alerts reducer', () => {
-  it('Empty Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_GEOFENCE_ALERTS },
-    )).toEqual({
-      ...initialState,
-      loading: true,
-    });
-  });
-
-  it('Get Geofence Alerts success Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_GEOFENCE_ALERTS_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      geofenceAlerts: undefined,
-    });
-  });
-
-  it('Get Geofence Alerts fail Reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_GEOFENCE_ALERTS_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,

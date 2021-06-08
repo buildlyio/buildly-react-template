@@ -36,8 +36,6 @@ export const GET_DASHBOARD_ITEMS = 'SHIPMENT/GET_DASHBOARD_ITEMS';
 export const GET_DASHBOARD_ITEMS_SUCCESS = 'SHIPMENT/GET_DASHBOARD_ITEMS_SUCCESS';
 export const GET_DASHBOARD_ITEMS_FAILURE = 'SHIPMENT/GET_DASHBOARD_ITEMS_FAILURE';
 
-export const EMAIL_ALERTS = 'SHIPMENT/EMAIL_ALERTS';
-
 export const ADD_PDF_IDENTIFIER = 'SHIPMENT/ADD_PDF_IDENTIFIER';
 export const ADD_PDF_IDENTIFIER_SUCCESS = 'SHIPMENT/ADD_PDF_IDENTIFIER_SUCCESS';
 export const ADD_PDF_IDENTIFIER_FAILURE = 'SHIPMENT/ADD_PDF_IDENTIFIER_FAILURE';
@@ -162,15 +160,6 @@ export const deleteShipmentFlag = (id) => ({
 export const getDashboardItems = (organization_uuid) => ({
   type: GET_DASHBOARD_ITEMS,
   organization_uuid,
-});
-
-/**
- * Email Alerts
- * @param {Object} alerts
- */
-export const emailAlerts = (alerts) => ({
-  type: EMAIL_ALERTS,
-  alerts,
 });
 
 /**
