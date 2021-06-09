@@ -132,7 +132,7 @@ const Users = ({ data, dispatch }) => {
           id={`userActions${row.id}`}
           anchorEl={menu.element}
           keepMounted
-          open={Boolean(menu.row && (menu.row.id === row.id))}
+          open={!!(menu.row && (menu.row.id === row.id))}
           onClose={handleMenuClose}
         >
           {row.actions.filter((option) => !(option.value === 'delete' && row.is_active)).map((option) => (

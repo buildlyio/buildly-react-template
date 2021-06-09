@@ -570,9 +570,17 @@ const ShipmentInfo = (props) => {
                       id="platform_name"
                       select
                       label="Sensor Platform"
-                      disabled={viewOnly}
+                      disabled={
+                        viewOnly
+                        || !!(editData && editData.platform_name)
+                      }
                       value={platform_name}
                       onChange={(e) => setPlatformName(e.target.value)}
+                      helperText={
+                        editData && editData.platform_name
+                          ? 'Once set, platform cannot be edited.'
+                          : 'Platform can be set just once.'
+                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       {SENSOR_PLATFORM

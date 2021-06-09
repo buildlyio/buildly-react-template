@@ -20,6 +20,7 @@ const RangeSlider = ({
   handleSliderChange,
   marks,
   orientation,
+  step,
 }) => {
   const classes = useStyles();
 
@@ -32,6 +33,7 @@ const RangeSlider = ({
         valueLabelDisplay="auto"
         disabled={disabled}
         marks={marks}
+        step={step}
         onChange={handleSliderChange}
       />
       <Typography id="range-slider" gutterBottom>

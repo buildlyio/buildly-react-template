@@ -113,7 +113,7 @@ const ItemsInfo = ({
     || itemData === null
   );
 
-  checkIfItemInfoEdited = () => Boolean(itemIds.length !== shipmentFormData.items.length);
+  checkIfItemInfoEdited = () => !!(itemIds.length !== shipmentFormData.items.length);
   /**
    * Submit The form and add/edit custodian
    * @param {Event} event the default submit event

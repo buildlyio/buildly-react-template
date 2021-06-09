@@ -177,6 +177,7 @@ const EnvironmentalLimitsInfo = ({
     shipmentFormData.max_warning_humidity || 75,
     shipmentFormData.max_excursion_humidity || 100,
   ];
+
   const shipmentFormMinMaxTemp = [
     shipmentFormData.min_excursion_temp || 0,
     shipmentFormData.min_warning_temp || 35,
@@ -202,6 +203,65 @@ const EnvironmentalLimitsInfo = ({
       setConfirmModal(true);
     } else {
       handleCancel();
+    }
+  };
+
+  const handleSliderUpdate = (event, type) => {
+    const newValue = event.target.value || 0;
+    const temp = minMaxTempValue;
+    const humidity = minMaxHumidValue;
+
+    switch (type) {
+      case 'max_temp_val':
+        changeMaxTempVal(newValue);
+        temp[3] = parseFloat(newValue);
+        setMinMaxTempValue(temp);
+        break;
+
+      case 'high_temp_val':
+        changeHighTempVal(newValue);
+        temp[2] = parseFloat(newValue);
+        setMinMaxTempValue(temp);
+        break;
+
+      case 'low_temp_val':
+        changeLowTempVal(newValue);
+        temp[1] = parseFloat(newValue);
+        setMinMaxTempValue(temp);
+        break;
+
+      case 'min_temp_val':
+        changeMinTempVal(newValue);
+        temp[0] = parseFloat(newValue);
+        setMinMaxTempValue(temp);
+        break;
+
+      case 'max_humid_val':
+        changeMaxHumidVal(newValue);
+        humidity[3] = parseFloat(newValue);
+        setMinMaxHumidValue(humidity);
+        break;
+
+      case 'high_humid_val':
+        changeHighHumidVal(newValue);
+        humidity[2] = parseFloat(newValue);
+        setMinMaxHumidValue(humidity);
+        break;
+
+      case 'low_humid_val':
+        changeLowHumidVal(newValue);
+        humidity[1] = parseFloat(newValue);
+        setMinMaxHumidValue(humidity);
+        break;
+
+      case 'min_humid_val':
+        changeMinHumidVal(newValue);
+        humidity[0] = parseFloat(newValue);
+        setMinMaxHumidValue(humidity);
+        break;
+
+      default:
+        break;
     }
   };
 
@@ -234,6 +294,9 @@ const EnvironmentalLimitsInfo = ({
                       autoComplete="max_temp_val"
                       value={max_temp_val}
                       disabled={viewOnly}
+                      onChange={(e) => {
+                        handleSliderUpdate(e, 'max_temp_val');
+                      }}
                     />
                     {shipmentMetaData.max_excursion_temp
                     && shipmentMetaData.max_excursion_temp.help_text
@@ -256,6 +319,9 @@ const EnvironmentalLimitsInfo = ({
                       autoComplete="high_temp_val"
                       value={high_temp_val}
                       disabled={viewOnly}
+                      onChange={(e) => {
+                        handleSliderUpdate(e, 'high_temp_val');
+                      }}
                     />
                     {shipmentMetaData.max_warning_temp
                     && shipmentMetaData.max_warning_temp.help_text
@@ -278,6 +344,9 @@ const EnvironmentalLimitsInfo = ({
                       autoComplete="low_temp_val"
                       value={low_temp_val}
                       disabled={viewOnly}
+                      onChange={(e) => {
+                        handleSliderUpdate(e, 'low_temp_val');
+                      }}
                     />
                     {shipmentMetaData.min_warning_temp
                     && shipmentMetaData.min_warning_temp.help_text
@@ -300,6 +369,9 @@ const EnvironmentalLimitsInfo = ({
                       autoComplete="min_temp_val"
                       value={min_temp_val}
                       disabled={viewOnly}
+                      onChange={(e) => {
+                        handleSliderUpdate(e, 'min_temp_val');
+                      }}
                     />
                     {shipmentMetaData.min_excursion_temp
                     && shipmentMetaData.min_excursion_temp.help_text
@@ -323,6 +395,7 @@ const EnvironmentalLimitsInfo = ({
                     orientation="vertical"
                     handleSliderChange={handleTempMinMaxChange}
                     rangeText=""
+                    step={0.1}
                     max={minMaxTempValue[3]}
                     min={minMaxTempValue[0]}
                     marks={[
@@ -363,6 +436,9 @@ const EnvironmentalLimitsInfo = ({
                       autoComplete="max_humid_val"
                       value={max_humid_val}
                       disabled={viewOnly}
+                      onChange={(e) => {
+                        handleSliderUpdate(e, 'max_humid_val');
+                      }}
                     />
                     {shipmentMetaData.max_excursion_humidity
                     && shipmentMetaData.max_excursion_humidity.help_text
@@ -385,6 +461,9 @@ const EnvironmentalLimitsInfo = ({
                       autoComplete="high_humid_val"
                       value={high_humid_val}
                       disabled={viewOnly}
+                      onChange={(e) => {
+                        handleSliderUpdate(e, 'high_humid_val');
+                      }}
                     />
                     {shipmentMetaData.max_warning_humidity
                     && shipmentMetaData.max_warning_humidity.help_text
@@ -407,6 +486,9 @@ const EnvironmentalLimitsInfo = ({
                       autoComplete="low_humid_val"
                       value={low_humid_val}
                       disabled={viewOnly}
+                      onChange={(e) => {
+                        handleSliderUpdate(e, 'low_humid_val');
+                      }}
                     />
                     {shipmentMetaData.min_warning_humidity
                     && shipmentMetaData.min_warning_humidity.help_text
@@ -429,6 +511,9 @@ const EnvironmentalLimitsInfo = ({
                       autoComplete="min_humid_val"
                       value={min_humid_val}
                       disabled={viewOnly}
+                      onChange={(e) => {
+                        handleSliderUpdate(e, 'min_humid_val');
+                      }}
                     />
                     {shipmentMetaData.min_excursion_humidity
                     && shipmentMetaData.min_excursion_humidity.help_text
@@ -452,6 +537,7 @@ const EnvironmentalLimitsInfo = ({
                     orientation="vertical"
                     handleSliderChange={handleHumidMinMaxChange}
                     rangeText=""
+                    step={0.1}
                     max={minMaxHumidValue[3]}
                     min={minMaxHumidValue[0]}
                     marks={[

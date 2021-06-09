@@ -54,7 +54,7 @@ const AdminMenu = ({
       id="customized-admin"
       anchorEl={settingEl}
       keepMounted
-      open={Boolean(settingEl)}
+      open={!!settingEl}
       onClose={handleClose}
     >
       <StyledMenuItem onClick={handleAdminPanelClick}>

@@ -342,7 +342,7 @@ const ShipmentKeyInfo = ({
                   variant="contained"
                   color="primary"
                   className={classes.submit}
-                  disabled={Boolean(loading || (key && !keyValue))}
+                  disabled={loading || !!(key && !keyValue)}
                 >
                   Save
                 </Button>
@@ -361,7 +361,7 @@ const ShipmentKeyInfo = ({
               color="primary"
               fullWidth
               onClick={onNextClick}
-              disabled={Boolean(key && !keyValue)}
+              disabled={!!(key && !keyValue)}
               className={classes.submit}
             >
               Save & Next: Items

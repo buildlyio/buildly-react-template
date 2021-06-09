@@ -153,7 +153,7 @@ const SensorsGatewayInfo = ({
   const submitDisabled = () => !gatewayIds.length || gatewayData === null;
 
   // eslint-disable-next-line max-len
-  checkIfSensorGatewayEdited = () => Boolean(gatewayIds.length !== shipmentFormData.gateway_ids.length);
+  checkIfSensorGatewayEdited = () => !!(gatewayIds.length !== shipmentFormData.gateway_ids.length);
 
   /**
    * Submit The form and add/edit custodian

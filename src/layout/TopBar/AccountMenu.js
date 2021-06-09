@@ -60,7 +60,7 @@ const AccountMenu = ({
         id="customized-menu"
         anchorEl={anchorEl}
         keepMounted
-        open={Boolean(anchorEl)}
+        open={!!anchorEl}
         onClose={handleClose}
       >
         <Box

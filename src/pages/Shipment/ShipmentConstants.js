@@ -506,7 +506,7 @@ export const itemColumns = [
       sortThirdClickReset: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? `$${numberWithCommas(value)}`
+          ? `${numberWithCommas(value)}`
           : value
       ),
     },
