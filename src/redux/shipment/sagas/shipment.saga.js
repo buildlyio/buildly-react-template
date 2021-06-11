@@ -443,7 +443,7 @@ function* pdfIdentifier(action) {
         : [response.data['aws url']];
     }
 
-    const unique_identifier = identifier || payload.unique_identifier;
+    const unique_identifier = identifier;
     yield [
       yield put({
         type: ADD_PDF_IDENTIFIER_SUCCESS,
@@ -463,14 +463,34 @@ function* pdfIdentifier(action) {
         redirectTo,
         organization_uuid,
       }),
+    ];
+    if (data && filename && identifier) {
       yield put(
         showAlert({
           type: 'success',
           open: true,
           message: 'Successfully Added PDF and Unique Identifer',
         }),
-      ),
-    ];
+      );
+    }
+    if (data && filename && !identifier) {
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Successfully Added PDF',
+        }),
+      );
+    }
+    if (!data && !filename && identifier) {
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Successfully Added Unique Identifer',
+        }),
+      );
+    }
   } catch (error) {
     yield [
       yield put(

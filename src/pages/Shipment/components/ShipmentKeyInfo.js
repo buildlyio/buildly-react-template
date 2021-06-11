@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { createWorker } from 'tesseract.js';
@@ -89,10 +89,30 @@ const ShipmentKeyInfo = ({
 
   const [file, setFile] = useState(null);
   const [text, setText] = useState(null);
-  const [key, setKey] = useState('');
+  const [keys, setKeys] = useState([]);
   const [loadingText, setLoadingText] = useState(false);
-  const [options, setOptions] = useState([]);
-  const [keyValue, setKeyValue] = useState('');
+  const [options, setOptions] = useState(['PR474946444', '1', '7194']);
+  const [keyValues, setKeyValues] = useState([]);
+  const [showIdentifier, setShowIdentifier] = useState('');
+
+  useEffect(() => {
+    if (
+      shipmentFormData
+      && shipmentFormData.unique_identifier
+    ) {
+      const identifier = JSON.parse(shipmentFormData.unique_identifier);
+      const KEYS = _.keys(identifier);
+      const VALUES = _.values(identifier);
+      let showIdfr = '';
+
+      _.forEach(KEYS, (key, index) => {
+        showIdfr = showIdfr
+          ? `${showIdfr}, ${key}: ${VALUES[index]}`
+          : `${key}: ${VALUES[index]}`;
+      });
+      setShowIdentifier(showIdfr);
+    }
+  }, [shipmentFormData]);
 
   const getPdfText = async (imageUrl) => {
     await worker.load();
@@ -105,15 +125,18 @@ const ShipmentKeyInfo = ({
   };
 
   const searchOnBlur = () => {
-    if (key && file) {
-      const re = new RegExp(`(.{0,20})${key}(.{0,20})`, 'gi');
-      let m;
+    if (file && keys.length > 0) {
       let values = [];
-      // eslint-disable-next-line no-cond-assign
-      while ((m = re.exec(text))) {
-        // let line = (m[1] ? '...' : '') + m[0] + (m[2] ? '...' : '');
-        values = [...values, m[2]];
-      }
+
+      _.forEach(keys, (key) => {
+        const re = new RegExp(`(.{0,20})${key}(.{0,20})`, 'gi');
+        let m;
+        // eslint-disable-next-line no-cond-assign
+        while ((m = re.exec(text))) {
+          values = [...values, m[2]];
+        }
+      });
+
       let opts = [];
       _.forEach(values, (value) => {
         const segments = value[0] === ':' ? value.split(': ') : value.split(' ');
@@ -125,22 +148,29 @@ const ShipmentKeyInfo = ({
           opts = [...opts, segment];
         }
       });
-      setOptions(opts);
+      setOptions(_.uniq(opts));
     }
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     let uploadFile = null;
+    let identifier = shipmentFormData
+    && shipmentFormData.unique_identifier
+      ? JSON.parse(shipmentFormData.unique_identifier)
+      : null;
 
     if (file) {
       uploadFile = new FormData();
       uploadFile.append('file', file, file.name);
     }
 
-    const identifier = key
-      ? JSON.stringify({ [key]: keyValue })
-      : null;
+    if (keys.length > 0 && keyValues.length > 0) {
+      _.forEach(keys, (key, index) => {
+        identifier = { ...identifier, [key]: keyValues[index] };
+      });
+      identifier = JSON.stringify(identifier);
+    }
 
     dispatch(
       pdfIdentifier(
@@ -157,8 +187,8 @@ const ShipmentKeyInfo = ({
     const fileInput = document.getElementById('key-file');
     setFile(null);
     setText(null);
-    setKey('');
-    setKeyValue('');
+    setKeys([]);
+    setKeyValues([]);
     setOptions([]);
     fileInput.value = '';
     fileInput.files = null;
@@ -188,8 +218,8 @@ const ShipmentKeyInfo = ({
   checkIfShipmentKeyEdited = () => (
     fileChanged
     || file !== null
-    || key !== ''
-    || keyValue !== ''
+    || keys.length > 0
+    || keyValues.length > 0
   );
 
   const onNextClick = (event) => {
@@ -206,6 +236,16 @@ const ShipmentKeyInfo = ({
     } else {
       handleCancel();
     }
+  };
+
+  const submitDisabled = () => {
+    if (
+      (keys && !keyValues)
+      && (keys.length !== keyValues.length)
+    ) {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -270,43 +310,62 @@ const ShipmentKeyInfo = ({
                   )
               }
             />
-            <TextField
-              className={classes.textfield}
-              variant="outlined"
-              fullWidth
-              id="file-search"
-              name="file-search"
-              label="Which should be the key?"
-              value={key}
-              onChange={(e) => setKey(e.target.value)}
-              onBlur={searchOnBlur}
-              helperText={
-                shipmentFormData
-                && shipmentFormData.unique_identifier
-                  ? (
-                    <span className={classes.identifier}>
-                      <em>Unique Identifier  --  </em>
-                      {`${_.keys(
-                        JSON.parse(shipmentFormData.unique_identifier),
-                      )[0]
-                      }: ${_.values(
-                        JSON.parse(shipmentFormData.unique_identifier),
-                      )[0]
-                      }`}
-                    </span>
-                  ) : (
-                    ''
-                  )
-              }
-            />
-            {key && (
             <Autocomplete
               freeSolo
+              multiple
+              className={classes.autoComplete}
+              id="file-search"
+              options={[]}
+              value={keys}
+              onChange={(event, newValue) => setKeys(newValue)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  className={classes.textfield}
+                  variant="outlined"
+                  fullWidth
+                  label="Which should be the key?"
+                  onBlur={searchOnBlur}
+                  helperText={
+                    shipmentFormData
+                    && shipmentFormData.unique_identifier
+                      ? (
+                        <span className={classes.identifier}>
+                          <span>
+                            Multiple keys allowed
+                          </span>
+                          <br />
+                          <em>Unique Identifier(s)  --  </em>
+                          {showIdentifier}
+                        </span>
+                      ) : (
+                        'Multiple keys allowed'
+                      )
+                  }
+                />
+              )}
+            />
+            {keys.length > 0 && (
+            <Autocomplete
+              freeSolo
+              multiple
               className={classes.autoComplete}
               id="unique-identifier"
               options={options}
-              value={keyValue}
-              onChange={(event, newValue) => setKeyValue(newValue)}
+              value={keyValues}
+              onChange={(event, newValue, reason) => {
+                if (
+                  reason === 'remove-option'
+                  && _.lowerCase(event.target.tagName) === 'li'
+                ) {
+                  setKeyValues([
+                    ...keyValues,
+                    options[event.target.value],
+                  ]);
+                } else {
+                  setKeyValues(newValue);
+                }
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -314,7 +373,16 @@ const ShipmentKeyInfo = ({
                   required
                   fullWidth
                   label="What should be the key value?"
-                  onChange={(e) => setKeyValue(e.target.value)}
+                  error={
+                    keyValues.length > 0
+                    && keys.length !== keyValues.length
+                  }
+                  helperText={
+                    keyValues.length > 0
+                    && keys.length !== keyValues.length
+                      ? 'Number of keys and values mismatch'
+                      : 'Multiple values allowed'
+                  }
                 />
               )}
             />
@@ -342,7 +410,7 @@ const ShipmentKeyInfo = ({
                   variant="contained"
                   color="primary"
                   className={classes.submit}
-                  disabled={loading || !!(key && !keyValue)}
+                  disabled={loading || submitDisabled()}
                 >
                   Save
                 </Button>
@@ -361,7 +429,7 @@ const ShipmentKeyInfo = ({
               color="primary"
               fullWidth
               onClick={onNextClick}
-              disabled={!!(key && !keyValue)}
+              disabled={submitDisabled()}
               className={classes.submit}
             >
               Save & Next: Items

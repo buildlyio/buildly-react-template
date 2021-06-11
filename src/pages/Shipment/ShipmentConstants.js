@@ -536,6 +536,7 @@ export const gatewayColumns = (timezone) => ([
     options: {
       sort: true,
       sortThirdClickReset: true,
+      customBodyRender: (value) => _.upperCase(value),
     },
   },
   {
@@ -597,6 +598,7 @@ export const sensorsColumns = (timezone) => ([
     options: {
       sort: true,
       sortThirdClickReset: true,
+      customBodyRender: (value) => _.upperCase(value),
     },
   },
   {
