@@ -62,21 +62,6 @@ export const convertUnitsOfMeasure = (
 ) => {
   let returnValue = null;
   switch (_class) {
-    case 'temperature':
-      if (
-        sourceUnit === 'fahrenheit'
-        && destinationUnit === 'celsius'
-      ) {
-        returnValue = (((value - 32) * 5) / 9).toFixed(2);
-      }
-      if (
-        sourceUnit === 'celsius'
-        && destinationUnit === 'fahrenheit'
-      ) {
-        returnValue = ((value * 9) / 5 + 32).toFixed(2);
-      }
-      break;
-
     case 'distance':
       if (
         sourceUnit === 'km'

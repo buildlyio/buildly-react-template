@@ -48,7 +48,6 @@ import {
   getSensorType,
   getSensorAlerts,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { convertUnitsOfMeasure } from '@utils/utilMethods';
 import {
   getShipmentDetails,
   deleteShipment,
@@ -251,15 +250,7 @@ const Shipment = (props) => {
           }
           _.forEach(report.report_entries, (report_entry) => {
             try {
-              const temperature = selectedShipment.platform_name === 'tive'
-                ? report_entry.report_temp
-                : convertUnitsOfMeasure(
-                  'celsius',
-                  report_entry.report_temp,
-                  temperatureUnit,
-                  'temperature',
-                );
-
+              const temperature = report_entry.report_temp;
               let dateTime;
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {

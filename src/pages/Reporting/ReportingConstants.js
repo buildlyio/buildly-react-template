@@ -16,9 +16,6 @@ import {
 import {
   getFormattedCustodyRows,
 } from '@pages/Shipment/ShipmentConstants';
-import {
-  convertUnitsOfMeasure,
-} from '@utils/utilMethods';
 
 export const SHIPMENT_OVERVIEW_TOOL_TIP = 'Select a shipment to view reporting data';
 
@@ -200,15 +197,7 @@ export const getShipmentOverview = (
           }
           _.forEach(report.report_entries, (report_entry) => {
             try {
-              const temperature = editedShipment.platform_name === 'tive'
-                ? report_entry.report_temp
-                : convertUnitsOfMeasure(
-                  'celsius',
-                  report_entry.report_temp,
-                  temperatureUnit,
-                  'temperature',
-                );
-
+              const temperature = report_entry.report_temp;
               let dateTime = '';
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
