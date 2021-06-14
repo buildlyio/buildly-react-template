@@ -7,7 +7,7 @@ import {
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { routes } from '@routes/routesConstants';
-import { getGatewayTypeColumns } from '../ConfigurationConstants';
+import { getColumns } from '../ConfigurationConstants';
 import AddGatewayType from '../forms/AddGatewayType';
 
 const GatewayType = ({
@@ -64,7 +64,7 @@ const GatewayType = ({
       noSpace
       loading={loading}
       rows={gatewayTypeList || []}
-      columns={getGatewayTypeColumns(timezone)}
+      columns={getColumns(timezone)}
       filename="GatewayType"
       addButtonHeading="Gateway Type"
       onAddButtonClick={onAddButtonClick}

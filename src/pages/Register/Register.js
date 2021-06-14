@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import {
   Button,
@@ -14,11 +14,18 @@ import {
   makeStyles,
   Container,
   Grid,
+  FormControl,
+  FormGroup,
+  FormControlLabel,
 } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
 import logo from '@assets/tp-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import { useInput } from '@hooks/useInput';
-import { register } from '@redux/authuser/actions/authuser.actions';
+import {
+  register,
+  loadOrgNames,
+} from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
 import { isMobile } from '@utils/mediaQuery';
 import { validators } from '@utils/validators';
@@ -59,15 +66,11 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     position: 'relative',
   },
-  infoSection: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: theme.spacing(2),
-    alignItems: 'center',
-  },
 }));
 
-const Register = ({ dispatch, loading, history }) => {
+const Register = ({
+  dispatch, loading, history, orgNames,
+}) => {
   const classes = useStyles();
   const email = useInput('', { required: true });
   const username = useInput('', { required: true });
@@ -82,6 +85,12 @@ const Register = ({ dispatch, loading, history }) => {
   const last_name = useInput('');
   const [emailAlertFlag, setEmailAlertFlag] = useState(false);
   const [formError, setFormError] = useState({});
+
+  useEffect(() => {
+    if (!orgNames) {
+      dispatch(loadOrgNames());
+    }
+  }, []);
 
   /**
    * Submit the form to the backend and attempts to authenticate
@@ -275,27 +284,38 @@ const Register = ({ dispatch, loading, history }) => {
               </Grid>
               <Grid container spacing={isMobile() ? 0 : 3}>
                 <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
+                  <Autocomplete
+                    freeSolo
+                    disableClearable
                     id="organization_name"
-                    label="Organization Name"
                     name="organization_name"
-                    autoComplete="organization_name"
-                    error={
-                      formError.organization_name
-                      && formError.organization_name.error
-                    }
-                    helperText={
-                      formError.organization_name
-                        ? formError.organization_name.message
-                        : ''
-                    }
-                    className={classes.textField}
-                    onBlur={(e) => handleBlur(e, 'required', organization_name)}
-                    {...organization_name.bind}
+                    options={orgNames || []}
+                    onChange={(e, newValue) => {
+                      organization_name.setValue(newValue || '');
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Organization Name"
+                        autoComplete="organization_name"
+                        error={
+                          formError.organization_name
+                          && formError.organization_name.error
+                        }
+                        helperText={
+                          formError.organization_name
+                            ? formError.organization_name.message
+                            : ''
+                        }
+                        className={classes.textField}
+                        onBlur={(e) => handleBlur(e, 'required', organization_name)}
+                        {...organization_name.bind}
+                      />
+                    )}
                   />
                 </Grid>
               </Grid>
@@ -351,20 +371,24 @@ const Register = ({ dispatch, loading, history }) => {
                     {...re_password.bind}
                   />
                 </Grid>
+
                 <Grid item xs={12} md={6}>
-                  <div className={classes.infoSection}>
-                    <Typography variant="body2">
-                      Shipment Email Alerts:
-                    </Typography>
-                    <Switch
-                      size="medium"
-                      color="primary"
-                      checked={emailAlertFlag}
-                      onChange={(event) => {
-                        setEmailAlertFlag(event.target.checked);
-                      }}
-                    />
-                  </div>
+                  <FormControl component="fieldset">
+                    <FormGroup aria-label="position" row>
+                      <FormControlLabel
+                        control={(
+                          <Switch
+                            size="medium"
+                            color="primary"
+                            checked={emailAlertFlag}
+                            onChange={(e) => setEmailAlertFlag(e.target.checked)}
+                          />
+                        )}
+                        label="Shipment Email Alerts"
+                        labelPlacement="end"
+                      />
+                    </FormGroup>
+                  </FormControl>
                 </Grid>
               </Grid>
               <div className={classes.loadingWrapper}>

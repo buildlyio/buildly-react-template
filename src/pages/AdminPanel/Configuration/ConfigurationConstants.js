@@ -17,6 +17,8 @@ export const GATEWAY_TYPE_TOOLTIP = 'Gateway Type(s) available in the system';
 
 export const ITEM_TYPE_TOOLTIP = 'Item Type(s) available in the system';
 
+export const ORGANIZATION_TYPE_TOOLTIP = 'Organization Type(s) available in the system';
+
 export const PRODUCT_TOOLTIP = 'Product(s) available in the system';
 
 export const PRODUCT_TYPE_TOOLTIP = 'Product Type(s) available in the system';
@@ -27,71 +29,7 @@ export const SHIPMENT_FLAG_TOOLTIP = 'Shipment Flag(s) available in the system';
 
 export const UNITS_OF_MEASURE_TOOLTIP = 'Unit(s) of Measure available in the system';
 
-export const getCustodianTypeColumns = (timezone) => ([
-  {
-    name: 'name',
-    label: 'Name',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
-  },
-  {
-    name: 'create_date',
-    label: 'Created At',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
-    },
-  },
-  {
-    name: 'edit_date',
-    label: 'Last Edited At',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
-    },
-  },
-]);
-
-export const getGatewayTypeColumns = (timezone) => ([
-  {
-    name: 'name',
-    label: 'Name',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
-  },
-  {
-    name: 'create_date',
-    label: 'Created At',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
-    },
-  },
-  {
-    name: 'edit_date',
-    label: 'Last Edited At',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
-    },
-  },
-]);
-
-export const getItemTypeColumns = (timezone) => ([
+export const getColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Name',
@@ -173,70 +111,6 @@ export const getProductColumns = (timezone) => ([
         const unit = _.find(units, { url: value });
         return unit ? unit.name : '';
       },
-    },
-  },
-  {
-    name: 'create_date',
-    label: 'Created At',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
-    },
-  },
-  {
-    name: 'edit_date',
-    label: 'Last Edited At',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
-    },
-  },
-]);
-
-export const getProductTypeColumns = (timezone) => ([
-  {
-    name: 'name',
-    label: 'Name',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
-  },
-  {
-    name: 'create_date',
-    label: 'Created At',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
-    },
-  },
-  {
-    name: 'edit_date',
-    label: 'Last Edited At',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
-    },
-  },
-]);
-
-export const getSensorTypeColumns = (timezone) => ([
-  {
-    name: 'name',
-    label: 'Name',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
     },
   },
   {

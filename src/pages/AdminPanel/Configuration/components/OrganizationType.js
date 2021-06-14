@@ -1,41 +1,45 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
-  getProductType,
-  deleteProductType,
-} from '@redux/items/actions/items.actions';
+  getOrgTypes,
+  deleteOrgType,
+} from '@redux/authuser/actions/authuser.actions';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '@context/User.context';
 import { routes } from '@routes/routesConstants';
 import { getColumns } from '../ConfigurationConstants';
-import AddProductType from '../forms/AddProductType';
+import AddOrganizationType from '../forms/AddOrganizationType';
 
-const ProductType = ({
+const OrganizationType = ({
   dispatch,
   loading,
-  productType,
+  orgTypes,
   redirectTo,
   history,
   timezone,
 }) => {
-  const organization = useContext(UserContext).organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
   const addPath = redirectTo
-    ? `${redirectTo}/product-type`
-    : `${routes.CONFIGURATION}/product-type/add`;
+    ? `${redirectTo}/org-type`
+    : `${routes.CONFIGURATION}/org-type/add`;
 
   const editPath = redirectTo
-    ? `${redirectTo}/product-type`
-    : `${routes.CONFIGURATION}/product-type/edit`;
+    ? `${redirectTo}/org-type`
+    : `${routes.CONFIGURATION}/org-type/edit`;
 
   useEffect(() => {
-    if (!loading && !productType) {
-      dispatch(getProductType(organization));
+    if (
+      !loading
+      && (
+        !orgTypes
+        || (orgTypes && orgTypes.length === 0)
+      )
+    ) {
+      dispatch(getOrgTypes());
     }
-  }, [productType]);
+  }, [orgTypes]);
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -57,7 +61,7 @@ const ProductType = ({
   };
 
   const handleDeleteModal = () => {
-    dispatch(deleteProductType(deleteId));
+    dispatch(deleteOrgType(deleteId));
     setDeleteModal(false);
   };
 
@@ -65,29 +69,29 @@ const ProductType = ({
     <DataTableWrapper
       noSpace
       loading={loading}
-      rows={productType || []}
+      rows={orgTypes || []}
       columns={getColumns(timezone)}
-      filename="ProductType"
-      addButtonHeading="Product Type"
+      filename="OrganizationType"
+      addButtonHeading="Organization Type"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openDeleteModal={openDeleteModal}
       setDeleteModal={setDeleteModal}
       handleDeleteModal={handleDeleteModal}
-      deleteModalTitle="Are you sure you want to Delete this Product Type?"
+      deleteModalTitle="Are you sure you want to Delete this Organization Type?"
       tableHeight="300px"
     >
-      <Route path={`${addPath}`} component={AddProductType} />
-      <Route path={`${editPath}/:id`} component={AddProductType} />
+      <Route path={`${addPath}`} component={AddOrganizationType} />
+      <Route path={`${editPath}/:id`} component={AddOrganizationType} />
     </DataTableWrapper>
   );
 };
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.itemsReducer,
+  ...state.authReducer,
   ...state.optionsReducer,
 });
 
-export default connect(mapStateToProps)(ProductType);
+export default connect(mapStateToProps)(OrganizationType);

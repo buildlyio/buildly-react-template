@@ -7,7 +7,7 @@ import {
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { routes } from '@routes/routesConstants';
-import { getSensorTypeColumns } from '../ConfigurationConstants';
+import { getColumns } from '../ConfigurationConstants';
 import AddSensorType from '../forms/AddSensorType';
 
 const SensorType = ({
@@ -64,7 +64,7 @@ const SensorType = ({
       noSpace
       loading={loading}
       rows={sensorTypeList || []}
-      columns={getSensorTypeColumns(timezone)}
+      columns={getColumns(timezone)}
       filename="SensorType"
       addButtonHeading="Sensor Type"
       onAddButtonClick={onAddButtonClick}

@@ -348,7 +348,7 @@ describe('Add Sensor reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.Add_SENSOR },
+      { type: actions.ADD_SENSOR },
     )).toEqual({
       ...initialState,
       loading: true,
@@ -358,7 +358,7 @@ describe('Add Sensor reducer', () => {
   it('Add Sensor success Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.Add_SENSOR_SUCCESS },
+      { type: actions.ADD_SENSOR_SUCCESS },
     )).toEqual({
       ...initialState,
       loaded: true,
@@ -370,7 +370,7 @@ describe('Add Sensor reducer', () => {
   it('Add Sensor fail Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.Add_SENSOR_FAILURE },
+      { type: actions.ADD_SENSOR_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,
@@ -657,8 +657,6 @@ describe('Get Sensor Alerts reducer', () => {
       ...initialState,
       loaded: true,
       loading: false,
-      sensorAlerts: undefined,
-      allAlerts: undefined,
     });
   });
 

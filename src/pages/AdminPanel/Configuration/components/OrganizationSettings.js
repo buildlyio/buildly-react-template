@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   makeStyles,
   Grid,
@@ -7,6 +8,7 @@ import {
   TextField,
   Typography,
   Button,
+  MenuItem,
 } from '@material-ui/core';
 import Loader from '@components/Loader/Loader';
 import {
@@ -62,6 +64,7 @@ const OrganizationSettings = ({
   dispatch,
   loading,
   organizationData,
+  orgTypes,
 }) => {
   const classes = useStyles();
   const [allowImportExport, setAllowImportExport] = useState(
@@ -70,6 +73,10 @@ const OrganizationSettings = ({
   );
   const [radius, setRadius] = useState(
     (organizationData && organizationData.radius) || 0,
+  );
+  const [orgType, setOrgType] = useState(
+    (organizationData
+      && organizationData.organization_type) || '',
   );
 
   useEffect(() => {
@@ -86,6 +93,7 @@ const OrganizationSettings = ({
       'miles',
       'distance',
     ));
+    setOrgType(organizationData.organization_type || '');
   };
 
   /**
@@ -106,6 +114,7 @@ const OrganizationSettings = ({
           'distance',
         )
         : 0,
+      organization_type: orgType,
     };
     dispatch(updateOrganization(data));
   };
@@ -141,6 +150,31 @@ const OrganizationSettings = ({
             value={radius}
             onChange={(event) => setRadius(event.target.value)}
           />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            select
+            id="org-type"
+            name="org-type"
+            label="Organization Type"
+            autoComplete="orgType"
+            value={orgType}
+            onChange={(e) => setOrgType(e.target.value)}
+          >
+            <MenuItem value="">Select</MenuItem>
+            {_.map(orgTypes, (type) => (
+              <MenuItem
+                key={`orgType-${type.id}`}
+                value={type.id}
+              >
+                {_.capitalize(type.name)}
+              </MenuItem>
+            ))}
+          </TextField>
         </Grid>
         <Grid container spacing={2} justify="center">
           <Grid item xs={6} sm={4}>

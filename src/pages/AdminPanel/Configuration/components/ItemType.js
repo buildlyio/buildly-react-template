@@ -8,7 +8,7 @@ import {
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
 import { routes } from '@routes/routesConstants';
-import { getItemTypeColumns } from '../ConfigurationConstants';
+import { getColumns } from '../ConfigurationConstants';
 import AddItemType from '../forms/AddItemType';
 
 const ItemType = ({
@@ -66,7 +66,7 @@ const ItemType = ({
       noSpace
       loading={loading}
       rows={itemTypeList || []}
-      columns={getItemTypeColumns(timezone)}
+      columns={getColumns(timezone)}
       filename="ItemType"
       addButtonHeading="Item Type"
       onAddButtonClick={onAddButtonClick}

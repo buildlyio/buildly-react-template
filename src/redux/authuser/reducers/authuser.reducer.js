@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   LOGIN,
   LOGIN_SUCCESS,
@@ -29,7 +30,22 @@ import {
   UPDATE_ORGANIZATION,
   UPDATE_ORGANIZATION_SUCCESS,
   UPDATE_ORGANIZATION_FAILURE,
-} from '@redux/authuser/actions/authuser.actions';
+  LOAD_ORG_NAMES,
+  LOAD_ORG_NAMES_SUCCESS,
+  LOAD_ORG_NAMES_FAILURE,
+  GET_ORG_TYPES,
+  GET_ORG_TYPES_SUCCESS,
+  GET_ORG_TYPES_FAILURE,
+  ADD_ORG_TYPE,
+  ADD_ORG_TYPE_SUCCESS,
+  ADD_ORG_TYPE_FAILURE,
+  EDIT_ORG_TYPE,
+  EDIT_ORG_TYPE_SUCCESS,
+  EDIT_ORG_TYPE_FAILURE,
+  DELETE_ORG_TYPE,
+  DELETE_ORG_TYPE_SUCCESS,
+  DELETE_ORG_TYPE_FAILURE,
+} from '../actions/authuser.actions';
 
 const initialState = {
   loading: false,
@@ -37,6 +53,8 @@ const initialState = {
   data: null,
   error: null,
   organizationData: null,
+  orgNames: null,
+  orgTypes: null,
 };
 
 // Reducer
@@ -284,6 +302,139 @@ export default (state = initialState, action) => {
       };
 
     case UPDATE_ORGANIZATION_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case LOAD_ORG_NAMES:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case LOAD_ORG_NAMES_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        orgNames: action.orgNames,
+      };
+
+    case LOAD_ORG_NAMES_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_ORG_TYPES:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case GET_ORG_TYPES_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        orgTypes: action.orgTypes,
+      };
+
+    case GET_ORG_TYPES_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case ADD_ORG_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case ADD_ORG_TYPE_SUCCESS: {
+      const types = state.orgTypes
+        ? [...state.orgTypes, action.orgType]
+        : [action.orgType];
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        orgTypes: types,
+      };
+    }
+
+    case ADD_ORG_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case EDIT_ORG_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case EDIT_ORG_TYPE_SUCCESS: {
+      let types = _.filter(state.orgTypes, (type) => (
+        type.id !== action.orgType.id
+      ));
+      types = [...types, action.orgType];
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        orgTypes: types,
+      };
+    }
+
+    case EDIT_ORG_TYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case DELETE_ORG_TYPE:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case DELETE_ORG_TYPE_SUCCESS: {
+      const types = _.filter(state.orgTypes, (type) => (
+        type.id !== action.id
+      ));
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        orgTypes: types,
+      };
+    }
+
+    case DELETE_ORG_TYPE_FAILURE:
       return {
         ...state,
         loading: false,

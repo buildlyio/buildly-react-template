@@ -28,5 +28,6 @@ export const useInput = (
       }
       return !!(initialValue !== newValue);
     },
+    setValue,
   };
 };

@@ -7,7 +7,7 @@ import {
 } from '@redux/custodian/actions/custodian.actions';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { routes } from '@routes/routesConstants';
-import { getCustodianTypeColumns } from '../ConfigurationConstants';
+import { getColumns } from '../ConfigurationConstants';
 import AddCustodianType from '../forms/AddCustodianType';
 
 const CustodianType = ({
@@ -64,7 +64,7 @@ const CustodianType = ({
       noSpace
       loading={loading}
       rows={custodianTypeList || []}
-      columns={getCustodianTypeColumns(timezone)}
+      columns={getColumns(timezone)}
       filename="CustodianType"
       addButtonHeading="Custodian Type"
       onAddButtonClick={onAddButtonClick}

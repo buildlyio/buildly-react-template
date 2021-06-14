@@ -7,6 +7,8 @@ const initialState = {
   data: null,
   error: null,
   organizationData: null,
+  orgNames: null,
+  orgTypes: null,
 };
 
 describe('Empty reducer', () => {
@@ -222,7 +224,6 @@ describe('Get Organization reducer', () => {
       ...initialState,
       loaded: true,
       loading: false,
-      organizationData: undefined,
     });
   });
 
@@ -259,7 +260,6 @@ describe('Update Organization reducer', () => {
       loaded: true,
       loading: false,
       data: undefined,
-      organizationData: undefined,
     });
   });
 
@@ -375,6 +375,214 @@ describe('Reset Password Check reducer', () => {
       error: undefined,
       loaded: true,
       loading: false,
+    });
+  });
+});
+
+describe('Load Organization Names reducer', () => {
+  it('Empty Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.LOAD_ORG_NAMES,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: true,
+      loaded: false,
+    });
+  });
+
+  it('load org names success Reducer', () => {
+    expect(
+      reducer.default(
+        initialState,
+        { type: actions.LOAD_ORG_NAMES_SUCCESS },
+      ),
+    ).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      orgNames: undefined,
+    });
+  });
+
+  it('load org names fail Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.LOAD_ORG_NAMES_FAILURE,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Get Organization Types reducer', () => {
+  it('Empty Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.GET_ORG_TYPES,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: true,
+      loaded: false,
+    });
+  });
+
+  it('get org types success Reducer', () => {
+    expect(
+      reducer.default(
+        initialState,
+        { type: actions.GET_ORG_TYPES_SUCCESS },
+      ),
+    ).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      orgTypes: undefined,
+    });
+  });
+
+  it('get org types fail Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.GET_ORG_TYPES_FAILURE,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Add Organization Type reducer', () => {
+  it('Empty Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_ORG_TYPE,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: true,
+      loaded: false,
+    });
+  });
+
+  it('add org type success Reducer', () => {
+    const orgType = { id: 1, name: 'Test' };
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_ORG_TYPE_SUCCESS,
+        orgType,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      orgTypes: [orgType],
+    });
+  });
+
+  it('add org type fail Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.ADD_ORG_TYPE_FAILURE,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Edit Organization Type reducer', () => {
+  it('Empty Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.EDIT_ORG_TYPE,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: true,
+      loaded: false,
+    });
+  });
+
+  it('edit org type success Reducer', () => {
+    const orgType = { id: 1, name: 'Test Edited' };
+    expect(
+      reducer.default(initialState, {
+        type: actions.EDIT_ORG_TYPE_SUCCESS,
+        orgType,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      orgTypes: [orgType],
+    });
+  });
+
+  it('edit org type fail Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.EDIT_ORG_TYPE_FAILURE,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Delete Organization Type reducer', () => {
+  it('Empty Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.DELETE_ORG_TYPE,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: true,
+      loaded: false,
+    });
+  });
+
+  it('delete org type success Reducer', () => {
+    const id = 1;
+    expect(
+      reducer.default(initialState, {
+        type: actions.DELETE_ORG_TYPE_SUCCESS,
+        id,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      orgTypes: [],
+    });
+  });
+
+  it('delete org type fail Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.DELETE_ORG_TYPE_FAILURE,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
     });
   });
 });

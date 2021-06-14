@@ -43,6 +43,26 @@ export const RESET_PASSWORD_CHECK = 'AUTH/RESET_PASSWORD_CHECK';
 export const RESET_PASSWORD_CHECK_SUCCESS = 'AUTH/RESET_PASSWORD_CHECK_SUCCESS';
 export const RESET_PASSWORD_CHECK_FAILURE = 'AUTH/RESET_PASSWORD_CHECK_FAILURE';
 
+export const LOAD_ORG_NAMES = 'AUTH/LOAD_ORG_NAMES';
+export const LOAD_ORG_NAMES_SUCCESS = 'AUTH/LOAD_ORG_NAMES_SUCCESS';
+export const LOAD_ORG_NAMES_FAILURE = 'AUTH/LOAD_ORG_NAMES_FAILURE';
+
+export const GET_ORG_TYPES = 'AUTH/GET_ORG_TYPES';
+export const GET_ORG_TYPES_SUCCESS = 'AUTH/GET_ORG_TYPES_SUCCESS';
+export const GET_ORG_TYPES_FAILURE = 'AUTH/GET_ORG_TYPES_FAILURE';
+
+export const ADD_ORG_TYPE = 'AUTH/ADD_ORG_TYPE';
+export const ADD_ORG_TYPE_SUCCESS = 'AUTH/ADD_ORG_TYPE_SUCCESS';
+export const ADD_ORG_TYPE_FAILURE = 'AUTH/ADD_ORG_TYPE_FAILURE';
+
+export const EDIT_ORG_TYPE = 'AUTH/EDIT_ORG_TYPE';
+export const EDIT_ORG_TYPE_SUCCESS = 'AUTH/EDIT_ORG_TYPE_SUCCESS';
+export const EDIT_ORG_TYPE_FAILURE = 'AUTH/EDIT_ORG_TYPE_FAILURE';
+
+export const DELETE_ORG_TYPE = 'AUTH/DELETE_ORG_TYPE';
+export const DELETE_ORG_TYPE_SUCCESS = 'AUTH/DELETE_ORG_TYPE_SUCCESS';
+export const DELETE_ORG_TYPE_FAILURE = 'AUTH/DELETE_ORG_TYPE_FAILURE';
+
 /**
  * Login action
  * @param {{ username, password }} credentials
@@ -134,4 +154,45 @@ export const resetPasswordCheck = (data, history) => ({
   type: RESET_PASSWORD_CHECK,
   data,
   history,
+});
+
+/**
+ * Load all Organizations Names
+ */
+export const loadOrgNames = () => ({
+  type: LOAD_ORG_NAMES,
+});
+
+/**
+ * Load all Organization Types
+ */
+export const getOrgTypes = () => ({
+  type: GET_ORG_TYPES,
+});
+
+/**
+ * Add Organization Type
+ * @param data
+ */
+export const addOrgType = (data) => ({
+  type: ADD_ORG_TYPE,
+  data,
+});
+
+/**
+ * Edit Organization Type
+ * @param data
+ */
+export const editOrgType = (data) => ({
+  type: EDIT_ORG_TYPE,
+  data,
+});
+
+/**
+ * Delete Organization Type
+ * @param id
+ */
+export const deleteOrgType = (id) => ({
+  type: DELETE_ORG_TYPE,
+  id,
 });

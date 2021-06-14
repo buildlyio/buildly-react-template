@@ -163,3 +163,59 @@ describe('Reset Password Check action', () => {
       .toEqual(expectedAction);
   });
 });
+
+// Test Load Org Names
+describe('actions', () => {
+  it('should create an action to load org names', () => {
+    const expectedAction = {
+      type: actions.LOAD_ORG_NAMES,
+    };
+    expect(actions.loadOrgNames()).toEqual(expectedAction);
+  });
+});
+
+// Test Load Org Types
+describe('actions', () => {
+  it('should create an action to load org types', () => {
+    const expectedAction = {
+      type: actions.GET_ORG_TYPES,
+    };
+    expect(actions.getOrgTypes()).toEqual(expectedAction);
+  });
+});
+
+// Test Add Org Type
+describe('actions', () => {
+  it('should create an action to add org type', () => {
+    const data = { name: 'Test' };
+    const expectedAction = {
+      type: actions.ADD_ORG_TYPE,
+      data,
+    };
+    expect(actions.addOrgType(data)).toEqual(expectedAction);
+  });
+});
+
+// Test Edit Org Type
+describe('actions', () => {
+  it('should create an action to edit org type', () => {
+    const data = { id: 1, name: 'Test Edited' };
+    const expectedAction = {
+      type: actions.EDIT_ORG_TYPE,
+      data,
+    };
+    expect(actions.editOrgType(data)).toEqual(expectedAction);
+  });
+});
+
+// Test Delete Org Type
+describe('actions', () => {
+  it('should create an action to delete org type', () => {
+    const id = 1;
+    const expectedAction = {
+      type: actions.DELETE_ORG_TYPE,
+      id,
+    };
+    expect(actions.deleteOrgType(id)).toEqual(expectedAction);
+  });
+});

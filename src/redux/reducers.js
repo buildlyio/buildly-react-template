@@ -1,6 +1,6 @@
 // react library imports
 import { combineReducers } from 'redux';
-import crudDataReducer from '@modules/crud/redux/crud.reducer';
+import crudDataReducer from '../modules/crud/redux/crud.reducer';
 import alertReducer from './alert/reducers/alert.reducer';
 import authReducer from './authuser/reducers/authuser.reducer';
 import coreGroupReducer from './coregroup/reducers/coregroup.reducer';
