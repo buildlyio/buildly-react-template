@@ -278,7 +278,7 @@ const EnvironmentalLimitsInfo = ({
               className={classes.boxHeading}
               variant="body2"
             >
-              Temperature settings
+              Temperature settings (°F)
             </Typography>
             <CardContent>
               <Grid container spacing={2}>
@@ -401,11 +401,11 @@ const EnvironmentalLimitsInfo = ({
                     marks={[
                       {
                         value: 0,
-                        label: '0°',
+                        label: '0°F',
                       },
                       {
                         value: 100,
-                        label: '100°',
+                        label: '100°F',
                       },
                     ]}
                   />
