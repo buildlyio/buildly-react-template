@@ -27,6 +27,9 @@ import {
   getOrganizationOptions,
   setTimezone,
 } from '@redux/options/actions/options.actions';
+import {
+  getNewGateways,
+} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { routes } from '@routes/routesConstants';
 import {
   checkForAdmin,
@@ -104,7 +107,7 @@ const TopBar = ({
   };
 
   const refreshPage = () => {
-    window.location.reload();
+    dispatch(getNewGateways());
   };
 
   const handleLogoutClick = () => {

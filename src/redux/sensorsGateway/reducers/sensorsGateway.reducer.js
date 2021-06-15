@@ -3,6 +3,9 @@ import {
   GET_GATEWAYS,
   GET_GATEWAYS_SUCCESS,
   GET_GATEWAYS_FAILURE,
+  GET_NEW_GATEWAYS,
+  GET_NEW_GATEWAYS_SUCCESS,
+  GET_NEW_GATEWAYS_FAILURE,
   ADD_GATEWAY,
   ADD_GATEWAY_SUCCESS,
   ADD_GATEWAY_FAILURE,
@@ -111,6 +114,29 @@ export default (state = initialState, action) => {
       };
 
     case GET_GATEWAYS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_NEW_GATEWAYS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case GET_NEW_GATEWAYS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+      };
+
+    case GET_NEW_GATEWAYS_FAILURE:
       return {
         ...state,
         loading: false,

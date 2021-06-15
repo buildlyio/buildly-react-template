@@ -50,6 +50,41 @@ describe('Get Gateway reducer', () => {
   });
 });
 
+describe('Get New Gateways reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_NEW_GATEWAYS },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('get new Gateways success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_NEW_GATEWAYS_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+    });
+  });
+
+  it('get new Gateways fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_NEW_GATEWAYS_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});
+
 describe('Add Gateway reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
