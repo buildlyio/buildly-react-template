@@ -14,7 +14,6 @@ import Loader from '@components/Loader/Loader';
 import {
   updateOrganization,
 } from '@redux/authuser/actions/authuser.actions';
-import { convertUnitsOfMeasure } from '@utils/utilMethods';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -87,12 +86,7 @@ const OrganizationSettings = ({
 
   const resetValues = () => {
     setAllowImportExport(organizationData.allow_import_export);
-    setRadius(convertUnitsOfMeasure(
-      'km',
-      parseFloat(organizationData.radius),
-      'miles',
-      'distance',
-    ));
+    setRadius(organizationData.radius);
     setOrgType(organizationData.organization_type || '');
   };
 
@@ -106,14 +100,7 @@ const OrganizationSettings = ({
       ...organizationData,
       edit_date: new Date(),
       allow_import_export: allowImportExport,
-      radius: radius
-        ? convertUnitsOfMeasure(
-          'miles',
-          parseFloat(radius),
-          'km',
-          'distance',
-        )
-        : 0,
+      radius: radius || 0,
       organization_type: orgType,
     };
     dispatch(updateOrganization(data));
