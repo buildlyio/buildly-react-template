@@ -8,6 +8,9 @@ import {
   GET_GATEWAYS,
   GET_GATEWAYS_SUCCESS,
   GET_GATEWAYS_FAILURE,
+  GET_NEW_GATEWAYS,
+  GET_NEW_GATEWAYS_SUCCESS,
+  GET_NEW_GATEWAYS_FAILURE,
   ADD_GATEWAY,
   ADD_GATEWAY_FAILURE,
   EDIT_GATEWAY,
@@ -80,6 +83,32 @@ function* getGatewayList(payload) {
       ),
       yield put({
         type: GET_GATEWAYS_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* getNewGateways(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}${sensorApiEndPoint}gateway/create_gateway/`,
+    );
+    yield put({ type: GET_NEW_GATEWAYS_SUCCESS });
+    window.location.reload();
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t load new gateways due to some error!',
+        }),
+      ),
+      yield put({
+        type: GET_NEW_GATEWAYS_FAILURE,
         error,
       }),
     ];
@@ -728,6 +757,10 @@ function* watchGetGateway() {
   yield takeLatest(GET_GATEWAYS, getGatewayList);
 }
 
+function* watchGetNewGateways() {
+  yield takeLatest(GET_NEW_GATEWAYS, getNewGateways);
+}
+
 function* watchAddGateway() {
   yield takeLatest(ADD_GATEWAY, addGateway);
 }
@@ -799,6 +832,7 @@ function* watchGetSensorAlerts() {
 export default function* sensorsGatewaySaga() {
   yield all([
     watchGetGateway(),
+    watchGetNewGateways(),
     watchAddGateway(),
     watchDeleteGateway(),
     watchEditGateway(),

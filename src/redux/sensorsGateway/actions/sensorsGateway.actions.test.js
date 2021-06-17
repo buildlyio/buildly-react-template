@@ -13,6 +13,16 @@ describe('Get Gateways action', () => {
   });
 });
 
+// Test Get New Gateways
+describe('Get New Gateways action', () => {
+  it('should create an action to get new Gateways', () => {
+    const expectedAction = {
+      type: actions.GET_NEW_GATEWAYS,
+    };
+    expect(actions.getNewGateways()).toEqual(expectedAction);
+  });
+});
+
 // Test Add Gateway
 describe('Add Gateway action', () => {
   it('should create an action to add Gateway', () => {

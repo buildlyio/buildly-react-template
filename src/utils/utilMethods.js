@@ -46,39 +46,3 @@ export const setOptionsData = (options, fieldName) => {
   }
   return result;
 };
-
-/**
- * Used to convert value measured from one unit to other
- * @param {String} sourceUnit
- * @param {Number} value
- * @param {String} destinationUnit
- * @param {String} _class
- */
-export const convertUnitsOfMeasure = (
-  sourceUnit,
-  value,
-  destinationUnit,
-  _class,
-) => {
-  let returnValue = null;
-  switch (_class) {
-    case 'distance':
-      if (
-        sourceUnit === 'km'
-        && destinationUnit === 'miles'
-      ) {
-        returnValue = (value * 0.6214).toFixed(2);
-      }
-      if (
-        sourceUnit === 'miles'
-        && destinationUnit === 'km'
-      ) {
-        returnValue = (value / 0.6214).toFixed(2);
-      }
-      break;
-
-    default:
-      break;
-  }
-  return returnValue;
-};

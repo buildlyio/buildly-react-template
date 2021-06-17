@@ -3,6 +3,10 @@ export const GET_GATEWAYS = 'SENSORS/GET_GATEWAYS';
 export const GET_GATEWAYS_SUCCESS = 'SENSORS/GET_GATEWAYS_SUCCESS';
 export const GET_GATEWAYS_FAILURE = 'SENSORS/GET_GATEWAYS_FAILURE';
 
+export const GET_NEW_GATEWAYS = 'SENSORS/GET_NEW_GATEWAYS';
+export const GET_NEW_GATEWAYS_SUCCESS = 'SENSORS/GET_NEW_GATEWAYS_SUCCESS';
+export const GET_NEW_GATEWAYS_FAILURE = 'SENSORS/GET_NEW_GATEWAYS_FAILURE';
+
 export const ADD_GATEWAY = 'SENSORS/ADD_GATEWAY';
 export const ADD_GATEWAY_SUCCESS = 'SENSORS/ADD_GATEWAY_SUCCESS';
 export const ADD_GATEWAY_FAILURE = 'SENSORS/ADD_GATEWAY_FAILURE';
@@ -79,6 +83,13 @@ export const GET_SENSOR_ALERTS_FAILURE = 'SENSORS/GET_SENSOR_ALERTS_FAILURE';
 export const getGateways = (organization_uuid) => ({
   type: GET_GATEWAYS,
   organization_uuid,
+});
+
+/**
+ *  Get New Gateways
+ */
+export const getNewGateways = () => ({
+  type: GET_NEW_GATEWAYS,
 });
 
 /**

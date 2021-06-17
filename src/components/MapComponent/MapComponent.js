@@ -14,7 +14,6 @@ import {
   REPORT_TYPES,
   getIcon,
 } from '@pages/Reporting/ReportingConstants';
-import { convertUnitsOfMeasure } from '@utils/utilMethods';
 
 export const MapComponent = (props) => {
   const { markers, setSelectedMarker, geofence } = props;
@@ -244,12 +243,7 @@ const RenderedMap = withScriptjs(
             />
             <InfoWindow>
               <div style={{ color: 'black' }}>
-                {`Geofence of ${convertUnitsOfMeasure(
-                  'km',
-                  parseFloat(mark.radius),
-                  'miles',
-                  'distance',
-                )} miles`}
+                {`Geofence of ${mark.radius} miles`}
               </div>
             </InfoWindow>
           </Marker>
