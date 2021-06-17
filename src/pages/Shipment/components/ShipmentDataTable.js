@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import MUIDataTable from 'mui-datatables';
 import _ from 'lodash';
 import {
@@ -11,6 +11,7 @@ import {
   Edit as EditIcon,
   ListAlt as ViewIcon,
   Delete as DeleteIcon,
+  FileCopy as FileCopyIcon,
 } from '@material-ui/icons';
 import { UserContext } from '@context/User.context';
 import { checkForGlobalAdmin } from '@utils/utilMethods';
@@ -57,9 +58,12 @@ const ShipmentDataTable = ({
   deleteAction,
   setSelectedShipment,
   timezone,
+  copyAction,
+  rowsType,
 }) => {
   const classes = useStyles();
   const [selected, setSelected] = useState(0);
+  const [columns, setColumns] = useState([]);
   const user = useContext(UserContext);
   const isAdmin = checkForGlobalAdmin(user);
 
@@ -89,9 +93,27 @@ const ShipmentDataTable = ({
     },
   };
 
-  const columns = [
+  const cols = [
     {
-      name: 'Edit',
+      name: 'Copy',
+      options: {
+        filter: false,
+        sort: false,
+        empty: true,
+        setCellHeaderProps: () => ({
+          className: classes.centerHeader,
+        }),
+        customBodyRenderLite: (dataIndex) => (
+          <IconButton
+            onClick={() => copyAction(rows[dataIndex])}
+          >
+            <FileCopyIcon />
+          </IconButton>
+        ),
+      },
+    },
+    {
+      name: (_.lowerCase(rowsType) !== 'active') ? 'View' : 'Edit',
       options: {
         filter: false,
         sort: false,
@@ -139,6 +161,15 @@ const ShipmentDataTable = ({
       },
     })),
   ];
+
+  useEffect(() => {
+    if (_.lowerCase(rowsType) === 'completed') {
+      setColumns(cols);
+    } else {
+      const restCols = _.filter(cols, (col) => col.name !== 'Copy');
+      setColumns(restCols);
+    }
+  }, [rowsType, rows]);
 
   return (
     <div className={classes.root}>

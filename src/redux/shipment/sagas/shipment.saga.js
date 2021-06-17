@@ -67,9 +67,8 @@ function* getShipmentList(payload) {
         );
       }
 
-      const ids = _.toString(
-        _.map(data.data, 'partner_shipment_id'),
-      );
+      const IDS = _.map(data.data, 'partner_shipment_id');
+      const ids = _.toString(_.without(IDS, null));
       const encodedIds = encodeURIComponent(ids);
       if (payload.getUpdatedSensorData) {
         yield [

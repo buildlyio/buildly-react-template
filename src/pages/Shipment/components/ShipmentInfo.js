@@ -94,6 +94,9 @@ const ShipmentInfo = (props) => {
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   const editPage = location.state && location.state.type === 'edit';
   const editData = location.state && location.state.data;
+  const copyData = (location.state
+    && location.state.type === 'copy'
+    && location.state.data) || {};
 
   const shipment_name = useInput(
     (editData && editData.name) || '',
@@ -295,6 +298,7 @@ const ShipmentInfo = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const shipmentFormValue = {
+      ...copyData,
       name: shipment_name.value,
       status: shipment_status.value,
       bol_order_id: lading_bill.value,

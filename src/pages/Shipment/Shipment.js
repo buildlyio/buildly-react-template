@@ -368,6 +368,38 @@ const Shipment = (props) => {
     setShipmentFilter(filter);
   };
 
+  const handleCopy = (item) => {
+    const copyData = {
+      transport_mode: item.transport_mode,
+      status: 'Planned',
+      max_excursion_temp: item.max_excursion_temp,
+      min_excursion_temp: item.min_excursion_temp,
+      max_excursion_humidity: item.max_excursion_humidity,
+      min_excursion_humidity: item.min_excursion_humidity,
+      max_warning_temp: item.max_warning_temp,
+      min_warning_temp: item.min_warning_temp,
+      max_warning_humidity: item.max_warning_humidity,
+      min_warning_humidity: item.min_warning_humidity,
+      route_description: item.route_description,
+      unit_of_measure: item.unit_of_measure,
+      value: item.value,
+      gross_weight: item.gross_weight,
+      net_weight: item.net_weight,
+      organization_uuid: item.organization_uuid,
+      uom_weight: item.uom_weight,
+      uom_temp: item.uom_temp,
+      uom_distance: item.uom_distance,
+      flags: item.flags,
+      items: item.items,
+    };
+
+    history.push(`${routes.SHIPMENT}/add`, {
+      type: 'copy',
+      data: copyData,
+      from: routes.SHIPMENT,
+    });
+  };
+
   return (
     <Box mt={5} mb={5}>
       {loading && <Loader open={loading} />}
@@ -434,6 +466,8 @@ const Shipment = (props) => {
             }
             editAction={handleEdit}
             deleteAction={handleDelete}
+            copyAction={handleCopy}
+            rowsType={shipmentFilter}
             setSelectedShipment={setSelectedShipment}
             tileView={tileView}
             timezone={timezone}
