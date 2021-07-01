@@ -91,7 +91,7 @@ const ShipmentKeyInfo = ({
   const [text, setText] = useState(null);
   const [keys, setKeys] = useState([]);
   const [loadingText, setLoadingText] = useState(false);
-  const [options, setOptions] = useState(['PR474946444', '1', '7194']);
+  const [options, setOptions] = useState([]);
   const [keyValues, setKeyValues] = useState([]);
   const [showIdentifier, setShowIdentifier] = useState('');
 

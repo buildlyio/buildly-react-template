@@ -12,6 +12,7 @@ import {
 import { routes } from '@routes/routesConstants';
 import Configuration from './Configuration/Configuration';
 import ImportExport from './ImportExport/ImportExport';
+import Consortium from './Consortium/Consortium';
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -29,9 +30,11 @@ const AdminPanel = ({ history, location, organizationData }) => {
     ? [
       { label: 'Configuration', value: 'configuration' },
       { label: 'Import/Export', value: 'import-export' },
+      { label: 'Consortium', value: 'consortium' },
     ]
     : [
       { label: 'Configuration', value: 'configuration' },
+      { label: 'Consortium', value: 'consortium' },
     ];
   const viewPath = (_.find(
     subNav,
@@ -74,6 +77,7 @@ const AdminPanel = ({ history, location, organizationData }) => {
           component={ImportExport}
         />
       )}
+      <Route path={routes.CONSORTIUM} component={Consortium} />
     </Box>
   );
 };

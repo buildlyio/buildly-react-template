@@ -17,4 +17,5 @@ export const routes = {
   ADMIN_PANEL: '/app/admin-panel',
   CONFIGURATION: '/app/admin-panel/configuration',
   IMPORT_EXPORT: '/app/admin-panel/import-export',
+  CONSORTIUM: '/app/admin-panel/consortium',
 };
