@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import {
   Button,
   TextField,
-  Switch,
   CircularProgress,
   Typography,
   makeStyles,
   Grid,
   useMediaQuery,
   useTheme,
+  Checkbox,
 } from '@material-ui/core';
 import FormModal from '@components/Modal/FormModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
@@ -50,12 +51,17 @@ const useStyles = makeStyles((theme) => ({
   infoSection: {
     display: 'flex',
     justifyContent: 'space-between',
-    paddingBottom: theme.spacing(2),
     alignItems: 'center',
   },
   inputWithTooltip: {
     display: 'flex',
     alignItems: 'center',
+  },
+  alertOptions: {
+    marginBottom: theme.spacing(2),
+  },
+  alertTitle: {
+    marginRight: theme.spacing(2),
   },
 }));
 
@@ -81,8 +87,17 @@ const EditProfileInfo = ({
     (organizationData && organizationData.name) || '',
   );
   const email = useInput((editData && editData.email) || '');
-  const [emailAlertFlag, setEmailAlertFlag] = useState(
-    editData && editData.email_alert_flag,
+  const [pushOptions, setPushOptions] = useState(
+    (editData && editData.push_preferences) || {
+      geofence: false,
+      environmental: false,
+    },
+  );
+  const [emailOptions, setEmailOptions] = useState(
+    (editData && editData.email_preferences) || {
+      geofence: false,
+      environmental: false,
+    },
   );
   const [formError, setFormError] = useState({});
 
@@ -91,7 +106,8 @@ const EditProfileInfo = ({
     last_name: '',
     email: '',
     organisation_name: '',
-    email_alert_flag: false,
+    push_preferences: '',
+    email_preferences: '',
   });
 
   const theme = useTheme();
@@ -112,9 +128,13 @@ const EditProfileInfo = ({
         userOptions.actions.POST,
         'email',
       );
-      metadata.email_alert_flag = setOptionsData(
+      metadata.push_preferences = setOptionsData(
         userOptions.actions.POST,
-        'email_alert_flag',
+        'push_preferences',
+      );
+      metadata.email_preferences = setOptionsData(
+        userOptions.actions.POST,
+        'email_preferences',
       );
     }
     if (orgOptions && orgOptions.actions) {
@@ -144,7 +164,9 @@ const EditProfileInfo = ({
       ...(organizationData && {
         organization_uuid: organizationData.organization_uuid,
       }),
-      email_alert_flag: emailAlertFlag,
+      push_preferences: pushOptions,
+      email_preferences: emailOptions,
+      user_timezone: moment.tz.guess(),
     };
     dispatch(updateUser(editUserFormValue));
     setFormModal(false);
@@ -196,7 +218,23 @@ const EditProfileInfo = ({
       || last_name.hasChanged()
       || organisation_name.hasChanged()
       || email.hasChanged()
-      || (emailAlertFlag !== editData.email_alert_flag)
+      || (pushOptions.geofence !== (
+        (editData.push_preferences
+          && editData.push_preferences.geofence
+        ) || false
+      )) || (pushOptions.environmental !== (
+        (editData.push_preferences
+          && editData.push_preferences.environmental
+        ) || false
+      )) || (emailOptions.geofence !== (
+        (editData.email_preferences
+          && editData.email_preferences.geofence
+        ) || false
+      )) || (emailOptions.environmental !== (
+        (editData.email_preferences
+          && editData.email_preferences.environmental
+        ) || false
+      ))
     );
 
     if (dataHasChanged) {
@@ -344,18 +382,93 @@ const EditProfileInfo = ({
               )}
             </Grid>
           )}
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.alertOptions}>
+            <Typography
+              className={classes.alertTitle}
+              variant="subtitle1"
+            >
+              Push Notification Preferences
+            </Typography>
+            {fieldsMetadata.push_preferences
+            && fieldsMetadata.push_preferences.help_text
+            && (
+              <CustomizedTooltips
+                toolTipText={
+                  fieldsMetadata.push_preferences.help_text
+                }
+              />
+            )}
             <div className={classes.infoSection}>
               <Typography variant="body2">
-                Shipment Email Alerts:
+                Geofence Notifications:
               </Typography>
-              <Switch
+              <Checkbox
                 size="medium"
                 color="primary"
-                checked={emailAlertFlag}
-                onChange={(event) => {
-                  setEmailAlertFlag(event.target.checked);
-                }}
+                checked={pushOptions.geofence}
+                onChange={(event) => setPushOptions({
+                  ...pushOptions,
+                  geofence: event.target.checked,
+                })}
+              />
+            </div>
+            <div className={classes.infoSection}>
+              <Typography variant="body2">
+                Environmental Notifications:
+              </Typography>
+              <Checkbox
+                size="medium"
+                color="primary"
+                checked={pushOptions.environmental}
+                onChange={(event) => setPushOptions({
+                  ...pushOptions,
+                  environmental: event.target.checked,
+                })}
+              />
+            </div>
+          </Grid>
+          <Grid item xs={12} className={classes.alertOptions}>
+            <Typography
+              className={classes.alertTitle}
+              variant="subtitle1"
+            >
+              Email Notification Preferences
+            </Typography>
+            {fieldsMetadata.email_preferences
+            && fieldsMetadata.email_preferences.help_text
+            && (
+              <CustomizedTooltips
+                toolTipText={
+                  fieldsMetadata.email_preferences.help_text
+                }
+              />
+            )}
+            <div className={classes.infoSection}>
+              <Typography variant="body2">
+                Geofence Notifications:
+              </Typography>
+              <Checkbox
+                size="medium"
+                color="primary"
+                checked={emailOptions.geofence}
+                onChange={(event) => setEmailOptions({
+                  ...emailOptions,
+                  geofence: event.target.checked,
+                })}
+              />
+            </div>
+            <div className={classes.infoSection}>
+              <Typography variant="body2">
+                Environmental Notifications:
+              </Typography>
+              <Checkbox
+                size="medium"
+                color="primary"
+                checked={emailOptions.environmental}
+                onChange={(event) => setEmailOptions({
+                  ...emailOptions,
+                  environmental: event.target.checked,
+                })}
               />
             </div>
           </Grid>

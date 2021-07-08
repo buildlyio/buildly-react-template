@@ -10,6 +10,8 @@ export const environment = window.environment || {
   MAP_API_KEY,
   MAP_API_URL: `https://maps.googleapis.com/maps/api/js?key=${MAP_API_KEY}&v=3.exp&libraries=geometry,drawing,places`,
   GEO_CODE_API: 'AIzaSyDw-lNn69CSWKBGz97HeVuJQKIhiVLcFyE',
+  ALERT_SOCKET_URL: 'wss://tp-dev-pushnotification.buildly.io:8001/ws/alert/',
   session_timeout: 1000,
+  hide_notification: 1000 * 60 * 10,
   production: false,
 };

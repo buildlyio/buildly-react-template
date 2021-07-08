@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment-timezone';
 import {
   Button,
   CssBaseline,
@@ -7,7 +8,6 @@ import {
   Link,
   Box,
   Card,
-  Switch,
   CircularProgress,
   CardContent,
   Typography,
@@ -17,6 +17,7 @@ import {
   FormControl,
   FormGroup,
   FormControlLabel,
+  Checkbox,
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import logo from '@assets/tp-logo.png';
@@ -66,10 +67,19 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     position: 'relative',
   },
+  alertGrid: {
+    marginTop: theme.spacing(2),
+  },
+  alertOptionsLabel: {
+    fontSize: '1rem',
+  },
+  alertOptions: {
+    marginLeft: theme.spacing(5),
+  },
 }));
 
 const Register = ({
-  dispatch, loading, history, orgNames,
+  dispatch, loading, history, orgNames, timezone,
 }) => {
   const classes = useStyles();
   const email = useInput('', { required: true });
@@ -83,7 +93,14 @@ const Register = ({
   const organization_name = useInput('', { required: true });
   const first_name = useInput('', { required: true });
   const last_name = useInput('');
-  const [emailAlertFlag, setEmailAlertFlag] = useState(false);
+  const [pushOptions, setPushOptions] = useState({
+    geofence: false,
+    environmental: false,
+  });
+  const [emailOptions, setEmailOptions] = useState({
+    geofence: false,
+    environmental: false,
+  });
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
@@ -106,7 +123,9 @@ const Register = ({
       organization_name: organization_name.value,
       first_name: first_name.value,
       last_name: last_name.value,
-      email_alert_flag: emailAlertFlag,
+      push_preferences: pushOptions,
+      email_preferences: emailOptions,
+      user_timezone: moment.tz.guess(),
     };
     dispatch(register(registerFormValue, history));
   };
@@ -372,23 +391,87 @@ const Register = ({
                   />
                 </Grid>
 
-                <Grid item xs={12} md={6}>
-                  <FormControl component="fieldset">
-                    <FormGroup aria-label="position" row>
-                      <FormControlLabel
-                        control={(
-                          <Switch
-                            size="medium"
-                            color="primary"
-                            checked={emailAlertFlag}
-                            onChange={(e) => setEmailAlertFlag(e.target.checked)}
-                          />
-                        )}
-                        label="Shipment Email Alerts"
-                        labelPlacement="end"
-                      />
-                    </FormGroup>
-                  </FormControl>
+                <Grid item xs={12}>
+                  <span className={classes.alertOptionsLabel}>
+                    Push Notification Preference
+                  </span>
+                  <div className={classes.alertOptions}>
+                    <FormControl component="fieldset">
+                      <FormGroup aria-label="position" row={false}>
+                        <FormControlLabel
+                          control={(
+                            <Checkbox
+                              size="medium"
+                              color="primary"
+                              checked={pushOptions.geofence}
+                              onChange={(e) => setPushOptions({
+                                ...pushOptions,
+                                geofence: e.target.checked,
+                              })}
+                            />
+                          )}
+                          label="GeoFence Notifications"
+                          labelPlacement="end"
+                        />
+                        <FormControlLabel
+                          control={(
+                            <Checkbox
+                              size="medium"
+                              color="primary"
+                              checked={pushOptions.environmental}
+                              onChange={(e) => setPushOptions({
+                                ...pushOptions,
+                                environmental: e.target.checked,
+                              })}
+                            />
+                          )}
+                          label="Environmental Notifications"
+                          labelPlacement="end"
+                        />
+                      </FormGroup>
+                    </FormControl>
+                  </div>
+                </Grid>
+                <Grid item xs={12} className={classes.alertGrid}>
+                  <span className={classes.alertOptionsLabel}>
+                    Email Notification Preference
+                  </span>
+                  <div className={classes.alertOptions}>
+                    <FormControl component="fieldset">
+                      <FormGroup aria-label="position" row={false}>
+                        <FormControlLabel
+                          control={(
+                            <Checkbox
+                              size="medium"
+                              color="primary"
+                              checked={emailOptions.geofence}
+                              onChange={(e) => setEmailOptions({
+                                ...emailOptions,
+                                geofence: e.target.checked,
+                              })}
+                            />
+                          )}
+                          label="GeoFence Notifications"
+                          labelPlacement="end"
+                        />
+                        <FormControlLabel
+                          control={(
+                            <Checkbox
+                              size="medium"
+                              color="primary"
+                              checked={emailOptions.environmental}
+                              onChange={(e) => setEmailOptions({
+                                ...emailOptions,
+                                environmental: e.target.checked,
+                              })}
+                            />
+                          )}
+                          label="Environmental Notifications"
+                          labelPlacement="end"
+                        />
+                      </FormGroup>
+                    </FormControl>
+                  </div>
                 </Grid>
               </Grid>
               <div className={classes.loadingWrapper}>

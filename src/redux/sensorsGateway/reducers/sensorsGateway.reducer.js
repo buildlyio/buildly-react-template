@@ -54,9 +54,9 @@ import {
   GET_AGGREGATE_REPORT,
   GET_AGGREGATE_REPORT_SUCCESS,
   GET_AGGREGATE_REPORT_FAILURE,
-  GET_SENSOR_ALERTS,
-  GET_SENSOR_ALERTS_SUCCESS,
-  GET_SENSOR_ALERTS_FAILURE,
+  GET_ALL_SENSOR_ALERTS,
+  GET_ALL_SENSOR_ALERTS_SUCCESS,
+  GET_ALL_SENSOR_ALERTS_FAILURE,
 } from '../actions/sensorsGateway.actions';
 
 const initialState = {
@@ -68,7 +68,6 @@ const initialState = {
   sensorData: null,
   sensorTypeList: null,
   aggregateReportData: null,
-  sensorAlerts: null,
   allAlerts: null,
 };
 
@@ -534,7 +533,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case GET_SENSOR_ALERTS:
+    case GET_ALL_SENSOR_ALERTS:
       return {
         ...state,
         loading: true,
@@ -542,20 +541,15 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case GET_SENSOR_ALERTS_SUCCESS:
+    case GET_ALL_SENSOR_ALERTS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        sensorAlerts: action.filteredData
-          ? action.filteredData
-          : state.sensorAlerts,
-        allAlerts: action.allData
-          ? action.allData
-          : state.allAlerts,
+        allAlerts: action.data,
       };
 
-    case GET_SENSOR_ALERTS_FAILURE:
+    case GET_ALL_SENSOR_ALERTS_FAILURE:
       return {
         ...state,
         loading: false,

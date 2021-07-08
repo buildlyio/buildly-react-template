@@ -221,6 +221,12 @@ function* updateUser(payload) {
       `${environment.API_URL}coreuser/me/`,
     );
     yield call(oauthService.setOauthUser, user);
+    const coreuser = yield call(
+      httpService.makeRequest,
+      'get',
+      `${environment.API_URL}coreuser/`,
+    );
+    yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield [
       yield put({ type: UPDATE_USER_SUCCESS, user }),
       yield put({ type: GET_ORGANIZATION_SUCCESS, data }),

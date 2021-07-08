@@ -33,7 +33,7 @@ import {
 import {
   getSensors,
   getSensorType,
-  getSensorAlerts,
+  getAllSensorAlerts,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
@@ -198,7 +198,7 @@ const Reporting = ({
       const ships = _.filter(shipmentData, { had_alert: true });
       const ids = _.toString(_.map(ships, 'partner_shipment_id'));
       const encodedIds = encodeURIComponent(ids);
-      dispatch(getSensorAlerts(encodedIds));
+      dispatch(getAllSensorAlerts(encodedIds));
     }
   }, [shipmentData, custodianData, custodyData, aggregateReportData, timezone]);
 

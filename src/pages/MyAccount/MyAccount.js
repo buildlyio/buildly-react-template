@@ -39,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
   backButton: {
     margin: theme.spacing(3, 0),
   },
+  alertOptions: {
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 /**
@@ -151,12 +154,65 @@ const MyAccount = ({
                       <Divider />
                     </Grid>
                     <Grid item xs={12}>
+                      <Typography
+                        className={classes.alertOptions}
+                        variant="subtitle1"
+                      >
+                        Push Notification Preferences
+                      </Typography>
                       <div className={classes.infoSection}>
                         <Typography variant="body2">
-                          Shipment Email Alerts:
+                          GeoFence Alerts:
                         </Typography>
                         <Typography variant="body1">
-                          {user && user.email_alert_flag
+                          {user
+                          && user.push_preferences
+                          && user.push_preferences.geofence
+                            ? 'Yes'
+                            : 'No'}
+                        </Typography>
+                      </div>
+                      <div className={classes.infoSection}>
+                        <Typography variant="body2">
+                          Environmental Alerts:
+                        </Typography>
+                        <Typography variant="body1">
+                          {user
+                          && user.push_preferences
+                          && user.push_preferences.environmental
+                            ? 'Yes'
+                            : 'No'}
+                        </Typography>
+                      </div>
+                      <Divider />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        className={classes.alertOptions}
+                        variant="subtitle1"
+                      >
+                        Email Notification Preferences
+                      </Typography>
+                      <div className={classes.infoSection}>
+                        <Typography variant="body2">
+                          GeoFence Alerts:
+                        </Typography>
+                        <Typography variant="body1">
+                          {user
+                          && user.email_preferences
+                          && user.email_preferences.geofence
+                            ? 'Yes'
+                            : 'No'}
+                        </Typography>
+                      </div>
+                      <div className={classes.infoSection}>
+                        <Typography variant="body2">
+                          Environmental Alerts:
+                        </Typography>
+                        <Typography variant="body1">
+                          {user
+                          && user.email_preferences
+                          && user.email_preferences.environmental
                             ? 'Yes'
                             : 'No'}
                         </Typography>

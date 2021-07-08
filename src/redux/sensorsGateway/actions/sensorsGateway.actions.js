@@ -72,9 +72,9 @@ export const GET_AGGREGATE_REPORT = 'SENSORS/GET_AGGREGATE_REPORT';
 export const GET_AGGREGATE_REPORT_SUCCESS = 'SENSORS/GET_AGGREGATE_REPORT_SUCCESS';
 export const GET_AGGREGATE_REPORT_FAILURE = 'SENSORS/GET_AGGREGATE_REPORT_FAILURE';
 
-export const GET_SENSOR_ALERTS = 'SENSORS/GET_SENSOR_ALERTS';
-export const GET_SENSOR_ALERTS_SUCCESS = 'SENSORS/GET_SENSOR_ALERTS_SUCCESS';
-export const GET_SENSOR_ALERTS_FAILURE = 'SENSORS/GET_SENSOR_ALERTS_FAILURE';
+export const GET_ALL_SENSOR_ALERTS = 'SENSORS/GET_ALL_SENSOR_ALERTS';
+export const GET_ALL_SENSOR_ALERTS_SUCCESS = 'SENSORS/GET_ALL_SENSOR_ALERTS_SUCCESS';
+export const GET_ALL_SENSOR_ALERTS_FAILURE = 'SENSORS/GET_ALL_SENSOR_ALERTS_FAILURE';
 
 // Gateway action functions
 /**
@@ -257,8 +257,7 @@ export const getAggregateReport = (partnerShipmentIds) => ({
  * Get Sensor Alerts
  * @param {Array} partnerShipmentIds
  */
-export const getSensorAlerts = (partnerShipmentIds, hourRange = 0) => ({
-  type: GET_SENSOR_ALERTS,
+export const getAllSensorAlerts = (partnerShipmentIds) => ({
+  type: GET_ALL_SENSOR_ALERTS,
   partnerShipmentIds,
-  hourRange,
 });
