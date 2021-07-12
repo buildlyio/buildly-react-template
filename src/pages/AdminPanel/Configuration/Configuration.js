@@ -17,7 +17,6 @@ import {
   PRODUCT_TOOLTIP,
   PRODUCT_TYPE_TOOLTIP,
   SENSOR_TYPE_TOOLTIP,
-  SHIPMENT_FLAG_TOOLTIP,
   UNITS_OF_MEASURE_TOOLTIP,
   ORG_SETTINGS_TOOLTIP,
 } from './ConfigurationConstants';
@@ -28,7 +27,6 @@ import OrganizationType from './components/OrganizationType';
 import Product from './components/Product';
 import ProductType from './components/ProductType';
 import SensorType from './components/SensorType';
-import ShipmentFlag from './components/ShipmentFlag';
 import UnitOfMeasure from './components/UnitOfMeasure';
 import OrganizationSettings from './components/OrganizationSettings';
 
@@ -169,21 +167,6 @@ const Configuration = (props) => {
         </AccordionSummary>
         <AccordionDetails>
           <SensorType {...props} />
-        </AccordionDetails>
-      </Accordion>
-      <Accordion className={classes.accordian}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="shipment-flag-content"
-          id="shipment-flag-header"
-        >
-          <Typography variant="h5">
-            Shipment Flag
-            <CustomizedTooltips toolTipText={SHIPMENT_FLAG_TOOLTIP} />
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <ShipmentFlag {...props} />
         </AccordionDetails>
       </Accordion>
       <Accordion className={classes.accordian}>

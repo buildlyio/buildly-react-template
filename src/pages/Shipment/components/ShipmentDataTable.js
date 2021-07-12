@@ -94,83 +94,83 @@ const ShipmentDataTable = ({
     },
   };
 
-  const cols = [
-    {
-      name: 'Copy',
-      options: {
-        filter: false,
-        sort: false,
-        empty: true,
-        setCellHeaderProps: () => ({
-          className: classes.centerHeader,
-        }),
-        customBodyRenderLite: (dataIndex) => (
-          <IconButton
-            onClick={() => copyAction(rows[dataIndex])}
-          >
-            <FileCopyIcon />
-          </IconButton>
-        ),
-      },
-    },
-    {
-      name: (_.lowerCase(rowsType) !== 'active') ? 'View' : 'Edit',
-      options: {
-        filter: false,
-        sort: false,
-        empty: true,
-        setCellHeaderProps: () => ({
-          className: classes.centerHeader,
-        }),
-        customBodyRenderLite: (dataIndex) => (
-          <IconButton onClick={() => editAction(rows[dataIndex])}>
-            {!isAdmin
-            && rows[dataIndex]
-            && rows[dataIndex].status
-            && _.lowerCase(rows[dataIndex].status) !== 'planned'
-              ? <ViewIcon />
-              : <EditIcon />}
-          </IconButton>
-        ),
-      },
-    },
-    {
-      name: 'Delete',
-      options: {
-        filter: false,
-        sort: false,
-        empty: true,
-        setCellHeaderProps: () => ({
-          className: classes.centerHeader,
-        }),
-        customBodyRenderLite: (dataIndex) => (
-          <IconButton
-            onClick={() => deleteAction(rows[dataIndex])}
-          >
-            <DeleteIcon />
-          </IconButton>
-        ),
-      },
-    },
-    ..._.map(getShipmentDataTableColumns(timezone, consortiumData), (column) => ({
-      ...column,
-      options: {
-        ...column.options,
-        setCellHeaderProps: () => ({
-          className: classes.leftHeader,
-        }),
-      },
-    })),
-  ];
-
   useEffect(() => {
+    const cols = [
+      {
+        name: 'Copy',
+        options: {
+          filter: false,
+          sort: false,
+          empty: true,
+          setCellHeaderProps: () => ({
+            className: classes.centerHeader,
+          }),
+          customBodyRenderLite: (dataIndex) => (
+            <IconButton
+              onClick={() => copyAction(rows[dataIndex])}
+            >
+              <FileCopyIcon />
+            </IconButton>
+          ),
+        },
+      },
+      {
+        name: (_.lowerCase(rowsType) !== 'active') ? 'View' : 'Edit',
+        options: {
+          filter: false,
+          sort: false,
+          empty: true,
+          setCellHeaderProps: () => ({
+            className: classes.centerHeader,
+          }),
+          customBodyRenderLite: (dataIndex) => (
+            <IconButton onClick={() => editAction(rows[dataIndex])}>
+              {!isAdmin
+              && rows[dataIndex]
+              && rows[dataIndex].status
+              && _.lowerCase(rows[dataIndex].status) !== 'planned'
+                ? <ViewIcon />
+                : <EditIcon />}
+            </IconButton>
+          ),
+        },
+      },
+      {
+        name: 'Delete',
+        options: {
+          filter: false,
+          sort: false,
+          empty: true,
+          setCellHeaderProps: () => ({
+            className: classes.centerHeader,
+          }),
+          customBodyRenderLite: (dataIndex) => (
+            <IconButton
+              onClick={() => deleteAction(rows[dataIndex])}
+            >
+              <DeleteIcon />
+            </IconButton>
+          ),
+        },
+      },
+      ..._.map(getShipmentDataTableColumns(timezone, consortiumData), (column) => ({
+        ...column,
+        options: {
+          ...column.options,
+          setCellHeaderProps: () => ({
+            className: classes.leftHeader,
+          }),
+        },
+      })),
+    ];
+
     if (_.lowerCase(rowsType) === 'completed') {
       setColumns(cols);
     } else {
       const restCols = _.filter(cols, (col) => col.name !== 'Copy');
       setColumns(restCols);
     }
-  }, [rowsType, rows]);
+  }, [timezone, consortiumData, rowsType]);
 
   return (
     <div className={classes.root}>

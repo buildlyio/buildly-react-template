@@ -18,26 +18,6 @@ export const recallColumns = [
     },
   },
   {
-    name: 'flag_list',
-    label: 'Issue',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      customBodyRender: (value) => {
-        if (value && value.length) {
-          let flagName = '';
-          _.forEach(value, (flag) => {
-            flagName = flagName
-              ? `${flagName}, ${flag.name}`
-              : `${flag.name}`;
-          });
-          return flagName;
-        }
-        return value;
-      },
-    },
-  },
-  {
     name: 'itemNo',
     label: 'Affected Items',
     options: {
@@ -107,7 +87,6 @@ export const getFormattedShipmentRow = (
   shipmentData,
   custodianData,
   itemData,
-  shipmentFlag,
   custodyData,
   aggregateReportData,
 ) => {
@@ -127,7 +106,6 @@ export const getFormattedShipmentRow = (
     let itemName = '';
     let custodyInfo = [];
     let custodianName = '';
-    let flag_list = [];
     let aggregateReportInfo = [];
 
     if (custodyRows.length > 0) {
@@ -174,19 +152,6 @@ export const getFormattedShipmentRow = (
         }
       });
     }
-
-    if (shipmentFlag && shipmentFlag.length) {
-      _.forEach(shipmentFlag, (flag) => {
-        if (
-          _.indexOf(shipment.flags, flag.url) !== -1
-          && flag.type !== 'None'
-        ) {
-          editedShipment[`${_.lowerCase(flag.name)}_flag`] = true;
-          flag_list = [...flag_list, flag];
-        }
-      });
-    }
-    editedShipment.flag_list = flag_list;
 
     shipmentList = [...shipmentList, editedShipment];
   });

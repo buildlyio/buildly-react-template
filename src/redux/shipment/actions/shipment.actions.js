@@ -16,22 +16,6 @@ export const DELETE_SHIPMENT = 'SHIPMENT/DELETE_SHIPMENT';
 export const DELETE_SHIPMENT_SUCCESS = 'SHIPMENT/DELETE_SHIPMENT_SUCCESS';
 export const DELETE_SHIPMENT_FAILURE = 'SHIPMENT/DELETE_SHIPMENT_FAILURE';
 
-export const GET_SHIPMENT_FLAG = 'SHIPMENT/GET_SHIPMENT_FLAG';
-export const GET_SHIPMENT_FLAG_SUCCESS = 'SHIPMENT/GET_SHIPMENT_FLAG_SUCCESS';
-export const GET_SHIPMENT_FLAG_FAILURE = 'SHIPMENT/GET_SHIPMENT_FLAG_FAILURE';
-
-export const ADD_SHIPMENT_FLAG = 'SHIPMENT/ADD_SHIPMENT_FLAG';
-export const ADD_SHIPMENT_FLAG_SUCCESS = 'SHIPMENT/ADD_SHIPMENT_FLAG_SUCCESS';
-export const ADD_SHIPMENT_FLAG_FAILURE = 'SHIPMENT/ADD_SHIPMENT_FLAG_FAILURE';
-
-export const EDIT_SHIPMENT_FLAG = 'SHIPMENT/EDIT_SHIPMENT_FLAG';
-export const EDIT_SHIPMENT_FLAG_SUCCESS = 'SHIPMENT/EDIT_SHIPMENT_FLAG_SUCCESS';
-export const EDIT_SHIPMENT_FLAG_FAILURE = 'SHIPMENT/EDIT_SHIPMENT_FLAG_FAILURE';
-
-export const DELETE_SHIPMENT_FLAG = 'SHIPMENT/DELETE_SHIPMENT_FLAG';
-export const DELETE_SHIPMENT_FLAG_SUCCESS = 'SHIPMENT/DELETE_SHIPMENT_FLAG_SUCCESS';
-export const DELETE_SHIPMENT_FLAG_FAILURE = 'SHIPMENT/DELETE_SHIPMENT_FLAG_FAILURE';
-
 export const GET_DASHBOARD_ITEMS = 'SHIPMENT/GET_DASHBOARD_ITEMS';
 export const GET_DASHBOARD_ITEMS_SUCCESS = 'SHIPMENT/GET_DASHBOARD_ITEMS_SUCCESS';
 export const GET_DASHBOARD_ITEMS_FAILURE = 'SHIPMENT/GET_DASHBOARD_ITEMS_FAILURE';
@@ -115,42 +99,6 @@ export const deleteShipment = (shipmentId, organization_uuid) => ({
   type: DELETE_SHIPMENT,
   shipmentId,
   organization_uuid,
-});
-
-/**
- * Get Shipment Flag
- * @param {String} organization_uuid
- */
-export const getShipmentFlag = (organization_uuid) => ({
-  type: GET_SHIPMENT_FLAG,
-  organization_uuid,
-});
-
-/**
- * Add Shipment Flag
- * @param {Object} payload
- */
-export const addShipmentFlag = (payload) => ({
-  type: ADD_SHIPMENT_FLAG,
-  payload,
-});
-
-/**
- * Edit Shipment Flag
- * @param {Object} payload
- */
-export const editShipmentFlag = (payload) => ({
-  type: EDIT_SHIPMENT_FLAG,
-  payload,
-});
-
-/**
- * Delete Shipment Flag
- * @param {Number} id
- */
-export const deleteShipmentFlag = (id) => ({
-  type: DELETE_SHIPMENT_FLAG,
-  id,
 });
 
 /**

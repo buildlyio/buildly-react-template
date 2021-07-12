@@ -19,7 +19,6 @@ import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
 import { environment } from '@environments/environment';
-import { svgIcon } from '@pages/Shipment/ShipmentConstants';
 import {
   getShipmentDetails,
   getDashboardItems,
@@ -97,7 +96,6 @@ const Dashboard = (props) => {
     dispatch,
     itemData,
     gatewayData,
-    shipmentFlag,
     unitsOfMeasure,
     custodyData,
     sensorData,
@@ -150,17 +148,6 @@ const Dashboard = (props) => {
     }
   }, []);
 
-  const returnIcon = (row) => {
-    let flagType = '';
-    let flag = '';
-    const shipmentFlags = row.flag_list;
-    if (shipmentFlags && shipmentFlags.length) {
-      flagType = shipmentFlags[0].type;
-      flag = shipmentFlags[0].name;
-    }
-    return svgIcon(flagType, flag);
-  };
-
   useEffect(() => {
     if (
       shipmentData
@@ -168,7 +155,6 @@ const Dashboard = (props) => {
       && custodyData
       && aggregateReportData
       && itemData
-      && shipmentFlag
     ) {
       const routesInfo = [];
       const delayedInfo = [];
@@ -177,7 +163,6 @@ const Dashboard = (props) => {
         shipmentData,
         custodianData,
         itemData,
-        shipmentFlag,
         custodyData,
         aggregateReportData,
       );
@@ -203,7 +188,6 @@ const Dashboard = (props) => {
                     custody.start_of_custody_location.split(',')[1],
                   ),
                   label: `${row.name}:${row.shipment_uuid}(Start Location)`,
-                  icon: returnIcon(row),
                 });
               }
               if (custody.end_of_custody_location) {
@@ -217,27 +201,7 @@ const Dashboard = (props) => {
                     custody.end_of_custody_location.split(',')[1],
                   ),
                   label: `${row.name}:${row.shipment_uuid}(End Location)`,
-                  icon: returnIcon(row),
                 });
-              }
-            }
-          });
-        }
-
-        if (row.flag_list) {
-          row.flag_list.forEach((flag) => {
-            if (flag.name.toLowerCase().includes('delay')) {
-              delayedInfo.push(row);
-            } else {
-              let itemExists = false;
-              excursionInfo.forEach((item) => {
-                itemExists = item.url === row.url;
-              });
-              if (
-                !itemExists
-                && row.status.toLowerCase() !== 'planned'
-              ) {
-                excursionInfo.push(row);
               }
             }
           });
@@ -248,7 +212,7 @@ const Dashboard = (props) => {
       setDelayedRows(delayedInfo);
       setExcursionRows(excursionInfo);
     }
-  }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData, aggregateReportData]);
+  }, [shipmentData, custodianData, itemData, custodyData, aggregateReportData]);
 
   return (
     <Box mt={3} mb={3}>

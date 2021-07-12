@@ -105,7 +105,6 @@ const Shipment = (props) => {
     dispatch,
     itemData,
     gatewayData,
-    shipmentFlag,
     unitsOfMeasure,
     custodyData,
     sensorData,
@@ -189,13 +188,11 @@ const Shipment = (props) => {
       && custodyData
       && itemData
       && aggregateReportData
-      && shipmentFlag
     ) {
       const formattedRows = getFormattedRow(
         shipmentData,
         custodianData,
         itemData,
-        shipmentFlag,
         custodyData,
         aggregateReportData,
       );
@@ -226,7 +223,7 @@ const Shipment = (props) => {
         }
       }
     }
-  }, [shipmentData, custodianData, itemData, shipmentFlag, custodyData, aggregateReportData]);
+  }, [shipmentData, custodianData, itemData, custodyData, aggregateReportData]);
 
   useEffect(() => {
     if (selectedShipment) {
@@ -239,14 +236,6 @@ const Shipment = (props) => {
 
       _.forEach(selectedShipment.sensor_report, (report) => {
         if (report.report_entries.length > 0) {
-          let color;
-          if (report.excursion_flag) {
-            color = 'red';
-          } else if (report.warning_flag) {
-            color = 'yellow';
-          } else {
-            color = 'green';
-          }
           _.forEach(report.report_entries, (report_entry) => {
             try {
               const temperature = report_entry.report_temp;
@@ -285,7 +274,7 @@ const Shipment = (props) => {
                   humidity: report_entry.report_humidity,
                   battery: report_entry.report_battery,
                   pressure: report_entry.report_pressure,
-                  color,
+                  color: 'green',
                   timestamp: dateTime,
                 };
                 // Considered use case: If a shipment stays at some
@@ -388,7 +377,6 @@ const Shipment = (props) => {
       uom_weight: item.uom_weight,
       uom_temp: item.uom_temp,
       uom_distance: item.uom_distance,
-      flags: item.flags,
       items: item.items,
     };
 

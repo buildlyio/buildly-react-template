@@ -13,18 +13,6 @@ import {
   DELETE_SHIPMENT,
   DELETE_SHIPMENT_SUCCESS,
   DELETE_SHIPMENT_FAILURE,
-  GET_SHIPMENT_FLAG,
-  GET_SHIPMENT_FLAG_SUCCESS,
-  GET_SHIPMENT_FLAG_FAILURE,
-  ADD_SHIPMENT_FLAG,
-  ADD_SHIPMENT_FLAG_SUCCESS,
-  ADD_SHIPMENT_FLAG_FAILURE,
-  EDIT_SHIPMENT_FLAG,
-  EDIT_SHIPMENT_FLAG_SUCCESS,
-  EDIT_SHIPMENT_FLAG_FAILURE,
-  DELETE_SHIPMENT_FLAG,
-  DELETE_SHIPMENT_FLAG_SUCCESS,
-  DELETE_SHIPMENT_FLAG_FAILURE,
   GET_DASHBOARD_ITEMS,
   GET_DASHBOARD_ITEMS_SUCCESS,
   GET_DASHBOARD_ITEMS_FAILURE,
@@ -39,25 +27,10 @@ const initialState = {
   error: null,
   shipmentFormData: null,
   shipmentData: null,
-  shipmentFlag: null,
 };
 
 // Reducer
 export default (state = initialState, action) => {
-  let deletedShipmentFlag;
-  let editedShipmentFlag = state.shipmentFlag;
-  const shipmentFlagPresent = _.remove(
-    editedShipmentFlag,
-    { id: action.shipmentFlag?.id },
-  )[0];
-  if (shipmentFlagPresent) {
-    deletedShipmentFlag = editedShipmentFlag;
-    editedShipmentFlag = [
-      ...editedShipmentFlag,
-      action.shipmentFlag,
-    ];
-  }
-
   switch (action.type) {
     case SAVE_SHIPMENT_FORM_DATA:
       return {
@@ -158,105 +131,6 @@ export default (state = initialState, action) => {
       };
 
     case DELETE_SHIPMENT_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case GET_SHIPMENT_FLAG:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case GET_SHIPMENT_FLAG_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        shipmentFlag: action.data,
-      };
-
-    case GET_SHIPMENT_FLAG_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case ADD_SHIPMENT_FLAG:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case ADD_SHIPMENT_FLAG_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        shipmentFlag: [
-          ...state.shipmentFlag,
-          action.shipmentFlag,
-        ],
-      };
-
-    case ADD_SHIPMENT_FLAG_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case EDIT_SHIPMENT_FLAG:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case EDIT_SHIPMENT_FLAG_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        shipmentFlag: editedShipmentFlag,
-      };
-
-    case EDIT_SHIPMENT_FLAG_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case DELETE_SHIPMENT_FLAG:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case DELETE_SHIPMENT_FLAG_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        shipmentFlag: deletedShipmentFlag,
-      };
-
-    case DELETE_SHIPMENT_FLAG_FAILURE:
       return {
         ...state,
         loading: false,

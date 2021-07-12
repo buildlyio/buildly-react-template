@@ -21,19 +21,6 @@ import {
   EDIT_SHIPMENT_FAILURE,
   DELETE_SHIPMENT,
   DELETE_SHIPMENT_FAILURE,
-  GET_SHIPMENT_FLAG,
-  GET_SHIPMENT_FLAG_FAILURE,
-  GET_SHIPMENT_FLAG_SUCCESS,
-  getShipmentFlag,
-  ADD_SHIPMENT_FLAG,
-  ADD_SHIPMENT_FLAG_SUCCESS,
-  ADD_SHIPMENT_FLAG_FAILURE,
-  EDIT_SHIPMENT_FLAG,
-  EDIT_SHIPMENT_FLAG_SUCCESS,
-  EDIT_SHIPMENT_FLAG_FAILURE,
-  DELETE_SHIPMENT_FLAG,
-  DELETE_SHIPMENT_FLAG_SUCCESS,
-  DELETE_SHIPMENT_FLAG_FAILURE,
   GET_DASHBOARD_ITEMS,
   GET_DASHBOARD_ITEMS_SUCCESS,
   GET_DASHBOARD_ITEMS_FAILURE,
@@ -54,10 +41,7 @@ function* getShipmentList(payload) {
       true,
     );
     if (data && data.data) {
-      yield [
-        yield put(getShipmentFlag(payload.organization_uuid)),
-        yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data }),
-      ];
+      yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data });
       if (payload.id) {
         yield put(
           saveShipmentFormData(
@@ -228,160 +212,6 @@ function* deleteShipment(payload) {
   }
 }
 
-function* getShipmentFlagList(payload) {
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'get',
-      `${environment.API_URL}${shipmentApiEndPoint}shipment_flag/?organization_uuid=${payload.organization_uuid}`,
-      null,
-      true,
-    );
-    const sortedData = _.orderBy(data.data, ['name'], ['asc']);
-    yield put({
-      type: GET_SHIPMENT_FLAG_SUCCESS,
-      data: sortedData,
-    });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t load data due to some error!',
-        }),
-      ),
-      yield put({
-        type: GET_SHIPMENT_FLAG_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* addShipmentFlag(action) {
-  const { payload } = action;
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'post',
-      `${environment.API_URL}${shipmentApiEndPoint}shipment_flag/`,
-      payload,
-      true,
-    );
-    if (data && data.data) {
-      yield [
-        yield put({
-          type: ADD_SHIPMENT_FLAG_SUCCESS,
-          shipmentFlag: data.data,
-        }),
-        yield put(
-          showAlert({
-            type: 'success',
-            open: true,
-            message: 'Successfully Added Shipment Flag',
-          }),
-        ),
-      ];
-    }
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t Add Shipment Flag due to some error!',
-        }),
-      ),
-      yield put({
-        type: ADD_SHIPMENT_FLAG_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* editShipmentFlag(action) {
-  const { payload } = action;
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'put',
-      `${environment.API_URL}${shipmentApiEndPoint}shipment_flag/${payload.id}`,
-      payload,
-      true,
-    );
-    if (data && data.data) {
-      yield [
-        yield put({
-          type: EDIT_SHIPMENT_FLAG_SUCCESS,
-          shipmentFlag: data.data,
-        }),
-        yield put(
-          showAlert({
-            type: 'success',
-            open: true,
-            message: 'Successfully Edited Shipment Flag',
-          }),
-        ),
-      ];
-    }
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t Edit Shipment Flag due to some error!',
-        }),
-      ),
-      yield put({
-        type: EDIT_SHIPMENT_FLAG_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* deleteShipmentFlag(payload) {
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'delete',
-      `${environment.API_URL}${shipmentApiEndPoint}shipment_flag/${payload.id}`,
-      null,
-      true,
-    );
-    yield [
-      yield put({
-        type: DELETE_SHIPMENT_FLAG_SUCCESS,
-        shipmentFlag: { id: payload.id },
-      }),
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Successfully Deleted Shipment Flag',
-        }),
-      ),
-    ];
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t Delete Shipment Flag due to some error!',
-        }),
-      ),
-      yield put({
-        type: DELETE_SHIPMENT_FLAG_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
 function* getDashboard(payload) {
   try {
     const data = yield call(
@@ -521,22 +351,6 @@ function* watchDeleteShipment() {
   yield takeLatest(DELETE_SHIPMENT, deleteShipment);
 }
 
-function* watchGetShipmentFlag() {
-  yield takeLatest(GET_SHIPMENT_FLAG, getShipmentFlagList);
-}
-
-function* watchAddShipmentFlag() {
-  yield takeLatest(ADD_SHIPMENT_FLAG, addShipmentFlag);
-}
-
-function* watchEditShipmentFlag() {
-  yield takeLatest(EDIT_SHIPMENT_FLAG, editShipmentFlag);
-}
-
-function* watchDeleteShipmentFlag() {
-  yield takeLatest(DELETE_SHIPMENT_FLAG, deleteShipmentFlag);
-}
-
 function* watchGetDashboardItems() {
   yield takeLatest(GET_DASHBOARD_ITEMS, getDashboard);
 }
@@ -551,10 +365,6 @@ export default function* shipmentSaga() {
     watchAddShipment(),
     watchDeleteShipment(),
     watchEditShipment(),
-    watchGetShipmentFlag(),
-    watchAddShipmentFlag(),
-    watchEditShipmentFlag(),
-    watchDeleteShipmentFlag(),
     watchGetDashboardItems(),
     watchPdfIdentifier(),
   ]);

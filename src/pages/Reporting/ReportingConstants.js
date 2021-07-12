@@ -187,14 +187,6 @@ export const getShipmentOverview = (
           report.shipment_id === shipment.partner_shipment_id
           && report.report_entries.length > 0
         ) {
-          let color;
-          if (report.excursion_flag) {
-            color = 'red';
-          } else if (report.warning_flag) {
-            color = 'yellow';
-          } else {
-            color = 'green';
-          }
           _.forEach(report.report_entries, (report_entry) => {
             try {
               const temperature = report_entry.report_temp;
@@ -233,7 +225,7 @@ export const getShipmentOverview = (
                   humidity: report_entry.report_humidity,
                   battery: report_entry.report_battery,
                   pressure: report_entry.report_pressure,
-                  color,
+                  color: 'green',
                   timestamp: dateTime,
                 };
                 // Considered use case: If a shipment stays at some

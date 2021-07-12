@@ -81,7 +81,6 @@ const ShipmentInfo = (props) => {
     dispatch,
     handleCancel,
     location,
-    shipmentFlag,
     unitsOfMeasure,
     shipmentOptions,
     viewOnly,
@@ -126,9 +125,6 @@ const ShipmentInfo = (props) => {
     (editData && editData.estimated_time_of_arrival)
     || new Date(),
   );
-  const [flags, setFlags] = useState(
-    (editData && editData.flags) || [],
-  );
   const [uom_temp, setUomTemp] = useState(
     (editData && editData.uom_temp) || '',
   );
@@ -154,7 +150,6 @@ const ShipmentInfo = (props) => {
     mode_type: '',
     scheduled_departure: '',
     scheduled_arrival: '',
-    flags: '',
     uom_temp: '',
     uom_distance: '',
     uom_weight,
@@ -162,7 +157,6 @@ const ShipmentInfo = (props) => {
     consortium_uuid: '',
   });
 
-  const shipmentFlags = (editData && editData.flags) || [];
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
@@ -201,10 +195,6 @@ const ShipmentInfo = (props) => {
       metadata.scheduled_arrival = setOptionsData(
         shipmentOptions.actions.POST,
         'estimated_time_of_arrival',
-      );
-      metadata.flags = setOptionsData(
-        shipmentOptions.actions.POST,
-        'flags',
       );
       metadata.uom_temp = setOptionsData(
         shipmentOptions.actions.POST,
@@ -324,7 +314,6 @@ const ShipmentInfo = (props) => {
       ) || [],
       wallet_ids: (editData && editData.wallet_ids) || [],
       custodian_ids: (editData && editData.custodian_ids) || [],
-      flags,
       uom_distance,
       uom_temp,
       uom_weight,
@@ -347,10 +336,6 @@ const ShipmentInfo = (props) => {
     }
   };
 
-  const onShipmentFlagChange = (value) => {
-    setFlags(_.map(value, 'url'));
-  };
-
   checkIfShipmentInfoEdited = () => (
     shipment_name.hasChanged()
     || lading_bill.hasChanged()
@@ -359,7 +344,6 @@ const ShipmentInfo = (props) => {
     || route_desc.hasChanged()
     || mode_type.hasChanged()
     || route_dist.hasChanged()
-    || (flags.length !== shipmentFlags.length)
   );
 
   const onNextClick = (event) => {
@@ -698,61 +682,6 @@ const ShipmentInfo = (props) => {
                           : ''
                       }
                     />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <div className={classes.inputWithTooltip}>
-                      <Autocomplete
-                        multiple
-                        id="tags-outlined"
-                        disabled={viewOnly}
-                        options={shipmentFlag || []}
-                        getOptionLabel={(option) => (
-                          option
-                            ? `${option.name} (${option.type})`
-                            : ''
-                        )}
-                        getOptionSelected={(option, value) => `${option.name} (${option.type})` === `${value.name} (${value.type})`}
-                        style={{ flex: 1 }}
-                        onChange={(event, newValue) => onShipmentFlagChange(newValue)}
-                        value={
-                          (
-                            shipmentFlag
-                            && _.filter(
-                              shipmentFlag,
-                              (flag) => _.indexOf(flags, flag.url) !== -1,
-                            )
-                          ) || []
-                        }
-                        renderOption={(option, { selected }) => (
-                          <>
-                            <Checkbox
-                              style={{ marginRight: 8 }}
-                              checked={selected}
-                            />
-                            {`${option.name} (${option.type})`}
-                          </>
-                        )}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            variant="outlined"
-                            label="Violations/Warnings"
-                            placeholder="Select"
-                            disabled={viewOnly}
-                            margin="normal"
-                          />
-                        )}
-                      />
-                      {fieldsMetadata.flags
-                      && fieldsMetadata.flags.help_text
-                      && (
-                        <CustomizedTooltips
-                          toolTipText={
-                            fieldsMetadata.flags.help_text
-                          }
-                        />
-                      )}
-                    </div>
                   </Grid>
                   <Grid
                     className={classes.inputWithTooltip}

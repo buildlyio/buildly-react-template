@@ -23,9 +23,7 @@ export const PRODUCT_TOOLTIP = 'Product(s) available in the system';
 
 export const PRODUCT_TYPE_TOOLTIP = 'Product Type(s) available in the system';
 
-export const SENSOR_TYPE_TOOLTIP = 'Shipment Flag(s) available in the system';
-
-export const SHIPMENT_FLAG_TOOLTIP = 'Shipment Flag(s) available in the system';
+export const SENSOR_TYPE_TOOLTIP = 'Sensor Type(s) available in the system';
 
 export const UNITS_OF_MEASURE_TOOLTIP = 'Unit(s) of Measure available in the system';
 
@@ -111,68 +109,6 @@ export const getProductColumns = (timezone) => ([
         const unit = _.find(units, { url: value });
         return unit ? unit.name : '';
       },
-    },
-  },
-  {
-    name: 'create_date',
-    label: 'Created At',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
-    },
-  },
-  {
-    name: 'edit_date',
-    label: 'Last Edited At',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
-    },
-  },
-]);
-
-export const getShipmentFlagColumns = (timezone) => ([
-  {
-    name: 'name',
-    label: 'Flag Name',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
-  },
-  {
-    name: 'type',
-    label: 'Flag Type',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => _.capitalize(value),
-    },
-  },
-  {
-    name: 'max_flag',
-    label: 'Maximum Limit Flag',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (value ? 'YES' : 'NO'),
-    },
-  },
-  {
-    name: 'min_flag',
-    label: 'Minimum Limit Flag',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (value ? 'YES' : 'NO'),
     },
   },
   {
