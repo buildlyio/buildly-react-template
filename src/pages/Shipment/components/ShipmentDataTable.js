@@ -170,7 +170,7 @@ const ShipmentDataTable = ({
       const restCols = _.filter(cols, (col) => col.name !== 'Copy');
       setColumns(restCols);
     }
-  }, [timezone, consortiumData, rowsType]);
+  }, [timezone, consortiumData, rowsType, rows]);
 
   return (
     <div className={classes.root}>
