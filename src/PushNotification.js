@@ -6,7 +6,6 @@ import addNotification from 'react-push-notification';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import { AppContext } from '@context/App.context';
-import { environment } from '@environments/environment';
 import { oauthService } from '@modules/oauth/oauth.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 
@@ -31,7 +30,7 @@ const PushNotification = ({ dispatch, loaded }) => {
   useEffect(() => {
     if (pushGrp && (pushGeo || pushEnv)) {
       alertsSocket.current = new WebSocket(
-        `${environment.ALERT_SOCKET_URL}${pushGrp}/`,
+        `${window.env.ALERT_SOCKET_URL}${pushGrp}/`,
       );
       alertsSocket.current.onopen = () => {
         alertsSocket.current.send(JSON.stringify({
@@ -105,7 +104,7 @@ const PushNotification = ({ dispatch, loaded }) => {
 
       addNotification({
         native: true,
-        duration: environment.hide_notification,
+        duration: window.env.hide_notification,
         title: appTitle,
         subtitle: '',
         message: `${alert.alert_message} | ${moment(alert.create_date).fromNow()}`,
@@ -125,7 +124,7 @@ const PushNotification = ({ dispatch, loaded }) => {
         if (!_.includes(viewed, alert.id)) {
           closeNotification(alert.id);
         }
-      }, environment.hide_notification);
+      }, window.env.hide_notification);
 
       const openAlerts = _.slice(alerts, 1);
       setAlerts(openAlerts);

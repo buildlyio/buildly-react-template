@@ -24,7 +24,6 @@ import { MapComponent } from '@components/MapComponent/MapComponent';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
-import { environment } from '@environments/environment';
 import SensorReport from '@pages/Reporting/components/SensorReport';
 import {
   getConsortiums,
@@ -494,7 +493,7 @@ const Shipment = (props) => {
             isMarkerShown={isMapLoaded}
             showPath
             markers={markers}
-            googleMapURL={environment.MAP_API_URL}
+            googleMapURL={window.env.MAP_API_URL}
             zoom={12}
             setSelectedMarker={setSelectedMarker}
             loadingElement={

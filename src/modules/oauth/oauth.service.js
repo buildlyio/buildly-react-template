@@ -1,6 +1,5 @@
 import { oauth } from 'midgard-core';
 import _ from 'lodash';
-import { environment } from '@environments/environment';
 
 /**
  * Returns the current access token.
@@ -44,8 +43,8 @@ const getOauthUser = () => {
  */
 const authenticateWithPasswordFlow = (credentials) => {
   const oauthOptions = {
-    clientId: environment.OAUTH_CLIENT_ID,
-    tokenUrl: environment.OAUTH_TOKEN_URL,
+    clientId: window.env.OAUTH_CLIENT_ID,
+    tokenUrl: window.env.OAUTH_TOKEN_URL,
     returnPromise: true,
   };
   return oauth.authenticateWithCredentials(
@@ -91,7 +90,7 @@ const setAccessToken = (token) => {
   if (token) {
     localStorage.setItem('token', JSON.stringify(token));
     if (token.expires_in) {
-      const expiresMilliSec = token.expires_in * environment.session_timeout;
+      const expiresMilliSec = token.expires_in * window.env.session_timeout;
       const now = new Date();
       const expiresAt = now.getTime() + expiresMilliSec;
       localStorage.setItem(

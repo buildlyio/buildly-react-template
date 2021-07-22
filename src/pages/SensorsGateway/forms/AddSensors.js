@@ -21,7 +21,6 @@ import { MapComponent } from '@components/MapComponent/MapComponent';
 import FormModal from '@components/Modal/FormModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
-import { environment } from '@environments/environment';
 import { useInput } from '@hooks/useInput';
 import {
   editSensor,
@@ -339,7 +338,7 @@ const AddSensor = ({
                 </div>
                 <MapComponent
                   isMarkerShown
-                  googleMapURL={environment.MAP_API_URL}
+                  googleMapURL={window.env.MAP_API_URL}
                   zoom={8}
                   loadingElement={
                     <div style={{ height: '100%' }} />

@@ -2,7 +2,6 @@ import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
-import { environment } from '@environments/environment';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import {
   GET_GATEWAYS,
@@ -67,7 +66,7 @@ function* getGatewayList(payload) {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${sensorApiEndPoint}gateway/?organization_uuid=${payload.organization_uuid}`,
+      `${window.env.API_URL}${sensorApiEndPoint}gateway/?organization_uuid=${payload.organization_uuid}`,
       null,
       true,
     );
@@ -94,7 +93,7 @@ function* getNewGateways(payload) {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${sensorApiEndPoint}gateway/create_gateway/`,
+      `${window.env.API_URL}${sensorApiEndPoint}gateway/create_gateway/`,
     );
     yield put({ type: GET_NEW_GATEWAYS_SUCCESS });
     window.location.reload();
@@ -121,7 +120,7 @@ function* addGateway(action) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}${sensorApiEndPoint}gateway/`,
+      `${window.env.API_URL}${sensorApiEndPoint}gateway/`,
       payload,
       true,
     );
@@ -161,7 +160,7 @@ function* editGateWayItem(action) {
     const data = yield call(
       httpService.makeRequest,
       'put',
-      `${environment.API_URL}${sensorApiEndPoint}gateway/${payload.id}/`,
+      `${window.env.API_URL}${sensorApiEndPoint}gateway/${payload.id}/`,
       payload,
       true,
     );
@@ -201,7 +200,7 @@ function* deleteGatewayItem(payload) {
     yield call(
       httpService.makeRequest,
       'delete',
-      `${environment.API_URL}${sensorApiEndPoint}gateway/${gatewayId}/`,
+      `${window.env.API_URL}${sensorApiEndPoint}gateway/${gatewayId}/`,
       null,
       true,
     );
@@ -237,7 +236,7 @@ function* getGatewayTypeList() {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${sensorApiEndPoint}gateway_type/`,
+      `${window.env.API_URL}${sensorApiEndPoint}gateway_type/`,
       null,
       true,
     );
@@ -268,7 +267,7 @@ function* addGatewayType(action) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}${sensorApiEndPoint}gateway_type/`,
+      `${window.env.API_URL}${sensorApiEndPoint}gateway_type/`,
       payload,
       true,
     );
@@ -310,7 +309,7 @@ function* editGatewayType(action) {
     const data = yield call(
       httpService.makeRequest,
       'put',
-      `${environment.API_URL}${sensorApiEndPoint}gateway_type/${payload.id}`,
+      `${window.env.API_URL}${sensorApiEndPoint}gateway_type/${payload.id}`,
       payload,
       true,
     );
@@ -351,7 +350,7 @@ function* deleteGatewayType(payload) {
     const data = yield call(
       httpService.makeRequest,
       'delete',
-      `${environment.API_URL}${sensorApiEndPoint}gateway_type/${payload.id}`,
+      `${window.env.API_URL}${sensorApiEndPoint}gateway_type/${payload.id}`,
       null,
       true,
     );
@@ -390,7 +389,7 @@ function* getSensorList(payload) {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${sensorApiEndPoint}sensor/?organization_uuid=${payload.organization_uuid}`,
+      `${window.env.API_URL}${sensorApiEndPoint}sensor/?organization_uuid=${payload.organization_uuid}`,
       null,
       true,
     );
@@ -418,7 +417,7 @@ function* addSensor(action) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}${sensorApiEndPoint}sensor/`,
+      `${window.env.API_URL}${sensorApiEndPoint}sensor/`,
       payload,
       true,
     );
@@ -458,7 +457,7 @@ function* editSensorItem(action) {
     const data = yield call(
       httpService.makeRequest,
       'put',
-      `${environment.API_URL}${sensorApiEndPoint}sensor/${payload.id}/`,
+      `${window.env.API_URL}${sensorApiEndPoint}sensor/${payload.id}/`,
       payload,
       true,
     );
@@ -498,7 +497,7 @@ function* deleteSensorItem(payload) {
     yield call(
       httpService.makeRequest,
       'delete',
-      `${environment.API_URL}${sensorApiEndPoint}sensor/${sensorId}/`,
+      `${window.env.API_URL}${sensorApiEndPoint}sensor/${sensorId}/`,
       null,
       true,
     );
@@ -534,7 +533,7 @@ function* getSensorTypeList() {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${sensorApiEndPoint}sensor_type/`,
+      `${window.env.API_URL}${sensorApiEndPoint}sensor_type/`,
       null,
       true,
     );
@@ -565,7 +564,7 @@ function* addSensorType(action) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}${sensorApiEndPoint}sensor_type/`,
+      `${window.env.API_URL}${sensorApiEndPoint}sensor_type/`,
       payload,
       true,
     );
@@ -607,7 +606,7 @@ function* editSensorType(action) {
     const data = yield call(
       httpService.makeRequest,
       'put',
-      `${environment.API_URL}${sensorApiEndPoint}sensor_type/${payload.id}`,
+      `${window.env.API_URL}${sensorApiEndPoint}sensor_type/${payload.id}`,
       payload,
       true,
     );
@@ -648,7 +647,7 @@ function* deleteSensorType(payload) {
     const data = yield call(
       httpService.makeRequest,
       'delete',
-      `${environment.API_URL}${sensorApiEndPoint}sensor_type/${payload.id}`,
+      `${window.env.API_URL}${sensorApiEndPoint}sensor_type/${payload.id}`,
       null,
       true,
     );
@@ -687,7 +686,7 @@ function* getAggregateReportList(payload) {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${sensorApiEndPoint}aggregate_report/?shipment_id=${payload.partnerShipmentIds}`,
+      `${window.env.API_URL}${sensorApiEndPoint}aggregate_report/?shipment_id=${payload.partnerShipmentIds}`,
       null,
       true,
     );
@@ -717,7 +716,7 @@ function* getAllSensorAlerts(payload) {
     const response = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${sensorApiEndPoint}sensor_report_alert/?shipment_ids=${payload.partnerShipmentIds}`,
+      `${window.env.API_URL}${sensorApiEndPoint}sensor_report_alert/?shipment_ids=${payload.partnerShipmentIds}`,
       null,
       true,
     );

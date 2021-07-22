@@ -2,7 +2,6 @@ import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
-import { environment } from '@environments/environment';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import {
   getItems,
@@ -72,7 +71,7 @@ function* getItemsList(payload) {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${shipmentApiEndPoint}item/?organization_uuid=${payload.organization_uuid}`,
+      `${window.env.API_URL}${shipmentApiEndPoint}item/?organization_uuid=${payload.organization_uuid}`,
       null,
       true,
     );
@@ -100,7 +99,7 @@ function* addItem(action) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}${shipmentApiEndPoint}item/`,
+      `${window.env.API_URL}${shipmentApiEndPoint}item/`,
       payload,
       true,
     );
@@ -140,7 +139,7 @@ function* editItem(action) {
     const data = yield call(
       httpService.makeRequest,
       'put',
-      `${environment.API_URL}${shipmentApiEndPoint}item/${payload.id}/`,
+      `${window.env.API_URL}${shipmentApiEndPoint}item/${payload.id}/`,
       payload,
       true,
     );
@@ -180,7 +179,7 @@ function* deleteItem(payload) {
     yield call(
       httpService.makeRequest,
       'delete',
-      `${environment.API_URL}${shipmentApiEndPoint}item/${itemId}/`,
+      `${window.env.API_URL}${shipmentApiEndPoint}item/${itemId}/`,
       null,
       true,
     );
@@ -216,7 +215,7 @@ function* getItemType(payload) {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${shipmentApiEndPoint}item_type/?organization_uuid=${payload.organization_uuid}`,
+      `${window.env.API_URL}${shipmentApiEndPoint}item_type/?organization_uuid=${payload.organization_uuid}`,
       null,
       true,
     );
@@ -247,7 +246,7 @@ function* addItemType(action) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}${shipmentApiEndPoint}item_type/`,
+      `${window.env.API_URL}${shipmentApiEndPoint}item_type/`,
       payload,
       true,
     );
@@ -289,7 +288,7 @@ function* editItemType(action) {
     const data = yield call(
       httpService.makeRequest,
       'put',
-      `${environment.API_URL}${shipmentApiEndPoint}item_type/${payload.id}`,
+      `${window.env.API_URL}${shipmentApiEndPoint}item_type/${payload.id}`,
       payload,
       true,
     );
@@ -330,7 +329,7 @@ function* deleteItemType(payload) {
     const data = yield call(
       httpService.makeRequest,
       'delete',
-      `${environment.API_URL}${shipmentApiEndPoint}item_type/${payload.id}`,
+      `${window.env.API_URL}${shipmentApiEndPoint}item_type/${payload.id}`,
       null,
       true,
     );
@@ -369,7 +368,7 @@ function* getProductList(payload) {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${shipmentApiEndPoint}product/?organization_uuid=${payload.organization_uuid}`,
+      `${window.env.API_URL}${shipmentApiEndPoint}product/?organization_uuid=${payload.organization_uuid}`,
       null,
       true,
     );
@@ -397,7 +396,7 @@ function* addProducts(action) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}${shipmentApiEndPoint}product/`,
+      `${window.env.API_URL}${shipmentApiEndPoint}product/`,
       payload,
       true,
     );
@@ -439,7 +438,7 @@ function* editProducts(action) {
     const data = yield call(
       httpService.makeRequest,
       'put',
-      `${environment.API_URL}${shipmentApiEndPoint}product/${payload.id}`,
+      `${window.env.API_URL}${shipmentApiEndPoint}product/${payload.id}`,
       payload,
       true,
     );
@@ -480,7 +479,7 @@ function* deleteProducts(payload) {
     const data = yield call(
       httpService.makeRequest,
       'delete',
-      `${environment.API_URL}${shipmentApiEndPoint}product/${payload.id}`,
+      `${window.env.API_URL}${shipmentApiEndPoint}product/${payload.id}`,
       null,
       true,
     );
@@ -519,7 +518,7 @@ function* getProductTypeList(payload) {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${shipmentApiEndPoint}product_type/?organization_uuid=${payload.organization_uuid}`,
+      `${window.env.API_URL}${shipmentApiEndPoint}product_type/?organization_uuid=${payload.organization_uuid}`,
       null,
       true,
     );
@@ -547,7 +546,7 @@ function* addProductType(action) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}${shipmentApiEndPoint}product_type/`,
+      `${window.env.API_URL}${shipmentApiEndPoint}product_type/`,
       payload,
       true,
     );
@@ -589,7 +588,7 @@ function* editProductType(action) {
     const data = yield call(
       httpService.makeRequest,
       'put',
-      `${environment.API_URL}${shipmentApiEndPoint}product_type/${payload.id}`,
+      `${window.env.API_URL}${shipmentApiEndPoint}product_type/${payload.id}`,
       payload,
       true,
     );
@@ -630,7 +629,7 @@ function* deleteProductType(payload) {
     const data = yield call(
       httpService.makeRequest,
       'delete',
-      `${environment.API_URL}${shipmentApiEndPoint}product_type/${payload.id}`,
+      `${window.env.API_URL}${shipmentApiEndPoint}product_type/${payload.id}`,
       null,
       true,
     );
@@ -669,7 +668,7 @@ function* getUnits() {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${shipmentApiEndPoint}unit_of_measure/`,
+      `${window.env.API_URL}${shipmentApiEndPoint}unit_of_measure/`,
       null,
       true,
     );
@@ -700,7 +699,7 @@ function* addUnitsOfMeasure(action) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}${shipmentApiEndPoint}unit_of_measure/`,
+      `${window.env.API_URL}${shipmentApiEndPoint}unit_of_measure/`,
       payload,
       true,
     );
@@ -742,7 +741,7 @@ function* editUnitsOfMeasure(action) {
     const data = yield call(
       httpService.makeRequest,
       'put',
-      `${environment.API_URL}${shipmentApiEndPoint}unit_of_measure/${payload.id}`,
+      `${window.env.API_URL}${shipmentApiEndPoint}unit_of_measure/${payload.id}`,
       payload,
       true,
     );
@@ -783,7 +782,7 @@ function* deleteUnitsOfMeasure(payload) {
     const data = yield call(
       httpService.makeRequest,
       'delete',
-      `${environment.API_URL}${shipmentApiEndPoint}unit_of_measure/${payload.id}`,
+      `${window.env.API_URL}${shipmentApiEndPoint}unit_of_measure/${payload.id}`,
       null,
       true,
     );

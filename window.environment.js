@@ -1,1 +1,1 @@
-window.environment = null;
+window.env = null;

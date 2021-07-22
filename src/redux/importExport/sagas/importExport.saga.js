@@ -3,7 +3,6 @@ import {
 } from 'redux-saga/effects';
 import _ from 'lodash';
 import { httpService } from '@modules/http/http.service';
-import { environment } from '@environments/environment';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import {
   ADD_FROM_FILE,
@@ -41,7 +40,7 @@ function* addFromFile(payload) {
     const response = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}${endPoint}`,
+      `${window.env.API_URL}${endPoint}`,
       payload.formData,
       true,
       'multipart/form-data',
@@ -127,7 +126,7 @@ function* getExportData(payload) {
     const response = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}${endPoint}?model=${payload.model}&file_type=${payload.fileType}`,
+      `${window.env.API_URL}${endPoint}?model=${payload.model}&file_type=${payload.fileType}`,
     );
     yield put({
       type: GET_EXPORT_DATA_SUCCESS,
@@ -172,7 +171,7 @@ function* addApiSetup(action) {
     const response = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}${endPoint}`,
+      `${window.env.API_URL}${endPoint}`,
       payload,
     );
     yield [

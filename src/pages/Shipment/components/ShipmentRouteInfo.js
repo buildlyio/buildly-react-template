@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import { Card, CardContent } from '@material-ui/core';
 import { MapComponent } from '@components/MapComponent/MapComponent';
-import { environment } from '@environments/environment';
 import {
   getFormattedCustodyRows,
 } from '../ShipmentConstants';
@@ -71,7 +70,7 @@ const ShipmentRouteInfo = ({
             <MapComponent
               isMarkerShown
               showPath
-              googleMapURL={environment.MAP_API_URL}
+              googleMapURL={window.env.MAP_API_URL}
               zoom={8}
               setSelectedMarker={setSelectedMarker}
               loadingElement={

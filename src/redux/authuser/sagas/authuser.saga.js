@@ -3,7 +3,6 @@ import {
 } from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
 import { oauthService } from '@modules/oauth/oauth.service';
-import { environment } from '@environments/environment';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import { routes } from '@routes/routesConstants';
 import {
@@ -77,13 +76,13 @@ function* login(payload) {
     const user = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coreuser/me/`,
+      `${window.env.API_URL}coreuser/me/`,
     );
     yield call(oauthService.setOauthUser, user, payload);
     const coreuser = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coreuser/`,
+      `${window.env.API_URL}coreuser/`,
     );
     yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield [
@@ -112,7 +111,7 @@ function* getUserDetails() {
     const user = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coreuser/me/`,
+      `${window.env.API_URL}coreuser/me/`,
     );
     yield put({ type: GET_USER_SUCCESS, user });
     if (user && user.data && user.data.organization) {
@@ -144,7 +143,7 @@ function* register(payload) {
     const user = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}coreuser/`,
+      `${window.env.API_URL}coreuser/`,
       payload.data,
     );
     yield [
@@ -180,7 +179,7 @@ function* invite(payload) {
     const user = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}coreuser/invite/`,
+      `${window.env.API_URL}coreuser/invite/`,
       payload.data,
     );
     yield [
@@ -206,25 +205,25 @@ function* updateUser(payload) {
     const response = yield call(
       httpService.makeRequest,
       'patch',
-      `${environment.API_URL}coreuser/${payload.data.id}/update_profile/`,
+      `${window.env.API_URL}coreuser/${payload.data.id}/update_profile/`,
       payload.data,
     );
     const data = yield call(
       httpService.makeRequest,
       'patch',
-      `${environment.API_URL}organization/${payload.data.organization_uuid}/`,
+      `${window.env.API_URL}organization/${payload.data.organization_uuid}/`,
       { name: payload.data.organization_name },
     );
     const user = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coreuser/me/`,
+      `${window.env.API_URL}coreuser/me/`,
     );
     yield call(oauthService.setOauthUser, user);
     const coreuser = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coreuser/`,
+      `${window.env.API_URL}coreuser/`,
     );
     yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield [
@@ -261,7 +260,7 @@ function* getOrganizationData(payload) {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}organization/${uuid}/`,
+      `${window.env.API_URL}organization/${uuid}/`,
       null,
       true,
     );
@@ -276,7 +275,7 @@ function* resetPassword(payload) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}coreuser/reset_password/`,
+      `${window.env.API_URL}coreuser/reset_password/`,
       payload.data,
     );
     if (data.data && data.data.count > 0) {
@@ -328,7 +327,7 @@ function* resetPasswordConfirm(payload) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}coreuser/reset_password_confirm/`,
+      `${window.env.API_URL}coreuser/reset_password_confirm/`,
       payload.data,
     );
     yield [
@@ -368,7 +367,7 @@ function* resetPasswordCheck(payload) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}coreuser/reset_password_check/`,
+      `${window.env.API_URL}coreuser/reset_password_check/`,
       payload.data,
     );
     if (data.data && data.data.success) {
@@ -420,13 +419,13 @@ function* updateOrganizationData(payload) {
     const org = yield call(
       httpService.makeRequest,
       'patch',
-      `${environment.API_URL}organization/${payload.data.organization_uuid}/`,
+      `${window.env.API_URL}organization/${payload.data.organization_uuid}/`,
       payload.data,
     );
     const user = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coreuser/me/`,
+      `${window.env.API_URL}coreuser/me/`,
     );
     yield call(oauthService.setOauthUser, user);
     yield [
@@ -461,7 +460,7 @@ function* loadOrganizationNames() {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}organization/fetch_orgs/`,
+      `${window.env.API_URL}organization/fetch_orgs/`,
     );
     yield put({ type: LOAD_ORG_NAMES_SUCCESS, orgNames: data.data });
   } catch (error) {
@@ -474,7 +473,7 @@ function* getOrgTypes() {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}organization_type/`,
+      `${window.env.API_URL}organization_type/`,
     );
     yield put({ type: GET_ORG_TYPES_SUCCESS, orgTypes: data.data });
   } catch (error) {
@@ -488,7 +487,7 @@ function* addOrgType(payload) {
     const response = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}organization_type/`,
+      `${window.env.API_URL}organization_type/`,
       data,
     );
     yield put({ type: ADD_ORG_TYPE_SUCCESS, orgType: response.data });
@@ -503,7 +502,7 @@ function* editOrgType(payload) {
     const response = yield call(
       httpService.makeRequest,
       'patch',
-      `${environment.API_URL}organization_type/${data.id}/`,
+      `${window.env.API_URL}organization_type/${data.id}/`,
       data,
     );
     yield put({ type: EDIT_ORG_TYPE_SUCCESS, orgType: response.data });
@@ -518,7 +517,7 @@ function* deleteOrgType(payload) {
     const response = yield call(
       httpService.makeRequest,
       'delete',
-      `${environment.API_URL}organization_type/${id}`,
+      `${window.env.API_URL}organization_type/${id}`,
     );
     yield put({ type: DELETE_ORG_TYPE_SUCCESS, id });
   } catch (error) {

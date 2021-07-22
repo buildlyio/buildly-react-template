@@ -1,4 +1,3 @@
-import { environment } from '@environments/environment';
 import { httpService } from '@modules/http/http.service';
 
 // Options Actions Types
@@ -56,7 +55,7 @@ export const getUserOptions = () => (dispatch) => {
   httpService
     .makeOptionsRequest(
       'options',
-      `${environment.API_URL}coreuser/`,
+      `${window.env.API_URL}coreuser/`,
       true,
     )
     .then((response) => response.json())
@@ -74,7 +73,7 @@ export const getOrganizationOptions = () => (dispatch) => {
   httpService
     .makeOptionsRequest(
       'options',
-      `${environment.API_URL}organization/`,
+      `${window.env.API_URL}organization/`,
       true,
     )
     .then((response) => response.json())
@@ -92,7 +91,7 @@ export const getCustodianOptions = () => (dispatch) => {
   httpService
     .makeOptionsRequest(
       'options',
-      `${environment.API_URL}custodian/custodian/`,
+      `${window.env.API_URL}custodian/custodian/`,
       true,
     )
     .then((response) => response.json())
@@ -110,7 +109,7 @@ export const getCustodyOptions = () => (dispatch) => {
   httpService
     .makeOptionsRequest(
       'options',
-      `${environment.API_URL}custodian/custody/`,
+      `${window.env.API_URL}custodian/custody/`,
       true,
     )
     .then((response) => response.json())
@@ -128,7 +127,7 @@ export const getContactOptions = () => (dispatch) => {
   httpService
     .makeOptionsRequest(
       'options',
-      `${environment.API_URL}custodian/contact/`,
+      `${window.env.API_URL}custodian/contact/`,
       true,
     )
     .then((response) => response.json())
@@ -146,7 +145,7 @@ export const getItemsOptions = () => (dispatch) => {
   httpService
     .makeOptionsRequest(
       'options',
-      `${environment.API_URL}shipment/item/`,
+      `${window.env.API_URL}shipment/item/`,
       true,
     )
     .then((response) => response.json())
@@ -164,7 +163,7 @@ export const getProductsOptions = () => (dispatch) => {
   httpService
     .makeOptionsRequest(
       'options',
-      `${environment.API_URL}shipment/product/`,
+      `${window.env.API_URL}shipment/product/`,
       true,
     )
     .then((response) => response.json())
@@ -182,7 +181,7 @@ export const getGatewayOptions = () => (dispatch) => {
   httpService
     .makeOptionsRequest(
       'options',
-      `${environment.API_URL}sensors/gateway/`,
+      `${window.env.API_URL}sensors/gateway/`,
       true,
     )
     .then((response) => response.json())
@@ -200,7 +199,7 @@ export const getSensorOptions = () => (dispatch) => {
   httpService
     .makeOptionsRequest(
       'options',
-      `${environment.API_URL}sensors/sensor/`,
+      `${window.env.API_URL}sensors/sensor/`,
       true,
     )
     .then((response) => response.json())
@@ -218,7 +217,7 @@ export const getShipmentOptions = () => (dispatch) => {
   httpService
     .makeOptionsRequest(
       'options',
-      `${environment.API_URL}shipment/shipment/`,
+      `${window.env.API_URL}shipment/shipment/`,
       true,
     )
     .then((response) => response.json())

@@ -2,7 +2,6 @@ import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
-import { environment } from '@environments/environment';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import {
   GET_CONSORTIUMS,
@@ -24,7 +23,7 @@ function* getConsortiums() {
     const response = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}consortium/`,
+      `${window.env.API_URL}consortium/`,
     );
     yield put({ type: GET_CONSORTIUMS_SUCCESS, data: response.data });
   } catch (error) {
@@ -49,7 +48,7 @@ function* createConsortium(payload) {
     const response = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}consortium/`,
+      `${window.env.API_URL}consortium/`,
       payload.data,
     );
     yield put({ type: CREATE_CONSORTIUM_SUCCESS, data: response.data });
@@ -75,7 +74,7 @@ function* editConsortium(payload) {
     const response = yield call(
       httpService.makeRequest,
       'patch',
-      `${environment.API_URL}consortium/${payload.data.consortium_uuid}/`,
+      `${window.env.API_URL}consortium/${payload.data.consortium_uuid}/`,
       payload.data,
     );
     yield put({ type: EDIT_CONSORTIUM_SUCCESS, data: response.data });
@@ -101,7 +100,7 @@ function* deleteConsortium(payload) {
     const response = yield call(
       httpService.makeRequest,
       'delete',
-      `${environment.API_URL}consortium/${payload.uuid}/`,
+      `${window.env.API_URL}consortium/${payload.uuid}/`,
     );
     yield put({ type: DELETE_CONSORTIUM_SUCCESS, uuid: payload.uuid });
   } catch (error) {

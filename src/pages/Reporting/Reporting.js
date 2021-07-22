@@ -23,7 +23,6 @@ import Loader from '@components/Loader/Loader';
 import { MapComponent } from '@components/MapComponent/MapComponent';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
-import { environment } from '@environments/environment';
 import {
   getCustodians,
   getCustodianType,
@@ -250,7 +249,7 @@ const Reporting = ({
             isMarkerShown={isMapLoaded}
             showPath
             markers={markers}
-            googleMapURL={environment.MAP_API_URL}
+            googleMapURL={window.env.MAP_API_URL}
             zoom={12}
             setSelectedMarker={setSelectedMarker}
             loadingElement={

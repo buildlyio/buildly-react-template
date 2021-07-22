@@ -2,7 +2,6 @@ import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
-import { environment } from '@environments/environment';
 import {
   LOAD_DATA_COREGROUP,
   LOAD_DATA_COREGROUP_FAIL,
@@ -23,7 +22,7 @@ function* loadCoregroups() {
     const group = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coregroups/`,
+      `${window.env.API_URL}coregroups/`,
     );
     yield put({
       type: LOAD_DATA_COREGROUP_COMMIT,
@@ -39,7 +38,7 @@ function* deleteCoregroups(data) {
     const group = yield call(
       httpService.makeRequest,
       'delete',
-      `${environment.API_URL}coregroups/${data.data.id}`,
+      `${window.env.API_URL}coregroups/${data.data.id}`,
     );
     yield put({
       type: DELETE_COREGROUP_COMMIT,
@@ -59,7 +58,7 @@ function* updateCoregroups(data) {
     const group = yield call(
       httpService.makeRequest,
       'put',
-      `${environment.API_URL}coregroups/${data.data.id}/`,
+      `${window.env.API_URL}coregroups/${data.data.id}/`,
       data.data,
     );
     yield put({
@@ -79,7 +78,7 @@ function* createCoregroups(data) {
     const group = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}coregroups/`,
+      `${window.env.API_URL}coregroups/`,
       data.data,
     );
     yield put({
