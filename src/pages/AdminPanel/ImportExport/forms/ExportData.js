@@ -111,7 +111,7 @@ const ExportData = ({ dispatch, exportData }) => {
             <MenuItem value="csv">CSV</MenuItem>
           </TextField>
         </Grid>
-        <Grid container spacing={2} justify="center">
+        <Grid container spacing={2} justifyContent="center">
           <Grid item xs={6} sm={4}>
             <Button
               type="submit"

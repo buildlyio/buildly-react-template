@@ -29,7 +29,6 @@ import { routes } from '@routes/routesConstants';
 import {
   SHIPMENT_STATUS,
   TRANSPORT_MODE,
-  SENSOR_PLATFORM,
 } from '@utils/mock';
 import { setOptionsData } from '@utils/utilMethods';
 import { validators } from '@utils/validators';
@@ -87,7 +86,6 @@ const ShipmentInfo = (props) => {
     setConfirmModal,
     setConfirmModalFor,
     timezone,
-    consortiumData,
   } = props;
   const classes = useStyles();
   const theme = useTheme();
@@ -134,12 +132,6 @@ const ShipmentInfo = (props) => {
   const [uom_distance, setUomDistance] = useState(
     (editData && editData.uom_distance) || '',
   );
-  const [platform_name, setPlatformName] = useState(
-    (editData && editData.platform_name) || 'iclp',
-  );
-  const [consortium_uuid, setConsortiumUuid] = useState(
-    (editData && editData.consortium_uuid) || '',
-  );
 
   const [formError, setFormError] = useState({});
   const [fieldsMetadata, setFieldsMetaData] = useState({
@@ -153,8 +145,6 @@ const ShipmentInfo = (props) => {
     uom_temp: '',
     uom_distance: '',
     uom_weight,
-    platform_name: '',
-    consortium_uuid: '',
   });
 
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -207,14 +197,6 @@ const ShipmentInfo = (props) => {
       metadata.uom_weight = setOptionsData(
         shipmentOptions.actions.POST,
         'uom_weight',
-      );
-      metadata.platform_name = setOptionsData(
-        shipmentOptions.actions.POST,
-        'platform_name',
-      );
-      metadata.consortium_uuid = setOptionsData(
-        shipmentOptions.actions.POST,
-        'consortium_uuid',
       );
     }
 
@@ -318,8 +300,7 @@ const ShipmentInfo = (props) => {
       uom_temp,
       uom_weight,
       organization_uuid: organization,
-      platform_name,
-      consortium_uuid,
+      // platform_name,
     };
 
     if (editPage && editData) {
@@ -332,7 +313,7 @@ const ShipmentInfo = (props) => {
         ),
       );
     } else {
-      dispatch(addShipment(shipmentFormValue, history, organization));
+      dispatch(addShipment(shipmentFormValue, history, null, organization));
     }
   };
 
@@ -555,54 +536,6 @@ const ShipmentInfo = (props) => {
                       />
                     )}
                   </Grid>
-                  <Grid
-                    className={classes.inputWithTooltip}
-                    item
-                    xs={12}
-                  >
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      required
-                      id="platform_name"
-                      select
-                      label="Sensor Platform"
-                      disabled={
-                        viewOnly
-                        || !!(editData && editData.platform_name)
-                      }
-                      value={platform_name}
-                      onChange={(e) => setPlatformName(e.target.value)}
-                      helperText={
-                        editData && editData.platform_name
-                          ? 'Once set, platform cannot be edited.'
-                          : 'Platform can be set just once.'
-                      }
-                    >
-                      <MenuItem value="">Select</MenuItem>
-                      {SENSOR_PLATFORM
-                      && _.map(
-                        _.orderBy(SENSOR_PLATFORM, ['value'], ['asc']),
-                        (item, index) => (
-                          <MenuItem
-                            key={`sensorPlatform${index}:${item.value}`}
-                            value={item.value}
-                          >
-                            {item.label}
-                          </MenuItem>
-                        ),
-                      )}
-                    </TextField>
-                    {fieldsMetadata.platform_name.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          fieldsMetadata.platform_name.help_text
-                        }
-                      />
-                    )}
-                  </Grid>
                 </Grid>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -771,50 +704,7 @@ const ShipmentInfo = (props) => {
                       />
                     )}
                   </Grid>
-                  <Grid
-                    className={classes.inputWithTooltip}
-                    item
-                    xs={12}
-                  >
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      required
-                      id="consortium"
-                      select
-                      label="Consortium"
-                      disabled={
-                        viewOnly
-                        || !!(editData && editData.consortium_uuid)
-                      }
-                      value={consortium_uuid}
-                      onChange={(e) => setConsortiumUuid(e.target.value)}
-                    >
-                      <MenuItem value="">Select</MenuItem>
-                      {consortiumData.length > 0
-                      && _.map(
-                        consortiumData,
-                        (data, index) => (
-                          <MenuItem
-                            key={`consortium${index}:${data.name}`}
-                            value={data.consortium_uuid}
-                          >
-                            {data.name}
-                          </MenuItem>
-                        ),
-                      )}
-                    </TextField>
-                    {fieldsMetadata.consortium_uuid
-                    && fieldsMetadata.consortium_uuid.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          fieldsMetadata.consortium_uuid.help_text
-                        }
-                      />
-                    )}
-                  </Grid>
+
                 </Grid>
               </Grid>
               {(shipmentFormData || editPage) && (
@@ -892,9 +782,7 @@ const mapStateToProps = (state, ownProps) => ({
     || state.itemsReducer.loading
     || state.custodianReducer.loading
     || state.optionsReducer.loading
-    || state.consortiumReducer.loading
   ),
-  consortiumData: state.consortiumReducer.data,
 });
 
 export default connect(mapStateToProps)(ShipmentInfo);

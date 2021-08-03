@@ -6,6 +6,13 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, argv) => {
+  const fileCopy = env.build === 'local'
+    ? new CopyPlugin([
+      { from: '.env.development.local', to: 'environment.js' },
+    ])
+    : new CopyPlugin([
+      { from: 'window.environment.js', to: 'environment.js' },
+    ]);
   const webpackConfig = {
     entry: ['babel-polyfill', './src/index.js'],
     module: {
@@ -106,9 +113,7 @@ module.exports = (env, argv) => {
         favicon: './src/assets/favicon.ico',
         hash: true,
       }),
-      new CopyPlugin([
-        { from: 'window.environment.js', to: 'environment.js' },
-      ]),
+      fileCopy,
     ],
   };
 

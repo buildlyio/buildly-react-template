@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
@@ -9,15 +9,13 @@ import {
   Button,
   TextField,
   CircularProgress,
+  MenuItem,
 } from '@material-ui/core';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
-import { validators } from '@utils/validators';
 import {
-  addProductType,
-  editProductType,
-} from '@redux/items/actions/items.actions';
-import { UserContext } from '@context/User.context';
+  updateCustodian,
+} from '@redux/custodian/actions/custodian.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -49,37 +47,56 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddProductType = ({
+const EditMapping = ({
   history,
   location,
   loading,
   dispatch,
+  allOrgs,
 }) => {
   const classes = useStyles();
-  const organization = useContext(UserContext).organization.organization_uuid;
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
+  const [options, setOptions] = useState([]);
 
-  const editPage = location.state && location.state.type === 'edit';
-  const editData = (
-    location.state
-    && location.state.type === 'edit'
-    && location.state.data
-  ) || {};
-
-  const name = useInput((editData && editData.name) || '', {
-    required: true,
-  });
-  const [formError, setFormError] = useState({});
-
-  const buttonText = editPage ? 'Save' : 'Add Product Type';
-  const formTitle = editPage ? 'Edit Product Type' : 'Add Product Type';
+  const pageType = location.state && location.state.type;
+  const pageData = location.state && location.state.data;
+  const buttonText = pageType === 'edit'
+    ? 'Save'
+    : 'Set Mapping';
+  const formTitle = pageType === 'edit'
+    ? 'Edit Mapping'
+    : 'Set Mapping';
 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
+  const custodyOrg = useInput((
+    pageData && pageData.custody_org_uuid
+  ) || '');
+
+  useEffect(() => {
+    if (allOrgs && pageData) {
+      const opts = _.map(allOrgs, (org) => {
+        const suggest = _.lowerCase(org.name) === _.lowerCase(pageData.name);
+        return {
+          value: org.organization_uuid,
+          name: org.name,
+          order: suggest ? 1 : 0,
+        };
+      });
+      const orderedOpts = _.orderBy(
+        opts,
+        ['order', 'name'],
+        ['desc', 'asc'],
+      );
+
+      setOptions(orderedOpts);
+    }
+  }, [allOrgs, pageData]);
+
   const closeFormModal = () => {
-    if (name.hasChanged()) {
+    if (custodyOrg.hasChanged()) {
       setConfirmModal(true);
     } else {
       setFormModal(false);
@@ -103,66 +120,14 @@ const AddProductType = ({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    const currentDateTime = new Date();
-    let data = {
-      ...editData,
-      name: name.value,
-      organization_uuid: organization,
-      edit_date: currentDateTime,
+    const editData = {
+      ...pageData,
+      custody_org_uuid: custodyOrg.value || null,
+      edit_date: new Date(),
     };
-    if (editPage) {
-      dispatch(editProductType(data));
-    } else {
-      data = {
-        ...data,
-        create_date: currentDateTime,
-      };
-      dispatch(addProductType(data));
-    }
+    dispatch(updateCustodian(editData, history, location.state.from));
+
     setFormModal(false);
-    if (location && location.state) {
-      history.push(location.state.from);
-    }
-  };
-
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
-
-  const handleBlur = (e, validation, input, parentId) => {
-    const validateObj = validators(validation, input);
-    const prevState = { ...formError };
-    if (validateObj && validateObj.error) {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: validateObj,
-      });
-    } else {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: {
-          error: false,
-          message: '',
-        },
-      });
-    }
-  };
-
-  const submitDisabled = () => {
-    const errorKeys = Object.keys(formError);
-    if (!name.value) {
-      return true;
-    }
-    let errorExists = false;
-    _.forEach(errorKeys, (key) => {
-      if (formError[key].error) {
-        errorExists = true;
-      }
-    });
-    return errorExists;
   };
 
   return (
@@ -189,18 +154,37 @@ const AddProductType = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  required
+                  disabled
                   id="name"
-                  label="Product Type"
+                  label="Custodian Name"
                   name="name"
-                  autoComplete="name"
-                  error={formError.name && formError.name.error}
-                  helperText={
-                    formError.name ? formError.name.message : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', name)}
-                  {...name.bind}
+                  value={(pageData && pageData.name) || ''}
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  select
+                  id="custodyOrg"
+                  label="Custodian Organization"
+                  name="custodyOrg"
+                  autoComplete="custodyOrg"
+                  {...custodyOrg.bind}
+                >
+                  <MenuItem value="">Select</MenuItem>
+                  {options
+                  && options.length > 0
+                  && _.map(options, (option, index) => (
+                    <MenuItem
+                      key={`org-option-${index}`}
+                      value={option.value}
+                    >
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
               <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={6} sm={4}>
@@ -211,7 +195,7 @@ const AddProductType = ({
                       variant="contained"
                       color="primary"
                       className={classes.submit}
-                      disabled={loading || submitDisabled()}
+                      disabled={loading}
                     >
                       {buttonText}
                     </Button>
@@ -246,7 +230,7 @@ const AddProductType = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.itemsReducer,
+  ...state.authReducer,
 });
 
-export default connect(mapStateToProps)(AddProductType);
+export default connect(mapStateToProps)(EditMapping);

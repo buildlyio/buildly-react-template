@@ -7,6 +7,7 @@ const initialState = {
   data: null,
   error: null,
   organizationData: null,
+  allOrgs: null,
   orgNames: null,
   orgTypes: null,
 };
@@ -375,6 +376,47 @@ describe('Reset Password Check reducer', () => {
       error: undefined,
       loaded: true,
       loading: false,
+    });
+  });
+});
+
+describe('Load Organizations reducer', () => {
+  it('Empty Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.LOAD_ALL_ORGS,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: true,
+      loaded: false,
+    });
+  });
+
+  it('load orgs success Reducer', () => {
+    expect(
+      reducer.default(
+        initialState,
+        { type: actions.LOAD_ALL_ORGS_SUCCESS },
+      ),
+    ).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      allOrgs: undefined,
+    });
+  });
+
+  it('load orgs fail Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.LOAD_ALL_ORGS_FAILURE,
+      }),
+    ).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
     });
   });
 });

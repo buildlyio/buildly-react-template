@@ -13,6 +13,7 @@ import {
   Button,
   CircularProgress,
   Chip,
+  MenuItem,
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import {
@@ -20,12 +21,17 @@ import {
   CheckBox as CheckBoxIcon,
 } from '@material-ui/icons';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
 import {
   getFormattedRow,
   getFormattedSensorRow,
   getAvailableGateways,
 } from '@pages/SensorsGateway/Constants';
+import {
+  SENSOR_PLATFORM,
+} from '@utils/mock';
+import { setOptionsData } from '@utils/utilMethods';
 import { editGateway } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { editShipment } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
@@ -80,16 +86,23 @@ const SensorsGatewayInfo = ({
   setConfirmModal,
   setConfirmModalFor,
   timezone,
+  shipmentOptions,
 }) => {
   const classes = useStyles();
   const [gatewayIds, setGatewayIds] = useState(
     (shipmentFormData && shipmentFormData.gateway_ids) || [],
+  );
+  const [platform_name, setPlatformName] = useState(
+    (shipmentFormData && shipmentFormData.platform_name) || 'iclp',
   );
   const [options, setOptions] = useState([]);
 
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
   const organization = useContext(UserContext).organization.organization_uuid;
+  const [fieldsMetadata, setFieldsMetaData] = useState({
+    platform_name: '',
+  });
 
   let rows = [];
   let sensorsRow = [];
@@ -114,6 +127,13 @@ const SensorsGatewayInfo = ({
   }
 
   useEffect(() => {
+    const metadata = { ...fieldsMetadata };
+    if (shipmentOptions && shipmentOptions.actions) {
+      metadata.platform_name = setOptionsData(
+        shipmentOptions.actions.POST,
+        'platform_name',
+      );
+    }
     if (
       gatewayData
       && gatewayData.length
@@ -201,6 +221,54 @@ const SensorsGatewayInfo = ({
         <Card variant="outlined" className={classes.form}>
           <CardContent>
             <Grid container spacing={2}>
+              <Grid
+                className={classes.inputWithTooltip}
+                item
+                xs={12}
+              >
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  required
+                  id="platform_name"
+                  select
+                  label="Sensor Platform"
+                  disabled={
+                        viewOnly
+                        || !!(shipmentFormData && shipmentFormData.platform_name)
+                      }
+                  value={platform_name}
+                  onChange={(e) => setPlatformName(e.target.value)}
+                  helperText={
+                        shipmentFormData && shipmentFormData.platform_name
+                          ? 'Once set, platform cannot be edited.'
+                          : 'Platform can be set just once.'
+                      }
+                >
+                  <MenuItem value="">Select</MenuItem>
+                  {SENSOR_PLATFORM
+                      && _.map(
+                        _.orderBy(SENSOR_PLATFORM, ['value'], ['asc']),
+                        (item, index) => (
+                          <MenuItem
+                            key={`sensorPlatform${index}:${item.value}`}
+                            value={item.value}
+                          >
+                            {item.label}
+                          </MenuItem>
+                        ),
+                      )}
+                </TextField>
+                {fieldsMetadata.platform_name.help_text
+                    && (
+                      <CustomizedTooltips
+                        toolTipText={
+                          fieldsMetadata.platform_name.help_text
+                        }
+                      />
+                    )}
+              </Grid>
               <Grid item xs={12}>
                 <Autocomplete
                   multiple

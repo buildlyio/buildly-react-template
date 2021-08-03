@@ -560,7 +560,7 @@ const EnvironmentalLimitsInfo = ({
       <Grid
         container
         spacing={3}
-        justify="center"
+        justifyContent="center"
         className={classes.buttonContainer}
       >
         <Grid item xs={6} sm={4}>

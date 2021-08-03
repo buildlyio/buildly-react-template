@@ -9,6 +9,9 @@ import {
   EDIT_CUSTODIANS,
   EDIT_CUSTODIANS_SUCCESS,
   EDIT_CUSTODIANS_FAILURE,
+  UPDATE_CUSTODIAN,
+  UPDATE_CUSTODIAN_FAILURE,
+  UPDATE_CUSTODIAN_SUCCESS,
   DELETE_CUSTODIANS,
   DELETE_CUSTODIANS_FAILURE,
   DELETE_CUSTODIANS_SUCCESS,
@@ -137,6 +140,30 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
+    case UPDATE_CUSTODIAN:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case UPDATE_CUSTODIAN_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodianData: action.data,
+        error: null,
+      };
+
+    case UPDATE_CUSTODIAN_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
     case DELETE_CUSTODIANS:
       return {
         ...state,

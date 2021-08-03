@@ -60,7 +60,6 @@ const ShipmentDataTable = ({
   timezone,
   copyAction,
   rowsType,
-  consortiumData,
 }) => {
   const classes = useStyles();
   const [selected, setSelected] = useState(0);
@@ -153,7 +152,7 @@ const ShipmentDataTable = ({
           ),
         },
       },
-      ..._.map(getShipmentDataTableColumns(timezone, consortiumData), (column) => ({
+      ..._.map(getShipmentDataTableColumns(timezone), (column) => ({
         ...column,
         options: {
           ...column.options,
@@ -170,7 +169,7 @@ const ShipmentDataTable = ({
       const restCols = _.filter(cols, (col) => col.name !== 'Copy');
       setColumns(restCols);
     }
-  }, [timezone, consortiumData, rowsType, rows]);
+  }, [timezone, rowsType, rows]);
 
   return (
     <div className={classes.root}>

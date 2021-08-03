@@ -6,7 +6,7 @@ export const MAP_TOOLTIP = 'Locations of the shipment from starting point till c
 
 export const SHIPMENT_DATA_TABLE_TOOLTIP = 'Click on a shipment to view it on the map';
 
-export const getShipmentDataTableColumns = (timezone, consortiumData) => ([
+export const getShipmentDataTableColumns = (timezone) => ([
   {
     name: 'name',
     label: 'Shipment Name',
@@ -44,19 +44,6 @@ export const getShipmentDataTableColumns = (timezone, consortiumData) => ([
             .format('MMMM DD, YYYY hh:mm:ss a')
           : value
       ),
-    },
-  },
-  {
-    name: 'consortium_uuid',
-    label: 'Consortium',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => {
-        const present = _.find(consortiumData, { consortium_uuid: value });
-        return present ? present.name : '';
-      },
     },
   },
   {

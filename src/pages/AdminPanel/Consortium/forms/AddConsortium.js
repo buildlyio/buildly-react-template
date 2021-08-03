@@ -55,7 +55,7 @@ const AddConsortium = ({
   location,
   loading,
   dispatch,
-  custodianData,
+  allOrgs,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
@@ -71,8 +71,8 @@ const AddConsortium = ({
   const name = useInput((editData && editData.name) || '', {
     required: true,
   });
-  const [custodians, setCustodians] = useState((
-    editData && editData.custodian_uuids
+  const [orgs, setOrgs] = useState((
+    editData && editData.organization_uuids
   ) || []);
   const [formError, setFormError] = useState({});
 
@@ -111,7 +111,7 @@ const AddConsortium = ({
     let data = {
       ...editData,
       name: name.value,
-      custodian_uuids: custodians,
+      organization_uuids: orgs,
       edit_date: currentDateTime,
     };
     if (editPage) {
@@ -171,12 +171,12 @@ const AddConsortium = ({
 
   const onInputChange = (value) => {
     switch (true) {
-      case (value.length > custodians.length):
-        setCustodians([...custodians, _.last(value).custodian_uuid]);
+      case (value.length > orgs.length):
+        setOrgs([...orgs, _.last(value).organization_uuid]);
         break;
 
-      case (value.length < custodians.length):
-        setCustodians(value);
+      case (value.length < orgs.length):
+        setOrgs(value);
         break;
 
       default:
@@ -226,23 +226,23 @@ const AddConsortium = ({
                   fullWidth
                   multiple
                   filterSelectedOptions
-                  id="custodians"
-                  options={custodianData}
+                  id="orgs"
+                  options={allOrgs}
                   getOptionLabel={(option) => (
                     option && option.name
                   )}
                   getOptionSelected={(option, value) => (
-                    option.custodian_uuid === value
+                    option.organization_uuid === value
                   )}
-                  value={custodians}
+                  value={orgs}
                   onChange={(e, newValue) => onInputChange(newValue)}
                   renderTags={(value, getTagProps) => (
                     _.map(value, (option, index) => (
                       <Chip
                         variant="default"
                         label={
-                          custodianData
-                            ? _.find(custodianData, { custodian_uuid: option })?.name
+                          allOrgs
+                            ? _.find(allOrgs, { organization_uuid: option })?.name
                             : ''
                         }
                         {...getTagProps({ index })}
@@ -253,14 +253,14 @@ const AddConsortium = ({
                     <TextField
                       {...params}
                       variant="outlined"
-                      label="Custodians"
+                      label="Custodian Organizations"
                       placeholder="Attach"
                       margin="normal"
                     />
                   )}
                 />
               </Grid>
-              <Grid container spacing={2} justify="center">
+              <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={6} sm={4}>
                   <div className={classes.loadingWrapper}>
                     <Button
@@ -305,7 +305,7 @@ const AddConsortium = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.consortiumReducer,
-  ...state.custodianReducer,
+  ...state.authReducer,
 });
 
 export default connect(mapStateToProps)(AddConsortium);

@@ -1,41 +1,39 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { UserContext } from '@context/User.context';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import {
-  getConsortiums,
+  loadAllOrgs,
+} from '@redux/authuser/actions/authuser.actions';
+import {
+  getAllConsortiums,
   deleteConsortium,
 } from '@redux/consortium/actions/consortium.actions';
-import {
-  getCustodians,
-} from '@redux/custodian/actions/custodian.actions';
 import { routes } from '@routes/routesConstants';
-import { getColumns } from './ConsortiumConstant';
-import AddConsortium from './forms/AddConsortium';
+import { getConsortiumColumns } from '../ConsortiumConstant';
+import AddConsortium from '../forms/AddConsortium';
 
 const Consortium = ({
   dispatch,
   loading,
-  data,
+  allConsortiums,
   history,
   redirectTo,
   timezone,
-  custodianData,
+  allOrgs,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const { organization_uuid } = useContext(UserContext).organization;
 
   const addPath = redirectTo || `${routes.CONSORTIUM}/add`;
   const editPath = redirectTo || `${routes.CONSORTIUM}/edit`;
 
   useEffect(() => {
-    if (!custodianData) {
-      dispatch(getCustodians(organization_uuid));
+    if (!allOrgs) {
+      dispatch(loadAllOrgs());
     }
-    if (!data) {
-      dispatch(getConsortiums());
+    if (!allConsortiums) {
+      dispatch(getAllConsortiums());
     }
   }, []);
 
@@ -67,8 +65,8 @@ const Consortium = ({
     <DataTableWrapper
       noSpace
       loading={loading}
-      rows={data || []}
-      columns={getColumns(timezone)}
+      rows={allConsortiums || []}
+      columns={getConsortiumColumns(timezone)}
       filename="Consortiums"
       addButtonHeading="Consortium"
       onAddButtonClick={onAddButtonClick}
@@ -89,7 +87,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.consortiumReducer,
   ...state.optionsReducer,
-  ...state.custodianReducer,
+  ...state.authReducer,
 });
 
 export default connect(mapStateToProps)(Consortium);

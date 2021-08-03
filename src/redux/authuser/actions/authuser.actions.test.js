@@ -164,6 +164,16 @@ describe('Reset Password Check action', () => {
   });
 });
 
+// Test Load Orgs
+describe('actions', () => {
+  it('should create an action to load orgs', () => {
+    const expectedAction = {
+      type: actions.LOAD_ALL_ORGS,
+    };
+    expect(actions.loadAllOrgs()).toEqual(expectedAction);
+  });
+});
+
 // Test Load Org Names
 describe('actions', () => {
   it('should create an action to load org names', () => {

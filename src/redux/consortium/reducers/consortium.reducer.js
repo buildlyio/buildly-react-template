@@ -1,8 +1,11 @@
 import _ from 'lodash';
 import {
-  GET_CONSORTIUMS,
-  GET_CONSORTIUMS_SUCCESS,
-  GET_CONSORTIUMS_FAILURE,
+  GET_ALL_CONSORTIUMS,
+  GET_ALL_CONSORTIUMS_SUCCESS,
+  GET_ALL_CONSORTIUMS_FAILURE,
+  GET_ORG_CONSORTIUMS,
+  GET_ORG_CONSORTIUMS_SUCCESS,
+  GET_ORG_CONSORTIUMS_FAILURE,
   CREATE_CONSORTIUM,
   CREATE_CONSORTIUM_SUCCESS,
   CREATE_CONSORTIUM_FAILURE,
@@ -17,14 +20,15 @@ import {
 const initialState = {
   loading: false,
   loaded: false,
-  data: null,
+  allConsortiums: null,
+  orgConsortiums: null,
   error: null,
 };
 
 // Reducer
 export default (state = initialState, action) => {
   switch (action.type) {
-    case GET_CONSORTIUMS:
+    case GET_ALL_CONSORTIUMS:
       return {
         ...state,
         loading: true,
@@ -32,15 +36,39 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case GET_CONSORTIUMS_SUCCESS:
+    case GET_ALL_CONSORTIUMS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.data,
+        allConsortiums: action.data,
       };
 
-    case GET_CONSORTIUMS_FAILURE:
+    case GET_ALL_CONSORTIUMS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_ORG_CONSORTIUMS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case GET_ORG_CONSORTIUMS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        orgConsortiums: action.data,
+      };
+
+    case GET_ORG_CONSORTIUMS_FAILURE:
       return {
         ...state,
         loading: false,
@@ -57,12 +85,12 @@ export default (state = initialState, action) => {
       };
 
     case CREATE_CONSORTIUM_SUCCESS: {
-      const data = state.data || [];
+      const data = state.allConsortiums || [];
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: [...data, action.data],
+        allConsortiums: [...data, action.data],
       };
     }
 
@@ -83,14 +111,14 @@ export default (state = initialState, action) => {
       };
 
     case EDIT_CONSORTIUM_SUCCESS: {
-      const edited = _.filter(state.data, (data) => (
+      const edited = _.filter(state.allConsortiums, (data) => (
         data.id !== action.data.id
       ));
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: [...edited, action.data],
+        allConsortiums: [...edited, action.data],
       };
     }
 
@@ -111,14 +139,14 @@ export default (state = initialState, action) => {
       };
 
     case DELETE_CONSORTIUM_SUCCESS: {
-      const deleted = _.filter(state.data, (data) => (
+      const deleted = _.filter(state.allConsortiums, (data) => (
         data.consortium_uuid !== action.uuid
       ));
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: deleted,
+        allConsortiums: deleted,
       };
     }
 

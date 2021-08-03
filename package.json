@@ -101,8 +101,8 @@
   "scripts": {
     "build": "webpack --mode development",
     "start": "webpack-dev-server --mode development",
+    "https:local": "webpack-dev-server --https --cert /Users/ajackusconsultancy/certs/server.crt --key /Users/ajackusconsultancy/certs/server.key --mode development --env.build=local",
     "build:dev": "webpack --mode development --env.build=dev",
-    "https:dev": "webpack-dev-server --https --cert /Users/radz/certs/server.crt --key /Users/radz/certs/server.key --mode development --env.build=dev",
     "start:dev": "webpack-dev-server --mode development --env.build=dev",
     "build:prod": "webpack --mode production --env.build=prod",
     "start:prod": "webpack-dev-server --mode development --env.build=prod",

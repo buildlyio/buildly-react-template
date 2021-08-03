@@ -11,6 +11,10 @@ export const EDIT_CUSTODIANS = 'CUSTODIAN/EDIT_CUSTODIANS';
 export const EDIT_CUSTODIANS_SUCCESS = 'CUSTODIAN/EDIT_CUSTODIANS_SUCCESS';
 export const EDIT_CUSTODIANS_FAILURE = 'CUSTODIAN/EDIT_CUSTODIANS_FAILURE';
 
+export const UPDATE_CUSTODIAN = 'CUSTODIAN/UPDATE_CUSTODIAN';
+export const UPDATE_CUSTODIAN_SUCCESS = 'CUSTODIAN/UPDATE_CUSTODIAN_SUCCESS';
+export const UPDATE_CUSTODIAN_FAILURE = 'CUSTODIAN/UPDATE_CUSTODIAN_FAILURE';
+
 export const DELETE_CUSTODIANS = 'CUSTODIAN/DELETE_CUSTODIANS';
 export const DELETE_CUSTODIANS_SUCCESS = 'CUSTODIAN/DELETE_CUSTODIANS_SUCCESS';
 export const DELETE_CUSTODIANS_FAILURE = 'CUSTODIAN/DELETE_CUSTODIANS_FAILURE';
@@ -83,6 +87,18 @@ export const editCustodian = (payload, history, redirectTo) => ({
   redirectTo,
 });
 
+/**
+ * Update Custodian
+ * @param {Object} payload
+ * @param {Object} history
+ * @param {String} redirectTo
+ */
+export const updateCustodian = (payload, history, redirectTo) => ({
+  type: UPDATE_CUSTODIAN,
+  payload,
+  history,
+  redirectTo,
+});
 /**
  * Delete Custodain
  * @param {Number} custodianId

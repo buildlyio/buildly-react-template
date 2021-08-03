@@ -334,7 +334,7 @@ const AddShipment = (props) => {
               <Grid
                 container
                 alignItems="center"
-                justify="center"
+                justifyContent="center"
               >
                 <Grid item sm={10}>
                   <Stepper

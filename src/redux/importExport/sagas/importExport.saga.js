@@ -42,7 +42,7 @@ function* addFromFile(payload) {
       'post',
       `${window.env.API_URL}${endPoint}`,
       payload.formData,
-      true,
+      null,
       'multipart/form-data',
     );
     if (response && response.data.status) {

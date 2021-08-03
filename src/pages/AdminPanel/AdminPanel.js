@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -9,10 +9,12 @@ import {
   Tabs,
   Tab,
 } from '@material-ui/core';
+import { UserContext } from '@context/User.context';
 import { routes } from '@routes/routesConstants';
+import { checkForGlobalAdmin } from '@utils/utilMethods';
 import Configuration from './Configuration/Configuration';
 import ImportExport from './ImportExport/ImportExport';
-import Consortium from './Consortium/Consortium';
+import ConsortiumSettings from './Consortium/ConsortiumSettings';
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -26,16 +28,27 @@ const useStyles = makeStyles((theme) => ({
  */
 const AdminPanel = ({ history, location, organizationData }) => {
   const classes = useStyles();
-  const subNav = organizationData && organizationData.allow_import_export
-    ? [
-      { label: 'Configuration', value: 'configuration' },
+  const superAdmin = checkForGlobalAdmin(useContext(UserContext));
+
+  let subNav = [
+    { label: 'Configuration', value: 'configuration' },
+  ];
+  if (
+    organizationData
+    && organizationData.allow_import_export
+  ) {
+    subNav = [
+      ...subNav,
       { label: 'Import/Export', value: 'import-export' },
-      { label: 'Consortium', value: 'consortium' },
-    ]
-    : [
-      { label: 'Configuration', value: 'configuration' },
+    ];
+  }
+  if (superAdmin) {
+    subNav = [
+      ...subNav,
       { label: 'Consortium', value: 'consortium' },
     ];
+  }
+
   const viewPath = (_.find(
     subNav,
     (item) => _.endsWith(location.pathname, item.value),
@@ -77,7 +90,7 @@ const AdminPanel = ({ history, location, organizationData }) => {
           component={ImportExport}
         />
       )}
-      <Route path={routes.CONSORTIUM} component={Consortium} />
+      <Route path={routes.CONSORTIUM} component={ConsortiumSettings} />
     </Box>
   );
 };

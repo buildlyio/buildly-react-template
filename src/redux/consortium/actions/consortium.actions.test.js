@@ -4,9 +4,22 @@ import * as actions from './consortium.actions';
 describe('get all consortiums action', () => {
   it('should create an action to get all consortiums', () => {
     const expectedAction = {
-      type: actions.GET_CONSORTIUMS,
+      type: actions.GET_ALL_CONSORTIUMS,
     };
-    expect(actions.getConsortiums()).toEqual(expectedAction);
+    expect(actions.getAllConsortiums()).toEqual(expectedAction);
+  });
+});
+
+// Test Get Org Consortiums Action
+describe('get org consortiums action', () => {
+  it('should create an action to get org consortiums', () => {
+    const organization_uuid = 'feu-ewgqu-egoo248w-3289hqv';
+    const expectedAction = {
+      type: actions.GET_ORG_CONSORTIUMS,
+      organization_uuid,
+    };
+    expect(actions.getOrgConsortiums(organization_uuid))
+      .toEqual(expectedAction);
   });
 });
 

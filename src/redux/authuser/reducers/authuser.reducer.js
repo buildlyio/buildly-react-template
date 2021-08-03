@@ -30,6 +30,9 @@ import {
   UPDATE_ORGANIZATION,
   UPDATE_ORGANIZATION_SUCCESS,
   UPDATE_ORGANIZATION_FAILURE,
+  LOAD_ALL_ORGS,
+  LOAD_ALL_ORGS_SUCCESS,
+  LOAD_ALL_ORGS_FAILURE,
   LOAD_ORG_NAMES,
   LOAD_ORG_NAMES_SUCCESS,
   LOAD_ORG_NAMES_FAILURE,
@@ -53,6 +56,7 @@ const initialState = {
   data: null,
   error: null,
   organizationData: null,
+  allOrgs: null,
   orgNames: null,
   orgTypes: null,
 };
@@ -302,6 +306,30 @@ export default (state = initialState, action) => {
       };
 
     case UPDATE_ORGANIZATION_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case LOAD_ALL_ORGS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case LOAD_ALL_ORGS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        allOrgs: action.allOrgs,
+      };
+
+    case LOAD_ALL_ORGS_FAILURE:
       return {
         ...state,
         loading: false,

@@ -201,7 +201,7 @@ const AddOrganizationType = ({
                   {...name.bind}
                 />
               </Grid>
-              <Grid container spacing={2} justify="center">
+              <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={6} sm={4}>
                   <div className={classes.loadingWrapper}>
                     <Button

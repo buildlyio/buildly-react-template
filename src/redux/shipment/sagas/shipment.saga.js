@@ -32,12 +32,20 @@ const shipmentApiEndPoint = 'shipment/';
 
 function* getShipmentList(payload) {
   try {
+    const response = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}consortium/?organization_uuid=${payload.organization_uuid}`,
+    );
+    const consortium_uuid = _.join(_.map(response.data, 'consortium_uuid'), ',');
+    let query_params = `?organization_uuid=${payload.organization_uuid}`;
+    if (consortium_uuid) {
+      query_params = query_params.concat(`&consortium_uuid=${consortium_uuid}`);
+    }
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${shipmentApiEndPoint}shipment/?organization_uuid=${payload.organization_uuid}`,
-      null,
-      true,
+      `${window.env.API_URL}${shipmentApiEndPoint}shipment/${query_params}`,
     );
     if (data && data.data) {
       yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data });
@@ -83,7 +91,6 @@ function* addShipment(action) {
       'post',
       `${window.env.API_URL}${shipmentApiEndPoint}shipment/`,
       payload,
-      true,
     );
     yield [
       yield put(
@@ -102,6 +109,12 @@ function* addShipment(action) {
     ];
     if (history && redirectTo) {
       yield call(history.push, redirectTo);
+    } else if (history && !redirectTo) {
+      yield call(history.push, `${routes.SHIPMENT}/edit/:${data.data.id}`, {
+        type: 'edit',
+        data: data.data,
+        from: routes.SHIPMENT,
+      });
     }
   } catch (error) {
     yield [
@@ -128,7 +141,6 @@ function* editShipment(action) {
       'put',
       `${window.env.API_URL}${shipmentApiEndPoint}shipment/${payload.id}/`,
       payload,
-      true,
     );
     yield [
       yield put(
@@ -177,8 +189,6 @@ function* deleteShipment(payload) {
       httpService.makeRequest,
       'delete',
       `${window.env.API_URL}${shipmentApiEndPoint}shipment/${shipmentId}/`,
-      null,
-      true,
     );
     yield [
       yield put(
@@ -217,8 +227,6 @@ function* getDashboard(payload) {
       httpService.makeRequest,
       'get',
       `${window.env.API_URL}${shipmentApiEndPoint}dashboard/?organization_uuid=${payload.organization_uuid}`,
-      null,
-      true,
     );
     yield put({
       type: GET_DASHBOARD_ITEMS_SUCCESS,
@@ -259,7 +267,6 @@ function* pdfIdentifier(action) {
         'post',
         `${window.env.API_URL}${shipmentApiEndPoint}upload_file/`,
         data,
-        true,
       );
       uploaded_pdf = payload.uploaded_pdf
         ? [...payload.uploaded_pdf, filename]
@@ -350,10 +357,6 @@ function* watchDeleteShipment() {
   yield takeLatest(DELETE_SHIPMENT, deleteShipment);
 }
 
-function* watchGetDashboardItems() {
-  yield takeLatest(GET_DASHBOARD_ITEMS, getDashboard);
-}
-
 function* watchPdfIdentifier() {
   yield takeLatest(ADD_PDF_IDENTIFIER, pdfIdentifier);
 }
@@ -364,7 +367,6 @@ export default function* shipmentSaga() {
     watchAddShipment(),
     watchDeleteShipment(),
     watchEditShipment(),
-    watchGetDashboardItems(),
     watchPdfIdentifier(),
   ]);
 }

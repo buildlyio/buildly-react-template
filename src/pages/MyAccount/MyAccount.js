@@ -68,7 +68,7 @@ const MyAccount = ({
       <Typography className={classes.pageHeading} variant="h5">
         Accounts and Settings
       </Typography>
-      <Grid container spacing={4} justify="center">
+      <Grid container spacing={4} justifyContent="center">
         <Grid item md={contactInfo ? 6 : 8} xs={12}>
           <Typography variant="h6">Account Info</Typography>
           <Card variant="outlined">
@@ -83,7 +83,7 @@ const MyAccount = ({
                   <EditIcon />
                 </IconButton>
               </div>
-              <Grid container spacing={3} justify="center">
+              <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12}>
                   <Avatar
                     alt="Remy Sharp"

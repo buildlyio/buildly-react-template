@@ -39,6 +39,9 @@ import {
   UPDATE_ORGANIZATION,
   UPDATE_ORGANIZATION_SUCCESS,
   UPDATE_ORGANIZATION_FAILURE,
+  LOAD_ALL_ORGS,
+  LOAD_ALL_ORGS_SUCCESS,
+  LOAD_ALL_ORGS_FAILURE,
   LOAD_ORG_NAMES,
   LOAD_ORG_NAMES_SUCCESS,
   LOAD_ORG_NAMES_FAILURE,
@@ -261,8 +264,6 @@ function* getOrganizationData(payload) {
       httpService.makeRequest,
       'get',
       `${window.env.API_URL}organization/${uuid}/`,
-      null,
-      true,
     );
     yield put({ type: GET_ORGANIZATION_SUCCESS, data });
   } catch (error) {
@@ -455,6 +456,19 @@ function* updateOrganizationData(payload) {
   }
 }
 
+function* loadAllOrganizations() {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}organization/`,
+    );
+    yield put({ type: LOAD_ALL_ORGS_SUCCESS, allOrgs: data.data });
+  } catch (error) {
+    yield put({ type: LOAD_ALL_ORGS_FAILURE, error });
+  }
+}
+
 function* loadOrganizationNames() {
   try {
     const data = yield call(
@@ -569,6 +583,10 @@ function* watchUpdateOrganization() {
   yield takeLatest(UPDATE_ORGANIZATION, updateOrganizationData);
 }
 
+function* watchLoadAllOrganizations() {
+  yield takeLatest(LOAD_ALL_ORGS, loadAllOrganizations);
+}
+
 function* watchLoadOrganizationNames() {
   yield takeLatest(LOAD_ORG_NAMES, loadOrganizationNames);
 }
@@ -602,6 +620,7 @@ export default function* authSaga() {
     watchConfirmResetPassword(),
     watchResetPasswordCheck(),
     watchUpdateOrganization(),
+    watchLoadAllOrganizations(),
     watchLoadOrganizationNames(),
     watchGetOrgTypes(),
     watchAddOrgType(),

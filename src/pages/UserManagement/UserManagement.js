@@ -139,7 +139,7 @@ const UserManagement = ({
               {...email.bind}
             />
             <Grid
-              justify="flex-end"
+              justifyContent="flex-end"
               container
               spacing={0}
             >

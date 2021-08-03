@@ -4,14 +4,15 @@ import * as reducer from './consortium.reducer';
 const initialState = {
   loading: false,
   loaded: false,
-  data: null,
+  allConsortiums: null,
+  orgConsortiums: null,
   error: null,
 };
 
 describe('Get all consortiums reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(initialState, {
-      type: actions.GET_CONSORTIUMS,
+      type: actions.GET_ALL_CONSORTIUMS,
     }))
       .toEqual({
         ...initialState,
@@ -22,19 +23,55 @@ describe('Get all consortiums reducer', () => {
   it('get all consortiums success Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_CONSORTIUMS_SUCCESS },
+      { type: actions.GET_ALL_CONSORTIUMS_SUCCESS },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      data: undefined,
+      allConsortiums: undefined,
     });
   });
 
   it('get all consortiums fail Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_CONSORTIUMS_FAILURE },
+      { type: actions.GET_ALL_CONSORTIUMS_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});
+
+describe('Get org consortiums reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(initialState, {
+      type: actions.GET_ORG_CONSORTIUMS,
+    }))
+      .toEqual({
+        ...initialState,
+        loading: true,
+      });
+  });
+
+  it('get org consortiums success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_ORG_CONSORTIUMS_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      orgConsortiums: undefined,
+    });
+  });
+
+  it('get org consortiums fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_ORG_CONSORTIUMS_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,

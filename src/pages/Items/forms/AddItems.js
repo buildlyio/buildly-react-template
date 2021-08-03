@@ -903,7 +903,7 @@ const AddItems = ({
             <Grid
               container
               spacing={isDesktop ? 3 : 0}
-              justify="center"
+              justifyContent="center"
             >
               <Grid item xs={12} sm={4}>
                 <div className={classes.loadingWrapper}>
