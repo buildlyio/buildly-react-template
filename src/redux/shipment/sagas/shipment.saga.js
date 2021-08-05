@@ -136,12 +136,26 @@ function* addShipment(action) {
 function* editShipment(action) {
   const { payload, history, redirectTo } = action;
   try {
+    let gatewayIds = [];
+    if ('new' in payload) {
+      delete payload.new;
+      gatewayIds = payload.gateway_ids;
+      delete payload.gateway_ids;
+    }
     const data = yield call(
       httpService.makeRequest,
       'put',
       `${window.env.API_URL}${shipmentApiEndPoint}shipment/${payload.id}/`,
       payload,
     );
+    if (gatewayIds && gatewayIds.length > 0) {
+      const updateShipment = yield call(
+        httpService.makeRequest,
+        'patch',
+        `${window.env.API_URL}${shipmentApiEndPoint}shipment/${payload.id}/`,
+        { gateway_ids: gatewayIds },
+      );
+    }
     yield [
       yield put(
         getShipmentDetails(

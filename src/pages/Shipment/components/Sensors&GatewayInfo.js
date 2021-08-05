@@ -33,7 +33,7 @@ import {
 } from '@utils/mock';
 import { setOptionsData } from '@utils/utilMethods';
 import { editGateway } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { editShipment } from '@redux/shipment/actions/shipment.actions';
+import { editShipment, saveShipmentFormData } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
 import { gatewayColumns, sensorsColumns } from '../ShipmentConstants';
 
@@ -137,7 +137,6 @@ const SensorsGatewayInfo = ({
     if (
       gatewayData
       && gatewayData.length
-      && shipmentFormData
       && gatewayTypeList
       && gatewayTypeList.length
       && shipmentData
@@ -145,15 +144,15 @@ const SensorsGatewayInfo = ({
     ) {
       const opts = getAvailableGateways(
         gatewayData,
-        shipmentFormData.platform_name
-          ? _.lowerCase(shipmentFormData.platform_name)
+        platform_name
+          ? _.lowerCase(platform_name)
           : 'iclp',
         gatewayTypeList,
         shipmentData,
       );
       setOptions(opts);
     }
-  }, [gatewayData, shipmentFormData, gatewayTypeList, shipmentData]);
+  }, [gatewayData, platform_name, gatewayTypeList, shipmentData]);
 
   const onInputChange = (value) => {
     switch (true) {
@@ -182,7 +181,9 @@ const SensorsGatewayInfo = ({
   const handleSubmit = (event) => {
     event.preventDefault();
     const shipmentFormValue = {
-      ...{ ...shipmentFormData, gateway_ids: gatewayIds },
+      ...{
+        ...shipmentFormData, platform_name, gateway_ids: gatewayIds, new: true,
+      },
     };
     const updateGateway = _.find(gatewayData, { gateway_uuid: gatewayIds[0] });
     dispatch(
