@@ -51,6 +51,9 @@ export const gatewayColumns = (timezone) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      customBodyRender: (value) => (
+        value && value !== '-' ? _.join(value, ',') : value
+      ),
     },
   },
   {

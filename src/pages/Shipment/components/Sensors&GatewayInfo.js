@@ -33,7 +33,7 @@ import {
 } from '@utils/mock';
 import { setOptionsData } from '@utils/utilMethods';
 import { editGateway } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { editShipment, saveShipmentFormData } from '@redux/shipment/actions/shipment.actions';
+import { editShipment } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
 import { gatewayColumns, sensorsColumns } from '../ShipmentConstants';
 
@@ -180,12 +180,15 @@ const SensorsGatewayInfo = ({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
+    const updateGateway = _.find(gatewayData, { gateway_uuid: gatewayIds[0] });
     const shipmentFormValue = {
       ...{
-        ...shipmentFormData, platform_name, gateway_ids: gatewayIds, new: true,
+        ...shipmentFormData,
+        platform_name,
+        gateway_ids: gatewayIds,
+        gateway_imei: [updateGateway.imei_number],
       },
     };
-    const updateGateway = _.find(gatewayData, { gateway_uuid: gatewayIds[0] });
     dispatch(
       editShipment(
         shipmentFormValue,
@@ -197,6 +200,7 @@ const SensorsGatewayInfo = ({
     dispatch(editGateway({
       ...updateGateway,
       gateway_status: 'assigned',
+      shipment_ids: [shipmentFormData.id],
     }));
   };
 
