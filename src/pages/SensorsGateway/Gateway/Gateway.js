@@ -11,6 +11,14 @@ import {
 import {
   getGatewayOptions,
 } from '@redux/options/actions/options.actions';
+import {
+  getCustodians,
+  getCustodianType,
+  getContact,
+} from '@redux/custodian/actions/custodian.actions';
+import {
+  getShipmentDetails,
+} from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
 import { gatewayColumns, getFormattedRow } from '../Constants';
 import AddGateway from '../forms/AddGateway';
@@ -25,6 +33,8 @@ const Gateway = ({
   gatewayOptions,
   shipmentData,
   timezone,
+  custodianData,
+  aggregateReportData,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteGatewayId, setDeleteGatewayId] = useState('');
@@ -47,6 +57,19 @@ const Gateway = ({
     if (gatewayOptions === null) {
       dispatch(getGatewayOptions());
     }
+    if (shipmentData === null) {
+      const getUpdatedSensorData = !aggregateReportData;
+      dispatch(getShipmentDetails(
+        organization,
+        null,
+        getUpdatedSensorData,
+      ));
+    }
+    if (custodianData === null) {
+      dispatch(getCustodians(organization));
+      dispatch(getCustodianType());
+      dispatch(getContact(organization));
+    }
   }, []);
 
   useEffect(() => {
@@ -56,9 +79,9 @@ const Gateway = ({
       && gatewayTypeList
       && gatewayTypeList.length
     ) {
-      setRows(getFormattedRow(gatewayData, gatewayTypeList, shipmentData));
+      setRows(getFormattedRow(gatewayData, gatewayTypeList, shipmentData, custodianData));
     }
-  }, [gatewayData, gatewayTypeList, shipmentData]);
+  }, [gatewayData, gatewayTypeList, shipmentData, custodianData]);
 
   const editGatewayAction = (item) => {
     history.push(`${editPath}/:${item.id}`, {
@@ -112,10 +135,12 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.sensorsGatewayReducer,
   ...state.optionsReducer,
   ...state.shipmentReducer,
+  ...state.custodianReducer,
   loading: (
     state.sensorsGatewayReducer.loading
     || state.optionsReducer.loading
     || state.shipmentReducer.loading
+    || state.custodianReducer.loading
   ),
 });
 

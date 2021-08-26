@@ -57,6 +57,18 @@ export const gatewayColumns = (timezone) => ([
     },
   },
   {
+    name: 'custodian',
+    label: 'Custodian',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        value && value !== '-' ? _.join(value, ',') : value
+      ),
+    },
+  },
+  {
     name: 'activation_date',
     label: 'Activation',
     options: {
@@ -72,15 +84,15 @@ export const gatewayColumns = (timezone) => ([
   },
 ]);
 
-export const getFormattedRow = (data, itemTypeList, shipmentData) => {
+export const getFormattedRow = (data, gatewayTypeList, shipmentData, custodianData) => {
   if (
     data
-    && itemTypeList
+    && gatewayTypeList
   ) {
     let formattedData = [];
     _.forEach(data, (element) => {
-      let edited = { ...element, shipment: [] };
-      _.forEach(itemTypeList, (type) => {
+      let edited = { ...element, shipment: [], custodian: [] };
+      _.forEach(gatewayTypeList, (type) => {
         if (type.url === element.gateway_type) {
           edited = {
             ...edited,
@@ -104,8 +116,24 @@ export const getFormattedRow = (data, itemTypeList, shipmentData) => {
           }
         });
       }
+      if (custodianData && custodianData.length) {
+        _.forEach(custodianData, (custodian) => {
+          if (element.custodian_uuid && element.custodian_uuid === custodian.custodian_uuid) {
+            edited = {
+              ...edited,
+              custodian: [
+                ...edited.custodian,
+                custodian.name,
+              ],
+            };
+          }
+        });
+      }
       if (edited.shipment.length === 0) {
         edited.shipment = '-';
+      }
+      if (edited.custodian.length === 0) {
+        edited.custodian = '-';
       }
       formattedData = [...formattedData, edited];
     });

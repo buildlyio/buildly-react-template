@@ -26,6 +26,7 @@ import {
   editGateway,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { validators } from '@utils/validators';
+import { getFormattedRow } from '@pages/Custodians/CustodianConstants';
 import { GATEWAY_STATUS } from '../Constants';
 
 const useStyles = makeStyles((theme) => ({
@@ -73,6 +74,9 @@ const AddGateway = ({
   gatewayTypeList,
   gatewayOptions,
   timezone,
+  viewOnly,
+  custodianData,
+  contactInfo,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
@@ -99,6 +103,10 @@ const AddGateway = ({
   const battery_level = useInput(
     editData.last_known_battery_level || '',
   );
+  const [custodianList, setCustodianList] = useState([]);
+  const [custodian_uuid, setcustodian_uuid] = useState(
+    (editData && editData.custodian_uuid) || '',
+  );
   const mac_address = useInput(editData.mac_address || '');
   const [last_known_location, setLastLocation] = useState(
     (editData
@@ -122,6 +130,19 @@ const AddGateway = ({
       setGatewayMetaData(gatewayOptions.actions.POST);
     }
   }, [gatewayOptions]);
+
+  useEffect(() => {
+    if (
+      custodianData
+      && contactInfo
+      && custodianData.length
+    ) {
+      setCustodianList(getFormattedRow(
+        custodianData,
+        contactInfo,
+      ));
+    }
+  }, [custodianData, contactInfo]);
 
   const closeFormModal = () => {
     const dataHasChanged = (
@@ -169,6 +190,7 @@ const AddGateway = ({
       last_known_battery_level: battery_level.value,
       ...(editPage && editData && { id: editData.id }),
       mac_address: mac_address.value,
+      custodian_uuid,
       last_known_location: [
         last_known_location === '' ? 'null, null' : last_known_location,
       ],
@@ -220,6 +242,23 @@ const AddGateway = ({
       }
     });
     return errorExists;
+  };
+
+  const onInputChange = (e) => {
+    const { value } = e.target;
+    if (value) {
+      setcustodian_uuid(value);
+      if (custodianList.length > 0) {
+        let selectedCustodian = '';
+        _.forEach(custodianList, (list) => {
+          if (list.uuid === value) {
+            selectedCustodian = list;
+          }
+        });
+      }
+    } else {
+      setcustodian_uuid(value);
+    }
   };
 
   const theme = useTheme();
@@ -495,6 +534,57 @@ const AddGateway = ({
                       />
                     )}
                   </Grid>
+                  <Grid
+                    className={classes.inputWithTooltip}
+                    item
+                    xs={12}
+                  >
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      id="custodian_uuid"
+                      select
+                      fullWidth
+                      required
+                      label="Custodian"
+                      disabled={viewOnly}
+                      error={
+                    formError.custodian_uuid
+                    && formError.custodian_uuid.error
+                  }
+                      helperText={
+                    formError.custodian_uuid
+                      ? formError.custodian_uuid.message
+                      : ''
+                  }
+                      onBlur={(e) => handleBlur(e, 'required', custodian_uuid, 'custodian_uuid')}
+                      value={custodian_uuid}
+                      onChange={onInputChange}
+                    >
+                      <MenuItem value="">Select</MenuItem>
+                      {custodianList
+                    && _.map(
+                      _.orderBy(custodianList, ['name'], ['asc']),
+                      (item, index) => (
+                        <MenuItem
+                          key={`custodian${index}:${item.id}`}
+                          value={item.custodian_uuid}
+                        >
+                          {item.name}
+                        </MenuItem>
+                      ),
+                    )}
+                    </TextField>
+                    {gatewayMetaData.custodian_uuid
+                && gatewayMetaData.custodian_uuid.help_text
+                && (
+                  <CustomizedTooltips
+                    toolTipText={
+                      gatewayMetaData.custodian_uuid.help_text
+                    }
+                  />
+                )}
+                  </Grid>
                   <Grid item xs={12}>
                     <div className={classes.inputWithTooltip}>
                       <TextField
@@ -595,9 +685,11 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
   ...state.optionsReducer,
+  ...state.custodianReducer,
   loading: (
     state.sensorsGatewayReducer.loading
     || state.optionsReducer.loading
+    || state.custodianReducer.loading
   ),
 });
 
