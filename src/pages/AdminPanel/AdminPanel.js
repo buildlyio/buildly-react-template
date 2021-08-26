@@ -11,10 +11,11 @@ import {
 } from '@material-ui/core';
 import { UserContext } from '@context/User.context';
 import { routes } from '@routes/routesConstants';
-import { checkForGlobalAdmin } from '@utils/utilMethods';
+import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
 import Configuration from './Configuration/Configuration';
 import ImportExport from './ImportExport/ImportExport';
 import ConsortiumSettings from './Consortium/ConsortiumSettings';
+import Forbidden from './Forbidden';
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -28,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
  */
 const AdminPanel = ({ history, location, organizationData }) => {
   const classes = useStyles();
+  const isAdmin = checkForAdmin(useContext(UserContext))
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  || checkForGlobalAdmin(useContext(UserContext));
   const superAdmin = checkForGlobalAdmin(useContext(UserContext));
 
   let subNav = [
@@ -66,6 +70,10 @@ const AdminPanel = ({ history, location, organizationData }) => {
 
   return (
     <Box mt={5} mb={5}>
+      {isAdmin
+    && (
+    <Box mt={5} mb={5}>
+
       <Box mb={3}>
         <Typography className={classes.heading} variant="h4">
           Admin Panel
@@ -92,6 +100,15 @@ const AdminPanel = ({ history, location, organizationData }) => {
       )}
       <Route path={routes.CONSORTIUM} component={ConsortiumSettings} />
     </Box>
+    )}
+      {!isAdmin && (
+      <Forbidden
+        history={history}
+        location={location}
+      />
+      )}
+    </Box>
+
   );
 };
 
