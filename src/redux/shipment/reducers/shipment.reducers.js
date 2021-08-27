@@ -49,13 +49,15 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case GET_SHIPMENTS_SUCCESS:
+    case GET_SHIPMENTS_SUCCESS: {
+      const initialShipmentData = state.shipmentData || [];
       return {
         ...state,
         loading: false,
         loaded: true,
-        shipmentData: action.data,
+        shipmentData: initialShipmentData.concat(action.data),
       };
+    }
 
     case GET_SHIPMENTS_FAILURE:
       return {

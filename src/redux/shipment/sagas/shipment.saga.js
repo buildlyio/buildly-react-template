@@ -38,7 +38,7 @@ function* getShipmentList(payload) {
       `${window.env.API_URL}consortium/?organization_uuid=${payload.organization_uuid}`,
     );
     const consortium_uuid = _.join(_.map(response.data, 'consortium_uuid'), ',');
-    let query_params = `?organization_uuid=${payload.organization_uuid}`;
+    let query_params = `?status=${payload.status}&organization_uuid=${payload.organization_uuid}`;
     if (consortium_uuid) {
       query_params = query_params.concat(`&consortium_uuid=${consortium_uuid}`);
     }
@@ -60,7 +60,7 @@ function* getShipmentList(payload) {
       const IDS = _.map(data.data, 'partner_shipment_id');
       const ids = _.toString(_.without(IDS, null));
       const encodedIds = encodeURIComponent(ids);
-      if (payload.getUpdatedSensorData) {
+      if (payload.getUpdatedSensorData && encodedIds) {
         yield [
           yield put(getAggregateReport(encodedIds)),
         ];

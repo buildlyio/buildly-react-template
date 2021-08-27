@@ -138,6 +138,7 @@ const Shipment = (props) => {
       const getUpdatedSensorData = !aggregateReportData;
       dispatch(getShipmentDetails(
         organization,
+        'Planned&Enroute',
         null,
         getUpdatedSensorData,
       ));
@@ -346,6 +347,28 @@ const Shipment = (props) => {
 
   const filterTabClicked = (event, filter) => {
     setShipmentFilter(filter);
+    const getUpdatedSensorData = !aggregateReportData;
+    let shipmentStatus = '';
+    switch (filter) {
+      case 'Active':
+      default:
+        shipmentStatus = 'Planned&Enroute';
+        break;
+      case 'Completed':
+      case 'Cancelled':
+        shipmentStatus = filter;
+        break;
+    }
+    const shipmentRows = _.filter(shipmentData, { type: filter });
+
+    if (shipmentRows.length === 0) {
+      dispatch(getShipmentDetails(
+        organization,
+        shipmentStatus,
+        null,
+        getUpdatedSensorData,
+      ));
+    }
   };
 
   const handleCopy = (item) => {

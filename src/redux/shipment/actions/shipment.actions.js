@@ -41,11 +41,13 @@ export const saveShipmentFormData = (formData) => ({
  */
 export const getShipmentDetails = (
   organization_uuid,
+  status,
   id = null,
   getUpdatedSensorData = false,
 ) => ({
   type: GET_SHIPMENTS,
   organization_uuid,
+  status,
   id,
   getUpdatedSensorData,
 });
