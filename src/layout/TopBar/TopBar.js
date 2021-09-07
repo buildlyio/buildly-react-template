@@ -21,6 +21,8 @@ import logo from '@assets/tp-logo.png';
 import {
   logout,
   getUser,
+  loadAllOrgs,
+  updateUser,
 } from '@redux/authuser/actions/authuser.actions';
 import {
   getUserOptions,
@@ -35,6 +37,7 @@ import {
   checkForAdmin,
   checkForGlobalAdmin,
 } from '@utils/utilMethods';
+import Loader from '@components/Loader/Loader';
 import AdminMenu from './AdminMenu';
 import AccountMenu from './AccountMenu';
 
@@ -42,6 +45,9 @@ const useStyles = makeStyles((theme) => ({
   appBar: {
     backgroundColor: '#383636',
     zIndex: theme.zIndex.drawer + 1,
+    [theme.breakpoints.down('sm')]: {
+      overflowX: 'auto',
+    },
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -54,8 +60,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
   },
   timezone: {
-    width: theme.spacing(20),
+    width: theme.spacing(24),
     marginTop: theme.spacing(1.5),
+    marginLeft: theme.spacing(1.5),
     '& .MuiOutlinedInput-input': {
       padding: theme.spacing(1, 3.5, 1, 2),
     },
@@ -75,21 +82,32 @@ const TopBar = ({
   userOptions,
   orgOptions,
   timezone,
+  allOrgs,
+  loading,
 }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const [settingEl, setSettingEl] = useState(null);
+  const [organization, setOrganization] = useState(null);
 
   let user;
   let isAdmin = false;
+  let isSuperAdmin = false;
 
   if (data && data.data) {
     user = data.data;
+    if (!organization) {
+      setOrganization(user.organization.name);
+    }
     isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
+    isSuperAdmin = checkForGlobalAdmin(user);
   }
 
   useEffect(() => {
     dispatch(getUser());
+    if (!allOrgs) {
+      dispatch(loadAllOrgs());
+    }
     if (userOptions === null) {
       dispatch(getUserOptions());
     }
@@ -130,8 +148,20 @@ const TopBar = ({
     setSettingEl(null);
   };
 
+  const handleOrganizationChange = (e) => {
+    const organization_name = e.target.value;
+    setOrganization(organization_name);
+    const { organization_uuid } = _.filter(allOrgs, (org) => org.name === organization_name)[0];
+    dispatch(updateUser({
+      id: user.id,
+      organization_uuid,
+      organization_name,
+    }, true));
+  };
+
   return (
     <AppBar position="fixed" className={classes.appBar}>
+      {loading && <Loader open={loading} />}
       <Toolbar>
         <Hidden mdUp>
           <IconButton
@@ -167,6 +197,27 @@ const TopBar = ({
               </MenuItem>
             ))}
           </TextField>
+          {isSuperAdmin && (
+            <TextField
+              className={classes.timezone}
+              variant="outlined"
+              fullWidth
+              id="org"
+              label="Organization"
+              select
+              value={organization}
+              onChange={handleOrganizationChange}
+            >
+              {_.map(allOrgs, (org) => (
+                <MenuItem
+                  key={`organization-${org.id}`}
+                  value={org.name}
+                >
+                  {org.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
           {isAdmin
           && (
           <IconButton

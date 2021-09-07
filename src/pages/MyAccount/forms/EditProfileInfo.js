@@ -168,7 +168,7 @@ const EditProfileInfo = ({
       email_preferences: emailOptions,
       user_timezone: moment.tz.guess(),
     };
-    dispatch(updateUser(editUserFormValue));
+    dispatch(updateUser(editUserFormValue, false));
     setFormModal(false);
   };
 
