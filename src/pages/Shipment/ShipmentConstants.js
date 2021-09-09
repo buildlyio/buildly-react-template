@@ -128,9 +128,11 @@ export const getFormattedRow = (
     if (custodyRows.length > 0) {
       _.forEach(custodyRows, (custody) => {
         if (custody.shipment_id === shipment.shipment_uuid) {
-          custodianName = custodianName
-            ? `${custodianName}, ${custody.custodian_data.name}`
-            : custody.custodian_data.name;
+          if (custody.custodian_data) {
+            custodianName = custodianName
+              ? `${custodianName}, ${custody.custodian_data.name}`
+              : custody.custodian_data.name;
+          }
           custodyInfo = [...custodyInfo, custody];
         }
       });
