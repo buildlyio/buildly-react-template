@@ -55,7 +55,17 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        shipmentData: initialShipmentData.concat(action.data),
+        // eslint-disable-next-line max-len
+        shipmentData: Object.values([...initialShipmentData, ...action.data].reduce((result, { id, ...rest }) => {
+          // eslint-disable-next-line no-param-reassign
+          result[id] = {
+            ...(result[id] || {}),
+            id,
+            ...rest,
+          };
+          return result;
+        }, {})),
+
       };
     }
 

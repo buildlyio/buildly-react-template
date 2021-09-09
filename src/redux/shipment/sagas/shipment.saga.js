@@ -38,7 +38,10 @@ function* getShipmentList(payload) {
       `${window.env.API_URL}consortium/?organization_uuid=${payload.organization_uuid}`,
     );
     const consortium_uuid = _.join(_.map(response.data, 'consortium_uuid'), ',');
-    let query_params = `?status=${payload.status}&organization_uuid=${payload.organization_uuid}`;
+    let query_params = `?organization_uuid=${payload.organization_uuid}`;
+    if (payload.status) {
+      query_params = query_params.concat(`&status=${payload.status}`);
+    }
     if (consortium_uuid) {
       query_params = query_params.concat(`&consortium_uuid=${consortium_uuid}`);
     }
@@ -103,7 +106,9 @@ function* addShipment(action) {
       yield put(
         getShipmentDetails(
           payload.organization_uuid,
+          null,
           data.data.id,
+          false,
         ),
       ),
     ];
@@ -146,6 +151,7 @@ function* editShipment(action) {
       yield put(
         getShipmentDetails(
           payload.organization_uuid,
+          null,
           payload.id,
           true,
         ),
@@ -200,6 +206,7 @@ function* deleteShipment(payload) {
       ),
       yield put(getShipmentDetails(
         organization_uuid,
+        null,
         null,
         true,
       )),
