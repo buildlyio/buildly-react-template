@@ -180,6 +180,7 @@ const Shipment = (props) => {
       && custodianData
       && custodyData
       && itemData
+      && aggregateReportData
     ) {
       const formattedRows = getFormattedRow(
         shipmentData,
