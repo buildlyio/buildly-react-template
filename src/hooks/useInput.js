@@ -16,5 +16,12 @@ export const useInput = (initialValue = '', validators = {}) => {
     },
     clear: () => setValue(''),
     reset: () => setValue(initialValue),
+    hasChanged: () => {
+      let newValue = value;
+      if (typeof (initialValue) === 'number') {
+        newValue = Number(value);
+      }
+      return !!(initialValue !== newValue);
+    },
   };
 };

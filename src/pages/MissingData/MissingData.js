@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { UserContext } from '@context/User.context';
-import Modal from '@components/Modal/Modal';
+import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
 import {
   loadOrgNames,
@@ -127,11 +127,12 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
   return (
     <div>
       <Backdrop className={classes.backdrop} open={true}>
-        <Modal
+        <FormModal
           open={true}
           title={'Missing Info'}
           titleClass={classes.modalTitle}
-          maxWidth={'sm'}
+          maxWidth='sm'
+          wantConfirm={false}
         >
           <form noValidate onSubmit={handleSubmit}>
             <Grid container>
@@ -223,7 +224,7 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
               </Grid>
             </Grid>
           </form>
-        </Modal>
+        </FormModal>
       </Backdrop>
     </div>
   );

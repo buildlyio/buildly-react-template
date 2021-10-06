@@ -1,55 +1,17 @@
 {
+  "extends": "./jsconfig.paths.json",
   "compilerOptions": {
-    "baseUrl": "./src",
     "outDir": "./dist/",
     "module": "commonjs",
     "target": "es6",
     "moduleResolution": "node",
     "jsx": "react",
-    "checkJs": true,
-    "allowSyntheticDefaultImports": true
+    "checkJs": false,
+    "allowSyntheticDefaultImports": true,
   },
   "include": [
     "./src/**/*"
   ],
-  "paths": {
-    "@assets/*": [
-      "src/assets/*"
-    ],
-    "@environments/*": [
-      "src/environments/*"
-    ],
-    "@styles/*": [
-      "src/styles/*"
-    ],
-    "@components/*": [
-      "src/components/*"
-    ],
-    "@context/*": [
-      "src/context/*"
-    ],
-    "@hooks/*": [
-      "src/hooks/*"
-    ],
-    "@layout/*": [
-      "src/layout/*"
-    ],
-    "@modules/*": [
-      "src/modules/*"
-    ],
-    "@pages/*": [
-      "src/pages/*"
-    ],
-    "@redux/*": [
-      "src/redux/*"
-    ],
-    "@routes/*": [
-      "src/routes/*"
-    ],
-    "@utils/*": [
-      "src/utils/*"
-    ],
-  },
   "exclude": [
     "node_modules"
   ],

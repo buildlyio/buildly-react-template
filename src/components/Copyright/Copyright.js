@@ -23,15 +23,18 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'column',
   },
   copyright: {
-    flex: 1,
     color: theme.palette.secondary.contrastText,
   },
   navs: {
+    width: '100%',
+    marginRight: theme.spacing(2),
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -42,21 +45,23 @@ const Copyright = () => {
   return (
     <AppBar position='fixed' className={classes.root}>
       <Toolbar className={classes.toolbar}>
-        <Typography
-          variant='body2'
-          align='center'
-          className={classes.copyright}
-        >
-          {'Copyright © '}
-          <Link color='inherit' href='https://example.com/' target='_blank'>
-            {app.title}
-          </Link>{' '}
-          {new Date().getFullYear()}
-          {'.'}
-        </Typography>
         <div className={classes.navs}>
           <Support />
           <Services />
+        </div>
+        <div>
+          <Typography
+            variant='body2'
+            align='center'
+            className={classes.copyright}
+          >
+            {'Copyright © '}
+            <Link color='inherit' href='https://example.com/' target='_blank'>
+              {app.title}
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+          </Typography>
         </div>
       </Toolbar>
     </AppBar>

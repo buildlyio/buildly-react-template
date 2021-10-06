@@ -1,18 +1,16 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import { UserContext } from '@context/User.context';
 import Loader from '@components/Loader/Loader';
-import FeedbackForm from './FeedbackForm';
-import ThankYou from './ThankYou';
+import UserDashboard from './components/UserDashboard';
+import FeedbackForm from './components/FeedbackForm';
 
-const Dashboard = ({ loading, loaded, filled }) => {
-  const user = useContext(UserContext);
+const Dashboard = ({ history, loading, loaded, filled }) => {
 
   return (
     <React.Fragment>
       {loading && <Loader open={loading} />}
       {loaded && !filled && <FeedbackForm />}
-      {loaded && filled && <ThankYou />}
+      {loaded && filled && <UserDashboard history={history} />}
     </React.Fragment>
   );
 };

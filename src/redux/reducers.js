@@ -5,6 +5,7 @@ import alertReducer from './alert/reducers/alert.reducer';
 import authReducer from './authuser/reducers/authuser.reducer';
 import coregroupReducer from './coregroup/reducers/coregroup.reducer';
 import coreuserReducer from './coreuser/coreuser.reducer';
+import dashboardReducer from './dashboard/reducers/dashboard.reducer';
 import googleSheetReducer from './googleSheet/reducers/googleSheet.reducer';
 import { LOGOUT_SUCCESS } from './authuser/actions/authuser.actions';
 
@@ -14,6 +15,7 @@ const appReducer = combineReducers({
   coregroupReducer,
   coreuserReducer,
   crudDataReducer,
+  dashboardReducer,
   googleSheetReducer,
 });
 
