@@ -27,7 +27,7 @@ import {
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
 } from '../actions/shipment.actions';
-
+import { GET_AGGREGATE_REPORT_SUCCESS } from '../../sensorsGateway/actions/sensorsGateway.actions';
 const shipmentApiEndPoint = 'shipment/';
 
 function* getShipmentList(payload) {
@@ -40,6 +40,7 @@ function* getShipmentList(payload) {
     const consortium_uuid = _.join(_.map(response.data, 'consortium_uuid'), ',');
     let query_params = `?organization_uuid=${payload.organization_uuid}`;
     if (payload.status) {
+      payload.status = encodeURIComponent(payload.status)
       query_params = query_params.concat(`&status=${payload.status}`);
     }
     if (consortium_uuid) {
@@ -67,6 +68,12 @@ function* getShipmentList(payload) {
         yield [
           yield put(getAggregateReport(encodedIds)),
         ];
+      }
+      else {
+        yield put({
+          type: GET_AGGREGATE_REPORT_SUCCESS,
+          data: [],
+        })
       }
     }
   } catch (error) {

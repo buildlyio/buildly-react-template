@@ -138,7 +138,7 @@ const Shipment = (props) => {
       const getUpdatedSensorData = !aggregateReportData;
       dispatch(getShipmentDetails(
         organization,
-        'Planned&Enroute',
+        'Planned,Enroute',
         null,
         getUpdatedSensorData,
       ));
@@ -352,7 +352,7 @@ const Shipment = (props) => {
     switch (filter) {
       case 'Active':
       default:
-        shipmentStatus = 'Planned&Enroute';
+        shipmentStatus = 'Planned,Enroute';
         break;
       case 'Completed':
       case 'Cancelled':
