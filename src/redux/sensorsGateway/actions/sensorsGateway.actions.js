@@ -68,6 +68,10 @@ export const DELETE_SENSORS_TYPE = 'SENSORS/DELETE_SENSORS_TYPE';
 export const DELETE_SENSORS_TYPE_SUCCESS = 'SENSORS/DELETE_SENSORS_TYPE_SUCCESS';
 export const DELETE_SENSORS_TYPE_FAILURE = 'SENSORS/DELETE_SENSORS_TYPE_FAILURE';
 
+export const GET_SENSOR_REPORT = 'SENSORS/GET_SENSOR_REPORT';
+export const GET_SENSOR_REPORT_SUCCESS = 'SENSORS/GET_SENSOR_REPORT_SUCCESS';
+export const GET_SENSOR_REPORT_FAILURE = 'SENSORS/GET_SENSOR_REPORT_FAILURE';
+
 export const GET_AGGREGATE_REPORT = 'SENSORS/GET_AGGREGATE_REPORT';
 export const GET_AGGREGATE_REPORT_SUCCESS = 'SENSORS/GET_AGGREGATE_REPORT_SUCCESS';
 export const GET_AGGREGATE_REPORT_FAILURE = 'SENSORS/GET_AGGREGATE_REPORT_FAILURE';
@@ -242,6 +246,15 @@ export const editSensorType = (payload) => ({
 export const deleteSensorType = (id) => ({
   type: DELETE_SENSORS_TYPE,
   id,
+});
+
+/**
+ * Get Sensor Report
+ * @param {Array} partnerShipmentIds
+ */
+export const getSensorReport = (partnerShipmentIds) => ({
+  type: GET_SENSOR_REPORT,
+  partnerShipmentIds,
 });
 
 /**

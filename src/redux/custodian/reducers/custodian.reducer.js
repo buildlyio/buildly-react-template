@@ -223,7 +223,7 @@ export default (state = initialState, action) => {
     case ADD_CUSTODY_SUCCESS:
       return {
         ...state,
-        loading: false,
+        loading: true,
         loaded: true,
         custodyData: action.data,
       };

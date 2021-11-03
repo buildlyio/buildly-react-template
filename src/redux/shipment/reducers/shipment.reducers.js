@@ -51,21 +51,42 @@ export default (state = initialState, action) => {
 
     case GET_SHIPMENTS_SUCCESS: {
       const initialShipmentData = state.shipmentData || [];
+      let shipmentData = [];
+
+      if (!(action.data instanceof Array)) {
+        let shipmentIndex = initialShipmentData.findIndex(el => el.id === action.data.id);
+        if (shipmentIndex < 0) {
+          initialShipmentData.push(action.data);
+        }
+        else {
+          initialShipmentData[shipmentIndex] = action.data;
+        }
+        shipmentData = initialShipmentData;
+
+      }
+      else {
+        if (action.data.length < initialShipmentData.length) {
+          shipmentData = action.data
+        }
+        else {
+          shipmentData = Object.values([...initialShipmentData, ...action.data].reduce((result, { id, ...rest }) => {
+            // eslint-disable-next-line no-param-reassign
+            result[id] = {
+              ...(result[id] || {}),
+              id,
+              ...rest,
+            };
+            return result;
+          }, {}))
+        }
+      }
+
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        // eslint-disable-next-line max-len
-        shipmentData: Object.values([...initialShipmentData, ...action.data].reduce((result, { id, ...rest }) => {
-          // eslint-disable-next-line no-param-reassign
-          result[id] = {
-            ...(result[id] || {}),
-            id,
-            ...rest,
-          };
-          return result;
-        }, {})),
-
+        shipmentData: shipmentData,
       };
     }
 

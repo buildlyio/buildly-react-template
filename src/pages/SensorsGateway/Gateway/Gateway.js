@@ -61,6 +61,7 @@ const Gateway = ({
       const getUpdatedSensorData = !aggregateReportData;
       dispatch(getShipmentDetails(
         organization,
+        'Planned,Enroute',
         null,
         getUpdatedSensorData,
       ));

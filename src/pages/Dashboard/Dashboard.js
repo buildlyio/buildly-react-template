@@ -115,6 +115,7 @@ const Dashboard = (props) => {
       const aggregate = !aggregateReportData;
       dispatch(getShipmentDetails(
         organization,
+        'Planned,Enroute',
         null,
         aggregate,
       ));

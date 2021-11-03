@@ -330,8 +330,9 @@ function* addCustody(action) {
             yield put(
               getShipmentDetails(
                 data.data.organization_uuid,
+                null,
                 data.data.id,
-                true,
+                false,
               ),
             ),
             yield put(getCustody()),
@@ -342,6 +343,7 @@ function* addCustody(action) {
                 message: 'Successfully Added Custody',
               }),
             ),
+
           ];
         }
       }

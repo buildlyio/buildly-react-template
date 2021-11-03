@@ -51,6 +51,9 @@ import {
   DELETE_SENSORS_TYPE,
   DELETE_SENSORS_TYPE_SUCCESS,
   DELETE_SENSORS_TYPE_FAILURE,
+  GET_SENSOR_REPORT,
+  GET_SENSOR_REPORT_SUCCESS,
+  GET_SENSOR_REPORT_FAILURE,
   GET_AGGREGATE_REPORT,
   GET_AGGREGATE_REPORT_SUCCESS,
   GET_AGGREGATE_REPORT_FAILURE,
@@ -69,6 +72,7 @@ const initialState = {
   sensorTypeList: null,
   aggregateReportData: null,
   allAlerts: null,
+  sensorReportData: null,
 };
 
 // Reducer
@@ -509,7 +513,32 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case GET_AGGREGATE_REPORT:
+      case GET_SENSOR_REPORT:
+        return {
+          ...state,
+          loading: true,
+          loaded: false,
+          error: null,
+        };
+
+      case GET_SENSOR_REPORT_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          loaded: true,
+          sensorReportData: action.data,
+        };
+
+      case GET_SENSOR_REPORT_FAILURE:
+        return {
+          ...state,
+          loading: false,
+          loaded: true,
+          error: action.error,
+        };
+
+
+      case GET_AGGREGATE_REPORT:
       return {
         ...state,
         loading: true,

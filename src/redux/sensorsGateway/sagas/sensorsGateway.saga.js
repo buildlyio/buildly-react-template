@@ -51,6 +51,9 @@ import {
   DELETE_SENSORS_TYPE,
   DELETE_SENSORS_TYPE_SUCCESS,
   DELETE_SENSORS_TYPE_FAILURE,
+  GET_SENSOR_REPORT,
+  GET_SENSOR_REPORT_SUCCESS,
+  GET_SENSOR_REPORT_FAILURE,
   GET_AGGREGATE_REPORT,
   GET_AGGREGATE_REPORT_SUCCESS,
   GET_AGGREGATE_REPORT_FAILURE,
@@ -657,6 +660,34 @@ function* deleteSensorType(payload) {
   }
 }
 
+function* getSensorReport(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}${sensorApiEndPoint}sensor_report/?shipment_id=${payload.partnerShipmentIds}`,
+    );
+    yield put({
+      type: GET_SENSOR_REPORT_SUCCESS,
+      data: data.data,
+    });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t load data due to some error!',
+        }),
+      ),
+      yield put({
+        type: GET_SENSOR_REPORT_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
 function* getAggregateReportList(payload) {
   try {
     const data = yield call(
@@ -779,6 +810,10 @@ function* watchEditSensorType() {
 
 function* watchDeleteSensorType() {
   yield takeLatest(DELETE_SENSORS_TYPE, deleteSensorType);
+}
+
+function* watchGetSensorReport() {
+  yield takeLatest(GET_SENSOR_REPORT, getSensorReport);
 }
 
 function* watchGetAggregateReport() {

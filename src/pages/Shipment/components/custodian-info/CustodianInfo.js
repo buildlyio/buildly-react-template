@@ -13,6 +13,7 @@ import {
   getFormattedCustodyRows,
   custodyColumns,
 } from '../../ShipmentConstants';
+import Loader from '@components/Loader/Loader';
 
 const useStyles = makeStyles((theme) => ({
   buttonContainer: {
@@ -102,6 +103,7 @@ const CustodianInfo = (props) => {
         Add Custody
       </Button>
       <Box mt={3} mb={5}>
+      {loading && <Loader open={loading} />}
         {rows.length > 0 && (
         <Grid container>
           <Grid item xs={12}>
