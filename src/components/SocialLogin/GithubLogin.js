@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import { Button } from '@material-ui/core';
 import { GitHub as GitHubIcon } from '@material-ui/icons';
 import PopupWindow from './PopupWindow';
-import { environment } from '@environments/environment';
 import { socialLogin } from '@redux/authuser/actions/authuser.actions';
 import { providers, toQuery } from '@utils/socialLogin';
 
@@ -10,7 +9,7 @@ const GithubLogin = ({ dispatch, history, disabled }) => {
   const popup = useRef(null);
 
   const onBtnClick = () => {
-    const search = toQuery({ client_id: environment.GITHUB_CLIENT_ID });
+    const search = toQuery({ client_id: window.env.GITHUB_CLIENT_ID });
     popup.current = PopupWindow.open(
       'github-oauth-authorize',
       `https://github.com/login/oauth/authorize?${search}`,

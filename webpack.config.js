@@ -4,28 +4,8 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const envConfig = require('./environments.config.json');
 
 module.exports = (env, argv) => {
-  const fileReplacements = [];
-  if (env) {
-    const configuration = envConfig.configurations[env.build];
-    if (configuration && configuration.fileReplacements) {
-      configuration.fileReplacements.forEach((replacement) => {
-        // create Webpack module rule
-        const replace = {
-          test: path.resolve(replacement.replace),
-          loader: 'file-replace-loader',
-          options: {
-            replacement: path.resolve(replacement.with),
-            async: true,
-          },
-        };
-        fileReplacements.push(replace);
-      });
-    }
-  }
-
   const webpackConfig = {
     entry: ['babel-polyfill', './src/index.js'],
     module: {
@@ -87,7 +67,6 @@ module.exports = (env, argv) => {
             },
           ],
         },
-        ...fileReplacements,
       ],
     },
     resolve: {
@@ -97,7 +76,6 @@ module.exports = (env, argv) => {
         '@assets': path.resolve(__dirname, './src/assets'),
         '@components': path.resolve(__dirname, './src/components'),
         '@context': path.resolve(__dirname, './src/context'),
-        '@environments': path.resolve(__dirname, './src/environments'),
         '@hooks': path.resolve(__dirname, './src/hooks'),
         '@layout': path.resolve(__dirname, './src/layout'),
         '@modules': path.resolve(__dirname, './src/modules'),

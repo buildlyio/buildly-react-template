@@ -8,7 +8,6 @@ import {
   CHECK_FILLED_FAIL,
 } from '@redux/googleSheet/actions/googleSheet.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
-import { environment } from '@environments/environment';
 import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 
@@ -18,7 +17,7 @@ function* addData(payload) {
     const sheet = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.FEEDBACK_SHEET}`,
+      `${window.env.FEEDBACK_SHEET}`,
       data
     );
 
@@ -56,7 +55,7 @@ function* checkFilled(payload) {
     const sheet = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.FEEDBACK_SHEET}`
+      `${window.env.FEEDBACK_SHEET}`
     );
     const entry = _.find(sheet.data, { Name: name });
     yield put({ type: CHECK_FILLED_SUCCESS, filled: Boolean(entry) });
