@@ -3,7 +3,7 @@ cache: yarn, pip
 services:
   - docker
 node_js:
-  - "10.16.0"
+  - "16.13.0"
 env:
   global:
   - DOCKER_REPO=transparent-path/react-ui

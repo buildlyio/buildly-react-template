@@ -11,7 +11,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 The web application was tested and built with the following versions:
 
-- node v10.16.0
+- node v16.13.0
 - yarn v1.17.3
 
 ### Installing
