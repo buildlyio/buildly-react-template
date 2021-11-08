@@ -1,5 +1,4 @@
 import { oauth } from 'midgard-core';
-import { environment } from '@environments/environment';
 
 export const oauthService = {
   authenticateWithPasswordFlow,
@@ -20,8 +19,8 @@ export const oauthService = {
  */
 function authenticateWithPasswordFlow(credentials) {
   const oauthOptions = {
-    clientId: environment.OAUTH_CLIENT_ID,
-    tokenUrl: environment.OAUTH_TOKEN_URL,
+    clientId: window.env.OAUTH_CLIENT_ID,
+    tokenUrl: window.env.OAUTH_TOKEN_URL,
     returnPromise: true,
   };
   return oauth.authenticateWithCredentials(credentials, oauthOptions);

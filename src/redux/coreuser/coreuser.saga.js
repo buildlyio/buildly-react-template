@@ -13,10 +13,9 @@ import {
   UPDATE_COREUSER_FAIL,
 } from './coreuser.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
-import { environment } from '@environments/environment';
 import { httpService } from '@modules/http/http.service';
 
-const endpoint = `${environment.API_URL}coreuser/`;
+const endpoint = `${window.env.API_URL}coreuser/`;
 
 function* loadCoreUsers() {
   try {

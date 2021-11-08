@@ -43,7 +43,6 @@ import {
   ADD_ORG_SOCIAL_USER_FAIL,
 } from '@redux/authuser/actions/authuser.actions';
 import { put, takeLatest, all, call } from 'redux-saga/effects';
-import { environment } from '@environments/environment';
 import { oauthService } from '@modules/oauth/oauth.service';
 import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
@@ -71,13 +70,13 @@ function* login(payload) {
     const user = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coreuser/me/`
+      `${window.env.API_URL}coreuser/me/`
     );
     yield call(oauthService.setOauthUser, user, payload);
     const coreuser = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coreuser/`
+      `${window.env.API_URL}coreuser/`
     );
     yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield [
@@ -104,7 +103,7 @@ function* getUserDetails() {
     const user = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coreuser/me/`
+      `${window.env.API_URL}coreuser/me/`
     );
     yield put({ type: GET_USER_SUCCESS, user });
     if (user && user.data && user.data.organization) {
@@ -130,7 +129,7 @@ function* register(payload) {
     const user = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}coreuser/`,
+      `${window.env.API_URL}coreuser/`,
       payload.data
     );
     yield [
@@ -165,7 +164,7 @@ function* sendPasswordResetLink(payload) {
     const response = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}coreuser/reset_password/`,
+      `${window.env.API_URL}coreuser/reset_password/`,
       payload.data
     );
     if (response.data && response.data.count) {
@@ -222,7 +221,7 @@ function* validateResetPasswordToken(payload) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}coreuser/reset_password_check/`,
+      `${window.env.API_URL}coreuser/reset_password_check/`,
       payload.data
     );
     if (data.data && data.data.success) {
@@ -278,7 +277,7 @@ function* resetPassword(payload) {
     const data = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}coreuser/reset_password_confirm/`,
+      `${window.env.API_URL}coreuser/reset_password_confirm/`,
       payload.data
     );
     console.log('data', data);
@@ -316,7 +315,7 @@ function* invite(payload) {
     const user = yield call(
       httpService.makeRequest,
       'post',
-      `${environment.API_URL}coreuser/invite/`,
+      `${window.env.API_URL}coreuser/invite/`,
       payload.data
     );
     yield [
@@ -342,13 +341,13 @@ function* updateUser(payload) {
     const user = yield call(
       httpService.makeRequest,
       'patch',
-      `${environment.API_URL}coreuser/${payload.data.id}/`,
+      `${window.env.API_URL}coreuser/${payload.data.id}/`,
       payload.data
     );
     const data = yield call(
       httpService.makeRequest,
       'put',
-      `${environment.API_URL}organization/${payload.data.organization_uuid}/`,
+      `${window.env.API_URL}organization/${payload.data.organization_uuid}/`,
       { name: payload.data.organization_name }
     );
     yield [
@@ -384,7 +383,7 @@ function* socialLogin(payload) {
   let url;
   switch (provider) {
     case providers.github:
-      url = `${environment.API_URL}oauth/complete/github/?code=${code}`;
+      url = `${window.env.API_URL}oauth/complete/github/?code=${code}`;
   }
 
   try {
@@ -393,13 +392,13 @@ function* socialLogin(payload) {
     const user = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coreuser/me/`
+      `${window.env.API_URL}coreuser/me/`
     );
     yield call(oauthService.setOauthUser, user, payload);
     const coreuser = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coreuser/`
+      `${window.env.API_URL}coreuser/`
     );
     yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield [
@@ -436,7 +435,7 @@ function* getOrganizationData(payload) {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}organization/${uuid}/`,
+      `${window.env.API_URL}organization/${uuid}/`,
       null,
       true
     );
@@ -451,7 +450,7 @@ function* loadOrganizationNames() {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}organization/names/`,
+      `${window.env.API_URL}organization/names/`,
       null,
       true
     );
@@ -467,14 +466,14 @@ function* addOrgSocialUser(payload) {
     const user = yield call(
       httpService.makeRequest,
       'patch',
-      `${environment.API_URL}coreuser/update_org/${data.id}/`,
+      `${window.env.API_URL}coreuser/update_org/${data.id}/`,
       data
     );
     yield call(oauthService.setOauthUser, user, payload);
     const coreuser = yield call(
       httpService.makeRequest,
       'get',
-      `${environment.API_URL}coreuser/`
+      `${window.env.API_URL}coreuser/`
     );
     yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield put({ type: ADD_ORG_SOCIAL_USER_SUCCESS, user });
