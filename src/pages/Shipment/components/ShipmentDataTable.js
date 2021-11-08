@@ -94,6 +94,7 @@ const ShipmentDataTable = ({
   };
 
   useEffect(() => {
+    setSelected(0);
     const cols = [
       {
         name: 'Copy',

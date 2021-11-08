@@ -33,6 +33,7 @@ import {
   getSensors,
   getSensorType,
   getAllSensorAlerts,
+  getAggregateReport,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
@@ -146,10 +147,40 @@ const Reporting = ({
       const aggregate = !aggregateReportData;
       dispatch(getShipmentDetails(
         organization,
-        'Planned,Enroute',
+        null,
         null,
         aggregate,
+        'get',
       ));
+    }
+    else {
+      const completedShipments = _.filter(shipmentData, shipment => shipment.type === 'Completed')
+      const cancelledShipments = _.filter(shipmentData, shipment => shipment.type === 'Cancelled')
+
+      if (!completedShipments.length) {
+        dispatch(getShipmentDetails(
+          organization,
+          'Completed',
+          null,
+          true,
+          'get',
+        ));
+      }
+      if (!cancelledShipments.length) {
+        dispatch(getShipmentDetails(
+          organization,
+          'Cancelled',
+          null,
+          true,
+          'get',
+        ));
+      }
+      const IDS = _.map(shipmentData,'partner_shipment_id');
+      const ids = _.toString(_.without(IDS, null));
+      const encodedIds = encodeURIComponent(ids);
+      if (encodedIds) {
+        dispatch(getAggregateReport(encodedIds));
+      }
     }
     if (!custodianData) {
       dispatch(getCustodians(organization));
@@ -198,7 +229,9 @@ const Reporting = ({
       const ships = _.filter(shipmentData, { had_alert: true });
       const ids = _.toString(_.map(ships, 'partner_shipment_id'));
       const encodedIds = encodeURIComponent(ids);
-      dispatch(getAllSensorAlerts(encodedIds));
+      if (encodedIds) {
+        dispatch(getAllSensorAlerts(encodedIds));
+      }
     }
   }, [shipmentData, custodianData, custodyData, aggregateReportData, timezone]);
 

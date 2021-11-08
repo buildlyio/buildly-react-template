@@ -58,7 +58,13 @@ function* getShipmentList(payload) {
       `${window.env.API_URL}${shipmentApiEndPoint}shipment/${query_params}`,
     );
     if (data && data.data) {
-      yield put({ type: GET_SHIPMENTS_SUCCESS, data: data.data });
+      yield put({
+        type: GET_SHIPMENTS_SUCCESS,
+        data: data.data,
+        shipmentAction: payload.shipmentAction,
+        status: payload.status ? payload.status: 'All'
+      });
+
       if (payload.id) {
         if (data.data instanceof Array) {
           yield put(
@@ -131,6 +137,7 @@ function* addShipment(action) {
           null,
           data.data.id,
           false,
+          'add',
         ),
       ),
     ];
@@ -176,6 +183,7 @@ function* editShipment(action) {
           null,
           payload.id,
           false,
+          'edit',
         ),
       ),
       yield put(
@@ -231,6 +239,7 @@ function* deleteShipment(payload) {
         'Planned,Enroute',
         null,
         true,
+        'delete',
       )),
     ];
   } catch (error) {

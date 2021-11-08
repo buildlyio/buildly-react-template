@@ -71,6 +71,9 @@ const SensorReport = ({
       );
       setRows(sortedData);
     }
+    else {
+      setRows([]);
+    }
   }, [aggregateReport]);
 
   useEffect(() => {

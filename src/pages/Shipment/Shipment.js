@@ -45,6 +45,7 @@ import {
   getGatewayType,
   getSensors,
   getSensorType,
+  getAggregateReport,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
@@ -134,25 +135,34 @@ const Shipment = (props) => {
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
-    if (shipmentData === null) {
+    if (!shipmentData) {
       const getUpdatedSensorData = !aggregateReportData;
       dispatch(getShipmentDetails(
         organization,
         'Planned,Enroute',
         null,
         getUpdatedSensorData,
+        'get',
       ));
     }
-    if (custodianData === null) {
+    else {
+      const IDS = _.map(_.filter(shipmentData, shipment => shipment.type === 'Active'),'partner_shipment_id');
+      const ids = _.toString(_.without(IDS, null));
+      const encodedIds = encodeURIComponent(ids);
+      if (encodedIds) {
+        dispatch(getAggregateReport(encodedIds));
+      }
+    }
+    if (!custodianData) {
       dispatch(getCustodians(organization));
       dispatch(getCustodianType());
       dispatch(getContact(organization));
     }
-    if (itemData === null) {
+    if (!itemData) {
       dispatch(getItems(organization));
       dispatch(getItemType(organization));
     }
-    if (gatewayData === null) {
+    if (!gatewayData) {
       dispatch(getGateways(organization));
       dispatch(getGatewayType());
     }
@@ -166,10 +176,10 @@ const Shipment = (props) => {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
-    if (shipmentOptions === null) {
+    if (!shipmentOptions) {
       dispatch(getShipmentOptions());
     }
-    if (custodyOptions === null) {
+    if (!custodyOptions) {
       dispatch(getCustodyOptions());
     }
   }, []);
@@ -309,7 +319,7 @@ const Shipment = (props) => {
   });
 
   useEffect(() => {
-    if (shipmentFilter && rows.length > 0) {
+    if (shipmentFilter && rows.length) {
       if (shipmentFilter === 'Cancelled') {
         setSelectedShipment(cancelledRows[0]);
       } else if (shipmentFilter === 'Completed') {
@@ -318,7 +328,7 @@ const Shipment = (props) => {
         setSelectedShipment(activeRows[0]);
       }
     }
-  }, [shipmentFilter]);
+  }, [shipmentFilter, shipmentData]);
 
   const onAddButtonClick = () => {
     history.push(`${routes.SHIPMENT}/add`, {
@@ -327,7 +337,6 @@ const Shipment = (props) => {
   };
 
   const handleEdit = (item) => {
-    // dispatch(saveShipmentFormData(item));
     history.push(`${routes.SHIPMENT}/edit/:${item.id}`, {
       type: 'edit',
       data: item,
@@ -346,8 +355,9 @@ const Shipment = (props) => {
   };
 
   const filterTabClicked = (event, filter) => {
+    setSelectedShipment(null);
+    setMarkers({});
     setShipmentFilter(filter);
-    const getUpdatedSensorData = !aggregateReportData;
     let shipmentStatus = '';
     switch (filter) {
       case 'Active':
@@ -366,7 +376,8 @@ const Shipment = (props) => {
         organization,
         shipmentStatus,
         null,
-        getUpdatedSensorData,
+        true,
+        'get',
       ));
     }
   };
@@ -508,6 +519,7 @@ const Shipment = (props) => {
             isMarkerShown={isMapLoaded}
             showPath
             markers={markers}
+            shipmentFilter={shipmentFilter}
             googleMapURL={window.env.MAP_API_URL}
             zoom={12}
             setSelectedMarker={setSelectedMarker}
@@ -525,8 +537,8 @@ const Shipment = (props) => {
       </Grid>
       <SensorReport
         loading={loading}
-        aggregateReport={selectedShipment?.sensor_report_info}
-        shipmentName={selectedShipment?.name}
+        aggregateReport={selectedShipment && selectedShipment?.sensor_report_info}
+        shipmentName={selectedShipment && selectedShipment?.name}
         selectedMarker={selectedShipment && selectedMarker}
       />
       <Route

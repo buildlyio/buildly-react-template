@@ -157,6 +157,7 @@ const TopBar = ({
       organization_uuid,
       organization_name,
     }, true));
+    history.push(routes.SHIPMENT);
   };
 
   return (

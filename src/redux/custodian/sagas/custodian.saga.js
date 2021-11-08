@@ -333,6 +333,7 @@ function* addCustody(action) {
                 null,
                 data.data.id,
                 false,
+                'get',
               ),
             ),
             yield put(getCustody()),

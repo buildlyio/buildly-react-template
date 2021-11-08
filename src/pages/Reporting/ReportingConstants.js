@@ -140,8 +140,10 @@ export const getShipmentOverview = (
     if (custodyRows.length > 0) {
       _.forEach(custodyRows, (custody) => {
         const editedCustody = custody;
-        if (custody.shipment_id === shipment.shipment_uuid) {
-          custodianName += custody.custodian_data.name;
+        if (custody.shipment_id === shipment.shipment_uuid && custody.custodian_data) {
+            custodianName = custodianName
+              ? `${custodianName}, ${custody.custodian_data.name}`
+              : custody.custodian_data.name;
           _.forEach(contactData, (contact) => {
             const editedContact = contact;
             if (custody.custodian_data.contact_data[0] === contact.url) {

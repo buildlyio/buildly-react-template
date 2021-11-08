@@ -44,12 +44,14 @@ export const getShipmentDetails = (
   status = null,
   id = null,
   getUpdatedSensorData = false,
+  action=null,
 ) => ({
   type: GET_SHIPMENTS,
   organization_uuid,
   status,
   id,
   getUpdatedSensorData,
+  action,
 });
 
 /**

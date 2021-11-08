@@ -27,6 +27,7 @@ const initialState = {
   error: null,
   shipmentFormData: null,
   shipmentData: null,
+  shipmentAction: null,
 };
 
 // Reducer
@@ -65,8 +66,15 @@ export default (state = initialState, action) => {
 
       }
       else {
-        if (action.data.length < initialShipmentData.length) {
-          shipmentData = action.data
+        if (action.data.length < initialShipmentData.length && action.shipmentAction === 'delete') {
+          let shipmentStatus = action.status in ['Completed', 'Cancelled'] ? action.status : 'Active';
+          const filteredShipment = _.filter(initialShipmentData, { type: shipmentStatus });
+          initialShipmentData = _.filter(initialShipmentData, function(shipment) {
+            return type !== shipmentStatus;
+        });
+        filteredShipment = action.data;
+          shipmentData = [...filteredShipment, ...initialShipmentData];
+
         }
         else {
           shipmentData = Object.values([...initialShipmentData, ...action.data].reduce((result, { id, ...rest }) => {

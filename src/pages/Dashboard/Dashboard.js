@@ -118,6 +118,7 @@ const Dashboard = (props) => {
         'Planned,Enroute',
         null,
         aggregate,
+        'get',
       ));
     }
     if (custodianData === null) {
