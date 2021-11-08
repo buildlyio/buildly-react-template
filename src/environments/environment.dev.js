@@ -1,6 +1,6 @@
 // Configuration for development environment
 
-const API_URL = 'http://rm-dev-api.buildly.io/';
+const API_URL = 'https://rm-dev.buildly.io/';
 const GITHUB_CLIENT_ID = '16fad6652ee9aafa3482';
 const FEEDBACK_SHEET =
   'https://sheet.best/api/sheets/fd4d0563-683c-4f3f-813c-526b5dc72606';
