@@ -1,7 +1,9 @@
 import React, { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { makeStyles, AppBar, Toolbar, IconButton } from '@material-ui/core';
+import {
+  makeStyles, AppBar, Toolbar, IconButton,
+} from '@material-ui/core';
 import {
   ExitToApp as ExitToAppIcon,
   Group as GroupIcon,
@@ -17,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
   appBar: {
     backgroundColor: theme.palette.secondary.light,
     zIndex: theme.zIndex.drawer + 1,
+    width: '100%',
   },
   logo: {
     maxWidth: 50,
@@ -56,7 +59,7 @@ const TopBar = ({ location, history, dispatch }) => {
   };
 
   return (
-    <AppBar position='fixed' className={classes.appBar}>
+    <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
         <Link to={routes.DASHBOARD}>
           <img src={logo} className={classes.logo} />
@@ -65,17 +68,17 @@ const TopBar = ({ location, history, dispatch }) => {
         <div className={classes.menuRight}>
           {isAdmin && (
             <Link to={routes.USER_MANAGEMENT}>
-              <IconButton aria-label='user-management' color='inherit'>
-                <GroupIcon fontSize='large' className={classes.menuIcon} />
+              <IconButton aria-label="user-management" color="inherit">
+                <GroupIcon fontSize="large" className={classes.menuIcon} />
               </IconButton>
             </Link>
           )}
           <IconButton
-            aria-label='logout'
-            color='inherit'
+            aria-label="logout"
+            color="inherit"
             onClick={handleLogoutClick}
           >
-            <ExitToAppIcon fontSize='large' className={classes.menuIcon} />
+            <ExitToAppIcon fontSize="large" className={classes.menuIcon} />
           </IconButton>
         </div>
       </Toolbar>

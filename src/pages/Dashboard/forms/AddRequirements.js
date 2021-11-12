@@ -52,9 +52,9 @@ const AddRequirements = ({
     && location.state.type === 'edit'
     && location.state.data
   ) || {};
-  const projId = location.state && location.state.projId;
+  const projectID = location.state && location.state.projectID;
 
-  const title = useInput(editData.title || '', {
+  const name = useInput(editData.name || '', {
     required: true,
   });
   const description = useInput(editData.description || '', {
@@ -70,7 +70,7 @@ const AddRequirements = ({
 
   const closeFormModal = () => {
     const dataHasChanged = (
-      title.hasChanged() || description.hasChanged()
+      name.hasChanged() || description.hasChanged()
     );
 
     if (dataHasChanged) {
@@ -97,9 +97,9 @@ const AddRequirements = ({
       ? editData.id
       : (location.state && location.state.nextId);
     const reqFormValue = {
-      projId,
+      projectID,
       id,
-      title: title.value,
+      name: name.value,
       description: description.value,
     };
 
@@ -132,7 +132,7 @@ const AddRequirements = ({
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (!title.value || !description.value) {
+    if (!name.value || !description.value) {
       return true;
     }
     let errorExists = false;
@@ -145,15 +145,15 @@ const AddRequirements = ({
   };
 
   return (
-    <React.Fragment>
+    <>
       {openFormModal && (
         <FormModal
           open={openFormModal}
           handleClose={closeFormModal}
-          title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth='md'
-          wantConfirm={true}
+          name={formTitle}
+          nameClass={classes.formTitle}
+          maxWidth="md"
+          wantConfirm
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
@@ -166,38 +166,38 @@ const AddRequirements = ({
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
-                  id='title'
-                  label='Title'
-                  name='title'
-                  autoComplete='title'
+                  id="name"
+                  label="Title"
+                  name="name"
+                  autoComplete="name"
                   error={
-                    formError.title
-                    && formError.title.error
+                    formError.name
+                    && formError.name.error
                   }
                   helperText={
-                    formError.title
-                      ? formError.title.message
+                    formError.name
+                      ? formError.name.message
                       : ''
                   }
-                  onBlur={(e) => handleBlur(e, 'required', title)}
-                  {...title.bind}
+                  onBlur={(e) => handleBlur(e, 'required', name)}
+                  {...name.bind}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
                   multiline
-                  id='description'
-                  label='Description'
-                  name='description'
-                  autoComplete='description'
+                  id="description"
+                  label="Description"
+                  name="description"
+                  autoComplete="description"
                   error={
                     formError.description
                     && formError.description.error
@@ -216,14 +216,14 @@ const AddRequirements = ({
             <Grid
               container
               spacing={isDesktop ? 3 : 0}
-              justify='center'
+              justify="center"
             >
               <Grid item xs={12} sm={4}>
                 <Button
-                  type='submit'
+                  type="submit"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   className={classes.submit}
                   disabled={submitDisabled()}
                 >
@@ -232,10 +232,10 @@ const AddRequirements = ({
               </Grid>
               <Grid item xs={12} sm={4}>
                 <Button
-                  type='button'
+                  type="button"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   onClick={discardFormData}
                   className={classes.submit}
                 >
@@ -246,9 +246,9 @@ const AddRequirements = ({
           </form>
         </FormModal>
       )}
-    </React.Fragment>
-  )
-}
+    </>
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

@@ -50,7 +50,7 @@ function setOauthUser(oauthUser) {
 }
 
 function setCurrentCoreUser(user, coreuser) {
-  let currentUser = user.data.filter((data) => data.id === coreuser.data.id);
+  const currentUser = user.data.filter((data) => data.id === coreuser.data.id);
   localStorage.setItem('currentUser', JSON.stringify(currentUser[0]));
 }
 

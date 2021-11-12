@@ -146,14 +146,14 @@ const FeedbackForm = ({ dispatch, loading }) => {
    */
 
   const handleBlur = (e, validation, input) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...formError };
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id]: validateObj,
       });
-    else
+    } else {
       setFormError({
         ...prevState,
         [e.target.id]: {
@@ -161,24 +161,24 @@ const FeedbackForm = ({ dispatch, loading }) => {
           message: '',
         },
       });
+    }
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
+    const errorKeys = Object.keys(formError);
     let errorExists = false;
     if (
-      !question1 ||
-      (question1 === 'no' && !question2) ||
-      !question3 ||
-      !question4 ||
-      !question5 ||
-      !question6 ||
-      !question7 ||
-      !question8 ||
-      !question11 ||
-      !question12
-    )
-      return true;
+      !question1
+      || (question1 === 'no' && !question2)
+      || !question3
+      || !question4
+      || !question5
+      || !question6
+      || !question7
+      || !question8
+      || !question11
+      || !question12
+    ) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -208,61 +208,61 @@ const FeedbackForm = ({ dispatch, loading }) => {
   };
 
   return (
-    <React.Fragment>
-      <Typography className={classes.title} variant='body1'>
-        Thanks for checking out Buildly and our new Product Management offering
+    <>
+      <Typography className={classes.title} variant="body1">
+        Thanks for checking out Buildly and our new Project Management offering
         Buildly Planner intended to help facilitate the communication between
         product owners and development teams. To help us guide the direction of
         the application moving forward and help find a fit inside the Buildly
         ecosystem of tools, it would be of great help to us if you could fill
         out this small survey.
       </Typography>
-      <Container component='main' maxWidth='md' className={classes.container}>
+      <Container component="main" maxWidth="md" className={classes.container}>
         <CssBaseline />
-        <Card variant='outlined'>
+        <Card variant="outlined">
           <CardContent>
             <div className={classes.paper}>
-              <Typography component='h1' variant='h5'>
+              <Typography component="h1" variant="h5">
                 Survey
               </Typography>
               <form className={classes.form} noValidate onSubmit={handleSubmit}>
                 <FormControl
                   className={classes.choice}
                   fullWidth
-                  component='fieldset'
+                  component="fieldset"
                 >
-                  <FormLabel component='legend'>
+                  <FormLabel component="legend">
                     Do you use Trello or GitHub for either Issue tracking or
-                    Product Road-mapping?
+                    Project Road-mapping?
                   </FormLabel>
                   <RadioGroup
-                    aria-label='issue-tracking-product-road-map'
-                    name='question1'
+                    aria-label="issue-tracking-product-road-map"
+                    name="question1"
                     value={question1}
                     onChange={(e) => setQuestion1(e.target.value)}
                   >
                     <FormControlLabel
-                      value='yes'
-                      label='Yes'
-                      control={<Radio color='primary' />}
+                      value="yes"
+                      label="Yes"
+                      control={<Radio color="primary" />}
                     />
                     <FormControlLabel
-                      value='no'
-                      label='No'
-                      control={<Radio color='primary' />}
+                      value="no"
+                      label="No"
+                      control={<Radio color="primary" />}
                     />
                   </RadioGroup>
                 </FormControl>
                 {question1 === 'no' && (
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
-                    id='question2'
-                    label='If not what do you use?'
-                    name='question2'
-                    autoComplete='question2'
+                    id="question2"
+                    label="If not what do you use?"
+                    name="question2"
+                    autoComplete="question2"
                     error={formError.question2 && formError.question2.error}
                     helperText={
                       formError && formError.question2
@@ -277,94 +277,94 @@ const FeedbackForm = ({ dispatch, loading }) => {
                 <FormControl
                   className={classes.choice}
                   fullWidth
-                  component='fieldset'
+                  component="fieldset"
                 >
-                  <FormLabel component='legend'>
+                  <FormLabel component="legend">
                     If you are a developer or development agency, do you have a
                     tool or system in place for updating your customers on
                     progress?
                   </FormLabel>
                   <RadioGroup
-                    aria-label='progress-update-to-customer'
-                    name='question3'
+                    aria-label="progress-update-to-customer"
+                    name="question3"
                     value={question3}
                     onChange={(e) => setQuestion3(e.target.value)}
                   >
                     <FormControlLabel
-                      value='yes'
-                      label='Yes'
-                      control={<Radio color='primary' />}
+                      value="yes"
+                      label="Yes"
+                      control={<Radio color="primary" />}
                     />
                     <FormControlLabel
-                      value='no'
-                      label='No'
-                      control={<Radio color='primary' />}
+                      value="no"
+                      label="No"
+                      control={<Radio color="primary" />}
                     />
                   </RadioGroup>
                 </FormControl>
                 <FormControl
                   className={classes.choice}
                   fullWidth
-                  component='fieldset'
+                  component="fieldset"
                 >
-                  <FormLabel component='legend'>
+                  <FormLabel component="legend">
                     Have your customers asked for more communication about
                     status, and when they can see a particular feature or fix?
                   </FormLabel>
                   <RadioGroup
-                    aria-label='more-comm-status-feature-fix'
-                    name='question4'
+                    aria-label="more-comm-status-feature-fix"
+                    name="question4"
                     value={question4}
                     onChange={(e) => setQuestion4(e.target.value)}
                   >
                     <FormControlLabel
-                      value='yes'
-                      label='Yes'
-                      control={<Radio color='primary' />}
+                      value="yes"
+                      label="Yes"
+                      control={<Radio color="primary" />}
                     />
                     <FormControlLabel
-                      value='no'
-                      label='No'
-                      control={<Radio color='primary' />}
+                      value="no"
+                      label="No"
+                      control={<Radio color="primary" />}
                     />
                   </RadioGroup>
                 </FormControl>
                 <FormControl
                   className={classes.choice}
                   fullWidth
-                  component='fieldset'
+                  component="fieldset"
                 >
-                  <FormLabel component='legend'>
+                  <FormLabel component="legend">
                     Do you ask your customers to track bugs, tickets or issues
                     in a developer tracking tool or do you send them separate
                     updates?
                   </FormLabel>
                   <RadioGroup
-                    aria-label='customer-dev-tracking-tool'
-                    name='question5'
+                    aria-label="customer-dev-tracking-tool"
+                    name="question5"
                     value={question5}
                     onChange={(e) => setQuestion5(e.target.value)}
                   >
                     <FormControlLabel
-                      value='yes'
-                      label='Yes'
-                      control={<Radio color='primary' />}
+                      value="yes"
+                      label="Yes"
+                      control={<Radio color="primary" />}
                     />
                     <FormControlLabel
-                      value='no'
-                      label='No'
-                      control={<Radio color='primary' />}
+                      value="no"
+                      label="No"
+                      control={<Radio color="primary" />}
                     />
                   </RadioGroup>
                 </FormControl>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   select
                   required
                   fullWidth
-                  id='question6'
-                  label='If you do send them a separate update is this a manual or automatic process?'
+                  id="question6"
+                  label="If you do send them a separate update is this a manual or automatic process?"
                   error={formError.question6 && formError.question6.error}
                   helperText={
                     formError && formError.question6
@@ -372,240 +372,230 @@ const FeedbackForm = ({ dispatch, loading }) => {
                       : ''
                   }
                   className={classes.textField}
-                  onBlur={(e) =>
-                    handleBlur(e, 'required', question6, 'question6')
-                  }
+                  onBlur={(e) => handleBlur(e, 'required', question6, 'question6')}
                   {...question6.bind}
                 >
-                  <MenuItem value=''>Select</MenuItem>
-                  <MenuItem value='manual'>Manual</MenuItem>
-                  <MenuItem value='automatic'>Automatic</MenuItem>
+                  <MenuItem value="">Select</MenuItem>
+                  <MenuItem value="manual">Manual</MenuItem>
+                  <MenuItem value="automatic">Automatic</MenuItem>
                 </TextField>
                 <FormControl
                   className={classes.choice}
                   fullWidth
-                  component='fieldset'
+                  component="fieldset"
                 >
-                  <FormLabel component='legend'>
+                  <FormLabel component="legend">
                     Do you do acceptance testing with your customers or clients?
                   </FormLabel>
                   <RadioGroup
-                    aria-label='customer-client-acceptance-testing'
-                    name='question7'
+                    aria-label="customer-client-acceptance-testing"
+                    name="question7"
                     value={question7}
                     onChange={(e) => setQuestion7(e.target.value)}
                   >
                     <FormControlLabel
-                      value='yes'
-                      label='Yes'
-                      control={<Radio color='primary' />}
+                      value="yes"
+                      label="Yes"
+                      control={<Radio color="primary" />}
                     />
                     <FormControlLabel
-                      value='no'
-                      label='No'
-                      control={<Radio color='primary' />}
+                      value="no"
+                      label="No"
+                      control={<Radio color="primary" />}
                     />
                   </RadioGroup>
                 </FormControl>
                 <FormControl
                   className={classes.choice}
                   fullWidth
-                  component='fieldset'
+                  component="fieldset"
                 >
-                  <FormLabel component='legend'>
+                  <FormLabel component="legend">
                     Do you share release notes and version updates to major
                     components of your software with customers?
                   </FormLabel>
                   <RadioGroup
-                    aria-label='customer-share-release-notes-versions'
-                    name='question8'
+                    aria-label="customer-share-release-notes-versions"
+                    name="question8"
                     value={question8}
                     onChange={(e) => setQuestion8(e.target.value)}
                   >
                     <FormControlLabel
-                      value='yes'
-                      label='Yes'
-                      control={<Radio color='primary' />}
+                      value="yes"
+                      label="Yes"
+                      control={<Radio color="primary" />}
                     />
                     <FormControlLabel
-                      value='no'
-                      label='No'
-                      control={<Radio color='primary' />}
+                      value="no"
+                      label="No"
+                      control={<Radio color="primary" />}
                     />
                   </RadioGroup>
                 </FormControl>
                 <FormControl
                   className={classes.choice}
                   fullWidth
-                  component='fieldset'
+                  component="fieldset"
                 >
-                  <FormLabel component='legend'>
+                  <FormLabel component="legend">
                     Are the majority of your customers enterprise level
                     companies, startups or small business?
                   </FormLabel>
                   <FormGroup>
                     <FormControlLabel
-                      control={
+                      control={(
                         <Checkbox
-                          id='enterprise'
-                          name='enterprise'
-                          color='primary'
+                          id="enterprise"
+                          name="enterprise"
+                          color="primary"
                           onChange={(e) => handleMultipleChoice(e, 'question9')}
                         />
-                      }
-                      label={'Enterprise Level Companies'}
+                      )}
+                      label="Enterprise Level Companies"
                     />
                     <FormControlLabel
-                      control={
+                      control={(
                         <Checkbox
-                          id='small'
-                          name='small'
-                          color='primary'
+                          id="small"
+                          name="small"
+                          color="primary"
                           onChange={(e) => handleMultipleChoice(e, 'question9')}
                         />
-                      }
-                      label={'Small Business'}
+                      )}
+                      label="Small Business"
                     />
                     <FormControlLabel
-                      control={
+                      control={(
                         <Checkbox
-                          id='startup'
-                          name='startup'
-                          color='primary'
+                          id="startup"
+                          name="startup"
+                          color="primary"
                           onChange={(e) => handleMultipleChoice(e, 'question9')}
                         />
-                      }
-                      label={'Startups'}
+                      )}
+                      label="Startups"
                     />
                   </FormGroup>
                 </FormControl>
                 <FormControl
                   className={classes.choice}
                   fullWidth
-                  component='fieldset'
+                  component="fieldset"
                 >
-                  <FormLabel component='legend'>
+                  <FormLabel component="legend">
                     Do you use microservice architectures, Monolith deployments,
                     separate Front End and Back Ends or All of the Above?
                   </FormLabel>
                   <FormGroup>
                     <FormControlLabel
-                      control={
+                      control={(
                         <Checkbox
-                          id='microservice'
-                          name='microservice'
-                          color='primary'
-                          onChange={(e) =>
-                            handleMultipleChoice(e, 'question10')
-                          }
+                          id="microservice"
+                          name="microservice"
+                          color="primary"
+                          onChange={(e) => handleMultipleChoice(e, 'question10')}
                         />
-                      }
-                      label={'Microservice Architecture'}
+                      )}
+                      label="Microservice Architecture"
                     />
                     <FormControlLabel
-                      control={
+                      control={(
                         <Checkbox
-                          id='monolith'
-                          name='monolith'
-                          color='primary'
-                          onChange={(e) =>
-                            handleMultipleChoice(e, 'question10')
-                          }
+                          id="monolith"
+                          name="monolith"
+                          color="primary"
+                          onChange={(e) => handleMultipleChoice(e, 'question10')}
                         />
-                      }
-                      label={'Monolith Deployments'}
+                      )}
+                      label="Monolith Deployments"
                     />
                     <FormControlLabel
-                      control={
+                      control={(
                         <Checkbox
-                          id='separate'
-                          name='separate'
-                          color='primary'
-                          onChange={(e) =>
-                            handleMultipleChoice(e, 'question10')
-                          }
+                          id="separate"
+                          name="separate"
+                          color="primary"
+                          onChange={(e) => handleMultipleChoice(e, 'question10')}
                         />
-                      }
-                      label={'Separate FrontEnd and BackEnd(s)'}
+                      )}
+                      label="Separate FrontEnd and BackEnd(s)"
                     />
                     <FormControlLabel
-                      control={
+                      control={(
                         <Checkbox
-                          id='all'
-                          name='all'
-                          color='primary'
-                          onChange={(e) =>
-                            handleMultipleChoice(e, 'question10')
-                          }
+                          id="all"
+                          name="all"
+                          color="primary"
+                          onChange={(e) => handleMultipleChoice(e, 'question10')}
                         />
-                      }
-                      label={'All of the above'}
+                      )}
+                      label="All of the above"
                     />
                   </FormGroup>
                 </FormControl>
                 <FormControl
                   className={classes.choice}
                   fullWidth
-                  component='fieldset'
+                  component="fieldset"
                 >
-                  <FormLabel component='legend'>
+                  <FormLabel component="legend">
                     Would you be interested in a release management tool that
                     could facilitate communication with your customers or your
                     development team without adding a new tool?
                   </FormLabel>
                   <RadioGroup
-                    aria-label='interested'
-                    name='question11'
+                    aria-label="interested"
+                    name="question11"
                     value={question11}
                     onChange={(e) => setQuestion11(e.target.value)}
                   >
                     <FormControlLabel
-                      value='yes'
-                      label='Yes'
-                      control={<Radio color='primary' />}
+                      value="yes"
+                      label="Yes"
+                      control={<Radio color="primary" />}
                     />
                     <FormControlLabel
-                      value='no'
-                      label='No'
-                      control={<Radio color='primary' />}
+                      value="no"
+                      label="No"
+                      control={<Radio color="primary" />}
                     />
                   </RadioGroup>
                 </FormControl>
                 <FormControl
                   className={classes.choice}
                   fullWidth
-                  component='fieldset'
+                  component="fieldset"
                 >
-                  <FormLabel component='legend'>
+                  <FormLabel component="legend">
                     Would you be interested in a 3 month free trial of a tool
                     that can generate Release Notes, Send updates to development
                     and product teams at each stage of your development workflow
                     and let you keep using the tools you are using?
                   </FormLabel>
                   <RadioGroup
-                    aria-label='3-month-free-trial'
-                    name='question12'
+                    aria-label="3-month-free-trial"
+                    name="question12"
                     value={question12}
                     onChange={(e) => setQuestion12(e.target.value)}
                   >
                     <FormControlLabel
-                      value='yes'
-                      label='Yes'
-                      control={<Radio color='primary' />}
+                      value="yes"
+                      label="Yes"
+                      control={<Radio color="primary" />}
                     />
                     <FormControlLabel
-                      value='no'
-                      label='No'
-                      control={<Radio color='primary' />}
+                      value="no"
+                      label="No"
+                      control={<Radio color="primary" />}
                     />
                   </RadioGroup>
                 </FormControl>
                 <FormControl
                   className={classes.choice}
                   fullWidth
-                  component='fieldset'
+                  component="fieldset"
                 >
-                  <FormLabel component='legend'>
+                  <FormLabel component="legend">
                     If not what feature would you be most interested in Auto
                     Generated Release Notes, Status updates via push/email
                     notification to team members or Version Dependency
@@ -613,54 +603,46 @@ const FeedbackForm = ({ dispatch, loading }) => {
                   </FormLabel>
                   <FormGroup>
                     <FormControlLabel
-                      control={
+                      control={(
                         <Checkbox
-                          id='autoGenerated'
-                          name='autoGenerated'
-                          color='primary'
-                          onChange={(e) =>
-                            handleMultipleChoice(e, 'question13')
-                          }
+                          id="autoGenerated"
+                          name="autoGenerated"
+                          color="primary"
+                          onChange={(e) => handleMultipleChoice(e, 'question13')}
                         />
-                      }
-                      label={'Auto Generated Release Notes'}
+                      )}
+                      label="Auto Generated Release Notes"
                     />
                     <FormControlLabel
-                      control={
+                      control={(
                         <Checkbox
-                          id='pushEmail'
-                          name='pushEmail'
-                          color='primary'
-                          onChange={(e) =>
-                            handleMultipleChoice(e, 'question13')
-                          }
+                          id="pushEmail"
+                          name="pushEmail"
+                          color="primary"
+                          onChange={(e) => handleMultipleChoice(e, 'question13')}
                         />
-                      }
-                      label={
-                        'Status updates via push/email notification to team members'
-                      }
+                      )}
+                      label="Status updates via push/email notification to team members"
                     />
                     <FormControlLabel
-                      control={
+                      control={(
                         <Checkbox
-                          id='versionDependency'
-                          name='versionDependency'
-                          color='primary'
-                          onChange={(e) =>
-                            handleMultipleChoice(e, 'question13')
-                          }
+                          id="versionDependency"
+                          name="versionDependency"
+                          color="primary"
+                          onChange={(e) => handleMultipleChoice(e, 'question13')}
                         />
-                      }
-                      label={'Version Dependency Management'}
+                      )}
+                      label="Version Dependency Management"
                     />
                   </FormGroup>
                 </FormControl>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type='submit'
+                    type="submit"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
                   >
@@ -678,7 +660,7 @@ const FeedbackForm = ({ dispatch, loading }) => {
           </CardContent>
         </Card>
       </Container>
-    </React.Fragment>
+    </>
   );
 };
 

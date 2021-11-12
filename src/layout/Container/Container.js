@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100%',
     paddingTop: '6em',
+    maxWidth: '100% !important',
   },
 }));
 

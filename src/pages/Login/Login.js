@@ -79,7 +79,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = ({ dispatch, loading, history, socialLogin }) => {
+const Login = ({
+  dispatch, loading, history, socialLogin,
+}) => {
   const classes = useStyles();
   const username = useInput('', { required: true });
   const password = useInput('', { required: true });
@@ -89,7 +91,7 @@ const Login = ({ dispatch, loading, history, socialLogin }) => {
     const [uid, token] = location.pathname
       .substring(
         location.pathname.indexOf(routes.RESET_PASSWORD) + 1,
-        location.pathname.lastIndexOf('/')
+        location.pathname.lastIndexOf('/'),
       )
       .split('/')
       .slice(1);
@@ -120,14 +122,14 @@ const Login = ({ dispatch, loading, history, socialLogin }) => {
    */
 
   const handleBlur = (e, validation, input) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...error };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...error };
+    if (validateObj && validateObj.error) {
       setError({
         ...prevState,
         [e.target.id]: validateObj,
       });
-    else
+    } else {
       setError({
         ...prevState,
         [e.target.id]: {
@@ -135,10 +137,11 @@ const Login = ({ dispatch, loading, history, socialLogin }) => {
           message: '',
         },
       });
+    }
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(error);
+    const errorKeys = Object.keys(error);
     if (!username.value || !password.value) return true;
     errorKeys.forEach((key) => {
       if (error[key].error) return true;
@@ -147,28 +150,28 @@ const Login = ({ dispatch, loading, history, socialLogin }) => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <div className={classes.logoDiv}>
         <img src={logo} className={classes.logo} />
       </div>
-      <Container component='main' maxWidth='xs' className={classes.container}>
+      <Container component="main" maxWidth="xs" className={classes.container}>
         <CssBaseline />
-        <Card variant='outlined'>
+        <Card variant="outlined">
           <CardContent>
             <div className={classes.paper}>
-              <Typography component='h1' variant='h5'>
+              <Typography component="h1" variant="h5">
                 Sign in
               </Typography>
               <form className={classes.form} noValidate onSubmit={handleSubmit}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
-                  id='username'
-                  label='Username'
-                  name='username'
-                  autoComplete='username'
+                  id="username"
+                  label="Username"
+                  name="username"
+                  autoComplete="username"
                   error={error.username && error.username.error}
                   helperText={
                     error && error.username ? error.username.message : ''
@@ -178,15 +181,15 @@ const Login = ({ dispatch, loading, history, socialLogin }) => {
                   {...username.bind}
                 />
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
-                  name='password'
-                  label='Password'
-                  type='password'
-                  id='password'
-                  autoComplete='current-password'
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
                   error={error.password && error.password.error}
                   helperText={
                     error && error.password ? error.password.message : ''
@@ -197,10 +200,10 @@ const Login = ({ dispatch, loading, history, socialLogin }) => {
                 />
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type='submit'
+                    type="submit"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
                   >
@@ -216,7 +219,7 @@ const Login = ({ dispatch, loading, history, socialLogin }) => {
               </form>
               <Grid container>
                 <Grid item xs={12} className={classes.or}>
-                  <Typography variant='body1'>----OR----</Typography>
+                  <Typography variant="body1">----OR----</Typography>
                 </Grid>
                 <Grid item xs={12} className={classes.socialAuth}>
                   <GithubLogin
@@ -224,27 +227,27 @@ const Login = ({ dispatch, loading, history, socialLogin }) => {
                     history={history}
                     disabled={loading && socialLogin}
                   />
-                  {loading &&
-                    socialLogin &&
-                    socialLogin === providers.github && (
+                  {loading
+                    && socialLogin
+                    && socialLogin === providers.github && (
                       <CircularProgress
                         size={24}
                         className={classes.buttonProgress}
                       />
-                    )}
+                  )}
                 </Grid>
                 <Grid item xs className={classes.link}>
                   <Link
                     href={routes.FORGOT_PASSWORD}
-                    variant='body2'
-                    color='primary'
+                    variant="body2"
+                    color="primary"
                   >
                     Forgot password?
                   </Link>
                 </Grid>
                 <Grid item className={classes.link}>
-                  <Link href={routes.REGISTER} variant='body2' color='primary'>
-                    {"Don't have an account? Register"}
+                  <Link href={routes.REGISTER} variant="body2" color="primary">
+                    Don't have an account? Register
                   </Link>
                 </Grid>
               </Grid>
@@ -253,7 +256,7 @@ const Login = ({ dispatch, loading, history, socialLogin }) => {
         </Card>
       </Container>
       <Copyright />
-    </React.Fragment>
+    </>
   );
 };
 

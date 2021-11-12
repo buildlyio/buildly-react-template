@@ -57,9 +57,9 @@ const AddIssues = ({
     && location.state.type === 'edit'
     && location.state.data
   ) || {};
-  const projId = location.state && location.state.projId;
+  const projectID = location.state && location.state.projectID;
 
-  const title = useInput(editData.title || '', {
+  const name = useInput(editData.name || '', {
     required: true,
   });
   const description = useInput(editData.description || '', {
@@ -85,7 +85,7 @@ const AddIssues = ({
 
   const closeFormModal = () => {
     const dataHasChanged = (
-      title.hasChanged()
+      name.hasChanged()
       || description.hasChanged()
       || type.hasChanged()
       || repo.hasChanged()
@@ -117,9 +117,9 @@ const AddIssues = ({
       ? editData.id
       : (location.state && location.state.nextId);
     const issueFormValue = {
-      projId,
+      projectID,
       id,
-      title: title.value,
+      name: name.value,
       description: description.value,
       type: type.value,
       repo: repo.value,
@@ -157,7 +157,7 @@ const AddIssues = ({
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     if (
-      !title.value
+      !name.value
       || !description.value
       || !type.value
       || !repo.value
@@ -176,15 +176,15 @@ const AddIssues = ({
   };
 
   return (
-    <React.Fragment>
+    <>
       {openFormModal && (
         <FormModal
           open={openFormModal}
           handleClose={closeFormModal}
-          title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth='md'
-          wantConfirm={true}
+          name={formTitle}
+          nameClass={classes.formTitle}
+          maxWidth="md"
+          wantConfirm
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
@@ -197,38 +197,38 @@ const AddIssues = ({
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
-                  id='title'
-                  label='Title'
-                  name='title'
-                  autoComplete='title'
+                  id="name"
+                  label="Title"
+                  name="name"
+                  autoComplete="name"
                   error={
-                    formError.title
-                    && formError.title.error
+                    formError.name
+                    && formError.name.error
                   }
                   helperText={
-                    formError.title
-                      ? formError.title.message
+                    formError.name
+                      ? formError.name.message
                       : ''
                   }
-                  onBlur={(e) => handleBlur(e, 'required', title)}
-                  {...title.bind}
+                  onBlur={(e) => handleBlur(e, 'required', name)}
+                  {...name.bind}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
                   multiline
-                  id='description'
-                  label='Description'
-                  name='description'
-                  autoComplete='description'
+                  id="description"
+                  label="Description"
+                  name="description"
+                  autoComplete="description"
                   error={
                     formError.description
                     && formError.description.error
@@ -244,15 +244,15 @@ const AddIssues = ({
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
                   select
-                  id='type'
-                  label='Issue Type'
-                  name='type'
-                  autoComplete='type'
+                  id="type"
+                  label="Issue Type"
+                  name="type"
+                  autoComplete="type"
                   error={
                     formError.type
                     && formError.type.error
@@ -265,7 +265,7 @@ const AddIssues = ({
                   onBlur={(e) => handleBlur(e, 'required', type)}
                   {...type.bind}
                 >
-                  <MenuItem value=''>Select</MenuItem>
+                  <MenuItem value="">Select</MenuItem>
                   {_.map(types, (tp) => (
                     <MenuItem
                       key={`type-${tp.id}`}
@@ -278,15 +278,15 @@ const AddIssues = ({
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
                   select
-                  id='repo'
-                  label='Link to Repo'
-                  name='repo'
-                  autoComplete='repo'
+                  id="repo"
+                  label="Link to Repo"
+                  name="repo"
+                  autoComplete="repo"
                   error={
                     formError.repo
                     && formError.repo.error
@@ -299,32 +299,32 @@ const AddIssues = ({
                   onBlur={(e) => handleBlur(e, 'required', repo)}
                   {...repo.bind}
                 >
-                  <MenuItem value=''>Select</MenuItem>
+                  <MenuItem value="">Select</MenuItem>
                   {_.map(
-                    _.filter(repos, { projId }),
+                    _.filter(repos, { projectID }),
                     (rp) => (
                       <MenuItem
-                        key={`type-${rp.projId}-${rp.id}`}
+                        key={`type-${rp.projectID}-${rp.id}`}
                         value={rp.name}
                       >
                         {rp.name}
                       </MenuItem>
-                    )
+                    ),
                   )}
                 </TextField>
               </Grid>
               {editPage && (
                 <Grid item xs={12}>
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
                     select
-                    id='issueStatus'
-                    label='Issue Status'
-                    name='issueStatus'
-                    autoComplete='issueStatus'
+                    id="issueStatus"
+                    label="Issue Status"
+                    name="issueStatus"
+                    autoComplete="issueStatus"
                     error={
                       formError.issueStatus
                       && formError.issueStatus.error
@@ -351,15 +351,15 @@ const AddIssues = ({
               {editPage && (
                 <Grid item xs={12}>
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
                     select
-                    id='assignedTo'
-                    label='Assigned To'
-                    name='assignedTo'
-                    autoComplete='assignedTo'
+                    id="assignedTo"
+                    label="Assigned To"
+                    name="assignedTo"
+                    autoComplete="assignedTo"
                     error={
                       formError.assignedTo
                       && formError.assignedTo.error
@@ -372,17 +372,17 @@ const AddIssues = ({
                     onBlur={(e) => handleBlur(e, 'required', assignedTo)}
                     {...assignedTo.bind}
                   >
-                    <MenuItem value=''>Select</MenuItem>
+                    <MenuItem value="">Select</MenuItem>
                     {_.map(
-                      _.filter(devs, { projId }),
+                      _.filter(devs, { projectID }),
                       (dev) => (
                         <MenuItem
-                          key={`type-${dev.projId}-${dev.id}`}
+                          key={`type-${dev.projectID}-${dev.id}`}
                           value={dev.value}
                         >
                           {dev.name}
                         </MenuItem>
-                      )
+                      ),
                     )}
                   </TextField>
                 </Grid>
@@ -392,14 +392,14 @@ const AddIssues = ({
             <Grid
               container
               spacing={isDesktop ? 3 : 0}
-              justify='center'
+              justify="center"
             >
               <Grid item xs={12} sm={4}>
                 <Button
-                  type='submit'
+                  type="submit"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   className={classes.submit}
                   disabled={submitDisabled()}
                 >
@@ -408,10 +408,10 @@ const AddIssues = ({
               </Grid>
               <Grid item xs={12} sm={4}>
                 <Button
-                  type='button'
+                  type="button"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   onClick={discardFormData}
                   className={classes.submit}
                 >
@@ -422,9 +422,9 @@ const AddIssues = ({
           </form>
         </FormModal>
       )}
-    </React.Fragment>
-  )
-}
+    </>
+  );
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

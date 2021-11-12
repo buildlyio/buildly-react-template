@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { makeStyles, Button, Link, Menu, MenuItem } from '@material-ui/core';
+import {
+  makeStyles, Button, Link, Menu, MenuItem,
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -24,16 +26,16 @@ const Services = () => {
   return (
     <div>
       <Button
-        aria-controls='buildly-services-menu'
-        aria-haspopup='true'
-        color='primary'
-        variant='contained'
+        aria-controls="buildly-services-menu"
+        aria-haspopup="true"
+        color="primary"
+        variant="contained"
         onClick={handleClick}
       >
         Buildly Services
       </Button>
       <Menu
-        id='buildly-services-menu'
+        id="buildly-services-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
@@ -50,9 +52,9 @@ const Services = () => {
         <MenuItem onClick={handleClose}>
           <Link
             className={classes.link}
-            href='https://buildly.io/'
-            target='_blank'
-            rel='noopener'
+            href="https://buildly.io/"
+            target="_blank"
+            rel="noopener"
           >
             Open Source
           </Link>
@@ -60,9 +62,9 @@ const Services = () => {
         <MenuItem onClick={handleClose}>
           <Link
             className={classes.link}
-            href='https://buildly.io/'
-            target='_blank'
-            rel='noopener'
+            href="https://buildly.io/"
+            target="_blank"
+            rel="noopener"
           >
             Sales and Consulting
           </Link>

@@ -85,14 +85,14 @@ const ForgotPassword = ({ dispatch, loading, history }) => {
    */
 
   const handleBlur = (e, validation, input) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...error };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...error };
+    if (validateObj && validateObj.error) {
       setError({
         ...prevState,
         [e.target.id]: validateObj,
       });
-    else
+    } else {
       setError({
         ...prevState,
         [e.target.id]: {
@@ -100,10 +100,11 @@ const ForgotPassword = ({ dispatch, loading, history }) => {
           message: '',
         },
       });
+    }
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(error);
+    const errorKeys = Object.keys(error);
     if (!email.value) return true;
     errorKeys.forEach((key) => {
       if (error[key].error) return true;
@@ -112,28 +113,28 @@ const ForgotPassword = ({ dispatch, loading, history }) => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <div className={classes.logoDiv}>
         <img src={logo} className={classes.logo} />
       </div>
-      <Container component='main' maxWidth='xs'>
+      <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <Card variant='outlined'>
+        <Card variant="outlined">
           <CardContent>
             <div className={classes.paper}>
-              <Typography component='h1' variant='h5' gutterBottom>
+              <Typography component="h1" variant="h5" gutterBottom>
                 Enter your registered Email
               </Typography>
               <form className={classes.form} noValidate onSubmit={handleSubmit}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
-                  id='email'
-                  label='Registered email'
-                  name='email'
-                  autoComplete='email'
+                  id="email"
+                  label="Registered email"
+                  name="email"
+                  autoComplete="email"
                   className={classes.textField}
                   error={error.email && error.email.error}
                   helperText={error && error.email ? error.email.message : ''}
@@ -143,10 +144,10 @@ const ForgotPassword = ({ dispatch, loading, history }) => {
 
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type='submit'
+                    type="submit"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
                   >
@@ -161,17 +162,17 @@ const ForgotPassword = ({ dispatch, loading, history }) => {
                 </div>
                 <Grid container>
                   <Grid item xs>
-                    <Link href={routes.LOGIN} variant='body2' color='primary'>
+                    <Link href={routes.LOGIN} variant="body2" color="primary">
                       Go back to Sign in
                     </Link>
                   </Grid>
                   <Grid item>
                     <Link
                       href={routes.REGISTER}
-                      variant='body2'
-                      color='primary'
+                      variant="body2"
+                      color="primary"
                     >
-                      {"Don't have an account? Register"}
+                      Don't have an account? Register
                     </Link>
                   </Grid>
                 </Grid>
@@ -181,7 +182,7 @@ const ForgotPassword = ({ dispatch, loading, history }) => {
         </Card>
       </Container>
       <Copyright />
-    </React.Fragment>
+    </>
   );
 };
 

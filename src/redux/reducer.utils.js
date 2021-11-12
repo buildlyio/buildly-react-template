@@ -6,9 +6,7 @@ import PropTypes from 'prop-types';
  * @param action - the returned action
  * @returns {{ data; dataLoaded: boolean }}
  */
-export const addAll = (state, action) => {
-  return { ...state, data: action.data, loaded: true };
-};
+export const addAll = (state, action) => ({ ...state, data: action.data, loaded: true });
 
 /**
  * it inserts an item to the state if it does not exist otherwise it will update the item with the passed action data
@@ -34,7 +32,9 @@ export const upsertOne = (state, action, idProp, dataProp) => {
         stateDataCopy.splice(action.index, 0, action.data);
         if (dataProp) {
           dataObj[dataProp] = stateDataCopy;
-          state = { ...state, data: dataObj, loaded: true, created: true };
+          state = {
+            ...state, data: dataObj, loaded: true, created: true,
+          };
         } else {
           state = {
             ...state,
@@ -43,53 +43,49 @@ export const upsertOne = (state, action, idProp, dataProp) => {
             created: true,
           };
         }
+      } else if (dataProp) {
+        dataObj[dataProp] = [...dataArr, action.data];
+        state = {
+          ...state, data: dataObj, loaded: true, created: true,
+        };
       } else {
-        if (dataProp) {
-          dataObj[dataProp] = [...dataArr, action.data];
-          state = { ...state, data: dataObj, loaded: true, created: true };
-        } else {
-          state = {
-            ...state,
-            data: [...dataArr, action.data],
-            loaded: true,
-            created: true,
-          };
-        }
-      }
-      return state;
-    } else {
-      // update if item exists
-      if (dataProp) {
-        dataObj[dataProp] = dataArr.map((item) => {
-          if (item[idProp] === action.data[idProp]) {
-            return action.data;
-          } else {
-            return item;
-          }
-        });
-        return { ...state, data: dataObj, loaded: true, updated: true };
-      } else {
-        return {
+        state = {
           ...state,
-          data: dataArr.map((item) => {
-            if (item[idProp] === action.data[idProp]) {
-              return action.data;
-            } else {
-              return item;
-            }
-          }),
+          data: [...dataArr, action.data],
           loaded: true,
-          updated: true,
+          created: true,
         };
       }
+      return state;
     }
-  } else {
-    if (!state.data) {
-      return { data: action.data, created: true, loaded: true };
-    } else {
-      return { data: action.data, updated: true };
+    // update if item exists
+    if (dataProp) {
+      dataObj[dataProp] = dataArr.map((item) => {
+        if (item[idProp] === action.data[idProp]) {
+          return action.data;
+        }
+        return item;
+      });
+      return {
+        ...state, data: dataObj, loaded: true, updated: true,
+      };
     }
+    return {
+      ...state,
+      data: dataArr.map((item) => {
+        if (item[idProp] === action.data[idProp]) {
+          return action.data;
+        }
+        return item;
+      }),
+      loaded: true,
+      updated: true,
+    };
   }
+  if (!state.data) {
+    return { data: action.data, created: true, loaded: true };
+  }
+  return { data: action.data, updated: true };
 };
 
 upsertOne.propTypes = {
@@ -110,14 +106,13 @@ export const deleteOne = (state, action, idProp, dataProp) => {
   let dataArr = [];
   if (dataProp) {
     dataArr = state.data[dataProp].filter(
-      (item) => item[idProp] !== action.data[idProp]
+      (item) => item[idProp] !== action.data[idProp],
     );
     dataObj[dataProp] = dataArr;
     return { ...state, data: dataObj, deleted: true };
-  } else {
-    dataArr = state.data.filter((item) => item[idProp] !== action.data[idProp]);
-    return { ...state, data: dataArr, deleted: true };
   }
+  dataArr = state.data.filter((item) => item[idProp] !== action.data[idProp]);
+  return { ...state, data: dataArr, deleted: true };
 };
 
 deleteOne.propTypes = {
@@ -133,8 +128,7 @@ deleteOne.propTypes = {
  */
 export const updateNested = (state, action) => {
   const parentIndex = state.data.findIndex(
-    (dataItem) =>
-      dataItem.id.toString() === action.data[action.nested.parent].toString()
+    (dataItem) => dataItem.id.toString() === action.data[action.nested.parent].toString(),
   );
   if (parentIndex !== -1) {
     state.data[parentIndex][action.nested.key].forEach((item, index) => {
@@ -156,8 +150,7 @@ export const updateNested = (state, action) => {
  */
 export const addNested = (state, action) => {
   const parentIndex = state.data.findIndex(
-    (dataItem) =>
-      dataItem.id.toString() === action.data[action.nested.parent].toString()
+    (dataItem) => dataItem.id.toString() === action.data[action.nested.parent].toString(),
   );
   if (parentIndex !== -1) {
     state.data[parentIndex][action.nested.key].push(action.data);
@@ -176,15 +169,12 @@ export const addNested = (state, action) => {
 export const deleteNested = (state, action) => {
   if (action.nested) {
     const parentIndex = state.data.findIndex(
-      (dataItem) =>
-        dataItem.id.toString() === action.data[action.nested.parent].toString()
+      (dataItem) => dataItem.id.toString() === action.data[action.nested.parent].toString(),
     );
     if (parentIndex !== -1) {
       state.data[parentIndex][action.nested.key] = state.data[parentIndex][
         action.nested.key
-      ].filter((item) => {
-        return item.id.toString() !== action.data.id.toString();
-      });
+      ].filter((item) => item.id.toString() !== action.data.id.toString());
     }
     return { ...state, deleted: true };
   }
@@ -200,7 +190,7 @@ export const addFromGraphQl = (state, action, type) => {
   Object.keys(action.data).forEach((key) => {
     if (action.data[key].__typename === type) {
       const findItem = state.data.find(
-        (item) => item.id.toString() === action.data[key].id.toString()
+        (item) => item.id.toString() === action.data[key].id.toString(),
       );
       if (!findItem) {
         state = { ...state, data: [...state.data, action.data[key]] };
@@ -221,15 +211,13 @@ addFromGraphQl.propTypes = {
  * @param action - the returned action
  * @returns {any}
  */
-export const deleteMultiple = (state, action, idProp) => {
-  return {
-    ...state,
-    data: state.data.filter(
-      (item) => !action.data.find((element) => element[idProp] === item[idProp])
-    ),
-    deleted: true,
-  };
-};
+export const deleteMultiple = (state, action, idProp) => ({
+  ...state,
+  data: state.data.filter(
+    (item) => !action.data.find((element) => element[idProp] === item[idProp]),
+  ),
+  deleted: true,
+});
 
 deleteMultiple.propTypes = {
   idProp: PropTypes.string,

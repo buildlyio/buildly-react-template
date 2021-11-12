@@ -48,7 +48,7 @@ describe('Login reducer', () => {
         data: null,
         socialLogin: null,
         orgNames: null,
-      }
+      },
     );
   });
 });
@@ -67,7 +67,7 @@ describe('Register reducer', () => {
 
   it('Register success Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.REGISTER_SUCCESS })
+      reducer.default(initialState, { type: actions.REGISTER_SUCCESS }),
     ).toEqual({
       error: null,
       loaded: true,
@@ -80,7 +80,7 @@ describe('Register reducer', () => {
 
   it('Register fail Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.REGISTER_FAIL })
+      reducer.default(initialState, { type: actions.REGISTER_FAIL }),
     ).toEqual({
       error: undefined,
       loaded: true,
@@ -95,7 +95,7 @@ describe('Register reducer', () => {
 describe('logout success reducer', () => {
   it('logout Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.LOGOUT_SUCCESS })
+      reducer.default(initialState, { type: actions.LOGOUT_SUCCESS }),
     ).toEqual(initialState);
   });
 });
@@ -103,7 +103,7 @@ describe('logout success reducer', () => {
 describe('Update User reducer', () => {
   it('update user Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.UPDATE_USER })
+      reducer.default(initialState, { type: actions.UPDATE_USER }),
     ).toEqual({
       error: null,
       loaded: false,
@@ -116,7 +116,7 @@ describe('Update User reducer', () => {
 
   it('update user success Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.UPDATE_USER_SUCCESS })
+      reducer.default(initialState, { type: actions.UPDATE_USER_SUCCESS }),
     ).toEqual({
       error: null,
       loaded: true,
@@ -129,7 +129,7 @@ describe('Update User reducer', () => {
 
   it('update user fail Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.UPDATE_USER_FAIL })
+      reducer.default(initialState, { type: actions.UPDATE_USER_FAIL }),
     ).toEqual({
       error: undefined,
       loaded: true,
@@ -155,7 +155,7 @@ describe('invite User reducer', () => {
 
   it('invite user success Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.INVITE_SUCCESS })
+      reducer.default(initialState, { type: actions.INVITE_SUCCESS }),
     ).toEqual({
       error: null,
       loaded: true,
@@ -168,7 +168,7 @@ describe('invite User reducer', () => {
 
   it('invite user fail Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.INVITE_FAIL })
+      reducer.default(initialState, { type: actions.INVITE_FAIL }),
     ).toEqual({
       error: undefined,
       loaded: true,
@@ -186,7 +186,7 @@ describe('Social Login reducer', () => {
       reducer.default(initialState, {
         type: actions.SOCIAL_LOGIN,
         provider: 'github',
-      })
+      }),
     ).toEqual({
       error: null,
       loaded: false,
@@ -206,13 +206,13 @@ describe('Social Login reducer', () => {
         error: null,
         socialLogin: null,
         orgNames: null,
-      }
+      },
     );
   });
 
   it('social login fail Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.SOCIAL_LOGIN_FAIL })
+      reducer.default(initialState, { type: actions.SOCIAL_LOGIN_FAIL }),
     ).toEqual({
       error: undefined,
       loaded: true,
@@ -229,7 +229,7 @@ describe('Load Organization Names reducer', () => {
     expect(
       reducer.default(initialState, {
         type: actions.LOAD_ORG_NAMES,
-      })
+      }),
     ).toEqual({
       error: null,
       loaded: false,
@@ -242,7 +242,7 @@ describe('Load Organization Names reducer', () => {
 
   it('load org names success Reducer', () => {
     expect(
-      reducer.default([], { type: actions.LOAD_ORG_NAMES_SUCCESS })
+      reducer.default([], { type: actions.LOAD_ORG_NAMES_SUCCESS }),
     ).toEqual({
       loaded: true,
       loading: false,
@@ -257,7 +257,7 @@ describe('Load Organization Names reducer', () => {
     expect(
       reducer.default(initialState, {
         type: actions.LOAD_ORG_NAMES_FAILURE,
-      })
+      }),
     ).toEqual({
       error: undefined,
       loaded: true,
@@ -272,7 +272,7 @@ describe('Load Organization Names reducer', () => {
 describe('Add Organization for Social User reducer', () => {
   it('Empty Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.ADD_ORG_SOCIAL_USER })
+      reducer.default(initialState, { type: actions.ADD_ORG_SOCIAL_USER }),
     ).toEqual({
       error: null,
       loaded: false,
@@ -285,7 +285,7 @@ describe('Add Organization for Social User reducer', () => {
 
   it('add organization for social user success Reducer', () => {
     expect(
-      reducer.default([], { type: actions.ADD_ORG_SOCIAL_USER_SUCCESS })
+      reducer.default([], { type: actions.ADD_ORG_SOCIAL_USER_SUCCESS }),
     ).toEqual({
       loaded: true,
       loading: false,
@@ -298,7 +298,7 @@ describe('Add Organization for Social User reducer', () => {
 
   it('add organization for social user fail Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.ADD_ORG_SOCIAL_USER_FAIL })
+      reducer.default(initialState, { type: actions.ADD_ORG_SOCIAL_USER_FAIL }),
     ).toEqual({
       error: undefined,
       loaded: true,

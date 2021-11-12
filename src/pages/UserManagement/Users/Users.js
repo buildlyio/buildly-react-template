@@ -66,9 +66,7 @@ const Users = ({ data, dispatch }) => {
     } else {
       // define permissions
       setPermissions(
-        data.map((coregroup) => {
-          return { label: coregroup.name, value: coregroup.id };
-        })
+        data.map((coregroup) => ({ label: coregroup.name, value: coregroup.id })),
       );
     }
   }, [data]);
@@ -77,13 +75,13 @@ const Users = ({ data, dispatch }) => {
   const permissionsTemplate = (row, crud, classes) => {
     if (coregroupsLoaded) {
       const [active, setActive] = useState(
-        (row.core_groups[0] && row.core_groups[0].id) || row.core_groups[0]
+        (row.core_groups[0] && row.core_groups[0].id) || row.core_groups[0],
       );
       return (
         <ButtonGroup
           disableElevation
-          color='primary'
-          size='small'
+          color="primary"
+          size="small"
           disabled={
             !row.is_active || user.core_user_uuid === row.core_user_uuid
           }
@@ -111,7 +109,7 @@ const Users = ({ data, dispatch }) => {
 
   const actionsTemplate = (row, crud) => {
     const handleMenuClick = (event) => {
-      setMenu({ row: row, element: event.currentTarget });
+      setMenu({ row, element: event.currentTarget });
     };
 
     const handleMenuItemClick = (action) => {
@@ -130,16 +128,16 @@ const Users = ({ data, dispatch }) => {
     };
 
     return (
-      <React.Fragment>
+      <>
         <IconButton
           className={classes.icon}
           disabled={user.core_user_uuid === row.core_user_uuid}
-          aria-label='more'
+          aria-label="more"
           aria-controls={`userActions${row.id}`}
-          aria-haspopup='true'
+          aria-haspopup="true"
           onClick={handleMenuClick}
         >
-          <MoreHoriz color='inherit' />
+          <MoreHoriz color="inherit" />
         </IconButton>
         <Menu
           id={`userActions${row.id}`}
@@ -159,18 +157,18 @@ const Users = ({ data, dispatch }) => {
               </MenuItem>
             ))}
         </Menu>
-      </React.Fragment>
+      </>
     );
   };
 
   return (
     <Box className={classes.root}>
       <Crud
-        deleteAction='DELETE_COREUSER'
-        updateAction='UPDATE_COREUSER'
-        createAction='CREATE_COREUSER'
-        loadAction='LOAD_DATA_COREUSER'
-        reducer='coreuserReducer'
+        deleteAction="DELETE_COREUSER"
+        updateAction="UPDATE_COREUSER"
+        createAction="CREATE_COREUSER"
+        loadAction="LOAD_DATA_COREUSER"
+        reducer="coreuserReducer"
       >
         {(crud) => {
           if (crud.getData()) {
@@ -197,10 +195,12 @@ const Users = ({ data, dispatch }) => {
                   prop: 'name',
                   template: (row) => (
                     <Typography
-                      variant='body1'
+                      variant="body1"
                       className={row.is_active ? '' : classes.textDisabled}
                     >
-                      {row.first_name} {row.last_name}
+                      {row.first_name}
+                      {' '}
+                      {row.last_name}
                     </Typography>
                   ),
                 },
@@ -209,7 +209,7 @@ const Users = ({ data, dispatch }) => {
                   prop: 'email',
                   template: (row) => (
                     <Typography
-                      variant='body2'
+                      variant="body2"
                       className={row.is_active ? '' : classes.textDisabled}
                     >
                       {' '}
@@ -222,7 +222,7 @@ const Users = ({ data, dispatch }) => {
                   prop: 'activity',
                   template: (row) => (
                     <Typography
-                      variant='caption'
+                      variant="caption"
                       className={classes.textDisabled}
                     >
                       Today
@@ -241,13 +241,11 @@ const Users = ({ data, dispatch }) => {
                 },
               ]}
               rows={crud.getData()}
-              sortFn={(a, b) =>
-                a.core_user_uuid === user.core_user_uuid
-                  ? -1
-                  : b.core_user_uuid === user.core_user_uuid
+              sortFn={(a, b) => (a.core_user_uuid === user.core_user_uuid
+                ? -1
+                : b.core_user_uuid === user.core_user_uuid
                   ? 1
-                  : 0
-              }
+                  : 0)}
             />
           );
         }}

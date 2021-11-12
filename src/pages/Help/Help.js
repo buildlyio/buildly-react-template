@@ -38,30 +38,30 @@ const Help = () => {
   const classes = useStyles();
 
   return (
-    <React.Fragment>
+    <>
       <div className={classes.logoDiv}>
         <img src={logo} className={classes.logo} />
       </div>
-      <Container component='main' maxWidth='xs'>
+      <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <Card variant='outlined'>
+        <Card variant="outlined">
           <CardContent>
             <div className={classes.paper}>
-              <Typography component='h1' variant='h5' gutterBottom>
+              <Typography component="h1" variant="h5" gutterBottom>
                 Request Help
               </Typography>
               <div className={classes.placeholder}>
-                <Typography variant='body1'>Work in Progress...</Typography>
+                <Typography variant="body1">Work in Progress...</Typography>
               </div>
               <Grid container>
                 <Grid item xs>
-                  <Link href={routes.LOGIN} variant='body2' color='primary'>
+                  <Link href={routes.LOGIN} variant="body2" color="primary">
                     Go back to Sign in
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href={routes.REGISTER} variant='body2' color='primary'>
-                    {"Don't have an account? Register"}
+                  <Link href={routes.REGISTER} variant="body2" color="primary">
+                    Don't have an account? Register
                   </Link>
                 </Grid>
               </Grid>
@@ -70,7 +70,7 @@ const Help = () => {
         </Card>
       </Container>
       <Copyright />
-    </React.Fragment>
+    </>
   );
 };
 

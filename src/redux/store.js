@@ -7,13 +7,12 @@ import rootSaga from './sagas';
 const configureStore = () => {
   const sagaMiddleware = createSagaMiddleware();
   // redux devtools
-  const composeEnhancers =
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
   return {
     ...redux.createStore(
       rootReducer,
-      composeEnhancers(redux.applyMiddleware(sagaMiddleware))
+      composeEnhancers(redux.applyMiddleware(sagaMiddleware)),
     ),
     runSaga: sagaMiddleware.run(rootSaga),
   };

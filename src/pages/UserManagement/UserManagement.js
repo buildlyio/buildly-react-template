@@ -95,9 +95,7 @@ const UserManagement = ({
     email.clear();
   };
 
-  const getEmailsFromInputValue = (value) => {
-    return value.split(',').map((item) => item.trim());
-  };
+  const getEmailsFromInputValue = (value) => value.split(',').map((item) => item.trim());
 
   const viewTabClicked = (event, view) => {
     setView(view);
@@ -105,27 +103,27 @@ const UserManagement = ({
 
   return (
     <Box mt={1} mb={3}>
-      <Grid container mb={3} justify='space-between' alignItems='center'>
+      <Grid container mb={3} justify="space-between" alignItems="center">
         <Grid item>
-          <Typography className={classes.userManagementHeading} variant={'h4'}>
+          <Typography className={classes.userManagementHeading} variant="h4">
             People using this system
           </Typography>
         </Grid>
         <Grid item>
           <Popup
-            trigger={
+            trigger={(
               <Button
-                type='button'
-                variant='outlined'
-                size='small'
-                color='primary'
+                type="button"
+                variant="outlined"
+                size="small"
+                color="primary"
                 startIcon={<EmailIcon />}
               >
                 Invite users
               </Button>
-            }
-            position='bottom right'
-            on='click'
+            )}
+            position="bottom right"
+            on="click"
             closeOnDocumentClick
             mouseLeaveDelay={300}
             mouseEnterDelay={0}
@@ -139,26 +137,26 @@ const UserManagement = ({
             arrow={false}
           >
             <form className={classes.inviteForm}>
-              <Typography variant='h6'>Invite users to platform</Typography>
+              <Typography variant="h6">Invite users to platform</Typography>
               <TextField
                 className={classes.textField}
-                label='Emails'
-                id='email'
-                variant='outlined'
-                placeholder='abc@xcy.com, 123@zxc.com'
+                label="Emails"
+                id="email"
+                variant="outlined"
+                placeholder="abc@xcy.com, 123@zxc.com"
                 error={Boolean(error)}
                 helperText={error}
                 {...email.bind}
               />
-              <Grid justify='flex-end' container spacing={0}>
+              <Grid justify="flex-end" container spacing={0}>
                 <Grid item>
                   <Button
                     onClick={inviteUser}
-                    size='small'
-                    variant='contained'
-                    color='primary'
+                    size="small"
+                    variant="contained"
+                    color="primary"
                     disabled={(loading && !loaded) || !email.value}
-                    type='submit'
+                    type="submit"
                   >
                     Send
                   </Button>
@@ -168,7 +166,7 @@ const UserManagement = ({
           </Popup>
         </Grid>
       </Grid>
-      <Grid mb={3} container justify='center'>
+      <Grid mb={3} container justify="center">
         <Grid item className={classes.tabs}>
           <Tabs value={view} onChange={viewTabClicked}>
             {subNav.map((itemProps, index) => (

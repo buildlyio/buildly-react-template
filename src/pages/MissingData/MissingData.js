@@ -45,7 +45,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MissingData = ({ dispatch, loading, history, orgNames }) => {
+const MissingData = ({
+  dispatch, loading, history, orgNames,
+}) => {
   const classes = useStyles();
   const user = useContext(UserContext);
 
@@ -60,17 +62,17 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    let updateForm = {
+    const updateForm = {
       id: user.id,
       organization_name: orgName,
     };
 
     if (email.value) {
-      updateForm['email'] = email.value;
+      updateForm.email = email.value;
     }
 
     dispatch(
-      addOrgSocialUser(updateForm, _.includes(orgNames, orgName), history)
+      addOrgSocialUser(updateForm, _.includes(orgNames, orgName), history),
     );
   };
 
@@ -82,14 +84,14 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
    */
 
   const handleBlur = (e, validation, input) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...formError };
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id]: validateObj,
       });
-    else
+    } else {
       setFormError({
         ...prevState,
         [e.target.id]: {
@@ -97,17 +99,17 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
           message: '',
         },
       });
+    }
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
+    const errorKeys = Object.keys(formError);
     let errorExists = false;
     if (
-      (!user.email && !email.value) ||
-      !radioValue ||
-      (radioValue === 'no' && !orgName)
-    )
-      return true;
+      (!user.email && !email.value)
+      || !radioValue
+      || (radioValue === 'no' && !orgName)
+    ) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -126,12 +128,12 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
 
   return (
     <div>
-      <Backdrop className={classes.backdrop} open={true}>
+      <Backdrop className={classes.backdrop} open>
         <FormModal
-          open={true}
-          title={'Missing Info'}
+          open
+          title="Missing Info"
           titleClass={classes.modalTitle}
-          maxWidth='sm'
+          maxWidth="sm"
           wantConfirm={false}
         >
           <form noValidate onSubmit={handleSubmit}>
@@ -139,15 +141,15 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
               {!user.email && (
                 <Grid item xs={12}>
                   <TextField
-                    variant='outlined'
-                    margin='normal'
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
-                    id='email'
-                    label='Email'
-                    name='email'
-                    autoComplete='email'
-                    type='email'
+                    id="email"
+                    label="Email"
+                    name="email"
+                    autoComplete="email"
+                    type="email"
                     error={formError.email && formError.email.error}
                     helperText={formError.email ? formError.email.message : ''}
                     className={classes.textField}
@@ -157,25 +159,25 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
                 </Grid>
               )}
               <Grid item xs={12}>
-                <FormControl component='fieldset' className={classes.radio}>
-                  <FormLabel component='legend'>
+                <FormControl component="fieldset" className={classes.radio}>
+                  <FormLabel component="legend">
                     Should you be added to the Default Organization?
                   </FormLabel>
                   <RadioGroup
-                    aria-label='use-default-org'
-                    name='use-default-org'
+                    aria-label="use-default-org"
+                    name="use-default-org"
                     value={radioValue}
                     onChange={handleRadio}
                   >
                     <FormControlLabel
-                      value='yes'
+                      value="yes"
                       control={<Radio />}
-                      label='Yes'
+                      label="Yes"
                     />
                     <FormControlLabel
-                      value='no'
+                      value="no"
                       control={<Radio />}
-                      label='No'
+                      label="No"
                     />
                   </RadioGroup>
                 </FormControl>
@@ -185,8 +187,8 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
                   <Autocomplete
                     freeSolo
                     disableClearable
-                    id='organization_name'
-                    name='organization_name'
+                    id="organization_name"
+                    name="organization_name"
                     options={orgNames || []}
                     getOptionLabel={(label) => _.capitalize(label)}
                     onChange={(e, newValue) => {
@@ -195,11 +197,11 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        variant='outlined'
-                        margin='normal'
+                        variant="outlined"
+                        margin="normal"
                         required
                         fullWidth
-                        label='Organisation Name'
+                        label="Organisation Name"
                         className={classes.textField}
                         value={orgName}
                         onChange={(e) => setOrgName(e.target.value)}
@@ -209,13 +211,13 @@ const MissingData = ({ dispatch, loading, history, orgNames }) => {
                 </Grid>
               )}
             </Grid>
-            <Grid container justify='center'>
+            <Grid container justify="center">
               <Grid item>
                 <Button
-                  type='submit'
+                  type="submit"
                   fullWidth
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   className={classes.submit}
                   disabled={loading || submitDisabled()}
                 >

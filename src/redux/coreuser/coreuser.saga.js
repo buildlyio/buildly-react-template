@@ -1,4 +1,8 @@
 import {
+  put, takeLatest, all, call,
+} from 'redux-saga/effects';
+import { httpService } from '@modules/http/http.service';
+import {
   LOAD_DATA_COREUSER,
   LOAD_DATA_COREUSER_COMMIT,
   LOAD_DATA_COREUSER_FAIL,
@@ -12,8 +16,6 @@ import {
   UPDATE_COREUSER_COMMIT,
   UPDATE_COREUSER_FAIL,
 } from './coreuser.actions';
-import { put, takeLatest, all, call } from 'redux-saga/effects';
-import { httpService } from '@modules/http/http.service';
 
 const endpoint = `${window.env.API_URL}coreuser/`;
 
@@ -32,7 +34,7 @@ function* createCoreUser(action) {
       httpService.makeRequest,
       'post',
       endpoint,
-      action.data
+      action.data,
     );
     yield [yield put({ type: CREATE_COREUSER_COMMIT, data: res.data })];
   } catch (error) {
@@ -47,7 +49,7 @@ function* updateCoreUser(action) {
       'patch',
       `${endpoint}${action.data.id}/`,
       action.data,
-      true
+      true,
     );
     yield [yield put({ type: UPDATE_COREUSER_COMMIT, data: res.data })];
   } catch (error) {
@@ -62,7 +64,7 @@ function* deleteCoreUser(action) {
       'delete',
       `${endpoint}${action.data.id}/`,
       {},
-      true
+      true,
     );
     yield [yield put({ type: DELETE_COREUSER_COMMIT, data: res.data })];
   } catch (error) {

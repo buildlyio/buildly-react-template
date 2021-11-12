@@ -43,7 +43,7 @@ const Copyright = () => {
   const app = useContext(AppContext);
 
   return (
-    <AppBar position='fixed' className={classes.root}>
+    <AppBar position="fixed" className={classes.root}>
       <Toolbar className={classes.toolbar}>
         <div className={classes.navs}>
           <Support />
@@ -51,12 +51,12 @@ const Copyright = () => {
         </div>
         <div>
           <Typography
-            variant='body2'
-            align='center'
+            variant="body2"
+            align="center"
             className={classes.copyright}
           >
             {'Copyright © '}
-            <Link color='inherit' href='https://example.com/' target='_blank'>
+            <Link color="inherit" href="https://example.com/" target="_blank">
               {app.title}
             </Link>{' '}
             {new Date().getFullYear()}

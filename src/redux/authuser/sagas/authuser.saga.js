@@ -42,7 +42,9 @@ import {
   ADD_ORG_SOCIAL_USER_SUCCESS,
   ADD_ORG_SOCIAL_USER_FAIL,
 } from '@redux/authuser/actions/authuser.actions';
-import { put, takeLatest, all, call } from 'redux-saga/effects';
+import {
+  put, takeLatest, all, call,
+} from 'redux-saga/effects';
 import { oauthService } from '@modules/oauth/oauth.service';
 import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
@@ -60,23 +62,23 @@ function* logout() {
 }
 
 function* login(payload) {
-  let { history } = payload;
+  const { history } = payload;
   try {
     const token = yield call(
       oauthService.authenticateWithPasswordFlow,
-      payload.credentials
+      payload.credentials,
     );
     yield call(oauthService.setAccessToken, token.data);
     const user = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}coreuser/me/`
+      `${window.env.API_URL}coreuser/me/`,
     );
     yield call(oauthService.setOauthUser, user, payload);
     const coreuser = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}coreuser/`
+      `${window.env.API_URL}coreuser/`,
     );
     yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield [
@@ -92,7 +94,7 @@ function* login(payload) {
           type: 'error',
           open: true,
           message: 'Sign in failed',
-        })
+        }),
       ),
     ];
   }
@@ -103,7 +105,7 @@ function* getUserDetails() {
     const user = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}coreuser/me/`
+      `${window.env.API_URL}coreuser/me/`,
     );
     yield put({ type: GET_USER_SUCCESS, user });
     if (user && user.data && user.data.organization) {
@@ -117,20 +119,20 @@ function* getUserDetails() {
           type: 'error',
           open: true,
           message: 'Error loading user data',
-        })
+        }),
       ),
     ];
   }
 }
 
 function* register(payload) {
-  let { history } = payload;
+  const { history } = payload;
   try {
     const user = yield call(
       httpService.makeRequest,
       'post',
       `${window.env.API_URL}coreuser/`,
-      payload.data
+      payload.data,
     );
     yield [
       yield put({ type: REGISTER_SUCCESS, user }),
@@ -139,7 +141,7 @@ function* register(payload) {
           type: 'success',
           open: true,
           message: 'Registration was successful',
-        })
+        }),
       ),
       yield call(history.push, routes.LOGIN),
     ];
@@ -151,7 +153,7 @@ function* register(payload) {
           type: 'error',
           open: true,
           message: 'Registration failed',
-        })
+        }),
       ),
       yield put({ type: REGISTER_FAIL, error: 'Registration failed' }),
     ];
@@ -159,13 +161,13 @@ function* register(payload) {
 }
 
 function* sendPasswordResetLink(payload) {
-  let { history } = payload;
+  const { history } = payload;
   try {
     const response = yield call(
       httpService.makeRequest,
       'post',
       `${window.env.API_URL}coreuser/reset_password/`,
-      payload.data
+      payload.data,
     );
     if (response.data && response.data.count) {
       yield [
@@ -178,7 +180,7 @@ function* sendPasswordResetLink(payload) {
             type: 'success',
             open: true,
             message: response.data.detail,
-          })
+          }),
         ),
         // yield call(history.push, routes.LOGIN),
       ];
@@ -189,7 +191,7 @@ function* sendPasswordResetLink(payload) {
             type: 'error',
             open: true,
             message: 'The email address entered does not exist',
-          })
+          }),
         ),
         yield put({
           type: SEND_PASSWORD_RESET_LINK_FAIL,
@@ -205,7 +207,7 @@ function* sendPasswordResetLink(payload) {
           type: 'error',
           open: true,
           message: 'Email could not be sent',
-        })
+        }),
       ),
       yield put({
         type: SEND_PASSWORD_RESET_LINK_FAIL,
@@ -216,13 +218,13 @@ function* sendPasswordResetLink(payload) {
 }
 
 function* validateResetPasswordToken(payload) {
-  let { history } = payload;
+  const { history } = payload;
   try {
     const data = yield call(
       httpService.makeRequest,
       'post',
       `${window.env.API_URL}coreuser/reset_password_check/`,
-      payload.data
+      payload.data,
     );
     if (data.data && data.data.success) {
       yield [
@@ -232,7 +234,7 @@ function* validateResetPasswordToken(payload) {
         }),
         yield call(
           history.push,
-          `${routes.RESET_PASSWORD}/${payload.data.uid}/${payload.data.token}/`
+          `${routes.RESET_PASSWORD}/${payload.data.uid}/${payload.data.token}/`,
         ),
       ];
     } else {
@@ -243,7 +245,7 @@ function* validateResetPasswordToken(payload) {
             open: true,
             message:
               'Invalid ID or token. Try sending resending the link to your email',
-          })
+          }),
         ),
         yield put({
           type: VALIDATE_RESET_PASSWORD_TOKEN_FAIL,
@@ -261,7 +263,7 @@ function* validateResetPasswordToken(payload) {
           type: 'error',
           open: true,
           message: 'Password reset failed',
-        })
+        }),
       ),
       yield put({
         type: VALIDATE_RESET_PASSWORD_TOKEN_FAIL,
@@ -272,13 +274,13 @@ function* validateResetPasswordToken(payload) {
 }
 
 function* resetPassword(payload) {
-  let { history } = payload;
+  const { history } = payload;
   try {
     const data = yield call(
       httpService.makeRequest,
       'post',
       `${window.env.API_URL}coreuser/reset_password_confirm/`,
-      payload.data
+      payload.data,
     );
     console.log('data', data);
     yield [
@@ -288,7 +290,7 @@ function* resetPassword(payload) {
           type: 'success',
           open: true,
           message: data.data.detail,
-        })
+        }),
       ),
       yield call(history.push, routes.LOGIN),
     ];
@@ -300,7 +302,7 @@ function* resetPassword(payload) {
           type: 'error',
           open: true,
           message: 'Password reset failed',
-        })
+        }),
       ),
       yield put({
         type: RESET_PASSWORD_FAIL,
@@ -316,7 +318,7 @@ function* invite(payload) {
       httpService.makeRequest,
       'post',
       `${window.env.API_URL}coreuser/invite/`,
-      payload.data
+      payload.data,
     );
     yield [
       yield put({ type: INVITE_SUCCESS, user }),
@@ -325,7 +327,7 @@ function* invite(payload) {
           type: 'success',
           open: true,
           message: 'Invitations sent successfully',
-        })
+        }),
       ),
     ];
   } catch (error) {
@@ -342,13 +344,13 @@ function* updateUser(payload) {
       httpService.makeRequest,
       'patch',
       `${window.env.API_URL}coreuser/${payload.data.id}/`,
-      payload.data
+      payload.data,
     );
     const data = yield call(
       httpService.makeRequest,
       'put',
       `${window.env.API_URL}organization/${payload.data.organization_uuid}/`,
-      { name: payload.data.organization_name }
+      { name: payload.data.organization_name },
     );
     yield [
       yield put({ type: UPDATE_USER_SUCCESS, user }),
@@ -358,7 +360,7 @@ function* updateUser(payload) {
           type: 'success',
           open: true,
           message: 'Account details successfully updated',
-        })
+        }),
       ),
     ];
   } catch (error) {
@@ -368,7 +370,7 @@ function* updateUser(payload) {
           type: 'error',
           open: true,
           message: 'Unable to update user details',
-        })
+        }),
       ),
       yield put({
         type: UPDATE_USER_FAIL,
@@ -379,7 +381,7 @@ function* updateUser(payload) {
 }
 
 function* socialLogin(payload) {
-  let { code, history, provider } = payload;
+  const { code, history, provider } = payload;
   let url;
   switch (provider) {
     case providers.github:
@@ -392,13 +394,13 @@ function* socialLogin(payload) {
     const user = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}coreuser/me/`
+      `${window.env.API_URL}coreuser/me/`,
     );
     yield call(oauthService.setOauthUser, user, payload);
     const coreuser = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}coreuser/`
+      `${window.env.API_URL}coreuser/`,
     );
     yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield [
@@ -423,21 +425,21 @@ function* socialLogin(payload) {
           type: 'error',
           open: true,
           message: `Sign in using ${provider} failed`,
-        })
+        }),
       ),
     ];
   }
 }
 
 function* getOrganizationData(payload) {
-  let { uuid } = payload;
+  const { uuid } = payload;
   try {
     const data = yield call(
       httpService.makeRequest,
       'get',
       `${window.env.API_URL}organization/${uuid}/`,
       null,
-      true
+      true,
     );
     yield put({ type: GET_ORGANIZATION_SUCCESS, data });
   } catch (error) {
@@ -451,8 +453,6 @@ function* loadOrganizationNames() {
       httpService.makeRequest,
       'get',
       `${window.env.API_URL}organization/names/`,
-      null,
-      true
     );
     yield put({ type: LOAD_ORG_NAMES_SUCCESS, orgNames: data.data });
   } catch (error) {
@@ -467,13 +467,13 @@ function* addOrgSocialUser(payload) {
       httpService.makeRequest,
       'patch',
       `${window.env.API_URL}coreuser/update_org/${data.id}/`,
-      data
+      data,
     );
     yield call(oauthService.setOauthUser, user, payload);
     const coreuser = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}coreuser/`
+      `${window.env.API_URL}coreuser/`,
     );
     yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield put({ type: ADD_ORG_SOCIAL_USER_SUCCESS, user });
@@ -487,9 +487,9 @@ function* addOrgSocialUser(payload) {
             type: 'success',
             open: true,
             message: `Added to Org ${_.capitalize(
-              user.data.organization.name
+              user.data.organization.name,
             )}. You need to be approved by Org Admin to access the platform.`,
-          })
+          }),
         ),
       ];
     } else if (!existingOrg && data.organization_name !== 'default') {
@@ -500,9 +500,9 @@ function* addOrgSocialUser(payload) {
             type: 'success',
             open: true,
             message: `Created new Org ${_.capitalize(
-              user.data.organization.name
+              user.data.organization.name,
             )} with you as Admin.`,
-          })
+          }),
         ),
       ];
     }
@@ -515,7 +515,7 @@ function* addOrgSocialUser(payload) {
           type: 'error',
           open: true,
           message: 'Unable to update organization details',
-        })
+        }),
       ),
       yield put({
         type: ADD_ORG_SOCIAL_USER_FAIL,

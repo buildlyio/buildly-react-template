@@ -79,7 +79,6 @@ export const InlineEditor = ({
         setEditing(false); // Close the input
         break;
       default:
-        return;
     }
   };
 
@@ -107,12 +106,12 @@ export const InlineEditor = ({
         <TextField
           className={classes.textField}
           tag={tag}
-          size='small'
-          variant='outlined'
+          size="small"
+          variant="outlined"
           autoFocus={true}
           ref={node}
           name={`${id}`}
-          type='text'
+          type="text"
           placeholder={placeholder}
           value={text}
           onChange={(event) => setText(event.target.value)}
@@ -120,8 +119,8 @@ export const InlineEditor = ({
       ) : (
         <Grid
           container
-          direction='row'
-          alignItems='center'
+          direction="row"
+          alignItems="center"
           className={`${classes.nonEditMode} ${!value && classes.placeholder}`}
           onDoubleClick={() => setEditing(true)}
         >

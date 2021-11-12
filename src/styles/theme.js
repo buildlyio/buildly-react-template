@@ -1,6 +1,7 @@
-import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
+/* eslint-disable import/no-unresolved */
+import { createTheme, responsiveFontSizes } from '@material-ui/core/styles';
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     primary: {
       main: '#09b79a',
@@ -11,6 +12,10 @@ const theme = createMuiTheme({
       main: '#3f3f3f',
       light: '#707070',
       contrastText: '#fff',
+    },
+    neutral: {
+      main: '#F6F8FA',
+      contrastText: '#000',
     },
   },
   typography: {

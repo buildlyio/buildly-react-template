@@ -1,4 +1,6 @@
-import { put, takeLatest, all, call } from 'redux-saga/effects';
+import {
+  put, takeLatest, all, call,
+} from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
 import {
   CRUD_CREATE,
@@ -26,7 +28,7 @@ function* crudLoadDataSaga(action) {
       'get',
       `${window.env.API_URL}${action.endpoint}`,
       {},
-      true
+      true,
     );
     yield [
       yield put({
@@ -53,7 +55,7 @@ function* crudDeleteDataSaga(action) {
       'delete',
       `${window.env.API_URL}${action.endpoint}${action.data[action.idProp]}/`,
       {},
-      true
+      true,
     );
     yield [
       yield put({
@@ -80,7 +82,7 @@ function* crudUpdateDataSaga(action) {
       'PATCH',
       `${window.env.API_URL}${action.endpoint}${action.data[action.idProp]}/`,
       action.data,
-      true
+      true,
     );
     yield [
       yield put({
@@ -107,7 +109,7 @@ function* crudCreateDataSaga(action) {
       'post',
       `${window.env.API_URL}${action.endpoint}`,
       action.data,
-      true
+      true,
     );
     yield [
       yield put({

@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
+import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
 import {
   CREATE_COREUSER_COMMIT,
   DELETE_COREUSER_COMMIT,
   LOAD_DATA_COREUSER_COMMIT,
   UPDATE_COREUSER_COMMIT,
 } from './coreuser.actions';
-import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
 
 const initialState = {
   data: [],
@@ -59,7 +59,7 @@ coreuserReducer.propTypes = {
         filter: PropTypes.string,
         create_date: PropTypes.string,
         edit_date: PropTypes.string,
-      })
+      }),
     ),
     loaded: PropTypes.bool,
     created: PropTypes.bool,

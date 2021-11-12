@@ -1,6 +1,6 @@
-import { Crud } from './Crud';
 import { shallow } from 'enzyme';
 import React from 'react';
+import { Crud } from './Crud';
 
 function setup() {
   const props = {

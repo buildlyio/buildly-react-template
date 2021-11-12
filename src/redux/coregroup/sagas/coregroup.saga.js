@@ -12,7 +12,9 @@ import {
   DELETE_COREGROUP_FAIL,
   DELETE_COREGROUP_COMMIT,
 } from '@redux/coregroup/actions/coregroup.actions';
-import { put, takeLatest, all, call } from 'redux-saga/effects';
+import {
+  put, takeLatest, all, call,
+} from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
 
 function* loadCoregroups() {
@@ -20,7 +22,7 @@ function* loadCoregroups() {
     const group = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}coregroups/`
+      `${window.env.API_URL}coregroups/`,
     );
     yield [yield put({ type: LOAD_DATA_COREGROUP_COMMIT, data: group.data })];
   } catch (error) {
@@ -33,7 +35,7 @@ function* deleteCoregroups(data) {
     const group = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}coregroups/${data.data.id}`
+      `${window.env.API_URL}coregroups/${data.data.id}`,
     );
     yield [
       yield put({ type: DELETE_COREGROUP_COMMIT, data: data.data, group }),
@@ -49,7 +51,7 @@ function* updateCoregroups(data) {
       httpService.makeRequest,
       'put',
       `${window.env.API_URL}coregroups/${data.data.id}/`,
-      data.data
+      data.data,
     );
     yield [yield put({ type: UPDATE_COREGROUP_COMMIT, data: data.data })];
   } catch (error) {
@@ -63,7 +65,7 @@ function* createCoregroups(data) {
       httpService.makeRequest,
       'post',
       `${window.env.API_URL}coregroups/`,
-      data.data
+      data.data,
     );
     yield [yield put({ type: CREATE_COREGROUP_COMMIT, data: group.data })];
   } catch (error) {

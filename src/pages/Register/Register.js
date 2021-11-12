@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
   makeStyles,
@@ -14,14 +14,19 @@ import {
   Grid,
 } from '@material-ui/core';
 import logo from '@assets/light-logo.png';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import Copyright from '@components/Copyright/Copyright';
 import GithubLogin from '@components/SocialLogin/GithubLogin';
 import { useInput } from '@hooks/useInput';
-import { register } from '@redux/authuser/actions/authuser.actions';
+import {
+  register,
+  loadOrgNames,
+} from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
 import { validators } from '@utils/validators';
 import { isMobile } from '@utils/mediaQuery';
 import { providers } from '@utils/socialLogin';
+import _ from 'lodash';
 
 const useStyles = makeStyles((theme) => ({
   logoDiv: {
@@ -77,7 +82,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Register = ({ dispatch, loading, history, socialLogin }) => {
+const Register = ({
+  dispatch, loading, history, socialLogin, orgNames,
+}) => {
   const classes = useStyles();
   const email = useInput('', { required: true });
   const username = useInput('', { required: true });
@@ -87,10 +94,15 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
     confirm: true,
     matchField: password,
   });
-  const organization_name = useInput('', { required: true });
+  const [orgName, setOrgName] = useState('');
   const first_name = useInput('', { required: true });
   const last_name = useInput('');
   const [formError, setFormError] = useState({});
+  useEffect(() => {
+    if (!orgNames) {
+      dispatch(loadOrgNames());
+    }
+  }, []);
 
   /**
    * Submit the form to the backend and attempts to authenticate
@@ -103,7 +115,7 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
       username: username.value,
       email: email.value,
       password: password.value,
-      organization_name: organization_name.value,
+      organization_name: orgName,
       first_name: first_name.value,
       last_name: last_name.value,
     };
@@ -118,14 +130,14 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
    */
 
   const handleBlur = (e, validation, input) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...formError };
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id]: validateObj,
       });
-    else
+    } else {
       setFormError({
         ...prevState,
         [e.target.id]: {
@@ -133,20 +145,20 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
           message: '',
         },
       });
+    }
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
+    const errorKeys = Object.keys(formError);
     let errorExists = false;
     if (
-      !username.value ||
-      !password.value ||
-      !email.value ||
-      !re_password.value ||
-      !organization_name.value ||
-      !first_name.value
-    )
-      return true;
+      !username.value
+      || !password.value
+      || !email.value
+      || !re_password.value
+      || !orgName
+      || !first_name.value
+    ) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -154,30 +166,30 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <div className={classes.logoDiv}>
         <img src={logo} className={classes.logo} />
       </div>
-      <Container component='main' maxWidth='sm' className={classes.container}>
+      <Container component="main" maxWidth="sm" className={classes.container}>
         <CssBaseline />
-        <Card variant='outlined'>
+        <Card variant="outlined">
           <CardContent>
             <div className={classes.paper}>
-              <Typography component='h1' variant='h5'>
+              <Typography component="h1" variant="h5">
                 Register
               </Typography>
               <form className={classes.form} noValidate onSubmit={handleSubmit}>
                 <Grid container spacing={isMobile() ? 0 : 3}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       required
                       fullWidth
-                      id='first_name'
-                      label='First Name'
-                      name='first_name'
-                      autoComplete='first_name'
+                      id="first_name"
+                      label="First Name"
+                      name="first_name"
+                      autoComplete="first_name"
                       error={formError.first_name && formError.first_name.error}
                       helperText={
                         formError.first_name ? formError.first_name.message : ''
@@ -189,13 +201,13 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       fullWidth
-                      id='last_name'
-                      label='Last Name'
-                      name='last_name'
-                      autoComplete='last_name'
+                      id="last_name"
+                      label="Last Name"
+                      name="last_name"
+                      autoComplete="last_name"
                       error={formError.last_name && formError.last_name.error}
                       helperText={
                         formError.last_name ? formError.last_name.message : ''
@@ -209,14 +221,14 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
                 <Grid container spacing={isMobile() ? 0 : 3}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       required
                       fullWidth
-                      id='username'
-                      label='Username'
-                      name='username'
-                      autoComplete='username'
+                      id="username"
+                      label="Username"
+                      name="username"
+                      autoComplete="username"
                       error={formError.username && formError.username.error}
                       helperText={
                         formError.username ? formError.username.message : ''
@@ -228,15 +240,15 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       required
                       fullWidth
-                      id='email'
-                      label='Email'
-                      name='email'
-                      autoComplete='email'
-                      type='email'
+                      id="email"
+                      label="Email"
+                      name="email"
+                      autoComplete="email"
+                      type="email"
                       error={formError.email && formError.email.error}
                       helperText={
                         formError.email ? formError.email.message : ''
@@ -249,44 +261,45 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
                 </Grid>
                 <Grid container spacing={isMobile() ? 0 : 3}>
                   <Grid item xs={12}>
-                    <TextField
-                      variant='outlined'
-                      margin='normal'
-                      required
-                      fullWidth
-                      id='organization_name'
-                      label='Organisation Name'
-                      name='organization_name'
-                      autoComplete='organization_name'
-                      error={
-                        formError.organization_name &&
-                        formError.organization_name.error
-                      }
-                      helperText={
-                        formError.organization_name
-                          ? formError.organization_name.message
-                          : ''
-                      }
-                      className={classes.textField}
-                      onBlur={(e) =>
-                        handleBlur(e, 'required', organization_name)
-                      }
-                      {...organization_name.bind}
+                    <Autocomplete
+                      freeSolo
+                      disableClearable
+                      id="organization_name"
+                      name="organization_name"
+                      options={orgNames || []}
+                      getOptionLabel={(label) => _.capitalize(label)}
+                      onChange={(e, newValue) => {
+                        setOrgName(newValue || '');
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          margin="normal"
+                          required
+                          fullWidth
+                          id="organization_name"
+                          label="Organisation Name"
+                          className={classes.textField}
+                          value={orgName}
+                          onChange={(e) => setOrgName(e.target.value)}
+                        />
+                      )}
                     />
                   </Grid>
                 </Grid>
                 <Grid container spacing={isMobile() ? 0 : 3}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       required
                       fullWidth
-                      name='password'
-                      label='Password'
-                      type='password'
-                      id='password'
-                      autoComplete='current-password'
+                      name="password"
+                      label="Password"
+                      type="password"
+                      id="password"
+                      autoComplete="current-password"
                       error={formError.password && formError.password.error}
                       helperText={
                         formError.password ? formError.password.message : ''
@@ -299,15 +312,15 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
 
                   <Grid item xs={12} md={6}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       required
                       fullWidth
-                      id='re_password'
-                      label='Confirm Password'
-                      name='re_password'
-                      type='password'
-                      autoComplete='re_password'
+                      id="re_password"
+                      label="Confirm Password"
+                      name="re_password"
+                      type="password"
+                      autoComplete="re_password"
                       error={
                         formError.re_password && formError.re_password.error
                       }
@@ -324,10 +337,10 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
                 </Grid>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type='submit'
+                    type="submit"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
                   >
@@ -343,7 +356,7 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
               </form>
               <Grid container>
                 <Grid item xs={12} className={classes.or}>
-                  <Typography variant='body1'>----OR----</Typography>
+                  <Typography variant="body1">----OR----</Typography>
                 </Grid>
                 <Grid item xs={12} className={classes.socialAuth}>
                   <GithubLogin
@@ -351,18 +364,18 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
                     history={history}
                     disabled={loading && socialLogin}
                   />
-                  {loading &&
-                    socialLogin &&
-                    socialLogin === providers.github && (
+                  {loading
+                    && socialLogin
+                    && socialLogin === providers.github && (
                       <CircularProgress
                         size={24}
                         className={classes.buttonProgress}
                       />
-                    )}
+                  )}
                 </Grid>
                 <Grid item className={classes.link}>
-                  <Link href={routes.LOGIN} variant='body2' color='primary'>
-                    {'Already have an account? Sign in'}
+                  <Link href={routes.LOGIN} variant="body2" color="primary">
+                    Already have an account? Sign in
                   </Link>
                 </Grid>
               </Grid>
@@ -371,7 +384,7 @@ const Register = ({ dispatch, loading, history, socialLogin }) => {
         </Card>
       </Container>
       <Copyright />
-    </React.Fragment>
+    </>
   );
 };
 

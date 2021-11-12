@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
+import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
 import {
   CRUD_CREATE_COMMIT,
   CRUD_DELETE_COMMIT,
   CRUD_LOAD_DATA_COMMIT,
   CRUD_UPDATE_COMMIT,
 } from './crud.actions';
-import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
 
 export default function crudDataReducer(state = {}, action) {
   const newState = { ...state };
@@ -18,7 +18,7 @@ export default function crudDataReducer(state = {}, action) {
         state[action.endpoint],
         action,
         action.idProp,
-        action.dataProp
+        action.dataProp,
       );
       return newState;
     case CRUD_CREATE_COMMIT:
@@ -26,7 +26,7 @@ export default function crudDataReducer(state = {}, action) {
         state[action.endpoint],
         action,
         action.idProp,
-        action.dataProp
+        action.dataProp,
       );
       return newState;
     case CRUD_UPDATE_COMMIT:
@@ -34,7 +34,7 @@ export default function crudDataReducer(state = {}, action) {
         state[action.endpoint],
         action,
         action.idProp,
-        action.dataProp
+        action.dataProp,
       );
       return newState;
     default:
@@ -50,6 +50,6 @@ crudDataReducer.propTypes = {
       created: PropTypes.bool,
       updated: PropTypes.bool,
       deleted: PropTypes.bool,
-    })
+    }),
   ),
 };

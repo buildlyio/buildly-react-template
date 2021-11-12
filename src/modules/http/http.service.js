@@ -27,14 +27,14 @@ function makeRequest(method, url, body, useJwt, contentType, responseType) {
   }
   const headers = {
     Authorization: `${tokenType} ${token}`,
-    'Content-Type': contentType ? contentType : 'application/json',
+    'Content-Type': contentType || 'application/json',
   };
   const options = {
-    method: method,
+    method,
     data: body,
-    headers: headers,
+    headers,
     returnPromise: true,
-    responseType: responseType ? responseType : null,
+    responseType: responseType || null,
   };
   return http.request(url, options);
 }

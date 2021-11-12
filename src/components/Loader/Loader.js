@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Loader = (props) => {
   const classes = useStyles();
-  let { open, setOpen } = props;
+  const { open, setOpen } = props;
 
   const handleClose = () => {
     setOpen(false);
@@ -23,7 +23,7 @@ const Loader = (props) => {
   return (
     <div>
       <Backdrop className={classes.backdrop} open={open}>
-        <CircularProgress color='inherit' />
+        <CircularProgress color="inherit" />
       </Backdrop>
     </div>
   );

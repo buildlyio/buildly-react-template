@@ -61,7 +61,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ResetPassword = ({ dispatch, loading, history, location }) => {
+const ResetPassword = ({
+  dispatch, loading, history, location,
+}) => {
   const classes = useStyles();
   const password = useInput('', { required: true });
   const re_password = useInput('', {
@@ -81,7 +83,7 @@ const ResetPassword = ({ dispatch, loading, history, location }) => {
     const [uid, token] = location.pathname
       .substring(
         location.pathname.indexOf(routes.RESET_PASSWORD) + 1,
-        location.pathname.lastIndexOf('/')
+        location.pathname.lastIndexOf('/'),
       )
       .split('/')
       .slice(1);
@@ -104,14 +106,14 @@ const ResetPassword = ({ dispatch, loading, history, location }) => {
    */
 
   const handleBlur = (e, validation, input) => {
-    let validateObj = validators(validation, input);
-    let prevState = { ...formError };
-    if (validateObj && validateObj.error)
+    const validateObj = validators(validation, input);
+    const prevState = { ...formError };
+    if (validateObj && validateObj.error) {
       setFormError({
         ...prevState,
         [e.target.id]: validateObj,
       });
-    else
+    } else {
       setFormError({
         ...prevState,
         [e.target.id]: {
@@ -119,10 +121,11 @@ const ResetPassword = ({ dispatch, loading, history, location }) => {
           message: '',
         },
       });
+    }
   };
 
   const submitDisabled = () => {
-    let errorKeys = Object.keys(formError);
+    const errorKeys = Object.keys(formError);
     let errorExists = false;
     if (!password.value || !re_password.value) return true;
     errorKeys.forEach((key) => {
@@ -132,31 +135,31 @@ const ResetPassword = ({ dispatch, loading, history, location }) => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <div className={classes.logoDiv}>
         <img src={logo} className={classes.logo} />
       </div>
-      <Container component='main' maxWidth='xs'>
+      <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <Card variant='outlined'>
+        <Card variant="outlined">
           <CardContent>
             <div className={classes.paper}>
-              <Typography component='h1' variant='h5'>
+              <Typography component="h1" variant="h5">
                 Reset your Password
               </Typography>
               <form className={classes.form} noValidate onSubmit={handleSubmit}>
                 <Grid container spacing={isMobile() ? 0 : 2}>
                   <Grid item xs={12}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       required
                       fullWidth
-                      name='password'
-                      label='New Password'
-                      type='password'
-                      id='password'
-                      autoComplete='current-password'
+                      name="password"
+                      label="New Password"
+                      type="password"
+                      id="password"
+                      autoComplete="current-password"
                       className={classes.textField}
                       error={formError.password && formError.password.error}
                       helperText={
@@ -168,15 +171,15 @@ const ResetPassword = ({ dispatch, loading, history, location }) => {
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
-                      variant='outlined'
-                      margin='normal'
+                      variant="outlined"
+                      margin="normal"
                       required
                       fullWidth
-                      id='re_password'
-                      label='Confirm Password'
-                      name='re_password'
-                      type='password'
-                      autoComplete='re_password'
+                      id="re_password"
+                      label="Confirm Password"
+                      name="re_password"
+                      type="password"
+                      autoComplete="re_password"
                       className={classes.textField}
                       error={
                         formError.re_password && formError.re_password.error
@@ -193,10 +196,10 @@ const ResetPassword = ({ dispatch, loading, history, location }) => {
                 </Grid>
                 <div className={classes.loadingWrapper}>
                   <Button
-                    type='submit'
+                    type="submit"
                     fullWidth
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="primary"
                     className={classes.submit}
                     disabled={loading || submitDisabled()}
                   >
@@ -211,7 +214,7 @@ const ResetPassword = ({ dispatch, loading, history, location }) => {
                 </div>
                 <Grid container>
                   <Grid item>
-                    <Link href={routes.LOGIN} variant='body2' color='primary'>
+                    <Link href={routes.LOGIN} variant="body2" color="primary">
                       Go back to Sign in
                     </Link>
                   </Grid>
@@ -222,7 +225,7 @@ const ResetPassword = ({ dispatch, loading, history, location }) => {
         </Card>
       </Container>
       <Copyright />
-    </React.Fragment>
+    </>
   );
 };
 

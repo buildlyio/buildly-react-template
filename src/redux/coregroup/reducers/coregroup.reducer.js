@@ -46,7 +46,7 @@ coregroupReducer.propTypes = {
           delete: PropTypes.string,
           read: PropTypes.string,
         }),
-      })
+      }),
     ),
     loaded: PropTypes.bool,
     created: PropTypes.bool,

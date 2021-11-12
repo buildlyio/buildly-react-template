@@ -16,7 +16,7 @@ describe('Show Alert reducer', () => {
 describe('Hide alert reducer', () => {
   it('hide alert∂ Reducer', () => {
     expect(reducer.default(initialState, { type: actions.HIDE_ALERT })).toEqual(
-      initialState
+      initialState,
     );
   });
 });

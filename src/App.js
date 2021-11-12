@@ -16,22 +16,19 @@ import { routes } from './routes/routesConstants';
 import { PrivateRoute } from './routes/Private.route';
 import theme from './styles/theme';
 
-const App = () => {
-  return (
+const App = () => (
     <Router>
       <ThemeProvider theme={theme}>
-        <div className='app'>
+        <div className="app">
           <CssBaseline />
           <Route
             exact
-            path='/'
-            render={() =>
-              oauthService.hasValidAccessToken() ? (
+            path="/"
+            render={() => (oauthService.hasValidAccessToken() ? (
                 <Redirect to={routes.DASHBOARD} />
-              ) : (
+            ) : (
                 <Redirect to={routes.LOGIN} />
-              )
-            }
+            ))}
           />
           <Route path={routes.LOGIN} component={Login} />
           <Route path={routes.REGISTER} component={Register} />
@@ -44,7 +41,6 @@ const App = () => {
         <Alerts />
       </ThemeProvider>
     </Router>
-  );
-};
+);
 
 export default hot(module)(App);

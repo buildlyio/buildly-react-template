@@ -32,7 +32,7 @@ describe('Add Data reducer', () => {
 
   it('add data fail Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.ADD_DATA_FAIL })
+      reducer.default(initialState, { type: actions.ADD_DATA_FAIL }),
     ).toEqual({
       loaded: true,
       loading: false,
@@ -46,7 +46,7 @@ describe('Add Data reducer', () => {
 describe('Check User reducer', () => {
   it('Empty Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.CHECK_FILLED })
+      reducer.default(initialState, { type: actions.CHECK_FILLED }),
     ).toEqual({
       loaded: false,
       loading: true,
@@ -64,13 +64,13 @@ describe('Check User reducer', () => {
         data: null,
         error: null,
         filled: undefined,
-      }
+      },
     );
   });
 
   it('check user fail Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.CHECK_FILLED_FAIL })
+      reducer.default(initialState, { type: actions.CHECK_FILLED_FAIL }),
     ).toEqual({
       loaded: true,
       loading: false,

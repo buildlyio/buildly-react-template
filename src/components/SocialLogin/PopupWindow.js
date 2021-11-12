@@ -33,8 +33,8 @@ class PopupWindow {
           }
 
           if (
-            popup.location.href === this.url ||
-            popup.location.pathname === 'blank'
+            popup.location.href === this.url
+            || popup.location.pathname === 'blank'
           ) {
             return;
           }

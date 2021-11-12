@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
 import { Button } from '@material-ui/core';
 import { GitHub as GitHubIcon } from '@material-ui/icons';
-import PopupWindow from './PopupWindow';
 import { socialLogin } from '@redux/authuser/actions/authuser.actions';
 import { providers, toQuery } from '@utils/socialLogin';
+import PopupWindow from './PopupWindow';
 
 const GithubLogin = ({ dispatch, history, disabled }) => {
   const popup = useRef(null);
@@ -13,12 +13,12 @@ const GithubLogin = ({ dispatch, history, disabled }) => {
     popup.current = PopupWindow.open(
       'github-oauth-authorize',
       `https://github.com/login/oauth/authorize?${search}`,
-      { height: 800, width: 600 }
+      { height: 800, width: 600 },
     );
 
     popup.current.then(
       (data) => onSuccess(data),
-      (error) => onFailure(error)
+      (error) => onFailure(error),
     );
   };
 
@@ -37,8 +37,8 @@ const GithubLogin = ({ dispatch, history, disabled }) => {
   return (
     <Button
       fullWidth
-      variant='contained'
-      color='secondary'
+      variant="contained"
+      color="secondary"
       startIcon={<GitHubIcon />}
       onClick={onBtnClick}
       disabled={Boolean(disabled)}
