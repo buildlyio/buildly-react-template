@@ -137,15 +137,22 @@ const Shipment = (props) => {
   useEffect(() => {
     if (!shipmentData) {
       const getUpdatedSensorData = !aggregateReportData;
+      const getUpdatedCustody = !custodyData;
       dispatch(getShipmentDetails(
         organization,
         'Planned,Enroute',
         null,
         getUpdatedSensorData,
+        getUpdatedCustody,
         'get',
       ));
     }
     else {
+      const UUIDS = _.map(_.filter(shipmentData, shipment => shipment.type === 'Active'), 'shipment_uuid');
+      const encodedUUIDs = encodeURIComponent(UUIDS);
+      if (encodedUUIDs) {
+        dispatch(getCustody(encodedUUIDs));
+      }
       const IDS = _.map(_.filter(shipmentData, shipment => shipment.type === 'Active'),'partner_shipment_id');
       const ids = _.toString(_.without(IDS, null));
       const encodedIds = encodeURIComponent(ids);
@@ -169,9 +176,9 @@ const Shipment = (props) => {
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
     }
-    if (!custodyData) {
-      dispatch(getCustody());
-    }
+    // if (!custodyData) {
+    //   dispatch(getCustody());
+    // }
     if (!sensorData) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
@@ -376,6 +383,7 @@ const Shipment = (props) => {
         organization,
         shipmentStatus,
         null,
+        true,
         true,
         'get',
       ));

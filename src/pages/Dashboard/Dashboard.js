@@ -113,11 +113,13 @@ const Dashboard = (props) => {
   useEffect(() => {
     if (shipmentData === null) {
       const aggregate = !aggregateReportData;
+      const custody = !custodyData;
       dispatch(getShipmentDetails(
         organization,
         'Planned,Enroute',
         null,
         aggregate,
+        custody,
         'get',
       ));
     }
@@ -137,9 +139,9 @@ const Dashboard = (props) => {
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
     }
-    if (!custodyData) {
-      dispatch(getCustody());
-    }
+    // if (!custodyData) {
+    //   dispatch(getCustody());
+    // }
     if (!sensorData) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());

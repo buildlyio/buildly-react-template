@@ -50,6 +50,7 @@ import {
   REPORT_TYPES,
   getIcon,
 } from './ReportingConstants';
+import { SHIPMENT_DATA_TABLE_TOOLTIP } from '@pages/Shipment/ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -145,11 +146,13 @@ const Reporting = ({
   useEffect(() => {
     if (!shipmentData) {
       const aggregate = !aggregateReportData;
+      const custody = !custodyData;
       dispatch(getShipmentDetails(
         organization,
-        null,
+        'Planned,Enroute',
         null,
         aggregate,
+        custody,
         'get',
       ));
     }
@@ -163,6 +166,7 @@ const Reporting = ({
           'Completed',
           null,
           true,
+          true,
           'get',
         ));
       }
@@ -172,8 +176,14 @@ const Reporting = ({
           'Cancelled',
           null,
           true,
+          true,
           'get',
         ));
+      }
+      const UUIDS = _.map(shipmentData, 'shipment_uuid');
+      const encodedUUIDs = encodeURIComponent(UUIDS);
+      if (encodedUUIDs) {
+        dispatch(getCustody(encodedUUIDs));
       }
       const IDS = _.map(shipmentData,'partner_shipment_id');
       const ids = _.toString(_.without(IDS, null));
@@ -187,9 +197,9 @@ const Reporting = ({
       dispatch(getCustodianType());
       dispatch(getContact(organization));
     }
-    if (!custodyData) {
-      dispatch(getCustody());
-    }
+    // if (!custodyData) {
+    //   dispatch(getCustody());
+    // }
     if (!sensorData) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());

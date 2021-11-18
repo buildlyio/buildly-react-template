@@ -7,6 +7,9 @@ import { showAlert } from '@redux/alert/actions/alert.actions';
 import {
   getAggregateReport,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+import {
+  getCustody,
+} from '@redux/custodian/actions/custodian.actions';
 import { routes } from '@routes/routesConstants';
 import {
   saveShipmentFormData,
@@ -28,6 +31,8 @@ import {
   ADD_PDF_IDENTIFIER_FAILURE,
 } from '../actions/shipment.actions';
 import { GET_AGGREGATE_REPORT_SUCCESS } from '../../sensorsGateway/actions/sensorsGateway.actions';
+import { GET_CUSTODY_SUCCESS } from '../../custodian/actions/custodian.actions';
+
 const shipmentApiEndPoint = 'shipment/';
 
 function* getShipmentList(payload) {
@@ -82,6 +87,19 @@ function* getShipmentList(payload) {
         }
       }
 
+      const UUIDS = _.map(data.data, 'shipment_uuid');
+      const encodedUUIDs = encodeURIComponent(UUIDS);
+      if (payload.getUpdatedCustody && encodedUUIDs) {
+        yield [
+          yield put(getCustody(encodedUUIDs)),
+        ];
+      }
+      else {
+        yield put({
+          type: GET_CUSTODY_SUCCESS,
+          data: [],
+        })
+      }
       const IDS = _.map(data.data, 'partner_shipment_id');
       const ids = _.toString(_.without(IDS, null));
       const encodedIds = encodeURIComponent(ids);

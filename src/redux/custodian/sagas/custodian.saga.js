@@ -275,12 +275,12 @@ function* deleteCustodian(payload) {
   }
 }
 
-function* getCustodyList() {
+function* getCustodyList(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${custodiansApiEndPoint}custody/`,
+      `${window.env.API_URL}${custodiansApiEndPoint}custody/?shipment_id=${payload.shipmentIds}`,
     );
     yield put({ type: GET_CUSTODY_SUCCESS, data: data.data });
   } catch (error) {
@@ -333,10 +333,11 @@ function* addCustody(action) {
                 null,
                 data.data.id,
                 false,
+                true,
                 'get',
               ),
             ),
-            yield put(getCustody()),
+            // yield put(getCustody(payload.shipment_id)),
             yield put(
               showAlert({
                 type: 'success',
@@ -377,7 +378,7 @@ function* editCustody(action) {
     );
     if (data && data.data) {
       yield [
-        yield put(getCustody()),
+        yield put(getCustody(payload.shipment_id)),
         yield put(
           showAlert({
             type: 'success',
@@ -415,7 +416,7 @@ function* updateCustody(action) {
     );
     if (data && data.data) {
       yield [
-        yield put(getCustody()),
+        yield put(getCustody(payload.shipment_id)),
         yield put(
           showAlert({
             type: 'success',

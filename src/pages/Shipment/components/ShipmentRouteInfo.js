@@ -33,7 +33,7 @@ const ShipmentRouteInfo = ({
       );
       let routesInfo = [];
       _.forEach(customizedRows, (row) => {
-        if (row.start_of_custody_location) {
+        if (row.start_of_custody_location && row.custodian_data) {
           routesInfo = [
             ...routesInfo,
             {
@@ -45,7 +45,7 @@ const ShipmentRouteInfo = ({
             },
           ];
         }
-        if (row.end_of_custody_location) {
+        if (row.end_of_custody_location && row.custodian_data) {
           routesInfo = [
             ...routesInfo,
             {

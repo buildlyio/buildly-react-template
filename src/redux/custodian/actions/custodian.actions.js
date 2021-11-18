@@ -119,8 +119,9 @@ export const deleteCustodian = (
 /**
  * Get Custody
  */
-export const getCustody = () => ({
+export const getCustody = (shipmentIds) => ({
   type: GET_CUSTODY,
+  shipmentIds,
 });
 
 /**

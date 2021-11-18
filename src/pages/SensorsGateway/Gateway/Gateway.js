@@ -64,6 +64,7 @@ const Gateway = ({
         'Planned,Enroute',
         null,
         getUpdatedSensorData,
+        true,
         'get',
       ));
     }

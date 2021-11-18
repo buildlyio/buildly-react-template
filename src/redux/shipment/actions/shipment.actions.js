@@ -44,6 +44,7 @@ export const getShipmentDetails = (
   status = null,
   id = null,
   getUpdatedSensorData = false,
+  getUpdatedCustody = false,
   action=null,
 ) => ({
   type: GET_SHIPMENTS,
@@ -51,6 +52,7 @@ export const getShipmentDetails = (
   status,
   id,
   getUpdatedSensorData,
+  getUpdatedCustody,
   action,
 });
 
