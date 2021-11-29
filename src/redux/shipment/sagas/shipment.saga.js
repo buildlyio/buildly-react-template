@@ -39,9 +39,8 @@ function* getShipmentList(payload) {
   try {
     let query_params;
     if (payload.id) {
-      query_params = `${payload.id}/`
-    }
-    else {
+      query_params = `${payload.id}/`;
+    } else {
       const response = yield call(
         httpService.makeRequest,
         'get',
@@ -50,7 +49,7 @@ function* getShipmentList(payload) {
       const consortium_uuid = _.join(_.map(response.data, 'consortium_uuid'), ',');
       query_params = `?organization_uuid=${payload.organization_uuid}`;
       if (payload.status) {
-        payload.status = encodeURIComponent(payload.status)
+        payload.status = encodeURIComponent(payload.status);
         query_params = query_params.concat(`&status=${payload.status}`);
       }
       if (consortium_uuid) {
@@ -67,38 +66,35 @@ function* getShipmentList(payload) {
         type: GET_SHIPMENTS_SUCCESS,
         data: data.data,
         shipmentAction: payload.shipmentAction,
-        status: payload.status ? payload.status: 'All'
+        status: payload.status ? payload.status : 'All',
       });
-
-      if (payload.id) {
-        if (data.data instanceof Array) {
-          yield put(
-            saveShipmentFormData(
-              data.data.find((shipment) => shipment.id === payload.id),
-            ),
-          );
-        }
-        else {
-          yield put(
-            saveShipmentFormData(
-              data.data,
-            ),
-          );
-        }
+      let UUIDS = '';
+      if (data.data instanceof Array) {
+        UUIDS = _.map(data.data, 'shipment_uuid');
+        yield put(
+          saveShipmentFormData(
+            data.data.find((shipment) => shipment.id === payload.id),
+          ),
+        );
+      } else {
+        UUIDS = data.data.shipment_uuid;
+        yield put(
+          saveShipmentFormData(
+            data.data,
+          ),
+        );
       }
-
-      const UUIDS = _.map(data.data, 'shipment_uuid');
-      const encodedUUIDs = encodeURIComponent(UUIDS);
+      const uuids = _.toString(_.without(UUIDS, null));
+      const encodedUUIDs = encodeURIComponent(uuids);
       if (payload.getUpdatedCustody && encodedUUIDs) {
         yield [
           yield put(getCustody(encodedUUIDs)),
         ];
-      }
-      else {
+      } else {
         yield put({
           type: GET_CUSTODY_SUCCESS,
           data: [],
-        })
+        });
       }
       const IDS = _.map(data.data, 'partner_shipment_id');
       const ids = _.toString(_.without(IDS, null));
@@ -107,12 +103,11 @@ function* getShipmentList(payload) {
         yield [
           yield put(getAggregateReport(encodedIds)),
         ];
-      }
-      else {
+      } else {
         yield put({
           type: GET_AGGREGATE_REPORT_SUCCESS,
           data: [],
-        })
+        });
       }
     }
   } catch (error) {

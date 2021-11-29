@@ -149,7 +149,8 @@ const Shipment = (props) => {
     }
     else {
       const UUIDS = _.map(_.filter(shipmentData, shipment => shipment.type === 'Active'), 'shipment_uuid');
-      const encodedUUIDs = encodeURIComponent(UUIDS);
+      const uuids = _.toString(_.without(UUIDS, null));
+      const encodedUUIDs = encodeURIComponent(uuids);
       if (encodedUUIDs) {
         dispatch(getCustody(encodedUUIDs));
       }
