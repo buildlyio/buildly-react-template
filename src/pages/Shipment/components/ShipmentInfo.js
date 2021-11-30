@@ -150,7 +150,7 @@ const ShipmentInfo = (props) => {
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
-    if (editPage && shipmentFormData === null) {
+    if (editPage) {
       dispatch(saveShipmentFormData(editData));
     }
   }, []);

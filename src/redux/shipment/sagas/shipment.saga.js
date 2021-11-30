@@ -68,23 +68,27 @@ function* getShipmentList(payload) {
         shipmentAction: payload.shipmentAction,
         status: payload.status ? payload.status : 'All',
       });
-      let UUIDS = '';
+      let uuids = '';
       if (data.data instanceof Array) {
-        UUIDS = _.map(data.data, 'shipment_uuid');
+        const UUIDS = _.map(data.data, 'shipment_uuid');
+        uuids = _.toString(_.without(UUIDS, null));
+      } else {
+        uuids = data.data.shipment_uuid;
+      }
+      if (payload.id && data.data instanceof Array) {
         yield put(
           saveShipmentFormData(
             data.data.find((shipment) => shipment.id === payload.id),
           ),
         );
-      } else {
-        UUIDS = data.data.shipment_uuid;
+
+      } else if (data.data instanceof Object) {
         yield put(
           saveShipmentFormData(
             data.data,
           ),
         );
       }
-      const uuids = _.toString(_.without(UUIDS, null));
       const encodedUUIDs = encodeURIComponent(uuids);
       if (payload.getUpdatedCustody && encodedUUIDs) {
         yield [

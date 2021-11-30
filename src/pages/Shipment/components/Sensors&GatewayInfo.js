@@ -172,7 +172,13 @@ const SensorsGatewayInfo = ({
   const submitDisabled = () => !gatewayIds.length || gatewayData === null;
 
   // eslint-disable-next-line max-len
-  checkIfSensorGatewayEdited = () => !!(gatewayIds.length !== shipmentFormData.gateway_ids.length);
+  checkIfSensorGatewayEdited = () => {
+    if (gatewayIds.length) {
+      return shipmentFormData.gateway_ids ?
+       !!(gatewayIds.length !== shipmentFormData.gateway_ids.length) : true;
+    }
+    return false;
+  };
 
   /**
    * Submit The form and add/edit custodian
