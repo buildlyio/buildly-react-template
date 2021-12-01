@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    padding: theme.spacing(0, 2),
     color: theme.palette.secondary.contrastText,
   },
   actionTitle: {

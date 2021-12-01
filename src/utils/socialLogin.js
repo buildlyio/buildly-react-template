@@ -1,5 +1,6 @@
 export const providers = {
   github: 'Github',
+  trello: 'Trello',
 };
 
 export const toParams = (query) => {

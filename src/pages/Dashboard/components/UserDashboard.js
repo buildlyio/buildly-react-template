@@ -4,11 +4,18 @@ import _ from 'lodash';
 import { Route } from 'react-router-dom';
 import {
   makeStyles,
+  useTheme,
   MenuItem,
   TextField,
   Typography,
   Chip,
+  Button,
+  Box,
+  useMediaQuery,
 } from '@material-ui/core';
+import {
+  AddRounded as AddRoundedIcon,
+} from '@material-ui/icons';
 import { routes } from '@routes/routesConstants';
 import { deleteRequirement, deleteIssue } from '@redux/dashboard/actions/dashboard.actions';
 import AddRequirements from '../forms/AddRequirements';
@@ -21,6 +28,7 @@ import Kanban from '../components/Kanban';
 const useStyles = makeStyles((theme) => ({
   section1: {
     position: 'fixed',
+    padding: theme.spacing(1, 2),
     width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
@@ -29,14 +37,13 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.secondary.dark,
     left: 0,
     top: '4rem',
-    padding: theme.spacing(1),
     zIndex: '99',
   },
   title: {
     margin: theme.spacing(2, 0),
   },
   product: {
-    width: '30%',
+    width: '20%',
     '& .MuiOutlinedInput-notchedOutline': {
       borderColor: theme.palette.secondary.contrastText,
     },
@@ -64,6 +71,7 @@ const useStyles = makeStyles((theme) => ({
     top: '11rem',
     left: '0',
     width: '100%',
+    padding: theme.spacing(0, 2),
   },
 }));
 
@@ -142,12 +150,14 @@ const UserDashboard = (props) => {
     history,
   } = props;
   const classes = useStyles();
+  const theme = useTheme();
   const [view, setView] = useState('list');
   const [proj, setProj] = useState(0);
   const [projReqs, setProjReqs] = useState([]);
   const [projIssues, setProjIssues] = useState([]);
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [toDeleteItem, setDeleteItem] = useState({ id: 0, type: 'req' });
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   const addReqPath = redirectTo
     ? `${redirectTo}/dashboard`
@@ -257,9 +267,15 @@ const UserDashboard = (props) => {
     }
   };
 
+  const handleNewProject = () => {
+    history.push(routes.NEW_PROJECT);
+  };
+
   return (
     <div>
       <div className={classes.section1}>
+      {/* {!isDesktop && (
+          <Box mb={2}> */}
         <Typography className={classes.title} variant="h3">
           Dashboard
         </Typography>
@@ -302,6 +318,18 @@ const UserDashboard = (props) => {
                           </MenuItem>
                         ))}
         </TextField>
+        <Button
+          aria-controls="new-project"
+          aria-haspopup="true"
+          color="primary"
+          variant="contained"
+          onClick={(e) => handleNewProject()}
+          startIcon={<AddRoundedIcon />}
+        >
+          New Project
+        </Button>
+      {/* </Box>
+      )} */}
       </div>
       <div className={classes.section2}>
         {getView(
