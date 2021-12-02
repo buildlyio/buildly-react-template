@@ -6,6 +6,7 @@ import {
 } from '@material-ui/core';
 import FormModal from '@components/Modal/FormModal';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import Loader from '@components/Loader/Loader';
 import AddCustodyForm, {
   checkIfCustodianInfoEdited,
 } from './AddCustodyForm';
@@ -13,7 +14,6 @@ import {
   getFormattedCustodyRows,
   custodyColumns,
 } from '../../ShipmentConstants';
-import Loader from '@components/Loader/Loader';
 
 const useStyles = makeStyles((theme) => ({
   buttonContainer: {
@@ -103,7 +103,7 @@ const CustodianInfo = (props) => {
         Add Custody
       </Button>
       <Box mt={3} mb={5}>
-      {loading && <Loader open={loading} />}
+        {loading && <Loader open={loading} />}
         {rows.length > 0 && (
         <Grid container>
           <Grid item xs={12}>

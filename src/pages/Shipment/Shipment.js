@@ -146,15 +146,14 @@ const Shipment = (props) => {
         getUpdatedCustody,
         'get',
       ));
-    }
-    else {
-      const UUIDS = _.map(_.filter(shipmentData, shipment => shipment.type === 'Active'), 'shipment_uuid');
+    } else {
+      const UUIDS = _.map(_.filter(shipmentData, (shipment) => shipment.type === 'Active'), 'shipment_uuid');
       const uuids = _.toString(_.without(UUIDS, null));
       const encodedUUIDs = encodeURIComponent(uuids);
       if (encodedUUIDs) {
         dispatch(getCustody(encodedUUIDs));
       }
-      const IDS = _.map(_.filter(shipmentData, shipment => shipment.type === 'Active'),'partner_shipment_id');
+      const IDS = _.map(_.filter(shipmentData, (shipment) => shipment.type === 'Active'), 'partner_shipment_id');
       const ids = _.toString(_.without(IDS, null));
       const encodedIds = encodeURIComponent(ids);
       if (encodedIds) {

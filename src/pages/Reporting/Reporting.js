@@ -41,6 +41,7 @@ import {
 import {
   getUnitsOfMeasure,
 } from '@redux/items/actions/items.actions';
+import { SHIPMENT_DATA_TABLE_TOOLTIP } from '@pages/Shipment/ShipmentConstants';
 import AlertsReport from './components/AlertsReport';
 import SensorReport from './components/SensorReport';
 import {
@@ -50,7 +51,6 @@ import {
   REPORT_TYPES,
   getIcon,
 } from './ReportingConstants';
-import { SHIPMENT_DATA_TABLE_TOOLTIP } from '@pages/Shipment/ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -155,10 +155,9 @@ const Reporting = ({
         custody,
         'get',
       ));
-    }
-    else {
-      const completedShipments = _.filter(shipmentData, shipment => shipment.type === 'Completed')
-      const cancelledShipments = _.filter(shipmentData, shipment => shipment.type === 'Cancelled')
+    } else {
+      const completedShipments = _.filter(shipmentData, (shipment) => shipment.type === 'Completed');
+      const cancelledShipments = _.filter(shipmentData, (shipment) => shipment.type === 'Cancelled');
 
       if (!completedShipments.length) {
         dispatch(getShipmentDetails(
@@ -185,7 +184,7 @@ const Reporting = ({
       if (encodedUUIDs) {
         dispatch(getCustody(encodedUUIDs));
       }
-      const IDS = _.map(shipmentData,'partner_shipment_id');
+      const IDS = _.map(shipmentData, 'partner_shipment_id');
       const ids = _.toString(_.without(IDS, null));
       const encodedIds = encodeURIComponent(ids);
       if (encodedIds) {

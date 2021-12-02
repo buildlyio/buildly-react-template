@@ -75,14 +75,13 @@ function* getShipmentList(payload) {
       } else {
         uuids = data.data.shipment_uuid;
       }
-      if (payload.id && data.data instanceof Array) {
+      if (payload.id && data.data.length > 0) {
         yield put(
           saveShipmentFormData(
             data.data.find((shipment) => shipment.id === payload.id),
           ),
         );
-
-      } else if (data.data instanceof Object) {
+      } else if (typeof (data.data) === 'object' && data.data.length === undefined) {
         yield put(
           saveShipmentFormData(
             data.data,

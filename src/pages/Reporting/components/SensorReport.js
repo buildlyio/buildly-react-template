@@ -70,8 +70,7 @@ const SensorReport = ({
         ['desc'],
       );
       setRows(sortedData);
-    }
-    else {
+    } else {
       setRows([]);
     }
   }, [aggregateReport]);

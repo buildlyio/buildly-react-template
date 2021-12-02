@@ -174,8 +174,8 @@ const SensorsGatewayInfo = ({
   // eslint-disable-next-line max-len
   checkIfSensorGatewayEdited = () => {
     if (gatewayIds.length) {
-      return shipmentFormData.gateway_ids ?
-       !!(gatewayIds.length !== shipmentFormData.gateway_ids.length) : true;
+      return shipmentFormData.gateway_ids
+        ? !!(gatewayIds.length !== shipmentFormData.gateway_ids.length) : true;
     }
     return false;
   };
