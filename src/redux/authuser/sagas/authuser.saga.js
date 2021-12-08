@@ -414,7 +414,6 @@ function* socialLogin(payload) {
       yield call(history.push, routes.DASHBOARD);
     }
   } catch (error) {
-    console.log('error', error);
     yield [
       yield put({
         type: SOCIAL_LOGIN_FAIL,

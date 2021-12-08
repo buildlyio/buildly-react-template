@@ -99,7 +99,8 @@
     "test": "jest --watch",
     "test:prod": "jest",
     "test-coverage": "jest --updateSnapshot --coverage",
-    "serve": "./node_modules/.bin/serve -s dist"
+    "serve": "./node_modules/.bin/serve -s dist",
+    "lint": "eslint src/**/*.js --fix"
   },
   "jest": {
     "moduleNameMapper": {

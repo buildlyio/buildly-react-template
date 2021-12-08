@@ -7,6 +7,7 @@ import rootSaga from './sagas';
 const configureStore = () => {
   const sagaMiddleware = createSagaMiddleware();
   // redux devtools
+  // eslint-disable-next-line no-shadow
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
   return {
@@ -18,6 +19,7 @@ const configureStore = () => {
   };
 };
 
+// eslint-disable-next-line no-undef
 export const dispatch = (type) => store.dispatch({ type });
 
 export default configureStore;

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import PropTypes from 'prop-types';
 
 /**
@@ -9,7 +10,8 @@ import PropTypes from 'prop-types';
 export const addAll = (state, action) => ({ ...state, data: action.data, loaded: true });
 
 /**
- * it inserts an item to the state if it does not exist otherwise it will update the item with the passed action data
+ * it inserts an item to the state if it does not exist otherwise it will
+ * update the item with the passed action data
  * @param state - the current state
  * @param action - the returned action
  * @param {string} dataProp - property that stores the data
@@ -131,6 +133,7 @@ export const updateNested = (state, action) => {
     (dataItem) => dataItem.id.toString() === action.data[action.nested.parent].toString(),
   );
   if (parentIndex !== -1) {
+    // eslint-disable-next-line consistent-return
     state.data[parentIndex][action.nested.key].forEach((item, index) => {
       if (item.id.toString() === action.data.id.toString()) {
         state.data[parentIndex][action.nested.key][index] = action.data;
@@ -166,6 +169,7 @@ export const addNested = (state, action) => {
  * @param action
  * @returns {{}}
  */
+// eslint-disable-next-line consistent-return
 export const deleteNested = (state, action) => {
   if (action.nested) {
     const parentIndex = state.data.findIndex(
@@ -188,6 +192,7 @@ export const deleteNested = (state, action) => {
  */
 export const addFromGraphQl = (state, action, type) => {
   Object.keys(action.data).forEach((key) => {
+    // eslint-disable-next-line no-underscore-dangle
     if (action.data[key].__typename === type) {
       const findItem = state.data.find(
         (item) => item.id.toString() === action.data[key].id.toString(),
