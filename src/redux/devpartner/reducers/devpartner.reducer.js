@@ -1,56 +1,56 @@
 import {
-  LOGIN,
-  LOGIN_SUCCESS,
-  LOGIN_FAIL,
-  REGISTER,
-  REGISTER_SUCCESS,
-  REGISTER_FAIL,
-  SEND_PASSWORD_RESET_LINK,
-  SEND_PASSWORD_RESET_LINK_SUCCESS,
-  SEND_PASSWORD_RESET_LINK_FAIL,
-  VALIDATE_RESET_PASSWORD_TOKEN,
-  VALIDATE_RESET_PASSWORD_TOKEN_SUCCESS,
-  VALIDATE_RESET_PASSWORD_TOKEN_FAIL,
-  RESET_PASSWORD,
-  RESET_PASSWORD_SUCCESS,
-  RESET_PASSWORD_FAIL,
-  UPDATE_USER,
-  UPDATE_USER_FAIL,
-  UPDATE_USER_SUCCESS,
-  GET_USER,
-  GET_USER_FAIL,
-  GET_USER_SUCCESS,
-  INVITE,
-  INVITE_FAIL,
-  INVITE_SUCCESS,
-  GET_ORGANIZATION,
-  GET_ORGANIZATION_SUCCESS,
-  GET_ORGANIZATION_FAILURE,
-  SOCIAL_LOGIN,
-  SOCIAL_LOGIN_SUCCESS,
-  SOCIAL_LOGIN_FAIL,
-  LOAD_ORG_NAMES,
-  LOAD_ORG_NAMES_SUCCESS,
-  LOAD_ORG_NAMES_FAILURE,
-  ADD_ORG_SOCIAL_USER,
-  ADD_ORG_SOCIAL_USER_SUCCESS,
-  ADD_ORG_SOCIAL_USER_FAIL,
-} from '../actions/authuser.actions';
+  GET_DEVTEAMS,
+  GET_DEVTEAMS_SUCCESS,
+  GET_DEVTEAMS_FAILURE,
+  ADD_DEVTEAM,
+  ADD_DEVTEAM_SUCCESS,
+  ADD_DEVTEAM_FAILURE,
+  UPDATE_DEVTEAM,
+  UPDATE_DEVTEAM_SUCCESS,
+  UPDATE_DEVTEAM_FAILURE,
+  DELETE_DEVTEAM,
+  DELETE_DEVTEAM_SUCCESS,
+  DELETE_DEVTEAM_FAILURE,
+  GET_TIMESHEETS,
+  GET_TIMESHEETS_SUCCESS,
+  GET_TIMESHEETS_FAILURE,
+  ADD_TIMESHEET,
+  ADD_TIMESHEET_SUCCESS,
+  ADD_TIMESHEET_FAILURE,
+  UPDATE_TIMESHEET,
+  UPDATE_TIMESHEET_SUCCESS,
+  UPDATE_TIMESHEET_FAILURE,
+  DELETE_TIMESHEET,
+  DELETE_TIMESHEET_SUCCESS,
+  DELETE_TIMESHEET_FAILURE,
+  GET_TIMESHEET_HOURS,
+  GET_TIMESHEET_HOURS_SUCCESS,
+  GET_TIMESHEET_HOURS_FAILURE,
+  ADD_TIMESHEET_HOUR,
+  ADD_TIMESHEET_HOUR_SUCCESS,
+  ADD_TIMESHEET_HOUR_FAILURE,
+  UPDATE_TIMESHEET_HOUR,
+  UPDATE_TIMESHEET_HOUR_SUCCESS,
+  UPDATE_TIMESHEET_HOUR_FAILURE,
+  DELETE_TIMESHEET_HOUR,
+  DELETE_TIMESHEET_HOUR_SUCCESS,
+  DELETE_TIMESHEET_HOUR_FAILURE,
+} from '../actions/devpartner.actions';
 
 const initialState = {
   loading: false,
   loaded: false,
-  data: null,
   error: null,
-  organizationData: null,
-  socialLogin: null,
-  orgNames: null,
+  devTeam: null,
+  issue: null,
+  timesheet: null,
+  timesheet_hour: null,
 };
 
 // Reducer
 export default (state = initialState, action) => {
   switch (action.type) {
-    case LOGIN:
+    case GET_DEVTEAMS:
       return {
         ...state,
         loading: true,
@@ -58,15 +58,15 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case LOGIN_SUCCESS:
+    case GET_DEVTEAMS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.user,
+        devTeam: action.data,
       };
 
-    case LOGIN_FAIL:
+    case GET_DEVTEAMS_FAILURE:
       return {
         ...state,
         loading: false,
@@ -74,7 +74,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case SEND_PASSWORD_RESET_LINK:
+    case ADD_DEVTEAM:
       return {
         ...state,
         loading: true,
@@ -82,15 +82,15 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case SEND_PASSWORD_RESET_LINK_SUCCESS:
+    case ADD_DEVTEAM_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        error: null,
+        devTeam: action.data,
       };
 
-    case SEND_PASSWORD_RESET_LINK_FAIL:
+    case ADD_DEVTEAM_FAILURE:
       return {
         ...state,
         loading: false,
@@ -98,7 +98,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case VALIDATE_RESET_PASSWORD_TOKEN:
+    case UPDATE_DEVTEAM:
       return {
         ...state,
         loading: true,
@@ -106,15 +106,15 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case VALIDATE_RESET_PASSWORD_TOKEN_SUCCESS:
+    case UPDATE_DEVTEAM_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        error: null,
+        devTeam: action.data,
       };
 
-    case VALIDATE_RESET_PASSWORD_TOKEN_FAIL:
+    case UPDATE_DEVTEAM_FAILURE:
       return {
         ...state,
         loading: false,
@@ -122,7 +122,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case RESET_PASSWORD:
+    case DELETE_DEVTEAM:
       return {
         ...state,
         loading: true,
@@ -130,15 +130,15 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case RESET_PASSWORD_SUCCESS:
+    case DELETE_DEVTEAM_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        error: null,
+        devTeam: action.data,
       };
 
-    case RESET_PASSWORD_FAIL:
+    case DELETE_DEVTEAM_FAILURE:
       return {
         ...state,
         loading: false,
@@ -146,7 +146,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case REGISTER:
+    case GET_TIMESHEETS:
       return {
         ...state,
         loading: true,
@@ -154,16 +154,15 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case REGISTER_SUCCESS:
+    case GET_TIMESHEETS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.user,
-        error: null,
+        timesheet: action.data,
       };
 
-    case REGISTER_FAIL:
+    case GET_TIMESHEETS_FAILURE:
       return {
         ...state,
         loading: false,
@@ -171,7 +170,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case UPDATE_USER:
+    case ADD_TIMESHEET:
       return {
         ...state,
         loading: true,
@@ -179,15 +178,15 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case UPDATE_USER_SUCCESS:
+    case ADD_TIMESHEET_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.user,
+        timesheet: action.data,
       };
 
-    case UPDATE_USER_FAIL:
+    case ADD_TIMESHEET_FAILURE:
       return {
         ...state,
         loading: false,
@@ -195,7 +194,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case GET_USER:
+    case UPDATE_TIMESHEET:
       return {
         ...state,
         loading: true,
@@ -203,15 +202,15 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case GET_USER_SUCCESS:
+    case UPDATE_TIMESHEET_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.user,
+        timesheet: action.data,
       };
 
-    case GET_USER_FAIL:
+    case UPDATE_TIMESHEET_FAILURE:
       return {
         ...state,
         loading: false,
@@ -219,78 +218,23 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case INVITE:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        data: null,
-        error: null,
-      };
-
-    case INVITE_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: null,
-        data: action.user,
-      };
-
-    case INVITE_FAIL:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        data: null,
-        error: action.error,
-      };
-
-    case GET_ORGANIZATION:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        organizationData: null,
-        error: null,
-      };
-
-    case GET_ORGANIZATION_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        organizationData: (action.data && action.data.data) || null,
-        error: null,
-      };
-
-    case GET_ORGANIZATION_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        organizationData: null,
-        error: action.error,
-      };
-
-    case SOCIAL_LOGIN:
+    case DELETE_TIMESHEET:
       return {
         ...state,
         loading: true,
         loaded: false,
         error: null,
-        socialLogin: action.provider,
       };
 
-    case SOCIAL_LOGIN_SUCCESS:
+    case DELETE_TIMESHEET_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.user,
+        timesheet: action.data,
       };
 
-    case SOCIAL_LOGIN_FAIL:
+    case DELETE_TIMESHEET_FAILURE:
       return {
         ...state,
         loading: false,
@@ -298,7 +242,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case LOAD_ORG_NAMES:
+    case GET_TIMESHEET_HOURS:
       return {
         ...state,
         loading: true,
@@ -306,15 +250,15 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case LOAD_ORG_NAMES_SUCCESS:
+    case GET_TIMESHEET_HOURS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        orgNames: action.orgNames,
+        timesheet_hour: action.data,
       };
 
-    case LOAD_ORG_NAMES_FAILURE:
+    case GET_TIMESHEET_HOURS_FAILURE:
       return {
         ...state,
         loading: false,
@@ -322,7 +266,7 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case ADD_ORG_SOCIAL_USER:
+    case ADD_TIMESHEET_HOUR:
       return {
         ...state,
         loading: true,
@@ -330,15 +274,63 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case ADD_ORG_SOCIAL_USER_SUCCESS:
+    case ADD_TIMESHEET_HOUR_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.user,
+        timesheet_hour: action.data,
       };
 
-    case ADD_ORG_SOCIAL_USER_FAIL:
+    case ADD_TIMESHEET_HOUR_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case UPDATE_TIMESHEET_HOUR:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case UPDATE_TIMESHEET_HOUR_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        timesheet_hour: action.data,
+      };
+
+    case UPDATE_TIMESHEET_HOUR_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case DELETE_TIMESHEET_HOUR:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case DELETE_TIMESHEET_HOUR_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        timesheet_hour: action.data,
+      };
+
+    case DELETE_TIMESHEET_HOUR_FAILURE:
       return {
         ...state,
         loading: false,

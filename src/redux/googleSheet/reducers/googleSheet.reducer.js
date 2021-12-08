@@ -5,7 +5,7 @@ import {
   CHECK_FILLED,
   CHECK_FILLED_SUCCESS,
   CHECK_FILLED_FAIL,
-} from '@redux/googleSheet/actions/googleSheet.actions';
+} from '../actions/googleSheet.actions';
 
 const initialState = {
   loading: false,

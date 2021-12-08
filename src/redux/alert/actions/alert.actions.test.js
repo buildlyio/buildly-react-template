@@ -1,4 +1,4 @@
-import * as actions from '@redux/alert/actions/alert.actions.js';
+import * as actions from './alert.actions.js';
 
 describe('actions', () => {
   it('should create an action to show alert', () => {
