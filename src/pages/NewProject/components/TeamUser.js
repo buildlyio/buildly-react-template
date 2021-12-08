@@ -86,7 +86,61 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
   },
+  icon: {
+    borderRadius: "50%",
+    width: 16,
+    height: 16,
+    boxShadow:
+      "inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)",
+    backgroundColor: "#f5f8fa",
+    backgroundImage:
+      "linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))",
+    "$root.Mui-focusVisible &": {
+      outline: "2px auto rgba(19,124,189,.6)",
+      outlineOffset: 2,
+    },
+    "input:hover ~ &": {
+      backgroundColor: "#ebf1f5",
+    },
+    "input:disabled ~ &": {
+      boxShadow: "none",
+      background: "rgba(206,217,224,.5)",
+    },
+  },
+  checkedIcon: {
+    backgroundColor: "#137cbd",
+    backgroundImage:
+      "linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))",
+    "&:before": {
+      display: "block",
+      width: 16,
+      height: 16,
+      backgroundImage: "radial-gradient(#fff,#fff 28%,transparent 32%)",
+      content: '""',
+    },
+    "input:hover ~ &": {
+      backgroundColor: "#106ba3",
+    },
+  },
 }));
+
+function StyledRadio(props) {
+  const classes = useStyles();
+
+  return (
+    <Radio
+      className={classes.root}
+      color="default"
+      checkedIcon={
+        <span className={`${classes.icon} ${classes.checkedIcon}`} />
+      }
+      icon={<span className={classes.icon} />}
+      {...props}
+    />
+  );
+}
+
+export let checkIfTeamUserEdited;
 
 const TeamUser = (props) => {
   const {
@@ -106,9 +160,6 @@ const TeamUser = (props) => {
   const editData =
     (location.state && location.state.type === "edit" && location.state.data) ||
     {};
-  const project_name = useInput((editData && editData.name) || "", {
-    required: true,
-  });
 
   const team_size = useInput((editData && editData.team_size) || "5 - 10", {
     required: true,
@@ -125,10 +176,10 @@ const TeamUser = (props) => {
   ]);
 
   const existing_requirements = useInput(
-    (editData && editData.existing_requirements) || ""
-    // {
-    //   required: true,
-    // }
+    (editData && editData.existing_requirements) || "",
+    {
+      required: true,
+    }
   );
 
   const [formError, setFormError] = useState({});
@@ -197,6 +248,8 @@ const TeamUser = (props) => {
     return false;
   };
 
+  checkIfTeamUserEdited = () => team_size.hasChanged();
+
   /**
    * Submit The form and add/edit custodian
    * @param {Event} event the default submit event
@@ -225,17 +278,17 @@ const TeamUser = (props) => {
                 >
                   <FormControlLabel
                     value="1 - 5"
-                    control={<Radio />}
+                    control={<StyledRadio />}
                     label="1 - 5"
                   />
                   <FormControlLabel
                     value="5 - 10"
-                    control={<Radio />}
+                    control={<StyledRadio />}
                     label="5 - 10"
                   />
                   <FormControlLabel
                     value="10 - 20 or more"
-                    control={<Radio />}
+                    control={<StyledRadio />}
                     label="10 - 20 or more"
                   />
                 </RadioGroup>
@@ -327,37 +380,6 @@ const TeamUser = (props) => {
             </Grid>
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>
-            {/* <Grid item xs={6} sm={2}>
-            {viewOnly ? (
-              <Button
-                type="button"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
-                Done
-              </Button>
-            ) : (
-              <div className={classes.loadingWrapper}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                >
-                  Save
-                </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                )}
-              </div>
-            )}
-          </Grid> */}
             <Grid item xs={12} sm={4}>
               <Button
                 variant="contained"

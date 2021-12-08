@@ -74,6 +74,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+export let checkIfBudgetTechnologyEdited;
+
 const BudgetTechnology = (props) => {
   const {
     history,
@@ -92,9 +94,6 @@ const BudgetTechnology = (props) => {
   const editData =
     (location.state && location.state.type === "edit" && location.state.data) ||
     {};
-  const project_name = useInput((editData && editData.name) || "", {
-    required: true,
-  });
 
   const [firstUserDate, handlefirstUserDateChange] = useState(
     (editData && editData.first_user_ate) || new Date()
@@ -178,18 +177,25 @@ const BudgetTechnology = (props) => {
   };
 
   const submitDisabled = () => {
-    const errorKeys = Object.keys(formError);
-    if (!project_name.value) {
-      return true;
-    }
-    let errorExists = false;
-    _.forEach(errorKeys, (key) => {
-      if (formError[key].error) {
-        errorExists = true;
-      }
-    });
-    return errorExists;
+    // const errorKeys = Object.keys(formError);
+    // if (!project_name.value) {
+    //   return true;
+    // }
+    // let errorExists = false;
+    // _.forEach(errorKeys, (key) => {
+    //   if (formError[key].error) {
+    //     errorExists = true;
+    //   }
+    // });
+    // return errorExists;
   };
+
+  checkIfBudgetTechnologyEdited = () =>
+    project_hosting.hasChanged() ||
+    project_language.hasChanged() ||
+    project_database.hasChanged() ||
+    project_storage.hasChanged() ||
+    project_deployment.hasChanged();
 
   /**
    * Submit The form and add/edit custodian
@@ -283,12 +289,11 @@ const BudgetTechnology = (props) => {
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography variant="h5" gutterBottom component="div">
-                Hosting
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth={true} className={classes.formControl}>
+              <FormControl
+                variant={"outlined"}
+                fullWidth={true}
+                className={classes.formControl}
+              >
                 <Select {...project_hosting.bind}>
                   <MenuItem value={"Hostinger"}>Hostinger</MenuItem>
                   <MenuItem value={"Bluehost"}>Bluehost</MenuItem>
@@ -304,12 +309,11 @@ const BudgetTechnology = (props) => {
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography variant="h5" gutterBottom component="div">
-                Language
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth={true} className={classes.formControl}>
+              <FormControl
+                variant={"outlined"}
+                fullWidth={true}
+                className={classes.formControl}
+              >
                 <Select {...project_language.bind}>
                   <MenuItem value={"JavaScript"}>JavaScript</MenuItem>
                   <MenuItem value={"Python"}>Python</MenuItem>
@@ -325,16 +329,12 @@ const BudgetTechnology = (props) => {
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography variant="h5" gutterBottom component="div">
-                Database
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth={true} className={classes.formControl}>
-                <Select
-                  value={""}
-                  //   onChange={handleChange}
-                >
+              <FormControl
+                variant={"outlined"}
+                fullWidth={true}
+                className={classes.formControl}
+              >
+                <Select {...project_database.bind}>
                   <MenuItem value={10}>Ten</MenuItem>
                   <MenuItem value={20}>Twenty</MenuItem>
                   <MenuItem value={30}>Thirty</MenuItem>
@@ -342,16 +342,12 @@ const BudgetTechnology = (props) => {
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography variant="h5" gutterBottom component="div">
-                Storage
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth={true} className={classes.formControl}>
-                <Select
-                  value={""}
-                  //   onChange={handleChange}
-                >
+              <FormControl
+                variant={"outlined"}
+                fullWidth={true}
+                className={classes.formControl}
+              >
+                <Select {...project_storage.bind}>
                   <MenuItem value={10}>Ten</MenuItem>
                   <MenuItem value={20}>Twenty</MenuItem>
                   <MenuItem value={30}>Thirty</MenuItem>
@@ -359,16 +355,12 @@ const BudgetTechnology = (props) => {
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography variant="h5" gutterBottom component="div">
-                Deployment
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth={true} className={classes.formControl}>
-                <Select
-                  value={""}
-                  //   onChange={handleChange}
-                >
+              <FormControl
+                variant={"outlined"}
+                fullWidth={true}
+                className={classes.formControl}
+              >
+                <Select {...project_deployment.bind}>
                   <MenuItem value={10}>Ten</MenuItem>
                   <MenuItem value={20}>Twenty</MenuItem>
                   <MenuItem value={30}>Thirty</MenuItem>
@@ -377,44 +369,12 @@ const BudgetTechnology = (props) => {
             </Grid>
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>
-            {/* <Grid item xs={6} sm={2}>
-            {viewOnly ? (
-              <Button
-                type="button"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
-                Done
-              </Button>
-            ) : (
-              <div className={classes.loadingWrapper}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                >
-                  Save
-                </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                )}
-              </div>
-            )}
-          </Grid> */}
             <Grid item xs={12} sm={4}>
               <Button
                 variant="contained"
                 color="primary"
                 fullWidth
                 onClick={onBackClick}
-                // disabled={projectFormData === null}
                 className={classes.submit}
               >
                 Back
@@ -426,7 +386,6 @@ const BudgetTechnology = (props) => {
                 color="primary"
                 fullWidth
                 onClick={onNextClick}
-                // disabled={projectFormData === null}
                 className={classes.submit}
               >
                 Save & Next

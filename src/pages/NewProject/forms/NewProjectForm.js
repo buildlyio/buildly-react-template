@@ -14,10 +14,16 @@ import { UserContext } from "@context/User.context";
 import { routes } from "@routes/routesConstants";
 // import { checkForGlobalAdmin } from "@utils/utilMethods";
 import ViewDetailsWrapper from "../components/ViewDetailsWrapper";
-import ProjectSetup from "../components/ProjectSetup";
-import ApplicationMarket from "../components/ApplicationMarket";
-import BudgetTechnology from "../components/BudgetTechnology";
-import TeamUser from "../components/TeamUser";
+import ProjectSetup, {
+  checkIfProjectSetupEdited,
+} from "../components/ProjectSetup";
+import ApplicationMarket, {
+  checkIfApplicationMarketEdited,
+} from "../components/ApplicationMarket";
+import BudgetTechnology, {
+  checkIfBudgetTechnologyEdited,
+} from "../components/BudgetTechnology";
+import TeamUser, { checkIfTeamUserEdited } from "../components/TeamUser";
 import UsersInfo from "../components/UsersInfo";
 import MinimalFunctionality from "../components/MinimalFunctionality";
 
@@ -51,7 +57,9 @@ const getStepContent = (
   handleNext,
   handleBack,
   maxSteps,
-  handleCancel
+  handleCancel,
+  setConfirmModal,
+  setConfirmModalFor
 ) => {
   switch (stepIndex) {
     case 0:
@@ -193,6 +201,8 @@ const NewProjectForm = (props) => {
   //   _.lowerCase(editData.status) !== "planned";
 
   const [activeStep, setActiveStep] = React.useState(0);
+  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [confirmModalFor, setConfirmModalFor] = useState("");
 
   const steps = getSteps();
   const maxSteps = steps.length;
@@ -221,9 +231,6 @@ const NewProjectForm = (props) => {
     //   setConfirmModal(true);
     // } else {
     //   handleConfirmModal();
-    //   if (shipmentFormData !== null) {
-    //     setActiveStep(step);
-    //   }
     // }
   };
 
@@ -264,30 +271,30 @@ const NewProjectForm = (props) => {
   //   }
   // };
 
-  // const checkIfFormEdited = (currentStep) => {
-  //   switch (currentStep) {
-  //     case 0:
-  //       return checkIfShipmentInfoEdited();
+  const checkIfFormEdited = (currentStep) => {
+    switch (currentStep) {
+      case 0:
+        return checkIfProjectSetupEdited();
 
-  //     case 1:
-  //       return checkIfShipmentKeyEdited();
+      case 1:
+        return checkIfApplicationMarketEdited();
 
-  //     case 2:
-  //       return checkIfItemInfoEdited();
+      case 2:
+        return checkIfBudgetTechnologyEdited();
 
-  //     case 3:
-  //       return false; // Handled in Custody Info
+      case 3:
+        return checkIfTeamUserEdited();
 
-  //     case 4:
-  //       return checkIfSensorGatewayEdited();
+      // case 4:
+      //   return checkIfSensorGatewayEdited();
 
-  //     case 5:
-  //       return checkIfEnvironmentLimitsEdited();
+      // case 5:
+      //   return checkIfEnvironmentLimitsEdited();
 
-  //     default:
-  //       return false;
-  //   }
-  // };
+      default:
+        return false;
+    }
+  };
 
   return (
     <div className={classes.root}>

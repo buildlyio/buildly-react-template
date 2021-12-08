@@ -209,19 +209,14 @@ const UsersInfo = (props) => {
         <Box mb={2} mt={3}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography variant="h5" component="div">
-                What is the product used for?
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 margin="normal"
                 fullWidth
                 multiline
-                rows={3}
+                rows={6}
                 id="product-use"
-                // label="product use"
+                label="What is the product used for"
                 name="product-use"
                 autoComplete="product-use"
                 disabled={viewOnly}
@@ -229,19 +224,14 @@ const UsersInfo = (props) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="h5" gutterBottom component="div">
-                When is it used?
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 margin="normal"
                 fullWidth
                 multiline
-                rows={3}
+                rows={6}
                 id="product-use-when"
-                // label="Product use"
+                label="When is it used"
                 name="product-use-when"
                 autoComplete="product-use-when"
                 disabled={viewOnly}
@@ -249,19 +239,14 @@ const UsersInfo = (props) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="h5" gutterBottom component="div">
-                What situations is it used in?
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 margin="normal"
                 fullWidth
                 multiline
-                rows={3}
+                rows={6}
                 id="product-situation"
-                // label="Product-situation"
+                label="What situations is it used in?"
                 name="product-situation"
                 autoComplete="product-situation"
                 disabled={viewOnly}
@@ -269,19 +254,14 @@ const UsersInfo = (props) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="h5" gutterBottom component="div">
-                What will be the most important functionality?
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 margin="normal"
                 fullWidth
                 multiline
-                rows={3}
+                rows={6}
                 id="product-imp-func"
-                // label="Product important functionality"
+                label="What will be the most important functionality"
                 name="product-imp-func"
                 autoComplete="product-imp-func"
                 disabled={viewOnly}
@@ -289,19 +269,14 @@ const UsersInfo = (props) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="h5" gutterBottom component="div">
-                What’s the biggest risk to product delivery?
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 margin="normal"
                 fullWidth
                 multiline
-                rows={3}
+                rows={6}
                 id="product-delivery-risk"
-                // label="Product Delivery risk"
+                label="What’s the biggest risk to product delivery?"
                 name="product-delivery-risk"
                 autoComplete="product-delivery-risk"
                 disabled={viewOnly}
@@ -310,37 +285,6 @@ const UsersInfo = (props) => {
             </Grid>
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>
-            {/* <Grid item xs={6} sm={2}>
-            {viewOnly ? (
-              <Button
-                type="button"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
-                Done
-              </Button>
-            ) : (
-              <div className={classes.loadingWrapper}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                >
-                  Save
-                </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                )}
-              </div>
-            )}
-          </Grid> */}
             <Grid item xs={12} sm={4}>
               <Button
                 variant="contained"

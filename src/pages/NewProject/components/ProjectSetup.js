@@ -112,6 +112,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+export let checkIfProjectSetupEdited;
+
 function StyledRadio(props) {
   const classes = useStyles();
 
@@ -210,6 +212,12 @@ const ProjectSetup = (props) => {
     });
     return errorExists;
   };
+
+  checkIfProjectSetupEdited = () =>
+    requirements_tool.hasChanged() ||
+    description.hasChanged() ||
+    requirements_tool.hasChanged() ||
+    issues_tool.hasChanged();
 
   /**
    * Submit The form and add/edit
@@ -379,49 +387,6 @@ const ProjectSetup = (props) => {
           </Grid>
         </Grid>
         <Grid container spacing={3} className={classes.buttonContainer}>
-          {/* <Grid item xs={6} sm={2}>
-            {viewOnly ? (
-              <Button
-                type="button"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
-                Done
-              </Button>
-            ) : (
-              <div className={classes.loadingWrapper}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                >
-                  Save
-                </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                )}
-              </div>
-            )}
-          </Grid> */}
-          {/* <Grid item xs={12} sm={4}>
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              onClick={onBackClick}
-              // disabled={projectFormData === null}
-              className={classes.submit}
-            >
-              Back
-            </Button>
-          </Grid> */}
           <Grid item xs={12} sm={4}>
             <Button
               variant="contained"
