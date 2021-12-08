@@ -1,4 +1,4 @@
-import * as actions from '@redux/authuser/actions/authuser.actions';
+import * as actions from './authuser.actions';
 
 describe('actions', () => {
   it('should create an action to login', () => {

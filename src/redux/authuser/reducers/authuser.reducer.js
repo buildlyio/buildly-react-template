@@ -35,7 +35,7 @@ import {
   ADD_ORG_SOCIAL_USER,
   ADD_ORG_SOCIAL_USER_SUCCESS,
   ADD_ORG_SOCIAL_USER_FAIL,
-} from '@redux/authuser/actions/authuser.actions';
+} from '../actions/authuser.actions';
 
 const initialState = {
   loading: false,

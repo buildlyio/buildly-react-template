@@ -1,4 +1,4 @@
-import * as actions from '@redux/googleSheet/actions/googleSheet.actions';
+import * as actions from './googleSheet.actions';
 
 describe('actions', () => {
   it('should create an action to add data', () => {

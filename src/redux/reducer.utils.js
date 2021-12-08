@@ -10,7 +10,8 @@ import PropTypes from 'prop-types';
 export const addAll = (state, action) => ({ ...state, data: action.data, loaded: true });
 
 /**
- * it inserts an item to the state if it does not exist otherwise it will
+ * it inserts an item to the state if
+ * it does not exist otherwise it will
  * update the item with the passed action data
  * @param state - the current state
  * @param action - the returned action

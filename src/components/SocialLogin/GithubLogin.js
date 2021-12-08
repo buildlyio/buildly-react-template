@@ -26,7 +26,7 @@ const GithubLogin = ({ dispatch, history, disabled }) => {
     if (!data.code) {
       return onFailure(new Error("'code' not found"));
     }
-
+    console.log('Data: ', data)
     dispatch(socialLogin(data.code, providers.github, history));
   };
 

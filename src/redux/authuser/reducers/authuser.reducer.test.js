@@ -1,4 +1,4 @@
-import * as actions from '@redux/authuser/actions/authuser.actions';
+import * as actions from '../actions/authuser.actions';
 import * as reducer from './authuser.reducer';
 
 const initialState = {
@@ -29,11 +29,11 @@ describe('Login reducer', () => {
   });
 
   it('login success Reducer', () => {
-    expect(reducer.default([], { type: actions.LOGIN_SUCCESS })).toEqual({
-      loaded: true,
-      loading: false,
+    expect(reducer.default(initialState, { type: actions.LOGIN_SUCCESS })).toEqual({
       data: undefined,
       error: null,
+      loaded: true,
+      loading: false,
       socialLogin: null,
       orgNames: null,
     });
@@ -198,14 +198,14 @@ describe('Social Login reducer', () => {
   });
 
   it('social login success Reducer', () => {
-    expect(reducer.default([], { type: actions.SOCIAL_LOGIN_SUCCESS })).toEqual(
+    expect(reducer.default(initialState, { type: actions.SOCIAL_LOGIN_SUCCESS })).toEqual(
       {
-        loaded: true,
-        loading: false,
         data: undefined,
         error: null,
-        socialLogin: null,
+        loaded: true,
+        loading: false,
         orgNames: null,
+        socialLogin: null,
       },
     );
   });
@@ -242,14 +242,14 @@ describe('Load Organization Names reducer', () => {
 
   it('load org names success Reducer', () => {
     expect(
-      reducer.default([], { type: actions.LOAD_ORG_NAMES_SUCCESS }),
+      reducer.default(initialState, { type: actions.LOAD_ORG_NAMES_SUCCESS }),
     ).toEqual({
-      loaded: true,
-      loading: false,
       data: null,
       error: null,
-      socialLogin: null,
+      loaded: true,
+      loading: false,
       orgNames: undefined,
+      socialLogin: null,
     });
   });
 
@@ -285,14 +285,14 @@ describe('Add Organization for Social User reducer', () => {
 
   it('add organization for social user success Reducer', () => {
     expect(
-      reducer.default([], { type: actions.ADD_ORG_SOCIAL_USER_SUCCESS }),
+      reducer.default(initialState, { type: actions.ADD_ORG_SOCIAL_USER_SUCCESS }),
     ).toEqual({
-      loaded: true,
-      loading: false,
       data: undefined,
       error: null,
-      socialLogin: null,
+      loaded: true,
+      loading: false,
       orgNames: null,
+      socialLogin: null,
     });
   });
 

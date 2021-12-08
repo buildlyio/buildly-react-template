@@ -1,4 +1,4 @@
-import * as actions from '@redux/googleSheet/actions/googleSheet.actions';
+import * as actions from '../actions/googleSheet.actions';
 import * as reducer from './googleSheet.reducer';
 
 const initialState = {
@@ -21,12 +21,12 @@ describe('Add Data reducer', () => {
   });
 
   it('add data success Reducer', () => {
-    expect(reducer.default([], { type: actions.ADD_DATA_SUCCESS })).toEqual({
-      loaded: true,
-      loading: false,
+    expect(reducer.default(initialState, { type: actions.ADD_DATA_SUCCESS })).toEqual({
       data: undefined,
       error: null,
       filled: true,
+      loaded: true,
+      loading: false,
     });
   });
 
@@ -57,13 +57,13 @@ describe('Check User reducer', () => {
   });
 
   it('check user success Reducer', () => {
-    expect(reducer.default([], { type: actions.CHECK_FILLED_SUCCESS })).toEqual(
+    expect(reducer.default(initialState, { type: actions.CHECK_FILLED_SUCCESS })).toEqual(
       {
-        loaded: true,
-        loading: false,
         data: null,
         error: null,
         filled: undefined,
+        loaded: true,
+        loading: false,
       },
     );
   });
