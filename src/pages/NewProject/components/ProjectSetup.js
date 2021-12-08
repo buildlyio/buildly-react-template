@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
-import { connect } from "react-redux";
-import _ from "lodash";
+import React, { useState, useEffect, useContext } from 'react';
+import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   Button,
   useTheme,
@@ -14,85 +14,85 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
-} from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
-import DatePickerComponent from "@components/DatePicker/DatePicker";
-import { useInput } from "@hooks/useInput";
-import { validators } from "@utils/validators";
+} from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+import DatePickerComponent from '@components/DatePicker/DatePicker';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(1),
-    color: "#fff",
-    [theme.breakpoints.up("sm")]: {
-      width: "70%",
-      margin: "auto",
+    color: '#fff',
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
     },
-    "& .MuiOutlinedInput-notchedOutline": {
+    '& .MuiOutlinedInput-notchedOutline': {
       borderColor: theme.palette.secondary.contrastText,
     },
-    "& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline": {
-      borderColor: "rgb(255, 255, 255, 0.23)",
+    '& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'rgb(255, 255, 255, 0.23)',
     },
-    "& .MuiInputLabel-root": {
+    '& .MuiInputLabel-root': {
       color: theme.palette.secondary.contrastText,
     },
-    "& .MuiSelect-icon": {
+    '& .MuiSelect-icon': {
       color: theme.palette.secondary.contrastText,
     },
-    "& .MuiInputBase-input": {
+    '& .MuiInputBase-input': {
       color: theme.palette.secondary.contrastText,
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    borderRadius: "18px",
+    borderRadius: '18px',
   },
   formTitle: {
-    fontWeight: "bold",
-    marginTop: "1em",
-    textAlign: "center",
+    fontWeight: 'bold',
+    marginTop: '1em',
+    textAlign: 'center',
     color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
     margin: theme.spacing(8, 0),
-    textAlign: "center",
-    justifyContent: "center",
+    textAlign: 'center',
+    justifyContent: 'center',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
-    position: "relative",
+    position: 'relative',
   },
   inputWithTooltip: {
-    display: "flex",
-    alignItems: "center",
+    display: 'flex',
+    alignItems: 'center',
   },
   icon: {
-    borderRadius: "50%",
+    borderRadius: '50%',
     width: 16,
     height: 16,
     boxShadow:
-      "inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)",
-    backgroundColor: "#f5f8fa",
+      'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
+    backgroundColor: '#f5f8fa',
     backgroundImage:
-      "linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))",
-    "$root.Mui-focusVisible &": {
-      outline: "2px auto rgba(19,124,189,.6)",
+      'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
+    '$root.Mui-focusVisible &': {
+      outline: '2px auto rgba(19,124,189,.6)',
       outlineOffset: 2,
     },
-    "input:hover ~ &": {
-      backgroundColor: "#ebf1f5",
+    'input:hover ~ &': {
+      backgroundColor: '#ebf1f5',
     },
-    "input:disabled ~ &": {
-      boxShadow: "none",
-      background: "rgba(206,217,224,.5)",
+    'input:disabled ~ &': {
+      boxShadow: 'none',
+      background: 'rgba(206,217,224,.5)',
     },
   },
   checkedIcon: {
@@ -120,7 +120,7 @@ function StyledRadio(props) {
   return (
     <Radio
       className={classes.root}
-      color="default"
+      color="primary"
       checkedIcon={
         <span className={`${classes.icon} ${classes.checkedIcon}`} />
       }
@@ -131,36 +131,36 @@ function StyledRadio(props) {
 }
 
 const ProjectSetup = (props) => {
-  const { history, loading, dispatch, location, handleNext, handleCancel } =
-    props;
+  const {
+    history, loading, dispatch, location, handleNext, handleCancel,
+  } = props;
   const classes = useStyles();
   const theme = useTheme();
   const viewOnly = false;
-  const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   // const editPage = location.state && location.state.type === 'edit';
-  const editData =
-    (location.state && location.state.type === "edit" && location.state.data) ||
-    {};
-  const project_name = useInput((editData && editData.name) || "", {
+  const editData = (location.state && location.state.type === 'edit' && location.state.data)
+    || {};
+  const project_name = useInput((editData && editData.name) || '', {
     required: true,
   });
-  const description = useInput((editData && editData.description) || "");
+  const description = useInput((editData && editData.description) || '');
 
   const requirements_tool = useInput(
-    (editData && editData.requirements_tool) || "start fresh"
+    (editData && editData.requirements_tool) || 'start fresh',
   );
 
   const issues_tool = useInput(
-    (editData && editData.issues_tool) || "start fresh"
+    (editData && editData.issues_tool) || 'start fresh',
   );
   // const product_team = useInput((editData && editData.product_team) || "", {
   //   required: true,
   // });
   const [start_date, handleStartDateChange] = useState(
-    (editData && editData.estimated_time_of_start) || new Date()
+    (editData && editData.estimated_time_of_start) || new Date(),
   );
   const [end_date, handleEndDateChange] = useState(
-    (editData && editData.estimated_time_of_arrival) || new Date()
+    (editData && editData.estimated_time_of_arrival) || new Date(),
   );
 
   const [buildly_architecture, setBuildly_architecture] = useState(true);
@@ -186,14 +186,14 @@ const ProjectSetup = (props) => {
         ...prevState,
         [e.target.id || parentId]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
     }
   };
 
   const onNextClick = (event) => {
-    // if (checkIfShipmentInfoEdited() === true) {
+    // if (checkIfProductInfoEdited() === true) {
     //   handleSubmit(event);
     // }
     handleNext();
@@ -229,9 +229,6 @@ const ProjectSetup = (props) => {
 
   return (
     <div>
-      <Typography variant="h4" className={classes.formTitle}>
-        New Project
-      </Typography>
       <form className={classes.form} noValidate onSubmit={handleSubmit}>
         <Box mb={2} mt={3}>
           <Grid container spacing={2}>
@@ -247,7 +244,7 @@ const ProjectSetup = (props) => {
                 autoComplete="project_name"
                 disabled={viewOnly}
                 error={formError.project_name && formError.project_name.error}
-                onBlur={(e) => handleBlur(e, "required", project_name)}
+                onBlur={(e) => handleBlur(e, 'required', project_name)}
                 {...project_name.bind}
               />
             </Grid>
@@ -301,7 +298,7 @@ const ProjectSetup = (props) => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography variant="h5">Requirements</Typography>
+              <Typography variant="h6">Requirements</Typography>
               <FormControl component="fieldset" required>
                 <RadioGroup
                   row
@@ -315,9 +312,9 @@ const ProjectSetup = (props) => {
                     label="Trello"
                   />
                   <FormControlLabel
-                    value="atlassians"
+                    value="atlassian"
                     control={<StyledRadio />}
-                    label="Atlassians"
+                    label="Atlassian"
                   />
                   <FormControlLabel
                     value="start fresh"
@@ -328,7 +325,7 @@ const ProjectSetup = (props) => {
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography variant="h5">Issues</Typography>
+              <Typography variant="h6">Issues</Typography>
               <FormControl component="fieldset" required>
                 <RadioGroup
                   row
@@ -359,21 +356,21 @@ const ProjectSetup = (props) => {
         <Grid container>
           <Grid item>
             <FormControl component="fieldset">
-              <Typography variant="h5">
+              <Typography variant="h6">
                 Do you want to use Buildly for your Architecture?
               </Typography>
               <RadioGroup
                 row
                 aria-label="buildly for architecture"
                 name="row-radio-buttons-group"
-                color="default"
+                color="success"
                 onChange={(e) => {
-                  setBuildly_architecture(e.target.value === "true");
+                  setBuildly_architecture(e.target.value === 'true');
                 }}
                 value={buildly_architecture}
               >
                 <FormControlLabel
-                  value={true}
+                  value
                   control={<StyledRadio />}
                   label="Yes"
                 />

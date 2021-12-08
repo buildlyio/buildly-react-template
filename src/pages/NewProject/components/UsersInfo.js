@@ -154,14 +154,14 @@ const UsersInfo = (props) => {
   };
 
   const onBackClick = (event) => {
-    // if (checkIfShipmentInfoEdited() === true) {
+    // if (checkIfProductInfoEdited() === true) {
     //   handleSubmit(event);
     // }
     handleBack();
   };
 
   const onNextClick = (event) => {
-    // if (checkIfShipmentInfoEdited() === true) {
+    // if (checkIfProductInfoEdited() === true) {
     //   handleSubmit(event);
     // }
     handleNext();
@@ -202,9 +202,6 @@ const UsersInfo = (props) => {
 
   return (
     <div>
-      {/* <Typography variant="h4" className={classes.formTitle}>
-        New Project
-      </Typography> */}
       <form className={classes.form} noValidate onSubmit={handleSubmit}>
         <Box mb={2} mt={3}>
           <Grid container spacing={2}>

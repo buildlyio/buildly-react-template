@@ -7,7 +7,7 @@ import Dashboard from "@pages/Dashboard/Dashboard";
 import UserManagement from "@pages/UserManagement/UserManagement";
 import MissingData from "@pages/MissingData/MissingData";
 import { routes } from "@routes/routesConstants";
-import NewProjectForm from "@pages/NewProject/forms/NewProjectForm";
+import NewProject from "@pages/NewProject/NewProject";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,7 +43,7 @@ const ContainerDashboard = ({ location, history }) => {
           <Route path={routes.DASHBOARD} component={Dashboard} />
           <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
           <Route path={routes.MISSING_DATA} component={MissingData} />
-          <Route path={routes.NEW_PROJECT} component={NewProjectForm} />
+          <Route path={routes.NEW_PROJECT} component={NewProject} />
         </Container>
       </UserContext.Provider>
     </div>

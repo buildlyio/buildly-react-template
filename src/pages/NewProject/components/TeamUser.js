@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { connect } from "react-redux";
-import _ from "lodash";
+/* eslint-disable no-param-reassign */
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   useTheme,
   makeStyles,
@@ -22,104 +23,136 @@ import {
   IconButton,
   TextField,
   Button,
-} from "@material-ui/core";
-import { useInput } from "@hooks/useInput";
-import { validators } from "@utils/validators";
-import AddIcon from "@material-ui/icons/Add";
-import RemoveIcon from "@material-ui/icons/Remove";
+} from '@material-ui/core';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 
 const useStyles = makeStyles((theme) => ({
   form: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(1),
-    color: "#fff",
-    [theme.breakpoints.up("sm")]: {
-      width: "70%",
-      margin: "auto",
+    color: '#fff',
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
     },
-    "& .MuiOutlinedInput-notchedOutline": {
+    '& .MuiOutlinedInput-notchedOutline': {
       borderColor: theme.palette.secondary.contrastText,
     },
-    "& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline": {
-      borderColor: "rgb(255, 255, 255, 0.23)",
+    '& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'rgb(255, 255, 255, 0.23)',
     },
-    "& .MuiInputLabel-root": {
+    '& .MuiInputLabel-root': {
       color: theme.palette.secondary.contrastText,
     },
-    "& .MuiSelect-icon": {
+    '& .MuiSelect-icon': {
       color: theme.palette.secondary.contrastText,
     },
-    "& .MuiInputBase-input": {
+    '& .MuiInputBase-input': {
       color: theme.palette.secondary.contrastText,
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    borderRadius: "18px",
-
-    "&.MuiButton-contained.Mui-disabled": {
-      color: "hsl(0deg 0% 100% / 70%);",
-    },
+    borderRadius: '18px',
   },
   formTitle: {
-    fontWeight: "bold",
-    marginTop: "1em",
-    textAlign: "center",
+    fontWeight: 'bold',
+    marginTop: '1em',
+    textAlign: 'center',
     color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
     margin: theme.spacing(8, 0),
-    textAlign: "center",
-    justifyContent: "center",
+    textAlign: 'center',
+    justifyContent: 'center',
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
-    position: "relative",
+    position: 'relative',
   },
   inputWithTooltip: {
-    display: "flex",
-    alignItems: "center",
+    display: 'flex',
+    alignItems: 'center',
   },
   icon: {
-    borderRadius: "50%",
+    borderRadius: '50%',
     width: 16,
     height: 16,
     boxShadow:
-      "inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)",
-    backgroundColor: "#f5f8fa",
+      'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
+    backgroundColor: '#f5f8fa',
     backgroundImage:
-      "linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))",
-    "$root.Mui-focusVisible &": {
-      outline: "2px auto rgba(19,124,189,.6)",
+      'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
+    '$root.Mui-focusVisible &': {
+      outline: '2px auto rgba(19,124,189,.6)',
       outlineOffset: 2,
     },
-    "input:hover ~ &": {
-      backgroundColor: "#ebf1f5",
+    'input:hover ~ &': {
+      backgroundColor: '#ebf1f5',
     },
-    "input:disabled ~ &": {
-      boxShadow: "none",
-      background: "rgba(206,217,224,.5)",
+    'input:disabled ~ &': {
+      boxShadow: 'none',
+      background: 'rgba(206,217,224,.5)',
     },
   },
   checkedIcon: {
-    backgroundColor: "#137cbd",
+    backgroundColor: '#137cbd',
     backgroundImage:
-      "linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))",
-    "&:before": {
-      display: "block",
+      'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
+    '&:before': {
+      display: 'block',
       width: 16,
       height: 16,
-      backgroundImage: "radial-gradient(#fff,#fff 28%,transparent 32%)",
+      backgroundImage: 'radial-gradient(#fff,#fff 28%,transparent 32%)',
       content: '""',
     },
-    "input:hover ~ &": {
-      backgroundColor: "#106ba3",
+    'input:hover ~ &': {
+      backgroundColor: '#106ba3',
+    },
+  },
+  icon: {
+    borderRadius: '50%',
+    width: 16,
+    height: 16,
+    boxShadow:
+      'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
+    backgroundColor: '#f5f8fa',
+    backgroundImage:
+      'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
+    '$root.Mui-focusVisible &': {
+      outline: '2px auto rgba(19,124,189,.6)',
+      outlineOffset: 2,
+    },
+    'input:hover ~ &': {
+      backgroundColor: '#ebf1f5',
+    },
+    'input:disabled ~ &': {
+      boxShadow: 'none',
+      background: 'rgba(206,217,224,.5)',
+    },
+  },
+  checkedIcon: {
+    backgroundColor: '#137cbd',
+    backgroundImage:
+      'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
+    '&:before': {
+      display: 'block',
+      width: 16,
+      height: 16,
+      backgroundImage: 'radial-gradient(#fff,#fff 28%,transparent 32%)',
+      content: '""',
+    },
+    'input:hover ~ &': {
+      backgroundColor: '#106ba3',
     },
   },
 }));
@@ -130,7 +163,7 @@ function StyledRadio(props) {
   return (
     <Radio
       className={classes.root}
-      color="default"
+      color="primary"
       checkedIcon={
         <span className={`${classes.icon} ${classes.checkedIcon}`} />
       }
@@ -155,31 +188,30 @@ const TeamUser = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const viewOnly = false;
-  const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   // const editPage = location.state && location.state.type === 'edit';
-  const editData =
-    (location.state && location.state.type === "edit" && location.state.data) ||
-    {};
+  const editData = (location.state && location.state.type === 'edit' && location.state.data)
+    || {};
 
-  const team_size = useInput((editData && editData.team_size) || "5 - 10", {
+  const team_size = useInput((editData && editData.team_size) || '5 - 10', {
     required: true,
   });
 
   const [role_count, setRole_count] = useState([
-    { role: "CTO (Budget Approval?)", count: 0 },
-    { role: "COO (Budget Approval?)", count: 0 },
-    { role: "UI/UX", count: 0 },
-    { role: "Lead Developer", count: 0 },
-    { role: "Project Manager", count: 0 },
-    { role: "Product Manager (Budget Approval?)", count: 0 },
-    { role: "Others", count: 0 },
+    { role: 'CTO (Budget Approval?)', count: 0 },
+    { role: 'COO (Budget Approval?)', count: 0 },
+    { role: 'UI/UX', count: 0 },
+    { role: 'Lead Developer', count: 0 },
+    { role: 'Project Manager', count: 0 },
+    { role: 'Product Manager (Budget Approval?)', count: 0 },
+    { role: 'Others', count: 0 },
   ]);
 
   const existing_requirements = useInput(
-    (editData && editData.existing_requirements) || "",
+    (editData && editData.existing_requirements) || '',
     {
       required: true,
-    }
+    },
   );
 
   const [formError, setFormError] = useState({});
@@ -203,21 +235,21 @@ const TeamUser = (props) => {
         ...prevState,
         [e.target.id || parentId]: {
           error: false,
-          message: "",
+          message: '',
         },
       });
     }
   };
 
   const onBackClick = (event) => {
-    // if (checkIfShipmentInfoEdited() === true) {
+    // if (checkIfProductInfoEdited() === true) {
     //   handleSubmit(event);
     // }
     handleBack();
   };
 
   const onNextClick = (event) => {
-    // if (checkIfShipmentInfoEdited() === true) {
+    // if (checkIfProductInfoEdited() === true) {
     //   handleSubmit(event);
     // }
     handleNext();
@@ -264,7 +296,7 @@ const TeamUser = (props) => {
         <Box mb={2} mt={3}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12}>
-              <Typography variant="h5" gutterBottom component="div">
+              <Typography variant="h6" gutterBottom component="div">
                 What is the size of your current team and backgrounds/roles?
               </Typography>
             </Grid>
@@ -300,9 +332,9 @@ const TeamUser = (props) => {
                   <TableHead>
                     <TableRow>
                       <TableCell>Roles</TableCell>
-                      <TableCell></TableCell>
+                      <TableCell />
                       <TableCell>Count</TableCell>
-                      <TableCell></TableCell>
+                      <TableCell />
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -325,18 +357,19 @@ const TeamUser = (props) => {
                             <RemoveIcon />
                           </IconButton>
                         </TableCell>
-                        <TableCell style={{ width: "10%" }}>
+                        <TableCell style={{ width: '30%' }}>
                           <TextField
                             onChange={(e) => {
                               setRole_count((prevRole_count) => {
                                 prevRole_count[index].count += parseInt(
-                                  e.target.value
+                                  e.target.value,
+                                  10,
                                 );
                                 return [...prevRole_count];
                               });
                             }}
                             value={row.count}
-                            type={"number"}
+                            type="number"
                             variant="filled"
                           />
                         </TableCell>
@@ -359,7 +392,7 @@ const TeamUser = (props) => {
               </TableContainer>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="h5" gutterBottom component="div">
+              <Typography variant="h6" gutterBottom component="div">
                 Do you have any existing requirements documents, mockups,
                 designs etc.?
               </Typography>
