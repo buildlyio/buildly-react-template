@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { connect } from 'react-redux';
-import _ from 'lodash';
+import React, { useState, useEffect, useContext } from "react";
+import { connect } from "react-redux";
+import _ from "lodash";
 import {
   Button,
   useTheme,
@@ -13,110 +13,96 @@ import {
   MenuItem,
   CircularProgress,
   Checkbox,
-} from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
-import DatePickerComponent from '@components/DatePicker/DatePicker';
-import { useInput } from '@hooks/useInput';
-import { validators } from '@utils/validators';
-import GithubLogin from '@components/SocialLogin/GithubLogin';
-import TrelloLogin from '@components/SocialLogin/TrelloLogin';
-import { providers } from '@utils/socialLogin';
+} from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
+import DatePickerComponent from "@components/DatePicker/DatePicker";
+import { useInput } from "@hooks/useInput";
+import { validators } from "@utils/validators";
+import GithubLogin from "@components/SocialLogin/GithubLogin";
+import TrelloLogin from "@components/SocialLogin/TrelloLogin";
+import { providers } from "@utils/socialLogin";
 
 const useStyles = makeStyles((theme) => ({
   form: {
-    width: '100%',
+    width: "100%",
     marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
+    [theme.breakpoints.up("sm")]: {
+      width: "70%",
+      margin: "auto",
     },
-    '& .MuiOutlinedInput-notchedOutline': {
+    "& .MuiOutlinedInput-notchedOutline": {
       borderColor: theme.palette.secondary.contrastText,
     },
-    '& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgb(255, 255, 255, 0.23)',
+    "& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline": {
+      borderColor: "rgb(255, 255, 255, 0.23)",
     },
-    '& .MuiInputLabel-root': {
+    "& .MuiInputLabel-root": {
       color: theme.palette.secondary.contrastText,
     },
-    '& .MuiSelect-icon': {
+    "& .MuiSelect-icon": {
       color: theme.palette.secondary.contrastText,
     },
-    '& .MuiInputBase-input': {
+    "& .MuiInputBase-input": {
       color: theme.palette.secondary.contrastText,
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
+    borderRadius: "18px",
   },
   formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
+    fontWeight: "bold",
+    marginTop: "1em",
+    textAlign: "center",
     color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
     margin: theme.spacing(8, 0),
-    textAlign: 'center',
-    justifyContent: 'center',
+    textAlign: "center",
+    justifyContent: "center",
   },
   buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
     marginTop: -12,
     marginLeft: -12,
   },
   loadingWrapper: {
-    position: 'relative',
+    position: "relative",
   },
   inputWithTooltip: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
   },
 }));
 
 const NewProject = (props) => {
-  const {
-    history,
-    loading,
-    dispatch,
-    location,
-    socialLogin,
-  } = props;
+  const { history, loading, dispatch, location, socialLogin } = props;
   const classes = useStyles();
   const theme = useTheme();
   const viewOnly = false;
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
-  const editPage = location.state && location.state.type === 'edit';
-  const editData = (
-    location.state
-    && location.state.type === 'edit'
-    && location.state.data
-  ) || {};
+  const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+  const editPage = location.state && location.state.type === "edit";
+  const editData =
+    (location.state && location.state.type === "edit" && location.state.data) ||
+    {};
 
-  const project_name = useInput(
-    (editData && editData.name) || '',
-    { required: true },
-  );
-  const description = useInput(
-    (editData && editData.description) || '',
-  );
+  const project_name = useInput((editData && editData.name) || "", {
+    required: true,
+  });
+  const description = useInput((editData && editData.description) || "");
   const project_manager = useInput(
-    (editData && editData.project_manager) || '',
+    (editData && editData.project_manager) || ""
   );
-  const product_team = useInput(
-    (editData && editData.product_team) || '',
-    { required: true },
-  );
+  const product_team = useInput((editData && editData.product_team) || "", {
+    required: true,
+  });
   const [start_date, handleStartDateChange] = useState(
-    (editData && editData.estimated_time_of_start)
-    || new Date(),
+    (editData && editData.estimated_time_of_start) || new Date()
   );
   const [end_date, handleEndDateChange] = useState(
-    (editData && editData.estimated_time_of_arrival)
-    || new Date(),
+    (editData && editData.estimated_time_of_arrival) || new Date()
   );
 
   const [formError, setFormError] = useState({});
@@ -141,7 +127,7 @@ const NewProject = (props) => {
         ...prevState,
         [e.target.id || parentId]: {
           error: false,
-          message: '',
+          message: "",
         },
       });
     }
@@ -176,18 +162,10 @@ const NewProject = (props) => {
           New Project
         </Typography>
 
-        <form
-          className={classes.form}
-          noValidate
-          onSubmit={handleSubmit}
-        >
+        <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <Box mb={2}>
             <Grid container spacing={2}>
-              <Grid
-                className={classes.inputWithTooltip}
-                item
-                xs={12}
-              >
+              <Grid className={classes.inputWithTooltip} item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -198,25 +176,14 @@ const NewProject = (props) => {
                   name="project_name"
                   autoComplete="project_name"
                   disabled={viewOnly}
-                  error={
-                        formError.project_name
-                        && formError.project_name.error
-                      }
-                  onBlur={(e) => handleBlur(e, 'required', project_name)}
+                  error={formError.project_name && formError.project_name.error}
+                  onBlur={(e) => handleBlur(e, "required", project_name)}
                   {...project_name.bind}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Grid
-                  container
-                  spacing={isDesktop ? 2 : 0}
-                >
-
-                  <Grid
-                    className={classes.inputWithTooltip}
-                    item
-                    xs={12}
-                  >
+                <Grid container spacing={isDesktop ? 2 : 0}>
+                  <Grid className={classes.inputWithTooltip} item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -230,7 +197,6 @@ const NewProject = (props) => {
                       disabled={viewOnly}
                       {...description.bind}
                     />
-
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
@@ -263,18 +229,16 @@ const NewProject = (props) => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Grid container spacing={2}>
-
                   <Grid item xs={12}>
                     <DatePickerComponent
                       label="Start Date"
                       selectedDate={start_date}
-                        // moment(scheduled_start).tz(timezone)
-                        //   .format('MMMM DD, YYYY HH:mm:ss')
+                      // moment(scheduled_start).tz(timezone)
+                      //   .format('MMMM DD, YYYY HH:mm:ss')
                       // }
                       hasTime
                       handleDateChange={handleStartDateChange}
                       disabled={viewOnly}
-
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -288,7 +252,6 @@ const NewProject = (props) => {
                       hasTime
                       handleDateChange={handleEndDateChange}
                       disabled={viewOnly}
-
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -320,7 +283,6 @@ const NewProject = (props) => {
                   </Grid>
                 </Grid>
               </Grid>
-
             </Grid>
           </Box>
           <Grid item xs={12} className={classes.socialAuth}>
@@ -329,13 +291,8 @@ const NewProject = (props) => {
               history={history}
               disabled={loading && socialLogin}
             />
-            {loading
-                    && socialLogin
-                    && socialLogin === providers.github && (
-                      <CircularProgress
-                        size={24}
-                        className={classes.buttonProgress}
-                      />
+            {loading && socialLogin && socialLogin === providers.github && (
+              <CircularProgress size={24} className={classes.buttonProgress} />
             )}
           </Grid>
           <Grid item xs={12} className={classes.socialAuth}>
@@ -344,20 +301,11 @@ const NewProject = (props) => {
               history={history}
               disabled={loading && socialLogin}
             />
-            {loading
-                    && socialLogin
-                    && socialLogin === providers.trello && (
-                      <CircularProgress
-                        size={24}
-                        className={classes.buttonProgress}
-                      />
+            {loading && socialLogin && socialLogin === providers.trello && (
+              <CircularProgress size={24} className={classes.buttonProgress} />
             )}
           </Grid>
-          <Grid
-            container
-            spacing={3}
-            className={classes.buttonContainer}
-          >
+          <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={6} sm={2}>
               {viewOnly ? (
                 <Button

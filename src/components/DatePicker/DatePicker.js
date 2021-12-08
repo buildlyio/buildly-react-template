@@ -1,17 +1,17 @@
-import React from 'react';
-import DateFnsUtils from '@date-io/date-fns';
-import { makeStyles } from '@material-ui/core';
+import React from "react";
+import DateFnsUtils from "@date-io/date-fns";
+import { makeStyles } from "@material-ui/core";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
   KeyboardDateTimePicker,
-} from '@material-ui/pickers';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
+} from "@material-ui/pickers";
+import CustomizedTooltips from "@components/ToolTip/ToolTip";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
   },
 }));
 
@@ -55,14 +55,12 @@ const DatePickerComponent = ({
             value={selectedDate}
             onChange={handleDateChange}
             KeyboardButtonProps={{
-              'aria-label': 'change date',
+              "aria-label": "change date",
             }}
           />
         )}
       </MuiPickersUtilsProvider>
-      {helpText && (
-        <CustomizedTooltips toolTipText={helpText} />
-      )}
+      {helpText && <CustomizedTooltips toolTipText={helpText} />}
     </div>
   );
 };
