@@ -3,6 +3,7 @@ import { createTheme, responsiveFontSizes } from '@material-ui/core/styles';
 
 const theme = createTheme({
   palette: {
+    type: 'dark',
     primary: {
       main: '#09b79a',
       contrastText: '#fff',

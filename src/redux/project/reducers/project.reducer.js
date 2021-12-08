@@ -70,6 +70,7 @@ const initialState = {
   thirdpartytool: null,
   credential: null,
   release: null,
+  productFormData: null,
 };
 
 // Reducer

@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     left: 0,
     position: 'absolute',
+    padding: theme.spacing(0, 2),
   },
   board: {
     display: 'flex',

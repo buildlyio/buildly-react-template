@@ -1,5 +1,6 @@
 export const providers = {
   github: 'Github',
+  trello: 'Trello',
 };
 
 export const toParams = (query) => {
@@ -8,6 +9,7 @@ export const toParams = (query) => {
   return q.split('&').reduce((values, param) => {
     const [key, value] = param.split('=');
 
+    // eslint-disable-next-line no-param-reassign
     values[key] = value;
 
     return values;

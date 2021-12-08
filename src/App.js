@@ -17,30 +17,30 @@ import { PrivateRoute } from './routes/Private.route';
 import theme from './styles/theme';
 
 const App = () => (
-    <Router>
-      <ThemeProvider theme={theme}>
-        <div className="app">
-          <CssBaseline />
-          <Route
-            exact
-            path="/"
-            render={() => (oauthService.hasValidAccessToken() ? (
-                <Redirect to={routes.DASHBOARD} />
-            ) : (
-                <Redirect to={routes.LOGIN} />
-            ))}
-          />
-          <Route path={routes.LOGIN} component={Login} />
-          <Route path={routes.REGISTER} component={Register} />
-          <Route path={routes.FORGOT_PASSWORD} component={ForgotPassword} />
-          <Route path={routes.RESET_PASSWORD} component={ResetPassword} />
-          <Route path={routes.HELP} component={Help} />
-          <Route path={routes.TICKET_STATUS} component={TicketStatus} />
-          <PrivateRoute path={routes.APP} component={ContainerDashboard} />
-        </div>
-        <Alerts />
-      </ThemeProvider>
-    </Router>
+  <Router>
+    <ThemeProvider theme={theme}>
+      <div className="app">
+        <CssBaseline />
+        <Route
+          exact
+          path="/"
+          render={() => (oauthService.hasValidAccessToken() ? (
+            <Redirect to={routes.DASHBOARD} />
+          ) : (
+            <Redirect to={routes.LOGIN} />
+          ))}
+        />
+        <Route path={routes.LOGIN} component={Login} />
+        <Route path={routes.REGISTER} component={Register} />
+        <Route path={routes.FORGOT_PASSWORD} component={ForgotPassword} />
+        <Route path={routes.RESET_PASSWORD} component={ResetPassword} />
+        <Route path={routes.HELP} component={Help} />
+        <Route path={routes.TICKET_STATUS} component={TicketStatus} />
+        <PrivateRoute path={routes.APP} component={ContainerDashboard} />
+      </div>
+      <Alerts />
+    </ThemeProvider>
+  </Router>
 );
 
 export default hot(module)(App);

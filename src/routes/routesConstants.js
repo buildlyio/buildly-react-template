@@ -11,4 +11,5 @@ export const routes = {
   HELP: '/help',
   TICKET_STATUS: '/ticket-status',
   MISSING_DATA: '/app/missing-data',
+  NEW_PROJECT: '/app/new-project',
 };

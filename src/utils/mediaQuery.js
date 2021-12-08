@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useTheme, useMediaQuery } from '@material-ui/core';
 
 export function isMobile() {

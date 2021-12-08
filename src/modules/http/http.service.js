@@ -27,6 +27,8 @@ function makeRequest(method, url, body, useJwt, contentType, responseType) {
   }
   const headers = {
     Authorization: `${tokenType} ${token}`,
+    // 'Access-Control-Allow-Origin': '*',
+    // 'Access-Control-Allow-Methods': '*',
     'Content-Type': contentType || 'application/json',
   };
   const options = {
