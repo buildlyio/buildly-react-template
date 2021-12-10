@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 
 const StyledToolTip = withStyles((theme) => ({
   tooltip: {
-    backgroundColor: '#f5f5f9',
+    backgroundColor: theme.palette.primary.light,
     color: 'rgba(0, 0, 0, 0.87)',
     maxWidth: 220,
     fontSize: theme.typography.pxToRem(12),

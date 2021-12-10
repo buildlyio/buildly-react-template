@@ -38,7 +38,7 @@ const GithubLogin = ({ dispatch, history, disabled }) => {
     <Button
       fullWidth
       variant="contained"
-      color="secondary"
+      color="default"
       startIcon={<GitHubIcon />}
       onClick={onBtnClick}
       disabled={Boolean(disabled)}

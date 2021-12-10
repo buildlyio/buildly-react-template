@@ -35,17 +35,18 @@ const useStyles = makeStyles((theme) => ({
   },
   column: {
     margin: theme.spacing(1, 1),
-    backgroundColor: theme.palette.neutral.main,
+    backgroundColor: theme.palette.secondary.main,
     borderRadius: theme.spacing(1),
   },
   columnHead: {
-    borderRadius: theme.spacing(1),
-    padding: theme.spacing(1),
+    borderTopLeftRadius: theme.spacing(1),
+    borderTopRightRadius: theme.spacing(1),
+    padding: theme.spacing(1,2),
     display: 'flex',
     justifyContent: 'space-evenly',
     fontSize: '1.2rem',
     alignItems: 'center',
-    backgroundColor: theme.palette.neutral.main,
+    backgroundColor: theme.palette.secondary.main,
     borderBottom: '1px solid #d8d8d8',
     '& > p': {
       flex: '1 1 auto',
@@ -54,6 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tasksList: {
     padding: theme.spacing(0, 0.5),
+    backgroundColor: theme.palette.secondary.main,
     height: '80vh',
     overflow: 'auto',
     minWidth: '300px',
@@ -88,6 +90,7 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     border: '1px solid #d8d8d8',
+    color: '#000',
     margin: '0 0 8px 0',
     padding: theme.spacing(1),
     '& .MuiCardHeader-title': {
@@ -217,9 +220,9 @@ const Kanban = (props) => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                     className={classes.tasksList}
-                    style={{
-                      background: snapshot.isDraggingOver ? '#D8D8D8' : '#F6F8FA',
-                    }}
+                    // style={{
+                    //   background: snapshot.isDraggingOver ? '#D8D8D8' : '#707070',
+                    // }}
                   >
                     {column.items.map((item, itemIndex) => (
                       <Draggable key={item.id} draggableId={item.id} index={itemIndex}>
