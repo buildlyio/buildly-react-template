@@ -54,9 +54,9 @@ export const getShipmentDataTableColumns = (timezone) => ([
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        value && value !== ''
-          ? _.upperCase(value)
-          : 'ICLP'
+        value && value !== '' ? value : '-'
+          // ? (value === 'ICLP' ? '-' : _.startCase(_.toLower(value)))
+          // : 'Tive'
       ),
     },
   },

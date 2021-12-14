@@ -160,7 +160,7 @@ export const TRANSPORT_MODE = [
 ];
 
 export const SENSOR_PLATFORM = [
-  { value: 'iclp', label: 'ICLP' },
+  // { value: 'iclp', label: 'ICLP' },
   { value: 'tive', label: 'Tive' },
 ];
 

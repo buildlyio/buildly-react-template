@@ -93,7 +93,7 @@ const SensorsGatewayInfo = ({
     (shipmentFormData && shipmentFormData.gateway_ids) || [],
   );
   const [platform_name, setPlatformName] = useState(
-    (shipmentFormData && shipmentFormData.platform_name) || 'iclp',
+    (shipmentFormData && shipmentFormData.platform_name) || 'tive',
   );
   const [options, setOptions] = useState([]);
 
@@ -145,8 +145,8 @@ const SensorsGatewayInfo = ({
       const opts = getAvailableGateways(
         gatewayData,
         platform_name
-          ? _.lowerCase(platform_name)
-          : 'iclp',
+          ?  _.lowerCase(platform_name)
+          : 'tive',
         gatewayTypeList,
         shipmentData,
       );

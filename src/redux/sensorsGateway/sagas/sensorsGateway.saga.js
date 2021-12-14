@@ -1,6 +1,7 @@
 import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
+import _ from 'lodash';
 import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import {
@@ -71,7 +72,7 @@ function* getGatewayList(payload) {
       'get',
       `${window.env.API_URL}${sensorApiEndPoint}gateway/?organization_uuid=${payload.organization_uuid}`,
     );
-    yield put({ type: GET_GATEWAYS_SUCCESS, data: data.data });
+    yield put({ type: GET_GATEWAYS_SUCCESS, data: _.filter(data.data, (gateway) => !gateway.name.includes('ICLP')) });
   } catch (error) {
     yield [
       yield put(
@@ -237,7 +238,7 @@ function* getGatewayTypeList() {
     );
     yield put({
       type: GET_GATEWAYS_TYPE_SUCCESS,
-      data: data.data,
+      data: _.filter(data.data, (gatewayType) => gatewayType.name !== 'ICLP'),
     });
   } catch (error) {
     yield [
