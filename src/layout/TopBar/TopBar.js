@@ -2,11 +2,12 @@ import React, { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
-  makeStyles, AppBar, Toolbar, IconButton,
+  makeStyles, AppBar, Toolbar, IconButton, Hidden,
 } from '@material-ui/core';
 import {
   ExitToApp as ExitToAppIcon,
   Group as GroupIcon,
+  Menu as MenuIcon,
 } from '@material-ui/icons';
 import logo from '@assets/light-logo.png';
 import { UserContext } from '@context/User.context';
@@ -25,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 50,
     objectFit: 'contain',
   },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
   menuRight: {
     marginLeft: 'auto',
   },
@@ -39,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Component for the top bar header.
  */
-const TopBar = ({ location, history, dispatch }) => {
+const TopBar = ({ location, history, dispatch, navHidden, setNavHidden, }) => {
   const classes = useStyles();
   const user = useContext(UserContext);
   const isAdmin = hasAdminRights(user) || hasGlobalAdminRights(user);
@@ -61,6 +65,17 @@ const TopBar = ({ location, history, dispatch }) => {
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
+        <Hidden mdUp>
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            onClick={() => setNavHidden(!navHidden)}
+            color="default"
+            aria-label="menu"
+          >
+            <MenuIcon />
+          </IconButton>
+        </Hidden>
         <Link to={routes.DASHBOARD}>
           <img src={logo} className={classes.logo} />
         </Link>

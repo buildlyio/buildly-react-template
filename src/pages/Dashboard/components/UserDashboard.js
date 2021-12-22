@@ -29,15 +29,20 @@ const useStyles = makeStyles((theme) => ({
   section1: {
     position: 'fixed',
     padding: theme.spacing(1, 2),
-    width: '100%',
+    width: '75%',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     color: theme.palette.secondary.contrastText,
     background: theme.palette.secondary.dark,
-    left: 0,
+    // left: 0,
+    flexWrap: 'wrap',
     top: '4rem',
     zIndex: '99',
+    [theme.breakpoints.down("sm")]: {
+      width: '100%',
+      left: 0
+    },
   },
   title: {
     margin: theme.spacing(2, 0),
@@ -68,10 +73,17 @@ const useStyles = makeStyles((theme) => ({
   },
   section2: {
     position: 'absolute',
-    top: '11rem',
-    left: '0',
-    width: '100%',
+    top: '12rem',
+    // left: '0',
+    width: '75%',
     padding: theme.spacing(0, 2),
+    [theme.breakpoints.down("sm")]: {
+      width: '100%',
+      left: 0
+    },
+    [theme.breakpoints.down("xs")]: {
+      top: '17rem'
+    },
   },
 }));
 
@@ -274,7 +286,7 @@ const UserDashboard = (props) => {
   return (
     <div>
       <div className={classes.section1}>
-      {/* {!isDesktop && (
+        {/* {!isDesktop && (
           <Box mb={2}> */}
         <Typography className={classes.title} variant="h3">
           Dashboard
@@ -308,15 +320,15 @@ const UserDashboard = (props) => {
         >
           <MenuItem value={0}>Select</MenuItem>
           {products
-                        && products.length > 0
-                        && _.map(products, (proj) => (
-                          <MenuItem
-                            key={`product-${proj.id}`}
-                            value={proj.id}
-                          >
-                            {proj.name}
-                          </MenuItem>
-                        ))}
+            && products.length > 0
+            && _.map(products, (proj) => (
+              <MenuItem
+                key={`product-${proj.id}`}
+                value={proj.id}
+              >
+                {proj.name}
+              </MenuItem>
+            ))}
         </TextField>
         <Button
           aria-controls="new-project"
@@ -328,7 +340,7 @@ const UserDashboard = (props) => {
         >
           New Project
         </Button>
-      {/* </Box>
+        {/* </Box>
       )} */}
       </div>
       <div className={classes.section2}>

@@ -18,6 +18,8 @@ const theme = createTheme({
     neutral: {
       main: '#F6F8FA',
       contrastText: '#000',
+      dark: '#887C5E',
+      light: '#646262',
     },
   },
   typography: {
