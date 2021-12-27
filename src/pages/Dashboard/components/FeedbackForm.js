@@ -5,7 +5,6 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
-  makeStyles,
   Radio,
   RadioGroup,
   Typography,
@@ -19,7 +18,8 @@ import {
   MenuItem,
   FormGroup,
   Checkbox,
-} from '@material-ui/core';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { UserContext } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
 import { addData } from '@redux/googleSheet/actions/googleSheet.actions';

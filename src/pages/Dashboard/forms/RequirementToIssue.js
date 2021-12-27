@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import {
-  makeStyles,
-  useTheme,
-  useMediaQuery,
-  Grid,
-  TextField,
-  Button,
-  MenuItem,
-} from '@material-ui/core';
+import { useTheme, useMediaQuery, Grid, TextField, Button, MenuItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
 import {
@@ -168,73 +161,144 @@ const RequirementToIssue = ({
     return errorExists;
   };
 
-  return (
-    <>
-      {openFormModal && (
-        <FormModal
-          open={openFormModal}
-          handleClose={closeFormModal}
-          name={formTitle}
-          nameClass={classes.formTitle}
-          maxWidth="md"
-          wantConfirm
-          openConfirmModal={openConfirmModal}
-          setConfirmModal={setConfirmModal}
-          handleConfirmModal={discardFormData}
+  return <>
+    {openFormModal && (
+      <FormModal
+        open={openFormModal}
+        handleClose={closeFormModal}
+        name={formTitle}
+        nameClass={classes.formTitle}
+        maxWidth="md"
+        wantConfirm
+        openConfirmModal={openConfirmModal}
+        setConfirmModal={setConfirmModal}
+        handleConfirmModal={discardFormData}
+      >
+        <form
+          className={classes.form}
+          noValidate
+          onSubmit={handleSubmit}
         >
-          <form
-            className={classes.form}
-            noValidate
-            onSubmit={handleSubmit}
-          >
-            <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="name"
-                  label="Title"
-                  name="name"
-                  autoComplete="name"
-                  error={
-                    formError.name
-                    && formError.name.error
-                  }
-                  helperText={
-                    formError.name
-                      ? formError.name.message
-                      : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', name)}
-                  {...name.bind}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  multiline
-                  id="description"
-                  label="Description"
-                  name="description"
-                  autoComplete="description"
-                  error={
-                    formError.description
-                    && formError.description.error
-                  }
-                  helperText={
-                    formError.description
-                      ? formError.description.message
-                      : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', description)}
-                  {...description.bind}
-                />
-              </Grid>
+          <Grid container spacing={isDesktop ? 2 : 0}>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="name"
+                label="Title"
+                name="name"
+                autoComplete="name"
+                error={
+                  formError.name
+                  && formError.name.error
+                }
+                helperText={
+                  formError.name
+                    ? formError.name.message
+                    : ''
+                }
+                onBlur={(e) => handleBlur(e, 'required', name)}
+                {...name.bind}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                multiline
+                id="description"
+                label="Description"
+                name="description"
+                autoComplete="description"
+                error={
+                  formError.description
+                  && formError.description.error
+                }
+                helperText={
+                  formError.description
+                    ? formError.description.message
+                    : ''
+                }
+                onBlur={(e) => handleBlur(e, 'required', description)}
+                {...description.bind}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                select
+                id="type"
+                label="Issue Type"
+                name="type"
+                autoComplete="type"
+                error={
+                  formError.type
+                  && formError.type.error
+                }
+                helperText={
+                  formError.type
+                    ? formError.type.message
+                    : ''
+                }
+                onBlur={(e) => handleBlur(e, 'required', type)}
+                {...type.bind}
+              >
+                <MenuItem value="">Select</MenuItem>
+                {_.map(types, (tp) => (
+                  <MenuItem
+                    key={`type-${tp.id}`}
+                    value={tp.value}
+                  >
+                    {tp.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                select
+                id="repo"
+                label="Link to Repo Status"
+                name="repo"
+                autoComplete="repo"
+                error={
+                  formError.repo
+                  && formError.repo.error
+                }
+                helperText={
+                  formError.repo
+                    ? formError.repo.message
+                    : ''
+                }
+                onBlur={(e) => handleBlur(e, 'required', repo)}
+                {...repo.bind}
+              >
+                <MenuItem value="">Select</MenuItem>
+                {_.map(
+                  _.filter(repos, { projectID }),
+                  (rp) => (
+                    <MenuItem
+                      key={`type-${rp.projectID}-${rp.id}`}
+                      value={rp.name}
+                    >
+                      {rp.name}
+                    </MenuItem>
+                  ),
+                )}
+              </TextField>
+            </Grid>
+            {editPage && (
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -242,33 +306,34 @@ const RequirementToIssue = ({
                   required
                   fullWidth
                   select
-                  id="type"
-                  label="Issue Type"
-                  name="type"
-                  autoComplete="type"
+                  id="issueStatus"
+                  label="Issue Status"
+                  name="issueStatus"
+                  autoComplete="issueStatus"
                   error={
-                    formError.type
-                    && formError.type.error
+                    formError.issueStatus
+                    && formError.issueStatus.error
                   }
                   helperText={
-                    formError.type
-                      ? formError.type.message
+                    formError.issueStatus
+                      ? formError.issueStatus.message
                       : ''
                   }
-                  onBlur={(e) => handleBlur(e, 'required', type)}
-                  {...type.bind}
+                  onBlur={(e) => handleBlur(e, 'required', issueStatus)}
+                  {...issueStatus.bind}
                 >
-                  <MenuItem value="">Select</MenuItem>
-                  {_.map(types, (tp) => (
+                  {_.map(status, (st) => (
                     <MenuItem
-                      key={`type-${tp.id}`}
-                      value={tp.value}
+                      key={`type-${st.id}`}
+                      value={st.value}
                     >
-                      {tp.name}
+                      {st.name}
                     </MenuItem>
                   ))}
                 </TextField>
               </Grid>
+            )}
+            {editPage && (
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -276,147 +341,73 @@ const RequirementToIssue = ({
                   required
                   fullWidth
                   select
-                  id="repo"
-                  label="Link to Repo Status"
-                  name="repo"
-                  autoComplete="repo"
+                  id="assignedTo"
+                  label="Assigned To"
+                  name="assignedTo"
+                  autoComplete="assignedTo"
                   error={
-                    formError.repo
-                    && formError.repo.error
+                    formError.assignedTo
+                    && formError.assignedTo.error
                   }
                   helperText={
-                    formError.repo
-                      ? formError.repo.message
+                    formError.assignedTo
+                      ? formError.assignedTo.message
                       : ''
                   }
-                  onBlur={(e) => handleBlur(e, 'required', repo)}
-                  {...repo.bind}
+                  onBlur={(e) => handleBlur(e, 'required', assignedTo)}
+                  {...assignedTo.bind}
                 >
                   <MenuItem value="">Select</MenuItem>
                   {_.map(
-                    _.filter(repos, { projectID }),
-                    (rp) => (
+                    _.filter(devs, { projectID }),
+                    (dev) => (
                       <MenuItem
-                        key={`type-${rp.projectID}-${rp.id}`}
-                        value={rp.name}
+                        key={`type-${dev.projectID}-${dev.id}`}
+                        value={dev.value}
                       >
-                        {rp.name}
+                        {dev.name}
                       </MenuItem>
                     ),
                   )}
                 </TextField>
               </Grid>
-              {editPage && (
-                <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    select
-                    id="issueStatus"
-                    label="Issue Status"
-                    name="issueStatus"
-                    autoComplete="issueStatus"
-                    error={
-                      formError.issueStatus
-                      && formError.issueStatus.error
-                    }
-                    helperText={
-                      formError.issueStatus
-                        ? formError.issueStatus.message
-                        : ''
-                    }
-                    onBlur={(e) => handleBlur(e, 'required', issueStatus)}
-                    {...issueStatus.bind}
-                  >
-                    {_.map(status, (st) => (
-                      <MenuItem
-                        key={`type-${st.id}`}
-                        value={st.value}
-                      >
-                        {st.name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-              )}
-              {editPage && (
-                <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    select
-                    id="assignedTo"
-                    label="Assigned To"
-                    name="assignedTo"
-                    autoComplete="assignedTo"
-                    error={
-                      formError.assignedTo
-                      && formError.assignedTo.error
-                    }
-                    helperText={
-                      formError.assignedTo
-                        ? formError.assignedTo.message
-                        : ''
-                    }
-                    onBlur={(e) => handleBlur(e, 'required', assignedTo)}
-                    {...assignedTo.bind}
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {_.map(
-                      _.filter(devs, { projectID }),
-                      (dev) => (
-                        <MenuItem
-                          key={`type-${dev.projectID}-${dev.id}`}
-                          value={dev.value}
-                        >
-                          {dev.name}
-                        </MenuItem>
-                      ),
-                    )}
-                  </TextField>
-                </Grid>
-              )}
-            </Grid>
+            )}
+          </Grid>
 
-            <Grid
-              container
-              spacing={isDesktop ? 3 : 0}
-              justify="center"
-            >
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  disabled={submitDisabled()}
-                >
-                  {buttonText}
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="button"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={discardFormData}
-                  className={classes.submit}
-                >
-                  Cancel
-                </Button>
-              </Grid>
+          <Grid
+            container
+            spacing={isDesktop ? 3 : 0}
+            justifyContent="center"
+          >
+            <Grid item xs={12} sm={4}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                disabled={submitDisabled()}
+              >
+                {buttonText}
+              </Button>
             </Grid>
-          </form>
-        </FormModal>
-      )}
-    </>
-  );
+            <Grid item xs={12} sm={4}>
+              <Button
+                type="button"
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={discardFormData}
+                className={classes.submit}
+              >
+                Cancel
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
+      </FormModal>
+    )}
+  </>;
 };
 
 const mapStateToProps = (state, ownProps) => ({

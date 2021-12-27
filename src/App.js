@@ -2,7 +2,7 @@ import * as React from 'react';
 import 'react-notifications/lib/notifications.css';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@material-ui/core';
+import { ThemeProvider, StyledEngineProvider, CssBaseline } from '@mui/material';
 import Alerts from './components/Alerts/Alerts';
 import ContainerDashboard from './layout/Container/Container';
 import { oauthService } from './modules/oauth/oauth.service';
@@ -18,28 +18,30 @@ import theme from './styles/theme';
 
 const App = () => (
   <Router>
-    <ThemeProvider theme={theme}>
-      <div className="app">
-        <CssBaseline />
-        <Route
-          exact
-          path="/"
-          render={() => (oauthService.hasValidAccessToken() ? (
-            <Redirect to={routes.DASHBOARD} />
-          ) : (
-            <Redirect to={routes.LOGIN} />
-          ))}
-        />
-        <Route path={routes.LOGIN} component={Login} />
-        <Route path={routes.REGISTER} component={Register} />
-        <Route path={routes.FORGOT_PASSWORD} component={ForgotPassword} />
-        <Route path={routes.RESET_PASSWORD} component={ResetPassword} />
-        <Route path={routes.HELP} component={Help} />
-        <Route path={routes.TICKET_STATUS} component={TicketStatus} />
-        <PrivateRoute path={routes.APP} component={ContainerDashboard} />
-      </div>
-      <Alerts />
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <div className="app">
+          <CssBaseline />
+          <Route
+            exact
+            path="/"
+            render={() => (oauthService.hasValidAccessToken() ? (
+              <Redirect to={routes.DASHBOARD} />
+            ) : (
+              <Redirect to={routes.LOGIN} />
+            ))}
+          />
+          <Route path={routes.LOGIN} component={Login} />
+          <Route path={routes.REGISTER} component={Register} />
+          <Route path={routes.FORGOT_PASSWORD} component={ForgotPassword} />
+          <Route path={routes.RESET_PASSWORD} component={ResetPassword} />
+          <Route path={routes.HELP} component={Help} />
+          <Route path={routes.TICKET_STATUS} component={TicketStatus} />
+          <PrivateRoute path={routes.APP} component={ContainerDashboard} />
+        </div>
+        <Alerts />
+      </ThemeProvider>
+    </StyledEngineProvider>
   </Router>
 );
 

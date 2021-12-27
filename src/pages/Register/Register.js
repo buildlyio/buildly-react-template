@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
-  makeStyles,
   Button,
   CssBaseline,
   TextField,
@@ -12,9 +11,10 @@ import {
   Typography,
   Container,
   Grid,
-} from '@material-ui/core';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import logo from '@assets/light-logo.png';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete from '@mui/material/Autocomplete';
 import Copyright from '@components/Copyright/Copyright';
 import GithubLogin from '@components/SocialLogin/GithubLogin';
 import { useInput } from '@hooks/useInput';

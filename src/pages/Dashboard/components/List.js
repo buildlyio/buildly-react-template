@@ -1,16 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import {
-  makeStyles,
-  Typography,
-} from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   AddRounded as AddRoundedIcon,
   EditRounded as EditRoundedIcon,
   DeleteRounded as DeleteRoundedIcon,
   TrendingFlatRounded as TrendingFlatRoundedIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 
 const useStyles = makeStyles((theme) => ({
   section2: {

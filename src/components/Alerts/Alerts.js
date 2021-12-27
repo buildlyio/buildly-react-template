@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { makeStyles, Snackbar } from '@material-ui/core';
-import MuiAlert from '@material-ui/lab/Alert';
+import { Snackbar } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import MuiAlert from '@mui/material/Alert';
 import { hideAlert } from '@redux/alert/actions/alert.actions';
 
 const Alert = (props) => <MuiAlert elevation={6} variant="filled" {...props} />;

@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   useTheme,
-  makeStyles,
   useMediaQuery,
   Grid,
   Typography,
@@ -14,7 +13,8 @@ import {
   MenuItem,
   Button,
   FormLabel,
-} from '@material-ui/core';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';

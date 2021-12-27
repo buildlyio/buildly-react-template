@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
-  makeStyles,
   Button,
   CssBaseline,
   TextField,
@@ -12,7 +11,8 @@ import {
   CardContent,
   Typography,
   Container,
-} from '@material-ui/core';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import logo from '@assets/light-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import GithubLogin from '@components/SocialLogin/GithubLogin';

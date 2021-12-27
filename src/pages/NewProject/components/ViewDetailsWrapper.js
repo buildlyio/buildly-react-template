@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-  Button,
-  Grid,
-  Box,
-  Typography,
-} from '@material-ui/core';
+import { useMediaQuery, useTheme, Button, Grid, Box, Typography } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles((theme) => ({
   submit: {

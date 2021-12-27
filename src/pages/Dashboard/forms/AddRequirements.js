@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import {
-  makeStyles,
-  useTheme,
-  useMediaQuery,
-  Grid,
-  TextField,
-  Button,
-} from '@material-ui/core';
+import { useTheme, useMediaQuery, Grid, TextField, Button } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
 import {
@@ -144,110 +138,108 @@ const AddRequirements = ({
     return errorExists;
   };
 
-  return (
-    <>
-      {openFormModal && (
-        <FormModal
-          open={openFormModal}
-          handleClose={closeFormModal}
-          name={formTitle}
-          nameClass={classes.formTitle}
-          maxWidth="md"
-          wantConfirm
-          openConfirmModal={openConfirmModal}
-          setConfirmModal={setConfirmModal}
-          handleConfirmModal={discardFormData}
+  return <>
+    {openFormModal && (
+      <FormModal
+        open={openFormModal}
+        handleClose={closeFormModal}
+        title={formTitle}
+        titleClass={classes.formTitle}
+        maxWidth="md"
+        wantConfirm
+        openConfirmModal={openConfirmModal}
+        setConfirmModal={setConfirmModal}
+        handleConfirmModal={discardFormData}
+      >
+        <form
+          className={classes.form}
+          noValidate
+          onSubmit={handleSubmit}
         >
-          <form
-            className={classes.form}
-            noValidate
-            onSubmit={handleSubmit}
-          >
-            <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="name"
-                  label="Title"
-                  name="name"
-                  autoComplete="name"
-                  error={
-                    formError.name
-                    && formError.name.error
-                  }
-                  helperText={
-                    formError.name
-                      ? formError.name.message
-                      : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', name)}
-                  {...name.bind}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  multiline
-                  id="description"
-                  label="Description"
-                  name="description"
-                  autoComplete="description"
-                  error={
-                    formError.description
-                    && formError.description.error
-                  }
-                  helperText={
-                    formError.description
-                      ? formError.description.message
-                      : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', description)}
-                  {...description.bind}
-                />
-              </Grid>
+          <Grid container spacing={isDesktop ? 2 : 0}>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="name"
+                label="Title"
+                name="name"
+                autoComplete="name"
+                error={
+                  formError.name
+                  && formError.name.error
+                }
+                helperText={
+                  formError.name
+                    ? formError.name.message
+                    : ''
+                }
+                onBlur={(e) => handleBlur(e, 'required', name)}
+                {...name.bind}
+              />
             </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                multiline
+                id="description"
+                label="Description"
+                name="description"
+                autoComplete="description"
+                error={
+                  formError.description
+                  && formError.description.error
+                }
+                helperText={
+                  formError.description
+                    ? formError.description.message
+                    : ''
+                }
+                onBlur={(e) => handleBlur(e, 'required', description)}
+                {...description.bind}
+              />
+            </Grid>
+          </Grid>
 
-            <Grid
-              container
-              spacing={isDesktop ? 3 : 0}
-              justify="center"
-            >
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  disabled={submitDisabled()}
-                >
-                  {buttonText}
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="button"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={discardFormData}
-                  className={classes.submit}
-                >
-                  Cancel
-                </Button>
-              </Grid>
+          <Grid
+            container
+            spacing={isDesktop ? 3 : 0}
+            justifyContent="center"
+          >
+            <Grid item xs={12} sm={4}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                disabled={submitDisabled()}
+              >
+                {buttonText}
+              </Button>
             </Grid>
-          </form>
-        </FormModal>
-      )}
-    </>
-  );
+            <Grid item xs={12} sm={4}>
+              <Button
+                type="button"
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={discardFormData}
+                className={classes.submit}
+              >
+                Cancel
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
+      </FormModal>
+    )}
+  </>;
 };
 
 const mapStateToProps = (state, ownProps) => ({

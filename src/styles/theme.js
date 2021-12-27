@@ -1,9 +1,9 @@
 /* eslint-disable import/no-unresolved */
-import { createTheme, responsiveFontSizes } from '@material-ui/core/styles';
+import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
-const theme = createTheme({
+const theme = createTheme(({
   palette: {
-    type: 'dark',
+    mode: 'dark',
     primary: {
       main: '#09b79a',
       contrastText: '#fff',
@@ -27,9 +27,9 @@ const theme = createTheme({
       textTransform: 'none',
     },
   },
-  overrides: {
+  components: {
     MuiCssBaseline: {
-      '@global': {
+      styleOverrides: {
         body: {
           padding: 0,
           backgroundColor: '#202020',
@@ -37,6 +37,6 @@ const theme = createTheme({
       },
     },
   },
-});
+}));
 
 export default responsiveFontSizes(theme);

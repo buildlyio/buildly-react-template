@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  withStyles,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -8,8 +7,9 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core';
-import { Close as CloseIcon } from '@material-ui/icons';
+} from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
+import { Close as CloseIcon } from '@mui/icons-material';
 import ConfirmModal from './ConfirmModal';
 
 const styles = (theme) => ({
@@ -32,12 +32,8 @@ const StyledDialogTitle = withStyles(styles)(({
   titleClass,
   ...other
 }) => (
-  <DialogTitle
-    disableTypography
-    className={classes.root}
-    {...other}
-  >
-    <Typography className={titleClass} variant="h6">
+  <DialogTitle className={classes.root} {...other}>
+    <Typography className={titleClass}>
       {children}
     </Typography>
     {onClose ? (
@@ -45,7 +41,7 @@ const StyledDialogTitle = withStyles(styles)(({
         aria-label="close"
         className={classes.closeButton}
         onClick={onClose}
-      >
+        size="large">
         <CloseIcon />
       </IconButton>
     ) : null}
@@ -65,7 +61,7 @@ const FormModal = ({
   handleConfirmModal,
 }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
     <div>

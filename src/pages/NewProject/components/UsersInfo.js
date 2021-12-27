@@ -1,20 +1,12 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import _ from "lodash";
-import {
-  useTheme,
-  makeStyles,
-  useMediaQuery,
-  Grid,
-  Typography,
-  Box,
-  TextField,
-  Button,
-} from "@material-ui/core";
+import { useTheme, useMediaQuery, Grid, Typography, Box, TextField, Button } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { useInput } from "@hooks/useInput";
 import { validators } from "@utils/validators";
-import AddIcon from "@material-ui/icons/Add";
-import RemoveIcon from "@material-ui/icons/Remove";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 
 const useStyles = makeStyles((theme) => ({
   form: {

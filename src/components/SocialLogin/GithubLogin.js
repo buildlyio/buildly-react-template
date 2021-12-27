@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import { Button } from '@material-ui/core';
-import { GitHub as GitHubIcon } from '@material-ui/icons';
+import { Button } from '@mui/material';
+import { GitHub as GitHubIcon } from '@mui/icons-material';
 import { socialLogin } from '@redux/authuser/actions/authuser.actions';
 import { providers, toQuery } from '@utils/socialLogin';
 import PopupWindow from './PopupWindow';
@@ -38,11 +38,9 @@ const GithubLogin = ({ dispatch, history, disabled }) => {
     <Button
       fullWidth
       variant="contained"
-      color="default"
       startIcon={<GitHubIcon />}
       onClick={onBtnClick}
-      disabled={Boolean(disabled)}
-    >
+      disabled={Boolean(disabled)}>
       Sign in with Github
     </Button>
   );

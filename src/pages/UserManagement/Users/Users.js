@@ -1,17 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { rem } from 'polished';
-import {
-  makeStyles,
-  Typography,
-  Button,
-  IconButton,
-  ButtonGroup,
-  Menu,
-  MenuItem,
-  Box,
-} from '@material-ui/core';
-import { MoreHoriz } from '@material-ui/icons';
+import { Typography, Button, IconButton, ButtonGroup, Menu, MenuItem, Box } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { MoreHoriz } from '@mui/icons-material';
 import { StyledTable } from '@components/StyledTable/StyledTable';
 import { UserContext } from '@context/User.context';
 import Crud from '@modules/crud/Crud';
@@ -127,38 +119,36 @@ const Users = ({ data, dispatch }) => {
       setMenu({ row: null, element: null });
     };
 
-    return (
-      <>
-        <IconButton
-          className={classes.icon}
-          disabled={user.core_user_uuid === row.core_user_uuid}
-          aria-label="more"
-          aria-controls={`userActions${row.id}`}
-          aria-haspopup="true"
-          onClick={handleMenuClick}
-        >
-          <MoreHoriz color="inherit" />
-        </IconButton>
-        <Menu
-          id={`userActions${row.id}`}
-          anchorEl={menu.element}
-          keepMounted
-          open={Boolean(menu.row && menu.row.id === row.id)}
-          onClose={handleMenuClose}
-        >
-          {row.actions
-            .filter((option) => !(option.value === 'delete' && row.is_active))
-            .map((option) => (
-              <MenuItem
-                key={`userActions${row.id}:${option.value}`}
-                onClick={() => handleMenuItemClick(option.value)}
-              >
-                {option.label}
-              </MenuItem>
-            ))}
-        </Menu>
-      </>
-    );
+    return <>
+      <IconButton
+        className={classes.icon}
+        disabled={user.core_user_uuid === row.core_user_uuid}
+        aria-label="more"
+        aria-controls={`userActions${row.id}`}
+        aria-haspopup="true"
+        onClick={handleMenuClick}
+        size="large">
+        <MoreHoriz color="inherit" />
+      </IconButton>
+      <Menu
+        id={`userActions${row.id}`}
+        anchorEl={menu.element}
+        keepMounted
+        open={Boolean(menu.row && menu.row.id === row.id)}
+        onClose={handleMenuClose}
+      >
+        {row.actions
+          .filter((option) => !(option.value === 'delete' && row.is_active))
+          .map((option) => (
+            <MenuItem
+              key={`userActions${row.id}:${option.value}`}
+              onClick={() => handleMenuItemClick(option.value)}
+            >
+              {option.label}
+            </MenuItem>
+          ))}
+      </Menu>
+    </>;
   };
 
   return (

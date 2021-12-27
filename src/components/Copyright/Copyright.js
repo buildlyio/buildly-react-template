@@ -1,11 +1,6 @@
 import React, { useContext } from 'react';
-import {
-  AppBar,
-  makeStyles,
-  Toolbar,
-  Typography,
-  Link,
-} from '@material-ui/core';
+import { AppBar, Toolbar, Typography, Link } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { AppContext } from '@context/App.context';
 import Support from './Support';
 import Services from './Services';

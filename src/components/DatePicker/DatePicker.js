@@ -1,11 +1,10 @@
 import React from "react";
-import DateFnsUtils from "@date-io/date-fns";
-import { makeStyles } from "@material-ui/core";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-  KeyboardDateTimePicker,
-} from "@material-ui/pickers";
+import makeStyles from '@mui/styles/makeStyles';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { TextField } from "@mui/material"
+import DatePicker from '@mui/lab/DatePicker';
+import DateTimePicker from '@mui/lab/DateTimePicker';
 import CustomizedTooltips from "@components/ToolTip/ToolTip";
 
 const useStyles = makeStyles((theme) => ({
@@ -27,39 +26,31 @@ const DatePickerComponent = ({
 
   return (
     <div className={classes.root}>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
         {hasTime ? (
-          <KeyboardDateTimePicker
-            variant="inline"
-            inputVariant="outlined"
+          <DateTimePicker
             ampm={false}
-            fullWidth
-            margin="normal"
             disabled={disabled}
-            label={label}
             value={selectedDate}
             onChange={handleDateChange}
             format="MM/dd/yyyy HH:mm:ss"
+            renderInput={(props) => <TextField  {...props} label={label} fullWidth margin="normal" />}
           />
         ) : (
-          <KeyboardDatePicker
-            autoOk
-            fullWidth
-            inputVariant="outlined"
-            variant="inline"
+          <DatePicker
             format="MM/dd/yyyy"
-            margin="normal"
             disabled={disabled}
             id="date-picker-inline"
-            label={label}
             value={selectedDate}
             onChange={handleDateChange}
+            renderInput={(props) => <TextField  {...props} label={label} fullWidth margin="normal" />}
             KeyboardButtonProps={{
               "aria-label": "change date",
             }}
           />
+
         )}
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
       {helpText && <CustomizedTooltips toolTipText={helpText} />}
     </div>
   );

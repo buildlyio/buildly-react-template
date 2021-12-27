@@ -1,14 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import {
-  makeStyles,
-  Stepper,
-  Step,
-  StepLabel,
-  Hidden,
-  Grid,
-} from '@material-ui/core';
+import { Stepper, Step, StepLabel, Hidden, Grid } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import FormModal from '@components/Modal/FormModal';
 import { UserContext } from '@context/User.context';
 import { routes } from '@routes/routesConstants';
@@ -308,7 +302,7 @@ const NewProjectForm = (props) => {
         handleConfirmModal={handleConfirmModal}
       >
         <div className={classes.root}>
-          <Hidden xsDown>
+          <Hidden smDown>
             <Grid container alignItems="center" justifyContent="center">
               <Grid item sm={10}>
                 <Stepper

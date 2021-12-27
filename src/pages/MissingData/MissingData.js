@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import {
-  makeStyles,
   Backdrop,
   Grid,
   Button,
@@ -12,8 +11,9 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
-} from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import Autocomplete from '@mui/material/Autocomplete';
 import { UserContext } from '@context/User.context';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
@@ -211,7 +211,7 @@ const MissingData = ({
                 </Grid>
               )}
             </Grid>
-            <Grid container justify="center">
+            <Grid container justifyContent="center">
               <Grid item>
                 <Button
                   type="submit"

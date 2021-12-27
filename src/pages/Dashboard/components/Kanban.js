@@ -11,15 +11,10 @@ import {
   TrendingFlatRounded as TrendingFlatRoundedIcon,
   MoreVert as MoreVertIcon,
   MoreHoriz as MoreHorizIcon,
-} from '@material-ui/icons';
-import {
-  makeStyles,
-  Card,
-  CardContent,
-  IconButton,
-  CardHeader,
-  Chip,
-} from '@material-ui/core';
+} from '@mui/icons-material';
+import { Card, CardContent, IconButton, CardHeader, Chip } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles((theme) => ({
   kanbanContainer: {
@@ -198,7 +193,7 @@ const Kanban = (props) => {
           <div className={classes.column} key={columnId}>
             <div className={classes.columnHead}>
               <p>{column.name}</p>
-              <IconButton onClick={(e) => addItem(index === 0 ? 'req' : 'issue')}>
+              <IconButton onClick={(e) => addItem(index === 0 ? 'req' : 'issue')} size="large">
                 <AddRoundedIcon
                   className={classes.icon}
                   fontSize="small"
@@ -251,7 +246,7 @@ const Kanban = (props) => {
                                     aria-controls="menu-card"
                                     aria-haspopup="false"
                                     color="default"
-                                  >
+                                    size="large">
                                     <TrendingFlatRoundedIcon
                                       className={classes.icon}
                                       fontSize="small"
@@ -265,7 +260,7 @@ const Kanban = (props) => {
                                     aria-haspopup="false"
                                     color="default"
                                     onClick={(e) => editItem(item, item.featureUUID ? 'issue' : 'req')}
-                                  >
+                                    size="large">
                                     <EditRoundedIcon className={classes.icon} fontSize="small" />
                                   </IconButton>
                                   <IconButton
@@ -274,7 +269,7 @@ const Kanban = (props) => {
                                     aria-haspopup="false"
                                     color="default"
                                     onClick={(e) => deleteItem(item, item.featureUUID ? 'issue' : 'req')}
-                                  >
+                                    size="large">
                                     <DeleteRoundedIcon className={classes.icon} fontSize="small" />
                                   </IconButton>
                                 </div>

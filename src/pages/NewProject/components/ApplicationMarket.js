@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   useTheme,
-  makeStyles,
   useMediaQuery,
   Grid,
   Typography,
@@ -16,7 +15,8 @@ import {
   InputLabel,
   Select,
   Button,
-} from '@material-ui/core';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 

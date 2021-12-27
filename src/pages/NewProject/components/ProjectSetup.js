@@ -4,7 +4,6 @@ import _ from 'lodash';
 import {
   Button,
   useTheme,
-  makeStyles,
   useMediaQuery,
   Grid,
   TextField,
@@ -14,8 +13,9 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
-} from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Autocomplete } from '@mui/material';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
@@ -119,7 +119,7 @@ function StyledRadio(props) {
 
   return (
     <Radio
-      className={classes.root}
+      // className={classes.root}
       color="primary"
       checkedIcon={
         <span className={`${classes.icon} ${classes.checkedIcon}`} />

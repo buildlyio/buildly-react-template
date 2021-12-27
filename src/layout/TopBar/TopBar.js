@@ -1,14 +1,13 @@
 import React, { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import {
-  makeStyles, AppBar, Toolbar, IconButton, Hidden,
-} from '@material-ui/core';
+import { AppBar, Toolbar, IconButton, Hidden } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   ExitToApp as ExitToAppIcon,
   Group as GroupIcon,
   Menu as MenuIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import logo from '@assets/light-logo.png';
 import { UserContext } from '@context/User.context';
 import { logout } from '@redux/authuser/actions/authuser.actions';
@@ -72,7 +71,7 @@ const TopBar = ({ location, history, dispatch, navHidden, setNavHidden, }) => {
             onClick={() => setNavHidden(!navHidden)}
             color="default"
             aria-label="menu"
-          >
+            size="large">
             <MenuIcon />
           </IconButton>
         </Hidden>
@@ -83,7 +82,7 @@ const TopBar = ({ location, history, dispatch, navHidden, setNavHidden, }) => {
         <div className={classes.menuRight}>
           {isAdmin && (
             <Link to={routes.USER_MANAGEMENT}>
-              <IconButton aria-label="user-management" color="inherit">
+              <IconButton aria-label="user-management" color="inherit" size="large">
                 <GroupIcon fontSize="large" className={classes.menuIcon} />
               </IconButton>
             </Link>
@@ -92,7 +91,7 @@ const TopBar = ({ location, history, dispatch, navHidden, setNavHidden, }) => {
             aria-label="logout"
             color="inherit"
             onClick={handleLogoutClick}
-          >
+            size="large">
             <ExitToAppIcon fontSize="large" className={classes.menuIcon} />
           </IconButton>
         </div>

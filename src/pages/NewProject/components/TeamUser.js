@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   useTheme,
-  makeStyles,
   useMediaQuery,
   Grid,
   Typography,
@@ -23,11 +22,12 @@ import {
   IconButton,
   TextField,
   Button,
-} from '@material-ui/core';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -353,7 +353,7 @@ const TeamUser = (props) => {
                                 });
                               }
                             }}
-                          >
+                            size="large">
                             <RemoveIcon />
                           </IconButton>
                         </TableCell>
@@ -381,7 +381,7 @@ const TeamUser = (props) => {
                                 return [...prevRole_count];
                               });
                             }}
-                          >
+                            size="large">
                             <AddIcon />
                           </IconButton>
                         </TableCell>

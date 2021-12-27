@@ -1,16 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import _ from 'lodash';
-import {
-  Divider,
-  Drawer,
-  Hidden,
-  List,
-  ListItem,
-  ListItemText,
-  makeStyles,
-  useTheme,
-} from '@material-ui/core';
+import { Divider, Drawer, Hidden, List, ListItem, ListItemText, useTheme } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { isMobile } from '@utils/mediaQuery';
 import { NAVIGATION_ITEMS } from './NavBarConstants';
 
@@ -118,7 +110,7 @@ const NavBar = ({ navHidden, setNavHidden }) => {
           {drawer}
         </Drawer>
       </Hidden>
-      <Hidden smDown implementation="css">
+      <Hidden mdDown implementation="css">
         <Drawer
           classes={{
             paper: classes.drawerPaper,

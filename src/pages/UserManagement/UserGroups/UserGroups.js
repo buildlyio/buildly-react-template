@@ -1,15 +1,7 @@
 import React, { useState, useContext } from 'react';
-import {
-  Button,
-  Grid,
-  IconButton,
-  Menu,
-  MenuItem,
-  Switch,
-  Box,
-  makeStyles,
-} from '@material-ui/core';
-import { AddCircle as AddIcon, MoreHoriz } from '@material-ui/icons';
+import { Button, Grid, IconButton, Menu, MenuItem, Switch, Box } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { AddCircle as AddIcon, MoreHoriz } from '@mui/icons-material';
 import { InlineEditor } from '@components/InlineEditor/InlineEditor';
 import { StyledTable } from '@components/StyledTable/StyledTable';
 import { UserContext } from '@context/User.context';
@@ -90,36 +82,34 @@ const UserGroups = () => {
       setMenu({ row: null, element: null });
     };
 
-    return (
-      <>
-        <IconButton
-          className={classes.icon}
-          aria-label="more"
-          aria-controls={`groupActions${row.id}`}
-          aria-haspopup="true"
-          disabled={user.core_groups[0].id === row.id || !row.organization}
-          onClick={handleMenuClick}
-        >
-          <MoreHoriz color="inherit" />
-        </IconButton>
-        <Menu
-          id={`groupActions${row.id}`}
-          anchorEl={menu.element}
-          keepMounted
-          open={(menu.row && menu.row.id === row.id) || false}
-          onClose={handleMenuClose}
-        >
-          {row.actions.map((option) => (
-            <MenuItem
-              key={`groupActions${row.id}:${option.value}`}
-              onClick={() => handleMenuItemClick(option.value)}
-            >
-              {option.label}
-            </MenuItem>
-          ))}
-        </Menu>
-      </>
-    );
+    return <>
+      <IconButton
+        className={classes.icon}
+        aria-label="more"
+        aria-controls={`groupActions${row.id}`}
+        aria-haspopup="true"
+        disabled={user.core_groups[0].id === row.id || !row.organization}
+        onClick={handleMenuClick}
+        size="large">
+        <MoreHoriz color="inherit" />
+      </IconButton>
+      <Menu
+        id={`groupActions${row.id}`}
+        anchorEl={menu.element}
+        keepMounted
+        open={(menu.row && menu.row.id === row.id) || false}
+        onClose={handleMenuClose}
+      >
+        {row.actions.map((option) => (
+          <MenuItem
+            key={`groupActions${row.id}:${option.value}`}
+            onClick={() => handleMenuItemClick(option.value)}
+          >
+            {option.label}
+          </MenuItem>
+        ))}
+      </Menu>
+    </>;
   };
 
   const update = (crud, row, value) => {
@@ -154,58 +144,56 @@ const UserGroups = () => {
             });
           }
 
-          return (
-            <>
-              <Grid container justify="flex-end">
-                <Grid item>
-                  <Button
-                    color="primary"
-                    size="small"
-                    variant="outlined"
-                    onClick={() => addGroup(crud)}
-                    startIcon={<AddIcon />}
-                  >
-                    Add group
-                  </Button>
-                </Grid>
+          return <>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Button
+                  color="primary"
+                  size="small"
+                  variant="outlined"
+                  onClick={() => addGroup(crud)}
+                  startIcon={<AddIcon />}
+                >
+                  Add group
+                </Button>
               </Grid>
-              <StyledTable
-                columns={[
-                  {
-                    label: 'Group type',
-                    prop: 'name',
-                    template: (row) => nameTemplate(row, crud),
-                  },
-                  {
-                    label: 'Create',
-                    prop: 'Create',
-                    template: (row) => permissionCellTemplate(row, crud, 'create'),
-                  },
-                  {
-                    label: 'Read',
-                    prop: 'Read',
-                    template: (row) => permissionCellTemplate(row, crud, 'read'),
-                  },
-                  {
-                    label: 'Update',
-                    prop: 'Update',
-                    template: (row) => permissionCellTemplate(row, crud, 'update'),
-                  },
-                  {
-                    label: 'Delete',
-                    prop: 'Delete',
-                    template: (row) => permissionCellTemplate(row, crud, 'delete'),
-                  },
-                  {
-                    label: 'Actions',
-                    prop: 'options',
-                    template: (row) => actionsTemplate(row, crud),
-                  },
-                ]}
-                rows={crud.getData()}
-              />
-            </>
-          );
+            </Grid>
+            <StyledTable
+              columns={[
+                {
+                  label: 'Group type',
+                  prop: 'name',
+                  template: (row) => nameTemplate(row, crud),
+                },
+                {
+                  label: 'Create',
+                  prop: 'Create',
+                  template: (row) => permissionCellTemplate(row, crud, 'create'),
+                },
+                {
+                  label: 'Read',
+                  prop: 'Read',
+                  template: (row) => permissionCellTemplate(row, crud, 'read'),
+                },
+                {
+                  label: 'Update',
+                  prop: 'Update',
+                  template: (row) => permissionCellTemplate(row, crud, 'update'),
+                },
+                {
+                  label: 'Delete',
+                  prop: 'Delete',
+                  template: (row) => permissionCellTemplate(row, crud, 'delete'),
+                },
+                {
+                  label: 'Actions',
+                  prop: 'options',
+                  template: (row) => actionsTemplate(row, crud),
+                },
+              ]}
+              rows={crud.getData()}
+            />
+          </>;
         }}
       </Crud>
     </Box>

@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { Route } from 'react-router-dom';
 import {
-  makeStyles,
   useTheme,
   MenuItem,
   TextField,
@@ -12,10 +11,11 @@ import {
   Button,
   Box,
   useMediaQuery,
-} from '@material-ui/core';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   AddRounded as AddRoundedIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import { routes } from '@routes/routesConstants';
 import { deleteRequirement, deleteIssue } from '@redux/dashboard/actions/dashboard.actions';
 import AddRequirements from '../forms/AddRequirements';
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
     top: '4rem',
     zIndex: '99',
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down('md')]: {
       width: '100%',
       left: 0
     },
@@ -77,11 +77,11 @@ const useStyles = makeStyles((theme) => ({
     // left: '0',
     width: '75%',
     padding: theme.spacing(0, 2),
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down('md')]: {
       width: '100%',
       left: 0
     },
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down('sm')]: {
       top: '17rem'
     },
   },

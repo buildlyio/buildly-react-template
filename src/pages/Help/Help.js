@@ -1,14 +1,6 @@
 import React from 'react';
-import {
-  makeStyles,
-  CssBaseline,
-  Link,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Container,
-} from '@material-ui/core';
+import { CssBaseline, Link, Grid, Card, CardContent, Typography, Container } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import logo from '@assets/light-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import { routes } from '@routes/routesConstants';
