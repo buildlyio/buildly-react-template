@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   FormControl,
   FormControlLabel,
@@ -19,7 +20,6 @@ import {
   FormGroup,
   Checkbox,
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import { UserContext } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
 import { addData } from '@redux/googleSheet/actions/googleSheet.actions';
@@ -203,6 +203,9 @@ const FeedbackForm = ({ dispatch, loading }) => {
           ...question13,
           [event.target.id]: event.target.checked,
         });
+        break;
+
+      default:
         break;
     }
   };

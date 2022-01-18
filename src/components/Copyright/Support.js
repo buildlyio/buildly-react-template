@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Link, Menu, MenuItem } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import {
+  Button,
+  Link,
+  Menu,
+  MenuItem,
+} from '@mui/material';
 import { routes } from '@routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({

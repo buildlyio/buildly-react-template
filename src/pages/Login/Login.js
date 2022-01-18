@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   Button,
   CssBaseline,
@@ -12,7 +13,6 @@ import {
   Typography,
   Container,
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import logo from '@assets/light-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import GithubLogin from '@components/SocialLogin/GithubLogin';
@@ -143,6 +143,7 @@ const Login = ({
   const submitDisabled = () => {
     const errorKeys = Object.keys(error);
     if (!username.value || !password.value) return true;
+    // eslint-disable-next-line consistent-return
     errorKeys.forEach((key) => {
       if (error[key].error) return true;
     });
@@ -152,7 +153,7 @@ const Login = ({
   return (
     <>
       <div className={classes.logoDiv}>
-        <img src={logo} className={classes.logo} />
+        <img src={logo} alt="Logo" className={classes.logo} />
       </div>
       <Container component="main" maxWidth="xs" className={classes.container}>
         <CssBaseline />

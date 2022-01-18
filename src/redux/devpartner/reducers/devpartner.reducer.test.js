@@ -5,372 +5,347 @@ const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  devTeam: null,
-  timesheet: null,
-  timesheet_hour: null,
+  devTeams: [],
+  timesheets: [],
+  timesheetHours: [],
 };
 
-describe('Get dev team reducer', () => {
+describe('Get all dev teams reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_DEVTEAMS },
+      { type: actions.ALL_DEV_TEAMS },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('get dev team success reducer', () => {
+  it('get all dev teams success reducer', () => {
+    const data = [{
+      devteam_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    }];
+
     expect(reducer.default(
       initialState,
-      { type: actions.GET_DEVTEAMS_SUCCESS },
+      { type: actions.ALL_DEV_TEAMS_SUCCESS, data },
     )).toEqual({
       ...initialState,
-      loaded: true,
       loading: false,
-      devTeam: undefined,
+      loaded: true,
+      devTeams: data,
     });
   });
 
-  it('get dev team fail reducer', () => {
+  it('get all dev teams fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_DEVTEAMS_FAILURE },
+      { type: actions.ALL_DEV_TEAMS_FAILURE },
     )).toEqual({
       ...initialState,
-      error: undefined,
-      loaded: true,
       loading: false,
+      loaded: true,
+      error: undefined,
     });
   });
 });
 
-describe('Add dev team reducer', () => {
+describe('Get a dev team reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.ADD_DEVTEAM },
+      { type: actions.GET_DEV_TEAM },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('add dev team success reducer', () => {
+  it('get a dev team success reducer', () => {
+    const data = {
+      devteam_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
     expect(reducer.default(
       initialState,
-      { type: actions.ADD_DEVTEAM_SUCCESS },
+      { type: actions.GET_DEV_TEAM_SUCCESS, data },
     )).toEqual({
       ...initialState,
-      loaded: true,
       loading: false,
-      devTeam: undefined,
+      loaded: true,
+      devTeams: [data],
     });
   });
 
-  it('add dev team fail reducer', () => {
+  it('get a dev team fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.ADD_DEVTEAM_FAILURE },
+      { type: actions.GET_DEV_TEAM_FAILURE },
     )).toEqual({
       ...initialState,
-      error: undefined,
-      loaded: true,
       loading: false,
+      loaded: true,
+      error: undefined,
     });
   });
 });
 
-describe('Update dev team reducer', () => {
+describe('Create a dev team reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.UPDATE_DEVTEAM },
+      { type: actions.CREATE_DEV_TEAM },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('update dev team success reducer', () => {
+  it('create a dev team success reducer', () => {
+    const data = {
+      devteam_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
     expect(reducer.default(
       initialState,
-      { type: actions.UPDATE_DEVTEAM_SUCCESS },
+      { type: actions.CREATE_DEV_TEAM_SUCCESS, data },
     )).toEqual({
       ...initialState,
-      loaded: true,
       loading: false,
-      devTeam: undefined,
+      loaded: true,
+      devTeams: [data],
     });
   });
 
-  it('update dev team fail reducer', () => {
+  it('create a dev team fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.UPDATE_DEVTEAM_FAILURE },
+      { type: actions.CREATE_DEV_TEAM_FAILURE },
     )).toEqual({
       ...initialState,
-      error: undefined,
-      loaded: true,
       loading: false,
+      loaded: true,
+      error: undefined,
     });
   });
 });
 
-describe('Delete dev team reducer', () => {
+describe('Update a dev team reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.DELETE_DEVTEAM },
+      { type: actions.UPDATE_DEV_TEAM },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('delete dev team success reducer', () => {
+  it('update a dev team success reducer', () => {
+    const data = {
+      devteam_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+    const editedData = {
+      devteam_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Edited',
+    };
+
     expect(reducer.default(
-      initialState,
-      { type: actions.DELETE_DEVTEAM_SUCCESS },
+      { ...initialState, devTeams: [data] },
+      { type: actions.UPDATE_DEV_TEAM_SUCCESS, data: editedData },
     )).toEqual({
       ...initialState,
-      loaded: true,
       loading: false,
-      devTeam: undefined,
+      loaded: true,
+      devTeams: [editedData],
     });
   });
 
-  it('delete dev team fail reducer', () => {
+  it('update a dev team fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.DELETE_DEVTEAM_FAILURE },
+      { type: actions.UPDATE_DEV_TEAM_FAILURE },
     )).toEqual({
       ...initialState,
-      error: undefined,
-      loaded: true,
       loading: false,
+      loaded: true,
+      error: undefined,
     });
   });
 });
 
-describe('Get timesheet reducer', () => {
+describe('Delete a dev team reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_TIMESHEETS },
+      { type: actions.DELETE_DEV_TEAM },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('get timesheet success reducer', () => {
+  it('delete a dev team success reducer', () => {
+    const data = {
+      devteam_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
     expect(reducer.default(
-      initialState,
-      { type: actions.GET_TIMESHEETS_SUCCESS },
+      { ...initialState, devTeams: [data] },
+      {
+        type: actions.DELETE_DEV_TEAM_SUCCESS,
+        devteam_uuid: data.devteam_uuid,
+      },
     )).toEqual({
       ...initialState,
-      loaded: true,
       loading: false,
-      timesheet: undefined,
+      loaded: true,
+      devTeams: [],
     });
   });
 
-  it('get timesheet fail reducer', () => {
+  it('delete a dev team fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_TIMESHEETS_FAILURE },
+      { type: actions.DELETE_DEV_TEAM_FAILURE },
     )).toEqual({
       ...initialState,
-      error: undefined,
-      loaded: true,
       loading: false,
+      loaded: true,
+      error: undefined,
     });
   });
 });
 
-describe('Add timesheet reducer', () => {
+describe('Get all timesheet hours reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.ADD_TIMESHEET },
+      { type: actions.ALL_TIMESHEET_HOURS },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('add timesheet success reducer', () => {
+  it('get all timesheet hours success reducer', () => {
+    const data = [{
+      timesheethour_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    }];
+
     expect(reducer.default(
       initialState,
-      { type: actions.ADD_TIMESHEET_SUCCESS },
+      { type: actions.ALL_TIMESHEET_HOURS_SUCCESS, data },
     )).toEqual({
       ...initialState,
-      loaded: true,
       loading: false,
-      timesheet: undefined,
+      loaded: true,
+      timesheetHours: data,
     });
   });
 
-  it('add timesheet fail reducer', () => {
+  it('get all timesheet hours fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.ADD_TIMESHEET_FAILURE },
+      { type: actions.ALL_TIMESHEET_HOURS_FAILURE },
     )).toEqual({
       ...initialState,
-      error: undefined,
-      loaded: true,
       loading: false,
+      loaded: true,
+      error: undefined,
     });
   });
 });
 
-describe('Update timesheet reducer', () => {
+describe('Get a timesheet hour reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.UPDATE_TIMESHEET },
+      { type: actions.GET_TIMESHEET_HOUR },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('update timesheet success reducer', () => {
+  it('get a timesheet hour success reducer', () => {
+    const data = {
+      timesheethour_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
     expect(reducer.default(
       initialState,
-      { type: actions.UPDATE_TIMESHEET_SUCCESS },
+      { type: actions.GET_TIMESHEET_HOUR_SUCCESS, data },
     )).toEqual({
       ...initialState,
-      loaded: true,
       loading: false,
-      timesheet: undefined,
+      loaded: true,
+      timesheetHours: [data],
     });
   });
 
-  it('update timesheet fail reducer', () => {
+  it('get a timesheet hour fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.UPDATE_TIMESHEET_FAILURE },
+      { type: actions.GET_TIMESHEET_HOUR_FAILURE },
     )).toEqual({
       ...initialState,
-      error: undefined,
-      loaded: true,
       loading: false,
+      loaded: true,
+      error: undefined,
     });
   });
 });
 
-describe('Delete timesheet reducer', () => {
+describe('Create a timesheet hour reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.DELETE_TIMESHEET },
+      { type: actions.CREATE_TIMESHEET_HOUR },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('delete timesheet success reducer', () => {
+  it('create a timesheet hour success reducer', () => {
+    const data = {
+      timesheethour_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
     expect(reducer.default(
       initialState,
-      { type: actions.DELETE_TIMESHEET_SUCCESS },
+      { type: actions.CREATE_TIMESHEET_HOUR_SUCCESS, data },
     )).toEqual({
       ...initialState,
-      loaded: true,
       loading: false,
-      timesheet: undefined,
+      loaded: true,
+      timesheetHours: [data],
     });
   });
 
-  it('delete timesheet fail reducer', () => {
+  it('create a timesheet hour fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.DELETE_TIMESHEET_FAILURE },
+      { type: actions.CREATE_TIMESHEET_HOUR_FAILURE },
     )).toEqual({
       ...initialState,
-      error: undefined,
-      loaded: true,
       loading: false,
+      loaded: true,
+      error: undefined,
     });
   });
 });
 
-describe('Get timesheet hour reducer', () => {
-  it('Empty reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_TIMESHEET_HOURS },
-    )).toEqual({
-      ...initialState,
-      loading: true,
-    });
-  });
-
-  it('get timesheet hour success reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_TIMESHEET_HOURS_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      timesheet_hour: undefined,
-    });
-  });
-
-  it('get timesheet hour fail reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.GET_TIMESHEET_HOURS_FAILURE },
-    )).toEqual({
-      ...initialState,
-      error: undefined,
-      loaded: true,
-      loading: false,
-    });
-  });
-});
-
-describe('Add timesheet hour reducer', () => {
-  it('Empty reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.ADD_TIMESHEET_HOUR },
-    )).toEqual({
-      ...initialState,
-      loading: true,
-    });
-  });
-
-  it('add timesheet hour success reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.ADD_TIMESHEET_HOUR_SUCCESS },
-    )).toEqual({
-      ...initialState,
-      loaded: true,
-      loading: false,
-      timesheet_hour: undefined,
-    });
-  });
-
-  it('add timesheet hour fail reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.ADD_TIMESHEET_HOUR_FAILURE },
-    )).toEqual({
-      ...initialState,
-      error: undefined,
-      loaded: true,
-      loading: false,
-    });
-  });
-});
-
-describe('Update timesheet hour reducer', () => {
+describe('Update a timesheet hour reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
@@ -381,32 +356,41 @@ describe('Update timesheet hour reducer', () => {
     });
   });
 
-  it('update timesheet hour success reducer', () => {
+  it('update a timesheet hour success reducer', () => {
+    const data = {
+      timesheethour_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+    const editedData = {
+      timesheethour_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Edited',
+    };
+
     expect(reducer.default(
-      initialState,
-      { type: actions.UPDATE_TIMESHEET_HOUR_SUCCESS },
+      { ...initialState, timesheetHours: [data] },
+      { type: actions.UPDATE_TIMESHEET_HOUR_SUCCESS, data: editedData },
     )).toEqual({
       ...initialState,
-      loaded: true,
       loading: false,
-      timesheet_hour: undefined,
+      loaded: true,
+      timesheetHours: [editedData],
     });
   });
 
-  it('update timesheet hour fail reducer', () => {
+  it('update a timesheet hour fail reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.UPDATE_TIMESHEET_HOUR_FAILURE },
     )).toEqual({
       ...initialState,
-      error: undefined,
-      loaded: true,
       loading: false,
+      loaded: true,
+      error: undefined,
     });
   });
 });
 
-describe('Delete timesheet hour reducer', () => {
+describe('Delete a timesheet hour reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
@@ -417,27 +401,247 @@ describe('Delete timesheet hour reducer', () => {
     });
   });
 
-  it('delete timesheet hour success reducer', () => {
+  it('delete a timesheet hour success reducer', () => {
+    const data = {
+      timesheethour_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
     expect(reducer.default(
-      initialState,
-      { type: actions.DELETE_TIMESHEET_HOUR_SUCCESS },
+      { ...initialState, timesheetHours: [data] },
+      {
+        type: actions.DELETE_TIMESHEET_HOUR_SUCCESS,
+        timesheethour_uuid: data.timesheethour_uuid,
+      },
     )).toEqual({
       ...initialState,
-      loaded: true,
       loading: false,
-      timesheet_hour: undefined,
+      loaded: true,
+      timesheetHours: [],
     });
   });
 
-  it('delete timesheethour fail reducer', () => {
+  it('delete a timesheet hour fail reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.DELETE_TIMESHEET_HOUR_FAILURE },
     )).toEqual({
       ...initialState,
-      error: undefined,
-      loaded: true,
       loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Get all timesheets reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.ALL_TIMESHEETS },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('get all timesheets success reducer', () => {
+    const data = [{
+      timesheet_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    }];
+
+    expect(reducer.default(
+      initialState,
+      { type: actions.ALL_TIMESHEETS_SUCCESS, data },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      timesheets: data,
+    });
+  });
+
+  it('get all timesheets fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.ALL_TIMESHEETS_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Get a timesheet reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_TIMESHEET },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('get a timesheet success reducer', () => {
+    const data = {
+      timesheet_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_TIMESHEET_SUCCESS, data },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      timesheets: [data],
+    });
+  });
+
+  it('get a timesheet fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_TIMESHEET_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Create a timesheet reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_TIMESHEET },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('create a timesheet success reducer', () => {
+    const data = {
+      timesheet_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_TIMESHEET_SUCCESS, data },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      timesheets: [data],
+    });
+  });
+
+  it('create a timesheet fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_TIMESHEET_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Update a timesheet reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.UPDATE_TIMESHEET },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('update a timesheet success reducer', () => {
+    const data = {
+      timesheet_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+    const editedData = {
+      timesheet_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Edited',
+    };
+
+    expect(reducer.default(
+      { ...initialState, timesheets: [data] },
+      { type: actions.UPDATE_TIMESHEET_SUCCESS, data: editedData },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      timesheets: [editedData],
+    });
+  });
+
+  it('update a timesheet fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.UPDATE_TIMESHEET_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Delete a timesheet reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.DELETE_TIMESHEET },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('delete a timesheet success reducer', () => {
+    const data = {
+      timesheet_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
+    expect(reducer.default(
+      { ...initialState, timesheets: [data] },
+      {
+        type: actions.DELETE_TIMESHEET_SUCCESS,
+        timesheet_uuid: data.timesheet_uuid,
+      },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      timesheets: [],
+    });
+  });
+
+  it('delete a timesheet fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.DELETE_TIMESHEET_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
     });
   });
 });

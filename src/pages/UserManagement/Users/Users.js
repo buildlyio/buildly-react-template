@@ -1,8 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { rem } from 'polished';
-import { Typography, Button, IconButton, ButtonGroup, Menu, MenuItem, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import {
+  Typography,
+  Button,
+  IconButton,
+  ButtonGroup,
+  Menu,
+  MenuItem,
+  Box,
+} from '@mui/material';
 import { MoreHoriz } from '@mui/icons-material';
 import { StyledTable } from '@components/StyledTable/StyledTable';
 import { UserContext } from '@context/User.context';
@@ -64,8 +72,10 @@ const Users = ({ data, dispatch }) => {
   }, [data]);
 
   // table templates
-  const permissionsTemplate = (row, crud, classes) => {
+  // eslint-disable-next-line consistent-return
+  const permissionsTemplate = (row, crud) => {
     if (coregroupsLoaded) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const [active, setActive] = useState(
         (row.core_groups[0] && row.core_groups[0].id) || row.core_groups[0],
       );
@@ -119,36 +129,39 @@ const Users = ({ data, dispatch }) => {
       setMenu({ row: null, element: null });
     };
 
-    return <>
-      <IconButton
-        className={classes.icon}
-        disabled={user.core_user_uuid === row.core_user_uuid}
-        aria-label="more"
-        aria-controls={`userActions${row.id}`}
-        aria-haspopup="true"
-        onClick={handleMenuClick}
-        size="large">
-        <MoreHoriz color="inherit" />
-      </IconButton>
-      <Menu
-        id={`userActions${row.id}`}
-        anchorEl={menu.element}
-        keepMounted
-        open={Boolean(menu.row && menu.row.id === row.id)}
-        onClose={handleMenuClose}
-      >
-        {row.actions
-          .filter((option) => !(option.value === 'delete' && row.is_active))
-          .map((option) => (
-            <MenuItem
-              key={`userActions${row.id}:${option.value}`}
-              onClick={() => handleMenuItemClick(option.value)}
-            >
-              {option.label}
-            </MenuItem>
-          ))}
-      </Menu>
-    </>;
+    return (
+      <>
+        <IconButton
+          className={classes.icon}
+          disabled={user.core_user_uuid === row.core_user_uuid}
+          aria-label="more"
+          aria-controls={`userActions${row.id}`}
+          aria-haspopup="true"
+          onClick={handleMenuClick}
+          size="large"
+        >
+          <MoreHoriz color="inherit" />
+        </IconButton>
+        <Menu
+          id={`userActions${row.id}`}
+          anchorEl={menu.element}
+          keepMounted
+          open={Boolean(menu.row && menu.row.id === row.id)}
+          onClose={handleMenuClose}
+        >
+          {row.actions
+            .filter((option) => !(option.value === 'delete' && row.is_active))
+            .map((option) => (
+              <MenuItem
+                key={`userActions${row.id}:${option.value}`}
+                onClick={() => handleMenuItemClick(option.value)}
+              >
+                {option.label}
+              </MenuItem>
+            ))}
+        </Menu>
+      </>
+    );
   };
 
   return (
@@ -164,11 +177,13 @@ const Users = ({ data, dispatch }) => {
           if (crud.getData()) {
             crud.getData().forEach((row) => {
               if (row.is_active) {
+                // eslint-disable-next-line no-param-reassign
                 row.actions = [
                   { value: 'deactivate', label: 'Deactivate' },
                   { value: 'delete', label: 'Delete' },
                 ];
               } else {
+                // eslint-disable-next-line no-param-reassign
                 row.actions = [
                   { value: 'activate', label: 'Activate' },
                   { value: 'delete', label: 'Delete' },
@@ -222,7 +237,7 @@ const Users = ({ data, dispatch }) => {
                 {
                   label: 'Permissions',
                   prop: 'permission',
-                  template: (row) => permissionsTemplate(row, crud, classes),
+                  template: (row) => permissionsTemplate(row, crud),
                 },
                 {
                   label: 'Actions',
@@ -231,6 +246,7 @@ const Users = ({ data, dispatch }) => {
                 },
               ]}
               rows={crud.getData()}
+              // eslint-disable-next-line no-nested-ternary
               sortFn={(a, b) => (a.core_user_uuid === user.core_user_uuid
                 ? -1
                 : b.core_user_uuid === user.core_user_uuid

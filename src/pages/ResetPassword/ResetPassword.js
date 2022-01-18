@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   Button,
   CssBaseline,
@@ -12,7 +13,6 @@ import {
   Container,
   Grid,
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import logo from '@assets/light-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import { useInput } from '@hooks/useInput';
@@ -137,7 +137,7 @@ const ResetPassword = ({
   return (
     <>
       <div className={classes.logoDiv}>
-        <img src={logo} className={classes.logo} />
+        <img src={logo} alt="Logo" className={classes.logo} />
       </div>
       <Container component="main" maxWidth="xs">
         <CssBaseline />

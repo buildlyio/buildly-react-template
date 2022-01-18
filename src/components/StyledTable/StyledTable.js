@@ -1,7 +1,13 @@
 import React from 'react';
-import { Table, TableRow, TableCell, TableHead, TableBody, Box } from '@mui/material';
-
 import withStyles from '@mui/styles/withStyles';
+import {
+  Table,
+  TableRow,
+  TableCell,
+  TableHead,
+  TableBody,
+  Box,
+} from '@mui/material';
 
 const StyledContainer = withStyles((theme) => ({
   root: {

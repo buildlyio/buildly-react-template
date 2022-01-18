@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   Backdrop,
   Grid,
@@ -12,7 +13,6 @@ import {
   FormControlLabel,
   Radio,
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import Autocomplete from '@mui/material/Autocomplete';
 import { UserContext } from '@context/User.context';
 import FormModal from '@components/Modal/FormModal';

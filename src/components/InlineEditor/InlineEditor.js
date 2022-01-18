@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Typography, TextField, Box, Grid } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { Edit as EditIcon } from '@mui/icons-material';
+import {
+  Typography,
+  TextField,
+  Box,
+  Grid,
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 
 const useStyles = makeStyles((theme) => ({
   nonEditMode: {
@@ -103,7 +108,7 @@ export const InlineEditor = ({
           tag={tag}
           size="small"
           variant="outlined"
-          autoFocus={true}
+          autoFocus
           ref={node}
           name={`${id}`}
           type="text"
@@ -129,7 +134,7 @@ export const InlineEditor = ({
               <EditIcon
                 className={classes.editIcon}
                 onClick={() => setEditing(true)}
-              ></EditIcon>
+              />
             </Grid>
           )}
         </Grid>

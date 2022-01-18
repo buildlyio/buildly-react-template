@@ -1,28 +1,30 @@
 import React, { useState } from 'react';
-import { Route, Redirect } from "react-router-dom";
-import { Container } from "@mui/material";
+import { Route, Redirect, Switch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import { UserContext, getUser } from "@context/User.context";
-import TopBar from "@layout/TopBar/TopBar";
-import NavBar from "@layout/NavBar/NavBar";
-import Dashboard from "@pages/Dashboard/Dashboard";
-import UserManagement from "@pages/UserManagement/UserManagement";
-import MissingData from "@pages/MissingData/MissingData";
-import { routes } from "@routes/routesConstants";
-import NewProject from "@pages/NewProject/NewProject";
+import { Container } from '@mui/material';
+import { UserContext, getUser } from '@context/User.context';
+import TopBar from '@layout/TopBar/TopBar';
+import NavBar from '@layout/NavBar/NavBar';
+import Dashboard from '@pages/Dashboard/Dashboard';
+import UserManagement from '@pages/UserManagement/UserManagement';
+import MissingData from '@pages/MissingData/MissingData';
+import { routes } from '@routes/routesConstants';
+import NewProduct from '@pages/NewProduct/NewProduct';
+import Release from '@pages/Release/Release';
+import ViewRelease from '@pages/Release/components/ViewRelease';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: "100%",
-    [theme.breakpoints.up("sm")]: {
-      display: "flex",
+    height: '100%',
+    [theme.breakpoints.up('sm')]: {
+      display: 'flex',
     },
   },
   content: {
     flexGrow: 1,
-    height: "100%",
-    paddingTop: "6em",
-    maxWidth: "100% !important",
+    height: '100%',
+    paddingTop: '6em',
+    maxWidth: '100% !important',
   },
 }));
 
@@ -36,18 +38,32 @@ const ContainerDashboard = ({ location, history }) => {
   return (
     <div className={classes.root}>
       <UserContext.Provider value={getUser()}>
-        <TopBar navHidden={navHidden} setNavHidden={setNavHidden} location={location} history={history} />
-        <NavBar navHidden={navHidden} setNavHidden={setNavHidden} location={location} history={history} />
+        <TopBar
+          navHidden={navHidden}
+          setNavHidden={setNavHidden}
+          location={location}
+          history={history}
+        />
+        <NavBar
+          navHidden={navHidden}
+          setNavHidden={setNavHidden}
+          location={location}
+          history={history}
+        />
         <Container className={classes.content}>
-          <Route
-            exact
-            path={routes.APP}
-            render={() => <Redirect to={routes.DASHBOARD} />}
-          />
-          <Route path={routes.DASHBOARD} component={Dashboard} />
-          <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
-          <Route path={routes.MISSING_DATA} component={MissingData} />
-          <Route path={routes.NEW_PROJECT} component={NewProject} />
+          <Switch>
+            <Route
+              exact
+              path={routes.APP}
+              render={() => <Redirect to={routes.DASHBOARD} />}
+            />
+            <Route path={routes.DASHBOARD} component={Dashboard} />
+            <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
+            <Route path={routes.MISSING_DATA} component={MissingData} />
+            <Route path={routes.NEW_PRODUCT} component={NewProduct} />
+            <Route exact path={`${routes.RELEASE}/view/:releaseID`} component={ViewRelease} />
+            <Route path={routes.RELEASE} component={Release} />
+          </Switch>
         </Container>
       </UserContext.Provider>
     </div>

@@ -4,140 +4,151 @@ import {
 import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import {
-  GET_DEVTEAMS,
-  GET_DEVTEAMS_SUCCESS,
-  GET_DEVTEAMS_FAILURE,
-  ADD_DEVTEAM,
-  ADD_DEVTEAM_FAILURE,
-  UPDATE_DEVTEAM,
-  UPDATE_DEVTEAM_FAILURE,
-  DELETE_DEVTEAM,
-  DELETE_DEVTEAM_FAILURE,
-  GET_TIMESHEETS,
-  GET_TIMESHEETS_SUCCESS,
-  GET_TIMESHEETS_FAILURE,
-  ADD_TIMESHEET,
-  ADD_TIMESHEET_FAILURE,
-  UPDATE_TIMESHEET,
-  UPDATE_TIMESHEET_FAILURE,
-  DELETE_TIMESHEET,
-  DELETE_TIMESHEET_FAILURE,
-  GET_TIMESHEET_HOURS,
-  GET_TIMESHEET_HOURS_SUCCESS,
-  GET_TIMESHEET_HOURS_FAILURE,
-  ADD_TIMESHEET_HOUR,
-  ADD_TIMESHEET_HOUR_FAILURE,
+  ALL_DEV_TEAMS,
+  ALL_DEV_TEAMS_SUCCESS,
+  ALL_DEV_TEAMS_FAILURE,
+  ALL_TIMESHEET_HOURS,
+  ALL_TIMESHEET_HOURS_SUCCESS,
+  ALL_TIMESHEET_HOURS_FAILURE,
+  ALL_TIMESHEETS,
+  ALL_TIMESHEETS_SUCCESS,
+  ALL_TIMESHEETS_FAILURE,
+  GET_DEV_TEAM,
+  GET_DEV_TEAM_SUCCESS,
+  GET_DEV_TEAM_FAILURE,
+  GET_TIMESHEET_HOUR,
+  GET_TIMESHEET_HOUR_SUCCESS,
+  GET_TIMESHEET_HOUR_FAILURE,
+  GET_TIMESHEET,
+  GET_TIMESHEET_SUCCESS,
+  GET_TIMESHEET_FAILURE,
+  CREATE_DEV_TEAM,
+  CREATE_DEV_TEAM_SUCCESS,
+  CREATE_DEV_TEAM_FAILURE,
+  CREATE_TIMESHEET_HOUR,
+  CREATE_TIMESHEET_HOUR_SUCCESS,
+  CREATE_TIMESHEET_HOUR_FAILURE,
+  CREATE_TIMESHEET,
+  CREATE_TIMESHEET_SUCCESS,
+  CREATE_TIMESHEET_FAILURE,
+  UPDATE_DEV_TEAM,
+  UPDATE_DEV_TEAM_SUCCESS,
+  UPDATE_DEV_TEAM_FAILURE,
   UPDATE_TIMESHEET_HOUR,
+  UPDATE_TIMESHEET_HOUR_SUCCESS,
   UPDATE_TIMESHEET_HOUR_FAILURE,
+  UPDATE_TIMESHEET,
+  UPDATE_TIMESHEET_SUCCESS,
+  UPDATE_TIMESHEET_FAILURE,
+  DELETE_DEV_TEAM,
+  DELETE_DEV_TEAM_SUCCESS,
+  DELETE_DEV_TEAM_FAILURE,
   DELETE_TIMESHEET_HOUR,
+  DELETE_TIMESHEET_HOUR_SUCCESS,
   DELETE_TIMESHEET_HOUR_FAILURE,
+  DELETE_TIMESHEET,
+  DELETE_TIMESHEET_SUCCESS,
+  DELETE_TIMESHEET_FAILURE,
 } from '../actions/devpartner.actions';
 
-const devPartnerEndpoint = 'devpartner/';
+const devpartnerEndpoint = 'devpartner/';
 
-function* getDevTeams(payload) {
+function* allDevTeams(payload) {
   try {
-    let query_params = '';
-    if (payload.organization_uuid) {
-      query_params = `organization_uuid=${payload.organization_uuid}/`;
-    } else if (payload.dev_team_uuid) {
-      query_params = query_params.concat(`dev_team_uuid=${payload.dev_team_uuid}`);
-    }
-    const data = yield call(
+    const devteams = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${devPartnerEndpoint}devteam/?${query_params}`,
+      `${window.env.API_URL}${devpartnerEndpoint}devteam/`,
     );
-    yield put({ type: GET_DEVTEAMS_SUCCESS, data: data.data });
+    yield put({ type: ALL_DEV_TEAMS_SUCCESS, data: devteams.data });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t fetch Dev Teams!',
+          message: 'Couldn\'t fetch all Dev Teams!',
         }),
       ),
       yield put({
-        type: GET_DEVTEAMS_FAILURE,
+        type: ALL_DEV_TEAMS_FAILURE,
         error,
       }),
     ];
   }
 }
 
-function* addDevTeam(action) {
-  const { payload } = action;
+function* getDevTeam(payload) {
   try {
-    const data = yield call(
+    const devteam = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}${devpartnerEndpoint}devteam/?devteam_uuid=${payload.devteam_uuid}`,
+    );
+    yield put({ type: GET_DEV_TEAM_SUCCESS, data: devteam.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t fetch Dev Team!',
+        }),
+      ),
+      yield put({
+        type: GET_DEV_TEAM_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* createDevTeam(payload) {
+  try {
+    const devteam = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${devPartnerEndpoint}devteam/`,
-      payload,
+      `${window.env.API_URL}${devpartnerEndpoint}devteam/`,
+      payload.data,
     );
-
-    if (data && data.data) {
-      yield [
-        yield put(getDevTeams(data.data.dev_team_uuid)),
-        yield put(
-          showAlert({
-            type: 'success',
-            open: true,
-            message: 'Successfully Added Dev team',
-          }),
-        ),
-
-      ];
-    }
+    yield put({ type: CREATE_DEV_TEAM_SUCCESS, data: devteam.data });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Add Dev Team due to some error!',
+          message: 'Couldn\'t create Dev Team!',
         }),
       ),
       yield put({
-        type: ADD_DEVTEAM_FAILURE,
+        type: CREATE_DEV_TEAM_FAILURE,
         error,
       }),
     ];
   }
 }
 
-function* updateDevTeam(action) {
-  const { payload } = action;
+function* updateDevTeam(payload) {
   try {
-    const data = yield call(
+    const devteam = yield call(
       httpService.makeRequest,
-      'patch',
-      `${window.env.API_URL}${devPartnerEndpoint}devteam/${payload.dev_team_uuid}/`,
-      payload,
+      'put',
+      `${window.env.API_URL}${devpartnerEndpoint}devteam/${payload.data.devteam_uuid}`,
+      payload.data,
     );
-    if (data && data.data) {
-      yield [
-        yield put(getDevTeams(payload.dev_team_uuid)),
-        yield put(
-          showAlert({
-            type: 'success',
-            open: true,
-            message: 'Successfully Edited Dev team',
-          }),
-        ),
-      ];
-    }
+    yield put({ type: UPDATE_DEV_TEAM_SUCCESS, data: devteam.data });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Edit Dev_team due to some error!',
+          message: 'Couldn\'t update Dev Team!',
         }),
       ),
       yield put({
-        type: UPDATE_DEVTEAM_FAILURE,
+        type: UPDATE_DEV_TEAM_FAILURE,
         error,
       }),
     ];
@@ -145,132 +156,251 @@ function* updateDevTeam(action) {
 }
 
 function* deleteDevTeam(payload) {
+  const { devteam_uuid } = payload;
   try {
-    yield call(
+    const devteam = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${devPartnerEndpoint}devteam/${payload.dev_team_uuid}/`,
+      `${window.env.API_URL}${devpartnerEndpoint}devteam/${devteam_uuid}`,
     );
-    yield [
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Dev team deleted successfully!',
-        }),
-      ),
-      yield put(getDevTeams(payload.organization_uuid)),
-    ];
+    yield put({ type: DELETE_DEV_TEAM_SUCCESS, devteam_uuid });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Error in deleting dev team!',
+          message: 'Couldn\'t delete Dev Team!',
         }),
       ),
       yield put({
-        type: DELETE_DEVTEAM_FAILURE,
+        type: DELETE_DEV_TEAM_FAILURE,
         error,
       }),
     ];
   }
 }
 
-function* getTimesheets(payload) {
+function* allTimesheetHours(payload) {
   try {
-    const data = yield call(
+    const hours = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${devPartnerEndpoint}timesheet/?project_uuid=${payload.project_uuid}`,
+      `${window.env.API_URL}${devpartnerEndpoint}timesheet_hour/`,
     );
-    yield put({ type: GET_TIMESHEETS_SUCCESS, data: data.data });
+    yield put({ type: ALL_TIMESHEET_HOURS_SUCCESS, data: hours.data });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t fetch Timesheets!',
+          message: 'Couldn\'t fetch all Timesheet Hours!',
         }),
       ),
       yield put({
-        type: GET_TIMESHEETS_FAILURE,
+        type: ALL_TIMESHEET_HOURS_FAILURE,
         error,
       }),
     ];
   }
 }
 
-function* addTimesheet(action) {
-  const { payload } = action;
+function* getTimesheetHour(payload) {
   try {
-    const data = yield call(
+    const hour = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}${devpartnerEndpoint}timesheet_hour/?timesheethour_uuid=${payload.timesheethour_uuid}`,
+    );
+    yield put({ type: GET_TIMESHEET_HOUR_SUCCESS, data: hour.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t fetch Timesheet Hour!',
+        }),
+      ),
+      yield put({
+        type: GET_TIMESHEET_HOUR_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* createTimesheetHour(payload) {
+  try {
+    const hour = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${devPartnerEndpoint}timesheet/`,
-      payload,
+      `${window.env.API_URL}${devpartnerEndpoint}timesheet_hour/`,
+      payload.data,
     );
-
-    if (data && data.data) {
-      yield [
-        yield put(getTimesheets(data.data.timesheet_uuid)),
-        yield put(
-          showAlert({
-            type: 'success',
-            open: true,
-            message: 'Successfully Added Timesheet',
-          }),
-        ),
-
-      ];
-    }
+    yield put({ type: CREATE_TIMESHEET_HOUR_SUCCESS, data: hour.data });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Add Timesheet due to some error!',
+          message: 'Couldn\'t create Timesheet Hour!',
         }),
       ),
       yield put({
-        type: ADD_TIMESHEET_FAILURE,
+        type: CREATE_TIMESHEET_HOUR_FAILURE,
         error,
       }),
     ];
   }
 }
 
-function* updateTimesheet(action) {
-  const { payload } = action;
+function* updateTimesheetHour(payload) {
   try {
-    const data = yield call(
+    const hour = yield call(
       httpService.makeRequest,
-      'patch',
-      `${window.env.API_URL}${devPartnerEndpoint}timesheet/${payload.timesheet_uuid}/`,
-      payload,
+      'put',
+      `${window.env.API_URL}${devpartnerEndpoint}timesheet_hour/${payload.data.timesheethour_uuid}`,
+      payload.data,
     );
-    if (data && data.data) {
-      yield [
-        yield put(getTimesheets(payload.timesheet_uuid)),
-        yield put(
-          showAlert({
-            type: 'success',
-            open: true,
-            message: 'Successfully Edited Timesheet',
-          }),
-        ),
-      ];
-    }
+    yield put({ type: UPDATE_TIMESHEET_HOUR_SUCCESS, data: hour.data });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Edit Timesheet due to some error!',
+          message: 'Couldn\'t update Timesheet Hour!',
+        }),
+      ),
+      yield put({
+        type: UPDATE_TIMESHEET_HOUR_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* deleteTimesheetHour(payload) {
+  const { timesheethour_uuid } = payload;
+  try {
+    const hour = yield call(
+      httpService.makeRequest,
+      'delete',
+      `${window.env.API_URL}${devpartnerEndpoint}timesheet_hour/${timesheethour_uuid}`,
+    );
+    yield put({ type: DELETE_TIMESHEET_HOUR_SUCCESS, timesheethour_uuid });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t delete Timesheet Hour!',
+        }),
+      ),
+      yield put({
+        type: DELETE_TIMESHEET_HOUR_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* allTimesheets(payload) {
+  try {
+    const sheets = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}${devpartnerEndpoint}timesheet/`,
+    );
+    yield put({ type: ALL_TIMESHEETS_SUCCESS, data: sheets.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t fetch all Timesheets!',
+        }),
+      ),
+      yield put({
+        type: ALL_TIMESHEETS_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* getTimesheet(payload) {
+  try {
+    const sheet = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}${devpartnerEndpoint}timesheet/?timesheet_uuid=${payload.timesheet_uuid}`,
+    );
+    yield put({ type: GET_TIMESHEET_SUCCESS, data: sheet.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t fetch Timesheet!',
+        }),
+      ),
+      yield put({
+        type: GET_TIMESHEET_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* createTimesheet(payload) {
+  try {
+    const sheet = yield call(
+      httpService.makeRequest,
+      'post',
+      `${window.env.API_URL}${devpartnerEndpoint}timesheet/`,
+      payload.data,
+    );
+    yield put({ type: CREATE_TIMESHEET_SUCCESS, data: sheet.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t create Dev Team!',
+        }),
+      ),
+      yield put({
+        type: CREATE_TIMESHEET_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* updateTimesheet(payload) {
+  try {
+    const sheet = yield call(
+      httpService.makeRequest,
+      'put',
+      `${window.env.API_URL}${devpartnerEndpoint}timesheet/${payload.data.timesheet_uuid}`,
+      payload.data,
+    );
+    yield put({ type: UPDATE_TIMESHEET_SUCCESS, data: sheet.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t update Dev Team!',
         }),
       ),
       yield put({
@@ -282,29 +412,21 @@ function* updateTimesheet(action) {
 }
 
 function* deleteTimesheet(payload) {
+  const { timesheet_uuid } = payload;
   try {
-    yield call(
+    const sheet = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${devPartnerEndpoint}timesheet/${payload.timesheet_uuid}/`,
+      `${window.env.API_URL}${devpartnerEndpoint}timesheet/${timesheet_uuid}`,
     );
-    yield [
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Timesheet deleted successfully!',
-        }),
-      ),
-      yield put(getTimesheets(payload.project_uuid)),
-    ];
+    yield put({ type: DELETE_TIMESHEET_SUCCESS, timesheet_uuid });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Error in deleting timesheet!',
+          message: 'Couldn\'t delete Dev Team!',
         }),
       ),
       yield put({
@@ -315,166 +437,57 @@ function* deleteTimesheet(payload) {
   }
 }
 
-function* getTimesheet_hours(payload) {
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'get',
-      `${window.env.API_URL}${devPartnerEndpoint}timesheet_hour/?project_uuid=${payload.project_uuid}`,
-    );
-    yield put({ type: GET_TIMESHEET_HOURS_SUCCESS, data: data.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t fetch Timesheet_hours!',
-        }),
-      ),
-      yield put({
-        type: GET_TIMESHEET_HOURS_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* addTimesheet_hour(action) {
-  const { payload } = action;
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'post',
-      `${window.env.API_URL}${devPartnerEndpoint}timesheet_hour/`,
-      payload,
-    );
-
-    if (data && data.data) {
-      yield [
-        yield put(getTimesheet_hours(data.data.timesheet_hour_uuid)),
-        yield put(
-          showAlert({
-            type: 'success',
-            open: true,
-            message: 'Successfully Added Timesheet_hour',
-          }),
-        ),
-
-      ];
-    }
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t Add Timesheet_hour due to some error!',
-        }),
-      ),
-      yield put({
-        type: ADD_TIMESHEET_HOUR_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* updateTimesheet_hour(action) {
-  const { payload } = action;
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'patch',
-      `${window.env.API_URL}${devPartnerEndpoint}timesheet_hour/${payload.timesheet_hour_uuid}/`,
-      payload,
-    );
-    if (data && data.data) {
-      yield [
-        yield put(getTimesheet_hours(payload.timesheet_hour_uuid)),
-        yield put(
-          showAlert({
-            type: 'success',
-            open: true,
-            message: 'Successfully Edited Timesheet_hour',
-          }),
-        ),
-      ];
-    }
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t Edit Timesheet_hour due to some error!',
-        }),
-      ),
-      yield put({
-        type: UPDATE_TIMESHEET_HOUR_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* deleteTimesheet_hour(payload) {
-  try {
-    yield call(
-      httpService.makeRequest,
-      'delete',
-      `${window.env.API_URL}${devPartnerEndpoint}timesheet_hour/${payload.timesheet_hour_uuid}/`,
-    );
-    yield [
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Timesheet_hour deleted successfully!',
-        }),
-      ),
-      yield put(getTimesheet_hours(payload.project_uuid)),
-    ];
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Error in deleting timesheet_hour!',
-        }),
-      ),
-      yield put({
-        type: DELETE_TIMESHEET_HOUR_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
 // Watchers
-function* watchGetDevTeams() {
-  yield takeLatest(GET_DEVTEAMS, getDevTeams);
+function* watchGetAllDevTeams() {
+  yield takeLatest(ALL_DEV_TEAMS, allDevTeams);
 }
 
-function* watchAddDevTeam() {
-  yield takeLatest(ADD_DEVTEAM, addDevTeam);
+function* watchGetDevTeam() {
+  yield takeLatest(GET_DEV_TEAM, getDevTeam);
+}
+
+function* watchCreateDevTeam() {
+  yield takeLatest(CREATE_DEV_TEAM, createDevTeam);
 }
 
 function* watchUpdateDevTeam() {
-  yield takeLatest(UPDATE_DEVTEAM, updateDevTeam);
+  yield takeLatest(UPDATE_DEV_TEAM, updateDevTeam);
 }
 
 function* watchDeleteDevTeam() {
-  yield takeLatest(DELETE_DEVTEAM, deleteDevTeam);
+  yield takeLatest(DELETE_DEV_TEAM, deleteDevTeam);
 }
 
-function* watchGetTimesheets() {
-  yield takeLatest(GET_TIMESHEETS, getTimesheets);
+function* watchGetAllTimesheetHours() {
+  yield takeLatest(ALL_TIMESHEET_HOURS, allTimesheetHours);
 }
 
-function* watchAddTimesheet() {
-  yield takeLatest(ADD_TIMESHEET, addTimesheet);
+function* watchGetTimesheetHour() {
+  yield takeLatest(GET_TIMESHEET_HOUR, getTimesheetHour);
+}
+
+function* watchCreateTimesheetHour() {
+  yield takeLatest(CREATE_TIMESHEET_HOUR, createTimesheetHour);
+}
+
+function* watchUpdateTimesheetHour() {
+  yield takeLatest(UPDATE_TIMESHEET_HOUR, updateTimesheetHour);
+}
+
+function* watchDeleteTimesheetHour() {
+  yield takeLatest(DELETE_TIMESHEET_HOUR, deleteTimesheetHour);
+}
+
+function* watchGetAllTimesheets() {
+  yield takeLatest(ALL_TIMESHEETS, allTimesheets);
+}
+
+function* watchGetTimesheet() {
+  yield takeLatest(GET_TIMESHEET, getTimesheet);
+}
+
+function* watchCreateTimesheet() {
+  yield takeLatest(CREATE_TIMESHEET, createTimesheet);
 }
 
 function* watchUpdateTimesheet() {
@@ -485,35 +498,22 @@ function* watchDeleteTimesheet() {
   yield takeLatest(DELETE_TIMESHEET, deleteTimesheet);
 }
 
-function* watchGetTimesheet_hours() {
-  yield takeLatest(GET_TIMESHEET_HOURS, getTimesheet_hours);
-}
-
-function* watchAddTimesheet_hour() {
-  yield takeLatest(ADD_TIMESHEET_HOUR, addTimesheet_hour);
-}
-
-function* watchUpdateTimesheet_hour() {
-  yield takeLatest(UPDATE_TIMESHEET_HOUR, updateTimesheet_hour);
-}
-
-function* watchDeleteTimesheet_hour() {
-  yield takeLatest(DELETE_TIMESHEET_HOUR, deleteTimesheet_hour);
-}
-
-export default function* devPartnerSaga() {
+export default function* devpartnerSaga() {
   yield all([
-    watchGetDevTeams(),
-    watchAddDevTeam(),
+    watchGetAllDevTeams(),
+    watchGetAllTimesheetHours(),
+    watchGetAllTimesheets(),
+    watchGetDevTeam(),
+    watchGetTimesheetHour(),
+    watchGetTimesheet(),
+    watchCreateDevTeam(),
+    watchCreateTimesheetHour(),
+    watchCreateTimesheet(),
     watchUpdateDevTeam(),
-    watchDeleteDevTeam(),
-    watchGetTimesheets(),
-    watchAddTimesheet(),
+    watchUpdateTimesheetHour(),
     watchUpdateTimesheet(),
+    watchDeleteDevTeam(),
+    watchDeleteTimesheetHour(),
     watchDeleteTimesheet(),
-    watchGetTimesheet_hours(),
-    watchAddTimesheet_hour(),
-    watchUpdateTimesheet_hour(),
-    watchDeleteTimesheet_hour(),
   ]);
 }

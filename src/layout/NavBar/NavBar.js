@@ -1,8 +1,16 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import _ from 'lodash';
-import { Divider, Drawer, Hidden, List, ListItem, ListItemText, useTheme } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import {
+  Divider,
+  Drawer,
+  Hidden,
+  List,
+  ListItem,
+  ListItemText,
+  useTheme,
+} from '@mui/material';
 import { isMobile } from '@utils/mediaQuery';
 import { NAVIGATION_ITEMS } from './NavBarConstants';
 
@@ -37,7 +45,6 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'left',
   },
 }));
-
 
 const NavBar = ({ navHidden, setNavHidden }) => {
   const classes = useStyles();

@@ -1,54 +1,36 @@
+/* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { Route } from 'react-router-dom';
+import makeStyles from '@mui/styles/makeStyles';
 import {
-  useTheme,
   MenuItem,
   TextField,
   Typography,
-  Chip,
   Button,
-  Box,
-  useMediaQuery,
+  Grid,
+  Tabs,
+  Tab,
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import {
-  AddRounded as AddRoundedIcon,
-} from '@mui/icons-material';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import Loader from '@components/Loader/Loader';
 import { routes } from '@routes/routesConstants';
-import { deleteRequirement, deleteIssue } from '@redux/dashboard/actions/dashboard.actions';
-import AddRequirements from '../forms/AddRequirements';
-import AddIssues from '../forms/AddIssues';
-import RequirementToIssue from '../forms/RequirementToIssue';
-import ConfirmModal from '../forms/ConfirmModal';
+import { getAllProducts } from '@redux/product/actions/product.actions';
+import {
+  getAllFeatures,
+  getAllIssues,
+  getAllStatuses,
+} from '@redux/decision/actions/decision.actions';
 import List from '../components/List';
 import Kanban from '../components/Kanban';
+import AddFeatures from '../forms/AddFeatures';
+import AddIssues from '../forms/AddIssues';
+import FeatureToIssue from '../forms/FeatureToIssue';
+import ConfirmModal from '@components/Modal/ConfirmModal';
 
 const useStyles = makeStyles((theme) => ({
-  section1: {
-    position: 'fixed',
-    padding: theme.spacing(1, 2),
-    width: '75%',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    color: theme.palette.secondary.contrastText,
-    background: theme.palette.secondary.dark,
-    // left: 0,
-    flexWrap: 'wrap',
-    top: '4rem',
-    zIndex: '99',
-    [theme.breakpoints.down('md')]: {
-      width: '100%',
-      left: 0
-    },
-  },
-  title: {
-    margin: theme.spacing(2, 0),
-  },
   product: {
-    width: '20%',
     '& .MuiOutlinedInput-notchedOutline': {
       borderColor: theme.palette.secondary.contrastText,
     },
@@ -65,304 +47,238 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.secondary.contrastText,
     },
   },
-  viewContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '12rem',
-  },
-  section2: {
-    position: 'absolute',
-    top: '12rem',
-    // left: '0',
-    width: '75%',
-    padding: theme.spacing(0, 2),
-    [theme.breakpoints.down('md')]: {
-      width: '100%',
-      left: 0
-    },
-    [theme.breakpoints.down('sm')]: {
-      top: '17rem'
+  tabs: {
+    '& .MuiTabs-root': {
+      color: theme.palette.secondary.contrastText,
+      '& .Mui-selected': {
+        color: theme.palette.primary.main,
+      },
+      '& .MuiTabs-indicator': {
+        backgroundColor: theme.palette.secondary.light,
+      },
     },
   },
 }));
 
-const getView = (
-  view,
-  props,
-  proj,
-  setProj,
-  projReqs,
-  setProjReqs,
-  projIssues,
-  setProjIssues,
-  setDeleteModal,
-  setDeleteItem,
-  addItem,
-  editItem,
-  convertIssue,
-  deleteItem,
-  openDeleteModal,
-  handleDeleteModal,
-) => {
-  switch (view) {
-    case 'list':
-      return (
-        <List
-          {...props}
-          proj={proj}
-          setProj={setProj}
-          projReqs={projReqs}
-          setProjReqs={setProjReqs}
-          projIssues={projIssues}
-          setProjIssues={setProjIssues}
-          setDeleteModal={setDeleteModal}
-          setDeleteItem={setDeleteItem}
-          addItem={addItem}
-          editItem={editItem}
-          convertIssue={convertIssue}
-          deleteItem={deleteItem}
-          openDeleteModal={openDeleteModal}
-          handleDeleteModal={handleDeleteModal}
-        />
-      );
-    case 'kanban':
-      return (
-        <Kanban
-          {...props}
-          proj={proj}
-          setProj={setProj}
-          projReqs={projReqs}
-          setProjReqs={setProjReqs}
-          projIssues={projIssues}
-          setProjIssues={setProjIssues}
-          setDeleteModal={setDeleteModal}
-          setDeleteItem={setDeleteItem}
-          addItem={addItem}
-          editItem={editItem}
-          convertIssue={convertIssue}
-          deleteItem={deleteItem}
-          openDeleteModal={openDeleteModal}
-          handleDeleteModal={handleDeleteModal}
-        />
-      );
-
-    default:
-      return 'Unknown View Selection';
-  }
-};
-
 const UserDashboard = (props) => {
   const {
     products,
+    loading,
     dispatch,
-    requirements,
+    features,
     issues,
+    statuses,
     redirectTo,
     history,
   } = props;
   const classes = useStyles();
-  const theme = useTheme();
-  const [view, setView] = useState('list');
-  const [proj, setProj] = useState(0);
-  const [projReqs, setProjReqs] = useState([]);
-  const [projIssues, setProjIssues] = useState([]);
+  const subNav = [
+    { label: 'List', value: 'list' },
+    { label: 'Kanban', value: 'kanban' },
+  ];
+  const viewPath = (
+    subNav.find((item) => location.pathname.endsWith(item.value)) || subNav[0]
+  ).value;
+  const [view, setView] = useState(viewPath);
+
+  const [product, setProduct] = useState(0);
+  const [productFeatures, setProductFeatures] = useState([]);
+  const [productIssues, setProductIssues] = useState([]);
   const [openDeleteModal, setDeleteModal] = useState(false);
-  const [toDeleteItem, setDeleteItem] = useState({ id: 0, type: 'req' });
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+  const [toDeleteItem, setDeleteItem] = useState({ id: 0, type: 'feat' });
 
-  const addReqPath = redirectTo
-    ? `${redirectTo}/dashboard`
-    : `${routes.DASHBOARD}/add-requirement`;
+  const addFeatPath = redirectTo
+    ? _.includes(location.pathname, 'list')
+      ? `${redirectTo}/dashboard/list`
+      : `${redirectTo}/dashboard/kanban`
+    : `${routes.DASHBOARD}/add-feature`;
 
-  const editReqPath = redirectTo
-    ? `${redirectTo}/dashboard`
-    : `${routes.DASHBOARD}/edit-requirement`;
+  const editFeatPath = redirectTo
+    ? _.includes(location.pathname, 'list')
+      ? `${redirectTo}/dashboard/list`
+      : `${redirectTo}/dashboard/kanban`
+    : `${routes.DASHBOARD}/edit-feature`;
 
   const addIssuePath = redirectTo
-    ? `${redirectTo}/dashboard`
+    ? _.includes(location.pathname, 'list')
+      ? `${redirectTo}/dashboard/list`
+      : `${redirectTo}/dashboard/kanban`
     : `${routes.DASHBOARD}/add-issue`;
 
   const editIssuePath = redirectTo
-    ? `${redirectTo}/dashboard`
+    ? _.includes(location.pathname, 'list')
+      ? `${redirectTo}/dashboard/list`
+      : `${redirectTo}/dashboard/kanban`
     : `${routes.DASHBOARD}/edit-issue`;
 
-  const requirementToIssuePath = redirectTo
-    ? `${redirectTo}/dashboard`
+  const featureToIssuePath = redirectTo
+    ? _.includes(location.pathname, 'list')
+      ? `${redirectTo}/dashboard/list`
+      : `${redirectTo}/dashboard/kanban`
     : `${routes.DASHBOARD}/convert-issue`;
 
   useEffect(() => {
-    const reqs = _.filter(
-      requirements,
-      { projectID: proj },
-    );
-    setProjReqs(_.orderBy(reqs, ['id']));
-  }, [requirements]);
+    if (!products || _.isEmpty(products)) {
+      dispatch(getAllProducts());
+    }
+    if (!features || _.isEmpty(features)) {
+      dispatch(getAllFeatures());
+    }
+    if (!issues || _.isEmpty(issues)) {
+      dispatch(getAllIssues());
+    }
+    if (!statuses || _.isEmpty(statuses)) {
+      dispatch(getAllStatuses());
+    }
+  }, []);
+
+  // this will be triggered whenever the content switcher is clicked to change the view
+  useEffect(() => {
+    history.push(`/app/dashboard/${view || location.state}`);
+  }, [view]);
 
   useEffect(() => {
+    const feats = _.filter(
+      features,
+      { product_uuid: product },
+    );
     const iss = _.filter(
       issues,
-      { projectID: proj },
+      { product_uuid: product },
     );
-    setProjIssues(_.orderBy(iss, ['id']));
-  }, [issues]);
+
+    setProductFeatures(_.orderBy(feats, 'create_date', 'desc'));
+    setProductIssues(_.orderBy(iss, 'create_date', 'desc'));
+  }, [product, features, issues]);
+
+  const viewTabClicked = (event, vw) => {
+    setView(vw);
+  };
 
   const editItem = (item, type) => {
     let path;
-    if (type === 'req') {
-      path = `${editReqPath}/:${item.id}`;
+    if (type === 'feat') {
+      path = `${editFeatPath}/:${item.id}`;
     } else if (type === 'issue') {
       path = `${editIssuePath}/:${item.id}`;
     } else if (type === 'convert') {
-      path = `${requirementToIssuePath}/:${item.id}`;
+      path = `${featureToIssuePath}/:${item.id}`;
     }
 
     history.push(path, {
       type: 'edit',
-      from: redirectTo || routes.DASHBOARD,
+      from: redirectTo || location.pathname,
       data: item,
-      projectID: proj,
+      productID: product,
     });
   };
 
   const addItem = (type) => {
     let path;
-    let nextId;
-    if (type === 'req') {
-      path = addReqPath;
-      nextId = (_.max(_.map(projReqs, 'id')) || 0) + 1;
+    if (type === 'feat') {
+      path = addFeatPath;
     } else if (type === 'issue') {
       path = addIssuePath;
-      nextId = (_.max(_.map(projIssues, 'id')) || 0) + 1;
     } else if (type === 'convert') {
-      path = requirementToIssuePath;
-      nextId = (_.max(_.map(projIssues, 'id')) || 0) + 1;
+      path = featureToIssuePath;
     }
 
     history.push(path, {
-      from: redirectTo || routes.DASHBOARD,
-      projectID: proj,
-      nextId,
+      from: redirectTo || location.pathname,
+      productID: product,
     });
   };
 
   const convertIssue = (item, type) => {
     let path;
-    let nextId;
     if (type === 'convert') {
-      path = requirementToIssuePath;
-      nextId = (_.max(_.map(projIssues, 'id')) || 0) + 1;
+      path = featureToIssuePath;
     }
 
     history.push(path, {
       type: 'edit',
-      from: redirectTo || routes.DASHBOARD,
-      projectID: proj,
-      nextId,
+      from: redirectTo || location.pathname,
+      productID: product,
       data: item,
     });
   };
 
   const deleteItem = (item, type) => {
-    setDeleteItem({ id: item.id, type });
+    const deleteID = type === 'feat'
+      ? item.feature_uuid
+      : item.issue_uuid;
+
+    setDeleteItem({ id: deleteID, type });
     setDeleteModal(true);
   };
 
   const handleDeleteModal = () => {
-    const { type } = toDeleteItem;
-    const { id } = toDeleteItem;
+    const { id, type } = toDeleteItem;
     setDeleteModal(false);
-    if (type === 'req') {
-      dispatch(deleteRequirement(id));
+    if (type === 'feat') {
+      console.log('Dispatch delete feature action here');
     } else if (type === 'issue') {
-      dispatch(deleteIssue(id));
+      console.log('Dispatch delete issue action here');
     }
-  };
-
-  const handleNewProject = () => {
-    history.push(routes.NEW_PROJECT);
   };
 
   return (
     <div>
-      <div className={classes.section1}>
-        {/* {!isDesktop && (
-          <Box mb={2}> */}
-        <Typography className={classes.title} variant="h3">
-          Dashboard
-        </Typography>
-        <div
-          className={classes.viewContainer}
-        >
-          <Chip label="List View" color={view === 'list' ? 'primary' : 'secondary'} onClick={(e) => setView('list')} />
-          <Chip label="Kanban View" color={view === 'kanban' ? 'primary' : 'secondary'} onClick={(e) => setView('kanban')} />
-        </div>
-        <TextField
-          variant="outlined"
-          margin="normal"
-          select
-          id="product"
-          color="primary"
-          label="Select Project"
-          className={classes.product}
-          value={proj}
-          onChange={(e) => {
-            setProj(e.target.value);
-            setProjReqs(_.filter(
-              requirements,
-              { projectID: e.target.value },
-            ));
-            setProjIssues(_.filter(
-              issues,
-              { projectID: e.target.value },
-            ));
-          }}
-        >
-          <MenuItem value={0}>Select</MenuItem>
-          {products
-            && products.length > 0
-            && _.map(products, (proj) => (
-              <MenuItem
-                key={`product-${proj.id}`}
-                value={proj.id}
-              >
-                {proj.name}
-              </MenuItem>
+      {loading && <Loader open={loading} />}
+      <Grid container alignItems="center">
+        <Grid item xs={4} md={6} lg={8}>
+          <Typography component="div" variant="h3">
+            Dashboard
+          </Typography>
+        </Grid>
+        <Grid item xs={4} md={3} lg={2} textAlign="end">
+          <TextField
+            variant="outlined"
+            margin="normal"
+            select
+            id="product"
+            color="primary"
+            label="Select Product"
+            className={classes.product}
+            value={product}
+            onChange={(e) => {
+              setProduct(e.target.value);
+            }}
+          >
+            <MenuItem value={0}>Select</MenuItem>
+            {products && !_.isEmpty(products)
+              && _.map(products, (prd) => (
+                <MenuItem
+                  key={`product-${prd.product_uuid}`}
+                  value={prd.product_uuid}
+                >
+                  {prd.name}
+                </MenuItem>
+              ))}
+          </TextField>
+        </Grid>
+        <Grid item xs={4} md={3} lg={2} textAlign="end">
+          <Button
+            aria-controls="new-product"
+            aria-haspopup="true"
+            color="primary"
+            variant="contained"
+            onClick={(e) => { history.push(routes.NEW_PRODUCT); }}
+            startIcon={<AddRoundedIcon />}
+          >
+            New Product
+          </Button>
+        </Grid>
+      </Grid>
+      <Grid mb={3} container justifyContent="center">
+        <Grid item className={classes.tabs}>
+          <Tabs value={view} onChange={viewTabClicked}>
+            {subNav.map((itemProps, index) => (
+              <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
             ))}
-        </TextField>
-        <Button
-          aria-controls="new-project"
-          aria-haspopup="true"
-          color="primary"
-          variant="contained"
-          onClick={(e) => handleNewProject()}
-          startIcon={<AddRoundedIcon />}
-        >
-          New Project
-        </Button>
-        {/* </Box>
-      )} */}
-      </div>
-      <div className={classes.section2}>
-        {getView(
-          view,
-          props,
-          proj,
-          setProj,
-          projReqs,
-          setProjReqs,
-          projIssues,
-          setProjIssues,
-          setDeleteModal,
-          setDeleteItem,
-          addItem,
-          editItem,
-          convertIssue,
-          deleteItem,
-          openDeleteModal,
-          handleDeleteModal,
-        )}
-      </div>
+          </Tabs>
+        </Grid>
+      </Grid>
 
       <ConfirmModal
         open={openDeleteModal}
@@ -371,18 +287,51 @@ const UserDashboard = (props) => {
         title="Are you sure you want to delete?"
         submitText="Delete"
       />
-      <Route path={`${addReqPath}`} component={AddRequirements} />
-      <Route path={`${editReqPath}`} component={AddRequirements} />
-      <Route path={`${addIssuePath}`} component={AddIssues} />
-      <Route path={`${editIssuePath}`} component={AddIssues} />
-      <Route path={`${requirementToIssuePath}`} component={RequirementToIssue} />
+      <Route
+        path={routes.DASHBOARD_LIST}
+        render={(prps) => (
+          <List
+            {...prps}
+            product={product}
+            productFeatures={productFeatures}
+            productIssues={productIssues}
+            addItem={addItem}
+            editItem={editItem}
+            convertIssue={convertIssue}
+            deleteItem={deleteItem}
+          />
+        )}
+      />
+      <Route
+        path={routes.DASHBOARD_KANBAN}
+        render={(prps) => (
+          <Kanban
+            {...prps}
+            statuses={statuses}
+            product={product}
+            productFeatures={productFeatures}
+            productIssues={productIssues}
+            addItem={addItem}
+            editItem={editItem}
+            convertIssue={convertIssue}
+            deleteItem={deleteItem}
+          />
+        )}
+      />
+      <Route path={addFeatPath} component={AddFeatures} />
+      <Route path={editFeatPath} component={AddFeatures} />
+      <Route path={addIssuePath} component={AddIssues} />
+      <Route path={editIssuePath} component={AddIssues} />
+      <Route path={featureToIssuePath} component={FeatureToIssue} />
     </div>
   );
 };
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.dashboardReducer,
+  ...state.productReducer,
+  ...state.decisionReducer,
+  loading: state.productReducer.loading && state.decisionReducer.loading,
 });
 
 export default connect(mapStateToProps)(UserDashboard);

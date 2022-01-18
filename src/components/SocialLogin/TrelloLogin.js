@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Button } from '@mui/material';
-import { GitHub as GitHubIcon } from '@mui/icons-material';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import { socialLogin } from '@redux/authuser/actions/authuser.actions';
 import { providers, toQuery } from '@utils/socialLogin';
 import PopupWindow from './PopupWindow';
@@ -22,6 +22,7 @@ const TrelloLogin = ({ dispatch, history, disabled }) => {
     );
   };
 
+  // eslint-disable-next-line consistent-return
   const onSuccess = (data) => {
     if (!data.code) {
       return onFailure(new Error("'code' not found"));

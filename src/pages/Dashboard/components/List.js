@@ -1,8 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
-import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from '@mui/material';
 import {
   AddRounded as AddRoundedIcon,
   EditRounded as EditRoundedIcon,
@@ -66,32 +65,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const List = (props) => {
-  const {
-    products,
-    requirements,
-    issues,
-    proj,
-    setProj,
-    projReqs,
-    setProjReqs,
-    projIssues,
-    setProjIssues,
-    addItem,
-    editItem,
-    convertIssue,
-    deleteItem,
-  } = props;
+const List = ({
+  product,
+  productFeatures,
+  productIssues,
+  addItem,
+  editItem,
+  convertIssue,
+  deleteItem,
+}) => {
   const classes = useStyles();
 
   return (
-    <div>
+    <>
       <div className={classes.section2}>
         <Typography
           className={classes.actionTitle}
           variant="h6"
         >
-          Requirements
+          Features
         </Typography>
         <Typography
           className={`${classes.actionTitle} ${classes.rightBox}`}
@@ -106,52 +98,50 @@ const List = (props) => {
           <AddRoundedIcon
             className={classes.addIcon}
             fontSize="large"
-            onClick={(e) => addItem('req')}
+            onClick={(e) => addItem('feat')}
           />
-          {proj === 0 && (
+          {product === 0 && (
             <Typography
               className={classes.noData}
               variant="body1"
             >
-              No Project selected. Please select the product.
+              No Product selected. Please select the product.
             </Typography>
           )}
-          {proj !== 0 && projReqs && projReqs.length === 0
-                        && (
-                        <Typography
-                          className={classes.noData}
-                          variant="body1"
-                        >
-                          No Requirements yet.
-                        </Typography>
-                        )}
-          {proj !== 0 && projReqs && projReqs.length > 0
-                        && _.map(projReqs, (req) => (
-                          <div
-                            key={`req-${req.projectID}-${req.id}`}
-                            className={classes.boxEntry}
-                          >
-                            <Typography
-                              className={classes.entryTitle}
-                              variant="body1"
-                            >
-                              {req.name}
-                            </Typography>
-                            <TrendingFlatRoundedIcon
-                              className={classes.entryIcon}
-                              onClick={(e) => convertIssue(req, 'convert')}
-                            />
-                            <EditRoundedIcon
-                              className={classes.entryIcon}
-                              onClick={(e) => editItem(req, 'req')}
-                            />
-                            <DeleteRoundedIcon
-                              className={classes.icon}
-                              onClick={(e) => deleteItem(req, 'req')}
-                            />
-                          </div>
-                        ))}
-
+          {product !== 0 && productFeatures && productFeatures.length === 0 && (
+            <Typography
+              className={classes.noData}
+              variant="body1"
+            >
+              No features yet.
+            </Typography>
+          )}
+          {product !== 0 && productFeatures && productFeatures.length > 0
+            && _.map(productFeatures, (feat) => (
+              <div
+                key={`feature-${feat.product_uuid}-${feat.feature_uuid}`}
+                className={classes.boxEntry}
+              >
+                <Typography
+                  className={classes.entryTitle}
+                  variant="body1"
+                >
+                  {feat.name}
+                </Typography>
+                <TrendingFlatRoundedIcon
+                  className={classes.entryIcon}
+                  onClick={(e) => convertIssue(feat, 'convert')}
+                />
+                <EditRoundedIcon
+                  className={classes.entryIcon}
+                  onClick={(e) => editItem(feat, 'feat')}
+                />
+                <DeleteRoundedIcon
+                  className={classes.icon}
+                  onClick={(e) => deleteItem(feat, 'feat')}
+                />
+              </div>
+            ))}
         </div>
 
         <div className={`${classes.boxSection} ${classes.rightBox}`}>
@@ -160,55 +150,48 @@ const List = (props) => {
             fontSize="large"
             onClick={(e) => addItem('issue')}
           />
-          {proj === 0 && (
+          {product === 0 && (
             <Typography
               className={classes.noData}
               variant="body1"
             >
-              No Project selected. Please select the product.
+              No Product selected. Please select the product.
             </Typography>
           )}
-          {proj !== 0 && projIssues && projIssues.length === 0
-                        && (
-                        <Typography
-                          className={classes.noData}
-                          variant="body1"
-                        >
-                          No Issues yet.
-                        </Typography>
-                        )}
-          {proj !== 0 && projIssues && projIssues.length > 0
-                        && _.map(projIssues, (issue) => (
-                          <div
-                            key={`issue-${issue.projectID}-${issue.id}`}
-                            className={classes.boxEntry}
-                          >
-                            <Typography
-                              className={classes.entryTitle}
-                              variant="body1"
-                            >
-                              {issue.name}
-                            </Typography>
-                            <EditRoundedIcon
-                              className={classes.entryIcon}
-                              onClick={(e) => editItem(issue, 'issue')}
-                            />
-                            <DeleteRoundedIcon
-                              className={classes.icon}
-                              onClick={(e) => deleteItem(issue, 'issue')}
-                            />
-                          </div>
-                        ))}
+          {product !== 0 && productIssues && productIssues.length === 0 && (
+            <Typography
+              className={classes.noData}
+              variant="body1"
+            >
+              No Issues yet.
+            </Typography>
+          )}
+          {product !== 0 && productIssues && productIssues.length > 0
+            && _.map(productIssues, (issue) => (
+              <div
+                key={`issue-${issue.product_uuid}-${issue.issue_uuid}`}
+                className={classes.boxEntry}
+              >
+                <Typography
+                  className={classes.entryTitle}
+                  variant="body1"
+                >
+                  {issue.name}
+                </Typography>
+                <EditRoundedIcon
+                  className={classes.entryIcon}
+                  onClick={(e) => editItem(issue, 'issue')}
+                />
+                <DeleteRoundedIcon
+                  className={classes.icon}
+                  onClick={(e) => deleteItem(issue, 'issue')}
+                />
+              </div>
+            ))}
         </div>
       </div>
-
-    </div>
+    </>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.dashboardReducer,
-});
-
-export default connect(mapStateToProps)(List);
+export default List;

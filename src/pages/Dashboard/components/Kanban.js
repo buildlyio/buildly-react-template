@@ -1,129 +1,108 @@
 /* eslint-disable no-shadow */
-/* eslint-disable import/no-unresolved */
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import moment from 'moment-timezone';
 import {
-  AddRounded as AddRoundedIcon,
-  EditRounded as EditRoundedIcon,
-  DeleteRounded as DeleteRoundedIcon,
-  TrendingFlatRounded as TrendingFlatRoundedIcon,
-  MoreVert as MoreVertIcon,
-  MoreHoriz as MoreHorizIcon,
+  DragDropContext,
+  Draggable,
+  Droppable,
+} from 'react-beautiful-dnd';
+import { makeStyles } from '@mui/styles';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Grid,
+  IconButton,
+  Typography,
+} from '@mui/material';
+import {
+  AddRounded,
+  EditRounded,
+  DeleteRounded,
+  TrendingFlatRounded,
 } from '@mui/icons-material';
-import { Card, CardContent, IconButton, CardHeader, Chip } from '@mui/material';
-
-import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles((theme) => ({
-  kanbanContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    left: 0,
-    position: 'absolute',
-    padding: theme.spacing(0, 2),
+  noProduct: {
+    marginTop: theme.spacing(12),
+    textAlign: 'center',
   },
-  board: {
-    display: 'flex',
-    margin: '0 auto',
+  container: {
+    marginBottom: theme.spacing(4),
   },
-  column: {
-    margin: theme.spacing(1, 1),
+  swimlane: {
     backgroundColor: theme.palette.secondary.main,
-    borderRadius: theme.spacing(1),
-  },
-  columnHead: {
-    borderTopLeftRadius: theme.spacing(1),
-    borderTopRightRadius: theme.spacing(1),
-    padding: theme.spacing(1,2),
     display: 'flex',
-    justifyContent: 'space-evenly',
-    fontSize: '1.2rem',
-    alignItems: 'center',
-    backgroundColor: theme.palette.secondary.main,
-    borderBottom: '1px solid #d8d8d8',
-    '& > p': {
-      flex: '1 1 auto',
-      margin: 'auto',
-    },
+    flexDirection: 'column',
   },
-  tasksList: {
-    padding: theme.spacing(0, 0.5),
-    backgroundColor: theme.palette.secondary.main,
-    height: '80vh',
-    overflow: 'auto',
-    minWidth: '300px',
-  },
-  icon: {
-    margin: 'auto',
-    cursor: 'pointer',
-  },
-  item: {
-    padding: theme.spacing(1),
-    margin: theme.spacing(1),
-    fontSize: '0.8em',
-    cursor: 'pointer',
-  },
-  flexContainer: {
-    display: 'flex',
-    justifyContent: 'flex-wrap',
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-  },
-  priority: {
-    width: '60%',
-    padding: theme.spacing(0.5),
-    backgroundColor: '#0000ff',
-    borderRadius: theme.spacing(1),
-    margin: theme.spacing(1, 0.2),
-  },
-  datetime: {
-    float: 'right',
-    fontSize: '0.7rem',
-    padding: theme.spacing(1, 0),
+  title: {
+    borderBottom: `1px solid ${theme.palette.secondary.contrastText}`,
+    padding: '16px',
+    fontWeight: 600,
   },
   card: {
-    border: '1px solid #d8d8d8',
-    color: '#000',
-    margin: '0 0 8px 0',
-    padding: theme.spacing(1),
-    '& .MuiCardHeader-title': {
-      fontSize: '1rem',
+    margin: theme.spacing(2),
+    backgroundColor: theme.palette.neutral.main,
+    color: theme.palette.neutral.contrastText,
+    '& span.MuiCardHeader-subheader': {
+      color: theme.palette.neutral.contrastText,
     },
-    '& .MuiCardHeader-root': {
-      padding: theme.spacing(0.5),
+  },
+  chip: {
+    marginRight: theme.spacing(1),
+    [theme.breakpoints.down('lg')]: {
+      marginTop: theme.spacing(1),
     },
-    '& .MuiCardContent-root': {
-      padding: theme.spacing(2, 1),
-    },
-    '& .MuiIconButton-root': {
-      padding: theme.spacing(0.5),
-    },
-    '& .MuiChip-root': {
-      marginRight: theme.spacing(0.2),
-    },
+  },
+  moment: {
+    marginTop: theme.spacing(3),
+    textAlign: 'right',
+  },
+  iconButton: {
+    padding: 0,
+    marginLeft: theme.spacing(1),
   },
 }));
 
-const Kanban = (props) => {
-  const {
-    products,
-    status,
-    requirements,
-    issues,
-    redirectTo,
-    proj,
-    setProj,
-    setProjReqs,
-    setProjIssues,
-    addItem,
-    editItem,
-    convertIssue,
-    deleteItem,
-  } = props;
+const Kanban = ({
+  statuses,
+  product,
+  productFeatures,
+  productIssues,
+  addItem,
+  editItem,
+  convertIssue,
+  deleteItem,
+}) => {
   const classes = useStyles();
   const [columns, setColumns] = useState({});
+
+  useEffect(() => {
+    let cols = {};
+    if (statuses && !_.isEmpty(statuses)) {
+      _.forEach(statuses, (sts) => {
+        const features = _.filter(
+          productFeatures,
+          { status: sts.status_uuid },
+        );
+        const issues = _.filter(
+          productIssues,
+          { status: sts.status_uuid },
+        );
+        const items = [...features, ...issues];
+        cols = {
+          ...cols,
+          [sts.status_uuid]: {
+            name: sts.name,
+            items: _.orderBy(items, 'create_date', 'desc'),
+          },
+        };
+      });
+      setColumns(cols);
+    }
+  }, [statuses, productFeatures, productIssues]);
 
   const onDragEnd = (result, columns, setColumns) => {
     if (!result.destination) return;
@@ -162,151 +141,161 @@ const Kanban = (props) => {
     }
   };
 
-  useEffect(() => {
-    if (status && status.length) {
-      const columnsFromBackend = {};
-      status.forEach((item) => {
-        columnsFromBackend[item.value] = { name: item.name, items: [] };
-      });
-      setColumns(columnsFromBackend);
-    }
-  }, []);
-
-  useEffect(() => {
-    const cols = columns;
-    const reqs = _.filter(requirements, { projectID: proj });
-    const iss = _.filter(issues, { projectID: proj });
-    setProjReqs(_.orderBy(reqs, ['id']));
-    setProjIssues(_.orderBy(iss, ['id']));
-    status.forEach((item) => {
-      const statusReqs = _.filter(reqs, { status: item.value });
-      const statusIss = _.filter(iss, { status: item.value });
-      cols[item.value] = { name: item.name, items: [...statusReqs, ...statusIss] };
-    });
-    setColumns(cols);
-  }, [requirements, issues, proj]);
-
   return (
-    <div className={classes.kanbanContainer}>
-      <DragDropContext onDragEnd={(result) => onDragEnd(result, columns, setColumns)}>
-        {Object.entries(columns).map(([columnId, column], index) => (
-          <div className={classes.column} key={columnId}>
-            <div className={classes.columnHead}>
-              <p>{column.name}</p>
-              <IconButton onClick={(e) => addItem(index === 0 ? 'req' : 'issue')} size="large">
-                <AddRoundedIcon
-                  className={classes.icon}
-                  fontSize="small"
-                />
-              </IconButton>
-              {/* <IconButton
-                  aria-label="column-options"
-                  aria-controls="menu-column"
-                  aria-haspopup="false"
-                  color="default"
-                >
-                  <MoreHorizIcon className={classes.icon} fontSize="small" />
-                </IconButton> */}
-            </div>
-            <div style={{ margin: 8 }}>
-              <Droppable droppableId={columnId} key={columnId}>
-                {(provided, snapshot) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className={classes.tasksList}
-                    // style={{
-                    //   background: snapshot.isDraggingOver ? '#D8D8D8' : '#707070',
-                    // }}
+    <>
+      {!product && (
+        <Typography
+          className={classes.noProduct}
+          component="div"
+          variant="body1"
+        >
+          No product selected yet. Please select a product
+          to view related features and/or issues.
+        </Typography>
+      )}
+      {!!product && (
+        <DragDropContext
+          onDragEnd={(result) => {
+            onDragEnd(result, columns, setColumns);
+          }}
+        >
+          <Grid
+            container
+            rowGap={2}
+            columnGap={2}
+            className={classes.container}
+          >
+            {_.map(Object.entries(columns), ([columnId, column], index) => (
+              <Grid
+                key={columnId}
+                item
+                xs={2.6}
+                sm={2.75}
+                lg={2.85}
+                className={classes.swimlane}
+              >
+                <div>
+                  <Typography
+                    className={classes.title}
+                    component="div"
+                    variant="body1"
                   >
-                    {column.items.map((item, itemIndex) => (
-                      <Draggable key={item.id} draggableId={item.id} index={itemIndex}>
-                        {(provided, snapshot) => (
-                          <Card
-                            className={classes.card}
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            style={{
-                              userSelect: 'none',
-                              minHeight: '50px',
-                              backgroundColor: snapshot.isDragging
-                                ? '#F6F8FA'
-                                : '#FFFFFF',
-                              ...provided.draggableProps.style,
-                            }}
+                    {column.name}
+                  </Typography>
+                  <IconButton onClick={(e) => addItem(index === 0 ? 'feat' : 'issue')} size="large">
+                    <AddRounded fontSize="small" />
+                  </IconButton>
+                </div>
+                <div>
+                  <Droppable droppableId={columnId} key={columnId}>
+                    {(provided, snapshot) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                      >
+                        {_.map(column.items, (item, itemIndex) => (
+                          <Draggable
+                            key={item.issue_uuid
+                              ? item.issue_uuid
+                              : item.feature_uuid}
+                            draggableId={item.issue_uuid
+                              ? item.issue_uuid
+                              : item.feature_uuid}
+                            index={itemIndex}
                           >
-                            <div className={classes.priority} />
-                            <CardHeader
-                              action={(
-                                <div>
-                                  {!item.featureUUID && (
-                                  <IconButton
-                                    aria-label="convert-ticket"
-                                    aria-controls="menu-card"
-                                    aria-haspopup="false"
-                                    color="default"
-                                    size="large">
-                                    <TrendingFlatRoundedIcon
-                                      className={classes.icon}
-                                      fontSize="small"
-                                      onClick={(e) => convertIssue(item, 'convert')}
-                                    />
-                                  </IconButton>
+                            {(provided, snapshot) => (
+                              <Card
+                                className={classes.card}
+                                variant="outlined"
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                style={{
+                                  userSelect: 'none',
+                                  backgroundColor: snapshot.isDragging
+                                    ? '#F6F8FA'
+                                    : '#FFFFFF',
+                                  ...provided.draggableProps.style,
+                                }}
+                              >
+                                <CardHeader
+                                  subheader={item.name}
+                                  action={(
+                                    <div>
+                                      {index === 0 && (
+                                        <IconButton
+                                          aria-label="convert-ticket"
+                                          aria-controls="menu-card"
+                                          aria-haspopup="false"
+                                          color="secondary"
+                                          onClick={(e) => convertIssue(item, 'convert')}
+                                          size="large"
+                                          className={classes.iconButton}
+                                        >
+                                          <TrendingFlatRounded fontSize="small" />
+                                        </IconButton>
+                                      )}
+                                      <IconButton
+                                        aria-label="edit-ticket"
+                                        aria-controls="menu-card"
+                                        aria-haspopup="false"
+                                        color="secondary"
+                                        onClick={(e) => editItem(item, item.featureUUID ? 'issue' : 'feat')}
+                                        size="large"
+                                        className={classes.iconButton}
+                                      >
+                                        <EditRounded fontSize="small" />
+                                      </IconButton>
+                                      <IconButton
+                                        aria-label="delete-ticket"
+                                        aria-controls="menu-card"
+                                        aria-haspopup="false"
+                                        color="secondary"
+                                        onClick={(e) => deleteItem(item, item.featureUUID ? 'issue' : 'feat')}
+                                        size="large"
+                                        className={classes.iconButton}
+                                      >
+                                        <DeleteRounded fontSize="small" />
+                                      </IconButton>
+                                    </div>
                                   )}
-                                  <IconButton
-                                    aria-label="edit-ticket"
-                                    aria-controls="menu-card"
-                                    aria-haspopup="false"
-                                    color="default"
-                                    onClick={(e) => editItem(item, item.featureUUID ? 'issue' : 'req')}
-                                    size="large">
-                                    <EditRoundedIcon className={classes.icon} fontSize="small" />
-                                  </IconButton>
-                                  <IconButton
-                                    aria-label="delete-ticket"
-                                    aria-controls="menu-card"
-                                    aria-haspopup="false"
-                                    color="default"
-                                    onClick={(e) => deleteItem(item, item.featureUUID ? 'issue' : 'req')}
-                                    size="large">
-                                    <DeleteRoundedIcon className={classes.icon} fontSize="small" />
-                                  </IconButton>
-                                </div>
-                                )}
-                              title={item.name}
-                            />
-                            <CardContent>
-                              <div className={classes.flexContainer}>
-                                <Chip label="testing" color="primary" size="small" />
-                                <Chip
-                                  label="documentation"
-                                  variant="outlined"
-                                  color="secondary"
-                                  size="small"
                                 />
-                              </div>
-                              <div className={classes.datetime}>19 mins ago</div>
-                            </CardContent>
-                          </Card>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </div>
-          </div>
-        ))}
-      </DragDropContext>
-    </div>
+                                <CardContent style={{ paddingBottom: '16px' }}>
+                                  {_.map(item.tags, (tag) => (
+                                    <Chip
+                                      key={item.issue_uuid
+                                        ? `tag-${item.issue_uuid}-${tag}`
+                                        : `tag-${item.feature_uuid}-${tag}`}
+                                      label={tag}
+                                      variant="outlined"
+                                      color="primary"
+                                      className={classes.chip}
+                                    />
+                                  ))}
+                                  <Typography
+                                    className={classes.moment}
+                                    component="div"
+                                    variant="body2"
+                                  >
+                                    {moment(item.create_date).fromNow()}
+                                  </Typography>
+                                </CardContent>
+                              </Card>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
+              </Grid>
+            ))}
+          </Grid>
+        </DragDropContext>
+      )}
+    </>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.dashboardReducer,
-});
-
-export default connect(mapStateToProps)(Kanban);
+export default Kanban;

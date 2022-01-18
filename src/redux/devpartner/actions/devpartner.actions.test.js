@@ -1,184 +1,189 @@
 import * as actions from './devpartner.actions';
 
-// Test Get Dev Teams
+// Test Get All Dev Teams
+describe('Get All Dev Teams action', () => {
+  it('should create an action to get all dev teams', () => {
+    const expectedAction = { type: actions.ALL_DEV_TEAMS };
+    expect(actions.getAllDevTeams()).toEqual(expectedAction);
+  });
+});
+
+// Test Get Dev Team
 describe('Get Dev Team action', () => {
   it('should create an action to get dev team', () => {
-    const organization_uuid = '224761f5-0010-4a46-ba2f-d92a4fdc1d21';
+    const devteam_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
     const expectedAction = {
-      type: actions.GET_DEVTEAMS,
-      organization_uuid,
+      type: actions.GET_DEV_TEAM,
+      devteam_uuid,
     };
-    expect(actions.getDevTeams(organization_uuid))
+
+    expect(actions.getDevTeam(devteam_uuid))
       .toEqual(expectedAction);
   });
 });
 
-// Test Add Dev Team
-describe('Add Dev Team action', () => {
-  it('should create an action to add dev team', () => {
-    const payload = { dev_team_uuid: '224761f5-0010-4a46-ba2f-d92a4fdc1d21', name: 'Abc' };
-    const history = {};
-    const redirectTo = '/test';
+// Test Create Dev Team
+describe('Create Dev Team action', () => {
+  it('should create an action to create dev team', () => {
+    const data = { name: 'Test' };
     const expectedAction = {
-      type: actions.ADD_DEVTEAM,
-      payload,
-      history,
-      redirectTo,
+      type: actions.CREATE_DEV_TEAM,
+      data,
     };
-    expect(actions.addDevTeam(payload, history, redirectTo))
-      .toEqual(expectedAction);
+
+    expect(actions.createDevTeam(data)).toEqual(expectedAction);
   });
 });
 
-// Test Edit Dev Team
-describe('Edit Dev team action', () => {
-  it('should create an action to edit dev team', () => {
-    const payload = { dev_team_uuid: '224761f5-0010-4a46-ba2f-d92a4fdc1d21' };
-    const history = {};
-    const redirectTo = '/test';
+// Test Update Dev Team
+describe('Update Dev Team action', () => {
+  it('should create an action to update dev team', () => {
+    const data = { name: 'Test Edited' };
     const expectedAction = {
-      type: actions.UPDATE_DEVTEAM,
-      payload,
-      history,
-      redirectTo,
+      type: actions.UPDATE_DEV_TEAM,
+      data,
     };
-    expect(actions.updateDevTeam(payload, history, redirectTo))
-      .toEqual(expectedAction);
+
+    expect(actions.updateDevTeam(data)).toEqual(expectedAction);
   });
 });
 
-// Test Delete Dev team
-describe('Delete Dev team action', () => {
+// Test Delete Dev Team
+describe('Delete Dev Team action', () => {
   it('should create an action to delete dev team', () => {
-    const dev_team_uuid = '224761f5-0010-4a46-ba2f-d92a4fdc1d21';
+    const devteam_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
     const expectedAction = {
-      type: actions.DELETE_DEVTEAM,
-      dev_team_uuid,
+      type: actions.DELETE_DEV_TEAM,
+      devteam_uuid,
     };
-    expect(actions.deleteDevTeam(
-      dev_team_uuid,
-    )).toEqual(expectedAction);
+
+    expect(actions.deleteDevTeam(devteam_uuid))
+      .toEqual(expectedAction);
   });
 });
 
-// Test Get Timesheets
+// Test Get All Timesheet Hours
+describe('Get All Timesheet Hours action', () => {
+  it('should create an action to get all timesheet hours', () => {
+    const expectedAction = { type: actions.ALL_TIMESHEET_HOURS };
+    expect(actions.getAllTimesheetHours()).toEqual(expectedAction);
+  });
+});
+
+// Test Get Timesheet Hour
+describe('Get Timesheet Hour action', () => {
+  it('should create an action to get timesheet hour', () => {
+    const timesheethour_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
+    const expectedAction = {
+      type: actions.GET_TIMESHEET_HOUR,
+      timesheethour_uuid,
+    };
+
+    expect(actions.getTimesheetHour(timesheethour_uuid))
+      .toEqual(expectedAction);
+  });
+});
+
+// Test Create Timesheet Hour
+describe('Create Timesheet Hour action', () => {
+  it('should create an action to create timesheet hour', () => {
+    const data = { name: 'Test' };
+    const expectedAction = {
+      type: actions.CREATE_TIMESHEET_HOUR,
+      data,
+    };
+
+    expect(actions.createTimesheetHour(data))
+      .toEqual(expectedAction);
+  });
+});
+
+// Test Update Timesheet Hour
+describe('Update Timesheet Hour action', () => {
+  it('should create an action to update timesheet hour', () => {
+    const data = { name: 'Test Edited' };
+    const expectedAction = {
+      type: actions.UPDATE_TIMESHEET_HOUR,
+      data,
+    };
+
+    expect(actions.updateTimesheetHour(data))
+      .toEqual(expectedAction);
+  });
+});
+
+// Test Delete Timesheet Hour
+describe('Delete Timesheet Hour action', () => {
+  it('should create an action to delete timesheet hour', () => {
+    const timesheethour_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
+    const expectedAction = {
+      type: actions.DELETE_TIMESHEET_HOUR,
+      timesheethour_uuid,
+    };
+
+    expect(actions.deleteTimesheetHour(timesheethour_uuid))
+      .toEqual(expectedAction);
+  });
+});
+
+// Test Get All Timesheets
+describe('Get All Timesheets action', () => {
+  it('should create an action to get all timesheets', () => {
+    const expectedAction = { type: actions.ALL_TIMESHEETS };
+    expect(actions.getAllTimesheets()).toEqual(expectedAction);
+  });
+});
+
+// Test Get Timesheet
 describe('Get Timesheet action', () => {
   it('should create an action to get timesheet', () => {
-    const project_uuid = '224761f5-0010-4a46-ba2f-d92a4fdc1d21';
+    const timesheet_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
     const expectedAction = {
-      type: actions.GET_TIMESHEETS,
-      project_uuid,
+      type: actions.GET_TIMESHEET,
+      timesheet_uuid,
     };
-    expect(actions.getTimesheets(project_uuid))
+
+    expect(actions.getTimesheet(timesheet_uuid))
       .toEqual(expectedAction);
   });
 });
 
-// Test Add Timesheet
-describe('Add Timesheet action', () => {
-  it('should create an action to add timesheet', () => {
-    const payload = { timesheet_uuid: '224761f5-0010-4a46-ba2f-d92a4fdc1d21', name: 'Abc' };
-    const history = {};
-    const redirectTo = '/test';
+// Test Create Timesheet
+describe('Create Timesheet action', () => {
+  it('should create an action to create timesheet', () => {
+    const data = { name: 'Test' };
     const expectedAction = {
-      type: actions.ADD_TIMESHEET,
-      payload,
-      history,
-      redirectTo,
+      type: actions.CREATE_TIMESHEET,
+      data,
     };
-    expect(actions.addTimesheet(payload, history, redirectTo))
-      .toEqual(expectedAction);
+
+    expect(actions.createTimesheet(data)).toEqual(expectedAction);
   });
 });
 
-// Test Edit Timesheet
-describe('Edit Timesheet action', () => {
-  it('should create an action to edit timesheet', () => {
-    const payload = { timesheet_uuid: '224761f5-0010-4a46-ba2f-d92a4fdc1d21' };
-    const history = {};
-    const redirectTo = '/test';
+// Test Update Timesheet
+describe('Update Timesheet action', () => {
+  it('should create an action to update timesheet', () => {
+    const data = { name: 'Test Edited' };
     const expectedAction = {
       type: actions.UPDATE_TIMESHEET,
-      payload,
-      history,
-      redirectTo,
+      data,
     };
-    expect(actions.updateTimesheet(payload, history, redirectTo))
-      .toEqual(expectedAction);
+
+    expect(actions.updateTimesheet(data)).toEqual(expectedAction);
   });
 });
 
 // Test Delete Timesheet
 describe('Delete Timesheet action', () => {
   it('should create an action to delete timesheet', () => {
-    const timesheet_uuid = '224761f5-0010-4a46-ba2f-d92a4fdc1d21';
+    const timesheet_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
     const expectedAction = {
       type: actions.DELETE_TIMESHEET,
       timesheet_uuid,
     };
-    expect(actions.deleteTimesheet(
-      timesheet_uuid,
-    )).toEqual(expectedAction);
-  });
-});
 
-// Test Get Timesheet hours
-describe('Get Timesheet hour action', () => {
-  it('should create an action to get timesheet hour', () => {
-    const timesheet_uuid = '224761f5-0010-4a46-ba2f-d92a4fdc1d21';
-    const expectedAction = {
-      type: actions.GET_TIMESHEET_HOURS,
-      timesheet_uuid,
-    };
-    expect(actions.getTimesheet_hours(timesheet_uuid))
+    expect(actions.deleteTimesheet(timesheet_uuid))
       .toEqual(expectedAction);
-  });
-});
-
-// Test Add Timesheet hour
-describe('Add Timesheet hour action', () => {
-  it('should create an action to add timesheet hour', () => {
-    const payload = { timesheet_hour_uuid: '224761f5-0010-4a46-ba2f-d92a4fdc1d21', name: 'Abc' };
-    const history = {};
-    const redirectTo = '/test';
-    const expectedAction = {
-      type: actions.ADD_TIMESHEET_HOUR,
-      payload,
-      history,
-      redirectTo,
-    };
-    expect(actions.addTimesheet_hour(payload, history, redirectTo))
-      .toEqual(expectedAction);
-  });
-});
-
-// Test Edit Timesheet hour
-describe('Edit Timesheet hour action', () => {
-  it('should create an action to edit timesheet hour', () => {
-    const payload = { timesheet_hour_uuid: '224761f5-0010-4a46-ba2f-d92a4fdc1d21' };
-    const history = {};
-    const redirectTo = '/test';
-    const expectedAction = {
-      type: actions.UPDATE_TIMESHEET_HOUR,
-      payload,
-      history,
-      redirectTo,
-    };
-    expect(actions.updateTimesheet_hour(payload, history, redirectTo))
-      .toEqual(expectedAction);
-  });
-});
-
-// Test Delete Timesheet hour
-describe('Delete Timesheet hour action', () => {
-  it('should create an action to delete timesheet hour', () => {
-    const timesheet_hour_uuid = '224761f5-0010-4a46-ba2f-d92a4fdc1d21';
-    const expectedAction = {
-      type: actions.DELETE_TIMESHEET_HOUR,
-      timesheet_hour_uuid,
-    };
-    expect(actions.deleteTimesheet_hour(
-      timesheet_hour_uuid,
-    )).toEqual(expectedAction);
   });
 });

@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { useTheme, useMediaQuery, Grid, TextField, Button, MenuItem } from '@mui/material';
+import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
+import {
+  useTheme,
+  useMediaQuery,
+  Grid,
+  TextField,
+  Button,
+  MenuItem,
+} from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
-import {
-  addIssue,
-  editIssue,
-} from '@redux/dashboard/actions/dashboard.actions';
 import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
@@ -50,7 +54,7 @@ const AddIssues = ({
     && location.state.type === 'edit'
     && location.state.data
   ) || {};
-  const projectID = location.state && location.state.projectID;
+  const productID = location.state && location.state.productID;
 
   const name = useInput(editData.name || '', {
     required: true,
@@ -110,7 +114,7 @@ const AddIssues = ({
       ? editData.id
       : (location.state && location.state.nextId);
     const issueFormValue = {
-      projectID,
+      productID,
       id,
       name: name.value,
       description: description.value,
@@ -121,9 +125,9 @@ const AddIssues = ({
     };
 
     if (editPage) {
-      dispatch(editIssue(issueFormValue));
+      console.log('Dispatch edit issue action here');
     } else {
-      dispatch(addIssue(issueFormValue));
+      console.log('Dispatch add issue action here');
     }
     history.push(redirectTo);
   };
@@ -168,8 +172,9 @@ const AddIssues = ({
     return errorExists;
   };
 
-  return <>
-    {openFormModal && (
+  return (
+    <>
+      {openFormModal && (
       <FormModal
         open={openFormModal}
         handleClose={closeFormModal}
@@ -293,10 +298,10 @@ const AddIssues = ({
               >
                 <MenuItem value="">Select</MenuItem>
                 {_.map(
-                  _.filter(repos, { projectID }),
+                  _.filter(repos, { productID }),
                   (rp) => (
                     <MenuItem
-                      key={`type-${rp.projectID}-${rp.id}`}
+                      key={`type-${rp.productID}-${rp.id}`}
                       value={rp.name}
                     >
                       {rp.name}
@@ -306,78 +311,78 @@ const AddIssues = ({
               </TextField>
             </Grid>
             {editPage && (
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  select
-                  id="issueStatus"
-                  label="Issue Status"
-                  name="issueStatus"
-                  autoComplete="issueStatus"
-                  error={
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                select
+                id="issueStatus"
+                label="Issue Status"
+                name="issueStatus"
+                autoComplete="issueStatus"
+                error={
                     formError.issueStatus
                     && formError.issueStatus.error
                   }
-                  helperText={
+                helperText={
                     formError.issueStatus
                       ? formError.issueStatus.message
                       : ''
                   }
-                  onBlur={(e) => handleBlur(e, 'required', issueStatus)}
-                  {...issueStatus.bind}
-                >
-                  {_.map(status, (st) => (
-                    <MenuItem
-                      key={`type-${st.id}`}
-                      value={st.value}
-                    >
-                      {st.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
+                onBlur={(e) => handleBlur(e, 'required', issueStatus)}
+                {...issueStatus.bind}
+              >
+                {_.map(status, (st) => (
+                  <MenuItem
+                    key={`type-${st.id}`}
+                    value={st.value}
+                  >
+                    {st.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
             )}
             {editPage && (
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  select
-                  id="assignedTo"
-                  label="Assigned To"
-                  name="assignedTo"
-                  autoComplete="assignedTo"
-                  error={
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                select
+                id="assignedTo"
+                label="Assigned To"
+                name="assignedTo"
+                autoComplete="assignedTo"
+                error={
                     formError.assignedTo
                     && formError.assignedTo.error
                   }
-                  helperText={
+                helperText={
                     formError.assignedTo
                       ? formError.assignedTo.message
                       : ''
                   }
-                  onBlur={(e) => handleBlur(e, 'required', assignedTo)}
-                  {...assignedTo.bind}
-                >
-                  <MenuItem value="">Select</MenuItem>
-                  {_.map(
-                    _.filter(devs, { projectID }),
-                    (dev) => (
-                      <MenuItem
-                        key={`type-${dev.projectID}-${dev.id}`}
-                        value={dev.value}
-                      >
-                        {dev.name}
-                      </MenuItem>
-                    ),
-                  )}
-                </TextField>
-              </Grid>
+                onBlur={(e) => handleBlur(e, 'required', assignedTo)}
+                {...assignedTo.bind}
+              >
+                <MenuItem value="">Select</MenuItem>
+                {_.map(
+                  _.filter(devs, { productID }),
+                  (dev) => (
+                    <MenuItem
+                      key={`type-${dev.productID}-${dev.id}`}
+                      value={dev.value}
+                    >
+                      {dev.name}
+                    </MenuItem>
+                  ),
+                )}
+              </TextField>
+            </Grid>
             )}
           </Grid>
 
@@ -413,13 +418,13 @@ const AddIssues = ({
           </Grid>
         </form>
       </FormModal>
-    )}
-  </>;
+      )}
+    </>
+  );
 };
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.dashboardReducer,
 });
 
 export default connect(mapStateToProps)(AddIssues);

@@ -7,8 +7,16 @@ import {
   NotificationManager,
 } from 'react-notifications';
 import { rem } from 'polished';
-import { Tabs, Tab, Button, TextField, Typography, Grid, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import {
+  Tabs,
+  Tab,
+  Button,
+  TextField,
+  Typography,
+  Grid,
+  Box,
+} from '@mui/material';
 import { Email as EmailIcon } from '@mui/icons-material';
 import { useInput } from '@hooks/useInput';
 import { invite } from '@redux/authuser/actions/authuser.actions';
@@ -89,8 +97,8 @@ const UserManagement = ({
 
   const getEmailsFromInputValue = (value) => value.split(',').map((item) => item.trim());
 
-  const viewTabClicked = (event, view) => {
-    setView(view);
+  const viewTabClicked = (event, vw) => {
+    setView(vw);
   };
 
   return (

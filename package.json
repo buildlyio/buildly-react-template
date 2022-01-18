@@ -28,6 +28,8 @@
     "i18next-browser-languagedetector": "^3.0.1",
     "immutability-helper": "3.0.1",
     "lodash": "^4.17.21",
+    "moment-timezone": "^0.5.34",
+    "mui-datatables": "^4.0.0",
     "npm": "^6.9.0",
     "polished": "^3.2.0",
     "prop-types": "^15.7.2",

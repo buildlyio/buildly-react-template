@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   Button,
   CssBaseline,
@@ -12,9 +14,8 @@ import {
   Container,
   Grid,
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import logo from '@assets/light-logo.png';
 import Autocomplete from '@mui/material/Autocomplete';
+import logo from '@assets/light-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import GithubLogin from '@components/SocialLogin/GithubLogin';
 import { useInput } from '@hooks/useInput';
@@ -26,7 +27,6 @@ import { routes } from '@routes/routesConstants';
 import { validators } from '@utils/validators';
 import { isMobile } from '@utils/mediaQuery';
 import { providers } from '@utils/socialLogin';
-import _ from 'lodash';
 
 const useStyles = makeStyles((theme) => ({
   logoDiv: {
@@ -168,7 +168,7 @@ const Register = ({
   return (
     <>
       <div className={classes.logoDiv}>
-        <img src={logo} className={classes.logo} />
+        <img src={logo} alt="Logo" className={classes.logo} />
       </div>
       <Container component="main" maxWidth="sm" className={classes.container}>
         <CssBaseline />

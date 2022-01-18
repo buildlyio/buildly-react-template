@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Loader from '@components/Loader/Loader';
 import UserDashboard from './components/UserDashboard';
-import FeedbackForm from './components/FeedbackForm';
+// import FeedbackForm from './components/FeedbackForm';
 
 const Dashboard = ({
   history, loading, loaded, filled,

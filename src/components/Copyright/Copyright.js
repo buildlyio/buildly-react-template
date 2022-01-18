@@ -1,6 +1,11 @@
 import React, { useContext } from 'react';
-import { AppBar, Toolbar, Typography, Link } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Link,
+} from '@mui/material';
 import { AppContext } from '@context/App.context';
 import Support from './Support';
 import Services from './Services';
@@ -53,9 +58,8 @@ const Copyright = () => {
             {'Copyright © '}
             <Link color="inherit" href="https://example.com/" target="_blank">
               {app.title}
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
+            </Link>
+            {` ${new Date().getFullYear()}.`}
           </Typography>
         </div>
       </Toolbar>

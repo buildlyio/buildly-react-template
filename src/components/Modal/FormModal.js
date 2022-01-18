@@ -1,4 +1,5 @@
 import React from 'react';
+import withStyles from '@mui/styles/withStyles';
 import {
   Dialog,
   DialogContent,
@@ -8,8 +9,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import { Close as CloseIcon } from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close';
 import ConfirmModal from './ConfirmModal';
 
 const styles = (theme) => ({
@@ -41,7 +41,8 @@ const StyledDialogTitle = withStyles(styles)(({
         aria-label="close"
         className={classes.closeButton}
         onClick={onClose}
-        size="large">
+        size="large"
+      >
         <CloseIcon />
       </IconButton>
     ) : null}

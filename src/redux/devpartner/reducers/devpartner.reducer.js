@@ -1,223 +1,78 @@
+import _ from 'lodash';
 import {
-  GET_DEVTEAMS,
-  GET_DEVTEAMS_SUCCESS,
-  GET_DEVTEAMS_FAILURE,
-  ADD_DEVTEAM,
-  ADD_DEVTEAM_SUCCESS,
-  ADD_DEVTEAM_FAILURE,
-  UPDATE_DEVTEAM,
-  UPDATE_DEVTEAM_SUCCESS,
-  UPDATE_DEVTEAM_FAILURE,
-  DELETE_DEVTEAM,
-  DELETE_DEVTEAM_SUCCESS,
-  DELETE_DEVTEAM_FAILURE,
-  GET_TIMESHEETS,
-  GET_TIMESHEETS_SUCCESS,
-  GET_TIMESHEETS_FAILURE,
-  ADD_TIMESHEET,
-  ADD_TIMESHEET_SUCCESS,
-  ADD_TIMESHEET_FAILURE,
-  UPDATE_TIMESHEET,
-  UPDATE_TIMESHEET_SUCCESS,
-  UPDATE_TIMESHEET_FAILURE,
-  DELETE_TIMESHEET,
-  DELETE_TIMESHEET_SUCCESS,
-  DELETE_TIMESHEET_FAILURE,
-  GET_TIMESHEET_HOURS,
-  GET_TIMESHEET_HOURS_SUCCESS,
-  GET_TIMESHEET_HOURS_FAILURE,
-  ADD_TIMESHEET_HOUR,
-  ADD_TIMESHEET_HOUR_SUCCESS,
-  ADD_TIMESHEET_HOUR_FAILURE,
+  ALL_DEV_TEAMS,
+  ALL_DEV_TEAMS_SUCCESS,
+  ALL_DEV_TEAMS_FAILURE,
+  ALL_TIMESHEET_HOURS,
+  ALL_TIMESHEET_HOURS_SUCCESS,
+  ALL_TIMESHEET_HOURS_FAILURE,
+  ALL_TIMESHEETS,
+  ALL_TIMESHEETS_SUCCESS,
+  ALL_TIMESHEETS_FAILURE,
+  GET_DEV_TEAM,
+  GET_DEV_TEAM_SUCCESS,
+  GET_DEV_TEAM_FAILURE,
+  GET_TIMESHEET_HOUR,
+  GET_TIMESHEET_HOUR_SUCCESS,
+  GET_TIMESHEET_HOUR_FAILURE,
+  GET_TIMESHEET,
+  GET_TIMESHEET_SUCCESS,
+  GET_TIMESHEET_FAILURE,
+  CREATE_DEV_TEAM,
+  CREATE_DEV_TEAM_SUCCESS,
+  CREATE_DEV_TEAM_FAILURE,
+  CREATE_TIMESHEET_HOUR,
+  CREATE_TIMESHEET_HOUR_SUCCESS,
+  CREATE_TIMESHEET_HOUR_FAILURE,
+  CREATE_TIMESHEET,
+  CREATE_TIMESHEET_SUCCESS,
+  CREATE_TIMESHEET_FAILURE,
+  UPDATE_DEV_TEAM,
+  UPDATE_DEV_TEAM_SUCCESS,
+  UPDATE_DEV_TEAM_FAILURE,
   UPDATE_TIMESHEET_HOUR,
   UPDATE_TIMESHEET_HOUR_SUCCESS,
   UPDATE_TIMESHEET_HOUR_FAILURE,
+  UPDATE_TIMESHEET,
+  UPDATE_TIMESHEET_SUCCESS,
+  UPDATE_TIMESHEET_FAILURE,
+  DELETE_DEV_TEAM,
+  DELETE_DEV_TEAM_SUCCESS,
+  DELETE_DEV_TEAM_FAILURE,
   DELETE_TIMESHEET_HOUR,
   DELETE_TIMESHEET_HOUR_SUCCESS,
   DELETE_TIMESHEET_HOUR_FAILURE,
+  DELETE_TIMESHEET,
+  DELETE_TIMESHEET_SUCCESS,
+  DELETE_TIMESHEET_FAILURE,
 } from '../actions/devpartner.actions';
 
 const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  devTeam: null,
-  issue: null,
-  timesheet: null,
-  timesheet_hour: null,
+  devTeams: [],
+  timesheetHours: [],
+  timesheets: [],
 };
 
 // Reducer
 export default (state = initialState, action) => {
   switch (action.type) {
-    case GET_DEVTEAMS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case GET_DEVTEAMS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        devTeam: action.data,
-      };
-
-    case GET_DEVTEAMS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case ADD_DEVTEAM:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case ADD_DEVTEAM_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        devTeam: action.data,
-      };
-
-    case ADD_DEVTEAM_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case UPDATE_DEVTEAM:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case UPDATE_DEVTEAM_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        devTeam: action.data,
-      };
-
-    case UPDATE_DEVTEAM_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case DELETE_DEVTEAM:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case DELETE_DEVTEAM_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        devTeam: action.data,
-      };
-
-    case DELETE_DEVTEAM_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case GET_TIMESHEETS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case GET_TIMESHEETS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        timesheet: action.data,
-      };
-
-    case GET_TIMESHEETS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case ADD_TIMESHEET:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case ADD_TIMESHEET_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        timesheet: action.data,
-      };
-
-    case ADD_TIMESHEET_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
+    case ALL_DEV_TEAMS:
+    case ALL_TIMESHEET_HOURS:
+    case ALL_TIMESHEETS:
+    case GET_DEV_TEAM:
+    case GET_TIMESHEET_HOUR:
+    case GET_TIMESHEET:
+    case CREATE_DEV_TEAM:
+    case CREATE_TIMESHEET_HOUR:
+    case CREATE_TIMESHEET:
+    case UPDATE_DEV_TEAM:
+    case UPDATE_TIMESHEET_HOUR:
     case UPDATE_TIMESHEET:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case UPDATE_TIMESHEET_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        timesheet: action.data,
-      };
-
-    case UPDATE_TIMESHEET_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
+    case DELETE_DEV_TEAM:
+    case DELETE_TIMESHEET_HOUR:
     case DELETE_TIMESHEET:
       return {
         ...state,
@@ -226,14 +81,20 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case DELETE_TIMESHEET_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        timesheet: action.data,
-      };
-
+    case ALL_DEV_TEAMS_FAILURE:
+    case ALL_TIMESHEET_HOURS_FAILURE:
+    case ALL_TIMESHEETS_FAILURE:
+    case GET_DEV_TEAM_FAILURE:
+    case GET_TIMESHEET_HOUR_FAILURE:
+    case GET_TIMESHEET_FAILURE:
+    case CREATE_DEV_TEAM_FAILURE:
+    case CREATE_TIMESHEET_HOUR_FAILURE:
+    case CREATE_TIMESHEET_FAILURE:
+    case UPDATE_DEV_TEAM_FAILURE:
+    case UPDATE_TIMESHEET_HOUR_FAILURE:
+    case UPDATE_TIMESHEET_FAILURE:
+    case DELETE_DEV_TEAM_FAILURE:
+    case DELETE_TIMESHEET_HOUR_FAILURE:
     case DELETE_TIMESHEET_FAILURE:
       return {
         ...state,
@@ -242,101 +103,137 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case GET_TIMESHEET_HOURS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case GET_TIMESHEET_HOURS_SUCCESS:
+    case ALL_DEV_TEAMS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        timesheet_hour: action.data,
+        devTeams: action.data,
       };
 
-    case GET_TIMESHEET_HOURS_FAILURE:
+    case GET_DEV_TEAM_SUCCESS:
+    case CREATE_DEV_TEAM_SUCCESS:
+    case UPDATE_DEV_TEAM_SUCCESS: {
+      const found = _.find(
+        state.devTeams,
+        { devteam_uuid: action.data.devteam_uuid },
+      );
+      const teams = found
+        ? _.map(state.devTeams, (team) => (
+          team.devteam_uuid === action.data.devteam_uuid
+            ? action.data
+            : team
+        ))
+        : [...state.devTeams, action.data];
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        error: action.error,
+        devTeams: teams,
       };
+    }
 
-    case ADD_TIMESHEET_HOUR:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
+    case DELETE_DEV_TEAM_SUCCESS: {
+      const { devTeams } = state;
+      _.remove(devTeams, { devteam_uuid: action.devteam_uuid });
 
-    case ADD_TIMESHEET_HOUR_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        timesheet_hour: action.data,
+        devTeams,
       };
+    }
 
-    case ADD_TIMESHEET_HOUR_FAILURE:
+    case ALL_TIMESHEET_HOURS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        error: action.error,
+        timesheetHours: action.data,
       };
 
-    case UPDATE_TIMESHEET_HOUR:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
+    case GET_TIMESHEET_HOUR_SUCCESS:
+    case CREATE_TIMESHEET_HOUR_SUCCESS:
+    case UPDATE_TIMESHEET_HOUR_SUCCESS: {
+      const found = _.find(
+        state.timesheetHours,
+        { timesheethour_uuid: action.data.timesheethour_uuid },
+      );
+      const hours = found
+        ? _.map(state.timesheetHours, (hour) => (
+          hour.timesheethour_uuid === action.data.timesheethour_uuid
+            ? action.data
+            : hour
+        ))
+        : [...state.timesheetHours, action.data];
 
-    case UPDATE_TIMESHEET_HOUR_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        timesheet_hour: action.data,
-      };
-
-    case UPDATE_TIMESHEET_HOUR_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case DELETE_TIMESHEET_HOUR:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case DELETE_TIMESHEET_HOUR_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        timesheet_hour: action.data,
+        timesheetHours: hours,
       };
+    }
 
-    case DELETE_TIMESHEET_HOUR_FAILURE:
+    case DELETE_TIMESHEET_HOUR_SUCCESS: {
+      const { timesheetHours } = state;
+      _.remove(
+        timesheetHours,
+        { timesheethour_uuid: action.timesheethour_uuid },
+      );
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        error: action.error,
+        timesheetHours,
       };
+    }
+
+    case ALL_TIMESHEETS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        timesheets: action.data,
+      };
+
+    case GET_TIMESHEET_SUCCESS:
+    case CREATE_TIMESHEET_SUCCESS:
+    case UPDATE_TIMESHEET_SUCCESS: {
+      const found = _.find(
+        state.timesheets,
+        { timesheet_uuid: action.data.timesheet_uuid },
+      );
+      const sheets = found
+        ? _.map(state.timesheets, (sheet) => (
+          sheet.timesheet_uuid === action.data.timesheet_uuid
+            ? action.data
+            : sheet
+        ))
+        : [...state.timesheets, action.data];
+
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        timesheets: sheets,
+      };
+    }
+
+    case DELETE_TIMESHEET_SUCCESS: {
+      const { timesheets } = state;
+      _.remove(timesheets, { timesheet_uuid: action.timesheet_uuid });
+
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        timesheets,
+      };
+    }
 
     default:
       return state;

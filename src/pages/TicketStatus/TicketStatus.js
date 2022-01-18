@@ -1,6 +1,14 @@
 import React from 'react';
-import { CssBaseline, Link, Grid, Card, CardContent, Typography, Container } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import {
+  CssBaseline,
+  Link,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Container,
+} from '@mui/material';
 import logo from '@assets/light-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import { routes } from '@routes/routesConstants';
@@ -32,7 +40,7 @@ const TicketStatus = () => {
   return (
     <>
       <div className={classes.logoDiv}>
-        <img src={logo} className={classes.logo} />
+        <img src={logo} alt="Logo" className={classes.logo} />
       </div>
       <Container component="main" maxWidth="xs">
         <CssBaseline />

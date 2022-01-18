@@ -20,7 +20,7 @@ class PopupWindow {
 
   poll() {
     this.promise = new Promise((resolve, reject) => {
-      this._iid = window.setInterval(() => {
+      this.id = window.setInterval(() => {
         try {
           const popup = this.window;
 
@@ -55,9 +55,9 @@ class PopupWindow {
   }
 
   cancel() {
-    if (this._iid) {
-      window.clearInterval(this._iid);
-      this._iid = null;
+    if (this.id) {
+      window.clearInterval(this.id);
+      this.id = null;
     }
   }
 
