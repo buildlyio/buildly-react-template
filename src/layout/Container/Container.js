@@ -12,6 +12,7 @@ import { routes } from '@routes/routesConstants';
 import NewProduct from '@pages/NewProduct/NewProduct';
 import Release from '@pages/Release/Release';
 import ViewRelease from '@pages/Release/components/ViewRelease';
+import Milestone from '@pages/Milestone/Milestone';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,6 +64,7 @@ const ContainerDashboard = ({ location, history }) => {
             <Route path={routes.NEW_PRODUCT} component={NewProduct} />
             <Route exact path={`${routes.RELEASE}/view/:releaseID`} component={ViewRelease} />
             <Route path={routes.RELEASE} component={Release} />
+            <Route path={routes.MILESTONE} component={Milestone} />
           </Switch>
         </Container>
       </UserContext.Provider>

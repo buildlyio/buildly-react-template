@@ -16,4 +16,9 @@ export const NAVIGATION_ITEMS = [
     name: 'Releases',
     link: routes.RELEASE,
   },
+  {
+    id: 'milestones',
+    name: 'Milestones',
+    link: routes.MILESTONE,
+  },
 ];
