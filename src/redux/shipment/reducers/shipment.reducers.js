@@ -51,50 +51,42 @@ export default (state = initialState, action) => {
       };
 
     case GET_SHIPMENTS_SUCCESS: {
-      const initialShipmentData = state.shipmentData || [];
+      let initialShipmentData = state.shipmentData || [];
       let shipmentData = [];
 
       if (!(action.data instanceof Array)) {
-        let shipmentIndex = initialShipmentData.findIndex(el => el.id === action.data.id);
+        const shipmentIndex = initialShipmentData.findIndex((el) => el.id === action.data.id);
         if (shipmentIndex < 0) {
           initialShipmentData.push(action.data);
-        }
-        else {
+        } else {
           initialShipmentData[shipmentIndex] = action.data;
         }
         shipmentData = initialShipmentData;
-
-      }
-      else {
-        if (action.data.length < initialShipmentData.length && action.shipmentAction === 'delete') {
-          let shipmentStatus = action.status in ['Completed', 'Cancelled'] ? action.status : 'Active';
-          const filteredShipment = _.filter(initialShipmentData, { type: shipmentStatus });
-          initialShipmentData = _.filter(initialShipmentData, function(shipment) {
-            return type !== shipmentStatus;
-        });
+      } else if (action.data.length < initialShipmentData.length && action.shipmentAction === 'delete') {
+        const shipmentStatus = action.status in ['Completed', 'Cancelled'] ? action.status : 'Active';
+        let filteredShipment = _.filter(initialShipmentData, { type: shipmentStatus });
+        // eslint-disable-next-line max-len
+        initialShipmentData = _.filter(initialShipmentData, (shipment) => shipment.type !== shipmentStatus);
         filteredShipment = action.data;
-          shipmentData = [...filteredShipment, ...initialShipmentData];
-
-        }
-        else {
-          shipmentData = Object.values([...initialShipmentData, ...action.data].reduce((result, { id, ...rest }) => {
-            // eslint-disable-next-line no-param-reassign
-            result[id] = {
-              ...(result[id] || {}),
-              id,
-              ...rest,
-            };
-            return result;
-          }, {}))
-        }
+        shipmentData = [...filteredShipment, ...initialShipmentData];
+      } else {
+        // eslint-disable-next-line max-len
+        shipmentData = Object.values([...initialShipmentData, ...action.data].reduce((result, { id, ...rest }) => {
+          // eslint-disable-next-line no-param-reassign
+          result[id] = {
+            ...(result[id] || {}),
+            id,
+            ...rest,
+          };
+          return result;
+        }, {}));
       }
-
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        shipmentData: shipmentData,
+        shipmentData,
       };
     }
 

@@ -101,7 +101,7 @@
   "scripts": {
     "build": "webpack --mode development",
     "start": "webpack-dev-server --mode development",
-    "https:local": "webpack-dev-server --https --cert /Users/ajackusconsultancy/certs/server.crt --key /Users/ajackusconsultancy/certs/server.key --mode development --env.build=local",
+    "https:local": "webpack-dev-server --https --cert /home/ajackus/Documents/Yasmin/Github/cert/localhost.crt --key /home/ajackus/Documents/Yasmin/Github/cert/localhost.key --mode development --env.build=local",
     "build:dev": "webpack --mode development --env.build=dev",
     "start:dev": "webpack-dev-server --mode development --env.build=dev",
     "build:prod": "webpack --mode production --env.build=prod",

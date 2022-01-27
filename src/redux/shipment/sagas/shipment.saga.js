@@ -62,9 +62,13 @@ function* getShipmentList(payload) {
       `${window.env.API_URL}${shipmentApiEndPoint}shipment/${query_params}`,
     );
     if (data && data.data) {
+      let shipment_data = data.data;
+      if (data.data instanceof Array) {
+        shipment_data = _.filter(data.data, (shipment) => _.lowerCase(shipment.platform_name) !== 'iclp');
+      }
       yield put({
         type: GET_SHIPMENTS_SUCCESS,
-        data: _.filter(data.data, (shipment) => _.lowerCase(shipment.platform_name) !== 'iclp'),
+        data: shipment_data,
         shipmentAction: payload.shipmentAction,
         status: payload.status ? payload.status : 'All',
       });
@@ -153,6 +157,7 @@ function* addShipment(action) {
           null,
           data.data.id,
           false,
+          false,
           'add',
         ),
       ),
@@ -198,6 +203,7 @@ function* editShipment(action) {
           payload.organization_uuid,
           null,
           payload.id,
+          false,
           false,
           'edit',
         ),
@@ -254,6 +260,7 @@ function* deleteShipment(payload) {
         organization_uuid,
         'Planned,Enroute',
         null,
+        true,
         true,
         'delete',
       )),

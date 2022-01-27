@@ -25,6 +25,9 @@ function makeRequest(method, url, body, useJwt, contentType, responseType, reque
     Authorization: `${tokenType} ${token}`,
     // 'Content-Type': contentType || 'application/json', // Commenting to make it work for GCP
   };
+  if (method === 'POST') {
+    headers['Content-Type'] = 'application/json';
+  }
   if (requestHeader) {
     headers = {
       ...headers,

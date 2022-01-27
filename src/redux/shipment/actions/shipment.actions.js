@@ -45,7 +45,7 @@ export const getShipmentDetails = (
   id = null,
   getUpdatedSensorData = false,
   getUpdatedCustody = false,
-  action=null,
+  action = null,
 ) => ({
   type: GET_SHIPMENTS,
   organization_uuid,
