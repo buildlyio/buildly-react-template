@@ -1,10 +1,7 @@
-import React, { createRef, useEffect, useRef, useState } from 'react';
-import makeStyles from '@mui/styles/makeStyles';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { milestoneConstants } from '@pages/Milestone/MilestoneConstants';
+import React, { useEffect, useState } from 'react';
 import {
-	Box,
-	Button, Checkbox,
+	Box, Button,
+	Checkbox,
 	Chip,
 	FormControl, FormControlLabel, FormGroup,
 	Grid,
@@ -14,240 +11,265 @@ import {
 	Select,
 	TextField
 } from '@mui/material';
-import DatePickerComponent from '@components/DatePicker/DatePicker';
+import makeStyles from '@mui/styles/makeStyles';
+import { milestoneConstants } from '@pages/Milestone/MilestoneConstants';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
 		padding: theme.spacing(5),
-		paddingTop: 0,
+		paddingTop: 0
 	},
 	link: {
 		color: theme.palette.primary.main,
 		textDecoration: 'none',
 		'& :hover': {
-			textDecoration: 'underline',
-		},
-	},
+			textDecoration: 'underline'
+		}
+	}
 }));
 
 const Milestone = () => {
 	const classes = useStyles();
-	const stateItems = ['open', 'closed'];
-	const [owner, setOwner] = useState('buildly-release-management');
+	const headers = {
+		Authorization: window.env.GITHUB_TOKEN,
+		Accept: 'application/vnd.github.v3+json'
+	};
+
+	const owner = 'buildly-release-management';
+	const [milestoneState, setMilestoneState] = useState('open');
+
 	const [repositories, setRepositories] = useState([]);
 	const [selectedRepositories, setSelectedRepositories] = useState([]);
 	const [milestones, setMilestones] = useState([]);
 	const [milestoneHeadings, setMilestoneHeadings] = useState([]);
 	const [selectedMilestones, setSelectedMilestones] = useState([]);
 
-	// temporary static data
-	const tempData = [];
-	for(let i = 1; i <= 10; i++) {
-		const today = new Date();
-
-		tempData.push({
-			repository: `Repository ${i}`,
-			milestone: `Milestone ${i}`,
-			state: stateItems[Math.floor(Math.random() * stateItems.length)],
-			description: `Description ${i}`,
-			info: `Info ${i}`,
-			start_date: today,
-			due_date: today,
-			burndown_date: today,
-			capacity: `Capacity ${i}`,
-			ed: `ED ${i}`,
-			key: i
-		});
-	}
-	const [data, setData] = useState(tempData);
-	const rowsData = useRef({});
-	const headers = {
-		'Authorization': 'token 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',
-		'Accept': 'application/vnd.github.v3+json'
-	};
+	const [rows, setRows] = useState([]);
 
 	useEffect(() => {
-		fetch(`https://api.github.com/orgs/buildly-release-management/repos`, {
+		fetch(`https://api.github.com/orgs/${ owner }/repos`, {
 			headers
 		})
 			.then((response) => response.json())
 			.then((data) => setRepositories(data.map(({ name }) => name)));
-	}, [setRepositories, owner]);
+	}, [owner]);
 
 	useEffect(() => {
-		setMilestones([]);
-		setMilestoneHeadings([]);
+		if (selectedRepositories.length) {
+			setMilestones([]);
 
-		if(selectedRepositories.length) {
-			selectedRepositories.map((repository) => fetch(`https://api.github.com/repos/${owner}/${repository}/milestones`, {
-				headers
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					setMilestones((previousMilestones) => [
-						...previousMilestones,
-						...data
-					]);
-					const updatedMilestoneHeadings = [
-						...new Set([
-							...milestoneHeadings,
-							...data.map(({ title }) => title)
-						])
-					];
-					setMilestoneHeadings(updatedMilestoneHeadings);
-				}));
+			selectedRepositories.map((repository) =>
+				fetch(
+					`https://api.github.com/repos/${ owner }/${ repository }/milestones?state=${ milestoneState }`,
+					{
+						headers
+					}
+				)
+					.then((response) => response.json())
+					.then((data) => setMilestones((previousMilestones) => {
+						const oldMilestones = previousMilestones.filter(
+							(milestone) =>
+								milestone.state === milestoneState
+						);
+						const oldHeadings = oldMilestones.map(
+							(milestone) => milestone.title
+						);
 
-			console.log(milestones);
+						setMilestoneHeadings([
+							...new Set([
+								...oldHeadings,
+								...data.map(({ title }) => title)
+							])
+						]);
+
+						return [...oldMilestones, ...data];
+					})));
+		} else {
+			setMilestones([]);
+			setMilestoneHeadings([]);
+			setSelectedMilestones([]);
 		}
-	}, [selectedRepositories, owner, setMilestones, setMilestoneHeadings]);
+	}, [selectedRepositories, owner, milestoneState]);
 
-	const rowFiller = (data) => data.map(({ repository, milestone, state, description, info, start_date, due_date, burndown_date, capacity, ed }, index) => {
-		// more refs left to be added
-		rowsData.current[`row_${index}`] = {
-			start_date: createRef(),
-			due_date: createRef(),
-			burndown_date: createRef(),
-			info: createRef(),
-		};
+	useEffect(() => {
+		const extractData = (string, term) => string.includes(term)
+			? string.split(`\n> ${ term }`).pop().split('\n')[0].trim()
+			: null;
 
-		return {
-			repository,
-			milestone,
-			state: <FormControl>
-				<InputLabel id={`state-${index}`}>State</InputLabel>
-				<Select
-					labelId={`state-${index}`}
-					id={`state-label-${index}`}
-					value={state}
-					label="State"
-					onChange={(event) => modifyData(index, 'state', event.target.value)}
-				>
-					<MenuItem value={'open'}>Open</MenuItem>
-					<MenuItem value={'closed'}>Closed</MenuItem>
-				</Select>
-			</FormControl>,
-			description: <TextField id={`description-${index}`} label="Description" variant="outlined" value={description} onChange={(event) => modifyData(index, 'description', event.target.value)}/>,
-			info: <TextField id={`info-${index}`} label="Info" variant="outlined" value={info} onChange={(event) => modifyData(index, 'info', event.target.value)} inputRef={rowsData.current[`row_${index}`].info} />,
-			start_date: <DatePickerComponent label="Start Date" handleDateChange={(date) => modifyData(index, 'start_date', date)} selectedDate={start_date} inputRef={rowsData.current[`row_${index}`].start_date} />,
-			due_date: <DatePickerComponent label="Due Date" handleDateChange={(date) => modifyData(index, 'due_date', date)} selectedDate={due_date} inputRef={rowsData.current[`row_${index}`].due_date} />,
-			burndown_date: <DatePickerComponent label="Burndown Date" handleDateChange={(date) => modifyData(index, 'burndown_date', date)} selectedDate={burndown_date} inputRef={rowsData.current[`row_${index}`].burndown_date} />,
-			capacity: <TextField id={`capacity-${index}`} label="Capacity" variant="outlined" value={capacity} onChange={(event) => modifyData(index, 'capacity', event.target.value)} />,
-			ed: <TextField id={`ed-${index}`} label="ED" variant="outlined" value={ed} onChange={(event) => modifyData(index, 'ed', event.target.value)} />,
-			actions: <Button type="button" variant="contained" color="primary" onClick={() => console.log(rowsData.current[`row_${index}`])}>Copy/Update</Button>,
-			key: index
-		};
-	});
-
-	const [rows, setRows] = useState(rowFiller(data));
-
-	const modifyData = (index, key, value) => {
-		const newData = [...data];
-		newData[index][key] = value;
-		setData(newData);
-		setRows(rowFiller(newData));
-	};
+		let data = milestones.filter(({ title }) => selectedMilestones.includes(title));
+		data = data.map(({
+							 url, title, state, description, due_on, id
+						 }) => ({
+			repository: url.split('/')[5],
+			milestone: title,
+			state: state.charAt(0).toUpperCase() + state.slice(1),
+			description: description.split('\n>')[0].trim(),
+			info: extractData(description, 'info'),
+			start_date: extractData(description, 'startdate'),
+			due_date: due_on,
+			burndown_date: extractData(description, 'burndowndate'),
+			capacity: extractData(description, 'capacity'),
+			ed: extractData(description, 'ed'),
+			id
+		}));
+		setRows(data);
+	}, [selectedMilestones, milestones]);
 
 	const selectedRepositoriesHandler = (event) => {
 		const {
-			target: { value },
+			target: { value }
 		} = event;
 		setSelectedRepositories(
-			typeof value === 'string' ? value.split(',') : value,
+			typeof value === 'string' ? value.split(',') : value
 		);
 	};
 
 	const selectedMilestonesHandler = (event) => {
 		const {
-			target: { value },
+			target: { value }
 		} = event;
 		setSelectedMilestones(
-			typeof value === 'string' ? value.split(',') : value,
+			typeof value === 'string' ? value.split(',') : value
 		);
 	};
 
-	const loading = false;
-
 	return (
-		<div className={classes.root}>
-			<Grid container spacing={2}>
-				<Grid item xs={2}>
-					<TextField id={'Owner'} label="Owner" variant="outlined" value={owner} fullWidth />
+		<div className={ classes.root }>
+			<Grid container spacing={ 2 }>
+				<Grid item xs={ 2 }>
+					<TextField
+						id={ 'Owner' }
+						label='Owner'
+						variant='outlined'
+						value={ owner }
+						fullWidth
+					/>
 				</Grid>
-				<Grid item xs={3}>
-					<FormControl sx={{ width: 1 }}>
-						<InputLabel id="select-repositories">Repositories</InputLabel>
+				<Grid item xs={ 3 }>
+					<FormControl sx={ { width: 1 } }>
+						<InputLabel id='select-repositories'>
+							Repositories
+						</InputLabel>
 						<Select
-							labelId="select-repositories"
-							id="repositories"
+							labelId='select-repositories'
+							id='repositories'
 							multiple
-							value={selectedRepositories}
-							onChange={selectedRepositoriesHandler}
-							input={<OutlinedInput id="select-multiple-repositories" label="Repositories" />}
-							renderValue={(selected) => (
-								<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-									{selected.map((value) => (
-										<Chip key={value} label={value} />
-									))}
-								</Box>
-							)}
-						>
-							{repositories.map((name) => (
-								<MenuItem
-									key={name}
-									value={name}
+							value={ selectedRepositories }
+							onChange={ selectedRepositoriesHandler }
+							input={
+								<OutlinedInput
+									id='select-multiple-repositories'
+									label='Repositories'
+								/>
+							}
+							renderValue={ (selected) => (
+								<Box
+									sx={ {
+										display: 'flex',
+										flexWrap: 'wrap',
+										gap: 0.5
+									} }
 								>
-									{name}
+									{ selected.map((value) => (
+										<Chip key={ value } label={ value } />
+									)) }
+								</Box>
+							) }
+						>
+							<MenuItem key={ null } value={ null } disabled>
+								{ repositories.length ? 'Select Repositories' : 'No repositories available.' }
+							</MenuItem>
+							{ repositories.map((name) => (
+								<MenuItem key={ name } value={ name }>
+									{ name }
 								</MenuItem>
-							))}
+							)) }
 						</Select>
 					</FormControl>
 				</Grid>
-				<Grid item xs={3}>
-					<FormControl sx={{ width: 1 }}>
-						<InputLabel id="select-milestones">Milestone(s)</InputLabel>
+				<Grid item xs={ 3 }>
+					<FormControl sx={ { width: 1 } }>
+						<InputLabel id='select-milestones'>
+							Milestone(s)
+						</InputLabel>
 						<Select
-							labelId="select-milestones"
-							id="milestones"
+							labelId='select-milestones'
+							id='milestones'
 							multiple
-							value={selectedMilestones}
-							onChange={selectedMilestonesHandler}
-							input={<OutlinedInput id="select-multiple-milestones" label="Milestone(s)" />}
-							renderValue={(selected) => (
-								<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-									{selected.map((value) => (
-										<Chip key={value} label={value} />
-									))}
-								</Box>
-							)}
-						>
-							{milestoneHeadings.map((name) => (
-								<MenuItem
-									key={name}
-									value={name}
+							value={ selectedMilestones }
+							onChange={ selectedMilestonesHandler }
+							input={
+								<OutlinedInput
+									id='select-multiple-milestones'
+									label='Milestone(s)'
+								/>
+							}
+							renderValue={ (selected) => (
+								<Box
+									sx={ {
+										display: 'flex',
+										flexWrap: 'wrap',
+										gap: 0.5
+									} }
 								>
-									{name}
+									{ selected.map((value) => (
+										<Chip key={ value } label={ value } />
+									)) }
+								</Box>
+							) }
+						>
+							<MenuItem key={ null } value={ null } disabled>
+								{ milestoneHeadings.length ? 'Select Milestone(s)' : 'No milestones available.' }
+							</MenuItem>
+							{ milestoneHeadings.map((name) => (
+								<MenuItem key={ name } value={ name }>
+									{ name }
 								</MenuItem>
-							))}
+							)) }
 						</Select>
 					</FormControl>
 				</Grid>
-				<Grid item xs={2}>
+				<Grid item xs={ 2 }>
 					<FormGroup>
-						<FormControlLabel control={<Checkbox />} label="Closed Milestones" /> // doesn't work yet
+						<FormControlLabel
+							control={
+								<Checkbox
+									onChange={ (event) => {
+										setMilestoneState(
+											event.target.checked
+												? 'closed'
+												: 'open'
+										);
+
+										setSelectedMilestones([]);
+									} }
+								/>
+							}
+							label='Closed Milestones'
+						/>
 					</FormGroup>
 				</Grid>
-				<Grid item xs={2}>
-					<TextField id={'Owner'} label="Owner" variant="outlined" value={owner} fullWidth /> // TODO: To be changed to a refresh button
+				<Grid item xs={ 2 }>
+					<Button
+						type='button'
+						variant='contained'
+						color='primary'
+						onClick={ () => console.log('should refresh') }
+					>
+						Refresh
+					</Button>
 				</Grid>
 			</Grid>
 			<DataTableWrapper
-				loading={loading}
-				rows={rows || []}
-				columns={milestoneConstants || []}
-				hideAddButton={true}
-				tableHeader="Milestones"
-			>
-			</DataTableWrapper>
+				loading={ false }
+				rows={ rows || [] }
+				columns={ milestoneConstants || [] }
+				hideAddButton={ true }
+				tableHeader='Milestones'
+				editAction={ (data) => console.log(data) }
+				deleteAction={ (data) => console.log(data) }
+			/>
 		</div>
 	);
 };

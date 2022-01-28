@@ -58,7 +58,9 @@ export const milestoneConstants = [
 			sort: true,
 			sortThirdClickReset: true,
 			filter: true,
-			customBodyRender: (value) => value || '-',
+			customBodyRender: (value) => (value
+				? moment(value).format('MMM DD YYYY, h:mm a')
+				: '-'),
 		},
 	},
 	{
@@ -68,7 +70,9 @@ export const milestoneConstants = [
 			sort: true,
 			sortThirdClickReset: true,
 			filter: true,
-			customBodyRender: (value) => value || '-',
+			customBodyRender: (value) => (value
+				? moment(value).format('MMM DD YYYY, h:mm a')
+				: '-'),
 		},
 	},
 	{
@@ -78,7 +82,9 @@ export const milestoneConstants = [
 			sort: true,
 			sortThirdClickReset: true,
 			filter: true,
-			customBodyRender: (value) => value || '-',
+			customBodyRender: (value) => (value
+				? moment(value).format('MMM DD YYYY, h:mm a')
+				: '-'),
 		},
 	},
 	{
@@ -100,15 +106,5 @@ export const milestoneConstants = [
 			filter: true,
 			customBodyRender: (value) => value || '-',
 		},
-	},
-	{
-		name: 'actions',
-		label: 'Actions',
-		options: {
-			sort: true,
-			sortThirdClickReset: true,
-			filter: true,
-			customBodyRender: (value) => value || '-',
-		},
-	},
+	}
 ];
