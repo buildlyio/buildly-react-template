@@ -28,7 +28,7 @@ export const milestoneConstants = [
 			sort: true,
 			sortThirdClickReset: true,
 			filter: true,
-			customBodyRender: (value) => value || '-',
+			customBodyRender: (value) => value.charAt(0).toUpperCase() + value.slice(1) || '-',
 		},
 	},
 	{
@@ -89,7 +89,7 @@ export const milestoneConstants = [
 	},
 	{
 		name: 'capacity',
-		label: 'Capacity (total 0)',
+		label: 'Capacity (Total 0)',
 		options: {
 			sort: true,
 			sortThirdClickReset: true,
@@ -99,7 +99,7 @@ export const milestoneConstants = [
 	},
 	{
 		name: 'ed',
-		label: 'ED (total 0)',
+		label: 'ED (Total 0)',
 		options: {
 			sort: true,
 			sortThirdClickReset: true,

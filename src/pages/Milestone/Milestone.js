@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
-	Box, Button,
+	Box,
+	Button,
 	Checkbox,
 	Chip,
-	FormControl, FormControlLabel, FormGroup,
+	FormControl,
+	FormControlLabel,
+	FormGroup,
 	Grid,
 	InputLabel,
 	MenuItem,
@@ -14,6 +17,9 @@ import {
 import makeStyles from '@mui/styles/makeStyles';
 import { milestoneConstants } from '@pages/Milestone/MilestoneConstants';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { routes } from '@routes/routesConstants';
+import { Route } from 'react-router-dom';
+import MilestoneForm from '@pages/Milestone/components/MilestoneForm';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -29,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const Milestone = () => {
+const Milestone = ({ history }) => {
 	const classes = useStyles();
 	const headers = {
 		Authorization: window.env.GITHUB_TOKEN,
@@ -38,6 +44,8 @@ const Milestone = () => {
 
 	const owner = 'buildly-release-management';
 	const [milestoneState, setMilestoneState] = useState('open');
+	const [deleteModalState, setDeleteModalState] = useState(false);
+	const [currentMilestone, setCurrentMilestone] = useState(null);
 
 	const [repositories, setRepositories] = useState([]);
 	const [selectedRepositories, setSelectedRepositories] = useState([]);
@@ -46,6 +54,9 @@ const Milestone = () => {
 	const [selectedMilestones, setSelectedMilestones] = useState([]);
 
 	const [rows, setRows] = useState([]);
+
+	const addMilestonePath = `${ routes.MILESTONE }/add`;
+	const editMilestonePath = `${ routes.MILESTONE }/edit`;
 
 	useEffect(() => {
 		fetch(`https://api.github.com/orgs/${ owner }/repos`, {
@@ -99,11 +110,11 @@ const Milestone = () => {
 
 		let data = milestones.filter(({ title }) => selectedMilestones.includes(title));
 		data = data.map(({
-							 url, title, state, description, due_on, id
+							 url, title, state, description, due_on, number
 						 }) => ({
 			repository: url.split('/')[5],
 			milestone: title,
-			state: state.charAt(0).toUpperCase() + state.slice(1),
+			state,
 			description: description.split('\n>')[0].trim(),
 			info: extractData(description, 'info'),
 			start_date: extractData(description, 'startdate'),
@@ -111,8 +122,9 @@ const Milestone = () => {
 			burndown_date: extractData(description, 'burndowndate'),
 			capacity: extractData(description, 'capacity'),
 			ed: extractData(description, 'ed'),
-			id
+			number
 		}));
+
 		setRows(data);
 	}, [selectedMilestones, milestones]);
 
@@ -132,6 +144,32 @@ const Milestone = () => {
 		setSelectedMilestones(
 			typeof value === 'string' ? value.split(',') : value
 		);
+	};
+
+	const addMilestone = () => history.push(`${ addMilestonePath }`, {
+		type: 'add',
+		from: routes.MILESTONE,
+		data: null,
+	});
+
+	const editMilestone = (milestone) => {
+		history.push(`${ editMilestonePath }/${ milestone.number }`, {
+			type: 'edit',
+			from: routes.MILESTONE,
+			data: milestone,
+		});
+	};
+
+	const deleteConfirmationHandler = (milestone) => {
+		setCurrentMilestone(milestone);
+		setDeleteModalState(true);
+	};
+
+	const deleteMilestone = () => {
+		const { repository, number } = currentMilestone;
+		console.log(owner, repository, number);
+		setCurrentMilestone(null)
+		setDeleteModalState(false);
 	};
 
 	return (
@@ -265,11 +303,20 @@ const Milestone = () => {
 				loading={ false }
 				rows={ rows || [] }
 				columns={ milestoneConstants || [] }
-				hideAddButton={ true }
+				hideAddButton={ false }
+				onAddButtonClick={ addMilestone }
+				addButtonHeading={ 'Add' }
 				tableHeader='Milestones'
-				editAction={ (data) => console.log(data) }
-				deleteAction={ (data) => console.log(data) }
-			/>
+				editAction={ editMilestone }
+				deleteAction={ deleteConfirmationHandler }
+				openDeleteModal={ deleteModalState }
+				setDeleteModal={ setDeleteModalState }
+				handleDeleteModal={ deleteMilestone }
+				deleteModalTitle={ 'Are you sure you want to delete the milestone?' }
+			>
+				<Route path={ `${ addMilestonePath }` } component={ MilestoneForm } />
+				<Route path={ `${ editMilestonePath }/:id` } component={ MilestoneForm } />
+			</DataTableWrapper>
 		</div>
 	);
 };
