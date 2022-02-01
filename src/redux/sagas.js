@@ -8,6 +8,7 @@ import googleSheetSaga from './googleSheet/sagas/googleSheet.saga';
 import productSaga from './product/sagas/product.saga';
 import decisionSaga from './decision/sagas/decision.saga';
 import devpartnerSaga from './devpartner/sagas/devpartner.saga';
+import milestoneSaga from './milestone/sagas/milestone.saga';
 
 export default function* rootSaga() {
   yield all([
@@ -19,5 +20,6 @@ export default function* rootSaga() {
     productSaga(),
     decisionSaga(),
     devpartnerSaga(),
+    milestoneSaga()
   ]);
 }

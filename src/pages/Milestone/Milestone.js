@@ -20,6 +20,13 @@ import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { routes } from '@routes/routesConstants';
 import { Route } from 'react-router-dom';
 import MilestoneForm from '@pages/Milestone/components/MilestoneForm';
+import {
+	clearMilestones,
+	clearMilestonesHeadings,
+	getMilestones,
+	getRepositories
+} from '@redux/milestone/actions/milestone.actions';
+import { connect } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -35,22 +42,18 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const Milestone = ({ history }) => {
+const Milestone = ({ history, loading, repositories, dispatch, milestones, milestoneHeadings }) => {
 	const classes = useStyles();
-	const headers = {
-		Authorization: window.env.GITHUB_TOKEN,
-		Accept: 'application/vnd.github.v3+json'
-	};
 
 	const owner = 'buildly-release-management';
 	const [milestoneState, setMilestoneState] = useState('open');
 	const [deleteModalState, setDeleteModalState] = useState(false);
 	const [currentMilestone, setCurrentMilestone] = useState(null);
 
-	const [repositories, setRepositories] = useState([]);
+	// const [repositories, setRepositories] = useState([]);
 	const [selectedRepositories, setSelectedRepositories] = useState([]);
-	const [milestones, setMilestones] = useState([]);
-	const [milestoneHeadings, setMilestoneHeadings] = useState([]);
+	// const [milestones, setMilestones] = useState([]);
+	// const [milestoneHeadings, setMilestoneHeadings] = useState([]);
 	const [selectedMilestones, setSelectedMilestones] = useState([]);
 
 	const [rows, setRows] = useState([]);
@@ -59,46 +62,20 @@ const Milestone = ({ history }) => {
 	const editMilestonePath = `${ routes.MILESTONE }/edit`;
 
 	useEffect(() => {
-		fetch(`https://api.github.com/orgs/${ owner }/repos`, {
-			headers
-		})
-			.then((response) => response.json())
-			.then((data) => setRepositories(data.map(({ name }) => name)));
+		dispatch(getRepositories({
+			owner
+		}));
 	}, [owner]);
 
 	useEffect(() => {
 		if (selectedRepositories.length) {
-			setMilestones([]);
-
-			selectedRepositories.map((repository) =>
-				fetch(
-					`https://api.github.com/repos/${ owner }/${ repository }/milestones?state=${ milestoneState }`,
-					{
-						headers
-					}
-				)
-					.then((response) => response.json())
-					.then((data) => setMilestones((previousMilestones) => {
-						const oldMilestones = previousMilestones.filter(
-							(milestone) =>
-								milestone.state === milestoneState
-						);
-						const oldHeadings = oldMilestones.map(
-							(milestone) => milestone.title
-						);
-
-						setMilestoneHeadings([
-							...new Set([
-								...oldHeadings,
-								...data.map(({ title }) => title)
-							])
-						]);
-
-						return [...oldMilestones, ...data];
-					})));
+			dispatch(getMilestones({
+				owner, selectedRepositories, milestoneState
+			}));
 		} else {
-			setMilestones([]);
-			setMilestoneHeadings([]);
+			dispatch(clearMilestones());
+			dispatch(clearMilestonesHeadings());
+
 			setSelectedMilestones([]);
 		}
 	}, [selectedRepositories, owner, milestoneState]);
@@ -168,7 +145,7 @@ const Milestone = ({ history }) => {
 	const deleteMilestone = () => {
 		const { repository, number } = currentMilestone;
 		console.log(owner, repository, number);
-		setCurrentMilestone(null)
+		setCurrentMilestone(null);
 		setDeleteModalState(false);
 	};
 
@@ -300,7 +277,7 @@ const Milestone = ({ history }) => {
 				</Grid>
 			</Grid>
 			<DataTableWrapper
-				loading={ false }
+				loading={ loading }
 				rows={ rows || [] }
 				columns={ milestoneConstants || [] }
 				hideAddButton={ false }
@@ -321,4 +298,9 @@ const Milestone = ({ history }) => {
 	);
 };
 
-export default Milestone;
+const mapStateToProps = (state, ownProps) => ({
+	...ownProps,
+	...state.milestoneReducer,
+});
+
+export default connect(mapStateToProps)(Milestone);

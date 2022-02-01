@@ -9,6 +9,7 @@ import googleSheetReducer from './googleSheet/reducers/googleSheet.reducer';
 import productReducer from './product/reducers/product.reducer';
 import decisionReducer from './decision/reducers/decision.reducer';
 import devpartnerReducer from './devpartner/reducers/devpartner.reducer';
+import milestoneReducer from './milestone/reducers/milestone.reducer';
 import { LOGOUT_SUCCESS } from './authuser/actions/authuser.actions';
 
 const appReducer = combineReducers({
@@ -21,6 +22,7 @@ const appReducer = combineReducers({
   productReducer,
   decisionReducer,
   devpartnerReducer,
+  milestoneReducer
 });
 
 const rootReducer = (state, action) => {
