@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import FormModal from '@components/Modal/FormModal';
 import {
-	Button,
-	CircularProgress,
-	Grid,
-	MenuItem,
+	Box,
+	Button, Chip,
+	CircularProgress, FormControl,
+	Grid, InputLabel,
+	MenuItem, OutlinedInput, Select,
 	TextField,
 	Typography,
 	useMediaQuery,
@@ -15,6 +16,8 @@ import { validators } from '@utils/validators';
 import { useInput } from '@hooks/useInput';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import moment from 'moment-timezone';
+import { connect } from 'react-redux';
+import { createMilestone } from '@redux/milestone/actions/milestone.actions';
 
 const useStyles = makeStyles((theme) => ({
 	formTitle: {
@@ -46,8 +49,10 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const MilestoneForm = ({ loading, location, history }) => {
+const MilestoneForm = ({ loading, location, history, repositories, dispatch }) => {
 	const classes = useStyles();
+
+	const owner = 'buildly-release-management';
 	const redirectTo = location.state && location.state.from;
 	const isEditPage = location.state && location.state.type === 'edit';
 	const editData = (
@@ -66,6 +71,7 @@ const MilestoneForm = ({ loading, location, history }) => {
 
 	const [formError, setFormError] = useState({});
 
+	const milestone = useInput('', { required: true });
 	const state = useInput(editData.state || '', { required: true });
 	const description = useInput(editData.description || '', { required: true });
 	const info = useInput(editData.info || '', {});
@@ -81,19 +87,23 @@ const MilestoneForm = ({ loading, location, history }) => {
 		(editData && editData.burndown_date) || null,
 	);
 
+	const [selectedRepositories, setSelectedRepositories] = useState([]);
 	const states = ['open', 'closed'];
 
 	const handleModalClose = () => {
-		const dataHasChanged = (
+		let dataHasChanged = (
 			state.hasChanged()
 			|| description.hasChanged()
 			|| info.hasChanged()
 			|| capacity.hasChanged()
 			|| ed.hasChanged()
-			|| startDate !== editData.start_date
-			|| dueDate !== editData.due_date
-			|| burndownDate !== editData.burndown_date
 		);
+
+		if(!isEditPage) {
+			dataHasChanged = dataHasChanged || selectedRepositories.length !== 0 || milestone.hasChanged() || startDate !== null || dueDate !== null || burndownDate !== null;
+		} else {
+			dataHasChanged = dataHasChanged || startDate !== editData.start_date || dueDate !== editData.due_date || burndownDate !== editData.burndown_date;
+		}
 
 		if (dataHasChanged) {
 			setConfirmModal(true);
@@ -103,6 +113,15 @@ const MilestoneForm = ({ loading, location, history }) => {
 				history.push(redirectTo);
 			}
 		}
+	};
+
+	const selectedRepositoriesHandler = (event) => {
+		const {
+			target: { value }
+		} = event;
+		setSelectedRepositories(
+			typeof value === 'string' ? value.split(',') : value
+		);
 	};
 
 	const handleBlur = (event, validation, input, parentId) => {
@@ -156,10 +175,19 @@ const MilestoneForm = ({ loading, location, history }) => {
 		const data = {
 			state: state.value,
 			description: combinedDescription,
-			due_date: moment(dueDate).toISOString()
+			due_on: moment(dueDate).toISOString()
 		};
 
-		console.log(data);
+		if(!isEditPage) {
+			data.title = milestone.value;
+
+			dispatch(createMilestone({
+				owner, repositories: selectedRepositories, data
+			}));
+		}
+
+		setConfirmModal(false);
+		setFormModalOpen(false);
 	};
 
 	const submitDisabled = () => {
@@ -223,7 +251,77 @@ const MilestoneForm = ({ loading, location, history }) => {
 						{ ...description.bind }
 					/>
 				</Grid>
-				<Grid item xs={ 12 }>
+				{
+					!isEditPage &&
+					<Fragment>
+						<Grid item xs={ 12 }>
+							<FormControl sx={ { width: 1 } }>
+								<InputLabel id='select-repositories-add'>
+									Repositories
+								</InputLabel>
+								<Select
+									labelId='select-repositories'
+									id='repositories'
+									multiple
+									value={ selectedRepositories }
+									onChange={ selectedRepositoriesHandler }
+									input={
+										<OutlinedInput
+											id='select-multiple-repositories-add'
+											label='Repositories'
+										/>
+									}
+									renderValue={ (selected) => (
+										<Box
+											sx={ {
+												display: 'flex',
+												flexWrap: 'wrap',
+												gap: 0.5
+											} }
+										>
+											{ selected.map((value) => (
+												<Chip key={ value } label={ value } />
+											)) }
+										</Box>
+									) }
+								>
+									<MenuItem key={ null } value={ null } disabled>
+										{ repositories.length ? 'Select Repositories' : 'No repositories available.' }
+									</MenuItem>
+									{ repositories.map((name) => (
+										<MenuItem key={ name } value={ name }>
+											{ name }
+										</MenuItem>
+									)) }
+								</Select>
+							</FormControl>
+						</Grid>
+						<Grid item xs={ 12 }>
+							<TextField
+								variant='outlined'
+								margin='normal'
+								required
+								fullWidth
+								id='milestone'
+								label='Milestone'
+								name='milestone'
+								autoComplete='milestone'
+								error={
+									formError.milestone
+									&& formError.milestone.error
+								}
+								helperText={
+									formError.milestone
+										? formError.milestone.message
+										: ''
+								}
+								onBlur={ (event) => handleBlur(event, 'required', milestone) }
+								{ ...milestone.bind }
+							/>
+						</Grid>
+					</Fragment>
+				}
+				<Grid item xs={ isEditPage ? 12 : 6 }>
 					<TextField
 						variant='outlined'
 						margin='normal'
@@ -389,4 +487,9 @@ const MilestoneForm = ({ loading, location, history }) => {
 	</FormModal>;
 };
 
-export default MilestoneForm;
+const mapStateToProps = (state, ownProps) => ({
+	...ownProps,
+	...state.milestoneReducer,
+});
+
+export default connect(mapStateToProps)(MilestoneForm);

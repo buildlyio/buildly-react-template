@@ -14,7 +14,10 @@ import {
 	CLEAR_MILESTONES_FAIL,
 	CLEAR_MILESTONES_HEADINGS,
 	CLEAR_MILESTONES_HEADINGS_SUCCESS,
-	CLEAR_MILESTONES_HEADINGS_FAIL
+	CLEAR_MILESTONES_HEADINGS_FAIL,
+	CREATE_MILESTONE,
+	CREATE_MILESTONE_SUCCESS,
+	CREATE_MILESTONE_FAIL, DELETE_MILESTONE_SUCCESS, DELETE_MILESTONE_FAIL, DELETE_MILESTONE
 } from '../actions/milestone.actions';
 
 function* getRepositories(payload) {
@@ -125,6 +128,95 @@ function* clearMilestonesHeadings() {
 	}
 }
 
+function* createMilestone(payload) {
+	try {
+		const { owner, repositories, data } = payload.data;
+
+		const milestones = [];
+		for(let i = 0; i < repositories.length; i++) {
+			const milestone = yield call(
+				httpService.makeRequest,
+				'post',
+				`${ window.env.GITHUB_API_URL }/repos/${ owner }/${ repositories[i] }/milestones`,
+				data,
+				false,
+				null,
+				null,
+				true
+			);
+
+			milestones.push(milestone.data);
+		}
+
+		yield [
+			yield put({ type: CREATE_MILESTONE_SUCCESS, data: { milestones } }),
+			yield put(
+				showAlert({
+					type: 'success',
+					open: true,
+					message: 'Milestone created successfully!',
+				}),
+			)
+		];
+	} catch (error) {
+		yield [
+			yield put(
+				showAlert({
+					type: 'error',
+					open: true,
+					message: 'Couldn\'t create the milestone!',
+				}),
+			),
+			yield put({
+				type: CREATE_MILESTONE_FAIL,
+				error,
+			}),
+		];
+	}
+}
+
+function* deleteMilestone(payload) {
+	try {
+		const { owner, repository, number } = payload.data;
+
+		yield call(
+			httpService.makeRequest,
+			'delete',
+			`${ window.env.GITHUB_API_URL }/repos/${ owner }/${ repository }/milestones/${number}`,
+			{},
+			false,
+			null,
+			null,
+			true
+		);
+
+		yield [
+			yield put({ type: DELETE_MILESTONE_SUCCESS, data: { number } }),
+			yield put(
+				showAlert({
+					type: 'success',
+					open: true,
+					message: 'Milestone deleted successfully!',
+				}),
+			)
+		];
+	} catch (error) {
+		yield [
+			yield put(
+				showAlert({
+					type: 'error',
+					open: true,
+					message: 'Couldn\'t delete the milestone!',
+				}),
+			),
+			yield put({
+				type: DELETE_MILESTONE_FAIL,
+				error,
+			}),
+		];
+	}
+}
+
 function* watchGetRepositories() {
 	yield takeLatest(GET_REPOSITORIES, getRepositories);
 }
@@ -141,6 +233,14 @@ function* watchClearMilestonesHeadings() {
 	yield takeLatest(CLEAR_MILESTONES_HEADINGS, clearMilestonesHeadings);
 }
 
+function* watchCreateMilestone() {
+	yield takeLatest(CREATE_MILESTONE, createMilestone);
+}
+
+function* watchDeleteMilestone() {
+	yield takeLatest(DELETE_MILESTONE, deleteMilestone);
+}
+
 export default function* milestoneSaga() {
-	yield all([watchGetRepositories(), watchGetMilestones(), watchClearMilestones(), watchClearMilestonesHeadings()]);
+	yield all([watchGetRepositories(), watchGetMilestones(), watchClearMilestones(), watchClearMilestonesHeadings(), watchCreateMilestone(), watchDeleteMilestone()]);
 }

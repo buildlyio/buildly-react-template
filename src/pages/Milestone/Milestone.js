@@ -22,7 +22,7 @@ import { Route } from 'react-router-dom';
 import MilestoneForm from '@pages/Milestone/components/MilestoneForm';
 import {
 	clearMilestones,
-	clearMilestonesHeadings,
+	clearMilestonesHeadings, deleteMilestone,
 	getMilestones,
 	getRepositories
 } from '@redux/milestone/actions/milestone.actions';
@@ -123,6 +123,19 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 		);
 	};
 
+	const refreshMilestones = () => {
+		if (selectedRepositories.length) {
+			dispatch(getMilestones({
+				owner, selectedRepositories, milestoneState
+			}));
+		} else {
+			dispatch(clearMilestones());
+			dispatch(clearMilestonesHeadings());
+
+			setSelectedMilestones([]);
+		}
+	};
+
 	const addMilestone = () => history.push(`${ addMilestonePath }`, {
 		type: 'add',
 		from: routes.MILESTONE,
@@ -140,11 +153,16 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 	const deleteConfirmationHandler = (milestone) => {
 		setCurrentMilestone(milestone);
 		setDeleteModalState(true);
+		console.log(milestone);
 	};
 
-	const deleteMilestone = () => {
+	const deleteMilestoneHandler = () => {
 		const { repository, number } = currentMilestone;
-		console.log(owner, repository, number);
+
+		dispatch(deleteMilestone({
+			owner, repository, number
+		}));
+
 		setCurrentMilestone(null);
 		setDeleteModalState(false);
 	};
@@ -270,7 +288,7 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 						type='button'
 						variant='contained'
 						color='primary'
-						onClick={ () => console.log('should refresh') }
+						onClick={ refreshMilestones }
 					>
 						Refresh
 					</Button>
@@ -288,7 +306,7 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 				deleteAction={ deleteConfirmationHandler }
 				openDeleteModal={ deleteModalState }
 				setDeleteModal={ setDeleteModalState }
-				handleDeleteModal={ deleteMilestone }
+				handleDeleteModal={ deleteMilestoneHandler }
 				deleteModalTitle={ 'Are you sure you want to delete the milestone?' }
 			>
 				<Route path={ `${ addMilestonePath }` } component={ MilestoneForm } />

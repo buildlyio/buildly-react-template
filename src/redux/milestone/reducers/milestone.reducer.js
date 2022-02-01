@@ -14,6 +14,11 @@ import {
 	CLEAR_MILESTONES_HEADINGS_FAIL,
 	CLEAR_MILESTONES_HEADINGS_SUCCESS,
 	CLEAR_MILESTONES_SUCCESS,
+	CREATE_MILESTONE,
+	CREATE_MILESTONE_FAIL,
+	CREATE_MILESTONE_SUCCESS,
+	DELETE_MILESTONE,
+	DELETE_MILESTONE_FAIL, DELETE_MILESTONE_SUCCESS,
 	GET_MILESTONES,
 	GET_MILESTONES_FAIL,
 	GET_MILESTONES_SUCCESS,
@@ -81,7 +86,7 @@ export default (state = initialState, action) => {
 				loading: true,
 				loaded: false,
 				error: null
-			}
+			};
 
 		case CLEAR_MILESTONES_SUCCESS:
 			return {
@@ -90,7 +95,7 @@ export default (state = initialState, action) => {
 				loaded: true,
 				error: null,
 				milestones: []
-			}
+			};
 
 		case CLEAR_MILESTONES_HEADINGS:
 			return {
@@ -98,7 +103,7 @@ export default (state = initialState, action) => {
 				loading: true,
 				loaded: false,
 				error: null
-			}
+			};
 
 		case CLEAR_MILESTONES_HEADINGS_SUCCESS:
 			return {
@@ -107,12 +112,56 @@ export default (state = initialState, action) => {
 				loaded: true,
 				error: null,
 				milestoneHeadings: []
-			}
+			};
+
+		case CREATE_MILESTONE:
+			return {
+				...state,
+				loading: true,
+				loaded: false,
+				error: null
+			};
+
+		case CREATE_MILESTONE_SUCCESS:
+			return {
+				...state,
+				loading: false,
+				loaded: true,
+				error: null
+			};
+
+		case DELETE_MILESTONE:
+			return {
+				...state,
+				loading: true,
+				loaded: false,
+				error: null
+			};
+
+		case DELETE_MILESTONE_SUCCESS:
+			const updatedMilestones = state.milestones.filter(
+				({ number }) => number !== action.data.number
+			);
+
+			return {
+				...state,
+				loading: false,
+				loaded: true,
+				error: null,
+				milestones: updatedMilestones,
+				milestoneHeadings: [
+					...new Set([
+						...updatedMilestones.map(({ title }) => title)
+					])
+				]
+			};
 
 		case GET_REPOSITORIES_FAIL:
 		case GET_MILESTONES_FAIL:
 		case CLEAR_MILESTONES_FAIL:
 		case CLEAR_MILESTONES_HEADINGS_FAIL:
+		case CREATE_MILESTONE_FAIL:
+		case DELETE_MILESTONE_FAIL:
 			return {
 				...state,
 				loading: false,

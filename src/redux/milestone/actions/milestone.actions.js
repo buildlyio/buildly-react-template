@@ -47,4 +47,15 @@ export const clearMilestones = () => ({ type: CLEAR_MILESTONES });
  */
 export const clearMilestonesHeadings = () => ({ type: CLEAR_MILESTONES_HEADINGS });
 
+/**
+ * Create Milestone
+ */
+export const createMilestone = (data) => ({ type: CREATE_MILESTONE, data });
+
+/**
+ * Delete Milestone
+ */
+export const deleteMilestone = (data) => ({ type: DELETE_MILESTONE, data });
+
+
 
