@@ -17,7 +17,7 @@ import { useInput } from '@hooks/useInput';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import moment from 'moment-timezone';
 import { connect } from 'react-redux';
-import { createMilestone } from '@redux/milestone/actions/milestone.actions';
+import { createMilestone, updateMilestone } from '@redux/milestone/actions/milestone.actions';
 
 const useStyles = makeStyles((theme) => ({
 	formTitle: {
@@ -184,10 +184,18 @@ const MilestoneForm = ({ loading, location, history, repositories, dispatch }) =
 			dispatch(createMilestone({
 				owner, repositories: selectedRepositories, data
 			}));
+		} else {
+			dispatch(updateMilestone({
+				owner, repository: editData.repository, data, number: editData.number
+			}));
 		}
 
 		setConfirmModal(false);
 		setFormModalOpen(false);
+
+		if (redirectTo) {
+			history.push(redirectTo);
+		}
 	};
 
 	const submitDisabled = () => {

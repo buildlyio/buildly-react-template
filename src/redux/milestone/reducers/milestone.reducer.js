@@ -1,12 +1,3 @@
-// import {
-//   ADD_DATA,
-//   ADD_DATA_SUCCESS,
-//   ADD_DATA_FAIL,
-//   CHECK_FILLED,
-//   CHECK_FILLED_SUCCESS,
-//   CHECK_FILLED_FAIL,
-// } from '../actions/googleSheet.actions';
-
 import {
 	CLEAR_MILESTONES,
 	CLEAR_MILESTONES_FAIL,
@@ -24,7 +15,7 @@ import {
 	GET_MILESTONES_SUCCESS,
 	GET_REPOSITORIES,
 	GET_REPOSITORIES_FAIL,
-	GET_REPOSITORIES_SUCCESS
+	GET_REPOSITORIES_SUCCESS, UPDATE_MILESTONE, UPDATE_MILESTONE_SUCCESS
 } from '@redux/milestone/actions/milestone.actions';
 
 const initialState = {
@@ -152,6 +143,36 @@ export default (state = initialState, action) => {
 				milestoneHeadings: [
 					...new Set([
 						...updatedMilestones.map(({ title }) => title)
+					])
+				]
+			};
+
+		case UPDATE_MILESTONE:
+			return {
+				...state,
+				loading: true,
+				loaded: false,
+				error: null
+			};
+
+		case UPDATE_MILESTONE_SUCCESS:
+			const updatedData = state.milestones.map((milestone) => {
+				if (milestone.number === action.data.milestone.data.number) {
+					return action.data.milestone.data;
+				}
+
+				return milestone;
+			});
+
+			return {
+				...state,
+				loading: false,
+				loaded: true,
+				error: null,
+				milestones: updatedData,
+				milestoneHeadings: [
+					...new Set([
+						...updatedData.map(({ title }) => title)
 					])
 				]
 			};

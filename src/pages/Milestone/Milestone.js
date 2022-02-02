@@ -50,10 +50,7 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 	const [deleteModalState, setDeleteModalState] = useState(false);
 	const [currentMilestone, setCurrentMilestone] = useState(null);
 
-	// const [repositories, setRepositories] = useState([]);
 	const [selectedRepositories, setSelectedRepositories] = useState([]);
-	// const [milestones, setMilestones] = useState([]);
-	// const [milestoneHeadings, setMilestoneHeadings] = useState([]);
 	const [selectedMilestones, setSelectedMilestones] = useState([]);
 
 	const [rows, setRows] = useState([]);
@@ -101,6 +98,13 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 			ed: extractData(description, 'ed'),
 			number
 		}));
+
+		const updatedHeadings = selectedMilestones.filter((heading) => milestoneHeadings.includes(heading));
+		const difference = selectedMilestones.filter((heading) => !updatedHeadings.includes(heading));
+
+		if(difference.length) {
+			setSelectedMilestones(updatedHeadings);
+		}
 
 		setRows(data);
 	}, [selectedMilestones, milestones]);
@@ -153,7 +157,6 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 	const deleteConfirmationHandler = (milestone) => {
 		setCurrentMilestone(milestone);
 		setDeleteModalState(true);
-		console.log(milestone);
 	};
 
 	const deleteMilestoneHandler = () => {

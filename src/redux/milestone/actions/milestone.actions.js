@@ -57,5 +57,7 @@ export const createMilestone = (data) => ({ type: CREATE_MILESTONE, data });
  */
 export const deleteMilestone = (data) => ({ type: DELETE_MILESTONE, data });
 
-
-
+/**
+ * Edit Milestone
+ */
+export const updateMilestone = (data) => ({ type: UPDATE_MILESTONE, data });

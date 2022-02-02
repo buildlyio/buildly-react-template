@@ -3,21 +3,27 @@ import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 
 import {
+	CLEAR_MILESTONES,
+	CLEAR_MILESTONES_FAIL,
+	CLEAR_MILESTONES_SUCCESS,
+	CLEAR_MILESTONES_HEADINGS,
+	CLEAR_MILESTONES_HEADINGS_FAIL,
+	CLEAR_MILESTONES_HEADINGS_SUCCESS,
+	CREATE_MILESTONE,
+	CREATE_MILESTONE_FAIL,
+	CREATE_MILESTONE_SUCCESS,
+	DELETE_MILESTONE,
+	DELETE_MILESTONE_FAIL,
+	DELETE_MILESTONE_SUCCESS,
 	GET_MILESTONES,
 	GET_MILESTONES_FAIL,
 	GET_MILESTONES_SUCCESS,
 	GET_REPOSITORIES,
 	GET_REPOSITORIES_FAIL,
 	GET_REPOSITORIES_SUCCESS,
-	CLEAR_MILESTONES,
-	CLEAR_MILESTONES_SUCCESS,
-	CLEAR_MILESTONES_FAIL,
-	CLEAR_MILESTONES_HEADINGS,
-	CLEAR_MILESTONES_HEADINGS_SUCCESS,
-	CLEAR_MILESTONES_HEADINGS_FAIL,
-	CREATE_MILESTONE,
-	CREATE_MILESTONE_SUCCESS,
-	CREATE_MILESTONE_FAIL, DELETE_MILESTONE_SUCCESS, DELETE_MILESTONE_FAIL, DELETE_MILESTONE
+	UPDATE_MILESTONE,
+	UPDATE_MILESTONE_FAIL,
+	UPDATE_MILESTONE_SUCCESS
 } from '../actions/milestone.actions';
 
 function* getRepositories(payload) {
@@ -55,7 +61,7 @@ function* getMilestones(payload) {
 	try {
 		const { owner, selectedRepositories, milestoneState } = payload.data;
 		const data = [];
-		for(let i = 0; i < selectedRepositories.length; i++) {
+		for (let i = 0; i < selectedRepositories.length; i++) {
 			const milestones = yield call(
 				httpService.makeRequest,
 				'get',
@@ -133,7 +139,7 @@ function* createMilestone(payload) {
 		const { owner, repositories, data } = payload.data;
 
 		const milestones = [];
-		for(let i = 0; i < repositories.length; i++) {
+		for (let i = 0; i < repositories.length; i++) {
 			const milestone = yield call(
 				httpService.makeRequest,
 				'post',
@@ -182,7 +188,7 @@ function* deleteMilestone(payload) {
 		yield call(
 			httpService.makeRequest,
 			'delete',
-			`${ window.env.GITHUB_API_URL }/repos/${ owner }/${ repository }/milestones/${number}`,
+			`${ window.env.GITHUB_API_URL }/repos/${ owner }/${ repository }/milestones/${ number }`,
 			{},
 			false,
 			null,
@@ -217,6 +223,48 @@ function* deleteMilestone(payload) {
 	}
 }
 
+function* updateMilestone(payload) {
+	try {
+		const { owner, repository, data, number } = payload.data;
+
+		const milestone = yield call(
+			httpService.makeRequest,
+			'patch',
+			`${ window.env.GITHUB_API_URL }/repos/${ owner }/${ repository }/milestones/${ number }`,
+			data,
+			false,
+			null,
+			null,
+			true
+		);
+
+		yield [
+			yield put({ type: UPDATE_MILESTONE_SUCCESS, data: { milestone } }),
+			yield put(
+				showAlert({
+					type: 'success',
+					open: true,
+					message: 'Milestone updated successfully!',
+				}),
+			)
+		];
+	} catch (error) {
+		yield [
+			yield put(
+				showAlert({
+					type: 'error',
+					open: true,
+					message: 'Couldn\'t update the milestone!',
+				}),
+			),
+			yield put({
+				type: UPDATE_MILESTONE_FAIL,
+				error,
+			}),
+		];
+	}
+}
+
 function* watchGetRepositories() {
 	yield takeLatest(GET_REPOSITORIES, getRepositories);
 }
@@ -241,6 +289,10 @@ function* watchDeleteMilestone() {
 	yield takeLatest(DELETE_MILESTONE, deleteMilestone);
 }
 
+function* watchUpdateMilestone() {
+	yield takeLatest(UPDATE_MILESTONE, updateMilestone);
+}
+
 export default function* milestoneSaga() {
-	yield all([watchGetRepositories(), watchGetMilestones(), watchClearMilestones(), watchClearMilestonesHeadings(), watchCreateMilestone(), watchDeleteMilestone()]);
+	yield all([watchGetRepositories(), watchGetMilestones(), watchClearMilestones(), watchClearMilestonesHeadings(), watchCreateMilestone(), watchDeleteMilestone(), watchUpdateMilestone()]);
 }
