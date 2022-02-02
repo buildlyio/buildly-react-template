@@ -11,6 +11,7 @@ import Register from './pages/Register/Register';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
 import Help from './pages/Help/Help';
+import LineChart from '@pages/Charts/LineChart';
 import TicketStatus from './pages/TicketStatus/TicketStatus';
 import { routes } from './routes/routesConstants';
 import { PrivateRoute } from './routes/Private.route';
@@ -38,6 +39,7 @@ const App = () => (
           <Route path={routes.HELP} component={Help} />
           <Route path={routes.TICKET_STATUS} component={TicketStatus} />
           <PrivateRoute path={routes.APP} component={ContainerDashboard} />
+          <Route path={routes.LINE_CHART} component={LineChart} />
         </div>
         <Alerts />
       </ThemeProvider>

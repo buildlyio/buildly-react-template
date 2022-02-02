@@ -15,4 +15,5 @@ export const routes = {
   MISSING_DATA: '/app/missing-data',
   NEW_PRODUCT: '/app/new-product',
   RELEASE: '/app/release',
+  LINE_CHART: '/app/chart'
 };
