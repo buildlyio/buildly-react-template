@@ -58,12 +58,14 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 	const addMilestonePath = `${ routes.MILESTONE }/add`;
 	const editMilestonePath = `${ routes.MILESTONE }/edit`;
 
+	// to refresh the repositories on owner change
 	useEffect(() => {
 		dispatch(getRepositories({
 			owner
 		}));
 	}, [owner]);
 
+	// to refresh the milestones if the selected-repositories/owner/milestone-state changes
 	useEffect(() => {
 		if (selectedRepositories.length) {
 			dispatch(getMilestones({
@@ -77,6 +79,7 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 		}
 	}, [selectedRepositories, owner, milestoneState]);
 
+	// to format the incoming milestones to be displayed onto the datatable
 	useEffect(() => {
 		const extractData = (string, term) => string.includes(term)
 			? string.split(`\n> ${ term }`).pop().split('\n')[0].trim()
@@ -109,6 +112,7 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 		setRows(data);
 	}, [selectedMilestones, milestones]);
 
+	// handling the repositories select
 	const selectedRepositoriesHandler = (event) => {
 		const {
 			target: { value }
@@ -118,6 +122,7 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 		);
 	};
 
+	// handling the milestones select
 	const selectedMilestonesHandler = (event) => {
 		const {
 			target: { value }
@@ -127,6 +132,7 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 		);
 	};
 
+	// handling the refresh button click
 	const refreshMilestones = () => {
 		if (selectedRepositories.length) {
 			dispatch(getMilestones({
@@ -140,12 +146,14 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 		}
 	};
 
+	// changing the page on add-milestone click
 	const addMilestone = () => history.push(`${ addMilestonePath }`, {
 		type: 'add',
 		from: routes.MILESTONE,
 		data: null,
 	});
 
+	// changing the page on edit-milestone click
 	const editMilestone = (milestone) => {
 		history.push(`${ editMilestonePath }/${ milestone.number }`, {
 			type: 'edit',
@@ -154,11 +162,13 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 		});
 	};
 
+	// handling the milestone delete button click
 	const deleteConfirmationHandler = (milestone) => {
 		setCurrentMilestone(milestone);
 		setDeleteModalState(true);
 	};
 
+	// handling the delete-milestone confirmation
 	const deleteMilestoneHandler = () => {
 		const { repository, number } = currentMilestone;
 
@@ -303,7 +313,7 @@ const Milestone = ({ history, loading, repositories, dispatch, milestones, miles
 				columns={ milestoneConstants || [] }
 				hideAddButton={ false }
 				onAddButtonClick={ addMilestone }
-				addButtonHeading={ 'Add' }
+				addButtonHeading={ 'Add Milestone' }
 				tableHeader='Milestones'
 				editAction={ editMilestone }
 				deleteAction={ deleteConfirmationHandler }

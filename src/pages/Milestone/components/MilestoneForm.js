@@ -90,6 +90,7 @@ const MilestoneForm = ({ loading, location, history, repositories, dispatch }) =
 	const [selectedRepositories, setSelectedRepositories] = useState([]);
 	const states = ['open', 'closed'];
 
+	// handling the modal close depending on data changes
 	const handleModalClose = () => {
 		let dataHasChanged = (
 			state.hasChanged()
@@ -115,6 +116,7 @@ const MilestoneForm = ({ loading, location, history, repositories, dispatch }) =
 		}
 	};
 
+	// handling the repositories select
 	const selectedRepositoriesHandler = (event) => {
 		const {
 			target: { value }
@@ -124,6 +126,7 @@ const MilestoneForm = ({ loading, location, history, repositories, dispatch }) =
 		);
 	};
 
+	// handling the blur on input fields
 	const handleBlur = (event, validation, input, parentId) => {
 		const validateObj = validators(validation, input);
 		const prevState = { ...formError };
@@ -143,6 +146,7 @@ const MilestoneForm = ({ loading, location, history, repositories, dispatch }) =
 		}
 	};
 
+	// handling the cancel button click
 	const discardFormData = () => {
 		setConfirmModal(false);
 		setFormModalOpen(false);
@@ -151,6 +155,7 @@ const MilestoneForm = ({ loading, location, history, repositories, dispatch }) =
 		}
 	};
 
+	// handling form submission
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
@@ -198,6 +203,7 @@ const MilestoneForm = ({ loading, location, history, repositories, dispatch }) =
 		}
 	};
 
+	// handling the state of form submit button
 	const submitDisabled = () => {
 		const errorKeys = Object.keys(formError);
 		if (!description.value || !state.value || !startDate) {
