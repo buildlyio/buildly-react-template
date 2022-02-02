@@ -16,12 +16,15 @@ import {
   Grid,
   IconButton,
   Typography,
+  Menu,
+  MenuItem,
 } from '@mui/material';
 import {
   AddRounded,
   EditRounded,
   DeleteRounded,
   TrendingFlatRounded,
+  MoreHoriz,
 } from '@mui/icons-material';
 
 const useStyles = makeStyles((theme) => ({
@@ -66,6 +69,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const options = [
+  'Edit',
+  'Delete',
+];
+
 const Kanban = ({
   statuses,
   product,
@@ -78,6 +86,18 @@ const Kanban = ({
 }) => {
   const classes = useStyles();
   const [columns, setColumns] = useState({});
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [currentNumber, setCurrentNumber] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event, number) => {
+    setAnchorEl(event.currentTarget);
+    setCurrentNumber(number);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+    setCurrentNumber(null);
+  };
 
   useEffect(() => {
     let cols = {};
@@ -195,12 +215,16 @@ const Kanban = ({
                       >
                         {_.map(column.items, (item, itemIndex) => (
                           <Draggable
-                            key={item.issue_uuid
-                              ? item.issue_uuid
-                              : item.feature_uuid}
-                            draggableId={item.issue_uuid
-                              ? item.issue_uuid
-                              : item.feature_uuid}
+                            key={
+                              item.issue_uuid
+                                ? item.issue_uuid
+                                : item.feature_uuid
+                            }
+                            draggableId={
+                              item.issue_uuid
+                                ? item.issue_uuid
+                                : item.feature_uuid
+                            }
                             index={itemIndex}
                           >
                             {(provided, snapshot) => (
@@ -236,27 +260,49 @@ const Kanban = ({
                                         </IconButton>
                                       )}
                                       <IconButton
-                                        aria-label="edit-ticket"
-                                        aria-controls="menu-card"
-                                        aria-haspopup="false"
+                                        id="menu-button"
+                                        aria-label="column-options"
+                                        aria-controls="menu-column"
+                                        aria-haspopup="true"
                                         color="secondary"
-                                        onClick={(e) => editItem(item, item.featureUUID ? 'issue' : 'feat')}
-                                        size="large"
-                                        className={classes.iconButton}
+                                        aria-expanded
+                                        onClick={(e) => handleClick(e, item)}
+
                                       >
-                                        <EditRounded fontSize="small" />
+                                        <MoreHoriz />
                                       </IconButton>
-                                      <IconButton
-                                        aria-label="delete-ticket"
-                                        aria-controls="menu-card"
-                                        aria-haspopup="false"
-                                        color="secondary"
-                                        onClick={(e) => deleteItem(item, item.featureUUID ? 'issue' : 'feat')}
-                                        size="large"
-                                        className={classes.iconButton}
+                                      <Menu
+                                        id="long-menu"
+                                        MenuListProps={{
+                                          'aria-labelledby': 'long-button',
+                                        }}
+                                        anchorEl={anchorEl}
+                                        open={currentNumber === item}
+                                        PaperProps={{
+                                          style: {
+                                            maxHeight: 48 * 4.5,
+                                            width: '20ch',
+                                          },
+                                        }}
+                                        onClick={handleClose}
                                       >
-                                        <DeleteRounded fontSize="small" />
-                                      </IconButton>
+                                        {_.map(options, (option, optInd) => (
+                                          <MenuItem
+                                            key={optInd}
+                                            selected={option === 'Edit'}
+                                            onClick={(e) => {
+                                              const type = item.issue_uuid ? 'issue' : 'feat';
+                                              if (option === 'Edit') {
+                                                editItem(item, type);
+                                              } else {
+                                                deleteItem(item, type);
+                                              }
+                                            }}
+                                          >
+                                            {option}
+                                          </MenuItem>
+                                        ))}
+                                      </Menu>
                                     </div>
                                   )}
                                 />
