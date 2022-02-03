@@ -13,35 +13,30 @@ export const httpService = {
  * @param {boolean} useJwt - boolean to check if we want to use JWT or not
  * @param {string} contentType - type of content to be requested
  * @param {string} responseType - the expected response type from the server
- * @param {boolean} useGitHub - boolean to check if this is a GitHub API call
+ * @param customHeaders - custom headers to be sent with the request
  * @returns {Observable} - response of the request or error
  */
-function makeRequest(method, url, body, useJwt, contentType, responseType, useGitHub = false) {
+function makeRequest(method, url, body, useJwt, contentType, responseType, customHeaders) {
   let token;
   let tokenType;
   if (useJwt) {
     tokenType = 'JWT';
     token = oauthService.getJwtToken();
-  } else if(useGitHub) {
-    tokenType = 'token';
-    token = window.env.GITHUB_TOKEN;
-  }
-  else {
+  } else {
     tokenType = 'Bearer';
     token = oauthService.getAccessToken();
   }
   let headers;
-  if(useGitHub) {
-    headers = {
-      Authorization: `${tokenType} ${token}`,
-      Accept: 'application/vnd.github.v3+json'
-    };
-  } else {
-    headers = {
-      Authorization: `${tokenType} ${token}`,
-      // 'Content-Type': contentType || 'application/json', // Commenting to make it work for GCP
-    };
+
+  headers = {
+    Authorization: `${tokenType} ${token}`,
+    // 'Content-Type': contentType || 'application/json', // Commenting to make it work for GCP
+  };
+
+  if (customHeaders) {
+    headers = customHeaders;
   }
+
   const options = {
     method,
     data: body,
