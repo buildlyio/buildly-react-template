@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
@@ -79,6 +80,7 @@ import {
   DELETE_THIRD_PARTY_TOOL,
   DELETE_THIRD_PARTY_TOOL_SUCCESS,
   DELETE_THIRD_PARTY_TOOL_FAILURE,
+  createCredential,
 } from '../actions/product.actions';
 
 const productEndpoint = 'product/';
@@ -133,7 +135,7 @@ function* getCredential(payload) {
   }
 }
 
-function* createCredential(payload) {
+function* addCredential(payload) {
   try {
     const cred = yield call(
       httpService.makeRequest,
@@ -397,6 +399,17 @@ function* createProduct(payload) {
       `${window.env.API_URL}${productEndpoint}product/`,
       payload.data,
     );
+    if (product && product.data) {
+      const dateTime = new Date();
+      yield all(_.map(payload.data.creds, (cred) => (
+        put(createCredential({
+          ...cred,
+          product_uuid: product.data.product_uuid,
+          create_date: dateTime,
+          edit_date: dateTime,
+        }))
+      )));
+    }
     yield put({ type: CREATE_PRODUCT_SUCCESS, data: product.data });
   } catch (error) {
     yield [
@@ -733,7 +746,7 @@ function* watchGetCredential() {
 }
 
 function* watchCreateCredential() {
-  yield takeLatest(CREATE_CREDENTIAL, createCredential);
+  yield takeLatest(CREATE_CREDENTIAL, addCredential);
 }
 
 function* watchUpdateCredential() {

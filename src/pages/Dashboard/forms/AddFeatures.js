@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -10,13 +10,17 @@ import {
   Button,
   Autocomplete,
   MenuItem,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
+  Chip,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
+import {
+  getAllStatuses,
+  createFeature,
+  updateFeature,
+} from '@redux/decision/actions/decision.actions';
 import { validators } from '@utils/validators';
+import { PRIORITIES, TAGS } from './formConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -42,11 +46,13 @@ const AddFeatures = ({
   history,
   location,
   statuses,
+  dispatch,
+  products,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
-  const [autoCompleteValue, setAutoCompleteValue] = useState([]);
+  const [product, setProduct] = useState('');
 
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === 'edit';
@@ -55,23 +61,24 @@ const AddFeatures = ({
     && location.state.type === 'edit'
     && location.state.data
   ) || {};
-  const productID = location.state && location.state.productID;
+  const product_uuid = location.state && location.state.product_uuid;
 
-  const name = useInput(editData.name || '', {
+  const name = useInput((editData && editData.name) || '', {
     required: true,
   });
-  const description = useInput(editData.description || '', {
+  const description = useInput((editData && editData.description) || '', {
     required: true,
   });
-  const priority = useInput(editData.priority || '', {
+  const priority = useInput((editData && editData.priority) || '', {
     required: true,
   });
-  const status = useInput(editData.status || '', {
+  const status = useInput((editData && editData.status) || '', {
     required: true,
   });
-  const tag = useInput(editData.tag || '', {
-    required: true,
-  });
+  const [tags, setTags] = useState((editData && editData.tags) || []);
+  const [colID, setColID] = useState('');
+  const totalEstimate = useInput((editData && editData.total_estimate) || '');
+  const version = useInput((editData && editData.version) || '');
   const [formError, setFormError] = useState({});
 
   const buttonText = editPage ? 'Save' : 'Add Feature';
@@ -80,9 +87,30 @@ const AddFeatures = ({
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
+  useEffect(() => {
+    if (!statuses || _.isEmpty(statuses)) {
+      dispatch(getAllStatuses());
+    }
+  }, []);
+
+  useEffect(() => {
+    setProduct(_.find(products, { product_uuid }));
+  }, [products]);
+
   const closeFormModal = () => {
     const dataHasChanged = (
-      name.hasChanged() || description.hasChanged()
+      name.hasChanged()
+      || description.hasChanged()
+      || priority.hasChanged()
+      || status.hasChanged()
+      || (!_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
+      || (_.isEmpty(editData) && !_.isEmpty(tags))
+      || totalEstimate.hasChanged()
+      || version.hasChanged()
+      || (!editPage && product
+        && product.feature_tool_detail
+        && product.feature_tool_detail.column_list
+        && colID !== '')
     );
 
     if (dataHasChanged) {
@@ -103,22 +131,47 @@ const AddFeatures = ({
     }
   };
 
+  // Handle tags list
+  const onTagsChange = (value) => {
+    switch (true) {
+      case (value.length > tags.length):
+        setTags([...tags, _.last(value)]);
+        break;
+
+      case (value.length < tags.length):
+        setTags(value);
+        break;
+
+      default:
+        break;
+    }
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const id = editPage
-      ? editData.id
-      : (location.state && location.state.nextId);
-    const featFormValue = {
-      productID,
-      id,
+    const dateTime = new Date();
+
+    const formData = {
+      ...editData,
+      edit_date: dateTime,
       name: name.value,
       description: description.value,
+      status: status.value,
+      tags,
+      product_uuid,
+      priority: priority.value,
+      total_estimate: totalEstimate.value,
+      version: version.value,
     };
 
     if (editPage) {
-      console.log('Dispatch edit feature action here');
+      dispatch(updateFeature(formData));
     } else {
-      console.log('Dispatch add feature action here');
+      formData.create_date = dateTime;
+      if (colID) {
+        formData.column_id = colID;
+      }
+      dispatch(createFeature(formData));
     }
     history.push(redirectTo);
   };
@@ -144,7 +197,13 @@ const AddFeatures = ({
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (!name.value || !description.value) {
+    if (!name.value
+      || !description.value
+      || !status.value
+      || !priority.value
+      || (!editPage && product
+        && product.feature_tool_detail && !colID)
+    ) {
       return true;
     }
     let errorExists = false;
@@ -155,32 +214,6 @@ const AddFeatures = ({
     });
     return errorExists;
   };
-
-  useEffect(() => {
-    if (!statuses || _.isEmpty(statuses)) {
-      dispatch(getAllStatuses());
-    }
-  }, []);
-
-
-  let priorities = [
-    {
-      "type": "Low",
-      "id": 1,
-    },
-    {
-      "type": "Medium",
-      "id": 2,
-    },
-    {
-      "type": "High",
-      "id": 3,
-    },
-    {
-      "type": "Urgent",
-      "id": 4,
-    },
-  ]
 
   return (
     <>
@@ -250,48 +283,8 @@ const AddFeatures = ({
                 />
               </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <Autocomplete
-                multiple
-                id="tags-outlined"
-                options={[]}
-                freeSolo
-                value={autoCompleteValue}
-                onChange={(e, newval, reason) => {
-                  setAutoCompleteValue(newval);
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="tag"
-                    label="Tags"
-                    name="tag"
-                    onKeyDown={(e) => {
-                      if (e.keyCode == 13 && e.target.value) {
-                        setAutoCompleteValue(autoCompleteValue.concat(e.target.value));
-                      }
-                    }}
-                    error={
-                      formError.tag
-                      && formError.tag.error
-                    }
-                    helperText={
-                      formError.tag
-                        ? formError.tag.message
-                        : ''
-                    }
-                    onBlur={(e) => handleBlur(e, 'required', tag)}
-                    {...tag.bind}
-                  />
-                )}
-              />
-            </Grid>
             <Grid container spacing={2}>
-              <Grid item xs={8}>
+              <Grid item xs={12} md={8}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -314,17 +307,17 @@ const AddFeatures = ({
                   onBlur={(e) => handleBlur(e, 'required', status)}
                   {...status.bind}
                 >
-                  {_.map(statuses, (status) => (
+                  {_.map(statuses, (sts) => (
                     <MenuItem
-                      key={status.status_uuid}
-                      value={status.name}
+                      key={`status-${sts.status_uuid}-${sts.name}`}
+                      value={sts.status_uuid}
                     >
-                      {status.name}
+                      {sts.name}
                     </MenuItem>
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={12} md={4}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -347,51 +340,116 @@ const AddFeatures = ({
                   onBlur={(e) => handleBlur(e, 'required', priority)}
                   {...priority.bind}
                 >
-                  {_.map(priorities, (priority) => (
+                  {_.map(PRIORITIES, (prty, idx) => (
                     <MenuItem
-                      key={priority.id}
-                      value={priority.type}
+                      key={`priority-${idx}`}
+                      value={prty}
                     >
-                      {priority.type}
+                      {prty}
                     </MenuItem>
                   ))}
                 </TextField>
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
+              <Autocomplete
                 fullWidth
-                multiline
-                id="featureTracker"
-                label="Feature Tracker"
-                name="featureTracker"
-                autoComplete="featureTracker"
+                multiple
+                filterSelectedOptions
+                id="tags"
+                options={TAGS}
+                value={tags}
+                onChange={(e, newValue) => onTagsChange(newValue)}
+                renderTags={(value, getTagProps) => (
+                  _.map(value, (option, index) => (
+                    <Chip
+                      variant="default"
+                      label={option}
+                      {...getTagProps({ index })}
+                    />
+                  ))
+                )}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Tags"
+                    margin="normal"
+                  />
+                )}
               />
             </Grid>
+            {!editPage && product
+            && product.feature_tool_detail
+            && product.feature_tool_detail.column_list
+            && (
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  select
+                  id="colid "
+                  label="Tool Column"
+                  name="colid"
+                  autoComplete="colid"
+                  value={colID}
+                  onChange={(e) => setColID(e.target.value)}
+                >
+                  {_.map(product.feature_tool_detail.column_list, (col) => (
+                    <MenuItem
+                      key={`column-${col.id}-${col.name}`}
+                      value={col.id}
+                    >
+                      {col.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+            )}
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 margin="normal"
                 fullWidth
-                multiline
-                id="version"
-                label="Version"
-                name="version"
-                autoComplete="version"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                multiline
                 id="totalEstimate"
                 label="Total Estimate"
                 name="totalEstimate"
                 autoComplete="totalEstimate"
+                error={
+                  formError.totalEstimate
+                  && formError.totalEstimate.error
+                }
+                helperText={
+                  formError.totalEstimate
+                    ? formError.totalEstimate.message
+                    : ''
+                }
+                onBlur={(e) => handleBlur(e, 'required', totalEstimate)}
+                {...totalEstimate.bind}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                id="version "
+                label="Version"
+                name="version"
+                autoComplete="version"
+                error={
+                  formError.version
+                  && formError.version.error
+                }
+                helperText={
+                  formError.version
+                    ? formError.version.message
+                    : ''
+                }
+                onBlur={(e) => handleBlur(e, 'required', version)}
+                {...version.bind}
               />
             </Grid>
             <Grid
@@ -426,15 +484,15 @@ const AddFeatures = ({
             </Grid>
           </form>
         </FormModal>
-      )
-      }
+      )}
     </>
   );
 };
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.decisionReducer,
+  statuses: state.decisionReducer.statuses,
+  products: state.productReducer.products,
 });
 
 export default connect(mapStateToProps)(AddFeatures);

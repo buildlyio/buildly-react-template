@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -16,12 +16,12 @@ import {
   Radio,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faGithub, faTrello, faAtlassian, faJira,
-} from '@fortawesome/free-brands-svg-icons';
+import { faGithub, faTrello } from '@fortawesome/free-brands-svg-icons';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
+import { getOrganization } from '@context/User.context';
+import { saveProductFormData, getAllThirdPartyTools } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -59,8 +59,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
-    margin: theme.spacing(8, 0),
-    textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   buttonProgress: {
@@ -146,41 +146,109 @@ const StyledStart = (props) => (
   />
 );
 
-const ProductSetup = (props) => {
-  const {
-    location, handleNext,
-  } = props;
+const ProductSetup = ({
+  productFormData,
+  handleNext,
+  dispatch,
+  thirdPartyTools,
+}) => {
   const classes = useStyles();
   const theme = useTheme();
-  const viewOnly = false;
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
-  // const editPage = location.state && location.state.type === 'edit';
-  const editData = (location.state && location.state.type === 'edit' && location.state.data)
-    || {};
 
-  const name = useInput((editData && editData.name) || '', {
-    required: true,
+  const name = useInput(
+    (productFormData && productFormData.product_name) || '',
+    { required: true },
+  );
+  const description = useInput(
+    (productFormData && productFormData.product_description) || '',
+    { required: true },
+  );
+  const featuresTool = useInput('start fresh', { required: true });
+  const issuesTool = useInput('start fresh', { required: true });
+  const [trelloAuth, setTrelloAuth] = useState({
+    trello_key: '',
+    access_token: '',
+    tool_type: 'Feature',
+    tool_name: 'Trello',
   });
-  const description = useInput((editData && editData.description) || '');
-
-  const featuresTool = useInput(
-    (editData && editData.feature_tool_detail) || 'start fresh',
-  );
-
-  const issuesTool = useInput(
-    (editData && editData.issues_tool_detail) || 'start fresh',
-  );
-
+  const [githubFeatureAuth, setGithubFeatureAuth] = useState({
+    owner_name: '',
+    access_token: '',
+    tool_type: 'Feature',
+    tool_name: 'GitHub',
+  });
+  const [githubIssueAuth, setGithubIssueAuth] = useState({
+    owner_name: '',
+    access_token: '',
+    tool_type: 'Issue',
+    tool_name: 'GitHub',
+  });
   const [startDate, handleStartDateChange] = useState(
-    (editData && editData.start_date) || new Date(),
+    (productFormData && productFormData.start_date) || new Date(),
   );
   const [endDate, handleEndDateChange] = useState(
-    (editData && editData.end_date) || new Date(),
+    (productFormData && productFormData.end_date) || new Date(),
   );
-
-  const [useBuildlyArch, setUseBuildlyArch] = useState(true);
-
+  const [useBuildlyArch, setUseBuildlyArch] = useState(
+    (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.use_buildly_arch
+    ) || true,
+  );
   const [formError, setFormError] = useState({});
+
+  useEffect(() => {
+    if (productFormData && !_.isEmpty(productFormData.creds)) {
+      _.forEach(productFormData.creds, (cred) => {
+        switch (true) {
+          case cred && cred.auth_detail
+            && cred.auth_detail.tool_type === 'Feature':
+            if (cred.auth_detail.tool_name === 'Trello') {
+              setTrelloAuth(cred.auth_detail);
+            }
+            if (cred.auth_detail.tool_name === 'GitHub') {
+              setGithubFeatureAuth(cred.auth_detail);
+            }
+            break;
+
+          case cred && cred.auth_detail
+            && cred.auth_detail.tool_type === 'Issue':
+            if (cred.auth_detail.tool_name === 'GitHub') {
+              setGithubIssueAuth(cred.auth_detail);
+            }
+            break;
+
+          default:
+            break;
+        }
+      });
+    }
+  }, [productFormData]);
+
+  useEffect(() => {
+    if (!thirdPartyTools || _.isEmpty(thirdPartyTools)) {
+      dispatch(getAllThirdPartyTools());
+    }
+
+    if (productFormData
+      && productFormData.third_party_tool
+      && !_.isEmpty(productFormData.third_party_tool)
+      && thirdPartyTools
+      && !_.isEmpty(thirdPartyTools)
+    ) {
+      _.forEach(productFormData.third_party_tool, (id) => {
+        const tool = _.find(thirdPartyTools, { thirdpartytool_uuid: id });
+        if (tool) {
+          if (_.toLower(tool.tool_type) === 'feature') {
+            featuresTool.setNewValue(_.toLower(tool.name));
+          } else {
+            issuesTool.setNewValue(_.toLower(tool.name));
+          }
+        }
+      });
+    }
+  }, [thirdPartyTools]);
 
   /**
    * Handle input field blur event
@@ -207,16 +275,18 @@ const ProductSetup = (props) => {
     }
   };
 
-  const onNextClick = (event) => {
-    // if (checkIfProductInfoEdited() === true) {
-    //   handleSubmit(event);
-    // }
-    handleNext();
-  };
-
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (!name.value) {
+    if (!name.value || !description.value
+      || (featuresTool.value === 'trello'
+        && (!trelloAuth.access_token || !trelloAuth.trello_key))
+      || (featuresTool.value === 'github'
+        && (!githubFeatureAuth.access_token
+          || !githubFeatureAuth.owner_name))
+      || (issuesTool.value === 'github'
+        && (!githubIssueAuth.access_token
+          || !githubIssueAuth.owner_name))
+    ) {
       return true;
     }
     let errorExists = false;
@@ -229,9 +299,20 @@ const ProductSetup = (props) => {
   };
 
   checkIfProductSetupEdited = () => (
-    description.hasChanged()
+    name.hasChanged()
+    || description.hasChanged()
     || featuresTool.hasChanged()
     || issuesTool.hasChanged()
+    || (productFormData
+      && productFormData.start_date
+      && (startDate !== productFormData.start_date))
+    || (productFormData
+      && productFormData.end_date
+      && (endDate !== productFormData.end_date))
+    || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.use_buildly_architecture
+      && (useBuildlyArch !== productFormData.product_info.use_buildly_architecture))
   );
 
   /**
@@ -240,6 +321,79 @@ const ProductSetup = (props) => {
    */
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    const dateTime = new Date();
+    let tools = [];
+    let creds = [];
+
+    switch (featuresTool.value) {
+      case 'trello': {
+        const ft = _.find(thirdPartyTools, (tool) => (
+          _.toLower(tool.name) === 'trello'
+          && _.toLower(tool.tool_type) === 'feature'
+        ));
+        tools = [...tools, ft?.thirdpartytool_uuid];
+        creds = [...creds, {
+          third_party_tool: ft?.thirdpartytool_uuid,
+          auth_detail: trelloAuth,
+        }];
+        break;
+      }
+
+      case 'github': {
+        const ft = _.find(thirdPartyTools, (tool) => (
+          _.toLower(tool.name) === 'github'
+          && _.toLower(tool.tool_type) === 'feature'
+        ));
+        tools = [...tools, ft?.thirdpartytool_uuid];
+        creds = [...creds, {
+          third_party_tool: ft?.thirdpartytool_uuid,
+          auth_detail: githubFeatureAuth,
+        }];
+        break;
+      }
+
+      default:
+        break;
+    }
+
+    switch (issuesTool.value) {
+      case 'github': {
+        const it = _.find(thirdPartyTools, (tool) => (
+          _.toLower(tool.name) === 'github'
+          && _.toLower(tool.tool_type) === 'issue'
+        ));
+        tools = [...tools, it?.thirdpartytool_uuid];
+        creds = [...creds, {
+          third_party_tool: it?.thirdpartytool_uuid,
+          auth_detail: githubIssueAuth,
+        }];
+        break;
+      }
+
+      default:
+        break;
+    }
+
+    const formData = {
+      ...productFormData,
+      product_name: name.value,
+      product_description: description.value,
+      start_date: startDate,
+      end_date: endDate,
+      create_date: dateTime,
+      edit_date: dateTime,
+      organization_uuid: getOrganization(),
+      third_party_tool: tools,
+      product_info: {
+        ...productFormData?.product_info,
+        use_buildly_architecture: useBuildlyArch,
+      },
+      creds,
+    };
+
+    dispatch(saveProductFormData(formData));
+    handleNext();
   };
 
   return (
@@ -257,7 +411,6 @@ const ProductSetup = (props) => {
                 label="Product name"
                 name="name"
                 autoComplete="name"
-                disabled={viewOnly}
                 error={formError.name && formError.name.error}
                 onBlur={(e) => handleBlur(e, 'required', name)}
                 {...name.bind}
@@ -276,7 +429,6 @@ const ProductSetup = (props) => {
                     label="Product description"
                     name="description"
                     autoComplete="description"
-                    disabled={viewOnly}
                     {...description.bind}
                   />
                 </Grid>
@@ -290,7 +442,6 @@ const ProductSetup = (props) => {
                     selectedDate={startDate}
                     hasTime
                     handleDateChange={handleStartDateChange}
-                    disabled={viewOnly}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -299,7 +450,6 @@ const ProductSetup = (props) => {
                     selectedDate={endDate}
                     hasTime
                     handleDateChange={handleEndDateChange}
-                    disabled={viewOnly}
                   />
                 </Grid>
               </Grid>
@@ -307,7 +457,7 @@ const ProductSetup = (props) => {
 
             <Grid item xs={12} sm={6}>
               <Typography variant="h6">Features</Typography>
-              <Box sx={{ border: '1px solid white', borderRadius: '4px' }}>
+              <Box sx={{ border: '1px solid white', borderRadius: '4px', padding: '0 12px' }}>
                 <Typography variant="subtitle1" align="center" mt={2}>Connect to supported tool</Typography>
                 <FormControl component="fieldset" required>
                   <RadioGroup
@@ -328,12 +478,12 @@ const ProductSetup = (props) => {
                       )}
                     />
                     <FormControlLabel
-                      value="atlassian"
+                      value="github"
                       control={<StyledStart />}
                       label={(
                         <>
-                          <FontAwesomeIcon icon={faAtlassian} className="fa-4x" />
-                          <Typography align="center">Atlassian</Typography>
+                          <FontAwesomeIcon icon={faGithub} className="fa-4x" />
+                          <Typography align="center">Github</Typography>
                         </>
                       )}
                     />
@@ -345,11 +495,87 @@ const ProductSetup = (props) => {
                     />
                   </RadioGroup>
                 </FormControl>
+                {featuresTool.value === 'trello' && (
+                  <>
+                    <Grid item>
+                      <TextField
+                        required
+                        fullWidth
+                        variant="outlined"
+                        margin="normal"
+                        id="trello-access-token"
+                        label="Trello Access Token"
+                        name="trello-access-token"
+                        autoComplete="trello-access-token"
+                        value={trelloAuth.access_token}
+                        onChange={(e) => setTrelloAuth({
+                          ...trelloAuth,
+                          access_token: e.target.value,
+                        })}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        required
+                        fullWidth
+                        variant="outlined"
+                        margin="normal"
+                        id="trello-key"
+                        label="Trello Key"
+                        name="trello-key"
+                        autoComplete="trello-key"
+                        value={trelloAuth.trello_key}
+                        onChange={(e) => setTrelloAuth({
+                          ...trelloAuth,
+                          trello_key: e.target.value,
+                        })}
+                      />
+                    </Grid>
+                  </>
+                )}
+                {featuresTool.value === 'github' && (
+                  <>
+                    <Grid item>
+                      <TextField
+                        required
+                        fullWidth
+                        variant="outlined"
+                        margin="normal"
+                        id="github-feature-access-token"
+                        label="Github Access Token"
+                        name="github-feature-access-token"
+                        autoComplete="github-feature-access-token"
+                        value={githubFeatureAuth.access_token}
+                        onChange={(e) => setGithubFeatureAuth({
+                          ...githubFeatureAuth,
+                          access_token: e.target.value,
+                        })}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        required
+                        fullWidth
+                        variant="outlined"
+                        margin="normal"
+                        id="github-feature-owner-name"
+                        label="Github Owner Name"
+                        name="github-feature-owner-name"
+                        autoComplete="github-feature-owner-name"
+                        value={githubFeatureAuth.owner_name}
+                        onChange={(e) => setGithubFeatureAuth({
+                          ...githubFeatureAuth,
+                          owner_name: e.target.value,
+                        })}
+                      />
+                    </Grid>
+                  </>
+                )}
               </Box>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="h6">Issues</Typography>
-              <Box sx={{ border: '1px solid white', borderRadius: '4px' }}>
+              <Box sx={{ border: '1px solid white', borderRadius: '4px', padding: '0 12px' }}>
                 <Typography variant="subtitle1" align="center" mt={2}>Connect to supported tool</Typography>
                 <FormControl component="fieldset" required>
                   <RadioGroup
@@ -370,16 +596,6 @@ const ProductSetup = (props) => {
                       )}
                     />
                     <FormControlLabel
-                      value="jira"
-                      control={<StyledStart />}
-                      label={(
-                        <>
-                          <FontAwesomeIcon icon={faJira} className="fa-4x" />
-                          <Typography align="center">Jira</Typography>
-                        </>
-                      )}
-                    />
-                    <FormControlLabel
                       value="start fresh"
                       className={classes.radioLeft}
                       control={<StyledRadio />}
@@ -387,6 +603,44 @@ const ProductSetup = (props) => {
                     />
                   </RadioGroup>
                 </FormControl>
+                {issuesTool.value === 'github' && (
+                  <>
+                    <Grid item>
+                      <TextField
+                        required
+                        fullWidth
+                        variant="outlined"
+                        margin="normal"
+                        id="github-issues-access-token"
+                        label="Github Access Token"
+                        name="github-issue-access-token"
+                        autoComplete="github-issue-access-token"
+                        value={githubIssueAuth.access_token}
+                        onChange={(e) => setGithubIssueAuth({
+                          ...githubIssueAuth,
+                          access_token: e.target.value,
+                        })}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        required
+                        fullWidth
+                        variant="outlined"
+                        margin="normal"
+                        id="github-issue-owner-name"
+                        label="Github Owner Name"
+                        name="github-issue-owner-name"
+                        autoComplete="github-issue-owner-name"
+                        value={githubIssueAuth.owner_name}
+                        onChange={(e) => setGithubIssueAuth({
+                          ...githubIssueAuth,
+                          owner_name: e.target.value,
+                        })}
+                      />
+                    </Grid>
+                  </>
+                )}
               </Box>
             </Grid>
           </Grid>
@@ -424,14 +678,14 @@ const ProductSetup = (props) => {
         <Grid container spacing={3} className={classes.buttonContainer}>
           <Grid item xs={12} sm={4}>
             <Button
+              type="submit"
               variant="contained"
               color="primary"
               fullWidth
-              onClick={onNextClick}
-              // disabled={productFormData === null}
+              disabled={submitDisabled()}
               className={classes.submit}
             >
-              Save & Next
+              Next
             </Button>
           </Grid>
         </Grid>
@@ -442,6 +696,8 @@ const ProductSetup = (props) => {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  productFormData: state.productReducer.productFormData,
+  thirdPartyTools: state.productReducer.thirdPartyTools,
 });
 
 export default connect(mapStateToProps)(ProductSetup);
