@@ -28,6 +28,7 @@ import AddFeatures from '../forms/AddFeatures';
 import AddIssues from '../forms/AddIssues';
 import FeatureToIssue from '../forms/FeatureToIssue';
 import ConfirmModal from '@components/Modal/ConfirmModal';
+import BarChart from './BarChart';
 
 const useStyles = makeStyles((theme) => ({
   product: {
@@ -323,6 +324,7 @@ const UserDashboard = (props) => {
       <Route path={addIssuePath} component={AddIssues} />
       <Route path={editIssuePath} component={AddIssues} />
       <Route path={featureToIssuePath} component={FeatureToIssue} />
+      <BarChart productFeatures={productFeatures} productIssues={productIssues} />
     </div>
   );
 };
