@@ -36,8 +36,11 @@ export const saveShipmentFormData = (formData) => ({
 /**
  * Get Shipment Details
  * @param {String} organization_uuid
+ * @param {String} status
  * @param {Number} id
  * @param {Boolean} getUpdatedSensorData
+ * @param {Boolean} getUpdatedCustody
+ * @param {String} shipmentAction
  */
 export const getShipmentDetails = (
   organization_uuid,
@@ -45,7 +48,7 @@ export const getShipmentDetails = (
   id = null,
   getUpdatedSensorData = false,
   getUpdatedCustody = false,
-  action = null,
+  shipmentAction = null,
 ) => ({
   type: GET_SHIPMENTS,
   organization_uuid,
@@ -53,7 +56,7 @@ export const getShipmentDetails = (
   id,
   getUpdatedSensorData,
   getUpdatedCustody,
-  action,
+  shipmentAction,
 });
 
 /**

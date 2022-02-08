@@ -141,14 +141,16 @@ const SensorsGatewayInfo = ({
       && gatewayTypeList.length
       && shipmentData
       && shipmentData.length
+      && shipmentFormData
     ) {
       const opts = getAvailableGateways(
         gatewayData,
         platform_name
-          ?  _.lowerCase(platform_name)
+          ? _.lowerCase(platform_name)
           : 'tive',
         gatewayTypeList,
         shipmentData,
+        shipmentFormData,
       );
       setOptions(opts);
     }

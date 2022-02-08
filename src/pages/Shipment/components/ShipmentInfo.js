@@ -281,7 +281,7 @@ const ShipmentInfo = (props) => {
     const shipmentFormValue = {
       ...copyData,
       name: shipment_name.value,
-      status: shipment_status.value,
+      status: shipment_status.value ? shipment_status.value : 'Planned',
       bol_order_id: lading_bill.value,
       route_description: route_desc.value,
       transport_mode: mode_type.value,
@@ -758,7 +758,7 @@ const ShipmentInfo = (props) => {
                 color="primary"
                 fullWidth
                 onClick={onNextClick}
-                disabled={shipmentFormData === null}
+                disabled={!editPage}
                 className={classes.submit}
               >
                 Save & Next: Shipment Key

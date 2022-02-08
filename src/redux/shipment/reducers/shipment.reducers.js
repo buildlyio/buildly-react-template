@@ -27,7 +27,6 @@ const initialState = {
   error: null,
   shipmentFormData: null,
   shipmentData: null,
-  shipmentAction: null,
 };
 
 // Reducer

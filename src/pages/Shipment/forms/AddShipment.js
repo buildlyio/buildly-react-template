@@ -243,12 +243,12 @@ const AddShipment = (props) => {
   };
 
   const handleStep = (step) => () => {
-    if (checkIfFormEdited(activeStep)) {
-      setConfirmModalFor(`step-${step}`);
-      setConfirmModal(true);
-    } else {
-      handleConfirmModal();
-      if (shipmentFormData !== null) {
+    if (shipmentFormData && !_.isEmpty(shipmentFormData)) {
+      if (checkIfFormEdited(activeStep)) {
+        setConfirmModalFor(`step-${step}`);
+        setConfirmModal(true);
+      } else {
+        handleConfirmModal();
         setActiveStep(step);
       }
     }

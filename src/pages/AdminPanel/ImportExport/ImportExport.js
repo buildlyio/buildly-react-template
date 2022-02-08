@@ -16,6 +16,11 @@ const useStyles = makeStyles((theme) => ({
   accordian: {
     backgroundColor: '#393636',
     marginBottom: theme.spacing(4),
+    scrollbarWidth: 'none',
+    msOverflowStyle: 'none',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
   },
   form: {
     width: '100%',

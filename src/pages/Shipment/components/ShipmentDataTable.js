@@ -79,6 +79,9 @@ const ShipmentDataTable = ({
     downloadOptions: {
       filename: 'ShipmentData.csv',
       separator: ',',
+      filterOptions: {
+        useDisplayedColumnsOnly: true,
+      },
     },
     rowsSelected: [selected],
     onRowSelectionChange: (rowsSelected) => {

@@ -143,10 +143,16 @@ const DataTableWrapper = ({
       ? {
         filename: 'nothing.csv',
         separator: ',',
+        filterOptions: {
+          useDisplayedColumnsOnly: true,
+        },
       }
       : {
         filename: `${filename}.csv`,
         separator: ',',
+        filterOptions: {
+          useDisplayedColumnsOnly: true,
+        },
       },
     textLabels: {
       body: {

@@ -42,6 +42,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#4F4D4D',
     marginBottom: theme.spacing(4),
     overflowX: 'scroll',
+    scrollbarWidth: 'none',
+    msOverflowStyle: 'none',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
   },
 }));
 
