@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -12,10 +12,12 @@ import {
   ListItemText,
   Button,
 } from '@mui/material';
+import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
-import { saveProductFormData, createProduct } from '@redux/product/actions/product.actions';
-import { routes } from '@routes/routesConstants';
+import { createProduct } from '@redux/product/actions/product.actions';
 import { EXAMPLELIST } from '../ProductFormConstants';
+import { updateUser } from '@redux/authuser/actions/authuser.actions';
+import { UserContext } from '@context/User.context';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -82,9 +84,10 @@ const MinimalFunctionality = ({
   handleBack,
   dispatch,
   history,
+  loading,
 }) => {
   const classes = useStyles();
-
+  const user = useContext(UserContext);
   const minimalFunc = useInput(
     (productFormData
       && productFormData.product_info
@@ -104,18 +107,20 @@ const MinimalFunctionality = ({
     const formData = {
       ...productFormData,
       product_info: {
-        ...productFormData.product_info,
+        ...productFormData?.product_info,
         minimal_functionality: minimalFunc.value,
       },
       edit_date: new Date(),
     };
-    dispatch(createProduct(formData));
-    dispatch(saveProductFormData(null));
-    history.push(routes.DASHBOARD);
+    if (user && !user.survey_status) {
+      dispatch(updateUser({ id: user.id, survey_status: true }));
+    }
+    dispatch(createProduct(formData, history));
   };
 
   return (
     <div>
+      {loading && <Loader open={loading} />}
       <form className={classes.form} noValidate onSubmit={handleSubmit}>
         <Box mb={2} mt={3}>
           <Grid container spacing={2}>
@@ -182,6 +187,7 @@ const MinimalFunctionality = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   productFormData: state.productReducer.productFormData,
+  loading: state.productReducer.loading,
 });
 
 export default connect(mapStateToProps)(MinimalFunctionality);

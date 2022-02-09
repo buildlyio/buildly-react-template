@@ -4,6 +4,7 @@ import {
 } from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
+import { routes } from '@routes/routesConstants';
 import {
   ALL_CREDENTIALS,
   ALL_CREDENTIALS_SUCCESS,
@@ -81,6 +82,7 @@ import {
   DELETE_THIRD_PARTY_TOOL_SUCCESS,
   DELETE_THIRD_PARTY_TOOL_FAILURE,
   createCredential,
+  saveProductFormData,
 } from '../actions/product.actions';
 
 const productEndpoint = 'product/';
@@ -392,6 +394,7 @@ function* getProduct(payload) {
 }
 
 function* createProduct(payload) {
+  const { history } = payload;
   try {
     const product = yield call(
       httpService.makeRequest,
@@ -410,7 +413,13 @@ function* createProduct(payload) {
         }))
       )));
     }
-    yield put({ type: CREATE_PRODUCT_SUCCESS, data: product.data });
+    yield [
+      yield put({ type: CREATE_PRODUCT_SUCCESS, data: product.data }),
+      yield put(saveProductFormData(null)),
+    ];
+    if (history) {
+      history.push(routes.DASHBOARD);
+    }
   } catch (error) {
     yield [
       yield put(

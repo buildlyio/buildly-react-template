@@ -241,48 +241,48 @@ const NewProductForm = (props) => {
   return (
     <div>
       {openFormModal && (
-      <FormModal
-        open={openFormModal}
-        handleClose={handleClose}
-        title="New Product Setup"
-        titleClass={classes.formTitle}
-        maxWidth="md"
-        wantConfirm
-        openConfirmModal={openConfirmModal}
-        setConfirmModal={setConfirmModal}
-        handleConfirmModal={handleConfirmModal}
-      >
-        <div className={classes.root}>
-          <Hidden smDown>
-            <Grid container alignItems="center" justifyContent="center">
-              <Grid item sm={10}>
-                <Stepper
-                  activeStep={activeStep}
-                  alternativeLabel
-                  nonLinear
-                  style={{ background: 'transparent' }}
-                >
-                  {_.map(steps, (label, index) => (
-                    <Step key={`step${index}:${label}`}>
-                      <StepLabel style={{ color: 'white' }}>{label}</StepLabel>
-                    </Step>
-                  ))}
-                </Stepper>
+        <FormModal
+          open={openFormModal}
+          handleClose={handleClose}
+          title="New Product Setup"
+          titleClass={classes.formTitle}
+          maxWidth="md"
+          wantConfirm
+          openConfirmModal={openConfirmModal}
+          setConfirmModal={setConfirmModal}
+          handleConfirmModal={handleConfirmModal}
+        >
+          <div className={classes.root}>
+            <Hidden smDown>
+              <Grid container alignItems="center" justifyContent="center">
+                <Grid item sm={10}>
+                  <Stepper
+                    activeStep={activeStep}
+                    alternativeLabel
+                    nonLinear
+                    style={{ background: 'transparent' }}
+                  >
+                    {_.map(steps, (label, index) => (
+                      <Step key={`step${index}:${label}`}>
+                        <StepLabel style={{ color: 'white' }}>{label}</StepLabel>
+                      </Step>
+                    ))}
+                  </Stepper>
+                </Grid>
               </Grid>
-            </Grid>
-          </Hidden>
+            </Hidden>
 
-          <div>
-            {getStepContent(
-              activeStep,
-              props,
-              handleNext,
-              handleBack,
-              maxSteps,
-            )}
+            <div>
+              {getStepContent(
+                activeStep,
+                props,
+                handleNext,
+                handleBack,
+                maxSteps,
+              )}
+            </div>
           </div>
-        </div>
-      </FormModal>
+        </FormModal>
       )}
     </div>
   );

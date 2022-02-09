@@ -13,6 +13,7 @@ import {
   Typography,
   Container,
   Grid,
+  MenuItem,
 } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import logo from '@assets/light-logo.png';
@@ -95,6 +96,7 @@ const Register = ({
     matchField: password,
   });
   const [orgName, setOrgName] = useState('');
+  const userType = useInput('', { required: true });
   const first_name = useInput('', { required: true });
   const last_name = useInput('');
   const [formError, setFormError] = useState({});
@@ -116,6 +118,7 @@ const Register = ({
       email: email.value,
       password: password.value,
       organization_name: orgName,
+      user_type: userType.value,
       first_name: first_name.value,
       last_name: last_name.value,
     };
@@ -157,6 +160,7 @@ const Register = ({
       || !email.value
       || !re_password.value
       || !orgName
+      || !userType.value
       || !first_name.value
     ) return true;
     errorKeys.forEach((key) => {
@@ -286,6 +290,32 @@ const Register = ({
                         />
                       )}
                     />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={isMobile() ? 0 : 3}>
+                  <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      required
+                      fullWidth
+                      select
+                      id="userType"
+                      name="userType"
+                      label="User Type"
+                      autoComplete="userType"
+                      error={formError.userType && formError.userType.error}
+                      helperText={
+                        formError.userType ? formError.userType.message : ''
+                      }
+                      className={classes.textField}
+                      onBlur={(e) => handleBlur(e, 'required', userType)}
+                      {...userType.bind}
+                    >
+                      <MenuItem value="">----------</MenuItem>
+                      <MenuItem value="Developer">Developer</MenuItem>
+                      <MenuItem value="Product Team">Product Team</MenuItem>
+                    </TextField>
                   </Grid>
                 </Grid>
                 <Grid container spacing={isMobile() ? 0 : 3}>
