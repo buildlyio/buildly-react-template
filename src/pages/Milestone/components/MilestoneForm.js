@@ -54,7 +54,7 @@ const MilestoneForm = ({
 }) => {
   const classes = useStyles();
 
-  const owner = 'buildly-release-management';
+  const owner = window.env.GITHUB_OWNER;
   const redirectTo = location.state && location.state.from;
   const isEditPage = location.state && location.state.type === 'edit';
   const editData = (

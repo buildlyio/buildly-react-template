@@ -47,7 +47,7 @@ const Milestone = ({
 }) => {
   const classes = useStyles();
 
-  const owner = 'buildly-release-management';
+  const owner = window.env.GITHUB_OWNER;
   const [milestoneState, setMilestoneState] = useState('open');
   const [deleteModalState, setDeleteModalState] = useState(false);
   const [currentMilestone, setCurrentMilestone] = useState(null);
