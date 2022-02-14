@@ -73,7 +73,7 @@ const MilestoneForm = ({
 
   const [formError, setFormError] = useState({});
 
-  const milestone = useInput('', { required: true });
+  const milestone = useInput(editData.milestone || '', { required: true });
   const state = useInput(editData.state || '', { required: true });
   const description = useInput(editData.description || '', { required: true });
   const info = useInput(editData.info || '', {});
@@ -97,6 +97,7 @@ const MilestoneForm = ({
     let dataHasChanged = (
       state.hasChanged()
     || description.hasChanged()
+    || milestone.hasChanged()
     || info.hasChanged()
     || capacity.hasChanged()
     || ed.hasChanged()
@@ -105,7 +106,6 @@ const MilestoneForm = ({
     if (!isEditPage) {
       dataHasChanged = dataHasChanged
       || selectedRepositories.length !== 0
-      || milestone.hasChanged()
       || startDate !== null
       || dueDate !== null
       || burndownDate !== null;
@@ -131,9 +131,14 @@ const MilestoneForm = ({
     const {
       target: { value },
     } = event;
-    setSelectedRepositories(
-      typeof value === 'string' ? value.split(',') : value,
-    );
+
+    if(typeof value === 'object' && value.includes('select-all')) {
+      setSelectedRepositories(repositories.map((name) => name));
+    } else {
+      setSelectedRepositories(
+          typeof value === 'string' ? value.split(',') : value,
+      );
+    }
   };
 
   // handling the blur on input fields
@@ -191,11 +196,10 @@ const MilestoneForm = ({
       state: state.value,
       description: combinedDescription,
       due_on: moment(dueDate).toISOString(),
+      title: milestone.value,
     };
 
     if (!isEditPage) {
-      data.title = milestone.value;
-
       dispatch(createMilestone({
         owner, repositories: selectedRepositories, data,
       }));
@@ -246,9 +250,6 @@ const MilestoneForm = ({
         && (
         <Typography id="modal-modal-title" variant="h6" component="h2" className={classes.formTitle}>
           { editData.repository }
-          {' '}
-          -
-          {editData.milestone}
         </Typography>
         )}
       <form
@@ -318,6 +319,12 @@ const MilestoneForm = ({
                         <MenuItem key={null} value={null} disabled>
                           { repositories.length ? 'Select Repositories' : 'No repositories available.' }
                         </MenuItem>
+                        {
+                          repositories.length &&
+                          <MenuItem key={'Select All'} value={'select-all'}>
+                            { 'Select All' }
+                          </MenuItem>
+                        }
                         { repositories.map((name) => (
                           <MenuItem key={name} value={name}>
                             { name }
@@ -326,32 +333,32 @@ const MilestoneForm = ({
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      required
-                      fullWidth
-                      id="milestone"
-                      label="Milestone"
-                      name="milestone"
-                      autoComplete="milestone"
-                      error={
-                        formError.milestone
-                        && formError.milestone.error
-                      }
-                      helperText={
-                        formError.milestone
-                          ? formError.milestone.message
-                          : ''
-                        }
-                      onBlur={(event) => handleBlur(event, 'required', milestone)}
-                      {...milestone.bind}
-                    />
-                  </Grid>
                 </>
               )
             }
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="milestone"
+              label="Milestone"
+              name="milestone"
+              autoComplete="milestone"
+              error={
+                formError.milestone
+                && formError.milestone.error
+              }
+              helperText={
+                formError.milestone
+                  ? formError.milestone.message
+                  : ''
+              }
+              onBlur={(event) => handleBlur(event, 'required', milestone)}
+              {...milestone.bind}
+            />
+          </Grid>
           <Grid item xs={isEditPage ? 12 : 6}>
             <TextField
               variant="outlined"
@@ -370,7 +377,7 @@ const MilestoneForm = ({
                   ? formError.state.message
                   : ''
               }
-              onBlur={(e) => handleBlur(e, 'required', state, 'state')}
+              onBlur={(event) => handleBlur(event, 'required', state, 'state')}
               {...state.bind}
             >
               <MenuItem value="">Select</MenuItem>
