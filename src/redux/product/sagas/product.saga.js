@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
@@ -136,7 +137,7 @@ function* getCredential(payload) {
   }
 }
 
-function* createCredential(payload) {
+function* addCredential(payload) {
   try {
     const cred = yield call(
       httpService.makeRequest,
@@ -754,7 +755,7 @@ function* watchGetCredential() {
 }
 
 function* watchCreateCredential() {
-  yield takeLatest(CREATE_CREDENTIAL, createCredential);
+  yield takeLatest(CREATE_CREDENTIAL, addCredential);
 }
 
 function* watchUpdateCredential() {

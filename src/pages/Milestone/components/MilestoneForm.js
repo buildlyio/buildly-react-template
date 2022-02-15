@@ -132,11 +132,11 @@ const MilestoneForm = ({
       target: { value },
     } = event;
 
-    if(typeof value === 'object' && value.includes('select-all')) {
+    if (typeof value === 'object' && value.includes('select-all')) {
       setSelectedRepositories(repositories.map((name) => name));
     } else {
       setSelectedRepositories(
-          typeof value === 'string' ? value.split(',') : value,
+        typeof value === 'string' ? value.split(',') : value,
       );
     }
   };
@@ -320,10 +320,12 @@ const MilestoneForm = ({
                           { repositories.length ? 'Select Repositories' : 'No repositories available.' }
                         </MenuItem>
                         {
-                          repositories.length &&
-                          <MenuItem key={'Select All'} value={'select-all'}>
-                            { 'Select All' }
+                          repositories.length
+                          && (
+                          <MenuItem key="Select All" value="select-all">
+                            Select All
                           </MenuItem>
+                          )
                         }
                         { repositories.map((name) => (
                           <MenuItem key={name} value={name}>

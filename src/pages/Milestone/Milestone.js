@@ -121,7 +121,7 @@ const Milestone = ({
       target: { value },
     } = event;
 
-    if(typeof value === 'object' && value.includes('select-all')) {
+    if (typeof value === 'object' && value.includes('select-all')) {
       setSelectedRepositories(repositories.map((name) => name));
     } else {
       setSelectedRepositories(
@@ -136,11 +136,11 @@ const Milestone = ({
       target: { value },
     } = event;
 
-    if(typeof value === 'object' && value.includes('select-all')) {
+    if (typeof value === 'object' && value.includes('select-all')) {
       setSelectedMilestones(milestoneHeadings.map((name) => name));
     } else {
       setSelectedMilestones(
-          typeof value === 'string' ? value.split(',') : value,
+        typeof value === 'string' ? value.split(',') : value,
       );
     }
   };
@@ -240,10 +240,12 @@ const Milestone = ({
                 { repositories.length ? 'Select Repositories' : 'No repositories available.' }
               </MenuItem>
               {
-                repositories.length &&
-                  <MenuItem key={'Select All'} value={'select-all'}>
-                    { 'Select All' }
+                repositories.length
+                  && (
+                  <MenuItem key="Select All" value="select-all">
+                    Select All
                   </MenuItem>
+                  )
               }
               { repositories.map((name) => (
                 <MenuItem key={name} value={name}>
@@ -288,10 +290,12 @@ const Milestone = ({
                 { milestoneHeadings.length ? 'Select Milestone(s)' : 'No milestones available.' }
               </MenuItem>
               {
-                  milestoneHeadings.length &&
-                  <MenuItem key={'Select All'} value={'select-all'}>
-                    { 'Select All' }
+                  milestoneHeadings.length
+                  && (
+                  <MenuItem key="Select All" value="select-all">
+                    Select All
                   </MenuItem>
+                  )
               }
               { milestoneHeadings.map((name) => (
                 <MenuItem key={name} value={name}>
