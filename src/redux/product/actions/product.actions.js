@@ -209,10 +209,12 @@ export const getProduct = (product_uuid) => ({
 /**
  * Create a Product
  * @param {Object} data
+ * @param history
  */
-export const createProduct = (data) => ({
+export const createProduct = (data, history) => ({
   type: CREATE_PRODUCT,
   data,
+  history,
 });
 
 /**

@@ -16,4 +16,5 @@ export const routes = {
   NEW_PRODUCT: '/app/new-product',
   RELEASE: '/app/release',
   MILESTONE: '/app/milestone',
+  DEVELOPER_FORM: '/app/developer-form',
 };

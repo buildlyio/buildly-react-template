@@ -153,12 +153,14 @@ describe('Get Product action', () => {
 describe('Create Product action', () => {
   it('should create an action to create product', () => {
     const data = { name: 'Test Product' };
+    const history = {};
     const expectedAction = {
       type: actions.CREATE_PRODUCT,
       data,
+      history,
     };
 
-    expect(actions.createProduct(data)).toEqual(expectedAction);
+    expect(actions.createProduct(data, history)).toEqual(expectedAction);
   });
 });
 

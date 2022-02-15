@@ -23,6 +23,7 @@ import {
 import { UserContext } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
 import { addData } from '@redux/googleSheet/actions/googleSheet.actions';
+import { updateUser } from '@redux/authuser/actions/authuser.actions';
 import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
@@ -69,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const FeedbackForm = ({ dispatch, loading }) => {
+const DeveloperForm = ({ dispatch, loading, history }) => {
   const classes = useStyles();
   const user = useContext(UserContext);
 
@@ -135,7 +136,8 @@ const FeedbackForm = ({ dispatch, loading }) => {
       'Version Dependency Management': question13.versionDependency,
     };
 
-    dispatch(addData(formData));
+    dispatch(addData(formData, history));
+    dispatch(updateUser({ id: user.id, survey_status: true }));
   };
 
   /**
@@ -672,4 +674,4 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.googleSheetReducer,
 });
 
-export default connect(mapStateToProps)(FeedbackForm);
+export default connect(mapStateToProps)(DeveloperForm);

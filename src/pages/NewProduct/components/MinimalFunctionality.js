@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -12,9 +12,12 @@ import {
   ListItemText,
   Button,
 } from '@mui/material';
+import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
-import { validators } from '@utils/validators';
-import { routes } from '@routes/routesConstants';
+import { createProduct } from '@redux/product/actions/product.actions';
+import { EXAMPLELIST } from '../ProductFormConstants';
+import { updateUser } from '@redux/authuser/actions/authuser.actions';
+import { UserContext } from '@context/User.context';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -56,8 +59,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
-    margin: theme.spacing(8, 0),
-    textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   buttonProgress: {
@@ -73,65 +76,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const exampleList = [
-  'Example 1:  A general user will need to be able to see a list of products to buy and a shopping cart to put them in and the ability to pay for and have those items shipped.',
-  "Example 2: An administrative user should be able to approve every user's access and level, as well as fix any problem for a general user that does not require direct access to the code or data.",
-  'Example 3: A power user should be able to download a report of the previous quarters activity in the application with no more than 3 clicks.',
-];
+// eslint-disable-next-line import/no-mutable-exports
+export let checkIfMinimalFuncEdited;
 
-const MinimalFunctionality = (props) => {
-  const {
-    location, handleBack,
-  } = props;
+const MinimalFunctionality = ({
+  productFormData,
+  handleBack,
+  dispatch,
+  history,
+  loading,
+}) => {
   const classes = useStyles();
-  // const editPage = location.state && location.state.type === 'edit';
-  const editData = (location.state && location.state.type === 'edit' && location.state.data)
-    || {};
-
+  const user = useContext(UserContext);
   const minimalFunc = useInput(
-    (editData && editData.minimal_functionality) || '',
+    (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.minimal_functionality)
+    || '',
     { required: true },
   );
-  const [formError, setFormError] = useState({});
 
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
-  const handleBlur = (e, validation, input, parentId) => {
-    const validateObj = validators(validation, input);
-    const prevState = { ...formError };
-    if (validateObj && validateObj.error) {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: validateObj,
-      });
-    } else {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: {
-          error: false,
-          message: '',
-        },
-      });
-    }
-  };
-
-  const onBackClick = (event) => {
-    // if (checkIfProductInfoEdited() === true) {
-    //   handleSubmit(event);
-    // }
-    handleBack();
-  };
-
-  const submitDisabled = () => {
-    if (!minimalFunc.value) {
-      return true;
-    }
-    return false;
-  };
+  checkIfMinimalFuncEdited = () => minimalFunc.hasChanged();
 
   /**
    * Submit The form and add/edit custodian
@@ -139,10 +104,23 @@ const MinimalFunctionality = (props) => {
    */
   const handleSubmit = (event) => {
     event.preventDefault();
+    const formData = {
+      ...productFormData,
+      product_info: {
+        ...productFormData?.product_info,
+        minimal_functionality: minimalFunc.value,
+      },
+      edit_date: new Date(),
+    };
+    if (user && !user.survey_status) {
+      dispatch(updateUser({ id: user.id, survey_status: true }));
+    }
+    dispatch(createProduct(formData, history));
   };
 
   return (
     <div>
+      {loading && <Loader open={loading} />}
       <form className={classes.form} noValidate onSubmit={handleSubmit}>
         <Box mb={2} mt={3}>
           <Grid container spacing={2}>
@@ -156,9 +134,9 @@ const MinimalFunctionality = (props) => {
                 and assume registration and login are taken care of)
               </Typography>
               <List>
-                {exampleList.map((listItem, index) => (
+                {_.map(EXAMPLELIST, (exmpl, index) => (
                   <ListItem key={index}>
-                    <ListItemText primary={listItem} />
+                    <ListItemText primary={exmpl} />
                   </ListItem>
                 ))}
               </List>
@@ -177,11 +155,11 @@ const MinimalFunctionality = (props) => {
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>
               <Button
+                type="button"
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={onBackClick}
-                // disabled={productFormData === null}
+                onClick={handleBack}
                 className={classes.submit}
               >
                 Back
@@ -189,14 +167,14 @@ const MinimalFunctionality = (props) => {
             </Grid>
             <Grid item xs={12} sm={4}>
               <Button
+                type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={handleSubmit}
-                disabled={submitDisabled()}
+                disabled={!minimalFunc.value}
                 className={classes.submit}
               >
-                Submit
+                Create Product
               </Button>
             </Grid>
           </Grid>
@@ -208,6 +186,8 @@ const MinimalFunctionality = (props) => {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  productFormData: state.productReducer.productFormData,
+  loading: state.productReducer.loading,
 });
 
 export default connect(mapStateToProps)(MinimalFunctionality);
