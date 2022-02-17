@@ -25,6 +25,9 @@ import {
   addShipment,
   saveShipmentFormData,
 } from '@redux/shipment/actions/shipment.actions';
+import {
+  getGateways,
+} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { routes } from '@routes/routesConstants';
 import {
   SHIPMENT_STATUS,
@@ -86,6 +89,7 @@ const ShipmentInfo = (props) => {
     setConfirmModal,
     setConfirmModalFor,
     timezone,
+    gatewayData,
   } = props;
   const classes = useStyles();
   const theme = useTheme();
@@ -304,14 +308,21 @@ const ShipmentInfo = (props) => {
     };
 
     if (editPage && editData) {
-      dispatch(
-        editShipment(
-          shipmentFormValue,
-          history,
-          `${routes.SHIPMENT}/edit/:${editData.id}`,
-          organization,
-        ),
-      );
+      if (shipmentFormData.gateway_ids.length > 0) {
+        let attachedGateway = null;
+        attachedGateway = _.filter(
+          gatewayData, (gateway) => gateway.gateway_uuid === shipmentFormData.gateway_ids[0],
+        );
+        dispatch(
+          editShipment(
+            shipmentFormValue,
+            history,
+            `${routes.SHIPMENT}/edit/:${editData.id}`,
+            organization,
+            attachedGateway[0],
+          ),
+        );
+      }
     } else {
       dispatch(addShipment(shipmentFormValue, history, null, organization));
     }
@@ -777,11 +788,13 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.itemsReducer,
   ...state.custodianReducer,
   ...state.optionsReducer,
+  ...state.sensorsGatewayReducer,
   loading: (
     state.shipmentReducer.loading
     || state.itemsReducer.loading
     || state.custodianReducer.loading
     || state.optionsReducer.loading
+    || state.sensorsGatewayReducer.loading
   ),
 });
 

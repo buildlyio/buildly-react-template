@@ -61,18 +61,21 @@ describe('Edit Shipment action', () => {
     const history = {};
     const redirectTo = '/test';
     const organization_uuid = 'gweiug-3t2igf-3yfhf-329hgds73';
+    const gateway = { id: 11 };
     const expectedAction = {
       type: actions.EDIT_SHIPMENT,
       payload,
       history,
       redirectTo,
       organization_uuid,
+      gateway,
     };
     expect(actions.editShipment(
       payload,
       history,
       redirectTo,
       organization_uuid,
+      gateway,
     )).toEqual(expectedAction);
   });
 });

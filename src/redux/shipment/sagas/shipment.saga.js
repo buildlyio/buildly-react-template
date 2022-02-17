@@ -6,6 +6,7 @@ import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import {
   getAggregateReport,
+  editGateway,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getCustody,
@@ -30,7 +31,7 @@ import {
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
 } from '../actions/shipment.actions';
-import { GET_AGGREGATE_REPORT_SUCCESS } from '../../sensorsGateway/actions/sensorsGateway.actions';
+import { GET_AGGREGATE_REPORT_SUCCESS, EDIT_GATEWAY_SUCCESS } from '../../sensorsGateway/actions/sensorsGateway.actions';
 import { GET_CUSTODY_SUCCESS } from '../../custodian/actions/custodian.actions';
 
 const shipmentApiEndPoint = 'shipment/';
@@ -189,7 +190,9 @@ function* addShipment(action) {
 }
 
 function* editShipment(action) {
-  const { payload, history, redirectTo } = action;
+  const {
+    payload, history, redirectTo, gateway,
+  } = action;
   try {
     const data = yield call(
       httpService.makeRequest,
@@ -197,6 +200,15 @@ function* editShipment(action) {
       `${window.env.API_URL}${shipmentApiEndPoint}shipment/${payload.id}/`,
       payload,
     );
+    if (payload.gateway_ids.length > 0 && gateway) {
+      yield [
+        yield put(
+          editGateway(
+            gateway,
+          ),
+        ),
+      ];
+    }
     yield [
       yield put(
         getShipmentDetails(

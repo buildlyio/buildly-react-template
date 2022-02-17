@@ -85,18 +85,21 @@ export const addShipment = (
  * @param {Object} history
  * @param {String} redirectTo path to redirect
  * @param {String} organization_uuid
+ * @param {String} gateway
  */
 export const editShipment = (
   payload,
   history,
   redirectTo,
   organization_uuid,
+  gateway,
 ) => ({
   type: EDIT_SHIPMENT,
   payload,
   history,
   redirectTo,
   organization_uuid,
+  gateway,
 });
 
 /**
