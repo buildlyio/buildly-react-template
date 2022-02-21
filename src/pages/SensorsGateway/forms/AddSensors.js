@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
-  makeStyles,
   useTheme,
   TextField,
   Button,
@@ -15,7 +14,8 @@ import {
   CardContent,
   Typography,
   Chip,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { MapComponent } from '@components/MapComponent/MapComponent';
 import FormModal from '@components/Modal/FormModal';

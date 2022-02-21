@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
-  makeStyles,
   Box,
   Grid,
   List,
@@ -13,11 +12,12 @@ import {
   IconButton,
   Hidden,
   MenuItem,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   ViewComfy as ViewComfyIcon,
   ViewCompact as ViewCompactIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import GraphComponent from '@components/GraphComponent/GraphComponent';
 import Loader from '@components/Loader/Loader';
 import { MapComponent } from '@components/MapComponent/MapComponent';

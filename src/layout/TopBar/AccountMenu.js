@@ -1,13 +1,13 @@
 import React from 'react';
 import {
-  withStyles,
   Menu,
   MenuItem,
   ListItemText,
   Typography,
   Divider,
   Box,
-} from '@material-ui/core';
+} from '@mui/material';
+import { withStyles } from '@mui/styles';
 
 const StyledMenu = withStyles({
   paper: {

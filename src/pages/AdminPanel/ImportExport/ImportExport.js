@@ -1,13 +1,13 @@
 import React from 'react';
 import {
-  makeStyles,
   Box,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Typography,
-} from '@material-ui/core';
-import { ExpandMore as ExpandMoreIcon } from '@material-ui/icons';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import AddFromFile from './forms/AddFromFile';
 import AddFromAPI from './forms/AddFromAPI';
 import ExportData from './forms/ExportData';

@@ -8,10 +8,10 @@ import {
   Menu,
   MenuItem,
   Box,
-  makeStyles,
   Typography,
-} from '@material-ui/core';
-import { MoreHoriz } from '@material-ui/icons';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { MoreHoriz } from '@mui/icons-material';
 import {
   PermissionsTable,
 } from '@components/PermissionsTable/PermissionsTable';

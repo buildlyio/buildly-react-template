@@ -1,7 +1,7 @@
 import {
   createTheme,
   responsiveFontSizes,
-} from '@material-ui/core';
+} from '@mui/material';
 
 const theme = createTheme({
   palette: {

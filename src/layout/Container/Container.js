@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import _ from 'lodash';
-import {
-  Container,
-  makeStyles,
-} from '@material-ui/core';
+import { Container } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   UserContext,
   getUser,

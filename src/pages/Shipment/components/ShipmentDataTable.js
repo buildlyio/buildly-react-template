@@ -2,17 +2,17 @@ import React, { useContext, useEffect, useState } from 'react';
 import MUIDataTable from 'mui-datatables';
 import _ from 'lodash';
 import {
-  makeStyles,
   Checkbox,
   Radio,
   IconButton,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   Edit as EditIcon,
   ListAlt as ViewIcon,
   Delete as DeleteIcon,
   FileCopy as FileCopyIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import { UserContext } from '@context/User.context';
 import { checkForGlobalAdmin } from '@utils/utilMethods';
 import { getShipmentDataTableColumns } from '../ShipmentConstants';

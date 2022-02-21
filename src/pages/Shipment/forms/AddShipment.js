@@ -2,13 +2,13 @@ import React, { useState, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  makeStyles,
   Stepper,
   Step,
   StepLabel,
   Hidden,
   Grid,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import FormModal from '@components/Modal/FormModal';
 import { UserContext } from '@context/User.context';
 import { saveShipmentFormData } from '@redux/shipment/actions/shipment.actions';

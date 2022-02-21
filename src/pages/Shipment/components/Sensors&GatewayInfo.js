@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  makeStyles,
   TextField,
   Box,
   Checkbox,
@@ -14,12 +13,13 @@ import {
   CircularProgress,
   Chip,
   MenuItem,
-} from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+  Autocomplete,
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   CheckBox as CheckBoxIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';

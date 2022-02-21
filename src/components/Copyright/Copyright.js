@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link, Typography } from '@material-ui/core';
+import { Link, Typography } from '@mui/material';
 import { AppContext } from '@context/App.context';
 
 const Copyright = () => {

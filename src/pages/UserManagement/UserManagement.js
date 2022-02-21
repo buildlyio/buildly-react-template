@@ -7,7 +7,6 @@ import {
   NotificationManager,
 } from 'react-notifications';
 import {
-  makeStyles,
   Tabs,
   Tab,
   Button,
@@ -15,8 +14,9 @@ import {
   Typography,
   Grid,
   Box,
-} from '@material-ui/core';
-import { Add as AddIcon } from '@material-ui/icons';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { Add as AddIcon } from '@mui/icons-material';
 import { useInput } from '@hooks/useInput';
 import { invite } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';

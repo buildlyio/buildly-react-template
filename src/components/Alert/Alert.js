@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { makeStyles, Snackbar } from '@material-ui/core';
-import { Alert as MuiAlert } from '@material-ui/lab';
+import { Snackbar, Alert as MuiAlert } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { hideAlert } from '@redux/alert/actions/alert.actions';
 
 const AlertData = (props) => (

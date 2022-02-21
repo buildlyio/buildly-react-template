@@ -9,13 +9,13 @@ import {
   CardContent,
   Container,
   Grid,
-  makeStyles,
   TextField,
   CircularProgress,
   Link,
-} from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
-import { PictureAsPdf as PictureAsPdfIcon } from '@material-ui/icons';
+  Autocomplete,
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { PictureAsPdf as PictureAsPdfIcon } from '@mui/icons-material';
 import Loader from '@components/Loader/Loader';
 import { pdfIdentifier } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';

@@ -4,7 +4,6 @@ import { Route } from 'react-router-dom';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
-  makeStyles,
   Typography,
   Tabs,
   Tab,
@@ -13,12 +12,13 @@ import {
   Button,
   IconButton,
   Hidden,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   Add as AddIcon,
   ViewComfy as ViewComfyIcon,
   ViewCompact as ViewCompactIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import Loader from '@components/Loader/Loader';
 import { MapComponent } from '@components/MapComponent/MapComponent';
 import ConfirmModal from '@components/Modal/ConfirmModal';

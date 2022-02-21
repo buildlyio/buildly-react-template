@@ -1,7 +1,7 @@
 import {
   useTheme,
   useMediaQuery,
-} from '@material-ui/core';
+} from '@mui/material';
 
 export const isMobile = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks

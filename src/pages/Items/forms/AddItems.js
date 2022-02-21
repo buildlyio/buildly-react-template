@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  makeStyles,
   useTheme,
   Button,
   TextField,
@@ -14,8 +13,9 @@ import {
   Card,
   CardContent,
   Typography,
-} from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+  Autocomplete,
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import FormModal from '@components/Modal/FormModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';

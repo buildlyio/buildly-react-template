@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  makeStyles,
   Grid,
   Checkbox,
   TextField,
   Typography,
   Button,
   MenuItem,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import Loader from '@components/Loader/Loader';
 import {
   updateOrganization,

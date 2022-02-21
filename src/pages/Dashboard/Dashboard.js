@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import {
-  makeStyles,
   Typography,
   Box,
   Grid,
   IconButton,
   Hidden,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   ViewComfy as ViewComfyIcon,
   ViewCompact as ViewCompactIcon,
   Apps as AppsIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import Loader from '@components/Loader/Loader';
 import { MapComponent } from '@components/MapComponent/MapComponent';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';

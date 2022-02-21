@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  withStyles,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -8,8 +7,9 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core';
-import { Close as CloseIcon } from '@material-ui/icons';
+} from '@mui/material';
+import { withStyles } from '@mui/styles';
+import { Close as CloseIcon } from '@mui/icons-material';
 import ConfirmModal from './ConfirmModal';
 
 const styles = (theme) => ({

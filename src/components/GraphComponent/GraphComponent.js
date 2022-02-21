@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import {
-  makeStyles,
-  Typography,
-} from '@material-ui/core';
+import { Typography } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles((theme) => ({
   typography: {

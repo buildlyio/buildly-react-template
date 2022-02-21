@@ -7,12 +7,12 @@ import {
   TextField,
   CircularProgress,
   Typography,
-  makeStyles,
   Grid,
   useMediaQuery,
   useTheme,
   Checkbox,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import FormModal from '@components/Modal/FormModal';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { useInput } from '@hooks/useInput';

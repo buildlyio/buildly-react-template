@@ -8,9 +8,9 @@ import {
   List,
   ListItem,
   ListItemText,
-  makeStyles,
   useTheme,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { isMobile } from '@utils/mediaQuery';
 import { NAVIGATION_ITEMS } from './NavBarConstants';
 

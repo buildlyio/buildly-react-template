@@ -8,12 +8,12 @@ import {
   CircularProgress,
   CardContent,
   Typography,
-  makeStyles,
   useTheme,
   Grid,
   MenuItem,
   useMediaQuery,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import FormModal from '@components/Modal/FormModal';
 import { UserContext } from '@context/User.context';

@@ -3,7 +3,7 @@ import moment from 'moment-timezone';
 import _ from 'lodash';
 import {
   AccessTime as AccessTimeIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import {
   TempIcon,
   HumidIcon,

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import {
-  makeStyles,
   TextField,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Button,
-} from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+  Autocomplete,
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 
 const useStyles = makeStyles((theme) => ({

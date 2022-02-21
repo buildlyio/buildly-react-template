@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  makeStyles,
   useTheme,
   useMediaQuery,
   Grid,
@@ -10,8 +9,9 @@ import {
   TextField,
   CircularProgress,
   Chip,
-} from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { Autocomplete } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';

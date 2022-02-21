@@ -5,7 +5,6 @@ import moment from 'moment-timezone';
 import {
   Button,
   useTheme,
-  makeStyles,
   useMediaQuery,
   Grid,
   TextField,
@@ -13,9 +12,8 @@ import {
   Box,
   MenuItem,
   CircularProgress,
-  Checkbox,
-} from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
@@ -25,9 +23,6 @@ import {
   addShipment,
   saveShipmentFormData,
 } from '@redux/shipment/actions/shipment.actions';
-import {
-  getGateways,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import { routes } from '@routes/routesConstants';
 import {
   SHIPMENT_STATUS,
