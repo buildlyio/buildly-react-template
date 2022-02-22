@@ -22,6 +22,21 @@ const theme = createTheme({
     button: {
       textTransform: 'none',
     },
+    h4: {
+      color: '#fff',
+    },
+    h5: {
+      color: '#fff',
+    },
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1280,
+      xl: 1536,
+    },
   },
   overrides: {
     MuiCssBaseline: {

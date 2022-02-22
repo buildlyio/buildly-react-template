@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
   iconButton: {
     padding: theme.spacing(1.5, 0.5),
+    color: '#fff',
   },
   dataTableBody: {
     '&:nth-of-type(odd)': {

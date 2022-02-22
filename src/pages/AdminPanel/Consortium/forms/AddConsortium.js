@@ -231,7 +231,7 @@ const AddConsortium = ({
                   getOptionLabel={(option) => (
                     option && option.name
                   )}
-                  getOptionSelected={(option, value) => (
+                  isOptionEqualToValue={(option, value) => (
                     option.organization_uuid === value
                   )}
                   value={orgs}

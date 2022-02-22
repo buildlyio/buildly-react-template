@@ -174,7 +174,7 @@ const ItemsInfo = ({
                     option
                     && option.name
                   )}
-                  getOptionSelected={(option, value) => (
+                  isOptionEqualToValue={(option, value) => (
                     option.url === value
                   )}
                   filterSelectedOptions

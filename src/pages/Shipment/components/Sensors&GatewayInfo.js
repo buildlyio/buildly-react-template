@@ -298,7 +298,7 @@ const SensorsGatewayInfo = ({
                     option
                     && option.name
                   )}
-                  getOptionSelected={(option, value) => (
+                  isOptionEqualToValue={(option, value) => (
                     option.gateway_uuid === value
                   )}
                   filterSelectedOptions

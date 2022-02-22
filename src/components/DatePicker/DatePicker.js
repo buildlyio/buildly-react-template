@@ -1,12 +1,13 @@
 import React from 'react';
 import { makeStyles } from '@mui/styles';
-import AdapterDateFns from '@date-io/date-fns';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import {
   DatePicker,
   DateTimePicker,
   LocalizationProvider,
 } from '@mui/lab';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
+import { TextField } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,7 +28,7 @@ const DatePickerComponent = ({
 
   return (
     <div className={classes.root}>
-      <LocalizationProvider utils={AdapterDateFns}>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
         {hasTime ? (
           <DateTimePicker
             variant="inline"
@@ -40,6 +41,7 @@ const DatePickerComponent = ({
             value={selectedDate}
             onChange={handleDateChange}
             format="MM/dd/yyyy HH:mm:ss"
+            renderInput={(props) => <TextField {...props} />}
           />
         ) : (
           <DatePicker
@@ -57,6 +59,7 @@ const DatePickerComponent = ({
             KeyboardButtonProps={{
               'aria-label': 'change date',
             }}
+            renderInput={(props) => <TextField {...props} />}
           />
         )}
       </LocalizationProvider>

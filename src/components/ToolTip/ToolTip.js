@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '16px',
     marginLeft: theme.spacing(1),
     cursor: 'pointer',
+    color: '#fff',
   },
 }));
 
