@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     height: '100%',
-    paddingTop: '6em',
+    paddingTop: '5.25em',
     paddingBottom: theme.spacing(1.5),
   },
   contentMaxWidth: {

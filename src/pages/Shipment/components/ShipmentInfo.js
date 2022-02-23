@@ -366,7 +366,14 @@ const ShipmentInfo = (props) => {
         >
           <Box mb={2}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                sx={{
+                  padding: '8px',
+                }}
+              >
                 <Grid
                   container
                   spacing={isDesktop ? 2 : 0}
@@ -544,7 +551,14 @@ const ShipmentInfo = (props) => {
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                sx={{
+                  padding: '8px',
+                }}
+              >
                 <Grid container spacing={2}>
                   <Grid
                     className={classes.inputWithTooltip}
