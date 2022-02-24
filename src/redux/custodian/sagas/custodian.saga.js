@@ -310,10 +310,11 @@ function* addCustody(action) {
       payload,
     );
     if (custodyResponse && custodyResponse.data) {
+      const encodedName = encodeURIComponent(custodyResponse.data.shipment);
       const consortiumData = yield call(
         httpService.makeRequest,
         'get',
-        `${window.env.API_URL}consortium/?name=${custodyResponse.data.shipment}`,
+        `${window.env.API_URL}consortium/?name=${encodedName}`,
       );
       if (consortiumData && consortiumData.data) {
         const shipmentPayload = {

@@ -36,6 +36,55 @@ import { GET_CUSTODY_SUCCESS } from '../../custodian/actions/custodian.actions';
 
 const shipmentApiEndPoint = 'shipment/';
 
+function* processShipments(payload, data) {
+  let uuids = '';
+  if (data instanceof Array) {
+    const UUIDS = _.map(data, 'shipment_uuid');
+    uuids = _.toString(_.without(UUIDS, null));
+  } else {
+    uuids = data.shipment_uuid;
+  }
+  if (payload.id && data.length > 0) {
+    yield put(
+      saveShipmentFormData(
+        data.find((shipment) => shipment.id === payload.id),
+      ),
+    );
+  } else if (typeof (data) === 'object' && data.length === undefined) {
+    yield put(
+      saveShipmentFormData(
+        data,
+      ),
+    );
+  }
+  // Fetch updated custody
+  const encodedUUIDs = encodeURIComponent(uuids);
+  if (payload.getUpdatedCustody && encodedUUIDs) {
+    yield [
+      yield put(getCustody(encodedUUIDs)),
+    ];
+  } else {
+    yield put({
+      type: GET_CUSTODY_SUCCESS,
+      data: [],
+    });
+  }
+  // Fetch new aggregate reports
+  const IDS = _.map(data, 'partner_shipment_id');
+  const ids = _.toString(_.without(IDS, null));
+  const encodedIds = encodeURIComponent(ids);
+  if (payload.getUpdatedSensorData && encodedIds) {
+    yield [
+      yield put(getAggregateReport(encodedIds)),
+    ];
+  } else {
+    yield put({
+      type: GET_AGGREGATE_REPORT_SUCCESS,
+      data: [],
+    });
+  }
+}
+
 function* getShipmentList(payload) {
   try {
     let query_params;
@@ -73,50 +122,8 @@ function* getShipmentList(payload) {
         shipmentAction: payload.shipmentAction,
         status: payload.status ? payload.status : 'All',
       });
-      let uuids = '';
-      if (data.data instanceof Array) {
-        const UUIDS = _.map(data.data, 'shipment_uuid');
-        uuids = _.toString(_.without(UUIDS, null));
-      } else {
-        uuids = data.data.shipment_uuid;
-      }
-      if (payload.id && data.data.length > 0) {
-        yield put(
-          saveShipmentFormData(
-            data.data.find((shipment) => shipment.id === payload.id),
-          ),
-        );
-      } else if (typeof (data.data) === 'object' && data.data.length === undefined) {
-        yield put(
-          saveShipmentFormData(
-            data.data,
-          ),
-        );
-      }
-      const encodedUUIDs = encodeURIComponent(uuids);
-      if (payload.getUpdatedCustody && encodedUUIDs) {
-        yield [
-          yield put(getCustody(encodedUUIDs)),
-        ];
-      } else {
-        yield put({
-          type: GET_CUSTODY_SUCCESS,
-          data: [],
-        });
-      }
-      const IDS = _.map(data.data, 'partner_shipment_id');
-      const ids = _.toString(_.without(IDS, null));
-      const encodedIds = encodeURIComponent(ids);
-      if (payload.getUpdatedSensorData && encodedIds) {
-        yield [
-          yield put(getAggregateReport(encodedIds)),
-        ];
-      } else {
-        yield put({
-          type: GET_AGGREGATE_REPORT_SUCCESS,
-          data: [],
-        });
-      }
+      // Splitting code to take care of once the response is back
+      yield processShipments(payload, data.data);
     }
   } catch (error) {
     yield [
@@ -216,7 +223,7 @@ function* editShipment(action) {
           null,
           payload.id,
           false,
-          false,
+          true,
           'edit',
         ),
       ),
