@@ -28,6 +28,9 @@ const theme = createTheme({
     h5: {
       color: '#fff',
     },
+    body2: {
+      color: 'rgba(255, 255, 255, 0.7) !important',
+    },
   },
   breakpoints: {
     values: {
@@ -290,6 +293,14 @@ const theme = createTheme({
           '&.Mui-selected': {
             backgroundColor: 'rgba(255, 255, 255, 0.16)',
           },
+        },
+      },
+    },
+    MuiSnackbarContent: {
+      styleOverrides: {
+        root: {
+          color: '#fff',
+          backgroundColor: 'transparent',
         },
       },
     },

@@ -16,6 +16,12 @@ const Copyright = () => {
         color="inherit"
         href="https://xparent.io/"
         target="_blank"
+        sx={{
+          textDecoration: 'none',
+          '&:hover': {
+            textDecoration: 'underline',
+          },
+        }}
       >
         {title}
       </Link>

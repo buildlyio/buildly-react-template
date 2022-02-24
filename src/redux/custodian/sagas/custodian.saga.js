@@ -313,7 +313,7 @@ function* addCustody(action) {
       const consortiumData = yield call(
         httpService.makeRequest,
         'get',
-        `${window.env.API_URL}consortium/?name=${custodyResponse.data.shipment}`,
+        `${window.env.API_URL}consortium/?organization_uuid=${custodyResponse.data.organization_uuid}`,
       );
       if (consortiumData && consortiumData.data) {
         const shipmentPayload = {
@@ -345,7 +345,6 @@ function* addCustody(action) {
                 message: 'Successfully Added Custody',
               }),
             ),
-
           ];
         }
       }
