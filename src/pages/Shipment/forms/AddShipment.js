@@ -5,7 +5,6 @@ import {
   Stepper,
   Step,
   StepLabel,
-  Hidden,
   Grid,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
@@ -330,32 +329,36 @@ const AddShipment = (props) => {
           handleConfirmModal={handleConfirmModal}
         >
           <div className={classes.root}>
-            <Hidden xsDown>
-              <Grid
-                container
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Grid item sm={10}>
-                  <Stepper
-                    activeStep={activeStep}
-                    alternativeLabel
-                    nonLinear
-                  >
-                    {_.map(steps, (label, index) => (
-                      <Step
-                        key={`step${index}:${label}`}
-                        className={`${shipmentFormData !== null && classes.step
-                        }`}
-                        onClick={handleStep(index)}
-                      >
-                        <StepLabel>{label}</StepLabel>
-                      </Step>
-                    ))}
-                  </Stepper>
-                </Grid>
+            <Grid
+              container
+              alignItems="center"
+              justifyContent="center"
+              sx={{
+                display: {
+                  xs: 'none',
+                  sm: 'block',
+                },
+              }}
+            >
+              <Grid item sm={10}>
+                <Stepper
+                  activeStep={activeStep}
+                  alternativeLabel
+                  nonLinear
+                >
+                  {_.map(steps, (label, index) => (
+                    <Step
+                      key={`step${index}:${label}`}
+                      className={`${shipmentFormData !== null && classes.step
+                      }`}
+                      onClick={handleStep(index)}
+                    >
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
               </Grid>
-            </Hidden>
+            </Grid>
 
             <div>
               <div>

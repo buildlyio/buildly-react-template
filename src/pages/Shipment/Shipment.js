@@ -11,7 +11,6 @@ import {
   Grid,
   Button,
   IconButton,
-  Hidden,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import {
@@ -49,7 +48,6 @@ import {
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
-  getDashboardItems,
   deleteShipment,
 } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
@@ -449,18 +447,22 @@ const Shipment = (props) => {
             <CustomizedTooltips
               toolTipText={SHIPMENT_DATA_TABLE_TOOLTIP}
             />
-            <Hidden smDown>
-              <IconButton
-                className={classes.menuButton}
-                onClick={() => setTileView(!tileView)}
-                color="default"
-                aria-label="menu"
-              >
-                {!tileView
-                  ? <ViewCompactIcon />
-                  : <ViewComfyIcon />}
-              </IconButton>
-            </Hidden>
+            <IconButton
+              className={classes.menuButton}
+              onClick={() => setTileView(!tileView)}
+              color="default"
+              aria-label="menu"
+              sx={{
+                display: {
+                  xs: 'none',
+                  md: 'block',
+                },
+              }}
+            >
+              {!tileView
+                ? <ViewCompactIcon />
+                : <ViewComfyIcon />}
+            </IconButton>
           </div>
           <Box mb={3} className={classes.tabContainer}>
             <Tabs
@@ -510,18 +512,22 @@ const Shipment = (props) => {
                   <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
                 )
             }
-            <Hidden smDown>
-              <IconButton
-                className={classes.menuButton}
-                onClick={() => setTileView(!tileView)}
-                color="default"
-                aria-label="menu"
-              >
-                {!tileView
-                  ? <ViewCompactIcon />
-                  : <ViewComfyIcon />}
-              </IconButton>
-            </Hidden>
+            <IconButton
+              className={classes.menuButton}
+              onClick={() => setTileView(!tileView)}
+              color="default"
+              aria-label="menu"
+              sx={{
+                display: {
+                  xs: 'none',
+                  md: 'block',
+                },
+              }}
+            >
+              {!tileView
+                ? <ViewCompactIcon />
+                : <ViewComfyIcon />}
+            </IconButton>
           </div>
           <MapComponent
             isMarkerShown={isMapLoaded}

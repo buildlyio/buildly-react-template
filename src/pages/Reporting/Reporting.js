@@ -10,7 +10,6 @@ import {
   Typography,
   TextField,
   IconButton,
-  Hidden,
   MenuItem,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
@@ -41,7 +40,6 @@ import {
 import {
   getUnitsOfMeasure,
 } from '@redux/items/actions/items.actions';
-import { SHIPMENT_DATA_TABLE_TOOLTIP } from '@pages/Shipment/ShipmentConstants';
 import AlertsReport from './components/AlertsReport';
 import SensorReport from './components/SensorReport';
 import {
@@ -275,17 +273,21 @@ const Reporting = ({
                 toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
               />
             </Typography>
-            <Hidden smDown>
-              <IconButton
-                onClick={() => setTileView(!tileView)}
-                color="default"
-                aria-label="menu"
-              >
-                {!tileView
-                  ? <ViewCompactIcon />
-                  : <ViewComfyIcon />}
-              </IconButton>
-            </Hidden>
+            <IconButton
+              onClick={() => setTileView(!tileView)}
+              color="default"
+              aria-label="menu"
+              sx={{
+                display: {
+                  xs: 'none',
+                  md: 'block',
+                },
+              }}
+            >
+              {!tileView
+                ? <ViewCompactIcon />
+                : <ViewComfyIcon />}
+            </IconButton>
           </div>
           <MapComponent
             isMarkerShown={isMapLoaded}
@@ -344,17 +346,21 @@ const Reporting = ({
             <CustomizedTooltips
               toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
             />
-            <Hidden smDown>
-              <IconButton
-                onClick={() => setTileView(!tileView)}
-                color="default"
-                aria-label="menu"
-              >
-                {!tileView
-                  ? <ViewCompactIcon />
-                  : <ViewComfyIcon />}
-              </IconButton>
-            </Hidden>
+            <IconButton
+              onClick={() => setTileView(!tileView)}
+              color="default"
+              aria-label="menu"
+              sx={{
+                display: {
+                  xs: 'none',
+                  md: 'block',
+                },
+              }}
+            >
+              {!tileView
+                ? <ViewCompactIcon />
+                : <ViewComfyIcon />}
+            </IconButton>
           </div>
           <div className={classes.infoContainer}>
             <Grid container>

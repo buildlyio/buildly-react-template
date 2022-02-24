@@ -6,7 +6,6 @@ import {
   AppBar,
   Toolbar,
   IconButton,
-  Hidden,
   TextField,
   MenuItem,
 } from '@mui/material';
@@ -164,17 +163,21 @@ const TopBar = ({
     <AppBar position="fixed" className={classes.appBar}>
       {loading && <Loader open={loading} />}
       <Toolbar>
-        <Hidden mdUp>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            onClick={() => setNavHidden(!navHidden)}
-            color="default"
-            aria-label="menu"
-          >
-            <MenuIcon />
-          </IconButton>
-        </Hidden>
+        <IconButton
+          edge="start"
+          className={classes.menuButton}
+          onClick={() => setNavHidden(!navHidden)}
+          color="default"
+          aria-label="menu"
+          sx={{
+            display: {
+              xs: 'block',
+              md: 'none',
+            },
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
         <img
           src={logo}
           className={classes.logo}
