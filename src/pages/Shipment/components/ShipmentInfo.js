@@ -322,6 +322,16 @@ const ShipmentInfo = (props) => {
             attachedGateway[0],
           ),
         );
+      } else {
+        dispatch(
+          editShipment(
+            shipmentFormValue,
+            history,
+            `${routes.SHIPMENT}/edit/:${editData.id}`,
+            organization,
+            null,
+          ),
+        );
       }
     } else {
       dispatch(addShipment(shipmentFormValue, history, null, organization));
