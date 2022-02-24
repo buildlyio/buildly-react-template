@@ -98,7 +98,7 @@ const ShipmentDataTable = ({
 
   useEffect(() => {
     setSelected(0);
-    const cols = [
+    let cols = [
       {
         name: 'Copy',
         options: {
@@ -138,24 +138,34 @@ const ShipmentDataTable = ({
           ),
         },
       },
-      {
-        name: 'Delete',
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          setCellHeaderProps: () => ({
-            className: classes.centerHeader,
-          }),
-          customBodyRenderLite: (dataIndex) => (
-            <IconButton
-              onClick={() => deleteAction(rows[dataIndex])}
-            >
-              <DeleteIcon />
-            </IconButton>
-          ),
+    ];
+
+    if (isAdmin) {
+      cols = [
+        ...cols,
+        {
+          name: 'Delete',
+          options: {
+            filter: false,
+            sort: false,
+            empty: true,
+            setCellHeaderProps: () => ({
+              className: classes.centerHeader,
+            }),
+            customBodyRenderLite: (dataIndex) => (
+              <IconButton
+                onClick={() => deleteAction(rows[dataIndex])}
+              >
+                <DeleteIcon />
+              </IconButton>
+            ),
+          },
         },
-      },
+      ];
+    }
+
+    cols = [
+      ...cols,
       ..._.map(getShipmentDataTableColumns(timezone), (column) => ({
         ...column,
         options: {
