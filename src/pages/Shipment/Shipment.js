@@ -62,7 +62,6 @@ import AddShipment from './forms/AddShipment';
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
     fontWeight: 'bold',
-    marginBottom: '0.5em',
   },
   tileHeading: {
     flex: 1,
@@ -122,7 +121,7 @@ const Shipment = (props) => {
   const [shipmentFilter, setShipmentFilter] = useState('Active');
   const [selectedMarker, setSelectedMarker] = useState({});
   const [markers, setMarkers] = useState([]);
-  const [tileView, setTileView] = useState(true);
+  const [tileView, setTileView] = useState(false);
   const [isMapLoaded, setMapLoaded] = useState(false);
 
   const subNav = [
@@ -422,7 +421,13 @@ const Shipment = (props) => {
   return (
     <Box mt={5} mb={5}>
       {loading && <Loader open={loading} />}
-      <Box mb={3} mt={2}>
+      <Box mb={3} mt={2} display="flex" alignItems="center" justifyContent="space-between">
+        <Typography
+          className={classes.dashboardHeading}
+          variant="h4"
+        >
+          Shipments
+        </Typography>
         <Button
           type="button"
           variant="contained"
@@ -435,12 +440,6 @@ const Shipment = (props) => {
           Add Shipment
         </Button>
       </Box>
-      <Typography
-        className={classes.dashboardHeading}
-        variant="h4"
-      >
-        Shipments
-      </Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>

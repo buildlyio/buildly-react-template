@@ -1,6 +1,9 @@
+import React from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import { numberWithCommas } from '@utils/utilMethods';
+import { Typography } from '@mui/material';
+import { Warning as WarningIcon } from '@mui/icons-material';
 
 export const MAP_TOOLTIP = 'Locations of the shipment from starting point till current time';
 
@@ -9,16 +12,24 @@ export const SHIPMENT_DATA_TABLE_TOOLTIP = 'Click on a shipment to view it on th
 export const getShipmentDataTableColumns = (timezone) => ([
   {
     name: 'name',
-    label: 'Shipment Name',
+    label: 'SHIPMENT NAME',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
     },
+    customBodyRender: (value) => (
+      <Typography sx={{
+        whiteSpace: 'nowrap',
+      }}
+      >
+        {value}
+      </Typography>
+    ),
   },
   {
     name: 'estimated_time_of_departure',
-    label: 'Estimated Departure DateTime',
+    label: 'DEPART',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -26,14 +37,14 @@ export const getShipmentDataTableColumns = (timezone) => ([
       customBodyRender: (value) => (
         value && value !== '-'
           ? moment(value).tz(timezone)
-            .format('MMMM DD, YYYY hh:mm:ss a')
+            .format('MMM DD, YYYY')
           : value
       ),
     },
   },
   {
     name: 'estimated_time_of_arrival',
-    label: 'Estimated Arrival DateTime',
+    label: 'ARRIVE',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -41,14 +52,14 @@ export const getShipmentDataTableColumns = (timezone) => ([
       customBodyRender: (value) => (
         value && value !== '-'
           ? moment(value).tz(timezone)
-            .format('MMMM DD, YYYY hh:mm:ss a')
+            .format('MMM DD, YYYY')
           : value
       ),
     },
   },
   {
     name: 'platform_name',
-    label: 'Sensor Platform',
+    label: 'SENSOR',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -60,7 +71,7 @@ export const getShipmentDataTableColumns = (timezone) => ([
   },
   {
     name: 'status',
-    label: 'Shipment Status',
+    label: 'STATUS',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -69,31 +80,21 @@ export const getShipmentDataTableColumns = (timezone) => ([
   },
   {
     name: 'had_alert',
-    label: 'Had Alert(s)',
+    label: <WarningIcon />,
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value ? 'YES' : 'NO'),
-    },
-  },
-  {
-    name: 'custodian_name',
-    label: 'Custodian Name',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
-  },
-  {
-    name: 'value',
-    label: 'Value',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (value && value !== '-' ? `$${numberWithCommas(value)}` : value),
+      customBodyRender: (value) => (value
+        ? (
+          <Typography sx={{
+            color: '#EBC645',
+          }}
+          >
+            YES
+          </Typography>
+        )
+        : 'NO'),
     },
   },
 ]);

@@ -196,7 +196,7 @@ const theme = createTheme({
         root: {
           backgroundColor: '#424242',
           '&.mui-row-selected': {
-            backgroundColor: '#a48a30 !important',
+            backgroundColor: '#887C5E !important',
           },
         },
       },
