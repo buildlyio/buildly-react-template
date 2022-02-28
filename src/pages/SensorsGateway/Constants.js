@@ -91,6 +91,7 @@ export const getFormattedRow = (data, gatewayTypeList, shipmentData, custodianDa
   ) {
     let formattedData = [];
     _.forEach(data, (element) => {
+      if (!element) return;
       let edited = { ...element, shipment: [], custodian: [] };
       _.forEach(gatewayTypeList, (type) => {
         if (type.url === element.gateway_type) {
