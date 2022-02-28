@@ -185,6 +185,9 @@ const theme = createTheme({
           '& .css-1h34uk6-MuiButtonBase-root-MuiRadio-root': {
             color: '#fff !important',
           },
+          '& .MuiButton-root:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+          },
         },
         head: {
           backgroundColor: '#424242 !important',
@@ -196,7 +199,10 @@ const theme = createTheme({
         root: {
           backgroundColor: '#424242',
           '&.mui-row-selected': {
-            backgroundColor: '#a48a30 !important',
+            backgroundColor: '#887C5E !important',
+          },
+          '&.MuiTableRow-hover:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
           },
         },
       },

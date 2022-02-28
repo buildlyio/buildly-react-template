@@ -73,6 +73,7 @@ const ShipmentDataTable = ({
     responsive: 'standard',
     tableBodyHeight: tileView ? '435px' : '500px',
     tableBodyMaxHeight: '',
+    selectableRowsHideCheckboxes: true,
     selectableRows: 'single',
     selectToolbarPlacement: 'none',
     rowsPerPageOptions: [5, 10, 15],
@@ -83,12 +84,16 @@ const ShipmentDataTable = ({
         useDisplayedColumnsOnly: true,
       },
     },
-    rowsSelected: [selected],
-    onRowSelectionChange: (rowsSelected) => {
-      const index = rowsSelected[0].dataIndex;
-      setSelected(index);
-      setSelectedShipment(rows[index]);
+    onRowClick: (rowData, rowMeta) => {
+      setSelected(rowMeta.rowIndex);
+      setSelectedShipment(rows[rowMeta.rowIndex]);
     },
+    rowsSelected: [selected],
+    // onRowSelectionChange: (rowsSelected) => {
+    //   const index = rowsSelected[0].dataIndex;
+    //   setSelected(index);
+    //   setSelectedShipment(rows[index]);
+    // },
     textLabels: {
       body: {
         noMatch: 'No data to display',
@@ -118,7 +123,7 @@ const ShipmentDataTable = ({
         },
       },
       {
-        name: (_.lowerCase(rowsType) !== 'active') ? 'View' : 'Edit',
+        name: (_.lowerCase(rowsType) !== 'active') ? 'VIEW' : 'EDIT',
         options: {
           filter: false,
           sort: false,
@@ -144,7 +149,7 @@ const ShipmentDataTable = ({
       cols = [
         ...cols,
         {
-          name: 'Delete',
+          name: 'DELETE',
           options: {
             filter: false,
             sort: false,

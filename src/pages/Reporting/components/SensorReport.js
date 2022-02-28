@@ -6,11 +6,9 @@ import {
   Typography,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import {
   SENSOR_REPORT_COLUMNS,
-  SENSOR_REPORT_TOOLTIP,
 } from '../ReportingConstants';
 
 const useStyles = makeStyles((theme) => ({
@@ -116,9 +114,6 @@ const SensorReport = ({
           >
             {shipmentName
             && `Sensor Report - Shipment: ${shipmentName}`}
-            <CustomizedTooltips
-              toolTipText={SENSOR_REPORT_TOOLTIP}
-            />
           </Typography>
         </div>
         <DataTableWrapper
