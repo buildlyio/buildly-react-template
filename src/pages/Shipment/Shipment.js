@@ -54,7 +54,6 @@ import { routes } from '@routes/routesConstants';
 import {
   getFormattedRow,
   MAP_TOOLTIP,
-  SHIPMENT_DATA_TABLE_TOOLTIP,
 } from './ShipmentConstants';
 import ShipmentDataTable from './components/ShipmentDataTable';
 import AddShipment from './forms/AddShipment';
@@ -443,9 +442,6 @@ const Shipment = (props) => {
       <Grid container spacing={2}>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
-            <CustomizedTooltips
-              toolTipText={SHIPMENT_DATA_TABLE_TOOLTIP}
-            />
             <IconButton
               className={classes.menuButton}
               onClick={() => setTileView(!tileView)}
@@ -504,7 +500,6 @@ const Shipment = (props) => {
                     variant="h5"
                   >
                     {selectedShipment.name}
-                    <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
                   </Typography>
                 )
                 : (

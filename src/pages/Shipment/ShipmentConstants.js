@@ -80,7 +80,7 @@ export const getShipmentDataTableColumns = (timezone) => ([
   },
   {
     name: 'had_alert',
-    label: <WarningIcon />,
+    label: 'Alerts?',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -95,6 +95,7 @@ export const getShipmentDataTableColumns = (timezone) => ([
           </Typography>
         )
         : 'NO'),
+      customHeadLabelRender: () => <WarningIcon />,
     },
   },
 ]);
