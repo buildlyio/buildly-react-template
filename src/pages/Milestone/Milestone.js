@@ -89,7 +89,7 @@ const Milestone = ({
 
     let data = milestones.filter(({ title }) => selectedMilestones.includes(title));
     data = data.map(({
-      url, title, state, description, due_on, number,
+      url, title, state, description, due_on, number, id
     }) => ({
       repository: url.split('/')[5],
       milestone: title,
@@ -102,6 +102,7 @@ const Milestone = ({
       capacity: extractData(description, 'capacity'),
       ed: extractData(description, 'ed'),
       number,
+      id
     }));
 
     const updatedHeadings = selectedMilestones
@@ -183,10 +184,10 @@ const Milestone = ({
 
   // handling the delete-milestone confirmation
   const deleteMilestoneHandler = () => {
-    const { repository, number } = currentMilestone;
+    const { repository, number, id } = currentMilestone;
 
     dispatch(deleteMilestone({
-      owner, repository, number,
+      owner, repository, number, id
     }));
 
     setCurrentMilestone(null);

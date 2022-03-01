@@ -136,7 +136,7 @@ export default (state = initialState, action) => {
 
     case DELETE_MILESTONE_SUCCESS: {
       const updatedMilestones = state.milestones.filter(
-        ({ number }) => number !== action.data.number,
+        ({ id }) => id !== action.data.id,
       );
 
       return {
@@ -163,7 +163,7 @@ export default (state = initialState, action) => {
 
     case UPDATE_MILESTONE_SUCCESS: {
       const updatedData = state.milestones.map((milestone) => {
-        if (milestone.number === action.data.milestone.data.number) {
+        if (milestone.id === action.data.milestone.data.id) {
           return action.data.milestone.data;
         }
 

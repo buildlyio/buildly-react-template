@@ -190,7 +190,7 @@ function* createMilestone(payload) {
 
 function* deleteMilestone(payload) {
   try {
-    const { owner, repository, number } = payload.data;
+    const { owner, repository, number, id } = payload.data;
 
     yield call(
       httpService.makeRequest,
@@ -204,7 +204,7 @@ function* deleteMilestone(payload) {
     );
 
     yield [
-      yield put({ type: DELETE_MILESTONE_SUCCESS, data: { number } }),
+      yield put({ type: DELETE_MILESTONE_SUCCESS, data: { id } }),
       yield put(
         showAlert({
           type: 'success',
