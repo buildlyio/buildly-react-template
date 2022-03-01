@@ -22,6 +22,14 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiChip-root': {
       display: 'none',
     },
+    '& .MuiToolbar-root': {
+      marginTop: '-60px',
+      paddingRight: '35px',
+      backgroundColor: '#222222',
+      '&>:nth-child(1)': {
+        margin: '0 25%',
+      },
+    },
   },
   centerHeader: {
     '& div': {
@@ -105,7 +113,7 @@ const ShipmentDataTable = ({
     setSelected(0);
     let cols = [
       {
-        name: 'Copy',
+        name: 'COPY',
         options: {
           filter: false,
           sort: false,
@@ -123,7 +131,7 @@ const ShipmentDataTable = ({
         },
       },
       {
-        name: (_.lowerCase(rowsType) !== 'active') ? 'VIEW' : 'EDIT',
+        name: (!isAdmin && _.lowerCase(rowsType) !== 'active') ? 'VIEW' : 'EDIT',
         options: {
           filter: false,
           sort: false,
@@ -185,7 +193,7 @@ const ShipmentDataTable = ({
     if (_.lowerCase(rowsType) === 'completed') {
       setColumns(cols);
     } else {
-      const restCols = _.filter(cols, (col) => col.name !== 'Copy');
+      const restCols = _.filter(cols, (col) => col.name !== 'COPY');
       setColumns(restCols);
     }
   }, [timezone, rowsType, rows]);

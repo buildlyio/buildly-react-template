@@ -84,10 +84,17 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButton: {
     marginLeft: 'auto',
+    zIndex: '5',
   },
   tabContainer: {
-    backgroundColor: '#383636',
+    backgroundColor: '#222222',
     margin: '0',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    '& .MuiTabs-root': {
+      zIndex: '5',
+    },
   },
 }));
 
@@ -441,7 +448,18 @@ const Shipment = (props) => {
       </Box>
       <Grid container spacing={2}>
         <Grid item xs={12} md={tileView ? 6 : 12}>
-          <div className={classes.switchViewSection}>
+          <Box mb={3} className={classes.tabContainer}>
+            <Tabs
+              value={shipmentFilter}
+              onChange={filterTabClicked}
+            >
+              {subNav.map((itemProps, index) => (
+                <Tab
+                  {...itemProps}
+                  key={`tab${index}:${itemProps.value}`}
+                />
+              ))}
+            </Tabs>
             <IconButton
               className={classes.menuButton}
               onClick={() => setTileView(!tileView)}
@@ -458,19 +476,6 @@ const Shipment = (props) => {
                 ? <ViewCompactIcon />
                 : <ViewComfyIcon />}
             </IconButton>
-          </div>
-          <Box mb={3} className={classes.tabContainer}>
-            <Tabs
-              value={shipmentFilter}
-              onChange={filterTabClicked}
-            >
-              {subNav.map((itemProps, index) => (
-                <Tab
-                  {...itemProps}
-                  key={`tab${index}:${itemProps.value}`}
-                />
-              ))}
-            </Tabs>
           </Box>
           <ShipmentDataTable
             rows={

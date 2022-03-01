@@ -331,12 +331,13 @@ const AddShipment = (props) => {
           <div className={classes.root}>
             <Grid
               container
+              flexWrap="wrap"
               alignItems="center"
               justifyContent="center"
               sx={{
                 display: {
                   xs: 'none',
-                  sm: 'block',
+                  sm: 'flex',
                 },
               }}
             >

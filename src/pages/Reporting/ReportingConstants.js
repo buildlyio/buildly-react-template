@@ -361,7 +361,7 @@ export const SENSOR_REPORT_COLUMNS = [
     },
   },
   {
-    name: 'lat',
+    name: 'lng',
     label: 'LONGITUDE',
     options: {
       sort: true,
@@ -375,7 +375,7 @@ export const SENSOR_REPORT_COLUMNS = [
     },
   },
   {
-    name: 'lng',
+    name: 'lat',
     label: 'LATITUDE',
     options: {
       sort: true,

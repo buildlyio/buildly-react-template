@@ -31,6 +31,12 @@ const theme = createTheme({
     body2: {
       color: 'rgba(255, 255, 255, 0.7) !important',
     },
+    body1: {
+      color: 'rgba(255, 255, 255, 1) !important',
+    },
+    caption: {
+      color: '#fff !important',
+    },
   },
   breakpoints: {
     values: {
