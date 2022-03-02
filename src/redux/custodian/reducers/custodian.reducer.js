@@ -27,6 +27,9 @@ import {
   UPDATE_CUSTODY,
   UPDATE_CUSTODY_SUCCESS,
   UPDATE_CUSTODY_FAILURE,
+  DELETE_CUSTODY,
+  DELETE_CUSTODY_SUCCESS,
+  DELETE_CUSTODY_FAILURE,
   GET_CUSTODIAN_TYPE,
   GET_CUSTODIAN_TYPE_SUCCESS,
   GET_CUSTODIAN_TYPE_FAILURE,
@@ -277,6 +280,30 @@ export default (state = initialState, action) => {
       };
 
     case UPDATE_CUSTODY_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case DELETE_CUSTODY:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case DELETE_CUSTODY_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodyData: action.data,
+      };
+
+    case DELETE_CUSTODY_FAILURE:
       return {
         ...state,
         loading: false,

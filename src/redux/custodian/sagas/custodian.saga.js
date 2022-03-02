@@ -27,6 +27,8 @@ import {
   EDIT_CUSTODY_FAILURE,
   UPDATE_CUSTODY,
   UPDATE_CUSTODY_FAILURE,
+  DELETE_CUSTODY,
+  DELETE_CUSTODY_FAILURE,
   GET_CUSTODIAN_TYPE,
   GET_CUSTODIAN_TYPE_SUCCESS,
   GET_CUSTODIAN_TYPE_FAILURE,
@@ -444,6 +446,50 @@ function* updateCustody(action) {
   }
 }
 
+function* deleteCustody(payload) {
+  const { custodyId, shipmentId, organization_uuid } = payload;
+  try {
+    yield call(
+      httpService.makeRequest,
+      'delete',
+      `${window.env.API_URL}${custodiansApiEndPoint}custody/${custodyId}/`,
+    );
+    yield [
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Custody deleted successfully!',
+        }),
+      ),
+      yield put(
+        getShipmentDetails(
+          organization_uuid,
+          null,
+          shipmentId,
+          false,
+          true,
+          'get',
+        ),
+      ),
+    ];
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Error in deleting Custody!',
+        }),
+      ),
+      yield put({
+        type: DELETE_CUSTODY_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
 function* getCustodianType() {
   try {
     const data = yield call(
@@ -650,6 +696,10 @@ function* watchUpdateCustody() {
   yield takeLatest(UPDATE_CUSTODY, updateCustody);
 }
 
+function* watchDeleteCustody() {
+  yield takeLatest(DELETE_CUSTODY, deleteCustody);
+}
+
 function* watchGetCustodianType() {
   yield takeLatest(GET_CUSTODIAN_TYPE, getCustodianType);
 }
@@ -681,6 +731,7 @@ export default function* custodianSaga() {
     watchAddCustody(),
     watchEditCustody(),
     watchUpdateCustody(),
+    watchDeleteCustody(),
     watchGetCustodianType(),
     watchAddCustodianType(),
     watchEditCustodianType(),
