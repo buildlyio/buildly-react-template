@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiChip-root': {
       display: 'none',
     },
-    '& .MuiToolbar-root': {
+    '& .MuiPaper-root > .MuiToolbar-regular': {
       marginTop: '-60px',
       paddingRight: '35px',
       backgroundColor: '#222222',

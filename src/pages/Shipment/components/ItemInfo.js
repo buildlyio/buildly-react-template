@@ -193,16 +193,16 @@ const ItemsInfo = ({
                       />
                     ))
                   )}
-                  renderOption={(option, { selected }) => (
-                    <>
+                  renderOption={(props, option, { selected }) => (
+                    <li {...props}>
                       <Checkbox
                         icon={icon}
                         checkedIcon={checkedIcon}
-                        style={{ marginRight: 8 }}
+                        style={{ marginRight: 8, color: '#fff' }}
                         checked={selected}
                       />
                       {option.name}
-                    </>
+                    </li>
                   )}
                   renderInput={(params) => (
                     <TextField

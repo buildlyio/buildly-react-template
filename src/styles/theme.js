@@ -19,23 +19,26 @@ const theme = createTheme({
     },
   },
   typography: {
+    root: {
+      color: '#fff !important',
+    },
     button: {
       textTransform: 'none',
     },
     h4: {
-      color: '#fff',
+      color: 'rgba(255, 255, 255, 1) !important',
     },
     h5: {
-      color: '#fff',
+      color: 'rgba(255, 255, 255, 1) !important',
     },
     body2: {
-      color: 'rgba(255, 255, 255, 0.7) !important',
+      color: 'rgba(255, 255, 255, 1) !important',
     },
     body1: {
       color: 'rgba(255, 255, 255, 1) !important',
     },
     caption: {
-      color: '#fff !important',
+      color: 'rgba(255, 255, 255, 1) !important',
     },
   },
   breakpoints: {
@@ -110,6 +113,14 @@ const theme = createTheme({
             },
           },
         },
+        input: {
+          '&:-webkit-autofill': {
+            '-webkit-box-shadow': '0 0 0 100px #266799 inset',
+            '-webkit-text-fill-color': '#fff',
+            'caret-color': '#fff',
+            'border-radius': 'inherit',
+          },
+        },
         notchedOutline: {
           borderColor: 'rgba(255, 255, 255, 0.23) !important',
         },
@@ -119,7 +130,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           '& .css-1pnmrwp-MuiTypography-root': {
-            color: 'rgba(255, 255, 255, 0.7) !important',
+            color: 'rgba(255, 255, 255, 1) !important',
           },
         },
       },
@@ -131,6 +142,14 @@ const theme = createTheme({
           '&.MuiSlider-markLabelActive': {
             color: '#fff',
           },
+        },
+        thumb: {
+          width: '12px',
+          height: '12px',
+        },
+        track: {
+          width: '2px',
+          border: 'none',
         },
       },
     },
@@ -295,7 +314,13 @@ const theme = createTheme({
     MuiAutocomplete: {
       styleOverrides: {
         noOptions: {
-          color: 'rgba(255, 255, 255, 0.6)',
+          color: 'rgba(255, 255, 255, 0.6) !important',
+        },
+        li: {
+          color: '#fff',
+        },
+        '&.popper': {
+          color: '#fff !important',
         },
       },
     },
@@ -313,6 +338,16 @@ const theme = createTheme({
         root: {
           color: '#fff',
           backgroundColor: 'transparent',
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#616161 !important',
+        },
+        labelMedium: {
+          color: '#fff',
         },
       },
     },
