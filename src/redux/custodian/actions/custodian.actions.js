@@ -35,6 +35,10 @@ export const UPDATE_CUSTODY = 'CUSTODIAN/UPDATE_CUSTODY';
 export const UPDATE_CUSTODY_SUCCESS = 'CUSTODIAN/UPDATE_CUSTODY_SUCCESS';
 export const UPDATE_CUSTODY_FAILURE = 'CUSTODIAN/UPDATE_CUSTODY_FAILURE';
 
+export const DELETE_CUSTODY = 'CUSTODIAN/DELETE_CUSTODY';
+export const DELETE_CUSTODY_SUCCESS = 'CUSTODIAN/DELETE_CUSTODY_SUCCESS';
+export const DELETE_CUSTODY_FAILURE = 'CUSTODIAN/DELETE_CUSTODY_FAILURE';
+
 export const GET_CUSTODIAN_TYPE = 'CUSTODIAN/GET_CUSTODIAN_TYPE';
 export const GET_CUSTODIAN_TYPE_SUCCESS = 'CUSTODIAN/GET_CUSTODIAN_TYPE_SUCCESS';
 export const GET_CUSTODIAN_TYPE_FAILURE = 'CUSTODIAN/GET_CUSTODIAN_TYPE_FAILURE';
@@ -149,6 +153,23 @@ export const editCustody = (payload) => ({
 export const updateCustody = (payload) => ({
   type: UPDATE_CUSTODY,
   payload,
+});
+
+/**
+ * Delete Custody
+ * @param {Number} custodyId
+ * @param {String} shipmentId
+ * @param {String} organization_uuid
+ */
+export const deleteCustody = (
+  custodyId,
+  shipmentId,
+  organization_uuid,
+) => ({
+  type: DELETE_CUSTODY,
+  custodyId,
+  shipmentId,
+  organization_uuid,
 });
 
 /**

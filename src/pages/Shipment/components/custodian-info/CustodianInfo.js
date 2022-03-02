@@ -14,6 +14,9 @@ import {
   getFormattedCustodyRows,
   custodyColumns,
 } from '../../ShipmentConstants';
+import {
+  deleteCustody,
+} from '@redux/custodian/actions/custodian.actions';
 
 const useStyles = makeStyles((theme) => ({
   buttonContainer: {
@@ -34,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CustodianInfo = (props) => {
   const {
+    dispatch,
     custodianData,
     handleNext,
     handleCancel,
@@ -51,6 +55,8 @@ const CustodianInfo = (props) => {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [rows, setRows] = useState([]);
   const [editItem, setEditItem] = useState(null);
+  const [openDeleteModal, setDeleteModal] = useState(false);
+  const [deleteItem, setDeleteItem] = useState(null);
 
   useEffect(() => {
     if (
@@ -91,6 +97,16 @@ const CustodianInfo = (props) => {
     setFormModal(true);
   };
 
+  const deleteCustodyItem = (item) => {
+    setDeleteItem(item.id);
+    setDeleteModal(true);
+  };
+
+  const handleDeleteModal = () => {
+    dispatch(deleteCustody(deleteItem, shipmentFormData.id, shipmentFormData.organization_uuid));
+    setDeleteModal(false);
+  };
+
   return (
     <Box mb={5} mt={3}>
       <Button
@@ -116,6 +132,11 @@ const CustodianInfo = (props) => {
                 rows={rows}
                 columns={custodyColumns(timezone)}
                 editAction={editCustody}
+                deleteAction={deleteCustodyItem}
+                openDeleteModal={openDeleteModal}
+                setDeleteModal={setDeleteModal}
+                handleDeleteModal={handleDeleteModal}
+                deleteModalTitle="Are you sure you want to Delete this Custody?"
                 hideAddButton
                 noOptionsIcon
                 noSpace
