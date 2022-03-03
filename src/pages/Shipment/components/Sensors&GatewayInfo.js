@@ -286,13 +286,13 @@ const SensorsGatewayInfo = ({
                 <Autocomplete
                   multiple
                   id="combo-box-demo"
-                  disabled={
-                    viewOnly
-                    || (shipmentFormData
-                      && shipmentFormData.gateway_ids
-                      && shipmentFormData.gateway_ids.length > 0
-                    )
-                  }
+                  // disabled={
+                  //   viewOnly
+                  //   || (shipmentFormData
+                  //     && shipmentFormData.gateway_ids
+                  //     && shipmentFormData.gateway_ids.length > 0
+                  //   )
+                  // }
                   options={options}
                   getOptionLabel={(option) => (
                     option

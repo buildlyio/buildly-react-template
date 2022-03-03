@@ -115,10 +115,10 @@ const theme = createTheme({
         },
         input: {
           '&:-webkit-autofill': {
-            '-webkit-box-shadow': '0 0 0 100px #266799 inset',
-            '-webkit-text-fill-color': '#fff',
-            'caret-color': '#fff',
-            'border-radius': 'inherit',
+            WebkitBoxShadow: '0 0 0 100px #266799 inset',
+            WebkitTextFillColor: '#fff',
+            caretColor: '#fff',
+            borderRadius: 'inherit',
           },
         },
         notchedOutline: {
@@ -301,6 +301,10 @@ const theme = createTheme({
             color: 'rgba(255, 255, 255, 0.3)',
             backgroundColor: 'rgba(255, 255, 255, 0.12)',
           },
+        },
+        '& .Mui-disabled': {
+          color: 'rgba(255, 255, 255, 0.3) !important',
+          backgroundColor: 'rgba(255, 255, 255, 0.12) !important',
         },
       },
     },

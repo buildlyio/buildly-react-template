@@ -124,8 +124,11 @@ export const getFormattedRow = (
     let custodyInfo = [];
     let custodianName = '';
     let aggregateReportInfo = [];
+    let firstCustody = null;
 
     if (custodyRows.length > 0) {
+      const [first] = _.orderBy(custodyRows, ['created_at'], ['asc']);
+      firstCustody = first;
       _.forEach(custodyRows, (custody) => {
         if (custody.shipment_id === shipment.shipment_uuid) {
           if (custody.custodian_data) {
@@ -139,6 +142,7 @@ export const getFormattedRow = (
     }
     editedShipment.custodian_name = custodianName;
     editedShipment.custody_info = custodyInfo;
+    editedShipment.first_custody = firstCustody;
 
     switch (_.lowerCase(shipment.status)) {
       case 'planned':
