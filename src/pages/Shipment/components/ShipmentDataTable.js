@@ -2,17 +2,17 @@ import React, { useContext, useEffect, useState } from 'react';
 import MUIDataTable from 'mui-datatables';
 import _ from 'lodash';
 import {
-  makeStyles,
   Checkbox,
   Radio,
   IconButton,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   Edit as EditIcon,
   ListAlt as ViewIcon,
   Delete as DeleteIcon,
   FileCopy as FileCopyIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import { UserContext } from '@context/User.context';
 import { checkForGlobalAdmin } from '@utils/utilMethods';
 import { getShipmentDataTableColumns } from '../ShipmentConstants';
@@ -21,6 +21,14 @@ const useStyles = makeStyles((theme) => ({
   root: {
     '& .MuiChip-root': {
       display: 'none',
+    },
+    '& .MuiPaper-root > .MuiToolbar-regular': {
+      marginTop: '-60px',
+      paddingRight: '35px',
+      backgroundColor: '#222222',
+      '&>:nth-child(1)': {
+        margin: '0 25%',
+      },
     },
   },
   centerHeader: {
@@ -73,6 +81,7 @@ const ShipmentDataTable = ({
     responsive: 'standard',
     tableBodyHeight: tileView ? '435px' : '500px',
     tableBodyMaxHeight: '',
+    selectableRowsHideCheckboxes: true,
     selectableRows: 'single',
     selectToolbarPlacement: 'none',
     rowsPerPageOptions: [5, 10, 15],
@@ -83,12 +92,16 @@ const ShipmentDataTable = ({
         useDisplayedColumnsOnly: true,
       },
     },
-    rowsSelected: [selected],
-    onRowSelectionChange: (rowsSelected) => {
-      const index = rowsSelected[0].dataIndex;
-      setSelected(index);
-      setSelectedShipment(rows[index]);
+    onRowClick: (rowData, rowMeta) => {
+      setSelected(rowMeta.rowIndex);
+      setSelectedShipment(rows[rowMeta.rowIndex]);
     },
+    rowsSelected: [selected],
+    // onRowSelectionChange: (rowsSelected) => {
+    //   const index = rowsSelected[0].dataIndex;
+    //   setSelected(index);
+    //   setSelectedShipment(rows[index]);
+    // },
     textLabels: {
       body: {
         noMatch: 'No data to display',
@@ -98,9 +111,9 @@ const ShipmentDataTable = ({
 
   useEffect(() => {
     setSelected(0);
-    const cols = [
+    let cols = [
       {
-        name: 'Copy',
+        name: 'COPY',
         options: {
           filter: false,
           sort: false,
@@ -118,7 +131,7 @@ const ShipmentDataTable = ({
         },
       },
       {
-        name: (_.lowerCase(rowsType) !== 'active') ? 'View' : 'Edit',
+        name: (!isAdmin && _.lowerCase(rowsType) !== 'active') ? 'VIEW' : 'EDIT',
         options: {
           filter: false,
           sort: false,
@@ -138,24 +151,34 @@ const ShipmentDataTable = ({
           ),
         },
       },
-      {
-        name: 'Delete',
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          setCellHeaderProps: () => ({
-            className: classes.centerHeader,
-          }),
-          customBodyRenderLite: (dataIndex) => (
-            <IconButton
-              onClick={() => deleteAction(rows[dataIndex])}
-            >
-              <DeleteIcon />
-            </IconButton>
-          ),
+    ];
+
+    if (isAdmin) {
+      cols = [
+        ...cols,
+        {
+          name: 'DELETE',
+          options: {
+            filter: false,
+            sort: false,
+            empty: true,
+            setCellHeaderProps: () => ({
+              className: classes.centerHeader,
+            }),
+            customBodyRenderLite: (dataIndex) => (
+              <IconButton
+                onClick={() => deleteAction(rows[dataIndex])}
+              >
+                <DeleteIcon />
+              </IconButton>
+            ),
+          },
         },
-      },
+      ];
+    }
+
+    cols = [
+      ...cols,
       ..._.map(getShipmentDataTableColumns(timezone), (column) => ({
         ...column,
         options: {
@@ -170,7 +193,7 @@ const ShipmentDataTable = ({
     if (_.lowerCase(rowsType) === 'completed') {
       setColumns(cols);
     } else {
-      const restCols = _.filter(cols, (col) => col.name !== 'Copy');
+      const restCols = _.filter(cols, (col) => col.name !== 'COPY');
       setColumns(restCols);
     }
   }, [timezone, rowsType, rows]);

@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  makeStyles,
   Typography,
   Box,
   Grid,
@@ -11,7 +10,8 @@ import {
   Divider,
   Button,
   Avatar,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { routes } from '@routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({

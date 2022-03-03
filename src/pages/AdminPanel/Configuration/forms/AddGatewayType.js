@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  makeStyles,
   useTheme,
   useMediaQuery,
   Grid,
   Button,
   TextField,
   CircularProgress,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';

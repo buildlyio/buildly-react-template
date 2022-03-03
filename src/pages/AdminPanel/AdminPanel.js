@@ -3,12 +3,12 @@ import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  makeStyles,
   Box,
   Typography,
   Tabs,
   Tab,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { UserContext } from '@context/User.context';
 import { routes } from '@routes/routesConstants';
 import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';

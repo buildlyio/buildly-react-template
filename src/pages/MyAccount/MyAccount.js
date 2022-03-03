@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import {
-  makeStyles,
   Typography,
   Box,
   Grid,
@@ -11,8 +10,9 @@ import {
   Divider,
   Button,
   Avatar,
-} from '@material-ui/core';
-import { Edit as EditIcon } from '@material-ui/icons';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { Edit as EditIcon } from '@mui/icons-material';
 import profile from '@assets/profile.png';
 import Loader from '@components/Loader/Loader';
 import { routes } from '@routes/routesConstants';

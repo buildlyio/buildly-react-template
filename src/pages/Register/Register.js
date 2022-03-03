@@ -11,15 +11,15 @@ import {
   CircularProgress,
   CardContent,
   Typography,
-  makeStyles,
   Container,
   Grid,
   FormControl,
   FormGroup,
   FormControlLabel,
   Checkbox,
-} from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+  Autocomplete,
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import logo from '@assets/tp-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import { useInput } from '@hooks/useInput';

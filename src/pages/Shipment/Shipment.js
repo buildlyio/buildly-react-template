@@ -4,7 +4,6 @@ import { Route } from 'react-router-dom';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
-  makeStyles,
   Typography,
   Tabs,
   Tab,
@@ -12,13 +11,13 @@ import {
   Grid,
   Button,
   IconButton,
-  Hidden,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   Add as AddIcon,
   ViewComfy as ViewComfyIcon,
   ViewCompact as ViewCompactIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import Loader from '@components/Loader/Loader';
 import { MapComponent } from '@components/MapComponent/MapComponent';
 import ConfirmModal from '@components/Modal/ConfirmModal';
@@ -49,14 +48,12 @@ import {
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
-  getDashboardItems,
   deleteShipment,
 } from '@redux/shipment/actions/shipment.actions';
 import { routes } from '@routes/routesConstants';
 import {
   getFormattedRow,
   MAP_TOOLTIP,
-  SHIPMENT_DATA_TABLE_TOOLTIP,
 } from './ShipmentConstants';
 import ShipmentDataTable from './components/ShipmentDataTable';
 import AddShipment from './forms/AddShipment';
@@ -64,7 +61,6 @@ import AddShipment from './forms/AddShipment';
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
     fontWeight: 'bold',
-    marginBottom: '0.5em',
   },
   tileHeading: {
     flex: 1,
@@ -88,10 +84,17 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButton: {
     marginLeft: 'auto',
+    zIndex: '5',
   },
   tabContainer: {
-    backgroundColor: '#383636',
+    backgroundColor: '#222222',
     margin: '0',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    '& .MuiTabs-root': {
+      zIndex: '5',
+    },
   },
 }));
 
@@ -124,7 +127,7 @@ const Shipment = (props) => {
   const [shipmentFilter, setShipmentFilter] = useState('Active');
   const [selectedMarker, setSelectedMarker] = useState({});
   const [markers, setMarkers] = useState([]);
-  const [tileView, setTileView] = useState(true);
+  const [tileView, setTileView] = useState(false);
   const [isMapLoaded, setMapLoaded] = useState(false);
 
   const subNav = [
@@ -424,7 +427,13 @@ const Shipment = (props) => {
   return (
     <Box mt={5} mb={5}>
       {loading && <Loader open={loading} />}
-      <Box mb={3} mt={2}>
+      <Box mb={3} mt={2} display="flex" alignItems="center" justifyContent="space-between">
+        <Typography
+          className={classes.dashboardHeading}
+          variant="h4"
+        >
+          Shipments
+        </Typography>
         <Button
           type="button"
           variant="contained"
@@ -437,31 +446,8 @@ const Shipment = (props) => {
           Add Shipment
         </Button>
       </Box>
-      <Typography
-        className={classes.dashboardHeading}
-        variant="h4"
-      >
-        Shipments
-      </Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md={tileView ? 6 : 12}>
-          <div className={classes.switchViewSection}>
-            <CustomizedTooltips
-              toolTipText={SHIPMENT_DATA_TABLE_TOOLTIP}
-            />
-            <Hidden smDown>
-              <IconButton
-                className={classes.menuButton}
-                onClick={() => setTileView(!tileView)}
-                color="default"
-                aria-label="menu"
-              >
-                {!tileView
-                  ? <ViewCompactIcon />
-                  : <ViewComfyIcon />}
-              </IconButton>
-            </Hidden>
-          </div>
           <Box mb={3} className={classes.tabContainer}>
             <Tabs
               value={shipmentFilter}
@@ -474,6 +460,22 @@ const Shipment = (props) => {
                 />
               ))}
             </Tabs>
+            <IconButton
+              className={classes.menuButton}
+              onClick={() => setTileView(!tileView)}
+              color="default"
+              aria-label="menu"
+              sx={{
+                display: {
+                  xs: 'none',
+                  md: 'block',
+                },
+              }}
+            >
+              {!tileView
+                ? <ViewCompactIcon />
+                : <ViewComfyIcon />}
+            </IconButton>
           </Box>
           <ShipmentDataTable
             rows={
@@ -503,25 +505,28 @@ const Shipment = (props) => {
                     variant="h5"
                   >
                     {selectedShipment.name}
-                    <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
                   </Typography>
                 )
                 : (
                   <CustomizedTooltips toolTipText={MAP_TOOLTIP} />
                 )
             }
-            <Hidden smDown>
-              <IconButton
-                className={classes.menuButton}
-                onClick={() => setTileView(!tileView)}
-                color="default"
-                aria-label="menu"
-              >
-                {!tileView
-                  ? <ViewCompactIcon />
-                  : <ViewComfyIcon />}
-              </IconButton>
-            </Hidden>
+            <IconButton
+              className={classes.menuButton}
+              onClick={() => setTileView(!tileView)}
+              color="default"
+              aria-label="menu"
+              sx={{
+                display: {
+                  xs: 'none',
+                  md: 'block',
+                },
+              }}
+            >
+              {!tileView
+                ? <ViewCompactIcon />
+                : <ViewComfyIcon />}
+            </IconButton>
           </div>
           <MapComponent
             isMarkerShown={isMapLoaded}

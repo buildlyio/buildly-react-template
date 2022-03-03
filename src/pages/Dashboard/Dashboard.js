@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import {
-  makeStyles,
   Typography,
   Box,
   Grid,
   IconButton,
-  Hidden,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   ViewComfy as ViewComfyIcon,
   ViewCompact as ViewCompactIcon,
   Apps as AppsIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import Loader from '@components/Loader/Loader';
 import { MapComponent } from '@components/MapComponent/MapComponent';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
@@ -26,7 +25,6 @@ import {
   getCustodians,
   getCustodianType,
   getContact,
-  getCustody,
 } from '@redux/custodian/actions/custodian.actions';
 import {
   getItems,
@@ -336,17 +334,21 @@ const Dashboard = (props) => {
                       toolTipText={DASHBOARD_DELAY_TOOLTIP}
                     />
                   </Typography>
-                  <Hidden smDown>
-                    <IconButton
-                      className={classes.menuButton}
-                      onClick={() => setTileView(!tileView)}
-                      aria-label="menu"
-                    >
-                      {!tileView
-                        ? <ViewCompactIcon />
-                        : <ViewComfyIcon />}
-                    </IconButton>
-                  </Hidden>
+                  <IconButton
+                    className={classes.menuButton}
+                    onClick={() => setTileView(!tileView)}
+                    aria-label="menu"
+                    sx={{
+                      display: {
+                        xs: 'none',
+                        md: 'block',
+                      },
+                    }}
+                  >
+                    {!tileView
+                      ? <ViewCompactIcon />
+                      : <ViewComfyIcon />}
+                  </IconButton>
                 </div>
                 <DataTableWrapper
                   loading={loading}
@@ -370,17 +372,21 @@ const Dashboard = (props) => {
                       toolTipText={DASHBOARD_RECALL_TOOLTIP}
                     />
                   </Typography>
-                  <Hidden smDown>
-                    <IconButton
-                      className={classes.menuButton}
-                      onClick={() => setTileView(!tileView)}
-                      aria-label="menu"
-                    >
-                      {!tileView
-                        ? <ViewCompactIcon />
-                        : <ViewComfyIcon />}
-                    </IconButton>
-                  </Hidden>
+                  <IconButton
+                    className={classes.menuButton}
+                    onClick={() => setTileView(!tileView)}
+                    aria-label="menu"
+                    sx={{
+                      display: {
+                        xs: 'none',
+                        md: 'block',
+                      },
+                    }}
+                  >
+                    {!tileView
+                      ? <ViewCompactIcon />
+                      : <ViewComfyIcon />}
+                  </IconButton>
                 </div>
                 <DataTableWrapper
                   loading={loading}
@@ -404,17 +410,21 @@ const Dashboard = (props) => {
                   toolTipText={DASHBOARD_MAP_TOOLTIP}
                 />
               </Typography>
-              <Hidden smDown>
-                <IconButton
-                  className={classes.menuButton}
-                  onClick={() => setTileView(!tileView)}
-                  aria-label="menu"
-                >
-                  {!tileView
-                    ? <ViewCompactIcon />
-                    : <ViewComfyIcon />}
-                </IconButton>
-              </Hidden>
+              <IconButton
+                className={classes.menuButton}
+                onClick={() => setTileView(!tileView)}
+                aria-label="menu"
+                sx={{
+                  display: {
+                    xs: 'none',
+                    md: 'block',
+                  },
+                }}
+              >
+                {!tileView
+                  ? <ViewCompactIcon />
+                  : <ViewComfyIcon />}
+              </IconButton>
             </div>
             <MapComponent
               isMarkerShown

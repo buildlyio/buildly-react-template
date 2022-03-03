@@ -1,18 +1,18 @@
 import React from 'react';
 import MUIDataTable from 'mui-datatables';
 import {
-  makeStyles,
   Grid,
   Button,
   IconButton,
   Box,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import Loader from '@components/Loader/Loader';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 
@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
   iconButton: {
     padding: theme.spacing(1.5, 0.5),
+    color: '#fff',
   },
   dataTableBody: {
     '&:nth-of-type(odd)': {

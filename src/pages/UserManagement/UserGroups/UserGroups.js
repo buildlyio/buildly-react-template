@@ -5,13 +5,13 @@ import {
   Menu,
   MenuItem,
   Switch,
-  makeStyles,
   Box,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   MoreHoriz,
   Add as AddIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import { InlineEditor } from '@components/InlineEditor/InlineEditor';
 import { PermissionsTable } from '@components/PermissionsTable/PermissionsTable';
 import { UserContext } from '@context/User.context';

@@ -1,12 +1,13 @@
 import React from 'react';
-import DateFnsUtils from '@date-io/date-fns';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-  KeyboardDateTimePicker,
-} from '@material-ui/pickers';
+  DatePicker,
+  DateTimePicker,
+  LocalizationProvider,
+} from '@mui/lab';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
+import { TextField } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,9 +28,9 @@ const DatePickerComponent = ({
 
   return (
     <div className={classes.root}>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
         {hasTime ? (
-          <KeyboardDateTimePicker
+          <DateTimePicker
             variant="inline"
             inputVariant="outlined"
             ampm={false}
@@ -40,9 +41,10 @@ const DatePickerComponent = ({
             value={selectedDate}
             onChange={handleDateChange}
             format="MM/dd/yyyy HH:mm:ss"
+            renderInput={(props) => <TextField {...props} />}
           />
         ) : (
-          <KeyboardDatePicker
+          <DatePicker
             autoOk
             fullWidth
             inputVariant="outlined"
@@ -57,9 +59,10 @@ const DatePickerComponent = ({
             KeyboardButtonProps={{
               'aria-label': 'change date',
             }}
+            renderInput={(props) => <TextField {...props} />}
           />
         )}
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
       {helpText && (
         <CustomizedTooltips toolTipText={helpText} />
       )}

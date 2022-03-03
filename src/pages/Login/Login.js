@@ -11,9 +11,9 @@ import {
   CircularProgress,
   CardContent,
   Typography,
-  makeStyles,
   Container,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { useInput } from '@hooks/useInput';
 import {
   login,

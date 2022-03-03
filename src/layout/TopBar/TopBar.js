@@ -3,20 +3,19 @@ import { connect } from 'react-redux';
 import moment from 'moment-timezone';
 import _ from 'lodash';
 import {
-  makeStyles,
   AppBar,
   Toolbar,
   IconButton,
-  Hidden,
   TextField,
   MenuItem,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   AccountCircle,
   Refresh as RefreshIcon,
   Settings as SettingsIcon,
   Menu as MenuIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import logo from '@assets/tp-logo.png';
 import {
   logout,
@@ -164,17 +163,21 @@ const TopBar = ({
     <AppBar position="fixed" className={classes.appBar}>
       {loading && <Loader open={loading} />}
       <Toolbar>
-        <Hidden mdUp>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            onClick={() => setNavHidden(!navHidden)}
-            color="default"
-            aria-label="menu"
-          >
-            <MenuIcon />
-          </IconButton>
-        </Hidden>
+        <IconButton
+          edge="start"
+          className={classes.menuButton}
+          onClick={() => setNavHidden(!navHidden)}
+          color="default"
+          aria-label="menu"
+          sx={{
+            display: {
+              xs: 'block',
+              md: 'none',
+            },
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
         <img
           src={logo}
           className={classes.logo}

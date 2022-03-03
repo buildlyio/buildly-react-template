@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  makeStyles,
   TextField,
   Box,
   Checkbox,
@@ -14,12 +13,13 @@ import {
   CircularProgress,
   Chip,
   MenuItem,
-} from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+  Autocomplete,
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   CheckBox as CheckBoxIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
@@ -286,19 +286,19 @@ const SensorsGatewayInfo = ({
                 <Autocomplete
                   multiple
                   id="combo-box-demo"
-                  disabled={
-                    viewOnly
-                    || (shipmentFormData
-                      && shipmentFormData.gateway_ids
-                      && shipmentFormData.gateway_ids.length > 0
-                    )
-                  }
+                  // disabled={
+                  //   viewOnly
+                  //   || (shipmentFormData
+                  //     && shipmentFormData.gateway_ids
+                  //     && shipmentFormData.gateway_ids.length > 0
+                  //   )
+                  // }
                   options={options}
                   getOptionLabel={(option) => (
                     option
                     && option.name
                   )}
-                  getOptionSelected={(option, value) => (
+                  isOptionEqualToValue={(option, value) => (
                     option.gateway_uuid === value
                   )}
                   filterSelectedOptions
@@ -317,16 +317,16 @@ const SensorsGatewayInfo = ({
                       />
                     ))
                   )}
-                  renderOption={(option, { selected }) => (
-                    <>
+                  renderOption={(props, option, { selected }) => (
+                    <li {...props}>
                       <Checkbox
                         icon={icon}
                         checkedIcon={checkedIcon}
-                        style={{ marginRight: 8 }}
+                        style={{ marginRight: 8, color: '#fff' }}
                         checked={selected}
                       />
                       {option.name}
-                    </>
+                    </li>
                   )}
                   renderInput={(params) => (
                     <TextField

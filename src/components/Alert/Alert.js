@@ -1,12 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { makeStyles, Snackbar } from '@material-ui/core';
-import { Alert as MuiAlert } from '@material-ui/lab';
+import {
+  Snackbar, Slide, IconButton,
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import CloseIcon from '@mui/icons-material/Close';
 import { hideAlert } from '@redux/alert/actions/alert.actions';
-
-const AlertData = (props) => (
-  <MuiAlert elevation={6} variant="filled" {...props} />
-);
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,6 +13,22 @@ const useStyles = makeStyles((theme) => ({
     '& > * + *': {
       marginTop: theme.spacing(2),
     },
+  },
+  success: {
+    backgroundColor: '#009900',
+    color: '#000',
+  },
+  info: {
+    backgroundColor: '#0099CC',
+    color: '#000',
+  },
+  warning: {
+    backgroundColor: '#FFCC33',
+    color: '#000',
+  },
+  error: {
+    backgroundColor: '#FF0033',
+    color: '#000',
   },
 }));
 
@@ -32,24 +47,34 @@ const Alert = ({ data, dispatch }) => {
 
   return (
     <div className={classes.root}>
-      <Snackbar
-        open={data ? data.open : false}
-        autoHideDuration={4000}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        {data && (
-          <AlertData
-            onClose={handleClose}
-            severity={data.type}
-          >
-            {data.message}
-          </AlertData>
-        )}
-      </Snackbar>
+      {data && (
+        <Snackbar
+          key={`${data.type}-${data.message}`}
+          open={data.open || false}
+          autoHideDuration={4000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          message={data.message}
+          TransitionComponent={(props) => (
+            <Slide {...props} direction="left" />
+          )}
+          classes={{
+            root: classes[data.type],
+          }}
+          action={(
+            <>
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                sx={{ p: 0.5 }}
+                onClick={handleClose}
+              >
+                <CloseIcon />
+              </IconButton>
+            </>
+          )}
+        />
+      )}
     </div>
   );
 };

@@ -9,11 +9,11 @@ import {
   CircularProgress,
   CardContent,
   Typography,
-  makeStyles,
   Container,
   Grid,
   Box,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import logo from '@assets/tp-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import { useInput } from '@hooks/useInput';

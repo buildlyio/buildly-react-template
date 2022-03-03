@@ -3,7 +3,6 @@ import Geocode from 'react-geocode';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
-  makeStyles,
   TextField,
   Box,
   Card,
@@ -12,7 +11,8 @@ import {
   Button,
   CircularProgress,
   MenuItem,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { MapComponent } from '@components/MapComponent/MapComponent';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';

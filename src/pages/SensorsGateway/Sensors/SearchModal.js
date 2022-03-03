@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import {
-  makeStyles,
   TextField,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Button,
-} from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+  Autocomplete,
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 
 const useStyles = makeStyles((theme) => ({
@@ -52,7 +52,7 @@ const SearchModal = ({
             id="tags-outlined"
             options={listOfItems}
             getOptionLabel={(option) => option && `${option.name}:${option.gateway_uuid}`}
-            getOptionSelected={(option, value) => `${option.name}:${option.gateway_uuid}` === `${value.name}:${value.gateway_uuid}`}
+            isOptionEqualToValue={(option, value) => `${option.name}:${option.gateway_uuid}` === `${value.name}:${value.gateway_uuid}`}
             onChange={(event, newValue) => setList(newValue)}
             defaultValue={selectedList}
             style={{ flex: 1 }}

@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  makeStyles,
   TextField,
   Box,
   Checkbox,
@@ -13,12 +12,13 @@ import {
   Button,
   CircularProgress,
   Chip,
-} from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+  Autocomplete,
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   CheckBox as CheckBoxIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '@context/User.context';
 import { getFormattedRow } from '@pages/Items/ItemsConstants';
@@ -174,7 +174,7 @@ const ItemsInfo = ({
                     option
                     && option.name
                   )}
-                  getOptionSelected={(option, value) => (
+                  isOptionEqualToValue={(option, value) => (
                     option.url === value
                   )}
                   filterSelectedOptions
@@ -193,16 +193,16 @@ const ItemsInfo = ({
                       />
                     ))
                   )}
-                  renderOption={(option, { selected }) => (
-                    <>
+                  renderOption={(props, option, { selected }) => (
+                    <li {...props}>
                       <Checkbox
                         icon={icon}
                         checkedIcon={checkedIcon}
-                        style={{ marginRight: 8 }}
+                        style={{ marginRight: 8, color: '#fff' }}
                         checked={selected}
                       />
                       {option.name}
-                    </>
+                    </li>
                   )}
                   renderInput={(params) => (
                     <TextField

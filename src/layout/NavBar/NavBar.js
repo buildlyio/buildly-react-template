@@ -8,9 +8,9 @@ import {
   List,
   ListItem,
   ListItemText,
-  makeStyles,
   useTheme,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { isMobile } from '@utils/mediaQuery';
 import { NAVIGATION_ITEMS } from './NavBarConstants';
 
@@ -100,37 +100,45 @@ const NavBar = ({ navHidden, setNavHidden }) => {
       className={classes.drawer}
       aria-label="mailbox folders"
     >
-      <Hidden smUp implementation="css">
-        <Drawer
-          variant="temporary"
-          anchor={
-            theme.direction === 'rtl'
-              ? 'right'
-              : 'left'
-          }
-          open={navHidden}
-          onClose={handleDrawerToggle}
-          classes={{
-            paper: classes.drawerPaper,
-          }}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
-        >
-          {drawer}
-        </Drawer>
-      </Hidden>
-      <Hidden smDown implementation="css">
-        <Drawer
-          classes={{
-            paper: classes.drawerPaper,
-          }}
-          variant="permanent"
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Hidden>
+      <Drawer
+        variant="temporary"
+        anchor={
+          theme.direction === 'rtl'
+            ? 'right'
+            : 'left'
+        }
+        open={navHidden}
+        onClose={handleDrawerToggle}
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
+        sx={{
+          display: {
+            xs: 'block',
+            md: 'none',
+          },
+        }}
+      >
+        {drawer}
+      </Drawer>
+      <Drawer
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+        variant="permanent"
+        open
+        sx={{
+          display: {
+            xs: 'none',
+            md: 'block',
+          },
+        }}
+      >
+        {drawer}
+      </Drawer>
     </nav>
   );
 };

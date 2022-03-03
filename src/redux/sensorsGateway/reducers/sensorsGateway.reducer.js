@@ -513,54 +513,53 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-      case GET_SENSOR_REPORT:
-        return {
-          ...state,
-          loading: true,
-          loaded: false,
-          error: null,
-        };
+    case GET_SENSOR_REPORT:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
 
-      case GET_SENSOR_REPORT_SUCCESS:
-        return {
-          ...state,
-          loading: false,
-          loaded: true,
-          sensorReportData: action.data,
-        };
+    case GET_SENSOR_REPORT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        sensorReportData: action.data,
+      };
 
-      case GET_SENSOR_REPORT_FAILURE:
-        return {
-          ...state,
-          loading: false,
-          loaded: true,
-          error: action.error,
-        };
-
+    case GET_SENSOR_REPORT_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
 
     case GET_AGGREGATE_REPORT:
-    return {
-      ...state,
-      loading: true,
-      loaded: false,
-      error: null,
-    };
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
 
     case GET_AGGREGATE_REPORT_SUCCESS:
-    const initialAggregateReport = state.aggregateReportData;
-    let aggregateReport = action.data;
-    if (initialAggregateReport){
-      aggregateReport = Object.values([...initialAggregateReport, ...action.data].reduce((result, { id, ...rest }) => {
+      const initialAggregateReport = state.aggregateReportData;
+      let aggregateReport = action.data;
+      if (initialAggregateReport) {
+        aggregateReport = Object.values([...initialAggregateReport, ...action.data].reduce((result, { id, ...rest }) => {
         // eslint-disable-next-line no-param-reassign
-        result[id] = {
-          ...(result[id] || {}),
-          id,
-          ...rest,
-        };
-        return result;
-      }, {}));
-    }
-    return {
+          result[id] = {
+            ...(result[id] || {}),
+            id,
+            ...rest,
+          };
+          return result;
+        }, {}));
+      }
+      return {
         ...state,
         loading: false,
         loaded: true,

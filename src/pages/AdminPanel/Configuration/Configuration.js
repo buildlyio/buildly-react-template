@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import {
-  makeStyles,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Typography,
-} from '@material-ui/core';
-import { ExpandMore as ExpandMoreIcon } from '@material-ui/icons';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
 import { checkForGlobalAdmin } from '@utils/utilMethods';

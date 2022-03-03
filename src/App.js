@@ -9,7 +9,8 @@ import {
 import {
   CssBaseline,
   ThemeProvider,
-} from '@material-ui/core';
+  StyledEngineProvider,
+} from '@mui/material';
 import Alert from './components/Alert/Alert';
 import { app, AppContext } from './context/App.context';
 import ContainerDashboard from './layout/Container/Container';
@@ -26,39 +27,41 @@ import PushNotification from './PushNotification';
 const App = () => (
   <Router>
     <AppContext.Provider value={app}>
-      <ThemeProvider theme={theme}>
-        <div className="app">
-          <CssBaseline />
-          <Route
-            exact
-            path="/"
-            render={() => (
-              oauthService.hasValidAccessToken()
-                ? <Redirect to={routes.SHIPMENT} />
-                : <Redirect to={routes.LOGIN} />
-            )}
-          />
-          <Route path={routes.LOGIN} component={Login} />
-          <Route
-            path={routes.REGISTER}
-            component={Register}
-          />
-          <Route
-            path={routes.RESET_PASSWORD}
-            component={EmailForm}
-          />
-          <Route
-            path={routes.RESET_PASSWORD_CONFIRM}
-            component={NewPasswordForm}
-          />
-          <PrivateRoute
-            path={routes.APP}
-            component={ContainerDashboard}
-          />
-        </div>
-        <Alert />
-        <PushNotification />
-      </ThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <div className="app">
+            <CssBaseline />
+            <Route
+              exact
+              path="/"
+              render={() => (
+                oauthService.hasValidAccessToken()
+                  ? <Redirect to={routes.SHIPMENT} />
+                  : <Redirect to={routes.LOGIN} />
+              )}
+            />
+            <Route path={routes.LOGIN} component={Login} />
+            <Route
+              path={routes.REGISTER}
+              component={Register}
+            />
+            <Route
+              path={routes.RESET_PASSWORD}
+              component={EmailForm}
+            />
+            <Route
+              path={routes.RESET_PASSWORD_CONFIRM}
+              component={NewPasswordForm}
+            />
+            <PrivateRoute
+              path={routes.APP}
+              component={ContainerDashboard}
+            />
+          </div>
+          <Alert />
+          <PushNotification />
+        </ThemeProvider>
+      </StyledEngineProvider>
     </AppContext.Provider>
   </Router>
 );

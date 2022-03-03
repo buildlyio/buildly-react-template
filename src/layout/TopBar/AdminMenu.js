@@ -1,11 +1,12 @@
 import React from 'react';
 import {
-  withStyles,
   Menu,
   MenuItem,
   ListItemText,
   Divider,
-} from '@material-ui/core';
+} from '@mui/material';
+
+import { withStyles } from '@mui/styles';
 
 const StyledMenu = withStyles({
   paper: {
@@ -14,7 +15,6 @@ const StyledMenu = withStyles({
 })((props) => (
   <Menu
     elevation={0}
-    getContentAnchorEl={null}
     anchorOrigin={{
       vertical: 'bottom',
       horizontal: 'right',

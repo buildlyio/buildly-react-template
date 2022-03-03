@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import _ from 'lodash';
-import {
-  Container,
-  makeStyles,
-} from '@material-ui/core';
+import { Container } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   UserContext,
   getUser,
@@ -36,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     height: '100%',
-    paddingTop: '6em',
+    paddingTop: '5.25em',
     paddingBottom: theme.spacing(1.5),
   },
   contentMaxWidth: {

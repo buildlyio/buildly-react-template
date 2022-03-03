@@ -9,7 +9,7 @@ import {
   Polygon,
   Circle,
 } from 'react-google-maps';
-import InfoBox from "react-google-maps/lib/components/addons/InfoBox";
+import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
 import _ from 'lodash';
 import {
   REPORT_TYPES,
@@ -17,7 +17,9 @@ import {
 } from '@pages/Reporting/ReportingConstants';
 
 export const MapComponent = (props) => {
-  const { markers, setSelectedMarker, geofence, shipmentFilter } = props;
+  const {
+    markers, setSelectedMarker, geofence, shipmentFilter,
+  } = props;
   const [center, setCenter] = useState({
     lat: 47.606209,
     lng: -122.332069,
@@ -92,15 +94,18 @@ const RenderedMap = withScriptjs(
     <GoogleMap zoom={props.zoom} center={props.center}>
       {props.showPath && props.shipmentFilter === 'Active' && (
         <InfoBox
-        position={new google.maps.LatLng(props.center.lat, props.center.lng)}
-        options={{ closeBoxURL: ``, enableEventPropagation: true }}
-      >
-        <div style={{ backgroundColor: `#605e5e`, opacity: 0.75, padding: `8px`, borderRadius: 10}}>
-          <div style={{ fontSize: `1rem`, color: `white` }}>
-            Please wait for new reports to aggregate
+          position={new google.maps.LatLng(props.center.lat, props.center.lng)}
+          options={{ closeBoxURL: '', enableEventPropagation: true }}
+        >
+          <div style={{
+            backgroundColor: '#605e5e', opacity: 0.75, padding: '8px', borderRadius: 10,
+          }}
+          >
+            <div style={{ fontSize: '1rem', color: 'white' }}>
+              Please wait for new reports to aggregate
+            </div>
           </div>
-        </div>
-      </InfoBox>
+        </InfoBox>
       )}
 
       {props.isMarkerShown

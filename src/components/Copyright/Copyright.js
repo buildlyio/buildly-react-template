@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link, Typography } from '@material-ui/core';
+import { Link, Typography } from '@mui/material';
 import { AppContext } from '@context/App.context';
 
 const Copyright = () => {
@@ -16,6 +16,12 @@ const Copyright = () => {
         color="inherit"
         href="https://xparent.io/"
         target="_blank"
+        sx={{
+          textDecoration: 'none',
+          '&:hover': {
+            textDecoration: 'underline',
+          },
+        }}
       >
         {title}
       </Link>

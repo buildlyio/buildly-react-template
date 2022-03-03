@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
-  makeStyles,
   Box,
   Grid,
   List,
@@ -11,13 +10,13 @@ import {
   Typography,
   TextField,
   IconButton,
-  Hidden,
   MenuItem,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
   ViewComfy as ViewComfyIcon,
   ViewCompact as ViewCompactIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import GraphComponent from '@components/GraphComponent/GraphComponent';
 import Loader from '@components/Loader/Loader';
 import { MapComponent } from '@components/MapComponent/MapComponent';
@@ -41,7 +40,6 @@ import {
 import {
   getUnitsOfMeasure,
 } from '@redux/items/actions/items.actions';
-import { SHIPMENT_DATA_TABLE_TOOLTIP } from '@pages/Shipment/ShipmentConstants';
 import AlertsReport from './components/AlertsReport';
 import SensorReport from './components/SensorReport';
 import {
@@ -275,17 +273,21 @@ const Reporting = ({
                 toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
               />
             </Typography>
-            <Hidden smDown>
-              <IconButton
-                onClick={() => setTileView(!tileView)}
-                color="default"
-                aria-label="menu"
-              >
-                {!tileView
-                  ? <ViewCompactIcon />
-                  : <ViewComfyIcon />}
-              </IconButton>
-            </Hidden>
+            <IconButton
+              onClick={() => setTileView(!tileView)}
+              color="default"
+              aria-label="menu"
+              sx={{
+                display: {
+                  xs: 'none',
+                  md: 'block',
+                },
+              }}
+            >
+              {!tileView
+                ? <ViewCompactIcon />
+                : <ViewComfyIcon />}
+            </IconButton>
           </div>
           <MapComponent
             isMarkerShown={isMapLoaded}
@@ -344,17 +346,21 @@ const Reporting = ({
             <CustomizedTooltips
               toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
             />
-            <Hidden smDown>
-              <IconButton
-                onClick={() => setTileView(!tileView)}
-                color="default"
-                aria-label="menu"
-              >
-                {!tileView
-                  ? <ViewCompactIcon />
-                  : <ViewComfyIcon />}
-              </IconButton>
-            </Hidden>
+            <IconButton
+              onClick={() => setTileView(!tileView)}
+              color="default"
+              aria-label="menu"
+              sx={{
+                display: {
+                  xs: 'none',
+                  md: 'block',
+                },
+              }}
+            >
+              {!tileView
+                ? <ViewCompactIcon />
+                : <ViewComfyIcon />}
+            </IconButton>
           </div>
           <div className={classes.infoContainer}>
             <Grid container>

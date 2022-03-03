@@ -1,13 +1,13 @@
 import React from 'react';
 import {
-  withStyles,
   Table,
   TableRow,
   TableCell,
   TableHead,
   TableBody,
   Box,
-} from '@material-ui/core';
+} from '@mui/material';
+import { withStyles } from '@mui/styles';
 
 const StyledTableRow = withStyles((theme) => ({
   root: {

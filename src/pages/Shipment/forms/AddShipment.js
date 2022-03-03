@@ -2,13 +2,12 @@ import React, { useState, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  makeStyles,
   Stepper,
   Step,
   StepLabel,
-  Hidden,
   Grid,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import FormModal from '@components/Modal/FormModal';
 import { UserContext } from '@context/User.context';
 import { saveShipmentFormData } from '@redux/shipment/actions/shipment.actions';
@@ -330,32 +329,37 @@ const AddShipment = (props) => {
           handleConfirmModal={handleConfirmModal}
         >
           <div className={classes.root}>
-            <Hidden xsDown>
-              <Grid
-                container
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Grid item sm={10}>
-                  <Stepper
-                    activeStep={activeStep}
-                    alternativeLabel
-                    nonLinear
-                  >
-                    {_.map(steps, (label, index) => (
-                      <Step
-                        key={`step${index}:${label}`}
-                        className={`${shipmentFormData !== null && classes.step
-                        }`}
-                        onClick={handleStep(index)}
-                      >
-                        <StepLabel>{label}</StepLabel>
-                      </Step>
-                    ))}
-                  </Stepper>
-                </Grid>
+            <Grid
+              container
+              flexWrap="wrap"
+              alignItems="center"
+              justifyContent="center"
+              sx={{
+                display: {
+                  xs: 'none',
+                  sm: 'flex',
+                },
+              }}
+            >
+              <Grid item sm={10}>
+                <Stepper
+                  activeStep={activeStep}
+                  alternativeLabel
+                  nonLinear
+                >
+                  {_.map(steps, (label, index) => (
+                    <Step
+                      key={`step${index}:${label}`}
+                      className={`${shipmentFormData !== null && classes.step
+                      }`}
+                      onClick={handleStep(index)}
+                    >
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
               </Grid>
-            </Hidden>
+            </Grid>
 
             <div>
               <div>

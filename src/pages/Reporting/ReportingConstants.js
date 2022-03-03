@@ -2,8 +2,8 @@ import React from 'react';
 import moment from 'moment-timezone';
 import _ from 'lodash';
 import {
-  AccessTime as AccessTimeIcon,
-} from '@material-ui/icons';
+  AccessTime as AccessTimeIcon, Warning as WarningIcon,
+} from '@mui/icons-material';
 import {
   TempIcon,
   HumidIcon,
@@ -20,8 +20,6 @@ import {
 export const SHIPMENT_OVERVIEW_TOOL_TIP = 'Select a shipment to view reporting data';
 
 export const NO_DATA = 'No data to display';
-
-export const SENSOR_REPORT_TOOLTIP = 'Shipment Sensor Report till current time';
 
 export const ALERTS_REPORT_TOOLTIP = 'Shipment Alerts till current time';
 
@@ -327,7 +325,7 @@ export const getShipmentOverview = (
   return _.orderBy(
     shipmentList,
     (shipment) => moment(shipment.estimated_time_of_departure)
-    && moment(shipment.create_date),
+      && moment(shipment.create_date),
     ['desc'],
   );
 };
@@ -350,34 +348,21 @@ export const SENSOR_REPORT_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      customHeadLabelRender: () => <WarningIcon />,
     },
   },
   {
     name: 'timestamp',
-    label: 'Tag Captured Timestamp',
+    label: 'DATE-TIME',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-    },
-  },
-  {
-    name: 'lat',
-    label: 'Location (Latitude)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (
-        _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : '-'
-      ),
     },
   },
   {
     name: 'lng',
-    label: 'Location (Longitude)',
+    label: 'LONGITUDE',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -390,64 +375,8 @@ export const SENSOR_REPORT_COLUMNS = [
     },
   },
   {
-    name: 'light',
-    label: 'Light (lux)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (
-        _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : '-'
-      ),
-    },
-  },
-  {
-    name: 'humidity',
-    label: 'Humidity (%)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (
-        _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : '-'
-      ),
-    },
-  },
-  {
-    name: 'temperature',
-    label: 'Temperature (\u00b0F)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (
-        _.isNumber(Number(value))
-          ? _.round(value, 2).toFixed(2)
-          : '-'
-      ),
-    },
-  },
-  {
-    name: 'shock',
-    label: 'Shock (mg)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (
-        _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : '-'
-      ),
-    },
-  },
-  {
-    name: 'tilt',
-    label: 'Tilt (deg)',
+    name: 'lat',
+    label: 'LATITUDE',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -461,7 +390,77 @@ export const SENSOR_REPORT_COLUMNS = [
   },
   {
     name: 'battery',
-    label: 'Battery (%)',
+    label: 'BATTERY',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : '-'
+      ),
+    },
+  },
+  {
+    name: 'temperature',
+    label: 'TEMP (\u00b0F)',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        _.isNumber(Number(value))
+          ? _.round(value, 2).toFixed(2)
+          : '-'
+      ),
+    },
+  },
+  {
+    name: 'humidity',
+    label: 'HUM %',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : '-'
+      ),
+    },
+  },
+  {
+    name: 'light',
+    label: 'LIGHT (lux)',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : '-'
+      ),
+    },
+  },
+  {
+    name: 'shock',
+    label: 'SHOCK (mg)',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : '-'
+      ),
+    },
+  },
+  {
+    name: 'tilt',
+    label: 'TILT (deg)',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -475,7 +474,7 @@ export const SENSOR_REPORT_COLUMNS = [
   },
   {
     name: 'pressure',
-    label: 'Pressure (Pa)',
+    label: 'PRESS (Pa)',
     options: {
       sort: true,
       sortThirdClickReset: true,

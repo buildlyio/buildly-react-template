@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  makeStyles,
   Card,
   CardContent,
   Typography,
@@ -10,7 +9,8 @@ import {
   TextField,
   CircularProgress,
   Grid,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import RangeSlider from '@components/Slider/RangeSlider';
 import CustomizedTooltips from '@components/ToolTip/ToolTip';
 import { UserContext } from '@context/User.context';
