@@ -1,17 +1,22 @@
+/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable import/no-named-as-default */
+/* eslint-disable no-mixed-operators */
+/* eslint-disable no-param-reassign */
+/* eslint-disable arrow-body-style */
 import React, { useState, useContext } from 'react';
 import { UserContext } from '@context/User.context';
 import { InlineEditor } from '@components/InlineEditor/InlineEditor';
 import { StyledTable } from '@components/StyledTable/StyledTable';
 import Crud from '@modules/crud/Crud';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreHoriz from '@material-ui/icons/MoreHoriz';
-import Switch from '@material-ui/core/Switch';
-import Box from '@material-ui/core/Box';
-import AddIcon from '@material-ui/icons/AddCircle';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import MoreHoriz from '@mui/icons-material/MoreHoriz';
+import Switch from '@mui/material/Switch';
+import Box from '@mui/material/Box';
+import AddIcon from '@mui/icons-material/AddCircle';
 
 /**
  * Manage user groups
@@ -40,15 +45,15 @@ function UserGroups() {
    * Clears authentication and redirects to the login screen.
    */
   const addGroup = (crud) => {
-    let item = {
-      "name": "custom"
+    const item = {
+      name: 'custom',
     };
     crud.createItem(item);
   };
 
   const actionsTemplate = (row, crud) => {
     const handleMenuClick = (event) => {
-      setMenu({ row: row, element: event.currentTarget });
+      setMenu({ row, element: event.currentTarget });
     };
 
     const handleMenuItemClick = (action) => {
@@ -61,15 +66,16 @@ function UserGroups() {
     const handleMenuClose = () => {
       setMenu({ row: null, element: null });
     };
-    
+
     return (
-      <React.Fragment>
+      <>
         <IconButton
           aria-label="more"
           aria-controls={`groupActions${row.id}`}
           aria-haspopup="true"
           disabled={user.core_groups[0].id === row.id || !row.organization}
           onClick={handleMenuClick}
+          size="large"
         >
           <MoreHoriz />
         </IconButton>
@@ -81,14 +87,15 @@ function UserGroups() {
           onClose={handleMenuClose}
         >
           {row.actions.map((option) => (
-          <MenuItem
-            key={`groupActions${row.id}:${option.value}`}
-            onClick={() => handleMenuItemClick(option.value)}
-          >
-            {option.label}
-          </MenuItem>))}
+            <MenuItem
+              key={`groupActions${row.id}:${option.value}`}
+              onClick={() => handleMenuItemClick(option.value)}
+            >
+              {option.label}
+            </MenuItem>
+          ))}
         </Menu>
-      </React.Fragment>
+      </>
     );
   };
 
@@ -120,31 +127,32 @@ function UserGroups() {
         reducer="coregroupReducer"
       >
         {
-          crud => {
+          (crud) => {
             if (crud.getData()) {
-              crud.getData().forEach(row => {
-                row.actions = [{value: 'delete', label: 'Delete'}];
+              crud.getData().forEach((row) => {
+                row.actions = [{ value: 'delete', label: 'Delete' }];
               });
             }
 
             return (
-              <React.Fragment>
-                <Grid container justify="flex-end">
+              <>
+                <Grid container justifyContent="flex-end">
                   <Grid item>
                     <Button
                       color="primary"
                       size="small"
                       variant="outlined"
                       onClick={() => addGroup(crud)}
-                      startIcon={<AddIcon />}>
+                      startIcon={<AddIcon />}
+                    >
                       Add group
                     </Button>
                   </Grid>
                 </Grid>
                 <StyledTable
                   columns={[
-                    { label: 'Group type', prop: 'name', template: (row) => nameTemplate(row, crud ) },
-                    { label: 'Create', prop: 'Create', template: (row) => permissionCellTemplate(row, crud, 'create' ) },
+                    { label: 'Group type', prop: 'name', template: (row) => nameTemplate(row, crud) },
+                    { label: 'Create', prop: 'Create', template: (row) => permissionCellTemplate(row, crud, 'create') },
                     { label: 'Read', prop: 'Read', template: (row) => permissionCellTemplate(row, crud, 'read') },
                     { label: 'Update', prop: 'Update', template: (row) => permissionCellTemplate(row, crud, 'update') },
                     { label: 'Delete', prop: 'Delete', template: (row) => permissionCellTemplate(row, crud, 'delete') },
@@ -156,7 +164,7 @@ function UserGroups() {
                   ]}
                   rows={crud.getData()}
                 />
-              </React.Fragment>
+              </>
             );
           }
         }

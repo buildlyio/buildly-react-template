@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import { invite } from "@redux/authuser/authuser.actions";
-import { useInput } from "@hooks/useInput";
-import Popup from "reactjs-popup";
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { invite } from '@redux/authuser/authuser.actions';
+import { useInput } from '@hooks/useInput';
+import Popup from 'reactjs-popup';
 import {
   NotificationContainer,
   NotificationManager,
-} from "react-notifications";
-import Users from "./Users/Users";
-import UserGroups from "./UserGroups/UserGroups";
-import { Route } from "react-router-dom";
-import { routes } from "@routes/routesConstants";
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import EmailIcon from "@material-ui/icons/Email";
-import { rem } from "polished";
+} from 'react-notifications';
+import { Route } from 'react-router-dom';
+import { routes } from '@routes/routesConstants';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import EmailIcon from '@mui/icons-material/Email';
+import { rem } from 'polished';
+import Users from './Users/Users';
+import UserGroups from './UserGroups/UserGroups';
 
 const useStyles = makeStyles((theme) => ({
   userManagementHeading: {
@@ -29,26 +29,29 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     minHeight: rem(5),
     margin: theme.spacing(1, 0),
-    width: "100%",
+    width: '100%',
   },
   inviteForm: {
     padding: theme.spacing(3),
-    minWidth: rem(25)
-  }
+    minWidth: rem(25),
+  },
 }));
 
 /**
  * Outputs the user management page.
  */
-function UserManagement({ dispatch, loading, error, user, history, location }) {
+function UserManagement({
+  dispatch, loading, error, user, history, location,
+}) {
   const classes = useStyles();
-  const email = useInput("", { required: true });
+  const email = useInput('', { required: true });
   const [inviteCall, setInviteCall] = useState(false);
   const subNav = [
-    { label: "Current users", value: "current-users" },
-    { label: "User groups", value: "groups" },
+    { label: 'Current users', value: 'current-users' },
+    { label: 'User groups', value: 'groups' },
   ];
-  const viewPath = (subNav.find(item => location.pathname.endsWith(item.value)) || subNav[0]).value;
+  const viewPath = (subNav.find((item) => location.pathname.endsWith(item.value))
+  || subNav[0]).value;
   const [view, setView] = useState(viewPath);
 
   // this will be triggered whenever the content switcher is clicked to change the view
@@ -57,7 +60,7 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
   }, [view]);
 
   if (user && user.data && user.data.detail && inviteCall && !error) {
-    NotificationManager.success(user.data.detail, "Success");
+    NotificationManager.success(user.data.detail, 'Success');
     setInviteCall(false);
   }
 
@@ -71,34 +74,34 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
     email.clear();
   };
 
-  const getEmailsFromInputValue = (value) => {
-    return value.split(",").map((item) => item.trim());
-  }
+  const getEmailsFromInputValue = (value) => value.split(',').map((item) => item.trim());
 
+  // eslint-disable-next-line no-shadow
   const viewTabClicked = (event, view) => {
     setView(view);
   };
 
   return (
     <Box mt={1} mb={3}>
-      <Grid container mb={3} justify="space-between" alignItems="center">
+      <Grid container mb={3} justifyContent="space-between" alignItems="center">
         <Grid item>
-          <Typography className={classes.userManagementHeading} variant={"h4"}>
+          <Typography className={classes.userManagementHeading} variant="h4">
             People using this system
           </Typography>
         </Grid>
         <Grid item>
           <Popup
-            trigger={
+            trigger={(
               <Button
                 type="button"
                 variant="outlined"
                 size="small"
                 color="primary"
-                startIcon={<EmailIcon />}>
+                startIcon={<EmailIcon />}
+              >
                 Invite users
               </Button>
-            }
+            )}
             position="bottom right"
             on="click"
             closeOnDocumentClick
@@ -106,48 +109,50 @@ function UserManagement({ dispatch, loading, error, user, history, location }) {
             mouseEnterDelay={0}
             contentStyle={{
               padding: 0,
-              border: "none",
-              width: "100%",
+              border: 'none',
+              width: '100%',
               minWidth: `${rem(250)}`,
-              maxWidth: `${rem(400)}`
+              maxWidth: `${rem(400)}`,
             }}
             arrow={false}
           >
-          <form className={classes.inviteForm}>
-            <Typography variant="h6">
-              Invite users to platform
-            </Typography>
-            <TextField
-              className={classes.textField}
-              label="Emails"
-              id="email"
-              variant="outlined"
-              placeholder="abc@xcy.com, 123@zxc.com"
-              error={error}
-              helperText={error}
-              {...email.bind}
-            />
-            <Grid
-              justify="flex-end"
-              container 
-              spacing={0}>
-              <Grid item>
-                <Button
-                  onClick={inviteUser}
-                  size="small"
-                  variant="contained"
-                  color="primary"
-                  disabled={loading}
-                  type="submit">
-                  Send
-                </Button>
+            <form className={classes.inviteForm}>
+              <Typography variant="h6">
+                Invite users to platform
+              </Typography>
+              <TextField
+                className={classes.textField}
+                label="Emails"
+                id="email"
+                variant="outlined"
+                placeholder="abc@xcy.com, 123@zxc.com"
+                error={error}
+                helperText={error}
+                {...email.bind}
+              />
+              <Grid
+                justifyContent="flex-end"
+                container
+                spacing={0}
+              >
+                <Grid item>
+                  <Button
+                    onClick={inviteUser}
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    disabled={loading}
+                    type="submit"
+                  >
+                    Send
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
-          </form>
+            </form>
           </Popup>
         </Grid>
       </Grid>
-      <Grid mb={3} container justify="center">
+      <Grid mb={3} container justifyContent="center">
         <Grid item>
           <Tabs value={view} onChange={viewTabClicked}>
             {subNav.map((itemProps, index) => <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />)}

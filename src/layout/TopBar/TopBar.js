@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import GroupIcon from '@material-ui/icons/Group';
+import makeStyles from '@mui/styles/makeStyles';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import GroupIcon from '@mui/icons-material/Group';
 import logo from '@assets/topbar-logo.png';
 import { logout } from '@redux/authuser/authuser.actions';
 import { routes } from '@routes/routesConstants';
@@ -56,11 +56,16 @@ function TopBar({
 
         <div className={classes.menuRight}>
           <Link to={routes.USER_MANAGEMENT}>
-            <IconButton aria-label="user-management" color="inherit">
+            <IconButton aria-label="user-management" color="inherit" size="large">
               <GroupIcon fontSize="large" className={classes.menuIcon} />
             </IconButton>
           </Link>
-          <IconButton aria-label="logout" color="inherit" onClick={handleLogoutClick}>
+          <IconButton
+            aria-label="logout"
+            color="inherit"
+            onClick={handleLogoutClick}
+            size="large"
+          >
             <ExitToAppIcon fontSize="large" className={classes.menuIcon} />
           </IconButton>
         </div>

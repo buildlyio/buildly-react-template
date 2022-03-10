@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/core/styles';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import makeStyles from '@mui/styles/makeStyles';
 import { hideAlert } from '@redux/alert/alert.actions';
 
 function AlertData(props) {
@@ -35,9 +35,11 @@ function Alert({ data, dispatch }) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         {data && (
-          <AlertData onClose={handleClose} severity={data.type}>
-            {data.message}
-          </AlertData>
+          <div>
+            <AlertData onClose={handleClose} severity={data.type}>
+              {data.message}
+            </AlertData>
+          </div>
         )}
       </Snackbar>
     </div>

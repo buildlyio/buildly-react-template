@@ -4,8 +4,8 @@ import { UserContext, getUser } from '@context/User.context';
 import TopBar from '@layout/TopBar/TopBar';
 import Profile from '@pages/Profile/Profile';
 import UserManagement from '@pages/UserManagement/UserManagement';
-import MatContainer from '@material-ui/core/Container';
-import { makeStyles } from '@material-ui/core/styles';
+import MatContainer from '@mui/material/Container';
+import makeStyles from '@mui/styles/makeStyles';
 import { routes } from '@routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({

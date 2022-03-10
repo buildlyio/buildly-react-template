@@ -1,19 +1,28 @@
+/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable import/no-named-as-default */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-mixed-operators */
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable consistent-return */
+/* eslint-disable no-shadow */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable no-param-reassign */
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '@context/User.context';
 import { StyledTable } from '@components/StyledTable/StyledTable';
 import Crud from '@modules/crud/Crud';
 import { getCoregroups } from '@redux/coregroup/coregroup.actions';
 import { connect } from 'react-redux';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreHoriz from '@material-ui/icons/MoreHoriz';
-import Box from '@material-ui/core/Box';
-import { makeStyles } from '@material-ui/core/styles';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import MoreHoriz from '@mui/icons-material/MoreHoriz';
+import Box from '@mui/material/Box';
+import makeStyles from '@mui/styles/makeStyles';
 import { rem } from 'polished';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   btnPermission: {
@@ -53,7 +62,8 @@ function Users({
   // table templates
   const permissionsTemplate = (row, crud, classes) => {
     if (coregroupsLoaded) {
-      const [active, setActive] = useState(row.core_groups[0] && row.core_groups[0].id || row.core_groups[0]);
+      const [active, setActive] = useState(row.core_groups[0]
+        && row.core_groups[0].id || row.core_groups[0]);
       return (
         <ButtonGroup disableElevation color="primary" size="small" disabled={!row.is_active || user.core_user_uuid === row.core_user_uuid}>
           {permissions.map((permission, index) => (
@@ -102,6 +112,7 @@ function Users({
           aria-controls={`userActions${row.id}`}
           aria-haspopup="true"
           onClick={handleMenuClick}
+          size="large"
         >
           <MoreHoriz />
         </IconButton>
@@ -182,7 +193,8 @@ function Users({
                 { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud) },
               ]}
               rows={crud.getData()}
-              sortFn={(a, b) => (a.core_user_uuid === user.core_user_uuid ? -1 : b.core_user_uuid === user.core_user_uuid ? 1 : 0)}
+              sortFn={(a, b) => (a.core_user_uuid === user.core_user_uuid
+                ? -1 : b.core_user_uuid === user.core_user_uuid ? 1 : 0)}
             />
           );
         }}
