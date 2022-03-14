@@ -1,10 +1,7 @@
-/* eslint-disable import/no-named-as-default-member */
-/* eslint-disable import/no-named-as-default */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-mixed-operators */
-/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable consistent-return */
 /* eslint-disable no-shadow */
+/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable import/no-named-as-default */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable no-param-reassign */
 import React, { useState, useEffect, useContext } from 'react';
@@ -62,7 +59,9 @@ function Users({
   // table templates
   const permissionsTemplate = (row, crud, classes) => {
     if (coregroupsLoaded) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const [active, setActive] = useState(row.core_groups[0]
+        // eslint-disable-next-line no-mixed-operators
         && row.core_groups[0].id || row.core_groups[0]);
       return (
         <ButtonGroup disableElevation color="primary" size="small" disabled={!row.is_active || user.core_user_uuid === row.core_user_uuid}>
@@ -193,6 +192,7 @@ function Users({
                 { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud) },
               ]}
               rows={crud.getData()}
+              // eslint-disable-next-line no-nested-ternary
               sortFn={(a, b) => (a.core_user_uuid === user.core_user_uuid
                 ? -1 : b.core_user_uuid === user.core_user_uuid ? 1 : 0)}
             />
