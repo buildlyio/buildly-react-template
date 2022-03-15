@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Login({ dispatch, loading, history }) {
+const Login = ({ dispatch, loading, history }) => {
   const classes = useStyles();
   const username = useInput('', { required: true });
   const password = useInput('', { required: true });
@@ -221,7 +221,7 @@ function Login({ dispatch, loading, history }) {
       </Box>
     </Container>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

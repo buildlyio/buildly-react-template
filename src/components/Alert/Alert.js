@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Alert({ data, dispatch }) {
+const Alert = ({ data, dispatch }) => {
   const classes = useStyles();
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -44,7 +44,7 @@ function Alert({ data, dispatch }) {
       </Snackbar>
     </div>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

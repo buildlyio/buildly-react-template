@@ -58,9 +58,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ResetPassword({
+const ResetPassword = ({
   dispatch, loading, history, loaded, error, location,
-}) {
+}) => {
   const classes = useStyles();
   const password = useInput('', { required: true });
   const re_password = useInput('', {
@@ -217,7 +217,7 @@ function ResetPassword({
       </Box>
     </Container>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

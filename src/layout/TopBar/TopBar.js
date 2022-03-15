@@ -34,11 +34,11 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Component for the top bar header.
  */
-function TopBar({
+const TopBar = ({
   history,
   location,
   dispatch,
-}) {
+}) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -72,7 +72,7 @@ function TopBar({
       </Toolbar>
     </AppBar>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

@@ -57,9 +57,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Register({
+const Register = ({
   dispatch, loading, history, loaded, error,
-}) {
+}) => {
   const classes = useStyles();
   const email = useInput('', { required: true });
   const username = useInput('', { required: true });
@@ -329,7 +329,7 @@ function Register({
       </Box>
     </Container>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
