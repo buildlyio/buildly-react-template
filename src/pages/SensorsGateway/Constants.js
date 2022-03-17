@@ -103,7 +103,7 @@ export const getFormattedRow = (data, gatewayTypeList, shipmentData, custodianDa
       });
       if (shipmentData && shipmentData.length) {
         _.forEach(shipmentData, (shipment) => {
-          if (shipment.partner_shipment_id !== null
+          if (shipment.partner_shipment_id !== null && element.shipment_ids.length > 0
             && element.shipment_ids.includes(shipment.partner_shipment_id)
           ) {
             edited = {
@@ -251,7 +251,7 @@ export const getAvailableGateways = (
     && shipmentFormData.first_custody !== null) {
     const firstCustodian = shipmentFormData.first_custody.custodian_data.custodian_uuid;
     filteredGateways = _.filter(
-      gatewayData, (gateway) => gateway.custodian_uuid === firstCustodian,
+      filteredGateways, (gateway) => gateway.custodian_uuid === firstCustodian,
     );
   }
   return filteredGateways;

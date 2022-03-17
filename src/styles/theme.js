@@ -355,6 +355,15 @@ const theme = createTheme({
         },
       },
     },
+    MuiAccordionSummary: {
+      styleOverrides: {
+        expandIconWrapper: {
+          '& >.MuiSvgIcon-root': {
+            color: '#fff',
+          },
+        },
+      },
+    },
   },
 });
 

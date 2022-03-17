@@ -63,13 +63,13 @@ const CustodianInfo = (props) => {
   const [deleteItem, setDeleteItem] = useState(null);
 
   useEffect(() => {
-    if (
+    if ((
       custodyData
       && custodyData.length
       && custodianData
       && custodianData.length
       && shipmentFormData
-    ) {
+    ) || (_.isEmpty(custodyData) && custodianData && custodianData.length && shipmentFormData)) {
       const filteredCustodyData = _.filter(
         custodyData,
         { shipment_id: shipmentFormData.shipment_uuid },

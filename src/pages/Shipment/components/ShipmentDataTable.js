@@ -93,15 +93,10 @@ const ShipmentDataTable = ({
       },
     },
     onRowClick: (rowData, rowMeta) => {
-      setSelected(rowMeta.rowIndex);
-      setSelectedShipment(rows[rowMeta.rowIndex]);
+      setSelected(rowMeta.dataIndex);
+      setSelectedShipment(rows[rowMeta.dataIndex]);
     },
     rowsSelected: [selected],
-    // onRowSelectionChange: (rowsSelected) => {
-    //   const index = rowsSelected[0].dataIndex;
-    //   setSelected(index);
-    //   setSelectedShipment(rows[index]);
-    // },
     textLabels: {
       body: {
         noMatch: 'No data to display',
