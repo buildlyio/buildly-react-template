@@ -53,7 +53,10 @@
     "redux-saga": "^1.0.0",
     "redux-thunk": "^2.3.0",
     "serve": "^11.0.0",
-    "tesseract.js": "^2.1.4"
+    "tesseract.js": "^2.1.4",
+    "workbox-core": "^6.5.1",
+    "workbox-precaching": "^6.5.1",
+    "workbox-window": "^6.5.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -99,12 +102,13 @@
     "typescript": "^3.4.5",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.14"
+    "webpack-dev-server": "^3.1.14",
+    "workbox-webpack-plugin": "^6.5.1"
   },
   "scripts": {
     "build": "webpack --mode development",
     "start": "webpack-dev-server --mode development",
-    "https:local": "webpack-dev-server --https --cert cert/localhost.crt --key cert/localhost.key --mode development --env.build=local",
+    "https:local": "webpack-dev-server --https --cert E:/Coding/Projects/Ajackus/SSL/localhost.crt --key E:/Coding/Projects/Ajackus/SSL/localhost.key --mode development --env.build=local",
     "build:dev": "webpack --mode development --env.build=dev",
     "start:dev": "webpack-dev-server --mode development --env.build=dev",
     "build:prod": "webpack --mode production --env.build=prod",

@@ -232,6 +232,15 @@ const theme = createTheme({
         },
       },
     },
+    MuiTableBody: {
+      styleOverrides: {
+        root: {
+          '.MuiTableRow-root:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.08) !important',
+          },
+        },
+      },
+    },
     MuiTablePagination: {
       styleOverrides: {
         root: {
@@ -360,6 +369,15 @@ const theme = createTheme({
         expandIconWrapper: {
           '& >.MuiSvgIcon-root': {
             color: '#fff',
+          },
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          '.MuiSvgIcon-root': {
+            color: '#fff !important',
           },
         },
       },
