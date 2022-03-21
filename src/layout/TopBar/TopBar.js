@@ -44,12 +44,20 @@ const useStyles = makeStyles((theme) => ({
     '& label.Mui-focused': {
       color: '#fff',
     },
+    '&:hover': {
+      '&& fieldset': {
+        borderColor: '#fff',
+      },
+    },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
         borderColor: '#fff',
       },
       '&.Mui-focused fieldset': {
         borderColor: '#fff',
+      },
+      '& .MuiSelect-icon': {
+        color: '#fff',
       },
     },
   },
