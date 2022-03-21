@@ -12,7 +12,7 @@ import logo from '@assets/topbar-logo.png';
 import { logout } from '@redux/authuser/authuser.actions';
 import { routes } from '@routes/routesConstants';
 import { UserContext } from '@context/User.context';
-import { hasGlobalAdminRights } from '@utils/permissions';
+import { hasGlobalAdminRights, hasAdminRights } from '@utils/permissions';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -67,6 +67,7 @@ function TopBar({
   const [anchorEl, setAnchorEl] = React.useState(null);
   const user = useContext(UserContext);
   let isSuperAdmin = false;
+  const isAdmin = hasAdminRights(user) || hasGlobalAdminRights(user);
   isSuperAdmin = hasGlobalAdminRights(user);
 
   const handleLogoutClick = () => {
@@ -95,6 +96,13 @@ function TopBar({
               None
             </MenuItem>
           </TextField>
+          )}
+          {isAdmin && (
+            <Link to={routes.USER_MANAGEMENT}>
+              <IconButton aria-label="user-management" color="inherit" size="large">
+                <GroupIcon fontSize="large" className={classes.menuIcon} />
+              </IconButton>
+            </Link>
           )}
           <IconButton
             aria-label="logout"
