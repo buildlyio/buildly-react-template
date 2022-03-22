@@ -320,7 +320,10 @@ const theme = createTheme({
     MuiFormHelperText: {
       styleOverrides: {
         root: {
-          color: 'rgba(255, 255, 255, 0.7)',
+          color: 'rgba(255, 255, 255, 0.7) !important',
+          '&.Mui-error': {
+            color: '#d32f2f !important',
+          },
         },
       },
     },

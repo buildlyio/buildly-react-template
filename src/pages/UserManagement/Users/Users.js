@@ -223,7 +223,7 @@ const Users = ({ data, dispatch }) => {
                       label: 'Last activity',
                       prop: 'activity',
                       flex: '1',
-                      template: (row) => (
+                      template: () => (
                         <Typography
                           variant="caption"
                           style={{ color: '#aaa' }}
@@ -305,7 +305,7 @@ const Users = ({ data, dispatch }) => {
                       prop: 'organization',
                       flex: '2',
                       template: (row) => {
-                        const { is_active, organization } = row;
+                        const { is_active, organization, organization_name } = row;
                         return (
                           <Typography
                             variant="body2"
@@ -315,7 +315,7 @@ const Users = ({ data, dispatch }) => {
                               : null
                           }
                           >
-                            {organization.name}
+                            {organization.name ?? organization_name}
                           </Typography>
                         );
                       },
@@ -324,7 +324,7 @@ const Users = ({ data, dispatch }) => {
                       label: 'Last activity',
                       prop: 'activity',
                       flex: '1',
-                      template: (row) => (
+                      template: () => (
                         <Typography
                           variant="caption"
                           style={{ color: '#aaa' }}

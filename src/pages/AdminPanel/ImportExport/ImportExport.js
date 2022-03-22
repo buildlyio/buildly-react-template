@@ -13,7 +13,7 @@ import AddFromAPI from './forms/AddFromAPI';
 import ExportData from './forms/ExportData';
 
 const useStyles = makeStyles((theme) => ({
-  accordian: {
+  accordion: {
     backgroundColor: '#393636',
     marginBottom: theme.spacing(4),
     scrollbarWidth: 'none',
@@ -35,7 +35,7 @@ const ImportExport = () => {
 
   return (
     <Box mt={5} mb={5}>
-      <Accordion className={classes.accordian}>
+      <Accordion className={classes.accordion}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="import-file-content"
@@ -51,7 +51,7 @@ const ImportExport = () => {
           </div>
         </AccordionDetails>
       </Accordion>
-      <Accordion className={classes.accordian}>
+      <Accordion className={classes.accordion}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="import-api-content"
@@ -67,7 +67,7 @@ const ImportExport = () => {
           </div>
         </AccordionDetails>
       </Accordion>
-      <Accordion className={classes.accordian}>
+      <Accordion className={classes.accordion}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="export-content"

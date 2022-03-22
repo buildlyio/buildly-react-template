@@ -38,10 +38,10 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     marginTop: theme.spacing(6),
   },
-  accordian: {
+  accordion: {
     backgroundColor: '#4F4D4D',
     marginBottom: theme.spacing(4),
-    overflowX: 'scroll',
+    overflow: 'scroll hidden',
     scrollbarWidth: 'none',
     msOverflowStyle: 'none',
     '&::-webkit-scrollbar': {
@@ -64,7 +64,7 @@ const Configuration = (props) => {
       )}
       {superAdmin && (
       <div className={classes.root}>
-        <Accordion className={classes.accordian}>
+        <Accordion className={classes.accordion}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="organization-setting-content"
@@ -79,7 +79,7 @@ const Configuration = (props) => {
             <OrganizationSettings {...props} />
           </AccordionDetails>
         </Accordion>
-        <Accordion className={classes.accordian}>
+        <Accordion className={classes.accordion}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="custodian-type-content"
@@ -94,7 +94,7 @@ const Configuration = (props) => {
             <CustodianType {...props} />
           </AccordionDetails>
         </Accordion>
-        <Accordion className={classes.accordian}>
+        <Accordion className={classes.accordion}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="gateway-type-content"
@@ -109,7 +109,7 @@ const Configuration = (props) => {
             <GatewayType {...props} />
           </AccordionDetails>
         </Accordion>
-        <Accordion className={classes.accordian}>
+        <Accordion className={classes.accordion}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="item-type-content"
@@ -124,7 +124,7 @@ const Configuration = (props) => {
             <ItemType {...props} />
           </AccordionDetails>
         </Accordion>
-        <Accordion className={classes.accordian}>
+        <Accordion className={classes.accordion}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="organization-type-content"
@@ -141,7 +141,7 @@ const Configuration = (props) => {
             <OrganizationType {...props} />
           </AccordionDetails>
         </Accordion>
-        <Accordion className={classes.accordian}>
+        <Accordion className={classes.accordion}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="product-content"
@@ -156,7 +156,7 @@ const Configuration = (props) => {
             <Product {...props} />
           </AccordionDetails>
         </Accordion>
-        <Accordion className={classes.accordian}>
+        <Accordion className={classes.accordion}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="product-type-content"
@@ -171,7 +171,7 @@ const Configuration = (props) => {
             <ProductType {...props} />
           </AccordionDetails>
         </Accordion>
-        <Accordion className={classes.accordian}>
+        <Accordion className={classes.accordion}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="sensor-type-content"
@@ -186,7 +186,7 @@ const Configuration = (props) => {
             <SensorType {...props} />
           </AccordionDetails>
         </Accordion>
-        <Accordion className={classes.accordian}>
+        <Accordion className={classes.accordion}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="unit-of-measure-content"

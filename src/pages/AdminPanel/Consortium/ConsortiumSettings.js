@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     marginTop: theme.spacing(6),
   },
-  accordian: {
+  accordion: {
     backgroundColor: '#4F4D4D',
     marginBottom: theme.spacing(4),
     overflowX: 'scroll',
@@ -38,7 +38,7 @@ const Configuration = (props) => {
 
   return (
     <div className={classes.root}>
-      <Accordion className={classes.accordian}>
+      <Accordion className={classes.accordion}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="mappingorg-content"
@@ -54,7 +54,7 @@ const Configuration = (props) => {
         </AccordionDetails>
       </Accordion>
 
-      <Accordion className={classes.accordian}>
+      <Accordion className={classes.accordion}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="consortium-content"
