@@ -1,8 +1,6 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-/* eslint-disable no-mixed-operators */
 /* eslint-disable no-param-reassign */
-/* eslint-disable arrow-body-style */
 import React, { useState, useContext } from 'react';
 import { UserContext } from '@context/User.context';
 import { InlineEditor } from '@components/InlineEditor/InlineEditor';
@@ -26,20 +24,18 @@ function UserGroups() {
   const [menu, setMenu] = useState({ row: null, element: null });
   const user = useContext(UserContext);
 
-  const permissionCellTemplate = (row, crud, operation) => {
-    return (
-      <Switch
-        size="small"
-        color="primary"
-        disabled={user.core_groups[0].id === row.id || !row.organization}
-        checked={row.permissions[operation]}
-        onChange={() => {
-          row.permissions[operation] = !row.permissions[operation];
-          crud.updateItem(row);
-        }}
-      />
-    );
-  };
+  const permissionCellTemplate = (row, crud, operation) => (
+    <Switch
+      size="small"
+      color="primary"
+      disabled={user.core_groups[0].id === row.id || !row.organization}
+      checked={row.permissions[operation]}
+      onChange={() => {
+        row.permissions[operation] = !row.permissions[operation];
+        crud.updateItem(row);
+      }}
+    />
+  );
 
   /**
    * Clears authentication and redirects to the login screen.
@@ -83,6 +79,7 @@ function UserGroups() {
           id={`groupActions${row.id}`}
           anchorEl={menu.element}
           keepMounted
+          // eslint-disable-next-line no-mixed-operators
           open={menu.row && (menu.row.id === row.id) || false}
           onClose={handleMenuClose}
         >
@@ -104,18 +101,16 @@ function UserGroups() {
     crud.updateItem(row);
   };
 
-  const nameTemplate = (row, crud) => {
-    return (
-      <InlineEditor
-        tag="body1"
-        id={row.id}
-        disabled={!row.organization}
-        value={row.name}
-        placeholder="Group type"
-        onChange={(event) => update(crud, row, event)}
-      />
-    );
-  };
+  const nameTemplate = (row, crud) => (
+    <InlineEditor
+      tag="body1"
+      id={row.id}
+      disabled={!row.organization}
+      value={row.name}
+      placeholder="Group type"
+      onChange={(event) => update(crud, row, event)}
+    />
+  );
 
   return (
     <Box>

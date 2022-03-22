@@ -167,7 +167,8 @@ function UserManagement({
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const loaded = state.coreuserReducer.loaded && state.coregroupReducer.loaded;
+  const loaded = state.coreuserReducer.loaded && state.coregroupReducer.loaded
+  && state.authReducer.loaded;
 
   return {
     ...ownProps,
