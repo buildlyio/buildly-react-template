@@ -55,6 +55,9 @@ const Milestone = ({
   const [selectedRepositories, setSelectedRepositories] = useState([]);
   const [selectedMilestones, setSelectedMilestones] = useState([]);
 
+  const [selectAllRepositories, setSelectAllRepositories] = useState(false);
+  const [selectAllMilestones, setSelectAllMilestones] = useState(false);
+
   const [rows, setRows] = useState([]);
 
   const addMilestonePath = `${routes.MILESTONE}/add`;
@@ -123,11 +126,21 @@ const Milestone = ({
     } = event;
 
     if (typeof value === 'object' && value.includes('select-all')) {
-      setSelectedRepositories(repositories.map((name) => name));
+      if(selectedRepositories.length === repositories.length) {
+        setSelectedRepositories([]);
+      } else {
+        setSelectedRepositories(repositories.map((name) => name));
+      }
     } else {
       setSelectedRepositories(
         typeof value === 'string' ? value.split(',') : value,
       );
+    }
+
+    if(selectedRepositories.length === repositories.length) {
+      setSelectAllRepositories(false);
+    } else {
+      setSelectAllRepositories(true);
     }
   };
 
@@ -138,11 +151,21 @@ const Milestone = ({
     } = event;
 
     if (typeof value === 'object' && value.includes('select-all')) {
-      setSelectedMilestones(milestoneHeadings.map((name) => name));
+      if(selectedMilestones.length === milestoneHeadings.length) {
+        setSelectedMilestones([]);
+      } else {
+        setSelectedMilestones(milestoneHeadings.map((name) => name));
+      }
     } else {
       setSelectedMilestones(
         typeof value === 'string' ? value.split(',') : value,
       );
+    }
+
+    if(selectedMilestones.length === milestoneHeadings.length) {
+      setSelectAllMilestones(false);
+    } else {
+      setSelectAllMilestones(true);
     }
   };
 
@@ -244,12 +267,14 @@ const Milestone = ({
                 repositories.length
                   && (
                   <MenuItem key="Select All" value="select-all">
+                    <Checkbox checked={selectAllRepositories} />
                     Select All
                   </MenuItem>
                   )
               }
               { repositories.map((name) => (
                 <MenuItem key={name} value={name}>
+                  <Checkbox checked={selectedRepositories.indexOf(name) > -1} />
                   { name }
                 </MenuItem>
               )) }
@@ -294,12 +319,14 @@ const Milestone = ({
                   milestoneHeadings.length
                   && (
                   <MenuItem key="Select All" value="select-all">
+                    <Checkbox checked={selectAllMilestones} />
                     Select All
                   </MenuItem>
                   )
               }
               { milestoneHeadings.map((name) => (
                 <MenuItem key={name} value={name}>
+                  <Checkbox checked={selectedMilestones.indexOf(name) > -1} />
                   { name }
                 </MenuItem>
               )) }
