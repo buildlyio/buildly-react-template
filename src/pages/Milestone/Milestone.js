@@ -82,6 +82,12 @@ const Milestone = ({
 
       setSelectedMilestones([]);
     }
+
+    if(selectedRepositories.length === repositories.length && repositories.length) {
+      setSelectAllRepositories(true);
+    } else {
+      setSelectAllRepositories(false);
+    }
   }, [selectedRepositories, owner, milestoneState]);
 
   // to format the incoming milestones to be displayed onto the datatable
@@ -117,6 +123,12 @@ const Milestone = ({
     }
 
     setRows(data);
+
+    if(selectedMilestones.length === milestoneHeadings.length && milestoneHeadings.length) {
+      setSelectAllMilestones(true);
+    } else {
+      setSelectAllMilestones(false);
+    }
   }, [selectedMilestones, milestones]);
 
   // handling the repositories select
@@ -136,12 +148,6 @@ const Milestone = ({
         typeof value === 'string' ? value.split(',') : value,
       );
     }
-
-    if(selectedRepositories.length === repositories.length) {
-      setSelectAllRepositories(false);
-    } else {
-      setSelectAllRepositories(true);
-    }
   };
 
   // handling the milestones select
@@ -160,12 +166,6 @@ const Milestone = ({
       setSelectedMilestones(
         typeof value === 'string' ? value.split(',') : value,
       );
-    }
-
-    if(selectedMilestones.length === milestoneHeadings.length) {
-      setSelectAllMilestones(false);
-    } else {
-      setSelectAllMilestones(true);
     }
   };
 
