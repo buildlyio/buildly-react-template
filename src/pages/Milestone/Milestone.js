@@ -27,6 +27,7 @@ import {
   getRepositories, closeMilestones,
 } from '@redux/milestone/actions/milestone.actions';
 import { connect } from 'react-redux';
+import { useInput } from '@hooks/useInput';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,7 +48,9 @@ const Milestone = ({
 }) => {
   const classes = useStyles();
 
-  const owner = window.env.GITHUB_OWNER;
+  const [owner, setOwner] = useState(window.env.GITHUB_OWNER);
+  const ownerInput = useInput(owner || '', { required: true });
+
   const [milestoneState, setMilestoneState] = useState('open');
   const [deleteModalState, setDeleteModalState] = useState(false);
   const [currentMilestone, setCurrentMilestone] = useState(null);
@@ -66,6 +69,8 @@ const Milestone = ({
 
   // to refresh the repositories on owner change
   useEffect(() => {
+    setSelectedRepositories([]);
+
     dispatch(getRepositories({
       owner,
     }));
@@ -73,7 +78,7 @@ const Milestone = ({
 
   // to refresh the milestones if the selected-repositories/owner/milestone-state changes
   useEffect(() => {
-    if (selectedRepositories.length) {
+    if(repositories.length && selectedRepositories.length) {
       dispatch(getMilestones({
         owner, selectedRepositories, milestoneState,
       }));
@@ -244,6 +249,8 @@ const Milestone = ({
             variant="outlined"
             value={owner}
             fullWidth
+            {...ownerInput.bind}
+            onBlur={() => setOwner(ownerInput.value)}
           />
         </Grid>
         <Grid item xs={3}>

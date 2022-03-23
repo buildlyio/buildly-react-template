@@ -211,6 +211,15 @@ export default (state = initialState, action) => {
 
     case GET_REPOSITORIES_FAIL:
     case GET_MILESTONES_FAIL:
+      return {
+        loading: false,
+        loaded: true,
+        error: action.error,
+        repositories: [],
+        milestones: [],
+        milestoneHeadings: [],
+      };
+
     case CLEAR_MILESTONES_FAIL:
     case CLEAR_MILESTONES_HEADINGS_FAIL:
     case CREATE_MILESTONE_FAIL:
