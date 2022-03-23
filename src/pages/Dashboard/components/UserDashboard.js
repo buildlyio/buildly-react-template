@@ -321,6 +321,7 @@ const UserDashboard = (props) => {
       <Route path={addIssuePath} component={AddIssues} />
       <Route path={editIssuePath} component={AddIssues} />
       <Route path={featureToIssuePath} component={AddIssues} />
+      <BarChart productFeatures={productFeatures} productIssues={productIssues} />
     </div>
   );
 };
