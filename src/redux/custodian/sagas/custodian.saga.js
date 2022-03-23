@@ -382,7 +382,17 @@ function* editCustody(action) {
     );
     if (data && data.data) {
       yield [
-        yield put(getCustody(payload.shipment_id)),
+        yield put(
+          getShipmentDetails(
+            data.data.organization_uuid,
+            'Planned,Enroute',
+            null,
+            false,
+            true,
+            'get',
+          ),
+        ),
+        // yield put(getCustody(payload.shipment_id)),
         yield put(
           showAlert({
             type: 'success',
@@ -460,7 +470,7 @@ function* deleteCustody(payload) {
         getShipmentDetails(
           organization_uuid,
           'Planned,Enroute',
-          shipmentId,
+          null,
           false,
           true,
           'get',
