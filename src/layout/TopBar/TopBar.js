@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
 import {
   AppBar,
@@ -18,7 +19,6 @@ import {
 import logo from '@assets/light-logo.png';
 import { UserContext } from '@context/User.context';
 import { logout, loadOrgNames } from '@redux/authuser/actions/authuser.actions';
-import { checkFilled } from '@redux/googleSheet/actions/googleSheet.actions';
 import { routes } from '@routes/routesConstants';
 import { hasGlobalAdminRights, hasAdminRights } from '@utils/permissions';
 
@@ -58,24 +58,21 @@ const TopBar = ({
 }) => {
   const classes = useStyles();
   const user = useContext(UserContext);
-  // const isAdmin = false;
-  let isSuperAdmin = false;
+  const isAdmin = hasAdminRights(user) || hasGlobalAdminRights(user);
+  const isSuperAdmin = hasGlobalAdminRights(user);
+
   const [organization, setOrganization] = useState(null);
 
   if (!organization) {
     setOrganization(user.organization.name);
   }
-  const isAdmin = hasAdminRights(user) || hasGlobalAdminRights(user);
-  isSuperAdmin = hasGlobalAdminRights(user);
-
 
   useEffect(() => {
     if (location.path !== routes.MISSING_DATA) {
-      if (!user.email || !user.organization) {
+      if (!user.email || !user.organization || !user.user_type) {
         history.push(routes.MISSING_DATA);
       }
     }
-    dispatch(checkFilled(`${user.first_name} ${user.last_name}`));
   }, []);
 
   useEffect(() => {
@@ -127,7 +124,7 @@ const TopBar = ({
               onChange={handleOrganizationChange}
             >
               {_.map(orgNames, (org, index) => (
-                < MenuItem
+                <MenuItem
                   key={index}
                   value={org}
                 >
@@ -153,7 +150,7 @@ const TopBar = ({
           </IconButton>
         </div>
       </Toolbar>
-    </AppBar >
+    </AppBar>
   );
 };
 

@@ -339,22 +339,28 @@ function* invite(payload) {
 }
 
 function* updateUser(payload) {
+  const { data } = payload;
   try {
-    const user = yield call(
+    const profile = yield call(
       httpService.makeRequest,
       'patch',
-      `${window.env.API_URL}coreuser/${payload.data.id}/`,
-      payload.data,
+      `${window.env.API_URL}coreuser/${data.id}/update_profile/`,
+      data,
     );
-    const data = yield call(
+    const user = yield call(
       httpService.makeRequest,
-      'put',
-      `${window.env.API_URL}organization/${payload.data.organization_uuid}/`,
-      { name: payload.data.organization_name },
+      'get',
+      `${window.env.API_URL}coreuser/me/`,
     );
+    yield call(oauthService.setOauthUser, user);
+    const coreuser = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}coreuser/`,
+    );
+    yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield [
       yield put({ type: UPDATE_USER_SUCCESS, user }),
-      yield put({ type: GET_ORGANIZATION_SUCCESS, data }),
       yield put(
         showAlert({
           type: 'success',
@@ -386,6 +392,10 @@ function* socialLogin(payload) {
   switch (provider) {
     case providers.github:
       url = `${window.env.API_URL}oauth/complete/github/?code=${code}`;
+      break;
+
+    default:
+      break;
   }
 
   try {

@@ -12,6 +12,7 @@ import { routes } from '@routes/routesConstants';
 import NewProduct from '@pages/NewProduct/NewProduct';
 import Release from '@pages/Release/Release';
 import ViewRelease from '@pages/Release/components/ViewRelease';
+import DeveloperForm from '@pages/DeveloperForm/DeveloperForm';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,6 +62,7 @@ const ContainerDashboard = ({ location, history }) => {
             <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
             <Route path={routes.MISSING_DATA} component={MissingData} />
             <Route path={routes.NEW_PRODUCT} component={NewProduct} />
+            <Route path={routes.DEVELOPER_FORM} component={DeveloperForm} />
             <Route exact path={`${routes.RELEASE}/view/:releaseID`} component={ViewRelease} />
             <Route path={routes.RELEASE} component={Release} />
           </Switch>

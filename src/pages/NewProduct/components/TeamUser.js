@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -22,9 +23,9 @@ import {
   Button,
 } from '@mui/material';
 import { useInput } from '@hooks/useInput';
-import { validators } from '@utils/validators';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import { saveProductFormData } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -62,8 +63,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
-    margin: theme.spacing(8, 0),
-    textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   buttonProgress: {
@@ -89,10 +90,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#f5f8fa',
     backgroundImage:
       'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
-    '$root.Mui-focusVisible &': {
-      outline: '2px auto rgba(19,124,189,.6)',
-      outlineOffset: 2,
-    },
     'input:hover ~ &': {
       backgroundColor: '#ebf1f5',
     },
@@ -137,47 +134,40 @@ const StyledRadio = (props) => {
 export let checkIfTeamUserEdited;
 
 const TeamUser = ({
-  location, handleNext, handleBack,
+  productFormData, handleNext, handleBack, dispatch,
 }) => {
   const classes = useStyles();
-  const editData = (location.state
-    && location.state.type === 'edit'
-    && location.state.data) || {};
 
-  const teamSize = useInput((editData && editData.team_size) || '5 - 10', {
-    required: true,
-  });
-
-  const [roleCount, setRoleCount] = useState([
-    { role: 'CTO (Budget Approval?)', count: 0 },
-    { role: 'COO (Budget Approval?)', count: 0 },
-    { role: 'UI/UX', count: 0 },
-    { role: 'Lead Developer', count: 0 },
-    { role: 'Product Manager', count: 0 },
-    { role: 'Product Manager (Budget Approval?)', count: 0 },
-    { role: 'Others', count: 0 },
-  ]);
-
-  const existingFeatures = useInput(
-    (editData && editData.existing_requirements) || '',
+  const teamSize = useInput(
+    (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.team_size)
+    || '5 - 10',
     { required: true },
   );
 
-  const [formError, setFormError] = useState({});
+  const [roleCount, setRoleCount] = useState(
+    (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.role_count)
+    || [
+      { role: 'CTO (Budget Approval?)', count: 0 },
+      { role: 'COO (Budget Approval?)', count: 0 },
+      { role: 'UI/UX', count: 0 },
+      { role: 'Lead Developer', count: 0 },
+      { role: 'Product Manager', count: 0 },
+      { role: 'Product Manager (Budget Approval?)', count: 0 },
+      { role: 'Others', count: 0 },
+    ],
+  );
 
-  const onBackClick = (event) => {
-    // if (checkIfProductInfoEdited() === true) {
-    //   handleSubmit(event);
-    // }
-    handleBack();
-  };
-
-  const onNextClick = (event) => {
-    // if (checkIfProductInfoEdited() === true) {
-    //   handleSubmit(event);
-    // }
-    handleNext();
-  };
+  const existingFeatures = useInput(
+    (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.existing_features)
+    || '',
+    { required: true },
+  );
 
   const submitDisabled = () => {
     let countNum = 0;
@@ -192,7 +182,15 @@ const TeamUser = ({
     return false;
   };
 
-  checkIfTeamUserEdited = () => teamSize.hasChanged();
+  checkIfTeamUserEdited = () => (
+    teamSize.hasChanged()
+    || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.role_count
+      && !_.isEqual(roleCount,
+        productFormData.product_info.role_count))
+    || existingFeatures.hasChanged()
+  );
 
   /**
    * Submit The form and add/edit custodian
@@ -200,6 +198,18 @@ const TeamUser = ({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
+    const formData = {
+      ...productFormData,
+      product_info: {
+        ...productFormData.product_info,
+        team_size: teamSize.value,
+        role_count: roleCount,
+        existing_features: existingFeatures.value,
+      },
+      edit_date: new Date(),
+    };
+    dispatch(saveProductFormData(formData));
+    handleNext();
   };
 
   return (
@@ -272,6 +282,7 @@ const TeamUser = ({
                         </TableCell>
                         <TableCell style={{ width: '30%' }}>
                           <TextField
+                            disabled
                             onChange={(e) => {
                               setRoleCount((pvrc) => {
                                 pvrc[index].count += parseInt(
@@ -319,7 +330,7 @@ const TeamUser = ({
                 multiline
                 rows={6}
                 id="existingFeatures"
-                label="existing features"
+                label="Existing Features"
                 name="existingFeatures"
                 autoComplete="existingFeatures"
                 {...existingFeatures.bind}
@@ -329,11 +340,11 @@ const TeamUser = ({
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>
               <Button
+                type="button"
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={onBackClick}
-                // disabled={productFormData === null}
+                onClick={handleBack}
                 className={classes.submit}
               >
                 Back
@@ -341,14 +352,14 @@ const TeamUser = ({
             </Grid>
             <Grid item xs={12} sm={4}>
               <Button
+                type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={onNextClick}
                 disabled={submitDisabled()}
                 className={classes.submit}
               >
-                Save & Next
+                Next
               </Button>
             </Grid>
           </Grid>
@@ -360,6 +371,7 @@ const TeamUser = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  productFormData: state.productReducer.productFormData,
 });
 
 export default connect(mapStateToProps)(TeamUser);

@@ -21,12 +21,13 @@ import {
   getAllFeatures,
   getAllIssues,
   getAllStatuses,
+  deleteFeature,
+  deleteIssue,
 } from '@redux/decision/actions/decision.actions';
 import List from '../components/List';
 import Kanban from '../components/Kanban';
 import AddFeatures from '../forms/AddFeatures';
 import AddIssues from '../forms/AddIssues';
-import FeatureToIssue from '../forms/FeatureToIssue';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 import BarChart from './BarChart';
 
@@ -159,18 +160,16 @@ const UserDashboard = (props) => {
   const editItem = (item, type) => {
     let path;
     if (type === 'feat') {
-      path = `${editFeatPath}/:${item.id}`;
+      path = `${editFeatPath}/:${item.feature_uuid}`;
     } else if (type === 'issue') {
-      path = `${editIssuePath}/:${item.id}`;
-    } else if (type === 'convert') {
-      path = `${featureToIssuePath}/:${item.id}`;
+      path = `${editIssuePath}/:${item.issue_uuid}`;
     }
 
     history.push(path, {
       type: 'edit',
       from: redirectTo || location.pathname,
       data: item,
-      productID: product,
+      product_uuid: product,
     });
   };
 
@@ -180,13 +179,11 @@ const UserDashboard = (props) => {
       path = addFeatPath;
     } else if (type === 'issue') {
       path = addIssuePath;
-    } else if (type === 'convert') {
-      path = featureToIssuePath;
     }
 
     history.push(path, {
       from: redirectTo || location.pathname,
-      productID: product,
+      product_uuid: product,
     });
   };
 
@@ -197,9 +194,9 @@ const UserDashboard = (props) => {
     }
 
     history.push(path, {
-      type: 'edit',
+      type: 'convert',
       from: redirectTo || location.pathname,
-      productID: product,
+      product_uuid: product,
       data: item,
     });
   };
@@ -217,9 +214,9 @@ const UserDashboard = (props) => {
     const { id, type } = toDeleteItem;
     setDeleteModal(false);
     if (type === 'feat') {
-      console.log('Dispatch delete feature action here');
+      dispatch(deleteFeature(id));
     } else if (type === 'issue') {
-      console.log('Dispatch delete issue action here');
+      dispatch(deleteIssue(id));
     }
   };
 
@@ -323,8 +320,7 @@ const UserDashboard = (props) => {
       <Route path={editFeatPath} component={AddFeatures} />
       <Route path={addIssuePath} component={AddIssues} />
       <Route path={editIssuePath} component={AddIssues} />
-      <Route path={featureToIssuePath} component={FeatureToIssue} />
-      <BarChart productFeatures={productFeatures} productIssues={productIssues} />
+      <Route path={featureToIssuePath} component={AddIssues} />
     </div>
   );
 };

@@ -319,7 +319,7 @@ function* deleteFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${decisionEndpoint}decision/${feature_uuid}`,
+      `${window.env.API_URL}${decisionEndpoint}feature/${feature_uuid}`,
     );
     yield put({ type: DELETE_FEATURE_SUCCESS, feature_uuid });
   } catch (error) {

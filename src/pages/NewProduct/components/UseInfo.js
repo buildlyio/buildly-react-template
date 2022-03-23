@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
+import { saveProductFormData } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -50,8 +51,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
-    margin: theme.spacing(8, 0),
-    textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   buttonProgress: {
@@ -67,40 +68,54 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const UsersInfo = (props) => {
-  const {
-    location,
-    handleNext,
-    handleBack,
-  } = props;
-  const classes = useStyles();
-  const viewOnly = false;
-  // const editPage = location.state && location.state.type === 'edit';
-  const editData = (location.state
-    && location.state.type === 'edit'
-    && location.state.data) || {};
+// eslint-disable-next-line import/no-mutable-exports
+export let checkIfUseInfoEdited;
 
-  const productUse = useInput((editData && editData.product_use) || '', {
-    required: true,
-  });
+const UseInfo = ({
+  productFormData,
+  handleNext,
+  handleBack,
+  dispatch,
+}) => {
+  const classes = useStyles();
+
+  const productUse = useInput(
+    (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.use)
+    || '',
+    { required: true },
+  );
 
   const useWhen = useInput(
-    (editData && editData.product_use_when) || '',
+    (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.use_when)
+    || '',
     { required: true },
   );
 
   const useSituation = useInput(
-    (editData && editData.product_use_situation) || '',
+    (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.use_situation)
+    || '',
     { required: true },
   );
 
   const impFunction = useInput(
-    (editData && editData.product_imp_func) || '',
+    (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.imp_function)
+    || '',
     { required: true },
   );
 
   const deliveryRisk = useInput(
-    (editData && editData.product_delivery_risk) || '',
+    (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.delivery_risk)
+    || '',
     { required: true },
   );
 
@@ -131,44 +146,31 @@ const UsersInfo = (props) => {
     }
   };
 
-  const onBackClick = (event) => {
-    // if (checkIfProductInfoEdited() === true) {
-    //   handleSubmit(event);
-    // }
-    handleBack();
-  };
-
-  const onNextClick = (event) => {
-    // if (checkIfProductInfoEdited() === true) {
-    //   handleSubmit(event);
-    // }
-    handleNext();
-  };
-
   const submitDisabled = () => {
-    // const errorKeys = Object.keys(formError);
-    // if (!product_name.value) {
-    //   return true;
-    // }
-    // let errorExists = false;
-    // _.forEach(errorKeys, (key) => {
-    //   if (formError[key].error) {
-    //     errorExists = true;
-    //   }
-    // });
-    // return errorExists;
-
-    if (
-      (productUse.value
-        && useWhen.value
-        && useSituation.value
-        && impFunction.value
-        && deliveryRisk.value) === ''
-    ) {
+    const errorKeys = Object.keys(formError);
+    if (!productUse.value
+      || !useWhen.value
+      || !useSituation.value
+      || !impFunction.value
+      || !deliveryRisk.value) {
       return true;
     }
-    return false;
+    let errorExists = false;
+    _.forEach(errorKeys, (key) => {
+      if (formError[key].error) {
+        errorExists = true;
+      }
+    });
+    return errorExists;
   };
+
+  checkIfUseInfoEdited = () => (
+    productUse.hasChanged()
+    || useWhen.hasChanged()
+    || useSituation.hasChanged()
+    || impFunction.hasChanged()
+    || deliveryRisk.hasChanged()
+  );
 
   /**
    * Submit The form and add/edit custodian
@@ -176,6 +178,20 @@ const UsersInfo = (props) => {
    */
   const handleSubmit = (event) => {
     event.preventDefault();
+    const formData = {
+      ...productFormData,
+      product_info: {
+        ...productFormData.product_info,
+        use: productUse.value,
+        use_when: useWhen.value,
+        use_situation: useSituation.value,
+        imp_function: impFunction.value,
+        delivery_risk: deliveryRisk.value,
+      },
+      edit_date: new Date(),
+    };
+    dispatch(saveProductFormData(formData));
+    handleNext();
   };
 
   return (
@@ -194,7 +210,7 @@ const UsersInfo = (props) => {
                 label="What is the product used for"
                 name="productUse"
                 autoComplete="productUse"
-                disabled={viewOnly}
+                onBlur={(e) => handleBlur(e, 'required', productUse)}
                 {...productUse.bind}
               />
             </Grid>
@@ -209,7 +225,7 @@ const UsersInfo = (props) => {
                 label="When is it used"
                 name="useWhen"
                 autoComplete="useWhen"
-                disabled={viewOnly}
+                onBlur={(e) => handleBlur(e, 'required', name)}
                 {...useWhen.bind}
               />
             </Grid>
@@ -224,7 +240,7 @@ const UsersInfo = (props) => {
                 label="What situations is it used in?"
                 name="useSituation"
                 autoComplete="useSituation"
-                disabled={viewOnly}
+                onBlur={(e) => handleBlur(e, 'required', name)}
                 {...useSituation.bind}
               />
             </Grid>
@@ -239,7 +255,7 @@ const UsersInfo = (props) => {
                 label="What will be the most important functionality"
                 name="impFunction"
                 autoComplete="impFunction"
-                disabled={viewOnly}
+                onBlur={(e) => handleBlur(e, 'required', name)}
                 {...impFunction.bind}
               />
             </Grid>
@@ -254,7 +270,7 @@ const UsersInfo = (props) => {
                 label="What’s the biggest risk to product delivery?"
                 name="deliveryRisk"
                 autoComplete="deliveryRisk"
-                disabled={viewOnly}
+                onBlur={(e) => handleBlur(e, 'required', name)}
                 {...deliveryRisk.bind}
               />
             </Grid>
@@ -262,11 +278,11 @@ const UsersInfo = (props) => {
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>
               <Button
+                type="button"
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={onBackClick}
-                // disabled={productFormData === null}
+                onClick={handleBack}
                 className={classes.submit}
               >
                 Back
@@ -274,14 +290,14 @@ const UsersInfo = (props) => {
             </Grid>
             <Grid item xs={12} sm={4}>
               <Button
+                type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={onNextClick}
                 disabled={submitDisabled()}
                 className={classes.submit}
               >
-                Save & Next
+                Next
               </Button>
             </Grid>
           </Grid>
@@ -293,6 +309,7 @@ const UsersInfo = (props) => {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  productFormData: state.productReducer.productFormData,
 });
 
-export default connect(mapStateToProps)(UsersInfo);
+export default connect(mapStateToProps)(UseInfo);
