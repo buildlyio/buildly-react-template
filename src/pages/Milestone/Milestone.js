@@ -24,7 +24,7 @@ import {
   clearMilestones,
   clearMilestonesHeadings, deleteMilestone,
   getMilestones,
-  getRepositories,
+  getRepositories, closeMilestones,
 } from '@redux/milestone/actions/milestone.actions';
 import { connect } from 'react-redux';
 
@@ -59,6 +59,7 @@ const Milestone = ({
   const [selectAllMilestones, setSelectAllMilestones] = useState(false);
 
   const [rows, setRows] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   const addMilestonePath = `${routes.MILESTONE}/add`;
   const editMilestonePath = `${routes.MILESTONE}/edit`;
@@ -215,7 +216,23 @@ const Milestone = ({
 
     setCurrentMilestone(null);
     setDeleteModalState(false);
+    if(!selectedMilestones.length) {
+      setSelectedRows([]);
+    }
   };
+
+  const closeMilestonesHandler = () => {
+    let milestonesToBeClosed = selectedRows.map((rowNumber) => ({
+      owner,
+      repository: rows[rowNumber].repository,
+      number: rows[rowNumber].number,
+      data: {
+        state: 'closed',
+      }
+    }));
+
+    dispatch(closeMilestones(milestonesToBeClosed));
+  }
 
   return (
     <div className={classes.root}>
@@ -370,7 +387,10 @@ const Milestone = ({
         columns={milestoneConstants || []}
         hideAddButton={false}
         onAddButtonClick={addMilestone}
+        hideAdditionalButton={!selectedRows.length}
+        additionalButtonHeading="Close"
         addButtonHeading="Add Milestone"
+        onAdditionalButtonClick={closeMilestonesHandler}
         tableHeader="Milestones"
         editAction={editMilestone}
         deleteAction={deleteConfirmationHandler}
@@ -378,6 +398,13 @@ const Milestone = ({
         setDeleteModal={setDeleteModalState}
         handleDeleteModal={deleteMilestoneHandler}
         deleteModalTitle="Are you sure you want to delete the milestone?"
+        selectable={{
+          rows: milestoneState === 'open' ? 'multiple' : 'none',
+        }}
+        onRowSelectChange={(selectedRows) => {
+          setSelectedRows(selectedRows);
+        }}
+        selected={selectedRows}
       >
         <Route path={`${addMilestonePath}`} component={MilestoneForm} />
         <Route path={`${editMilestonePath}/:id`} component={MilestoneForm} />

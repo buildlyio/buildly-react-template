@@ -12,6 +12,7 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
+  Close as CloseIcon,
 } from '@mui/icons-material';
 import Loader from '@components/Loader/Loader';
 import ConfirmModal from '@components/Modal/ConfirmModal';
@@ -52,6 +53,8 @@ const DataTableWrapper = ({
   filename,
   addButtonHeading,
   onAddButtonClick,
+  additionalButtonHeading,
+  onAdditionalButtonClick,
   children,
   editAction,
   deleteAction,
@@ -62,12 +65,14 @@ const DataTableWrapper = ({
   tableHeight,
   tableHeader,
   hideAddButton,
+  hideAdditionalButton,
   selectable,
   selected,
   customSort,
   noCustomTheme,
   noSpace,
   noOptionsIcon,
+  onRowSelectChange
 }) => {
   const classes = useStyles();
 
@@ -130,6 +135,9 @@ const DataTableWrapper = ({
     selectableRows: selectable && selectable.rows
       ? selectable.rows
       : 'none',
+    onRowSelectionChange: (currentRowsExpanded, allRowsExpanded, rowsExpanded) => {
+      onRowSelectChange(rowsExpanded);
+    },
     selectToolbarPlacement: 'none',
     selectableRowsHeader: selectable && selectable.rowsHeader
       ? selectable.rowsHeader
@@ -163,19 +171,33 @@ const DataTableWrapper = ({
     <Box mt={noSpace ? 0 : 5} mb={noSpace ? 0 : 5}>
       {loading && <Loader open={loading} />}
       <div>
-        {!hideAddButton && (
-          <Box mb={3} mt={2}>
+        <Box mb={3} mt={2}>
+          {!hideAddButton && (
             <Button
               type="button"
               variant="contained"
               color="primary"
               onClick={onAddButtonClick}
+              sx={{
+                marginRight: '16px',
+              }}
             >
               <AddIcon />
               {` ${addButtonHeading}`}
             </Button>
-          </Box>
-        )}
+          )}
+          {!hideAdditionalButton && (
+              <Button
+                  type="button"
+                  variant="outlined"
+                  color="error"
+                  onClick={onAdditionalButtonClick}
+              >
+                <CloseIcon />
+                {` ${additionalButtonHeading}`}
+              </Button>
+          )}
+        </Box>
         {tableHeader && (
           <Typography
             className={classes.dashboardHeading}

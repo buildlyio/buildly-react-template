@@ -27,6 +27,10 @@ export const DELETE_MILESTONE = 'MILESTONE/DELETE_MILESTONE';
 export const DELETE_MILESTONE_SUCCESS = 'MILESTONE/DELETE_MILESTONE_SUCCESS';
 export const DELETE_MILESTONE_FAIL = 'MILESTONE/DELETE_MILESTONE_FAIL';
 
+export const CLOSE_MILESTONES = 'MILESTONE/CLOSE_MILESTONES';
+export const CLOSE_MILESTONES_SUCCESS = 'MILESTONE/CLOSE_MILESTONES_SUCCESS';
+export const CLOSE_MILESTONES_FAIL = 'MILESTONE/CLOSE_MILESTONES_FAIL';
+
 /**
  * Get repositories data
  */
@@ -61,3 +65,8 @@ export const deleteMilestone = (data) => ({ type: DELETE_MILESTONE, data });
  * Edit Milestone
  */
 export const updateMilestone = (data) => ({ type: UPDATE_MILESTONE, data });
+
+/**
+ * Close Milestone
+ */
+export const closeMilestones = (data) => ({ type: CLOSE_MILESTONES, data });

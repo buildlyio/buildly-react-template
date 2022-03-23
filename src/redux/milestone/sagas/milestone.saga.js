@@ -25,7 +25,7 @@ import {
   GET_REPOSITORIES_SUCCESS,
   UPDATE_MILESTONE,
   UPDATE_MILESTONE_FAIL,
-  UPDATE_MILESTONE_SUCCESS,
+  UPDATE_MILESTONE_SUCCESS, CLOSE_MILESTONES, CLOSE_MILESTONES_SUCCESS, CLOSE_MILESTONES_FAIL,
 } from '../actions/milestone.actions';
 
 const headers = {
@@ -274,6 +274,53 @@ function* updateMilestone(payload) {
   }
 }
 
+function* closeMilestones(payload) {
+  try {
+    const { data: updateMilestones } = payload;
+    let milestones = [];
+
+    for(let i = 0; i < updateMilestones.length; i++) {
+      const { owner, repository, number, data } = updateMilestones[i];
+
+      milestones.push(yield call(
+          httpService.makeRequest,
+          'patch',
+          `${window.env.GITHUB_API_URL}/repos/${owner}/${repository}/milestones/${number}`,
+          data,
+          false,
+          null,
+          null,
+          headers,
+      ));
+    }
+
+    yield [
+      yield put({ type: CLOSE_MILESTONES_SUCCESS, data: { milestones } }),
+      yield put(
+          showAlert({
+            type: 'success',
+            open: true,
+            message: 'Milestone updated successfully!',
+          }),
+      ),
+    ];
+  } catch (error) {
+    yield [
+      yield put(
+          showAlert({
+            type: 'error',
+            open: true,
+            message: 'Couldn\'t update the milestone!',
+          }),
+      ),
+      yield put({
+        type: CLOSE_MILESTONES_FAIL,
+        error,
+      }),
+    ];
+  }
+}
+
 function* watchGetRepositories() {
   yield takeLatest(GET_REPOSITORIES, getRepositories);
 }
@@ -302,6 +349,10 @@ function* watchUpdateMilestone() {
   yield takeLatest(UPDATE_MILESTONE, updateMilestone);
 }
 
+function* watchCloseMilestones() {
+  yield takeLatest(CLOSE_MILESTONES, closeMilestones);
+}
+
 export default function* milestoneSaga() {
   yield all([
     watchGetRepositories(),
@@ -311,5 +362,6 @@ export default function* milestoneSaga() {
     watchCreateMilestone(),
     watchDeleteMilestone(),
     watchUpdateMilestone(),
+    watchCloseMilestones(),
   ]);
 }

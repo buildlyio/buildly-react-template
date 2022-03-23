@@ -4,7 +4,7 @@ import {
   CLEAR_MILESTONES_HEADINGS,
   CLEAR_MILESTONES_HEADINGS_FAIL,
   CLEAR_MILESTONES_HEADINGS_SUCCESS,
-  CLEAR_MILESTONES_SUCCESS,
+  CLEAR_MILESTONES_SUCCESS, CLOSE_MILESTONES_FAIL, CLOSE_MILESTONES_SUCCESS,
   CREATE_MILESTONE,
   CREATE_MILESTONE_FAIL,
   CREATE_MILESTONE_SUCCESS,
@@ -184,6 +184,31 @@ export default (state = initialState, action) => {
       };
     }
 
+    case CLOSE_MILESTONES_SUCCESS: {
+      const updatedMilestones = state.milestones.map((milestone) => {
+        for(let i = 0; i < action.data.milestones.length; i++) {
+          if(milestone.id === action.data.milestones[i].data.id) {
+            return action.data.milestones[i].data;
+          }
+        }
+
+        return milestone;
+      });
+
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: null,
+        milestones: updatedMilestones,
+        milestoneHeadings: [
+          ...new Set([
+            ...updatedMilestones.map(({ title }) => title),
+          ]),
+        ],
+      };
+    }
+
     case GET_REPOSITORIES_FAIL:
     case GET_MILESTONES_FAIL:
     case CLEAR_MILESTONES_FAIL:
@@ -191,6 +216,7 @@ export default (state = initialState, action) => {
     case CREATE_MILESTONE_FAIL:
     case DELETE_MILESTONE_FAIL:
     case UPDATE_MILESTONE_FAIL:
+    case CLOSE_MILESTONES_FAIL:
       return {
         ...state,
         loading: false,
