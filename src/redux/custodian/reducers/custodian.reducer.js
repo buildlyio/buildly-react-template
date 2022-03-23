@@ -1,3 +1,5 @@
+/* eslint-disable no-case-declarations */
+/* eslint-disable no-unused-expressions */
 import _ from 'lodash';
 import {
   GET_CUSTODIANS,
@@ -103,11 +105,12 @@ export default (state = initialState, action) => {
       };
 
     case ADD_CUSTODIANS_SUCCESS:
+      const custodianData = state.custodianData || [];
       return {
         ...state,
         loading: false,
         loaded: true,
-        custodianData: action.data,
+        custodianData: [...custodianData, action.data],
       };
 
     case ADD_CUSTODIANS_FAILURE:
@@ -127,11 +130,15 @@ export default (state = initialState, action) => {
       };
 
     case EDIT_CUSTODIANS_SUCCESS:
+      const editCustodian = _.filter(state.custodianData, (data) => {
+        data.id !== action.data.id;
+      });
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        custodianData: action.data,
+        custodianData: [...editCustodian, action.data],
         error: null,
       };
 
@@ -152,11 +159,15 @@ export default (state = initialState, action) => {
       };
 
     case UPDATE_CUSTODIAN_SUCCESS:
+      const updatedCustodian = _.filter(state.custodianData, (data) => (
+        data.id !== action.data.id
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        custodianData: action.data,
+        custodianData: [...updatedCustodian, action.data],
         error: null,
       };
 
@@ -176,11 +187,15 @@ export default (state = initialState, action) => {
       };
 
     case DELETE_CUSTODIANS_SUCCESS:
+      const deletedCustodian = _.filter(state.custodianData, (data) => (
+        data.id !== action.id
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        custodianData: action.data,
+        custodianData: [...deletedCustodian, action.data],
       };
 
     case DELETE_CUSTODIANS_FAILURE:
@@ -224,11 +239,12 @@ export default (state = initialState, action) => {
       };
 
     case ADD_CUSTODY_SUCCESS:
+      const data = state.custodyData || [];
       return {
         ...state,
         loading: true,
         loaded: true,
-        custodyData: action.data,
+        custodyData: [...data, action.data],
       };
 
     case ADD_CUSTODY_FAILURE:
@@ -248,11 +264,14 @@ export default (state = initialState, action) => {
       };
 
     case EDIT_CUSTODY_SUCCESS:
+      const edited = _.filter(state.custodyData, (custody) => (
+        custody.id !== action.data.id
+      ));
       return {
         ...state,
         loading: false,
         loaded: true,
-        custodyData: action.data,
+        custodyData: [...edited, action.data],
       };
 
     case EDIT_CUSTODY_FAILURE:
@@ -272,11 +291,15 @@ export default (state = initialState, action) => {
       };
 
     case UPDATE_CUSTODY_SUCCESS:
+      const updated = _.filter(state.custodyData, (custody) => (
+        custody.id !== action.data.id
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        custodyData: action.data,
+        custodyData: [...updated, action.data],
       };
 
     case UPDATE_CUSTODY_FAILURE:
@@ -296,11 +319,14 @@ export default (state = initialState, action) => {
       };
 
     case DELETE_CUSTODY_SUCCESS:
+      const deleted = _.filter(state.custodyData, (custody) => (
+        custody.id !== action.id
+      ));
       return {
         ...state,
         loading: false,
         loaded: true,
-        custodyData: action.data,
+        custodyData: deleted,
       };
 
     case DELETE_CUSTODY_FAILURE:

@@ -247,6 +247,7 @@ export const getAvailableGateways = (
     && _.filter(gatewayData, (gateway) => gateway.gateway_status === 'available'
       && gateway.gateway_type_value.toLowerCase().includes(gateway_type))
   );
+
   if (shipmentFormData.custody_info && shipmentFormData.custody_info.length > 0
     && shipmentFormData.first_custody !== null) {
     const firstCustodian = shipmentFormData.first_custody.custodian_data.custodian_uuid;

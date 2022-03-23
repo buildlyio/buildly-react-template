@@ -460,7 +460,7 @@ function* deleteCustody(payload) {
         getShipmentDetails(
           organization_uuid,
           'Planned,Enroute',
-          null,
+          shipmentId,
           false,
           true,
           'get',

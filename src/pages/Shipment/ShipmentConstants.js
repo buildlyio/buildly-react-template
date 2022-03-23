@@ -4,6 +4,9 @@ import moment from 'moment-timezone';
 import { numberWithCommas } from '@utils/utilMethods';
 import { Typography } from '@mui/material';
 import { Warning as WarningIcon } from '@mui/icons-material';
+import {
+  saveShipmentFormData,
+} from '@redux/shipment/actions/shipment.actions';
 
 export const MAP_TOOLTIP = 'Locations of the shipment from starting point till current time';
 
@@ -115,6 +118,8 @@ export const getFormattedRow = (
   itemData,
   custodyData,
   aggregateReportData,
+  shipmentFormData,
+  dispatch,
 ) => {
   let shipmentList = [];
   let custodyRows = [];
@@ -162,6 +167,9 @@ export const getFormattedRow = (
     editedShipment.custody_info = custodyInfo;
     editedShipment.first_custody = firstCustody;
 
+    if (shipmentFormData && shipmentFormData.id === editedShipment.id) {
+      dispatch(saveShipmentFormData(editedShipment));
+    }
     switch (_.lowerCase(shipment.status)) {
       case 'planned':
       case 'enroute':

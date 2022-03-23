@@ -114,6 +114,7 @@ const Shipment = (props) => {
     shipmentOptions,
     custodyOptions,
     timezone,
+    shipmentFormData,
   } = props;
   const classes = useStyles();
 
@@ -208,6 +209,8 @@ const Shipment = (props) => {
         itemData,
         custodyData,
         aggregateReportData,
+        shipmentFormData,
+        dispatch,
       );
       const ACTIVE_ROWS = _.filter(
         formattedRows,

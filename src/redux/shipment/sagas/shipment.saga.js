@@ -44,6 +44,7 @@ function* processShipments(payload, data) {
   } else {
     uuids = data.shipment_uuid;
   }
+
   if (payload.id && data.length > 0) {
     yield put(
       saveShipmentFormData(
