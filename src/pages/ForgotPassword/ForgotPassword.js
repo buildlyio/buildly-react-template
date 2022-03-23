@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ForgotPassword({ dispatch, loading, history }) {
+const ForgotPassword = ({ dispatch, loading, history }) => {
   const classes = useStyles();
   const email = useInput('', { required: true });
   const [error, setError] = useState({});
@@ -187,7 +187,7 @@ function ForgotPassword({ dispatch, loading, history }) {
       </Box>
     </Container>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,

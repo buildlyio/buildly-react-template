@@ -3,7 +3,7 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { AppContext } from '@context/App.context';
 
-function Copyright() {
+const Copyright = () => {
   const { title } = useContext(AppContext);
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -16,6 +16,6 @@ function Copyright() {
       .
     </Typography>
   );
-}
+};
 
 export default Copyright;

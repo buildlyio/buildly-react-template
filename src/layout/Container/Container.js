@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Container for the app layout when the user is authenticated.
  */
-function Container({ location, history }) {
+const Container = ({ location, history }) => {
   const classes = useStyles();
 
   return (
@@ -47,6 +47,6 @@ function Container({ location, history }) {
       </UserContext.Provider>
     </div>
   );
-}
+};
 
 export default Container;

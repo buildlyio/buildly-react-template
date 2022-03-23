@@ -15,33 +15,31 @@ import theme from './styles/theme';
 import Alert from './components/Alert/Alert';
 import { routes } from './routes/routesConstants';
 
-function App() {
-  return (
-    <Router>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <div className="app">
-            <CssBaseline />
-            <Route
-              exact
-              path="/"
-              render={() => (oauthService.hasValidAccessToken() ? (
-                <Redirect to={routes.DASHBOARD} />
-              ) : (
-                <Redirect to={routes.LOGIN} />
-              ))}
-            />
-            <Route path={routes.LOGIN} component={Login} />
-            <Route path={routes.REGISTER} component={Register} />
-            <Route path={routes.FORGOT_PASSWORD} component={ForgotPassword} />
-            <Route path={routes.RESET_PASSWORD} component={ResetPassword} />
-            <PrivateRoute path={routes.APP} component={ContainerDashboard} />
-          </div>
-          <Alert />
-        </ThemeProvider>
-      </StyledEngineProvider>
-    </Router>
-  );
-}
+const App = () => (
+  <Router>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <div className="app">
+          <CssBaseline />
+          <Route
+            exact
+            path="/"
+            render={() => (oauthService.hasValidAccessToken() ? (
+              <Redirect to={routes.DASHBOARD} />
+            ) : (
+              <Redirect to={routes.LOGIN} />
+            ))}
+          />
+          <Route path={routes.LOGIN} component={Login} />
+          <Route path={routes.REGISTER} component={Register} />
+          <Route path={routes.FORGOT_PASSWORD} component={ForgotPassword} />
+          <Route path={routes.RESET_PASSWORD} component={ResetPassword} />
+          <PrivateRoute path={routes.APP} component={ContainerDashboard} />
+        </div>
+        <Alert />
+      </ThemeProvider>
+    </StyledEngineProvider>
+  </Router>
+);
 
 export default hot(module)(App);
