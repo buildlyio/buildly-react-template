@@ -341,7 +341,6 @@ function* addCustody(action) {
                 'get',
               ),
             ),
-            // yield put(getCustody(payload.shipment_id)),
             yield put(
               showAlert({
                 type: 'success',

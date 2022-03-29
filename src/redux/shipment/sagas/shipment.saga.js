@@ -31,8 +31,6 @@ import {
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
 } from '../actions/shipment.actions';
-import { GET_AGGREGATE_REPORT_SUCCESS, EDIT_GATEWAY_SUCCESS } from '../../sensorsGateway/actions/sensorsGateway.actions';
-import { GET_CUSTODY_SUCCESS } from '../../custodian/actions/custodian.actions';
 
 const shipmentApiEndPoint = 'shipment/';
 
@@ -64,12 +62,8 @@ function* processShipments(payload, data) {
     yield [
       yield put(getCustody(encodedUUIDs)),
     ];
-  } else {
-    yield put({
-      type: GET_CUSTODY_SUCCESS,
-      data: [],
-    });
   }
+
   // Fetch new aggregate reports
   const IDS = _.map(data, 'partner_shipment_id');
   const ids = _.toString(_.without(IDS, null));
@@ -78,11 +72,6 @@ function* processShipments(payload, data) {
     yield [
       yield put(getAggregateReport(encodedIds)),
     ];
-  } else {
-    yield put({
-      type: GET_AGGREGATE_REPORT_SUCCESS,
-      data: [],
-    });
   }
 }
 
