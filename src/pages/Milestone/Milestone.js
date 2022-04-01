@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(5),
     paddingTop: 0,
+    overflowX: 'hidden',
   },
   link: {
     color: theme.palette.primary.main,
@@ -242,183 +243,185 @@ const Milestone = ({
   }
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={2}>
-        <Grid item xs={2}>
-          <TextField
-            id="Owner"
-            label="Owner"
-            variant="outlined"
-            value={owner}
-            fullWidth
-            {...ownerInput.bind}
-            onBlur={() => setOwner(ownerInput.value)}
-          />
-        </Grid>
-        <Grid item xs={3}>
-          <FormControl sx={{ width: 1 }}>
-            <InputLabel id="select-repositories">
-              Repositories
-            </InputLabel>
-            <Select
-              labelId="select-repositories"
-              id="repositories"
-              multiple
-              value={selectedRepositories}
-              onChange={selectedRepositoriesHandler}
-              input={(
-                <OutlinedInput
-                  id="select-multiple-repositories"
-                  label="Repositories"
-                />
-      )}
-              renderValue={(selected) => (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: 0.5,
-                  }}
-                >
-                  { selected.map((value) => (
-                    <Chip key={value} label={value} />
-                  )) }
-                </Box>
-              )}
-            >
-              <MenuItem key={null} value={null} disabled>
-                { repositories.length ? 'Select Repositories' : 'No repositories available.' }
-              </MenuItem>
-              {
-                repositories.length
-                  && (
-                  <MenuItem key="Select All" value="select-all">
-                    <Checkbox checked={selectAllRepositories} />
-                    Select All
-                  </MenuItem>
-                  )
-              }
-              { repositories.map((name) => (
-                <MenuItem key={name} value={name}>
-                  <Checkbox checked={selectedRepositories.indexOf(name) > -1} />
-                  { name }
-                </MenuItem>
-              )) }
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={3}>
-          <FormControl sx={{ width: 1 }}>
-            <InputLabel id="select-milestones">
-              Milestone(s)
-            </InputLabel>
-            <Select
-              labelId="select-milestones"
-              id="milestones"
-              multiple
-              value={selectedMilestones}
-              onChange={selectedMilestonesHandler}
-              input={(
-                <OutlinedInput
-                  id="select-multiple-milestones"
-                  label="Milestone(s)"
-                />
-      )}
-              renderValue={(selected) => (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: 0.5,
-                  }}
-                >
-                  { selected.map((value) => (
-                    <Chip key={value} label={value} />
-                  )) }
-                </Box>
-              )}
-            >
-              <MenuItem key={null} value={null} disabled>
-                { milestoneHeadings.length ? 'Select Milestone(s)' : 'No milestones available.' }
-              </MenuItem>
-              {
-                  milestoneHeadings.length
-                  && (
-                  <MenuItem key="Select All" value="select-all">
-                    <Checkbox checked={selectAllMilestones} />
-                    Select All
-                  </MenuItem>
-                  )
-              }
-              { milestoneHeadings.map((name) => (
-                <MenuItem key={name} value={name}>
-                  <Checkbox checked={selectedMilestones.indexOf(name) > -1} />
-                  { name }
-                </MenuItem>
-              )) }
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={2}>
-          <FormGroup>
-            <FormControlLabel
-              control={(
-                <Checkbox
-                  onChange={(event) => {
-                    setMilestoneState(
-                      event.target.checked
-                        ? 'closed'
-                        : 'open',
-                    );
-
-                    setSelectedMilestones([]);
-                  }}
-                />
-      )}
-              label="Closed Milestones"
+    <Grid container alignItems="center" className={classes.root}>
+      <Grid item xs={12} >
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={6} xl={2}>
+            <TextField
+                id="Owner"
+                label="Owner"
+                variant="outlined"
+                value={owner}
+                fullWidth
+                {...ownerInput.bind}
+                onBlur={() => setOwner(ownerInput.value)}
             />
-          </FormGroup>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} xl={3}>
+            <FormControl sx={{ width: 1 }}>
+              <InputLabel id="select-repositories">
+                Repositories
+              </InputLabel>
+              <Select
+                  labelId="select-repositories"
+                  id="repositories"
+                  multiple
+                  value={selectedRepositories}
+                  onChange={selectedRepositoriesHandler}
+                  input={(
+                      <OutlinedInput
+                          id="select-multiple-repositories"
+                          label="Repositories"
+                      />
+                  )}
+                  renderValue={(selected) => (
+                      <Box
+                          sx={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: 0.5,
+                          }}
+                      >
+                        { selected.map((value) => (
+                            <Chip key={value} label={value} />
+                        )) }
+                      </Box>
+                  )}
+              >
+                <MenuItem key={null} value={null} disabled>
+                  { repositories.length ? 'Select Repositories' : 'No repositories available.' }
+                </MenuItem>
+                {
+                    repositories.length
+                    && (
+                        <MenuItem key="Select All" value="select-all">
+                          <Checkbox checked={selectAllRepositories} />
+                          Select All
+                        </MenuItem>
+                    )
+                }
+                { repositories.map((name) => (
+                    <MenuItem key={name} value={name}>
+                      <Checkbox checked={selectedRepositories.indexOf(name) > -1} />
+                      { name }
+                    </MenuItem>
+                )) }
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} xl={3}>
+            <FormControl sx={{ width: 1 }}>
+              <InputLabel id="select-milestones">
+                Milestone(s)
+              </InputLabel>
+              <Select
+                  labelId="select-milestones"
+                  id="milestones"
+                  multiple
+                  value={selectedMilestones}
+                  onChange={selectedMilestonesHandler}
+                  input={(
+                      <OutlinedInput
+                          id="select-multiple-milestones"
+                          label="Milestone(s)"
+                      />
+                  )}
+                  renderValue={(selected) => (
+                      <Box
+                          sx={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: 0.5,
+                          }}
+                      >
+                        { selected.map((value) => (
+                            <Chip key={value} label={value} />
+                        )) }
+                      </Box>
+                  )}
+              >
+                <MenuItem key={null} value={null} disabled>
+                  { milestoneHeadings.length ? 'Select Milestone(s)' : 'No milestones available.' }
+                </MenuItem>
+                {
+                    milestoneHeadings.length
+                    && (
+                        <MenuItem key="Select All" value="select-all">
+                          <Checkbox checked={selectAllMilestones} />
+                          Select All
+                        </MenuItem>
+                    )
+                }
+                { milestoneHeadings.map((name) => (
+                    <MenuItem key={name} value={name}>
+                      <Checkbox checked={selectedMilestones.indexOf(name) > -1} />
+                      { name }
+                    </MenuItem>
+                )) }
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={8} sm={4} md={4} xl={2}>
+            <FormGroup>
+              <FormControlLabel
+                  control={(
+                      <Checkbox
+                          onChange={(event) => {
+                            setMilestoneState(
+                                event.target.checked
+                                    ? 'closed'
+                                    : 'open',
+                            );
+
+                            setSelectedMilestones([]);
+                          }}
+                      />
+                  )}
+                  label="Closed Milestones"
+              />
+            </FormGroup>
+          </Grid>
+          <Grid item xs={4} sm={2} md={2} xl={2} textAlign="end" >
+            <Button
+                type="button"
+                variant="contained"
+                color="primary"
+                onClick={refreshMilestones}
+            >
+              Refresh
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={2}>
-          <Button
-            type="button"
-            variant="contained"
-            color="primary"
-            onClick={refreshMilestones}
-          >
-            Refresh
-          </Button>
-        </Grid>
+        <DataTableWrapper
+            loading={loading}
+            rows={rows || []}
+            columns={milestoneConstants || []}
+            hideAddButton={false}
+            onAddButtonClick={addMilestone}
+            hideAdditionalButton={!selectedRows.length}
+            additionalButtonHeading="Close"
+            addButtonHeading="Add Milestone"
+            onAdditionalButtonClick={closeMilestonesHandler}
+            tableHeader="Milestones"
+            editAction={editMilestone}
+            deleteAction={deleteConfirmationHandler}
+            openDeleteModal={deleteModalState}
+            setDeleteModal={setDeleteModalState}
+            handleDeleteModal={deleteMilestoneHandler}
+            deleteModalTitle="Are you sure you want to delete the milestone?"
+            selectable={{
+              rows: milestoneState === 'open' ? 'multiple' : 'none',
+            }}
+            onRowSelectChange={(selectedRows) => {
+              setSelectedRows(selectedRows);
+            }}
+            selected={selectedRows}
+        >
+          <Route path={`${addMilestonePath}`} render={(props) => <MilestoneForm refresh={refreshMilestones} loading={loading} history={history} repositories={repositories} dispatch={dispatch} {...props} />}/>
+          <Route path={`${editMilestonePath}/:id`} component={MilestoneForm} />
+        </DataTableWrapper>
       </Grid>
-      <DataTableWrapper
-        loading={loading}
-        rows={rows || []}
-        columns={milestoneConstants || []}
-        hideAddButton={false}
-        onAddButtonClick={addMilestone}
-        hideAdditionalButton={!selectedRows.length}
-        additionalButtonHeading="Close"
-        addButtonHeading="Add Milestone"
-        onAdditionalButtonClick={closeMilestonesHandler}
-        tableHeader="Milestones"
-        editAction={editMilestone}
-        deleteAction={deleteConfirmationHandler}
-        openDeleteModal={deleteModalState}
-        setDeleteModal={setDeleteModalState}
-        handleDeleteModal={deleteMilestoneHandler}
-        deleteModalTitle="Are you sure you want to delete the milestone?"
-        selectable={{
-          rows: milestoneState === 'open' ? 'multiple' : 'none',
-        }}
-        onRowSelectChange={(selectedRows) => {
-          setSelectedRows(selectedRows);
-        }}
-        selected={selectedRows}
-      >
-        <Route path={`${addMilestonePath}`} render={(props) => <MilestoneForm refresh={refreshMilestones} loading={loading} history={history} repositories={repositories} dispatch={dispatch} {...props} />}/>
-        <Route path={`${editMilestonePath}/:id`} component={MilestoneForm} />
-      </DataTableWrapper>
-    </div>
+    </Grid>
   );
 };
 
