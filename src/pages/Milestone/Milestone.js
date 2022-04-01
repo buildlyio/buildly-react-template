@@ -246,7 +246,7 @@ const Milestone = ({
     <Grid container alignItems="center" className={classes.root}>
       <Grid item xs={12} >
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={6} xl={2}>
+          <Grid item xs={12} sm={6} xl={2}>
             <TextField
                 id="Owner"
                 label="Owner"
@@ -257,7 +257,7 @@ const Milestone = ({
                 onBlur={() => setOwner(ownerInput.value)}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={6} xl={3}>
+          <Grid item xs={12} sm={6} xl={3}>
             <FormControl sx={{ width: 1 }}>
               <InputLabel id="select-repositories">
                 Repositories
@@ -309,7 +309,7 @@ const Milestone = ({
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={6} md={6} xl={3}>
+          <Grid item xs={12} sm={6} xl={3}>
             <FormControl sx={{ width: 1 }}>
               <InputLabel id="select-milestones">
                 Milestone(s)
@@ -361,7 +361,7 @@ const Milestone = ({
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={8} sm={4} md={4} xl={2}>
+          <Grid item xs={8} sm={4} xl={2}>
             <FormGroup>
               <FormControlLabel
                   control={(
@@ -381,7 +381,7 @@ const Milestone = ({
               />
             </FormGroup>
           </Grid>
-          <Grid item xs={4} sm={2} md={2} xl={2} textAlign="end" >
+          <Grid item xs={4} sm={2} xl={2} textAlign="end" >
             <Button
                 type="button"
                 variant="contained"
