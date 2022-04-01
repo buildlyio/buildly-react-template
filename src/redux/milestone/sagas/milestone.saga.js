@@ -143,7 +143,7 @@ function* clearMilestonesHeadings() {
 
 function* createMilestone(payload) {
   try {
-    const { owner, repositories, data } = payload.data;
+    const { owner, repositories, data, refresh } = payload.data;
 
     const milestones = [];
     for (let i = 0; i < repositories.length; i += 1) {
@@ -160,6 +160,8 @@ function* createMilestone(payload) {
 
       milestones.push(milestone.data);
     }
+
+    yield call(refresh);
 
     yield [
       yield put({ type: CREATE_MILESTONE_SUCCESS, data: { milestones } }),

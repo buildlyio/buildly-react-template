@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MilestoneForm = ({
-  loading, location, history, repositories, dispatch,
+  loading, location, history, repositories, dispatch, refresh
 }) => {
   const classes = useStyles();
 
@@ -201,7 +201,7 @@ const MilestoneForm = ({
 
     if (!isEditPage) {
       dispatch(createMilestone({
-        owner, repositories: selectedRepositories, data,
+        owner, repositories: selectedRepositories, data, refresh
       }));
     } else {
       dispatch(updateMilestone({

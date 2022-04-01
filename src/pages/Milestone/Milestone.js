@@ -237,6 +237,8 @@ const Milestone = ({
     }));
 
     dispatch(closeMilestones(milestonesToBeClosed));
+
+    setSelectedRows([]);
   }
 
   return (
@@ -413,7 +415,7 @@ const Milestone = ({
         }}
         selected={selectedRows}
       >
-        <Route path={`${addMilestonePath}`} component={MilestoneForm} />
+        <Route path={`${addMilestonePath}`} render={(props) => <MilestoneForm refresh={refreshMilestones} loading={loading} history={history} repositories={repositories} dispatch={dispatch} {...props} />}/>
         <Route path={`${editMilestonePath}/:id`} component={MilestoneForm} />
       </DataTableWrapper>
     </div>
