@@ -12,10 +12,10 @@ import {
   MoreHoriz,
   Add as AddIcon,
 } from '@mui/icons-material';
-import { InlineEditor } from '@components/InlineEditor/InlineEditor';
-import { PermissionsTable } from '@components/PermissionsTable/PermissionsTable';
-import { UserContext } from '@context/User.context';
-import Crud from '@modules/crud/Crud';
+import { InlineEditor } from '../../../components/InlineEditor/InlineEditor';
+import { PermissionsTable } from '../../../components/PermissionsTable/PermissionsTable';
+import { UserContext } from '../../../context/User.context';
+import Crud from '../../../modules/crud/Crud';
 
 const useStyles = makeStyles((theme) => ({
   addButton: {

@@ -19,11 +19,11 @@ import {
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   CheckBox as CheckBoxIcon,
 } from '@mui/icons-material';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '@context/User.context';
-import { getFormattedRow } from '@pages/Items/ItemsConstants';
-import { editShipment } from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
+import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../context/User.context';
+import { getFormattedRow } from '../../../pages/Items/ItemsConstants';
+import { editShipment } from '../../../redux/shipment/actions/shipment.actions';
+import { routes } from '../../../routes/routesConstants';
 import { itemColumns } from '../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({

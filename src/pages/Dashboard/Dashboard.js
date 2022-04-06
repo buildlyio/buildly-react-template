@@ -12,32 +12,32 @@ import {
   ViewCompact as ViewCompactIcon,
   Apps as AppsIcon,
 } from '@mui/icons-material';
-import Loader from '@components/Loader/Loader';
-import { MapComponent } from '@components/MapComponent/MapComponent';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
+import Loader from '../../components/Loader/Loader';
+import { MapComponent } from '../../components/MapComponent/MapComponent';
+import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
+import CustomizedTooltips from '../../components/ToolTip/ToolTip';
+import { UserContext } from '../../context/User.context';
 import {
   getShipmentDetails,
   getDashboardItems,
-} from '@redux/shipment/actions/shipment.actions';
+} from '../../redux/shipment/actions/shipment.actions';
 import {
   getCustodians,
   getCustodianType,
   getContact,
-} from '@redux/custodian/actions/custodian.actions';
+} from '../../redux/custodian/actions/custodian.actions';
 import {
   getItems,
   getItemType,
   getUnitsOfMeasure,
-} from '@redux/items/actions/items.actions';
+} from '../../redux/items/actions/items.actions';
 import {
   getGateways,
   getGatewayType,
   getSensors,
   getSensorType,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { numberWithCommas } from '@utils/utilMethods';
+} from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
+import { numberWithCommas } from '../../utils/utilMethods';
 import {
   recallColumns,
   delayColumns,

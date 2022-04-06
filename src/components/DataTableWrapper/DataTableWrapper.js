@@ -13,8 +13,8 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
 } from '@mui/icons-material';
-import Loader from '@components/Loader/Loader';
-import ConfirmModal from '@components/Modal/ConfirmModal';
+import Loader from '../Loader/Loader';
+import ConfirmModal from '../Modal/ConfirmModal';
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {

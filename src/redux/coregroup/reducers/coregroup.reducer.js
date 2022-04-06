@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
-import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
+import { addAll, deleteOne, upsertOne } from '../../reducer.utils';
 import {
   CREATE_COREGROUP_COMMIT,
   DELETE_COREGROUP_COMMIT,
   LOAD_DATA_COREGROUP_COMMIT,
   UPDATE_COREGROUP_COMMIT,
-} from '@redux/coregroup/actions/coregroup.actions';
+} from '../actions/coregroup.actions';
 
 const initialState = {
   data: [],

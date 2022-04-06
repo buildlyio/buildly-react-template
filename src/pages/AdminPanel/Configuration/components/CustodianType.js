@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import {
   getCustodianType,
   deleteCustodianType,
-} from '@redux/custodian/actions/custodian.actions';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { routes } from '@routes/routesConstants';
+} from '../../../../redux/custodian/actions/custodian.actions';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
+import { routes } from '../../../../routes/routesConstants';
 import { getColumns } from '../ConfigurationConstants';
 import AddCustodianType from '../forms/AddCustodianType';
 

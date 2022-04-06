@@ -8,9 +8,9 @@ import {
   Button,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import FormModal from '@components/Modal/FormModal';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import Loader from '@components/Loader/Loader';
+import FormModal from '../../../../components/Modal/FormModal';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
+import Loader from '../../../../components/Loader/Loader';
 import AddCustodyForm, {
   checkIfCustodianInfoEdited,
 } from './AddCustodyForm';
@@ -20,7 +20,7 @@ import {
 } from '../../ShipmentConstants';
 import {
   deleteCustody,
-} from '@redux/custodian/actions/custodian.actions';
+} from '../../../../redux/custodian/actions/custodian.actions';
 
 const useStyles = makeStyles((theme) => ({
   buttonContainer: {

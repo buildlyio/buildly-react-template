@@ -14,19 +14,19 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import FormModal from '@components/Modal/FormModal';
-import { UserContext } from '@context/User.context';
-import { useInput } from '@hooks/useInput';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import FormModal from '../../../components/Modal/FormModal';
+import { UserContext } from '../../../context/User.context';
+import { useInput } from '../../../hooks/useInput';
 import {
   addCustodians,
   editCustodian,
-} from '@redux/custodian/actions/custodian.actions';
+} from '../../../redux/custodian/actions/custodian.actions';
 import {
   STATE_CHOICES,
   COUNTRY_CHOICES,
-} from '@utils/mock';
-import { validators } from '@utils/validators';
+} from '../../../utils/mock';
+import { validators } from '../../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   root: {

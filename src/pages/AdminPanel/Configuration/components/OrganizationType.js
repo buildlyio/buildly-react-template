@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import {
   getOrgTypes,
   deleteOrgType,
-} from '@redux/authuser/actions/authuser.actions';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { routes } from '@routes/routesConstants';
+} from '../../../../redux/authuser/actions/authuser.actions';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
+import { routes } from '../../../../routes/routesConstants';
 import { getColumns } from '../ConfigurationConstants';
 import AddOrganizationType from '../forms/AddOrganizationType';
 

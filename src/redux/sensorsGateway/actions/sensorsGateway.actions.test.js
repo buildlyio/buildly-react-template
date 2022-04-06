@@ -244,7 +244,7 @@ describe('Get Sensor Alerts action', () => {
   it('should create an action to get sensor alerts', () => {
     const partnerShipmentIds = ['1', '2', '3'];
     const expectedAction = {
-      type: actions.GET_SENSOR_ALERTS,
+      type: actions.GET_ALL_SENSOR_ALERTS,
       partnerShipmentIds,
     };
     expect(actions.getAllSensorAlerts(partnerShipmentIds))

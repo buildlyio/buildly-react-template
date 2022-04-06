@@ -18,39 +18,39 @@ import {
   ViewComfy as ViewComfyIcon,
   ViewCompact as ViewCompactIcon,
 } from '@mui/icons-material';
-import Loader from '@components/Loader/Loader';
-import { MapComponent } from '@components/MapComponent/MapComponent';
-import ConfirmModal from '@components/Modal/ConfirmModal';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
-import SensorReport from '@pages/Reporting/components/SensorReport';
+import Loader from '../../components/Loader/Loader';
+import { MapComponent } from '../../components/MapComponent/MapComponent';
+import ConfirmModal from '../../components/Modal/ConfirmModal';
+import CustomizedTooltips from '../../components/ToolTip/ToolTip';
+import { UserContext } from '../../context/User.context';
+import SensorReport from '../../pages/Reporting/components/SensorReport';
 import {
   getCustodians,
   getCustodianType,
   getContact,
   getCustody,
-} from '@redux/custodian/actions/custodian.actions';
+} from '../../redux/custodian/actions/custodian.actions';
 import {
   getItems,
   getItemType,
   getUnitsOfMeasure,
-} from '@redux/items/actions/items.actions';
+} from '../../redux/items/actions/items.actions';
 import {
   getCustodyOptions,
   getShipmentOptions,
-} from '@redux/options/actions/options.actions';
+} from '../../redux/options/actions/options.actions';
 import {
   getGateways,
   getGatewayType,
   getSensors,
   getSensorType,
   getAggregateReport,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+} from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
   deleteShipment,
-} from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../redux/shipment/actions/shipment.actions';
+import { routes } from '../../routes/routesConstants';
 import {
   getFormattedRow,
   MAP_TOOLTIP,

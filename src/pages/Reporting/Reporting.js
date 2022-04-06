@@ -17,29 +17,29 @@ import {
   ViewComfy as ViewComfyIcon,
   ViewCompact as ViewCompactIcon,
 } from '@mui/icons-material';
-import GraphComponent from '@components/GraphComponent/GraphComponent';
-import Loader from '@components/Loader/Loader';
-import { MapComponent } from '@components/MapComponent/MapComponent';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
+import GraphComponent from '../../components/GraphComponent/GraphComponent';
+import Loader from '../../components/Loader/Loader';
+import { MapComponent } from '../../components/MapComponent/MapComponent';
+import CustomizedTooltips from '../../components/ToolTip/ToolTip';
+import { UserContext } from '../../context/User.context';
 import {
   getCustodians,
   getCustodianType,
   getContact,
   getCustody,
-} from '@redux/custodian/actions/custodian.actions';
+} from '../../redux/custodian/actions/custodian.actions';
 import {
   getSensors,
   getSensorType,
   getAllSensorAlerts,
   getAggregateReport,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+} from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
-} from '@redux/shipment/actions/shipment.actions';
+} from '../../redux/shipment/actions/shipment.actions';
 import {
   getUnitsOfMeasure,
-} from '@redux/items/actions/items.actions';
+} from '../../redux/items/actions/items.actions';
 import AlertsReport from './components/AlertsReport';
 import SensorReport from './components/SensorReport';
 import {

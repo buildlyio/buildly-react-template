@@ -5,9 +5,9 @@ import { connect } from 'react-redux';
 import addNotification from 'react-push-notification';
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { AppContext } from '@context/App.context';
-import { oauthService } from '@modules/oauth/oauth.service';
-import { showAlert } from '@redux/alert/actions/alert.actions';
+import { AppContext } from './context/App.context';
+import { oauthService } from './modules/oauth/oauth.service';
+import { showAlert } from './redux/alert/actions/alert.actions';
 
 const PushNotification = ({ dispatch, loaded }) => {
   const [alerts, setAlerts] = useState([]);

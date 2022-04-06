@@ -13,13 +13,13 @@ import {
   MenuItem,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import FormModal from '@components/Modal/FormModal';
-import { useInput } from '@hooks/useInput';
-import { validators } from '@utils/validators';
+import FormModal from '../../../../components/Modal/FormModal';
+import { useInput } from '../../../../hooks/useInput';
+import { validators } from '../../../../utils/validators';
 import {
   addUnitsOfMeasure,
   editUnitsOfMeasure,
-} from '@redux/items/actions/items.actions';
+} from '../../../../redux/items/actions/items.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {

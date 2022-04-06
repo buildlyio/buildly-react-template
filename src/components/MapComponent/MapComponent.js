@@ -14,7 +14,7 @@ import _ from 'lodash';
 import {
   REPORT_TYPES,
   getIcon,
-} from '@pages/Reporting/ReportingConstants';
+} from '../../pages/Reporting/ReportingConstants';
 
 export const MapComponent = (props) => {
   const {

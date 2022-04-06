@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '@context/User.context';
+import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../context/User.context';
 import {
   getSensors,
   getSensorType,
   deleteSensor,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+} from '../../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getSensorOptions,
-} from '@redux/options/actions/options.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../../redux/options/actions/options.actions';
+import { routes } from '../../../routes/routesConstants';
 import { sensorsColumns, getFormattedSensorRow } from '../Constants';
 import AddSensors from '../forms/AddSensors';
 

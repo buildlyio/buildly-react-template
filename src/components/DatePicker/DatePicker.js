@@ -6,7 +6,7 @@ import {
   DateTimePicker,
   LocalizationProvider,
 } from '@mui/lab';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
+import CustomizedTooltips from '../../components/ToolTip/ToolTip';
 import { TextField } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({

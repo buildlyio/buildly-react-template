@@ -1,4 +1,4 @@
-import { httpService } from '@modules/http/http.service';
+import { httpService } from '../../../modules/http/http.service';
 
 // Options Actions Types
 export const SET_TIMEZONE = 'OPTIONS/SET_TIMEZONE';

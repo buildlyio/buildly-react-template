@@ -15,18 +15,18 @@ import {
   Typography,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import DatePickerComponent from '@components/DatePicker/DatePicker';
-import { MapComponent } from '@components/MapComponent/MapComponent';
-import FormModal from '@components/Modal/FormModal';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
-import { useInput } from '@hooks/useInput';
+import DatePickerComponent from '../../../components/DatePicker/DatePicker';
+import { MapComponent } from '../../../components/MapComponent/MapComponent';
+import FormModal from '../../../components/Modal/FormModal';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import { UserContext } from '../../../context/User.context';
+import { useInput } from '../../../hooks/useInput';
 import {
   addGateway,
   editGateway,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { validators } from '@utils/validators';
-import { getFormattedRow } from '@pages/Custodians/CustodianConstants';
+} from '../../../redux/sensorsGateway/actions/sensorsGateway.actions';
+import { validators } from '../../../utils/validators';
+import { getFormattedRow } from '../../../pages/Custodians/CustodianConstants';
 import { GATEWAY_STATUS } from '../Constants';
 
 const useStyles = makeStyles((theme) => ({

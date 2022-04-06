@@ -98,7 +98,6 @@ export default (state = initialState, action) => {
     case EDIT_CUSTODIAN_TYPE_FAILURE:
     case DELETE_CUSTODIAN_TYPE_FAILURE:
     case GET_CONTACT_FAILURE:
-      console.log('Error: ', action.error);
       return {
         ...state,
         loading: false,

@@ -11,11 +11,11 @@ import {
   MenuItem,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import FormModal from '@components/Modal/FormModal';
-import { useInput } from '@hooks/useInput';
+import FormModal from '../../../../components/Modal/FormModal';
+import { useInput } from '../../../../hooks/useInput';
 import {
   updateCustodian,
-} from '@redux/custodian/actions/custodian.actions';
+} from '../../../../redux/custodian/actions/custodian.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {

@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
 import {
   MAPPING_TOOLTIP,
   CONSORTIUM_TOOLTIP,

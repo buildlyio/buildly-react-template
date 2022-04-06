@@ -10,10 +10,10 @@ import {
   MenuItem,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import Loader from '@components/Loader/Loader';
+import Loader from '../../../../components/Loader/Loader';
 import {
   updateOrganization,
-} from '@redux/authuser/actions/authuser.actions';
+} from '../../../../redux/authuser/actions/authuser.actions';
 
 const useStyles = makeStyles((theme) => ({
   root: {

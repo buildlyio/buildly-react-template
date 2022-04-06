@@ -12,7 +12,7 @@ import {
   Avatar,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { routes } from '@routes/routesConstants';
+import { routes } from '../../routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({
   pageHeading: {

@@ -41,7 +41,7 @@ describe('Get Shipment Details reducer', () => {
       ...initialState,
       loaded: true,
       loading: false,
-      shipmentData: undefined,
+      shipmentData: [undefined],
     });
   });
 

@@ -14,22 +14,22 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import DatePickerComponent from '@components/DatePicker/DatePicker';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
-import { useInput } from '@hooks/useInput';
+import DatePickerComponent from '../../../components/DatePicker/DatePicker';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import { UserContext } from '../../../context/User.context';
+import { useInput } from '../../../hooks/useInput';
 import {
   editShipment,
   addShipment,
   saveShipmentFormData,
-} from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../../redux/shipment/actions/shipment.actions';
+import { routes } from '../../../routes/routesConstants';
 import {
   SHIPMENT_STATUS,
   TRANSPORT_MODE,
-} from '@utils/mock';
-import { setOptionsData } from '@utils/utilMethods';
-import { validators } from '@utils/validators';
+} from '../../../utils/mock';
+import { setOptionsData } from '../../../utils/utilMethods';
+import { validators } from '../../../utils/validators';
 import ShipmentRouteInfo from './ShipmentRouteInfo';
 
 const useStyles = makeStyles((theme) => ({

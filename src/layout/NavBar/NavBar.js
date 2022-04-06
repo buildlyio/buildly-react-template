@@ -11,7 +11,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { isMobile } from '@utils/mediaQuery';
+import { isMobile } from '../../utils/mediaQuery';
 import { NAVIGATION_ITEMS } from './NavBarConstants';
 
 const useStyles = makeStyles((theme) => ({

@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import CloseIcon from '@mui/icons-material/Close';
-import { hideAlert } from '@redux/alert/actions/alert.actions';
+import { hideAlert } from '../../redux/alert/actions/alert.actions';
 
 const useStyles = makeStyles((theme) => ({
   root: {

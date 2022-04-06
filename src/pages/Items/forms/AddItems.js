@@ -16,12 +16,12 @@ import {
   Autocomplete,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import FormModal from '@components/Modal/FormModal';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
-import { useInput } from '@hooks/useInput';
-import { editItem, addItem } from '@redux/items/actions/items.actions';
-import { validators } from '@utils/validators';
+import FormModal from '../../../components/Modal/FormModal';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import { UserContext } from '../../../context/User.context';
+import { useInput } from '../../../hooks/useInput';
+import { editItem, addItem } from '../../../redux/items/actions/items.actions';
+import { validators } from '../../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   form: {

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
+import { addAll, deleteOne, upsertOne } from '../reducer.utils';
 import {
   CREATE_COREUSER_COMMIT,
   DELETE_COREUSER_COMMIT,

@@ -13,8 +13,8 @@ import {
   Delete as DeleteIcon,
   FileCopy as FileCopyIcon,
 } from '@mui/icons-material';
-import { UserContext } from '@context/User.context';
-import { checkForGlobalAdmin } from '@utils/utilMethods';
+import { UserContext } from '../../../context/User.context';
+import { checkForGlobalAdmin } from '../../../utils/utilMethods';
 import { getShipmentDataTableColumns } from '../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({

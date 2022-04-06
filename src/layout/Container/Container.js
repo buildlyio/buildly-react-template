@@ -6,23 +6,23 @@ import { makeStyles } from '@mui/styles';
 import {
   UserContext,
   getUser,
-} from '@context/User.context';
-import NavBar from '@layout/NavBar/NavBar';
-import TopBar from '@layout/TopBar/TopBar';
-import Custodians from '@pages/Custodians/Custodians';
-import UserManagement from '@pages/UserManagement/UserManagement';
-import MyAccount from '@pages/MyAccount/MyAccount';
-import Items from '@pages/Items/Items';
-import SensorsGateway from '@pages/SensorsGateway/SensorsGateway';
-import Shipment from '@pages/Shipment/Shipment';
-import Reporting from '@pages/Reporting/Reporting';
-import AdminPanel from '@pages/AdminPanel/AdminPanel';
-import { routes } from '@routes/routesConstants';
+} from '../../context/User.context';
+import NavBar from '../NavBar/NavBar';
+import TopBar from '../TopBar/TopBar';
+import Custodians from '../../pages/Custodians/Custodians';
+import UserManagement from '../../pages/UserManagement/UserManagement';
+import MyAccount from '../../pages/MyAccount/MyAccount';
+import Items from '../../pages/Items/Items';
+import SensorsGateway from '../../pages/SensorsGateway/SensorsGateway';
+import Shipment from '../../pages/Shipment/Shipment';
+import Reporting from '../../pages/Reporting/Reporting';
+import AdminPanel from '../../pages/AdminPanel/AdminPanel';
+import { routes } from '../../routes/routesConstants';
 import {
   checkForAdmin,
   checkForGlobalAdmin,
-} from '@utils/utilMethods';
-import { isMobile } from '@utils/mediaQuery';
+} from '../../utils/utilMethods';
+import { isMobile } from '../../utils/mediaQuery';
 
 const useStyles = makeStyles((theme) => ({
   root: {

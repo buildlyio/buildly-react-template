@@ -17,9 +17,9 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Add as AddIcon } from '@mui/icons-material';
-import { useInput } from '@hooks/useInput';
-import { invite } from '@redux/authuser/actions/authuser.actions';
-import { routes } from '@routes/routesConstants';
+import { useInput } from '../../hooks/useInput';
+import { invite } from '../../redux/authuser/actions/authuser.actions';
+import { routes } from '../../routes/routesConstants';
 import UserGroups from './UserGroups/UserGroups';
 import Users from './Users/Users';
 

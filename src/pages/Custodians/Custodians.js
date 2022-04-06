@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '@context/User.context';
+import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../context/User.context';
 import {
   getCustodians,
   getCustodianType,
   deleteCustodian,
   getContact,
   getCustody,
-} from '@redux/custodian/actions/custodian.actions';
+} from '../../redux/custodian/actions/custodian.actions';
 import {
   getCustodianOptions,
   getContactOptions,
-} from '@redux/options/actions/options.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../redux/options/actions/options.actions';
+import { routes } from '../../routes/routesConstants';
 import {
   custodianColumns,
   getFormattedRow,

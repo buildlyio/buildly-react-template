@@ -6,7 +6,7 @@ import {
   Typography,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
 import {
   SENSOR_REPORT_COLUMNS,
 } from '../ReportingConstants';

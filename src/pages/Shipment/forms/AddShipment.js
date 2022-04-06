@@ -8,11 +8,11 @@ import {
   Grid,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import FormModal from '@components/Modal/FormModal';
-import { UserContext } from '@context/User.context';
-import { saveShipmentFormData } from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
-import { checkForGlobalAdmin } from '@utils/utilMethods';
+import FormModal from '../../../components/Modal/FormModal';
+import { UserContext } from '../../../context/User.context';
+import { saveShipmentFormData } from '../../../redux/shipment/actions/shipment.actions';
+import { routes } from '../../../routes/routesConstants';
+import { checkForGlobalAdmin } from '../../../utils/utilMethods';
 import ViewDetailsWrapper from '../components/ViewDetailsWrapper';
 import EnvironmentalLimitsInfo, {
   checkIfEnvironmentLimitsEdited,

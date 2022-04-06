@@ -14,13 +14,13 @@ import { makeStyles } from '@mui/styles';
 import { MoreHoriz } from '@mui/icons-material';
 import {
   PermissionsTable,
-} from '@components/PermissionsTable/PermissionsTable';
-import { UserContext } from '@context/User.context';
-import Crud from '@modules/crud/Crud';
+} from '../../../components/PermissionsTable/PermissionsTable';
+import { UserContext } from '../../../context/User.context';
+import Crud from '../../../modules/crud/Crud';
 import {
   getCoregroups,
-} from '@redux/coregroup/actions/coregroup.actions';
-import { checkForAdmin } from '@utils/utilMethods';
+} from '../../../redux/coregroup/actions/coregroup.actions';
+import { checkForAdmin } from '../../../utils/utilMethods';
 
 const useStyles = makeStyles((theme) => ({
   btnPermission: {

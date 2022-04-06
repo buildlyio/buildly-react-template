@@ -13,16 +13,16 @@ import {
   MenuItem,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import DatePickerComponent from '@components/DatePicker/DatePicker';
-import { MapComponent } from '@components/MapComponent/MapComponent';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { useInput } from '@hooks/useInput';
-import { getFormattedRow } from '@pages/Custodians/CustodianConstants';
+import DatePickerComponent from '../../../../components/DatePicker/DatePicker';
+import { MapComponent } from '../../../../components/MapComponent/MapComponent';
+import CustomizedTooltips from '../../../../components/ToolTip/ToolTip';
+import { useInput } from '../../../../hooks/useInput';
+import { getFormattedRow } from '../../../../pages/Custodians/CustodianConstants';
 import {
   addCustody,
   editCustody,
-} from '@redux/custodian/actions/custodian.actions';
-import { validators } from '@utils/validators';
+} from '../../../../redux/custodian/actions/custodian.actions';
+import { validators } from '../../../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   buttonContainer: {

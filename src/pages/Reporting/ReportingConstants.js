@@ -12,10 +12,10 @@ import {
   PressureIcon,
   TiltIcon,
   ShockIcon,
-} from '@components/Icons/Icons';
+} from '../../components/Icons/Icons';
 import {
   getFormattedCustodyRows,
-} from '@pages/Shipment/ShipmentConstants';
+} from '../../pages/Shipment/ShipmentConstants';
 
 export const SHIPMENT_OVERVIEW_TOOL_TIP = 'Select a shipment to view reporting data';
 

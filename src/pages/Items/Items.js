@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '@context/User.context';
+import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../context/User.context';
 import {
   getItems,
   deleteItem,
@@ -10,12 +10,12 @@ import {
   getUnitsOfMeasure,
   getProducts,
   getProductType,
-} from '@redux/items/actions/items.actions';
+} from '../../redux/items/actions/items.actions';
 import {
   getItemsOptions,
   getProductsOptions,
-} from '@redux/options/actions/options.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../redux/options/actions/options.actions';
+import { routes } from '../../routes/routesConstants';
 import { itemColumns, getFormattedRow } from './ItemsConstants';
 import AddItems from './forms/AddItems';
 

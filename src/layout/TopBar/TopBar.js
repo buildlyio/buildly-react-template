@@ -22,21 +22,21 @@ import {
   getUser,
   loadAllOrgs,
   updateUser,
-} from '@redux/authuser/actions/authuser.actions';
+} from '../../redux/authuser/actions/authuser.actions';
 import {
   getUserOptions,
   getOrganizationOptions,
   setTimezone,
-} from '@redux/options/actions/options.actions';
+} from '../../redux/options/actions/options.actions';
 import {
   getNewGateways,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
+import { routes } from '../../routes/routesConstants';
 import {
   checkForAdmin,
   checkForGlobalAdmin,
-} from '@utils/utilMethods';
-import Loader from '@components/Loader/Loader';
+} from '../../utils/utilMethods';
+import Loader from '../../components/Loader/Loader';
 import AdminMenu from './AdminMenu';
 import AccountMenu from './AccountMenu';
 

@@ -1,12 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { numberWithCommas } from '@utils/utilMethods';
+import { numberWithCommas } from '../../utils/utilMethods';
 import { Typography } from '@mui/material';
 import { Warning as WarningIcon } from '@mui/icons-material';
 import {
   saveShipmentFormData,
-} from '@redux/shipment/actions/shipment.actions';
+} from '../../redux/shipment/actions/shipment.actions';
 
 export const MAP_TOOLTIP = 'Locations of the shipment from starting point till current time';
 

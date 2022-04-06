@@ -1,5 +1,5 @@
 import React from 'react';
-import { oauthService } from '@modules/oauth/oauth.service';
+import { oauthService } from '../modules/oauth/oauth.service';
 
 export const getUser = () => (
   oauthService.getOauthUser()

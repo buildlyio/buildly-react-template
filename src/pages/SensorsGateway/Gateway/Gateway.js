@@ -1,25 +1,25 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '@context/User.context';
+import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../context/User.context';
 import {
   getGateways,
   getGatewayType,
   deleteGateway,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+} from '../../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getGatewayOptions,
-} from '@redux/options/actions/options.actions';
+} from '../../../redux/options/actions/options.actions';
 import {
   getCustodians,
   getCustodianType,
   getContact,
-} from '@redux/custodian/actions/custodian.actions';
+} from '../../../redux/custodian/actions/custodian.actions';
 import {
   getShipmentDetails,
-} from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../../redux/shipment/actions/shipment.actions';
+import { routes } from '../../../routes/routesConstants';
 import { gatewayColumns, getFormattedRow } from '../Constants';
 import AddGateway from '../forms/AddGateway';
 

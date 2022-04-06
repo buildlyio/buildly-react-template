@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
 import {
   loadAllOrgs,
-} from '@redux/authuser/actions/authuser.actions';
+} from '../../../../redux/authuser/actions/authuser.actions';
 import {
   getCustodians,
-} from '@redux/custodian/actions/custodian.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../../../redux/custodian/actions/custodian.actions';
+import { routes } from '../../../../routes/routesConstants';
 import { getMappingOrg } from '../ConsortiumConstant';
 import EditMapping from '../forms/EditMapping';
 
