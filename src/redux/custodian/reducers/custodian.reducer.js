@@ -60,24 +60,50 @@ const initialState = {
 
 // Reducer
 export default (state = initialState, action) => {
-  let deletedType;
-  let editedType = state.custodianTypeList;
-  const typePresent = _.remove(
-    editedType,
-    { id: action.custodianType?.id },
-  )[0];
-  if (typePresent) {
-    deletedType = editedType;
-    editedType = [...editedType, action.custodianType];
-  }
-
   switch (action.type) {
     case GET_CUSTODIANS:
+    case ADD_CUSTODIANS:
+    case EDIT_CUSTODIANS:
+    case UPDATE_CUSTODIAN:
+    case DELETE_CUSTODIANS:
+    case GET_CUSTODY:
+    case ADD_CUSTODY:
+    case EDIT_CUSTODY:
+    case UPDATE_CUSTODY:
+    case DELETE_CUSTODY:
+    case GET_CUSTODIAN_TYPE:
+    case ADD_CUSTODIAN_TYPE:
+    case EDIT_CUSTODIAN_TYPE:
+    case DELETE_CUSTODIAN_TYPE:
+    case GET_CONTACT:
       return {
         ...state,
         loading: true,
         loaded: false,
         error: null,
+      };
+
+    case GET_CUSTODIANS_FAILURE:
+    case ADD_CUSTODIANS_FAILURE:
+    case EDIT_CUSTODIANS_FAILURE:
+    case UPDATE_CUSTODIAN_FAILURE:
+    case DELETE_CUSTODIANS_FAILURE:
+    case GET_CUSTODY_FAILURE:
+    case ADD_CUSTODY_FAILURE:
+    case EDIT_CUSTODY_FAILURE:
+    case UPDATE_CUSTODY_FAILURE:
+    case DELETE_CUSTODY_FAILURE:
+    case GET_CUSTODIAN_TYPE_FAILURE:
+    case ADD_CUSTODIAN_TYPE_FAILURE:
+    case EDIT_CUSTODIAN_TYPE_FAILURE:
+    case DELETE_CUSTODIAN_TYPE_FAILURE:
+    case GET_CONTACT_FAILURE:
+      console.log('Error: ', action.error);
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
       };
 
     case GET_CUSTODIANS_SUCCESS:
@@ -88,131 +114,39 @@ export default (state = initialState, action) => {
         custodianData: action.data,
       };
 
-    case GET_CUSTODIANS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case ADD_CUSTODIANS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
     case ADD_CUSTODIANS_SUCCESS:
-      const custodianData = state.custodianData || [];
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        custodianData: [...custodianData, action.data],
-      };
-
-    case ADD_CUSTODIANS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case EDIT_CUSTODIANS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
     case EDIT_CUSTODIANS_SUCCESS:
-      const editCustodian = _.filter(state.custodianData, (data) => {
-        data.id !== action.data.id;
-      });
+    case UPDATE_CUSTODIAN_SUCCESS: {
+      const found = _.find(
+        state.custodianData,
+        { id: action.data.id },
+      );
+      const custodians = found
+        ? _.map(state.custodianData, (custodian) => (
+          custodian.id === action.data.id
+            ? action.data
+            : custodian
+        ))
+        : [...state.custodianData, action.data];
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        custodianData: custodians,
+      };
+    }
+
+    case DELETE_CUSTODIANS_SUCCESS: {
+      const { custodianData } = state;
+      _.remove(custodianData, { id: action.data.id });
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        custodianData: [...editCustodian, action.data],
-        error: null,
+        custodianData,
       };
-
-    case EDIT_CUSTODIANS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case UPDATE_CUSTODIAN:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case UPDATE_CUSTODIAN_SUCCESS:
-      const updatedCustodian = _.filter(state.custodianData, (data) => (
-        data.id !== action.data.id
-      ));
-
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        custodianData: [...updatedCustodian, action.data],
-        error: null,
-      };
-
-    case UPDATE_CUSTODIAN_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-    case DELETE_CUSTODIANS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case DELETE_CUSTODIANS_SUCCESS:
-      const deletedCustodian = _.filter(state.custodianData, (data) => (
-        data.id !== action.id
-      ));
-
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        custodianData: [...deletedCustodian, action.data],
-      };
-
-    case DELETE_CUSTODIANS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case GET_CUSTODY:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
+    }
 
     case GET_CUSTODY_SUCCESS:
       return {
@@ -222,128 +156,39 @@ export default (state = initialState, action) => {
         custodyData: action.data,
       };
 
-    case GET_CUSTODY_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case ADD_CUSTODY:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
     case ADD_CUSTODY_SUCCESS:
-      const data = state.custodyData || [];
-      return {
-        ...state,
-        loading: true,
-        loaded: true,
-        custodyData: [...data, action.data],
-      };
-
-    case ADD_CUSTODY_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case EDIT_CUSTODY:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
     case EDIT_CUSTODY_SUCCESS:
-      const edited = _.filter(state.custodyData, (custody) => (
-        custody.id !== action.data.id
-      ));
+    case UPDATE_CUSTODY_SUCCESS: {
+      const found = _.find(
+        state.custodyData,
+        { id: action.data.id },
+      );
+      const custodies = found
+        ? _.map(state.custodyData, (custody) => (
+          custody.id === action.data.id
+            ? action.data
+            : custody
+        ))
+        : [...state.custodianData, action.data];
       return {
         ...state,
         loading: false,
         loaded: true,
-        custodyData: [...edited, action.data],
+        custodyData: custodies,
       };
+    }
 
-    case EDIT_CUSTODY_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case UPDATE_CUSTODY:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case UPDATE_CUSTODY_SUCCESS:
-      const updated = _.filter(state.custodyData, (custody) => (
-        custody.id !== action.data.id
-      ));
+    case DELETE_CUSTODY_SUCCESS: {
+      const { custodyData } = state;
+      _.remove(custodyData, { id: action.data.id });
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        custodyData: [...updated, action.data],
+        custodyData,
       };
-
-    case UPDATE_CUSTODY_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case DELETE_CUSTODY:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case DELETE_CUSTODY_SUCCESS:
-      const deleted = _.filter(state.custodyData, (custody) => (
-        custody.id !== action.id
-      ));
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        custodyData: deleted,
-      };
-
-    case DELETE_CUSTODY_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case GET_CUSTODIAN_TYPE:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
+    }
 
     case GET_CUSTODIAN_TYPE_SUCCESS:
       return {
@@ -357,96 +202,48 @@ export default (state = initialState, action) => {
         ),
       };
 
-    case GET_CUSTODIAN_TYPE_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case ADD_CUSTODIAN_TYPE:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
     case ADD_CUSTODIAN_TYPE_SUCCESS:
+    case EDIT_CUSTODIAN_TYPE_SUCCESS: {
+      const found = _.find(
+        state.custodianTypeList,
+        { id: action.data.id },
+      );
+      const custodianTypes = found
+        ? _.map(state.custodianTypeList, (custodianType) => (
+          custodianType.id === action.data.id
+            ? action.data
+            : custodianType
+        ))
+        : [...state.custodianTypeList, action.data];
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        custodianTypeList: [
-          ...state.custodianTypeList,
-          action.custodianType,
-        ],
+        custodianTypeList: _.orderBy(
+          custodianTypes,
+          ['id'],
+          'asc',
+        ),
       };
-
-    case ADD_CUSTODIAN_TYPE_FAILURE:
+    }
+    case DELETE_CUSTODIAN_TYPE_SUCCESS: {
+      const { custodianTypeList } = state;
+      _.remove(
+        custodianTypeList,
+        { id: action.data.id },
+      );
       return {
         ...state,
         loading: false,
         loaded: true,
-        error: action.error,
+        custodianTypeList: _.orderBy(
+          custodianTypeList,
+          ['id'],
+          'asc',
+        ),
       };
-
-    case EDIT_CUSTODIAN_TYPE:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case EDIT_CUSTODIAN_TYPE_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        custodianTypeList: editedType,
-      };
-
-    case EDIT_CUSTODIAN_TYPE_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case DELETE_CUSTODIAN_TYPE:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case DELETE_CUSTODIAN_TYPE_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        custodianTypeList: deletedType,
-      };
-
-    case DELETE_CUSTODIAN_TYPE_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case GET_CONTACT:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
+    }
 
     case GET_CONTACT_SUCCESS:
       return {
@@ -454,14 +251,6 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         contactInfo: action.data,
-      };
-
-    case GET_CONTACT_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
       };
 
     default:

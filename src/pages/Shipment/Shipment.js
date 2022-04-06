@@ -200,13 +200,11 @@ const Shipment = (props) => {
       shipmentData
       && custodianData
       && custodyData
-      && itemData
       && aggregateReportData
     ) {
       const formattedRows = getFormattedRow(
         shipmentData,
         custodianData,
-        itemData,
         custodyData,
         aggregateReportData,
         shipmentFormData,
@@ -239,7 +237,7 @@ const Shipment = (props) => {
         }
       }
     }
-  }, [shipmentData, custodianData, itemData, custodyData, aggregateReportData]);
+  }, [shipmentData, custodianData, custodyData, aggregateReportData]);
 
   useEffect(() => {
     if (selectedShipment) {

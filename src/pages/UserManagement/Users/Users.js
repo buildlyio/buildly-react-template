@@ -149,7 +149,10 @@ const Users = ({ data, dispatch }) => {
   };
 
   return (
-    <Box>
+    <Box sx={{
+      overflowX: 'auto',
+    }}
+    >
       <Crud
         deleteAction="DELETE_COREUSER"
         updateAction="UPDATE_COREUSER"

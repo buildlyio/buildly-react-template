@@ -115,7 +115,6 @@ export const getShipmentDataTableColumns = (timezone) => ([
 export const getFormattedRow = (
   shipmentData,
   custodianData,
-  itemData,
   custodyData,
   aggregateReportData,
   shipmentFormData,
@@ -204,18 +203,18 @@ export const getFormattedRow = (
 
     editedShipment.sensor_report = aggregateReportInfo;
 
-    if (
-      itemData
-      && shipment.items
-      && shipment.items.length) {
-      _.forEach(itemData, (item) => {
-        let shipmentValue = 0;
-        if (_.indexOf(shipment.items, item.url) !== -1) {
-          shipmentValue += item.value;
-          editedShipment.value = shipmentValue;
-        }
-      });
-    }
+    // if (
+    //   itemData
+    //   && shipment.items
+    //   && shipment.items.length) {
+    //   _.forEach(itemData, (item) => {
+    //     let shipmentValue = 0;
+    //     if (_.indexOf(shipment.items, item.url) !== -1) {
+    //       shipmentValue += item.value;
+    //       editedShipment.value = shipmentValue;
+    //     }
+    //   });
+    // }
 
     shipmentList = [...shipmentList, editedShipment];
   });

@@ -183,6 +183,9 @@ const theme = createTheme({
         root: {
           backgroundColor: '#424242',
           color: '#fff',
+          '&.MuiDialog-paper': {
+            overflowY: 'hidden',
+          },
         },
         outlined: {
           borderColor: 'rgba(255, 255, 255, 0.12)',
@@ -228,6 +231,7 @@ const theme = createTheme({
           },
           '&.MuiTableRow-hover:hover': {
             backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            cursor: 'pointer',
           },
         },
       },
@@ -317,6 +321,15 @@ const theme = createTheme({
         },
       },
     },
+    MuiButtonGroup: {
+      styleOverrides: {
+        root: {
+          '& > .MuiButton-root.MuiButton-contained.Mui-disabled': {
+            color: 'rgba(255, 255, 255, 0.4)',
+          },
+        },
+      },
+    },
     MuiFormHelperText: {
       styleOverrides: {
         root: {
@@ -381,6 +394,25 @@ const theme = createTheme({
         root: {
           '.MuiSvgIcon-root': {
             color: '#fff !important',
+          },
+        },
+      },
+    },
+    MuiCalendarPicker: {
+      styleOverrides: {
+        root: {
+          '& > .MuiButtonBase-root.MuiPickersDay-root:hover': {
+            backgroundColor: '#000 !important',
+            color: '#fff !important',
+          },
+        },
+      },
+    },
+    MuiClockPicker: {
+      styleOverrides: {
+        arrowSwitcher: {
+          '& .css-eziifo': {
+            backgroundColor: 'rgb(255 255 255 / 33%) !important',
           },
         },
       },

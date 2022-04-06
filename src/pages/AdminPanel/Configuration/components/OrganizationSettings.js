@@ -142,7 +142,6 @@ const OrganizationSettings = ({
           <TextField
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             select
             id="org-type"

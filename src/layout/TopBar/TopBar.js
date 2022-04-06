@@ -138,12 +138,12 @@ const TopBar = ({
   };
 
   const handleAdminPanelClick = () => {
-    history.push(routes.ADMIN_PANEL);
+    history.push(`${routes.ADMIN_PANEL}/configuration`);
     setSettingEl(null);
   };
 
   const handleUserManagementClick = () => {
-    history.push(routes.USER_MANAGEMENT);
+    history.push(`${routes.USER_MANAGEMENT}/current-users`);
     setSettingEl(null);
   };
 

@@ -101,6 +101,7 @@ function* addItem(action) {
       payload,
     );
     yield [
+      yield put(getItems(payload.organization_uuid)),
       yield put(
         showAlert({
           type: 'success',
@@ -108,7 +109,6 @@ function* addItem(action) {
           message: 'Successfully Added Item',
         }),
       ),
-      yield put(getItems(payload.organization_uuid)),
     ];
     if (history && redirectTo) {
       yield call(history.push, redirectTo);
@@ -178,6 +178,7 @@ function* deleteItem(payload) {
       `${window.env.API_URL}${shipmentApiEndPoint}item/${itemId}/`,
     );
     yield [
+      yield put(getItems(organization_uuid)),
       yield put(
         showAlert({
           type: 'success',
@@ -185,7 +186,7 @@ function* deleteItem(payload) {
           message: 'Item deleted successfully!',
         }),
       ),
-      yield put(getItems(organization_uuid)),
+
     ];
   } catch (error) {
     yield [

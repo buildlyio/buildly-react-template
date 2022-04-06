@@ -222,8 +222,8 @@ function* editShipment(action) {
       yield put(
         getShipmentDetails(
           payload.organization_uuid,
+          'Planned,Enroute',
           null,
-          payload.id,
           false,
           true,
           'edit',

@@ -160,6 +160,7 @@ const ItemsInfo = ({
                   multiple
                   id="tags-outlined"
                   disabled={viewOnly}
+                  disableCloseOnSelect
                   options={
                     (
                       itemData

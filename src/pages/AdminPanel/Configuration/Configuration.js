@@ -212,6 +212,7 @@ const Configuration = (props) => {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  ...state,
 });
 
 export default connect(mapStateToProps)(Configuration);
