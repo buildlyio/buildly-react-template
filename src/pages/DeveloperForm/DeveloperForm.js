@@ -171,11 +171,11 @@ const DeveloperForm = ({ dispatch, loading, history }) => {
     let errorExists = false;
     if (
       !question1
-      || (question1 === 'no' && !question2)
+      || (question1 === 'no' && !question2.value)
       || !question3
       || !question4
       || !question5
-      || !question6
+      || (question5 === 'separate updates' && !question6.value)
       || !question7
       || !question8
       || !question11
@@ -351,39 +351,41 @@ const DeveloperForm = ({ dispatch, loading, history }) => {
                     onChange={(e) => setQuestion5(e.target.value)}
                   >
                     <FormControlLabel
-                      value="yes"
-                      label="Yes"
+                      value="developer tracking tool"
+                      label="Developer Tracking Tool"
                       control={<Radio color="primary" />}
                     />
                     <FormControlLabel
-                      value="no"
-                      label="No"
+                      value="separate updates"
+                      label="Separate Updates"
                       control={<Radio color="primary" />}
                     />
                   </RadioGroup>
                 </FormControl>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  select
-                  required
-                  fullWidth
-                  id="question6"
-                  label="If you do send them a separate update is this a manual or automatic process?"
-                  error={formError.question6 && formError.question6.error}
-                  helperText={
-                    formError && formError.question6
-                      ? formError.question6.message
-                      : ''
-                  }
-                  className={classes.textField}
-                  onBlur={(e) => handleBlur(e, 'required', question6, 'question6')}
-                  {...question6.bind}
-                >
-                  <MenuItem value="">Select</MenuItem>
-                  <MenuItem value="manual">Manual</MenuItem>
-                  <MenuItem value="automatic">Automatic</MenuItem>
-                </TextField>
+                {question5 === 'separate updates' && (
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    select
+                    required
+                    fullWidth
+                    id="question6"
+                    label="If you do send them a separate update is this a manual or automatic process?"
+                    error={formError.question6 && formError.question6.error}
+                    helperText={
+                      formError && formError.question6
+                        ? formError.question6.message
+                        : ''
+                    }
+                    className={classes.textField}
+                    onBlur={(e) => handleBlur(e, 'required', question6, 'question6')}
+                    {...question6.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    <MenuItem value="manual">Manual</MenuItem>
+                    <MenuItem value="automatic">Automatic</MenuItem>
+                  </TextField>
+                )}
                 <FormControl
                   className={classes.choice}
                   fullWidth
