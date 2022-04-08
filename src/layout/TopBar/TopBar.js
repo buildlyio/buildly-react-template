@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
  * Component for the top bar header.
  */
 const TopBar = ({
-  location, history, dispatch, navHidden, setNavHidden, orgNames,
+  history, dispatch, navHidden, setNavHidden, orgNames,
 }) => {
   const classes = useStyles();
   const user = useContext(UserContext);
@@ -66,14 +66,6 @@ const TopBar = ({
   if (!organization) {
     setOrganization(user.organization.name);
   }
-
-  useEffect(() => {
-    if (location.path !== routes.MISSING_DATA) {
-      if (!user.email || !user.organization || !user.user_type) {
-        history.push(routes.MISSING_DATA);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     if (!orgNames) {

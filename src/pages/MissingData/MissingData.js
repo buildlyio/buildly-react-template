@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
@@ -15,13 +15,13 @@ import {
   MenuItem,
 } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
-import { UserContext } from '@context/User.context';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
 import {
   loadOrgNames,
   addOrgSocialUser,
 } from '@redux/authuser/actions/authuser.actions';
+import { routes } from '@routes/routesConstants';
 import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
@@ -47,16 +47,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MissingData = ({
-  dispatch, loading, history, orgNames,
+  user, dispatch, loading, history, orgNames,
 }) => {
   const classes = useStyles();
-  const user = useContext(UserContext);
 
   const userType = useInput('', { required: true });
   const email = useInput('', { required: true });
   const [radioValue, setRadioValue] = useState(null);
   const [orgName, setOrgName] = useState('');
   const [formError, setFormError] = useState({});
+
+  useEffect(() => {
+    if (!user) {
+      history.push(routes.LOGIN);
+    }
+  }, [user]);
 
   /**
    * Submit the form to the backend and attempts to authenticate
@@ -65,11 +70,10 @@ const MissingData = ({
   const handleSubmit = (event) => {
     event.preventDefault();
     const updateForm = {
-      id: user.id,
+      id: !!user && user.id,
       organization_name: orgName,
       user_type: userType.value,
     };
-
     if (email.value) {
       updateForm.email = email.value;
     }
@@ -109,7 +113,7 @@ const MissingData = ({
     const errorKeys = Object.keys(formError);
     let errorExists = false;
     if (
-      (!user.email && !email.value)
+      (!!user && !user.email && !email.value)
       || !userType.value
       || !radioValue
       || (radioValue === 'no' && !orgName)
@@ -124,7 +128,7 @@ const MissingData = ({
     if (event.target.value === 'no') {
       dispatch(loadOrgNames());
     } else {
-      setOrgName('default');
+      setOrgName('default organization');
     }
 
     setRadioValue(event.target.value);
@@ -164,7 +168,7 @@ const MissingData = ({
                   <MenuItem value="Product Team">Product Team</MenuItem>
                 </TextField>
               </Grid>
-              {!user.email && (
+              {user && !user.email && (
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
@@ -261,6 +265,7 @@ const MissingData = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
+  user: state.authReducer.data,
 });
 
 export default connect(mapStateToProps)(MissingData);

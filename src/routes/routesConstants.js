@@ -12,7 +12,7 @@ export const routes = {
   USER_GROUPS: '/app/profile/users/groups',
   HELP: '/help',
   TICKET_STATUS: '/ticket-status',
-  MISSING_DATA: '/app/missing-data',
+  MISSING_DATA: '/missing-data',
   NEW_PRODUCT: '/app/new-product',
   RELEASE: '/app/release',
   DEVELOPER_FORM: '/app/developer-form',

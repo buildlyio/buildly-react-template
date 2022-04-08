@@ -19,6 +19,7 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
+import AccessAlarmsIcon from '@mui/icons-material/AccessAlarms';
 import {
   AddRounded,
   EditRounded,
@@ -46,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
   },
   card: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(1),
     backgroundColor: theme.palette.neutral.main,
     color: theme.palette.neutral.contrastText,
     '& span.MuiCardHeader-subheader': {
@@ -58,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('lg')]: {
       marginTop: theme.spacing(1),
     },
+    marginBottom: theme.spacing(0.5),
   },
   moment: {
     marginTop: theme.spacing(3),
@@ -246,7 +248,7 @@ const Kanban = ({
                                   subheader={item.name}
                                   action={(
                                     <div>
-                                      {index === 0 && (
+                                      {!item.issue_uuid && (
                                         <IconButton
                                           aria-label="convert-ticket"
                                           aria-controls="menu-card"
@@ -318,6 +320,15 @@ const Kanban = ({
                                       className={classes.chip}
                                     />
                                   ))}
+                                  {item.estimate
+                                  && (
+                                  <Chip
+                                    variant="outlined"
+                                    color="primary"
+                                    icon={<AccessAlarmsIcon />}
+                                    label={`${item.estimate}:00 Hrs`}
+                                  />
+                                  )}
                                   <Typography
                                     className={classes.moment}
                                     component="div"

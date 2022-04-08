@@ -15,6 +15,7 @@ import TicketStatus from './pages/TicketStatus/TicketStatus';
 import { routes } from './routes/routesConstants';
 import { PrivateRoute } from './routes/Private.route';
 import theme from './styles/theme';
+import MissingData from '@pages/MissingData/MissingData';
 
 const App = () => (
   <Router>
@@ -33,6 +34,7 @@ const App = () => (
           />
           <Route path={routes.LOGIN} component={Login} />
           <Route path={routes.REGISTER} component={Register} />
+          <Route path={routes.MISSING_DATA} component={MissingData} />
           <Route path={routes.FORGOT_PASSWORD} component={ForgotPassword} />
           <Route path={routes.RESET_PASSWORD} component={ResetPassword} />
           <Route path={routes.HELP} component={Help} />

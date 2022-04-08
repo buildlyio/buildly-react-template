@@ -100,6 +100,7 @@
     "start": "webpack-dev-server --mode development",
     "build:dev": "webpack --mode development --env.build=dev",
     "start:dev": "webpack-dev-server --mode development --env.build=dev",
+    "https:local": "webpack-dev-server --https --cert /Users/radz/certs/server.crt --key /Users/radz/certs/server.key --mode development --env.build=local",
     "start:local": "webpack-dev-server --mode development --env.build=local",
     "build:prod": "webpack --mode development --env.build=prod",
     "start:prod": "webpack-dev-server --mode development --env.build=prod",

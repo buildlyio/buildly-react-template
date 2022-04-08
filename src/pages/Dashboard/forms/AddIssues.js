@@ -22,6 +22,7 @@ import {
   createIssue,
   updateIssue,
 } from '@redux/decision/actions/decision.actions';
+import { getAllCredentials } from '@redux/product/actions/product.actions';
 import { validators } from '@utils/validators';
 import { ISSUETYPES, TAGS } from './formConstants';
 
@@ -51,11 +52,18 @@ const AddIssues = ({
   location,
   statuses,
   features,
+  credentials,
+  products,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [productFeatures, setProductFeatures] = useState([]);
+  const [product, setProduct] = useState('');
+  const [orgList, setOrgList] = useState([]);
+  const [repoList, setRepoList] = useState([]);
+  const [repo, setRepo] = useState('');
+  const [orgID, setOrgID] = useState('');
 
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === 'edit';
@@ -131,11 +139,25 @@ const AddIssues = ({
     if (!statuses || _.isEmpty(statuses)) {
       dispatch(getAllStatuses());
     }
+    if (!credentials || _.isEmpty(credentials)) {
+      dispatch(getAllCredentials());
+    }
   }, []);
 
   useEffect(() => {
     setProductFeatures(_.filter(features, { product_uuid }));
   }, [features]);
+
+  useEffect(() => {
+    const prd = _.find(products, { product_uuid });
+
+    if (prd && prd.issue_tool_detail
+      && !_.isEmpty(prd.issue_tool_detail)
+    ) {
+      setOrgList(_.map(prd.issue_tool_detail.organisation_list));
+    }
+    setProduct(prd);
+  }, [products]);
 
   const closeFormModal = () => {
     const dataHasChanged = (
@@ -151,6 +173,10 @@ const AddIssues = ({
       || (_.isEmpty(editData) && !_.isEmpty(tags))
       || estimate.hasChanged()
       || complexity.hasChanged()
+      || (product
+        && product.issue_tool_detail
+        && !_.isEmpty(repoList)
+        && repo !== '')
     );
 
     if (dataHasChanged) {
@@ -187,10 +213,13 @@ const AddIssues = ({
     }
   };
 
+  const issueCred = _.find(
+    credentials,
+    { product_uuid, auth_detail: { tool_type: 'Issue' } },
+  );
   const handleSubmit = (event) => {
     event.preventDefault();
     const dateTime = new Date();
-
     const formData = {
       ...editData,
       edit_date: dateTime,
@@ -199,11 +228,14 @@ const AddIssues = ({
       feature_uuid: feature.value,
       issue_type: type.value,
       start_date: startDate,
-      end_data: endDate,
+      end_date: endDate,
       status: status.value,
       tags,
+      product_uuid,
       estimate: estimate.value,
       complexity: Number(complexity.value),
+      repository: repo,
+      ...issueCred?.auth_detail,
     };
 
     if (editPage) {
@@ -242,6 +274,14 @@ const AddIssues = ({
       || !feature.value
       || !type.value
       || !status.value
+      || (product
+        && product.issue_tool_detail
+        && !_.isEmpty(orgList)
+        && !orgID)
+      || (product
+        && product.issue_tool_detail
+        && !_.isEmpty(repoList)
+        && !repo)
     ) {
       return true;
     }
@@ -387,6 +427,62 @@ const AddIssues = ({
                   ))}
                 </TextField>
               </Grid>
+              {!_.isEmpty(orgList) && (
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    select
+                    id="orgID"
+                    label="Organisation"
+                    name="orgID"
+                    autoComplete="orgID"
+                    value={orgID}
+                    onChange={(e) => {
+                      const org = e.target.value;
+                      setOrgID(org);
+                      setRepoList(org.repo_list);
+                    }}
+                  >
+                    {_.map(orgList, (org) => (
+                      <MenuItem
+                        key={`org-${org.org_id}-${org.org_name}`}
+                        value={org}
+                      >
+                        {org.org_name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              )}
+              {!_.isEmpty(repoList) && (
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    select
+                    id="repo"
+                    label="Repository"
+                    name="repo"
+                    autoComplete="repo"
+                    value={repo}
+                    onChange={(e) => setRepo(e.target.value)}
+                  >
+                    {_.map(repoList, (rep) => (
+                      <MenuItem
+                        key={`rep-${rep.id}-${rep.name}`}
+                        value={rep.name}
+                      >
+                        {rep.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              )}
               <Grid item xs={12} md={6}>
                 <DatePickerComponent
                   label="Start Date"
@@ -553,6 +649,8 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   statuses: state.decisionReducer.statuses,
   features: state.decisionReducer.features,
+  products: state.productReducer.products,
+  credentials: state.productReducer.credentials,
 });
 
 export default connect(mapStateToProps)(AddIssues);

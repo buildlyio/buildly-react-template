@@ -112,7 +112,6 @@ const Register = ({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    location.register = true;
     const registerFormValue = {
       username: username.value,
       email: email.value,

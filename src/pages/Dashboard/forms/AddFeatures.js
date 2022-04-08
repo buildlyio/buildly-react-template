@@ -19,6 +19,7 @@ import {
   createFeature,
   updateFeature,
 } from '@redux/decision/actions/decision.actions';
+import { getAllCredentials } from '@redux/product/actions/product.actions';
 import { validators } from '@utils/validators';
 import { PRIORITIES, TAGS } from './formConstants';
 
@@ -48,6 +49,7 @@ const AddFeatures = ({
   statuses,
   dispatch,
   products,
+  credentials,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
@@ -76,10 +78,13 @@ const AddFeatures = ({
     required: true,
   });
   const [tags, setTags] = useState((editData && editData.tags) || []);
+  const [boardList, setBoardList] = useState([]);
+  const [colList, setColList] = useState([]);
   const [colID, setColID] = useState('');
   const totalEstimate = useInput((editData && editData.total_estimate) || '');
   const version = useInput((editData && editData.version) || '');
   const [formError, setFormError] = useState({});
+  const [boardID, setBoardID] = useState('');
 
   const buttonText = editPage ? 'Save' : 'Add Feature';
   const formTitle = editPage ? 'Edit Feature' : 'Add Feature';
@@ -91,10 +96,23 @@ const AddFeatures = ({
     if (!statuses || _.isEmpty(statuses)) {
       dispatch(getAllStatuses());
     }
+    if (!credentials || _.isEmpty(credentials)) {
+      dispatch(getAllCredentials());
+    }
   }, []);
 
   useEffect(() => {
-    setProduct(_.find(products, { product_uuid }));
+    const prd = _.find(products, { product_uuid });
+    if (prd && prd.feature_tool_detail
+      && prd.feature_tool_detail.organisation_list
+      && !_.isEmpty(prd.feature_tool_detail.organisation_list)
+    ) {
+      setBoardList(_.flatMap(_.map(
+        prd.feature_tool_detail.organisation_list,
+        'board_list',
+      )));
+    }
+    setProduct(prd);
   }, [products]);
 
   const closeFormModal = () => {
@@ -109,7 +127,7 @@ const AddFeatures = ({
       || version.hasChanged()
       || (!editPage && product
         && product.feature_tool_detail
-        && product.feature_tool_detail.column_list
+        && !_.isEmpty(colList)
         && colID !== '')
     );
 
@@ -147,10 +165,13 @@ const AddFeatures = ({
     }
   };
 
+  const featCred = _.find(
+    credentials,
+    { product_uuid, auth_detail: { tool_type: 'Feature' } },
+  );
   const handleSubmit = (event) => {
     event.preventDefault();
     const dateTime = new Date();
-
     const formData = {
       ...editData,
       edit_date: dateTime,
@@ -162,15 +183,14 @@ const AddFeatures = ({
       priority: priority.value,
       total_estimate: totalEstimate.value,
       version: version.value,
+      ...featCred?.auth_detail,
     };
 
     if (editPage) {
       dispatch(updateFeature(formData));
     } else {
       formData.create_date = dateTime;
-      if (colID) {
-        formData.column_id = colID;
-      }
+      formData.column_id = colID;
       dispatch(createFeature(formData));
     }
     history.push(redirectTo);
@@ -202,7 +222,13 @@ const AddFeatures = ({
       || !status.value
       || !priority.value
       || (!editPage && product
-        && product.feature_tool_detail && !colID)
+        && product.feature_tool_detail
+        && !_.isEmpty(boardList)
+        && !boardID)
+      || (!editPage && product
+        && product.feature_tool_detail
+        && !_.isEmpty(colList)
+        && !colID)
     ) {
       return true;
     }
@@ -379,10 +405,7 @@ const AddFeatures = ({
                 )}
               />
             </Grid>
-            {!editPage && product
-            && product.feature_tool_detail
-            && product.feature_tool_detail.column_list
-            && (
+            {!editPage && !_.isEmpty(boardList) && (
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -390,19 +413,49 @@ const AddFeatures = ({
                   required
                   fullWidth
                   select
-                  id="colid "
+                  id="boardID"
+                  label="Tool Board"
+                  name="boardID"
+                  value={boardID}
+                  autoComplete="boardID"
+                  onChange={(e) => {
+                    const board = e.target.value;
+                    setBoardID(board);
+                    setColList(board.column_list);
+                  }}
+                >
+                  {_.map(boardList, (board) => (
+                    <MenuItem
+                      key={`board-${board.board_id}-${board.board_name}`}
+                      value={board}
+                    >
+                      {board.board_name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+            )}
+            {!editPage && !_.isEmpty(colList) && (
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  select
+                  id="colID"
                   label="Tool Column"
-                  name="colid"
-                  autoComplete="colid"
+                  name="colID"
+                  autoComplete="colID"
                   value={colID}
                   onChange={(e) => setColID(e.target.value)}
                 >
-                  {_.map(product.feature_tool_detail.column_list, (col) => (
+                  {_.map(colList, (col) => (
                     <MenuItem
-                      key={`column-${col.id}-${col.name}`}
-                      value={col.id}
+                      key={`column-${col.column_id}-${col.column_name}`}
+                      value={col.column_id}
                     >
-                      {col.name}
+                      {col.column_name}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -493,6 +546,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   statuses: state.decisionReducer.statuses,
   products: state.productReducer.products,
+  credentials: state.productReducer.credentials,
 });
 
 export default connect(mapStateToProps)(AddFeatures);

@@ -176,9 +176,9 @@ export const updateFeature = (data) => ({
  * Delete a Feature
  * @param {uuid} feature_uuid
  */
-export const deleteFeature = (feature_uuid) => ({
+export const deleteFeature = (data) => ({
   type: DELETE_FEATURE,
-  feature_uuid,
+  data,
 });
 
 /**
@@ -258,9 +258,9 @@ export const updateIssue = (data) => ({
  * Delete an Issue
  * @param {uuid} issue_uuid
  */
-export const deleteIssue = (issue_uuid) => ({
+export const deleteIssue = (data) => ({
   type: DELETE_ISSUE,
-  issue_uuid,
+  data,
 });
 
 /**

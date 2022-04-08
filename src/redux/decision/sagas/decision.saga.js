@@ -314,12 +314,13 @@ function* updateFeature(payload) {
 }
 
 function* deleteFeature(payload) {
-  const { feature_uuid } = payload;
+  const { feature_uuid } = payload.data;
   try {
     const feature = yield call(
       httpService.makeRequest,
       'delete',
       `${window.env.API_URL}${decisionEndpoint}feature/${feature_uuid}`,
+      payload.data,
     );
     yield put({ type: DELETE_FEATURE_SUCCESS, feature_uuid });
   } catch (error) {
@@ -570,12 +571,13 @@ function* updateIssue(payload) {
 }
 
 function* deleteIssue(payload) {
-  const { issue_uuid } = payload;
+  const { issue_uuid } = payload.data;
   try {
     const issue = yield call(
       httpService.makeRequest,
       'delete',
       `${window.env.API_URL}${decisionEndpoint}issue/${issue_uuid}`,
+      payload.data,
     );
     yield put({ type: DELETE_ISSUE_SUCCESS, issue_uuid });
   } catch (error) {

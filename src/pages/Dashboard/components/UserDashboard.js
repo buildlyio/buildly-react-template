@@ -24,6 +24,7 @@ import {
   deleteFeature,
   deleteIssue,
 } from '@redux/decision/actions/decision.actions';
+import { getAllCredentials } from '@redux/product/actions/product.actions';
 import List from '../components/List';
 import Kanban from '../components/Kanban';
 import AddFeatures from '../forms/AddFeatures';
@@ -69,6 +70,7 @@ const UserDashboard = (props) => {
     features,
     issues,
     statuses,
+    credentials,
     redirectTo,
     history,
   } = props;
@@ -119,9 +121,7 @@ const UserDashboard = (props) => {
     : `${routes.DASHBOARD}/convert-issue`;
 
   useEffect(() => {
-    if (!products || _.isEmpty(products)) {
-      dispatch(getAllProducts());
-    }
+    dispatch(getAllProducts());
     if (!features || _.isEmpty(features)) {
       dispatch(getAllFeatures());
     }
@@ -130,6 +130,9 @@ const UserDashboard = (props) => {
     }
     if (!statuses || _.isEmpty(statuses)) {
       dispatch(getAllStatuses());
+    }
+    if (!credentials || _.isEmpty(credentials)) {
+      dispatch(getAllCredentials());
     }
   }, []);
 
@@ -150,7 +153,7 @@ const UserDashboard = (props) => {
 
     setProductFeatures(_.orderBy(feats, 'create_date', 'desc'));
     setProductIssues(_.orderBy(iss, 'create_date', 'desc'));
-  }, [product, features, issues]);
+  }, [product, JSON.stringify(features), JSON.stringify(issues)]);
 
   const viewTabClicked = (event, vw) => {
     setView(vw);
@@ -209,40 +212,62 @@ const UserDashboard = (props) => {
     setDeleteModal(true);
   };
 
+  const featCred = _.find(
+    credentials,
+    { product_uuid: product, auth_detail: { tool_type: 'Feature' } },
+  );
+  const issueCred = _.find(
+    credentials,
+    { product_uuid: product, auth_detail: { tool_type: 'Issue' } },
+  );
   const handleDeleteModal = () => {
     const { id, type } = toDeleteItem;
     setDeleteModal(false);
     if (type === 'feat') {
-      dispatch(deleteFeature(id));
+      const deleteCred = {
+        ...featCred?.auth_detail,
+        feature_uuid: id,
+      };
+      dispatch(deleteFeature(deleteCred));
     } else if (type === 'issue') {
-      dispatch(deleteIssue(id));
+      const deleteCreds = {
+        ...issueCred?.auth_detail,
+        issue_uuid: id,
+      };
+      dispatch(deleteIssue(deleteCreds));
     }
   };
 
   return (
     <div>
       {loading && <Loader open={loading} />}
-      <Grid container alignItems="center">
-        <Grid item xs={4} md={6} lg={8}>
+      <Grid container alignItems="center" mb={2}>
+        <Grid item xs={8}>
           <Typography component="div" variant="h3">
             Dashboard
           </Typography>
         </Grid>
-        <Grid item xs={4} md={3} lg={2} textAlign="end">
+        <Grid item xs={4}>
           <TextField
             variant="outlined"
             margin="normal"
+            fullWidth
             select
             id="product"
             color="primary"
-            label="Select Product"
+            label="Product Options"
             className={classes.product}
             value={product}
             onChange={(e) => {
-              setProduct(e.target.value);
+              if (e.target.value === -1) {
+                history.push(routes.NEW_PRODUCT);
+              } else {
+                setProduct(e.target.value);
+              }
             }}
           >
             <MenuItem value={0}>Select</MenuItem>
+            <MenuItem value={-1}>Create New Product</MenuItem>
             {products && !_.isEmpty(products)
               && _.map(products, (prd) => (
                 <MenuItem
@@ -253,18 +278,6 @@ const UserDashboard = (props) => {
                 </MenuItem>
               ))}
           </TextField>
-        </Grid>
-        <Grid item xs={4} md={3} lg={2} textAlign="end">
-          <Button
-            aria-controls="new-product"
-            aria-haspopup="true"
-            color="primary"
-            variant="contained"
-            onClick={(e) => { history.push(routes.NEW_PRODUCT); }}
-            startIcon={<AddRoundedIcon />}
-          >
-            New Product
-          </Button>
         </Grid>
       </Grid>
       <Grid mb={3} container justifyContent="center">

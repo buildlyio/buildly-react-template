@@ -95,15 +95,18 @@ const List = ({
 
       <div className={classes.section3}>
         <div className={classes.boxSection}>
-          <AddRoundedIcon
-            className={classes.addIcon}
-            fontSize="large"
-            onClick={(e) => addItem('feat')}
-          />
+          {product !== 0 && (
+            <AddRoundedIcon
+              className={classes.addIcon}
+              fontSize="large"
+              onClick={(e) => addItem('feat')}
+            />
+          )}
           {product === 0 && (
             <Typography
               className={classes.noData}
               variant="body1"
+              style={{ marginTop: '56px' }}
             >
               No Product selected. Please select the product.
             </Typography>
@@ -145,15 +148,18 @@ const List = ({
         </div>
 
         <div className={`${classes.boxSection} ${classes.rightBox}`}>
-          <AddRoundedIcon
-            className={classes.addIcon}
-            fontSize="large"
-            onClick={(e) => addItem('issue')}
-          />
+          {product !== 0 && (
+            <AddRoundedIcon
+              className={classes.addIcon}
+              fontSize="large"
+              onClick={(e) => addItem('issue')}
+            />
+          )}
           {product === 0 && (
             <Typography
               className={classes.noData}
               variant="body1"
+              style={{ marginTop: '56px' }}
             >
               No Product selected. Please select the product.
             </Typography>

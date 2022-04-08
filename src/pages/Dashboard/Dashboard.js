@@ -12,7 +12,7 @@ const Dashboard = ({
   user,
 }) => {
   useEffect(() => {
-    if (!user.survey_status) {
+    if (loaded && !user.survey_status) {
       if (user.user_type === 'Developer') {
         history.push(routes.DEVELOPER_FORM);
       }
