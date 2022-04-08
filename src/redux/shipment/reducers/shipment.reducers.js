@@ -61,7 +61,7 @@ export default (state = initialState, action) => {
           initialShipmentData[shipmentIndex] = action.data;
         }
         shipmentData = initialShipmentData;
-      } else if (action.data.length < initialShipmentData.length && action.shipmentAction === 'delete') {
+      } else if (action.data.length < initialShipmentData.length && ['edit', 'delete'].includes(action.shipmentAction)) {
         const shipmentStatus = action.status in ['Completed', 'Cancelled'] ? action.status : 'Active';
         let filteredShipment = _.filter(initialShipmentData, { type: shipmentStatus });
         // eslint-disable-next-line max-len

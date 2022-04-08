@@ -162,13 +162,15 @@ export default (state = initialState, action) => {
         state.custodyData,
         { id: action.data.id },
       );
-      const custodies = found
+      let custodies = found
         ? _.map(state.custodyData, (custody) => (
           custody.id === action.data.id
             ? action.data
             : custody
         ))
         : [...state.custodianData, action.data];
+      custodies = _.filter(custodies, (item) => item.custodian !== undefined);
+
       return {
         ...state,
         loading: false,
