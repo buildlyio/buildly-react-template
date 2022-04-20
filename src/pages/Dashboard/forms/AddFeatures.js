@@ -57,13 +57,14 @@ const AddFeatures = ({
   const [product, setProduct] = useState('');
 
   const redirectTo = location.state && location.state.from;
-  const editPage = location.state && location.state.type === 'edit';
+  const editPage = location.state && (location.state.type === 'edit' || location.state.type === 'view');
   const editData = (
     location.state
-    && location.state.type === 'edit'
+    && (location.state.type === 'edit' || location.state.type === 'view')
     && location.state.data
   ) || {};
   const product_uuid = location.state && location.state.product_uuid;
+  const viewPage = (location.state && location.state.viewOnly) || false;
 
   const name = useInput((editData && editData.name) || '', {
     required: true,
@@ -87,7 +88,13 @@ const AddFeatures = ({
   const [boardID, setBoardID] = useState('');
 
   const buttonText = editPage ? 'Save' : 'Add Feature';
-  const formTitle = editPage ? 'Edit Feature' : 'Add Feature';
+
+  let formTitle;
+  if (editPage) {
+    formTitle = viewPage ? 'View Feature' : 'Edit Feature';
+  } else {
+    formTitle = 'Add Feature';
+  }
 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
@@ -282,6 +289,7 @@ const AddFeatures = ({
                   }
                   onBlur={(e) => handleBlur(e, 'required', name)}
                   {...name.bind}
+                  disabled={viewPage}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -306,6 +314,7 @@ const AddFeatures = ({
                   }
                   onBlur={(e) => handleBlur(e, 'required', description)}
                   {...description.bind}
+                  disabled={viewPage}
                 />
               </Grid>
             </Grid>
@@ -332,6 +341,7 @@ const AddFeatures = ({
                   }
                   onBlur={(e) => handleBlur(e, 'required', status)}
                   {...status.bind}
+                  disabled={viewPage}
                 >
                   {_.map(statuses, (sts) => (
                     <MenuItem
@@ -365,6 +375,7 @@ const AddFeatures = ({
                   }
                   onBlur={(e) => handleBlur(e, 'required', priority)}
                   {...priority.bind}
+                  disabled={viewPage}
                 >
                   {_.map(PRIORITIES, (prty, idx) => (
                     <MenuItem
@@ -403,6 +414,7 @@ const AddFeatures = ({
                     margin="normal"
                   />
                 )}
+                disabled={viewPage}
               />
             </Grid>
             {!editPage && !_.isEmpty(boardList) && (
@@ -423,6 +435,7 @@ const AddFeatures = ({
                     setBoardID(board);
                     setColList(board.column_list);
                   }}
+                  disabled={viewPage}
                 >
                   {_.map(boardList, (board) => (
                     <MenuItem
@@ -449,6 +462,7 @@ const AddFeatures = ({
                   autoComplete="colID"
                   value={colID}
                   onChange={(e) => setColID(e.target.value)}
+                  disabled={viewPage}
                 >
                   {_.map(colList, (col) => (
                     <MenuItem
@@ -481,6 +495,7 @@ const AddFeatures = ({
                 }
                 onBlur={(e) => handleBlur(e, 'required', totalEstimate)}
                 {...totalEstimate.bind}
+                disabled={viewPage}
               />
             </Grid>
             <Grid item xs={12}>
@@ -503,38 +518,43 @@ const AddFeatures = ({
                 }
                 onBlur={(e) => handleBlur(e, 'required', version)}
                 {...version.bind}
+                disabled={viewPage}
               />
             </Grid>
-            <Grid
-              container
-              spacing={isDesktop ? 3 : 0}
-              justifyContent="center"
-            >
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  disabled={submitDisabled()}
-                >
-                  {buttonText}
-                </Button>
+            {
+              !viewPage && (
+              <Grid
+                container
+                spacing={isDesktop ? 3 : 0}
+                justifyContent="center"
+              >
+                <Grid item xs={12} sm={4}>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    disabled={submitDisabled()}
+                  >
+                    {buttonText}
+                  </Button>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <Button
+                    type="button"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    onClick={discardFormData}
+                    className={classes.submit}
+                  >
+                    Cancel
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="button"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={discardFormData}
-                  className={classes.submit}
-                >
-                  Cancel
-                </Button>
-              </Grid>
-            </Grid>
+              )
+            }
           </form>
         </FormModal>
       )}

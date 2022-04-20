@@ -4,7 +4,6 @@ import makeStyles from '@mui/styles/makeStyles';
 import { Container } from '@mui/material';
 import { UserContext, getUser } from '@context/User.context';
 import TopBar from '@layout/TopBar/TopBar';
-import NavBar from '@layout/NavBar/NavBar';
 import Dashboard from '@pages/Dashboard/Dashboard';
 import UserManagement from '@pages/UserManagement/UserManagement';
 import { routes } from '@routes/routesConstants';
@@ -39,12 +38,6 @@ const ContainerDashboard = ({ location, history }) => {
     <div className={classes.root}>
       <UserContext.Provider value={getUser()}>
         <TopBar
-          navHidden={navHidden}
-          setNavHidden={setNavHidden}
-          location={location}
-          history={history}
-        />
-        <NavBar
           navHidden={navHidden}
           setNavHidden={setNavHidden}
           location={location}

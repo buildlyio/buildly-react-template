@@ -19,14 +19,16 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
-import AccessAlarmsIcon from '@mui/icons-material/AccessAlarms';
+import UpdateIcon from '@mui/icons-material/Update';
+import AltRouteIcon from '@mui/icons-material/AltRoute';
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import CommentIcon from '@mui/icons-material/Comment';
 import {
   AddRounded,
-  EditRounded,
-  DeleteRounded,
   TrendingFlatRounded,
   MoreHoriz,
 } from '@mui/icons-material';
+import { updateFeature, updateIssue } from '@redux/decision/actions/decision.actions';
 
 const useStyles = makeStyles((theme) => ({
   noProduct: {
@@ -55,19 +57,26 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   chip: {
-    marginRight: theme.spacing(1),
-    [theme.breakpoints.down('lg')]: {
-      marginTop: theme.spacing(1),
-    },
+    marginRight: theme.spacing(0.5),
     marginBottom: theme.spacing(0.5),
+  },
+  tag: {
+    marginRight: theme.spacing(0.5),
+    marginBottom: theme.spacing(0.5),
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
   },
   moment: {
     marginTop: theme.spacing(3),
-    textAlign: 'right',
+    textAlign: 'left',
   },
   iconButton: {
     padding: 0,
     marginLeft: theme.spacing(1),
+  },
+  comment: {
+    float: 'right',
+    cursor: 'pointer',
   },
 }));
 
@@ -85,11 +94,13 @@ const Kanban = ({
   editItem,
   convertIssue,
   deleteItem,
+  commentItem,
+  dispatch,
 }) => {
   const classes = useStyles();
   const [columns, setColumns] = useState({});
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [currentNumber, setCurrentNumber] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [currentNumber, setCurrentNumber] = useState(null);
   const open = Boolean(anchorEl);
 
   const handleClick = (event, number) => {
@@ -148,6 +159,14 @@ const Kanban = ({
           items: destItems,
         },
       });
+
+      // Update status of the card on drag and drop to other column
+      removed.status = destination.droppableId;
+      if (removed.issue_uuid) {
+        dispatch(updateIssue(removed));
+      } else {
+        dispatch(updateFeature(removed));
+      }
     } else {
       const column = columns[source.droppableId];
       const copiedItems = [...column.items];
@@ -317,7 +336,7 @@ const Kanban = ({
                                       label={tag}
                                       variant="outlined"
                                       color="primary"
-                                      className={classes.chip}
+                                      className={classes.tag}
                                     />
                                   ))}
                                   {item.estimate
@@ -325,16 +344,45 @@ const Kanban = ({
                                   <Chip
                                     variant="outlined"
                                     color="primary"
-                                    icon={<AccessAlarmsIcon />}
+                                    className={classes.chip}
+                                    icon={<UpdateIcon fontSize="small" />}
                                     label={`${item.estimate}:00 Hrs`}
                                   />
                                   )}
+                                  {item.end_date
+                                    && (
+                                    <Chip
+                                      variant="outlined"
+                                      color="primary"
+                                      className={classes.chip}
+                                      icon={<DateRangeIcon fontSize="small" />}
+                                      label={(item.end_date).slice(0, 10)}
+                                    />
+                                    )}
+
+                                  {item.issue_uuid && productFeatures
+                                    .filter((feat) => (feat.feature_uuid === item.feature_uuid))
+                                    .map((feat, ind) => (
+                                      <Chip
+                                        key={ind}
+                                        variant="outlined"
+                                        color="primary"
+                                        className={classes.chip}
+                                        icon={<AltRouteIcon fontSize="small" />}
+                                        label={feat.name}
+                                        onClick={() => editItem(feat, 'feat', true)}
+                                      />
+                                    ))}
                                   <Typography
                                     className={classes.moment}
                                     component="div"
                                     variant="body2"
                                   >
                                     {moment(item.create_date).fromNow()}
+                                    <CommentIcon
+                                      className={classes.comment}
+                                      onClick={(e) => commentItem()}
+                                    />
                                   </Typography>
                                 </CardContent>
                               </Card>
