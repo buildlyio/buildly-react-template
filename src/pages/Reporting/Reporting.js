@@ -204,6 +204,13 @@ const Reporting = ({
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
     }
+    if (shipmentData && shipmentData.length) {
+      const ids = _.toString(_.map(shipmentData, 'partner_shipment_id'));
+      const encodedIds = encodeURIComponent(ids);
+      if (encodedIds) {
+        dispatch(getAllSensorAlerts(encodedIds));
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -212,16 +219,16 @@ const Reporting = ({
       && custodianData
       && custodyData
       && aggregateReportData
+      && allAlerts
       && contactInfo
-      && unitsOfMeasure
     ) {
       const overview = getShipmentOverview(
         shipmentData,
         custodianData,
         custodyData,
         aggregateReportData,
+        allAlerts,
         contactInfo,
-        unitsOfMeasure,
         timezone,
       );
       if (overview.length > 0) {
@@ -229,14 +236,6 @@ const Reporting = ({
       }
       if (!selectedShipment && overview.length > 0) {
         setSelectedShipment(overview[0]);
-      }
-    }
-
-    if (shipmentData && shipmentData.length) {
-      const ids = _.toString(_.map(shipmentData, 'partner_shipment_id'));
-      const encodedIds = encodeURIComponent(ids);
-      if (encodedIds) {
-        dispatch(getAllSensorAlerts(encodedIds));
       }
     }
   }, [shipmentData, custodianData, custodyData, aggregateReportData, timezone]);
@@ -477,6 +476,10 @@ const Reporting = ({
       <SensorReport
         loading={loading}
         aggregateReport={selectedShipment?.sensor_report}
+        alerts={_.filter(
+          allAlerts,
+          { shipment_id: selectedShipment?.partner_shipment_id },
+        )}
         shipmentName={selectedShipment?.name}
         selectedMarker={selectedShipment && selectedMarker}
       />

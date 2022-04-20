@@ -545,19 +545,21 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case GET_AGGREGATE_REPORT_SUCCESS:
+    case GET_AGGREGATE_REPORT_SUCCESS: {
       const initialAggregateReport = state.aggregateReportData;
       let aggregateReport = action.data;
       if (initialAggregateReport) {
-        aggregateReport = Object.values([...initialAggregateReport, ...action.data].reduce((result, { id, ...rest }) => {
-        // eslint-disable-next-line no-param-reassign
-          result[id] = {
-            ...(result[id] || {}),
-            id,
-            ...rest,
-          };
-          return result;
-        }, {}));
+        aggregateReport = Object.values(
+          [...initialAggregateReport, ...action.data].reduce((result, { id, ...rest }) => {
+            // eslint-disable-next-line no-param-reassign
+            result[id] = {
+              ...(result[id] || {}),
+              id,
+              ...rest,
+            };
+            return result;
+          }, {}),
+        );
       }
       return {
         ...state,
@@ -565,7 +567,7 @@ export default (state = initialState, action) => {
         loaded: true,
         aggregateReportData: aggregateReport,
       };
-
+    }
     case GET_AGGREGATE_REPORT_FAILURE:
       return {
         ...state,

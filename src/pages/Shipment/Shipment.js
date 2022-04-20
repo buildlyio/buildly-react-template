@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
-import moment from 'moment-timezone';
 import {
   Typography,
   Tabs,
@@ -45,6 +44,7 @@ import {
   getSensors,
   getSensorType,
   getAggregateReport,
+  getAllSensorAlerts,
 } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
@@ -57,6 +57,7 @@ import {
 } from './ShipmentConstants';
 import ShipmentDataTable from './components/ShipmentDataTable';
 import AddShipment from './forms/AddShipment';
+import { getShipmentOverview } from '../Reporting/ReportingConstants';
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -115,6 +116,8 @@ const Shipment = (props) => {
     custodyOptions,
     timezone,
     shipmentFormData,
+    contactInfo,
+    allAlerts,
   } = props;
   const classes = useStyles();
 
@@ -125,6 +128,7 @@ const Shipment = (props) => {
   const [cancelledRows, setCancelledRows] = useState([]);
   const [rows, setRows] = useState([]);
   const [selectedShipment, setSelectedShipment] = useState(null);
+  const [shipmentOverview, setShipmentOverview] = useState([]);
   const [shipmentFilter, setShipmentFilter] = useState('Active');
   const [selectedMarker, setSelectedMarker] = useState({});
   const [markers, setMarkers] = useState([]);
@@ -180,9 +184,6 @@ const Shipment = (props) => {
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
     }
-    // if (!custodyData) {
-    //   dispatch(getCustody());
-    // }
     if (!sensorData) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
@@ -201,6 +202,8 @@ const Shipment = (props) => {
       && custodianData
       && custodyData
       && aggregateReportData
+      && allAlerts
+      && contactInfo
     ) {
       const formattedRows = getFormattedRow(
         shipmentData,
@@ -222,6 +225,18 @@ const Shipment = (props) => {
         formattedRows,
         { type: 'Cancelled' },
       );
+      const overview = getShipmentOverview(
+        shipmentData,
+        custodianData,
+        custodyData,
+        aggregateReportData,
+        allAlerts,
+        contactInfo,
+        timezone,
+      );
+      if (overview.length > 0) {
+        setShipmentOverview(overview);
+      }
 
       setRows(formattedRows);
       setActiveRows(ACTIVE_ROWS);
@@ -237,89 +252,18 @@ const Shipment = (props) => {
         }
       }
     }
-  }, [shipmentData, custodianData, custodyData, aggregateReportData]);
+    if (shipmentData && shipmentData.length) {
+      const ids = _.toString(_.map(shipmentData, 'partner_shipment_id'));
+      const encodedIds = encodeURIComponent(ids);
+      if (encodedIds) {
+        dispatch(getAllSensorAlerts(encodedIds));
+      }
+    }
+  }, [shipmentData, custodianData, custodyData, aggregateReportData, timezone]);
 
   useEffect(() => {
     if (selectedShipment) {
-      let markersToSet = [];
-      let aggregateReportInfo = [];
-      const temperatureUnit = _.filter(
-        unitsOfMeasure,
-        { supported_class: 'Temperature' },
-      )[0].name.toLowerCase();
-
-      _.forEach(selectedShipment.sensor_report, (report) => {
-        if (report.report_entries.length > 0) {
-          _.forEach(report.report_entries, (report_entry) => {
-            try {
-              const temperature = report_entry.report_temp;
-              let dateTime;
-              if ('report_timestamp' in report_entry) {
-                if (report_entry.report_timestamp !== null) {
-                  dateTime = moment(report_entry.report_timestamp)
-                    .tz(timezone).format('MMM DD YYYY, h:mm:ss a');
-                }
-              } else if ('report_location' in report_entry) {
-                dateTime = moment(
-                  report_entry.report_location.timeOfPosition,
-                ).tz(timezone).format('MMM DD YYYY, h:mm:ss a');
-              }
-
-              // For a valid (latitude, longitude) pair: -90<=X<=+90 and -180<=Y<=180
-              const latitude = report_entry.report_latitude
-                || report_entry.report_location.latitude;
-              const longitude = report_entry.report_longitude
-                || report_entry.report_location.longitude;
-              if (
-                (latitude >= -90
-                  && latitude <= 90)
-                && (longitude >= -180
-                  && longitude <= 180)
-                && dateTime !== ''
-              ) {
-                const marker = {
-                  lat: latitude,
-                  lng: longitude,
-                  label: 'Clustered',
-                  temperature,
-                  light: report_entry.report_light,
-                  shock: report_entry.report_shock,
-                  tilt: report_entry.report_tilt,
-                  humidity: report_entry.report_humidity,
-                  battery: report_entry.report_battery,
-                  pressure: report_entry.report_pressure,
-                  color: 'green',
-                  timestamp: dateTime,
-                };
-                // Considered use case: If a shipment stays at some
-                // position for long, other value changes can be
-                // critical
-                const markerFound = _.find(markersToSet, {
-                  lat: marker.lat,
-                  lng: marker.lng,
-                });
-
-                if (!markerFound) {
-                  markersToSet = [...markersToSet, marker];
-                }
-                aggregateReportInfo = [
-                  ...aggregateReportInfo,
-                  marker,
-                ];
-              }
-            } catch (e) {
-              // eslint-disable-next-line no-console
-              console.log(e);
-            }
-          });
-        }
-      });
-      setMarkers(_.orderBy(
-        markersToSet,
-        (item) => moment(item.timestamp),
-        ['asc'],
-      ));
-      selectedShipment.sensor_report_info = aggregateReportInfo;
+      setMarkers(selectedShipment.markers_to_set);
     }
   }, [selectedShipment, timezone]);
 
@@ -551,7 +495,7 @@ const Shipment = (props) => {
       </Grid>
       <SensorReport
         loading={loading}
-        aggregateReport={selectedShipment && selectedShipment?.sensor_report_info}
+        aggregateReport={selectedShipment && selectedShipment?.sensor_report}
         shipmentName={selectedShipment && selectedShipment?.name}
         selectedMarker={selectedShipment && selectedMarker}
       />

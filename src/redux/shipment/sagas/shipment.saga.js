@@ -1,5 +1,5 @@
 import {
-  put, takeLatest, all, call,
+  put, takeLatest, all, call, delay,
 } from 'redux-saga/effects';
 import _ from 'lodash';
 import { httpService } from '@modules/http/http.service';
@@ -24,14 +24,13 @@ import {
   EDIT_SHIPMENT_FAILURE,
   DELETE_SHIPMENT,
   DELETE_SHIPMENT_FAILURE,
-  GET_DASHBOARD_ITEMS,
   GET_DASHBOARD_ITEMS_SUCCESS,
   GET_DASHBOARD_ITEMS_FAILURE,
   ADD_PDF_IDENTIFIER,
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
 } from '../actions/shipment.actions';
-import { GET_AGGREGATE_REPORT_SUCCESS, EDIT_GATEWAY_SUCCESS } from '../../sensorsGateway/actions/sensorsGateway.actions';
+import { GET_AGGREGATE_REPORT_SUCCESS } from '../../sensorsGateway/actions/sensorsGateway.actions';
 import { GET_CUSTODY_SUCCESS } from '../../custodian/actions/custodian.actions';
 
 const shipmentApiEndPoint = 'shipment/';
@@ -76,9 +75,11 @@ function* processShipments(payload, data) {
   const ids = _.toString(_.without(IDS, null));
   const encodedIds = encodeURIComponent(ids);
   if (payload.getUpdatedSensorData && encodedIds) {
-    yield [
-      yield put(getAggregateReport(encodedIds)),
-    ];
+    const chunks = _.chunk(_.without(IDS, null), 25);
+    yield all(chunks.map(
+      (chunk) => put(getAggregateReport(encodeURIComponent(chunk))),
+      delay(500),
+    ));
   } else {
     yield put({
       type: GET_AGGREGATE_REPORT_SUCCESS,
@@ -101,6 +102,7 @@ function* getShipmentList(payload) {
       const consortium_uuid = _.join(_.map(response.data, 'consortium_uuid'), ',');
       query_params = `?organization_uuid=${payload.organization_uuid}`;
       if (payload.status) {
+        // eslint-disable-next-line no-param-reassign
         payload.status = encodeURIComponent(payload.status);
         query_params = query_params.concat(`&status=${payload.status}`);
       }
@@ -125,7 +127,7 @@ function* getShipmentList(payload) {
         status: payload.status ? payload.status : 'All',
       });
       // Splitting code to take care of once the response is back
-      yield processShipments(payload, data.data);
+      yield processShipments(payload, shipment_data);
     }
   } catch (error) {
     yield [
