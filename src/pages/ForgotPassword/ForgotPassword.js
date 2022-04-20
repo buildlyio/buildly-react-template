@@ -13,7 +13,7 @@ import {
   Typography,
   Container,
 } from '@mui/material';
-import logo from '@assets/light-logo.png';
+import logo from '@assets/insights-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import { useInput } from '@hooks/useInput';
 import { sendPasswordResetLink } from '@redux/authuser/actions/authuser.actions';
@@ -22,13 +22,13 @@ import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   logoDiv: {
-    width: theme.spacing(15),
+    width: theme.spacing(22),
     margin: 'auto',
-    marginTop: theme.spacing(1.25),
+    marginTop: theme.spacing(6),
     marginBottom: theme.spacing(2.5),
   },
   logo: {
-    width: theme.spacing(15),
+    width: theme.spacing(22),
     objectFit: 'contain',
   },
   paper: {

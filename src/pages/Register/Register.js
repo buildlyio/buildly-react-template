@@ -16,7 +16,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
-import logo from '@assets/light-logo.png';
+import logo from '@assets/insights-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import GithubLogin from '@components/SocialLogin/GithubLogin';
 import { useInput } from '@hooks/useInput';
@@ -31,13 +31,13 @@ import { providers } from '@utils/socialLogin';
 
 const useStyles = makeStyles((theme) => ({
   logoDiv: {
-    width: theme.spacing(15),
+    width: theme.spacing(26),
     margin: 'auto',
-    marginTop: theme.spacing(1.25),
+    marginTop: theme.spacing(6),
     marginBottom: theme.spacing(2.5),
   },
   logo: {
-    width: theme.spacing(15),
+    width: theme.spacing(26),
     objectFit: 'contain',
   },
   container: {

@@ -16,7 +16,7 @@ import {
   Group as GroupIcon,
   Menu as MenuIcon,
 } from '@mui/icons-material';
-import logo from '@assets/light-logo.png';
+import logo from '@assets/insights-logo.png';
 import { UserContext } from '@context/User.context';
 import { logout, loadOrgNames } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   logo: {
-    maxWidth: 50,
+    maxWidth: 130,
     objectFit: 'contain',
   },
   menuButton: {
