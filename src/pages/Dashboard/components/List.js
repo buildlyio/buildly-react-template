@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
-import { Grid, Typography } from '@mui/material';
+import {
+  Grid, Paper, Popover, Typography,
+} from '@mui/material';
 import {
   AddRounded as AddRoundedIcon,
   EditRounded as EditRoundedIcon,
   DeleteRounded as DeleteRoundedIcon,
   TrendingFlatRounded as TrendingFlatRoundedIcon,
+  Info as InfoIcon,
 } from '@mui/icons-material';
 import {
   Chip,
@@ -77,6 +80,12 @@ const useStyles = makeStyles((theme) => ({
   chip: {
     width: '20%',
   },
+  issueDetails: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(1),
+    padding: theme.spacing(2),
+  },
 }));
 
 const List = ({
@@ -90,6 +99,22 @@ const List = ({
   commentItem,
 }) => {
   const classes = useStyles();
+
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [issueDetailsAnchorEl, setIssueDetailsAnchorEl] = useState(null);
+
+  const handleIssueDetailsOpenClick = (event, issue) => {
+    setSelectedIssue(issue);
+    setIssueDetailsAnchorEl(event.currentTarget);
+  };
+
+  const handleIssueDetailsCloseClick = () => {
+    setIssueDetailsAnchorEl(null);
+    setSelectedIssue(null);
+  };
+
+  const open = Boolean(issueDetailsAnchorEl);
+  const id = open ? 'issue-details-popover' : undefined;
 
   return (
     <>
@@ -219,34 +244,71 @@ const List = ({
                           className={classes.entryIcon}
                           onClick={(e) => commentItem()}
                         />
-                        <Chip
-                          variant="outlined"
-                          icon={<UpdateIcon fontSize="small" />}
-                          label={`${issue.estimate}:00 Hrs`}
+                        <InfoIcon
+                          className={classes.entryIcon}
+                          onClick={(e) => handleIssueDetailsOpenClick(e, issue)}
+                          aria-describedby={id}
                         />
-                        <Chip
-                          variant="outlined"
-                          icon={<DateRangeIcon fontSize="small" />}
-                          label={(issue.end_date).slice(0, 10)}
-                        />
-                        {productFeatures
-                          .filter((feat) => (feat.feature_uuid === issue.feature_uuid))
-                          .map((feat, ind) => (
-                            <Chip
-                              key={ind}
-                              variant="outlined"
-                              className={classes.chip}
-                              icon={<AltRouteIcon fontSize="small" />}
-                              label={feat.name}
-                              onClick={() => editItem(feat, 'feat', true)}
-                            />
-                          ))}
                       </div>
                     ))}
               </div>
             </div>
           </div>
         </Grid>
+
+        {
+          selectedIssue
+          && (
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={issueDetailsAnchorEl}
+            onClose={handleIssueDetailsCloseClick}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          >
+            <Paper elevation={3} className={classes.issueDetails}>
+              {
+                selectedIssue.estimate
+                  && (
+                  <Chip
+                    variant="outlined"
+                    icon={<UpdateIcon fontSize="small" />}
+                    label={`${selectedIssue.estimate}:00 Hrs`}
+                  />
+                  )
+              }
+              {
+                selectedIssue.end_date
+                  && (
+                    <Chip
+                      variant="outlined"
+                      icon={<DateRangeIcon fontSize="small" />}
+                      label={(selectedIssue.end_date).slice(0, 10)}
+                    />
+                  )
+              }
+              {productFeatures
+                .filter((feat) => (feat.feature_uuid === selectedIssue.feature_uuid))
+                .map((feat, ind) => (
+                  <Chip
+                    key={ind}
+                    variant="outlined"
+                    icon={<AltRouteIcon fontSize="small" />}
+                    label={feat.name}
+                    onClick={() => editItem(feat, 'feat', true)}
+                  />
+                ))}
+            </Paper>
+          </Popover>
+          )
+        }
       </Grid>
     </>
   );
