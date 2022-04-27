@@ -54,6 +54,7 @@ import {
 import {
   getShipmentDetails,
 } from '../../shipment/actions/shipment.actions';
+import { loadAllOrgs } from '@redux/authuser/actions/authuser.actions';
 
 const custodiansApiEndPoint = 'custodian/';
 
@@ -98,6 +99,7 @@ function* addCustodian(action) {
         custodian_type: payload.custodian_type,
         contact_data: [contactInfo],
         organization_uuid: payload.organization_uuid,
+        custody_org_uuid: payload.custody_org_uuid,
       };
       const data = yield call(
         httpService.makeRequest,
@@ -116,6 +118,7 @@ function* addCustodian(action) {
             }),
           ),
           yield put(getContact(payload.organization_uuid)),
+          yield put(loadAllOrgs()),
         ];
         if (history && redirectTo) {
           yield call(history.push, redirectTo);
@@ -169,6 +172,7 @@ function* editCustodian(action) {
         yield [
           yield put({ type: EDIT_CUSTODIANS_SUCCESS, data: data.data }),
           yield put(getContact(payload.organization_uuid)),
+          yield put(loadAllOrgs()),
           yield put(
             showAlert({
               type: 'success',
@@ -255,12 +259,12 @@ function* deleteCustodian(payload) {
     yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}custodian/contact/${contactObjId}/`,
+      `${window.env.API_URL}${custodiansApiEndPoint}contact/${contactObjId}/`,
     );
     yield [
       yield put({
         type: DELETE_CUSTODIANS_SUCCESS,
-        data: { id: payload.id },
+        data: { custodianId: payload.custodianId, contactId: payload.contactObjId },
       }),
       yield put(
         showAlert({
@@ -476,7 +480,7 @@ function* deleteCustody(payload) {
       `${window.env.API_URL}${custodiansApiEndPoint}custody/${custodyId}/`,
     );
     yield [
-      yield put({ type: DELETE_CUSTODY_SUCCESS, data: { id: payload.id } }),
+      yield put({ type: DELETE_CUSTODY_SUCCESS, data: { id: payload.custodyId } }),
       yield put(
         getShipmentDetails(
           organization_uuid,

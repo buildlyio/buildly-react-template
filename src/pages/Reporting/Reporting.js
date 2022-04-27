@@ -204,13 +204,6 @@ const Reporting = ({
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
     }
-    if (shipmentData && shipmentData.length) {
-      const ids = _.toString(_.map(shipmentData, 'partner_shipment_id'));
-      const encodedIds = encodeURIComponent(ids);
-      if (encodedIds) {
-        dispatch(getAllSensorAlerts(encodedIds));
-      }
-    }
   }, []);
 
   useEffect(() => {

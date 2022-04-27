@@ -65,10 +65,10 @@ const Custodian = ({
   }, []);
 
   useEffect(() => {
-    if (custodianData && custodianData.length && contactInfo) {
+    if (custodianData && custodianData.length && contactInfo && contactInfo.length) {
       setRows(getFormattedRow(custodianData, contactInfo));
     }
-  }, [custodianData, contactInfo, custodyData]);
+  }, [JSON.stringify(custodianData), JSON.stringify(contactInfo)]);
 
   const editItem = (item) => {
     const contactObj = getUniqueContactInfo(item, contactInfo);

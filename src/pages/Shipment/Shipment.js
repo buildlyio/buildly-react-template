@@ -252,14 +252,8 @@ const Shipment = (props) => {
         }
       }
     }
-    if (shipmentData && shipmentData.length) {
-      const ids = _.toString(_.map(shipmentData, 'partner_shipment_id'));
-      const encodedIds = encodeURIComponent(ids);
-      if (encodedIds) {
-        dispatch(getAllSensorAlerts(encodedIds));
-      }
-    }
-  }, [shipmentData, custodianData, custodyData, aggregateReportData, timezone]);
+  }, [shipmentData, custodianData, custodyData, aggregateReportData,
+    allAlerts, contactInfo, timezone]);
 
   useEffect(() => {
     if (selectedShipment) {

@@ -7,6 +7,9 @@ import { showAlert } from '@redux/alert/actions/alert.actions';
 import {
   getAggregateReport,
   editGateway,
+  getAllSensorAlerts,
+  GET_ALL_SENSOR_ALERTS_SUCCESS,
+  GET_AGGREGATE_REPORT_SUCCESS,
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getCustody,
@@ -30,7 +33,6 @@ import {
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
 } from '../actions/shipment.actions';
-import { GET_AGGREGATE_REPORT_SUCCESS } from '../../sensorsGateway/actions/sensorsGateway.actions';
 import { GET_CUSTODY_SUCCESS } from '../../custodian/actions/custodian.actions';
 
 const shipmentApiEndPoint = 'shipment/';
@@ -76,15 +78,24 @@ function* processShipments(payload, data) {
   const encodedIds = encodeURIComponent(ids);
   if (payload.getUpdatedSensorData && encodedIds) {
     const chunks = _.chunk(_.without(IDS, null), 25);
-    yield all(chunks.map(
-      (chunk) => put(getAggregateReport(encodeURIComponent(chunk))),
-      delay(500),
-    ));
+    yield [
+      yield all(chunks.map(
+        (chunk) => put(getAggregateReport(encodeURIComponent(chunk))),
+        delay(500),
+      )),
+      yield put(getAllSensorAlerts(encodedIds)),
+    ];
   } else {
-    yield put({
-      type: GET_AGGREGATE_REPORT_SUCCESS,
-      data: [],
-    });
+    yield [
+      yield put({
+        type: GET_AGGREGATE_REPORT_SUCCESS,
+        data: [],
+      }),
+      yield put({
+        type: GET_ALL_SENSOR_ALERTS_SUCCESS,
+        data: [],
+      }),
+    ];
   }
 }
 

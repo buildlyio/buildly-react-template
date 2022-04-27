@@ -136,14 +136,16 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_CUSTODIANS_SUCCESS: {
-      const { custodianData } = state;
-      _.remove(custodianData, { id: action.data.id });
+      const { custodianData, contactInfo } = state;
+      _.remove(contactInfo, { id: action.data.contactId });
+      _.remove(custodianData, { id: action.data.custodianId });
 
       return {
         ...state,
         loading: false,
         loaded: true,
         custodianData,
+        contactInfo,
       };
     }
 

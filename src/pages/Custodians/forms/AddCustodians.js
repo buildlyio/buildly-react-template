@@ -79,6 +79,7 @@ const AddCustodians = ({
   custodianTypeList,
   custodianOptions,
   contactOptions,
+  allOrgs,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
@@ -179,6 +180,15 @@ const AddCustodians = ({
       ...(editPage && { id: contactData.id }),
       organization_uuid: organization,
     };
+    const orgNames = allOrgs.map((org) => org.name);
+    const custodianName = new RegExp(`.*${company.value.split('').join('.*').replace(/\s+/g, ' ').replace(/\d+/g, '')
+      .replace(/\s/g, '')
+      .trim()}.*`, 'i');
+    const matchingOrgs = _.filter(orgNames, (org) => custodianName.test(org));
+    let custody_org_uuid = null;
+    if (matchingOrgs.length > 0) {
+      custody_org_uuid = _.find(allOrgs, { name: matchingOrgs[0] }).organization_uuid;
+    }
     const custodianFormValue = {
       custodian_alias: alias.value,
       custodian_type: custodianType.value,
@@ -188,6 +198,7 @@ const AddCustodians = ({
       ...(editPage && { url: editData.url }),
       ...(editPage && { id: editData.id }),
       organization_uuid: organization,
+      custody_org_uuid: custody_org_uuid || null,
     };
     if (editPage) {
       dispatch(editCustodian(
@@ -703,9 +714,11 @@ const AddCustodians = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
+  ...state.authReducer,
   ...state.optionsReducer,
   loading: (
     state.custodianReducer.loading
+    || state.authReducer.loading
     || state.optionsReducer.loading
   ),
 });
