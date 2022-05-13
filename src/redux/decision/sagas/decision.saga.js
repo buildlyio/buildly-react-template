@@ -79,6 +79,7 @@ import {
   DELETE_STATUS,
   DELETE_STATUS_SUCCESS,
   DELETE_STATUS_FAILURE,
+  saveFeatureFormData,
 } from '../actions/decision.actions';
 
 const decisionEndpoint = 'decision/';
@@ -269,7 +270,10 @@ function* createFeature(payload) {
       `${window.env.API_URL}${decisionEndpoint}feature/`,
       payload.data,
     );
-    yield put({ type: CREATE_FEATURE_SUCCESS, data: feature.data });
+    yield [
+      yield put({ type: CREATE_FEATURE_SUCCESS, data: feature.data }),
+      yield put(saveFeatureFormData(null)),
+    ];
   } catch (error) {
     yield [
       yield put(
@@ -520,13 +524,25 @@ function* getIssue(payload) {
 
 function* createIssue(payload) {
   try {
-    const issue = yield call(
-      httpService.makeRequest,
-      'post',
-      `${window.env.API_URL}${decisionEndpoint}issue/`,
-      payload.data,
-    );
-    yield put({ type: CREATE_ISSUE_SUCCESS, data: issue.data });
+    if (payload.data.length > 0) {
+      for (let i = 0; i < payload.data.length; i += 1) {
+        const issue = yield call(
+          httpService.makeRequest,
+          'post',
+          `${window.env.API_URL}${decisionEndpoint}issue/`,
+          payload.data[i],
+        );
+        yield put({ type: CREATE_ISSUE_SUCCESS, data: issue.data });
+      }
+    } else {
+      const issue = yield call(
+        httpService.makeRequest,
+        'post',
+        `${window.env.API_URL}${decisionEndpoint}issue/`,
+        payload.data,
+      );
+      yield put({ type: CREATE_ISSUE_SUCCESS, data: issue.data });
+    }
   } catch (error) {
     yield [
       yield put(

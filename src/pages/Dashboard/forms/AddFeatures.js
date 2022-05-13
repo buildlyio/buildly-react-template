@@ -18,6 +18,7 @@ import {
   getAllStatuses,
   createFeature,
   updateFeature,
+  saveFeatureFormData,
 } from '@redux/decision/actions/decision.actions';
 import { getAllCredentials } from '@redux/product/actions/product.actions';
 import { validators } from '@utils/validators';
@@ -43,6 +44,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// eslint-disable-next-line import/no-mutable-exports
+export let checkIfAddFeaturesEdited;
+
 const AddFeatures = ({
   history,
   location,
@@ -50,10 +54,11 @@ const AddFeatures = ({
   dispatch,
   products,
   credentials,
+  productFeatures,
+  handleNext,
+  featureFormData,
 }) => {
   const classes = useStyles();
-  const [openFormModal, setFormModal] = useState(true);
-  const [openConfirmModal, setConfirmModal] = useState(false);
   const [product, setProduct] = useState('');
 
   const redirectTo = location.state && location.state.from;
@@ -66,28 +71,35 @@ const AddFeatures = ({
   const product_uuid = location.state && location.state.product_uuid;
   const viewPage = (location.state && location.state.viewOnly) || false;
 
-  const name = useInput((editData && editData.name) || '', {
+  const name = useInput((editData && editData.name) || (featureFormData && featureFormData.name) || '', {
+    required: true,
+    productFeatures,
+  });
+  const description = useInput((editData && editData.description) || (featureFormData && featureFormData.description) || '', {
     required: true,
   });
-  const description = useInput((editData && editData.description) || '', {
+  const priority = useInput((editData && editData.priority) || (featureFormData && featureFormData.priority) || '', {
     required: true,
   });
-  const priority = useInput((editData && editData.priority) || '', {
+  const status = useInput((editData && editData.status) || (featureFormData && featureFormData.status) || '', {
     required: true,
   });
-  const status = useInput((editData && editData.status) || '', {
-    required: true,
-  });
-  const [tags, setTags] = useState((editData && editData.tags) || []);
+  const [tags, setTags] = useState((editData && editData.tags)
+  || (featureFormData && featureFormData.tags) || []);
   const [boardList, setBoardList] = useState([]);
-  const [colList, setColList] = useState([]);
-  const [colID, setColID] = useState('');
-  const totalEstimate = useInput((editData && editData.total_estimate) || '');
-  const version = useInput((editData && editData.version) || '');
-  const [formError, setFormError] = useState({});
-  const [boardID, setBoardID] = useState('');
+  const [colID, setColID] = useState((featureFormData && featureFormData.column_id) || (editData && editData.feature_detail?.column_id) || '');
 
-  const buttonText = editPage ? 'Save' : 'Add Feature';
+  const totalEstimate = useInput((editData && editData.total_estimate) || (featureFormData && featureFormData.total_estimate) || '');
+  const version = useInput((editData && editData.version) || (featureFormData && featureFormData.version) || '');
+  const [formError, setFormError] = useState({});
+  const prdt = _.find(products, { product_uuid });
+  const listB = _.flatMap(_.map(
+    prdt?.feature_tool_detail?.organisation_list,
+    'board_list',
+  ));
+  const boardData = _.find(listB, { column_list: [{ column_id: colID }] });
+  const [boardID, setBoardID] = useState((editData && boardData) || '');
+  const [colList, setColList] = useState((editData && boardData?.column_list) || []);
 
   let formTitle;
   if (editPage) {
@@ -122,9 +134,8 @@ const AddFeatures = ({
     setProduct(prd);
   }, [products]);
 
-  const closeFormModal = () => {
-    const dataHasChanged = (
-      name.hasChanged()
+  checkIfAddFeaturesEdited = () => (
+    name.hasChanged()
       || description.hasChanged()
       || priority.hasChanged()
       || status.hasChanged()
@@ -136,25 +147,7 @@ const AddFeatures = ({
         && product.feature_tool_detail
         && !_.isEmpty(colList)
         && colID !== '')
-    );
-
-    if (dataHasChanged) {
-      setConfirmModal(true);
-    } else {
-      setFormModal(false);
-      if (location && location.state) {
-        history.push(redirectTo);
-      }
-    }
-  };
-
-  const discardFormData = () => {
-    setConfirmModal(false);
-    setFormModal(false);
-    if (location && location.state) {
-      history.push(redirectTo);
-    }
-  };
+  );
 
   // Handle tags list
   const onTagsChange = (value) => {
@@ -190,17 +183,17 @@ const AddFeatures = ({
       priority: priority.value,
       total_estimate: totalEstimate.value,
       version: version.value,
+      column_id: colID,
       ...featCred?.auth_detail,
     };
 
     if (editPage) {
-      dispatch(updateFeature(formData));
+      dispatch(saveFeatureFormData(formData));
     } else {
       formData.create_date = dateTime;
-      formData.column_id = colID;
-      dispatch(createFeature(formData));
+      dispatch(saveFeatureFormData(formData));
     }
-    history.push(redirectTo);
+    handleNext();
   };
 
   const handleBlur = (e, validation, input, parentId) => {
@@ -230,11 +223,6 @@ const AddFeatures = ({
       || !priority.value
       || (!editPage && product
         && product.feature_tool_detail
-        && !_.isEmpty(boardList)
-        && !boardID)
-      || (!editPage && product
-        && product.feature_tool_detail
-        && !_.isEmpty(colList)
         && !colID)
     ) {
       return true;
@@ -250,314 +238,284 @@ const AddFeatures = ({
 
   return (
     <>
-      {openFormModal && (
-        <FormModal
-          open={openFormModal}
-          handleClose={closeFormModal}
-          title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth="md"
-          wantConfirm
-          openConfirmModal={openConfirmModal}
-          setConfirmModal={setConfirmModal}
-          handleConfirmModal={discardFormData}
-        >
-          <form
-            className={classes.form}
-            noValidate
-            onSubmit={handleSubmit}
-          >
-            <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="name"
-                  label="Title"
-                  name="name"
-                  autoComplete="name"
-                  error={
+      <form
+        className={classes.form}
+        noValidate
+        onSubmit={handleSubmit}
+      >
+        <Grid container spacing={isDesktop ? 2 : 0}>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              label="Title"
+              name="name"
+              autoComplete="name"
+              error={
                     formError.name
                     && formError.name.error
                   }
-                  helperText={
+              helperText={
                     formError.name
                       ? formError.name.message
                       : ''
                   }
-                  onBlur={(e) => handleBlur(e, 'required', name)}
-                  {...name.bind}
-                  disabled={viewPage}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  multiline
-                  id="description"
-                  label="Description"
-                  name="description"
-                  autoComplete="description"
-                  error={
+              onBlur={(e) => handleBlur(e, 'duplicate', name)}
+              {...name.bind}
+              disabled={viewPage}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              multiline
+              id="description"
+              label="Description"
+              name="description"
+              autoComplete="description"
+              error={
                     formError.description
                     && formError.description.error
                   }
-                  helperText={
+              helperText={
                     formError.description
                       ? formError.description.message
                       : ''
                   }
-                  onBlur={(e) => handleBlur(e, 'required', description)}
-                  {...description.bind}
-                  disabled={viewPage}
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={8}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  select
-                  id="status"
-                  label="Status"
-                  name="status"
-                  autoComplete="status"
-                  error={
+              onBlur={(e) => handleBlur(e, 'required', description)}
+              {...description.bind}
+              disabled={viewPage}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={8}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              select
+              id="status"
+              label="Status"
+              name="status"
+              autoComplete="status"
+              error={
                     formError.status
                     && formError.status.error
                   }
-                  helperText={
+              helperText={
                     formError.status
                       ? formError.status.message
                       : ''
                   }
-                  onBlur={(e) => handleBlur(e, 'required', status)}
-                  {...status.bind}
-                  disabled={viewPage}
+              onBlur={(e) => handleBlur(e, 'required', status)}
+              {...status.bind}
+              disabled={viewPage}
+            >
+              {_.map(statuses, (sts) => (
+                <MenuItem
+                  key={`status-${sts.status_uuid}-${sts.name}`}
+                  value={sts.status_uuid}
                 >
-                  {_.map(statuses, (sts) => (
-                    <MenuItem
-                      key={`status-${sts.status_uuid}-${sts.name}`}
-                      value={sts.status_uuid}
-                    >
-                      {sts.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  select
-                  id="priority "
-                  label="Priority"
-                  name="priority"
-                  autoComplete="priority"
-                  error={
+                  {sts.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              select
+              id="priority "
+              label="Priority"
+              name="priority"
+              autoComplete="priority"
+              error={
                     formError.priority
                     && formError.priority.error
                   }
-                  helperText={
+              helperText={
                     formError.priority
                       ? formError.priority.message
                       : ''
                   }
-                  onBlur={(e) => handleBlur(e, 'required', priority)}
-                  {...priority.bind}
-                  disabled={viewPage}
+              onBlur={(e) => handleBlur(e, 'required', priority)}
+              {...priority.bind}
+              disabled={viewPage}
+            >
+              {_.map(PRIORITIES, (prty, idx) => (
+                <MenuItem
+                  key={`priority-${idx}`}
+                  value={prty}
                 >
-                  {_.map(PRIORITIES, (prty, idx) => (
-                    <MenuItem
-                      key={`priority-${idx}`}
-                      value={prty}
-                    >
-                      {prty}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Autocomplete
-                fullWidth
-                multiple
-                filterSelectedOptions
-                id="tags"
-                options={TAGS}
-                value={tags}
-                onChange={(e, newValue) => onTagsChange(newValue)}
-                renderTags={(value, getTagProps) => (
-                  _.map(value, (option, index) => (
-                    <Chip
-                      variant="default"
-                      label={option}
-                      {...getTagProps({ index })}
-                    />
-                  ))
-                )}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label="Tags"
-                    margin="normal"
-                  />
-                )}
-                disabled={viewPage}
-              />
-            </Grid>
-            {!editPage && !_.isEmpty(boardList) && (
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  select
-                  id="boardID"
-                  label="Tool Board"
-                  name="boardID"
-                  value={boardID}
-                  autoComplete="boardID"
-                  onChange={(e) => {
-                    const board = e.target.value;
-                    setBoardID(board);
-                    setColList(board.column_list);
-                  }}
-                  disabled={viewPage}
-                >
-                  {_.map(boardList, (board) => (
-                    <MenuItem
-                      key={`board-${board.board_id}-${board.board_name}`}
-                      value={board}
-                    >
-                      {board.board_name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
+                  {prty}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+        </Grid>
+        <Grid item xs={12}>
+          <Autocomplete
+            fullWidth
+            multiple
+            filterSelectedOptions
+            id="tags"
+            options={TAGS}
+            value={tags}
+            onChange={(e, newValue) => onTagsChange(newValue)}
+            renderTags={(value, getTagProps) => (
+              _.map(value, (option, index) => (
+                <Chip
+                  variant="default"
+                  label={option}
+                  {...getTagProps({ index })}
+                />
+              ))
             )}
-            {!editPage && !_.isEmpty(colList) && (
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  select
-                  id="colID"
-                  label="Tool Column"
-                  name="colID"
-                  autoComplete="colID"
-                  value={colID}
-                  onChange={(e) => setColID(e.target.value)}
-                  disabled={viewPage}
-                >
-                  {_.map(colList, (col) => (
-                    <MenuItem
-                      key={`column-${col.column_id}-${col.column_name}`}
-                      value={col.column_id}
-                    >
-                      {col.column_name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-            )}
-            <Grid item xs={12}>
+            renderInput={(params) => (
               <TextField
+                {...params}
                 variant="outlined"
+                label="Tags"
                 margin="normal"
-                fullWidth
-                id="totalEstimate"
-                label="Total Estimate"
-                name="totalEstimate"
-                autoComplete="totalEstimate"
-                error={
+              />
+            )}
+            disabled={viewPage}
+          />
+        </Grid>
+        {!_.isEmpty(boardList) && (
+        <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            select
+            id="boardID"
+            label="Tool Board"
+            name="boardID"
+            value={boardID}
+            autoComplete="boardID"
+            onChange={(e) => {
+              const board = e.target.value;
+              setBoardID(board);
+              setColList(board.column_list);
+            }}
+            disabled={viewPage}
+          >
+            {_.map(boardList, (board) => (
+              <MenuItem
+                key={`board-${board.board_id}-${board.board_name}`}
+                value={board}
+              >
+                {board.board_name}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        )}
+        {!_.isEmpty(colList) && (
+        <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            select
+            id="colID"
+            label="Tool Column"
+            name="colID"
+            autoComplete="colID"
+            value={colID}
+            onChange={(e) => setColID(e.target.value)}
+            disabled={viewPage}
+          >
+            {_.map(colList, (col) => (
+              <MenuItem
+                key={`column-${col.column_id}-${col.column_name}`}
+                value={col.column_id}
+              >
+                {col.column_name}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        )}
+        <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            id="totalEstimate"
+            label="Total Estimate"
+            name="totalEstimate"
+            autoComplete="totalEstimate"
+            error={
                   formError.totalEstimate
                   && formError.totalEstimate.error
                 }
-                helperText={
+            helperText={
                   formError.totalEstimate
                     ? formError.totalEstimate.message
                     : ''
                 }
-                onBlur={(e) => handleBlur(e, 'required', totalEstimate)}
-                {...totalEstimate.bind}
-                disabled={viewPage}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                id="version "
-                label="Version"
-                name="version"
-                autoComplete="version"
-                error={
+            onBlur={(e) => handleBlur(e, 'required', totalEstimate)}
+            {...totalEstimate.bind}
+            disabled={viewPage}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            id="version "
+            label="Version"
+            name="version"
+            autoComplete="version"
+            error={
                   formError.version
                   && formError.version.error
                 }
-                helperText={
+            helperText={
                   formError.version
                     ? formError.version.message
                     : ''
                 }
-                onBlur={(e) => handleBlur(e, 'required', version)}
-                {...version.bind}
-                disabled={viewPage}
-              />
-            </Grid>
-            {
-              !viewPage && (
-              <Grid
-                container
-                spacing={isDesktop ? 3 : 0}
-                justifyContent="center"
-              >
-                <Grid item xs={12} sm={4}>
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                    disabled={submitDisabled()}
-                  >
-                    {buttonText}
-                  </Button>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <Button
-                    type="button"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    onClick={discardFormData}
-                    className={classes.submit}
-                  >
-                    Cancel
-                  </Button>
-                </Grid>
-              </Grid>
-              )
-            }
-          </form>
-        </FormModal>
-      )}
+            onBlur={(e) => handleBlur(e, 'required', version)}
+            {...version.bind}
+            disabled={viewPage}
+          />
+        </Grid>
+        <Grid
+          container
+          spacing={isDesktop ? 3 : 0}
+          justifyContent="center"
+        >
+          <Grid item xs={12} sm={4}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              disabled={submitDisabled()}
+            >
+              Next
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
     </>
   );
 };
@@ -567,6 +525,7 @@ const mapStateToProps = (state, ownProps) => ({
   statuses: state.decisionReducer.statuses,
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,
+  featureFormData: state.decisionReducer.featureFormData,
 });
 
 export default connect(mapStateToProps)(AddFeatures);

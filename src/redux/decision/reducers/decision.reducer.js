@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import {
+  SAVE_FEATURE_FORM_DATA,
   ALL_DECISIONS,
   ALL_DECISIONS_SUCCESS,
   ALL_DECISIONS_FAILURE,
@@ -86,11 +87,17 @@ const initialState = {
   feedbacks: [],
   issues: [],
   statuses: [],
+  productFormData: null,
 };
 
 // Reducer
 export default (state = initialState, action) => {
   switch (action.type) {
+    case SAVE_FEATURE_FORM_DATA:
+      return {
+        ...state,
+        featureFormData: action.formData,
+      };
     case ALL_DECISIONS:
     case ALL_FEATURES:
     case ALL_FEEDBACKS:

@@ -25,6 +25,7 @@ import {
 import { getAllCredentials } from '@redux/product/actions/product.actions';
 import { validators } from '@utils/validators';
 import { ISSUETYPES, TAGS } from './formConstants';
+import { routes } from '@routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -59,15 +60,6 @@ const AddIssues = ({
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [productFeatures, setProductFeatures] = useState([]);
-  const [product, setProduct] = useState('');
-  const [orgList, setOrgList] = useState([]);
-  const [repoList, setRepoList] = useState([]);
-  const [repo, setRepo] = useState('');
-  const [orgID, setOrgID] = useState('');
-
-  const redirectTo = location.state && location.state.from;
-  const editPage = location.state && location.state.type === 'edit';
-  const convertPage = location.state && location.state.type === 'convert';
   const editData = (
     location.state
     && location.state.type === 'edit'
@@ -79,6 +71,27 @@ const AddIssues = ({
     && location.state.data
   ) || {};
   const product_uuid = location.state && location.state.product_uuid;
+  const prdt = _.find(products, { product_uuid });
+  const [product, setProduct] = useState('');
+  const [repo, setRepo] = useState((editData && editData.repository) || '');
+  const orgData = _.map(prdt.issue_tool_detail?.organisation_list);
+  const orgVal = _.find(orgData, { repo_list: [{ name: repo }] });
+  const [orgList, setOrgList] = useState([]);
+  const [repoList, setRepoList] = useState((editData && orgVal?.repo_list) || []);
+  const [orgID, setOrgID] = useState((editData && orgVal) || '');
+  const listB = _.flatMap(_.map(
+    prdt?.issue_tool_detail?.organisation_list,
+    'board_list',
+  ));
+  const [colID, setColID] = useState((editData && editData.issue_detail?.column_id) || '');
+  const boardData = _.find(listB, { column_list: [{ column_id: colID }] });
+  const [colList, setColList] = useState((editData && boardData?.column_list) || []); 
+  const [boardList, setBoardList] = useState((boardData) || []);
+  const [boardID, setBoardID] = useState((editData && boardData) || '');
+
+  const redirectTo = location.state && location.state.from;
+  const editPage = location.state && location.state.type === 'edit';
+  const convertPage = location.state && location.state.type === 'convert';
 
   const name = useInput(
     (convertData && convertData.name)
@@ -155,6 +168,10 @@ const AddIssues = ({
       && !_.isEmpty(prd.issue_tool_detail)
     ) {
       setOrgList(_.map(prd.issue_tool_detail.organisation_list));
+      setBoardList(_.flatMap(_.map(
+        prd.issue_tool_detail.organisation_list,
+        'board_list',
+      )));
     }
     setProduct(prd);
   }, [products]);
@@ -184,7 +201,9 @@ const AddIssues = ({
     } else {
       setFormModal(false);
       if (location && location.state) {
-        history.push(redirectTo);
+        history.push(_.includes(location.state.from, 'kanban')
+          ? `${routes.DASHBOARD}/kanban`
+          : `${routes.DASHBOARD}/list`);
       }
     }
   };
@@ -193,7 +212,9 @@ const AddIssues = ({
     setConfirmModal(false);
     setFormModal(false);
     if (location && location.state) {
-      history.push(redirectTo);
+      history.push(_.includes(location.state.from, 'kanban')
+        ? `${routes.DASHBOARD}/kanban`
+        : `${routes.DASHBOARD}/list`);
     }
   };
 
@@ -235,16 +256,21 @@ const AddIssues = ({
       estimate: estimate.value,
       complexity: Number(complexity.value),
       repository: repo,
+      column_id: colID,
+      issue_detail: {
+        column_id: colID,
+      },
       ...issueCred?.auth_detail,
     };
-
     if (editPage) {
       dispatch(updateIssue(formData));
     } else {
       formData.create_date = dateTime;
       dispatch(createIssue(formData));
     }
-    history.push(redirectTo);
+    history.push(_.includes(location.state.from, 'kanban')
+      ? `${routes.DASHBOARD}/kanban`
+      : `${routes.DASHBOARD}/list`);
   };
 
   const handleBlur = (e, validation, input, parentId) => {
@@ -274,7 +300,7 @@ const AddIssues = ({
       || !feature.value
       || !type.value
       || !status.value
-      || (product
+      || (!editPage && product
         && product.issue_tool_detail
         && !_.isEmpty(orgList)
         && !orgID)
@@ -482,6 +508,62 @@ const AddIssues = ({
                     ))}
                   </TextField>
                 </Grid>
+              )}
+              {!_.isEmpty(boardList) && (
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  select
+                  id="boardID"
+                  label="Tool Board"
+                  name="boardID"
+                  value={boardID}
+                  autoComplete="boardID"
+                  onChange={(e) => {
+                    const board = e.target.value;
+                    setBoardID(board);
+                    setColList(board.column_list);
+                  }}
+                >
+                  {_.map(boardList, (board) => (
+                    <MenuItem
+                      key={`board-${board.board_id}-${board.board_name}`}
+                      value={board}
+                    >
+                      {board.board_name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              )}
+              {!_.isEmpty(colList) && (
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  select
+                  id="colID"
+                  label="Tool Column"
+                  name="colID"
+                  autoComplete="colID"
+                  value={colID}
+                  onChange={(e) => setColID(e.target.value)}
+                >
+                  {_.map(colList, (col) => (
+                    <MenuItem
+                      key={`column-${col.column_id}-${col.column_name}`}
+                      value={col.column_id}
+                    >
+                      {col.column_name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
               )}
               <Grid item xs={12} md={6}>
                 <DatePickerComponent

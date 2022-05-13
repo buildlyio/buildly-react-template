@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const validators = (type, input) => {
   switch (type) {
     case 'required':
@@ -8,6 +10,9 @@ export const validators = (type, input) => {
 
     case 'confirm':
       return confirmValidator(input);
+
+    case 'duplicate':
+      return duplicateValidator(input);
 
     default:
       return { error: false, message: '' };
@@ -56,6 +61,25 @@ const confirmValidator = (input) => {
     return {
       error: true,
       message: 'Field does not match!',
+    };
+  }
+  return { error: false, message: '' };
+};
+
+const duplicateValidator = (input) => {
+  const { value, required, productFeatures } = input;
+  if (!value && required) {
+    return {
+      error: true,
+      message: 'This field is required',
+    };
+  }
+  const dupli = _.filter(productFeatures, (feat) => (
+    feat.name === value)).length > 0;
+  if (value && dupli) {
+    return {
+      error: true,
+      message: 'Feature exists, enter new feature',
     };
   }
   return { error: false, message: '' };

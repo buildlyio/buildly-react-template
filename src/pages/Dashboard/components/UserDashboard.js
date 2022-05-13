@@ -20,7 +20,9 @@ import {
 import List from '../components/List';
 import Kanban from '../components/Kanban';
 import AddFeatures from '../forms/AddFeatures';
+import NewFeatureForm from '../forms/NewFeatureForm';
 import AddIssues from '../forms/AddIssues';
+import IssueSuggestions from '../forms/IssueSuggestions';
 import AddComments from '../forms/AddComments';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 
@@ -66,6 +68,7 @@ const UserDashboard = (props) => {
     credentials,
     redirectTo,
     history,
+    loaded,
   } = props;
   const classes = useStyles();
   const subNav = [
@@ -112,6 +115,12 @@ const UserDashboard = (props) => {
       ? `${redirectTo}/dashboard/list`
       : `${redirectTo}/dashboard/kanban`
     : `${routes.DASHBOARD}/edit-issue`;
+
+  const issueSuggestionsPath = redirectTo
+    ? _.includes(location.pathname, 'list')
+      ? `${redirectTo}/dashboard/list`
+      : `${redirectTo}/dashboard/kanban`
+    : `${routes.DASHBOARD}/issue-suggestions`;
 
   const featureToIssuePath = redirectTo
     ? _.includes(location.pathname, 'list')
@@ -216,6 +225,20 @@ const UserDashboard = (props) => {
     });
   };
 
+  const issueSuggestions = (item, type) => {
+    let path;
+    if (type === 'show') {
+      path = issueSuggestionsPath;
+    }
+
+    history.push(path, {
+      type: 'show',
+      from: redirectTo || location.pathname,
+      product_uuid: product,
+      data: item,
+    });
+  };
+
   const deleteItem = (item, type) => {
     const deleteID = type === 'feat'
       ? item.feature_uuid
@@ -253,7 +276,7 @@ const UserDashboard = (props) => {
 
   return (
     <div>
-      {loading && <Loader open={loading} />}
+      {!loaded && <Loader open={!loaded} /> }
       <Grid container alignItems="center" mb={2}>
         <Grid item xs={8}>
           <Typography component="div" variant="h3">
@@ -302,7 +325,6 @@ const UserDashboard = (props) => {
           </Tabs>
         </Grid>
       </Grid>
-
       <ConfirmModal
         open={openDeleteModal}
         setOpen={setDeleteModal}
@@ -320,9 +342,9 @@ const UserDashboard = (props) => {
             productIssues={productIssues}
             addItem={addItem}
             editItem={editItem}
-            convertIssue={convertIssue}
             deleteItem={deleteItem}
             commentItem={commentItem}
+            issueSuggestions={issueSuggestions}
           />
         )}
       />
@@ -337,18 +359,50 @@ const UserDashboard = (props) => {
             productIssues={productIssues}
             addItem={addItem}
             editItem={editItem}
-            convertIssue={convertIssue}
+            issueSuggestions={issueSuggestions}
             deleteItem={deleteItem}
             commentItem={commentItem}
             dispatch={dispatch}
           />
         )}
       />
-      <Route path={addFeatPath} component={AddFeatures} />
-      <Route path={editFeatPath} component={AddFeatures} />
-      <Route path={viewFeatPath} component={AddFeatures} />
+      <Route
+        path={addFeatPath}
+        render={(prps) => (
+          <NewFeatureForm
+            {...prps}
+            productFeatures={productFeatures}
+          />
+        )}
+      />
+      <Route
+        path={editFeatPath}
+        render={(prps) => (
+          <NewFeatureForm
+            {...prps}
+            productFeatures={productFeatures}
+          />
+        )}
+      />
+      <Route
+        path={viewFeatPath}
+        render={(prps) => (
+          <NewFeatureForm
+            {...prps}
+          />
+        )}
+      />
       <Route path={addIssuePath} component={AddIssues} />
       <Route path={editIssuePath} component={AddIssues} />
+      <Route
+        path={issueSuggestionsPath}
+        render={(prps) => (
+          <IssueSuggestions
+            {...prps}
+            convertIssue={convertIssue}
+          />
+        )}
+      />
       <Route path={featureToIssuePath} component={AddIssues} />
       <Route path={addCommentPath} component={AddComments} />
     </div>
@@ -360,6 +414,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.productReducer,
   ...state.decisionReducer,
   loading: state.productReducer.loading && state.decisionReducer.loading,
+  loaded: state.productReducer.loaded && state.decisionReducer.loaded,
 });
 
 export default connect(mapStateToProps)(UserDashboard);

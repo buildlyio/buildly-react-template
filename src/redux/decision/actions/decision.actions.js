@@ -1,4 +1,6 @@
 // Decision Action types
+export const SAVE_FEATURE_FORM_DATA = 'DECISION/SAVE_FEATURE_FORM_DATA';
+
 export const ALL_DECISIONS = 'DECISION/ALL_DECISIONS';
 export const ALL_DECISIONS_SUCCESS = 'DECISION/ALL_DECISIONS_SUCCESS';
 export const ALL_DECISIONS_FAILURE = 'DECISION/ALL_DECISIONS_FAILURE';
@@ -98,6 +100,15 @@ export const UPDATE_STATUS_FAILURE = 'DECISION/UPDATE_STATUS_FAILURE';
 export const DELETE_STATUS = 'DECISION/DELETE_STATUS';
 export const DELETE_STATUS_SUCCESS = 'DECISION/DELETE_STATUS_SUCCESS';
 export const DELETE_STATUS_FAILURE = 'DECISION/DELETE_STATUS_FAILURE';
+
+/**
+ * Save Feature Form Data
+ * @param {Object} formData
+ */
+export const saveFeatureFormData = (formData) => ({
+  type: SAVE_FEATURE_FORM_DATA,
+  formData,
+});
 
 /**
  * Get all Decisions
