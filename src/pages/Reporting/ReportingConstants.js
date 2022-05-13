@@ -528,17 +528,17 @@ export const SENSOR_REPORT_COLUMNS = [
 ];
 
 export const getAlertsReportColumns = (timezone) => ([
-  {
-    name: 'id',
-    label: 'Alert ID',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-    },
-  },
+  // {
+  //   name: 'id',
+  //   label: 'Alert ID',
+  //   options: {
+  //     sort: true,
+  //     sortThirdClickReset: true,
+  //   },
+  // },
   {
     name: 'parameter_type',
-    label: 'Parameter Type',
+    label: 'Condition',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -552,7 +552,7 @@ export const getAlertsReportColumns = (timezone) => ([
   },
   {
     name: 'parameter_value',
-    label: 'Parameter Value',
+    label: 'Value',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -609,19 +609,19 @@ export const getAlertsReportColumns = (timezone) => ([
       customBodyRender: (value) => (value ? 'YES' : 'NO'),
     },
   },
-  {
-    name: 'recovered_alert_id',
-    label: 'Recovered Alert ID',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (value || '-'),
-    },
-  },
+  // {
+  //   name: 'recovered_alert_id',
+  //   label: 'Recovered Alert ID',
+  //   options: {
+  //     sort: true,
+  //     sortThirdClickReset: true,
+  //     filter: true,
+  //     customBodyRender: (value) => (value || '-'),
+  //   },
+  // },
   {
     name: 'create_date',
-    label: 'Alert Created At',
+    label: 'Date/Time stamp',
     options: {
       sort: true,
       sortThirdClickReset: true,
