@@ -8,6 +8,7 @@ const initialState = {
   error: null,
   socialLogin: null,
   orgNames: null,
+  stripeProducts: null,
 };
 
 describe('Empty reducer', () => {
@@ -19,35 +20,28 @@ describe('Empty reducer', () => {
 describe('Login reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(initialState, { type: actions.LOGIN })).toEqual({
-      error: null,
+      ...initialState,
       loaded: false,
       loading: true,
-      data: null,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 
   it('login success Reducer', () => {
     expect(reducer.default(initialState, { type: actions.LOGIN_SUCCESS })).toEqual({
+      ...initialState,
       data: undefined,
-      error: null,
       loaded: true,
       loading: false,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 
   it('login fail Reducer', () => {
     expect(reducer.default(initialState, { type: actions.LOGIN_FAIL })).toEqual(
       {
+        ...initialState,
         error: undefined,
         loaded: true,
         loading: false,
-        data: null,
-        socialLogin: null,
-        orgNames: null,
       },
     );
   });
@@ -56,12 +50,9 @@ describe('Login reducer', () => {
 describe('Register reducer', () => {
   it('Register Reducer', () => {
     expect(reducer.default(initialState, { type: actions.REGISTER })).toEqual({
-      error: null,
+      ...initialState,
       loaded: false,
       loading: true,
-      data: null,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 
@@ -69,12 +60,10 @@ describe('Register reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.REGISTER_SUCCESS }),
     ).toEqual({
-      error: null,
+      ...initialState,
       loaded: true,
       loading: false,
       data: undefined,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 
@@ -82,12 +71,10 @@ describe('Register reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.REGISTER_FAIL }),
     ).toEqual({
+      ...initialState,
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 });
@@ -105,12 +92,9 @@ describe('Update User reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.UPDATE_USER }),
     ).toEqual({
-      error: null,
+      ...initialState,
       loaded: false,
       loading: true,
-      data: null,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 
@@ -118,12 +102,10 @@ describe('Update User reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.UPDATE_USER_SUCCESS }),
     ).toEqual({
-      error: null,
+      ...initialState,
       loaded: true,
       loading: false,
       data: undefined,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 
@@ -131,12 +113,10 @@ describe('Update User reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.UPDATE_USER_FAIL }),
     ).toEqual({
+      ...initialState,
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 });
@@ -144,12 +124,9 @@ describe('Update User reducer', () => {
 describe('invite User reducer', () => {
   it('invite user Reducer', () => {
     expect(reducer.default(initialState, { type: actions.INVITE })).toEqual({
-      error: null,
+      ...initialState,
       loaded: false,
       loading: true,
-      data: null,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 
@@ -157,12 +134,10 @@ describe('invite User reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.INVITE_SUCCESS }),
     ).toEqual({
-      error: null,
+      ...initialState,
       loaded: true,
       loading: false,
       data: undefined,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 
@@ -170,12 +145,10 @@ describe('invite User reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.INVITE_FAIL }),
     ).toEqual({
+      ...initialState,
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 });
@@ -188,24 +161,20 @@ describe('Social Login reducer', () => {
         provider: 'github',
       }),
     ).toEqual({
-      error: null,
+      ...initialState,
       loaded: false,
       loading: true,
-      data: null,
       socialLogin: 'github',
-      orgNames: null,
     });
   });
 
   it('social login success Reducer', () => {
     expect(reducer.default(initialState, { type: actions.SOCIAL_LOGIN_SUCCESS })).toEqual(
       {
+        ...initialState,
         data: undefined,
-        error: null,
         loaded: true,
         loading: false,
-        orgNames: null,
-        socialLogin: null,
       },
     );
   });
@@ -214,12 +183,10 @@ describe('Social Login reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.SOCIAL_LOGIN_FAIL }),
     ).toEqual({
+      ...initialState,
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 });
@@ -231,12 +198,9 @@ describe('Load Organization Names reducer', () => {
         type: actions.LOAD_ORG_NAMES,
       }),
     ).toEqual({
-      error: null,
+      ...initialState,
       loaded: false,
       loading: true,
-      data: null,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 
@@ -244,12 +208,10 @@ describe('Load Organization Names reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.LOAD_ORG_NAMES_SUCCESS }),
     ).toEqual({
-      data: null,
-      error: null,
+      ...initialState,
       loaded: true,
       loading: false,
       orgNames: undefined,
-      socialLogin: null,
     });
   });
 
@@ -259,12 +221,10 @@ describe('Load Organization Names reducer', () => {
         type: actions.LOAD_ORG_NAMES_FAILURE,
       }),
     ).toEqual({
+      ...initialState,
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 });
@@ -274,12 +234,9 @@ describe('Add Organization for Social User reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.ADD_ORG_SOCIAL_USER }),
     ).toEqual({
-      error: null,
+      ...initialState,
       loaded: false,
       loading: true,
-      data: null,
-      socialLogin: null,
-      orgNames: null,
     });
   });
 
@@ -287,12 +244,10 @@ describe('Add Organization for Social User reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.ADD_ORG_SOCIAL_USER_SUCCESS }),
     ).toEqual({
+      ...initialState,
       data: undefined,
-      error: null,
       loaded: true,
       loading: false,
-      orgNames: null,
-      socialLogin: null,
     });
   });
 
@@ -300,12 +255,48 @@ describe('Add Organization for Social User reducer', () => {
     expect(
       reducer.default(initialState, { type: actions.ADD_ORG_SOCIAL_USER_FAIL }),
     ).toEqual({
+      ...initialState,
       error: undefined,
       loaded: true,
       loading: false,
-      data: null,
-      socialLogin: null,
-      orgNames: null,
+    });
+  });
+});
+
+describe('Load Stripe Products reducer', () => {
+  it('Empty Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.LOAD_STRIPE_PRODUCTS,
+      }),
+    ).toEqual({
+      ...initialState,
+      loaded: false,
+      loading: true,
+    });
+  });
+
+  it('load stripe products success Reducer', () => {
+    expect(
+      reducer.default(initialState, { type: actions.LOAD_STRIPE_PRODUCTS_SUCCESS }),
+    ).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      stripeProducts: undefined,
+    });
+  });
+
+  it('load stripe products fail Reducer', () => {
+    expect(
+      reducer.default(initialState, {
+        type: actions.LOAD_STRIPE_PRODUCTS_FAIL,
+      }),
+    ).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
     });
   });
 });

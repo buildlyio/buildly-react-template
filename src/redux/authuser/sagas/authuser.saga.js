@@ -41,6 +41,9 @@ import {
   ADD_ORG_SOCIAL_USER,
   ADD_ORG_SOCIAL_USER_SUCCESS,
   ADD_ORG_SOCIAL_USER_FAIL,
+  LOAD_STRIPE_PRODUCTS,
+  LOAD_STRIPE_PRODUCTS_SUCCESS,
+  LOAD_STRIPE_PRODUCTS_FAIL,
 } from '@redux/authuser/actions/authuser.actions';
 import {
   put, takeLatest, all, call,
@@ -553,6 +556,19 @@ function* addOrgSocialUser(payload) {
   }
 }
 
+function* loadStripeProducts() {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}stripe/products/`,
+    );
+    yield put({ type: LOAD_STRIPE_PRODUCTS_SUCCESS, stripeProducts: data.data });
+  } catch (error) {
+    yield put({ type: LOAD_STRIPE_PRODUCTS_FAIL, error });
+  }
+}
+
 function* watchLogout() {
   yield takeLatest(LOGOUT, logout);
 }
@@ -605,6 +621,10 @@ function* watchAddOrgSocialUser() {
   yield takeLatest(ADD_ORG_SOCIAL_USER, addOrgSocialUser);
 }
 
+function* watchLoadStripeProducts() {
+  yield takeLatest(LOAD_STRIPE_PRODUCTS, loadStripeProducts);
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
@@ -620,5 +640,6 @@ export default function* authSaga() {
     watchSocialLogin(),
     watchLoadOrganizationNames(),
     watchAddOrgSocialUser(),
+    watchLoadStripeProducts(),
   ]);
 }

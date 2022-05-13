@@ -55,6 +55,10 @@ export const ADD_ORG_SOCIAL_USER = 'AUTH/ADD_ORG_SOCIAL_USER';
 export const ADD_ORG_SOCIAL_USER_SUCCESS = 'AUTH/ADD_ORG_SOCIAL_USER_SUCCESS';
 export const ADD_ORG_SOCIAL_USER_FAIL = 'AUTH/ADD_ORG_SOCIAL_USER_FAIL';
 
+export const LOAD_STRIPE_PRODUCTS = 'AUTH/LOAD_STRIPE_PRODUCTS';
+export const LOAD_STRIPE_PRODUCTS_SUCCESS = 'AUTH/LOAD_STRIPE_PRODUCTS_SUCCESS';
+export const LOAD_STRIPE_PRODUCTS_FAIL = 'AUTH/LOAD_STRIPE_PRODUCTS_FAIL';
+
 /**
  * Login action
  * @param {{ username, password }} credentials
@@ -161,4 +165,8 @@ export const addOrgSocialUser = (data, existingOrg, history) => ({
   data,
   existingOrg,
   history,
+});
+
+export const loadStripeProducts = () => ({
+  type: LOAD_STRIPE_PRODUCTS,
 });

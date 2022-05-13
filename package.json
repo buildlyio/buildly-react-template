@@ -20,6 +20,8 @@
     "@mui/lab": "^5.0.0-alpha.61",
     "@mui/material": "^5.2.5",
     "@mui/styles": "^5.2.3",
+    "@stripe/react-stripe-js": "^1.7.2",
+    "@stripe/stripe-js": "^1.29.0",
     "@types/node": "^14.10.3",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",

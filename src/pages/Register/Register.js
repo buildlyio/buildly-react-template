@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { useElements, useStripe } from '@stripe/react-stripe-js';
 import makeStyles from '@mui/styles/makeStyles';
 import {
   Button,
@@ -23,11 +24,14 @@ import { useInput } from '@hooks/useInput';
 import {
   register,
   loadOrgNames,
+  loadStripeProducts,
 } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
 import { validators } from '@utils/validators';
 import { isMobile } from '@utils/mediaQuery';
 import { providers } from '@utils/socialLogin';
+import Loader from '@components/Loader/Loader';
+import StripeCard from '@components/StripeCard/StripeCard';
 
 const useStyles = makeStyles((theme) => ({
   logoDiv: {
@@ -81,12 +85,20 @@ const useStyles = makeStyles((theme) => ({
   link: {
     margin: theme.spacing(1, 0, 0, 1),
   },
+  hidden: {
+    display: 'none',
+  },
 }));
 
 const Register = ({
-  dispatch, loading, history, socialLogin, orgNames,
+  dispatch, loading, history, socialLogin, orgNames, stripeProducts,
 }) => {
   const classes = useStyles();
+  const stripe = useStripe();
+  const elements = useElements();
+  const [cardError, setCardError] = useState(false);
+  const [showProducts, setShowProducts] = useState(false);
+
   const email = useInput('', { required: true });
   const username = useInput('', { required: true });
   const password = useInput('', { required: true });
@@ -99,20 +111,36 @@ const Register = ({
   const userType = useInput('', { required: true });
   const first_name = useInput('', { required: true });
   const last_name = useInput('');
+  const product = useInput('', { required: true });
   const [formError, setFormError] = useState({});
+
   useEffect(() => {
     if (!orgNames) {
       dispatch(loadOrgNames());
     }
+    if (window.env.STRIPE_KEY && !stripeProducts) {
+      dispatch(loadStripeProducts());
+    }
   }, []);
+
+  useEffect(() => {
+    if (!orgName || _.isEmpty(orgNames)
+      || (orgName && _.includes(orgNames, _.lowerCase(orgName)))
+    ) {
+      setShowProducts(false);
+    } else {
+      setShowProducts(true);
+    }
+  }, [orgName, orgNames]);
 
   /**
    * Submit the form to the backend and attempts to authenticate
    * @param {Event} event the default submit event
    */
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const registerFormValue = {
+    let anyError = '';
+    let registerFormValue = {
       username: username.value,
       email: email.value,
       password: password.value,
@@ -121,7 +149,27 @@ const Register = ({
       first_name: first_name.value,
       last_name: last_name.value,
     };
-    dispatch(register(registerFormValue, history));
+
+    if (showProducts) {
+      const { error, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: elements.getElement('card'),
+        billing_details: {
+          email: email.value,
+          name: orgName,
+        },
+      });
+      anyError = error;
+      registerFormValue = {
+        ...registerFormValue,
+        product: product.value,
+        card: paymentMethod?.id,
+      };
+    }
+
+    if (!anyError) {
+      dispatch(register(registerFormValue, history));
+    }
   };
 
   /**
@@ -161,6 +209,11 @@ const Register = ({
       || !orgName
       || !userType.value
       || !first_name.value
+      || (showProducts && !product.value)
+      || (showProducts && cardError)
+      || (showProducts && !elements)
+      // eslint-disable-next-line no-underscore-dangle
+      || (showProducts && elements && elements.getElement('card')._empty)
     ) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
@@ -170,6 +223,7 @@ const Register = ({
 
   return (
     <>
+      {loading && <Loader open={loading} />}
       <div className={classes.logoDiv}>
         <img src={logo} alt="Logo" className={classes.logo} />
       </div>
@@ -271,9 +325,10 @@ const Register = ({
                       name="organization_name"
                       options={orgNames || []}
                       getOptionLabel={(label) => _.capitalize(label)}
-                      onChange={(e, newValue) => {
-                        setOrgName(newValue || '');
-                      }}
+                      value={orgName}
+                      onChange={(e, newValue) => setOrgName(newValue || '')}
+                      inputValue={orgName}
+                      onInputChange={(event, newInputValue) => setOrgName(newInputValue)}
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -284,8 +339,6 @@ const Register = ({
                           id="organization_name"
                           label="Organisation Name"
                           className={classes.textField}
-                          value={orgName}
-                          onChange={(e) => setOrgName(e.target.value)}
                         />
                       )}
                     />
@@ -315,6 +368,52 @@ const Register = ({
                       <MenuItem value="Developer">Developer</MenuItem>
                       <MenuItem value="Product Team">Product Team</MenuItem>
                     </TextField>
+                  </Grid>
+                </Grid>
+                <Grid
+                  className={showProducts ? '' : classes.hidden}
+                  container
+                  spacing={isMobile() ? 0 : 3}
+                >
+                  <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      required
+                      fullWidth
+                      select
+                      id="product"
+                      name="product"
+                      label="Subscription to Product"
+                      autoComplete="product"
+                      error={formError.product && formError.product.error}
+                      helperText={
+                        formError.product ? formError.product.message : ''
+                      }
+                      className={classes.textField}
+                      onBlur={(e) => handleBlur(e, 'required', product)}
+                      {...product.bind}
+                    >
+                      <MenuItem value="">----------</MenuItem>
+                      {stripeProducts && !_.isEmpty(stripeProducts)
+                      && _.map(stripeProducts, (prd) => (
+                        <MenuItem key={`sub-product-${prd.id}`} value={prd.id}>
+                          {`${prd.name} - ${prd.description}`}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                </Grid>
+                <Grid
+                  className={showProducts ? '' : classes.hidden}
+                  container
+                  spacing={isMobile() ? 0 : 3}
+                >
+                  <Grid item xs={12}>
+                    <StripeCard
+                      cardError={cardError}
+                      setCardError={setCardError}
+                    />
                   </Grid>
                 </Grid>
                 <Grid container spacing={isMobile() ? 0 : 3}>

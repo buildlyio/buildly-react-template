@@ -36,6 +36,9 @@ import {
   ADD_ORG_SOCIAL_USER,
   ADD_ORG_SOCIAL_USER_SUCCESS,
   ADD_ORG_SOCIAL_USER_FAIL,
+  LOAD_STRIPE_PRODUCTS,
+  LOAD_STRIPE_PRODUCTS_SUCCESS,
+  LOAD_STRIPE_PRODUCTS_FAIL,
 } from '../actions/authuser.actions';
 
 const initialState = {
@@ -46,6 +49,7 @@ const initialState = {
   organizationData: null,
   socialLogin: null,
   orgNames: null,
+  stripeProducts: null,
 };
 
 // Reducer
@@ -340,6 +344,30 @@ export default (state = initialState, action) => {
       };
 
     case ADD_ORG_SOCIAL_USER_FAIL:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case LOAD_STRIPE_PRODUCTS:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case LOAD_STRIPE_PRODUCTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        stripeProducts: action.stripeProducts,
+      };
+
+    case LOAD_STRIPE_PRODUCTS_FAIL:
       return {
         ...state,
         loading: false,

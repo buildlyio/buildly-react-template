@@ -84,3 +84,12 @@ describe('actions', () => {
     expect(actions.addOrgSocialUser(data)).toEqual(expectedAction);
   });
 });
+
+describe('actions', () => {
+  it('should create an action to load stripe product', () => {
+    const expectedAction = {
+      type: actions.LOAD_STRIPE_PRODUCTS,
+    };
+    expect(actions.loadStripeProducts()).toEqual(expectedAction);
+  });
+});
