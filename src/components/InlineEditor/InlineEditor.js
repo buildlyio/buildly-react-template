@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import EditIcon from '@material-ui/icons/Edit';
-import TextField from '@material-ui/core/TextField';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
+import makeStyles from '@mui/styles/makeStyles';
+import Typography from '@mui/material/Typography';
+import EditIcon from '@mui/icons-material/Edit';
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 
 const useStyles = makeStyles((theme) => ({
   nonEditMode: {
@@ -31,9 +31,9 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Component for inline editing.
  */
-export function InlineEditor({
+export const InlineEditor = ({
   id, tag, value, placeholder, disabled, onChange,
-}) {
+}) => {
   const classes = useStyles();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value);
@@ -119,4 +119,4 @@ export function InlineEditor({
       )}
     </Box>
   );
-}
+};

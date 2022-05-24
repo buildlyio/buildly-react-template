@@ -1,5 +1,6 @@
 import * as actions from '@redux/authuser/authuser.actions';
 import * as reducer from './authuser.reducer';
+
 const initialState = {
   loading: false,
   loaded: false,
@@ -33,8 +34,10 @@ describe('Login reducer', () => {
 describe('Login fail reducer', () => {
   it('login fail Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.LOGIN_FAIL })
-    ).toEqual({ error: undefined, loaded: true, loading: false, data: null });
+      reducer.default(initialState, { type: actions.LOGIN_FAIL }),
+    ).toEqual({
+      error: undefined, loaded: true, loading: false, data: null,
+    });
   });
 });
 
@@ -50,20 +53,24 @@ describe('Register reducer', () => {
 
   it('Register success Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.REGISTER_SUCCESS })
-    ).toEqual({ error: null, loaded: true, loading: false, data: undefined });
+      reducer.default(initialState, { type: actions.REGISTER_SUCCESS }),
+    ).toEqual({
+      error: null, loaded: true, loading: false, data: undefined,
+    });
   });
   it('Register fail Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.REGISTER_FAIL })
-    ).toEqual({ error: undefined, loaded: true, loading: false, data: null });
+      reducer.default(initialState, { type: actions.REGISTER_FAIL }),
+    ).toEqual({
+      error: undefined, loaded: true, loading: false, data: null,
+    });
   });
 });
 
 describe('logout success reducer', () => {
   it('logout Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.LOGOUT_SUCCESS })
+      reducer.default(initialState, { type: actions.LOGOUT_SUCCESS }),
     ).toEqual(initialState);
   });
 });
@@ -71,19 +78,25 @@ describe('logout success reducer', () => {
 describe('Update User reducer', () => {
   it('update user Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.UPDATE_USER })
-    ).toEqual({ error: null, loaded: false, loading: true, data: null });
+      reducer.default(initialState, { type: actions.UPDATE_USER }),
+    ).toEqual({
+      error: null, loaded: false, loading: true, data: null,
+    });
   });
 
   it('update user success Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.UPDATE_USER_SUCCESS })
-    ).toEqual({ error: null, loaded: true, loading: false, data: undefined });
+      reducer.default(initialState, { type: actions.UPDATE_USER_SUCCESS }),
+    ).toEqual({
+      error: null, loaded: true, loading: false, data: undefined,
+    });
   });
   it('update user fail Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.UPDATE_USER_FAIL })
-    ).toEqual({ error: undefined, loaded: true, loading: false, data: null });
+      reducer.default(initialState, { type: actions.UPDATE_USER_FAIL }),
+    ).toEqual({
+      error: undefined, loaded: true, loading: false, data: null,
+    });
   });
 });
 
@@ -99,12 +112,16 @@ describe('invite User reducer', () => {
 
   it('invite user success Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.INVITE_SUCCESS })
-    ).toEqual({ error: null, loaded: true, loading: false, data: undefined });
+      reducer.default(initialState, { type: actions.INVITE_SUCCESS }),
+    ).toEqual({
+      error: null, loaded: true, loading: false, data: undefined,
+    });
   });
   it('invite user fail Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.INVITE_FAIL })
-    ).toEqual({ error: undefined, loaded: true, loading: false, data: null });
+      reducer.default(initialState, { type: actions.INVITE_FAIL }),
+    ).toEqual({
+      error: undefined, loaded: true, loading: false, data: null,
+    });
   });
 });

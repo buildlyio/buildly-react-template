@@ -2,8 +2,8 @@ import * as React from 'react';
 import 'react-notifications/lib/notifications.css';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { PrivateRoute } from './routes/Private.route';
 import { oauthService } from './modules/oauth/oauth.service';
 import ContainerDashboard from './layout/Container/Container';
@@ -15,9 +15,9 @@ import theme from './styles/theme';
 import Alert from './components/Alert/Alert';
 import { routes } from './routes/routesConstants';
 
-function App() {
-  return (
-    <Router>
+const App = () => (
+  <Router>
+    <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
         <div className="app">
           <CssBaseline />
@@ -38,8 +38,8 @@ function App() {
         </div>
         <Alert />
       </ThemeProvider>
-    </Router>
-  );
-}
+    </StyledEngineProvider>
+  </Router>
+);
 
 export default hot(module)(App);
