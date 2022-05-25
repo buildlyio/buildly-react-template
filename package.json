@@ -70,7 +70,7 @@
     "html-webpack-plugin": "^3.2.0",
     "image-webpack-loader": "^4.6.0",
     "jest": "^23.6.0",
-    "node-sass": "^7.0.0",
+    "node-sass": "6.0.1",
     "react-docgen": "^4.1.1",
     "react-docgen-typescript": "^1.12.4",
     "redux-mock-store": "^1.5.3",
@@ -87,6 +87,9 @@
   "scripts": {
     "build": "webpack --mode development",
     "start": "webpack-dev-server --mode development",
+    "build:local": "webpack --mode development --env.build=local",
+    "https:local": "webpack-dev-server --https --cert /home/radhika/local_ssl/server.crt --key /home/radhika/local_ssl/server.key --mode development --env.build=local",
+    "start:local": "webpack-dev-server --mode development --env.build=local",
     "build:dev": "webpack --mode development --env.build=dev",
     "start:dev": "webpack-dev-server --mode development --env.build=dev",
     "build:prod": "webpack --mode development --env.build=prod",

@@ -5,7 +5,6 @@
       "@assets/*": ["./assets/*"],
       "@components/*": ["./components/*"],
       "@context/*": ["./context/*"],
-      "@environments/*": ["./environments/*"],
       "@hooks/*": ["./hooks/*"],
       "@layout/*": ["./layout/*"],
       "@modules/*": ["./modules/*"],

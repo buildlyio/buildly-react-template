@@ -14,6 +14,21 @@ The web application was tested and built with the following versions:
 - node v16.14.2
 - yarn v1.17.3
 
+- You need to create .env.development.local file with the env variables (something as below).
+buildly-react-template
+|--.env.development.local
+
+```
+window.env={
+    API_URL: "https://dev.example.com/",
+    OAUTH_TOKEN_URL: "https://dev.example.com/oauth/token/",
+    OAUTH_CLIENT_ID: "sjkghwty982092u1tjfwjit0348y82092utwgio",
+    PRODUCTION: "false",
+}
+```
+
+- In case you want to run https we app version on your local, you need to have a certificate created for your localhost already. Modify package.json file to indicate the path to you certififcate and key in the scripts --> https:local
+
 ### Installing
 
 First of all, you need to have a Buildly Core instance up and running locally.
@@ -28,13 +43,19 @@ $ yarn install
 Now, initialize and build the project
 
 ```
-$ yarn run build
+$ yarn run build:local
 ```
 
 To run the web app:
 
 ```
-$ yarn run start
+$ yarn run start:local
+```
+
+To run the https web app:
+
+```
+$ yarn run https:local
 ```
 
 Your Buildly React Template will be running locally and listening to the port 3000, so you can access it via your browser typing this address: 127.0.0.1:3000

@@ -16,11 +16,10 @@ import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
-import { environment } from '@environments/environment';
 
 function* loadCoregroups() {
   try {
-    const group = yield call(httpService.makeRequest, 'get', `${environment.API_URL}coregroups/`);
+    const group = yield call(httpService.makeRequest, 'get', `${window.env.API_URL}coregroups/`);
     yield [
       yield put({ type: LOAD_DATA_COREGROUP_COMMIT, data: group.data }),
     ];
@@ -31,7 +30,7 @@ function* loadCoregroups() {
 
 function* deleteCoregroups(data) {
   try {
-    const group = yield call(httpService.makeRequest, 'delete', `${environment.API_URL}coregroups/${data.data.id}`);
+    const group = yield call(httpService.makeRequest, 'delete', `${window.env.API_URL}coregroups/${data.data.id}`);
     yield [
       yield put({ type: DELETE_COREGROUP_COMMIT, data: data.data, group }),
     ];
@@ -42,7 +41,7 @@ function* deleteCoregroups(data) {
 
 function* updateCoregroups(data) {
   try {
-    const group = yield call(httpService.makeRequest, 'put', `${environment.API_URL}coregroups/${data.data.id}/`, data.data);
+    const group = yield call(httpService.makeRequest, 'put', `${window.env.API_URL}coregroups/${data.data.id}/`, data.data);
     yield [
       yield put({ type: UPDATE_COREGROUP_COMMIT, data: data.data }),
     ];
@@ -53,7 +52,7 @@ function* updateCoregroups(data) {
 
 function* createCoregroups(data) {
   try {
-    const group = yield call(httpService.makeRequest, 'post', `${environment.API_URL}coregroups/`, data.data);
+    const group = yield call(httpService.makeRequest, 'post', `${window.env.API_URL}coregroups/`, data.data);
     yield [
       yield put({ type: CREATE_COREGROUP_COMMIT, data: group.data }),
     ];
