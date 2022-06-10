@@ -380,7 +380,7 @@ const UserDashboard = (props) => {
           </Typography>
         </Grid>
         <Grid item xs={4}>
-          {(prod?.feature_tool_detail
+          {(prod?.third_party_tool
         && (
           <Button
             variant="contained"
