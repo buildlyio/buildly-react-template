@@ -315,3 +315,31 @@ describe('Delete Third Party Tool action', () => {
       .toEqual(expectedAction);
   });
 });
+
+// Test Get Board
+describe('Get Board action', () => {
+  it('should create an action to get board', () => {
+    const product_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
+    const expectedAction = {
+      type: actions.GET_BOARD,
+      product_uuid,
+    };
+
+    expect(actions.getBoard(product_uuid))
+      .toEqual(expectedAction);
+  });
+});
+
+// Test Create Credential
+describe('Create Board action', () => {
+  it('should create an action to create board', () => {
+    const data = { name: 'Test Board' };
+    const expectedAction = {
+      type: actions.CREATE_BOARD,
+      data,
+    };
+
+    expect(actions.createBoard(data))
+      .toEqual(expectedAction);
+  });
+});

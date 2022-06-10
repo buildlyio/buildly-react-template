@@ -1,5 +1,6 @@
 /* eslint-disable no-shadow */
 import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
@@ -28,9 +29,10 @@ import {
   TrendingFlatRounded,
   MoreHoriz,
 } from '@mui/icons-material';
+import {
+  getAllStatuses,
+} from '@redux/decision/actions/decision.actions';
 import { updateFeature, updateIssue } from '@redux/decision/actions/decision.actions';
-import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
 
 const useStyles = makeStyles((theme) => ({
   noProduct: {
@@ -39,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     marginBottom: theme.spacing(4),
+    flexWrap: 'inherit',
   },
   swimlane: {
     backgroundColor: theme.palette.secondary.main,
@@ -98,12 +101,14 @@ const Kanban = ({
   deleteItem,
   commentItem,
   dispatch,
+  credentials,
 }) => {
   const classes = useStyles();
   const [columns, setColumns] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentNumber, setCurrentNumber] = useState(null);
   const open = Boolean(anchorEl);
+  const [status, setStatus] = useState('');
 
   const handleClick = (event, number) => {
     setAnchorEl(event.currentTarget);
@@ -115,9 +120,18 @@ const Kanban = ({
   };
 
   useEffect(() => {
+    dispatch(getAllStatuses());
+  }, []);
+
+  useEffect(() => {
+    const sta = _.filter(statuses, { product_uuid: product });
+    setStatus(sta);
+  }, [statuses, product]);
+
+  useEffect(() => {
     let cols = {};
-    if (statuses && !_.isEmpty(statuses)) {
-      _.forEach(statuses, (sts) => {
+    if (status && !_.isEmpty(status)) {
+      _.forEach(status, (sts) => {
         const features = _.filter(
           productFeatures,
           { status: sts.status_uuid },
@@ -137,20 +151,17 @@ const Kanban = ({
       });
       setColumns(cols);
     }
-  }, [statuses, productFeatures, productIssues]);
+  }, [status, productFeatures, productIssues]);
 
-  const setProgress = (item) => {
-    switch (item.status) {
-      case '1eca247d-33c6-4f3a-99a8-4c3f6988c616':
-        return 50;
-      case 'ea69910f-93cf-4591-8cd7-5ea8a781a633':
-        return 75;
-      case '66b23739-7b2a-4bff-bc1a-3ab4609b5ad9':
-        return 100;
-      default:
-        return 25;
-    }
-  };
+  const featCred = _.find(
+    credentials,
+    { product_uuid: product, auth_detail: { tool_type: 'Feature' } },
+  );
+  const issueCred = _.find(
+    credentials,
+    { product_uuid: product, auth_detail: { tool_type: 'Issue' } },
+  );
+  const currentStat = _.filter(statuses, { product_uuid: product });
 
   const onDragEnd = (result, columns, setColumns) => {
     if (!result.destination) return;
@@ -177,10 +188,21 @@ const Kanban = ({
 
       // Update status of the card on drag and drop to other column
       removed.status = destination.droppableId;
+      const currentStatData = _.find(currentStat, { status_uuid: destination.droppableId });
+      removed.column_id = currentStatData.status_tracking_id;
+      let updateData = {};
       if (removed.issue_uuid) {
-        dispatch(updateIssue(removed));
+        updateData = {
+          ...removed,
+          ...issueCred?.auth_detail,
+        };
+        dispatch(updateIssue(updateData));
       } else {
-        dispatch(updateFeature(removed));
+        updateData = {
+          ...removed,
+          ...featCred?.auth_detail,
+        };
+        dispatch(updateFeature(updateData));
       }
     } else {
       const column = columns[source.droppableId];
@@ -390,9 +412,6 @@ const Kanban = ({
                                         onClick={() => editItem(feat, 'feat', true)}
                                       />
                                     ))}
-                                  <Box sx={{ marginTop: '15px' }}>
-                                    <LinearProgress variant="determinate" value={setProgress(item)} />
-                                  </Box>
                                   <Typography
                                     className={classes.moment}
                                     component="div"
@@ -423,4 +442,9 @@ const Kanban = ({
   );
 };
 
-export default Kanban;
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.decisionReducer,
+});
+
+export default connect(mapStateToProps)(Kanban);

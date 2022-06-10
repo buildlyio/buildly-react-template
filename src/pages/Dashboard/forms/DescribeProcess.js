@@ -226,11 +226,10 @@ const DescribeProcess = ({
         displaying_data: quest3,
         display_desc: quest4.value,
         business_logic: quest5,
-        enabled: quest6 !== 'yes' ? 'no' : 'yes',
+        enabled: quest6,
         enabled_desc: quest7.value,
         search_or_nav: quest8,
         links: quest9,
-        column_id: featureFormData.column_id,
       },
     };
     if (editPage) {
@@ -268,7 +267,7 @@ const DescribeProcess = ({
     || !quest3
     || (quest3 === 'yes' && !quest4.value)
     || (quest3 === 'yes' && !quest5)
-    || ((quest3 === 'no' || quest5 === 'yes') && !quest6)
+    || !quest6
     || (quest6 === 'yes' && !quest7.value)
     || (quest5 === 'no' && !quest8)
     ) {
@@ -295,7 +294,7 @@ const DescribeProcess = ({
             className={classes.choice}
             fullWidth
             component="fieldset"
-            disabled={viewPage}
+            disabled={viewPage || editPage}
           >
             <FormLabel component="legend">
               Are we collecting any data from the user?
@@ -337,14 +336,14 @@ const DescribeProcess = ({
             className={classes.textField}
             onBlur={(e) => handleBlur(e, 'required', quest2)}
             {...quest2.bind}
-            disabled={viewPage}
+            disabled={viewPage || editPage}
           />
           )}
           <FormControl
             className={classes.choice}
             fullWidth
             component="fieldset"
-            disabled={viewPage}
+            disabled={viewPage || editPage}
           >
             <FormLabel component="legend">
               Is the collected or stored data to be displayed to the user?
@@ -386,7 +385,7 @@ const DescribeProcess = ({
             className={classes.textField}
             onBlur={(e) => handleBlur(e, 'required', quest4)}
             {...quest4.bind}
-            disabled={viewPage}
+            disabled={viewPage || editPage}
           />
           )}
           {quest3 === 'yes' && (
@@ -394,7 +393,7 @@ const DescribeProcess = ({
             className={classes.choice}
             fullWidth
             component="fieldset"
-            disabled={viewPage}
+            disabled={viewPage || editPage}
           >
             <FormLabel component="legend">
               Is there any particular flow or logic to be followed for the collected or stored data?
@@ -418,12 +417,11 @@ const DescribeProcess = ({
             </RadioGroup>
           </FormControl>
           )}
-          {(quest3 === 'no' || quest5 === 'yes') && (
           <FormControl
             className={classes.choice}
             fullWidth
             component="fieldset"
-            disabled={viewPage}
+            disabled={viewPage || editPage}
           >
             <FormLabel component="legend">
               Are we making any important decisions that need to be notified or displayed?
@@ -446,7 +444,6 @@ const DescribeProcess = ({
               />
             </RadioGroup>
           </FormControl>
-          )}
           {quest6 === 'yes' && (
           <TextField
             variant="outlined"
@@ -466,7 +463,7 @@ const DescribeProcess = ({
             className={classes.textField}
             onBlur={(e) => handleBlur(e, 'required', quest7)}
             {...quest7.bind}
-            disabled={viewPage}
+            disabled={viewPage || editPage}
           />
           )}
           {quest5 === 'no' && (
@@ -474,7 +471,7 @@ const DescribeProcess = ({
             className={classes.choice}
             fullWidth
             component="fieldset"
-            disabled={viewPage}
+            disabled={viewPage || editPage}
           >
             <FormLabel component="legend">
               How does a user find this data?
@@ -503,7 +500,7 @@ const DescribeProcess = ({
             className={classes.choice}
             fullWidth
             component="fieldset"
-            disabled={viewPage}
+            disabled={viewPage || editPage}
           >
             <FormLabel component="legend">
               Where do you want to display links?

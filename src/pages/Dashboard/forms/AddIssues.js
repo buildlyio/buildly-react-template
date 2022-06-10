@@ -55,6 +55,7 @@ const AddIssues = ({
   features,
   credentials,
   products,
+  boards,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
@@ -73,21 +74,15 @@ const AddIssues = ({
   const product_uuid = location.state && location.state.product_uuid;
   const prdt = _.find(products, { product_uuid });
   const [product, setProduct] = useState('');
+  const [prodStatus, setProdStatus] = useState('');
   const [repo, setRepo] = useState((editData && editData.repository) || '');
-  const orgData = _.map(prdt.issue_tool_detail?.organisation_list);
-  const orgVal = _.find(orgData, { repo_list: [{ name: repo }] });
-  const [orgList, setOrgList] = useState([]);
-  const [repoList, setRepoList] = useState((editData && orgVal?.repo_list) || []);
-  const [orgID, setOrgID] = useState((editData && orgVal) || '');
-  const listB = _.flatMap(_.map(
-    prdt?.issue_tool_detail?.organisation_list,
-    'board_list',
-  ));
-  const [colID, setColID] = useState((editData && editData.issue_detail?.column_id) || '');
-  const boardData = _.find(listB, { column_list: [{ column_id: colID }] });
-  const [colList, setColList] = useState((editData && boardData?.column_list) || []); 
-  const [boardList, setBoardList] = useState((boardData) || []);
-  const [boardID, setBoardID] = useState((editData && boardData) || '');
+  const repoData = _.map(prdt?.issue_tool_detail?.repository_list);
+  const [repoList, setRepoList] = useState((editData && repoData) || []);
+  const [statusID, setStatusID] = useState((editData && editData.status) || '');
+  const currentStat = _.filter(statuses, { product_uuid });
+  const currentStatData = _.find(currentStat, { status_uuid: statusID });
+  const [status, setStatus] = useState((editData && currentStatData) || '');
+  const [colID, setColID] = useState('');
 
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === 'edit';
@@ -117,11 +112,7 @@ const AddIssues = ({
   const [endDate, handleEndDateChange] = useState(
     (editData && editData.end_date) || new Date(),
   );
-  const status = useInput(
-    (convertData && convertData.status)
-    || (editData && editData.status),
-    { required: true },
-  );
+
   const [tags, setTags] = useState(
     (convertData && convertData.tags)
     || (editData && editData.tags)
@@ -149,9 +140,7 @@ const AddIssues = ({
     if (!features || _.isEmpty(features)) {
       dispatch(getAllFeatures());
     }
-    if (!statuses || _.isEmpty(statuses)) {
-      dispatch(getAllStatuses());
-    }
+    dispatch(getAllStatuses());
     if (!credentials || _.isEmpty(credentials)) {
       dispatch(getAllCredentials());
     }
@@ -167,14 +156,15 @@ const AddIssues = ({
     if (prd && prd.issue_tool_detail
       && !_.isEmpty(prd.issue_tool_detail)
     ) {
-      setOrgList(_.map(prd.issue_tool_detail.organisation_list));
-      setBoardList(_.flatMap(_.map(
-        prd.issue_tool_detail.organisation_list,
-        'board_list',
-      )));
+      setRepoList(_.map(prd.issue_tool_detail.repository_list));
     }
     setProduct(prd);
   }, [products]);
+
+  useEffect(() => {
+    const sta = _.filter(statuses, { product_uuid });
+    setProdStatus(sta);
+  }, [product]);
 
   const closeFormModal = () => {
     const dataHasChanged = (
@@ -184,7 +174,7 @@ const AddIssues = ({
       || type.hasChanged()
       || (!_.isEmpty(editData) && !_.isEqual(startDate, editData.start_date))
       || (!_.isEmpty(editData) && !_.isEqual(endDate, editData.end_date))
-      || status.hasChanged()
+      || (_.isEmpty(currentStatData) && !_.isEmpty(status))
       || (!_.isEmpty(convertData) && !_.isEqual(tags, convertData.tags))
       || (!_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
       || (_.isEmpty(editData) && !_.isEmpty(tags))
@@ -250,7 +240,7 @@ const AddIssues = ({
       issue_type: type.value,
       start_date: startDate,
       end_date: endDate,
-      status: status.value,
+      status: statusID,
       tags,
       product_uuid,
       estimate: estimate.value,
@@ -299,11 +289,7 @@ const AddIssues = ({
       || !description.value
       || !feature.value
       || !type.value
-      || !status.value
-      || (!editPage && product
-        && product.issue_tool_detail
-        && !_.isEmpty(orgList)
-        && !orgID)
+      || !statusID
       || (product
         && product.issue_tool_detail
         && !_.isEmpty(repoList)
@@ -453,36 +439,6 @@ const AddIssues = ({
                   ))}
                 </TextField>
               </Grid>
-              {!_.isEmpty(orgList) && (
-                <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    select
-                    id="orgID"
-                    label="Organisation"
-                    name="orgID"
-                    autoComplete="orgID"
-                    value={orgID}
-                    onChange={(e) => {
-                      const org = e.target.value;
-                      setOrgID(org);
-                      setRepoList(org.repo_list);
-                    }}
-                  >
-                    {_.map(orgList, (org) => (
-                      <MenuItem
-                        key={`org-${org.org_id}-${org.org_name}`}
-                        value={org}
-                      >
-                        {org.org_name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-              )}
               {!_.isEmpty(repoList) && (
                 <Grid item xs={12}>
                   <TextField
@@ -592,22 +548,18 @@ const AddIssues = ({
                   label="Status"
                   name="status"
                   autoComplete="status"
-                  error={
-                    formError.status
-                    && formError.status.error
-                  }
-                  helperText={
-                    formError.status
-                      ? formError.status.message
-                      : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', status)}
-                  {...status.bind}
+                  value={status}
+                  onChange={(e) => {
+                    const stat = e.target.value;
+                    setStatus(stat);
+                    setStatusID(stat.status_uuid);
+                    setColID(stat.status_tracking_id);
+                  }}
                 >
-                  {_.map(statuses, (sts) => (
+                  {_.map(prodStatus, (sts) => (
                     <MenuItem
                       key={`status-${sts.status_uuid}-${sts.name}`}
-                      value={sts.status_uuid}
+                      value={sts}
                     >
                       {sts.name}
                     </MenuItem>

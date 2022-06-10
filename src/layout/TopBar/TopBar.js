@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
   navMenu: {
     marginRight: theme.spacing(1),
+    marginLeft: theme.spacing(3),
   },
 }));
 

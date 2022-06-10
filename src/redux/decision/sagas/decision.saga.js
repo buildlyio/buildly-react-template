@@ -3,6 +3,7 @@ import {
 } from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
+import { routes } from '@routes/routesConstants';
 import {
   ALL_DECISIONS,
   ALL_DECISIONS_SUCCESS,
@@ -80,6 +81,9 @@ import {
   DELETE_STATUS_SUCCESS,
   DELETE_STATUS_FAILURE,
   saveFeatureFormData,
+  IMPORT_TICKETS,
+  IMPORT_TICKETS_SUCCESS,
+  IMPORT_TICKETS_FAILURE,
 } from '../actions/decision.actions';
 
 const decisionEndpoint = 'decision/';
@@ -643,7 +647,7 @@ function* getStatus(payload) {
     const status = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${decisionEndpoint}status/?status_uuid=${payload.status_uuid}`,
+      `${window.env.API_URL}${decisionEndpoint}status/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: GET_STATUS_SUCCESS, data: status.data });
   } catch (error) {
@@ -665,13 +669,25 @@ function* getStatus(payload) {
 
 function* createStatus(payload) {
   try {
-    const status = yield call(
-      httpService.makeRequest,
-      'post',
-      `${window.env.API_URL}${decisionEndpoint}status/`,
-      payload.data,
-    );
-    yield put({ type: CREATE_STATUS_SUCCESS, data: status.data });
+    if (payload.data.length > 0) {
+      for (let i = 0; i < payload.data.length; i += 1) {
+        const status = yield call(
+          httpService.makeRequest,
+          'post',
+          `${window.env.API_URL}${decisionEndpoint}status/`,
+          payload.data[i],
+        );
+        yield put({ type: CREATE_STATUS_SUCCESS, data: status.data });
+      }
+    } else {
+      const status = yield call(
+        httpService.makeRequest,
+        'post',
+        `${window.env.API_URL}${decisionEndpoint}status/`,
+        payload.data,
+      );
+      yield put({ type: CREATE_STATUS_SUCCESS, data: status.data });
+    }
   } catch (error) {
     yield [
       yield put(
@@ -735,6 +751,32 @@ function* deleteStatus(payload) {
       ),
       yield put({
         type: DELETE_STATUS_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* importTickets(payload) {
+  try {
+    const ticket = yield call(
+      httpService.makeRequest,
+      'post',
+      `${window.env.API_URL}${decisionEndpoint}import-project-tickets/`,
+      payload.data,
+    );
+    yield put({ type: IMPORT_TICKETS_SUCCESS, data: ticket.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t import tickets!',
+        }),
+      ),
+      yield put({
+        type: IMPORT_TICKETS_FAILURE,
         error,
       }),
     ];
@@ -842,6 +884,10 @@ function* watchDeleteStatus() {
   yield takeLatest(DELETE_STATUS, deleteStatus);
 }
 
+function* watchImportTickets() {
+  yield takeLatest(IMPORT_TICKETS, importTickets);
+}
+
 export default function* decisionSaga() {
   yield all([
     watchGetAllDecisions(),
@@ -859,6 +905,7 @@ export default function* decisionSaga() {
     watchCreateFeedback(),
     watchCreateIssue(),
     watchCreateStatus(),
+    watchImportTickets(),
     watchUpdateDecision(),
     watchUpdateFeature(),
     watchUpdateFeedback(),

@@ -60,7 +60,7 @@ const AddFeatures = ({
 }) => {
   const classes = useStyles();
   const [product, setProduct] = useState('');
-
+  const [prodStatus, setProdStatus] = useState('');
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && (location.state.type === 'edit' || location.state.type === 'view');
   const editData = (
@@ -81,25 +81,18 @@ const AddFeatures = ({
   const priority = useInput((editData && editData.priority) || (featureFormData && featureFormData.priority) || '', {
     required: true,
   });
-  const status = useInput((editData && editData.status) || (featureFormData && featureFormData.status) || '', {
-    required: true,
-  });
   const [tags, setTags] = useState((editData && editData.tags)
   || (featureFormData && featureFormData.tags) || []);
-  const [boardList, setBoardList] = useState([]);
-  const [colID, setColID] = useState((featureFormData && featureFormData.column_id) || (editData && editData.feature_detail?.column_id) || '');
+
+  const [colID, setColID] = useState('');
+  const [statusID, setStatusID] = useState((editData && editData.status) || (featureFormData && featureFormData.status) || '');
+  const currentStat = _.filter(statuses, { product_uuid });
+  const currentStatData = _.find(currentStat, { status_uuid: statusID });
+  const [status, setStatus] = useState((editData && currentStatData) || '');
 
   const totalEstimate = useInput((editData && editData.total_estimate) || (featureFormData && featureFormData.total_estimate) || '');
   const version = useInput((editData && editData.version) || (featureFormData && featureFormData.version) || '');
   const [formError, setFormError] = useState({});
-  const prdt = _.find(products, { product_uuid });
-  const listB = _.flatMap(_.map(
-    prdt?.feature_tool_detail?.organisation_list,
-    'board_list',
-  ));
-  const boardData = _.find(listB, { column_list: [{ column_id: colID }] });
-  const [boardID, setBoardID] = useState((editData && boardData) || '');
-  const [colList, setColList] = useState((editData && boardData?.column_list) || []);
 
   let formTitle;
   if (editPage) {
@@ -112,9 +105,7 @@ const AddFeatures = ({
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
-    if (!statuses || _.isEmpty(statuses)) {
-      dispatch(getAllStatuses());
-    }
+    dispatch(getAllStatuses());
     if (!credentials || _.isEmpty(credentials)) {
       dispatch(getAllCredentials());
     }
@@ -122,31 +113,23 @@ const AddFeatures = ({
 
   useEffect(() => {
     const prd = _.find(products, { product_uuid });
-    if (prd && prd.feature_tool_detail
-      && prd.feature_tool_detail.organisation_list
-      && !_.isEmpty(prd.feature_tool_detail.organisation_list)
-    ) {
-      setBoardList(_.flatMap(_.map(
-        prd.feature_tool_detail.organisation_list,
-        'board_list',
-      )));
-    }
     setProduct(prd);
   }, [products]);
+
+  useEffect(() => {
+    const sta = _.filter(statuses, { product_uuid });
+    setProdStatus(sta);
+  }, [product]);
 
   checkIfAddFeaturesEdited = () => (
     name.hasChanged()
       || description.hasChanged()
       || priority.hasChanged()
-      || status.hasChanged()
+      || (_.isEmpty(currentStatData) && !_.isEmpty(status))
       || (!_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
       || (_.isEmpty(editData) && !_.isEmpty(tags))
       || totalEstimate.hasChanged()
       || version.hasChanged()
-      || (!editPage && product
-        && product.feature_tool_detail
-        && !_.isEmpty(colList)
-        && colID !== '')
   );
 
   // Handle tags list
@@ -177,7 +160,7 @@ const AddFeatures = ({
       edit_date: dateTime,
       name: name.value,
       description: description.value,
-      status: status.value,
+      status: statusID,
       tags,
       product_uuid,
       priority: priority.value,
@@ -219,11 +202,8 @@ const AddFeatures = ({
     const errorKeys = Object.keys(formError);
     if (!name.value
       || !description.value
-      || !status.value
+      || !statusID
       || !priority.value
-      || (!editPage && product
-        && product.feature_tool_detail
-        && !colID)
     ) {
       return true;
     }
@@ -305,24 +285,20 @@ const AddFeatures = ({
               id="status"
               label="Status"
               name="status"
+              value={status}
               autoComplete="status"
-              error={
-                    formError.status
-                    && formError.status.error
-                  }
-              helperText={
-                    formError.status
-                      ? formError.status.message
-                      : ''
-                  }
-              onBlur={(e) => handleBlur(e, 'required', status)}
-              {...status.bind}
               disabled={viewPage}
+              onChange={(e) => {
+                const stat = e.target.value;
+                setStatus(stat);
+                setStatusID(stat.status_uuid);
+                setColID(stat.status_tracking_id);
+              }}
             >
-              {_.map(statuses, (sts) => (
+              {_.map(prodStatus, (sts) => (
                 <MenuItem
                   key={`status-${sts.status_uuid}-${sts.name}`}
-                  value={sts.status_uuid}
+                  value={sts}
                 >
                   {sts.name}
                 </MenuItem>
@@ -393,64 +369,6 @@ const AddFeatures = ({
             disabled={viewPage}
           />
         </Grid>
-        {!_.isEmpty(boardList) && (
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            select
-            id="boardID"
-            label="Tool Board"
-            name="boardID"
-            value={boardID}
-            autoComplete="boardID"
-            onChange={(e) => {
-              const board = e.target.value;
-              setBoardID(board);
-              setColList(board.column_list);
-            }}
-            disabled={viewPage}
-          >
-            {_.map(boardList, (board) => (
-              <MenuItem
-                key={`board-${board.board_id}-${board.board_name}`}
-                value={board}
-              >
-                {board.board_name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        )}
-        {!_.isEmpty(colList) && (
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            select
-            id="colID"
-            label="Tool Column"
-            name="colID"
-            autoComplete="colID"
-            value={colID}
-            onChange={(e) => setColID(e.target.value)}
-            disabled={viewPage}
-          >
-            {_.map(colList, (col) => (
-              <MenuItem
-                key={`column-${col.column_id}-${col.column_name}`}
-                value={col.column_id}
-              >
-                {col.column_name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        )}
         <Grid item xs={12}>
           <TextField
             variant="outlined"

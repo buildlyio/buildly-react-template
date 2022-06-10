@@ -101,6 +101,10 @@ export const DELETE_STATUS = 'DECISION/DELETE_STATUS';
 export const DELETE_STATUS_SUCCESS = 'DECISION/DELETE_STATUS_SUCCESS';
 export const DELETE_STATUS_FAILURE = 'DECISION/DELETE_STATUS_FAILURE';
 
+export const IMPORT_TICKETS = 'DECISION/IMPORT_TICKETS';
+export const IMPORT_TICKETS_SUCCESS = 'DECISION/IMPORT_TICKETS_SUCCESS';
+export const IMPORT_TICKETS_FAILURE = 'DECISION/IMPORT_TICKETS_FAILURE';
+
 /**
  * Save Feature Form Data
  * @param {Object} formData
@@ -281,11 +285,11 @@ export const getAllStatuses = () => ({ type: ALL_STATUSES });
 
 /**
  * Get a Status
- * @param {uuid} status_uuid
+ * @param {uuid} product_uuid
  */
-export const getStatus = (status_uuid) => ({
+export const getStatus = (product_uuid) => ({
   type: GET_STATUS,
-  status_uuid,
+  product_uuid,
 });
 
 /**
@@ -313,4 +317,13 @@ export const updateStatus = (data) => ({
 export const deleteStatus = (status_uuid) => ({
   type: DELETE_STATUS,
   status_uuid,
+});
+
+/**
+ * Import Tickets
+ * @param {Object} data
+ */
+export const importTickets = (data) => ({
+  type: IMPORT_TICKETS,
+  data,
 });

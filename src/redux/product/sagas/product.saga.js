@@ -35,6 +35,9 @@ import {
   GET_RELEASE_FAILURE,
   GET_THIRD_PARTY_TOOL,
   GET_THIRD_PARTY_TOOL_SUCCESS,
+  GET_BOARD,
+  GET_BOARD_SUCCESS,
+  GET_BOARD_FAILURE,
   GET_THIRD_PARTY_TOOL_FAILURE,
   CREATE_CREDENTIAL,
   CREATE_CREDENTIAL_SUCCESS,
@@ -51,6 +54,9 @@ import {
   CREATE_THIRD_PARTY_TOOL,
   CREATE_THIRD_PARTY_TOOL_SUCCESS,
   CREATE_THIRD_PARTY_TOOL_FAILURE,
+  CREATE_BOARD,
+  CREATE_BOARD_SUCCESS,
+  CREATE_BOARD_FAILURE,
   UPDATE_CREDENTIAL,
   UPDATE_CREDENTIAL_SUCCESS,
   UPDATE_CREDENTIAL_FAILURE,
@@ -83,7 +89,12 @@ import {
   DELETE_THIRD_PARTY_TOOL_FAILURE,
   createCredential,
   saveProductFormData,
+  clearBoardData,
+  getBoard,
 } from '../actions/product.actions';
+import {
+  createStatus,
+} from '../../decision/actions/decision.actions';
 
 const productEndpoint = 'product/';
 
@@ -373,7 +384,7 @@ function* getProduct(payload) {
     const product = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}product/?product_uuid=${payload.product_uuid}`,
+      `${window.env.API_URL}${productEndpoint}product/?organization_uuid=${payload.product_uuid}`,
     );
     yield put({ type: GET_PRODUCT_SUCCESS, data: product.data });
   } catch (error) {
@@ -745,6 +756,72 @@ function* deleteThirdPartyTool(payload) {
   }
 }
 
+function* getBoards(payload) {
+  try {
+    const board = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}${productEndpoint}board-list/?product_uuid=${payload.product_uuid}`,
+    );
+    yield put(clearBoardData());
+    yield put({ type: GET_BOARD_SUCCESS, data: board.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t fetch Board!',
+        }),
+      ),
+      yield put({
+        type: GET_BOARD_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* createBoard(payload) {
+  try {
+    const board = yield call(
+      httpService.makeRequest,
+      'post',
+      `${window.env.API_URL}${productEndpoint}board-configuration/?product_uuid=${payload.data.product_uuid}`,
+      payload.data,
+    );
+    const prodID = payload.data.product_uuid;
+    const statusData = board?.data[0]?.feature_tool_detail?.column_list?.map((col) => ({
+      product_uuid: prodID,
+      name: col.column_name,
+      description: col.column_name,
+      status_tracking_id: col.column_id,
+    }));
+    statusData.push({
+      product_uuid: prodID,
+      name: 'No Status',
+      description: 'No Status',
+      status_tracking_id: null,
+    });
+    yield put(getBoard(payload.data.product_uuid));
+    yield put(createStatus(statusData));
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t create Board!',
+        }),
+      ),
+      yield put({
+        type: CREATE_BOARD_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
 // Watchers
 function* watchGetAllCredentials() {
   yield takeLatest(ALL_CREDENTIALS, allCredentials);
@@ -846,6 +923,14 @@ function* watchDeleteThirdPartyTool() {
   yield takeLatest(DELETE_THIRD_PARTY_TOOL, deleteThirdPartyTool);
 }
 
+function* watchGetBoard() {
+  yield takeLatest(GET_BOARD, getBoards);
+}
+
+function* watchCreateBoard() {
+  yield takeLatest(CREATE_BOARD, createBoard);
+}
+
 export default function* productSaga() {
   yield all([
     watchGetAllCredentials(),
@@ -858,11 +943,13 @@ export default function* productSaga() {
     watchGetProduct(),
     watchGetRelease(),
     watchGetThirdPartyTool(),
+    watchGetBoard(),
     watchCreateCredential(),
     watchCreateProductTeam(),
     watchCreateProduct(),
     watchCreateRelease(),
     watchCreateThirdPartyTool(),
+    watchCreateBoard(),
     watchUpdateCredential(),
     watchUpdateProductTeam(),
     watchUpdateProduct(),

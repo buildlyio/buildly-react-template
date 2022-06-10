@@ -76,6 +76,9 @@ import {
   DELETE_STATUS,
   DELETE_STATUS_SUCCESS,
   DELETE_STATUS_FAILURE,
+  IMPORT_TICKETS,
+  IMPORT_TICKETS_SUCCESS,
+  IMPORT_TICKETS_FAILURE,
 } from '../actions/decision.actions';
 
 const initialState = {
@@ -87,6 +90,8 @@ const initialState = {
   feedbacks: [],
   issues: [],
   statuses: [],
+  tickets: [],
+  importLoaded: false,
   productFormData: null,
 };
 
@@ -113,6 +118,7 @@ export default (state = initialState, action) => {
     case CREATE_FEEDBACK:
     case CREATE_ISSUE:
     case CREATE_STATUS:
+    case IMPORT_TICKETS:
     case UPDATE_DECISION:
     case UPDATE_FEATURE:
     case UPDATE_FEEDBACK:
@@ -145,6 +151,7 @@ export default (state = initialState, action) => {
     case CREATE_FEEDBACK_FAILURE:
     case CREATE_ISSUE_FAILURE:
     case CREATE_STATUS_FAILURE:
+    case IMPORT_TICKETS_FAILURE:
     case UPDATE_DECISION_FAILURE:
     case UPDATE_FEATURE_FAILURE:
     case UPDATE_FEEDBACK_FAILURE:
@@ -347,11 +354,11 @@ export default (state = initialState, action) => {
     case UPDATE_STATUS_SUCCESS: {
       const found = _.find(
         state.statuses,
-        { status_uuid: action.data.status_uuid },
+        { product_uuid: action.data.product_uuid },
       );
       const statuses = found
         ? _.map(state.statuses, (status) => (
-          status.status_uuid === action.data.status_uuid
+          status.product_uuid === action.data.product_uuid
             ? action.data
             : status
         ))
@@ -374,6 +381,28 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         statuses,
+      };
+    }
+
+    case IMPORT_TICKETS_SUCCESS: {
+      const found = _.find(
+        state.tickets,
+        { product_uuid: action.data.product_uuid },
+      );
+      const tickets = found
+        ? _.map(state.tickets, (ticket) => (
+          ticket.product_uuid === action.data.product_uuid
+            ? action.data
+            : ticket
+        ))
+        : [...state.tickets, action.data];
+
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        importLoaded: true,
+        tickets,
       };
     }
 

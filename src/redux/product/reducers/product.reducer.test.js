@@ -10,6 +10,7 @@ const initialState = {
   products: [],
   releases: [],
   thirdPartyTools: [],
+  boards: [],
   productFormData: null,
 };
 
@@ -1065,6 +1066,88 @@ describe('Delete thirdPartyTool reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.DELETE_THIRD_PARTY_TOOL_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Get board reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_BOARD },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('get board success reducer', () => {
+    const data = {
+      product_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_BOARD_SUCCESS, data },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      boards: [data],
+    });
+  });
+
+  it('get board fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_BOARD_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Create board reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_BOARD },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('create product success reducer', () => {
+    const data = {
+      product_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_BOARD_SUCCESS, data },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      boards: [data],
+    });
+  });
+
+  it('create board fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_BOARD_FAILURE },
     )).toEqual({
       ...initialState,
       loading: false,

@@ -10,6 +10,7 @@ const initialState = {
   feedbacks: [],
   issues: [],
   statuses: [],
+  tickets: [],
   featureFormData: null,
 };
 
@@ -928,7 +929,7 @@ describe('Get a status reducer', () => {
 
   it('get a status success reducer', () => {
     const data = {
-      status_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      product_uuid: '275ac379-82a2-4937-a434-ce6c2e277c88',
       name: 'Test',
     };
 
@@ -1085,3 +1086,45 @@ describe('Delete a status reducer', () => {
     });
   });
 });
+
+describe('Create a ticket reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.IMPORT_TICKETS },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('create a ticket success reducer', () => {
+    const data = {
+      product_uuid: '275ac379-82a2-4937-a434-ce6c2e277c88',
+      name: 'Test',
+    };
+
+    expect(reducer.default(
+      initialState,
+      { type: actions.IMPORT_TICKETS_SUCCESS, data },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      tickets: [data],
+    });
+  });
+
+  it('create a ticket fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.IMPORT_TICKETS_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+

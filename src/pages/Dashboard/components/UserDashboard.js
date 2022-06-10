@@ -5,17 +5,18 @@ import _ from 'lodash';
 import { Route } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import {
-  Grid, MenuItem, Tab, Tabs, TextField, Typography,
+  Grid, MenuItem, Tab, Tabs, TextField, Typography, Button,
 } from '@mui/material';
 import Loader from '@components/Loader/Loader';
 import { routes } from '@routes/routesConstants';
-import { getAllCredentials, getAllProducts } from '@redux/product/actions/product.actions';
+import { getAllCredentials, getAllProducts, getBoard } from '@redux/product/actions/product.actions';
 import {
   deleteFeature,
   deleteIssue,
   getAllFeatures,
   getAllIssues,
   getAllStatuses,
+  importTickets,
 } from '@redux/decision/actions/decision.actions';
 import List from '../components/List';
 import Kanban from '../components/Kanban';
@@ -25,6 +26,8 @@ import AddIssues from '../forms/AddIssues';
 import IssueSuggestions from '../forms/IssueSuggestions';
 import AddComments from '../forms/AddComments';
 import ConfirmModal from '@components/Modal/ConfirmModal';
+import ToolBoard from '../forms/ToolBoard';
+import StatusBoard from '../forms/StatusBoard';
 
 const useStyles = makeStyles((theme) => ({
   product: {
@@ -55,6 +58,13 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  board: {
+    margin: '10%',
+    textAlign: 'center',
+  },
+  boardButton: {
+    marginTop: theme.spacing(1),
+  },
 }));
 
 const UserDashboard = (props) => {
@@ -69,7 +79,11 @@ const UserDashboard = (props) => {
     redirectTo,
     history,
     loaded,
+    user,
+    boards,
+    importLoaded,
   } = props;
+
   const classes = useStyles();
   const subNav = [
     { label: 'List', value: 'list' },
@@ -81,6 +95,9 @@ const UserDashboard = (props) => {
   const [view, setView] = useState(viewPath);
 
   const [product, setProduct] = useState(0);
+  const [currentProducts, setCurrentProducts] = useState([]);
+  const [prod, setProd] = useState('');
+  const [status, setStatus] = useState('');
   const [productFeatures, setProductFeatures] = useState([]);
   const [productIssues, setProductIssues] = useState([]);
   const [openDeleteModal, setDeleteModal] = useState(false);
@@ -136,19 +153,34 @@ const UserDashboard = (props) => {
 
   useEffect(() => {
     dispatch(getAllProducts());
-    if (!features || _.isEmpty(features)) {
-      dispatch(getAllFeatures());
-    }
-    if (!issues || _.isEmpty(issues)) {
-      dispatch(getAllIssues());
-    }
-    if (!statuses || _.isEmpty(statuses)) {
-      dispatch(getAllStatuses());
-    }
+    dispatch(getAllStatuses());
+    dispatch(getAllFeatures());
+    dispatch(getAllIssues());
     if (!credentials || _.isEmpty(credentials)) {
       dispatch(getAllCredentials());
     }
   }, []);
+
+  useEffect(() => {
+    dispatch(getAllFeatures());
+    dispatch(getAllIssues());
+  }, [importLoaded]);
+
+  useEffect(() => {
+    const currentProd = _.filter(products,
+      { organization_uuid: user.organization.organization_uuid });
+    setCurrentProducts(currentProd);
+  }, [products]);
+
+  useEffect(() => {
+    if (product) {
+      dispatch(getBoard(product));
+    }
+    const prd = _.find(products, { product_uuid: product });
+    setProd(prd);
+    const sta = _.filter(statuses, { product_uuid: product });
+    setStatus(sta);
+  }, [statuses, product]);
 
   // this will be triggered whenever the content switcher is clicked to change the view
   useEffect(() => {
@@ -206,6 +238,20 @@ const UserDashboard = (props) => {
 
   const commentItem = () => {
     history.push(addCommentPath, {
+      from: redirectTo || location.pathname,
+      product_uuid: product,
+    });
+  };
+
+  const configureBoard = () => {
+    history.push(`${routes.DASHBOARD}/tool-board`, {
+      from: redirectTo || location.pathname,
+      product_uuid: product,
+    });
+  };
+
+  const configureStatus = () => {
+    history.push(`${routes.DASHBOARD}/tool-status`, {
       from: redirectTo || location.pathname,
       product_uuid: product,
     });
@@ -274,14 +320,77 @@ const UserDashboard = (props) => {
     }
   };
 
+  const repoData = [];
+  for (let i = 0; i < prod?.issue_tool_detail?.repository_list?.length; i += 1) {
+    repoData.push(prod.issue_tool_detail.repository_list[i].name);
+  }
+
+  const importTicket = (e) => {
+    e.preventDefault();
+    if (featCred?.auth_detail?.tool_name !== 'GitHub') {
+      const featData = {
+        ...featCred?.auth_detail,
+        product_uuid: product,
+        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
+      };
+      dispatch(importTickets(featData));
+      const issueData = {
+        ...issueCred?.auth_detail,
+        product_uuid: product,
+        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
+      };
+      if (featCred?.auth_detail?.tool_name !== 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
+        issueData.is_repo_issue = true;
+        issueData.repo_list = repoData;
+      }
+      dispatch(importTickets(issueData));
+    } else if (featCred?.auth_detail?.tool_name === 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
+      const featData = {
+        ...featCred?.auth_detail,
+        product_uuid: product,
+        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
+        is_repo_issue: false,
+      };
+      dispatch(importTickets(featData));
+    } else {
+      const featData = {
+        ...featCred?.auth_detail,
+        product_uuid: product,
+        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
+        is_repo_issue: false,
+      };
+      dispatch(importTickets(featData));
+      const issueData = {
+        ...issueCred?.auth_detail,
+        product_uuid: product,
+        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
+        is_repo_issue: true,
+        repo_list: repoData,
+      };
+      dispatch(importTickets(issueData));
+    }
+  };
+
   return (
     <div>
-      {!loaded && <Loader open={!loaded} /> }
       <Grid container alignItems="center" mb={2}>
-        <Grid item xs={8}>
+        <Grid item xs={4}>
           <Typography component="div" variant="h3">
             Dashboard
           </Typography>
+        </Grid>
+        <Grid item xs={4}>
+          {(prod?.feature_tool_detail
+        && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={(e) => importTicket(e)}
+          >
+            Import Tickets
+          </Button>
+        )
+           )}
         </Grid>
         <Grid item xs={4}>
           <TextField
@@ -304,107 +413,171 @@ const UserDashboard = (props) => {
           >
             <MenuItem value={0}>Select</MenuItem>
             <MenuItem value={-1}>Create New Product</MenuItem>
-            {products && !_.isEmpty(products)
-              && _.map(products, (prd) => (
+            {currentProducts && !_.isEmpty(currentProducts)
+              && _.flatMap(_.map(currentProducts, (prd) => (
                 <MenuItem
                   key={`product-${prd.product_uuid}`}
                   value={prd.product_uuid}
                 >
                   {prd.name}
                 </MenuItem>
-              ))}
+              )))}
           </TextField>
         </Grid>
       </Grid>
-      <Grid mb={3} container justifyContent="center">
-        <Grid item className={classes.tabs}>
-          <Tabs value={view} onChange={viewTabClicked}>
-            {subNav.map((itemProps, index) => (
-              <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
-            ))}
-          </Tabs>
-        </Grid>
-      </Grid>
-      <ConfirmModal
-        open={openDeleteModal}
-        setOpen={setDeleteModal}
-        submitAction={handleDeleteModal}
-        title="Are you sure you want to delete?"
-        submitText="Delete"
-      />
-      <Route
-        path={routes.DASHBOARD_LIST}
-        render={(prps) => (
-          <List
-            {...prps}
-            product={product}
-            productFeatures={productFeatures}
-            productIssues={productIssues}
-            addItem={addItem}
-            editItem={editItem}
-            deleteItem={deleteItem}
-            commentItem={commentItem}
-            issueSuggestions={issueSuggestions}
-          />
-        )}
-      />
-      <Route
-        path={routes.DASHBOARD_KANBAN}
-        render={(prps) => (
-          <Kanban
-            {...prps}
-            statuses={statuses}
-            product={product}
-            productFeatures={productFeatures}
-            productIssues={productIssues}
-            addItem={addItem}
-            editItem={editItem}
-            issueSuggestions={issueSuggestions}
-            deleteItem={deleteItem}
-            commentItem={commentItem}
-            dispatch={dispatch}
-          />
-        )}
-      />
-      <Route
-        path={addFeatPath}
-        render={(prps) => (
-          <NewFeatureForm
-            {...prps}
-            productFeatures={productFeatures}
-          />
-        )}
-      />
-      <Route
-        path={editFeatPath}
-        render={(prps) => (
-          <NewFeatureForm
-            {...prps}
-            productFeatures={productFeatures}
-          />
-        )}
-      />
-      <Route
-        path={viewFeatPath}
-        render={(prps) => (
-          <NewFeatureForm
-            {...prps}
-          />
-        )}
-      />
-      <Route path={addIssuePath} component={AddIssues} />
-      <Route path={editIssuePath} component={AddIssues} />
-      <Route
-        path={issueSuggestionsPath}
-        render={(prps) => (
-          <IssueSuggestions
-            {...prps}
-            convertIssue={convertIssue}
-          />
-        )}
-      />
-      <Route path={featureToIssuePath} component={AddIssues} />
-      <Route path={addCommentPath} component={AddComments} />
+      {((_.isEmpty(status)) && product !== 0
+        ? (!_.isEmpty(prod) && (!_.isEmpty(prod.third_party_tool)))
+          ? (
+            <>
+              <Grid item xs={4} className={classes.board}>
+                <Typography component="div" variant="h4" align="center">
+                  Configure Project Board
+                </Typography>
+                <Typography variant="subtitle1" align="center">
+                  Add a configuration to get started
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={(e) => configureBoard()}
+                  className={classes.boardButton}
+                >
+                  Add Configuration
+                </Button>
+              </Grid>
+              <Route
+                path={`${routes.DASHBOARD}/tool-board`}
+                render={(prps) => (
+                  <ToolBoard
+                    {...prps}
+                    boards={boards}
+                  />
+                )}
+              />
+            </>
+          )
+          : (
+            <>
+              <Grid item xs={4} className={classes.board}>
+                <Typography component="div" variant="h4" align="center">
+                  Configure Project Board
+                </Typography>
+                <Typography variant="subtitle1" align="center">
+                  Add a configuration to get started
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={(e) => configureStatus()}
+                  className={classes.boardButton}
+                >
+                  Add Configuration
+                </Button>
+              </Grid>
+              <Route
+                path={`${routes.DASHBOARD}/tool-status`}
+                render={(prps) => (
+                  <StatusBoard
+                    {...prps}
+                  />
+                )}
+              />
+            </>
+          )
+        : (
+          <>
+            {!loaded && <Loader open={!loaded} /> }
+            <Grid mb={3} container justifyContent="center">
+              <Grid item className={classes.tabs}>
+                <Tabs value={view} onChange={viewTabClicked}>
+                  {subNav.map((itemProps, index) => (
+                    <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
+                  ))}
+                </Tabs>
+              </Grid>
+            </Grid>
+            <ConfirmModal
+              open={openDeleteModal}
+              setOpen={setDeleteModal}
+              submitAction={handleDeleteModal}
+              title="Are you sure you want to delete?"
+              submitText="Delete"
+            />
+            <Route
+              path={routes.DASHBOARD_LIST}
+              render={(prps) => (
+                <List
+                  {...prps}
+                  product={product}
+                  productFeatures={productFeatures}
+                  productIssues={productIssues}
+                  addItem={addItem}
+                  editItem={editItem}
+                  deleteItem={deleteItem}
+                  commentItem={commentItem}
+                  issueSuggestions={issueSuggestions}
+                />
+              )}
+            />
+            <Route
+              path={routes.DASHBOARD_KANBAN}
+              render={(prps) => (
+                <Kanban
+                  {...prps}
+                  credentials={credentials}
+                  product={product}
+                  productFeatures={productFeatures}
+                  productIssues={productIssues}
+                  addItem={addItem}
+                  editItem={editItem}
+                  issueSuggestions={issueSuggestions}
+                  deleteItem={deleteItem}
+                  commentItem={commentItem}
+                  dispatch={dispatch}
+                />
+              )}
+            />
+            <Route
+              path={addFeatPath}
+              render={(prps) => (
+                <NewFeatureForm
+                  {...prps}
+                  productFeatures={productFeatures}
+                />
+              )}
+            />
+            <Route
+              path={editFeatPath}
+              render={(prps) => (
+                <NewFeatureForm
+                  {...prps}
+                  productFeatures={productFeatures}
+                />
+              )}
+            />
+            <Route
+              path={viewFeatPath}
+              render={(prps) => (
+                <NewFeatureForm
+                  {...prps}
+                />
+              )}
+            />
+            <Route path={addIssuePath} component={AddIssues} />
+            <Route path={editIssuePath} component={AddIssues} />
+            <Route
+              path={issueSuggestionsPath}
+              render={(prps) => (
+                <IssueSuggestions
+                  {...prps}
+                  convertIssue={convertIssue}
+                />
+              )}
+            />
+            <Route path={featureToIssuePath} component={AddIssues} />
+            <Route path={addCommentPath} component={AddComments} />
+          </>
+        ))}
     </div>
   );
 };
@@ -415,6 +588,9 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.decisionReducer,
   loading: state.productReducer.loading && state.decisionReducer.loading,
   loaded: state.productReducer.loaded && state.decisionReducer.loaded,
+  user: state.authReducer.data,
+  boards: state.productReducer.boards,
+  importLoaded: state.decisionReducer.importLoaded,
 });
 
 export default connect(mapStateToProps)(UserDashboard);

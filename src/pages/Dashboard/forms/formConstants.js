@@ -25,3 +25,12 @@ export const ISSUETYPES = [
   'UI/UX',
   'Documentation',
 ];
+
+export const STATUSTYPES = [
+  'Backlog',
+  'Sprint Ready',
+  'To Do',
+  'In Progress',
+  'Doing',
+  'Done',
+];
