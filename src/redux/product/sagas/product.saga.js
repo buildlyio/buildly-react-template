@@ -797,14 +797,16 @@ function* createBoard(payload) {
       description: col.column_name,
       status_tracking_id: col.column_id,
     }));
-    statusData.push({
-      product_uuid: prodID,
-      name: 'No Status',
-      description: 'No Status',
-      status_tracking_id: null,
-    });
+    if (statusData) {
+      statusData.push({
+        product_uuid: prodID,
+        name: 'No Status',
+        description: 'No Status',
+        status_tracking_id: null,
+      });
+      yield put(createStatus(statusData));
+    }
     yield put(getBoard(payload.data.product_uuid));
-    yield put(createStatus(statusData));
   } catch (error) {
     yield [
       yield put(

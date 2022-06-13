@@ -10,10 +10,14 @@ import {
   TextField,
   Button,
   MenuItem,
+  Autocomplete,
+  Chip,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import { createBoard } from '@redux/product/actions/product.actions';
+import { createStatus } from '@redux/decision/actions/decision.actions';
 import { validators } from '@utils/validators';
+import { STATUSTYPES } from './formConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -52,6 +56,7 @@ const ToolBoard = ({
   const [issueOrgID, setIssueOrgID] = useState('');
   const [featBoardList, setFeatBoardList] = useState([]);
   const [featBoardID, setFeatBoardID] = useState('');
+  const [status, setStatus] = useState([]);
 
   const redirectTo = location.state && location.state.from;
   const [formError, setFormError] = useState({});
@@ -99,23 +104,48 @@ const ToolBoard = ({
     }
   };
 
+  // Handle statuses list
+  const onStatusChange = (value) => {
+    switch (true) {
+      case (value.length > status.length):
+        setStatus([...status, _.last(value)]);
+        break;
+
+      case (value.length < status.length):
+        setStatus(value);
+        break;
+
+      default:
+        break;
+    }
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     delete featOrgID.board_list;
     delete issueOrgID.board_list;
+    if (!_.isEmpty(status)) {
+      const statusData = status.map((col) => ({
+        product_uuid,
+        name: col,
+        description: col,
+        status_tracking_id: null,
+      }));
+      dispatch(createStatus(statusData));
+    }
     const formData = {
       product_uuid,
       feature_tool_detail: {
         ...featOrgID,
         board_detail:
-          {
-            ...featBoardID,
-          },
+            {
+              ...featBoardID,
+            },
       },
       issue_tool_detail: {
         ...issueOrgID,
         board_detail:
-            {},
+              {},
       },
     };
     dispatch(createBoard(formData));
@@ -239,6 +269,38 @@ const ToolBoard = ({
                     </MenuItem>
                   ))}
                 </TextField>
+              </Grid>
+              )}
+              {_.isEmpty(featOrgList)
+              && (
+              <Grid item xs={12}>
+                <Autocomplete
+                  fullWidth
+                  multiple
+                  filterSelectedOptions
+                  id="status"
+                  options={STATUSTYPES}
+                  freeSolo
+                  value={status}
+                  onChange={(e, newValue) => onStatusChange(newValue)}
+                  renderTags={(value, getStatusProps) => (
+                    _.map(value, (option, index) => (
+                      <Chip
+                        variant="default"
+                        label={option}
+                        {...getStatusProps({ index })}
+                      />
+                    ))
+                  )}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="Select the list of Columns"
+                      margin="normal"
+                    />
+                  )}
+                />
               </Grid>
               )}
               {!_.isEmpty(issueOrgList) && (

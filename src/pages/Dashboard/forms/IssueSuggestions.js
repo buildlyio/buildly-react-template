@@ -98,9 +98,6 @@ const IssueSuggestions = ({
       create_date: dateTime,
       column_id: product.issue_tool_detail?.column_list[0]?.column_id,
       ...issueCred?.auth_detail,
-      issue_detail: {
-        column_id: product.issue_tool_detail?.column_list[0]?.column_id,
-      },
     };
     const issueSuggestionsData = showData.issue_suggestion.map((issue) => ({
       ...formData,
@@ -167,6 +164,8 @@ const IssueSuggestions = ({
               spacing={isDesktop ? 3 : 0}
               justifyContent="center"
             >
+              {(showData?.issue_suggestion !== null
+              && (
               <Grid item xs={12} sm={4}>
                 <Button
                   type="submit"
@@ -178,6 +177,8 @@ const IssueSuggestions = ({
                   Go with suggestions
                 </Button>
               </Grid>
+              )
+              )}
               <Grid item xs={12} sm={4}>
                 <Button
                   type="button"

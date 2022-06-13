@@ -247,9 +247,6 @@ const AddIssues = ({
       complexity: Number(complexity.value),
       repository: repo,
       column_id: colID,
-      issue_detail: {
-        column_id: colID,
-      },
       ...issueCred?.auth_detail,
     };
     if (editPage) {

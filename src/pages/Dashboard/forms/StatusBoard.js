@@ -110,7 +110,7 @@ const StatusBoard = ({
       description: col,
       status_tracking_id: null,
     }));
-    dispatch(createStatus(statusData, true));
+    dispatch(createStatus(statusData));
     history.push(redirectTo);
   };
 
