@@ -82,7 +82,7 @@ const AddIssues = ({
   const currentStat = _.filter(statuses, { product_uuid });
   const currentStatData = _.find(currentStat, { status_uuid: statusID });
   const [status, setStatus] = useState((editData && currentStatData) || '');
-  const [colID, setColID] = useState('');
+  const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
 
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === 'edit';

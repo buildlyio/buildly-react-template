@@ -84,11 +84,11 @@ const AddFeatures = ({
   const [tags, setTags] = useState((editData && editData.tags)
   || (featureFormData && featureFormData.tags) || []);
 
-  const [colID, setColID] = useState('');
   const [statusID, setStatusID] = useState((editData && editData.status) || (featureFormData && featureFormData.status) || '');
   const currentStat = _.filter(statuses, { product_uuid });
   const currentStatData = _.find(currentStat, { status_uuid: statusID });
   const [status, setStatus] = useState((editData && currentStatData) || '');
+  const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
 
   const totalEstimate = useInput((editData && editData.total_estimate) || (featureFormData && featureFormData.total_estimate) || '');
   const version = useInput((editData && editData.version) || (featureFormData && featureFormData.version) || '');
