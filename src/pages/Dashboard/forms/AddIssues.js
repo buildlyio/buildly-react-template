@@ -253,6 +253,7 @@ const AddIssues = ({
       dispatch(updateIssue(formData));
     } else {
       formData.create_date = dateTime;
+      formData.issue_detail = {};
       dispatch(createIssue(formData));
     }
     history.push(_.includes(location.state.from, 'kanban')

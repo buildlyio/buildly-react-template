@@ -98,6 +98,7 @@ const IssueSuggestions = ({
       create_date: dateTime,
       column_id: product.issue_tool_detail?.column_list[0]?.column_id,
       ...issueCred?.auth_detail,
+      issue_detail: {},
     };
     const issueSuggestionsData = showData.issue_suggestion.map((issue) => ({
       ...formData,

@@ -333,7 +333,9 @@ const UserDashboard = (props) => {
         product_uuid: product,
         board_id: prod?.feature_tool_detail?.board_detail?.board_id,
       };
-      dispatch(importTickets(featData));
+      if (featCred?.auth_detail) {
+        dispatch(importTickets(featData));
+      }
       const issueData = {
         ...issueCred?.auth_detail,
         product_uuid: product,
@@ -343,7 +345,9 @@ const UserDashboard = (props) => {
         issueData.is_repo_issue = true;
         issueData.repo_list = repoData;
       }
-      dispatch(importTickets(issueData));
+      if (issueCred?.auth_detail) {
+        dispatch(importTickets(issueData));
+      }
     } else if (featCred?.auth_detail?.tool_name === 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
       const featData = {
         ...featCred?.auth_detail,
@@ -351,7 +355,9 @@ const UserDashboard = (props) => {
         board_id: prod?.feature_tool_detail?.board_detail?.board_id,
         is_repo_issue: false,
       };
-      dispatch(importTickets(featData));
+      if (featCred?.auth_detail) {
+        dispatch(importTickets(featData));
+      }
     } else {
       const featData = {
         ...featCred?.auth_detail,
@@ -359,7 +365,9 @@ const UserDashboard = (props) => {
         board_id: prod?.feature_tool_detail?.board_detail?.board_id,
         is_repo_issue: false,
       };
-      dispatch(importTickets(featData));
+      if (featCred?.auth_detail) {
+        dispatch(importTickets(featData));
+      }
       const issueData = {
         ...issueCred?.auth_detail,
         product_uuid: product,
@@ -367,7 +375,9 @@ const UserDashboard = (props) => {
         is_repo_issue: true,
         repo_list: repoData,
       };
-      dispatch(importTickets(issueData));
+      if (issueCred?.auth_detail) {
+        dispatch(importTickets(issueData));
+      }
     }
   };
 
