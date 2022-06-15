@@ -222,7 +222,7 @@ function* editShipment(action) {
       `${window.env.API_URL}${shipmentApiEndPoint}shipment/${payload.id}/`,
       payload,
     );
-    if (payload.gateway_ids.length > 0 && gateway) {
+    if (payload.gateway_ids.length > 0 && gateway && (!payload.status) in ['Completed', 'Cancelled']) {
       yield [
         yield put(
           editGateway(
@@ -235,7 +235,7 @@ function* editShipment(action) {
       yield put(
         getShipmentDetails(
           payload.organization_uuid,
-          'Planned,Enroute',
+          'Planned,Enroute,Completed,Cancelled',
           null,
           false,
           true,
@@ -292,7 +292,7 @@ function* deleteShipment(payload) {
       ),
       yield put(getShipmentDetails(
         organization_uuid,
-        'Planned,Enroute',
+        'Planned,Enroute,Completed,Cancelled',
         null,
         true,
         true,

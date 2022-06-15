@@ -63,6 +63,7 @@ export const getUserOptions = () => (dispatch) => {
     .then((response) => {
       if (response.status === 403) {
         dispatch(logout());
+        window.location.href = '/';
       }
       return response.json();
     })

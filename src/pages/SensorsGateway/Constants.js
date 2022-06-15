@@ -104,7 +104,7 @@ export const getFormattedRow = (data, gatewayTypeList, shipmentData, custodianDa
       if (shipmentData && shipmentData.length) {
         _.forEach(shipmentData, (shipment) => {
           if (shipment.partner_shipment_id !== null && element.shipment_ids.length > 0
-            && element.shipment_ids.includes(shipment.partner_shipment_id)
+            && element.shipment_ids.includes(shipment.id.toString())
           ) {
             edited = {
               ...edited,

@@ -45,6 +45,7 @@ import {
   getSensorType,
   getAggregateReport,
   getAllSensorAlerts,
+  editGateway,
 } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
@@ -299,6 +300,19 @@ const Shipment = (props) => {
   };
 
   const handleConfirmModal = () => {
+    if (selectedShipment.gateway_ids.length > 0) {
+      let attachedGateway = null;
+      attachedGateway = _.filter(
+        gatewayData, (gateway) => gateway.gateway_uuid === selectedShipment.gateway_ids[0],
+      );
+      dispatch(
+        editGateway({
+          ...attachedGateway[0],
+          gateway_status: 'available',
+          shipment_ids: [],
+        }),
+      );
+    }
     dispatch(deleteShipment(deleteItemId, organization));
     setConfirmModal(false);
   };

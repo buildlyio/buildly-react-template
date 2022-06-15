@@ -31,6 +31,7 @@ import {
 import { setOptionsData } from '../../../utils/utilMethods';
 import { validators } from '../../../utils/validators';
 import ShipmentRouteInfo from './ShipmentRouteInfo';
+import { editGateway } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -303,11 +304,24 @@ const ShipmentInfo = (props) => {
     };
 
     if (editPage && editData) {
-      if (shipmentFormData.gateway_ids.length > 0) {
+      if (shipmentFormValue.gateway_ids.length > 0) {
+        let gateway_status = null;
+        let shipment_ids = [];
         let attachedGateway = null;
         attachedGateway = _.filter(
-          gatewayData, (gateway) => gateway.gateway_uuid === shipmentFormData.gateway_ids[0],
+          gatewayData, (gateway) => gateway.gateway_uuid === shipmentFormValue.gateway_ids[0],
         );
+        if (shipmentFormValue.status === 'Completed' || shipmentFormValue.status === 'Cancelled') {
+          gateway_status = 'available';
+        } else if (shipmentFormValue.status === 'Enroute' && shipmentFormValue.gateway_ids.length > 0) {
+          gateway_status = 'assigned';
+          shipment_ids = [shipmentFormValue.id];
+        }
+
+        if (gateway_status === null) {
+          gateway_status = attachedGateway[0].gateway_status;
+        }
+
         dispatch(
           editShipment(
             shipmentFormValue,
@@ -316,6 +330,13 @@ const ShipmentInfo = (props) => {
             organization,
             attachedGateway[0],
           ),
+        );
+        dispatch(
+          editGateway({
+            ...attachedGateway[0],
+            gateway_status,
+            shipment_ids,
+          }),
         );
       } else {
         dispatch(

@@ -235,6 +235,9 @@ const AddGateway = ({
     if (!gateway_type.value || !gateway_name.value) {
       return true;
     }
+    if (editData.shipment_ids.length > 0) {
+      return true;
+    }
     let errorExists = false;
     _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
