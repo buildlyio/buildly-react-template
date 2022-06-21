@@ -8,6 +8,7 @@ import {
   IconButton,
   TextField,
   MenuItem,
+  Button,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import {
@@ -15,6 +16,7 @@ import {
   Refresh as RefreshIcon,
   Settings as SettingsIcon,
   Menu as MenuIcon,
+  Add as AddIcon,
 } from '@mui/icons-material';
 import logo from '@assets/tp-logo.png';
 import {
@@ -42,7 +44,7 @@ import AccountMenu from './AccountMenu';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    backgroundColor: '#383636',
+    backgroundColor: theme.palette.background.dark,
     zIndex: theme.zIndex.drawer + 1,
     [theme.breakpoints.down('sm')]: {
       overflowX: 'auto',
@@ -65,6 +67,14 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiOutlinedInput-input': {
       padding: theme.spacing(1, 3.5, 1, 2),
     },
+  },
+  addButton: {
+    [theme.breakpoints.down('xs')]: {
+      marginTop: theme.spacing(2),
+      padding: 0,
+    },
+    borderRadius: '18px',
+    fontSize: '0.8rem',
   },
 }));
 
@@ -159,6 +169,10 @@ const TopBar = ({
     history.push(routes.SHIPMENT);
   };
 
+  const onAddButtonClick = () => {
+    history.push(routes.CREATE_SHIPMENT);
+  };
+
   return (
     <AppBar position="fixed" className={classes.appBar}>
       {loading && <Loader open={loading} />}
@@ -185,6 +199,23 @@ const TopBar = ({
         />
 
         <div className={classes.menuRight}>
+          <div
+            style={{
+              margin: 'auto',
+            }}
+          >
+            <Button
+              type="button"
+              variant="contained"
+              color="primary"
+              className={classes.addButton}
+              onClick={onAddButtonClick}
+            >
+              <AddIcon />
+              {' '}
+              Create New
+            </Button>
+          </div>
           <TextField
             className={classes.timezone}
             variant="outlined"

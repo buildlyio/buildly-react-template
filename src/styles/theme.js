@@ -8,6 +8,8 @@ const theme = createTheme({
     type: 'dark',
     background: {
       default: '#605e5e',
+      dark: '#383636',
+      contrast: '#4F4D4D',
     },
     primary: {
       main: '#EBC645',
@@ -16,6 +18,20 @@ const theme = createTheme({
     secondary: {
       main: '#fff',
       contrastText: '#000',
+    },
+    common: {
+      success: '#009900',
+      info: '#0099CC',
+      warning: '#FFCC33',
+      error: '#FF0033',
+      placeholder: '#aaa',
+      grey: '#7C7A7A',
+      darkGrey: '#343434',
+      arrow: '#f5f5f9',
+      drawer: '#646262',
+      active: '#887C5E',
+      darkGrey2: '#424242',
+      tab: '#222222',
     },
   },
   typography: {

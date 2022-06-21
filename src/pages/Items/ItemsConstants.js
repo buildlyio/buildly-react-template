@@ -69,7 +69,7 @@ export const itemColumns = [
   },
 ];
 
-export const getFormattedRow = (data, itemTypeList, unitsOfMeasure) => {
+export const getItemFormattedRow = (data, itemTypeList, unitsOfMeasure) => {
   if (data && itemTypeList) {
     let formattedData = [];
     _.forEach(data, (element) => {

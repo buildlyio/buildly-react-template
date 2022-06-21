@@ -16,7 +16,7 @@ import {
   getProductsOptions,
 } from '../../redux/options/actions/options.actions';
 import { routes } from '../../routes/routesConstants';
-import { itemColumns, getFormattedRow } from './ItemsConstants';
+import { itemColumns, getItemFormattedRow } from './ItemsConstants';
 import AddItems from './forms/AddItems';
 
 const Items = ({
@@ -73,7 +73,7 @@ const Items = ({
       && unitsOfMeasure
       && unitsOfMeasure.length
     ) {
-      setRows(getFormattedRow(
+      setRows(getItemFormattedRow(
         itemData,
         itemTypeList,
         unitsOfMeasure,

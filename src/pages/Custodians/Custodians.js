@@ -17,7 +17,7 @@ import {
 import { routes } from '../../routes/routesConstants';
 import {
   custodianColumns,
-  getFormattedRow,
+  getCustodianFormattedRow,
   getUniqueContactInfo,
 } from './CustodianConstants';
 import AddCustodians from './forms/AddCustodians';
@@ -66,7 +66,7 @@ const Custodian = ({
 
   useEffect(() => {
     if (custodianData && custodianData.length && contactInfo && contactInfo.length) {
-      setRows(getFormattedRow(custodianData, contactInfo));
+      setRows(getCustodianFormattedRow(custodianData, contactInfo));
     }
   }, [JSON.stringify(custodianData), JSON.stringify(contactInfo)]);
 

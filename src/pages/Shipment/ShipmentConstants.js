@@ -112,7 +112,7 @@ export const getShipmentDataTableColumns = (timezone) => ([
   },
 ]);
 
-export const getFormattedRow = (
+export const getShipmentFormattedRow = (
   shipmentData,
   custodianData,
   custodyData,

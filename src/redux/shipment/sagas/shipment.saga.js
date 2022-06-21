@@ -13,6 +13,8 @@ import {
 } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getCustody,
+  addCustody,
+  editCustody,
 } from '@redux/custodian/actions/custodian.actions';
 import { routes } from '@routes/routesConstants';
 import {
@@ -99,6 +101,69 @@ function* processShipments(payload, data) {
   }
 }
 
+function* configureGatewayCustody(shipmentData, payload, isEdit, shipment_gw) {
+  if ('shipment' in payload) {
+    const { gateway, start_custody, end_custody } = payload;
+    const start_custody_form = {
+      ...start_custody,
+      shipment: shipmentData.id,
+      shipment_id: shipmentData.shipment_uuid,
+    };
+    const end_custody_form = {
+      ...end_custody,
+      shipment: shipmentData.id,
+      shipment_id: shipmentData.shipment_uuid,
+    };
+    if (isEdit) {
+      yield [
+        yield put(
+          editGateway(
+            shipment_gw,
+          ),
+        ),
+        yield put(
+          editCustody(start_custody_form),
+        ),
+        yield put(
+          editCustody(end_custody_form),
+        ),
+      ];
+    } else if (gateway) {
+      yield [
+        yield put(
+          editGateway({
+            ...gateway,
+            gateway_status: 'assigned',
+            shipment_ids: [shipmentData.id],
+          }),
+        ),
+        yield put(
+          addCustody(start_custody_form),
+        ),
+        yield put(
+          addCustody(end_custody_form),
+        ),
+      ];
+    } else {
+      yield [
+        yield put(
+          addCustody(start_custody_form),
+        ),
+        yield put(
+          addCustody(end_custody_form),
+        ),
+      ];
+    }
+  } else if (isEdit && shipment_gw) {
+    yield [
+      yield put(
+        editGateway(
+          shipment_gw,
+        ),
+      ),
+    ];
+  }
+}
 function* getShipmentList(payload) {
   try {
     let query_params;
@@ -164,9 +229,10 @@ function* addShipment(action) {
       httpService.makeRequest,
       'post',
       `${window.env.API_URL}${shipmentApiEndPoint}shipment/`,
-      payload,
+      payload.shipment,
     );
     yield [
+      yield configureGatewayCustody(data.data, payload, false, null),
       yield put(
         showAlert({
           type: 'success',
@@ -176,7 +242,7 @@ function* addShipment(action) {
       ),
       yield put(
         getShipmentDetails(
-          payload.organization_uuid,
+          payload.shipment.organization_uuid,
           'Planned,Enroute',
           null,
           true,
@@ -216,25 +282,27 @@ function* editShipment(action) {
     payload, history, redirectTo, gateway,
   } = action;
   try {
+    let shipment_payload;
+    if ('shipment' in payload) {
+      shipment_payload = payload.shipment;
+    } else {
+      shipment_payload = payload;
+    }
     const data = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${shipmentApiEndPoint}shipment/${payload.id}/`,
-      payload,
+      `${window.env.API_URL}${shipmentApiEndPoint}shipment/${shipment_payload.id}/`,
+      shipment_payload,
     );
-    if (payload.gateway_ids.length > 0 && gateway && (!payload.status) in ['Completed', 'Cancelled']) {
+    if (shipment_payload.gateway_ids.length > 0 && gateway && (!shipment_payload.status) in ['Completed', 'Cancelled']) {
       yield [
-        yield put(
-          editGateway(
-            gateway,
-          ),
-        ),
+        yield configureGatewayCustody(data.data, payload, true, gateway),
       ];
     }
     yield [
       yield put(
         getShipmentDetails(
-          payload.organization_uuid,
+          shipment_payload.organization_uuid,
           'Planned,Enroute,Completed,Cancelled',
           null,
           false,

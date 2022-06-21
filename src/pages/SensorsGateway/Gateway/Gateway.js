@@ -20,7 +20,7 @@ import {
   getShipmentDetails,
 } from '../../../redux/shipment/actions/shipment.actions';
 import { routes } from '../../../routes/routesConstants';
-import { gatewayColumns, getFormattedRow } from '../Constants';
+import { gatewayColumns, getGatewayFormattedRow } from '../Constants';
 import AddGateway from '../forms/AddGateway';
 
 const Gateway = ({
@@ -82,7 +82,7 @@ const Gateway = ({
       && gatewayTypeList
       && gatewayTypeList.length
     ) {
-      setRows(getFormattedRow(gatewayData, gatewayTypeList, shipmentData, custodianData));
+      setRows(getGatewayFormattedRow(gatewayData, gatewayTypeList, shipmentData, custodianData));
     }
   }, [gatewayData, gatewayTypeList, shipmentData, custodianData]);
 

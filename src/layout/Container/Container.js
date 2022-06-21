@@ -17,6 +17,7 @@ import SensorsGateway from '../../pages/SensorsGateway/SensorsGateway';
 import Shipment from '../../pages/Shipment/Shipment';
 import Reporting from '../../pages/Reporting/Reporting';
 import AdminPanel from '../../pages/AdminPanel/AdminPanel';
+import CreateShipment from '../../pages/Shipment/CreateShipment';
 import { routes } from '../../routes/routesConstants';
 import {
   checkForAdmin,
@@ -121,6 +122,10 @@ const ContainerDashboard = ({ location, history }) => {
           <Route
             path={routes.ADMIN_PANEL}
             component={AdminPanel}
+          />
+          <Route
+            path={routes.CREATE_SHIPMENT}
+            component={CreateShipment}
           />
         </Container>
       </UserContext.Provider>

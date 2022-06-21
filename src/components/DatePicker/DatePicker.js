@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
+    margin: '0px',
   },
 }));
 
@@ -23,6 +24,7 @@ const DatePickerComponent = ({
   hasTime,
   helpText,
   disabled,
+  required,
 }) => {
   const classes = useStyles();
 
@@ -36,12 +38,13 @@ const DatePickerComponent = ({
             ampm={false}
             fullWidth
             margin="normal"
+            required={required}
             disabled={disabled}
             label={label}
             value={selectedDate}
             onChange={handleDateChange}
             format="MM/dd/yyyy HH:mm:ss"
-            renderInput={(props) => <TextField {...props} />}
+            renderInput={(props) => <TextField fullWidth {...props} />}
           />
         ) : (
           <DatePicker
@@ -52,6 +55,7 @@ const DatePickerComponent = ({
             format="MM/dd/yyyy"
             margin="normal"
             disabled={disabled}
+            required={required}
             id="date-picker-inline"
             label={label}
             value={selectedDate}
@@ -59,13 +63,13 @@ const DatePickerComponent = ({
             KeyboardButtonProps={{
               'aria-label': 'change date',
             }}
-            renderInput={(props) => <TextField {...props} />}
+            renderInput={(props) => <TextField fullWidth {...props} />}
           />
         )}
       </LocalizationProvider>
-      {helpText && (
+      {/* {helpText && (
         <CustomizedTooltips toolTipText={helpText} />
-      )}
+      )} */}
     </div>
   );
 };

@@ -12,7 +12,7 @@ import {
   getSensorOptions,
 } from '../../../redux/options/actions/options.actions';
 import { routes } from '../../../routes/routesConstants';
-import { sensorsColumns, getFormattedSensorRow } from '../Constants';
+import { sensorsColumns, getSensorFormattedRow } from '../Constants';
 import AddSensors from '../forms/AddSensors';
 
 const Sensors = ({
@@ -56,7 +56,7 @@ const Sensors = ({
       && sensorTypeList
       && sensorTypeList.length
     ) {
-      setRows(getFormattedSensorRow(sensorData, sensorTypeList, gatewayData));
+      setRows(getSensorFormattedRow(sensorData, sensorTypeList, gatewayData));
     }
   }, [sensorData, sensorTypeList]);
 

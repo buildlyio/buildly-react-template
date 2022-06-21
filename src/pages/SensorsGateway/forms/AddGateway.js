@@ -26,7 +26,7 @@ import {
   editGateway,
 } from '../../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import { validators } from '../../../utils/validators';
-import { getFormattedRow } from '../../../pages/Custodians/CustodianConstants';
+import { getCustodianFormattedRow } from '../../../pages/Custodians/CustodianConstants';
 import { GATEWAY_STATUS } from '../Constants';
 
 const useStyles = makeStyles((theme) => ({
@@ -137,7 +137,7 @@ const AddGateway = ({
       && contactInfo
       && custodianData.length
     ) {
-      setCustodianList(getFormattedRow(
+      setCustodianList(getCustodianFormattedRow(
         custodianData,
         contactInfo,
       ));

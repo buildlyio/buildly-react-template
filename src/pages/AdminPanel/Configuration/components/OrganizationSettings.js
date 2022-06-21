@@ -18,7 +18,7 @@ import {
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    backgroundColor: '#424242',
+    backgroundColor: theme.palette.common.darkGrey2,
     margin: theme.spacing(0.25, 0, 0.25, 0.25),
   },
   checkbox: {

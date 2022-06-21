@@ -100,10 +100,10 @@ const ShipmentInfo = (props) => {
     (editData && editData.name) || '',
     { required: true },
   );
-  const lading_bill = useInput(
-    (editData && editData.bol_order_id) || '',
-  );
-  const load_no = useInput('');
+  // const lading_bill = useInput(
+  //   (editData && editData.bol_order_id) || '',
+  // );
+  // const load_no = useInput('');
   const shipment_status = useInput(
     (editData && editData.status) || '',
     { required: true },
@@ -137,7 +137,7 @@ const ShipmentInfo = (props) => {
   const [fieldsMetadata, setFieldsMetaData] = useState({
     shipment_name: '',
     shipment_status: '',
-    lading_bill: '',
+    // lading_bill: '',
     route_desc: '',
     mode_type: '',
     scheduled_departure: '',
@@ -170,10 +170,10 @@ const ShipmentInfo = (props) => {
         shipmentOptions.actions.POST,
         'route_description',
       );
-      metadata.lading_bill = setOptionsData(
-        shipmentOptions.actions.POST,
-        'bol_order_id',
-      );
+      // metadata.lading_bill = setOptionsData(
+      //   shipmentOptions.actions.POST,
+      //   'bol_order_id',
+      // );
       metadata.mode_type = setOptionsData(
         shipmentOptions.actions.POST,
         'transport_mode',
@@ -282,7 +282,7 @@ const ShipmentInfo = (props) => {
       ...copyData,
       name: shipment_name.value,
       status: shipment_status.value ? shipment_status.value : 'Planned',
-      bol_order_id: lading_bill.value,
+      // bol_order_id: lading_bill.value,
       route_description: route_desc.value,
       transport_mode: mode_type.value,
       estimated_time_of_arrival: scheduled_arrival,
@@ -356,8 +356,8 @@ const ShipmentInfo = (props) => {
 
   checkIfShipmentInfoEdited = () => (
     shipment_name.hasChanged()
-    || lading_bill.hasChanged()
-    || load_no.hasChanged()
+    // || lading_bill.hasChanged()
+    // || load_no.hasChanged()
     || shipment_status.hasChanged()
     || route_desc.hasChanged()
     || mode_type.hasChanged()
@@ -450,7 +450,7 @@ const ShipmentInfo = (props) => {
                     item
                     xs={12}
                   >
-                    <TextField
+                    {/* <TextField
                       variant="outlined"
                       margin="normal"
                       fullWidth
@@ -468,7 +468,7 @@ const ShipmentInfo = (props) => {
                           fieldsMetadata.lading_bill.help_text
                         }
                       />
-                    )}
+                    )} */}
                   </Grid>
                   <Grid
                     className={classes.inputWithTooltip}

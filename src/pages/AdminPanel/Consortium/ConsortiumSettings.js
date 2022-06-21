@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(6),
   },
   accordion: {
-    backgroundColor: '#4F4D4D',
+    backgroundColor: theme.palette.background.dark,
     marginBottom: theme.spacing(4),
     overflowX: 'scroll',
     scrollbarWidth: 'none',

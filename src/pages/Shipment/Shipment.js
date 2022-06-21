@@ -53,12 +53,12 @@ import {
 } from '../../redux/shipment/actions/shipment.actions';
 import { routes } from '../../routes/routesConstants';
 import {
-  getFormattedRow,
+  getShipmentFormattedRow,
   MAP_TOOLTIP,
 } from './ShipmentConstants';
 import ShipmentDataTable from './components/ShipmentDataTable';
-import AddShipment from './forms/AddShipment';
 import { getShipmentOverview } from '../Reporting/ReportingConstants';
+import AddShipment from './forms/AddShipment';
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -72,13 +72,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
-  addButton: {
-    [theme.breakpoints.down('xs')]: {
-      marginTop: theme.spacing(2),
-    },
-  },
   switchViewSection: {
-    background: '#383636',
+    background: theme.palette.background.dark,
     width: '100%',
     display: 'flex',
     minHeight: '40px',
@@ -89,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
     zIndex: '5',
   },
   tabContainer: {
-    backgroundColor: '#222222',
+    backgroundColor: theme.palette.common.tab,
     margin: '0',
     display: 'flex',
     justifyContent: 'space-between',
@@ -206,7 +201,7 @@ const Shipment = (props) => {
       && allAlerts
       && contactInfo
     ) {
-      const formattedRows = getFormattedRow(
+      const formattedRows = getShipmentFormattedRow(
         shipmentData,
         custodianData,
         custodyData,
@@ -279,12 +274,6 @@ const Shipment = (props) => {
       }
     }
   }, [shipmentFilter, shipmentData]);
-
-  const onAddButtonClick = () => {
-    history.push(`${routes.SHIPMENT}/add`, {
-      from: routes.SHIPMENT,
-    });
-  };
 
   const handleEdit = (item) => {
     history.push(`${routes.SHIPMENT}/edit/:${item.id}`, {
@@ -370,7 +359,7 @@ const Shipment = (props) => {
       items: item.items,
     };
 
-    history.push(`${routes.SHIPMENT}/add`, {
+    history.push(routes.CREATE_SHIPMENT, {
       type: 'copy',
       data: copyData,
       from: routes.SHIPMENT,
@@ -387,17 +376,6 @@ const Shipment = (props) => {
         >
           Shipments
         </Typography>
-        <Button
-          type="button"
-          variant="contained"
-          color="primary"
-          className={classes.addButton}
-          onClick={onAddButtonClick}
-        >
-          <AddIcon />
-          {' '}
-          Add Shipment
-        </Button>
       </Box>
       <Grid container spacing={2}>
         <Grid item xs={12} md={tileView ? 6 : 12}>
@@ -506,10 +484,6 @@ const Shipment = (props) => {
         aggregateReport={selectedShipment && selectedShipment?.sensor_report}
         shipmentName={selectedShipment && selectedShipment?.name}
         selectedMarker={selectedShipment && selectedMarker}
-      />
-      <Route
-        path={`${routes.SHIPMENT}/add`}
-        component={AddShipment}
       />
       <Route
         path={`${routes.SHIPMENT}/edit/:id`}

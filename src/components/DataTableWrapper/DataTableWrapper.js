@@ -23,14 +23,14 @@ const useStyles = makeStyles((theme) => ({
   },
   iconButton: {
     padding: theme.spacing(1.5, 0.5),
-    color: '#fff',
+    color: theme.palette.secondary.main,
   },
   dataTableBody: {
     '&:nth-of-type(odd)': {
-      backgroundColor: '#4F4D4D',
+      backgroundColor: theme.palette.background.dark,
     },
     '&:nth-of-type(even)': {
-      backgroundColor: '#383636',
+      backgroundColor: theme.palette.background.dark,
     },
     '&:hover': {
       backgroundColor: '#000 !important',
@@ -38,10 +38,10 @@ const useStyles = makeStyles((theme) => ({
   },
   dataTable: {
     '& .MuiPaper-root': {
-      backgroundColor: '#383636',
+      backgroundColor: theme.palette.background.dark,
     },
     '& tr > th': {
-      backgroundColor: '#383636',
+      backgroundColor: theme.palette.background.dark,
     },
   },
 }));

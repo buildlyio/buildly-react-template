@@ -33,7 +33,7 @@ const StyledMenuItem = withStyles((theme) => ({
     '&:focus': {
       backgroundColor: theme.palette.primary.main,
       '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-        color: theme.palette.common.white,
+        color: theme.palette.secondary.main,
       },
     },
     padding: theme.spacing(2),

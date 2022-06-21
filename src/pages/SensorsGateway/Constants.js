@@ -84,7 +84,7 @@ export const gatewayColumns = (timezone) => ([
   },
 ]);
 
-export const getFormattedRow = (data, gatewayTypeList, shipmentData, custodianData) => {
+export const getGatewayFormattedRow = (data, gatewayTypeList, shipmentData, custodianData) => {
   if (
     data
     && gatewayTypeList
@@ -192,7 +192,7 @@ export const sensorsColumns = (timezone) => ([
   },
 ]);
 
-export const getFormattedSensorRow = (data, sensorTypeList, gatewayData) => {
+export const getSensorFormattedRow = (data, sensorTypeList, gatewayData) => {
   if (data && sensorTypeList) {
     let formattedData = [];
     _.forEach(data, (element) => {
@@ -241,7 +241,7 @@ export const getAvailableGateways = (
   shipmentData,
   shipmentFormData,
 ) => {
-  const gatewayData = getFormattedRow(data, gatewayTypeList, shipmentData);
+  const gatewayData = getGatewayFormattedRow(data, gatewayTypeList, shipmentData);
   let filteredGateways = (
     _.orderBy(gatewayData, ['name'], ['asc'])
     && _.filter(gatewayData, (gateway) => gateway.gateway_status === 'available'

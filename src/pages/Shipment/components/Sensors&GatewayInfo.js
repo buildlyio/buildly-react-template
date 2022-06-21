@@ -24,8 +24,8 @@ import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrap
 import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
 import { UserContext } from '../../../context/User.context';
 import {
-  getFormattedRow,
-  getFormattedSensorRow,
+  getGatewayFormattedRow,
+  getSensorFormattedRow,
   getAvailableGateways,
 } from '../../../pages/SensorsGateway/Constants';
 import {
@@ -122,8 +122,8 @@ const SensorsGatewayInfo = ({
         }
       }
     });
-    rows = getFormattedRow(selectedRows, gatewayTypeList, shipmentData);
-    sensorsRow = getFormattedSensorRow(selectedSensors, sensorTypeList);
+    rows = getGatewayFormattedRow(selectedRows, gatewayTypeList, shipmentData);
+    sensorsRow = getSensorFormattedRow(selectedSensors, sensorTypeList);
   }
 
   useEffect(() => {

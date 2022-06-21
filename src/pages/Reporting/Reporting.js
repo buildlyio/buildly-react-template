@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   switchViewSection: {
-    background: '#383636',
+    background: theme.palette.background.dark,
     width: '100%',
     display: 'flex',
     minHeight: '40px',
@@ -85,12 +85,12 @@ const useStyles = makeStyles((theme) => ({
   infoContainer: {
     height: '525px',
     overflowX: 'auto',
-    backgroundColor: '#424242',
+    backgroundColor: theme.palette.common.darkGrey2,
   },
   reportContainer: {
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(3),
-    backgroundColor: '#424242',
+    backgroundColor: theme.palette.common.darkGrey2,
   },
   selectInput: {
     marginLeft: theme.spacing(1),
