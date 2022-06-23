@@ -347,7 +347,8 @@ export const getBoard = (product_uuid) => ({
  * Create a board
  * @param {Object} data
  */
-export const createBoard = (data) => ({
+export const createBoard = (data, create) => ({
   type: CREATE_BOARD,
   data,
+  create,
 });

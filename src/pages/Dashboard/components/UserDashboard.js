@@ -399,23 +399,24 @@ const UserDashboard = (props) => {
     const formData = {
       product_uuid: product,
       feature_tool_detail: {
-        ...featCred?.auth_detail,
-        org_id: prod.feature_tool_detail.org_id,
-        org_name: prod.feature_tool_detail.org_name,
+        tool_name: featCred?.auth_detail?.tool_name,
+        tool_type: featCred?.auth_detail?.tool_type,
+        org_id: prod?.feature_tool_detail?.org_id,
+        org_name: prod?.feature_tool_detail?.org_name,
         board_detail:
             {
               ...prod.feature_tool_detail.board_detail,
             },
       },
       issue_tool_detail: {
-        org_id: prod.issue_tool_detail.org_id,
-        org_name: prod.issue_tool_detail.org_name,
-        ...issueCred?.auth_detail,
-        board_detail:
-              {},
+        tool_name: issueCred?.auth_detail?.tool_name,
+        tool_type: issueCred?.auth_detail?.tool_type,
+        org_id: prod?.issue_tool_detail?.org_id,
+        org_name: prod?.issue_tool_detail?.org_name,
+        board_detail: {},
       },
     };
-    dispatch(createBoard(formData));
+    dispatch(createBoard(formData, false));
   };
 
   return (
