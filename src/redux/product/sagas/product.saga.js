@@ -806,7 +806,6 @@ function* createBoard(payload) {
       });
       yield put(createStatus(statusData));
     }
-    yield put(getBoard(payload.data.product_uuid));
   } catch (error) {
     yield [
       yield put(

@@ -5,11 +5,13 @@ import _ from 'lodash';
 import { Route } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import {
-  Grid, MenuItem, Tab, Tabs, TextField, Typography, Button,
+  Grid, MenuItem, Tab, Tabs, TextField, Typography, Button, IconButton,
 } from '@mui/material';
+import SyncIcon from '@mui/icons-material/Sync';
 import Loader from '@components/Loader/Loader';
 import { routes } from '@routes/routesConstants';
 import { getAllCredentials, getAllProducts, getBoard } from '@redux/product/actions/product.actions';
+import { createBoard } from '@redux/product/actions/product.actions';
 import {
   deleteFeature,
   deleteIssue,
@@ -45,6 +47,8 @@ const useStyles = makeStyles((theme) => ({
     },
     '& .MuiInputBase-input': {
       color: theme.palette.secondary.contrastText,
+      paddingTop: theme.spacing(1.2),
+      paddingBottom: theme.spacing(1.2),
     },
   },
   tabs: {
@@ -64,6 +68,15 @@ const useStyles = makeStyles((theme) => ({
   },
   boardButton: {
     marginTop: theme.spacing(1),
+  },
+  menuRight: {
+    marginLeft: 'auto',
+    display: 'flex',
+  },
+  importButton: {
+    whiteSpace: 'nowrap',
+    padding: theme.spacing(1, 4),
+    margin: theme.spacing(2, 0),
   },
 }));
 
@@ -381,28 +394,61 @@ const UserDashboard = (props) => {
     }
   };
 
+  const syncData = (e) => {
+    e.preventDefault();
+    const formData = {
+      product_uuid: product,
+      feature_tool_detail: {
+        ...featCred?.auth_detail,
+        org_id: prod.feature_tool_detail.org_id,
+        org_name: prod.feature_tool_detail.org_name,
+        board_detail:
+            {
+              ...prod.feature_tool_detail.board_detail,
+            },
+      },
+      issue_tool_detail: {
+        org_id: prod.issue_tool_detail.org_id,
+        org_name: prod.issue_tool_detail.org_name,
+        ...issueCred?.auth_detail,
+        board_detail:
+              {},
+      },
+    };
+    dispatch(createBoard(formData));
+  };
+
   return (
     <div>
       <Grid container alignItems="center" mb={2}>
-        <Grid item xs={4}>
-          <Typography component="div" variant="h3">
+        <Grid item xs={4} md={3} lg={2}>
+          <Typography component="div" variant="h4">
             Dashboard
           </Typography>
         </Grid>
-        <Grid item xs={4}>
+        <div className={classes.menuRight}>
           {((!_.isEmpty(prod?.third_party_tool)) && (!_.isEmpty(status))
         && (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={(e) => importTicket(e)}
-          >
-            Import Tickets
-          </Button>
+          <>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={(e) => importTicket(e)}
+              className={classes.importButton}
+            >
+              Import Tickets
+            </Button>
+            <IconButton
+              aria-label="sync"
+              color="inherit"
+              size="large"
+              onClick={(e) => syncData(e)}
+            >
+              <SyncIcon fontSize="large" className={classes.menuIcon} />
+            </IconButton>
+          </>
         )
            )}
-        </Grid>
-        <Grid item xs={4}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -433,7 +479,7 @@ const UserDashboard = (props) => {
                 </MenuItem>
               )))}
           </TextField>
-        </Grid>
+        </div>
       </Grid>
       {((_.isEmpty(status)) && product !== 0
         ? (!_.isEmpty(prod) && (!_.isEmpty(prod.third_party_tool)))

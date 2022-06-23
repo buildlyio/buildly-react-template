@@ -21,9 +21,10 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    height: '100%',
-    paddingTop: '6em',
+    height: '100vh',
+    paddingTop: '3.5em',
     maxWidth: '100% !important',
+    overflowY: 'hidden',
   },
 }));
 

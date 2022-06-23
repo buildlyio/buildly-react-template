@@ -47,6 +47,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.main,
     display: 'flex',
     flexDirection: 'column',
+    minWidth: '22%',
+    height: '100%',
   },
   title: {
     borderBottom: `1px solid ${theme.palette.secondary.contrastText}`,
@@ -82,6 +84,10 @@ const useStyles = makeStyles((theme) => ({
   comment: {
     float: 'right',
     cursor: 'pointer',
+  },
+  columnBody: {
+    maxHeight: '56vh',
+    overflowY: 'auto',
   },
 }));
 
@@ -264,7 +270,7 @@ const Kanban = ({
                     <AddRounded fontSize="small" />
                   </IconButton>
                 </div>
-                <div>
+                <div className={classes.columnBody}>
                   <Droppable droppableId={columnId} key={columnId}>
                     {(provided, snapshot) => (
                       <div

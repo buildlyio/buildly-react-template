@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   logo: {
-    maxWidth: 130,
+    maxWidth: 144,
     objectFit: 'contain',
   },
   menuButton: {
