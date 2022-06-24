@@ -300,8 +300,9 @@ const Kanban = ({
                                 {...provided.dragHandleProps}
                                 style={{
                                   userSelect: 'none',
-                                  backgroundColor: snapshot.isDragging
-                                    ? '#F6F8FA'
+                                  backgroundColor: item?.feature_detail?.is_imported
+                                  || item?.issue_detail?.is_imported
+                                    ? '#e0e0e0'
                                     : '#FFFFFF',
                                   ...provided.draggableProps.style,
                                 }}
