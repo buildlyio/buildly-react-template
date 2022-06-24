@@ -790,23 +790,25 @@ function* createBoard(payload) {
       `${window.env.API_URL}${productEndpoint}board-configuration/?product_uuid=${payload.data.product_uuid}`,
       payload.data,
     );
-    const prodID = payload.data.product_uuid;
-    const statusData = board?.data[0]?.feature_tool_detail?.column_list?.map((col) => ({
-      product_uuid: prodID,
-      name: col.column_name,
-      description: col.column_name,
-      status_tracking_id: col.column_id,
-    }));
-    if (statusData) {
-      statusData.push({
+    if (payload.create) {
+      const prodID = payload.data.product_uuid;
+      const statusData = board?.data[0]?.feature_tool_detail?.column_list?.map((col) => ({
         product_uuid: prodID,
-        name: 'No Status',
-        description: 'No Status',
-        status_tracking_id: null,
-      });
-      yield put(createStatus(statusData));
+        name: col.column_name,
+        description: col.column_name,
+        status_tracking_id: col.column_id,
+      }));
+      if (statusData) {
+        statusData.push({
+          product_uuid: prodID,
+          name: 'No Status',
+          description: 'No Status',
+          status_tracking_id: null,
+        });
+        yield put(createStatus(statusData));
+      }
     }
-    yield put(getBoard(payload.data.product_uuid));
+    yield put({ type: CREATE_BOARD_SUCCESS, data: board.data });
   } catch (error) {
     yield [
       yield put(

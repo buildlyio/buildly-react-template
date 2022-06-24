@@ -154,7 +154,7 @@ const ToolBoard = ({
               {},
       },
     };
-    dispatch(createBoard(formData));
+    dispatch(createBoard(formData, true));
     history.push(redirectTo);
   };
 
