@@ -89,7 +89,7 @@ const BudgetTechnology = ({
     (productFormData
       && productFormData.product_info
       && productFormData.product_info.first_user_date)
-    || new Date(),
+    || new Date().setDate(new Date().getDate() + 90),
   );
 
   const [approxBudget, setApproxBudget] = useState(

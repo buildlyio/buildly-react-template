@@ -90,8 +90,8 @@ const AddFeatures = ({
   const [status, setStatus] = useState((editData && currentStatData) || '');
   const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
 
-  const totalEstimate = useInput((editData && editData.total_estimate) || (featureFormData && featureFormData.total_estimate) || '');
-  const version = useInput((editData && editData.version) || (featureFormData && featureFormData.version) || '');
+  // const totalEstimate = useInput((editData && editData.total_estimate) || (featureFormData && featureFormData.total_estimate) || '');
+  // const version = useInput((editData && editData.version) || (featureFormData && featureFormData.version) || '');
   const [formError, setFormError] = useState({});
 
   let formTitle;
@@ -128,8 +128,8 @@ const AddFeatures = ({
       || (_.isEmpty(currentStatData) && !_.isEmpty(status))
       || (!_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
       || (_.isEmpty(editData) && !_.isEmpty(tags))
-      || totalEstimate.hasChanged()
-      || version.hasChanged()
+      // || totalEstimate.hasChanged()
+      // || version.hasChanged()
   );
 
   // Handle tags list
@@ -164,8 +164,8 @@ const AddFeatures = ({
       tags,
       product_uuid,
       priority: priority.value,
-      total_estimate: totalEstimate.value,
-      version: version.value,
+      // total_estimate: totalEstimate.value,
+      // version: version.value,
       column_id: colID,
       ...featCred?.auth_detail,
     };
@@ -369,7 +369,7 @@ const AddFeatures = ({
             disabled={viewPage}
           />
         </Grid>
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -391,8 +391,8 @@ const AddFeatures = ({
             {...totalEstimate.bind}
             disabled={viewPage}
           />
-        </Grid>
-        <Grid item xs={12}>
+        </Grid> */}
+        {/* <Grid item xs={12}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -414,7 +414,7 @@ const AddFeatures = ({
             {...version.bind}
             disabled={viewPage}
           />
-        </Grid>
+        </Grid> */}
         <Grid
           container
           spacing={isDesktop ? 3 : 0}

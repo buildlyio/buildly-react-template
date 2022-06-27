@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
   inviteForm: {
     padding: theme.spacing(3),
     minWidth: rem(25),
+    backgroundColor: '#202020',
   },
   tabs: {
     '& .MuiTabs-root': {
