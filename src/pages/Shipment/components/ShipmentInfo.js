@@ -100,9 +100,9 @@ const ShipmentInfo = (props) => {
     (editData && editData.name) || '',
     { required: true },
   );
-  // const lading_bill = useInput(
-  //   (editData && editData.bol_order_id) || '',
-  // );
+  const carrier = useInput(
+    (editData && editData.bol_order_id) || '',
+  );
   // const load_no = useInput('');
   const shipment_status = useInput(
     (editData && editData.status) || '',
@@ -137,7 +137,7 @@ const ShipmentInfo = (props) => {
   const [fieldsMetadata, setFieldsMetaData] = useState({
     shipment_name: '',
     shipment_status: '',
-    // lading_bill: '',
+    carrier: '',
     route_desc: '',
     mode_type: '',
     scheduled_departure: '',
@@ -170,10 +170,10 @@ const ShipmentInfo = (props) => {
         shipmentOptions.actions.POST,
         'route_description',
       );
-      // metadata.lading_bill = setOptionsData(
-      //   shipmentOptions.actions.POST,
-      //   'bol_order_id',
-      // );
+      metadata.carrier = setOptionsData(
+        shipmentOptions.actions.POST,
+        'carrier',
+      );
       metadata.mode_type = setOptionsData(
         shipmentOptions.actions.POST,
         'transport_mode',
@@ -282,7 +282,7 @@ const ShipmentInfo = (props) => {
       ...copyData,
       name: shipment_name.value,
       status: shipment_status.value ? shipment_status.value : 'Planned',
-      // bol_order_id: lading_bill.value,
+      carrier: carrier.value ? [carrier.value] : [],
       route_description: route_desc.value,
       transport_mode: mode_type.value,
       estimated_time_of_arrival: scheduled_arrival,
@@ -356,7 +356,7 @@ const ShipmentInfo = (props) => {
 
   checkIfShipmentInfoEdited = () => (
     shipment_name.hasChanged()
-    // || lading_bill.hasChanged()
+    || carrier.hasChanged()
     // || load_no.hasChanged()
     || shipment_status.hasChanged()
     || route_desc.hasChanged()
@@ -450,25 +450,25 @@ const ShipmentInfo = (props) => {
                     item
                     xs={12}
                   >
-                    {/* <TextField
+                    <TextField
                       variant="outlined"
                       margin="normal"
                       fullWidth
-                      id="lading_bill"
-                      label="Bill of lading"
-                      name="lading_bill"
-                      autoComplete="lading_bill"
+                      id="carrier"
+                      label="Carrier"
+                      name="carrier"
+                      autoComplete="carrier"
                       disabled={viewOnly}
-                      {...lading_bill.bind}
+                      {...carrier.bind}
                     />
-                    {fieldsMetadata.lading_bill.help_text
+                    {fieldsMetadata.carrier.help_text
                     && (
                       <CustomizedTooltips
                         toolTipText={
-                          fieldsMetadata.lading_bill.help_text
+                          fieldsMetadata.carrier.help_text
                         }
                       />
-                    )} */}
+                    )}
                   </Grid>
                   <Grid
                     className={classes.inputWithTooltip}

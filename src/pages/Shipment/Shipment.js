@@ -366,10 +366,26 @@ const Shipment = (props) => {
     });
   };
 
+  const onAddButtonClick = () => {
+    history.push(routes.CREATE_SHIPMENT);
+  };
+
   return (
     <Box mt={5} mb={5}>
       {loading && <Loader open={loading} />}
+      <Box mb={3} mt={2}>
+        <Button
+          type="button"
+          variant="contained"
+          color="primary"
+          onClick={onAddButtonClick}
+        >
+          <AddIcon />
+          Add Shipment
+        </Button>
+      </Box>
       <Box mb={3} mt={2} display="flex" alignItems="center" justifyContent="space-between">
+
         <Typography
           className={classes.dashboardHeading}
           variant="h4"

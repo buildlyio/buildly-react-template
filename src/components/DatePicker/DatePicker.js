@@ -44,7 +44,7 @@ const DatePickerComponent = ({
             value={selectedDate}
             onChange={handleDateChange}
             format="MM/dd/yyyy HH:mm:ss"
-            renderInput={(props) => <TextField fullWidth {...props} />}
+            renderInput={(props) => <TextField {...props} />}
           />
         ) : (
           <DatePicker
@@ -63,7 +63,7 @@ const DatePickerComponent = ({
             KeyboardButtonProps={{
               'aria-label': 'change date',
             }}
-            renderInput={(props) => <TextField fullWidth {...props} />}
+            renderInput={(props) => <TextField {...props} />}
           />
         )}
       </LocalizationProvider>

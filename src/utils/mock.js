@@ -159,6 +159,10 @@ export const TRANSPORT_MODE = [
   { value: 'sea', label: 'Sea' },
 ];
 
+export const CARRIER = [
+  { value: 'Logistics Provider', label: 'Logistics Provider' },
+];
+
 export const SENSOR_PLATFORM = [
   // { value: 'iclp', label: 'ICLP' },
   { value: 'tive', label: 'Tive' },

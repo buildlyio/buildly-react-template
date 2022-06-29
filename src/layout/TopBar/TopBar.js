@@ -68,14 +68,6 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(1, 3.5, 1, 2),
     },
   },
-  addButton: {
-    [theme.breakpoints.down('xs')]: {
-      marginTop: theme.spacing(2),
-      padding: 0,
-    },
-    borderRadius: '18px',
-    fontSize: '0.8rem',
-  },
 }));
 
 /**
@@ -169,10 +161,6 @@ const TopBar = ({
     history.push(routes.SHIPMENT);
   };
 
-  const onAddButtonClick = () => {
-    history.push(routes.CREATE_SHIPMENT);
-  };
-
   return (
     <AppBar position="fixed" className={classes.appBar}>
       {loading && <Loader open={loading} />}
@@ -199,23 +187,6 @@ const TopBar = ({
         />
 
         <div className={classes.menuRight}>
-          <div
-            style={{
-              margin: 'auto',
-            }}
-          >
-            <Button
-              type="button"
-              variant="contained"
-              color="primary"
-              className={classes.addButton}
-              onClick={onAddButtonClick}
-            >
-              <AddIcon />
-              {' '}
-              Create New
-            </Button>
-          </div>
           <TextField
             className={classes.timezone}
             variant="outlined"
