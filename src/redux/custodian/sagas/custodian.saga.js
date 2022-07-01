@@ -348,7 +348,7 @@ function* addCustody(action) {
             yield put(
               getShipmentDetails(
                 data.data.organization_uuid,
-                'Planned,Enroute,Completed,Cancelled',
+                'Planned,Enroute,Cancelled',
                 null,
                 false,
                 true,
@@ -399,7 +399,7 @@ function* editCustody(action) {
         yield put(
           getShipmentDetails(
             data.data.organization_uuid,
-            'Planned,Enroute,Completed,Cancelled',
+            'Planned,Enroute,Cancelled',
             null,
             false,
             true,
@@ -484,7 +484,7 @@ function* deleteCustody(payload) {
       yield put(
         getShipmentDetails(
           organization_uuid,
-          'Planned,Enroute,Completed,Cancelled',
+          'Planned,Enroute,Cancelled',
           null,
           false,
           true,

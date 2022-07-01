@@ -11,6 +11,10 @@ import {
   TextField,
   IconButton,
   MenuItem,
+  ToggleButton,
+  ToggleButtonGroup,
+  CardContent,
+  Card,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import {
@@ -31,11 +35,10 @@ import {
 import {
   getSensors,
   getSensorType,
-  getAllSensorAlerts,
-  getAggregateReport,
 } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
+  getReportAndAlerts,
 } from '../../redux/shipment/actions/shipment.actions';
 import {
   getUnitsOfMeasure,
@@ -113,12 +116,14 @@ const Reporting = ({
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
   const [tileView, setTileView] = useState(true);
+  const [shipmentFilter, setShipmentFilter] = useState('Active');
   const [selectedGraph, setSelectedGraph] = useState('temperature');
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [shipmentOverview, setShipmentOverview] = useState([]);
   const [isMapLoaded, setMapLoaded] = useState(true);
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState({});
+  const [formattedShipmentData, setFormattedShipmentData] = useState([]);
 
   const getShipmentValue = (value) => {
     let returnValue;
@@ -141,8 +146,21 @@ const Reporting = ({
     return returnValue;
   };
 
+  const handleShipmentSelection = (shipment) => {
+    setSelectedShipment(shipment);
+    if (shipment.partner_shipment_id) {
+      dispatch(getReportAndAlerts(shipment.partner_shipment_id));
+    }
+  };
+
+  const makeFilterSelection = (value) => {
+    setShipmentFilter(value);
+    setSelectedShipment(null);
+    setMarkers([]);
+  };
+
   useEffect(() => {
-    if (!shipmentData) {
+    if (!shipmentData || shipmentFilter === 'Active') {
       const aggregate = !aggregateReportData;
       const custody = !custodyData;
       dispatch(getShipmentDetails(
@@ -155,9 +173,10 @@ const Reporting = ({
       ));
     } else {
       const completedShipments = _.filter(shipmentData, (shipment) => shipment.type === 'Completed');
-      const cancelledShipments = _.filter(shipmentData, (shipment) => shipment.type === 'Cancelled');
+      // const cancelledShipments =
+      // _.filter(shipmentData, (shipment) => shipment.type === 'Cancelled');
 
-      if (!completedShipments.length) {
+      if (!completedShipments.length || shipmentFilter === 'Completed') {
         dispatch(getShipmentDetails(
           organization,
           'Completed',
@@ -167,26 +186,20 @@ const Reporting = ({
           'get',
         ));
       }
-      if (!cancelledShipments.length) {
-        dispatch(getShipmentDetails(
-          organization,
-          'Cancelled',
-          null,
-          true,
-          true,
-          'get',
-        ));
-      }
+      // if (!cancelledShipments.length) {
+      //   dispatch(getShipmentDetails(
+      //     organization,
+      //     'Cancelled',
+      //     null,
+      //     true,
+      //     true,
+      //     'get',
+      //   ));
+      // }
       const UUIDS = _.map(shipmentData, 'shipment_uuid');
       const encodedUUIDs = encodeURIComponent(UUIDS);
       if (encodedUUIDs) {
         dispatch(getCustody(encodedUUIDs));
-      }
-      const IDS = _.map(shipmentData, 'partner_shipment_id');
-      const ids = _.toString(_.without(IDS, null));
-      const encodedIds = encodeURIComponent(ids);
-      if (encodedIds) {
-        dispatch(getAggregateReport(encodedIds));
       }
     }
     if (!custodianData) {
@@ -204,17 +217,27 @@ const Reporting = ({
     if (!unitsOfMeasure) {
       dispatch(getUnitsOfMeasure());
     }
-  }, []);
+  }, [shipmentFilter]);
 
   useEffect(() => {
-    if (
-      shipmentData
+    if (selectedShipment && selectedShipment.markers_to_set) {
+      setMarkers(selectedShipment.markers_to_set);
+    }
+  }, [selectedShipment, shipmentOverview]);
+
+  useEffect(() => {
+    if (markers && markers.length > 0) {
+      setTimeout(() => setMapLoaded(true), 1000);
+    }
+  });
+
+  useEffect(() => {
+    if (aggregateReportData
+      && shipmentData
+      && allAlerts
       && custodianData
       && custodyData
-      && aggregateReportData
-      && allAlerts
-      && contactInfo
-    ) {
+      && contactInfo) {
       const overview = getShipmentOverview(
         shipmentData,
         custodianData,
@@ -226,24 +249,45 @@ const Reporting = ({
       );
       if (overview.length > 0) {
         setShipmentOverview(overview);
-      }
-      if (!selectedShipment && overview.length > 0) {
-        setSelectedShipment(overview[0]);
+        if (selectedShipment) {
+          const selected = _.find(overview, { id: selectedShipment.id });
+          setSelectedShipment(selected);
+        }
       }
     }
-  }, [shipmentData, custodianData, custodyData, aggregateReportData, timezone]);
+  }, [aggregateReportData, allAlerts]);
 
   useEffect(() => {
-    if (selectedShipment) {
-      setMarkers(selectedShipment.markers_to_set);
-    }
-  }, [selectedShipment]);
+    if (shipmentData) {
+      let shipmentList = [];
+      _.forEach(shipmentData, (shipment) => {
+        const editedShipment = shipment;
 
-  useEffect(() => {
-    if (markers && markers.length > 0) {
-      setTimeout(() => setMapLoaded(true), 1000);
+        switch (_.lowerCase(shipment.status)) {
+          case 'planned':
+          case 'enroute':
+            editedShipment.type = 'Active';
+            break;
+
+          case 'completed':
+            editedShipment.type = 'Completed';
+            break;
+
+          case 'cancelled':
+            editedShipment.type = 'Cancelled';
+            break;
+
+          default:
+            break;
+        }
+        shipmentList = [...shipmentList, editedShipment];
+      });
+      setFormattedShipmentData(shipmentList,
+        (shipment) => moment(shipment.estimated_time_of_departure)
+          && moment(shipment.create_date),
+        ['desc']);
     }
-  });
+  }, [shipmentData]);
 
   return (
     <Box mt={5} mb={5}>
@@ -301,6 +345,33 @@ const Reporting = ({
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
+            <ToggleButtonGroup
+              color="primary"
+              value={shipmentFilter}
+              exclusive
+              fullWidth
+            >
+              <ToggleButton
+                selected={shipmentFilter === 'Active'}
+                size="medium"
+                value="Active"
+                onClick={(event, value) => makeFilterSelection(value)}
+              >
+                Active
+
+              </ToggleButton>
+              <ToggleButton
+                value="Completed"
+                size="medium"
+                selected={shipmentFilter === 'Completed'}
+                onClick={(event, value) => makeFilterSelection(value)}
+              >
+                Completed
+
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </div>
+          <div className={classes.switchViewSection}>
             <TextField
               variant="outlined"
               margin="normal"
@@ -316,15 +387,15 @@ const Reporting = ({
                   : ''
               }
               onChange={(e) => {
-                const selected = _.find(shipmentOverview, { id: e.target.value });
-                setSelectedShipment(selected);
+                const selected = _.find(formattedShipmentData, { id: e.target.value });
+                handleShipmentSelection(selected);
               }}
             >
               <MenuItem value="">Select</MenuItem>
-              {shipmentData
-              && shipmentData.length > 0
+              {formattedShipmentData
+              && formattedShipmentData.length > 0
               && _.map(
-                shipmentData,
+                _.filter(formattedShipmentData, { type: shipmentFilter }),
                 (shipment, index) => (
                   <MenuItem
                     key={index}
@@ -355,60 +426,64 @@ const Reporting = ({
             </IconButton>
           </div>
           <div className={classes.infoContainer}>
-            <Grid container>
-              {selectedShipment
-                ? (_.map(
-                  SHIPMENT_OVERVIEW_COLUMNS,
-                  (column, index) => (
-                    <Grid
-                      item
-                      className={classes.infoSection}
-                      xs={10}
-                      md={6}
-                      key={`col${index}:${column.name}`}
-                    >
-                      <Typography variant="h6">
-                        {column.label}
-                      </Typography>
-                      {column.name === 'custody_info'
-                      && selectedShipment[column.name]
-                        ? _.map(
-                          selectedShipment[column.name],
-                          (value, idx) => (
-                            <div
-                              key={`custody_info_${idx}`}
-                              style={{
-                                marginBottom: 10,
-                                color: value.custody_type === 'Current'
-                                  ? '#EBC645'
-                                  : '#ffffff',
-                              }}
-                            >
-                              <Typography variant="body1">
-                                {`Custody Type: ${value.custody_type}`}
-                              </Typography>
-                              <Typography variant="body1">
-                                {`Custodian Address: ${selectedShipment.contact_info[idx].address}`}
-                              </Typography>
-                            </div>
-                          ),
-                        ) : (
-                          <Typography variant="body1">
-                            {getShipmentValue(column.name)}
+            <Card>
+              <CardContent>
+                <Grid container>
+                  {selectedShipment
+                    ? (_.map(
+                      SHIPMENT_OVERVIEW_COLUMNS,
+                      (column, index) => (
+                        <Grid
+                          item
+                          className={classes.infoSection}
+                          xs={10}
+                          md={6}
+                          key={`col${index}:${column.name}`}
+                        >
+                          <Typography variant="h6">
+                            {column.label}
                           </Typography>
-                        )}
-                    </Grid>
-                  ),
-                ))
-                : (
-                  <Typography
-                    variant="h6"
-                    align="center"
-                  >
-                    {SHIPMENT_OVERVIEW_TOOL_TIP}
-                  </Typography>
-                )}
-            </Grid>
+                          {column.name === 'custody_info'
+                      && selectedShipment[column.name]
+                            ? _.map(
+                              selectedShipment[column.name],
+                              (value, idx) => (
+                                <div
+                                  key={`custody_info_${idx}`}
+                                  style={{
+                                    marginBottom: 10,
+                                    color: value.custody_type === 'Current'
+                                      ? '#EBC645'
+                                      : '#ffffff',
+                                  }}
+                                >
+                                  <Typography variant="body1">
+                                    {`Custody Type: ${value.custody_type}`}
+                                  </Typography>
+                                  <Typography variant="body1">
+                                    {`Custodian Address: ${selectedShipment.contact_info[idx].address}`}
+                                  </Typography>
+                                </div>
+                              ),
+                            ) : (
+                              <Typography variant="body1">
+                                {getShipmentValue(column.name)}
+                              </Typography>
+                            )}
+                        </Grid>
+                      ),
+                    ))
+                    : (
+                      <Typography
+                        variant="h6"
+                        align="center"
+                      >
+                        {SHIPMENT_OVERVIEW_TOOL_TIP}
+                      </Typography>
+                    )}
+                </Grid>
+              </CardContent>
+            </Card>
           </div>
         </Grid>
       </Grid>

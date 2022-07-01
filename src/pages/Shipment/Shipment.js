@@ -50,6 +50,7 @@ import {
 import {
   getShipmentDetails,
   deleteShipment,
+  getReportAndAlerts,
 } from '../../redux/shipment/actions/shipment.actions';
 import { routes } from '../../routes/routesConstants';
 import {
@@ -120,7 +121,7 @@ const Shipment = (props) => {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
   const [activeRows, setActiveRows] = useState([]);
-  const [completedRows, setCompletedRows] = useState([]);
+  // const [completedRows, setCompletedRows] = useState([]);
   const [cancelledRows, setCancelledRows] = useState([]);
   const [rows, setRows] = useState([]);
   const [selectedShipment, setSelectedShipment] = useState(null);
@@ -133,7 +134,7 @@ const Shipment = (props) => {
 
   const subNav = [
     { label: 'Active', value: 'Active' },
-    { label: 'Completed', value: 'Completed' },
+    // { label: 'Completed', value: 'Completed' },
     { label: 'Cancelled', value: 'Cancelled' },
   ];
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -197,8 +198,6 @@ const Shipment = (props) => {
       shipmentData
       && custodianData
       && custodyData
-      && aggregateReportData
-      && allAlerts
       && contactInfo
     ) {
       const formattedRows = getShipmentFormattedRow(
@@ -213,14 +212,65 @@ const Shipment = (props) => {
         formattedRows,
         { type: 'Active' },
       );
-      const COMPLETED_ROWS = _.filter(
-        formattedRows,
-        { type: 'Completed' },
-      );
+      // const COMPLETED_ROWS = _.filter(
+      //   formattedRows,
+      //   { type: 'Completed' },
+      // );
       const CANCELLED_ROWS = _.filter(
         formattedRows,
         { type: 'Cancelled' },
       );
+      setRows(formattedRows);
+      setActiveRows(ACTIVE_ROWS);
+      // setCompletedRows(COMPLETED_ROWS);
+      setCancelledRows(CANCELLED_ROWS);
+      if (!selectedShipment && formattedRows.length) {
+        if (shipmentFilter === 'Cancelled') {
+          handleShipmentSelection(CANCELLED_ROWS[0]);
+        }
+        // else if (shipmentFilter === 'Completed') {
+        //   handleShipmentSelection(COMPLETED_ROWS[0]);
+        // }
+        else {
+          handleShipmentSelection(ACTIVE_ROWS[0]);
+        }
+      }
+    }
+  }, [shipmentData, custodianData, custodyData, contactInfo, timezone]);
+
+  useEffect(() => {
+    if (selectedShipment && selectedShipment.markers_to_set) {
+      setMarkers(selectedShipment.markers_to_set);
+    }
+  }, [selectedShipment, timezone, shipmentOverview]);
+
+  useEffect(() => {
+    if (markers && markers.length > 0) {
+      setTimeout(() => setMapLoaded(true), 1000);
+    }
+  });
+
+  useEffect(() => {
+    if (shipmentFilter && rows.length) {
+      if (shipmentFilter === 'Cancelled') {
+        handleShipmentSelection(cancelledRows[0]);
+      }
+      // } else if (shipmentFilter === 'Completed') {
+      //   handleShipmentSelection(completedRows[0]);
+      // }
+      else {
+        handleShipmentSelection(activeRows[0]);
+      }
+    }
+  }, [shipmentFilter, shipmentData]);
+
+  useEffect(() => {
+    if (aggregateReportData
+      && shipmentData
+      && allAlerts
+      && custodianData
+      && custodyData
+      && contactInfo) {
       const overview = getShipmentOverview(
         shipmentData,
         custodianData,
@@ -232,48 +282,13 @@ const Shipment = (props) => {
       );
       if (overview.length > 0) {
         setShipmentOverview(overview);
-      }
-
-      setRows(formattedRows);
-      setActiveRows(ACTIVE_ROWS);
-      setCompletedRows(COMPLETED_ROWS);
-      setCancelledRows(CANCELLED_ROWS);
-      if (!selectedShipment && formattedRows.length) {
-        if (shipmentFilter === 'Cancelled') {
-          setSelectedShipment(CANCELLED_ROWS[0]);
-        } else if (shipmentFilter === 'Completed') {
-          setSelectedShipment(COMPLETED_ROWS[0]);
-        } else {
-          setSelectedShipment(ACTIVE_ROWS[0]);
+        if (selectedShipment) {
+          const selected = _.find(overview, { id: selectedShipment.id });
+          setSelectedShipment(selected);
         }
       }
     }
-  }, [shipmentData, custodianData, custodyData, aggregateReportData,
-    allAlerts, contactInfo, timezone]);
-
-  useEffect(() => {
-    if (selectedShipment) {
-      setMarkers(selectedShipment.markers_to_set);
-    }
-  }, [selectedShipment, timezone]);
-
-  useEffect(() => {
-    if (markers && markers.length > 0) {
-      setTimeout(() => setMapLoaded(true), 1000);
-    }
-  });
-
-  useEffect(() => {
-    if (shipmentFilter && rows.length) {
-      if (shipmentFilter === 'Cancelled') {
-        setSelectedShipment(cancelledRows[0]);
-      } else if (shipmentFilter === 'Completed') {
-        setSelectedShipment(completedRows[0]);
-      } else {
-        setSelectedShipment(activeRows[0]);
-      }
-    }
-  }, [shipmentFilter, shipmentData]);
+  }, [aggregateReportData, allAlerts]);
 
   const handleEdit = (item) => {
     history.push(`${routes.SHIPMENT}/edit/:${item.id}`, {
@@ -307,7 +322,7 @@ const Shipment = (props) => {
   };
 
   const filterTabClicked = (event, filter) => {
-    setSelectedShipment(null);
+    handleShipmentSelection(null);
     setMarkers({});
     setShipmentFilter(filter);
     let shipmentStatus = '';
@@ -316,7 +331,7 @@ const Shipment = (props) => {
       default:
         shipmentStatus = 'Planned,Enroute';
         break;
-      case 'Completed':
+      // case 'Completed':
       case 'Cancelled':
         shipmentStatus = filter;
         break;
@@ -368,6 +383,13 @@ const Shipment = (props) => {
 
   const onAddButtonClick = () => {
     history.push(routes.CREATE_SHIPMENT);
+  };
+
+  const handleShipmentSelection = (shipment) => {
+    setSelectedShipment(shipment);
+    if (shipment && shipment.partner_shipment_id) {
+      dispatch(getReportAndAlerts(shipment.partner_shipment_id));
+    }
   };
 
   return (
@@ -426,18 +448,19 @@ const Shipment = (props) => {
           </Box>
           <ShipmentDataTable
             rows={
-              // eslint-disable-next-line no-nested-ternary
-              shipmentFilter === 'Cancelled'
-                ? cancelledRows
-                : shipmentFilter === 'Completed'
-                  ? completedRows
-                  : activeRows
+              // // eslint-disable-next-line no-nested-ternary
+              // shipmentFilter === 'Cancelled'
+              //   ? cancelledRows
+              //   : shipmentFilter === 'Completed'
+              //     ? completedRows
+              //     : activeRows
+              shipmentFilter === 'Cancelled' ? cancelledRows : activeRows
             }
             editAction={handleEdit}
             deleteAction={handleDelete}
             copyAction={handleCopy}
             rowsType={shipmentFilter}
-            setSelectedShipment={setSelectedShipment}
+            setSelectedShipment={handleShipmentSelection}
             tileView={tileView}
             timezone={timezone}
           />

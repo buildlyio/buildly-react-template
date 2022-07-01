@@ -127,6 +127,7 @@ export const getShipmentOverview = (
     let batteryData = [];
     let pressureData = [];
     let markersToSet = [];
+    editedShipment.sensor_report = [];
 
     const alerts = _.filter(
       alertsData,

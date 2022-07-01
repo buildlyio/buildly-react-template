@@ -19,6 +19,7 @@ import {
   ADD_PDF_IDENTIFIER,
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
+  GET_REPORT_AND_ALERTS,
 } from '../actions/shipment.actions';
 
 const initialState = {
@@ -39,6 +40,14 @@ export default (state = initialState, action) => {
         loaded: true,
         error: null,
         shipmentFormData: action.formData,
+      };
+
+    case GET_REPORT_AND_ALERTS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: null,
       };
 
     case GET_SHIPMENTS:

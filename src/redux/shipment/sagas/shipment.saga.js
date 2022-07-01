@@ -34,6 +34,7 @@ import {
   ADD_PDF_IDENTIFIER,
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
+  GET_REPORT_AND_ALERTS,
 } from '../actions/shipment.actions';
 import { GET_CUSTODY_SUCCESS } from '../../custodian/actions/custodian.actions';
 
@@ -41,11 +42,15 @@ const shipmentApiEndPoint = 'shipment/';
 
 function* processShipments(payload, data) {
   let uuids = '';
+  let shipment_id = '';
   if (data instanceof Array) {
     const UUIDS = _.map(data, 'shipment_uuid');
     uuids = _.toString(_.without(UUIDS, null));
+    // eslint-disable-next-line prefer-destructuring
+    shipment_id = UUIDS[0];
   } else {
     uuids = data.shipment_uuid;
+    shipment_id = data.shipment_uuid;
   }
 
   if (payload.id && data.length > 0) {
@@ -54,12 +59,14 @@ function* processShipments(payload, data) {
         data.find((shipment) => shipment.id === payload.id),
       ),
     );
+    yield getReportAndAlerts({ shipment_id: payload.partner_shipment_id });
   } else if (typeof (data) === 'object' && data.length === undefined) {
     yield put(
       saveShipmentFormData(
         data,
       ),
     );
+    yield getReportAndAlerts({ shipment_id: data.partner_shipment_id });
   }
   // Fetch updated custody
   const encodedUUIDs = encodeURIComponent(uuids);
@@ -72,32 +79,6 @@ function* processShipments(payload, data) {
       type: GET_CUSTODY_SUCCESS,
       data: [],
     });
-  }
-
-  // Fetch new aggregate reports
-  const IDS = _.map(data, 'partner_shipment_id');
-  const ids = _.toString(_.without(IDS, null));
-  const encodedIds = encodeURIComponent(ids);
-  if (payload.getUpdatedSensorData && encodedIds) {
-    const chunks = _.chunk(_.without(IDS, null), 25);
-    yield [
-      yield all(chunks.map(
-        (chunk) => put(getAggregateReport(encodeURIComponent(chunk))),
-        delay(500),
-      )),
-      yield put(getAllSensorAlerts(encodedIds)),
-    ];
-  } else {
-    yield [
-      yield put({
-        type: GET_AGGREGATE_REPORT_SUCCESS,
-        data: [],
-      }),
-      yield put({
-        type: GET_ALL_SENSOR_ALERTS_SUCCESS,
-        data: [],
-      }),
-    ];
   }
 }
 
@@ -164,6 +145,38 @@ function* configureGatewayCustody(shipmentData, payload, isEdit, shipment_gw) {
     ];
   }
 }
+
+function* getReportAndAlerts(payload) {
+  try {
+    const { shipment_id } = payload;
+    if (shipment_id) {
+      yield [
+        yield put(getAggregateReport(shipment_id)),
+        yield put(getAllSensorAlerts(shipment_id)),
+      ];
+    } else {
+      yield [
+        yield put({
+          type: GET_AGGREGATE_REPORT_SUCCESS,
+          data: [],
+        }),
+        yield put({
+          type: GET_ALL_SENSOR_ALERTS_SUCCESS,
+          data: [],
+        }),
+      ];
+    }
+  } catch (error) {
+    yield put(
+      showAlert({
+        type: 'error',
+        open: true,
+        message: 'Couldn\'t load data due to some error!',
+      }),
+    );
+  }
+}
+
 function* getShipmentList(payload) {
   try {
     let query_params;
@@ -303,7 +316,7 @@ function* editShipment(action) {
       yield put(
         getShipmentDetails(
           shipment_payload.organization_uuid,
-          'Planned,Enroute,Completed,Cancelled',
+          'Planned,Enroute,Cancelled',
           null,
           false,
           true,
@@ -360,7 +373,7 @@ function* deleteShipment(payload) {
       ),
       yield put(getShipmentDetails(
         organization_uuid,
-        'Planned,Enroute,Completed,Cancelled',
+        'Planned,Enroute,Cancelled',
         null,
         true,
         true,
@@ -524,6 +537,10 @@ function* watchPdfIdentifier() {
   yield takeLatest(ADD_PDF_IDENTIFIER, pdfIdentifier);
 }
 
+function* watchReportAndAlerts() {
+  yield takeLatest(GET_REPORT_AND_ALERTS, getReportAndAlerts);
+}
+
 export default function* shipmentSaga() {
   yield all([
     watchGetShipment(),
@@ -531,5 +548,6 @@ export default function* shipmentSaga() {
     watchDeleteShipment(),
     watchEditShipment(),
     watchPdfIdentifier(),
+    watchReportAndAlerts(),
   ]);
 }

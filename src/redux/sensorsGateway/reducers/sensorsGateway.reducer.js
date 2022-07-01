@@ -546,26 +546,32 @@ export default (state = initialState, action) => {
       };
 
     case GET_AGGREGATE_REPORT_SUCCESS: {
-      const initialAggregateReport = state.aggregateReportData;
-      let aggregateReport = action.data;
-      if (initialAggregateReport) {
-        aggregateReport = Object.values(
-          [...initialAggregateReport, ...action.data].reduce((result, { id, ...rest }) => {
-            // eslint-disable-next-line no-param-reassign
-            result[id] = {
-              ...(result[id] || {}),
-              id,
-              ...rest,
-            };
-            return result;
-          }, {}),
-        );
-      }
+      // const initialAggregateReport = state.aggregateReportData;
+      // let aggregateReport = action.data;
+      // if (initialAggregateReport) {
+      //   aggregateReport = Object.values(
+      //     [...initialAggregateReport, ...action.data].reduce((result, { id, ...rest }) => {
+      //       // eslint-disable-next-line no-param-reassign
+      //       result[id] = {
+      //         ...(result[id] || {}),
+      //         id,
+      //         ...rest,
+      //       };
+      //       return result;
+      //     }, {}),
+      //   );
+      // }
+      // return {
+      //   ...state,
+      //   loading: false,
+      //   loaded: true,
+      //   aggregateReportData: aggregateReport,
+      // };
       return {
         ...state,
         loading: false,
         loaded: true,
-        aggregateReportData: aggregateReport,
+        aggregateReportData: action.data,
       };
     }
     case GET_AGGREGATE_REPORT_FAILURE:

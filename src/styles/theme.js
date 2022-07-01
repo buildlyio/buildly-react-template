@@ -433,6 +433,16 @@ const theme = createTheme({
         },
       },
     },
+    MuiToggleButton: {
+      styleOverrides: {
+        '& .Mui-selected': {
+          color: '#EBC645',
+        },
+        root: {
+          color: '#fff',
+        },
+      },
+    },
   },
 });
 

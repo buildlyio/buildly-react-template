@@ -105,7 +105,7 @@ const ShipmentDataTable = ({
   };
 
   useEffect(() => {
-    setSelected(0);
+    // setSelected(0);
     let cols = [
       {
         name: 'COPY',
