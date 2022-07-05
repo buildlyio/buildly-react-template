@@ -11,6 +11,7 @@ import NewProduct from '@pages/NewProduct/NewProduct';
 import Release from '@pages/Release/Release';
 import ViewRelease from '@pages/Release/components/ViewRelease';
 import DeveloperForm from '@pages/DeveloperForm/DeveloperForm';
+import Products from 'Products.js/Products';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,6 +58,7 @@ const ContainerDashboard = ({ location, history }) => {
             <Route path={routes.DEVELOPER_FORM} component={DeveloperForm} />
             <Route exact path={`${routes.RELEASE}/view/:releaseID`} component={ViewRelease} />
             <Route path={routes.RELEASE} component={Release} />
+            <Route path={routes.PRODUCTS} component={Products} />
           </Switch>
         </Container>
       </UserContext.Provider>

@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
-import { createProduct } from '@redux/product/actions/product.actions';
+import { createProduct, updateProduct } from '@redux/product/actions/product.actions';
 import { EXAMPLELIST } from '../ProductFormConstants';
 import { updateUser } from '@redux/authuser/actions/authuser.actions';
 import { UserContext } from '@context/User.context';
@@ -85,16 +85,20 @@ const MinimalFunctionality = ({
   dispatch,
   history,
   loading,
+  editData,
+  editPage,
 }) => {
   const classes = useStyles();
   const user = useContext(UserContext);
-  const minimalFunc = useInput(
-    (productFormData
+  const buttonText = editPage ? 'Save' : 'Create Product';
+  const minimalFunc = useInput((editData
+    && editData.product_info
+    && editData.product_info.minimal_functionality)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.minimal_functionality)
     || '',
-    { required: true },
-  );
+  { required: true });
 
   checkIfMinimalFuncEdited = () => minimalFunc.hasChanged();
 
@@ -115,7 +119,11 @@ const MinimalFunctionality = ({
     if (user && !user.survey_status) {
       dispatch(updateUser({ id: user.id, survey_status: true }));
     }
-    dispatch(createProduct(formData, history));
+    if (editPage) {
+      dispatch(updateProduct(formData));
+    } else {
+      dispatch(createProduct(formData, history));
+    }
   };
 
   return (
@@ -174,7 +182,7 @@ const MinimalFunctionality = ({
                 disabled={!minimalFunc.value}
                 className={classes.submit}
               >
-                Create Product
+                {buttonText}
               </Button>
             </Grid>
           </Grid>

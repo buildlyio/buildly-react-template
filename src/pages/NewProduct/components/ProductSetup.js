@@ -154,19 +154,19 @@ const ProductSetup = ({
   handleNext,
   dispatch,
   thirdPartyTools,
+  location,
+  editData,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
-  const name = useInput(
-    (productFormData && productFormData.product_name) || '',
-    { required: true },
-  );
-  const description = useInput(
-    (productFormData && productFormData.product_description) || '',
-    { required: true },
-  );
+  const name = useInput((editData && editData.name)
+  || (productFormData && productFormData.product_name) || '',
+  { required: true });
+  const description = useInput((editData && editData.description)
+  || (productFormData && productFormData.product_description) || '',
+  { required: true });
   const featuresTool = useInput('start fresh', { required: true });
   const issuesTool = useInput('start fresh', { required: true });
   const [trelloAuth, setTrelloAuth] = useState({
@@ -187,18 +187,17 @@ const ProductSetup = ({
     tool_type: 'Issue',
     tool_name: 'GitHub',
   });
-  const [startDate, handleStartDateChange] = useState(
-    (productFormData && productFormData.start_date) || new Date(),
-  );
-  const [endDate, handleEndDateChange] = useState(
-    (productFormData && productFormData.end_date) || new Date(),
-  );
-  const [useBuildlyArch, setUseBuildlyArch] = useState(
-    (productFormData
+  const [startDate, handleStartDateChange] = useState((editData && editData.start_date)
+  || (productFormData && productFormData.start_date) || new Date());
+  const [endDate, handleEndDateChange] = useState((editData && editData.end_date)
+  || (productFormData && productFormData.end_date) || new Date());
+  const [useBuildlyArch, setUseBuildlyArch] = useState((editData
+    && editData.product_info
+    && editData.product_info.use_buildly_architecture
+  ) || (productFormData
       && productFormData.product_info
       && productFormData.product_info.use_buildly_arch
-    ) || true,
-  );
+  ) || true);
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
@@ -230,6 +229,34 @@ const ProductSetup = ({
   }, [productFormData]);
 
   useEffect(() => {
+    if (editData && !_.isEmpty(editData.creds)) {
+      _.forEach(editData.creds, (cred) => {
+        switch (true) {
+          case cred && cred.auth_detail
+            && cred.auth_detail.tool_type === 'Feature':
+            if (cred.auth_detail.tool_name === 'Trello') {
+              setTrelloAuth(cred.auth_detail);
+            }
+            if (cred.auth_detail.tool_name === 'GitHub') {
+              setGithubFeatureAuth(cred.auth_detail);
+            }
+            break;
+
+          case cred && cred.auth_detail
+            && cred.auth_detail.tool_type === 'Issue':
+            if (cred.auth_detail.tool_name === 'GitHub') {
+              setGithubIssueAuth(cred.auth_detail);
+            }
+            break;
+
+          default:
+            break;
+        }
+      });
+    }
+  }, [editData]);
+
+  useEffect(() => {
     if (!thirdPartyTools || _.isEmpty(thirdPartyTools)) {
       dispatch(getAllThirdPartyTools());
     }
@@ -241,6 +268,22 @@ const ProductSetup = ({
       && !_.isEmpty(thirdPartyTools)
     ) {
       _.forEach(productFormData.third_party_tool, (id) => {
+        const tool = _.find(thirdPartyTools, { thirdpartytool_uuid: id });
+        if (tool) {
+          if (_.toLower(tool.tool_type) === 'feature') {
+            featuresTool.setNewValue(_.toLower(tool.name));
+          } else {
+            issuesTool.setNewValue(_.toLower(tool.name));
+          }
+        }
+      });
+    } else if (editData
+        && editData.third_party_tool
+        && !_.isEmpty(editData.third_party_tool)
+        && thirdPartyTools
+        && !_.isEmpty(thirdPartyTools)
+    ) {
+      _.forEach(editData.third_party_tool, (id) => {
         const tool = _.find(thirdPartyTools, { thirdpartytool_uuid: id });
         if (tool) {
           if (_.toLower(tool.tool_type) === 'feature') {

@@ -129,38 +129,50 @@ const ApplicationMarket = ({
   handleNext,
   handleBack,
   dispatch,
+  editData,
 }) => {
   const classes = useStyles();
 
-  const applicationType = useInput(
-    (productFormData
+  const applicationType = useInput((editData
+    && editData.product_info
+    && editData.product_info.application_type)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.application_type)
     || 'desktop',
-    { required: true },
-  );
-  const [specificProblem, setSpecificProblem] = useState(
-    (productFormData
+  { required: true });
+  const [specificProblem, setSpecificProblem] = useState((editData
+    && editData.product_info
+    && editData.product_info.specific_problem)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.specific_problem)
     || {
       value: false,
       problem: '',
-    },
-  );
-  const primaryUsers = useInput(
-    (productFormData
+    });
+  const primaryUsers = useInput((editData
+    && editData.product_info
+    && editData.product_info.primary_users)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.primary_users)
     || '',
-    { required: true },
-  );
-  const [bussinessSegment, setBussinessSegment] = useState(
-    (productFormData
+  { required: true });
+  // const secondaryUsers = useInput(
+  //   (productFormData
+  //     && productFormData.product_info
+  //     && productFormData.product_info.secondary_users)
+  //   || '',
+  //   { required: true },
+  // );
+  const [bussinessSegment, setBussinessSegment] = useState((editData
+    && editData.product_info
+    && editData.product_info.bussiness_segment)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.bussiness_segment)
-    || [],
-  );
+    || []);
 
   const submitDisabled = () => {
     if (!applicationType.value
@@ -180,6 +192,7 @@ const ApplicationMarket = ({
       && !_.isEqual(specificProblem,
         productFormData.product_info.specific_problem))
     || primaryUsers.hasChanged()
+    // || secondaryUsers.hasChanged()
     || (productFormData
       && productFormData.product_info
       && productFormData.product_info.bussiness_segment
@@ -200,6 +213,7 @@ const ApplicationMarket = ({
         application_type: applicationType.value,
         specific_problem: specificProblem,
         primary_users: primaryUsers.value,
+        // secondary_users: secondaryUsers.value,
         bussiness_segment: bussinessSegment,
       },
       edit_date: new Date(),
@@ -322,6 +336,24 @@ const ApplicationMarket = ({
                 </Select>
               </FormControl>
             </Grid>
+            {/* <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel id="primary-user-label">Secondary User</InputLabel>
+                <Select
+                  labelId="primary-user-label"
+                  id="primary-user"
+                  label="Type of User"
+                  {...secondaryUsers.bind}
+                >
+                  <MenuItem value="" />
+                  {_.map(PRIMARY_USERS, (user, idx) => (
+                    <MenuItem key={`user-${idx}`} value={user}>
+                      {user}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid> */}
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel id="bussiness-segment-label">

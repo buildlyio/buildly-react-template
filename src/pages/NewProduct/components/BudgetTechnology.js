@@ -82,65 +82,73 @@ const BudgetTechnology = ({
   handleNext,
   handleBack,
   dispatch,
+  editData,
 }) => {
   const classes = useStyles();
 
-  const [firstUserDate, handlefirstUserDateChange] = useState(
-    (productFormData
+  const [firstUserDate, handlefirstUserDateChange] = useState((editData
+    && editData.product_info
+    && editData.product_info.first_user_date)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.first_user_date)
-    || new Date().setDate(new Date().getDate() + 90),
-  );
+    || new Date().setDate(new Date().getDate() + 90));
 
-  const [approxBudget, setApproxBudget] = useState(
-    (productFormData
+  const [approxBudget, setApproxBudget] = useState((editData
+    && editData.product_info
+    && editData.product_info.approx_budget)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.approx_budget)
     || {
       value: 0,
       category: '10-15k',
-    },
-  );
+    });
 
-  const hosting = useInput(
-    (productFormData
+  const hosting = useInput((editData
+    && editData.product_info
+    && editData.product_info.hosting)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.hosting)
-    || 'Hostinger',
-    { required: true },
-  );
+    || 'GCP',
+  { required: true });
 
-  const language = useInput(
-    (productFormData
+  const language = useInput((editData
+    && editData.product_info
+    && editData.product_info.language)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.language)
     || 'JavaScript',
-    { required: true },
-  );
+  { required: true });
 
-  const database = useInput(
-    (productFormData
+  const database = useInput((editData
+    && editData.product_info
+    && editData.product_info.database)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.database)
     || 'Postgres',
-    { required: true },
-  );
+  { required: true });
 
-  const storage = useInput(
-    (productFormData
+  const storage = useInput((editData
+    && editData.product_info
+    && editData.product_info.storage)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.storage)
     || 'AWS',
-    { required: true },
-  );
+  { required: true });
 
-  const deployment = useInput(
-    (productFormData
+  const deployment = useInput((editData
+    && editData.product_info
+    && editData.product_info.deployment)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.deployment)
     || 'AWS',
-    { required: true },
-  );
+  { required: true });
 
   const [formError, setFormError] = useState({});
 

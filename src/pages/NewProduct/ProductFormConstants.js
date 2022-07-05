@@ -27,16 +27,21 @@ export const BUSSINESS_SEGMENTS = [
 ];
 
 export const HOSTING = [
-  'Hostinger',
-  'Bluehost',
-  'Dreamhost',
-  'Hostgator',
-  'GreenGeeks',
-  'SiteGround',
-  'A2 Hosting',
-  'InMotion',
-  'WPEngine',
-  'Nexcess',
+  // 'Hostinger',
+  // 'Bluehost',
+  // 'Dreamhost',
+  // 'Hostgator',
+  // 'GreenGeeks',
+  // 'SiteGround',
+  // 'A2 Hosting',
+  // 'InMotion',
+  // 'WPEngine',
+  // 'Nexcess',
+  'GCP',
+  'AWS',
+  'Digital Ocean',
+  'Oracle Cloud',
+  'Azure',
 ];
 
 export const LANGUAGES = [

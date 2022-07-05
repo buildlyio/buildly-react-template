@@ -76,48 +76,56 @@ const UseInfo = ({
   handleNext,
   handleBack,
   dispatch,
+  editData,
 }) => {
   const classes = useStyles();
 
   const productUse = useInput(
-    (productFormData
+    (editData
+      && editData.product_info
+      && editData.product_info.use)
+    || (productFormData
       && productFormData.product_info
       && productFormData.product_info.use)
     || '',
     { required: true },
   );
 
-  const useWhen = useInput(
-    (productFormData
+  const useWhen = useInput((editData
+    && editData.product_info
+    && editData.product_info.use_when)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.use_when)
     || '',
-    { required: true },
-  );
+  { required: true });
 
-  const useSituation = useInput(
-    (productFormData
+  const useSituation = useInput((editData
+    && editData.product_info
+    && editData.product_info.use_situation)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.use_situation)
     || '',
-    { required: true },
-  );
+  { required: true });
 
-  const impFunction = useInput(
-    (productFormData
+  const impFunction = useInput((editData
+    && editData.product_info
+    && editData.product_info.imp_function)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.imp_function)
     || '',
-    { required: true },
-  );
+  { required: true });
 
-  const deliveryRisk = useInput(
-    (productFormData
+  const deliveryRisk = useInput((editData
+    && editData.product_info
+    && editData.product_info.delivery_risk)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.delivery_risk)
     || '',
-    { required: true },
-  );
+  { required: true });
 
   const [formError, setFormError] = useState({});
 

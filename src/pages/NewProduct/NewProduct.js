@@ -54,6 +54,8 @@ const getStepContent = (
   handleNext,
   handleBack,
   maxSteps,
+  editData,
+  editPage,
 ) => {
   switch (stepIndex) {
     case 0:
@@ -69,6 +71,7 @@ const getStepContent = (
             {...props}
             location={props.location}
             handleNext={handleNext}
+            editData={editData}
           />
         </ViewDetailsWrapper>
       );
@@ -87,6 +90,7 @@ const getStepContent = (
             location={props.location}
             handleNext={handleNext}
             handleBack={handleBack}
+            editData={editData}
           />
         </ViewDetailsWrapper>
       );
@@ -105,6 +109,7 @@ const getStepContent = (
             location={props.location}
             handleNext={handleNext}
             handleBack={handleBack}
+            editData={editData}
           />
         </ViewDetailsWrapper>
       );
@@ -123,6 +128,7 @@ const getStepContent = (
             location={props.location}
             handleNext={handleNext}
             handleBack={handleBack}
+            editData={editData}
           />
         </ViewDetailsWrapper>
       );
@@ -141,6 +147,7 @@ const getStepContent = (
             location={props.location}
             handleNext={handleNext}
             handleBack={handleBack}
+            editData={editData}
           />
         </ViewDetailsWrapper>
       );
@@ -158,6 +165,8 @@ const getStepContent = (
             {...props}
             location={props.location}
             handleBack={handleBack}
+            editData={editData}
+            editPage={editPage}
           />
         </ViewDetailsWrapper>
       );
@@ -168,10 +177,21 @@ const getStepContent = (
 };
 
 const NewProductForm = (props) => {
-  const { history, productFormData, dispatch } = props;
+  const {
+    history, productFormData, dispatch, location,
+  } = props;
   const classes = useStyles();
   const steps = getSteps();
   const maxSteps = steps.length;
+
+  const editPage = location.state && location.state.type === 'editP';
+  const editData = (
+    location.state
+    && (location.state.type === 'editP')
+    && location.state.data
+  ) || {};
+
+  const formTitle = editPage ? 'Edit Product' : 'New Product Setup';
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [openFormModal, setFormModal] = useState(true);
@@ -244,7 +264,7 @@ const NewProductForm = (props) => {
         <FormModal
           open={openFormModal}
           handleClose={handleClose}
-          title="New Product Setup"
+          title={formTitle}
           titleClass={classes.formTitle}
           maxWidth="md"
           wantConfirm
@@ -279,6 +299,8 @@ const NewProductForm = (props) => {
                 handleNext,
                 handleBack,
                 maxSteps,
+                editData,
+                editPage,
               )}
             </div>
           </div>

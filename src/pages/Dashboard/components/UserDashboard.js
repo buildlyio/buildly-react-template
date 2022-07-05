@@ -75,8 +75,10 @@ const useStyles = makeStyles((theme) => ({
   },
   importButton: {
     whiteSpace: 'nowrap',
-    padding: theme.spacing(1, 4),
     margin: theme.spacing(2, 0),
+  },
+  bar: {
+    minWidth: '250px',
   },
 }));
 
@@ -450,27 +452,28 @@ const UserDashboard = (props) => {
           </>
         )
            )}
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            select
-            id="product"
-            color="primary"
-            label="Product Options"
-            className={classes.product}
-            value={product}
-            onChange={(e) => {
-              if (e.target.value === -1) {
-                history.push(routes.NEW_PRODUCT);
-              } else {
-                setProduct(e.target.value);
-              }
-            }}
-          >
-            <MenuItem value={0}>Select</MenuItem>
-            <MenuItem value={-1}>Create New Product</MenuItem>
-            {currentProducts && !_.isEmpty(currentProducts)
+          <Grid item lg={2} className={classes.bar}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              select
+              id="product"
+              color="primary"
+              label="Product Options"
+              className={classes.product}
+              value={product}
+              onChange={(e) => {
+                if (e.target.value === -1) {
+                  history.push(routes.NEW_PRODUCT);
+                } else {
+                  setProduct(e.target.value);
+                }
+              }}
+            >
+              <MenuItem value={0}>Select</MenuItem>
+              <MenuItem value={-1}>Create New Product</MenuItem>
+              {currentProducts && !_.isEmpty(currentProducts)
               && _.flatMap(_.map(currentProducts, (prd) => (
                 <MenuItem
                   key={`product-${prd.product_uuid}`}
@@ -479,7 +482,8 @@ const UserDashboard = (props) => {
                   {prd.name}
                 </MenuItem>
               )))}
-          </TextField>
+            </TextField>
+          </Grid>
         </div>
       </Grid>
       {((_.isEmpty(status)) && product !== 0

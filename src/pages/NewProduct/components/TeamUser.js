@@ -134,20 +134,23 @@ const StyledRadio = (props) => {
 export let checkIfTeamUserEdited;
 
 const TeamUser = ({
-  productFormData, handleNext, handleBack, dispatch,
+  productFormData, handleNext, handleBack, dispatch, editData,
 }) => {
   const classes = useStyles();
 
-  const teamSize = useInput(
-    (productFormData
+  const teamSize = useInput((editData
+    && editData.product_info
+    && editData.product_info.team_size)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.team_size)
     || '5 - 10',
-    { required: true },
-  );
+  { required: true });
 
-  const [roleCount, setRoleCount] = useState(
-    (productFormData
+  const [roleCount, setRoleCount] = useState((editData
+    && editData.product_info
+    && editData.product_info.role_count)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.role_count)
     || [
@@ -158,16 +161,16 @@ const TeamUser = ({
       { role: 'Product Manager', count: 0 },
       { role: 'Product Manager (Budget Approval?)', count: 0 },
       { role: 'Others', count: 0 },
-    ],
-  );
+    ]);
 
-  const existingFeatures = useInput(
-    (productFormData
+  const existingFeatures = useInput((editData
+    && editData.product_info
+    && editData.product_info.existing_features)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.existing_features)
     || '',
-    { required: true },
-  );
+  { required: true });
 
   const submitDisabled = () => {
     let countNum = 0;
