@@ -282,10 +282,10 @@ const Reporting = ({
         }
         shipmentList = [...shipmentList, editedShipment];
       });
-      setFormattedShipmentData(shipmentList,
+      setFormattedShipmentData(_.orderBy(shipmentList,
         (shipment) => moment(shipment.estimated_time_of_departure)
           && moment(shipment.create_date),
-        ['desc']);
+        ['desc']));
     }
   }, [shipmentData]);
 

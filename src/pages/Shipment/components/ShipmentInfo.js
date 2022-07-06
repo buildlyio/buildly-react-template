@@ -455,7 +455,7 @@ const ShipmentInfo = (props) => {
                       margin="normal"
                       fullWidth
                       id="carrier"
-                      label="Carrier"
+                      label="Lading Bill"
                       name="carrier"
                       autoComplete="carrier"
                       disabled={viewOnly}

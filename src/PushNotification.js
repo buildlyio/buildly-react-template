@@ -119,15 +119,6 @@ const PushNotification = ({ dispatch, loaded }) => {
         id: alert.id,
         onClose: closeNotification,
       }));
-      setTimeout(() => {
-        const viewed = getViewedNotifications();
-        if (!_.includes(viewed, alert.id)) {
-          closeNotification(alert.id);
-        }
-      }, window.env.hide_notification);
-
-      const openAlerts = _.slice(alerts, 1);
-      setAlerts(openAlerts);
     }
   }, [alerts]);
 
@@ -138,6 +129,8 @@ const PushNotification = ({ dispatch, loaded }) => {
   );
 
   const closeNotification = (id) => {
+    const openAlerts = _.filter(alerts, (alert) => alert.id !== id);
+    setAlerts(openAlerts);
     const viewed = getViewedNotifications();
     localStorage.setItem(
       'viewedNotifications',

@@ -44,7 +44,6 @@ import {
   getSensors,
   getSensorType,
   getAggregateReport,
-  getAllSensorAlerts,
   editGateway,
 } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
@@ -374,7 +373,7 @@ const Shipment = (props) => {
       items: item.items,
     };
 
-    history.push(routes.CREATE_SHIPMENT, {
+    history.push(`${routes.SHIPMENT}/add`, {
       type: 'copy',
       data: copyData,
       from: routes.SHIPMENT,
@@ -382,7 +381,10 @@ const Shipment = (props) => {
   };
 
   const onAddButtonClick = () => {
-    history.push(routes.CREATE_SHIPMENT);
+    // history.push(routes.CREATE_SHIPMENT);
+    history.push(`${routes.SHIPMENT}/add`, {
+      from: routes.SHIPMENT,
+    });
   };
 
   const handleShipmentSelection = (shipment) => {
@@ -523,6 +525,10 @@ const Shipment = (props) => {
         aggregateReport={selectedShipment && selectedShipment?.sensor_report}
         shipmentName={selectedShipment && selectedShipment?.name}
         selectedMarker={selectedShipment && selectedMarker}
+      />
+      <Route
+        path={`${routes.SHIPMENT}/add`}
+        component={AddShipment}
       />
       <Route
         path={`${routes.SHIPMENT}/edit/:id`}
