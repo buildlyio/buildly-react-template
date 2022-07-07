@@ -230,6 +230,7 @@ const DescribeProcess = ({
         enabled_desc: quest7.value,
         search_or_nav: quest8,
         links: quest9,
+        assigneees: featureFormData?.assignees,
       },
     };
     if (editPage) {

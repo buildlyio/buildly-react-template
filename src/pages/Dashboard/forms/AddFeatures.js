@@ -90,8 +90,24 @@ const AddFeatures = ({
   const [status, setStatus] = useState((editData && currentStatData) || '');
   const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
 
-  // const totalEstimate = useInput((editData && editData.total_estimate) || (featureFormData && featureFormData.total_estimate) || '');
-  // const version = useInput((editData && editData.version) || (featureFormData && featureFormData.version) || '');
+  const editAssigneeData = [];
+  for (let i = 0; i < editData?.feature_detail?.assigneees?.length; i += 1) {
+    editAssigneeData.push(editData.feature_detail.assigneees[i].username);
+  }
+
+  const [assignees, setAssignees] = useState((editData && editAssigneeData) || []);
+
+  const assigneeData = [];
+  for (let i = 0; i < product?.feature_tool_detail?.user_list?.length; i += 1) {
+    assigneeData.push(product.feature_tool_detail.user_list[i].username);
+  }
+  const assigneesList = [...new Set(product?.feature_tool_detail?.user_list
+    .filter((element) => assignees.includes(element.username)))];
+
+  // const totalEstimate = useInput((editData && editData.total_estimate)
+  // || (featureFormData && featureFormData.total_estimate) || '');
+  // const version = useInput((editData && editData.version)
+  // || (featureFormData && featureFormData.version) || '');
   const [formError, setFormError] = useState({});
 
   let formTitle;
@@ -148,6 +164,21 @@ const AddFeatures = ({
     }
   };
 
+  const onAssigneeChange = (value) => {
+    switch (true) {
+      case (value.length > assignees.length):
+        setAssignees([...assignees, _.last(value)]);
+        break;
+
+      case (value.length < assignees.length):
+        setAssignees(value);
+        break;
+
+      default:
+        break;
+    }
+  };
+
   const featCred = _.find(
     credentials,
     { product_uuid, auth_detail: { tool_type: 'Feature' } },
@@ -168,6 +199,7 @@ const AddFeatures = ({
       // version: version.value,
       column_id: colID,
       ...featCred?.auth_detail,
+      assignees: assigneesList,
     };
 
     if (editPage) {
@@ -204,6 +236,7 @@ const AddFeatures = ({
       || !description.value
       || !statusID
       || !priority.value
+      || !assignees
     ) {
       return true;
     }
@@ -369,6 +402,37 @@ const AddFeatures = ({
             disabled={viewPage}
           />
         </Grid>
+        {!_.isEmpty(product?.feature_tool_detail?.user_list) && (
+        <Grid item xs={12} md={8}>
+          <Autocomplete
+            fullWidth
+            multiple
+            filterSelectedOptions
+            id="assignees"
+            options={assigneeData}
+            value={assignees}
+            onChange={(e, newValue) => onAssigneeChange(newValue)}
+            renderTags={(value, getAssigneeProps) => (
+              _.map(value, (option, index) => (
+                <Chip
+                  variant="default"
+                  label={option}
+                  {...getAssigneeProps({ index })}
+                />
+              ))
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                label="Assignees"
+                margin="normal"
+              />
+            )}
+            disabled={viewPage}
+          />
+        </Grid>
+        )}
         {/* <Grid item xs={12}>
           <TextField
             variant="outlined"
