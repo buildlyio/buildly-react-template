@@ -319,3 +319,17 @@ describe('Import Tickets action', () => {
     expect(actions.importTickets(data)).toEqual(expectedAction);
   });
 });
+
+// Test Delete Features and Issues
+describe('Clear product action', () => {
+  it('should create an action to clear product', () => {
+    const product_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
+    const expectedAction = {
+      type: actions.CLEAR_PRODUCT_DATA,
+      product_uuid,
+    };
+
+    expect(actions.clearProductData(product_uuid))
+      .toEqual(expectedAction);
+  });
+});

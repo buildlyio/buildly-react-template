@@ -79,6 +79,9 @@ import {
   IMPORT_TICKETS,
   IMPORT_TICKETS_SUCCESS,
   IMPORT_TICKETS_FAILURE,
+  CLEAR_PRODUCT_DATA,
+  CLEAR_PRODUCT_DATA_FAILURE,
+  CLEAR_PRODUCT_DATA_SUCCESS,
 } from '../actions/decision.actions';
 
 const initialState = {
@@ -129,6 +132,7 @@ export default (state = initialState, action) => {
     case DELETE_FEEDBACK:
     case DELETE_ISSUE:
     case DELETE_STATUS:
+    case CLEAR_PRODUCT_DATA:
       return {
         ...state,
         loading: true,
@@ -162,6 +166,7 @@ export default (state = initialState, action) => {
     case DELETE_FEEDBACK_FAILURE:
     case DELETE_ISSUE_FAILURE:
     case DELETE_STATUS_FAILURE:
+    case CLEAR_PRODUCT_DATA_FAILURE:
       return {
         ...state,
         loading: false,
@@ -403,6 +408,20 @@ export default (state = initialState, action) => {
         loaded: true,
         importLoaded: true,
         tickets,
+      };
+    }
+
+    case CLEAR_PRODUCT_DATA_SUCCESS: {
+      const { features, issues } = state;
+      _.remove(features, { product_uuid: action.product_uuid });
+      _.remove(issues, { product_uuid: action.product_uuid });
+
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        features,
+        issues,
       };
     }
 

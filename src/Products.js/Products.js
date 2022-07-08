@@ -8,6 +8,8 @@ import { getAllProducts } from '@redux/product/actions/product.actions';
 import { routes } from '@routes/routesConstants';
 import AddProduct from '../pages/NewProduct/NewProduct';
 import { productColumns, getProductsData } from './ProductConstants';
+import ConfirmModal from '@components/Modal/ConfirmModal';
+import { clearProductData } from '@redux/decision/actions/decision.actions';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,6 +32,8 @@ const Products = ({
   const classes = useStyles();
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState(productColumns);
+  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [deleteItemId, setDeleteItemId] = useState('');
 
   const addProductPath = redirectTo
     ? `${redirectTo}/product`
@@ -38,6 +42,16 @@ const Products = ({
   const editProductPath = redirectTo
     ? `${redirectTo}/product`
     : `${routes.PRODUCTS}/edit`;
+
+  const deleteProduct = (item) => {
+    setDeleteItemId(item.product_uuid);
+    setConfirmModal(true);
+  };
+
+  const handleConfirmModal = () => {
+    dispatch(clearProductData(deleteItemId));
+    setConfirmModal(false);
+  };
 
   useEffect(() => {
     if (!products || _.isEmpty(products)) {
@@ -105,10 +119,18 @@ const Products = ({
         addButtonHeading="Add Product"
         onAddButtonClick={onAddButtonClick}
         editAction={editProduct}
+        deleteAction={deleteProduct}
         tableHeader="Products"
       >
         <Route path={addProductPath} component={AddProduct} />
         <Route path={`${editProductPath}/:id`} component={AddProduct} />
+        <ConfirmModal
+          open={openConfirmModal}
+          setOpen={setConfirmModal}
+          submitAction={handleConfirmModal}
+          title="Are you sure you want to delete this product?"
+          submitText="Delete"
+        />
       </DataTableWrapper>
     </div>
   );
