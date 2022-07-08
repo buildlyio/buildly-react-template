@@ -184,6 +184,7 @@ const NewProductForm = (props) => {
   const steps = getSteps();
   const maxSteps = steps.length;
 
+  const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === 'editP';
   const editData = (
     location.state
@@ -219,7 +220,7 @@ const NewProductForm = (props) => {
       setConfirmModalFor(null);
     } else {
       setFormModal(false);
-      history.push(routes.DASHBOARD);
+      history.push(redirectTo);
     }
   };
 

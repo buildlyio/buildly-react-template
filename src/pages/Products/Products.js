@@ -6,7 +6,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { getAllProducts } from '@redux/product/actions/product.actions';
 import { routes } from '@routes/routesConstants';
-import AddProduct from '../pages/NewProduct/NewProduct';
+import AddProduct from '@pages/NewProduct/NewProduct';
 import { productColumns, getProductsData } from './ProductConstants';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 import { clearProductData } from '@redux/decision/actions/decision.actions';

@@ -578,7 +578,7 @@ const AddIssues = ({
                   options={assigneeData}
                   value={assignees}
                   onChange={(e, newValue) => onAssigneeChange(newValue)}
-                  renderAssignees={(value, getAssigneeProps) => (
+                  renderTags={(value, getAssigneeProps) => (
                     _.map(value, (option, index) => (
                       <Chip
                         variant="default"

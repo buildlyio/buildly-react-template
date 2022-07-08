@@ -465,7 +465,9 @@ const UserDashboard = (props) => {
               value={product}
               onChange={(e) => {
                 if (e.target.value === -1) {
-                  history.push(routes.NEW_PRODUCT);
+                  history.push(routes.NEW_PRODUCT, {
+                    from: redirectTo || location.pathname,
+                  });
                 } else {
                   setProduct(e.target.value);
                 }

@@ -11,7 +11,7 @@ import NewProduct from '@pages/NewProduct/NewProduct';
 import Release from '@pages/Release/Release';
 import ViewRelease from '@pages/Release/components/ViewRelease';
 import DeveloperForm from '@pages/DeveloperForm/DeveloperForm';
-import Products from 'Products.js/Products';
+import Products from '@pages/Products/Products';
 
 const useStyles = makeStyles((theme) => ({
   root: {
