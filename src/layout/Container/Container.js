@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
     paddingTop: '3.5em',
     maxWidth: '100% !important',
-    overflowY: 'hidden',
   },
 }));
 

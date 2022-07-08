@@ -71,6 +71,11 @@ const AddFeatures = ({
   const product_uuid = location.state && location.state.product_uuid;
   const viewPage = (location.state && location.state.viewOnly) || false;
 
+  const retainAssigneeData = [];
+  for (let i = 0; i < featureFormData?.assignees?.length; i += 1) {
+    retainAssigneeData.push(featureFormData.assignees[i].username);
+  }
+
   const name = useInput((editData && editData.name) || (featureFormData && featureFormData.name) || '', {
     required: true,
     productFeatures,
@@ -94,8 +99,8 @@ const AddFeatures = ({
   for (let i = 0; i < editData?.feature_detail?.assigneees?.length; i += 1) {
     editAssigneeData.push(editData.feature_detail.assigneees[i].username);
   }
-
-  const [assignees, setAssignees] = useState((editData && editAssigneeData) || []);
+  const [assignees, setAssignees] = useState((editData && editAssigneeData)
+  || (featureFormData && retainAssigneeData) || []);
 
   const assigneeData = [];
   for (let i = 0; i < product?.feature_tool_detail?.user_list?.length; i += 1) {
