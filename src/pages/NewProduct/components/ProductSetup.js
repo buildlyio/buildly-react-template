@@ -21,7 +21,7 @@ import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 import { getOrganization } from '@context/User.context';
-import { saveProductFormData, getAllThirdPartyTools } from '@redux/product/actions/product.actions';
+import { saveProductFormData, getAllThirdPartyTools, getAllCredentials } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -156,6 +156,7 @@ const ProductSetup = ({
   thirdPartyTools,
   location,
   editData,
+  credentials,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
@@ -200,6 +201,24 @@ const ProductSetup = ({
   ) || true);
   const [formError, setFormError] = useState({});
 
+  const editCreds = [];
+  if (editData) {
+    const featCred = _.find(
+      credentials,
+      { product_uuid: editData.product_uuid, auth_detail: { tool_type: 'Feature' } },
+    );
+    const issueCred = _.find(
+      credentials,
+      { product_uuid: editData.product_uuid, auth_detail: { tool_type: 'Issue' } },
+    );
+    if (featCred) {
+      editCreds.push(featCred);
+    }
+    if (issueCred) {
+      editCreds.push(issueCred);
+    }
+  }
+
   useEffect(() => {
     if (productFormData && !_.isEmpty(productFormData.creds)) {
       _.forEach(productFormData.creds, (cred) => {
@@ -229,8 +248,8 @@ const ProductSetup = ({
   }, [productFormData]);
 
   useEffect(() => {
-    if (editData && !_.isEmpty(editData.creds)) {
-      _.forEach(editData.creds, (cred) => {
+    if (editData && !_.isEmpty(editCreds)) {
+      _.forEach(editCreds, (cred) => {
         switch (true) {
           case cred && cred.auth_detail
             && cred.auth_detail.tool_type === 'Feature':
@@ -295,6 +314,12 @@ const ProductSetup = ({
       });
     }
   }, [thirdPartyTools]);
+
+  useEffect(() => {
+    if (!credentials || _.isEmpty(credentials)) {
+      dispatch(getAllCredentials());
+    }
+  }, [editData]);
 
   /**
    * Handle input field blur event
@@ -759,6 +784,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   productFormData: state.productReducer.productFormData,
   thirdPartyTools: state.productReducer.thirdPartyTools,
+  credentials: state.productReducer.credentials,
 });
 
 export default connect(mapStateToProps)(ProductSetup);
