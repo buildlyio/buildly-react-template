@@ -230,7 +230,7 @@ const NewProductForm = (props) => {
       setActiveStep(confirmModalFor);
     } else {
       dispatch(saveProductFormData(null));
-      history.push(routes.DASHBOARD);
+      history.push(redirectTo);
     }
   };
 

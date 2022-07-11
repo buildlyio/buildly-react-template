@@ -18,7 +18,6 @@ import {
   getAllFeatures,
   getAllIssues,
   getAllStatuses,
-  importTickets,
 } from '@redux/decision/actions/decision.actions';
 import List from '../components/List';
 import Kanban from '../components/Kanban';
@@ -30,6 +29,7 @@ import AddComments from '../forms/AddComments';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 import ToolBoard from '../forms/ToolBoard';
 import StatusBoard from '../forms/StatusBoard';
+import DropColumn from '../forms/DropColumn';
 
 const useStyles = makeStyles((theme) => ({
   product: {
@@ -165,6 +165,8 @@ const UserDashboard = (props) => {
       ? `${redirectTo}/dashboard/list`
       : `${redirectTo}/dashboard/kanban`
     : `${routes.DASHBOARD}/add-comment`;
+
+  const addDropColumnPath = `${routes.DASHBOARD}/select-column`;
 
   useEffect(() => {
     dispatch(getAllProducts());
@@ -342,58 +344,10 @@ const UserDashboard = (props) => {
 
   const importTicket = (e) => {
     e.preventDefault();
-    if (featCred?.auth_detail?.tool_name !== 'GitHub') {
-      const featData = {
-        ...featCred?.auth_detail,
-        product_uuid: product,
-        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
-      };
-      if (featCred?.auth_detail) {
-        dispatch(importTickets(featData));
-      }
-      const issueData = {
-        ...issueCred?.auth_detail,
-        product_uuid: product,
-        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
-      };
-      if (featCred?.auth_detail?.tool_name !== 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
-        issueData.is_repo_issue = true;
-        issueData.repo_list = repoData;
-      }
-      if (issueCred?.auth_detail) {
-        dispatch(importTickets(issueData));
-      }
-    } else if (featCred?.auth_detail?.tool_name === 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
-      const featData = {
-        ...featCred?.auth_detail,
-        product_uuid: product,
-        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
-        is_repo_issue: false,
-      };
-      if (featCred?.auth_detail) {
-        dispatch(importTickets(featData));
-      }
-    } else {
-      const featData = {
-        ...featCred?.auth_detail,
-        product_uuid: product,
-        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
-        is_repo_issue: false,
-      };
-      if (featCred?.auth_detail) {
-        dispatch(importTickets(featData));
-      }
-      const issueData = {
-        ...issueCred?.auth_detail,
-        product_uuid: product,
-        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
-        is_repo_issue: true,
-        repo_list: repoData,
-      };
-      if (issueCred?.auth_detail) {
-        dispatch(importTickets(issueData));
-      }
-    }
+    history.push(addDropColumnPath, {
+      from: redirectTo || location.pathname,
+      product_uuid: product,
+    });
   };
 
   const syncData = (e) => {
@@ -639,6 +593,7 @@ const UserDashboard = (props) => {
             />
             <Route path={featureToIssuePath} component={AddIssues} />
             <Route path={addCommentPath} component={AddComments} />
+            <Route path={addDropColumnPath} component={DropColumn} />
           </>
         ))}
     </div>
