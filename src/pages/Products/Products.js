@@ -106,6 +106,7 @@ const Products = ({
       type: 'editP',
       from: redirectTo || location.pathname,
       data: item,
+      product_uuid: item.product_uuid,
     });
   };
 

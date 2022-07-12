@@ -56,6 +56,7 @@ const getStepContent = (
   maxSteps,
   editData,
   editPage,
+  product_uuid,
 ) => {
   switch (stepIndex) {
     case 0:
@@ -167,6 +168,7 @@ const getStepContent = (
             handleBack={handleBack}
             editData={editData}
             editPage={editPage}
+            product_uuid={product_uuid}
           />
         </ViewDetailsWrapper>
       );
@@ -185,6 +187,7 @@ const NewProductForm = (props) => {
   const maxSteps = steps.length;
 
   const redirectTo = location.state && location.state.from;
+  const product_uuid = location.state && location.state.product_uuid;
   const editPage = location.state && location.state.type === 'editP';
   const editData = (
     location.state
@@ -302,6 +305,7 @@ const NewProductForm = (props) => {
                 maxSteps,
                 editData,
                 editPage,
+                product_uuid,
               )}
             </div>
           </div>

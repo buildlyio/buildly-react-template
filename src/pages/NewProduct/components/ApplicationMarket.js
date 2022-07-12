@@ -159,13 +159,14 @@ const ApplicationMarket = ({
       && productFormData.product_info.primary_users)
     || '',
   { required: true });
-  // const secondaryUsers = useInput(
-  //   (productFormData
-  //     && productFormData.product_info
-  //     && productFormData.product_info.secondary_users)
-  //   || '',
-  //   { required: true },
-  // );
+  const secondaryUsers = useInput((editData
+    && editData.product_info
+    && editData.product_info.secondary_users)
+  || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.secondary_users)
+    || '',
+  { required: true });
   const [bussinessSegment, setBussinessSegment] = useState((editData
     && editData.product_info
     && editData.product_info.bussiness_segment)
@@ -192,7 +193,7 @@ const ApplicationMarket = ({
       && !_.isEqual(specificProblem,
         productFormData.product_info.specific_problem))
     || primaryUsers.hasChanged()
-    // || secondaryUsers.hasChanged()
+    || secondaryUsers.hasChanged()
     || (productFormData
       && productFormData.product_info
       && productFormData.product_info.bussiness_segment
@@ -213,7 +214,7 @@ const ApplicationMarket = ({
         application_type: applicationType.value,
         specific_problem: specificProblem,
         primary_users: primaryUsers.value,
-        // secondary_users: secondaryUsers.value,
+        secondary_users: secondaryUsers.value,
         bussiness_segment: bussinessSegment,
       },
       edit_date: new Date(),
@@ -336,7 +337,7 @@ const ApplicationMarket = ({
                 </Select>
               </FormControl>
             </Grid>
-            {/* <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel id="primary-user-label">Secondary User</InputLabel>
                 <Select
@@ -353,7 +354,8 @@ const ApplicationMarket = ({
                   ))}
                 </Select>
               </FormControl>
-            </Grid> */}
+            </Grid>
+            {specificProblem.problem !== 'Consumer' && (
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel id="bussiness-segment-label">
@@ -388,6 +390,7 @@ const ApplicationMarket = ({
                 </Select>
               </FormControl>
             </Grid>
+            )}
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>

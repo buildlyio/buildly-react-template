@@ -87,6 +87,7 @@ const MinimalFunctionality = ({
   loading,
   editData,
   editPage,
+  product_uuid,
 }) => {
   const classes = useStyles();
   const user = useContext(UserContext);
@@ -120,6 +121,7 @@ const MinimalFunctionality = ({
       dispatch(updateUser({ id: user.id, survey_status: true }));
     }
     if (editPage) {
+      formData.product_uuid = product_uuid;
       dispatch(updateProduct(formData));
     } else {
       dispatch(createProduct(formData, history));
