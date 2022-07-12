@@ -323,13 +323,13 @@ describe('Import Tickets action', () => {
 // Test Delete Features and Issues
 describe('Clear product action', () => {
   it('should create an action to clear product', () => {
-    const product_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
+    const data = { name: 'Clear Product' };
     const expectedAction = {
       type: actions.CLEAR_PRODUCT_DATA,
-      product_uuid,
+      data,
     };
 
-    expect(actions.clearProductData(product_uuid))
+    expect(actions.clearProductData(data))
       .toEqual(expectedAction);
   });
 });

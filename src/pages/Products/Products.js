@@ -49,7 +49,10 @@ const Products = ({
   };
 
   const handleConfirmModal = () => {
-    dispatch(clearProductData(deleteItemId));
+    const deleteData = {
+      product_uuid: deleteItemId,
+    };
+    dispatch(clearProductData(deleteData));
     setConfirmModal(false);
   };
 

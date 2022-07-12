@@ -413,8 +413,8 @@ export default (state = initialState, action) => {
 
     case CLEAR_PRODUCT_DATA_SUCCESS: {
       const { features, issues } = state;
-      _.remove(features, { product_uuid: action.product_uuid });
-      _.remove(issues, { product_uuid: action.product_uuid });
+      _.remove(features, { product_uuid: action.data.product_uuid });
+      _.remove(issues, { product_uuid: action.data.product_uuid });
 
       return {
         ...state,

@@ -336,7 +336,7 @@ export const importTickets = (data) => ({
  * Clear Product Features and Issues
  * @param {Object} data
  */
- export const clearProductData = (product_uuid) => ({
+export const clearProductData = (data) => ({
   type: CLEAR_PRODUCT_DATA,
-  product_uuid,
+  data,
 });

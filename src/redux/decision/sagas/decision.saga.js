@@ -790,16 +790,16 @@ function* importTickets(payload) {
 }
 
 function* clearProductData(payload) {
-  const { product_uuid } = payload;
+  const { product_uuid } = payload.data;
   try {
     const product = yield call(
       httpService.makeRequest,
       'delete',
       `${window.env.API_URL}${decisionEndpoint}clear-product-data/`,
-      product_uuid,
+      payload.data,
     );
-    yield put({ type: CLEAR_PRODUCT_DATA_SUCCESS, product_uuid });
-    yield put(deleteProduct(payload));
+    yield put({ type: CLEAR_PRODUCT_DATA_SUCCESS, payload });
+    yield put(deleteProduct(product_uuid));
   } catch (error) {
     yield [
       yield put(

@@ -8,8 +8,7 @@ import {
   Grid,
   TextField,
   Button,
-  Autocomplete,
-  Chip,
+  MenuItem,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
@@ -55,25 +54,8 @@ const DropColumn = ({
   const product_uuid = location.state && location.state.product_uuid;
   const [product, setProduct] = useState('');
   const [prodStatus, setProdStatus] = useState('');
-
-  const [status, setStatus] = useState([]);
-  const statusList = [];
-  for (let i = 0; i < prodStatus?.length; i += 1) {
-    statusList.push(prodStatus[i].name);
-  }
-
-  let colList;
-  const colData = [];
-  if (prodStatus) {
-    colList = [...new Set(prodStatus
-      .filter((element) => status.includes(element.name)))];
-    for (let i = 0; i < colList?.length; i += 1) {
-      colData.push({
-        column_id: colList[i].status_tracking_id,
-        column_name: colList[i].name,
-      });
-    }
-  }
+  const [statusID, setStatusID] = useState('');
+  const [status, setStatus] = useState('');
 
   const redirectTo = location.state && location.state.from;
   const [formError, setFormError] = useState({});
@@ -123,22 +105,6 @@ const DropColumn = ({
     }
   };
 
-  // Handle statuses list
-  const onStatusChange = (value) => {
-    switch (true) {
-      case (value.length > status.length):
-        setStatus([...status, _.last(value)]);
-        break;
-
-      case (value.length < status.length):
-        setStatus(value);
-        break;
-
-      default:
-        break;
-    }
-  };
-
   const featCred = _.find(
     credentials,
     { product_uuid, auth_detail: { tool_type: 'Feature' } },
@@ -158,9 +124,7 @@ const DropColumn = ({
         ...featCred?.auth_detail,
         product_uuid,
         board_id: product?.feature_tool_detail?.board_detail?.board_id,
-        drop_col_name: {
-          colData,
-        },
+        drop_col_name: statusID,
       };
       if (featCred?.auth_detail) {
         dispatch(importTickets(featData));
@@ -169,6 +133,7 @@ const DropColumn = ({
         ...issueCred?.auth_detail,
         product_uuid,
         board_id: product?.feature_tool_detail?.board_detail?.board_id,
+        drop_col_name: statusID,
       };
       if (featCred?.auth_detail?.tool_name !== 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
         issueData.is_repo_issue = true;
@@ -183,9 +148,7 @@ const DropColumn = ({
         product_uuid,
         board_id: product?.feature_tool_detail?.board_detail?.board_id,
         is_repo_issue: false,
-        drop_col_name: {
-          colData,
-        },
+        drop_col_name: statusID,
       };
       if (featCred?.auth_detail) {
         dispatch(importTickets(featData));
@@ -196,9 +159,7 @@ const DropColumn = ({
         product_uuid,
         board_id: product?.feature_tool_detail?.board_detail?.board_id,
         is_repo_issue: false,
-        drop_col_name: {
-          colData,
-        },
+        drop_col_name: statusID,
       };
       if (featCred?.auth_detail) {
         dispatch(importTickets(featData));
@@ -209,6 +170,7 @@ const DropColumn = ({
         board_id: product?.feature_tool_detail?.board_detail?.board_id,
         is_repo_issue: true,
         repo_list: repoData,
+        drop_col_name: statusID,
       };
       if (issueCred?.auth_detail) {
         dispatch(importTickets(issueData));
@@ -239,7 +201,7 @@ const DropColumn = ({
         <FormModal
           open={openFormModal}
           handleClose={closeFormModal}
-          title="Select columns to import tickets from"
+          title="Select column to drop"
           titleClass={classes.formTitle}
           maxWidth="md"
           wantConfirm
@@ -254,33 +216,32 @@ const DropColumn = ({
           >
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
-                <Autocomplete
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
                   fullWidth
-                  multiple
-                  filterSelectedOptions
+                  select
                   id="status"
-                  options={statusList}
-                  freeSolo
+                  label="Select Column"
+                  name="status"
+                  autoComplete="status"
                   value={status}
-                  onChange={(e, newValue) => onStatusChange(newValue)}
-                  renderTags={(value, getStatusProps) => (
-                    _.map(value, (option, index) => (
-                      <Chip
-                        variant="default"
-                        label={option}
-                        {...getStatusProps({ index })}
-                      />
-                    ))
-                  )}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      variant="outlined"
-                      label="Select the list of Columns"
-                      margin="normal"
-                    />
-                  )}
-                />
+                  onChange={(e) => {
+                    const stat = e.target.value;
+                    setStatus(stat);
+                    setStatusID({ column_name: stat.name, column_id: stat.status_tracking_id });
+                  }}
+                >
+                  {_.map(prodStatus, (sts) => (
+                    <MenuItem
+                      key={`status-${sts.status_uuid}-${sts.name}`}
+                      value={sts}
+                    >
+                      {sts.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
             </Grid>
             <Grid
