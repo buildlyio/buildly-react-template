@@ -179,22 +179,6 @@ const DropColumn = ({
     history.push(redirectTo);
   };
 
-  const submitDisabled = () => {
-    const errorKeys = Object.keys(formError);
-    if (
-      !status
-    ) {
-      return true;
-    }
-    let errorExists = false;
-    _.forEach(errorKeys, (key) => {
-      if (formError[key].error) {
-        errorExists = true;
-      }
-    });
-    return errorExists;
-  };
-
   return (
     <>
       {openFormModal && (
@@ -219,7 +203,7 @@ const DropColumn = ({
                 <TextField
                   variant="outlined"
                   margin="normal"
-                  required
+                  // required
                   fullWidth
                   select
                   id="status"
@@ -256,7 +240,7 @@ const DropColumn = ({
                   variant="contained"
                   color="primary"
                   className={classes.submit}
-                  disabled={submitDisabled()}
+                  // disabled={submitDisabled()}
                 >
                   Submit
                 </Button>

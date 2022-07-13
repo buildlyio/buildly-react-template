@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import { Container } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import { UserContext, getUser } from '@context/User.context';
 import TopBar from '@layout/TopBar/TopBar';
 import Dashboard from '@pages/Dashboard/Dashboard';
@@ -25,6 +25,11 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
     paddingTop: '3.5em',
     maxWidth: '100% !important',
+  },
+  desk: {
+    position: 'fixed',
+    right: '30px',
+    bottom: '10px',
   },
 }));
 
@@ -59,6 +64,12 @@ const ContainerDashboard = ({ location, history }) => {
             <Route path={routes.RELEASE} component={Release} />
             <Route path={routes.PRODUCTS} component={Products} />
           </Switch>
+          <Typography
+            className={classes.desk}
+            variant="h6"
+          >
+            Freshdesk coming soon...
+          </Typography>
         </Container>
       </UserContext.Provider>
     </div>
