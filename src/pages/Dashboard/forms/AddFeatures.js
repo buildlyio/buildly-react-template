@@ -71,6 +71,11 @@ const AddFeatures = ({
   const product_uuid = location.state && location.state.product_uuid;
   const viewPage = (location.state && location.state.viewOnly) || false;
 
+  const retainAssigneeData = [];
+  for (let i = 0; i < featureFormData?.assignees?.length; i += 1) {
+    retainAssigneeData.push(featureFormData.assignees[i].username);
+  }
+
   const name = useInput((editData && editData.name) || (featureFormData && featureFormData.name) || '', {
     required: true,
     productFeatures,
@@ -90,8 +95,24 @@ const AddFeatures = ({
   const [status, setStatus] = useState((editData && currentStatData) || '');
   const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
 
-  const totalEstimate = useInput((editData && editData.total_estimate) || (featureFormData && featureFormData.total_estimate) || '');
-  const version = useInput((editData && editData.version) || (featureFormData && featureFormData.version) || '');
+  const editAssigneeData = [];
+  for (let i = 0; i < editData?.feature_detail?.assigneees?.length; i += 1) {
+    editAssigneeData.push(editData.feature_detail.assigneees[i].username);
+  }
+  const [assignees, setAssignees] = useState((editData && editAssigneeData)
+  || (featureFormData && retainAssigneeData) || []);
+
+  const assigneeData = [];
+  for (let i = 0; i < product?.feature_tool_detail?.user_list?.length; i += 1) {
+    assigneeData.push(product.feature_tool_detail.user_list[i].username);
+  }
+  const assigneesList = [...new Set(product?.feature_tool_detail?.user_list
+    .filter((element) => assignees.includes(element.username)))];
+
+  // const totalEstimate = useInput((editData && editData.total_estimate)
+  // || (featureFormData && featureFormData.total_estimate) || '');
+  // const version = useInput((editData && editData.version)
+  // || (featureFormData && featureFormData.version) || '');
   const [formError, setFormError] = useState({});
 
   let formTitle;
@@ -128,8 +149,8 @@ const AddFeatures = ({
       || (_.isEmpty(currentStatData) && !_.isEmpty(status))
       || (!_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
       || (_.isEmpty(editData) && !_.isEmpty(tags))
-      || totalEstimate.hasChanged()
-      || version.hasChanged()
+      // || totalEstimate.hasChanged()
+      // || version.hasChanged()
   );
 
   // Handle tags list
@@ -141,6 +162,21 @@ const AddFeatures = ({
 
       case (value.length < tags.length):
         setTags(value);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const onAssigneeChange = (value) => {
+    switch (true) {
+      case (value.length > assignees.length):
+        setAssignees([...assignees, _.last(value)]);
+        break;
+
+      case (value.length < assignees.length):
+        setAssignees(value);
         break;
 
       default:
@@ -164,10 +200,11 @@ const AddFeatures = ({
       tags,
       product_uuid,
       priority: priority.value,
-      total_estimate: totalEstimate.value,
-      version: version.value,
+      // total_estimate: totalEstimate.value,
+      // version: version.value,
       column_id: colID,
       ...featCred?.auth_detail,
+      assignees: assigneesList,
     };
 
     if (editPage) {
@@ -204,6 +241,7 @@ const AddFeatures = ({
       || !description.value
       || !statusID
       || !priority.value
+      || !assignees
     ) {
       return true;
     }
@@ -369,7 +407,38 @@ const AddFeatures = ({
             disabled={viewPage}
           />
         </Grid>
-        <Grid item xs={12}>
+        {!_.isEmpty(product?.feature_tool_detail?.user_list) && (
+        <Grid item xs={12} md={8}>
+          <Autocomplete
+            fullWidth
+            multiple
+            filterSelectedOptions
+            id="assignees"
+            options={assigneeData}
+            value={assignees}
+            onChange={(e, newValue) => onAssigneeChange(newValue)}
+            renderTags={(value, getAssigneeProps) => (
+              _.map(value, (option, index) => (
+                <Chip
+                  variant="default"
+                  label={option}
+                  {...getAssigneeProps({ index })}
+                />
+              ))
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                label="Assignees"
+                margin="normal"
+              />
+            )}
+            disabled={viewPage}
+          />
+        </Grid>
+        )}
+        {/* <Grid item xs={12}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -391,8 +460,8 @@ const AddFeatures = ({
             {...totalEstimate.bind}
             disabled={viewPage}
           />
-        </Grid>
-        <Grid item xs={12}>
+        </Grid> */}
+        {/* <Grid item xs={12}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -414,7 +483,7 @@ const AddFeatures = ({
             {...version.bind}
             disabled={viewPage}
           />
-        </Grid>
+        </Grid> */}
         <Grid
           container
           spacing={isDesktop ? 3 : 0}

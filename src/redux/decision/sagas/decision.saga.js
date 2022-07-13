@@ -84,7 +84,13 @@ import {
   IMPORT_TICKETS,
   IMPORT_TICKETS_SUCCESS,
   IMPORT_TICKETS_FAILURE,
+  CLEAR_PRODUCT_DATA,
+  CLEAR_PRODUCT_DATA_SUCCESS,
+  CLEAR_PRODUCT_DATA_FAILURE,
 } from '../actions/decision.actions';
+import {
+  deleteProduct,
+} from '../../product/actions/product.actions';
 
 const decisionEndpoint = 'decision/';
 
@@ -783,6 +789,34 @@ function* importTickets(payload) {
   }
 }
 
+function* clearProductData(payload) {
+  const { product_uuid } = payload.data;
+  try {
+    const product = yield call(
+      httpService.makeRequest,
+      'delete',
+      `${window.env.API_URL}${decisionEndpoint}clear-product-data/`,
+      payload.data,
+    );
+    yield put({ type: CLEAR_PRODUCT_DATA_SUCCESS, payload });
+    yield put(deleteProduct(product_uuid));
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t clear product!',
+        }),
+      ),
+      yield put({
+        type: CLEAR_PRODUCT_DATA_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
 // Watchers
 function* watchGetAllDecisions() {
   yield takeLatest(ALL_DECISIONS, allDecisions);
@@ -888,6 +922,10 @@ function* watchImportTickets() {
   yield takeLatest(IMPORT_TICKETS, importTickets);
 }
 
+function* watchClearProductData() {
+  yield takeLatest(CLEAR_PRODUCT_DATA, clearProductData);
+}
+
 export default function* decisionSaga() {
   yield all([
     watchGetAllDecisions(),
@@ -916,5 +954,6 @@ export default function* decisionSaga() {
     watchDeleteFeedback(),
     watchDeleteIssue(),
     watchDeleteStatus(),
+    watchClearProductData(),
   ]);
 }

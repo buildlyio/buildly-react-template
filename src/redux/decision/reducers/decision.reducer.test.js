@@ -1128,3 +1128,48 @@ describe('Create a ticket reducer', () => {
   });
 });
 
+describe('Clear a product reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.CLEAR_PRODUCT_DATA },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('clear a product success reducer', () => {
+    const data = {
+      product_uuid: '275ac379-82a2-4937-a434-ce6c2e277c88',
+      name: 'Test',
+    };
+
+    expect(reducer.default(
+      { ...initialState, features: [data] },
+      { ...initialState, issues: [data] },
+      {
+        type: actions.CLEAR_PRODUCT_DATA_SUCCESS,
+        product_uuid: data.product_uuid,
+      },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      features: [],
+      issues: [],
+    });
+  });
+
+  it('delete a status fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.DELETE_STATUS_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});

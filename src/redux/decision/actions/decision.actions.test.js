@@ -319,3 +319,17 @@ describe('Import Tickets action', () => {
     expect(actions.importTickets(data)).toEqual(expectedAction);
   });
 });
+
+// Test Delete Features and Issues
+describe('Clear product action', () => {
+  it('should create an action to clear product', () => {
+    const data = { name: 'Clear Product' };
+    const expectedAction = {
+      type: actions.CLEAR_PRODUCT_DATA,
+      data,
+    };
+
+    expect(actions.clearProductData(data))
+      .toEqual(expectedAction);
+  });
+});

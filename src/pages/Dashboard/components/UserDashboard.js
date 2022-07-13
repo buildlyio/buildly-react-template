@@ -18,7 +18,6 @@ import {
   getAllFeatures,
   getAllIssues,
   getAllStatuses,
-  importTickets,
 } from '@redux/decision/actions/decision.actions';
 import List from '../components/List';
 import Kanban from '../components/Kanban';
@@ -30,6 +29,7 @@ import AddComments from '../forms/AddComments';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 import ToolBoard from '../forms/ToolBoard';
 import StatusBoard from '../forms/StatusBoard';
+import DropColumn from '../forms/DropColumn';
 
 const useStyles = makeStyles((theme) => ({
   product: {
@@ -75,8 +75,10 @@ const useStyles = makeStyles((theme) => ({
   },
   importButton: {
     whiteSpace: 'nowrap',
-    padding: theme.spacing(1, 4),
     margin: theme.spacing(2, 0),
+  },
+  bar: {
+    minWidth: '250px',
   },
 }));
 
@@ -163,6 +165,8 @@ const UserDashboard = (props) => {
       ? `${redirectTo}/dashboard/list`
       : `${redirectTo}/dashboard/kanban`
     : `${routes.DASHBOARD}/add-comment`;
+
+  const addDropColumnPath = `${routes.DASHBOARD}/select-column`;
 
   useEffect(() => {
     dispatch(getAllProducts());
@@ -340,58 +344,10 @@ const UserDashboard = (props) => {
 
   const importTicket = (e) => {
     e.preventDefault();
-    if (featCred?.auth_detail?.tool_name !== 'GitHub') {
-      const featData = {
-        ...featCred?.auth_detail,
-        product_uuid: product,
-        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
-      };
-      if (featCred?.auth_detail) {
-        dispatch(importTickets(featData));
-      }
-      const issueData = {
-        ...issueCred?.auth_detail,
-        product_uuid: product,
-        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
-      };
-      if (featCred?.auth_detail?.tool_name !== 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
-        issueData.is_repo_issue = true;
-        issueData.repo_list = repoData;
-      }
-      if (issueCred?.auth_detail) {
-        dispatch(importTickets(issueData));
-      }
-    } else if (featCred?.auth_detail?.tool_name === 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
-      const featData = {
-        ...featCred?.auth_detail,
-        product_uuid: product,
-        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
-        is_repo_issue: false,
-      };
-      if (featCred?.auth_detail) {
-        dispatch(importTickets(featData));
-      }
-    } else {
-      const featData = {
-        ...featCred?.auth_detail,
-        product_uuid: product,
-        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
-        is_repo_issue: false,
-      };
-      if (featCred?.auth_detail) {
-        dispatch(importTickets(featData));
-      }
-      const issueData = {
-        ...issueCred?.auth_detail,
-        product_uuid: product,
-        board_id: prod?.feature_tool_detail?.board_detail?.board_id,
-        is_repo_issue: true,
-        repo_list: repoData,
-      };
-      if (issueCred?.auth_detail) {
-        dispatch(importTickets(issueData));
-      }
-    }
+    history.push(addDropColumnPath, {
+      from: redirectTo || location.pathname,
+      product_uuid: product,
+    });
   };
 
   const syncData = (e) => {
@@ -450,27 +406,30 @@ const UserDashboard = (props) => {
           </>
         )
            )}
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            select
-            id="product"
-            color="primary"
-            label="Product Options"
-            className={classes.product}
-            value={product}
-            onChange={(e) => {
-              if (e.target.value === -1) {
-                history.push(routes.NEW_PRODUCT);
-              } else {
-                setProduct(e.target.value);
-              }
-            }}
-          >
-            <MenuItem value={0}>Select</MenuItem>
-            <MenuItem value={-1}>Create New Product</MenuItem>
-            {currentProducts && !_.isEmpty(currentProducts)
+          <Grid item lg={2} className={classes.bar}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              select
+              id="product"
+              color="primary"
+              label="Product Options"
+              className={classes.product}
+              value={product}
+              onChange={(e) => {
+                if (e.target.value === -1) {
+                  history.push(routes.NEW_PRODUCT, {
+                    from: redirectTo || location.pathname,
+                  });
+                } else {
+                  setProduct(e.target.value);
+                }
+              }}
+            >
+              <MenuItem value={0}>Select</MenuItem>
+              <MenuItem value={-1}>Create New Product</MenuItem>
+              {currentProducts && !_.isEmpty(currentProducts)
               && _.flatMap(_.map(currentProducts, (prd) => (
                 <MenuItem
                   key={`product-${prd.product_uuid}`}
@@ -479,7 +438,8 @@ const UserDashboard = (props) => {
                   {prd.name}
                 </MenuItem>
               )))}
-          </TextField>
+            </TextField>
+          </Grid>
         </div>
       </Grid>
       {((_.isEmpty(status)) && product !== 0
@@ -633,6 +593,7 @@ const UserDashboard = (props) => {
             />
             <Route path={featureToIssuePath} component={AddIssues} />
             <Route path={addCommentPath} component={AddComments} />
+            <Route path={addDropColumnPath} component={DropColumn} />
           </>
         ))}
     </div>

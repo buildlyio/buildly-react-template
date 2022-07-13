@@ -105,6 +105,10 @@ export const IMPORT_TICKETS = 'DECISION/IMPORT_TICKETS';
 export const IMPORT_TICKETS_SUCCESS = 'DECISION/IMPORT_TICKETS_SUCCESS';
 export const IMPORT_TICKETS_FAILURE = 'DECISION/IMPORT_TICKETS_FAILURE';
 
+export const CLEAR_PRODUCT_DATA = 'DECISION/CLEAR_PRODUCT_DATA';
+export const CLEAR_PRODUCT_DATA_SUCCESS = 'DECISION/CLEAR_PRODUCT_DATA_SUCCESS';
+export const CLEAR_PRODUCT_DATA_FAILURE = 'DECISION/CLEAR_PRODUCT_DATA_FAILURE';
+
 /**
  * Save Feature Form Data
  * @param {Object} formData
@@ -325,5 +329,14 @@ export const deleteStatus = (status_uuid) => ({
  */
 export const importTickets = (data) => ({
   type: IMPORT_TICKETS,
+  data,
+});
+
+/**
+ * Clear Product Features and Issues
+ * @param {Object} data
+ */
+export const clearProductData = (data) => ({
+  type: CLEAR_PRODUCT_DATA,
   data,
 });

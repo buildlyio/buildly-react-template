@@ -126,7 +126,9 @@ const Kanban = ({
   };
 
   useEffect(() => {
-    dispatch(getAllStatuses());
+    if (!status || _.isEmpty(status)) {
+      dispatch(getAllStatuses());
+    }
   }, []);
 
   useEffect(() => {

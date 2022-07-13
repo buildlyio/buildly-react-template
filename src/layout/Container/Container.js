@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import { Container } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import { UserContext, getUser } from '@context/User.context';
 import TopBar from '@layout/TopBar/TopBar';
 import Dashboard from '@pages/Dashboard/Dashboard';
@@ -11,6 +11,7 @@ import NewProduct from '@pages/NewProduct/NewProduct';
 import Release from '@pages/Release/Release';
 import ViewRelease from '@pages/Release/components/ViewRelease';
 import DeveloperForm from '@pages/DeveloperForm/DeveloperForm';
+import Products from '@pages/Products/Products';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,7 +25,12 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
     paddingTop: '3.5em',
     maxWidth: '100% !important',
-    overflowY: 'hidden',
+    overflowY: 'auto',
+  },
+  desk: {
+    position: 'fixed',
+    right: '30px',
+    bottom: '10px',
   },
 }));
 
@@ -57,7 +63,14 @@ const ContainerDashboard = ({ location, history }) => {
             <Route path={routes.DEVELOPER_FORM} component={DeveloperForm} />
             <Route exact path={`${routes.RELEASE}/view/:releaseID`} component={ViewRelease} />
             <Route path={routes.RELEASE} component={Release} />
+            <Route path={routes.PRODUCTS} component={Products} />
           </Switch>
+          {/* <Typography
+            className={classes.desk}
+            variant="h6"
+          >
+            Freshdesk coming soon...
+          </Typography> */}
         </Container>
       </UserContext.Provider>
     </div>
