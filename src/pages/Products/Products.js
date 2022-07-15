@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Products = ({
-  dispatch, loading, history, products,
+  dispatch, loading, history, products, user,
 }) => {
   const redirectTo = location.state && location.state.from;
   const classes = useStyles();
@@ -63,40 +63,13 @@ const Products = ({
   }, []);
 
   useEffect(() => {
-    if (products && products.length > 0) {
-      const rws = _.orderBy(getProductsData(products), 'create_date', 'desc');
-      let cols = columns;
-
-      if (cols[0] && !(cols[0].label === 'Name')) {
-        cols = [
-          {
-            name: 'name',
-            label: 'Name',
-            options: {
-              filter: false,
-              sort: false,
-              empty: true,
-              customBodyRenderLite: (dataIndex) => {
-                const row = rws[dataIndex];
-                return (
-                  // <Link
-                  //   className={classes.link}
-                  //   to={`${routes.PRODUCTS}/view/:${row.product_uuid}`}
-                  // >
-                  row.name
-                  // </Link>
-                );
-              },
-            },
-          },
-          ...columns,
-        ];
-      }
-
+    const currentProd = _.filter(products,
+      { organization_uuid: user.organization.organization_uuid });
+    if (currentProd && currentProd.length > 0) {
+      const rws = _.orderBy(getProductsData(currentProd), 'create_date', 'desc');
       setRows(rws);
-      setColumns(cols);
     }
-  }, [products]);
+  }, [JSON.stringify(products)]);
 
   const onAddButtonClick = () => {
     history.push(addProductPath, {
@@ -143,6 +116,7 @@ const Products = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.productReducer,
+  user: state.authReducer.data,
 });
 
 export default connect(mapStateToProps)(Products);

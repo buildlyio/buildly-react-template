@@ -54,7 +54,7 @@ const DropColumn = ({
   const product_uuid = location.state && location.state.product_uuid;
   const [product, setProduct] = useState('');
   const [prodStatus, setProdStatus] = useState('');
-  const [statusID, setStatusID] = useState('');
+  const [statusID, setStatusID] = useState(null);
   const [status, setStatus] = useState('');
 
   const redirectTo = location.state && location.state.from;
