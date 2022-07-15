@@ -3,6 +3,16 @@ import moment from 'moment-timezone';
 
 export const productColumns = [
   {
+    name: 'name',
+    label: 'Name',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => value || '-',
+    },
+  },
+  {
     name: 'description',
     label: 'Description',
     options: {
