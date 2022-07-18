@@ -88,6 +88,7 @@ const MinimalFunctionality = ({
   editData,
   editPage,
   product_uuid,
+  redirectTo,
 }) => {
   const classes = useStyles();
   const user = useContext(UserContext);
@@ -124,8 +125,9 @@ const MinimalFunctionality = ({
       formData.product_uuid = product_uuid;
       dispatch(updateProduct(formData));
     } else {
-      dispatch(createProduct(formData, history));
+      dispatch(createProduct(formData));
     }
+    history.push(redirectTo);
   };
 
   return (
