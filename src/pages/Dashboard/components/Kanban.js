@@ -156,6 +156,9 @@ const Kanban = ({
             items: _.orderBy(items, 'create_date', 'desc'),
           },
         };
+        if (sts.name === 'No Status' && !items.length) {
+          delete cols[sts.status_uuid];
+        }
       });
       setColumns(cols);
     }
