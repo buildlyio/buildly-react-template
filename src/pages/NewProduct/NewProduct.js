@@ -57,6 +57,7 @@ const getStepContent = (
   editData,
   editPage,
   product_uuid,
+  redirectTo,
 ) => {
   switch (stepIndex) {
     case 0:
@@ -169,6 +170,7 @@ const getStepContent = (
             editData={editData}
             editPage={editPage}
             product_uuid={product_uuid}
+            redirectTo={redirectTo}
           />
         </ViewDetailsWrapper>
       );
@@ -306,6 +308,7 @@ const NewProductForm = (props) => {
                 editData,
                 editPage,
                 product_uuid,
+                redirectTo,
               )}
             </div>
           </div>

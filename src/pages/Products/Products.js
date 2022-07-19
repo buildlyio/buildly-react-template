@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -16,13 +16,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(5),
     paddingTop: 0,
   },
-  link: {
-    color: theme.palette.primary.main,
-    textDecoration: 'none',
-    '& :hover': {
-      textDecoration: 'underline',
-    },
-  },
 }));
 
 const Products = ({
@@ -37,7 +30,7 @@ const Products = ({
 
   const addProductPath = redirectTo
     ? `${redirectTo}/product`
-    : `${routes.PRODUCTS}/add`;
+    : `${routes.NEW_PRODUCT}`;
 
   const editProductPath = redirectTo
     ? `${redirectTo}/product`
@@ -73,7 +66,7 @@ const Products = ({
 
   const onAddButtonClick = () => {
     history.push(addProductPath, {
-      from: redirectTo || routes.PRODUCTS,
+      from: redirectTo || location.pathname,
     });
   };
 

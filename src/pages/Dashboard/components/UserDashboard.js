@@ -190,6 +190,7 @@ const UserDashboard = (props) => {
   }, [products]);
 
   useEffect(() => {
+    dispatch(getAllProducts());
     if (product) {
       dispatch(getBoard(product));
     }
