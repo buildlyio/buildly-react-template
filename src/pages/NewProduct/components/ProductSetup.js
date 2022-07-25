@@ -532,12 +532,12 @@ const ProductSetup = ({
         break;
     }
 
-    //  check tooltype of toolData and previous tool credentials
+    //  check tooltype of features and previous tool credentials
     const resultFeat = !_.isMatch(
       featCreds[0]?.auth_detail.tool_name, featCred?.auth_detail.tool_name,
     );
 
-    // check tooltype of toolData and previous tool credentials
+    // check tooltype of issues and previous tool credentials
     const resultIssue = !_.isMatch(
       issCreds[0]?.auth_detail.tool_name, issueCred?.auth_detail.tool_name,
     );

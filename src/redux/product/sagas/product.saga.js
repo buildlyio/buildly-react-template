@@ -461,85 +461,89 @@ function* updateProduct(payload) {
       `${window.env.API_URL}${productEndpoint}product/${payload.data.product_uuid}`,
       payload.data,
     );
-    if ((payload.data.changedData[0].changeTool === true
+    if (product && product.data) {
+      if ((payload.data.changedData[0].changeTool === true
         && payload.data.changedData[0].auth_detail)
         || (payload.data.changedData[0].changeTool === false
+          && payload.data.changedData[0].third_party_tool
           && payload.data.changedData[0].credential_uuid === undefined)) {
-      const dateTime = new Date();
-      const credData = {
-        ...payload.data.changedData[0],
-        product_uuid: product.data.product_uuid,
-        create_date: dateTime,
-        edit_date: dateTime,
-      };
-      yield put(createCredential(credData));
-    } else if (payload.data.changedData[0].changeTool) {
-      const dateTime = new Date();
-      const credData = {
-        third_party_tool: null,
-        auth_detail: {
-          tool_name: null,
-          tool_type: 'Feature',
-          owner_name: null,
-          access_token: null,
-        },
-        product_uuid: product.data.product_uuid,
-        is_fresh_start: true,
-        create_date: dateTime,
-        edit_date: dateTime,
-      };
-      yield put(createCredential(credData));
-    } else {
-      const dateTime = new Date();
-      const credData = {
-        ...payload.data.changedData[0],
-        product_uuid: product.data.product_uuid,
-        create_date: dateTime,
-        edit_date: dateTime,
-      };
-      yield put(updateCredential(credData));
-    }
+        const dateTime = new Date();
+        const credData = {
+          ...payload.data.changedData[0],
+          product_uuid: product.data.product_uuid,
+          create_date: dateTime,
+          edit_date: dateTime,
+        };
+        yield put(createCredential(credData));
+      } else if (payload.data.changedData[0].changeTool) {
+        const dateTime = new Date();
+        const credData = {
+          third_party_tool: null,
+          auth_detail: {
+            tool_name: null,
+            tool_type: 'Feature',
+            owner_name: null,
+            access_token: null,
+          },
+          product_uuid: product.data.product_uuid,
+          is_fresh_start: true,
+          create_date: dateTime,
+          edit_date: dateTime,
+        };
+        yield put(createCredential(credData));
+      } else if (payload.data.changedData[0].changeTool === false
+        && payload.data.changedData[0].credential_uuid) {
+        const dateTime = new Date();
+        const credData = {
+          ...payload.data.changedData[0],
+          product_uuid: product.data.product_uuid,
+          create_date: dateTime,
+          edit_date: dateTime,
+        };
+        yield put(updateCredential(credData));
+      }
 
-    if ((payload.data.changedData[1].changeTool === true
+      if ((payload.data.changedData[1].changeTool === true
       && payload.data.changedData[1].auth_detail)
       || (payload.data.changedData[1].changeTool === false
+        && payload.data.changedData[1].third_party_tool
         && payload.data.changedData[1].credential_uuid === undefined)) {
-      const dateTime = new Date();
-      const credData = {
-        ...payload.data.changedData[1],
-        product_uuid: product.data.product_uuid,
-        create_date: dateTime,
-        edit_date: dateTime,
-      };
-      yield put(createCredential(credData));
-    } else if (payload.data.changedData[1].changeTool) {
-      const dateTime = new Date();
-      const credData = {
-        third_party_tool: null,
-        auth_detail: {
-          tool_name: null,
-          tool_type: 'Issue',
-          owner_name: null,
-          access_token: null,
-        },
-        product_uuid: product.data.product_uuid,
-        is_fresh_start: true,
-        create_date: dateTime,
-        edit_date: dateTime,
-      };
-      yield put(createCredential(credData));
-    } else {
-      const dateTime = new Date();
-      const credData = {
-        ...payload.data.changedData[1],
-        product_uuid: product.data.product_uuid,
-        create_date: dateTime,
-        edit_date: dateTime,
-      };
-      yield put(updateCredential(credData));
+        const dateTime = new Date();
+        const credData = {
+          ...payload.data.changedData[1],
+          product_uuid: product.data.product_uuid,
+          create_date: dateTime,
+          edit_date: dateTime,
+        };
+        yield put(createCredential(credData));
+      } else if (payload.data.changedData[1].changeTool) {
+        const dateTime = new Date();
+        const credData = {
+          third_party_tool: null,
+          auth_detail: {
+            tool_name: null,
+            tool_type: 'Issue',
+            owner_name: null,
+            access_token: null,
+          },
+          product_uuid: product.data.product_uuid,
+          is_fresh_start: true,
+          create_date: dateTime,
+          edit_date: dateTime,
+        };
+        yield put(createCredential(credData));
+      } else if (payload.data.changedData[1].changeTool === false
+      && payload.data.changedData[1].credential_uuid) {
+        const dateTime = new Date();
+        const credData = {
+          ...payload.data.changedData[1],
+          product_uuid: product.data.product_uuid,
+          create_date: dateTime,
+          edit_date: dateTime,
+        };
+        yield put(updateCredential(credData));
+      }
     }
-    // }
-    // }
     yield put({ type: UPDATE_PRODUCT_SUCCESS, data: product.data });
   } catch (error) {
     yield [
