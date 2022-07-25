@@ -2,6 +2,7 @@ import _ from 'lodash';
 import {
   SAVE_PRODUCT_FORM_DATA,
   CLEAR_BOARD_DATA,
+  // CLEAR_VALIDATE_DATA,
   ALL_CREDENTIALS,
   ALL_CREDENTIALS_SUCCESS,
   ALL_CREDENTIALS_FAILURE,
@@ -83,6 +84,9 @@ import {
   DELETE_THIRD_PARTY_TOOL,
   DELETE_THIRD_PARTY_TOOL_SUCCESS,
   DELETE_THIRD_PARTY_TOOL_FAILURE,
+  VALIDATE_CREDENTIAL,
+  VALIDATE_CREDENTIAL_SUCCESS,
+  VALIDATE_CREDENTIAL_FAILURE,
 } from '../actions/product.actions';
 
 const initialState = {
@@ -95,6 +99,8 @@ const initialState = {
   releases: [],
   thirdPartyTools: [],
   boards: [],
+  // featValidate: false,
+  // issueValidate: false,
   productFormData: null,
 };
 
@@ -111,6 +117,12 @@ export default (state = initialState, action) => {
         ...state,
         boards: [],
       };
+      // case CLEAR_VALIDATE_DATA:
+      //   return {
+      //     ...state,
+      //     featValidate: false,
+      //     issueValidate: false,
+      //   };
 
     case ALL_CREDENTIALS:
     case ALL_PRODUCT_TEAMS:
@@ -139,6 +151,7 @@ export default (state = initialState, action) => {
     case DELETE_PRODUCT:
     case DELETE_RELEASE:
     case DELETE_THIRD_PARTY_TOOL:
+    case VALIDATE_CREDENTIAL:
       return {
         ...state,
         loading: true,
@@ -173,6 +186,7 @@ export default (state = initialState, action) => {
     case DELETE_PRODUCT_FAILURE:
     case DELETE_RELEASE_FAILURE:
     case DELETE_THIRD_PARTY_TOOL_FAILURE:
+    case VALIDATE_CREDENTIAL_FAILURE:
       return {
         ...state,
         loading: false,
@@ -423,6 +437,14 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         boards,
+      };
+    }
+
+    case VALIDATE_CREDENTIAL_SUCCESS: {
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
       };
     }
 

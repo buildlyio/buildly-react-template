@@ -21,7 +21,9 @@ import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 import { getOrganization } from '@context/User.context';
-import { saveProductFormData, getAllThirdPartyTools, getAllCredentials } from '@redux/product/actions/product.actions';
+import {
+  saveProductFormData, getAllThirdPartyTools, getAllCredentials, validateCredential,
+} from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -156,7 +158,10 @@ const ProductSetup = ({
   thirdPartyTools,
   location,
   editData,
-  credentials,
+  // credentials,
+  viewPage,
+  featCred,
+  issueCred,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
@@ -203,14 +208,6 @@ const ProductSetup = ({
 
   const editCreds = [];
   if (editData) {
-    const featCred = _.find(
-      credentials,
-      { product_uuid: editData.product_uuid, auth_detail: { tool_type: 'Feature' } },
-    );
-    const issueCred = _.find(
-      credentials,
-      { product_uuid: editData.product_uuid, auth_detail: { tool_type: 'Issue' } },
-    );
     if (featCred) {
       editCreds.push(featCred);
     }
@@ -315,12 +312,6 @@ const ProductSetup = ({
     }
   }, [thirdPartyTools]);
 
-  useEffect(() => {
-    if (!credentials || _.isEmpty(credentials)) {
-      dispatch(getAllCredentials());
-    }
-  }, [editData]);
-
   /**
    * Handle input field blur event
    * @param {Event} e Event
@@ -386,14 +377,9 @@ const ProductSetup = ({
       && (useBuildlyArch !== productFormData.product_info.use_buildly_architecture))
   );
 
-  /**
-   * Submit The form and add/edit
-   * @param {Event} event the default submit event
-   */
-  const handleSubmit = (event) => {
+  const handleFeatureCredential = (event) => {
     event.preventDefault();
 
-    const dateTime = new Date();
     let tools = [];
     let creds = [];
 
@@ -427,6 +413,18 @@ const ProductSetup = ({
       default:
         break;
     }
+    const formData = {
+      ...creds[0].auth_detail,
+    };
+
+    dispatch(validateCredential(formData));
+  };
+
+  const handleIssueCredential = (event) => {
+    event.preventDefault();
+
+    let tools = [];
+    let creds = [];
 
     switch (issuesTool.value) {
       case 'github': {
@@ -447,6 +445,113 @@ const ProductSetup = ({
     }
 
     const formData = {
+      ...creds[0].auth_detail,
+    };
+
+    dispatch(validateCredential(formData));
+  };
+
+  /**
+   * Submit The form and add/edit
+   * @param {Event} event the default submit event
+   */
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const dateTime = new Date();
+    let tools = [];
+    let creds = [];
+    let changedData = [];
+    let featCreds = [];
+    let issCreds = [];
+
+    switch (featuresTool.value) {
+      case 'trello': {
+        const ft = _.find(thirdPartyTools, (tool) => (
+          _.toLower(tool.name) === 'trello'
+          && _.toLower(tool.tool_type) === 'feature'
+        ));
+        tools = [...tools, ft?.thirdpartytool_uuid];
+        creds = [...creds, {
+          third_party_tool: ft?.thirdpartytool_uuid,
+          auth_detail: trelloAuth,
+          credential_uuid: featCred?.credential_uuid,
+        }];
+        featCreds = [...featCreds, {
+          third_party_tool: ft?.thirdpartytool_uuid,
+          auth_detail: trelloAuth,
+          credential_uuid: featCred?.credential_uuid,
+        }];
+        break;
+      }
+
+      case 'github': {
+        const ft = _.find(thirdPartyTools, (tool) => (
+          _.toLower(tool.name) === 'github'
+          && _.toLower(tool.tool_type) === 'feature'
+        ));
+        tools = [...tools, ft?.thirdpartytool_uuid];
+        creds = [...creds, {
+          third_party_tool: ft?.thirdpartytool_uuid,
+          auth_detail: githubFeatureAuth,
+          credential_uuid: featCred?.credential_uuid,
+        }];
+        featCreds = [...featCreds, {
+          third_party_tool: ft?.thirdpartytool_uuid,
+          auth_detail: githubFeatureAuth,
+          credential_uuid: featCred?.credential_uuid,
+        }];
+        break;
+      }
+
+      default:
+        break;
+    }
+
+    switch (issuesTool.value) {
+      case 'github': {
+        const it = _.find(thirdPartyTools, (tool) => (
+          _.toLower(tool.name) === 'github'
+          && _.toLower(tool.tool_type) === 'issue'
+        ));
+        tools = [...tools, it?.thirdpartytool_uuid];
+        creds = [...creds, {
+          third_party_tool: it?.thirdpartytool_uuid,
+          auth_detail: githubIssueAuth,
+          credential_uuid: issueCred?.credential_uuid,
+        }];
+        issCreds = [...issCreds, {
+          third_party_tool: it?.thirdpartytool_uuid,
+          auth_detail: githubIssueAuth,
+          credential_uuid: issueCred?.credential_uuid,
+        }];
+        break;
+      }
+
+      default:
+        break;
+    }
+
+    //  check tooltype of toolData and previous tool credentials
+    const resultFeat = !_.isMatch(
+      featCreds[0]?.auth_detail.tool_name, featCred?.auth_detail.tool_name,
+    );
+
+    // check tooltype of toolData and previous tool credentials
+    const resultIssue = !_.isMatch(
+      issCreds[0]?.auth_detail.tool_name, issueCred?.auth_detail.tool_name,
+    );
+
+    changedData = [{
+      changeTool: resultFeat,
+      ...featCreds[0],
+    },
+    {
+      changeTool: resultIssue,
+      ...issCreds[0],
+    }];
+
+    const formData = {
       ...productFormData,
       product_name: name.value,
       product_description: description.value,
@@ -461,6 +566,7 @@ const ProductSetup = ({
         use_buildly_architecture: useBuildlyArch,
       },
       creds,
+      changedData,
     };
 
     dispatch(saveProductFormData(formData));
@@ -541,6 +647,7 @@ const ProductSetup = ({
                     <FormControlLabel
                       value="trello"
                       control={<StyledStart />}
+                      disabled={viewPage}
                       label={(
                         <>
                           <FontAwesomeIcon icon={faTrello} className="fa-4x" />
@@ -551,6 +658,7 @@ const ProductSetup = ({
                     <FormControlLabel
                       value="github"
                       control={<StyledStart />}
+                      disabled={viewPage}
                       label={(
                         <>
                           <FontAwesomeIcon icon={faGithub} className="fa-4x" />
@@ -561,6 +669,7 @@ const ProductSetup = ({
                     <FormControlLabel
                       value="start fresh"
                       className={classes.radioLeft}
+                      disabled={viewPage}
                       control={<StyledRadio />}
                       label="Start Fresh"
                     />
@@ -588,6 +697,7 @@ const ProductSetup = ({
                           ...trelloAuth,
                           access_token: e.target.value,
                         })}
+                        // disabled={featValidate}
                       />
                     </Grid>
                     <Grid item>
@@ -605,7 +715,20 @@ const ProductSetup = ({
                           ...trelloAuth,
                           trello_key: e.target.value,
                         })}
+                        // disabled={featValidate}
                       />
+                    </Grid>
+                    <Grid item>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        className={classes.submit}
+                        onClick={handleFeatureCredential}
+                      >
+                        Validate
+                      </Button>
                     </Grid>
                   </>
                 )}
@@ -631,6 +754,7 @@ const ProductSetup = ({
                           ...githubFeatureAuth,
                           access_token: e.target.value,
                         })}
+                        // disabled={featValidate}
                       />
                     </Grid>
                     <Grid item>
@@ -648,7 +772,20 @@ const ProductSetup = ({
                           ...githubFeatureAuth,
                           owner_name: e.target.value,
                         })}
+                        // disabled={featValidate}
                       />
+                    </Grid>
+                    <Grid item>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        onClick={handleFeatureCredential}
+                        className={classes.submit}
+                      >
+                        Validate
+                      </Button>
                     </Grid>
                   </>
                 )}
@@ -669,6 +806,7 @@ const ProductSetup = ({
                     <FormControlLabel
                       value="github"
                       control={<StyledStart />}
+                      disabled={viewPage}
                       label={(
                         <>
                           <FontAwesomeIcon icon={faGithub} className="fa-4x" />
@@ -679,6 +817,7 @@ const ProductSetup = ({
                     <FormControlLabel
                       value="start fresh"
                       className={classes.radioLeft}
+                      disabled={viewPage}
                       control={<StyledRadio />}
                       label="Start Fresh"
                     />
@@ -706,6 +845,7 @@ const ProductSetup = ({
                           ...githubIssueAuth,
                           access_token: e.target.value,
                         })}
+                        // disabled={issueValidate}
                       />
                     </Grid>
                     <Grid item>
@@ -723,7 +863,20 @@ const ProductSetup = ({
                           ...githubIssueAuth,
                           owner_name: e.target.value,
                         })}
+                        // disabled={issueValidate}
                       />
+                    </Grid>
+                    <Grid item>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        onClick={handleIssueCredential}
+                        className={classes.submit}
+                      >
+                        Validate
+                      </Button>
                     </Grid>
                   </>
                 )}
@@ -785,6 +938,8 @@ const mapStateToProps = (state, ownProps) => ({
   productFormData: state.productReducer.productFormData,
   thirdPartyTools: state.productReducer.thirdPartyTools,
   credentials: state.productReducer.credentials,
+  // featValidate: state.productReducer.featValidate,
+  // issueValidate: state.productReducer.issueValidate,
 });
 
 export default connect(mapStateToProps)(ProductSetup);

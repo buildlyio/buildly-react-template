@@ -343,3 +343,17 @@ describe('Create Board action', () => {
       .toEqual(expectedAction);
   });
 });
+
+// Test Validate Credential
+describe('Validate Credential action', () => {
+  it('should create an action to validate credential', () => {
+    const data = { name: 'Test Validate Credential' };
+    const expectedAction = {
+      type: actions.VALIDATE_CREDENTIAL,
+      data,
+    };
+
+    expect(actions.validateCredential(data))
+      .toEqual(expectedAction);
+  });
+});

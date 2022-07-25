@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -10,7 +10,7 @@ import {
   Grid,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
-import { saveProductFormData } from '@redux/product/actions/product.actions';
+import { clearValidateData, saveProductFormData, getAllCredentials } from '@redux/product/actions/product.actions';
 import { routes } from '@routes/routesConstants';
 import ProductSetup, {
   checkIfProductSetupEdited,
@@ -27,6 +27,7 @@ import MinimalFunctionality, {
   checkIfMinimalFuncEdited,
 } from './components/MinimalFunctionality';
 import ViewDetailsWrapper from './components/ViewDetailsWrapper';
+import { getAllStatuses } from '@redux/decision/actions/decision.actions';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -58,6 +59,9 @@ const getStepContent = (
   editPage,
   product_uuid,
   redirectTo,
+  viewPage,
+  featCred,
+  issueCred,
 ) => {
   switch (stepIndex) {
     case 0:
@@ -74,6 +78,9 @@ const getStepContent = (
             location={props.location}
             handleNext={handleNext}
             editData={editData}
+            viewPage={viewPage}
+            featCred={featCred}
+            issueCred={issueCred}
           />
         </ViewDetailsWrapper>
       );
@@ -182,11 +189,12 @@ const getStepContent = (
 
 const NewProductForm = (props) => {
   const {
-    history, productFormData, dispatch, location,
+    history, productFormData, dispatch, location, statuses, credentials,
   } = props;
   const classes = useStyles();
   const steps = getSteps();
   const maxSteps = steps.length;
+  const [status, setStatus] = useState('');
 
   const redirectTo = location.state && location.state.from;
   const product_uuid = location.state && location.state.product_uuid;
@@ -196,13 +204,22 @@ const NewProductForm = (props) => {
     && (location.state.type === 'editP')
     && location.state.data
   ) || {};
-
+  const viewPage = status?.length > 0 || false;
   const formTitle = editPage ? 'Edit Product' : 'New Product Setup';
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [confirmModalFor, setConfirmModalFor] = useState(null);
+
+  const featCred = _.find(
+    credentials,
+    { product_uuid, auth_detail: { tool_type: 'Feature' } },
+  );
+  const issueCred = _.find(
+    credentials,
+    { product_uuid, auth_detail: { tool_type: 'Issue' } },
+  );
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -238,6 +255,20 @@ const NewProductForm = (props) => {
       history.push(redirectTo);
     }
   };
+
+  useEffect(() => {
+    const sta = _.filter(statuses, { product_uuid });
+    setStatus(sta);
+  }, [statuses, product_uuid]);
+
+  useEffect(() => {
+    dispatch(getAllStatuses());
+    // dispatch(clearValidateData());
+  }, []);
+
+  useEffect(() => {
+    dispatch(getAllCredentials());
+  }, []);
 
   const checkIfFormEdited = (currentStep) => {
     switch (currentStep) {
@@ -309,6 +340,9 @@ const NewProductForm = (props) => {
                 editPage,
                 product_uuid,
                 redirectTo,
+                viewPage,
+                featCred,
+                issueCred,
               )}
             </div>
           </div>
@@ -322,6 +356,8 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.optionsReducer,
   productFormData: state.productReducer.productFormData,
+  ...state.productReducer,
+  ...state.decisionReducer,
 });
 
 export default connect(mapStateToProps)(NewProductForm);

@@ -1156,3 +1156,33 @@ describe('Create board reducer', () => {
     });
   });
 });
+
+describe('Validate credential reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(initialState, { type: actions.VALIDATE_CREDENTIAL })).toEqual({
+      ...initialState,
+      loaded: false,
+      loading: true,
+    });
+  });
+
+  it('Validate credential success Reducer', () => {
+    expect(reducer.default(initialState, { type: actions.VALIDATE_CREDENTIAL_SUCCESS })).toEqual({
+      ...initialState,
+      data: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+
+  it('Validate credential fail Reducer', () => {
+    expect(reducer.default(initialState, { type: actions.VALIDATE_CREDENTIAL_FAILURE })).toEqual(
+      {
+        ...initialState,
+        error: undefined,
+        loaded: true,
+        loading: false,
+      },
+    );
+  });
+});
