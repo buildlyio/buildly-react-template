@@ -92,7 +92,7 @@ const AddFeatures = ({
   const [statusID, setStatusID] = useState((editData && editData.status) || (featureFormData && featureFormData.status) || '');
   const currentStat = _.filter(statuses, { product_uuid });
   const currentStatData = _.find(currentStat, { status_uuid: statusID });
-  const [status, setStatus] = useState((editData && currentStatData) || '');
+  const [status, setStatus] = useState('');
   const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
 
   const editAssigneeData = [];
@@ -107,7 +107,7 @@ const AddFeatures = ({
     assigneeData.push(product.feature_tool_detail.user_list[i].username);
   }
   const assigneesList = [...new Set(product?.feature_tool_detail?.user_list
-    .filter((element) => assignees.includes(element.username)))];
+    ?.filter((element) => assignees.includes(element.username)))];
 
   // const totalEstimate = useInput((editData && editData.total_estimate)
   // || (featureFormData && featureFormData.total_estimate) || '');
@@ -140,6 +140,9 @@ const AddFeatures = ({
   useEffect(() => {
     const sta = _.filter(statuses, { product_uuid });
     setProdStatus(sta);
+    if (editData) {
+      setStatus(_.find(sta, { status_uuid: editData.status }));
+    }
   }, [product]);
 
   checkIfAddFeaturesEdited = () => (

@@ -14,8 +14,6 @@ import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
 import {
   getAllStatuses,
-  createIssue,
-  updateIssue,
   importTickets,
 } from '@redux/decision/actions/decision.actions';
 import { getAllCredentials } from '@redux/product/actions/product.actions';
@@ -67,9 +65,7 @@ const DropColumn = ({
     if (!status || _.isEmpty(status)) {
       dispatch(dispatch(getAllStatuses()));
     }
-    // if (!credentials || _.isEmpty(credentials)) {
-    //   dispatch(getAllCredentials());
-    // }
+    dispatch(getAllCredentials());
   }, []);
 
   useEffect(() => {
