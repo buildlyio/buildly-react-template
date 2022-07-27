@@ -199,7 +199,6 @@ const AddIssues = ({
         && product.issue_tool_detail
         && !_.isEmpty(repoList)
         && repo !== '')
-      || assignees.hasChanged()
     );
 
     if (dataHasChanged) {
@@ -279,13 +278,14 @@ const AddIssues = ({
       repository: repo,
       column_id: colID,
       ...issueCred?.auth_detail,
-      issue_detail: {
-        assignees: assigneesList,
-      },
     };
     if (editPage) {
+      editData.issue_detail.assignees = assigneesList;
       dispatch(updateIssue(formData));
     } else {
+      formData.issue_detail = {
+        assignees: assigneesList,
+      };
       formData.create_date = dateTime;
       dispatch(createIssue(formData));
     }
@@ -325,7 +325,6 @@ const AddIssues = ({
         && product.issue_tool_detail
         && !_.isEmpty(repoList)
         && !repo)
-      || !assignees
     ) {
       return true;
     }

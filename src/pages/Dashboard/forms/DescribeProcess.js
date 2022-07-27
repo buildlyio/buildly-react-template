@@ -220,7 +220,10 @@ const DescribeProcess = ({
     event.preventDefault();
     const featureDetails = {
       ...featureFormData,
-      feature_detail: {
+    };
+    if (editPage) {
+      // edit only keys and values so it wont overwrite is_import value coming from BE
+      editData.feature_detail = {
         collecting_data: quest1,
         field_desc: quest2.value,
         displaying_data: quest3,
@@ -231,11 +234,21 @@ const DescribeProcess = ({
         search_or_nav: quest8,
         links: quest9,
         assigneees: featureFormData?.assignees,
-      },
-    };
-    if (editPage) {
+      };
       dispatch(updateFeature(featureDetails));
     } else {
+      featureDetails.feature_detail = {
+        collecting_data: quest1,
+        field_desc: quest2.value,
+        displaying_data: quest3,
+        display_desc: quest4.value,
+        business_logic: quest5,
+        enabled: quest6,
+        enabled_desc: quest7.value,
+        search_or_nav: quest8,
+        links: quest9,
+        assigneees: featureFormData?.assignees,
+      };
       dispatch(createFeature(featureDetails));
     }
     dispatch(saveFeatureFormData(null));
