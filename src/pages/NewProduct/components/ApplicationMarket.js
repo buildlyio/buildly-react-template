@@ -15,6 +15,7 @@ import {
   Select,
   Button,
   Checkbox,
+  TextField,
   ListItemText,
 } from '@mui/material';
 import { useInput } from '@hooks/useInput';
@@ -151,6 +152,13 @@ const ApplicationMarket = ({
       value: false,
       problem: '',
     });
+  const specificProblemDesc = useInput((editData
+        && editData.product_info
+        && editData.product_info.specific_problem_desc)
+      || (productFormData
+          && productFormData.product_info
+          && productFormData.product_info.specific_problem_desc)
+        || '', { required: true });
   const primaryUsers = useInput((editData
     && editData.product_info
     && editData.product_info.primary_users)
@@ -213,6 +221,7 @@ const ApplicationMarket = ({
         ...productFormData.product_info,
         application_type: applicationType.value,
         specific_problem: specificProblem,
+        specific_problem_desc: specificProblemDesc.value,
         primary_users: primaryUsers.value,
         secondary_users: secondaryUsers.value,
         bussiness_segment: bussinessSegment,
@@ -259,10 +268,23 @@ const ApplicationMarket = ({
             </Grid>
             <Grid item xs={12} sm={12}>
               <Typography variant="h6" gutterBottom component="div">
-                Is there a specific problem you are trying to solve
+                Is there a specific problem you are trying to solve?
               </Typography>
+              <Grid className={classes.inputWithTooltip} item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  multiline
+                  rows={6}
+                  id="specificProblemDesc"
+                  label="Problem description"
+                  name="specificProblemDesc"
+                  autoComplete="specificProblemDesc"
+                  {...specificProblemDesc.bind}
+                />
+              </Grid>
             </Grid>
-
             <Grid item xs={12} sm={6}>
               <FormControl component="fieldset" required>
                 <Typography variant="caption" gutterBottom component="div">
@@ -355,7 +377,6 @@ const ApplicationMarket = ({
                 </Select>
               </FormControl>
             </Grid>
-            {specificProblem.problem !== 'Consumer' && (
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel id="bussiness-segment-label">
@@ -390,7 +411,6 @@ const ApplicationMarket = ({
                 </Select>
               </FormControl>
             </Grid>
-            )}
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>

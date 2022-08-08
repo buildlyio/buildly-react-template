@@ -87,6 +87,9 @@ import {
   VALIDATE_CREDENTIAL,
   VALIDATE_CREDENTIAL_SUCCESS,
   VALIDATE_CREDENTIAL_FAILURE,
+  ADD_DOC_IDENTIFIER,
+  ADD_DOC_IDENTIFIER_SUCCESS,
+  ADD_DOC_IDENTIFIER_FAILURE,
 } from '../actions/product.actions';
 
 const initialState = {
@@ -152,6 +155,7 @@ export default (state = initialState, action) => {
     case DELETE_RELEASE:
     case DELETE_THIRD_PARTY_TOOL:
     case VALIDATE_CREDENTIAL:
+    case ADD_DOC_IDENTIFIER:
       return {
         ...state,
         loading: true,
@@ -187,6 +191,7 @@ export default (state = initialState, action) => {
     case DELETE_RELEASE_FAILURE:
     case DELETE_THIRD_PARTY_TOOL_FAILURE:
     case VALIDATE_CREDENTIAL_FAILURE:
+    case ADD_DOC_IDENTIFIER_FAILURE:
       return {
         ...state,
         loading: false,
@@ -447,6 +452,19 @@ export default (state = initialState, action) => {
         loaded: true,
       };
     }
+
+    case ADD_DOC_IDENTIFIER_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        // productFormData: {
+        //   ...state.productFormData,
+        //   uploaded_pdf: action.uploaded_pdf,
+        //   uploaded_pdf_link: action.uploaded_pdf_link,
+        //   unique_identifier: action.unique_identifier,
+        // },
+      };
 
     default:
       return state;

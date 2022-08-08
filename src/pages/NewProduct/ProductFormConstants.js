@@ -37,6 +37,7 @@ export const HOSTING = [
   // 'InMotion',
   // 'WPEngine',
   // 'Nexcess',
+  'No Preference',
   'GCP',
   'AWS',
   'Digital Ocean',
@@ -45,6 +46,7 @@ export const HOSTING = [
 ];
 
 export const LANGUAGES = [
+  'No Preference',
   'JavaScript',
   'Python',
   'Java',
@@ -58,18 +60,21 @@ export const LANGUAGES = [
 ];
 
 export const DATABASES = [
+  'No Preference',
   'Postgres',
   'MySQL',
   'MongoDB',
 ];
 
 export const STORAGES = [
+  'No Preference',
   'AWS',
   'GCP',
   'Digital Ocean',
 ];
 
 export const DEPLOYMENTS = [
+  'No Preference',
   'AWS',
   'GCP',
   'Digital Ocean',
