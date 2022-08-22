@@ -131,7 +131,6 @@ const AccordionSummary = styled((props) => (
 }));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  padding: theme.spacing(2),
   borderTop: '1px solid rgba(0, 0, 0, .125)',
 }));
 
@@ -284,10 +283,10 @@ const List = ({
                         <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                           <Typography>{feat.name}</Typography>
                         </AccordionSummary>
-                        <AccordionDetails>
-                          {productIssues
-                            .filter((iss) => (iss.feature_uuid === feat.feature_uuid))
-                            .map((issue, index) => (
+                        {productIssues
+                          .filter((iss) => (iss.feature_uuid === feat.feature_uuid))
+                          .map((issue, index) => (
+                            <AccordionDetails>
                               <div
                                 className={classes.boxEntry}
                                 key={index}
@@ -317,10 +316,9 @@ const List = ({
                                   aria-describedby={id}
                                 />
                               </div>
-                            ))}
-                        </AccordionDetails>
+                            </AccordionDetails>
+                          ))}
                       </Accordion>
-
                     ))}
               </div>
             </div>

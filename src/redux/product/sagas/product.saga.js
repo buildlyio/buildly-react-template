@@ -432,6 +432,13 @@ function* createProduct(payload) {
     yield [
       yield put({ type: CREATE_PRODUCT_SUCCESS, data: product.data }),
       yield put(saveProductFormData(null)),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Created product successfully',
+        }),
+      ),
     ];
     if (history) {
       history.push(routes.DASHBOARD);
@@ -544,7 +551,16 @@ function* updateProduct(payload) {
         yield put(updateCredential(credData));
       }
     }
-    yield put({ type: UPDATE_PRODUCT_SUCCESS, data: product.data });
+    yield [
+      yield put({ type: UPDATE_PRODUCT_SUCCESS, data: product.data }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Updated product successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(
@@ -570,7 +586,16 @@ function* deleteProduct(payload) {
       'delete',
       `${window.env.API_URL}${productEndpoint}product/${product_uuid}`,
     );
-    yield put({ type: DELETE_PRODUCT_SUCCESS, product_uuid });
+    yield [
+      yield put({ type: DELETE_PRODUCT_SUCCESS, product_uuid }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Deleted product successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(
@@ -896,7 +921,16 @@ function* createBoard(payload) {
         yield put(createStatus(statusData));
       }
     }
-    yield put({ type: CREATE_BOARD_SUCCESS, data: board.data });
+    yield [
+      yield put({ type: CREATE_BOARD_SUCCESS, data: board.data }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: payload.create ? 'Created board successfully' : 'Data synced successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(

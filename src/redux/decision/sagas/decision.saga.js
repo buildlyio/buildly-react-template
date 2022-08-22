@@ -283,6 +283,13 @@ function* createFeature(payload) {
     yield [
       yield put({ type: CREATE_FEATURE_SUCCESS, data: feature.data }),
       yield put(saveFeatureFormData(null)),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Created feature successfully',
+        }),
+      ),
     ];
   } catch (error) {
     yield [
@@ -309,7 +316,16 @@ function* updateFeature(payload) {
       `${window.env.API_URL}${decisionEndpoint}feature/${payload.data.feature_uuid}`,
       payload.data,
     );
-    yield put({ type: UPDATE_FEATURE_SUCCESS, data: feature.data });
+    yield [
+      yield put({ type: UPDATE_FEATURE_SUCCESS, data: feature.data }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Updated feature successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(
@@ -336,7 +352,16 @@ function* deleteFeature(payload) {
       `${window.env.API_URL}${decisionEndpoint}feature/${feature_uuid}`,
       payload.data,
     );
-    yield put({ type: DELETE_FEATURE_SUCCESS, feature_uuid });
+    yield [
+      yield put({ type: DELETE_FEATURE_SUCCESS, feature_uuid }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Deleted feature successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(
@@ -551,7 +576,16 @@ function* createIssue(payload) {
         `${window.env.API_URL}${decisionEndpoint}issue/`,
         payload.data,
       );
-      yield put({ type: CREATE_ISSUE_SUCCESS, data: issue.data });
+      yield [
+        yield put({ type: CREATE_ISSUE_SUCCESS, data: issue.data }),
+        yield put(
+          showAlert({
+            type: 'success',
+            open: true,
+            message: 'Created Issue successfully',
+          }),
+        ),
+      ];
     }
   } catch (error) {
     yield [
@@ -578,7 +612,16 @@ function* updateIssue(payload) {
       `${window.env.API_URL}${decisionEndpoint}issue/${payload.data.issue_uuid}`,
       payload.data,
     );
-    yield put({ type: UPDATE_ISSUE_SUCCESS, data: issue.data });
+    yield [
+      yield put({ type: UPDATE_ISSUE_SUCCESS, data: issue.data }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Updated Issue successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(
@@ -605,7 +648,16 @@ function* deleteIssue(payload) {
       `${window.env.API_URL}${decisionEndpoint}issue/${issue_uuid}`,
       payload.data,
     );
-    yield put({ type: DELETE_ISSUE_SUCCESS, issue_uuid });
+    yield [
+      yield put({ type: DELETE_ISSUE_SUCCESS, issue_uuid }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Deleted Issue successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(
@@ -771,7 +823,16 @@ function* importTickets(payload) {
       `${window.env.API_URL}${decisionEndpoint}import-project-tickets/`,
       payload.data,
     );
-    yield put({ type: IMPORT_TICKETS_SUCCESS, data: ticket.data });
+    yield [
+      yield put({ type: IMPORT_TICKETS_SUCCESS, data: ticket.data }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Imported tickets successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(
