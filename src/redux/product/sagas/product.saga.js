@@ -952,88 +952,42 @@ function* validateCredential(payload) {
   }
 }
 
-function* docIdentifier(action) {
-  const {
-    data,
-    filename,
-    identifier,
-    payload,
-    history,
-    redirectTo,
-    organization_uuid,
-  } = action;
+function* docIdentifier(payload) {
   try {
-    let { uploaded_pdf, uploaded_pdf_link } = payload;
-    if (data && filename) {
       const response = yield call(
         httpService.makeRequest,
         'post',
         `${window.env.API_URL}${productEndpoint}upload_file/`,
-        data,
+        payload.uploadFile,
+        '',
+        'multipart/form-data',
       );
-      uploaded_pdf = payload.uploaded_pdf
-        ? [...payload.uploaded_pdf, filename]
-        : [filename];
-      uploaded_pdf_link = payload.uploaded_pdf_link
-        ? [...payload.uploaded_pdf_link, response.data['aws url']]
-        : [response.data['aws url']];
-    }
 
-    const unique_identifier = identifier;
     yield [
       yield put({
         type: ADD_DOC_IDENTIFIER_SUCCESS,
-        uploaded_pdf,
-        uploaded_pdf_link,
-        unique_identifier,
+        response,
       }),
-      yield put({
-        type: UPDATE_PRODUCT,
-        payload: {
-          ...payload,
-          uploaded_pdf,
-          uploaded_pdf_link,
-          unique_identifier,
-        },
-        history,
-        redirectTo,
-        organization_uuid,
-      }),
+      // yield put({
+      //   type: UPDATE_PRODUCT,
+      //   payload: {
+      //     ...payload,
+      //     uploaded_pdf,
+      //     uploaded_pdf_link,
+      //     unique_identifier,
+      //   },
+      //   history,
+      //   redirectTo,
+      //   organization_uuid,
+      // }),
     ];
-    if (data && filename && identifier) {
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Successfully Added PDF and Unique Identifer',
-        }),
-      );
-    }
-    if (data && filename && !identifier) {
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Successfully Added PDF',
-        }),
-      );
-    }
-    if (!data && !filename && identifier) {
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Successfully Added Unique Identifer',
-        }),
-      );
-    }
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Upload Bill due to some error!',
+          message: 'Couldn\'t Upload File!',
         }),
       ),
       yield put({
@@ -1157,6 +1111,10 @@ function* watchValidateCredential() {
   yield takeLatest(VALIDATE_CREDENTIAL, validateCredential);
 }
 
+function* watchdocIdentifier() {
+  yield takeLatest(ADD_DOC_IDENTIFIER, docIdentifier);
+}
+
 export default function* productSaga() {
   yield all([
     watchGetAllCredentials(),
@@ -1187,5 +1145,6 @@ export default function* productSaga() {
     watchDeleteRelease(),
     watchDeleteThirdPartyTool(),
     watchValidateCredential(),
+    watchdocIdentifier(),
   ]);
 }

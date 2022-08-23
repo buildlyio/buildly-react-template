@@ -151,8 +151,8 @@ const TeamUser = ({
   productFormData, handleNext, handleBack, dispatch, editData,
 }) => {
   const classes = useStyles();
-  let fileChanged = false;
-  const [files, setFiles] = useState([]);
+  // let fileChanged = false;
+  const [filesUpload, setFilesUpload] = useState([]);
 
   const teamSize = useInput((editData
     && editData.product_info
@@ -213,39 +213,13 @@ const TeamUser = ({
     || existingFeatures.hasChanged()
   );
 
-  // const URL_REGEX = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?
-  // [a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/gm;
-
-  // const linkify = (e) => {
-  //   const words = event.target.value.split(' ');
-  //   return (
-  //     <p>
-  //       {words.map((word, i) => (word.match(URL_REGEX) ? (
-  //         <div key={i}>
-  //           setExistingLinks(
-  //           <a href={word}>{word}</a>
-  //           )
-  //           {' '}
-  //         </div>
-  //       ) : (
-  //         setExistingLinks(`${word} `)
-  //       )))}
-  //     </p>
-  //   );
+  // const removeFile = (filename) => {
+  //   setFiles(files.filter((file) => file.name !== filename));
   // };
-
-  const removeFile = (filename) => {
-    setFiles(files.filter((file) => file.name !== filename));
-  };
 
   let uploadFile;
   const fileChange = (event) => {
-    const file = event.target.files[0];
-    setFiles([...files, file]);
-    fileChanged = true;
-    uploadFile = new FormData();
-    uploadFile.append(file.name, file, file.name);
-    // dispatch(docIdentifier(uploadFile));
+    setFilesUpload(event.target.files);
   };
 
   /**
@@ -254,17 +228,21 @@ const TeamUser = ({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
+    uploadFile = new FormData();
+    for (const key of Object.keys(filesUpload)) {
+      uploadFile.append('file', filesUpload[key]);
+    }
     const formData = {
       ...productFormData,
       product_info: {
         ...productFormData.product_info,
         team_size: teamSize.value,
         role_count: roleCount,
-        // ...uploadFile,
       },
       edit_date: new Date(),
     };
     dispatch(saveProductFormData(formData));
+    dispatch(docIdentifier(uploadFile));
     handleNext();
   };
 
@@ -395,16 +373,18 @@ const TeamUser = ({
                 variant="outlined"
                 margin="normal"
                 fullWidth
+                // multiple
                 type="file"
                 id="existingFeatures"
                 label="Existing Features"
                 name="existingFeatures"
                 autoComplete="existingFeatures"
+                inputProps={{ multiple: true }}
                 InputLabelProps={{ shrink: true }}
                 onChange={fileChange}
                 // {...existingFeatures.bind}
               />
-              <List>
+              {/* <List>
                 {_.map(files, (file, index) => (
                   <ListItem
                     key={index}
@@ -424,7 +404,7 @@ const TeamUser = ({
                     />
                   </ListItem>
                 ))}
-              </List>
+              </List> */}
             </Grid>
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>

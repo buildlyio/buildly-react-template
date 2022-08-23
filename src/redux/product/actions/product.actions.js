@@ -382,28 +382,10 @@ export const validateCredential = (data, valid) => ({
 /**
  * PDF Identifier
  * @param {FormData} data
- * @param {String} filename
- * @param {String} identifier
- * @param {Object} payload
- * @param {Object} history
- * @param {String} redirectTo
- * @param {String} organization_uuid
  */
 export const docIdentifier = (
-  data,
-  filename,
-  identifier,
-  payload,
-  history,
-  redirectTo,
-  organization_uuid,
+  uploadFile,
 ) => ({
   type: ADD_DOC_IDENTIFIER,
-  data,
-  filename,
-  identifier,
-  payload,
-  history,
-  redirectTo,
-  organization_uuid,
+ uploadFile,
 });
