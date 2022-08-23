@@ -131,7 +131,8 @@ const AccordionSummary = styled((props) => (
 }));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  borderTop: '1px solid rgba(0, 0, 0, .125)',
+  borderTop: '1px solid rgba(0, 0, 0, 0.125)',
+  padding: '8px 8px 0px 8px',
 }));
 
 const List = ({
