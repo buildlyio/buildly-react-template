@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material/styles';
 import {
   Grid, Paper, Popover, Typography,
 } from '@mui/material';
@@ -11,6 +12,10 @@ import {
   TrendingFlatRounded as TrendingFlatRoundedIcon,
   Info as InfoIcon,
 } from '@mui/icons-material';
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import MuiAccordion from '@mui/material/Accordion';
+import MuiAccordionSummary from '@mui/material/AccordionSummary';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import {
   Chip,
 } from '@mui/material';
@@ -86,6 +91,48 @@ const useStyles = makeStyles((theme) => ({
     gap: theme.spacing(1),
     padding: theme.spacing(2),
   },
+  issueBox: {
+    backgroundColor: theme.palette.primary.main,
+    border: '1px solid #121212',
+    margin: theme.spacing(1),
+    padding: theme.spacing(0.3, 0.7),
+  },
+}));
+
+const Accordion = styled((props) => (
+  <MuiAccordion disableGutters elevation={0} square {...props} />
+))(({ theme }) => ({
+  border: `1px solid ${theme.palette.divider}`,
+  '&:not(:last-child)': {
+    borderBottom: 0,
+  },
+  '&:before': {
+    display: 'none',
+  },
+}));
+
+const AccordionSummary = styled((props) => (
+  <MuiAccordionSummary
+    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
+    {...props}
+  />
+))(({ theme }) => ({
+  backgroundColor:
+    theme.palette.mode === 'dark'
+      ? 'rgba(255, 255, 255, .05)'
+      : 'rgba(0, 0, 0, .03)',
+  flexDirection: 'row-reverse',
+  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+    transform: 'rotate(90deg)',
+  },
+  '& .MuiAccordionSummary-content': {
+    marginLeft: theme.spacing(1),
+  },
+}));
+
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+  borderTop: '1px solid rgba(0, 0, 0, 0.125)',
+  padding: '8px 8px 0px 8px',
 }));
 
 const List = ({
@@ -115,6 +162,12 @@ const List = ({
 
   const open = Boolean(issueDetailsAnchorEl);
   const id = open ? 'issue-details-popover' : undefined;
+
+  const [expanded, setExpanded] = React.useState('');
+
+  const handleChange = (panel) => (event, newExpanded) => {
+    setExpanded(newExpanded ? panel : false);
+  };
 
   return (
     <>
@@ -225,41 +278,53 @@ const List = ({
               )}
               <div>
                 {product !== 0 && productIssues && productIssues.length > 0
-                    && _.map(productIssues, (issue) => (
-                      <div
-                        key={`issue-${issue.product_uuid}-${issue.issue_uuid}`}
-                        className={classes.boxEntry}
-                      >
-                        <Typography
-                          className={classes.entryTitle}
-                          variant="body1"
-                        >
-                          {issue.name}
-                        </Typography>
-                        <EditRoundedIcon
-                          className={classes.entryIcon}
-                          onClick={(e) => editItem(issue, 'issue')}
-                        />
-                        <DeleteRoundedIcon
-                          className={classes.entryIcon}
-                          onClick={(e) => deleteItem(issue, 'issue')}
-                        />
-                        <CommentIcon
-                          className={classes.entryIcon}
-                          onClick={(e) => commentItem()}
-                        />
-                        <InfoIcon
-                          className={classes.entryIcon}
-                          onClick={(e) => handleIssueDetailsOpenClick(e, issue)}
-                          aria-describedby={id}
-                        />
-                      </div>
+                && productFeatures && productFeatures.length > 0
+                    && _.map(productFeatures, (feat, ind) => (
+                      <Accordion expanded={expanded === feat} onChange={handleChange(feat)} key={`feat-${ind}`}>
+                        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                          <Typography>{feat.name}</Typography>
+                        </AccordionSummary>
+                        {productIssues
+                          .filter((iss) => (iss.feature_uuid === feat.feature_uuid))
+                          .map((issue, index) => (
+                            <AccordionDetails>
+                              <div
+                                className={classes.boxEntry}
+                                key={index}
+                              >
+                                <Typography
+                                  className={classes.entryTitle}
+                                  variant="body1"
+                                >
+                                  {issue.name }
+                                  <span className={classes.issueBox}>{issue.issue_type}</span>
+                                </Typography>
+                                <EditRoundedIcon
+                                  className={classes.entryIcon}
+                                  onClick={(e) => editItem(issue, 'issue')}
+                                />
+                                <DeleteRoundedIcon
+                                  className={classes.entryIcon}
+                                  onClick={(e) => deleteItem(issue, 'issue')}
+                                />
+                                <CommentIcon
+                                  className={classes.entryIcon}
+                                  onClick={(e) => commentItem()}
+                                />
+                                <InfoIcon
+                                  className={classes.entryIcon}
+                                  onClick={(e) => handleIssueDetailsOpenClick(e, issue)}
+                                  aria-describedby={id}
+                                />
+                              </div>
+                            </AccordionDetails>
+                          ))}
+                      </Accordion>
                     ))}
               </div>
             </div>
           </div>
         </Grid>
-
         {
           selectedIssue
           && (

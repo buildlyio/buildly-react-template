@@ -10,7 +10,9 @@ import {
 import SyncIcon from '@mui/icons-material/Sync';
 import Loader from '@components/Loader/Loader';
 import { routes } from '@routes/routesConstants';
-import { getAllCredentials, getAllProducts, getBoard } from '@redux/product/actions/product.actions';
+import {
+  getAllCredentials, getAllProducts, getBoard,
+} from '@redux/product/actions/product.actions';
 import { createBoard } from '@redux/product/actions/product.actions';
 import {
   deleteFeature,
@@ -18,6 +20,7 @@ import {
   getAllFeatures,
   getAllIssues,
   getAllStatuses,
+  importTickets,
 } from '@redux/decision/actions/decision.actions';
 import List from '../components/List';
 import Kanban from '../components/Kanban';
@@ -345,10 +348,70 @@ const UserDashboard = (props) => {
 
   const importTicket = (e) => {
     e.preventDefault();
-    history.push(addDropColumnPath, {
-      from: redirectTo || location.pathname,
-      product_uuid: product,
-    });
+    if (prod?.feature_tool_detail == null) {
+      if (featCred?.auth_detail?.tool_name !== 'GitHub') {
+        const featData = {
+          ...featCred?.auth_detail,
+          product_uuid: product,
+          board_id: prod?.feature_tool_detail?.board_detail?.board_id,
+          drop_col_name: null,
+        };
+        if (featCred?.auth_detail) {
+          dispatch(importTickets(featData));
+        }
+        const issueData = {
+          ...issueCred?.auth_detail,
+          product_uuid: product,
+          board_id: prod?.feature_tool_detail?.board_detail?.board_id,
+          drop_col_name: null,
+        };
+        if (featCred?.auth_detail?.tool_name !== 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
+          issueData.is_repo_issue = true;
+          issueData.repo_list = repoData;
+        }
+        if (issueCred?.auth_detail) {
+          dispatch(importTickets(issueData));
+        }
+      } else if (featCred?.auth_detail?.tool_name === 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
+        const featData = {
+          ...featCred?.auth_detail,
+          product_uuid: product,
+          board_id: prod?.feature_tool_detail?.board_detail?.board_id,
+          is_repo_issue: false,
+          drop_col_name: null,
+        };
+        if (featCred?.auth_detail) {
+          dispatch(importTickets(featData));
+        }
+      } else {
+        const featData = {
+          ...featCred?.auth_detail,
+          product_uuid: product,
+          board_id: prod?.feature_tool_detail?.board_detail?.board_id,
+          is_repo_issue: false,
+          drop_col_name: null,
+        };
+        if (featCred?.auth_detail) {
+          dispatch(importTickets(featData));
+        }
+        const issueData = {
+          ...issueCred?.auth_detail,
+          product_uuid: product,
+          board_id: prod?.feature_tool_detail?.board_detail?.board_id,
+          is_repo_issue: true,
+          repo_list: repoData,
+          drop_col_name: null,
+        };
+        if (issueCred?.auth_detail) {
+          dispatch(importTickets(issueData));
+        }
+      }
+    } else {
+      history.push(addDropColumnPath, {
+        from: redirectTo || location.pathname,
+        product_uuid: product,
+      });
+    }
   };
 
   const syncData = (e) => {
