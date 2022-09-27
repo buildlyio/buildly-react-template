@@ -339,7 +339,6 @@ const Kanban = ({
                                         color="secondary"
                                         aria-expanded
                                         onClick={(e) => handleClick(e, item)}
-
                                       >
                                         <MoreHoriz />
                                       </IconButton>

@@ -16,6 +16,7 @@ import { routes } from './routes/routesConstants';
 import { PrivateRoute } from './routes/Private.route';
 import theme from './styles/theme';
 import MissingData from '@pages/MissingData/MissingData';
+import Home from '@pages/Home/Home';
 
 const App = () => (
   <Router>
@@ -26,10 +27,11 @@ const App = () => (
           <Route
             exact
             path="/"
+            // eslint-disable-next-line no-nested-ternary
             render={() => (oauthService.hasValidAccessToken() ? (
               <Redirect to={routes.DASHBOARD} />
             ) : (
-              <Redirect to={routes.LOGIN} />
+              window.env.PRODUCTION ? <Home /> : <Redirect to={routes.LOGIN} />
             ))}
           />
           <Route path={routes.LOGIN} component={Login} />

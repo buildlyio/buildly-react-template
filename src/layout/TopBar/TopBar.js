@@ -195,7 +195,7 @@ const TopBar = ({
               >
                 Dashboard
               </MenuItem>
-              <MenuItem
+              {/* <MenuItem
                 disabled={location.pathname === routes.RELEASE}
                 onClick={() => {
                   setAnchorEl(null);
@@ -203,7 +203,7 @@ const TopBar = ({
                 }}
               >
                 Releases
-              </MenuItem>
+              </MenuItem> */}
               {isAdmin && (
               <MenuItem
                 disabled={location.pathname === routes.PRODUCTS}

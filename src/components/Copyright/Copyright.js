@@ -5,8 +5,10 @@ import {
   Toolbar,
   Typography,
   Link,
+  Button,
 } from '@mui/material';
 import { AppContext } from '@context/App.context';
+import { routes } from '@routes/routesConstants';
 import Support from './Support';
 import Services from './Services';
 
@@ -36,6 +38,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     marginBottom: theme.spacing(1),
   },
+  login: {
+    marginRight: theme.spacing(1),
+  },
 }));
 
 const Copyright = () => {
@@ -46,6 +51,17 @@ const Copyright = () => {
     <AppBar position="fixed" className={classes.root}>
       <Toolbar className={classes.toolbar}>
         <div className={classes.navs}>
+          {window.env.PRODUCTION && (
+            <Button
+              aria-controls="buildly-login"
+              color="primary"
+              variant="contained"
+              className={classes.login}
+              href={routes.LOGIN}
+            >
+              Insights Login
+            </Button>
+          )}
           <Support />
           <Services />
         </div>

@@ -112,7 +112,6 @@ const AddIssues = ({
   const [endDate, handleEndDateChange] = useState(
     (editData && editData.end_date) || new Date(),
   );
-
   const [tags, setTags] = useState(
     (convertData && convertData.tags)
     || (editData && editData.tags)
