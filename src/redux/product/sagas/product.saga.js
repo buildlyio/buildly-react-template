@@ -91,7 +91,6 @@ import {
   updateCredential,
   saveProductFormData,
   clearBoardData,
-  // clearValidateData,
   getBoard,
   VALIDATE_CREDENTIAL,
   VALIDATE_CREDENTIAL_SUCCESS,

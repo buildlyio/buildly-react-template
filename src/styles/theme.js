@@ -33,6 +33,9 @@ const theme = createTheme(({
         body: {
           padding: 0,
           backgroundColor: '#202020',
+          '&#fc_frame, #fc_frame.fc-widget-normal': {
+            bottom: '100px !important',
+          },
         },
       },
     },

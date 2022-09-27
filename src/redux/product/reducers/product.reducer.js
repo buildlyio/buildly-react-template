@@ -2,7 +2,6 @@ import _ from 'lodash';
 import {
   SAVE_PRODUCT_FORM_DATA,
   CLEAR_BOARD_DATA,
-  // CLEAR_VALIDATE_DATA,
   ALL_CREDENTIALS,
   ALL_CREDENTIALS_SUCCESS,
   ALL_CREDENTIALS_FAILURE,
@@ -99,8 +98,6 @@ const initialState = {
   releases: [],
   thirdPartyTools: [],
   boards: [],
-  // featValidate: false,
-  // issueValidate: false,
   productFormData: null,
 };
 
@@ -117,12 +114,6 @@ export default (state = initialState, action) => {
         ...state,
         boards: [],
       };
-      // case CLEAR_VALIDATE_DATA:
-      //   return {
-      //     ...state,
-      //     featValidate: false,
-      //     issueValidate: false,
-      //   };
 
     case ALL_CREDENTIALS:
     case ALL_PRODUCT_TEAMS:

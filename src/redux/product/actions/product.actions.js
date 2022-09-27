@@ -1,7 +1,6 @@
 // Product Action types
 export const SAVE_PRODUCT_FORM_DATA = 'PRODUCT/SAVE_PRODUCT_FORM_DATA';
 export const CLEAR_BOARD_DATA = 'PRODUCT/CLEAR_BOARD_DATA';
-// export const CLEAR_VALIDATE_DATA = 'PRODUCT/CLEAR_VALIDATE_DATA';
 
 export const ALL_CREDENTIALS = 'PRODUCT/ALL_CREDENTIALS';
 export const ALL_CREDENTIALS_SUCCESS = 'PRODUCT/ALL_CREDENTIALS_SUCCESS';
@@ -367,10 +366,3 @@ export const validateCredential = (data, valid) => ({
   data,
   valid,
 });
-
-/**
- * Clear Validate Data
- */
-// export const clearValidateData = () => ({
-//   type: CLEAR_VALIDATE_DATA,
-// });

@@ -158,7 +158,6 @@ const ProductSetup = ({
   thirdPartyTools,
   location,
   editData,
-  // credentials,
   viewPage,
   featCred,
   issueCred,
@@ -697,7 +696,6 @@ const ProductSetup = ({
                           ...trelloAuth,
                           access_token: e.target.value,
                         })}
-                        // disabled={featValidate}
                       />
                     </Grid>
                     <Grid item>
@@ -715,7 +713,6 @@ const ProductSetup = ({
                           ...trelloAuth,
                           trello_key: e.target.value,
                         })}
-                        // disabled={featValidate}
                       />
                     </Grid>
                     <Grid item>
@@ -754,7 +751,6 @@ const ProductSetup = ({
                           ...githubFeatureAuth,
                           access_token: e.target.value,
                         })}
-                        // disabled={featValidate}
                       />
                     </Grid>
                     <Grid item>
@@ -772,7 +768,6 @@ const ProductSetup = ({
                           ...githubFeatureAuth,
                           owner_name: e.target.value,
                         })}
-                        // disabled={featValidate}
                       />
                     </Grid>
                     <Grid item>
@@ -845,7 +840,6 @@ const ProductSetup = ({
                           ...githubIssueAuth,
                           access_token: e.target.value,
                         })}
-                        // disabled={issueValidate}
                       />
                     </Grid>
                     <Grid item>
@@ -863,7 +857,6 @@ const ProductSetup = ({
                           ...githubIssueAuth,
                           owner_name: e.target.value,
                         })}
-                        // disabled={issueValidate}
                       />
                     </Grid>
                     <Grid item>
@@ -938,8 +931,6 @@ const mapStateToProps = (state, ownProps) => ({
   productFormData: state.productReducer.productFormData,
   thirdPartyTools: state.productReducer.thirdPartyTools,
   credentials: state.productReducer.credentials,
-  // featValidate: state.productReducer.featValidate,
-  // issueValidate: state.productReducer.issueValidate,
 });
 
 export default connect(mapStateToProps)(ProductSetup);

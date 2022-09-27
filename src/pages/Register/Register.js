@@ -114,6 +114,20 @@ const Register = ({
   const product = useInput('', { required: true });
   const [formError, setFormError] = useState({});
 
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (window.env.PRODUCTION) {
+      const script = document.createElement('script');
+      script.src = '//fw-cdn.com/1900654/2696977.js';
+      script.chat = true;
+      document.body.appendChild(script);
+
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
+  }, []);
+
   useEffect(() => {
     if (!orgNames) {
       dispatch(loadOrgNames());

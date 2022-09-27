@@ -279,48 +279,48 @@ const List = ({
               <div>
                 {product !== 0 && productIssues && productIssues.length > 0
                 && productFeatures && productFeatures.length > 0
-                    && _.map(productFeatures, (feat, ind) => (
-                      <Accordion expanded={expanded === feat} onChange={handleChange(feat)} key={`feat-${ind}`}>
-                        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                          <Typography>{feat.name}</Typography>
-                        </AccordionSummary>
-                        {productIssues
-                          .filter((iss) => (iss.feature_uuid === feat.feature_uuid))
-                          .map((issue, index) => (
-                            <AccordionDetails>
-                              <div
-                                className={classes.boxEntry}
-                                key={index}
-                              >
-                                <Typography
-                                  className={classes.entryTitle}
-                                  variant="body1"
-                                >
-                                  {issue.name }
-                                  <span className={classes.issueBox}>{issue.issue_type}</span>
-                                </Typography>
-                                <EditRoundedIcon
-                                  className={classes.entryIcon}
-                                  onClick={(e) => editItem(issue, 'issue')}
-                                />
-                                <DeleteRoundedIcon
-                                  className={classes.entryIcon}
-                                  onClick={(e) => deleteItem(issue, 'issue')}
-                                />
-                                <CommentIcon
-                                  className={classes.entryIcon}
-                                  onClick={(e) => commentItem()}
-                                />
-                                <InfoIcon
-                                  className={classes.entryIcon}
-                                  onClick={(e) => handleIssueDetailsOpenClick(e, issue)}
-                                  aria-describedby={id}
-                                />
-                              </div>
-                            </AccordionDetails>
-                          ))}
-                      </Accordion>
-                    ))}
+                && _.map(productFeatures, (feat, ind) => (
+                  <Accordion expanded={expanded === feat} onChange={handleChange(feat)} key={`feat-${ind}`}>
+                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                      <Typography>{feat.name}</Typography>
+                    </AccordionSummary>
+                    {productIssues
+                      .filter((iss) => (iss.feature_uuid === feat.feature_uuid))
+                      .map((issue, index) => (
+                        <AccordionDetails>
+                          <div
+                            className={classes.boxEntry}
+                            key={index}
+                          >
+                            <Typography
+                              className={classes.entryTitle}
+                              variant="body1"
+                            >
+                              {issue.name }
+                              <span className={classes.issueBox}>{issue.issue_type}</span>
+                            </Typography>
+                            <EditRoundedIcon
+                              className={classes.entryIcon}
+                              onClick={(e) => editItem(issue, 'issue')}
+                            />
+                            <DeleteRoundedIcon
+                              className={classes.entryIcon}
+                              onClick={(e) => deleteItem(issue, 'issue')}
+                            />
+                            <CommentIcon
+                              className={classes.entryIcon}
+                              onClick={(e) => commentItem()}
+                            />
+                            <InfoIcon
+                              className={classes.entryIcon}
+                              onClick={(e) => handleIssueDetailsOpenClick(e, issue)}
+                              aria-describedby={id}
+                            />
+                          </div>
+                        </AccordionDetails>
+                      ))}
+                  </Accordion>
+                ))}
               </div>
             </div>
           </div>
