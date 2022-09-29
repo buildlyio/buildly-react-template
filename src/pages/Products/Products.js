@@ -90,6 +90,8 @@ const Products = ({
         onAddButtonClick={onAddButtonClick}
         editAction={editProduct}
         deleteAction={deleteProduct}
+        openDeleteModal={openConfirmModal}
+        setDeleteModal={setConfirmModal}
         tableHeader="Products"
       >
         <Route path={addProductPath} component={AddProduct} />

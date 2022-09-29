@@ -28,25 +28,9 @@ const useStyles = makeStyles((theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
-    color: '#fff',
     [theme.breakpoints.up('sm')]: {
       width: '70%',
       margin: 'auto',
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.secondary.contrastText,
-    },
-    '& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgb(255, 255, 255, 0.23)',
-    },
-    '& .MuiInputLabel-root': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiSelect-icon': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiInputBase-input': {
-      color: theme.palette.secondary.contrastText,
     },
   },
   choice: {
@@ -60,7 +44,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginTop: '1em',
     textAlign: 'center',
-    color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
     display: 'flex',
@@ -78,38 +61,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
-  icon: {
-    borderRadius: '50%',
-    width: 16,
-    height: 16,
-    boxShadow:
-      'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
-    backgroundColor: '#f5f8fa',
-    backgroundImage:
-      'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
-    'input:hover ~ &': {
-      backgroundColor: '#ebf1f5',
-    },
-    'input:disabled ~ &': {
-      boxShadow: 'none',
-      background: 'rgba(206,217,224,.5)',
-    },
-  },
-  checkedIcon: {
-    backgroundColor: '#137cbd',
-    backgroundImage:
-      'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
-    '&:before': {
-      display: 'block',
-      width: 16,
-      height: 16,
-      backgroundImage: 'radial-gradient(#fff,#fff 28%,transparent 32%)',
-      content: '""',
-    },
-    'input:hover ~ &': {
-      backgroundColor: '#106ba3',
-    },
-  },
   radioButton: {
     margin: theme.spacing(2, 2),
   },
@@ -126,19 +77,14 @@ const DescribeProcess = ({
   location,
   statuses,
   dispatch,
-  products,
   credentials,
-  productFeatures,
-  handleNext,
   handleBack,
   featureFormData,
 }) => {
   const classes = useStyles();
-  const [product, setProduct] = useState('');
 
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && (location.state.type === 'edit' || location.state.type === 'view');
-  const product_uuid = location.state && location.state.product_uuid;
   const [formError, setFormError] = useState({});
   const editData = (
     location.state
@@ -321,12 +267,12 @@ const DescribeProcess = ({
             >
               <FormControlLabel
                 value="yes"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
                 label="Yes"
               />
               <FormControlLabel
                 value="no"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
                 label="No"
               />
             </RadioGroup>
@@ -371,12 +317,12 @@ const DescribeProcess = ({
               <FormControlLabel
                 value="yes"
                 label="Yes"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
               />
               <FormControlLabel
                 value="no"
                 label="No"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
               />
             </RadioGroup>
           </FormControl>
@@ -421,12 +367,12 @@ const DescribeProcess = ({
               <FormControlLabel
                 value="yes"
                 label="Yes"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
               />
               <FormControlLabel
                 value="no"
                 label="No"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
               />
             </RadioGroup>
           </FormControl>
@@ -449,12 +395,12 @@ const DescribeProcess = ({
               <FormControlLabel
                 value="yes"
                 label="Yes"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
               />
               <FormControlLabel
                 value="no"
                 label="No"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
               />
             </RadioGroup>
           </FormControl>
@@ -499,12 +445,12 @@ const DescribeProcess = ({
               <FormControlLabel
                 value="search"
                 label="Search"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
               />
               <FormControlLabel
                 value="nav"
                 label="Nav"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
               />
             </RadioGroup>
           </FormControl>
@@ -528,17 +474,17 @@ const DescribeProcess = ({
               <FormControlLabel
                 value="top"
                 label="Top"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
               />
               <FormControlLabel
                 value="secondary"
                 label="Secondary"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
               />
               <FormControlLabel
                 value="tertiary"
                 label="Tertiary"
-                control={<Radio color="primary" />}
+                control={<Radio color="info" />}
               />
             </RadioGroup>
           </FormControl>
@@ -580,7 +526,6 @@ const DescribeProcess = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   statuses: state.decisionReducer.statuses,
-  products: state.productReducer.products,
   credentials: state.productReducer.credentials,
   featureFormData: state.decisionReducer.featureFormData,
 });

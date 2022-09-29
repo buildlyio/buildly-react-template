@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import { clearValidateData, saveProductFormData, getAllCredentials } from '@redux/product/actions/product.actions';
-import { routes } from '@routes/routesConstants';
 import ProductSetup, {
   checkIfProductSetupEdited,
 } from './components/ProductSetup';
@@ -32,6 +31,9 @@ import { getAllStatuses } from '@redux/decision/actions/decision.actions';
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
+    '& .MuiStepLabel-label': {
+      color: theme.palette.neutral.text.light,
+    },
   },
   formTitle: {
     fontWeight: 'bold',

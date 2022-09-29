@@ -241,13 +241,13 @@ const Login = ({
                   <Link
                     href={routes.FORGOT_PASSWORD}
                     variant="body2"
-                    color="primary"
+                    color="secondary"
                   >
                     Forgot password?
                   </Link>
                 </Grid>
                 <Grid item className={classes.link}>
-                  <Link href={routes.REGISTER} variant="body2" color="primary">
+                  <Link href={routes.REGISTER} variant="body2" color="secondary">
                     Don't have an account? Register
                   </Link>
                 </Grid>

@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     top: 'auto',
     bottom: 0,
-    backgroundColor: theme.palette.secondary.light,
+    backgroundColor: theme.palette.contrast.main,
     padding: theme.spacing(1, 0),
   },
   toolbar: {
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
   },
   copyright: {
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.contrast.text,
   },
   navs: {
     width: '100%',

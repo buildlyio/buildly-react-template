@@ -26,7 +26,7 @@ import { hasGlobalAdminRights, hasAdminRights } from '@utils/permissions';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    backgroundColor: theme.palette.secondary.light,
+    backgroundColor: theme.palette.contrast.main,
     zIndex: theme.zIndex.drawer + 1,
     width: '100%',
   },
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 'auto',
   },
   menuIcon: {
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.contrast.text,
   },
   globalFilter: {
     width: theme.spacing(24),
@@ -74,8 +74,6 @@ const StyledMenu = styled((props) => (
     borderRadius: 6,
     marginTop: theme.spacing(1),
     minWidth: 180,
-    color:
-      theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
     boxShadow:
       'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
     '& .MuiMenu-list': {

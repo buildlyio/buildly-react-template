@@ -424,7 +424,7 @@ const Register = ({
                   )}
                 </Grid>
                 <Grid item className={classes.link}>
-                  <Link href={routes.LOGIN} variant="body2" color="primary">
+                  <Link href={routes.LOGIN} variant="body2" color="secondary">
                     Already have an account? Sign in
                   </Link>
                 </Grid>

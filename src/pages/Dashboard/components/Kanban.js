@@ -44,24 +44,23 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'inherit',
   },
   swimlane: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.contrast.main,
     display: 'flex',
     flexDirection: 'column',
     minWidth: '22%',
     height: '100%',
   },
   title: {
-    borderBottom: `1px solid ${theme.palette.secondary.contrastText}`,
+    color: theme.palette.contrast.text,
+    borderBottom: `1px solid ${theme.palette.contrast.text}`,
     padding: '16px',
     fontWeight: 600,
   },
+  addIcon: {
+    color: theme.palette.contrast.text,
+  },
   card: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.neutral.main,
-    color: theme.palette.neutral.contrastText,
-    '& span.MuiCardHeader-subheader': {
-      color: theme.palette.neutral.contrastText,
-    },
   },
   chip: {
     marginRight: theme.spacing(0.5),
@@ -71,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(0.5),
     marginBottom: theme.spacing(0.5),
     backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.neutral.text,
   },
   moment: {
     marginTop: theme.spacing(3),
@@ -272,7 +271,7 @@ const Kanban = ({
                     {column.name}
                   </Typography>
                   <IconButton onClick={(e) => addItem(index === 0 ? 'feat' : 'issue')} size="large">
-                    <AddRounded fontSize="small" />
+                    <AddRounded fontSize="small" className={classes.addIcon} />
                   </IconButton>
                 </div>
                 <div className={classes.columnBody}>
