@@ -4,6 +4,7 @@ export const routes = {
   REGISTER: '/register',
   FORGOT_PASSWORD: '/forgot-password',
   RESET_PASSWORD: '/reset-password-confirm',
+  VERIFY_EMAIL: '/verify-email',
   APP: '/app',
   DASHBOARD: '/app/dashboard',
   DASHBOARD_LIST: '/app/dashboard/list',

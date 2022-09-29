@@ -41,9 +41,9 @@ import {
   ADD_ORG_SOCIAL_USER,
   ADD_ORG_SOCIAL_USER_SUCCESS,
   ADD_ORG_SOCIAL_USER_FAIL,
-  LOAD_STRIPE_PRODUCTS,
-  LOAD_STRIPE_PRODUCTS_SUCCESS,
-  LOAD_STRIPE_PRODUCTS_FAIL,
+  VERIFY_EMAIL,
+  VERIFY_EMAIL_SUCCESS,
+  VERIFY_EMAIL_FAIL,
 } from '@redux/authuser/actions/authuser.actions';
 import {
   put, takeLatest, all, call,
@@ -139,33 +139,16 @@ function* register(payload) {
     );
     yield put({ type: REGISTER_SUCCESS, user });
     if (user && user.data) {
-      if (!user.data.is_active) {
-        yield [
-          yield call(history.push, routes.LOGIN),
-          yield put(
-            showAlert({
-              type: 'success',
-              open: true,
-              message: `Added to Org ${_.startCase(
-                user.data.organization_name,
-              )}. You need to be approved by Admin to access the platform.`,
-            }),
-          ),
-        ];
-      } else {
-        yield [
-          yield call(history.push, routes.LOGIN),
-          yield put(
-            showAlert({
-              type: 'success',
-              open: true,
-              message: `Created new Org ${_.startCase(
-                user.data.organization_name,
-              )} with you as Admin.`,
-            }),
-          ),
-        ];
-      }
+      yield [
+        yield call(history.push, routes.LOGIN),
+        yield put(
+          showAlert({
+            type: 'success',
+            open: true,
+            message: 'Please verify the email address to access the platform.',
+          }),
+        ),
+      ];
     }
   } catch (error) {
     console.log('error', error);
@@ -556,16 +539,21 @@ function* addOrgSocialUser(payload) {
   }
 }
 
-function* loadStripeProducts() {
+function* verifyEmail(payload) {
+  const { history, data } = payload;
   try {
-    const data = yield call(
+    const user = yield call(
       httpService.makeRequest,
-      'get',
-      `${window.env.API_URL}stripe/products/`,
+      'post',
+      `${window.env.API_URL}coreuser/verify_email/`,
+      data,
     );
-    yield put({ type: LOAD_STRIPE_PRODUCTS_SUCCESS, stripeProducts: data.data });
+    if (user && user.data && user.data.success) {
+      yield put({ type: VERIFY_EMAIL_SUCCESS });
+      yield call(history.push, routes.LOGIN);
+    }
   } catch (error) {
-    yield put({ type: LOAD_STRIPE_PRODUCTS_FAIL, error });
+    yield put({ type: VERIFY_EMAIL_FAIL, error });
   }
 }
 
@@ -621,8 +609,8 @@ function* watchAddOrgSocialUser() {
   yield takeLatest(ADD_ORG_SOCIAL_USER, addOrgSocialUser);
 }
 
-function* watchLoadStripeProducts() {
-  yield takeLatest(LOAD_STRIPE_PRODUCTS, loadStripeProducts);
+function* watchVerifyEmail() {
+  yield takeLatest(VERIFY_EMAIL, verifyEmail);
 }
 
 export default function* authSaga() {
@@ -640,6 +628,6 @@ export default function* authSaga() {
     watchSocialLogin(),
     watchLoadOrganizationNames(),
     watchAddOrgSocialUser(),
-    watchLoadStripeProducts(),
+    watchVerifyEmail(),
   ]);
 }
