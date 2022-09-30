@@ -1,12 +1,3 @@
-export const SPECIFIC_PROBLEMS = [
-  'Small Business User',
-  'Enterprise User (Big Companies)',
-  'Government User',
-  'Consumer',
-  'Developer',
-  'Other',
-];
-
 export const PRIMARY_USERS = [
   'Customer 1',
   'Customer 2 (Power User)',
@@ -27,16 +18,6 @@ export const BUSSINESS_SEGMENTS = [
 ];
 
 export const HOSTING = [
-  // 'Hostinger',
-  // 'Bluehost',
-  // 'Dreamhost',
-  // 'Hostgator',
-  // 'GreenGeeks',
-  // 'SiteGround',
-  // 'A2 Hosting',
-  // 'InMotion',
-  // 'WPEngine',
-  // 'Nexcess',
   'GCP',
   'AWS',
   'Digital Ocean',

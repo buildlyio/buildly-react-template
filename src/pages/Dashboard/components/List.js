@@ -353,7 +353,7 @@ const List = ({
                     variant="outlined"
                     icon={<AltRouteIcon fontSize="small" />}
                     label={feat.name}
-                    onClick={() => editItem(feat, 'feat', true)}
+                    onClick={() => editItem(feat, 'feat', false)}
                   />
                 ))}
             </Paper>

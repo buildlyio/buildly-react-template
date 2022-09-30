@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import { useInput } from '@hooks/useInput';
 import { saveProductFormData } from '@redux/product/actions/product.actions';
-import { BUSSINESS_SEGMENTS, PRIMARY_USERS, SPECIFIC_PROBLEMS } from '../ProductFormConstants';
+import { BUSSINESS_SEGMENTS, PRIMARY_USERS } from '../ProductFormConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -79,16 +79,6 @@ const ApplicationMarket = ({
       && productFormData.product_info.application_type)
     || 'desktop',
   { required: true });
-  const [specificProblem, setSpecificProblem] = useState((editData
-    && editData.product_info
-    && editData.product_info.specific_problem)
-  || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.specific_problem)
-    || {
-      value: false,
-      problem: '',
-    });
   const primaryUsers = useInput((editData
     && editData.product_info
     && editData.product_info.primary_users)
@@ -125,11 +115,6 @@ const ApplicationMarket = ({
 
   checkIfApplicationMarketEdited = () => (
     applicationType.hasChanged()
-    || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.specific_problem
-      && !_.isEqual(specificProblem,
-        productFormData.product_info.specific_problem))
     || primaryUsers.hasChanged()
     || secondaryUsers.hasChanged()
     || (productFormData
@@ -150,7 +135,6 @@ const ApplicationMarket = ({
       product_info: {
         ...productFormData.product_info,
         application_type: applicationType.value,
-        specific_problem: specificProblem,
         primary_users: primaryUsers.value,
         secondary_users: secondaryUsers.value,
         bussiness_segment: bussinessSegment,
@@ -195,140 +179,96 @@ const ApplicationMarket = ({
                 />
               </RadioGroup>
             </Grid>
-            <Grid item xs={12} sm={12}>
-              <Typography variant="h6" gutterBottom component="div">
-                Is there a specific problem you are trying to solve
-              </Typography>
-            </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl component="fieldset" required>
-                <Typography variant="caption" gutterBottom component="div">
-                  If Yes, for what type of user?
+            <Grid container>
+              <Grid item xs={12} sm={12}>
+                <Typography variant="h6" gutterBottom component="div">
+                  What is your primary business segment?
                 </Typography>
-                <RadioGroup
-                  row
-                  aria-label="specific-problem"
-                  name="specific-problem-radio-buttons-group"
-                  value={specificProblem.value}
-                  onChange={(e) => {
-                    setSpecificProblem((prevSpecificProblem) => ({
-                      ...prevSpecificProblem,
-                      value: e.target.value === 'true',
-                    }));
-                  }}
-                >
-                  <FormControlLabel
-                    value
-                    control={<StyledRadio />}
-                    label="Yes"
-                  />
-                  <FormControlLabel
-                    value={false}
-                    control={<StyledRadio />}
-                    label="No"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {specificProblem.value && (
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
-                  <InputLabel id="type-of-user-label">Type of User</InputLabel>
+                  <InputLabel id="bussiness-segment-label">
+                    Business Segment
+                  </InputLabel>
                   <Select
-                    labelId="type-of-user-label"
-                    id="type-of-user"
+                    labelId="bussiness-segment-label"
+                    id="bussiness-segment"
+                    value={bussinessSegment}
                     label="Type of User"
-                    value={specificProblem.problem}
-                    onChange={(e) => {
-                      setSpecificProblem((prevSpecificProblem) => ({
-                        ...prevSpecificProblem,
-                        problem: e.target.value,
-                      }));
+                    multiple
+                    onChange={(event) => {
+                      const {
+                        target: { value },
+                      } = event;
+                      setBussinessSegment(
+                        // On autofill we get a stringified value.
+                        typeof value === 'string' ? value.split(',') : value,
+                      );
                     }}
+                    renderValue={(selected) => selected.join(', ')}
                   >
                     <MenuItem value="" />
-                    {_.map(SPECIFIC_PROBLEMS, (prob, idx) => (
-                      <MenuItem key={`prob-${idx}`} value={prob}>
-                        {prob}
+                    {_.map(BUSSINESS_SEGMENTS, (segment, idx) => (
+                      <MenuItem key={`segment-${idx}`} value={segment}>
+                        <Checkbox
+                          checked={_.indexOf(bussinessSegment, segment) > -1}
+                        />
+                        <ListItemText primary={segment} />
                       </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
-              )}
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id="primary-user-label">Primary User</InputLabel>
-                <Select
-                  labelId="primary-user-label"
-                  id="primary-user"
-                  label="Type of User"
-                  {...primaryUsers.bind}
-                >
-                  <MenuItem value="" />
-                  {_.map(PRIMARY_USERS, (user, idx) => (
-                    <MenuItem key={`user-${idx}`} value={user}>
-                      {user}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+
+            <Grid container>
+              <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom component="div">
+                  Who are your users?
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="primary-user-label">Primary User</InputLabel>
+                  <Select
+                    labelId="primary-user-label"
+                    id="primary-user"
+                    label="Type of User"
+                    {...primaryUsers.bind}
+                  >
+                    <MenuItem value="" />
+                    {_.map(PRIMARY_USERS, (user, idx) => (
+                      <MenuItem key={`user-${idx}`} value={user}>
+                        {user}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="primary-user-label">Secondary User</InputLabel>
+                  <Select
+                    labelId="primary-user-label"
+                    id="primary-user"
+                    label="Type of User"
+                    {...secondaryUsers.bind}
+                  >
+                    <MenuItem value="" />
+                    {_.map(PRIMARY_USERS, (user, idx) => (
+                      <MenuItem key={`user-${idx}`} value={user}>
+                        {user}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id="primary-user-label">Secondary User</InputLabel>
-                <Select
-                  labelId="primary-user-label"
-                  id="primary-user"
-                  label="Type of User"
-                  {...secondaryUsers.bind}
-                >
-                  <MenuItem value="" />
-                  {_.map(PRIMARY_USERS, (user, idx) => (
-                    <MenuItem key={`user-${idx}`} value={user}>
-                      {user}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            {specificProblem.problem !== 'Consumer' && (
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id="bussiness-segment-label">
-                  Bussiness Segment
-                </InputLabel>
-                <Select
-                  labelId="bussiness-segment-label"
-                  id="bussiness-segment"
-                  value={bussinessSegment}
-                  label="Type of User"
-                  multiple
-                  onChange={(event) => {
-                    const {
-                      target: { value },
-                    } = event;
-                    setBussinessSegment(
-                      // On autofill we get a stringified value.
-                      typeof value === 'string' ? value.split(',') : value,
-                    );
-                  }}
-                  renderValue={(selected) => selected.join(', ')}
-                >
-                  <MenuItem value="" />
-                  {_.map(BUSSINESS_SEGMENTS, (segment, idx) => (
-                    <MenuItem key={`segment-${idx}`} value={segment}>
-                      <Checkbox
-                        checked={_.indexOf(bussinessSegment, segment) > -1}
-                      />
-                      <ListItemText primary={segment} />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            )}
+
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>

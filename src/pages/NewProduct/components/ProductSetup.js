@@ -130,13 +130,6 @@ const ProductSetup = ({
   || (productFormData && productFormData.start_date) || new Date());
   const [endDate, handleEndDateChange] = useState((editData && editData.end_date)
   || (productFormData && productFormData.end_date) || new Date());
-  const [useBuildlyArch, setUseBuildlyArch] = useState((editData
-    && editData.product_info
-    && editData.product_info.use_buildly_architecture
-  ) || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.use_buildly_arch
-  ) || true);
   const [formError, setFormError] = useState({});
 
   const editCreds = [];
@@ -304,10 +297,6 @@ const ProductSetup = ({
     || (productFormData
       && productFormData.end_date
       && (endDate !== productFormData.end_date))
-    || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.use_buildly_architecture
-      && (useBuildlyArch !== productFormData.product_info.use_buildly_architecture))
   );
 
   const handleFeatureCredential = (event) => {
@@ -496,7 +485,6 @@ const ProductSetup = ({
       third_party_tool: tools,
       product_info: {
         ...productFormData?.product_info,
-        use_buildly_architecture: useBuildlyArch,
       },
       creds,
       changedData,
@@ -811,36 +799,6 @@ const ProductSetup = ({
             </Grid>
           </Grid>
         </Box>
-        <Grid container>
-          <Grid item>
-            <FormControl component="fieldset">
-              <Typography variant="h6">
-                Do you want to use Buildly for your Architecture?
-              </Typography>
-              <RadioGroup
-                row
-                aria-label="buildly for architecture"
-                name="row-radio-buttons-group"
-                color="success"
-                onChange={(e) => {
-                  setUseBuildlyArch(e.target.value === 'true');
-                }}
-                value={useBuildlyArch}
-              >
-                <FormControlLabel
-                  value
-                  control={<StyledRadio />}
-                  label="Yes"
-                />
-                <FormControlLabel
-                  value={false}
-                  control={<StyledRadio />}
-                  label="No"
-                />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-        </Grid>
         <Grid container spacing={3} className={classes.buttonContainer}>
           <Grid item xs={12} sm={4}>
             <Button
