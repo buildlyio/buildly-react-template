@@ -18,25 +18,12 @@ import Crud from '@modules/crud/Crud';
 const useStyles = makeStyles((theme) => ({
   root: {
     '& .MuiTableCell-root': {
-      color: `${theme.palette.secondary.contrastText} !important`,
-      '& .MuiSwitch-track': {
-        backgroundColor: theme.palette.secondary.light,
-      },
-      '& .MuiSwitch-colorPrimary.Mui-disabled': {
-        color: theme.palette.secondary.light,
-      },
-      '& .MuiSwitch-colorPrimary.Mui-disabled + .MuiSwitch-track': {
-        backgroundColor: theme.palette.secondary.light,
-      },
-      '& .MuiSwitch-colorPrimary.Mui-checked + .MuiSwitch-track': {
-        backgroundColor: theme.palette.primary.main,
-      },
+      borderBottomColor: theme.palette.neutral.text,
     },
   },
   icon: {
-    color: theme.palette.secondary.contrastText,
     '&.Mui-disabled': {
-      color: theme.palette.secondary.light,
+      color: theme.palette.contrast.main.light,
     },
   },
 }));
@@ -54,7 +41,7 @@ const UserGroups = () => {
   const permissionCellTemplate = (row, crud, operation) => (
     <Switch
       size="small"
-      color="primary"
+      color="secondary"
       disabled={user.core_groups[0].id === row.id || !row.organization}
       checked={row.permissions[operation]}
       onChange={() => {
@@ -165,7 +152,7 @@ const UserGroups = () => {
                   <Button
                     color="primary"
                     size="small"
-                    variant="outlined"
+                    variant="contained"
                     onClick={() => addGroup(crud)}
                     startIcon={<AddIcon />}
                   >

@@ -31,12 +31,14 @@ const ConfirmModal = ({
         </DialogTitle>
         <DialogContent />
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleClose} color="primary" variant="contained" type="button">
             Cancel
           </Button>
           <Button
             onClick={submitAction}
             color="primary"
+            variant="contained"
+            type="button"
             autoFocus
           >
             {submitText}

@@ -84,3 +84,16 @@ describe('actions', () => {
     expect(actions.addOrgSocialUser(data)).toEqual(expectedAction);
   });
 });
+
+describe('actions', () => {
+  it('should create an action to verify email for the user', () => {
+    const data = 'AUTH/VERIFY_EMAIL';
+    const history = '';
+    const expectedAction = {
+      type: actions.VERIFY_EMAIL,
+      data,
+      history,
+    };
+    expect(actions.verifyEmail(data, history)).toEqual(expectedAction);
+  });
+});

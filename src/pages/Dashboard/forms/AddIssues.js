@@ -13,7 +13,16 @@ import {
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
+import {
+  getAllFeatures,
+  getAllStatuses,
+  createIssue,
+  updateIssue,
+} from '@redux/decision/actions/decision.actions';
+import { getAllCredentials } from '@redux/product/actions/product.actions';
 import { validators } from '@utils/validators';
+import { ISSUETYPES, TAGS } from './formConstants';
+import { routes } from '@routes/routesConstants';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 
 const useStyles = makeStyles((theme) => ({
@@ -44,22 +53,56 @@ const AddIssues = ({
   statuses,
   issues,
   features,
+<<<<<<< HEAD
   repos,
   devs,
+=======
+  credentials,
+  products,
+  boards,
+>>>>>>> master
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
+<<<<<<< HEAD
   const [autoCompleteValue, setAutoCompleteValue] = useState([]);
 
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === 'edit';
+=======
+  const [productFeatures, setProductFeatures] = useState([]);
+>>>>>>> master
   const editData = (
     location.state
     && location.state.type === 'edit'
     && location.state.data
   ) || {};
+<<<<<<< HEAD
   const productID = location.state && location.state.productID;
+=======
+  const convertData = (
+    location.state
+    && location.state.type === 'convert'
+    && location.state.data
+  ) || {};
+  const product_uuid = location.state && location.state.product_uuid;
+  const prdt = _.find(products, { product_uuid });
+  const [product, setProduct] = useState('');
+  const [prodStatus, setProdStatus] = useState('');
+  const [repo, setRepo] = useState((editData && editData.repository) || '');
+  const repoData = _.map(prdt?.issue_tool_detail?.repository_list);
+  const [repoList, setRepoList] = useState((editData && repoData) || []);
+  const [statusID, setStatusID] = useState((editData && editData.status) || '');
+  const currentStat = _.filter(statuses, { product_uuid });
+  const currentStatData = _.find(currentStat, { status_uuid: editData.status });
+  const [status, setStatus] = useState('');
+  const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
+
+  const redirectTo = location.state && location.state.from;
+  const editPage = location.state && location.state.type === 'edit';
+  const convertPage = location.state && location.state.type === 'convert';
+>>>>>>> master
 
   const name = useInput(editData.name || '', {
     required: true,
@@ -95,6 +138,33 @@ const AddIssues = ({
   const [endDate, handleEndDateChange] = useState(
     (editData && editData.end_date) || new Date(),
   );
+<<<<<<< HEAD
+=======
+  const [tags, setTags] = useState(
+    (convertData && convertData.tags)
+    || (editData && editData.tags)
+    || [],
+  );
+  const estimate = useInput(
+    (convertData && convertData.total_estimate)
+    || (editData && editData.estimate)
+    || '',
+  );
+  const complexity = useInput((editData && editData.complexity) || 0);
+
+  const editAssigneeData = [];
+  for (let i = 0; i < editData?.issue_detail?.assignees?.length; i += 1) {
+    editAssigneeData.push(editData.issue_detail.assignees[i].username);
+  }
+  const [assignees, setAssignees] = useState((editData && editAssigneeData) || []);
+  const assigneeData = [];
+  for (let i = 0; i < product?.feature_tool_detail?.user_list?.length; i += 1) {
+    assigneeData.push(product.feature_tool_detail.user_list[i].username);
+  }
+  const assigneesList = [...new Set(product?.issue_tool_detail?.user_list
+    ?.filter((element) => assignees?.includes(element?.username)))];
+  const [formError, setFormError] = useState({});
+>>>>>>> master
 
 
   const buttonText = editPage ? 'Save' : 'Add Issue';
@@ -103,14 +173,65 @@ const AddIssues = ({
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
+<<<<<<< HEAD
+=======
+  useEffect(() => {
+    if (!features || _.isEmpty(features)) {
+      dispatch(getAllFeatures());
+    }
+    dispatch(getAllStatuses());
+    if (!credentials || _.isEmpty(credentials)) {
+      dispatch(getAllCredentials());
+    }
+  }, []);
+
+  useEffect(() => {
+    setProductFeatures(_.filter(features, { product_uuid }));
+  }, [features]);
+
+  useEffect(() => {
+    const prd = _.find(products, { product_uuid });
+
+    if (prd && prd.issue_tool_detail
+      && !_.isEmpty(prd.issue_tool_detail)
+    ) {
+      setRepoList(_.map(prd.issue_tool_detail.repository_list));
+    }
+    setProduct(prd);
+  }, [products]);
+
+  useEffect(() => {
+    const sta = _.filter(statuses, { product_uuid });
+    setProdStatus(sta);
+    if (editData) {
+      setStatus(_.find(sta, { status_uuid: editData.status }));
+    }
+  }, [product]);
+
+>>>>>>> master
   const closeFormModal = () => {
     const dataHasChanged = (
       name.hasChanged()
       || description.hasChanged()
       || type.hasChanged()
+<<<<<<< HEAD
       || repo.hasChanged()
       || (editPage && issueStatus.hasChanged())
       || (editPage && assignedTo.hasChanged())
+=======
+      || (!_.isEmpty(editData) && !_.isEqual(startDate, editData.start_date))
+      || (!_.isEmpty(editData) && !_.isEqual(endDate, editData.end_date))
+      || (_.isEmpty(currentStatData) && !_.isEmpty(status))
+      || (!_.isEmpty(convertData) && !_.isEqual(tags, convertData.tags))
+      || (!_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
+      || (_.isEmpty(editData) && !_.isEmpty(tags))
+      || estimate.hasChanged()
+      || complexity.hasChanged()
+      || (product
+        && product.issue_tool_detail
+        && !_.isEmpty(repoList)
+        && repo !== '')
+>>>>>>> master
     );
 
     if (dataHasChanged) {
@@ -118,7 +239,9 @@ const AddIssues = ({
     } else {
       setFormModal(false);
       if (location && location.state) {
-        history.push(redirectTo);
+        history.push(_.includes(location.state.from, 'kanban')
+          ? `${routes.DASHBOARD}/kanban`
+          : `${routes.DASHBOARD}/list`);
       }
     }
   };
@@ -127,10 +250,13 @@ const AddIssues = ({
     setConfirmModal(false);
     setFormModal(false);
     if (location && location.state) {
-      history.push(redirectTo);
+      history.push(_.includes(location.state.from, 'kanban')
+        ? `${routes.DASHBOARD}/kanban`
+        : `${routes.DASHBOARD}/list`);
     }
   };
 
+<<<<<<< HEAD
   const handleSubmit = (event) => {
     event.preventDefault();
     const id = editPage
@@ -145,14 +271,83 @@ const AddIssues = ({
       repo: repo.value,
       status: editPage ? issueStatus.value : 'created',
       assignedTo: editPage ? assignedTo.value : '',
-    };
+=======
+  // Handle tags list
+  const onTagsChange = (value) => {
+    switch (true) {
+      case (value.length > tags.length):
+        setTags([...tags, _.last(value)]);
+        break;
 
+      case (value.length < tags.length):
+        setTags(value);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const onAssigneeChange = (value) => {
+    switch (true) {
+      case (value.length > assignees.length):
+        setAssignees([...assignees, _.last(value)]);
+        break;
+
+      case (value.length < assignees.length):
+        setAssignees(value);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const issueCred = _.find(
+    credentials,
+    { product_uuid, auth_detail: { tool_type: 'Issue' } },
+  );
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const dateTime = new Date();
+    const formData = {
+      ...editData,
+      edit_date: dateTime,
+      name: name.value,
+      description: description.value,
+      feature_uuid: feature.value,
+      issue_type: type.value,
+      start_date: startDate,
+      end_date: endDate,
+      status: statusID,
+      tags,
+      product_uuid,
+      estimate: estimate.value,
+      complexity: Number(complexity.value),
+      repository: repo,
+      column_id: colID,
+      ...issueCred?.auth_detail,
+>>>>>>> master
+    };
     if (editPage) {
+<<<<<<< HEAD
       console.log('Dispatch edit issue action here');
     } else {
       console.log('Dispatch add issue action here');
+=======
+      editData.issue_detail.assignees = assigneesList;
+      dispatch(updateIssue(formData));
+    } else {
+      formData.issue_detail = {
+        assignees: assigneesList,
+      };
+      formData.create_date = dateTime;
+      dispatch(createIssue(formData));
+>>>>>>> master
     }
-    history.push(redirectTo);
+    history.push(_.includes(location.state.from, 'kanban')
+      ? `${routes.DASHBOARD}/kanban`
+      : `${routes.DASHBOARD}/list`);
   };
 
   const handleBlur = (e, validation, input, parentId) => {
@@ -180,9 +375,17 @@ const AddIssues = ({
       !name.value
       || !description.value
       || !type.value
+<<<<<<< HEAD
       || !repo.value
       || (editPage && !issueStatus.value)
       || (editPage && !assignedTo.value)
+=======
+      || !statusID
+      || (product
+        && product.issue_tool_detail
+        && !_.isEmpty(repoList)
+        && !repo)
+>>>>>>> master
     ) {
       return true;
     }
@@ -308,6 +511,51 @@ const AddIssues = ({
                   ))}
                 </TextField>
               </Grid>
+<<<<<<< HEAD
+=======
+              {!_.isEmpty(repoList) && (
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    select
+                    id="repo"
+                    label="Repository"
+                    name="repo"
+                    autoComplete="repo"
+                    value={repo}
+                    onChange={(e) => setRepo(e.target.value)}
+                  >
+                    {_.map(repoList, (rep) => (
+                      <MenuItem
+                        key={`rep-${rep.id}-${rep.name}`}
+                        value={rep.name}
+                      >
+                        {rep.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              )}
+              <Grid item xs={12} md={6}>
+                <DatePickerComponent
+                  label="Start Date"
+                  selectedDate={startDate}
+                  hasTime
+                  handleDateChange={handleStartDateChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <DatePickerComponent
+                  label="End Date"
+                  selectedDate={endDate}
+                  hasTime
+                  handleDateChange={handleEndDateChange}
+                />
+              </Grid>
+>>>>>>> master
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -315,6 +563,7 @@ const AddIssues = ({
                   required
                   fullWidth
                   select
+<<<<<<< HEAD
                   id="repo"
                   label="Link to Repo"
                   name="repo"
@@ -343,6 +592,28 @@ const AddIssues = ({
                       </MenuItem>
                     ),
                   )}
+=======
+                  id="status"
+                  label="Status"
+                  name="status"
+                  autoComplete="status"
+                  value={status}
+                  onChange={(e) => {
+                    const stat = e.target.value;
+                    setStatus(stat);
+                    setStatusID(stat.status_uuid);
+                    setColID(stat.status_tracking_id);
+                  }}
+                >
+                  {_.map(prodStatus, (sts) => (
+                    <MenuItem
+                      key={`status-${sts.status_uuid}-${sts.name}`}
+                      value={sts}
+                    >
+                      {sts.name}
+                    </MenuItem>
+                  ))}
+>>>>>>> master
                 </TextField>
               </Grid> */}
               {editPage && (
@@ -459,6 +730,36 @@ const AddIssues = ({
                   )}
                 />
               </Grid>
+              {!_.isEmpty(product?.issue_tool_detail?.user_list) && (
+              <Grid item xs={12}>
+                <Autocomplete
+                  fullWidth
+                  multiple
+                  filterSelectedOptions
+                  id="assignees"
+                  options={assigneeData}
+                  value={assignees}
+                  onChange={(e, newValue) => onAssigneeChange(newValue)}
+                  renderTags={(value, getAssigneeProps) => (
+                    _.map(value, (option, index) => (
+                      <Chip
+                        variant="default"
+                        label={option}
+                        {...getAssigneeProps({ index })}
+                      />
+                    ))
+                  )}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="Assignees"
+                      margin="normal"
+                    />
+                  )}
+                />
+              </Grid>
+              )}
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -621,7 +922,14 @@ const AddIssues = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+<<<<<<< HEAD
   ...state.decisionReducer,
+=======
+  statuses: state.decisionReducer.statuses,
+  features: state.decisionReducer.features,
+  products: state.productReducer.products,
+  credentials: state.productReducer.credentials,
+>>>>>>> master
 });
 
 export default connect(mapStateToProps)(AddIssues);

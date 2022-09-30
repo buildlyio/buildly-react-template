@@ -315,3 +315,59 @@ describe('Delete Third Party Tool action', () => {
       .toEqual(expectedAction);
   });
 });
+
+// Test Get Board
+describe('Get Board action', () => {
+  it('should create an action to get board', () => {
+    const product_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
+    const expectedAction = {
+      type: actions.GET_BOARD,
+      product_uuid,
+    };
+
+    expect(actions.getBoard(product_uuid))
+      .toEqual(expectedAction);
+  });
+});
+
+// Test Create Credential
+describe('Create Board action', () => {
+  it('should create an action to create board', () => {
+    const data = { name: 'Test Board' };
+    const expectedAction = {
+      type: actions.CREATE_BOARD,
+      data,
+    };
+
+    expect(actions.createBoard(data))
+      .toEqual(expectedAction);
+  });
+});
+
+// Test Validate Credential
+describe('Validate Credential action', () => {
+  it('should create an action to validate credential', () => {
+    const data = { name: 'Test Validate Credential' };
+    const expectedAction = {
+      type: actions.VALIDATE_CREDENTIAL,
+      data,
+    };
+
+    expect(actions.validateCredential(data))
+      .toEqual(expectedAction);
+  });
+});
+
+// Test Add DOC Identifier action
+describe('Add Doc Identifier action', () => {
+  it('should create an action to add Doc identifier', () => {
+    const data = { file: 'test.pdf' };
+    const expectedAction = {
+      type: actions.ADD_PDF_IDENTIFIER,
+      data,
+    };
+    expect(actions.pdfIdentifier(
+      data,
+    )).toEqual(expectedAction);
+  });
+});

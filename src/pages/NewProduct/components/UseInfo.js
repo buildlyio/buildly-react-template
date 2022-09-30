@@ -16,39 +16,19 @@ const useStyles = makeStyles((theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
-    color: '#fff',
     [theme.breakpoints.up('sm')]: {
       width: '70%',
       margin: 'auto',
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.secondary.contrastText,
-    },
-    '& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgb(255, 255, 255, 0.23)',
-    },
-    '& .MuiInputLabel-root': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiSelect-icon': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiInputBase-input': {
-      color: theme.palette.secondary.contrastText,
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
     borderRadius: '18px',
-    '&.MuiButton-contained.Mui-disabled': {
-      color: 'hsl(0deg 0% 100% / 70%);',
-    },
   },
   formTitle: {
     fontWeight: 'bold',
     marginTop: '1em',
     textAlign: 'center',
-    color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
     display: 'flex',
@@ -76,48 +56,65 @@ const UseInfo = ({
   handleNext,
   handleBack,
   dispatch,
+  editData,
 }) => {
   const classes = useStyles();
 
   const productUse = useInput(
-    (productFormData
+    (editData
+      && editData.product_info
+      && editData.product_info.use)
+    || (productFormData
       && productFormData.product_info
       && productFormData.product_info.use)
     || '',
     { required: true },
   );
 
-  const useWhen = useInput(
-    (productFormData
+  const useWhen = useInput((editData
+    && editData.product_info
+    && editData.product_info.use_when)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.use_when)
     || '',
-    { required: true },
-  );
+  { required: true });
 
-  const useSituation = useInput(
-    (productFormData
+  const useSituation = useInput((editData
+    && editData.product_info
+    && editData.product_info.use_situation)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.use_situation)
     || '',
-    { required: true },
-  );
+  { required: true });
 
-  const impFunction = useInput(
-    (productFormData
+  const impFunction = useInput((editData
+    && editData.product_info
+    && editData.product_info.imp_function)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.imp_function)
     || '',
-    { required: true },
-  );
+  { required: true });
 
-  const deliveryRisk = useInput(
-    (productFormData
+  const deliveryRisk = useInput((editData
+    && editData.product_info
+    && editData.product_info.delivery_risk)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.delivery_risk)
     || '',
-    { required: true },
-  );
+  { required: true });
+
+  const toolReq = useInput((editData
+    && editData.product_info
+    && editData.product_info.tool_req)
+  || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.tool_req)
+    || '',
+  { required: true });
 
   const [formError, setFormError] = useState({});
 
@@ -148,11 +145,18 @@ const UseInfo = ({
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (!productUse.value
-      || !useWhen.value
-      || !useSituation.value
-      || !impFunction.value
-      || !deliveryRisk.value) {
+    if ((_.isEmpty(productFormData?.third_party_tool)
+    && !productUse.value)
+      || (_.isEmpty(productFormData?.third_party_tool)
+      && !useWhen.value)
+      || (_.isEmpty(productFormData?.third_party_tool)
+      && !useSituation.value)
+      || (_.isEmpty(productFormData?.third_party_tool)
+      && !impFunction.value)
+      || (_.isEmpty(productFormData?.third_party_tool)
+      && !deliveryRisk.value)
+      || (!_.isEmpty(productFormData?.third_party_tool)
+      && !toolReq.value)) {
       return true;
     }
     let errorExists = false;
@@ -170,6 +174,7 @@ const UseInfo = ({
     || useSituation.hasChanged()
     || impFunction.hasChanged()
     || deliveryRisk.hasChanged()
+    || toolReq.hasChanged()
   );
 
   /**
@@ -187,6 +192,7 @@ const UseInfo = ({
         use_situation: useSituation.value,
         imp_function: impFunction.value,
         delivery_risk: deliveryRisk.value,
+        tool_req: toolReq.value,
       },
       edit_date: new Date(),
     };
@@ -198,83 +204,104 @@ const UseInfo = ({
     <div>
       <form className={classes.form} noValidate onSubmit={handleSubmit}>
         <Box mb={2} mt={3}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                multiline
-                rows={6}
-                id="productUse"
-                label="What is the product used for"
-                name="productUse"
-                autoComplete="productUse"
-                onBlur={(e) => handleBlur(e, 'required', productUse)}
-                {...productUse.bind}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                multiline
-                rows={6}
-                id="useWhen"
-                label="When is it used"
-                name="useWhen"
-                autoComplete="useWhen"
-                onBlur={(e) => handleBlur(e, 'required', name)}
-                {...useWhen.bind}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                multiline
-                rows={6}
-                id="useSituation"
-                label="What situations is it used in?"
-                name="useSituation"
-                autoComplete="useSituation"
-                onBlur={(e) => handleBlur(e, 'required', name)}
-                {...useSituation.bind}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                multiline
-                rows={6}
-                id="impFunction"
-                label="What will be the most important functionality"
-                name="impFunction"
-                autoComplete="impFunction"
-                onBlur={(e) => handleBlur(e, 'required', name)}
-                {...impFunction.bind}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                multiline
-                rows={6}
-                id="deliveryRisk"
-                label="What’s the biggest risk to product delivery?"
-                name="deliveryRisk"
-                autoComplete="deliveryRisk"
-                onBlur={(e) => handleBlur(e, 'required', name)}
-                {...deliveryRisk.bind}
-              />
-            </Grid>
-          </Grid>
+          {(!_.isEmpty(productFormData?.third_party_tool)
+            ? (
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  multiline
+                  rows={6}
+                  id="toolReq"
+                  label="Do you already have requirements in your connected project planning tool?"
+                  name="toolReq"
+                  autoComplete="toolReq"
+                  onBlur={(e) => handleBlur(e, 'required', toolReq)}
+                  {...toolReq.bind}
+                />
+              </Grid>
+            )
+            : (
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    multiline
+                    rows={6}
+                    id="productUse"
+                    label="What is the product used for"
+                    name="productUse"
+                    autoComplete="productUse"
+                    onBlur={(e) => handleBlur(e, 'required', productUse)}
+                    {...productUse.bind}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    multiline
+                    rows={6}
+                    id="useWhen"
+                    label="When is it used"
+                    name="useWhen"
+                    autoComplete="useWhen"
+                    onBlur={(e) => handleBlur(e, 'required', useWhen)}
+                    {...useWhen.bind}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    multiline
+                    rows={6}
+                    id="useSituation"
+                    label="What situations is it used in?"
+                    name="useSituation"
+                    autoComplete="useSituation"
+                    onBlur={(e) => handleBlur(e, 'required', useSituation)}
+                    {...useSituation.bind}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    multiline
+                    rows={6}
+                    id="impFunction"
+                    label="What will be the most important functionality"
+                    name="impFunction"
+                    autoComplete="impFunction"
+                    onBlur={(e) => handleBlur(e, 'required', impFunction)}
+                    {...impFunction.bind}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    multiline
+                    rows={6}
+                    id="deliveryRisk"
+                    label="What’s the biggest risk to product delivery?"
+                    name="deliveryRisk"
+                    autoComplete="deliveryRisk"
+                    onBlur={(e) => handleBlur(e, 'required', deliveryRisk)}
+                    {...deliveryRisk.bind}
+                  />
+                </Grid>
+              </Grid>
+            )
+        )}
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>
               <Button

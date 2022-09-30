@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import { Container } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import { UserContext, getUser } from '@context/User.context';
 import TopBar from '@layout/TopBar/TopBar';
-import NavBar from '@layout/NavBar/NavBar';
 import Dashboard from '@pages/Dashboard/Dashboard';
 import UserManagement from '@pages/UserManagement/UserManagement';
-import MissingData from '@pages/MissingData/MissingData';
 import { routes } from '@routes/routesConstants';
 import NewProduct from '@pages/NewProduct/NewProduct';
 import Release from '@pages/Release/Release';
 import ViewRelease from '@pages/Release/components/ViewRelease';
 import Milestone from '@pages/Milestone/Milestone';
 import DeveloperForm from '@pages/DeveloperForm/DeveloperForm';
+import Products from '@pages/Products/Products';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,8 +23,8 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    height: '100%',
-    paddingTop: '6em',
+    height: '100vh',
+    paddingTop: '3.5em',
     maxWidth: '100% !important',
   },
 }));
@@ -46,12 +45,6 @@ const ContainerDashboard = ({ location, history }) => {
           location={location}
           history={history}
         />
-        <NavBar
-          navHidden={navHidden}
-          setNavHidden={setNavHidden}
-          location={location}
-          history={history}
-        />
         <Container className={classes.content}>
           <Switch>
             <Route
@@ -61,12 +54,12 @@ const ContainerDashboard = ({ location, history }) => {
             />
             <Route path={routes.DASHBOARD} component={Dashboard} />
             <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
-            <Route path={routes.MISSING_DATA} component={MissingData} />
             <Route path={routes.NEW_PRODUCT} component={NewProduct} />
             <Route path={routes.DEVELOPER_FORM} component={DeveloperForm} />
             <Route exact path={`${routes.RELEASE}/view/:releaseID`} component={ViewRelease} />
             <Route path={routes.RELEASE} component={Release} />
             <Route path={routes.MILESTONE} component={Milestone} />
+            <Route path={routes.PRODUCTS} component={Products} />
           </Switch>
         </Container>
       </UserContext.Provider>

@@ -7,16 +7,18 @@ import {
   AppBar,
   Toolbar,
   IconButton,
-  Hidden,
   TextField,
   MenuItem,
+  Button,
+  Menu,
 } from '@mui/material';
+import { styled, alpha } from '@mui/material/styles';
 import {
   ExitToApp as ExitToAppIcon,
   Group as GroupIcon,
-  Menu as MenuIcon,
+  KeyboardArrowDown,
 } from '@mui/icons-material';
-import logo from '@assets/light-logo.png';
+import logo from '@assets/insights-logo.png';
 import { UserContext } from '@context/User.context';
 import { logout, loadOrgNames } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
@@ -24,12 +26,12 @@ import { hasGlobalAdminRights, hasAdminRights } from '@utils/permissions';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    backgroundColor: theme.palette.secondary.light,
+    backgroundColor: theme.palette.contrast.main,
     zIndex: theme.zIndex.drawer + 1,
     width: '100%',
   },
   logo: {
-    maxWidth: 50,
+    maxWidth: 144,
     objectFit: 'contain',
   },
   menuButton: {
@@ -39,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 'auto',
   },
   menuIcon: {
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.contrast.text,
   },
   globalFilter: {
     width: theme.spacing(24),
@@ -48,13 +50,56 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(1, 3.5, 1, 2),
     },
   },
+  navMenu: {
+    marginRight: theme.spacing(1),
+    marginLeft: theme.spacing(3),
+  },
+}));
+
+const StyledMenu = styled((props) => (
+  <Menu
+    elevation={0}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'right',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'right',
+    }}
+    {...props}
+  />
+))(({ theme }) => ({
+  '& .MuiPaper-root': {
+    borderRadius: 6,
+    marginTop: theme.spacing(1),
+    minWidth: 180,
+    boxShadow:
+      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+    '& .MuiMenu-list': {
+      padding: '4px 0',
+    },
+    '& .MuiMenuItem-root': {
+      '& .MuiSvgIcon-root': {
+        fontSize: 18,
+        color: theme.palette.text.secondary,
+        marginRight: theme.spacing(1.5),
+      },
+      '&:active': {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          theme.palette.action.selectedOpacity,
+        ),
+      },
+    },
+  },
 }));
 
 /**
  * Component for the top bar header.
  */
 const TopBar = ({
-  location, history, dispatch, navHidden, setNavHidden, orgNames,
+  history, dispatch, orgNames, location,
 }) => {
   const classes = useStyles();
   const user = useContext(UserContext);
@@ -62,18 +107,11 @@ const TopBar = ({
   const isSuperAdmin = hasGlobalAdminRights(user);
 
   const [organization, setOrganization] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   if (!organization) {
     setOrganization(user.organization.name);
   }
-
-  useEffect(() => {
-    if (location.path !== routes.MISSING_DATA) {
-      if (!user.email || !user.organization || !user.user_type) {
-        history.push(routes.MISSING_DATA);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     if (!orgNames) {
@@ -95,18 +133,6 @@ const TopBar = ({
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
-        <Hidden mdUp>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            onClick={() => setNavHidden(!navHidden)}
-            color="default"
-            aria-label="menu"
-            size="large"
-          >
-            <MenuIcon />
-          </IconButton>
-        </Hidden>
         <Link to={routes.DASHBOARD}>
           <img src={logo} alt="Logo" className={classes.logo} />
         </Link>
@@ -133,6 +159,62 @@ const TopBar = ({
               ))}
             </TextField>
           )}
+          <>
+            <Button
+              id="topbar-menu"
+              aria-controls="topbar-menu"
+              aria-haspopup="true"
+              variant="contained"
+              disableElevation
+              endIcon={<KeyboardArrowDown />}
+              className={classes.navMenu}
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+            >
+              Navigate To
+            </Button>
+            <StyledMenu
+              id="topbar-menu"
+              MenuListProps={{
+                'aria-labelledby': 'topbar-menu',
+              }}
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={() => setAnchorEl(null)}
+            >
+              <MenuItem
+                disabled={
+                  (location.pathname === routes.DASHBOARD_LIST)
+                  || (location.pathname === routes.DASHBOARD_KANBAN)
+                }
+                onClick={() => {
+                  setAnchorEl(null);
+                  history.push(routes.DASHBOARD);
+                }}
+              >
+                Dashboard
+              </MenuItem>
+              {isAdmin && (
+              <MenuItem
+                disabled={location.pathname === routes.PRODUCTS}
+                onClick={() => {
+                  setAnchorEl(null);
+                  history.push(routes.PRODUCTS);
+                }}
+              >
+                Products
+              </MenuItem>
+              )}
+              <MenuItem
+                disabled={location.pathname === routes.RELEASE}
+                onClick={() => {
+                  setAnchorEl(null);
+                  history.push(routes.RELEASE);
+                }}
+              >
+                Releases
+              </MenuItem>
+            </StyledMenu>
+          </>
           {isAdmin && (
             <Link to={routes.USER_MANAGEMENT}>
               <IconButton aria-label="user-management" color="inherit" size="large">

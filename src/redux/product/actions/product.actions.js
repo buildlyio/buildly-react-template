@@ -1,5 +1,6 @@
 // Product Action types
 export const SAVE_PRODUCT_FORM_DATA = 'PRODUCT/SAVE_PRODUCT_FORM_DATA';
+export const CLEAR_BOARD_DATA = 'PRODUCT/CLEAR_BOARD_DATA';
 
 export const ALL_CREDENTIALS = 'PRODUCT/ALL_CREDENTIALS';
 export const ALL_CREDENTIALS_SUCCESS = 'PRODUCT/ALL_CREDENTIALS_SUCCESS';
@@ -101,6 +102,22 @@ export const DELETE_THIRD_PARTY_TOOL = 'PRODUCT/DELETE_THIRD_PARTY_TOOL';
 export const DELETE_THIRD_PARTY_TOOL_SUCCESS = 'PRODUCT/DELETE_THIRD_PARTY_TOOL_SUCCESS';
 export const DELETE_THIRD_PARTY_TOOL_FAILURE = 'PRODUCT/DELETE_THIRD_PARTY_TOOL_FAILURE';
 
+export const GET_BOARD = 'PRODUCT/GET_BOARD';
+export const GET_BOARD_SUCCESS = 'PRODUCT/GET_BOARD_SUCCESS';
+export const GET_BOARD_FAILURE = 'PRODUCT/GET_BOARD_FAILURE';
+
+export const CREATE_BOARD = 'PRODUCT/CREATE_BOARD';
+export const CREATE_BOARD_SUCCESS = 'PRODUCT/CREATE_BOARD_SUCCESS';
+export const CREATE_BOARD_FAILURE = 'PRODUCT/CREATE_BOARD_FAILURE';
+
+export const VALIDATE_CREDENTIAL = 'PRODUCT/VALIDATE_CREDENTIAL';
+export const VALIDATE_CREDENTIAL_SUCCESS = 'PRODUCT/VALIDATE_CREDENTIAL_SUCCESS';
+export const VALIDATE_CREDENTIAL_FAILURE = 'PRODUCT/VALIDATE_CREDENTIAL_FAILURE';
+
+export const ADD_DOC_IDENTIFIER = 'SHIPMENT/ADD_DOC_IDENTIFIER';
+export const ADD_DOC_IDENTIFIER_SUCCESS = 'SHIPMENT/ADD_DOC_IDENTIFIER_SUCCESS';
+export const ADD_DOC_IDENTIFIER_FAILURE = 'SHIPMENT/ADD_DOC_IDENTIFIER_FAILURE';
+
 /**
  * Save Product Form Data
  * @param {Object} formData
@@ -108,6 +125,14 @@ export const DELETE_THIRD_PARTY_TOOL_FAILURE = 'PRODUCT/DELETE_THIRD_PARTY_TOOL_
 export const saveProductFormData = (formData) => ({
   type: SAVE_PRODUCT_FORM_DATA,
   formData,
+});
+
+/**
+ * Clear Board Data
+ * @param {Object} formData
+ */
+export const clearBoardData = () => ({
+  type: CLEAR_BOARD_DATA,
 });
 
 /**
@@ -315,4 +340,44 @@ export const updateThirdPartyTool = (data) => ({
 export const deleteThirdPartyTool = (thirdpartytool_uuid) => ({
   type: DELETE_THIRD_PARTY_TOOL,
   thirdpartytool_uuid,
+});
+
+/**
+ * Get board details
+ * @param {uuid} product_uuid
+ */
+export const getBoard = (product_uuid) => ({
+  type: GET_BOARD,
+  product_uuid,
+});
+
+/**
+ * Create a board
+ * @param {Object} data
+ */
+export const createBoard = (data, create) => ({
+  type: CREATE_BOARD,
+  data,
+  create,
+});
+
+/**
+ * Validate tool Credential
+ * @param {Object} data
+ */
+export const validateCredential = (data, valid) => ({
+  type: VALIDATE_CREDENTIAL,
+  data,
+  valid,
+});
+
+/**
+ * PDF Identifier
+ * @param {FormData} data
+ */
+export const docIdentifier = (
+  uploadFile,
+) => ({
+  type: ADD_DOC_IDENTIFIER,
+ uploadFile,
 });

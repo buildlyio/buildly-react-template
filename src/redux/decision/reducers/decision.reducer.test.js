@@ -10,7 +10,22 @@ const initialState = {
   feedbacks: [],
   issues: [],
   statuses: [],
+  tickets: [],
+  featureFormData: null,
 };
+
+describe('Save Feature Form reducer', () => {
+  it('should save feature form data', () => {
+    const formData = { name: 'Test' };
+    expect(reducer.default(
+      initialState,
+      { type: actions.SAVE_FEATURE_FORM_DATA, formData },
+    )).toEqual({
+      ...initialState,
+      featureFormData: formData,
+    });
+  });
+});
 
 describe('Get all decisions reducer', () => {
   it('Empty reducer', () => {
@@ -914,7 +929,7 @@ describe('Get a status reducer', () => {
 
   it('get a status success reducer', () => {
     const data = {
-      status_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      product_uuid: '275ac379-82a2-4937-a434-ce6c2e277c88',
       name: 'Test',
     };
 
@@ -1056,6 +1071,93 @@ describe('Delete a status reducer', () => {
       loading: false,
       loaded: true,
       statuses: [],
+    });
+  });
+
+  it('delete a status fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.DELETE_STATUS_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Create a ticket reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.IMPORT_TICKETS },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('create a ticket success reducer', () => {
+    const data = {
+      product_uuid: '275ac379-82a2-4937-a434-ce6c2e277c88',
+      name: 'Test',
+    };
+
+    expect(reducer.default(
+      initialState,
+      { type: actions.IMPORT_TICKETS_SUCCESS, data },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      tickets: [data],
+    });
+  });
+
+  it('create a ticket fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.IMPORT_TICKETS_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Clear a product reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.CLEAR_PRODUCT_DATA },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('clear a product success reducer', () => {
+    const data = {
+      product_uuid: '275ac379-82a2-4937-a434-ce6c2e277c88',
+      name: 'Test',
+    };
+
+    expect(reducer.default(
+      { ...initialState, features: [data] },
+      { ...initialState, issues: [data] },
+      {
+        type: actions.CLEAR_PRODUCT_DATA_SUCCESS,
+        product_uuid: data.product_uuid,
+      },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      features: [],
+      issues: [],
     });
   });
 

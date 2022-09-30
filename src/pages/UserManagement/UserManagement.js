@@ -27,7 +27,6 @@ import UserGroups from './UserGroups/UserGroups';
 const useStyles = makeStyles((theme) => ({
   userManagementHeading: {
     margin: theme.spacing(3, 0),
-    color: theme.palette.secondary.contrastText,
   },
   textField: {
     minHeight: rem(5),
@@ -40,9 +39,9 @@ const useStyles = makeStyles((theme) => ({
   },
   tabs: {
     '& .MuiTabs-root': {
-      color: theme.palette.secondary.contrastText,
+      color: theme.palette.contrast.text,
       '& .Mui-selected': {
-        color: theme.palette.primary.main,
+        color: theme.palette.secondary.main,
       },
       '& .MuiTabs-indicator': {
         backgroundColor: theme.palette.secondary.light,
@@ -114,7 +113,7 @@ const UserManagement = ({
             trigger={(
               <Button
                 type="button"
-                variant="outlined"
+                variant="contained"
                 size="small"
                 color="primary"
                 startIcon={<EmailIcon />}

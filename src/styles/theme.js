@@ -2,24 +2,20 @@ import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
 const theme = createTheme(({
   palette: {
-    mode: 'dark',
+    mode: 'light',
+    contrast: {
+      main: '#121212',
+      text: '#fff',
+    },
     primary: {
-      main: '#08b293',
-      dark: '#067f69',
-      light: '#0be5bd',
-      contrastText: '#fff',
+      main: '#f9943b', // orange
     },
     secondary: {
-      dark: '#191919',
-      main: '#4c4c4c',
-      light: '#7f7f7f',
-      contrastText: '#fff',
+      main: '#2E29B2', // blue
     },
     neutral: {
-      main: '#F6F8FA',
-      dark: '#887C5E',
-      light: '#646262',
-      contrastText: '#000',
+      main: '#DCDCE0',
+      text: '#000',
     },
   },
   typography: {
@@ -32,7 +28,11 @@ const theme = createTheme(({
       styleOverrides: {
         body: {
           padding: 0,
-          backgroundColor: '#202020',
+          backgroundColor: '#DCDCE0',
+          color: '#000',
+          '&#fc_frame, #fc_frame.fc-widget-normal': {
+            bottom: '100px !important',
+          },
         },
       },
     },

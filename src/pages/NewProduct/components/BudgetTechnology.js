@@ -21,25 +21,9 @@ const useStyles = makeStyles((theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
-    color: '#fff',
     [theme.breakpoints.up('sm')]: {
       width: '70%',
       margin: 'auto',
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.secondary.contrastText,
-    },
-    '& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgb(255, 255, 255, 0.23)',
-    },
-    '& .MuiInputLabel-root': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiSelect-icon': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiInputBase-input': {
-      color: theme.palette.secondary.contrastText,
     },
   },
   submit: {
@@ -50,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginTop: '1em',
     textAlign: 'center',
-    color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
     margin: theme.spacing(8, 0),
@@ -73,51 +56,82 @@ const useStyles = makeStyles((theme) => ({
 // eslint-disable-next-line import/no-mutable-exports
 export let checkIfBudgetTechnologyEdited;
 
-const BudgetTechnology = (props) => {
-  const {
-    location,
-    handleNext,
-    handleBack,
-  } = props;
+const BudgetTechnology = ({
+  productFormData,
+  handleNext,
+  handleBack,
+  dispatch,
+  editData,
+}) => {
   const classes = useStyles();
   const viewOnly = false;
   // const editPage = location.state && location.state.type === 'edit';
   const editData = (location.state && location.state.type === 'edit' && location.state.data)
     || {};
 
-  const [firstUserDate, handlefirstUserDateChange] = useState(
-    (editData && editData.first_user_ate) || new Date(),
-  );
+  const [firstUserDate, handlefirstUserDateChange] = useState((editData
+    && editData.product_info
+    && editData.product_info.first_user_date)
+  || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.first_user_date)
+    || new Date().setDate(new Date().getDate() + 90));
 
-  const [approxBudget, setApproxBudget] = useState({
-    value: 0,
-    category: '10-15k',
-  });
+  const [approxBudget, setApproxBudget] = useState((editData
+    && editData.product_info
+    && editData.product_info.approx_budget)
+  || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.approx_budget)
+    || {
+      value: 0,
+      category: '10-15k',
+    });
 
-  const hosting = useInput(
-    (editData && editData.product_hosting) || 'Hostinger',
-    { required: true },
-  );
+  const hosting = useInput((editData
+    && editData.product_info
+    && editData.product_info.hosting)
+  || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.hosting)
+    || 'No Preference',
+  { required: true });
 
-  const language = useInput(
-    (editData && editData.product_language) || 'JavaScript',
-    { required: true },
-  );
+  const language = useInput((editData
+    && editData.product_info
+    && editData.product_info.language)
+  || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.language)
+    || 'No Preference',
+  { required: true });
 
-  const database = useInput(
-    (editData && editData.product_database) || 'Postgres',
-    { required: true },
-  );
+  const database = useInput((editData
+    && editData.product_info
+    && editData.product_info.database)
+  || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.database)
+    || 'No Preference',
+  { required: true });
 
-  const storage = useInput(
-    (editData && editData.product_storage) || 'AWS',
-    { required: true },
-  );
+  const storage = useInput((editData
+    && editData.product_info
+    && editData.product_info.storage)
+  || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.storage)
+    || 'No Preference',
+  { required: true });
 
-  const deployment = useInput(
-    (editData && editData.product_deployment) || 'AWS',
-    { required: true },
-  );
+  const deployment = useInput((editData
+    && editData.product_info
+    && editData.product_info.deployment)
+  || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.deployment)
+    || 'No Preference',
+  { required: true });
 
   const [formError, setFormError] = useState({});
 

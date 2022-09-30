@@ -25,25 +25,6 @@ const useStyles = makeStyles((theme) => ({
   iconButton: {
     padding: theme.spacing(1.5, 0.5),
   },
-  dataTableBody: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: '#4F4D4D',
-    },
-    '&:nth-of-type(even)': {
-      backgroundColor: '#383636',
-    },
-    '&:hover': {
-      backgroundColor: '#000 !important',
-    },
-  },
-  dataTable: {
-    '& .MuiPaper-root': {
-      backgroundColor: '#383636',
-    },
-    '& tr > th': {
-      backgroundColor: '#383636',
-    },
-  },
 }));
 
 const DataTableWrapper = ({

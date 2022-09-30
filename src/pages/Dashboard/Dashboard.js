@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { Grid, Typography } from '@mui/material';
 import Loader from '@components/Loader/Loader';
 import { routes } from '@routes/routesConstants';
 import UserDashboard from './components/UserDashboard';
@@ -12,7 +13,7 @@ const Dashboard = ({
   user,
 }) => {
   useEffect(() => {
-    if (!user.survey_status) {
+    if (loaded && !user.survey_status) {
       if (user.user_type === 'Developer') {
         history.push(routes.DEVELOPER_FORM);
       }

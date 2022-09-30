@@ -55,6 +55,10 @@ export const ADD_ORG_SOCIAL_USER = 'AUTH/ADD_ORG_SOCIAL_USER';
 export const ADD_ORG_SOCIAL_USER_SUCCESS = 'AUTH/ADD_ORG_SOCIAL_USER_SUCCESS';
 export const ADD_ORG_SOCIAL_USER_FAIL = 'AUTH/ADD_ORG_SOCIAL_USER_FAIL';
 
+export const VERIFY_EMAIL = 'AUTH/VERIFY_EMAIL';
+export const VERIFY_EMAIL_SUCCESS = 'AUTH/VERIFY_EMAIL_SUCCESS';
+export const VERIFY_EMAIL_FAIL = 'AUTH/VERIFY_EMAIL_FAIL';
+
 /**
  * Login action
  * @param {{ username, password }} credentials
@@ -162,3 +166,9 @@ export const addOrgSocialUser = (data, existingOrg, history) => ({
   existingOrg,
   history,
 });
+
+/**
+ * Verify email for the user
+ * @param data
+ */
+export const verifyEmail = (data, history) => ({ type: VERIFY_EMAIL, data, history });
