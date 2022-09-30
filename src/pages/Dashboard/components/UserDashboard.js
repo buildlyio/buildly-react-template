@@ -29,9 +29,11 @@ import AddIssues from '../forms/AddIssues';
 import IssueSuggestions from '../forms/IssueSuggestions';
 import AddComments from '../forms/AddComments';
 import ConfirmModal from '@components/Modal/ConfirmModal';
+import BarChart from './BarChart';
 import ToolBoard from '../forms/ToolBoard';
 import StatusBoard from '../forms/StatusBoard';
 import DropColumn from '../forms/DropColumn';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -501,6 +503,60 @@ const UserDashboard = (props) => {
           </Grid>
         </div>
       </Grid>
+      <Grid mb={3} container justifyContent="center">
+        <Grid item className={classes.tabs}>
+          <Tabs value={view} onChange={viewTabClicked}>
+            {subNav.map((itemProps, index) => (
+              <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
+            ))}
+          </Tabs>
+        </Grid>
+      </Grid>
+
+      <ConfirmModal
+        open={openDeleteModal}
+        setOpen={setDeleteModal}
+        submitAction={handleDeleteModal}
+        title="Are you sure you want to delete?"
+        submitText="Delete"
+      />
+      <Route
+        path={routes.DASHBOARD_LIST}
+        render={(prps) => (
+          <List
+            {...prps}
+            product={product}
+            productFeatures={productFeatures}
+            productIssues={productIssues}
+            addItem={addItem}
+            editItem={editItem}
+            convertIssue={convertIssue}
+            deleteItem={deleteItem}
+          />
+        )}
+      />
+      <Route
+        path={routes.DASHBOARD_KANBAN}
+        render={(prps) => (
+          <Kanban
+            {...prps}
+            statuses={statuses}
+            product={product}
+            productFeatures={productFeatures}
+            productIssues={productIssues}
+            addItem={addItem}
+            editItem={editItem}
+            convertIssue={convertIssue}
+            deleteItem={deleteItem}
+          />
+        )}
+      />
+      <Route path={addFeatPath} component={AddFeatures} />
+      <Route path={editFeatPath} component={AddFeatures} />
+      <Route path={addIssuePath} component={AddIssues} />
+      <Route path={editIssuePath} component={AddIssues} />
+      <Route path={featureToIssuePath} component={AddIssues} />
+      <BarChart productFeatures={productFeatures} productIssues={productIssues} />
       {((_.isEmpty(status)) && product !== 0
         ? (!_.isEmpty(prod) && (!_.isEmpty(prod.third_party_tool)))
           ? (

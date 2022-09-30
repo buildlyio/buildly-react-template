@@ -95,6 +95,9 @@ import {
   VALIDATE_CREDENTIAL,
   VALIDATE_CREDENTIAL_SUCCESS,
   VALIDATE_CREDENTIAL_FAILURE,
+  ADD_DOC_IDENTIFIER,
+  ADD_DOC_IDENTIFIER_SUCCESS,
+  ADD_DOC_IDENTIFIER_FAILURE,
 } from '../actions/product.actions';
 import {
   createStatus,
@@ -982,6 +985,52 @@ function* validateCredential(payload) {
   }
 }
 
+function* docIdentifier(payload) {
+  try {
+      const response = yield call(
+        httpService.makeRequest,
+        'post',
+        `${window.env.API_URL}${productEndpoint}upload_file/`,
+        payload.uploadFile,
+        '',
+        'multipart/form-data',
+      );
+
+    yield [
+      yield put({
+        type: ADD_DOC_IDENTIFIER_SUCCESS,
+        response,
+      }),
+      // yield put({
+      //   type: UPDATE_PRODUCT,
+      //   payload: {
+      //     ...payload,
+      //     uploaded_pdf,
+      //     uploaded_pdf_link,
+      //     unique_identifier,
+      //   },
+      //   history,
+      //   redirectTo,
+      //   organization_uuid,
+      // }),
+    ];
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t Upload File!',
+        }),
+      ),
+      yield put({
+        type: ADD_DOC_IDENTIFIER_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
 // Watchers
 function* watchGetAllCredentials() {
   yield takeLatest(ALL_CREDENTIALS, allCredentials);
@@ -1095,6 +1144,10 @@ function* watchValidateCredential() {
   yield takeLatest(VALIDATE_CREDENTIAL, validateCredential);
 }
 
+function* watchdocIdentifier() {
+  yield takeLatest(ADD_DOC_IDENTIFIER, docIdentifier);
+}
+
 export default function* productSaga() {
   yield all([
     watchGetAllCredentials(),
@@ -1125,5 +1178,6 @@ export default function* productSaga() {
     watchDeleteRelease(),
     watchDeleteThirdPartyTool(),
     watchValidateCredential(),
+    watchdocIdentifier(),
   ]);
 }

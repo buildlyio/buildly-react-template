@@ -114,6 +114,10 @@ export const VALIDATE_CREDENTIAL = 'PRODUCT/VALIDATE_CREDENTIAL';
 export const VALIDATE_CREDENTIAL_SUCCESS = 'PRODUCT/VALIDATE_CREDENTIAL_SUCCESS';
 export const VALIDATE_CREDENTIAL_FAILURE = 'PRODUCT/VALIDATE_CREDENTIAL_FAILURE';
 
+export const ADD_DOC_IDENTIFIER = 'SHIPMENT/ADD_DOC_IDENTIFIER';
+export const ADD_DOC_IDENTIFIER_SUCCESS = 'SHIPMENT/ADD_DOC_IDENTIFIER_SUCCESS';
+export const ADD_DOC_IDENTIFIER_FAILURE = 'SHIPMENT/ADD_DOC_IDENTIFIER_FAILURE';
+
 /**
  * Save Product Form Data
  * @param {Object} formData
@@ -365,4 +369,15 @@ export const validateCredential = (data, valid) => ({
   type: VALIDATE_CREDENTIAL,
   data,
   valid,
+});
+
+/**
+ * PDF Identifier
+ * @param {FormData} data
+ */
+export const docIdentifier = (
+  uploadFile,
+) => ({
+  type: ADD_DOC_IDENTIFIER,
+ uploadFile,
 });

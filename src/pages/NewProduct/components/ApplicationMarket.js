@@ -15,6 +15,7 @@ import {
   Select,
   Button,
   Checkbox,
+  TextField,
   ListItemText,
 } from '@mui/material';
 import { useInput } from '@hooks/useInput';
@@ -135,6 +136,8 @@ const ApplicationMarket = ({
       product_info: {
         ...productFormData.product_info,
         application_type: applicationType.value,
+        specific_problem: specificProblem,
+        specific_problem_desc: specificProblemDesc.value,
         primary_users: primaryUsers.value,
         secondary_users: secondaryUsers.value,
         bussiness_segment: bussinessSegment,
