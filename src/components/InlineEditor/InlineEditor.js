@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   },
   textField: {
     '& input': {
-      color: theme.palette.secondary.contrastText,
+      color: theme.palette.contrast.text,
     },
   },
 }));

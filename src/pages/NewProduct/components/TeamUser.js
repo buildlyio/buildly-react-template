@@ -21,35 +21,33 @@ import {
   IconButton,
   TextField,
   Button,
+  Card,
+  CardContent,
+  Container,
+  Link,
+  Autocomplete,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
 } from '@mui/material';
+import FolderIcon from '@mui/icons-material/Folder';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { PictureAsPdf as PictureAsPdfIcon } from '@mui/icons-material';
 import { useInput } from '@hooks/useInput';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { saveProductFormData } from '@redux/product/actions/product.actions';
+import { saveProductFormData, docIdentifier } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
-    color: '#fff',
     [theme.breakpoints.up('sm')]: {
       width: '70%',
       margin: 'auto',
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.secondary.contrastText,
-    },
-    '& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgb(255, 255, 255, 0.23)',
-    },
-    '& .MuiInputLabel-root': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiSelect-icon': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiInputBase-input': {
-      color: theme.palette.secondary.contrastText,
     },
   },
   submit: {
@@ -60,7 +58,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginTop: '1em',
     textAlign: 'center',
-    color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
     display: 'flex',
@@ -81,73 +78,33 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
-  icon: {
-    borderRadius: '50%',
-    width: 16,
-    height: 16,
-    boxShadow:
-      'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
-    backgroundColor: '#f5f8fa',
-    backgroundImage:
-      'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
-    'input:hover ~ &': {
-      backgroundColor: '#ebf1f5',
-    },
-    'input:disabled ~ &': {
-      boxShadow: 'none',
-      background: 'rgba(206,217,224,.5)',
-    },
-  },
-  checkedIcon: {
-    backgroundColor: '#137cbd',
-    backgroundImage:
-      'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
-    '&:before': {
-      display: 'block',
-      width: 16,
-      height: 16,
-      backgroundImage: 'radial-gradient(#fff,#fff 28%,transparent 32%)',
-      content: '""',
-    },
-    'input:hover ~ &': {
-      backgroundColor: '#106ba3',
-    },
-  },
 }));
 
-const StyledRadio = (props) => {
-  const classes = useStyles();
-
-  return (
-    <Radio
-      color="primary"
-      checkedIcon={
-        <span className={`${classes.icon} ${classes.checkedIcon}`} />
-      }
-      icon={<span className={classes.icon} />}
-      {...props}
-    />
-  );
-};
+const StyledRadio = (props) => <Radio color="info" {...props} />;
 
 // eslint-disable-next-line import/no-mutable-exports
 export let checkIfTeamUserEdited;
 
 const TeamUser = ({
-  productFormData, handleNext, handleBack, dispatch,
+  productFormData, handleNext, handleBack, dispatch, editData,
 }) => {
   const classes = useStyles();
+  // let fileChanged = false;
+  const [filesUpload, setFilesUpload] = useState([]);
 
-  const teamSize = useInput(
-    (productFormData
+  const teamSize = useInput((editData
+    && editData.product_info
+    && editData.product_info.team_size)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.team_size)
     || '5 - 10',
-    { required: true },
-  );
+  { required: true });
 
-  const [roleCount, setRoleCount] = useState(
-    (productFormData
+  const [roleCount, setRoleCount] = useState((editData
+    && editData.product_info
+    && editData.product_info.role_count)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.role_count)
     || [
@@ -158,16 +115,18 @@ const TeamUser = ({
       { role: 'Product Manager', count: 0 },
       { role: 'Product Manager (Budget Approval?)', count: 0 },
       { role: 'Others', count: 0 },
-    ],
-  );
+    ]);
 
-  const existingFeatures = useInput(
-    (productFormData
+  const existingFeatures = useInput((editData
+    && editData.product_info
+    && editData.product_info.existing_features)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.existing_features)
     || '',
-    { required: true },
-  );
+  { required: true });
+
+  // const [existingLinks, setExistingLinks] = useState([]);
 
   const submitDisabled = () => {
     let countNum = 0;
@@ -192,23 +151,36 @@ const TeamUser = ({
     || existingFeatures.hasChanged()
   );
 
+  // const removeFile = (filename) => {
+  //   setFiles(files.filter((file) => file.name !== filename));
+  // };
+
+  let uploadFile;
+  const fileChange = (event) => {
+    setFilesUpload(event.target.files);
+  };
+
   /**
    * Submit The form and add/edit custodian
    * @param {Event} event the default submit event
    */
   const handleSubmit = (event) => {
     event.preventDefault();
+    uploadFile = new FormData();
+    for (const key of Object.keys(filesUpload)) {
+      uploadFile.append('file', filesUpload[key]);
+    }
     const formData = {
       ...productFormData,
       product_info: {
         ...productFormData.product_info,
         team_size: teamSize.value,
         role_count: roleCount,
-        existing_features: existingFeatures.value,
       },
       edit_date: new Date(),
     };
     dispatch(saveProductFormData(formData));
+    dispatch(docIdentifier(uploadFile));
     handleNext();
   };
 
@@ -323,18 +295,54 @@ const TeamUser = ({
               </Typography>
             </Grid>
             <Grid item xs={12}>
+              {/* <TextField
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                // value={existingLinks}
+                id="existingLinks"
+                label="Existing File links"
+                name="existingLinks"
+                autoComplete="existingLinks"
+                onKeyDown={(e) => linkify(e)}
+                {...existingLinks.bind}
+              /> */}
               <TextField
                 variant="outlined"
                 margin="normal"
                 fullWidth
-                multiline
-                rows={6}
+                // multiple
+                type="file"
                 id="existingFeatures"
                 label="Existing Features"
                 name="existingFeatures"
                 autoComplete="existingFeatures"
-                {...existingFeatures.bind}
+                inputProps={{ multiple: true }}
+                InputLabelProps={{ shrink: true }}
+                onChange={fileChange}
+                // {...existingFeatures.bind}
               />
+              {/* <List>
+                {_.map(files, (file, index) => (
+                  <ListItem
+                    key={index}
+                    secondaryAction={(
+                      <IconButton edge="end" aria-label="delete">
+                        <DeleteIcon onClick={(e) => removeFile(file.name)} />
+                      </IconButton>
+                  )}
+                  >
+                    <ListItemAvatar>
+                      <Avatar>
+                        <FolderIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={file.name}
+                    />
+                  </ListItem>
+                ))}
+              </List> */}
             </Grid>
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>

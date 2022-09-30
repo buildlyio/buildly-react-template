@@ -9,9 +9,8 @@ import {
 
 const useStyles = makeStyles((theme) => ({
   link: {
-    '&:hover': {
-      textDecoration: 'none',
-    },
+    color: theme.palette.secondary.main,
+    textDecoration: 'none',
   },
 }));
 

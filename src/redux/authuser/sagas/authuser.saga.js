@@ -41,6 +41,9 @@ import {
   ADD_ORG_SOCIAL_USER,
   ADD_ORG_SOCIAL_USER_SUCCESS,
   ADD_ORG_SOCIAL_USER_FAIL,
+  VERIFY_EMAIL,
+  VERIFY_EMAIL_SUCCESS,
+  VERIFY_EMAIL_FAIL,
 } from '@redux/authuser/actions/authuser.actions';
 import {
   put, takeLatest, all, call,
@@ -88,12 +91,12 @@ function* login(payload) {
   } catch (error) {
     console.log('error', error);
     yield [
-      yield put({ type: LOGIN_FAIL, error: 'Invalid credentials given' }),
+      yield put({ type: LOGIN_FAIL, error: 'Not approved or Invalid credentials given' }),
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Sign in failed',
+          message: 'Either your account is not approved or you provided invalid username/password.',
         }),
       ),
     ];
@@ -134,17 +137,19 @@ function* register(payload) {
       `${window.env.API_URL}coreuser/`,
       payload.data,
     );
-    yield [
-      yield put({ type: REGISTER_SUCCESS, user }),
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Registration was successful',
-        }),
-      ),
-      yield call(history.push, routes.LOGIN),
-    ];
+    yield put({ type: REGISTER_SUCCESS, user });
+    if (user && user.data) {
+      yield [
+        yield call(history.push, routes.LOGIN),
+        yield put(
+          showAlert({
+            type: 'success',
+            open: true,
+            message: 'Please verify the email address to access the platform.',
+          }),
+        ),
+      ];
+    }
   } catch (error) {
     console.log('error', error);
     yield [
@@ -418,7 +423,7 @@ function* socialLogin(payload) {
       yield put({ type: SOCIAL_LOGIN_SUCCESS, user }),
     ];
 
-    if (!user.data.email || !user.data.organization) {
+    if (!user.data.email || !user.data.organization || !user.data.user_type) {
       yield call(history.push, routes.MISSING_DATA);
     } else {
       yield call(history.push, routes.DASHBOARD);
@@ -501,7 +506,7 @@ function* addOrgSocialUser(payload) {
           }),
         ),
       ];
-    } else if (!existingOrg && data.organization_name !== 'default') {
+    } else if (!existingOrg && data.organization_name !== 'default organization') {
       yield [
         yield call(history.push, routes.DASHBOARD),
         yield put(
@@ -531,6 +536,24 @@ function* addOrgSocialUser(payload) {
         error: 'Unable to update user details. Please try again.',
       }),
     ];
+  }
+}
+
+function* verifyEmail(payload) {
+  const { history, data } = payload;
+  try {
+    const user = yield call(
+      httpService.makeRequest,
+      'post',
+      `${window.env.API_URL}coreuser/verify_email/`,
+      data,
+    );
+    if (user && user.data && user.data.success) {
+      yield put({ type: VERIFY_EMAIL_SUCCESS });
+      yield call(history.push, routes.LOGIN);
+    }
+  } catch (error) {
+    yield put({ type: VERIFY_EMAIL_FAIL, error });
   }
 }
 
@@ -586,6 +609,10 @@ function* watchAddOrgSocialUser() {
   yield takeLatest(ADD_ORG_SOCIAL_USER, addOrgSocialUser);
 }
 
+function* watchVerifyEmail() {
+  yield takeLatest(VERIFY_EMAIL, verifyEmail);
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
@@ -601,5 +628,6 @@ export default function* authSaga() {
     watchSocialLogin(),
     watchLoadOrganizationNames(),
     watchAddOrgSocialUser(),
+    watchVerifyEmail(),
   ]);
 }

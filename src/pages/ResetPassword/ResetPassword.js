@@ -214,7 +214,7 @@ const ResetPassword = ({
                 </div>
                 <Grid container>
                   <Grid item>
-                    <Link href={routes.LOGIN} variant="body2" color="primary">
+                    <Link href={routes.LOGIN} variant="body2" color="secondary">
                       Go back to Sign in
                     </Link>
                   </Grid>

@@ -1,8 +1,10 @@
 export const routes = {
+  HOME: '/',
   LOGIN: '/login',
   REGISTER: '/register',
   FORGOT_PASSWORD: '/forgot-password',
   RESET_PASSWORD: '/reset-password-confirm',
+  VERIFY_EMAIL: '/verify-email',
   APP: '/app',
   DASHBOARD: '/app/dashboard',
   DASHBOARD_LIST: '/app/dashboard/list',
@@ -12,8 +14,9 @@ export const routes = {
   USER_GROUPS: '/app/profile/users/groups',
   HELP: '/help',
   TICKET_STATUS: '/ticket-status',
-  MISSING_DATA: '/app/missing-data',
+  MISSING_DATA: '/missing-data',
   NEW_PRODUCT: '/app/new-product',
   RELEASE: '/app/release',
   DEVELOPER_FORM: '/app/developer-form',
+  PRODUCTS: '/app/products',
 };

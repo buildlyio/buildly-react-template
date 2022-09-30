@@ -10,6 +10,7 @@ const initialState = {
   products: [],
   releases: [],
   thirdPartyTools: [],
+  boards: [],
   productFormData: null,
 };
 
@@ -1070,6 +1071,159 @@ describe('Delete thirdPartyTool reducer', () => {
       loading: false,
       loaded: true,
       error: undefined,
+    });
+  });
+});
+
+describe('Get board reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_BOARD },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('get board success reducer', () => {
+    const data = {
+      product_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_BOARD_SUCCESS, data },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      boards: [data],
+    });
+  });
+
+  it('get board fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_BOARD_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Create board reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_BOARD },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('create product success reducer', () => {
+    const data = {
+      product_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test',
+    };
+
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_BOARD_SUCCESS, data },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      boards: [data],
+    });
+  });
+
+  it('create board fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_BOARD_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Validate credential reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(initialState, { type: actions.VALIDATE_CREDENTIAL })).toEqual({
+      ...initialState,
+      loaded: false,
+      loading: true,
+    });
+  });
+
+  it('Validate credential success Reducer', () => {
+    expect(reducer.default(initialState, { type: actions.VALIDATE_CREDENTIAL_SUCCESS })).toEqual({
+      ...initialState,
+      data: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+
+  it('Validate credential fail Reducer', () => {
+    expect(reducer.default(initialState, { type: actions.VALIDATE_CREDENTIAL_FAILURE })).toEqual(
+      {
+        ...initialState,
+        error: undefined,
+        loaded: true,
+        loading: false,
+      },
+    );
+  });
+});
+
+describe('Add PDF Identifier reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.ADD_DOC_IDENTIFIER },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('Add PDF Identifier success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.ADD_DOC_IDENTIFIER_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      productFormData: {
+        ...initialState.productFormData,
+        uploaded_pdf: undefined,
+        uploaded_pdf_link: undefined,
+        unique_identifier: undefined,
+      },
+    });
+  });
+
+  it('Add PDF Identifier fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.ADD_DOC_IDENTIFIER_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
     });
   });
 });

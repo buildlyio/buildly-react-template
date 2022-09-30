@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import {
   Button,
@@ -13,9 +14,8 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
   },
   link: {
-    '&:hover': {
-      textDecoration: 'none',
-    },
+    color: theme.palette.secondary.main,
+    textDecoration: 'none',
   },
 }));
 
@@ -58,14 +58,14 @@ const Support = () => {
         }}
       >
         <MenuItem onClick={handleClose}>
-          <Link className={classes.link} href={routes.HELP}>
+          <RouterLink className={classes.link} to={routes.HELP}>
             Request Help
-          </Link>
+          </RouterLink>
         </MenuItem>
         <MenuItem onClick={handleClose}>
-          <Link className={classes.link} href={routes.TICKET_STATUS}>
+          <RouterLink className={classes.link} to={routes.TICKET_STATUS}>
             Status of Ticket
-          </Link>
+          </RouterLink>
         </MenuItem>
         <MenuItem onClick={handleClose}>
           <Link

@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import {
   SAVE_PRODUCT_FORM_DATA,
+  CLEAR_BOARD_DATA,
   ALL_CREDENTIALS,
   ALL_CREDENTIALS_SUCCESS,
   ALL_CREDENTIALS_FAILURE,
@@ -31,6 +32,9 @@ import {
   GET_THIRD_PARTY_TOOL,
   GET_THIRD_PARTY_TOOL_SUCCESS,
   GET_THIRD_PARTY_TOOL_FAILURE,
+  GET_BOARD,
+  GET_BOARD_SUCCESS,
+  GET_BOARD_FAILURE,
   CREATE_CREDENTIAL,
   CREATE_CREDENTIAL_SUCCESS,
   CREATE_CREDENTIAL_FAILURE,
@@ -46,6 +50,9 @@ import {
   CREATE_THIRD_PARTY_TOOL,
   CREATE_THIRD_PARTY_TOOL_SUCCESS,
   CREATE_THIRD_PARTY_TOOL_FAILURE,
+  CREATE_BOARD,
+  CREATE_BOARD_SUCCESS,
+  CREATE_BOARD_FAILURE,
   UPDATE_CREDENTIAL,
   UPDATE_CREDENTIAL_SUCCESS,
   UPDATE_CREDENTIAL_FAILURE,
@@ -76,6 +83,12 @@ import {
   DELETE_THIRD_PARTY_TOOL,
   DELETE_THIRD_PARTY_TOOL_SUCCESS,
   DELETE_THIRD_PARTY_TOOL_FAILURE,
+  VALIDATE_CREDENTIAL,
+  VALIDATE_CREDENTIAL_SUCCESS,
+  VALIDATE_CREDENTIAL_FAILURE,
+  ADD_DOC_IDENTIFIER,
+  ADD_DOC_IDENTIFIER_SUCCESS,
+  ADD_DOC_IDENTIFIER_FAILURE,
 } from '../actions/product.actions';
 
 const initialState = {
@@ -87,6 +100,7 @@ const initialState = {
   products: [],
   releases: [],
   thirdPartyTools: [],
+  boards: [],
   productFormData: null,
 };
 
@@ -98,6 +112,11 @@ export default (state = initialState, action) => {
         ...state,
         productFormData: action.formData,
       };
+    case CLEAR_BOARD_DATA:
+      return {
+        ...state,
+        boards: [],
+      };
 
     case ALL_CREDENTIALS:
     case ALL_PRODUCT_TEAMS:
@@ -107,6 +126,7 @@ export default (state = initialState, action) => {
     case GET_CREDENTIAL:
     case GET_PRODUCT_TEAM:
     case GET_PRODUCT:
+    case GET_BOARD:
     case GET_RELEASE:
     case GET_THIRD_PARTY_TOOL:
     case CREATE_CREDENTIAL:
@@ -114,6 +134,7 @@ export default (state = initialState, action) => {
     case CREATE_PRODUCT:
     case CREATE_RELEASE:
     case CREATE_THIRD_PARTY_TOOL:
+    case CREATE_BOARD:
     case UPDATE_CREDENTIAL:
     case UPDATE_PRODUCT_TEAM:
     case UPDATE_PRODUCT:
@@ -124,6 +145,8 @@ export default (state = initialState, action) => {
     case DELETE_PRODUCT:
     case DELETE_RELEASE:
     case DELETE_THIRD_PARTY_TOOL:
+    case VALIDATE_CREDENTIAL:
+    case ADD_DOC_IDENTIFIER:
       return {
         ...state,
         loading: true,
@@ -139,6 +162,7 @@ export default (state = initialState, action) => {
     case GET_CREDENTIAL_FAILURE:
     case GET_PRODUCT_TEAM_FAILURE:
     case GET_PRODUCT_FAILURE:
+    case GET_BOARD_FAILURE:
     case GET_RELEASE_FAILURE:
     case GET_THIRD_PARTY_TOOL_FAILURE:
     case CREATE_CREDENTIAL_FAILURE:
@@ -146,6 +170,7 @@ export default (state = initialState, action) => {
     case CREATE_PRODUCT_FAILURE:
     case CREATE_RELEASE_FAILURE:
     case CREATE_THIRD_PARTY_TOOL_FAILURE:
+    case CREATE_BOARD_FAILURE:
     case UPDATE_CREDENTIAL_FAILURE:
     case UPDATE_PRODUCT_TEAM_FAILURE:
     case UPDATE_PRODUCT_FAILURE:
@@ -156,6 +181,8 @@ export default (state = initialState, action) => {
     case DELETE_PRODUCT_FAILURE:
     case DELETE_RELEASE_FAILURE:
     case DELETE_THIRD_PARTY_TOOL_FAILURE:
+    case VALIDATE_CREDENTIAL_FAILURE:
+    case ADD_DOC_IDENTIFIER_FAILURE:
       return {
         ...state,
         loading: false,
@@ -386,6 +413,49 @@ export default (state = initialState, action) => {
         thirdPartyTools,
       };
     }
+
+    case GET_BOARD_SUCCESS:
+    case CREATE_BOARD_SUCCESS: {
+      const found = _.find(
+        state.boards,
+        { product_uuid: action.data.product_uuid },
+      );
+      const boards = found
+        ? _.map(state.boards, (board) => (
+          board.product_uuid === action.data.product_uuid
+            ? action.data
+            : board
+        ))
+        : [...state.boards, action.data];
+
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        boards,
+      };
+    }
+
+    case VALIDATE_CREDENTIAL_SUCCESS: {
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+      };
+    }
+
+    case ADD_DOC_IDENTIFIER_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        // productFormData: {
+        //   ...state.productFormData,
+        //   uploaded_pdf: action.uploaded_pdf,
+        //   uploaded_pdf_link: action.uploaded_pdf_link,
+        //   unique_identifier: action.unique_identifier,
+        // },
+      };
 
     default:
       return state;

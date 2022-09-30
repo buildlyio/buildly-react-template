@@ -15,6 +15,9 @@ import TicketStatus from './pages/TicketStatus/TicketStatus';
 import { routes } from './routes/routesConstants';
 import { PrivateRoute } from './routes/Private.route';
 import theme from './styles/theme';
+import MissingData from '@pages/MissingData/MissingData';
+import Home from '@pages/Home/Home';
+import VerifyEmail from '@pages/VerifyEmail/VerifyEmail';
 
 const App = () => (
   <Router>
@@ -25,14 +28,17 @@ const App = () => (
           <Route
             exact
             path="/"
+            // eslint-disable-next-line no-nested-ternary
             render={() => (oauthService.hasValidAccessToken() ? (
               <Redirect to={routes.DASHBOARD} />
             ) : (
-              <Redirect to={routes.LOGIN} />
+              window.env.PRODUCTION ? <Home /> : <Redirect to={routes.LOGIN} />
             ))}
           />
+          <Route exact path={`${routes.VERIFY_EMAIL}/:token`} component={VerifyEmail} />
           <Route path={routes.LOGIN} component={Login} />
           <Route path={routes.REGISTER} component={Register} />
+          <Route path={routes.MISSING_DATA} component={MissingData} />
           <Route path={routes.FORGOT_PASSWORD} component={ForgotPassword} />
           <Route path={routes.RESET_PASSWORD} component={ResetPassword} />
           <Route path={routes.HELP} component={Help} />

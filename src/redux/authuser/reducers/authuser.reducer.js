@@ -1,3 +1,4 @@
+import { getUser } from '@context/User.context';
 import {
   LOGIN,
   LOGIN_SUCCESS,
@@ -35,12 +36,15 @@ import {
   ADD_ORG_SOCIAL_USER,
   ADD_ORG_SOCIAL_USER_SUCCESS,
   ADD_ORG_SOCIAL_USER_FAIL,
+  VERIFY_EMAIL,
+  VERIFY_EMAIL_SUCCESS,
+  VERIFY_EMAIL_FAIL,
 } from '../actions/authuser.actions';
 
 const initialState = {
   loading: false,
   loaded: false,
-  data: null,
+  data: getUser(),
   error: null,
   organizationData: null,
   socialLogin: null,
@@ -335,10 +339,32 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.user,
+        data: action.user.data,
       };
 
     case ADD_ORG_SOCIAL_USER_FAIL:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case VERIFY_EMAIL:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+      };
+
+    case VERIFY_EMAIL_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+      };
+
+    case VERIFY_EMAIL_FAIL:
       return {
         ...state,
         loading: false,

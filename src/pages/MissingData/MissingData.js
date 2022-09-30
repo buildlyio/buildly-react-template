@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
@@ -15,14 +15,15 @@ import {
   MenuItem,
 } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
-import { UserContext } from '@context/User.context';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
 import {
   loadOrgNames,
   addOrgSocialUser,
 } from '@redux/authuser/actions/authuser.actions';
+import { routes } from '@routes/routesConstants';
 import { validators } from '@utils/validators';
+import Loader from '@components/Loader/Loader';
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -44,13 +45,15 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     marginBottom: theme.spacing(2),
   },
+  hidden: {
+    display: 'none',
+  },
 }));
 
 const MissingData = ({
-  dispatch, loading, history, orgNames,
+  user, dispatch, loading, history, orgNames,
 }) => {
   const classes = useStyles();
-  const user = useContext(UserContext);
 
   const userType = useInput('', { required: true });
   const email = useInput('', { required: true });
@@ -58,18 +61,29 @@ const MissingData = ({
   const [orgName, setOrgName] = useState('');
   const [formError, setFormError] = useState({});
 
+  useEffect(() => {
+    if (!orgNames) {
+      dispatch(loadOrgNames());
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      history.push(routes.LOGIN);
+    }
+  }, [user]);
+
   /**
    * Submit the form to the backend and attempts to authenticate
    * @param {Event} event the default submit event
    */
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const updateForm = {
-      id: user.id,
+    let updateForm = {
+      id: !!user && user.id,
       organization_name: orgName,
       user_type: userType.value,
     };
-
     if (email.value) {
       updateForm.email = email.value;
     }
@@ -109,7 +123,7 @@ const MissingData = ({
     const errorKeys = Object.keys(formError);
     let errorExists = false;
     if (
-      (!user.email && !email.value)
+      (!!user && !user.email && !email.value)
       || !userType.value
       || !radioValue
       || (radioValue === 'no' && !orgName)
@@ -124,7 +138,7 @@ const MissingData = ({
     if (event.target.value === 'no') {
       dispatch(loadOrgNames());
     } else {
-      setOrgName('default');
+      setOrgName('default organization');
     }
 
     setRadioValue(event.target.value);
@@ -132,6 +146,7 @@ const MissingData = ({
 
   return (
     <div>
+      {loading && <Loader open={loading} />}
       <Backdrop className={classes.backdrop} open>
         <FormModal
           open
@@ -164,7 +179,7 @@ const MissingData = ({
                   <MenuItem value="Product Team">Product Team</MenuItem>
                 </TextField>
               </Grid>
-              {!user.email && (
+              {user && !user.email && (
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
@@ -217,9 +232,10 @@ const MissingData = ({
                     name="organization_name"
                     options={orgNames || []}
                     getOptionLabel={(label) => _.capitalize(label)}
-                    onChange={(e, newValue) => {
-                      setOrgName(newValue || '');
-                    }}
+                    value={orgName}
+                    onChange={(e, newValue) => setOrgName(newValue || '')}
+                    inputValue={orgName}
+                    onInputChange={(event, newInputValue) => setOrgName(newInputValue)}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -229,8 +245,6 @@ const MissingData = ({
                         fullWidth
                         label="Organisation Name"
                         className={classes.textField}
-                        value={orgName}
-                        onChange={(e) => setOrgName(e.target.value)}
                       />
                     )}
                   />
@@ -261,6 +275,7 @@ const MissingData = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
+  user: state.authReducer.data,
 });
 
 export default connect(mapStateToProps)(MissingData);

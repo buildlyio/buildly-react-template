@@ -6,6 +6,7 @@ export const useInput = (initialValue = '', validators = {}) => {
   return {
     value,
     required: validators.required,
+    ...(validators.productFeatures && { productFeatures: validators.productFeatures }),
     confirm: validators.confirm,
     ...(validators.confirm
       && validators.matchField && { matchField: validators.matchField.value }),

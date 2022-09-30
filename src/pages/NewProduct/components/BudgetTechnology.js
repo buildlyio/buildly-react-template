@@ -25,25 +25,9 @@ const useStyles = makeStyles((theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
-    color: '#fff',
     [theme.breakpoints.up('sm')]: {
       width: '70%',
       margin: 'auto',
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.secondary.contrastText,
-    },
-    '& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgb(255, 255, 255, 0.23)',
-    },
-    '& .MuiInputLabel-root': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiSelect-icon': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiInputBase-input': {
-      color: theme.palette.secondary.contrastText,
     },
   },
   submit: {
@@ -54,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginTop: '1em',
     textAlign: 'center',
-    color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
     display: 'flex',
@@ -82,65 +65,73 @@ const BudgetTechnology = ({
   handleNext,
   handleBack,
   dispatch,
+  editData,
 }) => {
   const classes = useStyles();
 
-  const [firstUserDate, handlefirstUserDateChange] = useState(
-    (productFormData
+  const [firstUserDate, handlefirstUserDateChange] = useState((editData
+    && editData.product_info
+    && editData.product_info.first_user_date)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.first_user_date)
-    || new Date(),
-  );
+    || new Date().setDate(new Date().getDate() + 90));
 
-  const [approxBudget, setApproxBudget] = useState(
-    (productFormData
+  const [approxBudget, setApproxBudget] = useState((editData
+    && editData.product_info
+    && editData.product_info.approx_budget)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.approx_budget)
     || {
       value: 0,
       category: '10-15k',
-    },
-  );
+    });
 
-  const hosting = useInput(
-    (productFormData
+  const hosting = useInput((editData
+    && editData.product_info
+    && editData.product_info.hosting)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.hosting)
-    || 'Hostinger',
-    { required: true },
-  );
+    || 'No Preference',
+  { required: true });
 
-  const language = useInput(
-    (productFormData
+  const language = useInput((editData
+    && editData.product_info
+    && editData.product_info.language)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.language)
-    || 'JavaScript',
-    { required: true },
-  );
+    || 'No Preference',
+  { required: true });
 
-  const database = useInput(
-    (productFormData
+  const database = useInput((editData
+    && editData.product_info
+    && editData.product_info.database)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.database)
-    || 'Postgres',
-    { required: true },
-  );
+    || 'No Preference',
+  { required: true });
 
-  const storage = useInput(
-    (productFormData
+  const storage = useInput((editData
+    && editData.product_info
+    && editData.product_info.storage)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.storage)
-    || 'AWS',
-    { required: true },
-  );
+    || 'No Preference',
+  { required: true });
 
-  const deployment = useInput(
-    (productFormData
+  const deployment = useInput((editData
+    && editData.product_info
+    && editData.product_info.deployment)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.deployment)
-    || 'AWS',
-    { required: true },
-  );
+    || 'No Preference',
+  { required: true });
 
   const [formError, setFormError] = useState({});
 

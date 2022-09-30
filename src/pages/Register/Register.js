@@ -16,7 +16,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
-import logo from '@assets/light-logo.png';
+import logo from '@assets/insights-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import GithubLogin from '@components/SocialLogin/GithubLogin';
 import { useInput } from '@hooks/useInput';
@@ -28,16 +28,17 @@ import { routes } from '@routes/routesConstants';
 import { validators } from '@utils/validators';
 import { isMobile } from '@utils/mediaQuery';
 import { providers } from '@utils/socialLogin';
+import Loader from '@components/Loader/Loader';
 
 const useStyles = makeStyles((theme) => ({
   logoDiv: {
-    width: theme.spacing(15),
+    width: theme.spacing(26),
     margin: 'auto',
-    marginTop: theme.spacing(1.25),
+    marginTop: theme.spacing(6),
     marginBottom: theme.spacing(2.5),
   },
   logo: {
-    width: theme.spacing(15),
+    width: theme.spacing(26),
     objectFit: 'contain',
   },
   container: {
@@ -81,12 +82,16 @@ const useStyles = makeStyles((theme) => ({
   link: {
     margin: theme.spacing(1, 0, 0, 1),
   },
+  hidden: {
+    display: 'none',
+  },
 }));
 
 const Register = ({
   dispatch, loading, history, socialLogin, orgNames,
 }) => {
   const classes = useStyles();
+
   const email = useInput('', { required: true });
   const username = useInput('', { required: true });
   const password = useInput('', { required: true });
@@ -100,6 +105,21 @@ const Register = ({
   const first_name = useInput('', { required: true });
   const last_name = useInput('');
   const [formError, setFormError] = useState({});
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (window.env.PRODUCTION) {
+      const script = document.createElement('script');
+      script.src = '//fw-cdn.com/1900654/2696977.js';
+      script.chat = true;
+      document.body.appendChild(script);
+
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
+  }, []);
+
   useEffect(() => {
     if (!orgNames) {
       dispatch(loadOrgNames());
@@ -110,9 +130,8 @@ const Register = ({
    * Submit the form to the backend and attempts to authenticate
    * @param {Event} event the default submit event
    */
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    location.register = true;
     const registerFormValue = {
       username: username.value,
       email: email.value,
@@ -122,6 +141,7 @@ const Register = ({
       first_name: first_name.value,
       last_name: last_name.value,
     };
+
     dispatch(register(registerFormValue, history));
   };
 
@@ -171,6 +191,7 @@ const Register = ({
 
   return (
     <>
+      {loading && <Loader open={loading} />}
       <div className={classes.logoDiv}>
         <img src={logo} alt="Logo" className={classes.logo} />
       </div>
@@ -272,9 +293,10 @@ const Register = ({
                       name="organization_name"
                       options={orgNames || []}
                       getOptionLabel={(label) => _.capitalize(label)}
-                      onChange={(e, newValue) => {
-                        setOrgName(newValue || '');
-                      }}
+                      value={orgName}
+                      onChange={(e, newValue) => setOrgName(newValue || '')}
+                      inputValue={orgName}
+                      onInputChange={(event, newInputValue) => setOrgName(newInputValue)}
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -285,8 +307,6 @@ const Register = ({
                           id="organization_name"
                           label="Organisation Name"
                           className={classes.textField}
-                          value={orgName}
-                          onChange={(e) => setOrgName(e.target.value)}
                         />
                       )}
                     />
@@ -404,7 +424,7 @@ const Register = ({
                   )}
                 </Grid>
                 <Grid item className={classes.link}>
-                  <Link href={routes.LOGIN} variant="body2" color="primary">
+                  <Link href={routes.LOGIN} variant="body2" color="secondary">
                     Already have an account? Sign in
                   </Link>
                 </Grid>

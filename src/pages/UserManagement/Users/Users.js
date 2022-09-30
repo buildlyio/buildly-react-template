@@ -20,17 +20,17 @@ import { getCoregroups } from '@redux/coregroup/actions/coregroup.actions';
 const useStyles = makeStyles((theme) => ({
   root: {
     '& .MuiTableCell-root': {
-      color: `${theme.palette.secondary.contrastText} !important`,
+      borderBottomColor: theme.palette.neutral.text,
     },
   },
   btnPermission: {
     fontSize: rem(10),
     '&.Mui-disabled': {
-      color: theme.palette.secondary.light,
-      borderColor: theme.palette.secondary.light,
+      color: theme.palette.contrast.main.light,
+      borderColor: theme.palette.contrast.main.light,
       '&.MuiButton-contained': {
-        backgroundColor: theme.palette.secondary.light,
-        color: theme.palette.secondary.main,
+        backgroundColor: theme.palette.contrast.main.light,
+        color: theme.palette.contrast.main,
       },
     },
   },
@@ -38,12 +38,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
   textDisabled: {
-    color: theme.palette.secondary.light,
+    color: theme.palette.contrast.main.light,
   },
   icon: {
-    color: theme.palette.secondary.contrastText,
     '&.Mui-disabled': {
-      color: theme.palette.secondary.light,
+      color: theme.palette.contrast.main.light,
     },
   },
 }));

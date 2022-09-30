@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
-import { createProduct } from '@redux/product/actions/product.actions';
+import { createProduct, updateProduct } from '@redux/product/actions/product.actions';
 import { EXAMPLELIST } from '../ProductFormConstants';
 import { updateUser } from '@redux/authuser/actions/authuser.actions';
 import { UserContext } from '@context/User.context';
@@ -23,40 +23,19 @@ const useStyles = makeStyles((theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
-    color: '#fff',
     [theme.breakpoints.up('sm')]: {
       width: '70%',
       margin: 'auto',
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.secondary.contrastText,
-    },
-    '& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgb(255, 255, 255, 0.23)',
-    },
-    '& .MuiInputLabel-root': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiSelect-icon': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiInputBase-input': {
-      color: theme.palette.secondary.contrastText,
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
     borderRadius: '18px',
-
-    '&.MuiButton-contained.Mui-disabled': {
-      color: 'hsl(0deg 0% 100% / 70%);',
-    },
   },
   formTitle: {
     fontWeight: 'bold',
     marginTop: '1em',
     textAlign: 'center',
-    color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
     display: 'flex',
@@ -85,16 +64,22 @@ const MinimalFunctionality = ({
   dispatch,
   history,
   loading,
+  editData,
+  editPage,
+  product_uuid,
+  redirectTo,
 }) => {
   const classes = useStyles();
   const user = useContext(UserContext);
-  const minimalFunc = useInput(
-    (productFormData
+  const buttonText = editPage ? 'Save' : 'Create Product';
+  const minimalFunc = useInput((editData
+    && editData.product_info
+    && editData.product_info.minimal_functionality)
+  || (productFormData
       && productFormData.product_info
       && productFormData.product_info.minimal_functionality)
     || '',
-    { required: true },
-  );
+  { required: true });
 
   checkIfMinimalFuncEdited = () => minimalFunc.hasChanged();
 
@@ -115,7 +100,13 @@ const MinimalFunctionality = ({
     if (user && !user.survey_status) {
       dispatch(updateUser({ id: user.id, survey_status: true }));
     }
-    dispatch(createProduct(formData, history));
+    if (editPage) {
+      formData.product_uuid = product_uuid;
+      dispatch(updateProduct(formData));
+    } else {
+      dispatch(createProduct(formData));
+    }
+    history.push(redirectTo);
   };
 
   return (
@@ -174,7 +165,7 @@ const MinimalFunctionality = ({
                 disabled={!minimalFunc.value}
                 className={classes.submit}
               >
-                Create Product
+                {buttonText}
               </Button>
             </Grid>
           </Grid>

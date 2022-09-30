@@ -3,6 +3,7 @@ import {
 } from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
+import { routes } from '@routes/routesConstants';
 import {
   ALL_DECISIONS,
   ALL_DECISIONS_SUCCESS,
@@ -79,7 +80,17 @@ import {
   DELETE_STATUS,
   DELETE_STATUS_SUCCESS,
   DELETE_STATUS_FAILURE,
+  saveFeatureFormData,
+  IMPORT_TICKETS,
+  IMPORT_TICKETS_SUCCESS,
+  IMPORT_TICKETS_FAILURE,
+  CLEAR_PRODUCT_DATA,
+  CLEAR_PRODUCT_DATA_SUCCESS,
+  CLEAR_PRODUCT_DATA_FAILURE,
 } from '../actions/decision.actions';
+import {
+  deleteProduct,
+} from '../../product/actions/product.actions';
 
 const decisionEndpoint = 'decision/';
 
@@ -269,7 +280,17 @@ function* createFeature(payload) {
       `${window.env.API_URL}${decisionEndpoint}feature/`,
       payload.data,
     );
-    yield put({ type: CREATE_FEATURE_SUCCESS, data: feature.data });
+    yield [
+      yield put({ type: CREATE_FEATURE_SUCCESS, data: feature.data }),
+      yield put(saveFeatureFormData(null)),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Created feature successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(
@@ -295,7 +316,16 @@ function* updateFeature(payload) {
       `${window.env.API_URL}${decisionEndpoint}feature/${payload.data.feature_uuid}`,
       payload.data,
     );
-    yield put({ type: UPDATE_FEATURE_SUCCESS, data: feature.data });
+    yield [
+      yield put({ type: UPDATE_FEATURE_SUCCESS, data: feature.data }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Updated feature successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(
@@ -314,14 +344,24 @@ function* updateFeature(payload) {
 }
 
 function* deleteFeature(payload) {
-  const { feature_uuid } = payload;
+  const { feature_uuid } = payload.data;
   try {
     const feature = yield call(
       httpService.makeRequest,
       'delete',
       `${window.env.API_URL}${decisionEndpoint}feature/${feature_uuid}`,
+      payload.data,
     );
-    yield put({ type: DELETE_FEATURE_SUCCESS, feature_uuid });
+    yield [
+      yield put({ type: DELETE_FEATURE_SUCCESS, feature_uuid }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Deleted feature successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(
@@ -519,13 +559,34 @@ function* getIssue(payload) {
 
 function* createIssue(payload) {
   try {
-    const issue = yield call(
-      httpService.makeRequest,
-      'post',
-      `${window.env.API_URL}${decisionEndpoint}issue/`,
-      payload.data,
-    );
-    yield put({ type: CREATE_ISSUE_SUCCESS, data: issue.data });
+    if (payload.data.length > 0) {
+      for (let i = 0; i < payload.data.length; i += 1) {
+        const issue = yield call(
+          httpService.makeRequest,
+          'post',
+          `${window.env.API_URL}${decisionEndpoint}issue/`,
+          payload.data[i],
+        );
+        yield put({ type: CREATE_ISSUE_SUCCESS, data: issue.data });
+      }
+    } else {
+      const issue = yield call(
+        httpService.makeRequest,
+        'post',
+        `${window.env.API_URL}${decisionEndpoint}issue/`,
+        payload.data,
+      );
+      yield [
+        yield put({ type: CREATE_ISSUE_SUCCESS, data: issue.data }),
+        yield put(
+          showAlert({
+            type: 'success',
+            open: true,
+            message: 'Created Issue successfully',
+          }),
+        ),
+      ];
+    }
   } catch (error) {
     yield [
       yield put(
@@ -551,7 +612,16 @@ function* updateIssue(payload) {
       `${window.env.API_URL}${decisionEndpoint}issue/${payload.data.issue_uuid}`,
       payload.data,
     );
-    yield put({ type: UPDATE_ISSUE_SUCCESS, data: issue.data });
+    yield [
+      yield put({ type: UPDATE_ISSUE_SUCCESS, data: issue.data }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Updated Issue successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(
@@ -570,14 +640,24 @@ function* updateIssue(payload) {
 }
 
 function* deleteIssue(payload) {
-  const { issue_uuid } = payload;
+  const { issue_uuid } = payload.data;
   try {
     const issue = yield call(
       httpService.makeRequest,
       'delete',
       `${window.env.API_URL}${decisionEndpoint}issue/${issue_uuid}`,
+      payload.data,
     );
-    yield put({ type: DELETE_ISSUE_SUCCESS, issue_uuid });
+    yield [
+      yield put({ type: DELETE_ISSUE_SUCCESS, issue_uuid }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Deleted Issue successfully',
+        }),
+      ),
+    ];
   } catch (error) {
     yield [
       yield put(
@@ -625,7 +705,7 @@ function* getStatus(payload) {
     const status = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${decisionEndpoint}status/?status_uuid=${payload.status_uuid}`,
+      `${window.env.API_URL}${decisionEndpoint}status/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: GET_STATUS_SUCCESS, data: status.data });
   } catch (error) {
@@ -647,13 +727,25 @@ function* getStatus(payload) {
 
 function* createStatus(payload) {
   try {
-    const status = yield call(
-      httpService.makeRequest,
-      'post',
-      `${window.env.API_URL}${decisionEndpoint}status/`,
-      payload.data,
-    );
-    yield put({ type: CREATE_STATUS_SUCCESS, data: status.data });
+    if (payload.data.length > 0) {
+      for (let i = 0; i < payload.data.length; i += 1) {
+        const status = yield call(
+          httpService.makeRequest,
+          'post',
+          `${window.env.API_URL}${decisionEndpoint}status/`,
+          payload.data[i],
+        );
+        yield put({ type: CREATE_STATUS_SUCCESS, data: status.data });
+      }
+    } else {
+      const status = yield call(
+        httpService.makeRequest,
+        'post',
+        `${window.env.API_URL}${decisionEndpoint}status/`,
+        payload.data,
+      );
+      yield put({ type: CREATE_STATUS_SUCCESS, data: status.data });
+    }
   } catch (error) {
     yield [
       yield put(
@@ -717,6 +809,68 @@ function* deleteStatus(payload) {
       ),
       yield put({
         type: DELETE_STATUS_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* importTickets(payload) {
+  try {
+    const ticket = yield call(
+      httpService.makeRequest,
+      'post',
+      `${window.env.API_URL}${decisionEndpoint}import-project-tickets/`,
+      payload.data,
+    );
+    yield [
+      yield put({ type: IMPORT_TICKETS_SUCCESS, data: ticket.data }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Imported tickets successfully',
+        }),
+      ),
+    ];
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t import tickets!',
+        }),
+      ),
+      yield put({
+        type: IMPORT_TICKETS_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* clearProductData(payload) {
+  try {
+    const product = yield call(
+      httpService.makeRequest,
+      'post',
+      `${window.env.API_URL}${decisionEndpoint}clear-product-data/`,
+      payload.data,
+    );
+    yield put({ type: CLEAR_PRODUCT_DATA_SUCCESS, data: payload.data });
+    yield put(deleteProduct(payload.data.product_uuid));
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t clear product!',
+        }),
+      ),
+      yield put({
+        type: CLEAR_PRODUCT_DATA_FAILURE,
         error,
       }),
     ];
@@ -824,6 +978,14 @@ function* watchDeleteStatus() {
   yield takeLatest(DELETE_STATUS, deleteStatus);
 }
 
+function* watchImportTickets() {
+  yield takeLatest(IMPORT_TICKETS, importTickets);
+}
+
+function* watchClearProductData() {
+  yield takeLatest(CLEAR_PRODUCT_DATA, clearProductData);
+}
+
 export default function* decisionSaga() {
   yield all([
     watchGetAllDecisions(),
@@ -841,6 +1003,7 @@ export default function* decisionSaga() {
     watchCreateFeedback(),
     watchCreateIssue(),
     watchCreateStatus(),
+    watchImportTickets(),
     watchUpdateDecision(),
     watchUpdateFeature(),
     watchUpdateFeedback(),
@@ -851,5 +1014,6 @@ export default function* decisionSaga() {
     watchDeleteFeedback(),
     watchDeleteIssue(),
     watchDeleteStatus(),
+    watchClearProductData(),
   ]);
 }
