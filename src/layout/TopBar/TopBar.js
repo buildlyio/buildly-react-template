@@ -193,15 +193,6 @@ const TopBar = ({
               >
                 Dashboard
               </MenuItem>
-              {/* <MenuItem
-                disabled={location.pathname === routes.RELEASE}
-                onClick={() => {
-                  setAnchorEl(null);
-                  history.push(routes.RELEASE);
-                }}
-              >
-                Releases
-              </MenuItem> */}
               {isAdmin && (
               <MenuItem
                 disabled={location.pathname === routes.PRODUCTS}
@@ -213,6 +204,15 @@ const TopBar = ({
                 Products
               </MenuItem>
               )}
+              <MenuItem
+                disabled={location.pathname === routes.RELEASE}
+                onClick={() => {
+                  setAnchorEl(null);
+                  history.push(routes.RELEASE);
+                }}
+              >
+                Releases
+              </MenuItem>
             </StyledMenu>
           </>
           {isAdmin && (
