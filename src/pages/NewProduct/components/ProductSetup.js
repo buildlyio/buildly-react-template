@@ -93,7 +93,6 @@ const ProductSetup = ({
   handleNext,
   dispatch,
   thirdPartyTools,
-  editData,
   viewPage,
   featCred,
   issueCred,

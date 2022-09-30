@@ -53,34 +53,19 @@ const AddIssues = ({
   statuses,
   issues,
   features,
-<<<<<<< HEAD
-  repos,
-  devs,
-=======
   credentials,
   products,
   boards,
->>>>>>> master
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
-<<<<<<< HEAD
-  const [autoCompleteValue, setAutoCompleteValue] = useState([]);
-
-  const redirectTo = location.state && location.state.from;
-  const editPage = location.state && location.state.type === 'edit';
-=======
   const [productFeatures, setProductFeatures] = useState([]);
->>>>>>> master
   const editData = (
     location.state
     && location.state.type === 'edit'
     && location.state.data
   ) || {};
-<<<<<<< HEAD
-  const productID = location.state && location.state.productID;
-=======
   const convertData = (
     location.state
     && location.state.type === 'convert'
@@ -102,7 +87,6 @@ const AddIssues = ({
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === 'edit';
   const convertPage = location.state && location.state.type === 'convert';
->>>>>>> master
 
   const name = useInput(editData.name || '', {
     required: true,
@@ -111,9 +95,6 @@ const AddIssues = ({
     required: true,
   });
   const type = useInput(editData.type || '', {
-    required: true,
-  });
-  const repo = useInput(editData.repo || '', {
     required: true,
   });
   const issueStatus = useInput(editData && editData.status, {
@@ -138,8 +119,6 @@ const AddIssues = ({
   const [endDate, handleEndDateChange] = useState(
     (editData && editData.end_date) || new Date(),
   );
-<<<<<<< HEAD
-=======
   const [tags, setTags] = useState(
     (convertData && convertData.tags)
     || (editData && editData.tags)
@@ -163,9 +142,6 @@ const AddIssues = ({
   }
   const assigneesList = [...new Set(product?.issue_tool_detail?.user_list
     ?.filter((element) => assignees?.includes(element?.username)))];
-  const [formError, setFormError] = useState({});
->>>>>>> master
-
 
   const buttonText = editPage ? 'Save' : 'Add Issue';
   const formTitle = editPage ? 'Edit Issue' : 'Add Issue';
@@ -173,8 +149,6 @@ const AddIssues = ({
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
-<<<<<<< HEAD
-=======
   useEffect(() => {
     if (!features || _.isEmpty(features)) {
       dispatch(getAllFeatures());
@@ -208,17 +182,11 @@ const AddIssues = ({
     }
   }, [product]);
 
->>>>>>> master
   const closeFormModal = () => {
     const dataHasChanged = (
       name.hasChanged()
       || description.hasChanged()
       || type.hasChanged()
-<<<<<<< HEAD
-      || repo.hasChanged()
-      || (editPage && issueStatus.hasChanged())
-      || (editPage && assignedTo.hasChanged())
-=======
       || (!_.isEmpty(editData) && !_.isEqual(startDate, editData.start_date))
       || (!_.isEmpty(editData) && !_.isEqual(endDate, editData.end_date))
       || (_.isEmpty(currentStatData) && !_.isEmpty(status))
@@ -231,7 +199,6 @@ const AddIssues = ({
         && product.issue_tool_detail
         && !_.isEmpty(repoList)
         && repo !== '')
->>>>>>> master
     );
 
     if (dataHasChanged) {
@@ -256,22 +223,6 @@ const AddIssues = ({
     }
   };
 
-<<<<<<< HEAD
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const id = editPage
-      ? editData.id
-      : (location.state && location.state.nextId);
-    const issueFormValue = {
-      productID,
-      id,
-      name: name.value,
-      description: description.value,
-      type: type.value,
-      repo: repo.value,
-      status: editPage ? issueStatus.value : 'created',
-      assignedTo: editPage ? assignedTo.value : '',
-=======
   // Handle tags list
   const onTagsChange = (value) => {
     switch (true) {
@@ -327,14 +278,8 @@ const AddIssues = ({
       repository: repo,
       column_id: colID,
       ...issueCred?.auth_detail,
->>>>>>> master
     };
     if (editPage) {
-<<<<<<< HEAD
-      console.log('Dispatch edit issue action here');
-    } else {
-      console.log('Dispatch add issue action here');
-=======
       editData.issue_detail.assignees = assigneesList;
       dispatch(updateIssue(formData));
     } else {
@@ -343,7 +288,6 @@ const AddIssues = ({
       };
       formData.create_date = dateTime;
       dispatch(createIssue(formData));
->>>>>>> master
     }
     history.push(_.includes(location.state.from, 'kanban')
       ? `${routes.DASHBOARD}/kanban`
@@ -375,17 +319,11 @@ const AddIssues = ({
       !name.value
       || !description.value
       || !type.value
-<<<<<<< HEAD
-      || !repo.value
-      || (editPage && !issueStatus.value)
-      || (editPage && !assignedTo.value)
-=======
       || !statusID
       || (product
         && product.issue_tool_detail
         && !_.isEmpty(repoList)
         && !repo)
->>>>>>> master
     ) {
       return true;
     }
@@ -922,14 +860,10 @@ const AddIssues = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-<<<<<<< HEAD
-  ...state.decisionReducer,
-=======
   statuses: state.decisionReducer.statuses,
   features: state.decisionReducer.features,
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,
->>>>>>> master
 });
 
 export default connect(mapStateToProps)(AddIssues);

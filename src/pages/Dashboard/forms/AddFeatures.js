@@ -49,14 +49,6 @@ const AddFeatures = ({
   history,
   location,
   statuses,
-<<<<<<< HEAD
-}) => {
-  const classes = useStyles();
-  const [openFormModal, setFormModal] = useState(true);
-  const [openConfirmModal, setConfirmModal] = useState(false);
-  const [autoCompleteValue, setAutoCompleteValue] = useState([]);
-
-=======
   dispatch,
   products,
   credentials,
@@ -67,7 +59,6 @@ const AddFeatures = ({
   const classes = useStyles();
   const [product, setProduct] = useState('');
   const [prodStatus, setProdStatus] = useState('');
->>>>>>> master
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && (location.state.type === 'edit' || location.state.type === 'view');
   const editData = (
@@ -75,25 +66,6 @@ const AddFeatures = ({
     && (location.state.type === 'edit' || location.state.type === 'view')
     && location.state.data
   ) || {};
-<<<<<<< HEAD
-  const productID = location.state && location.state.productID;
-
-  const name = useInput(editData.name || '', {
-    required: true,
-  });
-  const description = useInput(editData.description || '', {
-    required: true,
-  });
-  const priority = useInput(editData.priority || '', {
-    required: true,
-  });
-  const status = useInput(editData.status || '', {
-    required: true,
-  });
-  const tag = useInput(editData.tag || '', {
-    required: true,
-  });
-=======
   const product_uuid = location.state && location.state.product_uuid;
   const viewPage = (location.state && location.state.viewOnly) || false;
 
@@ -139,7 +111,6 @@ const AddFeatures = ({
   // || (featureFormData && featureFormData.total_estimate) || '');
   // const version = useInput((editData && editData.version)
   // || (featureFormData && featureFormData.version) || '');
->>>>>>> master
   const [formError, setFormError] = useState({});
 
   let formTitle;
@@ -152,47 +123,6 @@ const AddFeatures = ({
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
-<<<<<<< HEAD
-  const closeFormModal = () => {
-    const dataHasChanged = (
-      name.hasChanged() || description.hasChanged()
-    );
-
-    if (dataHasChanged) {
-      setConfirmModal(true);
-    } else {
-      setFormModal(false);
-      if (location && location.state) {
-        history.push(redirectTo);
-      }
-    }
-  };
-
-  const discardFormData = () => {
-    setConfirmModal(false);
-    setFormModal(false);
-    if (location && location.state) {
-      history.push(redirectTo);
-    }
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const id = editPage
-      ? editData.id
-      : (location.state && location.state.nextId);
-    const featFormValue = {
-      productID,
-      id,
-      name: name.value,
-      description: description.value,
-    };
-
-    if (editPage) {
-      console.log('Dispatch edit feature action here');
-    } else {
-      console.log('Dispatch add feature action here');
-=======
   useEffect(() => {
     dispatch(getAllStatuses());
     if (!credentials || _.isEmpty(credentials)) {
@@ -283,7 +213,6 @@ const AddFeatures = ({
     } else {
       formData.create_date = dateTime;
       dispatch(saveFeatureFormData(formData));
->>>>>>> master
     }
     handleNext();
   };
@@ -309,16 +238,12 @@ const AddFeatures = ({
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-<<<<<<< HEAD
-    if (!name.value || !description.value) {
-=======
     if (!name.value
       || !description.value
       || !statusID
       || !priority.value
       || !assignees
     ) {
->>>>>>> master
       return true;
     }
     let errorExists = false;
@@ -408,99 +333,6 @@ const AddFeatures = ({
                       ? formError.description.message
                       : ''
                   }
-<<<<<<< HEAD
-                  onBlur={(e) => handleBlur(e, 'required', description)}
-                  {...description.bind}
-                />
-              </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Autocomplete
-                multiple
-                id="tags-outlined"
-                options={[]}
-                freeSolo
-                value={autoCompleteValue}
-                onChange={(e, newval, reason) => {
-                  setAutoCompleteValue(newval);
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="tag"
-                    label="Tags"
-                    name="tag"
-                    onKeyDown={(e) => {
-                      if (e.keyCode == 13 && e.target.value) {
-                        setAutoCompleteValue(autoCompleteValue.concat(e.target.value));
-                      }
-                    }}
-                    error={
-                      formError.tag
-                      && formError.tag.error
-                    }
-                    helperText={
-                      formError.tag
-                        ? formError.tag.message
-                        : ''
-                    }
-                    onBlur={(e) => handleBlur(e, 'required', tag)}
-                    {...tag.bind}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid container spacing={2}>
-              <Grid item xs={8}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  select
-                  id="status"
-                  label="Status"
-                  name="status"
-                  autoComplete="status"
-                  error={
-                    formError.status
-                    && formError.status.error
-                  }
-                  helperText={
-                    formError.status
-                      ? formError.status.message
-                      : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', status)}
-                  {...status.bind}
-                >
-                  {_.map(statuses, (status) => (
-                    <MenuItem
-                      key={status.status_uuid}
-                      value={status.name}
-                    >
-                      {status.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={4}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  select
-                  id="priority "
-                  label="Priority"
-                  name="priority"
-                  autoComplete="priority"
-                  error={
-=======
               onBlur={(e) => handleBlur(e, 'required', description)}
               {...description.bind}
               disabled={viewPage}
@@ -550,7 +382,6 @@ const AddFeatures = ({
               name="priority"
               autoComplete="priority"
               error={
->>>>>>> master
                     formError.priority
                     && formError.priority.error
                   }
@@ -568,20 +399,6 @@ const AddFeatures = ({
                   key={`priority-${idx}`}
                   value={prty}
                 >
-<<<<<<< HEAD
-                  {_.map(priorities, (priority) => (
-                    <MenuItem
-                      key={priority.id}
-                      value={priority.type}
-                    >
-                      {priority.type}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-            </Grid>
-            <Grid item xs={12}>
-=======
                   {prty}
                 </MenuItem>
               ))}
@@ -607,80 +424,11 @@ const AddFeatures = ({
               ))
             )}
             renderInput={(params) => (
->>>>>>> master
               <TextField
                 {...params}
                 variant="outlined"
                 label="Tags"
                 margin="normal"
-<<<<<<< HEAD
-                fullWidth
-                multiline
-                id="featureTracker"
-                label="Feature Tracker"
-                name="featureTracker"
-                autoComplete="featureTracker"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                multiline
-                id="version"
-                label="Version"
-                name="version"
-                autoComplete="version"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                multiline
-                id="totalEstimate"
-                label="Total Estimate"
-                name="totalEstimate"
-                autoComplete="totalEstimate"
-              />
-            </Grid>
-            <Grid
-              container
-              spacing={isDesktop ? 3 : 0}
-              justifyContent="center"
-            >
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  disabled={submitDisabled()}
-                >
-                  {buttonText}
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="button"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={discardFormData}
-                  className={classes.submit}
-                >
-                  Cancel
-                </Button>
-              </Grid>
-            </Grid>
-          </form>
-        </FormModal>
-      )
-      }
-=======
               />
             )}
             disabled={viewPage}
@@ -782,21 +530,16 @@ const AddFeatures = ({
           </Grid>
         </Grid>
       </form>
->>>>>>> master
     </>
   );
 };
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-<<<<<<< HEAD
-  ...state.decisionReducer,
-=======
   statuses: state.decisionReducer.statuses,
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,
   featureFormData: state.decisionReducer.featureFormData,
->>>>>>> master
 });
 
 export default connect(mapStateToProps)(AddFeatures);

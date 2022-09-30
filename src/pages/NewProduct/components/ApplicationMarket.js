@@ -64,81 +64,17 @@ const StyledRadio = (props) => <Radio color="info" {...props} />;
 // eslint-disable-next-line import/no-mutable-exports
 export let checkIfApplicationMarketEdited;
 
-<<<<<<< HEAD
-const ApplicationMarket = (props) => {
-  const {
-    location,
-    handleNext,
-    handleBack,
-  } = props;
-=======
 const ApplicationMarket = ({
   productFormData,
   handleNext,
   handleBack,
   dispatch,
-  editData,
 }) => {
->>>>>>> master
   const classes = useStyles();
   // const editPage = location.state && location.state.type === 'edit';
   const editData = (location.state && location.state.type === 'edit' && location.state.data)
     || {};
 
-<<<<<<< HEAD
-  const applicationType = useInput(
-    (editData && editData.application_type) || 'desktop',
-    { required: true },
-  );
-  const [specificProblem, setSpecificProblem] = useState({
-    value: false,
-    problem: '',
-  });
-  const primaryUsers = useInput((editData && editData.primary_users) || '', {
-    required: true,
-  });
-  const [bussinessSegment, setBussinessSegment] = useState([]);
-  const [formError, setFormError] = useState({});
-
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
-  const handleBlur = (e, validation, input, parentId) => {
-    const validateObj = validators(validation, input);
-    const prevState = { ...formError };
-    if (validateObj && validateObj.error) {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: validateObj,
-      });
-    } else {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: {
-          error: false,
-          message: '',
-        },
-      });
-    }
-  };
-
-  const onBackClick = (event) => {
-    // if (checkIfProductInfoEdited() === true) {
-    //   handleSubmit(event);
-    // }
-    handleBack();
-  };
-
-  const onNextClick = (event) => {
-    // if (checkIfProductInfoEdited() === true) {
-    //   handleSubmit(event);
-    // }
-    handleNext();
-  };
-=======
   const applicationType = useInput((editData
     && editData.product_info
     && editData.product_info.application_type)
@@ -189,7 +125,6 @@ const ApplicationMarket = ({
       && productFormData.product_info
       && productFormData.product_info.bussiness_segment)
     || []);
->>>>>>> master
 
   const submitDisabled = () => {
     if (primaryUsers.value === '' || bussinessSegment.length <= 0) {
@@ -199,9 +134,6 @@ const ApplicationMarket = ({
   };
 
   checkIfApplicationMarketEdited = () => (
-<<<<<<< HEAD
-    applicationType.hasChanged() || primaryUsers.hasChanged()
-=======
     applicationType.hasChanged()
     || primaryUsers.hasChanged()
     || secondaryUsers.hasChanged()
@@ -210,7 +142,6 @@ const ApplicationMarket = ({
       && productFormData.product_info.bussiness_segment
       && !_.isEqual(bussinessSegment,
         productFormData.product_info.bussiness_segment))
->>>>>>> master
   );
 
   /**
@@ -219,8 +150,6 @@ const ApplicationMarket = ({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-<<<<<<< HEAD
-=======
     const formData = {
       ...productFormData,
       product_info: {
@@ -236,7 +165,6 @@ const ApplicationMarket = ({
     };
     dispatch(saveProductFormData(formData));
     handleNext();
->>>>>>> master
   };
 
   return (
@@ -298,7 +226,8 @@ const ApplicationMarket = ({
                 <Typography variant="caption" gutterBottom component="div">
                   If Yes, for what type of user?
                 </Typography>
-              </Grid>
+              </FormControl>
+            </Grid>
 
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
@@ -322,20 +251,6 @@ const ApplicationMarket = ({
                     }}
                     renderValue={(selected) => selected.join(', ')}
                   >
-<<<<<<< HEAD
-                    <MenuItem value="small business user">
-                      Small Business User
-                    </MenuItem>
-                    <MenuItem value="enterprise user (big companies)">
-                      Enterprise User (Big Companies)
-                    </MenuItem>
-                    <MenuItem value="government user">
-                      Government User
-                    </MenuItem>
-                    <MenuItem value="consumer">Consumer</MenuItem>
-                    <MenuItem value="developer">Developer</MenuItem>
-                    <MenuItem value="others">Other</MenuItem>
-=======
                     <MenuItem value="" />
                     {_.map(BUSSINESS_SEGMENTS, (segment, idx) => (
                       <MenuItem key={`segment-${idx}`} value={segment}>
@@ -345,7 +260,6 @@ const ApplicationMarket = ({
                         <ListItemText primary={segment} />
                       </MenuItem>
                     ))}
->>>>>>> master
                   </Select>
                 </FormControl>
               </Grid>
@@ -428,7 +342,6 @@ const ApplicationMarket = ({
                   <MenuItem value="Other">Other</MenuItem>
                 </Select>
               </FormControl>
-            </Grid>
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>

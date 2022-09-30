@@ -61,7 +61,6 @@ const BudgetTechnology = ({
   handleNext,
   handleBack,
   dispatch,
-  editData,
 }) => {
   const classes = useStyles();
   const viewOnly = false;
