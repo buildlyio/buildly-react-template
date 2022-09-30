@@ -21,11 +21,25 @@ import {
   IconButton,
   TextField,
   Button,
+  Card,
+  CardContent,
+  Container,
+  Link,
+  Autocomplete,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
 } from '@mui/material';
+import FolderIcon from '@mui/icons-material/Folder';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { PictureAsPdf as PictureAsPdfIcon } from '@mui/icons-material';
 import { useInput } from '@hooks/useInput';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { saveProductFormData } from '@redux/product/actions/product.actions';
+import { saveProductFormData, docIdentifier } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -75,6 +89,8 @@ const TeamUser = ({
   productFormData, handleNext, handleBack, dispatch, editData,
 }) => {
   const classes = useStyles();
+  // let fileChanged = false;
+  const [filesUpload, setFilesUpload] = useState([]);
 
   const teamSize = useInput((editData
     && editData.product_info
@@ -110,6 +126,8 @@ const TeamUser = ({
     || '',
   { required: true });
 
+  // const [existingLinks, setExistingLinks] = useState([]);
+
   const submitDisabled = () => {
     let countNum = 0;
     _.forEach(roleCount, (roleCountObject) => {
@@ -133,23 +151,36 @@ const TeamUser = ({
     || existingFeatures.hasChanged()
   );
 
+  // const removeFile = (filename) => {
+  //   setFiles(files.filter((file) => file.name !== filename));
+  // };
+
+  let uploadFile;
+  const fileChange = (event) => {
+    setFilesUpload(event.target.files);
+  };
+
   /**
    * Submit The form and add/edit custodian
    * @param {Event} event the default submit event
    */
   const handleSubmit = (event) => {
     event.preventDefault();
+    uploadFile = new FormData();
+    for (const key of Object.keys(filesUpload)) {
+      uploadFile.append('file', filesUpload[key]);
+    }
     const formData = {
       ...productFormData,
       product_info: {
         ...productFormData.product_info,
         team_size: teamSize.value,
         role_count: roleCount,
-        existing_features: existingFeatures.value,
       },
       edit_date: new Date(),
     };
     dispatch(saveProductFormData(formData));
+    dispatch(docIdentifier(uploadFile));
     handleNext();
   };
 
@@ -264,18 +295,54 @@ const TeamUser = ({
               </Typography>
             </Grid>
             <Grid item xs={12}>
+              {/* <TextField
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                // value={existingLinks}
+                id="existingLinks"
+                label="Existing File links"
+                name="existingLinks"
+                autoComplete="existingLinks"
+                onKeyDown={(e) => linkify(e)}
+                {...existingLinks.bind}
+              /> */}
               <TextField
                 variant="outlined"
                 margin="normal"
                 fullWidth
-                multiline
-                rows={6}
+                // multiple
+                type="file"
                 id="existingFeatures"
                 label="Existing Features"
                 name="existingFeatures"
                 autoComplete="existingFeatures"
-                {...existingFeatures.bind}
+                inputProps={{ multiple: true }}
+                InputLabelProps={{ shrink: true }}
+                onChange={fileChange}
+                // {...existingFeatures.bind}
               />
+              {/* <List>
+                {_.map(files, (file, index) => (
+                  <ListItem
+                    key={index}
+                    secondaryAction={(
+                      <IconButton edge="end" aria-label="delete">
+                        <DeleteIcon onClick={(e) => removeFile(file.name)} />
+                      </IconButton>
+                  )}
+                  >
+                    <ListItemAvatar>
+                      <Avatar>
+                        <FolderIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={file.name}
+                    />
+                  </ListItem>
+                ))}
+              </List> */}
             </Grid>
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>
