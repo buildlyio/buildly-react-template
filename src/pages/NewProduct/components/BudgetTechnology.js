@@ -16,6 +16,10 @@ import {
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
+import { saveProductFormData } from '@redux/product/actions/product.actions';
+import {
+  DATABASES, DEPLOYMENTS, HOSTING, LANGUAGES, STORAGES,
+} from '../ProductFormConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -36,8 +40,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
   },
   buttonContainer: {
-    margin: theme.spacing(8, 0),
-    textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   buttonProgress: {
@@ -61,12 +65,9 @@ const BudgetTechnology = ({
   handleNext,
   handleBack,
   dispatch,
+  editData,
 }) => {
   const classes = useStyles();
-  const viewOnly = false;
-  // const editPage = location.state && location.state.type === 'edit';
-  const editData = (location.state && location.state.type === 'edit' && location.state.data)
-    || {};
 
   const [firstUserDate, handlefirstUserDateChange] = useState((editData
     && editData.product_info
@@ -93,7 +94,7 @@ const BudgetTechnology = ({
   || (productFormData
       && productFormData.product_info
       && productFormData.product_info.hosting)
-    || 'No Preference',
+    || 'GCP',
   { required: true });
 
   const language = useInput((editData
@@ -102,7 +103,7 @@ const BudgetTechnology = ({
   || (productFormData
       && productFormData.product_info
       && productFormData.product_info.language)
-    || 'No Preference',
+    || 'JavaScript',
   { required: true });
 
   const database = useInput((editData
@@ -111,7 +112,7 @@ const BudgetTechnology = ({
   || (productFormData
       && productFormData.product_info
       && productFormData.product_info.database)
-    || 'No Preference',
+    || 'Postgres',
   { required: true });
 
   const storage = useInput((editData
@@ -120,7 +121,7 @@ const BudgetTechnology = ({
   || (productFormData
       && productFormData.product_info
       && productFormData.product_info.storage)
-    || 'No Preference',
+    || 'AWS',
   { required: true });
 
   const deployment = useInput((editData
@@ -129,7 +130,7 @@ const BudgetTechnology = ({
   || (productFormData
       && productFormData.product_info
       && productFormData.product_info.deployment)
-    || 'No Preference',
+    || 'AWS',
   { required: true });
 
   const [formError, setFormError] = useState({});
@@ -159,22 +160,17 @@ const BudgetTechnology = ({
     }
   };
 
-  const onBackClick = (event) => {
-    // if (checkIfProductInfoEdited() === true) {
-    //   handleSubmit(event);
-    // }
-    handleBack();
-  };
-
-  const onNextClick = (event) => {
-    // if (checkIfProductInfoEdited() === true) {
-    //   handleSubmit(event);
-    // }
-    handleNext();
-  };
-
   checkIfBudgetTechnologyEdited = () => (
-    hosting.hasChanged()
+    (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.first_user_date
+      && (firstUserDate !== productFormData.product_info.first_user_date))
+    || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.approx_budget
+      && !_.isEqual(approxBudget,
+        productFormData.product_info.approx_budget))
+    || hosting.hasChanged()
     || language.hasChanged()
     || database.hasChanged()
     || storage.hasChanged()
@@ -187,6 +183,22 @@ const BudgetTechnology = ({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
+    const formData = {
+      ...productFormData,
+      product_info: {
+        ...productFormData.product_info,
+        first_user_date: firstUserDate,
+        approx_budget: approxBudget,
+        hosting: hosting.value,
+        language: language.value,
+        database: database.value,
+        storage: storage.value,
+        deployment: deployment.value,
+      },
+      edit_date: new Date(),
+    };
+    dispatch(saveProductFormData(formData));
+    handleNext();
   };
 
   const budgetCategory = [
@@ -276,7 +288,6 @@ const BudgetTechnology = ({
                 selectedDate={firstUserDate}
                 hasTime
                 handleDateChange={handlefirstUserDateChange}
-                disabled={viewOnly}
               />
             </Grid>
             <Grid item xs={12} sm={12}>
@@ -316,16 +327,11 @@ const BudgetTechnology = ({
                   Select Hosting
                 </FormLabel>
                 <Select {...hosting.bind}>
-                  <MenuItem value="Hostinger">Hostinger</MenuItem>
-                  <MenuItem value="Bluehost">Bluehost</MenuItem>
-                  <MenuItem value="Dreamhost">Dreamhost</MenuItem>
-                  <MenuItem value="Hostgator">Hostgator</MenuItem>
-                  <MenuItem value="GreenGeeks">GreenGeeks</MenuItem>
-                  <MenuItem value="SiteGround">SiteGround</MenuItem>
-                  <MenuItem value="A2 Hosting">A2 Hosting</MenuItem>
-                  <MenuItem value="InMotion">InMotion</MenuItem>
-                  <MenuItem value="WPEngine">WPEngine</MenuItem>
-                  <MenuItem value="Nexcess">Nexcess</MenuItem>
+                  {_.map(HOSTING, (host, idx) => (
+                    <MenuItem key={`hosting-${idx}`} value={host}>
+                      {host}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -341,16 +347,11 @@ const BudgetTechnology = ({
                   Select Language
                 </FormLabel>
                 <Select {...language.bind}>
-                  <MenuItem value="JavaScript">JavaScript</MenuItem>
-                  <MenuItem value="Python">Python</MenuItem>
-                  <MenuItem value="Java">Java</MenuItem>
-                  <MenuItem value="C/CPP">C/CPP</MenuItem>
-                  <MenuItem value="PHP">PHP</MenuItem>
-                  <MenuItem value="Swift">Swift</MenuItem>
-                  <MenuItem value="C#">C#</MenuItem>
-                  <MenuItem value="Ruby">Ruby</MenuItem>
-                  <MenuItem value="Objective – C">Objective – C</MenuItem>
-                  <MenuItem value="SQL">SQL</MenuItem>
+                  {_.map(LANGUAGES, (lng, idx) => (
+                    <MenuItem key={`language-${idx}`} value={lng}>
+                      {lng}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -365,9 +366,11 @@ const BudgetTechnology = ({
                   Select Database
                 </FormLabel>
                 <Select {...database.bind}>
-                  <MenuItem value="Postgres">Postgres</MenuItem>
-                  <MenuItem value="MySQL">MySQL</MenuItem>
-                  <MenuItem value="Mongo">MongoDB</MenuItem>
+                  {_.map(DATABASES, (db, idx) => (
+                    <MenuItem key={`database-${idx}`} value={db}>
+                      {db}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -382,9 +385,11 @@ const BudgetTechnology = ({
                   Select Storage
                 </FormLabel>
                 <Select {...storage.bind}>
-                  <MenuItem value="AWS">AWS</MenuItem>
-                  <MenuItem value="GCP">GCP</MenuItem>
-                  <MenuItem value="Digital Ocean">Digital Ocean</MenuItem>
+                  {_.map(STORAGES, (strg, idx) => (
+                    <MenuItem key={`storage-${idx}`} value={strg}>
+                      {strg}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -399,9 +404,11 @@ const BudgetTechnology = ({
                   Select Deployment
                 </FormLabel>
                 <Select {...deployment.bind}>
-                  <MenuItem value="AWS">AWS</MenuItem>
-                  <MenuItem value="GCP">GCP</MenuItem>
-                  <MenuItem value="Digital Ocean">Digital Ocean</MenuItem>
+                  {_.map(DEPLOYMENTS, (deploy, idx) => (
+                    <MenuItem key={`deployment-${idx}`} value={deploy}>
+                      {deploy}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -409,10 +416,11 @@ const BudgetTechnology = ({
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>
               <Button
+                type="button"
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={onBackClick}
+                onClick={handleBack}
                 className={classes.submit}
               >
                 Back
@@ -420,13 +428,13 @@ const BudgetTechnology = ({
             </Grid>
             <Grid item xs={12} sm={4}>
               <Button
+                type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={onNextClick}
                 className={classes.submit}
               >
-                Save & Next
+                Next
               </Button>
             </Grid>
           </Grid>
@@ -438,6 +446,7 @@ const BudgetTechnology = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  productFormData: state.productReducer.productFormData,
 });
 
 export default connect(mapStateToProps)(BudgetTechnology);

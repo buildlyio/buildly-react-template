@@ -15,13 +15,11 @@ import {
   Select,
   Button,
   Checkbox,
-  TextField,
   ListItemText,
 } from '@mui/material';
 import { useInput } from '@hooks/useInput';
 import { saveProductFormData } from '@redux/product/actions/product.actions';
-import { BUSSINESS_SEGMENTS, PRIMARY_USERS } from '../ProductFormConstants';
-import { validators } from '@utils/validators';
+import { BUSSINESS_SEGMENTS, PRIMARY_USERS, SPECIFIC_PROBLEMS } from '../ProductFormConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -42,8 +40,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
   },
   buttonContainer: {
-    margin: theme.spacing(8, 0),
-    textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   buttonProgress: {
@@ -69,11 +67,9 @@ const ApplicationMarket = ({
   handleNext,
   handleBack,
   dispatch,
+  editData,
 }) => {
   const classes = useStyles();
-  // const editPage = location.state && location.state.type === 'edit';
-  const editData = (location.state && location.state.type === 'edit' && location.state.data)
-    || {};
 
   const applicationType = useInput((editData
     && editData.product_info
@@ -83,7 +79,6 @@ const ApplicationMarket = ({
       && productFormData.product_info.application_type)
     || 'desktop',
   { required: true });
-
   const [specificProblem, setSpecificProblem] = useState((editData
     && editData.product_info
     && editData.product_info.specific_problem)
@@ -94,14 +89,6 @@ const ApplicationMarket = ({
       value: false,
       problem: '',
     });
-  const specificProblemDesc = useInput((editData
-        && editData.product_info
-        && editData.product_info.specific_problem_desc)
-      || (productFormData
-          && productFormData.product_info
-          && productFormData.product_info.specific_problem_desc)
-        || '', { required: true });
-
   const primaryUsers = useInput((editData
     && editData.product_info
     && editData.product_info.primary_users)
@@ -127,7 +114,10 @@ const ApplicationMarket = ({
     || []);
 
   const submitDisabled = () => {
-    if (primaryUsers.value === '' || bussinessSegment.length <= 0) {
+    if (!applicationType.value
+      || !primaryUsers.value
+      || bussinessSegment.length <= 0
+    ) {
       return true;
     }
     return false;
@@ -135,6 +125,11 @@ const ApplicationMarket = ({
 
   checkIfApplicationMarketEdited = () => (
     applicationType.hasChanged()
+    || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.specific_problem
+      && !_.isEqual(specificProblem,
+        productFormData.product_info.specific_problem))
     || primaryUsers.hasChanged()
     || secondaryUsers.hasChanged()
     || (productFormData
@@ -156,7 +151,6 @@ const ApplicationMarket = ({
         ...productFormData.product_info,
         application_type: applicationType.value,
         specific_problem: specificProblem,
-        specific_problem_desc: specificProblemDesc.value,
         primary_users: primaryUsers.value,
         secondary_users: secondaryUsers.value,
         bussiness_segment: bussinessSegment,
@@ -201,68 +195,67 @@ const ApplicationMarket = ({
                 />
               </RadioGroup>
             </Grid>
-
             <Grid item xs={12} sm={12}>
               <Typography variant="h6" gutterBottom component="div">
-                Is there a specific problem you are trying to solve?
+                Is there a specific problem you are trying to solve
               </Typography>
-              <Grid className={classes.inputWithTooltip} item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  multiline
-                  rows={6}
-                  id="specificProblemDesc"
-                  label="Problem description"
-                  name="specificProblemDesc"
-                  autoComplete="specificProblemDesc"
-                  {...specificProblemDesc.bind}
-                />
-              </Grid>
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <FormControl component="fieldset" required>
                 <Typography variant="caption" gutterBottom component="div">
                   If Yes, for what type of user?
                 </Typography>
+                <RadioGroup
+                  row
+                  aria-label="specific-problem"
+                  name="specific-problem-radio-buttons-group"
+                  value={specificProblem.value}
+                  onChange={(e) => {
+                    setSpecificProblem((prevSpecificProblem) => ({
+                      ...prevSpecificProblem,
+                      value: e.target.value === 'true',
+                    }));
+                  }}
+                >
+                  <FormControlLabel
+                    value
+                    control={<StyledRadio />}
+                    label="Yes"
+                  />
+                  <FormControlLabel
+                    value={false}
+                    control={<StyledRadio />}
+                    label="No"
+                  />
+                </RadioGroup>
               </FormControl>
             </Grid>
-
-              <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6}>
+              {specificProblem.value && (
                 <FormControl fullWidth>
-                  <InputLabel id="bussiness-segment-label">
-                    Business Segment
-                  </InputLabel>
+                  <InputLabel id="type-of-user-label">Type of User</InputLabel>
                   <Select
-                    labelId="bussiness-segment-label"
-                    id="bussiness-segment"
-                    value={bussinessSegment}
+                    labelId="type-of-user-label"
+                    id="type-of-user"
                     label="Type of User"
-                    multiple
-                    onChange={(event) => {
-                      const {
-                        target: { value },
-                      } = event;
-                      setBussinessSegment(
-                        // On autofill we get a stringified value.
-                        typeof value === 'string' ? value.split(',') : value,
-                      );
+                    value={specificProblem.problem}
+                    onChange={(e) => {
+                      setSpecificProblem((prevSpecificProblem) => ({
+                        ...prevSpecificProblem,
+                        problem: e.target.value,
+                      }));
                     }}
-                    renderValue={(selected) => selected.join(', ')}
                   >
                     <MenuItem value="" />
-                    {_.map(BUSSINESS_SEGMENTS, (segment, idx) => (
-                      <MenuItem key={`segment-${idx}`} value={segment}>
-                        <Checkbox
-                          checked={_.indexOf(bussinessSegment, segment) > -1}
-                        />
-                        <ListItemText primary={segment} />
+                    {_.map(SPECIFIC_PROBLEMS, (prob, idx) => (
+                      <MenuItem key={`prob-${idx}`} value={prob}>
+                        {prob}
                       </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
-              </Grid>
+              )}
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
@@ -273,13 +266,12 @@ const ApplicationMarket = ({
                   label="Type of User"
                   {...primaryUsers.bind}
                 >
-                  <MenuItem value="customer1">Customer 1</MenuItem>
-                  <MenuItem value="customer2">
-                    Customer 2 (Power User)
-                  </MenuItem>
-                  <MenuItem value="Government User">
-                    Administrator ( All powerfull, helpfull, etc. )
-                  </MenuItem>
+                  <MenuItem value="" />
+                  {_.map(PRIMARY_USERS, (user, idx) => (
+                    <MenuItem key={`user-${idx}`} value={user}>
+                      {user}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -301,6 +293,7 @@ const ApplicationMarket = ({
                 </Select>
               </FormControl>
             </Grid>
+            {specificProblem.problem !== 'Consumer' && (
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel id="bussiness-segment-label">
@@ -312,45 +305,39 @@ const ApplicationMarket = ({
                   value={bussinessSegment}
                   label="Type of User"
                   multiple
-                  onChange={(e) => {
-                    setBussinessSegment(e.target.value);
+                  onChange={(event) => {
+                    const {
+                      target: { value },
+                    } = event;
+                    setBussinessSegment(
+                      // On autofill we get a stringified value.
+                      typeof value === 'string' ? value.split(',') : value,
+                    );
                   }}
+                  renderValue={(selected) => selected.join(', ')}
                 >
-                  <MenuItem value="Advertisement/Marketing">
-                    Advertisement/Marketing
-                  </MenuItem>
-                  <MenuItem value="Finance/Banking">Finance/Banking</MenuItem>
-                  <MenuItem value="HR/People">HR/People</MenuItem>
-                  <MenuItem value="IT/Tech/Developers">
-                    IT/Tech/Developers
-                  </MenuItem>
-                  <MenuItem value="Education - Science">
-                    Education - Science
-                  </MenuItem>
-                  <MenuItem value="Education - Teachers">
-                    Education - Teachers
-                  </MenuItem>
-                  <MenuItem value="Education - Students">
-                    Education - Students
-                  </MenuItem>
-                  <MenuItem value="Government/Politics">
-                    Government/Politics
-                  </MenuItem>
-                  <MenuItem value="Public/Non-Profit">
-                    Public/Non-Profit
-                  </MenuItem>
-                  <MenuItem value="Other">Other</MenuItem>
+                  <MenuItem value="" />
+                  {_.map(BUSSINESS_SEGMENTS, (segment, idx) => (
+                    <MenuItem key={`segment-${idx}`} value={segment}>
+                      <Checkbox
+                        checked={_.indexOf(bussinessSegment, segment) > -1}
+                      />
+                      <ListItemText primary={segment} />
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
+            </Grid>
+            )}
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>
               <Button
+                type="button"
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={onBackClick}
-                // disabled={productFormData === null}
+                onClick={handleBack}
                 className={classes.submit}
               >
                 Back
@@ -358,14 +345,14 @@ const ApplicationMarket = ({
             </Grid>
             <Grid item xs={12} sm={4}>
               <Button
+                type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={onNextClick}
                 disabled={submitDisabled()}
                 className={classes.submit}
               >
-                Save & Next
+                Next
               </Button>
             </Grid>
           </Grid>
@@ -377,6 +364,7 @@ const ApplicationMarket = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  productFormData: state.productReducer.productFormData,
 });
 
 export default connect(mapStateToProps)(ApplicationMarket);

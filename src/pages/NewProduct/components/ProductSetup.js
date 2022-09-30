@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -16,9 +16,7 @@ import {
   Radio,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faGithub, faTrello, faAtlassian, faJira,
-} from '@fortawesome/free-brands-svg-icons';
+import { faGithub, faTrello } from '@fortawesome/free-brands-svg-icons';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
@@ -46,8 +44,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
   },
   buttonContainer: {
-    margin: theme.spacing(8, 0),
-    textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   buttonProgress: {
@@ -93,17 +91,14 @@ const ProductSetup = ({
   handleNext,
   dispatch,
   thirdPartyTools,
+  editData,
   viewPage,
   featCred,
   issueCred,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
-  const viewOnly = false;
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
-  // const editPage = location.state && location.state.type === 'edit';
-  const editData = (location.state && location.state.type === 'edit' && location.state.data)
-    || {};
 
   const name = useInput((editData && editData.name)
   || (productFormData && productFormData.product_name) || '',
@@ -135,6 +130,13 @@ const ProductSetup = ({
   || (productFormData && productFormData.start_date) || new Date());
   const [endDate, handleEndDateChange] = useState((editData && editData.end_date)
   || (productFormData && productFormData.end_date) || new Date());
+  const [useBuildlyArch, setUseBuildlyArch] = useState((editData
+    && editData.product_info
+    && editData.product_info.use_buildly_architecture
+  ) || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.use_buildly_arch
+  ) || true);
   const [formError, setFormError] = useState({});
 
   const editCreds = [];
@@ -268,16 +270,18 @@ const ProductSetup = ({
     }
   };
 
-  const onNextClick = (event) => {
-    // if (checkIfProductInfoEdited() === true) {
-    //   handleSubmit(event);
-    // }
-    handleNext();
-  };
-
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (!name.value) {
+    if (!name.value || !description.value
+      || (featuresTool.value === 'trello'
+        && (!trelloAuth.access_token || !trelloAuth.trello_key))
+      || (featuresTool.value === 'github'
+        && (!githubFeatureAuth.access_token
+          || !githubFeatureAuth.owner_name))
+      || (issuesTool.value === 'github'
+        && (!githubIssueAuth.access_token
+          || !githubIssueAuth.owner_name))
+    ) {
       return true;
     }
     let errorExists = false;
@@ -290,7 +294,8 @@ const ProductSetup = ({
   };
 
   checkIfProductSetupEdited = () => (
-    description.hasChanged()
+    name.hasChanged()
+    || description.hasChanged()
     || featuresTool.hasChanged()
     || issuesTool.hasChanged()
     || (productFormData
@@ -299,6 +304,10 @@ const ProductSetup = ({
     || (productFormData
       && productFormData.end_date
       && (endDate !== productFormData.end_date))
+    || (productFormData
+      && productFormData.product_info
+      && productFormData.product_info.use_buildly_architecture
+      && (useBuildlyArch !== productFormData.product_info.use_buildly_architecture))
   );
 
   const handleFeatureCredential = (event) => {
@@ -487,6 +496,7 @@ const ProductSetup = ({
       third_party_tool: tools,
       product_info: {
         ...productFormData?.product_info,
+        use_buildly_architecture: useBuildlyArch,
       },
       creds,
       changedData,
@@ -511,7 +521,6 @@ const ProductSetup = ({
                 label="Product name"
                 name="name"
                 autoComplete="name"
-                disabled={viewOnly}
                 error={formError.name && formError.name.error}
                 onBlur={(e) => handleBlur(e, 'required', name)}
                 {...name.bind}
@@ -530,7 +539,6 @@ const ProductSetup = ({
                     label="Product description"
                     name="description"
                     autoComplete="description"
-                    disabled={viewOnly}
                     {...description.bind}
                   />
                 </Grid>
@@ -544,7 +552,6 @@ const ProductSetup = ({
                     selectedDate={startDate}
                     hasTime
                     handleDateChange={handleStartDateChange}
-                    disabled={viewOnly}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -553,7 +560,6 @@ const ProductSetup = ({
                     selectedDate={endDate}
                     hasTime
                     handleDateChange={handleEndDateChange}
-                    disabled={viewOnly}
                   />
                 </Grid>
               </Grid>
@@ -583,13 +589,13 @@ const ProductSetup = ({
                       )}
                     />
                     <FormControlLabel
-                      value="atlassian"
+                      value="github"
                       control={<StyledStart />}
                       disabled={viewPage}
                       label={(
                         <>
-                          <FontAwesomeIcon icon={faAtlassian} className="fa-4x" />
-                          <Typography align="center">Atlassian</Typography>
+                          <FontAwesomeIcon icon={faGithub} className="fa-4x" />
+                          <Typography align="center">Github</Typography>
                         </>
                       )}
                     />
@@ -738,16 +744,6 @@ const ProductSetup = ({
                       )}
                     />
                     <FormControlLabel
-                      value="jira"
-                      control={<StyledStart />}
-                      label={(
-                        <>
-                          <FontAwesomeIcon icon={faJira} className="fa-4x" />
-                          <Typography align="center">Jira</Typography>
-                        </>
-                      )}
-                    />
-                    <FormControlLabel
                       value="start fresh"
                       className={classes.radioLeft}
                       disabled={viewPage}
@@ -818,14 +814,14 @@ const ProductSetup = ({
         <Grid container spacing={3} className={classes.buttonContainer}>
           <Grid item xs={12} sm={4}>
             <Button
+              type="submit"
               variant="contained"
               color="primary"
               fullWidth
-              onClick={onNextClick}
-              // disabled={productFormData === null}
+              disabled={submitDisabled()}
               className={classes.submit}
             >
-              Save & Next
+              Next
             </Button>
           </Grid>
         </Grid>
