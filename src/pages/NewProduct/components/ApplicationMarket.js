@@ -20,31 +20,15 @@ import {
 } from '@mui/material';
 import { useInput } from '@hooks/useInput';
 import { saveProductFormData } from '@redux/product/actions/product.actions';
-import { BUSSINESS_SEGMENTS, PRIMARY_USERS, SPECIFIC_PROBLEMS } from '../ProductFormConstants';
+import { BUSSINESS_SEGMENTS, PRIMARY_USERS } from '../ProductFormConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
-    color: '#fff',
     [theme.breakpoints.up('sm')]: {
       width: '70%',
       margin: 'auto',
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.secondary.contrastText,
-    },
-    '& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgb(255, 255, 255, 0.23)',
-    },
-    '& .MuiInputLabel-root': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiSelect-icon': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiInputBase-input': {
-      color: theme.palette.secondary.contrastText,
     },
   },
   submit: {
@@ -55,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginTop: '1em',
     textAlign: 'center',
-    color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
     display: 'flex',
@@ -73,54 +56,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
-  icon: {
-    borderRadius: '50%',
-    width: 16,
-    height: 16,
-    boxShadow:
-      'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
-    backgroundColor: '#f5f8fa',
-    backgroundImage:
-      'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
-    'input:hover ~ &': {
-      backgroundColor: '#ebf1f5',
-    },
-    'input:disabled ~ &': {
-      boxShadow: 'none',
-      background: 'rgba(206,217,224,.5)',
-    },
-  },
-  checkedIcon: {
-    backgroundColor: '#137cbd',
-    backgroundImage:
-      'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
-    '&:before': {
-      display: 'block',
-      width: 16,
-      height: 16,
-      backgroundImage: 'radial-gradient(#fff,#fff 28%,transparent 32%)',
-      content: '""',
-    },
-    'input:hover ~ &': {
-      backgroundColor: '#106ba3',
-    },
-  },
 }));
 
-const StyledRadio = (props) => {
-  const classes = useStyles();
-
-  return (
-    <Radio
-      color="primary"
-      checkedIcon={
-        <span className={`${classes.icon} ${classes.checkedIcon}`} />
-      }
-      icon={<span className={classes.icon} />}
-      {...props}
-    />
-  );
-};
+const StyledRadio = (props) => <Radio color="info" {...props} />;
 
 // eslint-disable-next-line import/no-mutable-exports
 export let checkIfApplicationMarketEdited;
@@ -142,6 +80,7 @@ const ApplicationMarket = ({
       && productFormData.product_info.application_type)
     || 'desktop',
   { required: true });
+
   const [specificProblem, setSpecificProblem] = useState((editData
     && editData.product_info
     && editData.product_info.specific_problem)
@@ -159,6 +98,7 @@ const ApplicationMarket = ({
           && productFormData.product_info
           && productFormData.product_info.specific_problem_desc)
         || '', { required: true });
+
   const primaryUsers = useInput((editData
     && editData.product_info
     && editData.product_info.primary_users)
@@ -195,11 +135,6 @@ const ApplicationMarket = ({
 
   checkIfApplicationMarketEdited = () => (
     applicationType.hasChanged()
-    || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.specific_problem
-      && !_.isEqual(specificProblem,
-        productFormData.product_info.specific_problem))
     || primaryUsers.hasChanged()
     || secondaryUsers.hasChanged()
     || (productFormData
@@ -266,6 +201,7 @@ const ApplicationMarket = ({
                 />
               </RadioGroup>
             </Grid>
+            
             <Grid item xs={12} sm={12}>
               <Typography variant="h6" gutterBottom component="div">
                 Is there a specific problem you are trying to solve?
@@ -290,56 +226,42 @@ const ApplicationMarket = ({
                 <Typography variant="caption" gutterBottom component="div">
                   If Yes, for what type of user?
                 </Typography>
-                <RadioGroup
-                  row
-                  aria-label="specific-problem"
-                  name="specific-problem-radio-buttons-group"
-                  value={specificProblem.value}
-                  onChange={(e) => {
-                    setSpecificProblem((prevSpecificProblem) => ({
-                      ...prevSpecificProblem,
-                      value: e.target.value === 'true',
-                    }));
-                  }}
-                >
-                  <FormControlLabel
-                    value
-                    control={<StyledRadio />}
-                    label="Yes"
-                  />
-                  <FormControlLabel
-                    value={false}
-                    control={<StyledRadio />}
-                    label="No"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {specificProblem.value && (
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
-                  <InputLabel id="type-of-user-label">Type of User</InputLabel>
+                  <InputLabel id="bussiness-segment-label">
+                    Business Segment
+                  </InputLabel>
                   <Select
-                    labelId="type-of-user-label"
-                    id="type-of-user"
+                    labelId="bussiness-segment-label"
+                    id="bussiness-segment"
+                    value={bussinessSegment}
                     label="Type of User"
-                    value={specificProblem.problem}
-                    onChange={(e) => {
-                      setSpecificProblem((prevSpecificProblem) => ({
-                        ...prevSpecificProblem,
-                        problem: e.target.value,
-                      }));
+                    multiple
+                    onChange={(event) => {
+                      const {
+                        target: { value },
+                      } = event;
+                      setBussinessSegment(
+                        // On autofill we get a stringified value.
+                        typeof value === 'string' ? value.split(',') : value,
+                      );
                     }}
+                    renderValue={(selected) => selected.join(', ')}
                   >
                     <MenuItem value="" />
-                    {_.map(SPECIFIC_PROBLEMS, (prob, idx) => (
-                      <MenuItem key={`prob-${idx}`} value={prob}>
-                        {prob}
+                    {_.map(BUSSINESS_SEGMENTS, (segment, idx) => (
+                      <MenuItem key={`segment-${idx}`} value={segment}>
+                        <Checkbox
+                          checked={_.indexOf(bussinessSegment, segment) > -1}
+                        />
+                        <ListItemText primary={segment} />
                       </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
-              )}
+              </Grid>
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>

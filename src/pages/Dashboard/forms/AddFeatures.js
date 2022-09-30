@@ -12,12 +12,9 @@ import {
   MenuItem,
   Chip,
 } from '@mui/material';
-import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
 import {
   getAllStatuses,
-  createFeature,
-  updateFeature,
   saveFeatureFormData,
 } from '@redux/decision/actions/decision.actions';
 import { getAllCredentials } from '@redux/product/actions/product.actions';

@@ -163,7 +163,7 @@ const ForgotPassword = ({ dispatch, loading }) => {
                 </div>
                 <Grid container>
                   <Grid item xs>
-                    <Link href={routes.LOGIN} variant="body2" color="primary">
+                    <Link href={routes.LOGIN} variant="body2" color="secondary">
                       Go back to Sign in
                     </Link>
                   </Grid>
@@ -171,7 +171,7 @@ const ForgotPassword = ({ dispatch, loading }) => {
                     <Link
                       href={routes.REGISTER}
                       variant="body2"
-                      color="primary"
+                      color="secondary"
                     >
                       Don't have an account? Register
                     </Link>

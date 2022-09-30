@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { useElements, useStripe } from '@stripe/react-stripe-js';
 import makeStyles from '@mui/styles/makeStyles';
 import {
   Button,
@@ -24,14 +23,12 @@ import { useInput } from '@hooks/useInput';
 import {
   register,
   loadOrgNames,
-  loadStripeProducts,
 } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
 import { validators } from '@utils/validators';
 import { isMobile } from '@utils/mediaQuery';
 import { providers } from '@utils/socialLogin';
 import Loader from '@components/Loader/Loader';
-import StripeCard from '@components/StripeCard/StripeCard';
 
 const useStyles = makeStyles((theme) => ({
   logoDiv: {
@@ -91,13 +88,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Register = ({
-  dispatch, loading, history, socialLogin, orgNames, stripeProducts,
+  dispatch, loading, history, socialLogin, orgNames,
 }) => {
   const classes = useStyles();
-  const stripe = useStripe();
-  const elements = useElements();
-  const [cardError, setCardError] = useState(false);
-  const [showProducts, setShowProducts] = useState(false);
 
   const email = useInput('', { required: true });
   const username = useInput('', { required: true });
@@ -111,7 +104,6 @@ const Register = ({
   const userType = useInput('', { required: true });
   const first_name = useInput('', { required: true });
   const last_name = useInput('');
-  const product = useInput('', { required: true });
   const [formError, setFormError] = useState({});
 
   // eslint-disable-next-line consistent-return
@@ -132,20 +124,7 @@ const Register = ({
     if (!orgNames) {
       dispatch(loadOrgNames());
     }
-    if (window.env.STRIPE_KEY && !stripeProducts) {
-      dispatch(loadStripeProducts());
-    }
   }, []);
-
-  useEffect(() => {
-    if (!orgName || _.isEmpty(orgNames)
-      || (orgName && _.includes(orgNames, _.lowerCase(orgName)))
-    ) {
-      setShowProducts(false);
-    } else {
-      setShowProducts(true);
-    }
-  }, [orgName, orgNames]);
 
   /**
    * Submit the form to the backend and attempts to authenticate
@@ -153,8 +132,7 @@ const Register = ({
    */
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let anyError = '';
-    let registerFormValue = {
+    const registerFormValue = {
       username: username.value,
       email: email.value,
       password: password.value,
@@ -164,26 +142,7 @@ const Register = ({
       last_name: last_name.value,
     };
 
-    if (showProducts) {
-      const { error, paymentMethod } = await stripe.createPaymentMethod({
-        type: 'card',
-        card: elements.getElement('card'),
-        billing_details: {
-          email: email.value,
-          name: orgName,
-        },
-      });
-      anyError = error;
-      registerFormValue = {
-        ...registerFormValue,
-        product: product.value,
-        card: paymentMethod?.id,
-      };
-    }
-
-    if (!anyError) {
-      dispatch(register(registerFormValue, history));
-    }
+    dispatch(register(registerFormValue, history));
   };
 
   /**
@@ -223,11 +182,6 @@ const Register = ({
       || !orgName
       || !userType.value
       || !first_name.value
-      || (showProducts && !product.value)
-      || (showProducts && cardError)
-      || (showProducts && !elements)
-      // eslint-disable-next-line no-underscore-dangle
-      || (showProducts && elements && elements.getElement('card')._empty)
     ) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
@@ -384,52 +338,6 @@ const Register = ({
                     </TextField>
                   </Grid>
                 </Grid>
-                <Grid
-                  className={showProducts ? '' : classes.hidden}
-                  container
-                  spacing={isMobile() ? 0 : 3}
-                >
-                  <Grid item xs={12}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      required
-                      fullWidth
-                      select
-                      id="product"
-                      name="product"
-                      label="Subscription to Product"
-                      autoComplete="product"
-                      error={formError.product && formError.product.error}
-                      helperText={
-                        formError.product ? formError.product.message : ''
-                      }
-                      className={classes.textField}
-                      onBlur={(e) => handleBlur(e, 'required', product)}
-                      {...product.bind}
-                    >
-                      <MenuItem value="">----------</MenuItem>
-                      {stripeProducts && !_.isEmpty(stripeProducts)
-                      && _.map(stripeProducts, (prd) => (
-                        <MenuItem key={`sub-product-${prd.id}`} value={prd.id}>
-                          {`${prd.name} - ${prd.description}`}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                </Grid>
-                <Grid
-                  className={showProducts ? '' : classes.hidden}
-                  container
-                  spacing={isMobile() ? 0 : 3}
-                >
-                  <Grid item xs={12}>
-                    <StripeCard
-                      cardError={cardError}
-                      setCardError={setCardError}
-                    />
-                  </Grid>
-                </Grid>
                 <Grid container spacing={isMobile() ? 0 : 3}>
                   <Grid item xs={12} md={6}>
                     <TextField
@@ -516,7 +424,7 @@ const Register = ({
                   )}
                 </Grid>
                 <Grid item className={classes.link}>
-                  <Link href={routes.LOGIN} variant="body2" color="primary">
+                  <Link href={routes.LOGIN} variant="body2" color="secondary">
                     Already have an account? Sign in
                   </Link>
                 </Grid>

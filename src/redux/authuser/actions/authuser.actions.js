@@ -55,9 +55,9 @@ export const ADD_ORG_SOCIAL_USER = 'AUTH/ADD_ORG_SOCIAL_USER';
 export const ADD_ORG_SOCIAL_USER_SUCCESS = 'AUTH/ADD_ORG_SOCIAL_USER_SUCCESS';
 export const ADD_ORG_SOCIAL_USER_FAIL = 'AUTH/ADD_ORG_SOCIAL_USER_FAIL';
 
-export const LOAD_STRIPE_PRODUCTS = 'AUTH/LOAD_STRIPE_PRODUCTS';
-export const LOAD_STRIPE_PRODUCTS_SUCCESS = 'AUTH/LOAD_STRIPE_PRODUCTS_SUCCESS';
-export const LOAD_STRIPE_PRODUCTS_FAIL = 'AUTH/LOAD_STRIPE_PRODUCTS_FAIL';
+export const VERIFY_EMAIL = 'AUTH/VERIFY_EMAIL';
+export const VERIFY_EMAIL_SUCCESS = 'AUTH/VERIFY_EMAIL_SUCCESS';
+export const VERIFY_EMAIL_FAIL = 'AUTH/VERIFY_EMAIL_FAIL';
 
 /**
  * Login action
@@ -167,6 +167,8 @@ export const addOrgSocialUser = (data, existingOrg, history) => ({
   history,
 });
 
-export const loadStripeProducts = () => ({
-  type: LOAD_STRIPE_PRODUCTS,
-});
+/**
+ * Verify email for the user
+ * @param data
+ */
+export const verifyEmail = (data, history) => ({ type: VERIFY_EMAIL, data, history });

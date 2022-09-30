@@ -37,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-start',
     alignItems: 'center',
     padding: theme.spacing(0, 2),
-    color: theme.palette.secondary.contrastText,
   },
   actionTitle: {
     flex: 1,
@@ -45,13 +44,12 @@ const useStyles = makeStyles((theme) => ({
   },
   section3: {
     display: 'flex',
-    color: theme.palette.secondary.contrastText,
     flex: 1,
   },
   boxSection: {
     flex: 1,
     marginTop: theme.spacing(2),
-    border: `1px solid ${theme.palette.secondary.contrastText}`,
+    border: '1px solid',
     borderRadius: theme.spacing(2),
     padding: theme.spacing(1, 1, 8, 1),
     display: 'flex',
@@ -117,10 +115,7 @@ const AccordionSummary = styled((props) => (
     {...props}
   />
 ))(({ theme }) => ({
-  backgroundColor:
-    theme.palette.mode === 'dark'
-      ? 'rgba(255, 255, 255, .05)'
-      : 'rgba(0, 0, 0, .03)',
+  backgroundColor: theme.palette.contrast.main,
   flexDirection: 'row-reverse',
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
     transform: 'rotate(90deg)',
@@ -278,48 +273,35 @@ const List = ({
               )}
               <div>
                 {product !== 0 && productIssues && productIssues.length > 0
-                && productFeatures && productFeatures.length > 0
-                && _.map(productFeatures, (feat, ind) => (
-                  <Accordion expanded={expanded === feat} onChange={handleChange(feat)} key={`feat-${ind}`}>
-                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                      <Typography>{feat.name}</Typography>
-                    </AccordionSummary>
-                    {productIssues
-                      .filter((iss) => (iss.feature_uuid === feat.feature_uuid))
-                      .map((issue, index) => (
-                        <AccordionDetails>
-                          <div
-                            className={classes.boxEntry}
-                            key={index}
-                          >
-                            <Typography
-                              className={classes.entryTitle}
-                              variant="body1"
-                            >
-                              {issue.name }
-                              <span className={classes.issueBox}>{issue.issue_type}</span>
-                            </Typography>
-                            <EditRoundedIcon
-                              className={classes.entryIcon}
-                              onClick={(e) => editItem(issue, 'issue')}
-                            />
-                            <DeleteRoundedIcon
-                              className={classes.entryIcon}
-                              onClick={(e) => deleteItem(issue, 'issue')}
-                            />
-                            <CommentIcon
-                              className={classes.entryIcon}
-                              onClick={(e) => commentItem()}
-                            />
-                            <InfoIcon
-                              className={classes.entryIcon}
-                              onClick={(e) => handleIssueDetailsOpenClick(e, issue)}
-                              aria-describedby={id}
-                            />
-                          </div>
-                        </AccordionDetails>
-                      ))}
-                  </Accordion>
+                && _.map(productIssues, (issue) => (
+                  <div
+                    key={`issue-${issue.product_uuid}-${issue.issue_uuid}`}
+                    className={classes.boxEntry}
+                  >
+                    <Typography
+                      className={classes.entryTitle}
+                      variant="body1"
+                    >
+                      {issue.name}
+                    </Typography>
+                    <EditRoundedIcon
+                      className={classes.entryIcon}
+                      onClick={(e) => editItem(issue, 'issue')}
+                    />
+                    <DeleteRoundedIcon
+                      className={classes.entryIcon}
+                      onClick={(e) => deleteItem(issue, 'issue')}
+                    />
+                    <CommentIcon
+                      className={classes.entryIcon}
+                      onClick={(e) => commentItem()}
+                    />
+                    <InfoIcon
+                      className={classes.entryIcon}
+                      onClick={(e) => handleIssueDetailsOpenClick(e, issue)}
+                      aria-describedby={id}
+                    />
+                  </div>
                 ))}
               </div>
             </div>
@@ -371,7 +353,7 @@ const List = ({
                     variant="outlined"
                     icon={<AltRouteIcon fontSize="small" />}
                     label={feat.name}
-                    onClick={() => editItem(feat, 'feat', true)}
+                    onClick={() => editItem(feat, 'feat', false)}
                   />
                 ))}
             </Paper>

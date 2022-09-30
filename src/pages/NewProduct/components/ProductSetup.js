@@ -29,25 +29,9 @@ const useStyles = makeStyles((theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
-    color: '#fff',
     [theme.breakpoints.up('sm')]: {
       width: '70%',
       margin: 'auto',
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.secondary.contrastText,
-    },
-    '& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgb(255, 255, 255, 0.23)',
-    },
-    '& .MuiInputLabel-root': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiSelect-icon': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiInputBase-input': {
-      color: theme.palette.secondary.contrastText,
     },
   },
   submit: {
@@ -58,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginTop: '1em',
     textAlign: 'center',
-    color: theme.palette.primary.contrastText,
   },
   buttonContainer: {
     display: 'flex',
@@ -76,66 +59,18 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
-  icon: {
-    borderRadius: '50%',
-    width: 16,
-    height: 16,
-    boxShadow:
-      'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
-    backgroundColor: '#f5f8fa',
-    backgroundImage:
-      'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
-    'input:hover ~ &': {
-      backgroundColor: '#ebf1f5',
-    },
-    'input:disabled ~ &': {
-      boxShadow: 'none',
-      background: 'rgba(206,217,224,.5)',
-    },
-  },
-  checkedIcon: {
-    backgroundColor: '#137cbd',
-    backgroundImage:
-      'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
-    '&:before': {
-      display: 'block',
-      width: 16,
-      height: 16,
-      backgroundImage: 'radial-gradient(#fff,#fff 28%,transparent 32%)',
-      content: '""',
-    },
-    'input:hover ~ &': {
-      backgroundColor: '#106ba3',
-    },
-  },
   radioButton: {
     margin: theme.spacing(2, 2),
   },
   radioLeft: {
     marginLeft: theme.spacing(2),
   },
-  link: {
-    color: theme.palette.primary.contrastText,
-  },
 }));
 
 // eslint-disable-next-line import/no-mutable-exports
 export let checkIfProductSetupEdited;
 
-const StyledRadio = (props) => {
-  const classes = useStyles();
-
-  return (
-    <Radio
-      color="primary"
-      checkedIcon={
-        <span className={`${classes.icon} ${classes.checkedIcon}`} />
-      }
-      icon={<span className={classes.icon} />}
-      {...props}
-    />
-  );
-};
+const StyledRadio = (props) => <Radio color="info" {...props} />;
 
 const StyledStart = (props) => (
   <Radio
@@ -156,7 +91,6 @@ const ProductSetup = ({
   handleNext,
   dispatch,
   thirdPartyTools,
-  location,
   editData,
   viewPage,
   featCred,
@@ -196,13 +130,6 @@ const ProductSetup = ({
   || (productFormData && productFormData.start_date) || new Date());
   const [endDate, handleEndDateChange] = useState((editData && editData.end_date)
   || (productFormData && productFormData.end_date) || new Date());
-  const [useBuildlyArch, setUseBuildlyArch] = useState((editData
-    && editData.product_info
-    && editData.product_info.use_buildly_architecture
-  ) || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.use_buildly_arch
-  ) || true);
   const [formError, setFormError] = useState({});
 
   const editCreds = [];
@@ -370,10 +297,6 @@ const ProductSetup = ({
     || (productFormData
       && productFormData.end_date
       && (endDate !== productFormData.end_date))
-    || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.use_buildly_architecture
-      && (useBuildlyArch !== productFormData.product_info.use_buildly_architecture))
   );
 
   const handleFeatureCredential = (event) => {
@@ -562,7 +485,6 @@ const ProductSetup = ({
       third_party_tool: tools,
       product_info: {
         ...productFormData?.product_info,
-        use_buildly_architecture: useBuildlyArch,
       },
       creds,
       changedData,
@@ -633,7 +555,7 @@ const ProductSetup = ({
 
             <Grid item xs={12} sm={6}>
               <Typography variant="h6">Features</Typography>
-              <Box sx={{ border: '1px solid white', borderRadius: '4px', padding: '0 12px' }}>
+              <Box sx={{ border: '1px solid', borderRadius: '4px', padding: '0 12px' }}>
                 <Typography variant="subtitle1" align="center" mt={2}>Connect to supported tool</Typography>
                 <FormControl component="fieldset" required>
                   <RadioGroup
@@ -677,7 +599,7 @@ const ProductSetup = ({
                 {featuresTool.value === 'trello' && (
                   <>
                     <Grid item>
-                      <a href="https://docs.google.com/document/d/1QYosDQAyaTGJJ0TbiojPHQptbDEKI5NEvvwWvZI5Rhk/edit" target="_blank" rel="noopener noreferrer" className={classes.link}>
+                      <a href="https://docs.google.com/document/d/1QYosDQAyaTGJJ0TbiojPHQptbDEKI5NEvvwWvZI5Rhk/edit" target="_blank" rel="noopener noreferrer">
                         How to get the access token?
                       </a>
                     </Grid>
@@ -732,7 +654,7 @@ const ProductSetup = ({
                 {featuresTool.value === 'github' && (
                   <>
                     <Grid item>
-                      <a href="https://docs.google.com/document/d/1T04LhZjsNsS7ufRZmp-ZGBD60iEOAcMR0aAtAAkdxgs/edit" target="_blank" rel="noopener noreferrer" className={classes.link}>
+                      <a href="https://docs.google.com/document/d/1T04LhZjsNsS7ufRZmp-ZGBD60iEOAcMR0aAtAAkdxgs/edit" target="_blank" rel="noopener noreferrer">
                         How to get the access token?
                       </a>
                     </Grid>
@@ -788,7 +710,7 @@ const ProductSetup = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="h6">Issues</Typography>
-              <Box sx={{ border: '1px solid white', borderRadius: '4px', padding: '0 12px' }}>
+              <Box sx={{ border: '1px solid', borderRadius: '4px', padding: '0 12px' }}>
                 <Typography variant="subtitle1" align="center" mt={2}>Connect to supported tool</Typography>
                 <FormControl component="fieldset" required>
                   <RadioGroup
@@ -821,7 +743,7 @@ const ProductSetup = ({
                 {issuesTool.value === 'github' && (
                   <>
                     <Grid item>
-                      <a href="https://docs.google.com/document/d/1T04LhZjsNsS7ufRZmp-ZGBD60iEOAcMR0aAtAAkdxgs/edit" target="_blank" rel="noopener noreferrer" className={classes.link}>
+                      <a href="https://docs.google.com/document/d/1T04LhZjsNsS7ufRZmp-ZGBD60iEOAcMR0aAtAAkdxgs/edit" target="_blank" rel="noopener noreferrer">
                         How to get the access token?
                       </a>
                     </Grid>
@@ -877,36 +799,6 @@ const ProductSetup = ({
             </Grid>
           </Grid>
         </Box>
-        <Grid container>
-          <Grid item>
-            <FormControl component="fieldset">
-              <Typography variant="h6">
-                Do you want to use Buildly for your Architecture?
-              </Typography>
-              <RadioGroup
-                row
-                aria-label="buildly for architecture"
-                name="row-radio-buttons-group"
-                color="success"
-                onChange={(e) => {
-                  setUseBuildlyArch(e.target.value === 'true');
-                }}
-                value={useBuildlyArch}
-              >
-                <FormControlLabel
-                  value
-                  control={<StyledRadio />}
-                  label="Yes"
-                />
-                <FormControlLabel
-                  value={false}
-                  control={<StyledRadio />}
-                  label="No"
-                />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-        </Grid>
         <Grid container spacing={3} className={classes.buttonContainer}>
           <Grid item xs={12} sm={4}>
             <Button

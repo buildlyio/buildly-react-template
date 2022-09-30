@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import { saveFeatureFormData } from '@redux/decision/actions/decision.actions';
-import { routes } from '@routes/routesConstants';
 import AddFeatures, { checkIfAddFeaturesEdited } from './AddFeatures';
 import DescribeProcess, { checkIfDescribeProcessEdited } from './DescribeProcess';
 import ViewDetailsWrapper from '../../NewProduct/components/ViewDetailsWrapper';
@@ -19,6 +18,9 @@ import ViewDetailsWrapper from '../../NewProduct/components/ViewDetailsWrapper';
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
+    '& .MuiStepLabel-label': {
+      color: theme.palette.neutral.text.light,
+    },
   },
   formTitle: {
     fontWeight: 'bold',

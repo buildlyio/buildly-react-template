@@ -86,10 +86,14 @@ describe('actions', () => {
 });
 
 describe('actions', () => {
-  it('should create an action to load stripe product', () => {
+  it('should create an action to verify email for the user', () => {
+    const data = 'AUTH/VERIFY_EMAIL';
+    const history = '';
     const expectedAction = {
-      type: actions.LOAD_STRIPE_PRODUCTS,
+      type: actions.VERIFY_EMAIL,
+      data,
+      history,
     };
-    expect(actions.loadStripeProducts()).toEqual(expectedAction);
+    expect(actions.verifyEmail(data, history)).toEqual(expectedAction);
   });
 });

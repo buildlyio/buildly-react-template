@@ -8,7 +8,6 @@ const initialState = {
   error: null,
   socialLogin: null,
   orgNames: null,
-  stripeProducts: null,
 };
 
 describe('Empty reducer', () => {
@@ -263,12 +262,10 @@ describe('Add Organization for Social User reducer', () => {
   });
 });
 
-describe('Load Stripe Products reducer', () => {
+describe('Verfiy email reducer', () => {
   it('Empty Reducer', () => {
     expect(
-      reducer.default(initialState, {
-        type: actions.LOAD_STRIPE_PRODUCTS,
-      }),
+      reducer.default(initialState, { type: actions.VERIFY_EMAIL }),
     ).toEqual({
       ...initialState,
       loaded: false,
@@ -276,22 +273,19 @@ describe('Load Stripe Products reducer', () => {
     });
   });
 
-  it('load stripe products success Reducer', () => {
+  it('verify email for user success Reducer', () => {
     expect(
-      reducer.default(initialState, { type: actions.LOAD_STRIPE_PRODUCTS_SUCCESS }),
+      reducer.default(initialState, { type: actions.VERIFY_EMAIL_SUCCESS }),
     ).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      stripeProducts: undefined,
     });
   });
 
-  it('load stripe products fail Reducer', () => {
+  it('verify email for user fail Reducer', () => {
     expect(
-      reducer.default(initialState, {
-        type: actions.LOAD_STRIPE_PRODUCTS_FAIL,
-      }),
+      reducer.default(initialState, { type: actions.VERIFY_EMAIL_FAIL }),
     ).toEqual({
       ...initialState,
       error: undefined,

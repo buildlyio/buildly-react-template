@@ -55,12 +55,12 @@ const TicketStatus = () => {
               </div>
               <Grid container>
                 <Grid item xs>
-                  <Link href={routes.LOGIN} variant="body2" color="primary">
+                  <Link href={routes.LOGIN} variant="body2" color="secondary">
                     Go back to Sign in
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href={routes.REGISTER} variant="body2" color="primary">
+                  <Link href={routes.REGISTER} variant="body2" color="secondary">
                     Don't have an account? Register
                   </Link>
                 </Grid>

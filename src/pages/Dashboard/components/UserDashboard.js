@@ -24,7 +24,6 @@ import {
 } from '@redux/decision/actions/decision.actions';
 import List from '../components/List';
 import Kanban from '../components/Kanban';
-import AddFeatures from '../forms/AddFeatures';
 import NewFeatureForm from '../forms/NewFeatureForm';
 import AddIssues from '../forms/AddIssues';
 import IssueSuggestions from '../forms/IssueSuggestions';
@@ -35,33 +34,29 @@ import StatusBoard from '../forms/StatusBoard';
 import DropColumn from '../forms/DropColumn';
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    marginTop: theme.spacing(2),
+  },
   product: {
+    // '& .MuiFilledInput-root': {
+    //   backgroundColor: theme.palette.primary.main,
+    // },
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.secondary.contrastText,
-    },
-    '& .MuiOutlinedInput-root:hover > .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgb(255, 255, 255, 0.23)',
-    },
-    '& .MuiInputLabel-root': {
-      color: theme.palette.secondary.contrastText,
-    },
-    '& .MuiSelect-icon': {
-      color: theme.palette.secondary.contrastText,
+      borderColor: theme.palette.primary.main,
     },
     '& .MuiInputBase-input': {
-      color: theme.palette.secondary.contrastText,
       paddingTop: theme.spacing(1.2),
       paddingBottom: theme.spacing(1.2),
     },
   },
   tabs: {
     '& .MuiTabs-root': {
-      color: theme.palette.secondary.contrastText,
+      color: theme.palette.contrast.text,
       '& .Mui-selected': {
-        color: theme.palette.primary.main,
+        color: theme.palette.secondary.main,
       },
       '& .MuiTabs-indicator': {
-        backgroundColor: theme.palette.secondary.light,
+        backgroundColor: theme.palette.secondary.main,
       },
     },
   },
@@ -440,7 +435,7 @@ const UserDashboard = (props) => {
   };
 
   return (
-    <div>
+    <div className={classes.root}>
       <Grid container alignItems="center" mb={2}>
         <Grid item xs={4} md={3} lg={2}>
           <Typography component="div" variant="h4">
