@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -10,9 +10,7 @@ import {
   Button,
   Autocomplete,
   MenuItem,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
+  Chip,
 } from '@mui/material';
 import { useInput } from '@hooks/useInput';
 import {
@@ -21,6 +19,7 @@ import {
 } from '@redux/decision/actions/decision.actions';
 import { getAllCredentials } from '@redux/product/actions/product.actions';
 import { validators } from '@utils/validators';
+import { PRIORITIES, TAGS } from './formConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -254,32 +253,6 @@ const AddFeatures = ({
     });
     return errorExists;
   };
-
-  useEffect(() => {
-    if (!statuses || _.isEmpty(statuses)) {
-      dispatch(getAllStatuses());
-    }
-  }, []);
-
-
-  let priorities = [
-    {
-      "type": "Low",
-      "id": 1,
-    },
-    {
-      "type": "Medium",
-      "id": 2,
-    },
-    {
-      "type": "High",
-      "id": 3,
-    },
-    {
-      "type": "Urgent",
-      "id": 4,
-    },
-  ]
 
   return (
     <>
