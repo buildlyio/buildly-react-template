@@ -551,8 +551,6 @@ const UserDashboard = (props) => {
           />
         )}
       />
-      <Route path={addFeatPath} component={AddFeatures} />
-      <Route path={editFeatPath} component={AddFeatures} />
       <Route path={addIssuePath} component={AddIssues} />
       <Route path={editIssuePath} component={AddIssues} />
       <Route path={featureToIssuePath} component={AddIssues} />

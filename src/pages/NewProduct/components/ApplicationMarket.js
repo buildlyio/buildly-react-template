@@ -201,7 +201,7 @@ const ApplicationMarket = ({
                 />
               </RadioGroup>
             </Grid>
-            
+
             <Grid item xs={12} sm={12}>
               <Typography variant="h6" gutterBottom component="div">
                 Is there a specific problem you are trying to solve?
@@ -226,6 +226,7 @@ const ApplicationMarket = ({
                 <Typography variant="caption" gutterBottom component="div">
                   If Yes, for what type of user?
                 </Typography>
+              </FormControl>
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -332,7 +333,6 @@ const ApplicationMarket = ({
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>
