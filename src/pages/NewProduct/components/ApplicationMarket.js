@@ -224,7 +224,6 @@ const ApplicationMarket = ({
                     label="No"
                   />
                 </RadioGroup>
-              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
               {specificProblem.value && (
@@ -278,28 +277,28 @@ const ApplicationMarket = ({
                   </Select>
                 </FormControl>
               </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel id="primary-user-label">Secondary User</InputLabel>
-                  <Select
-                    labelId="primary-user-label"
-                    id="primary-user"
-                    label="Type of User"
-                    {...secondaryUsers.bind}
-                  >
-                    <MenuItem value="" />
-                    {_.map(PRIMARY_USERS, (user, idx) => (
-                      <MenuItem key={`user-${idx}`} value={user}>
-                        {user}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
             </Grid>
 
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel id="primary-user-label">Secondary User</InputLabel>
+                <Select
+                  labelId="primary-user-label"
+                  id="primary-user"
+                  label="Type of User"
+                  {...secondaryUsers.bind}
+                >
+                  <MenuItem value="" />
+                  {_.map(PRIMARY_USERS, (user, idx) => (
+                    <MenuItem key={`user-${idx}`} value={user}>
+                      {user}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
+        </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>
               <Button

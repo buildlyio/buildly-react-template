@@ -32,7 +32,7 @@ import { useInput } from '@hooks/useInput';
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(5),
-    paddingTop: 0,
+    paddingTop: 15,
     overflowX: 'hidden',
   },
   link: {
