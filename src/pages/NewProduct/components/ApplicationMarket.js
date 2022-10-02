@@ -195,16 +195,11 @@ const ApplicationMarket = ({
                 />
               </RadioGroup>
             </Grid>
-            <Grid item xs={12} sm={12}>
-              <Typography variant="h6" gutterBottom component="div">
-                Is there a specific problem you are trying to solve
-              </Typography>
-            </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl component="fieldset" required>
-                <Typography variant="caption" gutterBottom component="div">
-                  If Yes, for what type of user?
+            <Grid container>
+              <Grid item xs={12} sm={12}>
+                <Typography variant="h6" gutterBottom component="div">
+                  What is your primary business segment?
                 </Typography>
                 <RadioGroup
                   row
@@ -257,78 +252,53 @@ const ApplicationMarket = ({
                 </FormControl>
               )}
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id="primary-user-label">Primary User</InputLabel>
-                <Select
-                  labelId="primary-user-label"
-                  id="primary-user"
-                  label="Type of User"
-                  {...primaryUsers.bind}
-                >
-                  <MenuItem value="" />
-                  {_.map(PRIMARY_USERS, (user, idx) => (
-                    <MenuItem key={`user-${idx}`} value={user}>
-                      {user}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+
+            <Grid container>
+              <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom component="div">
+                  Who are your users?
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="primary-user-label">Primary User</InputLabel>
+                  <Select
+                    labelId="primary-user-label"
+                    id="primary-user"
+                    label="Type of User"
+                    {...primaryUsers.bind}
+                  >
+                    <MenuItem value="" />
+                    {_.map(PRIMARY_USERS, (user, idx) => (
+                      <MenuItem key={`user-${idx}`} value={user}>
+                        {user}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="primary-user-label">Secondary User</InputLabel>
+                  <Select
+                    labelId="primary-user-label"
+                    id="primary-user"
+                    label="Type of User"
+                    {...secondaryUsers.bind}
+                  >
+                    <MenuItem value="" />
+                    {_.map(PRIMARY_USERS, (user, idx) => (
+                      <MenuItem key={`user-${idx}`} value={user}>
+                        {user}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id="primary-user-label">Secondary User</InputLabel>
-                <Select
-                  labelId="primary-user-label"
-                  id="primary-user"
-                  label="Type of User"
-                  {...secondaryUsers.bind}
-                >
-                  <MenuItem value="" />
-                  {_.map(PRIMARY_USERS, (user, idx) => (
-                    <MenuItem key={`user-${idx}`} value={user}>
-                      {user}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            {specificProblem.problem !== 'Consumer' && (
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id="bussiness-segment-label">
-                  Bussiness Segment
-                </InputLabel>
-                <Select
-                  labelId="bussiness-segment-label"
-                  id="bussiness-segment"
-                  value={bussinessSegment}
-                  label="Type of User"
-                  multiple
-                  onChange={(event) => {
-                    const {
-                      target: { value },
-                    } = event;
-                    setBussinessSegment(
-                      // On autofill we get a stringified value.
-                      typeof value === 'string' ? value.split(',') : value,
-                    );
-                  }}
-                  renderValue={(selected) => selected.join(', ')}
-                >
-                  <MenuItem value="" />
-                  {_.map(BUSSINESS_SEGMENTS, (segment, idx) => (
-                    <MenuItem key={`segment-${idx}`} value={segment}>
-                      <Checkbox
-                        checked={_.indexOf(bussinessSegment, segment) > -1}
-                      />
-                      <ListItemText primary={segment} />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            )}
+
           </Grid>
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>
