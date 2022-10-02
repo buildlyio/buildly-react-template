@@ -213,6 +213,24 @@ const TopBar = ({
               >
                 Releases
               </MenuItem>
+              <MenuItem
+                disabled={location.pathname === routes.RELEASE}
+                onClick={() => {
+                  setAnchorEl(null);
+                  history.push(routes.MILESTONE);
+                }}
+              >
+                Milestones
+              </MenuItem>
+              <MenuItem
+                disabled={location.pathname === routes.RELEASE}
+                onClick={() => {
+                  setAnchorEl(null);
+                  history.push(routes.HELP);
+                }}
+              >
+                Help
+              </MenuItem>
             </StyledMenu>
           </>
           {isAdmin && (
