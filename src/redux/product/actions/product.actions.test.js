@@ -362,12 +362,14 @@ describe('Validate Credential action', () => {
 describe('Add Doc Identifier action', () => {
   it('should create an action to add Doc identifier', () => {
     const data = { file: 'test.pdf' };
+    const formData = {};
     const expectedAction = {
       type: actions.ADD_PDF_IDENTIFIER,
       data,
+      formData,
     };
-    expect(actions.pdfIdentifier(
-      data,
+    expect(actions.docIdentifier(
+      data, formData,
     )).toEqual(expectedAction);
   });
 });

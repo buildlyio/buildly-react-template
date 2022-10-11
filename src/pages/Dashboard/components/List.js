@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
-import { styled } from '@mui/material/styles';
 import {
+  FormHelperText,
   Grid, Paper, Popover, Typography,
 } from '@mui/material';
 import {
@@ -12,10 +12,6 @@ import {
   TrendingFlatRounded as TrendingFlatRoundedIcon,
   Info as InfoIcon,
 } from '@mui/icons-material';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import MuiAccordion from '@mui/material/Accordion';
-import MuiAccordionSummary from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import {
   Chip,
 } from '@mui/material';
@@ -97,39 +93,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Accordion = styled((props) => (
-  <MuiAccordion disableGutters elevation={0} square {...props} />
-))(({ theme }) => ({
-  border: `1px solid ${theme.palette.divider}`,
-  '&:not(:last-child)': {
-    borderBottom: 0,
-  },
-  '&:before': {
-    display: 'none',
-  },
-}));
-
-const AccordionSummary = styled((props) => (
-  <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
-    {...props}
-  />
-))(({ theme }) => ({
-  backgroundColor: theme.palette.contrast.main,
-  flexDirection: 'row-reverse',
-  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)',
-  },
-  '& .MuiAccordionSummary-content': {
-    marginLeft: theme.spacing(1),
-  },
-}));
-
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  borderTop: '1px solid rgba(0, 0, 0, 0.125)',
-  padding: '8px 8px 0px 8px',
-}));
-
 const List = ({
   product,
   productFeatures,
@@ -139,6 +102,7 @@ const List = ({
   deleteItem,
   commentItem,
   issueSuggestions,
+  upgrade,
 }) => {
   const classes = useStyles();
 
@@ -155,15 +119,6 @@ const List = ({
     setSelectedIssue(null);
   };
 
-  const open = Boolean(issueDetailsAnchorEl);
-  const id = open ? 'issue-details-popover' : undefined;
-
-  const [expanded, setExpanded] = React.useState('');
-
-  const handleChange = (panel) => (event, newExpanded) => {
-    setExpanded(newExpanded ? panel : false);
-  };
-
   return (
     <>
       <Grid container spacing={2}>
@@ -175,10 +130,15 @@ const List = ({
             >
               Features
             </Typography>
+            {!!product && upgrade && (
+              <FormHelperText error>
+                Upgrade to be able to create more features
+              </FormHelperText>
+            )}
           </div>
           <div className={classes.section3}>
             <div className={classes.boxSection}>
-              {product !== 0 && (
+              {!!product && !upgrade && (
               <AddRoundedIcon
                 className={classes.addIcon}
                 fontSize="large"
@@ -194,7 +154,7 @@ const List = ({
                 No Product selected. Please select the product.
               </Typography>
               )}
-              {product !== 0 && productFeatures && productFeatures.length === 0 && (
+              {!!product && productFeatures && productFeatures.length === 0 && (
               <Typography
                 className={classes.noData}
                 variant="body1"
@@ -202,7 +162,7 @@ const List = ({
                 No features yet.
               </Typography>
               )}
-              {product !== 0 && productFeatures && productFeatures.length > 0
+              {!!product && productFeatures && productFeatures.length > 0
                   && _.map(productFeatures, (feat) => (
                     <div
                       key={`feature-${feat.product_uuid}-${feat.feature_uuid}`}
@@ -214,13 +174,13 @@ const List = ({
                       >
                         {feat.name}
                       </Typography>
-                      {_.filter(productIssues, (issue) => (
-                        issue.feature_uuid === feat.feature_uuid)).length === 0
-                      && (
-                      <TrendingFlatRoundedIcon
-                        className={classes.entryIcon}
-                        onClick={(e) => issueSuggestions(feat, 'show')}
-                      />
+                      {_.size(_.filter(productIssues, (issue) => (
+                        issue.feature_uuid === feat.feature_uuid
+                      ))) === 0 && (
+                        <TrendingFlatRoundedIcon
+                          className={classes.entryIcon}
+                          onClick={(e) => issueSuggestions(feat, 'show')}
+                        />
                       )}
                       <EditRoundedIcon
                         className={classes.entryIcon}
@@ -247,7 +207,7 @@ const List = ({
           </div>
           <div className={classes.section3}>
             <div className={classes.boxSection}>
-              {product !== 0 && (
+              {!!product && (
               <AddRoundedIcon
                 className={classes.addIcon}
                 fontSize="large"
@@ -263,7 +223,7 @@ const List = ({
                 No Product selected. Please select the product.
               </Typography>
               )}
-              {product !== 0 && productIssues && productIssues.length === 0 && (
+              {!!product && productIssues && productIssues.length === 0 && (
               <Typography
                 className={classes.noData}
                 variant="body1"
@@ -272,7 +232,7 @@ const List = ({
               </Typography>
               )}
               <div>
-                {product !== 0 && productIssues && productIssues.length > 0
+                {!!product && productIssues && productIssues.length > 0
                 && _.map(productIssues, (issue) => (
                   <div
                     key={`issue-${issue.product_uuid}-${issue.issue_uuid}`}
@@ -299,7 +259,11 @@ const List = ({
                     <InfoIcon
                       className={classes.entryIcon}
                       onClick={(e) => handleIssueDetailsOpenClick(e, issue)}
-                      aria-describedby={id}
+                      aria-describedby={
+                        issueDetailsAnchorEl && Boolean(issueDetailsAnchorEl)
+                          ? 'issue-details-popover'
+                          : undefined
+                      }
                     />
                   </div>
                 ))}
@@ -311,7 +275,11 @@ const List = ({
           selectedIssue
           && (
           <Popover
-            id={id}
+            id={
+              issueDetailsAnchorEl && Boolean(issueDetailsAnchorEl)
+                ? 'issue-details-popover'
+                : undefined
+            }
             open={open}
             anchorEl={issueDetailsAnchorEl}
             onClose={handleIssueDetailsCloseClick}

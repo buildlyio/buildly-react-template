@@ -449,12 +449,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        // productFormData: {
-        //   ...state.productFormData,
-        //   uploaded_pdf: action.uploaded_pdf,
-        //   uploaded_pdf_link: action.uploaded_pdf_link,
-        //   unique_identifier: action.unique_identifier,
-        // },
+        productFormData: action.productFormData,
       };
 
     default:

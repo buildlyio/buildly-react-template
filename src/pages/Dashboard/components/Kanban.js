@@ -19,6 +19,7 @@ import {
   Typography,
   Menu,
   MenuItem,
+  FormHelperText,
 } from '@mui/material';
 import UpdateIcon from '@mui/icons-material/Update';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
@@ -40,11 +41,12 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
   },
   container: {
-    marginBottom: theme.spacing(4),
-    flexWrap: 'inherit',
+    flexWrap: 'nowrap',
+    overflowX: 'auto',
+    paddingBottom: theme.spacing(4),
   },
   swimlane: {
-    backgroundColor: theme.palette.contrast.main,
+    backgroundColor: theme.palette.secondary.main,
     display: 'flex',
     flexDirection: 'column',
     minWidth: '22%',
@@ -85,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'pointer',
   },
   columnBody: {
-    maxHeight: '56vh',
+    maxHeight: '64vh',
     overflowY: 'auto',
   },
 }));
@@ -107,12 +109,12 @@ const Kanban = ({
   commentItem,
   dispatch,
   credentials,
+  upgrade,
 }) => {
   const classes = useStyles();
   const [columns, setColumns] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentNumber, setCurrentNumber] = useState(null);
-  const open = Boolean(anchorEl);
   const [status, setStatus] = useState('');
 
   const handleClick = (event, number) => {
@@ -241,6 +243,13 @@ const Kanban = ({
           to view related features and/or issues.
         </Typography>
       )}
+
+      {!!product && upgrade && (
+        <FormHelperText error style={{ marginBottom: '16px' }}>
+          Upgrade to be able to create more features
+        </FormHelperText>
+      )}
+
       {!!product && (
         <DragDropContext
           onDragEnd={(result) => {
@@ -250,7 +259,7 @@ const Kanban = ({
           <Grid
             container
             rowGap={2}
-            columnGap={2}
+            columnGap={4}
             className={classes.container}
           >
             {_.map(Object.entries(columns), ([columnId, column], index) => (
@@ -270,10 +279,12 @@ const Kanban = ({
                   >
                     {column.name}
                   </Typography>
+
                   <IconButton onClick={(e) => addItem(index === 0 ? 'feat' : 'issue')} size="large">
                     <AddRounded fontSize="small" className={classes.addIcon} />
                   </IconButton>
                 </div>
+
                 <div className={classes.columnBody}>
                   <Droppable droppableId={columnId} key={columnId}>
                     {(provided, snapshot) => (
@@ -316,8 +327,8 @@ const Kanban = ({
                                   action={(
                                     <div>
                                       {!item.issue_uuid && _.filter(productIssues, (issue) => (
-                                        issue.feature_uuid === item.feature_uuid)).length === 0
-                                        && (
+                                        issue.feature_uuid === item.feature_uuid
+                                      )).length === 0 && (
                                         <IconButton
                                           aria-label="issue-suggestion"
                                           aria-controls="menu-card"
@@ -329,7 +340,8 @@ const Kanban = ({
                                         >
                                           <TrendingFlatRounded fontSize="small" />
                                         </IconButton>
-                                        )}
+                                      )}
+
                                       <IconButton
                                         id="menu-button"
                                         aria-label="column-options"
@@ -341,6 +353,7 @@ const Kanban = ({
                                       >
                                         <MoreHoriz />
                                       </IconButton>
+
                                       <Menu
                                         id="long-menu"
                                         MenuListProps={{
@@ -376,6 +389,7 @@ const Kanban = ({
                                     </div>
                                   )}
                                 />
+
                                 <CardContent style={{ paddingBottom: '16px' }}>
                                   {_.map(item.tags, (tag) => (
                                     <Chip
@@ -388,18 +402,18 @@ const Kanban = ({
                                       className={classes.tag}
                                     />
                                   ))}
-                                  {item.estimate
-                                  && (
-                                  <Chip
-                                    variant="outlined"
-                                    color="primary"
-                                    className={classes.chip}
-                                    icon={<UpdateIcon fontSize="small" />}
-                                    label={`${item.estimate}:00 Hrs`}
-                                  />
+
+                                  {item.estimate && (
+                                    <Chip
+                                      variant="outlined"
+                                      color="primary"
+                                      className={classes.chip}
+                                      icon={<UpdateIcon fontSize="small" />}
+                                      label={`${item.estimate}:00 Hrs`}
+                                    />
                                   )}
-                                  {item.end_date
-                                    && (
+
+                                  {item.end_date && (
                                     <Chip
                                       variant="outlined"
                                       color="primary"
@@ -407,7 +421,7 @@ const Kanban = ({
                                       icon={<DateRangeIcon fontSize="small" />}
                                       label={(item.end_date).slice(0, 10)}
                                     />
-                                    )}
+                                  )}
 
                                   {item.issue_uuid && productFeatures
                                     .filter((feat) => (feat.feature_uuid === item.feature_uuid))
@@ -422,6 +436,7 @@ const Kanban = ({
                                         onClick={() => editItem(feat, 'feat', false)}
                                       />
                                     ))}
+
                                   <Typography
                                     className={classes.moment}
                                     component="div"

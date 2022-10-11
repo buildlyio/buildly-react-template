@@ -82,31 +82,22 @@ const getStepContent = (
 
 const NewFeatureForm = (props) => {
   const {
-    history, featureFormData, dispatch, location,
+    history, dispatch, location,
   } = props;
   const classes = useStyles();
   const steps = getSteps();
   const maxSteps = steps.length;
+  const redirectTo = location.state && location.state.from;
+
   const editPage = location.state && (location.state.type === 'edit' || location.state.type === 'view');
+  const viewPage = (location.state && location.state.viewOnly) || false;
+  // eslint-disable-next-line no-nested-ternary
+  const formTitle = viewPage ? 'View Feature' : editPage ? 'Edit Feature' : 'Add Feature';
+
   const [activeStep, setActiveStep] = React.useState(0);
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [confirmModalFor, setConfirmModalFor] = useState(null);
-  const redirectTo = location.state && location.state.from;
-  const viewPage = (location.state && location.state.viewOnly) || false;
-
-  let formTitle;
-  if (editPage) {
-    formTitle = viewPage ? 'View Feature' : 'Edit Feature';
-  } else {
-    formTitle = 'New Feature Setup';
-  }
-
-  const editData = (
-    location.state
-    && location.state.type === 'edit'
-    && location.state.data
-  ) || {};
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -212,7 +203,6 @@ const NewFeatureForm = (props) => {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.optionsReducer,
-  featureFormData: state.decisionReducer.featureFormData,
 });
 
 export default connect(mapStateToProps)(NewFeatureForm);

@@ -55,22 +55,21 @@ const AddIssues = ({
   features,
   credentials,
   products,
-  boards,
 }) => {
   const classes = useStyles();
+  const editPage = location.state && location.state.type === 'edit';
+  const convertPage = location.state && location.state.type === 'convert';
+  const editData = (editPage && location.state.data) || {};
+  const convertData = (convertPage && location.state.data) || {};
+  const buttonText = convertPage ? 'Convert to Issue' : editPage ? 'Save' : 'Add Issue';
+  const formTitle = convertPage ? 'Convert to Issue' : editPage ? 'Edit Issue' : 'Add Issue';
+
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [productFeatures, setProductFeatures] = useState([]);
-  const editData = (
-    location.state
-    && location.state.type === 'edit'
-    && location.state.data
-  ) || {};
-  const convertData = (
-    location.state
-    && location.state.type === 'convert'
-    && location.state.data
-  ) || {};
   const product_uuid = location.state && location.state.product_uuid;
   const prdt = _.find(products, { product_uuid });
   const [product, setProduct] = useState('');
@@ -84,68 +83,54 @@ const AddIssues = ({
   const [status, setStatus] = useState('');
   const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
 
-  const redirectTo = location.state && location.state.from;
-  const editPage = location.state && location.state.type === 'edit';
-  const convertPage = location.state && location.state.type === 'convert';
-
   const name = useInput(
-    (convertData && convertData.name)
-    || (editData && editData.name) || '',
+    (convertData && convertData.name) || (editData && editData.name) || '',
     { required: true },
   );
+
   const description = useInput(
-    (convertData && convertData.description)
-    || (editData && editData.description) || '',
+    (convertData && convertData.description) || (editData && editData.description) || '',
     { required: true },
   );
+
   const feature = useInput(
-    (convertData && convertData.feature_uuid)
-    || (editData && editData.feature_uuid) || '',
+    (convertData && convertData.feature_uuid) || (editData && editData.feature_uuid) || '',
     { required: true },
   );
-  const type = useInput((editData && editData.issue_type) || '', {
-    required: true,
-  });
+
+  const type = useInput((editData && editData.issue_type) || '', { required: true });
+
   const [startDate, handleStartDateChange] = useState(
     (editData && editData.start_date) || new Date(),
   );
+
   const [endDate, handleEndDateChange] = useState(
     (editData && editData.end_date) || new Date(),
   );
+
   const [tags, setTags] = useState(
     (convertData && convertData.tags)
     || (editData && editData.tags)
     || [],
   );
+
   const estimate = useInput(
     (convertData && convertData.total_estimate)
     || (editData && editData.estimate)
     || '',
   );
+
   const complexity = useInput((editData && editData.complexity) || 0);
 
-  const editAssigneeData = [];
-  for (let i = 0; i < editData?.issue_detail?.assignees?.length; i += 1) {
-    editAssigneeData.push(editData.issue_detail.assignees[i].username);
-  }
-  const [assignees, setAssignees] = useState((editData && editAssigneeData) || []);
-  const assigneeData = [];
-  for (let i = 0; i < product?.feature_tool_detail?.user_list?.length; i += 1) {
-    assigneeData.push(product.feature_tool_detail.user_list[i].username);
-  }
-  const assigneesList = [...new Set(product?.issue_tool_detail?.user_list
-    ?.filter((element) => assignees?.includes(element?.username)))];
+  const [assignees, setAssignees] = useState(
+    (editData && editData.issue_detail && editData.issue_detail.assignees
+      && !_.isEmpty(editData.issue_detail.assignees)
+      && _.map(editData.issue_detail.assignees, 'username'))
+    || [],
+  );
+
+  const [assigneeData, setAssigneeData] = useState([]);
   const [formError, setFormError] = useState({});
-
-  const buttonText = convertPage
-    ? 'Convert to Issue'
-    : editPage ? 'Save' : 'Add Issue';
-  const formTitle = convertPage
-    ? 'Convert to Issue'
-    : editPage ? 'Edit Issue' : 'Add Issue';
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
     if (!features || _.isEmpty(features)) {
@@ -162,22 +147,29 @@ const AddIssues = ({
   }, [features]);
 
   useEffect(() => {
-    const prd = _.find(products, { product_uuid });
-
-    if (prd && prd.issue_tool_detail
-      && !_.isEmpty(prd.issue_tool_detail)
+    const temp_product = _.find(products, { product_uuid });
+    if (temp_product && temp_product.issue_tool_detail
+      && !_.isEmpty(temp_product.issue_tool_detail)
     ) {
-      setRepoList(_.map(prd.issue_tool_detail.repository_list));
+      setRepoList(_.map(temp_product.issue_tool_detail.repository_list));
     }
-    setProduct(prd);
+
+    setProduct(temp_product);
   }, [products]);
 
   useEffect(() => {
     const sta = _.filter(statuses, { product_uuid });
-    setProdStatus(sta);
+    const assigneeOptions = (product && product.feature_tool_detail
+      && product.feature_tool_detail.user_list
+      && !_.isEmpty(product.feature_tool_detail.user_list)
+      && _.map(product.feature_tool_detail.user_list, 'username')) || [];
+
     if (editData) {
       setStatus(_.find(sta, { status_uuid: editData.status }));
     }
+
+    setAssigneeData(assigneeOptions);
+    setProdStatus(sta);
   }, [product]);
 
   const closeFormModal = () => {
@@ -276,15 +268,18 @@ const AddIssues = ({
       complexity: Number(complexity.value),
       repository: repo,
       column_id: colID,
+      issue_detail: {
+        assignees: product && product.issue_tool_detail && product.issue_tool_detail.user_list
+          && _.filter(product.issue_tool_detail.user_list, (user) => (
+            user && _.includes(assignees, user.username)
+          )),
+      },
       ...issueCred?.auth_detail,
     };
+
     if (editPage) {
-      editData.issue_detail.assignees = assigneesList;
       dispatch(updateIssue(formData));
     } else {
-      formData.issue_detail = {
-        assignees: assigneesList,
-      };
       formData.create_date = dateTime;
       dispatch(createIssue(formData));
     }

@@ -47,6 +47,11 @@ const ToolBoard = ({
   boards,
 }) => {
   const classes = useStyles();
+  const redirectTo = location.state && location.state.from;
+
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+
   const [featOrgList, setFeatOrgList] = useState([]);
   const [issueOrgList, setIssueOrgList] = useState([]);
   const [openFormModal, setFormModal] = useState(true);
@@ -58,11 +63,7 @@ const ToolBoard = ({
   const [featBoardID, setFeatBoardID] = useState('');
   const [status, setStatus] = useState([]);
 
-  const redirectTo = location.state && location.state.from;
   const [formError, setFormError] = useState({});
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
     if (!_.isEmpty(boards)) {

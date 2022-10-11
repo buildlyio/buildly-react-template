@@ -43,10 +43,6 @@ const IssueSuggestions = ({
   convertIssue,
 }) => {
   const classes = useStyles();
-  const [openFormModal, setFormModal] = useState(true);
-  const [openConfirmModal, setConfirmModal] = useState(false);
-  const [product, setProduct] = useState('');
-
   const redirectTo = location.state && location.state.from;
   const editData = (
     location.state
@@ -63,6 +59,10 @@ const IssueSuggestions = ({
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
+  const [openFormModal, setFormModal] = useState(true);
+  const [openConfirmModal, setConfirmModal] = useState(false);
+  const [product, setProduct] = useState('');
+
   useEffect(() => {
     const prd = _.find(products, { product_uuid });
     setProduct(prd);
@@ -71,13 +71,14 @@ const IssueSuggestions = ({
     }
   }, []);
 
-  const issueCred = _.find(
-    credentials,
-    { product_uuid, auth_detail: { tool_type: 'Issue' } },
-  );
   const handleSubmit = (event) => {
     event.preventDefault();
     const dateTime = new Date();
+    const issueCred = _.find(
+      credentials,
+      { product_uuid, auth_detail: { tool_type: 'Issue' } },
+    );
+
     const formData = {
       ...editData,
       edit_date: dateTime,
@@ -95,6 +96,7 @@ const IssueSuggestions = ({
       ...issueCred?.auth_detail,
       issue_detail: {},
     };
+
     const issueSuggestionsData = showData.issue_suggestion.map((issue) => ({
       ...formData,
       name: issue.name,

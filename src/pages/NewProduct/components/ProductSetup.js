@@ -22,7 +22,7 @@ import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 import { getOrganization } from '@context/User.context';
 import {
-  saveProductFormData, getAllThirdPartyTools, getAllCredentials, validateCredential,
+  saveProductFormData, getAllThirdPartyTools, validateCredential,
 } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
@@ -286,18 +286,29 @@ const ProductSetup = ({
     return errorExists;
   };
 
-  checkIfProductSetupEdited = () => (
-    name.hasChanged()
-    || description.hasChanged()
-    || featuresTool.hasChanged()
-    || issuesTool.hasChanged()
-    || (productFormData
-      && productFormData.start_date
-      && (startDate !== productFormData.start_date))
-    || (productFormData
-      && productFormData.end_date
-      && (endDate !== productFormData.end_date))
-  );
+  checkIfProductSetupEdited = () => {
+    const tools = _.filter(thirdPartyTools, (tool) => (
+      (editData && _.includes(editData.third_party_tool, tool.thirdpartytool_uuid))
+      || (productFormData && _.includes(productFormData.third_party_tool, tool.thirdpartytool_uuid))
+    ));
+    const ft = _.toLower(_.find(tools, (tool) => _.lowerCase(tool.tool_type) === 'feature')?.name);
+    const it = _.toLower(_.find(tools, (tool) => _.lowerCase(tool.tool_type) === 'issue')?.name);
+
+    return (
+      name.hasChanged()
+      || description.hasChanged()
+      || (featuresTool.value !== ft)
+      || (issuesTool.value !== it)
+      || Boolean(editData && editData.start_date
+        && (startDate !== editData.start_date))
+      || Boolean(productFormData && productFormData.start_date
+        && (startDate !== productFormData.start_date))
+      || Boolean(editData && editData.end_date
+        && (endDate !== editData.end_date))
+      || Boolean(productFormData && productFormData.end_date
+        && (endDate !== productFormData.end_date))
+    );
+  };
 
   const handleFeatureCredential = (event) => {
     event.preventDefault();

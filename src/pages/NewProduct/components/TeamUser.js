@@ -21,25 +21,13 @@ import {
   IconButton,
   TextField,
   Button,
-  Card,
-  CardContent,
-  Container,
-  Link,
-  Autocomplete,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListItemAvatar,
-  Avatar,
+  ImageList,
+  ImageListItem,
 } from '@mui/material';
-import FolderIcon from '@mui/icons-material/Folder';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { PictureAsPdf as PictureAsPdfIcon } from '@mui/icons-material';
 import { useInput } from '@hooks/useInput';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { saveProductFormData, docIdentifier } from '@redux/product/actions/product.actions';
+import { docIdentifier } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -52,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
+    borderRadius: theme.spacing(2.25),
   },
   formTitle: {
     fontWeight: 'bold',
@@ -78,6 +66,12 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
+  filesText: {
+    marginTop: theme.spacing(2),
+  },
+  uploadedFiles: {
+    border: `1px solid ${theme.palette.neutral.text}`,
+  },
 }));
 
 const StyledRadio = (props) => <Radio color="info" {...props} />;
@@ -89,7 +83,6 @@ const TeamUser = ({
   productFormData, handleNext, handleBack, dispatch, editData,
 }) => {
   const classes = useStyles();
-  // let fileChanged = false;
   const [filesUpload, setFilesUpload] = useState([]);
 
   const teamSize = useInput((editData
@@ -117,16 +110,13 @@ const TeamUser = ({
       { role: 'Others', count: 0 },
     ]);
 
-  const existingFeatures = useInput((editData
+  const doc_file = useInput((editData
     && editData.product_info
-    && editData.product_info.existing_features)
+    && editData.product_info.doc_file)
   || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.existing_features)
-    || '',
-  { required: true });
-
-  // const [existingLinks, setExistingLinks] = useState([]);
+    && productFormData.product_info
+    && productFormData.product_info.doc_file)
+  || []);
 
   const submitDisabled = () => {
     let countNum = 0;
@@ -148,14 +138,9 @@ const TeamUser = ({
       && productFormData.product_info.role_count
       && !_.isEqual(roleCount,
         productFormData.product_info.role_count))
-    || existingFeatures.hasChanged()
+    || (filesUpload && !_.isEmpty(filesUpload))
   );
 
-  // const removeFile = (filename) => {
-  //   setFiles(files.filter((file) => file.name !== filename));
-  // };
-
-  let uploadFile;
   const fileChange = (event) => {
     setFilesUpload(event.target.files);
   };
@@ -166,21 +151,22 @@ const TeamUser = ({
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    uploadFile = new FormData();
-    for (const key of Object.keys(filesUpload)) {
-      uploadFile.append('file', filesUpload[key]);
-    }
+    const uploadFile = new FormData();
+    _.mapKeys(filesUpload, (value, key) => {
+      uploadFile.append('file', value);
+    });
     const formData = {
       ...productFormData,
       product_info: {
         ...productFormData.product_info,
         team_size: teamSize.value,
         role_count: roleCount,
+        doc_file: doc_file.value,
       },
       edit_date: new Date(),
     };
-    dispatch(saveProductFormData(formData));
-    dispatch(docIdentifier(uploadFile));
+
+    dispatch(docIdentifier(uploadFile, formData));
     handleNext();
   };
 
@@ -194,6 +180,7 @@ const TeamUser = ({
                 What is the size of your current team and backgrounds/roles?
               </Typography>
             </Grid>
+
             <Grid item xs={12} sm={12}>
               <FormControl component="fieldset">
                 <RadioGroup
@@ -220,6 +207,7 @@ const TeamUser = ({
                 </RadioGroup>
               </FormControl>
             </Grid>
+
             <Grid item xs={12}>
               <TableContainer component={Paper}>
                 <Table aria-label="simple table">
@@ -288,63 +276,55 @@ const TeamUser = ({
                 </Table>
               </TableContainer>
             </Grid>
+
             <Grid item xs={12}>
               <Typography variant="h6" gutterBottom component="div">
                 Do you have any existing requirements documents, mockups,
                 designs etc.?
               </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              {/* <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                // value={existingLinks}
-                id="existingLinks"
-                label="Existing File links"
-                name="existingLinks"
-                autoComplete="existingLinks"
-                onKeyDown={(e) => linkify(e)}
-                {...existingLinks.bind}
-              /> */}
+
               <TextField
                 variant="outlined"
                 margin="normal"
                 fullWidth
-                // multiple
                 type="file"
-                id="existingFeatures"
-                label="Existing Features"
-                name="existingFeatures"
-                autoComplete="existingFeatures"
+                id="uploadFiles"
+                label="Upload Files"
+                name="uploadFiles"
+                autoComplete="uploadFiles"
                 inputProps={{ multiple: true }}
                 InputLabelProps={{ shrink: true }}
                 onChange={fileChange}
-                // {...existingFeatures.bind}
               />
-              {/* <List>
-                {_.map(files, (file, index) => (
-                  <ListItem
-                    key={index}
-                    secondaryAction={(
-                      <IconButton edge="end" aria-label="delete">
-                        <DeleteIcon onClick={(e) => removeFile(file.name)} />
-                      </IconButton>
-                  )}
-                  >
-                    <ListItemAvatar>
-                      <Avatar>
-                        <FolderIcon />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={file.name}
-                    />
-                  </ListItem>
-                ))}
-              </List> */}
             </Grid>
           </Grid>
+
+          {doc_file.value && !_.isEmpty(doc_file.value) && (
+            <>
+              <Grid item xs={12} className={classes.filesText}>
+                <Typography variant="body1" gutterBottom component="div">
+                  Already uploaded files
+                </Typography>
+              </Grid>
+
+              <ImageList sx={{ width: '100%', height: 200 }} cols={4} rowHeight={200} gap={40}>
+                {_.map(doc_file.value, (file, index) => (
+                  <ImageListItem key={`${index}-${file}`}>
+                    <a href={file} target="_blank" rel="noopener noreferrer">
+                      <img
+                        src={`${file}?w=164&h=164&fit=crop&auto=format`}
+                        srcSet={`${file}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                        alt={`Uploaded file ${index + 1}`}
+                        loading="lazy"
+                        className={classes.uploadedFiles}
+                      />
+                    </a>
+                  </ImageListItem>
+                ))}
+              </ImageList>
+            </>
+          )}
+
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>
               <Button
@@ -358,6 +338,7 @@ const TeamUser = ({
                 Back
               </Button>
             </Grid>
+
             <Grid item xs={12} sm={4}>
               <Button
                 type="submit"

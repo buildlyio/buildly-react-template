@@ -29,20 +29,15 @@ import AddIssues from '../forms/AddIssues';
 import IssueSuggestions from '../forms/IssueSuggestions';
 import AddComments from '../forms/AddComments';
 import ConfirmModal from '@components/Modal/ConfirmModal';
-import BarChart from './BarChart';
 import ToolBoard from '../forms/ToolBoard';
 import StatusBoard from '../forms/StatusBoard';
 import DropColumn from '../forms/DropColumn';
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(2),
   },
   product: {
-    // '& .MuiFilledInput-root': {
-    //   backgroundColor: theme.palette.primary.main,
-    // },
     '& .MuiOutlinedInput-notchedOutline': {
       borderColor: theme.palette.primary.main,
     },
@@ -117,6 +112,7 @@ const UserDashboard = (props) => {
   const [productIssues, setProductIssues] = useState([]);
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [toDeleteItem, setDeleteItem] = useState({ id: 0, type: 'feat' });
+  const [upgrade, setUpgrade] = useState(false);
 
   const addFeatPath = redirectTo
     ? _.includes(location.pathname, 'list')
@@ -169,6 +165,12 @@ const UserDashboard = (props) => {
   const addDropColumnPath = `${routes.DASHBOARD}/select-column`;
 
   useEffect(() => {
+    const selected_product = history && history.location
+      && history.location.state && history.location.state.selected_product;
+    if (selected_product) {
+      setProduct(selected_product);
+    }
+
     dispatch(getAllProducts());
     dispatch(getAllStatuses());
     dispatch(getAllFeatures());
@@ -215,9 +217,16 @@ const UserDashboard = (props) => {
       { product_uuid: product },
     );
 
+    if ((_.size(feats) >= 5) && user && user.organization
+    && !user.organization.unlimited_free_plan) {
+      setUpgrade(true);
+    } else {
+      setUpgrade(false);
+    }
+
     setProductFeatures(_.orderBy(feats, 'create_date', 'desc'));
     setProductIssues(_.orderBy(iss, 'create_date', 'desc'));
-  }, [product, JSON.stringify(features), JSON.stringify(issues)]);
+  }, [product, features, issues]);
 
   const viewTabClicked = (event, vw) => {
     setView(vw);
@@ -438,6 +447,7 @@ const UserDashboard = (props) => {
 
   return (
     <div className={classes.root}>
+      {loading && <Loader open={loading} />}
       <Grid container alignItems="center" mb={2}>
         <Grid item xs={4} md={3} lg={2}>
           <Typography component="div" variant="h4">
@@ -446,27 +456,27 @@ const UserDashboard = (props) => {
         </Grid>
         <div className={classes.menuRight}>
           {((!_.isEmpty(prod?.third_party_tool)) && (!_.isEmpty(status))
-        && (
-          <>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={(e) => importTicket(e)}
-              className={classes.importButton}
-            >
-              Import Tickets
-            </Button>
-            <IconButton
-              aria-label="sync"
-              color="inherit"
-              size="large"
-              onClick={(e) => syncData(e)}
-            >
-              <SyncIcon fontSize="large" className={classes.menuIcon} />
-            </IconButton>
-          </>
-        )
-           )}
+          && (
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={(e) => importTicket(e)}
+                className={classes.importButton}
+              >
+                Import Tickets
+              </Button>
+              <IconButton
+                aria-label="sync"
+                color="inherit"
+                size="large"
+                onClick={(e) => syncData(e)}
+              >
+                <SyncIcon fontSize="large" className={classes.menuIcon} />
+              </IconButton>
+            </>
+          ))}
+
           <Grid item lg={2} className={classes.bar}>
             <TextField
               variant="outlined"
@@ -503,60 +513,7 @@ const UserDashboard = (props) => {
           </Grid>
         </div>
       </Grid>
-      <Grid mb={3} container justifyContent="center">
-        <Grid item className={classes.tabs}>
-          <Tabs value={view} onChange={viewTabClicked}>
-            {subNav.map((itemProps, index) => (
-              <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
-            ))}
-          </Tabs>
-        </Grid>
-      </Grid>
 
-      <ConfirmModal
-        open={openDeleteModal}
-        setOpen={setDeleteModal}
-        submitAction={handleDeleteModal}
-        title="Are you sure you want to delete?"
-        submitText="Delete"
-      />
-      <Route
-        path={routes.DASHBOARD_LIST}
-        render={(prps) => (
-          <List
-            {...prps}
-            product={product}
-            productFeatures={productFeatures}
-            productIssues={productIssues}
-            addItem={addItem}
-            editItem={editItem}
-            convertIssue={convertIssue}
-            deleteItem={deleteItem}
-          />
-        )}
-      />
-      <Route
-        path={routes.DASHBOARD_KANBAN}
-        render={(prps) => (
-          <Kanban
-            {...prps}
-            statuses={statuses}
-            product={product}
-            productFeatures={productFeatures}
-            productIssues={productIssues}
-            addItem={addItem}
-            editItem={editItem}
-            convertIssue={convertIssue}
-            deleteItem={deleteItem}
-          />
-        )}
-      />
-      <Route path={addFeatPath} component={AddFeatures} />
-      <Route path={editFeatPath} component={AddFeatures} />
-      <Route path={addIssuePath} component={AddIssues} />
-      <Route path={editIssuePath} component={AddIssues} />
-      <Route path={featureToIssuePath} component={AddIssues} />
-      <BarChart productFeatures={productFeatures} productIssues={productIssues} />
       {((_.isEmpty(status)) && product !== 0
         ? (!_.isEmpty(prod) && (!_.isEmpty(prod.third_party_tool)))
           ? (
@@ -618,7 +575,6 @@ const UserDashboard = (props) => {
           )
         : (
           <>
-            {!loaded && <Loader open={!loaded} /> }
             <Grid mb={3} container justifyContent="center">
               <Grid item className={classes.tabs}>
                 <Tabs value={view} onChange={viewTabClicked}>
@@ -648,6 +604,7 @@ const UserDashboard = (props) => {
                   deleteItem={deleteItem}
                   commentItem={commentItem}
                   issueSuggestions={issueSuggestions}
+                  upgrade={upgrade}
                 />
               )}
             />
@@ -666,6 +623,7 @@ const UserDashboard = (props) => {
                   deleteItem={deleteItem}
                   commentItem={commentItem}
                   dispatch={dispatch}
+                  upgrade={upgrade}
                 />
               )}
             />
@@ -719,8 +677,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.productReducer,
   ...state.decisionReducer,
-  loading: state.productReducer.loading && state.decisionReducer.loading,
-  loaded: state.productReducer.loaded && state.decisionReducer.loaded,
+  loading: state.productReducer.loading || state.decisionReducer.loading,
   user: state.authReducer.data,
   boards: state.productReducer.boards,
   importLoaded: state.decisionReducer.importLoaded,

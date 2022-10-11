@@ -44,11 +44,7 @@ const AddComments = ({
 
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && location.state.type === 'edit';
-  const editData = (
-    location.state
-    && location.state.type === 'edit'
-    && location.state.data
-  ) || {};
+  const editData = (editPage && location.state.data) || {};
 
   const comment = useInput((editData && editData.comment) || '', {
     required: true,

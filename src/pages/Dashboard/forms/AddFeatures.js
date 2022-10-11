@@ -34,18 +34,12 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
     borderRadius: '18px',
   },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
 }));
 
 // eslint-disable-next-line import/no-mutable-exports
 export let checkIfAddFeaturesEdited;
 
 const AddFeatures = ({
-  history,
   location,
   statuses,
   dispatch,
@@ -56,35 +50,36 @@ const AddFeatures = ({
   featureFormData,
 }) => {
   const classes = useStyles();
-  const [product, setProduct] = useState('');
-  const [prodStatus, setProdStatus] = useState('');
-  const redirectTo = location.state && location.state.from;
   const editPage = location.state && (location.state.type === 'edit' || location.state.type === 'view');
-  const editData = (
-    location.state
-    && (location.state.type === 'edit' || location.state.type === 'view')
-    && location.state.data
-  ) || {};
+  const editData = (editPage && location.state.data) || {};
   const product_uuid = location.state && location.state.product_uuid;
   const viewPage = (location.state && location.state.viewOnly) || false;
 
-  const retainAssigneeData = [];
-  for (let i = 0; i < featureFormData?.assignees?.length; i += 1) {
-    retainAssigneeData.push(featureFormData.assignees[i].username);
-  }
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
-  const name = useInput((editData && editData.name) || (featureFormData && featureFormData.name) || '', {
-    required: true,
-    productFeatures,
-  });
-  const description = useInput((editData && editData.description) || (featureFormData && featureFormData.description) || '', {
-    required: true,
-  });
-  const priority = useInput((editData && editData.priority) || (featureFormData && featureFormData.priority) || '', {
-    required: true,
-  });
+  const [formError, setFormError] = useState({});
+  const [product, setProduct] = useState('');
+  const [prodStatus, setProdStatus] = useState('');
+  const [assigneeData, setAssigneeData] = useState([]);
+
+  const name = useInput(
+    (editData && editData.name) || (featureFormData && featureFormData.name) || '',
+    { required: true, productFeatures },
+  );
+
+  const description = useInput(
+    (editData && editData.description) || (featureFormData && featureFormData.description) || '',
+    { required: true },
+  );
+
+  const priority = useInput(
+    (editData && editData.priority) || (featureFormData && featureFormData.priority) || '',
+    { required: true },
+  );
+
   const [tags, setTags] = useState((editData && editData.tags)
-  || (featureFormData && featureFormData.tags) || []);
+    || (featureFormData && featureFormData.tags) || []);
 
   const [statusID, setStatusID] = useState((editData && editData.status) || (featureFormData && featureFormData.status) || '');
   const currentStat = _.filter(statuses, { product_uuid });
@@ -92,35 +87,13 @@ const AddFeatures = ({
   const [status, setStatus] = useState('');
   const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
 
-  const editAssigneeData = [];
-  for (let i = 0; i < editData?.feature_detail?.assigneees?.length; i += 1) {
-    editAssigneeData.push(editData.feature_detail.assigneees[i].username);
-  }
-  const [assignees, setAssignees] = useState((editData && editAssigneeData)
-  || (featureFormData && retainAssigneeData) || []);
-
-  const assigneeData = [];
-  for (let i = 0; i < product?.feature_tool_detail?.user_list?.length; i += 1) {
-    assigneeData.push(product.feature_tool_detail.user_list[i].username);
-  }
-  const assigneesList = [...new Set(product?.feature_tool_detail?.user_list
-    ?.filter((element) => assignees.includes(element.username)))];
-
-  // const totalEstimate = useInput((editData && editData.total_estimate)
-  // || (featureFormData && featureFormData.total_estimate) || '');
-  // const version = useInput((editData && editData.version)
-  // || (featureFormData && featureFormData.version) || '');
-  const [formError, setFormError] = useState({});
-
-  let formTitle;
-  if (editPage) {
-    formTitle = viewPage ? 'View Feature' : 'Edit Feature';
-  } else {
-    formTitle = 'Add Feature';
-  }
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+  const [assignees, setAssignees] = useState(
+    (editData && editData.feature_detail && editData.feature_detail.assigneees
+      && !_.isEmpty(editData.feature_detail.assigneees) && _.map(editData.feature_detail.assigneees, 'username'))
+    || (featureFormData && featureFormData.assigneees && !_.isEmpty(featureFormData.assigneees)
+      && _.map(featureFormData.assigneees, 'username'))
+    || [],
+  );
 
   useEffect(() => {
     dispatch(getAllStatuses());
@@ -130,27 +103,31 @@ const AddFeatures = ({
   }, []);
 
   useEffect(() => {
-    const prd = _.find(products, { product_uuid });
-    setProduct(prd);
+    const temp_product = _.find(products, { product_uuid });
+    setProduct(temp_product);
   }, [products]);
 
   useEffect(() => {
     const sta = _.filter(statuses, { product_uuid });
-    setProdStatus(sta);
+    const assigneeOptions = (product && product.feature_tool_detail
+      && product.feature_tool_detail.user_list
+      && _.map(product.feature_tool_detail.user_list, 'username')) || [];
+
     if (editData) {
       setStatus(_.find(sta, { status_uuid: editData.status }));
     }
+
+    setProdStatus(sta);
+    setAssigneeData(assigneeOptions);
   }, [product]);
 
   checkIfAddFeaturesEdited = () => (
     name.hasChanged()
       || description.hasChanged()
-      || priority.hasChanged()
-      || (_.isEmpty(currentStatData) && !_.isEmpty(status))
-      || (!_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
-      || (_.isEmpty(editData) && !_.isEmpty(tags))
-      // || totalEstimate.hasChanged()
-      // || version.hasChanged()
+      || (editPage && priority.hasChanged())
+      || (editPage && _.isEmpty(currentStatData) && !_.isEmpty(status))
+      || (editPage && !_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
+      || (editPage && _.isEmpty(editData) && !_.isEmpty(tags))
   );
 
   // Handle tags list
@@ -184,30 +161,32 @@ const AddFeatures = ({
     }
   };
 
-  const featCred = _.find(
-    credentials,
-    { product_uuid, auth_detail: { tool_type: 'Feature' } },
-  );
   const handleSubmit = (event) => {
     event.preventDefault();
     const dateTime = new Date();
+    const featCred = _.find(
+      credentials,
+      { product_uuid, auth_detail: { tool_type: 'Feature' } },
+    );
+
     const formData = {
       ...editData,
       edit_date: dateTime,
       name: name.value,
       description: description.value,
-      status: statusID,
-      tags,
       product_uuid,
-      priority: priority.value,
-      // total_estimate: totalEstimate.value,
-      // version: version.value,
-      column_id: colID,
       ...featCred?.auth_detail,
-      assignees: assigneesList,
+      assignees: product && product.feature_tool_detail && product.feature_tool_detail.user_list
+        && _.filter(product.feature_tool_detail.user_list, (user) => (
+          user && _.includes(assignees, user.username)
+        )),
     };
 
     if (editPage) {
+      formData.status = statusID;
+      formData.tags = tags;
+      formData.priority = priority.value;
+      formData.column_id = colID;
       dispatch(saveFeatureFormData(formData));
     } else {
       formData.create_date = dateTime;
@@ -239,18 +218,20 @@ const AddFeatures = ({
     const errorKeys = Object.keys(formError);
     if (!name.value
       || !description.value
-      || !statusID
-      || !priority.value
+      || (editPage && !statusID)
+      || (editPage && !priority.value)
       || !assignees
     ) {
       return true;
     }
+
     let errorExists = false;
     _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
     });
+
     return errorExists;
   };
 
@@ -273,19 +254,20 @@ const AddFeatures = ({
               name="name"
               autoComplete="name"
               error={
-                    formError.name
-                    && formError.name.error
-                  }
+                formError.name
+                && formError.name.error
+              }
               helperText={
-                    formError.name
-                      ? formError.name.message
-                      : ''
-                  }
+                formError.name
+                  ? formError.name.message
+                  : ''
+              }
               onBlur={(e) => handleBlur(e, 'duplicate', name)}
               {...name.bind}
               disabled={viewPage}
             />
           </Grid>
+
           <Grid item xs={12}>
             <TextField
               variant="outlined"
@@ -298,192 +280,155 @@ const AddFeatures = ({
               name="description"
               autoComplete="description"
               error={
-                    formError.description
-                    && formError.description.error
-                  }
+                formError.description
+                && formError.description.error
+              }
               helperText={
-                    formError.description
-                      ? formError.description.message
-                      : ''
-                  }
+                formError.description
+                  ? formError.description.message
+                  : ''
+              }
               onBlur={(e) => handleBlur(e, 'required', description)}
               {...description.bind}
               disabled={viewPage}
             />
           </Grid>
         </Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={8}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              select
-              id="status"
-              label="Status"
-              name="status"
-              value={status}
-              autoComplete="status"
-              disabled={viewPage}
-              onChange={(e) => {
-                const stat = e.target.value;
-                setStatus(stat);
-                setStatusID(stat.status_uuid);
-                setColID(stat.status_tracking_id);
-              }}
-            >
-              {_.map(prodStatus, (sts) => (
-                <MenuItem
-                  key={`status-${sts.status_uuid}-${sts.name}`}
-                  value={sts}
-                >
-                  {sts.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              select
-              id="priority "
-              label="Priority"
-              name="priority"
-              autoComplete="priority"
-              error={
-                    formError.priority
-                    && formError.priority.error
-                  }
-              helperText={
-                    formError.priority
-                      ? formError.priority.message
-                      : ''
-                  }
-              onBlur={(e) => handleBlur(e, 'required', priority)}
-              {...priority.bind}
-              disabled={viewPage}
-            >
-              {_.map(PRIORITIES, (prty, idx) => (
-                <MenuItem
-                  key={`priority-${idx}`}
-                  value={prty}
-                >
-                  {prty}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          <Autocomplete
-            fullWidth
-            multiple
-            filterSelectedOptions
-            id="tags"
-            options={TAGS}
-            value={tags}
-            onChange={(e, newValue) => onTagsChange(newValue)}
-            renderTags={(value, getTagProps) => (
-              _.map(value, (option, index) => (
-                <Chip
-                  variant="default"
-                  label={option}
-                  {...getTagProps({ index })}
-                />
-              ))
-            )}
-            renderInput={(params) => (
+
+        {editPage && (
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={8}>
               <TextField
-                {...params}
                 variant="outlined"
-                label="Tags"
                 margin="normal"
-              />
-            )}
-            disabled={viewPage}
-          />
-        </Grid>
-        {!_.isEmpty(product?.feature_tool_detail?.user_list) && (
-        <Grid item xs={12} md={8}>
-          <Autocomplete
-            fullWidth
-            multiple
-            filterSelectedOptions
-            id="assignees"
-            options={assigneeData}
-            value={assignees}
-            onChange={(e, newValue) => onAssigneeChange(newValue)}
-            renderTags={(value, getAssigneeProps) => (
-              _.map(value, (option, index) => (
-                <Chip
-                  variant="default"
-                  label={option}
-                  {...getAssigneeProps({ index })}
-                />
-              ))
-            )}
-            renderInput={(params) => (
+                required
+                fullWidth
+                select
+                id="status"
+                label="Status"
+                name="status"
+                value={status}
+                autoComplete="status"
+                disabled={viewPage}
+                onChange={(e) => {
+                  const stat = e.target.value;
+                  setStatus(stat);
+                  setStatusID(stat.status_uuid);
+                  setColID(stat.status_tracking_id);
+                }}
+              >
+                {_.map(prodStatus, (sts) => (
+                  <MenuItem
+                    key={`status-${sts.status_uuid}-${sts.name}`}
+                    value={sts}
+                  >
+                    {sts.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
               <TextField
-                {...params}
                 variant="outlined"
-                label="Assignees"
                 margin="normal"
-              />
-            )}
-            disabled={viewPage}
-          />
-        </Grid>
+                required
+                fullWidth
+                select
+                id="priority "
+                label="Priority"
+                name="priority"
+                autoComplete="priority"
+                error={
+                  formError.priority
+                  && formError.priority.error
+                }
+                helperText={
+                  formError.priority
+                    ? formError.priority.message
+                    : ''
+                }
+                onBlur={(e) => handleBlur(e, 'required', priority)}
+                {...priority.bind}
+                disabled={viewPage}
+              >
+                {_.map(PRIORITIES, (prty, idx) => (
+                  <MenuItem
+                    key={`priority-${idx}`}
+                    value={prty}
+                  >
+                    {prty}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+          </Grid>
         )}
-        {/* <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            id="totalEstimate"
-            label="Total Estimate"
-            name="totalEstimate"
-            autoComplete="totalEstimate"
-            error={
-                  formError.totalEstimate
-                  && formError.totalEstimate.error
-                }
-            helperText={
-                  formError.totalEstimate
-                    ? formError.totalEstimate.message
-                    : ''
-                }
-            onBlur={(e) => handleBlur(e, 'required', totalEstimate)}
-            {...totalEstimate.bind}
-            disabled={viewPage}
-          />
-        </Grid> */}
-        {/* <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            id="version "
-            label="Version"
-            name="version"
-            autoComplete="version"
-            error={
-                  formError.version
-                  && formError.version.error
-                }
-            helperText={
-                  formError.version
-                    ? formError.version.message
-                    : ''
-                }
-            onBlur={(e) => handleBlur(e, 'required', version)}
-            {...version.bind}
-            disabled={viewPage}
-          />
-        </Grid> */}
+
+        {editPage && (
+          <Grid item xs={12}>
+            <Autocomplete
+              fullWidth
+              multiple
+              filterSelectedOptions
+              id="tags"
+              options={TAGS}
+              value={tags}
+              onChange={(e, newValue) => onTagsChange(newValue)}
+              renderTags={(value, getTagProps) => (
+                _.map(value, (option, index) => (
+                  <Chip
+                    variant="default"
+                    label={option}
+                    {...getTagProps({ index })}
+                  />
+                ))
+              )}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  label="Tags"
+                  margin="normal"
+                />
+              )}
+              disabled={viewPage}
+            />
+          </Grid>
+        )}
+
+        {!_.isEmpty(product?.feature_tool_detail?.user_list) && (
+          <Grid item xs={12} md={8}>
+            <Autocomplete
+              fullWidth
+              multiple
+              filterSelectedOptions
+              id="assignees"
+              options={assigneeData}
+              value={assignees}
+              onChange={(e, newValue) => onAssigneeChange(newValue)}
+              renderTags={(value, getAssigneeProps) => (
+                _.map(value, (option, index) => (
+                  <Chip
+                    variant="default"
+                    label={option}
+                    {...getAssigneeProps({ index })}
+                  />
+                ))
+              )}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  label="Assignees"
+                  margin="normal"
+                />
+              )}
+              disabled={viewPage}
+            />
+          </Grid>
+        )}
+
         <Grid
           container
           spacing={isDesktop ? 3 : 0}

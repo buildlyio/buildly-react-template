@@ -10,7 +10,8 @@ import {
   Grid,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
-import { clearValidateData, saveProductFormData, getAllCredentials } from '@redux/product/actions/product.actions';
+import { getAllStatuses } from '@redux/decision/actions/decision.actions';
+import { saveProductFormData, getAllCredentials } from '@redux/product/actions/product.actions';
 import ProductSetup, {
   checkIfProductSetupEdited,
 } from './components/ProductSetup';
@@ -22,11 +23,7 @@ import BudgetTechnology, {
 } from './components/BudgetTechnology';
 import TeamUser, { checkIfTeamUserEdited } from './components/TeamUser';
 import UseInfo, { checkIfUseInfoEdited } from './components/UseInfo';
-import MinimalFunctionality, {
-  checkIfMinimalFuncEdited,
-} from './components/MinimalFunctionality';
 import ViewDetailsWrapper from './components/ViewDetailsWrapper';
-import { getAllStatuses } from '@redux/decision/actions/decision.actions';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,7 +45,6 @@ const getSteps = () => [
   'Budget & Technology',
   'Team & Users',
   'Users Information',
-  'Minimal Functionality',
 ];
 
 const getStepContent = (
@@ -156,25 +152,6 @@ const getStepContent = (
           <UseInfo
             {...props}
             location={props.location}
-            handleNext={handleNext}
-            handleBack={handleBack}
-            editData={editData}
-          />
-        </ViewDetailsWrapper>
-      );
-
-    case 5:
-      return (
-        <ViewDetailsWrapper
-          {...props}
-          handleBack={handleBack}
-          title="New Product Setup"
-          maxSteps={maxSteps}
-          activeStep={stepIndex}
-        >
-          <MinimalFunctionality
-            {...props}
-            location={props.location}
             handleBack={handleBack}
             editData={editData}
             editPage={editPage}
@@ -243,6 +220,7 @@ const NewProductForm = (props) => {
       setConfirmModal(true);
       setConfirmModalFor(null);
     } else {
+      dispatch(saveProductFormData(null));
       setFormModal(false);
       history.push(redirectTo);
     }
@@ -265,7 +243,6 @@ const NewProductForm = (props) => {
 
   useEffect(() => {
     dispatch(getAllStatuses());
-    // dispatch(clearValidateData());
   }, []);
 
   useEffect(() => {
@@ -288,9 +265,6 @@ const NewProductForm = (props) => {
 
       case 4:
         return checkIfUseInfoEdited();
-
-      case 5:
-        return checkIfMinimalFuncEdited();
 
       default:
         return false;

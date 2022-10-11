@@ -104,6 +104,7 @@ const Register = ({
   const userType = useInput('', { required: true });
   const first_name = useInput('', { required: true });
   const last_name = useInput('');
+  const coupon_code = useInput(window.env.FREE_COUPON_CODE || '');
   const [formError, setFormError] = useState({});
 
   // eslint-disable-next-line consistent-return
@@ -140,6 +141,7 @@ const Register = ({
       user_type: userType.value,
       first_name: first_name.value,
       last_name: last_name.value,
+      coupon_code: coupon_code.value,
     };
 
     dispatch(register(registerFormValue, history));
@@ -203,6 +205,7 @@ const Register = ({
               <Typography component="h1" variant="h5">
                 Register
               </Typography>
+
               <form className={classes.form} noValidate onSubmit={handleSubmit}>
                 <Grid container spacing={isMobile() ? 0 : 3}>
                   <Grid item xs={12} md={6}>
@@ -224,6 +227,7 @@ const Register = ({
                       {...first_name.bind}
                     />
                   </Grid>
+
                   <Grid item xs={12} md={6}>
                     <TextField
                       variant="outlined"
@@ -243,6 +247,7 @@ const Register = ({
                     />
                   </Grid>
                 </Grid>
+
                 <Grid container spacing={isMobile() ? 0 : 3}>
                   <Grid item xs={12} md={6}>
                     <TextField
@@ -263,6 +268,7 @@ const Register = ({
                       {...username.bind}
                     />
                   </Grid>
+
                   <Grid item xs={12} md={6}>
                     <TextField
                       variant="outlined"
@@ -284,6 +290,7 @@ const Register = ({
                     />
                   </Grid>
                 </Grid>
+
                 <Grid container spacing={isMobile() ? 0 : 3}>
                   <Grid item xs={12}>
                     <Autocomplete
@@ -312,6 +319,7 @@ const Register = ({
                     />
                   </Grid>
                 </Grid>
+
                 <Grid container spacing={isMobile() ? 0 : 3}>
                   <Grid item xs={12}>
                     <TextField
@@ -338,6 +346,7 @@ const Register = ({
                     </TextField>
                   </Grid>
                 </Grid>
+
                 <Grid container spacing={isMobile() ? 0 : 3}>
                   <Grid item xs={12} md={6}>
                     <TextField
@@ -385,6 +394,29 @@ const Register = ({
                     />
                   </Grid>
                 </Grid>
+
+                <Grid container spacing={isMobile() ? 0 : 3}>
+                  <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      disabled
+                      id="coupon_code"
+                      label="Coupon Code"
+                      name="coupon_code"
+                      autoComplete="coupon_code"
+                      error={formError.coupon_code && formError.coupon_code.error}
+                      helperText={
+                        formError.coupon_code ? formError.coupon_code.message : ''
+                      }
+                      className={classes.textField}
+                      onBlur={(e) => handleBlur(e, '', coupon_code)}
+                      {...coupon_code.bind}
+                    />
+                  </Grid>
+                </Grid>
+
                 <div className={classes.loadingWrapper}>
                   <Button
                     type="submit"
@@ -404,16 +436,19 @@ const Register = ({
                   )}
                 </div>
               </form>
+
               <Grid container>
                 <Grid item xs={12} className={classes.or}>
                   <Typography variant="body1">----OR----</Typography>
                 </Grid>
+
                 <Grid item xs={12} className={classes.socialAuth}>
                   <GithubLogin
                     dispatch={dispatch}
                     history={history}
                     disabled={loading && socialLogin}
                   />
+
                   {loading
                     && socialLogin
                     && socialLogin === providers.github && (
@@ -423,6 +458,7 @@ const Register = ({
                       />
                   )}
                 </Grid>
+
                 <Grid item className={classes.link}>
                   <Link href={routes.LOGIN} variant="body2" color="secondary">
                     Already have an account? Sign in

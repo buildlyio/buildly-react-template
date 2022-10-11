@@ -443,7 +443,7 @@ function* createProduct(payload) {
       ),
     ];
     if (history) {
-      history.push(routes.DASHBOARD);
+      history.push(routes.DASHBOARD, { selected_product: product.data.product_uuid });
     }
   } catch (error) {
     yield [
@@ -467,9 +467,10 @@ function* updateProduct(payload) {
     const product = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${productEndpoint}product/${payload.data.product_uuid}`,
+      `${window.env.API_URL}${productEndpoint}product/${payload.data.product_uuid}/`,
       payload.data,
     );
+
     if (product && product.data) {
       if ((payload.data.changedData[0].changeTool === true
         && payload.data.changedData[0].auth_detail)
@@ -553,8 +554,12 @@ function* updateProduct(payload) {
         yield put(updateCredential(credData));
       }
     }
+
     yield [
-      yield put({ type: UPDATE_PRODUCT_SUCCESS, data: product.data }),
+      yield put({
+        type: UPDATE_PRODUCT_SUCCESS,
+        data: { ...product.data, product_uuid: payload.data.product_uuid },
+      }),
       yield put(
         showAlert({
           type: 'success',
@@ -987,33 +992,38 @@ function* validateCredential(payload) {
 
 function* docIdentifier(payload) {
   try {
-      const response = yield call(
-        httpService.makeRequest,
-        'post',
-        `${window.env.API_URL}${productEndpoint}upload_file/`,
-        payload.uploadFile,
-        '',
-        'multipart/form-data',
-      );
+    const response = yield call(
+      httpService.makeRequest,
+      'post',
+      `${window.env.PRODUCT_SERVICE_URL}upload_file/`,
+      payload.uploadFile,
+      '',
+      'multipart/form-data',
+    );
 
-    yield [
+    if (response && response.data) {
+      let productFormData = payload.formData;
+
+      if (response.data.cloud_url && !_.isEmpty(response.data.cloud_url)) {
+        const doc_file = productFormData.product_info.doc_file
+        && !_.isEmpty(productFormData.product_info.doc_file)
+          ? [...productFormData.product_info.doc_file, ...response.data.cloud_url]
+          : response.data.cloud_url;
+
+        productFormData = {
+          ...productFormData,
+          product_info: {
+            ...productFormData.product_info,
+            doc_file,
+          },
+        };
+      }
+
       yield put({
         type: ADD_DOC_IDENTIFIER_SUCCESS,
-        response,
-      }),
-      // yield put({
-      //   type: UPDATE_PRODUCT,
-      //   payload: {
-      //     ...payload,
-      //     uploaded_pdf,
-      //     uploaded_pdf_link,
-      //     unique_identifier,
-      //   },
-      //   history,
-      //   redirectTo,
-      //   organization_uuid,
-      // }),
-    ];
+        productFormData,
+      });
+    }
   } catch (error) {
     yield [
       yield put(

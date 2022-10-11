@@ -1201,17 +1201,12 @@ describe('Add PDF Identifier reducer', () => {
   it('Add PDF Identifier success Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.ADD_DOC_IDENTIFIER_SUCCESS },
+      { type: actions.ADD_DOC_IDENTIFIER_SUCCESS, productFormData: initialState.productFormData },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      productFormData: {
-        ...initialState.productFormData,
-        uploaded_pdf: undefined,
-        uploaded_pdf_link: undefined,
-        unique_identifier: undefined,
-      },
+      productFormData: initialState.productFormData,
     });
   });
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -8,9 +8,12 @@ import {
   TextField,
   Button,
 } from '@mui/material';
+import Loader from '@components/Loader/Loader';
+import { UserContext } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
-import { saveProductFormData } from '@redux/product/actions/product.actions';
+import { updateUser } from '@redux/authuser/actions/authuser.actions';
+import { createProduct, updateProduct } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -53,12 +56,18 @@ export let checkIfUseInfoEdited;
 
 const UseInfo = ({
   productFormData,
-  handleNext,
   handleBack,
   dispatch,
   editData,
+  loading,
+  history,
+  editPage,
+  product_uuid,
+  redirectTo,
 }) => {
   const classes = useStyles();
+  const user = useContext(UserContext);
+  const buttonText = editPage ? 'Save' : 'Create Product';
 
   const productUse = useInput(
     (editData
@@ -196,12 +205,23 @@ const UseInfo = ({
       },
       edit_date: new Date(),
     };
-    dispatch(saveProductFormData(formData));
-    handleNext();
+
+    if (user && !user.survey_status) {
+      dispatch(updateUser({ id: user.id, survey_status: true }));
+    }
+
+    if (editPage) {
+      formData.product_uuid = product_uuid;
+      dispatch(updateProduct(formData));
+      history.push(redirectTo);
+    } else {
+      dispatch(createProduct(formData, history));
+    }
   };
 
   return (
     <div>
+      {loading && <Loader open={loading} />}
       <form className={classes.form} noValidate onSubmit={handleSubmit}>
         <Box mb={2} mt={3}>
           {(!_.isEmpty(productFormData?.third_party_tool)
@@ -324,7 +344,7 @@ const UseInfo = ({
                 disabled={submitDisabled()}
                 className={classes.submit}
               >
-                Next
+                {buttonText}
               </Button>
             </Grid>
           </Grid>

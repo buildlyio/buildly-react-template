@@ -18,6 +18,7 @@ export const BUSSINESS_SEGMENTS = [
 ];
 
 export const HOSTING = [
+  'No Preference',
   'GCP',
   'AWS',
   'Digital Ocean',

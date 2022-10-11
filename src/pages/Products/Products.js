@@ -8,7 +8,6 @@ import { getAllProducts } from '@redux/product/actions/product.actions';
 import { routes } from '@routes/routesConstants';
 import AddProduct from '@pages/NewProduct/NewProduct';
 import { productColumns, getProductsData } from './ProductConstants';
-import ConfirmModal from '@components/Modal/ConfirmModal';
 import { clearProductData } from '@redux/decision/actions/decision.actions';
 
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +23,6 @@ const Products = ({
   const redirectTo = location.state && location.state.from;
   const classes = useStyles();
   const [rows, setRows] = useState([]);
-  const [columns, setColumns] = useState(productColumns);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
 
@@ -56,13 +54,14 @@ const Products = ({
   }, []);
 
   useEffect(() => {
-    const currentProd = _.filter(products,
-      { organization_uuid: user.organization.organization_uuid });
-    if (currentProd && currentProd.length > 0) {
-      const rws = _.orderBy(getProductsData(currentProd), 'create_date', 'desc');
-      setRows(rws);
-    }
-  }, [JSON.stringify(products)]);
+    const filteredProducts = _.filter(
+      products,
+      { organization_uuid: user.organization.organization_uuid },
+    );
+
+    const sorted_products = _.orderBy(getProductsData(filteredProducts), 'create_date', 'desc');
+    setRows(sorted_products);
+  }, [products]);
 
   const onAddButtonClick = () => {
     history.push(addProductPath, {
@@ -84,7 +83,7 @@ const Products = ({
       <DataTableWrapper
         loading={loading}
         rows={rows || []}
-        columns={columns}
+        columns={productColumns}
         filename="ProductList"
         addButtonHeading="Add Product"
         onAddButtonClick={onAddButtonClick}
@@ -92,17 +91,12 @@ const Products = ({
         deleteAction={deleteProduct}
         openDeleteModal={openConfirmModal}
         setDeleteModal={setConfirmModal}
+        handleDeleteModal={handleConfirmModal}
+        deleteModalTitle="Are you sure you want to delete this product?"
         tableHeader="Products"
       >
         <Route path={addProductPath} component={AddProduct} />
         <Route path={`${editProductPath}/:id`} component={AddProduct} />
-        <ConfirmModal
-          open={openConfirmModal}
-          setOpen={setConfirmModal}
-          submitAction={handleConfirmModal}
-          title="Are you sure you want to delete this product?"
-          submitText="Delete"
-        />
       </DataTableWrapper>
     </div>
   );
