@@ -299,13 +299,9 @@ const ProductSetup = ({
       || description.hasChanged()
       || (featuresTool.value !== ft)
       || (issuesTool.value !== it)
-      || Boolean(editData && editData.start_date
-        && (startDate !== editData.start_date))
-      || Boolean(productFormData && productFormData.start_date
+      || !!(productFormData && productFormData.start_date
         && (startDate !== productFormData.start_date))
-      || Boolean(editData && editData.end_date
-        && (endDate !== editData.end_date))
-      || Boolean(productFormData && productFormData.end_date
+      || !!(productFormData && productFormData.end_date
         && (endDate !== productFormData.end_date))
     );
   };

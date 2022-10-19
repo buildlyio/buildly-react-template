@@ -118,9 +118,7 @@ const ApplicationMarket = ({
     applicationType.hasChanged()
     || primaryUsers.hasChanged()
     || secondaryUsers.hasChanged()
-    || Boolean(editData && editData.product_info && editData.product_info.bussiness_segment
-      && !_.isEqual(bussinessSegment, editData.product_info.bussiness_segment))
-    || Boolean(productFormData && productFormData.product_info
+    || !!(productFormData && productFormData.product_info
       && productFormData.product_info.bussiness_segment
       && !_.isEqual(bussinessSegment, productFormData.product_info.bussiness_segment))
   );
@@ -207,7 +205,7 @@ const ApplicationMarket = ({
                   }}
                   renderValue={(selected) => selected.join(', ')}
                 >
-                  <MenuItem value="" />
+                  <MenuItem value="">-----------------------</MenuItem>
                   {_.map(BUSSINESS_SEGMENTS, (segment, idx) => (
                     <MenuItem key={`segment-${idx}`} value={segment}>
                       <Checkbox
@@ -235,7 +233,7 @@ const ApplicationMarket = ({
                       label="Type of User"
                       {...primaryUsers.bind}
                     >
-                      <MenuItem value="" />
+                      <MenuItem value="">-----------------------</MenuItem>
                       {_.map(PRIMARY_USERS, (user, idx) => (
                         <MenuItem key={`user-${idx}`} value={user}>
                           {user}
@@ -254,7 +252,7 @@ const ApplicationMarket = ({
                       label="Type of User"
                       {...secondaryUsers.bind}
                     >
-                      <MenuItem value="" />
+                      <MenuItem value="">-----------------------</MenuItem>
                       {_.map(PRIMARY_USERS, (user, idx) => (
                         <MenuItem key={`user-${idx}`} value={user}>
                           {user}

@@ -21,6 +21,7 @@ import ApplicationMarket, {
 import BudgetTechnology, {
   checkIfBudgetTechnologyEdited,
 } from './components/BudgetTechnology';
+import Setup, { checkIfSetupEdited } from './components/Setup';
 import TeamUser, { checkIfTeamUserEdited } from './components/TeamUser';
 import UseInfo, { checkIfUseInfoEdited } from './components/UseInfo';
 import ViewDetailsWrapper from './components/ViewDetailsWrapper';
@@ -45,6 +46,7 @@ const getSteps = () => [
   'Budget & Technology',
   'Team & Users',
   'Users Information',
+  'Setup Details',
 ];
 
 const getStepContent = (
@@ -152,14 +154,34 @@ const getStepContent = (
           <UseInfo
             {...props}
             location={props.location}
+            handleNext={handleNext}
+            handleBack={handleBack}
+            editData={editData}
+          />
+        </ViewDetailsWrapper>
+      );
+
+    case 5:
+      return (
+        <ViewDetailsWrapper
+          {...props}
+          handleBack={handleBack}
+          title="New Product Setup"
+          maxSteps={maxSteps}
+          activeStep={stepIndex}
+        >
+          <Setup
+            {...props}
+            location={props.location}
             handleBack={handleBack}
             editData={editData}
             editPage={editPage}
+            viewPage={viewPage}
             product_uuid={product_uuid}
             redirectTo={redirectTo}
           />
         </ViewDetailsWrapper>
-      );
+      )
 
     default:
       return 'Unknown stepIndex';
@@ -265,6 +287,9 @@ const NewProductForm = (props) => {
 
       case 4:
         return checkIfUseInfoEdited();
+
+      case 5:
+        return checkIfSetupEdited();
 
       default:
         return false;

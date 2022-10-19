@@ -133,12 +133,12 @@ const TeamUser = ({
 
   checkIfTeamUserEdited = () => (
     teamSize.hasChanged()
-    || (productFormData
+    || !!(productFormData
       && productFormData.product_info
       && productFormData.product_info.role_count
       && !_.isEqual(roleCount,
         productFormData.product_info.role_count))
-    || (filesUpload && !_.isEmpty(filesUpload))
+    || !!(filesUpload && !_.isEmpty(filesUpload))
   );
 
   const fileChange = (event) => {

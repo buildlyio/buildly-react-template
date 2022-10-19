@@ -161,11 +161,11 @@ const BudgetTechnology = ({
   };
 
   checkIfBudgetTechnologyEdited = () => (
-    (productFormData
+    !!(productFormData
       && productFormData.product_info
       && productFormData.product_info.first_user_date
       && (firstUserDate !== productFormData.product_info.first_user_date))
-    || (productFormData
+    || !!(productFormData
       && productFormData.product_info
       && productFormData.product_info.approx_budget
       && !_.isEqual(approxBudget,

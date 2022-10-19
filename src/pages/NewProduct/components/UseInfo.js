@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -9,11 +9,9 @@ import {
   Button,
 } from '@mui/material';
 import Loader from '@components/Loader/Loader';
-import { UserContext } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
-import { updateUser } from '@redux/authuser/actions/authuser.actions';
-import { createProduct, updateProduct } from '@redux/product/actions/product.actions';
+import { saveProductFormData } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -60,14 +58,9 @@ const UseInfo = ({
   dispatch,
   editData,
   loading,
-  history,
-  editPage,
-  product_uuid,
-  redirectTo,
+  handleNext,
 }) => {
   const classes = useStyles();
-  const user = useContext(UserContext);
-  const buttonText = editPage ? 'Save' : 'Create Product';
 
   const productUse = useInput(
     (editData
@@ -206,17 +199,8 @@ const UseInfo = ({
       edit_date: new Date(),
     };
 
-    if (user && !user.survey_status) {
-      dispatch(updateUser({ id: user.id, survey_status: true }));
-    }
-
-    if (editPage) {
-      formData.product_uuid = product_uuid;
-      dispatch(updateProduct(formData));
-      history.push(redirectTo);
-    } else {
-      dispatch(createProduct(formData, history));
-    }
+    dispatch(saveProductFormData(formData));
+    handleNext();
   };
 
   return (
@@ -344,7 +328,7 @@ const UseInfo = ({
                 disabled={submitDisabled()}
                 className={classes.submit}
               >
-                {buttonText}
+                Next
               </Button>
             </Grid>
           </Grid>
