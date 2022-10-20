@@ -75,7 +75,6 @@ export const PRODUCT_SETUP = [
 ];
 
 export const INTEGRATION_TYPES = [
-  { value: '', text: '-------------------------------------------' },
   { value: 'login', text: 'Login/Authentication Service (Single Sign On or Social Auth)' },
   { value: 'erp', text: 'ERP data system' },
   { value: 'hr', text: 'HR system' },

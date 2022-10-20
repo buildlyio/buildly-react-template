@@ -23,6 +23,26 @@ export const productColumns = [
     },
   },
   {
+    name: 'product_info',
+    label: 'Complexity',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (info) => (info && info.complexity_score) || 0,
+    },
+  },
+  {
+    name: 'product_info',
+    label: 'Cost',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (info) => (info && info.cost_score) || 0,
+    },
+  },
+  {
     name: 'edit_date',
     label: 'Last Edited At',
     options: {

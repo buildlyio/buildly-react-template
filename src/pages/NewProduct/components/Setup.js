@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import makeStyles from '@mui/styles/makeStyles';
 import {
   Grid,
@@ -13,6 +14,9 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Select,
+  Checkbox,
+  ListItemText,
 } from '@mui/material';
 import Loader from '@components/Loader/Loader';
 import { UserContext } from '@context/User.context';
@@ -20,7 +24,9 @@ import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 import { updateUser } from '@redux/authuser/actions/authuser.actions';
 import { createProduct, updateProduct } from '@redux/product/actions/product.actions';
-import { EXPECTED_TRAFFIC, PRODUCT_SETUP, PRODUCT_TYPE } from '../ProductFormConstants';
+import {
+  EXPECTED_TRAFFIC, INTEGRATION_TYPES, PRODUCT_SETUP, PRODUCT_TYPE,
+} from '../ProductFormConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -69,7 +75,6 @@ const Setup = ({
   editData,
   handleBack,
   editPage,
-  viewPage,
   product_uuid,
   redirectTo,
 }) => {
@@ -219,12 +224,12 @@ const Setup = ({
         ...productFormData.product_info,
         product_setup: productSetup.value,
         integration_needed: integrationNeeded.value,
-        integration_types: integrationTypes.value,
+        integration_types: integrationNeeded.value ? integrationTypes.value : [],
         product_type: productType.value,
         expected_traffic: expectedTraffic.value,
         team_needed: teamNeeded.value,
-        product_timezone: productTimezone.value,
-        team_timezone_away: teamTimezoneAway.value,
+        product_timezone: teamNeeded.value ? productTimezone.value : '',
+        team_timezone_away: teamNeeded.value ? teamTimezoneAway.value : false,
       },
       edit_date: new Date(),
     };
@@ -280,13 +285,11 @@ const Setup = ({
                 >
                   <FormControlLabel
                     checked={integrationNeeded.value}
-                    disabled={viewPage}
                     control={<Radio color="info" onClick={(e) => integrationNeeded.setNewValue(true)} />}
                     label="Yes"
                   />
                   <FormControlLabel
                     checked={!integrationNeeded.value}
-                    disabled={viewPage}
                     control={<Radio color="info" onClick={(e) => integrationNeeded.setNewValue(false)} />}
                     label="No"
                   />
@@ -294,22 +297,49 @@ const Setup = ({
               </FormControl>
             </Grid>
 
-            {/* {integrationNeeded.value && (
+            {integrationNeeded.value && (
               <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  select
-                  id="integrationTypes"
-                  label="If Yes what types?"
-                  name="integrationTypes"
-                  autoComplete="integrationTypes"
-                  onBlur={(e) => handleBlur(e, 'required', integrationTypes)}
-                  {...integrationTypes.bind}
-                />
+                <Typography variant="h6" gutterBottom component="div">
+                  If Yes what types? (Multiple Select)
+                </Typography>
+
+                <FormControl fullWidth>
+                  <Select
+                    labelId="integration-type-label"
+                    id="integration-type"
+                    value={integrationTypes.value}
+                    label="Integration Type"
+                    multiple
+                    onChange={(event) => {
+                      const {
+                        target: { value },
+                      } = event;
+                      integrationTypes.setNewValue(
+                        // On autofill we get a stringified value.
+                        typeof value === 'string' ? value.split(',') : value,
+                      );
+                    }}
+                    renderValue={(selected) => {
+                      const values = _.map(selected, (sel) => {
+                        const type = _.find(INTEGRATION_TYPES, { value: sel });
+                        return type.text;
+                      });
+                      return values.join(', ');
+                    }}
+                  >
+                    <MenuItem value="">-----------------------</MenuItem>
+                    {_.map(INTEGRATION_TYPES, (intType, idx) => (
+                      <MenuItem key={`integration-type-${idx}`} value={intType.value}>
+                        <Checkbox
+                          checked={_.indexOf(integrationTypes.value, intType.value) > -1}
+                        />
+                        <ListItemText primary={intType.text} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
-            )} */}
+            )}
 
             <Grid item xs={3}>
               <TextField
@@ -363,13 +393,11 @@ const Setup = ({
                 >
                   <FormControlLabel
                     checked={teamNeeded.value}
-                    disabled={viewPage}
                     control={<Radio color="info" onClick={(e) => teamNeeded.setNewValue(true)} />}
                     label="Hire"
                   />
                   <FormControlLabel
                     checked={!teamNeeded.value}
-                    disabled={viewPage}
                     control={<Radio color="info" onClick={(e) => teamNeeded.setNewValue(false)} />}
                     label="Own"
                   />
@@ -391,7 +419,12 @@ const Setup = ({
                   onBlur={(e) => handleBlur(e, 'required', productTimezone)}
                   {...productTimezone.bind}
                 >
-                  <MenuItem value="IST">---</MenuItem>
+                  <MenuItem value="">---</MenuItem>
+                  {_.map(moment.tz.names(), (name, index) => (
+                    <MenuItem key={`${name}-${index}`} value={name}>
+                      {name}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </Grid>
             )}
@@ -410,13 +443,11 @@ const Setup = ({
                   >
                     <FormControlLabel
                       checked={teamTimezoneAway.value}
-                      disabled={viewPage}
                       control={<Radio color="info" onClick={(e) => teamTimezoneAway.setNewValue(true)} />}
                       label="Yes"
                     />
                     <FormControlLabel
                       checked={!teamTimezoneAway.value}
-                      disabled={viewPage}
                       control={<Radio color="info" onClick={(e) => teamTimezoneAway.setNewValue(false)} />}
                       label="No"
                     />

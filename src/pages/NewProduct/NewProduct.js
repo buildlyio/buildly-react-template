@@ -176,12 +176,11 @@ const getStepContent = (
             handleBack={handleBack}
             editData={editData}
             editPage={editPage}
-            viewPage={viewPage}
             product_uuid={product_uuid}
             redirectTo={redirectTo}
           />
         </ViewDetailsWrapper>
-      )
+      );
 
     default:
       return 'Unknown stepIndex';
