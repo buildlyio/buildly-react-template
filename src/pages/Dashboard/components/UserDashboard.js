@@ -11,10 +11,11 @@ import SyncIcon from '@mui/icons-material/Sync';
 import Loader from '@components/Loader/Loader';
 import { routes } from '@routes/routesConstants';
 import {
-  getAllCredentials, getAllProducts, getBoard,
+  getAllCredentials, getAllProducts, getBoard, updateProduct,
 } from '@redux/product/actions/product.actions';
 import { createBoard } from '@redux/product/actions/product.actions';
 import {
+  createFeature,
   deleteFeature,
   deleteIssue,
   getAllFeatures,
@@ -104,7 +105,8 @@ const UserDashboard = (props) => {
   ).value;
   const [view, setView] = useState(viewPath);
 
-  const [product, setProduct] = useState(0);
+  const [product, setProduct] = useState((history && history.location && history.location.state
+    && history.location.state.selected_product) || 0);
   const [currentProducts, setCurrentProducts] = useState([]);
   const [prod, setProd] = useState('');
   const [status, setStatus] = useState('');
@@ -165,12 +167,6 @@ const UserDashboard = (props) => {
   const addDropColumnPath = `${routes.DASHBOARD}/select-column`;
 
   useEffect(() => {
-    const selected_product = history && history.location
-      && history.location.state && history.location.state.selected_product;
-    if (selected_product) {
-      setProduct(selected_product);
-    }
-
     dispatch(getAllProducts());
     dispatch(getAllStatuses());
     dispatch(getAllFeatures());
@@ -196,7 +192,34 @@ const UserDashboard = (props) => {
     if (product) {
       dispatch(getBoard(product));
     }
-    const prd = _.find(products, { product_uuid: product });
+    let prd = _.find(products, { product_uuid: product });
+    if (prd) {
+      prd = {
+        ...prd,
+        product_info: {
+          ...prd.product_info,
+          suggestions: [{
+            suggestion_uuid: 'iuetw49hfwet9826wes',
+            business_type: 'b2c',
+            project_type: 'new',
+            architecture_type: 'mini-app',
+            front_end: 'desktop',
+            suggested_feature: 'Test sugessted feature 1',
+            issue_repo_type: null,
+            suggested_issue: null,
+          }, {
+            suggestion_uuid: 'qirqathglkqwehr923ytwhl',
+            business_type: 'b2c',
+            project_type: 'new',
+            architecture_type: 'mini-app',
+            front_end: 'desktop',
+            suggested_feature: 'Test sugessted feature 2',
+            issue_repo_type: 'fe',
+            suggested_issue: 'Test suggested issue 1',
+          }],
+        },
+      };
+    }
     setProd(prd);
     const sta = _.filter(statuses, { product_uuid: product });
     setStatus(sta);
@@ -445,6 +468,35 @@ const UserDashboard = (props) => {
     dispatch(createBoard(formData, false));
   };
 
+  const createSuggestedFeature = (suggestion) => {
+    const datetime = new Date();
+
+    const formData = {
+      create_date: datetime,
+      edit_date: datetime,
+      name: suggestion.suggested_feature,
+      description: suggestion.suggested_feature,
+      product_uuid: product,
+      ...featCred?.auth_detail,
+      assignees: [],
+    };
+
+    dispatch(createFeature(formData));
+    removeSuggestedFeature(suggestion);
+  };
+
+  const removeSuggestedFeature = (suggestion) => {
+    const formData = {
+      ...prod,
+      product_info: {
+        ...prod.product_info,
+        suggestions: _.without(prod.product_info.suggestions, suggestion),
+      },
+    };
+
+    dispatch(updateProduct(formData));
+  };
+
   return (
     <div className={classes.root}>
       {loading && <Loader open={loading} />}
@@ -605,6 +657,9 @@ const UserDashboard = (props) => {
                   commentItem={commentItem}
                   issueSuggestions={issueSuggestions}
                   upgrade={upgrade}
+                  productSuggestions={prod && prod.product_info && prod.product_info.suggestions}
+                  createSuggestedFeature={createSuggestedFeature}
+                  removeSuggestedFeature={removeSuggestedFeature}
                 />
               )}
             />
@@ -624,6 +679,9 @@ const UserDashboard = (props) => {
                   commentItem={commentItem}
                   dispatch={dispatch}
                   upgrade={upgrade}
+                  productSuggestions={prod && prod.product_info && prod.product_info.suggestions}
+                  createSuggestedFeature={createSuggestedFeature}
+                  removeSuggestedFeature={removeSuggestedFeature}
                 />
               )}
             />
