@@ -193,33 +193,6 @@ const UserDashboard = (props) => {
       dispatch(getBoard(product));
     }
     let prd = _.find(products, { product_uuid: product });
-    if (prd) {
-      prd = {
-        ...prd,
-        product_info: {
-          ...prd.product_info,
-          suggestions: [{
-            suggestion_uuid: 'iuetw49hfwet9826wes',
-            business_type: 'b2c',
-            project_type: 'new',
-            architecture_type: 'mini-app',
-            front_end: 'desktop',
-            suggested_feature: 'Test sugessted feature 1',
-            issue_repo_type: null,
-            suggested_issue: null,
-          }, {
-            suggestion_uuid: 'qirqathglkqwehr923ytwhl',
-            business_type: 'b2c',
-            project_type: 'new',
-            architecture_type: 'mini-app',
-            front_end: 'desktop',
-            suggested_feature: 'Test sugessted feature 2',
-            issue_repo_type: 'fe',
-            suggested_issue: 'Test suggested issue 1',
-          }],
-        },
-      };
-    }
     setProd(prd);
     const sta = _.filter(statuses, { product_uuid: product });
     setStatus(sta);
@@ -478,8 +451,16 @@ const UserDashboard = (props) => {
       description: suggestion.suggested_feature,
       product_uuid: product,
       ...featCred?.auth_detail,
-      assignees: [],
+      feature_detail: {},
     };
+
+    if (suggestion.suggested_issue) {
+      formData.suggestions = [{
+        name: suggestion.suggested_issue,
+        description: suggestion.suggested_issue,
+        ticket_type: suggestion.issue_repo_type,
+      }];
+    }
 
     dispatch(createFeature(formData));
     removeSuggestedFeature(suggestion);
