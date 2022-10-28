@@ -21,14 +21,16 @@ import {
   MenuItem,
   FormHelperText,
 } from '@mui/material';
-import UpdateIcon from '@mui/icons-material/Update';
-import AltRouteIcon from '@mui/icons-material/AltRoute';
-import DateRangeIcon from '@mui/icons-material/DateRange';
-import CommentIcon from '@mui/icons-material/Comment';
 import {
-  AddRounded,
-  TrendingFlatRounded,
-  MoreHoriz,
+  AddRounded as AddRoundedIcon,
+  AddTask as AddTaskIcon,
+  AltRoute as AltRouteIcon,
+  Comment as CommentIcon,
+  Close as CloseIcon,
+  DateRange as DateRangeIcon,
+  MoreHoriz as MoreHorizIcon,
+  TrendingFlatRounded as TrendingFlatRoundedIcon,
+  Update as UpdateIcon,
 } from '@mui/icons-material';
 import {
   getAllStatuses,
@@ -87,7 +89,9 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'pointer',
   },
   columnBody: {
-    maxHeight: '64vh',
+    [theme.breakpoints.up('lg')]: {
+      height: '63vh',
+    },
     overflowY: 'auto',
   },
 }));
@@ -110,6 +114,9 @@ const Kanban = ({
   dispatch,
   credentials,
   upgrade,
+  productSuggestions,
+  createSuggestedFeature,
+  removeSuggestedFeature,
 }) => {
   const classes = useStyles();
   const [columns, setColumns] = useState({});
@@ -234,13 +241,8 @@ const Kanban = ({
   return (
     <>
       {!product && (
-        <Typography
-          className={classes.noProduct}
-          component="div"
-          variant="body1"
-        >
-          No product selected yet. Please select a product
-          to view related features and/or issues.
+        <Typography className={classes.noProduct} component="div" variant="body1">
+          No product selected yet. Please select a product to view related features and/or issues.
         </Typography>
       )}
 
@@ -256,42 +258,68 @@ const Kanban = ({
             onDragEnd(result, columns, setColumns);
           }}
         >
-          <Grid
-            container
-            rowGap={2}
-            columnGap={4}
-            className={classes.container}
-          >
-            {_.map(Object.entries(columns), ([columnId, column], index) => (
-              <Grid
-                key={columnId}
-                item
-                xs={2.6}
-                sm={2.75}
-                lg={2.85}
-                className={classes.swimlane}
-              >
+          <Grid container rowGap={2} columnGap={4} className={classes.container}>
+            {!!product && productSuggestions && !_.isEmpty(productSuggestions) && (
+              <Grid item xs={2.6} sm={2.75} lg={2.85} className={classes.swimlane}>
                 <div>
-                  <Typography
-                    className={classes.title}
-                    component="div"
-                    variant="body1"
-                  >
+                  <Typography className={classes.title} component="div" variant="body1">
+                    Feature Suggestions
+                  </Typography>
+                </div>
+
+                <div className={classes.columnBody}>
+                  {_.map(productSuggestions, (sug, idx) => (
+                    <Card key={`suggestion-${sug.suggestion_uuid}`} className={classes.card} variant="outlined">
+                      <CardHeader
+                        subheader={sug.suggested_feature}
+                        action={(
+                          <div>
+                            <IconButton
+                              aria-label="product-suggestion-add"
+                              aria-haspopup="false"
+                              color="secondary"
+                              onClick={(e) => createSuggestedFeature(sug)}
+                              size="large"
+                              className={classes.iconButton}
+                            >
+                              <AddTaskIcon fontSize="small" />
+                            </IconButton>
+
+                            <IconButton
+                              aria-label="product-suggestion-remove"
+                              aria-haspopup="false"
+                              color="secondary"
+                              onClick={(e) => removeSuggestedFeature(sug)}
+                              size="large"
+                              className={classes.iconButton}
+                            >
+                              <CloseIcon fontSize="small" />
+                            </IconButton>
+                          </div>
+                        )}
+                      />
+                    </Card>
+                  ))}
+                </div>
+              </Grid>
+            )}
+
+            {_.map(Object.entries(columns), ([columnId, column], index) => (
+              <Grid key={columnId} item xs={2.6} sm={2.75} lg={2.85} className={classes.swimlane}>
+                <div>
+                  <Typography className={classes.title} component="div" variant="body1">
                     {column.name}
                   </Typography>
 
                   <IconButton onClick={(e) => addItem(index === 0 ? 'feat' : 'issue')} size="large">
-                    <AddRounded fontSize="small" className={classes.addIcon} />
+                    <AddRoundedIcon fontSize="small" className={classes.addIcon} />
                   </IconButton>
                 </div>
 
                 <div className={classes.columnBody}>
                   <Droppable droppableId={columnId} key={columnId}>
                     {(provided, snapshot) => (
-                      <div
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                      >
+                      <div {...provided.droppableProps} ref={provided.innerRef}>
                         {_.map(column.items, (item, itemIndex) => (
                           <Draggable
                             key={
@@ -338,7 +366,7 @@ const Kanban = ({
                                           size="large"
                                           className={classes.iconButton}
                                         >
-                                          <TrendingFlatRounded fontSize="small" />
+                                          <TrendingFlatRoundedIcon fontSize="small" />
                                         </IconButton>
                                       )}
 
@@ -351,7 +379,7 @@ const Kanban = ({
                                         aria-expanded
                                         onClick={(e) => handleClick(e, item)}
                                       >
-                                        <MoreHoriz />
+                                        <MoreHorizIcon />
                                       </IconButton>
 
                                       <Menu
@@ -423,9 +451,11 @@ const Kanban = ({
                                     />
                                   )}
 
-                                  {item.issue_uuid && productFeatures
-                                    .filter((feat) => (feat.feature_uuid === item.feature_uuid))
-                                    .map((feat, ind) => (
+                                  {item.issue_uuid && _.map(
+                                    _.filter(productFeatures, (feat) => (
+                                      feat.feature_uuid === item.feature_uuid
+                                    )),
+                                    (feat, ind) => (
                                       <Chip
                                         key={ind}
                                         variant="outlined"
@@ -435,13 +465,10 @@ const Kanban = ({
                                         label={feat.name}
                                         onClick={() => editItem(feat, 'feat', false)}
                                       />
-                                    ))}
+                                    ),
+                                  )}
 
-                                  <Typography
-                                    className={classes.moment}
-                                    component="div"
-                                    variant="body2"
-                                  >
+                                  <Typography className={classes.moment} component="div" variant="body2">
                                     {moment(item.create_date).fromNow()}
                                     <CommentIcon
                                       className={classes.comment}

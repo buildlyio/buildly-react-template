@@ -2,23 +2,27 @@ import React, { useState } from 'react';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
 import {
+  Chip,
+  Divider,
   FormHelperText,
-  Grid, Paper, Popover, Typography,
+  Grid,
+  Paper,
+  Popover,
+  Typography,
 } from '@mui/material';
 import {
   AddRounded as AddRoundedIcon,
-  EditRounded as EditRoundedIcon,
+  AddTask as AddTaskIcon,
+  AltRoute as AltRouteIcon,
+  Close as CloseIcon,
+  Comment as CommentIcon,
+  DateRange as DateRangeIcon,
   DeleteRounded as DeleteRoundedIcon,
-  TrendingFlatRounded as TrendingFlatRoundedIcon,
+  EditRounded as EditRoundedIcon,
   Info as InfoIcon,
+  TrendingFlatRounded as TrendingFlatRoundedIcon,
+  Update as UpdateIcon,
 } from '@mui/icons-material';
-import {
-  Chip,
-} from '@mui/material';
-import UpdateIcon from '@mui/icons-material/Update';
-import DateRangeIcon from '@mui/icons-material/DateRange';
-import CommentIcon from '@mui/icons-material/Comment';
-import AltRouteIcon from '@mui/icons-material/AltRoute';
 
 const useStyles = makeStyles((theme) => ({
   gridItem: {
@@ -103,6 +107,9 @@ const List = ({
   commentItem,
   issueSuggestions,
   upgrade,
+  productSuggestions,
+  createSuggestedFeature,
+  removeSuggestedFeature,
 }) => {
   const classes = useStyles();
 
@@ -124,146 +131,151 @@ const List = ({
       <Grid container spacing={2}>
         <Grid item lg={6} className={classes.gridItem}>
           <div className={classes.section2}>
-            <Typography
-              className={classes.actionTitle}
-              variant="h6"
-            >
+            <Typography className={classes.actionTitle} variant="h6">
               Features
             </Typography>
+
             {!!product && upgrade && (
               <FormHelperText error>
                 Upgrade to be able to create more features
               </FormHelperText>
             )}
           </div>
+
           <div className={classes.section3}>
             <div className={classes.boxSection}>
               {!!product && !upgrade && (
-              <AddRoundedIcon
-                className={classes.addIcon}
-                fontSize="large"
-                onClick={(e) => addItem('feat')}
-              />
+                <AddRoundedIcon
+                  className={classes.addIcon}
+                  fontSize="large"
+                  onClick={(e) => addItem('feat')}
+                />
               )}
+
               {product === 0 && (
-              <Typography
-                className={classes.noData}
-                variant="body1"
-                style={{ marginTop: '56px' }}
-              >
-                No Product selected. Please select the product.
-              </Typography>
+                <Typography className={classes.noData} variant="body1" style={{ marginTop: '56px' }}>
+                  No Product selected. Please select the product.
+                </Typography>
               )}
-              {!!product && productFeatures && productFeatures.length === 0 && (
-              <Typography
-                className={classes.noData}
-                variant="body1"
-              >
+
+              {!!product && productFeatures && _.isEmpty(productFeatures)
+              && productSuggestions && _.isEmpty(productSuggestions) && (
+              <Typography className={classes.noData} variant="body1">
                 No features yet.
               </Typography>
               )}
-              {!!product && productFeatures && productFeatures.length > 0
-                  && _.map(productFeatures, (feat) => (
-                    <div
-                      key={`feature-${feat.product_uuid}-${feat.feature_uuid}`}
-                      className={classes.boxEntry}
-                    >
-                      <Typography
-                        className={classes.entryTitle}
-                        variant="body1"
-                      >
-                        {feat.name}
-                      </Typography>
-                      {_.size(_.filter(productIssues, (issue) => (
-                        issue.feature_uuid === feat.feature_uuid
-                      ))) === 0 && (
-                        <TrendingFlatRoundedIcon
-                          className={classes.entryIcon}
-                          onClick={(e) => issueSuggestions(feat, 'show')}
-                        />
-                      )}
-                      <EditRoundedIcon
-                        className={classes.entryIcon}
-                        onClick={(e) => editItem(feat, 'feat')}
-                      />
-                      <DeleteRoundedIcon
-                        className={classes.entryIcon}
-                        onClick={(e) => deleteItem(feat, 'feat')}
-                      />
-                    </div>
-                  ))}
+
+              {!!product && productSuggestions && !_.isEmpty(productSuggestions)
+              && _.map(productSuggestions, (sug) => (
+                <div key={`suggestion-${sug.suggestion_uuid}`} className={classes.boxEntry}>
+                  <Typography className={classes.entryTitle} variant="body1">
+                    {sug.suggested_feature}
+                    {' '}
+                    (Suggested Feature)
+                  </Typography>
+
+                  <AddTaskIcon
+                    className={classes.entryIcon}
+                    onClick={(e) => createSuggestedFeature(sug)}
+                  />
+
+                  <CloseIcon
+                    className={classes.entryIcon}
+                    onClick={(e) => removeSuggestedFeature(sug)}
+                  />
+                </div>
+              ))}
+
+              {!!product && productSuggestions && !_.isEmpty(productSuggestions)
+              && productFeatures && !_.isEmpty(productFeatures) && <Divider />}
+
+              {!!product && productFeatures && !_.isEmpty(productFeatures)
+              && _.map(productFeatures, (feat) => (
+                <div key={`feature-${feat.product_uuid}-${feat.feature_uuid}`} className={classes.boxEntry}>
+                  <Typography className={classes.entryTitle} variant="body1">
+                    {feat.name}
+                  </Typography>
+
+                  {_.isEmpty(_.filter(productIssues, (issue) => (
+                    issue.feature_uuid === feat.feature_uuid
+                  ))) && (
+                    <TrendingFlatRoundedIcon
+                      className={classes.entryIcon}
+                      onClick={(e) => issueSuggestions(feat, 'show')}
+                    />
+                  )}
+
+                  <EditRoundedIcon
+                    className={classes.entryIcon}
+                    onClick={(e) => editItem(feat, 'feat')}
+                  />
+
+                  <DeleteRoundedIcon
+                    className={classes.entryIcon}
+                    onClick={(e) => deleteItem(feat, 'feat')}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </Grid>
 
         <Grid item lg={6} className={classes.gridItem}>
           <div className={classes.section2}>
-            <Typography
-              className={classes.actionTitle}
-              variant="h6"
-            >
+            <Typography className={classes.actionTitle} variant="h6">
               Issues
             </Typography>
           </div>
+
           <div className={classes.section3}>
             <div className={classes.boxSection}>
               {!!product && (
-              <AddRoundedIcon
-                className={classes.addIcon}
-                fontSize="large"
-                onClick={(e) => addItem('issue')}
-              />
+                <AddRoundedIcon
+                  className={classes.addIcon}
+                  fontSize="large"
+                  onClick={(e) => addItem('issue')}
+                />
               )}
+
               {product === 0 && (
-              <Typography
-                className={classes.noData}
-                variant="body1"
-                style={{ marginTop: '56px' }}
-              >
-                No Product selected. Please select the product.
-              </Typography>
+                <Typography className={classes.noData} variant="body1" style={{ marginTop: '56px' }}>
+                  No Product selected. Please select the product.
+                </Typography>
               )}
-              {!!product && productIssues && productIssues.length === 0 && (
-              <Typography
-                className={classes.noData}
-                variant="body1"
-              >
-                No Issues yet.
-              </Typography>
+
+              {!!product && productIssues && _.isEmpty(productIssues) && (
+                <Typography className={classes.noData} variant="body1">
+                  No Issues yet.
+                </Typography>
               )}
+
               <div>
-                {!!product && productIssues && productIssues.length > 0
+                {!!product && productIssues && !_.isEmpty(productIssues)
                 && _.map(productIssues, (issue) => (
-                  <div
-                    key={`issue-${issue.product_uuid}-${issue.issue_uuid}`}
-                    className={classes.boxEntry}
-                  >
-                    <Typography
-                      className={classes.entryTitle}
-                      variant="body1"
-                    >
+                  <div key={`issue-${issue.product_uuid}-${issue.issue_uuid}`} className={classes.boxEntry}>
+                    <Typography className={classes.entryTitle} variant="body1">
                       {issue.name}
                     </Typography>
+
                     <EditRoundedIcon
                       className={classes.entryIcon}
                       onClick={(e) => editItem(issue, 'issue')}
                     />
+
                     <DeleteRoundedIcon
                       className={classes.entryIcon}
                       onClick={(e) => deleteItem(issue, 'issue')}
                     />
+
                     <CommentIcon
                       className={classes.entryIcon}
                       onClick={(e) => commentItem()}
                     />
+
                     <InfoIcon
                       className={classes.entryIcon}
                       onClick={(e) => handleIssueDetailsOpenClick(e, issue)}
-                      aria-describedby={
-                        issueDetailsAnchorEl && Boolean(issueDetailsAnchorEl)
-                          ? 'issue-details-popover'
-                          : undefined
-                      }
+                      aria-describedby={issueDetailsAnchorEl ? 'issue-details-popover' : undefined}
                     />
                   </div>
                 ))}
@@ -271,15 +283,10 @@ const List = ({
             </div>
           </div>
         </Grid>
-        {
-          selectedIssue
-          && (
+
+        {selectedIssue && (
           <Popover
-            id={
-              issueDetailsAnchorEl && Boolean(issueDetailsAnchorEl)
-                ? 'issue-details-popover'
-                : undefined
-            }
+            id={issueDetailsAnchorEl ? 'issue-details-popover' : undefined}
             open={open}
             anchorEl={issueDetailsAnchorEl}
             onClose={handleIssueDetailsCloseClick}
@@ -293,29 +300,27 @@ const List = ({
             }}
           >
             <Paper elevation={3} className={classes.issueDetails}>
-              {
-                selectedIssue.estimate
-                  && (
-                  <Chip
-                    variant="outlined"
-                    icon={<UpdateIcon fontSize="small" />}
-                    label={`${selectedIssue.estimate}:00 Hrs`}
-                  />
-                  )
-              }
-              {
-                selectedIssue.end_date
-                  && (
-                    <Chip
-                      variant="outlined"
-                      icon={<DateRangeIcon fontSize="small" />}
-                      label={(selectedIssue.end_date).slice(0, 10)}
-                    />
-                  )
-              }
-              {productFeatures
-                .filter((feat) => (feat.feature_uuid === selectedIssue.feature_uuid))
-                .map((feat, ind) => (
+              {selectedIssue.estimate && (
+                <Chip
+                  variant="outlined"
+                  icon={<UpdateIcon fontSize="small" />}
+                  label={`${selectedIssue.estimate}:00 Hrs`}
+                />
+              )}
+
+              {selectedIssue.end_date && (
+                <Chip
+                  variant="outlined"
+                  icon={<DateRangeIcon fontSize="small" />}
+                  label={(selectedIssue.end_date).slice(0, 10)}
+                />
+              )}
+
+              {_.map(
+                _.filter(productFeatures, (feat) => (
+                  feat.feature_uuid === selectedIssue.feature_uuid
+                )),
+                (feat, ind) => (
                   <Chip
                     key={ind}
                     variant="outlined"
@@ -323,11 +328,11 @@ const List = ({
                     label={feat.name}
                     onClick={() => editItem(feat, 'feat', false)}
                   />
-                ))}
+                ),
+              )}
             </Paper>
           </Popover>
-          )
-        }
+        )}
       </Grid>
     </>
   );
