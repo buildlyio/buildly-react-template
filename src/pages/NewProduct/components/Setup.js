@@ -367,7 +367,7 @@ const Setup = ({
                 fullWidth
                 select
                 id="expectedTraffic"
-                label="How many users do you expect to accommodate per day, per month?"
+                label="How many users do you expect to accommodate per month?"
                 name="expectedTraffic"
                 autoComplete="expectedTraffic"
                 onBlur={(e) => handleBlur(e, 'required', expectedTraffic)}
@@ -394,12 +394,12 @@ const Setup = ({
                   <FormControlLabel
                     checked={teamNeeded.value}
                     control={<Radio color="info" onClick={(e) => teamNeeded.setNewValue(true)} />}
-                    label="Hire"
+                    label="Hire team"
                   />
                   <FormControlLabel
                     checked={!teamNeeded.value}
                     control={<Radio color="info" onClick={(e) => teamNeeded.setNewValue(false)} />}
-                    label="Own"
+                    label="Use my Own team"
                   />
                 </RadioGroup>
               </FormControl>

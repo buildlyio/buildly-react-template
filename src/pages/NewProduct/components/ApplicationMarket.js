@@ -181,7 +181,7 @@ const ApplicationMarket = ({
 
             <Grid item xs={12}>
               <Typography variant="h6" gutterBottom component="div">
-                What is your primary business segment?
+                What our your primary business segments?
               </Typography>
 
               <FormControl fullWidth>

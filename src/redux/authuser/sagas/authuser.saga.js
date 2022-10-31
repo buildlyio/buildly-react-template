@@ -152,15 +152,19 @@ function* register(payload) {
     }
   } catch (error) {
     console.log('error', error);
+    const message = error && error.response && error.response.data
+      ? _.map(error.response.data, (value) => `${value[0]}`)
+      : 'Registration failed';
+
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Registration failed',
+          message,
         }),
       ),
-      yield put({ type: REGISTER_FAIL, error: 'Registration failed' }),
+      yield put({ type: REGISTER_FAIL, error: message }),
     ];
   }
 }
@@ -211,12 +215,12 @@ function* sendPasswordResetLink(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Email could not be sent',
+          message: 'Password reset email could not be sent',
         }),
       ),
       yield put({
         type: SEND_PASSWORD_RESET_LINK_FAIL,
-        error: 'Email could not be sent',
+        error: 'Password reset email could not be sent',
       }),
     ];
   }
@@ -528,7 +532,7 @@ function* addOrgSocialUser(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Unable to update organization details',
+          message: 'Unable to update user details',
         }),
       ),
       yield put({

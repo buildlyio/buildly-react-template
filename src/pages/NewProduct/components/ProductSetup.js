@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import makeStyles from '@mui/styles/makeStyles';
 import {
   Button,
@@ -127,9 +128,9 @@ const ProductSetup = ({
     tool_name: 'GitHub',
   });
   const [startDate, handleStartDateChange] = useState((editData && editData.start_date)
-  || (productFormData && productFormData.start_date) || new Date());
+  || (productFormData && productFormData.start_date) || moment());
   const [endDate, handleEndDateChange] = useState((editData && editData.end_date)
-  || (productFormData && productFormData.end_date) || new Date());
+  || (productFormData && productFormData.end_date) || moment().add(2, 'M'));
   const [formError, setFormError] = useState({});
 
   const editCreds = [];
@@ -545,7 +546,6 @@ const ProductSetup = ({
                   <DatePickerComponent
                     label="Start Date"
                     selectedDate={startDate}
-                    hasTime
                     handleDateChange={handleStartDateChange}
                   />
                 </Grid>
@@ -553,7 +553,6 @@ const ProductSetup = ({
                   <DatePickerComponent
                     label="End Date"
                     selectedDate={endDate}
-                    hasTime
                     handleDateChange={handleEndDateChange}
                   />
                 </Grid>

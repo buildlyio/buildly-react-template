@@ -1,4 +1,5 @@
 import { http } from 'midgard-core';
+import _ from 'lodash';
 import { oauthService } from '@modules/oauth/oauth.service';
 
 export const httpService = {
@@ -29,7 +30,7 @@ function makeRequest(method, url, body, useJwt, contentType, responseType) {
     Authorization: `${tokenType} ${token}`,
     // 'Content-Type': contentType || 'application/json', // Commenting to make it work for GCP
   };
-  if (method === 'POST' || method === 'post' || method === 'PUT' || method === 'put' || method === 'DELETE' || method === 'delete') {
+  if (_.includes(['post', 'put', 'delete'], _.lowerCase(method))) {
     headers['Content-Type'] = contentType || 'application/json';
   }
   const options = {

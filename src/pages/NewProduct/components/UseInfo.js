@@ -7,6 +7,11 @@ import {
   Box,
   TextField,
   Button,
+  Typography,
+  FormControl,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from '@mui/material';
 import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
@@ -115,7 +120,7 @@ const UseInfo = ({
   || (productFormData
       && productFormData.product_info
       && productFormData.product_info.tool_req)
-    || '',
+    || 'no',
   { required: true });
 
   const [formError, setFormError] = useState({});
@@ -211,19 +216,32 @@ const UseInfo = ({
           {(!_.isEmpty(productFormData?.third_party_tool)
             ? (
               <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  multiline
-                  rows={6}
-                  id="toolReq"
-                  label="Do you already have requirements in your connected project planning tool?"
-                  name="toolReq"
-                  autoComplete="toolReq"
-                  onBlur={(e) => handleBlur(e, 'required', toolReq)}
-                  {...toolReq.bind}
-                />
+                <Typography variant="h6" component="h6">
+                  Do you already have requirements in your connected project planning tool?
+                </Typography>
+
+                <FormControl component="fieldset" required>
+                  <RadioGroup
+                    row
+                    aria-label="tool-req"
+                    name="tool-req-radio-buttons-group"
+                    {...toolReq.bind}
+                    value={_.lowerCase(toolReq.value)}
+                  >
+                    <FormControlLabel
+                      checked={toolReq.value === 'yes'}
+                      value="yes"
+                      control={<Radio color="info" />}
+                      label="Yes, we do"
+                    />
+                    <FormControlLabel
+                      checked={toolReq.value === 'no'}
+                      value="no"
+                      control={<Radio color="info" />}
+                      label="No, we don't"
+                    />
+                  </RadioGroup>
+                </FormControl>
               </Grid>
             )
             : (
