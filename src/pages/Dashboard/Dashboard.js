@@ -1,7 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Grid, Typography } from '@mui/material';
 import Loader from '@components/Loader/Loader';
 import { routes } from '@routes/routesConstants';
 import UserDashboard from './components/UserDashboard';
