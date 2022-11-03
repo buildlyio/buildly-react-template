@@ -3,7 +3,7 @@ name: Build and Push Docker Image to Prod
 on:
   push:
     branches:
-      - production
+      - prod
 
 jobs:
   build:
@@ -17,17 +17,18 @@ jobs:
         fetch-depth: 0
 
     # auto generate tag from label defined in Dockerfile
-    - uses: butlerlogic/action-autotag@stable
+    - name: Tag version
+      uses: Klemensas/action-autotag@stable
       id: tag_version
       with:
         GITHUB_TOKEN: "${{ secrets.RELEASE_TOKEN }}"
-        strategy: docker
-        tag_prefix: "v"
 
     # Create release notes
     - name: Build changelog
       id: build_changelog
       uses: mikepenz/release-changelog-builder-action@main
+      with:
+        configuration: 'release-changelog-builder-config.json'
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
