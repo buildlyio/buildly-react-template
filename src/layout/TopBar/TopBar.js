@@ -159,6 +159,7 @@ const TopBar = ({
               ))}
             </TextField>
           )}
+
           <>
             <Button
               id="topbar-menu"
@@ -172,6 +173,7 @@ const TopBar = ({
             >
               Navigate To
             </Button>
+
             <StyledMenu
               id="topbar-menu"
               MenuListProps={{
@@ -193,7 +195,7 @@ const TopBar = ({
               >
                 Dashboard
               </MenuItem>
-              {isAdmin && (
+
               <MenuItem
                 disabled={location.pathname === routes.PRODUCTS}
                 onClick={() => {
@@ -203,7 +205,7 @@ const TopBar = ({
               >
                 Products
               </MenuItem>
-              )}
+
               <MenuItem
                 disabled={location.pathname === routes.RELEASE}
                 onClick={() => {
@@ -215,6 +217,7 @@ const TopBar = ({
               </MenuItem>
             </StyledMenu>
           </>
+
           {isAdmin && (
             <Link to={routes.USER_MANAGEMENT}>
               <IconButton aria-label="user-management" color="inherit" size="large">
@@ -222,6 +225,7 @@ const TopBar = ({
               </IconButton>
             </Link>
           )}
+
           <IconButton
             aria-label="logout"
             color="inherit"
