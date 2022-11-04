@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
@@ -18,8 +18,6 @@ import {
   Checkbox,
   ListItemText,
 } from '@mui/material';
-import Loader from '@components/Loader/Loader';
-import { UserContext } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 import { updateUser } from '@redux/authuser/actions/authuser.actions';
@@ -41,26 +39,10 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
     borderRadius: '18px',
   },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
   buttonContainer: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  inputWithTooltip: {
-    display: 'flex',
-    alignItems: 'center',
   },
 }));
 
@@ -70,85 +52,69 @@ export let checkIfSetupEdited;
 const Setup = ({
   dispatch,
   history,
-  loading,
   productFormData,
   editData,
   handleBack,
   editPage,
   product_uuid,
   redirectTo,
+  user,
 }) => {
   const classes = useStyles();
-  const user = useContext(UserContext);
   const buttonText = editPage ? 'Save' : 'Create Product';
 
-  const productSetup = useInput(
-    (editData
-      && editData.product_info
+  const productSetup = useInput((editData && editData.product_info
       && editData.product_info.product_setup)
-    || (productFormData
-      && productFormData.product_info
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.product_setup)
     || '',
-    { required: true },
-  );
+  { required: true });
 
-  const integrationNeeded = useInput((editData
-    && editData.product_info
-    && editData.product_info.integration_needed)
-  || (productFormData
-      && productFormData.product_info
+  const integrationNeeded = useInput((editData && editData.product_info
+      && editData.product_info.integration_needed)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.integration_needed)
     || false,
   { required: true });
-  const integrationTypes = useInput((editData
-    && editData.product_info
-    && editData.product_info.integration_types)
-  || (productFormData
-      && productFormData.product_info
+
+  const integrationTypes = useInput((editData && editData.product_info
+      && editData.product_info.integration_types)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.integration_types)
     || [],
   { required: true });
 
-  const productType = useInput((editData
-    && editData.product_info
-    && editData.product_info.product_type)
-  || (productFormData
-      && productFormData.product_info
+  const productType = useInput((editData && editData.product_info
+      && editData.product_info.product_type)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.product_type)
     || '',
   { required: true });
 
-  const expectedTraffic = useInput((editData
-    && editData.product_info
-    && editData.product_info.expected_traffic)
-  || (productFormData
-      && productFormData.product_info
+  const expectedTraffic = useInput((editData && editData.product_info
+      && editData.product_info.expected_traffic)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.expected_traffic)
     || '',
   { required: true });
 
-  const teamNeeded = useInput((editData
-    && editData.product_info
-    && editData.product_info.team_needed)
-  || (productFormData
-      && productFormData.product_info
+  const teamNeeded = useInput((editData && editData.product_info
+      && editData.product_info.team_needed)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.team_needed)
     || false,
   { required: true });
-  const productTimezone = useInput((editData
-    && editData.product_info
-    && editData.product_info.product_timezone)
-  || (productFormData
-      && productFormData.product_info
+
+  const productTimezone = useInput((editData && editData.product_info
+      && editData.product_info.product_timezone)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.product_timezone)
     || '',
   { required: true });
-  const teamTimezoneAway = useInput((editData
-    && editData.product_info
-    && editData.product_info.team_timezone_away)
-  || (productFormData
-      && productFormData.product_info
+
+  const teamTimezoneAway = useInput((editData && editData.product_info
+      && editData.product_info.team_timezone_away)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.team_timezone_away)
     || true,
   { required: true });
@@ -249,7 +215,6 @@ const Setup = ({
 
   return (
     <div>
-      {loading && <Loader open={loading} />}
       <form className={classes.form} noValidate onSubmit={handleSubmit}>
         <Box mb={2} mt={3}>
           <Grid container spacing={2}>
@@ -288,6 +253,7 @@ const Setup = ({
                     control={<Radio color="info" onClick={(e) => integrationNeeded.setNewValue(true)} />}
                     label="Yes"
                   />
+
                   <FormControlLabel
                     checked={!integrationNeeded.value}
                     control={<Radio color="info" onClick={(e) => integrationNeeded.setNewValue(false)} />}
@@ -396,6 +362,7 @@ const Setup = ({
                     control={<Radio color="info" onClick={(e) => teamNeeded.setNewValue(true)} />}
                     label="Hire team"
                   />
+
                   <FormControlLabel
                     checked={!teamNeeded.value}
                     control={<Radio color="info" onClick={(e) => teamNeeded.setNewValue(false)} />}
@@ -446,6 +413,7 @@ const Setup = ({
                       control={<Radio color="info" onClick={(e) => teamTimezoneAway.setNewValue(true)} />}
                       label="Yes"
                     />
+
                     <FormControlLabel
                       checked={!teamTimezoneAway.value}
                       control={<Radio color="info" onClick={(e) => teamTimezoneAway.setNewValue(false)} />}
@@ -470,6 +438,7 @@ const Setup = ({
                 Back
               </Button>
             </Grid>
+
             <Grid item xs={12} sm={4}>
               <Button
                 type="submit"
@@ -491,6 +460,7 @@ const Setup = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  user: state.authReducer.data,
   productFormData: state.productReducer.productFormData,
 });
 

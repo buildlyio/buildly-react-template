@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import makeStyles from '@mui/styles/makeStyles';
 import {
   Grid,
@@ -15,10 +16,9 @@ import {
 } from '@mui/material';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { useInput } from '@hooks/useInput';
-import { validators } from '@utils/validators';
 import { saveProductFormData } from '@redux/product/actions/product.actions';
 import {
-  DATABASES, DEPLOYMENTS, HOSTING, LANGUAGES, STORAGES,
+  BUDGET_CATEGORY, DATABASES, DEPLOYMENTS, HOSTING, LANGUAGES, STORAGES,
 } from '../ProductFormConstants';
 
 const useStyles = makeStyles((theme) => ({
@@ -69,107 +69,62 @@ const BudgetTechnology = ({
 }) => {
   const classes = useStyles();
 
-  const [firstUserDate, handlefirstUserDateChange] = useState((editData
-    && editData.product_info
-    && editData.product_info.first_user_date)
-  || (productFormData
-      && productFormData.product_info
+  const [firstUserDate, handlefirstUserDateChange] = useState(moment(
+    (editData && editData.product_info && editData.product_info.first_user_date)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.first_user_date)
-    || new Date().setDate(new Date().getDate() + 90));
+    || moment().add(3, 'M'),
+  ).toISOString());
 
-  const [approxBudget, setApproxBudget] = useState((editData
-    && editData.product_info
-    && editData.product_info.approx_budget)
-  || (productFormData
-      && productFormData.product_info
+  const [approxBudget, setApproxBudget] = useState(
+    (editData && editData.product_info && editData.product_info.approx_budget)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.approx_budget)
     || {
       value: 0,
       category: '10-15k',
-    });
+    },
+  );
 
-  const hosting = useInput((editData
-    && editData.product_info
-    && editData.product_info.hosting)
-  || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.hosting)
+  const hosting = useInput((editData && editData.product_info && editData.product_info.hosting)
+    || (productFormData && productFormData.product_info && productFormData.product_info.hosting)
     || 'No Preference',
   { required: true });
 
-  const language = useInput((editData
-    && editData.product_info
-    && editData.product_info.language)
-  || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.language)
+  const language = useInput((editData && editData.product_info && editData.product_info.language)
+    || (productFormData && productFormData.product_info && productFormData.product_info.language)
     || 'No Preference',
   { required: true });
 
-  const database = useInput((editData
-    && editData.product_info
-    && editData.product_info.database)
-  || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.database)
+  const database = useInput((editData && editData.product_info && editData.product_info.database)
+    || (productFormData && productFormData.product_info && productFormData.product_info.database)
     || 'No Preference',
   { required: true });
 
-  const storage = useInput((editData
-    && editData.product_info
-    && editData.product_info.storage)
-  || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.storage)
+  const storage = useInput((editData && editData.product_info && editData.product_info.storage)
+    || (productFormData && productFormData.product_info && productFormData.product_info.storage)
     || 'No Preference',
   { required: true });
 
-  const deployment = useInput((editData
-    && editData.product_info
-    && editData.product_info.deployment)
-  || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.deployment)
+  const deployment = useInput((editData && editData.product_info
+      && editData.product_info.deployment)
+    || (productFormData && productFormData.product_info && productFormData.product_info.deployment)
     || 'No Preference',
   { required: true });
-
-  const [formError, setFormError] = useState({});
-
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
-  const handleBlur = (e, validation, input, parentId) => {
-    const validateObj = validators(validation, input);
-    const prevState = { ...formError };
-    if (validateObj && validateObj.error) {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: validateObj,
-      });
-    } else {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: {
-          error: false,
-          message: '',
-        },
-      });
-    }
-  };
 
   checkIfBudgetTechnologyEdited = () => (
-    !!(productFormData
-      && productFormData.product_info
+    (!editData && productFormData && !_.isEmpty(productFormData))
+    || !!(productFormData && productFormData.product_info
       && productFormData.product_info.first_user_date
-      && (firstUserDate !== productFormData.product_info.first_user_date))
-    || !!(productFormData
-      && productFormData.product_info
+      && (moment(firstUserDate).format('L') !== moment(productFormData.product_info.first_user_date).format('L')))
+    || !!(editData && editData.product_info && editData.product_info.first_user_date
+      && (moment(firstUserDate).format('L') !== moment(editData.product_info.first_user_date).format('L')))
+    || !!(productFormData && productFormData.product_info
       && productFormData.product_info.approx_budget
-      && !_.isEqual(approxBudget,
-        productFormData.product_info.approx_budget))
+      && !_.isEqual(approxBudget, productFormData.product_info.approx_budget))
+    || !!(editData && editData.product_info
+      && editData.product_info.approx_budget
+      && !_.isEqual(approxBudget, editData.product_info.approx_budget))
     || hosting.hasChanged()
     || language.hasChanged()
     || database.hasChanged()
@@ -197,52 +152,10 @@ const BudgetTechnology = ({
       },
       edit_date: new Date(),
     };
+
     dispatch(saveProductFormData(formData));
     handleNext();
   };
-
-  const budgetCategory = [
-    {
-      value: 1,
-      label: '10-15k',
-    },
-    {
-      value: 2,
-      label: '15-25k',
-    },
-    {
-      value: 3,
-      label: '25-35k',
-    },
-    {
-      value: 4,
-      label: '35-50k',
-    },
-    {
-      value: 5,
-      label: '50-100k',
-    },
-    {
-      value: 6,
-      label: '100-150k',
-    },
-    {
-      value: 7,
-      label: '150-200k',
-    },
-    {
-      value: 8,
-      label: '200-300k',
-    },
-    {
-      value: 9,
-      label: '300-500k',
-    },
-    {
-      value: 10,
-      label: '500k+',
-    },
-  ];
 
   const getBudgetCategory = (newValue) => {
     switch (newValue) {
@@ -282,19 +195,21 @@ const BudgetTechnology = ({
                 first users onboarded?
               </Typography>
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <DatePickerComponent
                 label="Date"
                 selectedDate={firstUserDate}
-                hasTime
                 handleDateChange={handlefirstUserDateChange}
               />
             </Grid>
+
             <Grid item xs={12} sm={12}>
               <Typography variant="h6" gutterBottom component="div">
                 Do you have an approximate budget yet?
               </Typography>
             </Grid>
+
             <Grid item xs={12} sm={12}>
               <Slider
                 value={approxBudget.value}
@@ -307,15 +222,17 @@ const BudgetTechnology = ({
                 step={1}
                 min={1}
                 max={10}
-                marks={budgetCategory}
+                marks={BUDGET_CATEGORY}
               />
             </Grid>
+
             <Grid item xs={12} sm={12}>
               <Typography variant="h6" gutterBottom component="div">
                 Do you have a preference for hosting, language, database,
                 storage or deployment?
               </Typography>
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <FormControl
                 variant="outlined"
@@ -326,6 +243,7 @@ const BudgetTechnology = ({
                 <FormLabel component="legend">
                   Select Hosting
                 </FormLabel>
+
                 <Select {...hosting.bind}>
                   {_.map(HOSTING, (host, idx) => (
                     <MenuItem key={`hosting-${idx}`} value={host}>
@@ -335,8 +253,8 @@ const BudgetTechnology = ({
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
 
+            <Grid item xs={12} sm={6}>
               <FormControl
                 variant="outlined"
                 fullWidth
@@ -346,6 +264,7 @@ const BudgetTechnology = ({
                 <FormLabel component="legend">
                   Select Language
                 </FormLabel>
+
                 <Select {...language.bind}>
                   {_.map(LANGUAGES, (lng, idx) => (
                     <MenuItem key={`language-${idx}`} value={lng}>
@@ -355,6 +274,7 @@ const BudgetTechnology = ({
                 </Select>
               </FormControl>
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <FormControl
                 variant="outlined"
@@ -365,6 +285,7 @@ const BudgetTechnology = ({
                 <FormLabel component="legend">
                   Select Database
                 </FormLabel>
+
                 <Select {...database.bind}>
                   {_.map(DATABASES, (db, idx) => (
                     <MenuItem key={`database-${idx}`} value={db}>
@@ -374,6 +295,7 @@ const BudgetTechnology = ({
                 </Select>
               </FormControl>
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <FormControl
                 variant="outlined"
@@ -384,6 +306,7 @@ const BudgetTechnology = ({
                 <FormLabel component="legend">
                   Select Storage
                 </FormLabel>
+
                 <Select {...storage.bind}>
                   {_.map(STORAGES, (strg, idx) => (
                     <MenuItem key={`storage-${idx}`} value={strg}>
@@ -393,6 +316,7 @@ const BudgetTechnology = ({
                 </Select>
               </FormControl>
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <FormControl
                 variant="outlined"
@@ -403,6 +327,7 @@ const BudgetTechnology = ({
                 <FormLabel component="legend">
                   Select Deployment
                 </FormLabel>
+
                 <Select {...deployment.bind}>
                   {_.map(DEPLOYMENTS, (deploy, idx) => (
                     <MenuItem key={`deployment-${idx}`} value={deploy}>
@@ -413,6 +338,7 @@ const BudgetTechnology = ({
               </FormControl>
             </Grid>
           </Grid>
+
           <Grid container spacing={3} className={classes.buttonContainer}>
             <Grid item xs={12} sm={4}>
               <Button
@@ -426,6 +352,7 @@ const BudgetTechnology = ({
                 Back
               </Button>
             </Grid>
+
             <Grid item xs={12} sm={4}>
               <Button
                 type="submit"

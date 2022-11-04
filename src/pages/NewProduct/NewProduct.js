@@ -9,22 +9,18 @@ import {
   Hidden,
   Grid,
 } from '@mui/material';
+import Loader from '@components/Loader/Loader';
 import FormModal from '@components/Modal/FormModal';
 import { getAllStatuses } from '@redux/decision/actions/decision.actions';
 import { saveProductFormData, getAllCredentials } from '@redux/product/actions/product.actions';
-import ProductSetup, {
-  checkIfProductSetupEdited,
-} from './components/ProductSetup';
-import ApplicationMarket, {
-  checkIfApplicationMarketEdited,
-} from './components/ApplicationMarket';
-import BudgetTechnology, {
-  checkIfBudgetTechnologyEdited,
-} from './components/BudgetTechnology';
+import ApplicationMarket, { checkIfApplicationMarketEdited } from './components/ApplicationMarket';
+import BudgetTechnology, { checkIfBudgetTechnologyEdited } from './components/BudgetTechnology';
+import ProductSetup, { checkIfProductSetupEdited } from './components/ProductSetup';
 import Setup, { checkIfSetupEdited } from './components/Setup';
 import TeamUser, { checkIfTeamUserEdited } from './components/TeamUser';
 import UseInfo, { checkIfUseInfoEdited } from './components/UseInfo';
 import ViewDetailsWrapper from './components/ViewDetailsWrapper';
+import { routes } from '@routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -189,22 +185,22 @@ const getStepContent = (
 
 const NewProductForm = (props) => {
   const {
-    history, productFormData, dispatch, location, statuses, credentials,
+    history, dispatch, location, statuses, credentials, loading,
   } = props;
   const classes = useStyles();
   const steps = getSteps();
   const maxSteps = steps.length;
   const [status, setStatus] = useState('');
 
-  const redirectTo = location.state && location.state.from;
+  const redirectTo = (location.state && location.state.from) || routes.DASHBOARD;
   const product_uuid = location.state && location.state.product_uuid;
   const editPage = location.state && location.state.type === 'editP';
   const editData = (
     location.state
     && (location.state.type === 'editP')
     && location.state.data
-  ) || {};
-  const viewPage = status?.length > 0 || false;
+  ) || null;
+  const viewPage = location.state && location.state.type === 'view';
   const formTitle = editPage ? 'Edit Product' : 'New Product Setup';
 
   const [activeStep, setActiveStep] = React.useState(0);
@@ -212,14 +208,18 @@ const NewProductForm = (props) => {
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [confirmModalFor, setConfirmModalFor] = useState(null);
 
-  const featCred = _.find(
-    credentials,
-    { product_uuid, auth_detail: { tool_type: 'Feature' } },
-  );
-  const issueCred = _.find(
-    credentials,
-    { product_uuid, auth_detail: { tool_type: 'Issue' } },
-  );
+  const featCred = _.find(credentials, { product_uuid, auth_detail: { tool_type: 'Feature' } });
+  const issueCred = _.find(credentials, { product_uuid, auth_detail: { tool_type: 'Issue' } });
+
+  useEffect(() => {
+    dispatch(getAllStatuses());
+    dispatch(getAllCredentials());
+  }, []);
+
+  useEffect(() => {
+    const sta = _.filter(statuses, { product_uuid });
+    setStatus(sta);
+  }, [statuses, product_uuid]);
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -235,9 +235,7 @@ const NewProductForm = (props) => {
   };
 
   const handleClose = () => {
-    if (checkIfFormEdited(activeStep)
-      || (productFormData && !_.isEmpty(productFormData))
-    ) {
+    if (checkIfFormEdited(activeStep)) {
       setConfirmModal(true);
       setConfirmModalFor(null);
     } else {
@@ -256,19 +254,6 @@ const NewProductForm = (props) => {
       history.push(redirectTo);
     }
   };
-
-  useEffect(() => {
-    const sta = _.filter(statuses, { product_uuid });
-    setStatus(sta);
-  }, [statuses, product_uuid]);
-
-  useEffect(() => {
-    dispatch(getAllStatuses());
-  }, []);
-
-  useEffect(() => {
-    dispatch(getAllCredentials());
-  }, []);
 
   const checkIfFormEdited = (currentStep) => {
     switch (currentStep) {
@@ -310,6 +295,7 @@ const NewProductForm = (props) => {
           handleConfirmModal={handleConfirmModal}
         >
           <div className={classes.root}>
+            {loading && <Loader open={loading} />}
             <Hidden smDown>
               <Grid container alignItems="center" justifyContent="center">
                 <Grid item sm={10}>
@@ -354,10 +340,9 @@ const NewProductForm = (props) => {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.optionsReducer,
-  productFormData: state.productReducer.productFormData,
-  ...state.productReducer,
-  ...state.decisionReducer,
+  loading: state.productReducer.loading || state.decisionReducer.loading,
+  statuses: state.decisionReducer.statuses,
+  credentials: state.productReducer.credentials,
 });
 
 export default connect(mapStateToProps)(NewProductForm);

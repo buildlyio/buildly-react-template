@@ -57,8 +57,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StyledRadio = (props) => <Radio color="info" {...props} />;
-
 // eslint-disable-next-line import/no-mutable-exports
 export let checkIfApplicationMarketEdited;
 
@@ -71,36 +69,30 @@ const ApplicationMarket = ({
 }) => {
   const classes = useStyles();
 
-  const applicationType = useInput((editData
-    && editData.product_info
-    && editData.product_info.application_type)
-  || (productFormData
-      && productFormData.product_info
+  const applicationType = useInput((editData && editData.product_info
+      && editData.product_info.application_type)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.application_type)
     || 'desktop',
   { required: true });
 
-  const primaryUsers = useInput((editData
-    && editData.product_info
-    && editData.product_info.primary_users)
-  || (productFormData
-      && productFormData.product_info
+  const primaryUsers = useInput((editData && editData.product_info
+      && editData.product_info.primary_users)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.primary_users)
     || '',
   { required: true });
-  const secondaryUsers = useInput((editData
-    && editData.product_info
-    && editData.product_info.secondary_users)
-  || (productFormData
-      && productFormData.product_info
+
+  const secondaryUsers = useInput((editData && editData.product_info
+      && editData.product_info.secondary_users)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.secondary_users)
     || '',
   { required: true });
-  const [bussinessSegment, setBussinessSegment] = useState((editData
-    && editData.product_info
-    && editData.product_info.bussiness_segment)
-  || (productFormData
-      && productFormData.product_info
+
+  const [bussinessSegment, setBussinessSegment] = useState((editData && editData.product_info
+      && editData.product_info.bussiness_segment)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.bussiness_segment)
     || []);
 
@@ -111,13 +103,18 @@ const ApplicationMarket = ({
     ) {
       return true;
     }
+
     return false;
   };
 
   checkIfApplicationMarketEdited = () => (
-    applicationType.hasChanged()
+    (!editData && productFormData && !_.isEmpty(productFormData))
+    || applicationType.hasChanged()
     || primaryUsers.hasChanged()
     || secondaryUsers.hasChanged()
+    || !!(editData && editData.product_info
+      && editData.product_info.bussiness_segment
+      && !_.isEqual(bussinessSegment, editData.product_info.bussiness_segment))
     || !!(productFormData && productFormData.product_info
       && productFormData.product_info.bussiness_segment
       && !_.isEqual(bussinessSegment, productFormData.product_info.bussiness_segment))
@@ -140,6 +137,7 @@ const ApplicationMarket = ({
       },
       edit_date: new Date(),
     };
+
     dispatch(saveProductFormData(formData));
     handleNext();
   };
@@ -154,6 +152,7 @@ const ApplicationMarket = ({
                 Type of Application
               </Typography>
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <RadioGroup
                 row
@@ -163,17 +162,19 @@ const ApplicationMarket = ({
               >
                 <FormControlLabel
                   value="mobile"
-                  control={<StyledRadio />}
+                  control={<Radio color="info" />}
                   label="Mobile"
                 />
+
                 <FormControlLabel
                   value="desktop"
-                  control={<StyledRadio />}
+                  control={<Radio color="info" />}
                   label="Desktop"
                 />
+
                 <FormControlLabel
                   value="both"
-                  control={<StyledRadio />}
+                  control={<Radio color="info" />}
                   label="Both"
                 />
               </RadioGroup>
@@ -188,6 +189,7 @@ const ApplicationMarket = ({
                 <InputLabel id="bussiness-segment-label">
                   Business Segment
                 </InputLabel>
+
                 <Select
                   labelId="bussiness-segment-label"
                   id="bussiness-segment"
@@ -278,6 +280,7 @@ const ApplicationMarket = ({
                 Back
               </Button>
             </Grid>
+
             <Grid item xs={12} sm={4}>
               <Button
                 type="submit"

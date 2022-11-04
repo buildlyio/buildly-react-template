@@ -192,7 +192,7 @@ const UserDashboard = (props) => {
     if (product) {
       dispatch(getBoard(product));
     }
-    let prd = _.find(products, { product_uuid: product });
+    const prd = _.find(products, { product_uuid: product });
     setProd(prd);
     const sta = _.filter(statuses, { product_uuid: product });
     setStatus(sta);

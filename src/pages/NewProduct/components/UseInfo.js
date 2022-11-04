@@ -13,7 +13,6 @@ import {
   FormControlLabel,
   Radio,
 } from '@mui/material';
-import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 import { saveProductFormData } from '@redux/product/actions/product.actions';
@@ -62,64 +61,43 @@ const UseInfo = ({
   handleBack,
   dispatch,
   editData,
-  loading,
   handleNext,
 }) => {
   const classes = useStyles();
 
-  const productUse = useInput(
-    (editData
-      && editData.product_info
-      && editData.product_info.use)
-    || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.use)
-    || '',
-    { required: true },
-  );
-
-  const useWhen = useInput((editData
-    && editData.product_info
-    && editData.product_info.use_when)
-  || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.use_when)
+  const productUse = useInput((editData && editData.product_info && editData.product_info.use)
+    || (productFormData && productFormData.product_info && productFormData.product_info.use)
     || '',
   { required: true });
 
-  const useSituation = useInput((editData
-    && editData.product_info
-    && editData.product_info.use_situation)
-  || (productFormData
-      && productFormData.product_info
+  const useWhen = useInput((editData && editData.product_info && editData.product_info.use_when)
+    || (productFormData && productFormData.product_info && productFormData.product_info.use_when)
+    || '',
+  { required: true });
+
+  const useSituation = useInput((editData && editData.product_info
+      && editData.product_info.use_situation)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.use_situation)
     || '',
   { required: true });
 
-  const impFunction = useInput((editData
-    && editData.product_info
-    && editData.product_info.imp_function)
-  || (productFormData
-      && productFormData.product_info
+  const impFunction = useInput((editData && editData.product_info
+      && editData.product_info.imp_function)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.imp_function)
     || '',
   { required: true });
 
-  const deliveryRisk = useInput((editData
-    && editData.product_info
-    && editData.product_info.delivery_risk)
-  || (productFormData
-      && productFormData.product_info
+  const deliveryRisk = useInput((editData && editData.product_info
+      && editData.product_info.delivery_risk)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.delivery_risk)
     || '',
   { required: true });
 
-  const toolReq = useInput((editData
-    && editData.product_info
-    && editData.product_info.tool_req)
-  || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.tool_req)
+  const toolReq = useInput((editData && editData.product_info && editData.product_info.tool_req)
+    || (productFormData && productFormData.product_info && productFormData.product_info.tool_req)
     || 'no',
   { required: true });
 
@@ -152,20 +130,16 @@ const UseInfo = ({
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if ((_.isEmpty(productFormData?.third_party_tool)
-    && !productUse.value)
-      || (_.isEmpty(productFormData?.third_party_tool)
-      && !useWhen.value)
-      || (_.isEmpty(productFormData?.third_party_tool)
-      && !useSituation.value)
-      || (_.isEmpty(productFormData?.third_party_tool)
-      && !impFunction.value)
-      || (_.isEmpty(productFormData?.third_party_tool)
-      && !deliveryRisk.value)
-      || (!_.isEmpty(productFormData?.third_party_tool)
-      && !toolReq.value)) {
+    if (_.isEmpty(productFormData?.third_party_tool) && (!productUse.value
+      || !useWhen.value
+      || !useSituation.value
+      || !impFunction.value
+      || !deliveryRisk.value
+      || !toolReq.value)
+    ) {
       return true;
     }
+
     let errorExists = false;
     _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
@@ -210,7 +184,6 @@ const UseInfo = ({
 
   return (
     <div>
-      {loading && <Loader open={loading} />}
       <form className={classes.form} noValidate onSubmit={handleSubmit}>
         <Box mb={2} mt={3}>
           {(!_.isEmpty(productFormData?.third_party_tool)
@@ -234,6 +207,7 @@ const UseInfo = ({
                       control={<Radio color="info" />}
                       label="Yes, we do"
                     />
+
                     <FormControlLabel
                       checked={toolReq.value === 'no'}
                       value="no"
@@ -261,6 +235,7 @@ const UseInfo = ({
                     {...productUse.bind}
                   />
                 </Grid>
+
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
@@ -276,6 +251,7 @@ const UseInfo = ({
                     {...useWhen.bind}
                   />
                 </Grid>
+
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
@@ -291,6 +267,7 @@ const UseInfo = ({
                     {...useSituation.bind}
                   />
                 </Grid>
+
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
@@ -306,6 +283,7 @@ const UseInfo = ({
                     {...impFunction.bind}
                   />
                 </Grid>
+
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
@@ -337,6 +315,7 @@ const UseInfo = ({
                 Back
               </Button>
             </Grid>
+
             <Grid item xs={12} sm={4}>
               <Button
                 type="submit"

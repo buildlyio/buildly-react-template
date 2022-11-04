@@ -103,3 +103,16 @@ export const EXPECTED_TRAFFIC = {
     '2.5 Million a month - I work at Apple',
   ],
 };
+
+export const BUDGET_CATEGORY = [
+  { value: 1, label: '10-15k' },
+  { value: 2, label: '15-25k' },
+  { value: 3, label: '25-35k' },
+  { value: 4, label: '35-50k' },
+  { value: 5, label: '50-100k' },
+  { value: 6, label: '100-150k' },
+  { value: 7, label: '150-200k' },
+  { value: 8, label: '200-300k' },
+  { value: 9, label: '300-500k' },
+  { value: 10, label: '500k+' },
+];
