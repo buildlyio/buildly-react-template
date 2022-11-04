@@ -22,13 +22,13 @@ import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   logoDiv: {
-    width: theme.spacing(22),
-    margin: 'auto',
-    marginTop: theme.spacing(6),
+    width: '100%',
+    textAlign: 'center',
+    marginTop: theme.spacing(4),
     marginBottom: theme.spacing(2.5),
   },
   logo: {
-    width: theme.spacing(22),
+    width: theme.spacing(40),
     objectFit: 'contain',
   },
   paper: {

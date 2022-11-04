@@ -81,7 +81,7 @@ const Users = ({ data, dispatch }) => {
       return (
         <ButtonGroup
           disableElevation
-          color="primary"
+          color="secondary"
           size="small"
           disabled={
             !row.is_active || user.core_user_uuid === row.core_user_uuid
