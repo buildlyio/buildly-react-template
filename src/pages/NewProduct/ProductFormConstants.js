@@ -1,4 +1,4 @@
-export const PRIMARY_USERS = [
+export const AVAILABLE_USER_TYPES = [
   'Customer 1',
   'Customer 2 (Power User)',
   'Administrator ( All powerfull, helpfull, etc. )',
@@ -87,6 +87,8 @@ export const PRODUCT_TYPE = [
   { value: '', text: '---' },
   { value: 'b2c', text: 'B2C' },
   { value: 'b2b', text: 'B2B' },
+  { value: 'b2b internal', text: 'B2B Internal' },
+  { value: 'b2c e-commerce', text: 'B2C E-Commerce' },
 ];
 
 export const EXPECTED_TRAFFIC = {
@@ -97,6 +99,18 @@ export const EXPECTED_TRAFFIC = {
     '2.5 Billion a month - The next Amazon',
   ],
   b2b: [
+    '100 - 1000 a month',
+    '1000 - 10000 a month',
+    '10000 - 100000 a month',
+    '2.5 Million a month - I work at Apple',
+  ],
+  'b2c e-commerce': [
+    '1000 - 10000 a month',
+    '10000 - 100000 a month',
+    '100000 - 1000000 a month',
+    '2.5 Billion a month - The next Amazon',
+  ],
+  'b2b internal': [
     '100 - 1000 a month',
     '1000 - 10000 a month',
     '10000 - 100000 a month',
