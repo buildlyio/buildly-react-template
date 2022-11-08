@@ -1,4 +1,4 @@
-export const PRIMARY_USERS = [
+export const AVAILABLE_USER_TYPES = [
   'Customer 1',
   'Customer 2 (Power User)',
   'Administrator ( All powerfull, helpfull, etc. )',
@@ -87,6 +87,8 @@ export const PRODUCT_TYPE = [
   { value: '', text: '---' },
   { value: 'b2c', text: 'B2C' },
   { value: 'b2b', text: 'B2B' },
+  { value: 'b2b internal', text: 'B2B Internal' },
+  { value: 'b2c e-commerce', text: 'B2C E-Commerce' },
 ];
 
 export const EXPECTED_TRAFFIC = {
@@ -102,4 +104,29 @@ export const EXPECTED_TRAFFIC = {
     '10000 - 100000 a month',
     '2.5 Million a month - I work at Apple',
   ],
+  'b2c e-commerce': [
+    '1000 - 10000 a month',
+    '10000 - 100000 a month',
+    '100000 - 1000000 a month',
+    '2.5 Billion a month - The next Amazon',
+  ],
+  'b2b internal': [
+    '100 - 1000 a month',
+    '1000 - 10000 a month',
+    '10000 - 100000 a month',
+    '2.5 Million a month - I work at Apple',
+  ],
 };
+
+export const BUDGET_CATEGORY = [
+  { value: 1, label: '10-15k' },
+  { value: 2, label: '15-25k' },
+  { value: 3, label: '25-35k' },
+  { value: 4, label: '35-50k' },
+  { value: 5, label: '50-100k' },
+  { value: 6, label: '100-150k' },
+  { value: 7, label: '150-200k' },
+  { value: 8, label: '200-300k' },
+  { value: 9, label: '300-500k' },
+  { value: 10, label: '500k+' },
+];

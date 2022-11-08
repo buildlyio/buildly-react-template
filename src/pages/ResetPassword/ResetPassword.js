@@ -13,7 +13,7 @@ import {
   Container,
   Grid,
 } from '@mui/material';
-import logo from '@assets/light-logo.png';
+import logo from '@assets/insights-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import { useInput } from '@hooks/useInput';
 import { resetPassword } from '@redux/authuser/actions/authuser.actions';
@@ -23,13 +23,13 @@ import { isMobile } from '@utils/mediaQuery';
 
 const useStyles = makeStyles((theme) => ({
   logoDiv: {
-    width: theme.spacing(15),
-    margin: 'auto',
-    marginTop: theme.spacing(1.25),
+    width: '100%',
+    textAlign: 'center',
+    marginTop: theme.spacing(4),
     marginBottom: theme.spacing(2.5),
   },
   logo: {
-    width: theme.spacing(15),
+    width: theme.spacing(40),
     objectFit: 'contain',
   },
   paper: {

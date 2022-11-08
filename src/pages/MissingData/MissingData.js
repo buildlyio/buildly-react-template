@@ -79,7 +79,7 @@ const MissingData = ({
    */
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let updateForm = {
+    const updateForm = {
       id: !!user && user.id,
       organization_name: orgName,
       user_type: userType.value,
