@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import Loader from '@components/Loader/Loader';
 import FormModal from '@components/Modal/FormModal';
-import { getAllStatuses } from '@redux/decision/actions/decision.actions';
+import { getAllStatuses } from '@redux/release/actions/release.actions';
 import { saveProductFormData, getAllCredentials } from '@redux/product/actions/product.actions';
 import ApplicationMarket, { checkIfApplicationMarketEdited } from './components/ApplicationMarket';
 import BudgetTechnology, { checkIfBudgetTechnologyEdited } from './components/BudgetTechnology';
@@ -340,8 +340,8 @@ const NewProductForm = (props) => {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  loading: state.productReducer.loading || state.decisionReducer.loading,
-  statuses: state.decisionReducer.statuses,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
+  statuses: state.releaseReducer.statuses,
   credentials: state.productReducer.credentials,
 });
 

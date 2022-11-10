@@ -62,26 +62,6 @@ export const DELETE_PRODUCT = 'PRODUCT/DELETE_PRODUCT';
 export const DELETE_PRODUCT_SUCCESS = 'PRODUCT/DELETE_PRODUCT_SUCCESS';
 export const DELETE_PRODUCT_FAILURE = 'PRODUCT/DELETE_PRODUCT_FAILURE';
 
-export const ALL_RELEASES = 'PRODUCT/ALL_RELEASES';
-export const ALL_RELEASES_SUCCESS = 'PRODUCT/ALL_RELEASES_SUCCESS';
-export const ALL_RELEASES_FAILURE = 'PRODUCT/ALL_RELEASES_FAILURE';
-
-export const GET_RELEASE = 'PRODUCT/GET_RELEASE';
-export const GET_RELEASE_SUCCESS = 'PRODUCT/GET_RELEASE_SUCCESS';
-export const GET_RELEASE_FAILURE = 'PRODUCT/GET_RELEASE_FAILURE';
-
-export const CREATE_RELEASE = 'PRODUCT/CREATE_RELEASE';
-export const CREATE_RELEASE_SUCCESS = 'PRODUCT/CREATE_RELEASE_SUCCESS';
-export const CREATE_RELEASE_FAILURE = 'PRODUCT/CREATE_RELEASE_FAILURE';
-
-export const UPDATE_RELEASE = 'PRODUCT/UPDATE_RELEASE';
-export const UPDATE_RELEASE_SUCCESS = 'PRODUCT/UPDATE_RELEASE_SUCCESS';
-export const UPDATE_RELEASE_FAILURE = 'PRODUCT/UPDATE_RELEASE_FAILURE';
-
-export const DELETE_RELEASE = 'PRODUCT/DELETE_RELEASE';
-export const DELETE_RELEASE_SUCCESS = 'PRODUCT/DELETE_RELEASE_SUCCESS';
-export const DELETE_RELEASE_FAILURE = 'PRODUCT/DELETE_RELEASE_FAILURE';
-
 export const ALL_THIRD_PARTY_TOOLS = 'PRODUCT/ALL_THIRD_PARTY_TOOLS';
 export const ALL_THIRD_PARTY_TOOLS_SUCCESS = 'PRODUCT/ALL_THIRD_PARTY_TOOLS_SUCCESS';
 export const ALL_THIRD_PARTY_TOOLS_FAILURE = 'PRODUCT/ALL_THIRD_PARTY_TOOLS_FAILURE';
@@ -258,47 +238,6 @@ export const updateProduct = (data) => ({
 export const deleteProduct = (product_uuid) => ({
   type: DELETE_PRODUCT,
   product_uuid,
-});
-
-/**
- * Get all Releases
- */
-export const getAllReleases = () => ({ type: ALL_RELEASES });
-
-/**
- * Get a Release
- * @param {uuid} release_uuid
- */
-export const getRelease = (release_uuid) => ({
-  type: GET_RELEASE,
-  release_uuid,
-});
-
-/**
- * Create a Release
- * @param {Object} data
- */
-export const createRelease = (data) => ({
-  type: CREATE_RELEASE,
-  data,
-});
-
-/**
- * Update a Release
- * @param {Object} data
- */
-export const updateRelease = (data) => ({
-  type: UPDATE_RELEASE,
-  data,
-});
-
-/**
- * Delete a Release
- * @param {uuid} release_uuid
- */
-export const deleteRelease = (release_uuid) => ({
-  type: DELETE_RELEASE,
-  release_uuid,
 });
 
 /**

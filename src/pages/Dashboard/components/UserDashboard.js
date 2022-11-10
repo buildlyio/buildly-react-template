@@ -22,7 +22,7 @@ import {
   getAllIssues,
   getAllStatuses,
   importTickets,
-} from '@redux/decision/actions/decision.actions';
+} from '@redux/release/actions/release.actions';
 import List from '../components/List';
 import Kanban from '../components/Kanban';
 import NewFeatureForm from '../forms/NewFeatureForm';
@@ -715,11 +715,11 @@ const UserDashboard = (props) => {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.productReducer,
-  ...state.decisionReducer,
-  loading: state.productReducer.loading || state.decisionReducer.loading,
+  ...state.releaseReducer,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
   user: state.authReducer.data,
   boards: state.productReducer.boards,
-  importLoaded: state.decisionReducer.importLoaded,
+  importLoaded: state.releaseReducer.importLoaded,
 });
 
 export default connect(mapStateToProps)(UserDashboard);

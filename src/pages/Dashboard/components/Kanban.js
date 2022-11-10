@@ -33,9 +33,8 @@ import {
   Update as UpdateIcon,
 } from '@mui/icons-material';
 import {
-  getAllStatuses,
-} from '@redux/decision/actions/decision.actions';
-import { updateFeature, updateIssue } from '@redux/decision/actions/decision.actions';
+  getAllStatuses, updateFeature, updateIssue,
+} from '@redux/release/actions/release.actions';
 
 const useStyles = makeStyles((theme) => ({
   noProduct: {
@@ -496,7 +495,7 @@ const Kanban = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.decisionReducer,
+  ...state.releaseReducer,
 });
 
 export default connect(mapStateToProps)(Kanban);

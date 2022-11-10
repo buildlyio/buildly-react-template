@@ -15,7 +15,7 @@ import {
 import FormModal from '@components/Modal/FormModal';
 import {
   createStatus,
-} from '@redux/decision/actions/decision.actions';
+} from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
 import { STATUSTYPES } from './formConstants';
 

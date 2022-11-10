@@ -14,7 +14,7 @@ import FormModal from '@components/Modal/FormModal';
 import {
   getAllStatuses,
   importTickets,
-} from '@redux/decision/actions/decision.actions';
+} from '@redux/release/actions/release.actions';
 import { getAllCredentials } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
@@ -263,8 +263,8 @@ const DropColumn = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  statuses: state.decisionReducer.statuses,
-  features: state.decisionReducer.features,
+  statuses: state.releaseReducer.statuses,
+  features: state.releaseReducer.features,
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,
 });

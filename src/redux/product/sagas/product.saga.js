@@ -15,9 +15,6 @@ import {
   ALL_PRODUCTS,
   ALL_PRODUCTS_SUCCESS,
   ALL_PRODUCTS_FAILURE,
-  ALL_RELEASES,
-  ALL_RELEASES_SUCCESS,
-  ALL_RELEASES_FAILURE,
   ALL_THIRD_PARTY_TOOLS,
   ALL_THIRD_PARTY_TOOLS_SUCCESS,
   ALL_THIRD_PARTY_TOOLS_FAILURE,
@@ -30,9 +27,6 @@ import {
   GET_PRODUCT,
   GET_PRODUCT_SUCCESS,
   GET_PRODUCT_FAILURE,
-  GET_RELEASE,
-  GET_RELEASE_SUCCESS,
-  GET_RELEASE_FAILURE,
   GET_THIRD_PARTY_TOOL,
   GET_THIRD_PARTY_TOOL_SUCCESS,
   GET_BOARD,
@@ -48,9 +42,6 @@ import {
   CREATE_PRODUCT,
   CREATE_PRODUCT_SUCCESS,
   CREATE_PRODUCT_FAILURE,
-  CREATE_RELEASE,
-  CREATE_RELEASE_SUCCESS,
-  CREATE_RELEASE_FAILURE,
   CREATE_THIRD_PARTY_TOOL,
   CREATE_THIRD_PARTY_TOOL_SUCCESS,
   CREATE_THIRD_PARTY_TOOL_FAILURE,
@@ -66,9 +57,6 @@ import {
   UPDATE_PRODUCT,
   UPDATE_PRODUCT_SUCCESS,
   UPDATE_PRODUCT_FAILURE,
-  UPDATE_RELEASE,
-  UPDATE_RELEASE_SUCCESS,
-  UPDATE_RELEASE_FAILURE,
   UPDATE_THIRD_PARTY_TOOL,
   UPDATE_THIRD_PARTY_TOOL_SUCCESS,
   UPDATE_THIRD_PARTY_TOOL_FAILURE,
@@ -81,9 +69,6 @@ import {
   DELETE_PRODUCT,
   DELETE_PRODUCT_SUCCESS,
   DELETE_PRODUCT_FAILURE,
-  DELETE_RELEASE,
-  DELETE_RELEASE_SUCCESS,
-  DELETE_RELEASE_FAILURE,
   DELETE_THIRD_PARTY_TOOL,
   DELETE_THIRD_PARTY_TOOL_SUCCESS,
   DELETE_THIRD_PARTY_TOOL_FAILURE,
@@ -91,7 +76,6 @@ import {
   updateCredential,
   saveProductFormData,
   clearBoardData,
-  getBoard,
   VALIDATE_CREDENTIAL,
   VALIDATE_CREDENTIAL_SUCCESS,
   VALIDATE_CREDENTIAL_FAILURE,
@@ -101,7 +85,7 @@ import {
 } from '../actions/product.actions';
 import {
   createStatus,
-} from '../../decision/actions/decision.actions';
+} from '../../release/actions/release.actions';
 
 const productEndpoint = 'product/';
 
@@ -620,134 +604,6 @@ function* deleteProduct(payload) {
   }
 }
 
-function* allReleases(payload) {
-  try {
-    const releases = yield call(
-      httpService.makeRequest,
-      'get',
-      `${window.env.API_URL}${productEndpoint}release/`,
-    );
-    yield put({ type: ALL_RELEASES_SUCCESS, data: releases.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t fetch all Releases!',
-        }),
-      ),
-      yield put({
-        type: ALL_RELEASES_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* getRelease(payload) {
-  try {
-    const release = yield call(
-      httpService.makeRequest,
-      'get',
-      `${window.env.API_URL}${productEndpoint}release/?release_uuid=${payload.release_uuid}`,
-    );
-    yield put({ type: GET_RELEASE_SUCCESS, data: release.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t fetch Release!',
-        }),
-      ),
-      yield put({
-        type: GET_RELEASE_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* createRelease(payload) {
-  try {
-    const release = yield call(
-      httpService.makeRequest,
-      'post',
-      `${window.env.API_URL}${productEndpoint}release/`,
-      payload.data,
-    );
-    yield put({ type: CREATE_RELEASE_SUCCESS, data: release.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t create Release!',
-        }),
-      ),
-      yield put({
-        type: CREATE_RELEASE_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* updateRelease(payload) {
-  try {
-    const release = yield call(
-      httpService.makeRequest,
-      'put',
-      `${window.env.API_URL}${productEndpoint}release/${payload.data.release_uuid}`,
-      payload.data,
-    );
-    yield put({ type: UPDATE_RELEASE_SUCCESS, data: release.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t update Release!',
-        }),
-      ),
-      yield put({
-        type: UPDATE_RELEASE_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* deleteRelease(payload) {
-  const { release_uuid } = payload;
-  try {
-    const release = yield call(
-      httpService.makeRequest,
-      'delete',
-      `${window.env.API_URL}${productEndpoint}release/${release_uuid}`,
-    );
-    yield put({ type: DELETE_RELEASE_SUCCESS, release_uuid });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t delete Release!',
-        }),
-      ),
-      yield put({
-        type: DELETE_RELEASE_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
 function* allThirdPartyTools(payload) {
   try {
     const tools = yield call(
@@ -1102,26 +958,6 @@ function* watchDeleteProduct() {
   yield takeLatest(DELETE_PRODUCT, deleteProduct);
 }
 
-function* watchGetAllReleases() {
-  yield takeLatest(ALL_RELEASES, allReleases);
-}
-
-function* watchGetRelease() {
-  yield takeLatest(GET_RELEASE, getRelease);
-}
-
-function* watchCreateRelease() {
-  yield takeLatest(CREATE_RELEASE, createRelease);
-}
-
-function* watchUpdateRelease() {
-  yield takeLatest(UPDATE_RELEASE, updateRelease);
-}
-
-function* watchDeleteRelease() {
-  yield takeLatest(DELETE_RELEASE, deleteRelease);
-}
-
 function* watchGetAllThirdPartyTools() {
   yield takeLatest(ALL_THIRD_PARTY_TOOLS, allThirdPartyTools);
 }
@@ -1163,29 +999,24 @@ export default function* productSaga() {
     watchGetAllCredentials(),
     watchGetAllProductTeams(),
     watchGetAllProducts(),
-    watchGetAllReleases(),
     watchGetAllThirdPartyTools(),
     watchGetCredential(),
     watchGetProductTeam(),
     watchGetProduct(),
-    watchGetRelease(),
     watchGetThirdPartyTool(),
     watchGetBoard(),
     watchCreateCredential(),
     watchCreateProductTeam(),
     watchCreateProduct(),
-    watchCreateRelease(),
     watchCreateThirdPartyTool(),
     watchCreateBoard(),
     watchUpdateCredential(),
     watchUpdateProductTeam(),
     watchUpdateProduct(),
-    watchUpdateRelease(),
     watchUpdateThirdPartyTool(),
     watchDeleteCredential(),
     watchDeleteProductTeam(),
     watchDeleteProduct(),
-    watchDeleteRelease(),
     watchDeleteThirdPartyTool(),
     watchValidateCredential(),
     watchdocIdentifier(),

@@ -1,64 +1,122 @@
-import * as actions from './decision.actions';
+import * as actions from './release.actions';
 
-// Test Get All Decisions
-describe('Get All Decisions action', () => {
-  it('should create an action to get all decisions', () => {
-    const expectedAction = { type: actions.ALL_DECISIONS };
-    expect(actions.getAllDecisions()).toEqual(expectedAction);
+// Test Get All Releases
+describe('Get All Releases action', () => {
+  it('should create an action to get all release', () => {
+    const expectedAction = { type: actions.ALL_RELEASES };
+    expect(actions.getAllReleases()).toEqual(expectedAction);
   });
 });
 
-// Test Get Decision
-describe('Get Decision action', () => {
-  it('should create an action to get decision', () => {
-    const decision_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
+// Test Get Release
+describe('Get Release action', () => {
+  it('should create an action to get release', () => {
+    const release_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
     const expectedAction = {
-      type: actions.GET_DECISION,
-      decision_uuid,
+      type: actions.GET_RELEASE,
+      release_uuid,
     };
 
-    expect(actions.getDecision(decision_uuid))
-      .toEqual(expectedAction);
+    expect(actions.getRelease(release_uuid)).toEqual(expectedAction);
   });
 });
 
-// Test Create Decision
-describe('Create Decision action', () => {
-  it('should create an action to create decision', () => {
-    const data = { name: 'Test Decision' };
+// Test Create Release
+describe('Create Release action', () => {
+  it('should create an action to create release', () => {
+    const data = { name: 'Test Release' };
     const expectedAction = {
-      type: actions.CREATE_DECISION,
+      type: actions.CREATE_RELEASE,
       data,
     };
 
-    expect(actions.createDecision(data)).toEqual(expectedAction);
+    expect(actions.createRelease(data)).toEqual(expectedAction);
   });
 });
 
-// Test Update Decision
-describe('Update Decision action', () => {
-  it('should create an action to update decision', () => {
-    const data = { name: 'Test Decision Edited' };
+// Test Update Release
+describe('Update Release action', () => {
+  it('should create an action to update release', () => {
+    const data = { name: 'Test Release Edited' };
     const expectedAction = {
-      type: actions.UPDATE_DECISION,
+      type: actions.UPDATE_RELEASE,
       data,
     };
 
-    expect(actions.updateDecision(data)).toEqual(expectedAction);
+    expect(actions.updateRelease(data)).toEqual(expectedAction);
   });
 });
 
-// Test Delete Decision
-describe('Delete Decision action', () => {
-  it('should create an action to delete decision', () => {
-    const decision_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
+// Test Delete Release
+describe('Delete Release action', () => {
+  it('should create an action to delete release', () => {
+    const release_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
     const expectedAction = {
-      type: actions.DELETE_DECISION,
-      decision_uuid,
+      type: actions.DELETE_RELEASE,
+      release_uuid,
     };
 
-    expect(actions.deleteDecision(decision_uuid))
-      .toEqual(expectedAction);
+    expect(actions.deleteRelease(release_uuid)).toEqual(expectedAction);
+  });
+});
+
+// Test Get All Comments
+describe('Get All Comments action', () => {
+  it('should create an action to get all comment', () => {
+    const expectedAction = { type: actions.ALL_COMMENTS };
+    expect(actions.getAllComments()).toEqual(expectedAction);
+  });
+});
+
+// Test Get Comment
+describe('Get Comment action', () => {
+  it('should create an action to get comment', () => {
+    const comment_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
+    const expectedAction = {
+      type: actions.GET_COMMENT,
+      comment_uuid,
+    };
+
+    expect(actions.getComment(comment_uuid)).toEqual(expectedAction);
+  });
+});
+
+// Test Create Comment
+describe('Create Comment action', () => {
+  it('should create an action to create comment', () => {
+    const data = { name: 'Test Comment' };
+    const expectedAction = {
+      type: actions.CREATE_COMMENT,
+      data,
+    };
+
+    expect(actions.createComment(data)).toEqual(expectedAction);
+  });
+});
+
+// Test Update Comment
+describe('Update Comment action', () => {
+  it('should create an action to update comment', () => {
+    const data = { name: 'Test Comment Edited' };
+    const expectedAction = {
+      type: actions.UPDATE_COMMENT,
+      data,
+    };
+
+    expect(actions.updateComment(data)).toEqual(expectedAction);
+  });
+});
+
+// Test Delete Comment
+describe('Delete Comment action', () => {
+  it('should create an action to delete comment', () => {
+    const comment_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
+    const expectedAction = {
+      type: actions.DELETE_COMMENT,
+      comment_uuid,
+    };
+
+    expect(actions.deleteComment(comment_uuid)).toEqual(expectedAction);
   });
 });
 

@@ -10,7 +10,7 @@ import {
   Grid,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
-import { saveFeatureFormData } from '@redux/decision/actions/decision.actions';
+import { saveFeatureFormData } from '@redux/release/actions/release.actions';
 import AddFeatures, { checkIfAddFeaturesEdited } from './AddFeatures';
 import DescribeProcess, { checkIfDescribeProcessEdited } from './DescribeProcess';
 import ViewDetailsWrapper from '../../NewProduct/components/ViewDetailsWrapper';

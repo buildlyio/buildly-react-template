@@ -16,7 +16,7 @@ import { useInput } from '@hooks/useInput';
 import {
   getAllStatuses,
   saveFeatureFormData,
-} from '@redux/decision/actions/decision.actions';
+} from '@redux/release/actions/release.actions';
 import { getAllCredentials } from '@redux/product/actions/product.actions';
 import { validators } from '@utils/validators';
 import { PRIORITIES, TAGS } from './formConstants';
@@ -454,10 +454,10 @@ const AddFeatures = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  statuses: state.decisionReducer.statuses,
+  statuses: state.releaseReducer.statuses,
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,
-  featureFormData: state.decisionReducer.featureFormData,
+  featureFormData: state.releaseReducer.featureFormData,
 });
 
 export default connect(mapStateToProps)(AddFeatures);

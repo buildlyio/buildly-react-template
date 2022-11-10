@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import { createBoard } from '@redux/product/actions/product.actions';
-import { createStatus } from '@redux/decision/actions/decision.actions';
+import { createStatus } from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
 import { STATUSTYPES } from './formConstants';
 
@@ -379,7 +379,7 @@ const ToolBoard = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  statuses: state.decisionReducer.statuses,
+  statuses: state.releaseReducer.statuses,
 });
 
 export default connect(mapStateToProps)(ToolBoard);

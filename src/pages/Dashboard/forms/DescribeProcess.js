@@ -19,7 +19,7 @@ import {
   createFeature,
   updateFeature,
   saveFeatureFormData,
-} from '@redux/decision/actions/decision.actions';
+} from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
 
 const useStyles = makeStyles((theme) => ({
@@ -482,7 +482,7 @@ const DescribeProcess = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  featureFormData: state.decisionReducer.featureFormData,
+  featureFormData: state.releaseReducer.featureFormData,
 });
 
 export default connect(mapStateToProps)(DescribeProcess);

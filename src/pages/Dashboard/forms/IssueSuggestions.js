@@ -11,7 +11,7 @@ import {
 import FormModal from '@components/Modal/FormModal';
 import {
   createIssue,
-} from '@redux/decision/actions/decision.actions';
+} from '@redux/release/actions/release.actions';
 import { getAllCredentials } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({

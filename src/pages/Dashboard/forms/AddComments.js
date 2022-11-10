@@ -206,7 +206,7 @@ const AddComments = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  statuses: state.decisionReducer.statuses,
+  statuses: state.releaseReducer.statuses,
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,
 });

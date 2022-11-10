@@ -191,67 +191,6 @@ describe('Delete Product action', () => {
   });
 });
 
-// Test Get All Releases
-describe('Get All Releases action', () => {
-  it('should create an action to get all releases', () => {
-    const expectedAction = { type: actions.ALL_RELEASES };
-    expect(actions.getAllReleases()).toEqual(expectedAction);
-  });
-});
-
-// Test Get Release
-describe('Get Release action', () => {
-  it('should create an action to get release', () => {
-    const release_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
-    const expectedAction = {
-      type: actions.GET_RELEASE,
-      release_uuid,
-    };
-
-    expect(actions.getRelease(release_uuid)).toEqual(expectedAction);
-  });
-});
-
-// Test Create Release
-describe('Create Release action', () => {
-  it('should create an action to create release', () => {
-    const data = { name: 'Test Release' };
-    const expectedAction = {
-      type: actions.CREATE_RELEASE,
-      data,
-    };
-
-    expect(actions.createRelease(data)).toEqual(expectedAction);
-  });
-});
-
-// Test Update Release
-describe('Update Release action', () => {
-  it('should create an action to update release', () => {
-    const data = { name: 'Test Release Edited' };
-    const expectedAction = {
-      type: actions.UPDATE_RELEASE,
-      data,
-    };
-
-    expect(actions.updateRelease(data)).toEqual(expectedAction);
-  });
-});
-
-// Test Delete Release
-describe('Delete Release action', () => {
-  it('should create an action to delete release', () => {
-    const release_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
-    const expectedAction = {
-      type: actions.DELETE_RELEASE,
-      release_uuid,
-    };
-
-    expect(actions.deleteRelease(release_uuid))
-      .toEqual(expectedAction);
-  });
-});
-
 // Test Get All Third Party Tools
 describe('Get All Third Party Tools action', () => {
   it('should create an action to get all third party tools', () => {
