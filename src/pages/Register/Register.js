@@ -234,7 +234,7 @@ const Register = ({
                     required
                     fullWidth
                     id="organization_name"
-                    label="Organisation Name"
+                    label="Organization Name"
                     name="organization_name"
                     autoComplete="organization_name"
                     error={

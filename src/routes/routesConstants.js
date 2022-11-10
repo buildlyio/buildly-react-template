@@ -8,4 +8,5 @@ export const routes = {
   USER_MANAGEMENT: '/app/profile/users',
   CURRENT_USERS: '/app/profile/users/current-users',
   USER_GROUPS: '/app/profile/users/groups',
+  REGISTER_CONFIRMATION: '/register-confirmation', //test
 };
