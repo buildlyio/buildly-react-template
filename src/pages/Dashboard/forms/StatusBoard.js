@@ -16,7 +16,6 @@ import FormModal from '@components/Modal/FormModal';
 import {
   createStatus,
 } from '@redux/release/actions/release.actions';
-import { validators } from '@utils/validators';
 import { STATUSTYPES } from './formConstants';
 
 const useStyles = makeStyles((theme) => ({
@@ -103,40 +102,25 @@ const StatusBoard = ({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const statusData = status.map((col) => ({
+    let statusData = _.map(status, (col) => ({
       product_uuid,
       name: col,
       description: col,
       status_tracking_id: null,
     }));
-    statusData.push({
-      product_uuid,
-      name: 'No Status',
-      description: 'No Status',
-      status_tracking_id: null,
-    });
+
+    statusData = [
+      ...statusData,
+      {
+        product_uuid,
+        name: 'No Status',
+        description: 'No Status',
+        status_tracking_id: null,
+      },
+    ];
 
     dispatch(createStatus(statusData));
     history.push(redirectTo);
-  };
-
-  const handleBlur = (e, validation, input, parentId) => {
-    const validateObj = validators(validation, input);
-    const prevState = { ...formError };
-    if (validateObj && validateObj.error) {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: validateObj,
-      });
-    } else {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: {
-          error: false,
-          message: '',
-        },
-      });
-    }
   };
 
   const submitDisabled = () => {
@@ -146,6 +130,7 @@ const StatusBoard = ({
     ) {
       return true;
     }
+
     let errorExists = false;
     _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
@@ -169,11 +154,7 @@ const StatusBoard = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
-          <form
-            className={classes.form}
-            noValidate
-            onSubmit={handleSubmit}
-          >
+          <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <Autocomplete
@@ -200,21 +181,13 @@ const StatusBoard = ({
                       variant="outlined"
                       label="Select the list of Columns"
                       margin="normal"
-                      // onKeyDown={(e) => {
-                      //   if (e.key === 13 && e.target.value) {
-                      //     onStatusChange(e.target.value);
-                      //   }
-                      // }}
                     />
                   )}
                 />
               </Grid>
             </Grid>
-            <Grid
-              container
-              spacing={isDesktop ? 3 : 0}
-              justifyContent="center"
-            >
+
+            <Grid container spacing={isDesktop ? 3 : 0} justifyContent="center">
               <Grid item xs={12} sm={4}>
                 <Button
                   type="submit"
@@ -227,6 +200,7 @@ const StatusBoard = ({
                   Configure Board
                 </Button>
               </Grid>
+
               <Grid item xs={12} sm={4}>
                 <Button
                   type="button"

@@ -106,7 +106,7 @@ import {
   deleteProduct,
 } from '../../product/actions/product.actions';
 
-const releaseEndpoint = 'release/';
+const releaseEndpoint = 'decision/';
 
 function* allReleases(payload) {
   try {
@@ -241,7 +241,7 @@ function* allComments(payload) {
     const comments = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}comment/`,
+      `${window.env.API_URL}${releaseEndpoint}comment/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_COMMENTS_SUCCESS, data: comments.data });
   } catch (error) {
@@ -369,7 +369,7 @@ function* allFeatures(payload) {
     const features = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}feature/`,
+      `${window.env.API_URL}${releaseEndpoint}feature/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_FEATURES_SUCCESS, data: features.data });
   } catch (error) {
@@ -654,7 +654,7 @@ function* allIssues(payload) {
     const issues = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}issue/`,
+      `${window.env.API_URL}${releaseEndpoint}issue/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_ISSUES_SUCCESS, data: issues.data });
   } catch (error) {
@@ -822,7 +822,7 @@ function* allStatuses(payload) {
     const statuses = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}status/`,
+      `${window.env.API_URL}${releaseEndpoint}status/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_STATUSES_SUCCESS, data: statuses.data });
   } catch (error) {

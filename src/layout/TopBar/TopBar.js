@@ -185,7 +185,7 @@ const TopBar = ({
             >
               <MenuItem
                 disabled={
-                  (location.pathname === routes.DASHBOARD_LIST)
+                  (location.pathname === routes.DASHBOARD_TABULAR)
                   || (location.pathname === routes.DASHBOARD_KANBAN)
                 }
                 onClick={() => {

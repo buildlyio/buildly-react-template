@@ -3,8 +3,9 @@ import * as actions from './product.actions';
 // Test Get All Credentials
 describe('Get All Credentials action', () => {
   it('should create an action to get all credentials', () => {
-    const expectedAction = { type: actions.ALL_CREDENTIALS };
-    expect(actions.getAllCredentials()).toEqual(expectedAction);
+    const product_uuid = '25682839-jshfw2-8t29we-3r28wen';
+    const expectedAction = { type: actions.ALL_CREDENTIALS, product_uuid };
+    expect(actions.getAllCredentials(product_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -131,8 +132,9 @@ describe('Delete Product Team action', () => {
 // Test Get All Products
 describe('Get All Products action', () => {
   it('should create an action to get all products', () => {
-    const expectedAction = { type: actions.ALL_PRODUCTS };
-    expect(actions.getAllProducts()).toEqual(expectedAction);
+    const organization_uuid = '27541748-3871-138ryweh-328tywef';
+    const expectedAction = { type: actions.ALL_PRODUCTS, organization_uuid };
+    expect(actions.getAllProducts(organization_uuid)).toEqual(expectedAction);
   });
 });
 

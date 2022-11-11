@@ -7,7 +7,7 @@ export const routes = {
   VERIFY_EMAIL: '/verify-email',
   APP: '/app',
   DASHBOARD: '/app/dashboard',
-  DASHBOARD_LIST: '/app/dashboard/list',
+  DASHBOARD_TABULAR: '/app/dashboard/tabular',
   DASHBOARD_KANBAN: '/app/dashboard/kanban',
   USER_MANAGEMENT: '/app/profile/users',
   CURRENT_USERS: '/app/profile/users/current-users',

@@ -1,6 +1,7 @@
 // Product Action types
 export const SAVE_PRODUCT_FORM_DATA = 'PRODUCT/SAVE_PRODUCT_FORM_DATA';
 export const CLEAR_BOARD_DATA = 'PRODUCT/CLEAR_BOARD_DATA';
+export const CLEAR_PRODUCT_RELATED_PRODUCT_DATA = 'PRODUCT/CLEAR_PRODUCT_RELATED_PRODUCT_DATA';
 
 export const ALL_CREDENTIALS = 'PRODUCT/ALL_CREDENTIALS';
 export const ALL_CREDENTIALS_SUCCESS = 'PRODUCT/ALL_CREDENTIALS_SUCCESS';
@@ -109,16 +110,26 @@ export const saveProductFormData = (formData) => ({
 
 /**
  * Clear Board Data
- * @param {Object} formData
  */
 export const clearBoardData = () => ({
   type: CLEAR_BOARD_DATA,
 });
 
 /**
- * Get all Credentials
+ * Clear Product Related Data
  */
-export const getAllCredentials = () => ({ type: ALL_CREDENTIALS });
+export const clearProductRelatedProductData = () => ({
+  type: CLEAR_PRODUCT_RELATED_PRODUCT_DATA,
+});
+
+/**
+ * Get all Credentials
+ * @param {uuid} product_uuid
+ */
+export const getAllCredentials = (product_uuid) => ({
+  type: ALL_CREDENTIALS,
+  product_uuid,
+});
 
 /**
  * Get a Credential
@@ -199,8 +210,12 @@ export const deleteProductTeam = (productteam_uuid) => ({
 
 /**
  * Get all Products
+ * @param {uuid} organization_uuid
  */
-export const getAllProducts = () => ({ type: ALL_PRODUCTS });
+export const getAllProducts = (organization_uuid) => ({
+  type: ALL_PRODUCTS,
+  organization_uuid,
+});
 
 /**
  * Get a Product

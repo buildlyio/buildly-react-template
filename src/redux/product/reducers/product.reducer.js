@@ -2,6 +2,7 @@ import _ from 'lodash';
 import {
   SAVE_PRODUCT_FORM_DATA,
   CLEAR_BOARD_DATA,
+  CLEAR_PRODUCT_RELATED_PRODUCT_DATA,
   ALL_CREDENTIALS,
   ALL_CREDENTIALS_SUCCESS,
   ALL_CREDENTIALS_FAILURE,
@@ -96,10 +97,19 @@ export default (state = initialState, action) => {
         ...state,
         productFormData: action.formData,
       };
+
     case CLEAR_BOARD_DATA:
       return {
         ...state,
         boards: [],
+      };
+
+    case CLEAR_PRODUCT_RELATED_PRODUCT_DATA:
+      return {
+        ...state,
+        credentials: [],
+        boards: [],
+        productFormData: null,
       };
 
     case ALL_CREDENTIALS:
@@ -196,17 +206,15 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_CREDENTIAL_SUCCESS: {
-      const { credentials } = state;
-      _.remove(
-        credentials,
-        { credential_uuid: action.credential_uuid },
-      );
+      const creds = _.filter(state.credentials, (cred) => (
+        cred.credential_uuid !== action.credential_uuid
+      ));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        credentials,
+        credentials: creds,
       };
     }
 
@@ -242,17 +250,15 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_PRODUCT_TEAM_SUCCESS: {
-      const { productTeams } = state;
-      _.remove(
-        productTeams,
-        { productteam_uuid: action.productteam_uuid },
-      );
+      const pts = _.filter(state.productTeams, (pt) => (
+        pt.productteam_uuid !== action.productteam_uuid
+      ));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        productTeams,
+        productTeams: pts,
       };
     }
 
@@ -288,14 +294,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_PRODUCT_SUCCESS: {
-      const { products } = state;
-      _.remove(products, { product_uuid: action.product_uuid });
+      const prods = _.filter(state.products, (prod) => (prod.product_uuid !== action.product_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        products,
+        products: prods,
       };
     }
 
@@ -331,17 +336,15 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_THIRD_PARTY_TOOL_SUCCESS: {
-      const { thirdPartyTools } = state;
-      _.remove(
-        thirdPartyTools,
-        { thirdpartytool_uuid: action.thirdpartytool_uuid },
-      );
+      const tpts = _.filter(state.thirdPartyTools, (tp) => (
+        tp.thirdpartytool_uuid !== action.thirdpartytool_uuid
+      ));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        thirdPartyTools,
+        thirdPartyTools: tpts,
       };
     }
 

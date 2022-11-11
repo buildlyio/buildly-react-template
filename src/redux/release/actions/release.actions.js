@@ -1,5 +1,6 @@
 // Release Action types
 export const SAVE_FEATURE_FORM_DATA = 'RELEASE/SAVE_FEATURE_FORM_DATA';
+export const CLEAR_PRODUCT_RELATED_RELEASE_DATA = 'RELEASE/CLEAR_PRODUCT_RELATED_RELEASE_DATA';
 
 export const ALL_RELEASES = 'RELEASE/ALL_RELEASES';
 export const ALL_RELEASES_SUCCESS = 'RELEASE/ALL_RELEASES_SUCCESS';
@@ -181,8 +182,12 @@ export const deleteRelease = (release_uuid) => ({
 
 /**
  * Get all Comments
+ * @param {uuid} product_uuid
  */
-export const getAllComments = () => ({ type: ALL_COMMENTS });
+export const getAllComments = (product_uuid) => ({
+  type: ALL_COMMENTS,
+  product_uuid,
+});
 
 /**
  * Get a Comment
@@ -222,8 +227,12 @@ export const deleteComment = (comment_uuid) => ({
 
 /**
  * Get all Features
+ * @param {uuid} product_uuid
  */
-export const getAllFeatures = () => ({ type: ALL_FEATURES });
+export const getAllFeatures = (product_uuid) => ({
+  type: ALL_FEATURES,
+  product_uuid,
+});
 
 /**
  * Get a Feature
@@ -304,8 +313,12 @@ export const deleteFeedback = (feedback_uuid) => ({
 
 /**
  * Get all Issues
+ * @param {uuid} product_uuid
  */
-export const getAllIssues = () => ({ type: ALL_ISSUES });
+export const getAllIssues = (product_uuid) => ({
+  type: ALL_ISSUES,
+  product_uuid,
+});
 
 /**
  * Get an Issue
@@ -345,8 +358,12 @@ export const deleteIssue = (data) => ({
 
 /**
  * Get all Statuses
+ * @param {uuid} product_uuid
  */
-export const getAllStatuses = () => ({ type: ALL_STATUSES });
+export const getAllStatuses = (product_uuid) => ({
+  type: ALL_STATUSES,
+  product_uuid,
+});
 
 /**
  * Get a Status
@@ -400,4 +417,11 @@ export const importTickets = (data) => ({
 export const clearProductData = (data) => ({
   type: CLEAR_PRODUCT_DATA,
   data,
+});
+
+/**
+ * Clear Product related data
+ */
+export const clearProductRelatedReleaseData = () => ({
+  type: CLEAR_PRODUCT_RELATED_RELEASE_DATA,
 });

@@ -7,12 +7,12 @@ import {
   useMediaQuery,
   Grid,
   Button,
+  Typography,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import {
   createIssue,
 } from '@redux/release/actions/release.actions';
-import { getAllCredentials } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -30,6 +30,11 @@ const useStyles = makeStyles((theme) => ({
   formTitle: {
     fontWeight: 'bold',
     marginTop: '1em',
+    textAlign: 'center',
+  },
+  noSuggestions: {
+    width: '100%',
+    padding: theme.spacing(4),
     textAlign: 'center',
   },
 }));
@@ -64,11 +69,8 @@ const IssueSuggestions = ({
   const [product, setProduct] = useState('');
 
   useEffect(() => {
-    const prd = _.find(products, { product_uuid });
-    setProduct(prd);
-    if (!credentials || _.isEmpty(credentials)) {
-      dispatch(getAllCredentials());
-    }
+    const prod = _.find(products, { product_uuid });
+    setProduct(prod);
   }, []);
 
   const handleSubmit = (event) => {
@@ -97,7 +99,7 @@ const IssueSuggestions = ({
       issue_detail: {},
     };
 
-    const issueSuggestionsData = showData.issue_suggestion.map((issue) => ({
+    const issueSuggestionsData = _.map(showData.issue_suggestion, (issue) => ({
       ...formData,
       name: issue.name,
       description: issue.description,
@@ -137,13 +139,16 @@ const IssueSuggestions = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
-          <form
-            className={classes.form}
-            noValidate
-            onSubmit={handleSubmit}
-          >
+          <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container rowGap={2}>
-              {_.map(showData.issue_suggestion, (issue, index) => (
+              {showData && _.isEmpty(showData.issue_suggestion) && (
+                <Typography variant="body1" className={classes.noSuggestions}>
+                  No suggested issues found
+                </Typography>
+              )}
+
+              {showData && !_.isEmpty(showData.issue_suggestion)
+              && _.map(showData.issue_suggestion, (issue, index) => (
                 <Button
                   key={`${issue.name}-${index}`}
                   style={{ cursor: 'text' }}
@@ -155,26 +160,23 @@ const IssueSuggestions = ({
                 </Button>
               ))}
             </Grid>
-            <Grid
-              container
-              spacing={isDesktop ? 3 : 0}
-              justifyContent="center"
-            >
-              {(showData?.issue_suggestion !== null
-              && (
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                >
-                  Go with suggestions
-                </Button>
-              </Grid>
-              )
-              )}
+
+            <Grid container spacing={isDesktop ? 3 : 0} justifyContent="center">
+              {(showData && (
+                <Grid item xs={12} sm={4}>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    disabled={_.isEmpty(showData.issue_suggestion)}
+                  >
+                    Go with suggestions
+                  </Button>
+                </Grid>
+              ))}
+
               <Grid item xs={12} sm={4}>
                 <Button
                   type="button"

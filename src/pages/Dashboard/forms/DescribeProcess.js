@@ -59,8 +59,8 @@ const DescribeProcess = ({
 
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && (location.state.type === 'edit' || location.state.type === 'view');
+  const viewPage = location.state && (location.state.type === 'view');
   const editData = (editPage && location.state.data) || {};
-  const viewPage = (location.state && location.state.viewOnly) || false;
 
   const buttonText = editPage ? 'Save' : 'Add Feature';
   const theme = useTheme();
@@ -200,7 +200,7 @@ const DescribeProcess = ({
             className={classes.choice}
             fullWidth
             component="fieldset"
-            disabled={viewPage || editPage}
+            disabled={viewPage}
           >
             <FormLabel component="legend">
               Are we collecting any data from the user?
@@ -243,7 +243,7 @@ const DescribeProcess = ({
               className={classes.textField}
               onBlur={(e) => handleBlur(e, 'required', quest2)}
               {...quest2.bind}
-              disabled={viewPage || editPage}
+              disabled={viewPage}
             />
           )}
 
@@ -251,7 +251,7 @@ const DescribeProcess = ({
             className={classes.choice}
             fullWidth
             component="fieldset"
-            disabled={viewPage || editPage}
+            disabled={viewPage}
           >
             <FormLabel component="legend">
               Is the collected or stored data to be displayed to the user?
@@ -294,7 +294,7 @@ const DescribeProcess = ({
               className={classes.textField}
               onBlur={(e) => handleBlur(e, 'required', quest4)}
               {...quest4.bind}
-              disabled={viewPage || editPage}
+              disabled={viewPage}
             />
           )}
 
@@ -303,7 +303,7 @@ const DescribeProcess = ({
               className={classes.choice}
               fullWidth
               component="fieldset"
-              disabled={viewPage || editPage}
+              disabled={viewPage}
             >
               <FormLabel component="legend">
                 Is there any particular flow or logic to be followed for the
@@ -333,7 +333,7 @@ const DescribeProcess = ({
             className={classes.choice}
             fullWidth
             component="fieldset"
-            disabled={viewPage || editPage}
+            disabled={viewPage}
           >
             <FormLabel component="legend">
               Are we making any important decisions that need to be notified or displayed?
@@ -376,7 +376,7 @@ const DescribeProcess = ({
               className={classes.textField}
               onBlur={(e) => handleBlur(e, 'required', quest7)}
               {...quest7.bind}
-              disabled={viewPage || editPage}
+              disabled={viewPage}
             />
           )}
 
@@ -385,7 +385,7 @@ const DescribeProcess = ({
               className={classes.choice}
               fullWidth
               component="fieldset"
-              disabled={viewPage || editPage}
+              disabled={viewPage}
             >
               <FormLabel component="legend">
                 How does a user find this data?
@@ -415,7 +415,7 @@ const DescribeProcess = ({
               className={classes.choice}
               fullWidth
               component="fieldset"
-              disabled={viewPage || editPage}
+              disabled={viewPage}
             >
               <FormLabel component="legend">
                 Where do you want to display links?

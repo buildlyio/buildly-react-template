@@ -94,7 +94,7 @@ function* allCredentials(payload) {
     const creds = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}credential/`,
+      `${window.env.API_URL}${productEndpoint}credential/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_CREDENTIALS_SUCCESS, data: creds.data });
   } catch (error) {
@@ -350,7 +350,7 @@ function* allProducts(payload) {
     const products = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}product/`,
+      `${window.env.API_URL}${productEndpoint}product/?organization_uuid=${payload.organization_uuid}`,
     );
     yield put({ type: ALL_PRODUCTS_SUCCESS, data: products.data });
   } catch (error) {

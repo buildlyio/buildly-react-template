@@ -63,8 +63,9 @@ describe('Delete Release action', () => {
 // Test Get All Comments
 describe('Get All Comments action', () => {
   it('should create an action to get all comment', () => {
-    const expectedAction = { type: actions.ALL_COMMENTS };
-    expect(actions.getAllComments()).toEqual(expectedAction);
+    const product_uuid = '38625-dkjhg8934-832r2ehf-382fie22w';
+    const expectedAction = { type: actions.ALL_COMMENTS, product_uuid };
+    expect(actions.getAllComments(product_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -123,8 +124,9 @@ describe('Delete Comment action', () => {
 // Test Get All Features
 describe('Get All Features action', () => {
   it('should create an action to get all features', () => {
-    const expectedAction = { type: actions.ALL_FEATURES };
-    expect(actions.getAllFeatures()).toEqual(expectedAction);
+    const product_uuid = '38625-dkjhg8934-832r2ehf-382fie22w';
+    const expectedAction = { type: actions.ALL_FEATURES, product_uuid };
+    expect(actions.getAllFeatures(product_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -246,8 +248,9 @@ describe('Delete Feedback action', () => {
 // Test Get All Issues
 describe('Get All Issues action', () => {
   it('should create an action to get all issues', () => {
-    const expectedAction = { type: actions.ALL_ISSUES };
-    expect(actions.getAllIssues()).toEqual(expectedAction);
+    const product_uuid = '38625-dkjhg8934-832r2ehf-382fie22w';
+    const expectedAction = { type: actions.ALL_ISSUES, product_uuid };
+    expect(actions.getAllIssues(product_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -307,8 +310,9 @@ describe('Delete Issue action', () => {
 // Test Get All Statuses
 describe('Get All Statuses action', () => {
   it('should create an action to get all statuses', () => {
-    const expectedAction = { type: actions.ALL_STATUSES };
-    expect(actions.getAllStatuses()).toEqual(expectedAction);
+    const product_uuid = '38625-dkjhg8934-832r2ehf-382fie22w';
+    const expectedAction = { type: actions.ALL_STATUSES, product_uuid };
+    expect(actions.getAllStatuses(product_uuid)).toEqual(expectedAction);
   });
 });
 

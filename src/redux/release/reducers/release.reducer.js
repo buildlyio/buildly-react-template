@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import {
   SAVE_FEATURE_FORM_DATA,
+  CLEAR_PRODUCT_RELATED_RELEASE_DATA,
   ALL_RELEASES,
   ALL_RELEASES_SUCCESS,
   ALL_RELEASES_FAILURE,
@@ -123,6 +124,17 @@ export default (state = initialState, action) => {
         featureFormData: action.formData,
       };
 
+    case CLEAR_PRODUCT_RELATED_RELEASE_DATA:
+      return {
+        ...state,
+        comments: [],
+        features: [],
+        issues: [],
+        statuses: [],
+        importLoaded: false,
+        featureFormData: null,
+      };
+
     case ALL_RELEASES:
     case ALL_COMMENTS:
     case ALL_FEATURES:
@@ -233,14 +245,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_RELEASE_SUCCESS: {
-      const { releases } = state;
-      _.remove(releases, { release_uuid: action.release_uuid });
+      const rels = _.filter(state.releases, (rel) => (rel.release_uuid !== action.release_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        releases,
+        releases: rels,
       };
     }
 
@@ -276,14 +287,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_COMMENT_SUCCESS: {
-      const { comments } = state;
-      _.remove(comments, { comment_uuid: action.comment_uuid });
+      const comms = _.filter(state.comments, (comm) => (comm.comment_uuid !== action.comment_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        comments,
+        comments: comms,
       };
     }
 
@@ -319,14 +329,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_FEATURE_SUCCESS: {
-      const { features } = state;
-      _.remove(features, { feature_uuid: action.feature_uuid });
+      const feats = _.filter(state.features, (feat) => (feat.feature_uuid !== action.feature_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        features,
+        features: feats,
       };
     }
 
@@ -362,14 +371,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_FEEDBACK_SUCCESS: {
-      const { feedbacks } = state;
-      _.remove(feedbacks, { feedback_uuid: action.feedback_uuid });
+      const fbs = _.filter(state.feedbacks, (fb) => (fb.feedback_uuid !== action.feedback_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        feedbacks,
+        feedbacks: fbs,
       };
     }
 
@@ -405,14 +413,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_ISSUE_SUCCESS: {
-      const { issues } = state;
-      _.remove(issues, { issue_uuid: action.issue_uuid });
+      const iss = _.filter(state.issues, (issue) => (issue.issue_uuid !== action.issue_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        issues,
+        issues: iss,
       };
     }
 
@@ -448,14 +455,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_STATUS_SUCCESS: {
-      const { statuses } = state;
-      _.remove(statuses, { status_uuid: action.status_uuid });
+      const sts = _.filter(state.statuses, (st) => (st.status_uuid !== action.status_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        statuses,
+        statuses: sts,
       };
     }
 
@@ -481,19 +487,14 @@ export default (state = initialState, action) => {
       };
     }
 
-    case CLEAR_PRODUCT_DATA_SUCCESS: {
-      const { features, issues } = state;
-      _.remove(features, { product_uuid: action.data.product_uuid });
-      _.remove(issues, { product_uuid: action.data.product_uuid });
-
+    case CLEAR_PRODUCT_DATA_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        features,
-        issues,
+        features: [],
+        issues: [],
       };
-    }
 
     default:
       return state;
