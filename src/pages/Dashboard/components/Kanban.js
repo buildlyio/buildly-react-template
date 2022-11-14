@@ -32,9 +32,7 @@ import {
   TrendingFlatRounded as TrendingFlatRoundedIcon,
   Update as UpdateIcon,
 } from '@mui/icons-material';
-import {
-  getAllStatuses, updateFeature, updateIssue,
-} from '@redux/release/actions/release.actions';
+import { updateFeature, updateIssue } from '@redux/release/actions/release.actions';
 
 const useStyles = makeStyles((theme) => ({
   noProduct: {
@@ -101,19 +99,19 @@ const options = [
 ];
 
 const Kanban = ({
+  dispatch,
+  selectedProduct,
+  features,
+  issues,
   statuses,
-  product,
-  productFeatures,
-  productIssues,
+  credentials,
   addItem,
   editItem,
-  issueSuggestions,
   deleteItem,
   commentItem,
-  dispatch,
-  credentials,
+  issueSuggestions,
   upgrade,
-  productSuggestions,
+  suggestedFeatures,
   createSuggestedFeature,
   removeSuggestedFeature,
 }) => {
@@ -121,40 +119,23 @@ const Kanban = ({
   const [columns, setColumns] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentNumber, setCurrentNumber] = useState(null);
-  const [status, setStatus] = useState('');
 
   const handleClick = (event, number) => {
     setAnchorEl(event.currentTarget);
     setCurrentNumber(number);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
     setCurrentNumber(null);
   };
 
   useEffect(() => {
-    if (!status || _.isEmpty(status)) {
-      dispatch(getAllStatuses());
-    }
-  }, []);
-
-  useEffect(() => {
-    const sta = _.filter(statuses, { product_uuid: product });
-    setStatus(sta);
-  }, [statuses, product]);
-
-  useEffect(() => {
     let cols = {};
-    if (status && !_.isEmpty(status)) {
-      _.forEach(status, (sts) => {
-        const features = _.filter(
-          productFeatures,
-          { status: sts.status_uuid },
-        );
-        const issues = _.filter(
-          productIssues,
-          { status: sts.status_uuid },
-        );
+    if (statuses && !_.isEmpty(statuses)) {
+      _.forEach(statuses, (sts) => {
+        const features = _.filter(features, { status: sts.status_uuid });
+        const issues = _.filter(issues, { status: sts.status_uuid });
         const items = [...features, ...issues];
         cols = {
           ...cols,
@@ -167,21 +148,15 @@ const Kanban = ({
           delete cols[sts.status_uuid];
         }
       });
+
       setColumns(cols);
     }
-  }, [status, productFeatures, productIssues]);
-
-  const featCred = _.find(
-    credentials,
-    { product_uuid: product, auth_detail: { tool_type: 'Feature' } },
-  );
-  const issueCred = _.find(
-    credentials,
-    { product_uuid: product, auth_detail: { tool_type: 'Issue' } },
-  );
-  const currentStat = _.filter(statuses, { product_uuid: product });
+  }, [statuses, features, issues]);
 
   const onDragEnd = (result, columns, setColumns) => {
+    const featCred = _.find(credentials, { auth_detail: { tool_type: 'Feature' } });
+    const issueCred = _.find(credentials, { auth_detail: { tool_type: 'Issue' } });
+
     if (!result.destination) return;
     const { source, destination } = result;
 
@@ -206,8 +181,9 @@ const Kanban = ({
 
       // Update status of the card on drag and drop to other column
       removed.status = destination.droppableId;
-      const currentStatData = _.find(currentStat, { status_uuid: destination.droppableId });
+      const currentStatData = _.find(statuses, { status_uuid: destination.droppableId });
       removed.column_id = currentStatData.status_tracking_id;
+
       let updateData = {};
       if (removed.issue_uuid) {
         updateData = {
@@ -239,26 +215,26 @@ const Kanban = ({
 
   return (
     <>
-      {!product && (
+      {!selectedProduct && (
         <Typography className={classes.noProduct} component="div" variant="body1">
           No product selected yet. Please select a product to view related features and/or issues.
         </Typography>
       )}
 
-      {!!product && upgrade && (
+      {!!selectedProduct && upgrade && (
         <FormHelperText error style={{ marginBottom: '16px' }}>
           Upgrade to be able to create more features
         </FormHelperText>
       )}
 
-      {!!product && (
+      {!!selectedProduct && (
         <DragDropContext
           onDragEnd={(result) => {
             onDragEnd(result, columns, setColumns);
           }}
         >
           <Grid container rowGap={2} columnGap={4} className={classes.container}>
-            {!!product && productSuggestions && !_.isEmpty(productSuggestions) && (
+            {!!selectedProduct && suggestedFeatures && !_.isEmpty(suggestedFeatures) && (
               <Grid item xs={2.6} sm={2.75} lg={2.85} className={classes.swimlane}>
                 <div>
                   <Typography className={classes.title} component="div" variant="body1">
@@ -267,7 +243,7 @@ const Kanban = ({
                 </div>
 
                 <div className={classes.columnBody}>
-                  {_.map(productSuggestions, (sug, idx) => (
+                  {_.map(suggestedFeatures, (sug, idx) => (
                     <Card key={`suggestion-${sug.suggestion_uuid}`} className={classes.card} variant="outlined">
                       <CardHeader
                         subheader={sug.suggested_feature}
@@ -353,7 +329,7 @@ const Kanban = ({
                                   subheader={item.name}
                                   action={(
                                     <div>
-                                      {!item.issue_uuid && _.filter(productIssues, (issue) => (
+                                      {!item.issue_uuid && _.filter(issues, (issue) => (
                                         issue.feature_uuid === item.feature_uuid
                                       )).length === 0 && (
                                         <IconButton
@@ -451,7 +427,7 @@ const Kanban = ({
                                   )}
 
                                   {item.issue_uuid && _.map(
-                                    _.filter(productFeatures, (feat) => (
+                                    _.filter(features, (feat) => (
                                       feat.feature_uuid === item.feature_uuid
                                     )),
                                     (feat, ind) => (
@@ -495,7 +471,10 @@ const Kanban = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.releaseReducer,
+  features: state.releaseReducer.features,
+  issues: state.releaseReducer.issues,
+  statuses: state.releaseReducer.statuses,
+  credentials: state.productReducer.credentials,
 });
 
 export default connect(mapStateToProps)(Kanban);

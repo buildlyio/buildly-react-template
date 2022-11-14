@@ -7,9 +7,9 @@ import { makeStyles } from '@mui/styles';
 import {
   Button, Grid, MenuItem, Tab, Tabs, TextField, Typography,
 } from '@mui/material';
+import ConfirmModal from '@components/Modal/ConfirmModal';
 import Loader from '@components/Loader/Loader';
 import { routes } from '@routes/routesConstants';
-import Tabular from './components/Tabular';
 import {
   clearProductRelatedProductData, getAllCredentials, getAllProducts, getBoard, updateProduct,
 } from '@redux/product/actions/product.actions';
@@ -22,14 +22,15 @@ import {
   getAllIssues,
   getAllStatuses,
 } from '@redux/release/actions/release.actions';
-import NewFeatureForm from './forms/NewFeatureForm';
+import Kanban from './components/Kanban';
+import Tabular from './components/Tabular';
 import AddIssues from './forms/AddIssues';
 import AddComments from './forms/AddComments';
-import ConfirmModal from '@components/Modal/ConfirmModal';
-import IssueSuggestions from './forms/IssueSuggestions';
 import IgnoreColumns from './forms/IgnoreColumns';
-import ToolBoard from './forms/ToolBoard';
+import IssueSuggestions from './forms/IssueSuggestions';
+import NewFeatureForm from './forms/NewFeatureForm';
 import StatusBoard from './forms/StatusBoard';
+import ToolBoard from './forms/ToolBoard';
 
 const useStyles = makeStyles((theme) => ({
   firstTimeMessage: {
@@ -441,6 +442,26 @@ const Dashboard = ({
             path={routes.DASHBOARD_TABULAR}
             render={(prps) => (
               <Tabular
+                {...prps}
+                selectedProduct={selectedProduct}
+                addItem={addItem}
+                editItem={editItem}
+                deleteItem={deleteItem}
+                commentItem={commentItem}
+                issueSuggestions={issueSuggestions}
+                upgrade={upgrade}
+                suggestedFeatures={
+                  product && product.product_info && product.product_info.suggestions
+                }
+                createSuggestedFeature={createSuggestedFeature}
+                removeSuggestedFeature={removeSuggestedFeature}
+              />
+            )}
+          />
+          <Route
+            path={routes.DASHBOARD_KANBAN}
+            render={(prps) => (
+              <Kanban
                 {...prps}
                 selectedProduct={selectedProduct}
                 addItem={addItem}
