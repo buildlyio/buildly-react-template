@@ -2,16 +2,24 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import Container from '@mui/material/Container';
+import { useInput } from '@hooks/useInput';
+import {
+  sendPasswordResetLink,
+} from '@redux/authuser/authuser.actions';
+import { validators } from '@utils/validators';
 import logo from '@assets/buildly-logo.png';
+import { routes } from '@routes/routesConstants';
 import Copyright from '@components/Copyright/Copyright';
-import {useHistory,} from 'react-router-dom';
-import { devNull } from 'os';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,11 +35,12 @@ const useStyles = makeStyles((theme) => ({
     width: '12.5rem',
     maxWidth: '100%',
   },
-  buttonHome: {
-    background: '#3E5266',
-    cursor: 'pointer',
-    width: '170px',
-    marginTop: '20px',
+  buttonProgress: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
   },
   emailText: {
     color: '#3E5266',
@@ -39,24 +48,8 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const RegisterConfirmation = ({ dispatch, loading }) => {
+const RegisterConfirmationEmail = ({ dispatch, loading, history }) => {
     const classes = useStyles();
-
-
-    /* this supposed to be the function to redirect to home  */
-
-
-    /* const history = useHistory()
-     /**
-   * Submit the form to the backend and attempts to authenticate
-   * @param {Event} event the default submit event
-   */
-
-    /* const redirect = (event) => {
-      event.preventDefault();
-      history.push('/')
-    
-    } */
 
   
     return (
@@ -70,22 +63,11 @@ const RegisterConfirmation = ({ dispatch, loading }) => {
             <span className={classes.emailText}>Thank you for registering with us!!</span>
             </Typography>
             <Typography component="h1" variant="body1" gutterBottom>
-              We will be communicating with you through your email.
+            Please check the email with which you just registered to confirm your account.
             </Typography>
             <Typography component="h1" variant="body1" gutterBottom>
               Please if you have any questions write to the following email <span className={classes.emailText}>idk@idk.com</span>.
             </Typography>
-            <Button
-                onClick={null}
-                size="small"
-                variant="contained"
-                color="primary"
-                type="submit"
-                className={classes.buttonHome}
-                disabled={false}
-              >
-                Go back Home
-            </Button>
           </div>
         </CardContent>
       </Card>
@@ -101,4 +83,4 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.authReducer,
 });
 
-export default connect(mapStateToProps)(RegisterConfirmation);
+export default connect(mapStateToProps)(RegisterConfirmationEmail);

@@ -209,7 +209,15 @@ const Login = ({ dispatch, loading, history }) => {
                     variant="body2"
                     color="secondary"
                   >
-                       TEST TEST 
+                       TEST 1 
+                  </Link>
+
+                  <Link
+                    href={routes.REGISTER_CONFIRMATION_EMAIL}
+                    variant="body2"
+                    color="secondary"
+                  >
+                       TEST 2 
                   </Link>
                 </Grid>
                 <Grid item>

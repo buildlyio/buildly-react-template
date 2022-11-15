@@ -12,6 +12,7 @@ import Register from './pages/Register/Register';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
 import RegisterConfirmation from './pages/RegisterConfirmation/registerConfirmation'; /* test */
+import RegisterConfirmationEmail from './pages/RegisterConfirmationEmail/registerConfirmationEmail'; /* test */
 import theme from './styles/theme';
 import Alert from './components/Alert/Alert';
 import { routes } from './routes/routesConstants';
@@ -36,6 +37,7 @@ const App = () => (
           <Route path={routes.FORGOT_PASSWORD} component={ForgotPassword} />
           <Route path={routes.RESET_PASSWORD} component={ResetPassword} />
           <Route path={routes.REGISTER_CONFIRMATION} component={RegisterConfirmation} /> {/* test */}
+          <Route path={routes.REGISTER_CONFIRMATION_EMAIL} component={RegisterConfirmationEmail} /> {/* test */}
           <PrivateRoute path={routes.APP} component={ContainerDashboard} />
         </div>
         <Alert />
