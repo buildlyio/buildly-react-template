@@ -201,6 +201,24 @@ const Login = ({ dispatch, loading, history }) => {
                   >
                     Forgot password?
                   </Link>
+                  
+{/*                   Esto es de prueba
+ */}
+                  <Link
+                    href={routes.REGISTER_CONFIRMATION}
+                    variant="body2"
+                    color="secondary"
+                  >
+                       TEST 1 
+                  </Link>
+
+                  <Link
+                    href={routes.REGISTER_CONFIRMATION_EMAIL}
+                    variant="body2"
+                    color="secondary"
+                  >
+                       TEST 2 
+                  </Link>
                 </Grid>
                 <Grid item>
                   <Link
