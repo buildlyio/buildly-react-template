@@ -275,13 +275,14 @@ describe('Get Board action', () => {
 describe('Create Board action', () => {
   it('should create an action to create board', () => {
     const data = { name: 'Test Board' };
+    const statusData = [];
     const expectedAction = {
       type: actions.CREATE_BOARD,
       data,
+      statusData,
     };
 
-    expect(actions.createBoard(data))
-      .toEqual(expectedAction);
+    expect(actions.createBoard(data, statusData)).toEqual(expectedAction);
   });
 });
 

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
@@ -868,23 +869,24 @@ function* getStatus(payload) {
 }
 
 function* createStatus(payload) {
+  const { data } = payload;
   try {
-    if (payload.data.length > 0) {
-      for (let i = 0; i < payload.data.length; i += 1) {
-        const status = yield call(
+    if (_.size(data) > 1) {
+      const statuses = yield all(_.map(data, (status_data) => (
+        call(
           httpService.makeRequest,
           'post',
           `${window.env.API_URL}${releaseEndpoint}status/`,
-          payload.data[i],
-        );
-        yield put({ type: CREATE_STATUS_SUCCESS, data: status.data });
-      }
+          status_data,
+        )
+      )));
+      yield put({ type: CREATE_STATUS_SUCCESS, data: _.flatMap(_.map(statuses, 'data')) });
     } else {
       const status = yield call(
         httpService.makeRequest,
         'post',
         `${window.env.API_URL}${releaseEndpoint}status/`,
-        payload.data,
+        data,
       );
       yield put({ type: CREATE_STATUS_SUCCESS, data: status.data });
     }

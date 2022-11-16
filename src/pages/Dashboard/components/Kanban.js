@@ -29,7 +29,7 @@ import {
   Close as CloseIcon,
   DateRange as DateRangeIcon,
   MoreHoriz as MoreHorizIcon,
-  TrendingFlatRounded as TrendingFlatRoundedIcon,
+  Task as TaskIcon,
   Update as UpdateIcon,
 } from '@mui/icons-material';
 import { updateFeature, updateIssue } from '@redux/release/actions/release.actions';
@@ -134,9 +134,9 @@ const Kanban = ({
     let cols = {};
     if (statuses && !_.isEmpty(statuses)) {
       _.forEach(statuses, (sts) => {
-        const features = _.filter(features, { status: sts.status_uuid });
-        const issues = _.filter(issues, { status: sts.status_uuid });
-        const items = [...features, ...issues];
+        const feats = _.filter(features, { status: sts.status_uuid });
+        const iss = _.filter(issues, { status: sts.status_uuid });
+        const items = [...feats, ...iss];
         cols = {
           ...cols,
           [sts.status_uuid]: {
@@ -341,7 +341,7 @@ const Kanban = ({
                                           size="large"
                                           className={classes.iconButton}
                                         >
-                                          <TrendingFlatRoundedIcon fontSize="small" />
+                                          <TaskIcon fontSize="small" />
                                         </IconButton>
                                       )}
 
@@ -438,7 +438,7 @@ const Kanban = ({
                                         className={classes.chip}
                                         icon={<AltRouteIcon fontSize="small" />}
                                         label={feat.name}
-                                        onClick={() => editItem(feat, 'feat', false)}
+                                        onClick={() => editItem(feat, 'feat', true)}
                                       />
                                     ),
                                   )}

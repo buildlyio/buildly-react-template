@@ -69,48 +69,48 @@ export const EXAMPLELIST = [
 
 export const PRODUCT_SETUP = [
   { value: '', text: '--------------------------------' },
-  { value: 'new', text: 'Create new software from Scratch' },
-  { value: 'modify', text: 'Modify existing Software' },
-  { value: 'migrate', text: 'Migrate Software from Legacy Application' },
+  { value: 'New', text: 'Create new software from Scratch' },
+  { value: 'Modify', text: 'Modify existing Software' },
+  { value: 'Migration', text: 'Migrate Software from Legacy Application' },
 ];
 
 export const INTEGRATION_TYPES = [
-  { value: 'login', text: 'Login/Authentication Service (Single Sign On or Social Auth)' },
-  { value: 'erp', text: 'ERP data system' },
-  { value: 'hr', text: 'HR system' },
-  { value: 'accounting', text: 'Accounting/Bookeeping' },
-  { value: 'sales', text: 'Sales (SalesForce)' },
-  { value: 'other', text: 'Other' },
+  { value: 'Login', text: 'Login/Authentication Service (Single Sign On or Social Auth)' },
+  { value: 'ERP', text: 'ERP data system' },
+  { value: 'HR', text: 'HR system' },
+  { value: 'Accounting', text: 'Accounting/Bookeeping' },
+  { value: 'Ssales', text: 'Sales (SalesForce)' },
+  { value: 'Other', text: 'Other' },
 ];
 
 export const PRODUCT_TYPE = [
   { value: '', text: '---' },
-  { value: 'b2c', text: 'B2C' },
-  { value: 'b2b', text: 'B2B' },
-  { value: 'b2b internal', text: 'B2B Internal' },
-  { value: 'b2c e-commerce', text: 'B2C E-Commerce' },
+  { value: 'B2C', text: 'B2C' },
+  { value: 'B2B', text: 'B2B' },
+  { value: 'B2B Internal', text: 'B2B Internal' },
+  { value: 'B2C E-Commerce', text: 'B2C E-Commerce' },
 ];
 
 export const EXPECTED_TRAFFIC = {
-  b2c: [
+  B2C: [
     '1000 - 10000 a month',
     '10000 - 100000 a month',
     '100000 - 1000000 a month',
     '2.5 Billion a month - The next Amazon',
   ],
-  b2b: [
+  B2B: [
     '100 - 1000 a month',
     '1000 - 10000 a month',
     '10000 - 100000 a month',
     '2.5 Million a month - I work at Apple',
   ],
-  'b2c e-commerce': [
+  'B2C E-Commerce': [
     '1000 - 10000 a month',
     '10000 - 100000 a month',
     '100000 - 1000000 a month',
     '2.5 Billion a month - The next Amazon',
   ],
-  'b2b internal': [
+  'B2B Internal': [
     '100 - 1000 a month',
     '1000 - 10000 a month',
     '10000 - 100000 a month',

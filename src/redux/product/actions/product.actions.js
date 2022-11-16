@@ -1,6 +1,5 @@
 // Product Action types
 export const SAVE_PRODUCT_FORM_DATA = 'PRODUCT/SAVE_PRODUCT_FORM_DATA';
-export const CLEAR_BOARD_DATA = 'PRODUCT/CLEAR_BOARD_DATA';
 export const CLEAR_PRODUCT_RELATED_PRODUCT_DATA = 'PRODUCT/CLEAR_PRODUCT_RELATED_PRODUCT_DATA';
 
 export const ALL_CREDENTIALS = 'PRODUCT/ALL_CREDENTIALS';
@@ -106,13 +105,6 @@ export const ADD_DOC_IDENTIFIER_FAILURE = 'PRODUCT/ADD_DOC_IDENTIFIER_FAILURE';
 export const saveProductFormData = (formData) => ({
   type: SAVE_PRODUCT_FORM_DATA,
   formData,
-});
-
-/**
- * Clear Board Data
- */
-export const clearBoardData = () => ({
-  type: CLEAR_BOARD_DATA,
 });
 
 /**
@@ -308,21 +300,21 @@ export const getBoard = (product_uuid) => ({
 /**
  * Create a board
  * @param {Object} data
+ * @param {Array} statusData
  */
-export const createBoard = (data, create) => ({
+export const createBoard = (data, statusData) => ({
   type: CREATE_BOARD,
   data,
-  create,
+  statusData,
 });
 
 /**
  * Validate tool Credential
  * @param {Object} data
  */
-export const validateCredential = (data, valid) => ({
+export const validateCredential = (data) => ({
   type: VALIDATE_CREDENTIAL,
   data,
-  valid,
 });
 
 /**

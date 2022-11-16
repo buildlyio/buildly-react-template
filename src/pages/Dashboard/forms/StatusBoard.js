@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -11,11 +11,10 @@ import {
   Button,
   Autocomplete,
   Chip,
+  MenuItem,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
-import {
-  createStatus,
-} from '@redux/release/actions/release.actions';
+import { createStatus } from '@redux/release/actions/release.actions';
 import { STATUSTYPES } from './formConstants';
 
 const useStyles = makeStyles((theme) => ({
@@ -58,6 +57,7 @@ const StatusBoard = ({
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [status, setStatus] = useState([]);
+  const [defaultStatus, setDefaultStatus] = useState('');
   const [formError, setFormError] = useState({});
 
   const closeFormModal = () => {
@@ -102,22 +102,13 @@ const StatusBoard = ({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    let statusData = _.map(status, (col) => ({
+    const statusData = _.map(status, (col) => ({
       product_uuid,
       name: col,
       description: col,
       status_tracking_id: null,
+      is_default_status: !!(col === defaultStatus),
     }));
-
-    statusData = [
-      ...statusData,
-      {
-        product_uuid,
-        name: 'No Status',
-        description: 'No Status',
-        status_tracking_id: null,
-      },
-    ];
 
     dispatch(createStatus(statusData));
     history.push(redirectTo);
@@ -125,9 +116,7 @@ const StatusBoard = ({
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (
-      !status
-    ) {
+    if (_.isEmpty(status) || !defaultStatus) {
       return true;
     }
 
@@ -185,6 +174,31 @@ const StatusBoard = ({
                   )}
                 />
               </Grid>
+
+              {!_.isEmpty(status) && (
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    select
+                    id="defaultStatus"
+                    label="Default Status to be used while creating cards/tasks"
+                    name="defaultStatus"
+                    value={defaultStatus}
+                    autoComplete="defaultStatus"
+                    onChange={(e) => setDefaultStatus(e.target.value)}
+                  >
+                    <MenuItem value="">--------------------</MenuItem>
+                    {_.map(status, (sts, idx) => (
+                      <MenuItem key={`sts-${idx}`} value={sts}>
+                        {sts}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              )}
             </Grid>
 
             <Grid container spacing={isDesktop ? 3 : 0} justifyContent="center">

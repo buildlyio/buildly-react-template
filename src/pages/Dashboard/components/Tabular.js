@@ -22,6 +22,10 @@ const useStyles = makeStyles((theme) => ({
   tabular2: {
     marginTop: `-${theme.spacing(5)}`,
   },
+  noProduct: {
+    marginTop: theme.spacing(12),
+    textAlign: 'center',
+  },
 }));
 
 const Tabular = ({
@@ -63,16 +67,23 @@ const Tabular = ({
         },
       },
       {
-        name: 'Convert to Issue',
+        name: 'Convert to issue/ticket for dev team',
         options: {
           filter: false,
           sort: false,
           empty: true,
-          customBodyRenderLite: (dataIndex) => (
-            <IconButton onClick={() => issueSuggestions(featureRows[dataIndex])}>
-              <TaskIcon />
-            </IconButton>
-          ),
+          customBodyRenderLite: (dataIndex) => {
+            const issuePresent = !!(_.find(issueRows, {
+              feature_uuid: featureRows[dataIndex]?.feature_uuid,
+            }));
+
+            return !issuePresent
+              ? (
+                <IconButton onClick={() => issueSuggestions(featureRows[dataIndex])}>
+                  <TaskIcon />
+                </IconButton>
+              ) : '';
+          },
         },
       },
       ...featureColumns,
@@ -151,6 +162,12 @@ const Tabular = ({
             filter: false,
             sort: false,
             empty: true,
+            setCellProps: (value) => ({
+              style: { width: 200 },
+            }),
+            setCellHeaderProps: (value) => ({
+              style: { width: 200 },
+            }),
             customBodyRenderLite: (dataIndex) => (
               <IconButton onClick={() => createSuggestedFeature(suggestedFeatures[dataIndex])}>
                 <AddTaskIcon />
@@ -164,6 +181,12 @@ const Tabular = ({
             filter: false,
             sort: false,
             empty: true,
+            setCellProps: (value) => ({
+              style: { width: 200 },
+            }),
+            setCellHeaderProps: (value) => ({
+              style: { width: 200 },
+            }),
             customBodyRenderLite: (dataIndex) => (
               <IconButton onClick={() => removeSuggestedFeature(suggestedFeatures[dataIndex])}>
                 <CloseIcon />
@@ -179,8 +202,8 @@ const Tabular = ({
   return (
     <>
       {!selectedProduct && (
-        <Typography variant="h6" align="center">
-          Please select a product to view feature and issues
+        <Typography className={classes.noProduct} component="div" variant="body1">
+          No product selected yet. Please select a product to view related features and/or issues.
         </Typography>
       )}
 
@@ -190,12 +213,12 @@ const Tabular = ({
         </Typography>
       )}
 
-      {suggestedFeatures && !_.isEmpty(suggestedFeatures) && (
+      {!!selectedProduct && suggestedFeatures && !_.isEmpty(suggestedFeatures) && (
         <div className={classes.tabular}>
           <DataTableWrapper
             loading={loading}
             rows={suggestedFeatures}
-            cols={finalSugCols}
+            columns={finalSugCols}
             filename="SuggestedFeaturesList"
             hideAddButton
             tableHeader="Suggested Features"
@@ -203,41 +226,45 @@ const Tabular = ({
         </div>
       )}
 
-      <div
-        className={
-          suggestedFeatures && !_.isEmpty(suggestedFeatures)
-            ? `${classes.tabular} ${classes.tabular2}`
-            : classes.tabular
-        }
-      >
-        <DataTableWrapper
-          loading={loading}
-          rows={featureRows}
-          columns={finalFeatCols}
-          filename="FeaturesList"
-          hideAddButton={!selectedProduct || (!!selectedProduct && upgrade)}
-          addButtonHeading="Add Feature"
-          onAddButtonClick={(e) => addItem('feat')}
-          editAction={(feat) => editItem(feat, 'feat')}
-          deleteAction={(feat) => deleteItem(feat, 'feat')}
-          tableHeader="Features"
-        />
-      </div>
+      {!!selectedProduct && (
+        <div
+          className={
+            suggestedFeatures && !_.isEmpty(suggestedFeatures)
+              ? `${classes.tabular} ${classes.tabular2}`
+              : classes.tabular
+          }
+        >
+          <DataTableWrapper
+            loading={loading}
+            rows={featureRows}
+            columns={finalFeatCols}
+            filename="FeaturesList"
+            hideAddButton={!selectedProduct || (!!selectedProduct && upgrade)}
+            addButtonHeading="Add Feature"
+            onAddButtonClick={(e) => addItem('feat')}
+            editAction={(feat) => editItem(feat, 'feat')}
+            deleteAction={(feat) => deleteItem(feat, 'feat')}
+            tableHeader="Features"
+          />
+        </div>
+      )}
 
-      <div className={`${classes.tabular} ${classes.tabular2}`}>
-        <DataTableWrapper
-          loading={loading}
-          rows={issueRows}
-          columns={finalIssCols}
-          filename="IssuesList"
-          hideAddButton={!selectedProduct || (!!selectedProduct && upgrade)}
-          addButtonHeading="Add Issue"
-          onAddButtonClick={(e) => addItem('issue')}
-          editAction={(issue) => editItem(issue, 'issue')}
-          deleteAction={(issue) => deleteItem(issue, 'issue')}
-          tableHeader="Issues"
-        />
-      </div>
+      {!!selectedProduct && (
+        <div className={`${classes.tabular} ${classes.tabular2}`}>
+          <DataTableWrapper
+            loading={loading}
+            rows={issueRows}
+            columns={finalIssCols}
+            filename="IssuesList"
+            hideAddButton={!selectedProduct || (!!selectedProduct && upgrade)}
+            addButtonHeading="Add Issue"
+            onAddButtonClick={(e) => addItem('issue')}
+            editAction={(issue) => editItem(issue, 'issue')}
+            deleteAction={(issue) => deleteItem(issue, 'issue')}
+            tableHeader="Issues"
+          />
+        </div>
+      )}
     </>
   );
 };

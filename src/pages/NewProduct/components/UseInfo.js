@@ -199,7 +199,7 @@ const UseInfo = ({
                     aria-label="tool-req"
                     name="tool-req-radio-buttons-group"
                     {...toolReq.bind}
-                    value={_.lowerCase(toolReq.value)}
+                    value={_.toLower(toolReq.value)}
                   >
                     <FormControlLabel
                       checked={toolReq.value === 'yes'}

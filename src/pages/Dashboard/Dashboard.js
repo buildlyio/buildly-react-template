@@ -7,6 +7,7 @@ import { makeStyles } from '@mui/styles';
 import {
   Button, Grid, MenuItem, Tab, Tabs, TextField, Typography,
 } from '@mui/material';
+import { Sync as SyncIcon } from '@mui/icons-material';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 import Loader from '@components/Loader/Loader';
 import { routes } from '@routes/routesConstants';
@@ -47,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     display: 'flex',
     flexDirection: 'row-reverse',
+    alignItems: 'center',
   },
   selectedProduct: {
     width: theme.spacing(31.25),
@@ -76,6 +78,10 @@ const useStyles = makeStyles((theme) => ({
   configBoardButton: {
     marginTop: theme.spacing(1),
   },
+  syncBoard: {
+    height: theme.spacing(6),
+    marginRight: theme.spacing(2),
+  },
 }));
 
 const Dashboard = ({
@@ -88,7 +94,6 @@ const Dashboard = ({
   features,
   credentials,
   statuses,
-  boards,
 }) => {
   const classes = useStyles();
   const [route, setRoute] = useState(routes.DASHBOARD);
@@ -106,8 +111,6 @@ const Dashboard = ({
   const [upgrade, setUpgrade] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [deleteItemID, setDeleteItemID] = useState({ id: 0, type: 'feat' });
-  const [featCred, setFeatCred] = useState(null);
-  const [issueCred, setIssueCred] = useState(null);
 
   const addFeatPath = `${routes.DASHBOARD}/add-feature/`;
   const editFeatPath = `${routes.DASHBOARD}/edit-feature/`;
@@ -118,6 +121,8 @@ const Dashboard = ({
   const issueSuggestionsPath = `${routes.DASHBOARD}/issue-suggestions`;
   const featureToIssuePath = `${routes.DASHBOARD}/convert-issue`;
   const ignoreColumnsPath = `${routes.DASHBOARD}/ignore-columns`;
+  const statusBoardPath = `${routes.DASHBOARD}/tool-status`;
+  const toolBoardPath = `${routes.DASHBOARD}/tool-board`;
 
   // this will be triggered whenever the content switcher is clicked to change the view
   useEffect(() => {
@@ -142,7 +147,6 @@ const Dashboard = ({
       dispatch(getAllFeatures(selectedProduct));
       dispatch(getAllIssues(selectedProduct));
       dispatch(getAllCredentials(selectedProduct));
-      dispatch(getBoard(selectedProduct));
     } else {
       dispatch(clearProductRelatedProductData());
       dispatch(clearProductRelatedReleaseData());
@@ -159,15 +163,16 @@ const Dashboard = ({
   }, [selectedProduct, features]);
 
   useEffect(() => {
-    setFeatCred(_.find(credentials, { auth_detail: { tool_type: 'Feature' } }));
-    setIssueCred(_.find(credentials, { auth_detail: { tool_type: 'Issue' } }));
-  }, [credentials]);
-
-  useEffect(() => {
     if (selectedProduct && !!selectedProduct) {
       setProduct(_.find(products, { product_uuid: selectedProduct }));
     }
   }, [selectedProduct, products]);
+
+  useEffect(() => {
+    if (selectedProduct && !!selectedProduct) {
+      dispatch(getBoard(selectedProduct));
+    }
+  }, [selectedProduct, statuses]);
 
   const addItem = (type) => {
     let path;
@@ -210,6 +215,8 @@ const Dashboard = ({
 
   const handleDeleteModal = () => {
     const { id, type } = deleteItemID;
+    const featCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'feature'));
+    const issueCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'issue'));
 
     if (type === 'feat') {
       const deleteCred = {
@@ -260,13 +267,14 @@ const Dashboard = ({
 
   const createSuggestedFeature = (suggestion) => {
     const datetime = new Date();
+    const featCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'feature'));
 
     const formData = {
       create_date: datetime,
       edit_date: datetime,
       name: suggestion.suggested_feature,
       description: suggestion.suggested_feature,
-      product_uuid: product,
+      product_uuid: selectedProduct,
       ...featCred?.auth_detail,
       feature_detail: {},
     };
@@ -296,18 +304,20 @@ const Dashboard = ({
   };
 
   const configureBoard = () => {
-    history.push(`${routes.DASHBOARD}/tool-board`, {
+    history.push(toolBoardPath, {
       from: location.pathname,
       product_uuid: selectedProduct,
     });
   };
 
   const configureStatus = () => {
-    history.push(`${routes.DASHBOARD}/tool-status`, {
+    history.push(statusBoardPath, {
       from: location.pathname,
       product_uuid: selectedProduct,
     });
   };
+
+  const syncBoard = () => {};
 
   return (
     <>
@@ -330,50 +340,6 @@ const Dashboard = ({
             Let's get started!
           </Button>
         </div>
-      )}
-
-      {loaded && user && user.survey_status && _.isEmpty(statuses) && !!selectedProduct
-      && !_.isEmpty(product) && !_.isEmpty(product.third_party_tool) && (
-        <Grid item xs={4} className={classes.configBoard}>
-          <Typography component="div" variant="h4" align="center">
-            Configure Project Board
-          </Typography>
-
-          <Typography variant="subtitle1" align="center">
-            Add a configuration to get started
-          </Typography>
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={configureBoard}
-            className={classes.configBoardButton}
-          >
-            Add Configuration
-          </Button>
-        </Grid>
-      )}
-
-      {loaded && user && user.survey_status && _.isEmpty(statuses) && !!selectedProduct
-      && !_.isEmpty(product) && _.isEmpty(product.third_party_tool) && (
-        <Grid item xs={4} className={classes.configBoard}>
-          <Typography component="div" variant="h4" align="center">
-            Configure Project Board
-          </Typography>
-
-          <Typography variant="subtitle1" align="center">
-            Add a configuration to get started
-          </Typography>
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={configureStatus}
-            className={classes.configBoardButton}
-          >
-            Add Configuration
-          </Button>
-        </Grid>
       )}
 
       {loaded && user && user.survey_status && (
@@ -417,86 +383,143 @@ const Dashboard = ({
                   </MenuItem>
                 ))}
               </TextField>
+
+              {(loaded && product && !_.isEmpty(product.third_party_tool)
+              && !_.isEmpty(statuses) && (
+                <Button variant="contained" color="primary" onClick={syncBoard} className={classes.syncBoard}>
+                  <SyncIcon />
+                  {' '}
+                  Sync Board
+                </Button>
+              ))}
             </Grid>
           </Grid>
 
-          <Grid mb={3} container justifyContent="center">
-            <Grid item className={classes.viewTabs}>
-              <Tabs value={view} onChange={(event, vw) => setView(vw)}>
-                {subNav.map((itemProps, index) => (
-                  <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
-                ))}
-              </Tabs>
-            </Grid>
-          </Grid>
+          {loaded && _.isEmpty(statuses) && !!selectedProduct
+            ? (product && !_.isEmpty(product.third_party_tool)
+              ? (
+                <>
+                  <Grid item xs={4} className={classes.configBoard}>
+                    <Typography component="div" variant="h4" align="center">
+                      Configure Project Board
+                    </Typography>
 
-          <ConfirmModal
-            open={openDeleteModal}
-            setOpen={setOpenDeleteModal}
-            submitAction={handleDeleteModal}
-            title="Are you sure you want to delete?"
-            submitText="Delete"
-          />
+                    <Typography variant="subtitle1" align="center">
+                      Add a configuration to get started
+                    </Typography>
 
-          <Route
-            path={routes.DASHBOARD_TABULAR}
-            render={(prps) => (
-              <Tabular
-                {...prps}
-                selectedProduct={selectedProduct}
-                addItem={addItem}
-                editItem={editItem}
-                deleteItem={deleteItem}
-                commentItem={commentItem}
-                issueSuggestions={issueSuggestions}
-                upgrade={upgrade}
-                suggestedFeatures={
-                  product && product.product_info && product.product_info.suggestions
-                }
-                createSuggestedFeature={createSuggestedFeature}
-                removeSuggestedFeature={removeSuggestedFeature}
-              />
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={configureBoard}
+                      className={classes.configBoardButton}
+                    >
+                      Add Configuration
+                    </Button>
+                  </Grid>
+
+                  <Route path={toolBoardPath} component={ToolBoard} />
+                </>
+              ) : (
+                <>
+                  <Grid item xs={4} className={classes.configBoard}>
+                    <Typography component="div" variant="h4" align="center">
+                      Configure Project Board
+                    </Typography>
+
+                    <Typography variant="subtitle1" align="center">
+                      Add a configuration to get started
+                    </Typography>
+
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={configureStatus}
+                      className={classes.configBoardButton}
+                    >
+                      Add Configuration
+                    </Button>
+                  </Grid>
+
+                  <Route path={statusBoardPath} component={StatusBoard} />
+                </>
+              )
+            ) : (
+              <>
+                <Grid mb={3} container justifyContent="center">
+                  <Grid item className={classes.viewTabs}>
+                    <Tabs value={view} onChange={(event, vw) => setView(vw)}>
+                      {subNav.map((itemProps, index) => (
+                        <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
+                      ))}
+                    </Tabs>
+                  </Grid>
+                </Grid>
+
+                <ConfirmModal
+                  open={openDeleteModal}
+                  setOpen={setOpenDeleteModal}
+                  submitAction={handleDeleteModal}
+                  title="Are you sure you want to delete?"
+                  submitText="Delete"
+                />
+
+                <Route
+                  path={routes.DASHBOARD_TABULAR}
+                  render={(prps) => (
+                    <Tabular
+                      {...prps}
+                      selectedProduct={selectedProduct}
+                      addItem={addItem}
+                      editItem={editItem}
+                      deleteItem={deleteItem}
+                      commentItem={commentItem}
+                      issueSuggestions={issueSuggestions}
+                      upgrade={upgrade}
+                      suggestedFeatures={
+                        product && product.product_info && product.product_info.suggestions
+                      }
+                      createSuggestedFeature={createSuggestedFeature}
+                      removeSuggestedFeature={removeSuggestedFeature}
+                    />
+                  )}
+                />
+                <Route
+                  path={routes.DASHBOARD_KANBAN}
+                  render={(prps) => (
+                    <Kanban
+                      {...prps}
+                      selectedProduct={selectedProduct}
+                      addItem={addItem}
+                      editItem={editItem}
+                      deleteItem={deleteItem}
+                      commentItem={commentItem}
+                      issueSuggestions={issueSuggestions}
+                      upgrade={upgrade}
+                      suggestedFeatures={
+                        product && product.product_info && product.product_info.suggestions
+                      }
+                      createSuggestedFeature={createSuggestedFeature}
+                      removeSuggestedFeature={removeSuggestedFeature}
+                    />
+                  )}
+                />
+                <Route path={addFeatPath} component={NewFeatureForm} />
+                <Route path={editFeatPath} component={NewFeatureForm} />
+                <Route path={viewFeatPath} component={NewFeatureForm} />
+                <Route path={addIssuePath} component={AddIssues} />
+                <Route path={editIssuePath} component={AddIssues} />
+                <Route path={addCommentPath} component={AddComments} />
+                <Route path={featureToIssuePath} component={AddIssues} />
+                <Route path={ignoreColumnsPath} component={IgnoreColumns} />
+                <Route
+                  path={issueSuggestionsPath}
+                  render={(renderProps) => (
+                    <IssueSuggestions {...renderProps} convertIssue={convertIssue} />
+                  )}
+                />
+              </>
             )}
-          />
-          <Route
-            path={routes.DASHBOARD_KANBAN}
-            render={(prps) => (
-              <Kanban
-                {...prps}
-                selectedProduct={selectedProduct}
-                addItem={addItem}
-                editItem={editItem}
-                deleteItem={deleteItem}
-                commentItem={commentItem}
-                issueSuggestions={issueSuggestions}
-                upgrade={upgrade}
-                suggestedFeatures={
-                  product && product.product_info && product.product_info.suggestions
-                }
-                createSuggestedFeature={createSuggestedFeature}
-                removeSuggestedFeature={removeSuggestedFeature}
-              />
-            )}
-          />
-          <Route path={addFeatPath} component={NewFeatureForm} />
-          <Route path={editFeatPath} component={NewFeatureForm} />
-          <Route path={viewFeatPath} component={NewFeatureForm} />
-          <Route path={addIssuePath} component={AddIssues} />
-          <Route path={editIssuePath} component={AddIssues} />
-          <Route path={addCommentPath} component={AddComments} />
-          <Route path={featureToIssuePath} component={AddIssues} />
-          <Route path={ignoreColumnsPath} component={IgnoreColumns} />
-          <Route path={`${routes.DASHBOARD}/tool-status`} component={StatusBoard} />
-          <Route
-            path={issueSuggestionsPath}
-            render={(renderProps) => (
-              <IssueSuggestions {...renderProps} convertIssue={convertIssue} />
-            )}
-          />
-          <Route
-            path={`${routes.DASHBOARD}/tool-board`}
-            render={(prps) => <ToolBoard {...prps} boards={boards} />}
-          />
         </div>
       )}
     </>
@@ -507,13 +530,12 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   loading: state.authReducer.loading || state.productReducer.loading
     || state.releaseReducer.loading,
-  loaded: state.authReducer.loaded || state.productReducer.loaded || state.releaseReducer.loaded,
+  loaded: state.authReducer.loaded && state.productReducer.loaded && state.releaseReducer.loaded,
   user: state.authReducer.data,
   products: state.productReducer.products,
   features: state.releaseReducer.features,
   credentials: state.productReducer.credentials,
   statuses: state.releaseReducer.statuses,
-  boards: state.productReducer.boards,
 });
 
 export default connect(mapStateToProps)(Dashboard);

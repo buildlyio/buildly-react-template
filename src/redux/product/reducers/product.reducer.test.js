@@ -9,8 +9,10 @@ const initialState = {
   productTeams: [],
   products: [],
   thirdPartyTools: [],
-  boards: [],
+  boards: {},
   productFormData: null,
+  featureCredValid: false,
+  issueCredValid: false,
 };
 
 describe('Save Product Form reducer', () => {
@@ -889,7 +891,7 @@ describe('Get board reducer', () => {
       ...initialState,
       loading: false,
       loaded: true,
-      boards: [data],
+      boards: data,
     });
   });
 
@@ -930,7 +932,7 @@ describe('Create board reducer', () => {
       ...initialState,
       loading: false,
       loaded: true,
-      boards: [data],
+      boards: data,
     });
   });
 
@@ -957,12 +959,13 @@ describe('Validate credential reducer', () => {
   });
 
   it('Validate credential success Reducer', () => {
-    expect(reducer.default(initialState, { type: actions.VALIDATE_CREDENTIAL_SUCCESS })).toEqual({
-      ...initialState,
-      data: undefined,
-      loaded: true,
-      loading: false,
-    });
+    expect(reducer.default(initialState, { type: actions.VALIDATE_CREDENTIAL_SUCCESS, tool: 'feature' }))
+      .toEqual({
+        ...initialState,
+        loaded: true,
+        loading: false,
+        featureCredValid: true,
+      });
   });
 
   it('Validate credential fail Reducer', () => {

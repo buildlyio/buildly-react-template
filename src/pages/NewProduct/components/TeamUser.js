@@ -120,8 +120,7 @@ const TeamUser = ({
   };
 
   checkIfTeamUserEdited = () => (
-    (!editData && productFormData && !_.isEmpty(productFormData))
-    || teamSize.hasChanged()
+    teamSize.hasChanged()
     || !!(productFormData && productFormData.product_info
       && productFormData.product_info.role_count
       && !_.isEqual(roleCount, productFormData.product_info.role_count))

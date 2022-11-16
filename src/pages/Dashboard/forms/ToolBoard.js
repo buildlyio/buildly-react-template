@@ -15,7 +15,6 @@ import {
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import { createBoard } from '@redux/product/actions/product.actions';
-import { createStatus } from '@redux/release/actions/release.actions';
 import { STATUSTYPES } from './formConstants';
 
 const useStyles = makeStyles((theme) => ({
@@ -42,8 +41,8 @@ const ToolBoard = ({
   dispatch,
   history,
   location,
-  statuses,
   boards,
+  loaded,
 }) => {
   const classes = useStyles();
   const redirectTo = location.state && location.state.from;
@@ -60,21 +59,16 @@ const ToolBoard = ({
   const [issueOrgID, setIssueOrgID] = useState('');
   const [featBoardList, setFeatBoardList] = useState([]);
   const [featBoardID, setFeatBoardID] = useState('');
+  const [featStatusList, setFeatStatusList] = useState([]);
   const [status, setStatus] = useState([]);
+  const [defaultStatus, setDefaultStatus] = useState('');
 
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
     if (!_.isEmpty(boards)) {
-      const last = boards[boards.length - 1];
-      for (let i = 0; i < last.length; i += 1) {
-        if (last[i].issue_tool_detail) {
-          setIssueOrgList(last[i].issue_tool_detail);
-        }
-        if (last[i].feature_tool_detail) {
-          setFeatOrgList(last[i].feature_tool_detail);
-        }
-      }
+      setIssueOrgList(boards.issue_tool_detail);
+      setFeatOrgList(boards.feature_tool_detail);
     }
   }, [boards]);
 
@@ -125,51 +119,40 @@ const ToolBoard = ({
     delete featOrgID.board_list;
     delete issueOrgID.board_list;
 
-    if (!_.isEmpty(status)) {
-      const statusData = status.map((col) => ({
-        product_uuid,
-        name: col,
-        description: col,
-        status_tracking_id: null,
-      }));
-      statusData.push({
-        product_uuid,
-        name: 'No Status',
-        description: 'No Status',
-        status_tracking_id: null,
-      });
-      dispatch(createStatus(statusData));
-    }
-
     const formData = {
       product_uuid,
       feature_tool_detail: {
         ...featOrgID,
-        board_detail:
-            {
-              ...featBoardID,
-            },
+        board_detail: {
+          ...featBoardID,
+        },
       },
       issue_tool_detail: {
         ...issueOrgID,
-        board_detail:
-              {},
+        board_detail: {},
       },
     };
+    const statusCols = !_.isEmpty(status)
+      ? _.map(status, (sts) => ({ column_name: sts }))
+      : featStatusList;
+    const statusData = _.map(statusCols, (sts) => ({
+      product_uuid,
+      name: sts.column_name,
+      description: sts.column_name,
+      status_tracking_id: sts.column_id || null,
+      is_default_status: !!(sts.column_name === defaultStatus),
+    }));
 
-    dispatch(createBoard(formData, true));
+    dispatch(createBoard(formData, statusData));
     history.push(redirectTo);
   };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (
-      (!_.isEmpty(featOrgList)
-        && !featOrgID)
-      || (!_.isEmpty(featBoardList)
-      && !featBoardID)
-      || (!_.isEmpty(issueOrgList)
-      && !issueOrgID)
+    if ((!_.isEmpty(featOrgList) && !featOrgID)
+      || (!_.isEmpty(featBoardList) && !featBoardID)
+      || (!_.isEmpty(issueOrgList) && !issueOrgID)
+      || ((!_.isEmpty(status) || !_.isEmpty(featStatusList)) && !defaultStatus)
     ) {
       return true;
     }
@@ -199,7 +182,7 @@ const ToolBoard = ({
         >
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
-              {!_.isEmpty(featOrgList) && (
+              {loaded && !_.isEmpty(featOrgList) && (
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
@@ -228,7 +211,7 @@ const ToolBoard = ({
                 </Grid>
               )}
 
-              {!_.isEmpty(featBoardList) && (
+              {loaded && !_.isEmpty(featBoardList) && (
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
@@ -244,6 +227,7 @@ const ToolBoard = ({
                     onChange={(e) => {
                       const board = e.target.value;
                       setFeatBoardID(board);
+                      setFeatStatusList(board.column_list);
                     }}
                   >
                     <MenuItem value="">---------------------------</MenuItem>
@@ -256,7 +240,7 @@ const ToolBoard = ({
                 </Grid>
               )}
 
-              {_.isEmpty(featOrgList) && (
+              {loaded && _.isEmpty(featOrgList) && (
                 <Grid item xs={12}>
                   <Autocomplete
                     fullWidth
@@ -288,7 +272,37 @@ const ToolBoard = ({
                 </Grid>
               )}
 
-              {!_.isEmpty(issueOrgList) && (
+              {(!_.isEmpty(status) || !_.isEmpty(featStatusList)) && (
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    select
+                    id="defaultStatus"
+                    label="Default Status to be used while creating cards/tasks"
+                    name="defaultStatus"
+                    value={defaultStatus}
+                    autoComplete="defaultStatus"
+                    onChange={(e) => setDefaultStatus(e.target.value)}
+                  >
+                    <MenuItem value="">--------------------</MenuItem>
+                    {!_.isEmpty(status) && _.map(status, (sts, idx) => (
+                      <MenuItem key={`sts-${idx}`} value={sts}>
+                        {sts}
+                      </MenuItem>
+                    ))}
+                    {!_.isEmpty(featStatusList) && _.map(featStatusList, (sts) => (
+                      <MenuItem key={sts.column_id} value={sts.column_name}>
+                        {sts.column_name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              )}
+
+              {loaded && !_.isEmpty(issueOrgList) && (
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
@@ -353,7 +367,8 @@ const ToolBoard = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  statuses: state.releaseReducer.statuses,
+  loaded: state.productReducer.loaded,
+  boards: state.productReducer.boards,
 });
 
 export default connect(mapStateToProps)(ToolBoard);

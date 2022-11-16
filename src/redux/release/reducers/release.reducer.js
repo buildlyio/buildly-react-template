@@ -121,12 +121,16 @@ export default (state = initialState, action) => {
     case SAVE_FEATURE_FORM_DATA:
       return {
         ...state,
+        loading: false,
+        loaded: true,
         featureFormData: action.formData,
       };
 
     case CLEAR_PRODUCT_RELATED_RELEASE_DATA:
       return {
         ...state,
+        loading: false,
+        loaded: true,
         comments: [],
         features: [],
         issues: [],
@@ -432,7 +436,6 @@ export default (state = initialState, action) => {
       };
 
     case GET_STATUS_SUCCESS:
-    case CREATE_STATUS_SUCCESS:
     case UPDATE_STATUS_SUCCESS: {
       const found = _.find(
         state.statuses,
@@ -453,6 +456,14 @@ export default (state = initialState, action) => {
         statuses,
       };
     }
+
+    case CREATE_STATUS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        statuses: action.data,
+      };
 
     case DELETE_STATUS_SUCCESS: {
       const sts = _.filter(state.statuses, (st) => (st.status_uuid !== action.status_uuid));
