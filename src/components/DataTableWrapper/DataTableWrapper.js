@@ -71,47 +71,6 @@ const DataTableWrapper = ({
   };
 
   let finalColumns = [];
-  if (editAction) {
-    finalColumns = [
-      ...finalColumns,
-      {
-        name: 'Edit',
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          customBodyRenderLite: (dataIndex) => (
-            <IconButton
-              className={classes.iconButton}
-              onClick={() => editAction(rows[dataIndex])}
-            >
-              <EditIcon />
-            </IconButton>
-          ),
-        },
-      },
-    ];
-  }
-  if (deleteAction) {
-    finalColumns = [
-      ...finalColumns,
-      {
-        name: 'Delete',
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          customBodyRenderLite: (dataIndex) => (
-            <IconButton
-              onClick={() => deleteAction(rows[dataIndex])}
-            >
-              <DeleteIcon />
-            </IconButton>
-          ),
-        },
-      },
-    ];
-  }
 
   finalColumns = [
     ...finalColumns,
@@ -199,9 +158,9 @@ const DataTableWrapper = ({
                       <Divider />
                       <MenuItem onClick={() => deleteAction(rows[dataIndex])}>
                         <ListItemIcon>
-                          <DeleteIcon color="red" fontSize="small" />
+                          <DeleteIcon style={{ color: 'red' }} fontSize="small" />
                         </ListItemIcon>
-                        Delete
+                        <span style={{ color: 'red' }}>Delete</span>
                       </MenuItem>
                     </div>
                   )

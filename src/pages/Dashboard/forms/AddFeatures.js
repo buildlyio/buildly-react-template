@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { Editor } from 'react-draft-wysiwyg';
+import { EditorState } from 'draft-js';
+
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
 import {
@@ -16,6 +19,7 @@ import { useInput } from '@hooks/useInput';
 import { saveFeatureFormData } from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
 import { PRIORITIES, TAGS } from './formConstants';
+import SmaprtInput from '@components/SmartInput/SmartInput';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -254,29 +258,30 @@ const AddFeatures = ({
           </Grid>
 
           <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              multiline
-              id="description"
-              label="Description"
-              name="description"
-              autoComplete="description"
-              error={
-                formError.description
-                && formError.description.error
-              }
-              helperText={
-                formError.description
-                  ? formError.description.message
-                  : ''
-              }
-              onBlur={(e) => handleBlur(e, 'required', description)}
-              {...description.bind}
-              disabled={viewPage}
-            />
+            <SmaprtInput />
+            {/* <TextField */}
+            {/*   variant="outlined" */}
+            {/*   margin="normal" */}
+            {/*   required */}
+            {/*   fullWidth */}
+            {/*   multiline */}
+            {/*   id="description" */}
+            {/*   label="Description" */}
+            {/*   name="description" */}
+            {/*   autoComplete="description" */}
+            {/*   error={ */}
+            {/*     formError.description */}
+            {/*     && formError.description.error */}
+            {/*   } */}
+            {/*   helperText={ */}
+            {/*     formError.description */}
+            {/*       ? formError.description.message */}
+            {/*       : '' */}
+            {/*   } */}
+            {/*   onBlur={(e) => handleBlur(e, 'required', description)} */}
+            {/*   {...description.bind} */}
+            {/*   disabled={viewPage} */}
+            {/* /> */}
           </Grid>
         </Grid>
 
