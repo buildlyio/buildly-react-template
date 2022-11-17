@@ -15,9 +15,6 @@ import {
   ALL_PRODUCTS,
   ALL_PRODUCTS_SUCCESS,
   ALL_PRODUCTS_FAILURE,
-  ALL_RELEASES,
-  ALL_RELEASES_SUCCESS,
-  ALL_RELEASES_FAILURE,
   ALL_THIRD_PARTY_TOOLS,
   ALL_THIRD_PARTY_TOOLS_SUCCESS,
   ALL_THIRD_PARTY_TOOLS_FAILURE,
@@ -30,9 +27,6 @@ import {
   GET_PRODUCT,
   GET_PRODUCT_SUCCESS,
   GET_PRODUCT_FAILURE,
-  GET_RELEASE,
-  GET_RELEASE_SUCCESS,
-  GET_RELEASE_FAILURE,
   GET_THIRD_PARTY_TOOL,
   GET_THIRD_PARTY_TOOL_SUCCESS,
   GET_BOARD,
@@ -48,9 +42,6 @@ import {
   CREATE_PRODUCT,
   CREATE_PRODUCT_SUCCESS,
   CREATE_PRODUCT_FAILURE,
-  CREATE_RELEASE,
-  CREATE_RELEASE_SUCCESS,
-  CREATE_RELEASE_FAILURE,
   CREATE_THIRD_PARTY_TOOL,
   CREATE_THIRD_PARTY_TOOL_SUCCESS,
   CREATE_THIRD_PARTY_TOOL_FAILURE,
@@ -66,9 +57,6 @@ import {
   UPDATE_PRODUCT,
   UPDATE_PRODUCT_SUCCESS,
   UPDATE_PRODUCT_FAILURE,
-  UPDATE_RELEASE,
-  UPDATE_RELEASE_SUCCESS,
-  UPDATE_RELEASE_FAILURE,
   UPDATE_THIRD_PARTY_TOOL,
   UPDATE_THIRD_PARTY_TOOL_SUCCESS,
   UPDATE_THIRD_PARTY_TOOL_FAILURE,
@@ -81,17 +69,12 @@ import {
   DELETE_PRODUCT,
   DELETE_PRODUCT_SUCCESS,
   DELETE_PRODUCT_FAILURE,
-  DELETE_RELEASE,
-  DELETE_RELEASE_SUCCESS,
-  DELETE_RELEASE_FAILURE,
   DELETE_THIRD_PARTY_TOOL,
   DELETE_THIRD_PARTY_TOOL_SUCCESS,
   DELETE_THIRD_PARTY_TOOL_FAILURE,
   createCredential,
   updateCredential,
   saveProductFormData,
-  clearBoardData,
-  getBoard,
   VALIDATE_CREDENTIAL,
   VALIDATE_CREDENTIAL_SUCCESS,
   VALIDATE_CREDENTIAL_FAILURE,
@@ -101,7 +84,7 @@ import {
 } from '../actions/product.actions';
 import {
   createStatus,
-} from '../../decision/actions/decision.actions';
+} from '../../release/actions/release.actions';
 
 const productEndpoint = 'product/';
 
@@ -110,7 +93,7 @@ function* allCredentials(payload) {
     const creds = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}credential/`,
+      `${window.env.API_URL}${productEndpoint}credential/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_CREDENTIALS_SUCCESS, data: creds.data });
   } catch (error) {
@@ -366,7 +349,7 @@ function* allProducts(payload) {
     const products = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}product/`,
+      `${window.env.API_URL}${productEndpoint}product/?organization_uuid=${payload.organization_uuid}`,
     );
     yield put({ type: ALL_PRODUCTS_SUCCESS, data: products.data });
   } catch (error) {
@@ -412,24 +395,32 @@ function* getProduct(payload) {
 }
 
 function* createProduct(payload) {
-  const { history } = payload;
+  const { history, data } = payload;
   try {
     const product = yield call(
       httpService.makeRequest,
       'post',
       `${window.env.API_URL}${productEndpoint}product/`,
-      payload.data,
+      data,
     );
     if (product && product.data) {
       const dateTime = new Date();
-      yield all(_.map(payload.data.creds, (cred) => (
-        put(createCredential({
-          ...cred,
+      if (data.featureCreds) {
+        yield put(createCredential({
+          ...data.featureCreds,
           product_uuid: product.data.product_uuid,
           create_date: dateTime,
           edit_date: dateTime,
-        }))
-      )));
+        }));
+      }
+      if (data.issueCreds) {
+        yield put(createCredential({
+          ...data.issueCreds,
+          product_uuid: product.data.product_uuid,
+          create_date: dateTime,
+          edit_date: dateTime,
+        }));
+      }
     }
     yield [
       yield put({ type: CREATE_PRODUCT_SUCCESS, data: product.data }),
@@ -472,86 +463,22 @@ function* updateProduct(payload) {
     );
 
     if (product && product.data) {
-      if ((payload.data.changedData[0].changeTool === true
-        && payload.data.changedData[0].auth_detail)
-        || (payload.data.changedData[0].changeTool === false
-          && payload.data.changedData[0].third_party_tool
-          && payload.data.changedData[0].credential_uuid === undefined)) {
-        const dateTime = new Date();
-        const credData = {
-          ...payload.data.changedData[0],
+      const dateTime = new Date();
+      if (payload.data.featureCreds && payload.data.featureCreds.credential_uuid) {
+        yield put(updateCredential({
+          ...payload.data.featureCreds,
           product_uuid: product.data.product_uuid,
           create_date: dateTime,
           edit_date: dateTime,
-        };
-        yield put(createCredential(credData));
-      } else if (payload.data.changedData[0].changeTool) {
-        const dateTime = new Date();
-        const credData = {
-          third_party_tool: null,
-          auth_detail: {
-            tool_name: null,
-            tool_type: 'Feature',
-            owner_name: null,
-            access_token: null,
-          },
-          product_uuid: product.data.product_uuid,
-          is_fresh_start: true,
-          create_date: dateTime,
-          edit_date: dateTime,
-        };
-        yield put(createCredential(credData));
-      } else if (payload.data.changedData[0].changeTool === false
-        && payload.data.changedData[0].credential_uuid) {
-        const dateTime = new Date();
-        const credData = {
-          ...payload.data.changedData[0],
-          product_uuid: product.data.product_uuid,
-          create_date: dateTime,
-          edit_date: dateTime,
-        };
-        yield put(updateCredential(credData));
+        }));
       }
-
-      if ((payload.data.changedData[1].changeTool === true
-      && payload.data.changedData[1].auth_detail)
-      || (payload.data.changedData[1].changeTool === false
-        && payload.data.changedData[1].third_party_tool
-        && payload.data.changedData[1].credential_uuid === undefined)) {
-        const dateTime = new Date();
-        const credData = {
-          ...payload.data.changedData[1],
+      if (payload.data.issueCreds && payload.data.issueCreds.credential_uuid) {
+        yield put(updateCredential({
+          ...payload.data.issueCreds,
           product_uuid: product.data.product_uuid,
           create_date: dateTime,
           edit_date: dateTime,
-        };
-        yield put(createCredential(credData));
-      } else if (payload.data.changedData[1].changeTool) {
-        const dateTime = new Date();
-        const credData = {
-          third_party_tool: null,
-          auth_detail: {
-            tool_name: null,
-            tool_type: 'Issue',
-            owner_name: null,
-            access_token: null,
-          },
-          product_uuid: product.data.product_uuid,
-          is_fresh_start: true,
-          create_date: dateTime,
-          edit_date: dateTime,
-        };
-        yield put(createCredential(credData));
-      } else if (payload.data.changedData[1].changeTool === false
-      && payload.data.changedData[1].credential_uuid) {
-        const dateTime = new Date();
-        const credData = {
-          ...payload.data.changedData[1],
-          product_uuid: product.data.product_uuid,
-          create_date: dateTime,
-          edit_date: dateTime,
-        };
-        yield put(updateCredential(credData));
+        }));
       }
     }
 
@@ -614,134 +541,6 @@ function* deleteProduct(payload) {
       ),
       yield put({
         type: DELETE_PRODUCT_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* allReleases(payload) {
-  try {
-    const releases = yield call(
-      httpService.makeRequest,
-      'get',
-      `${window.env.API_URL}${productEndpoint}release/`,
-    );
-    yield put({ type: ALL_RELEASES_SUCCESS, data: releases.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t fetch all Releases!',
-        }),
-      ),
-      yield put({
-        type: ALL_RELEASES_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* getRelease(payload) {
-  try {
-    const release = yield call(
-      httpService.makeRequest,
-      'get',
-      `${window.env.API_URL}${productEndpoint}release/?release_uuid=${payload.release_uuid}`,
-    );
-    yield put({ type: GET_RELEASE_SUCCESS, data: release.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t fetch Release!',
-        }),
-      ),
-      yield put({
-        type: GET_RELEASE_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* createRelease(payload) {
-  try {
-    const release = yield call(
-      httpService.makeRequest,
-      'post',
-      `${window.env.API_URL}${productEndpoint}release/`,
-      payload.data,
-    );
-    yield put({ type: CREATE_RELEASE_SUCCESS, data: release.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t create Release!',
-        }),
-      ),
-      yield put({
-        type: CREATE_RELEASE_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* updateRelease(payload) {
-  try {
-    const release = yield call(
-      httpService.makeRequest,
-      'put',
-      `${window.env.API_URL}${productEndpoint}release/${payload.data.release_uuid}`,
-      payload.data,
-    );
-    yield put({ type: UPDATE_RELEASE_SUCCESS, data: release.data });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t update Release!',
-        }),
-      ),
-      yield put({
-        type: UPDATE_RELEASE_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* deleteRelease(payload) {
-  const { release_uuid } = payload;
-  try {
-    const release = yield call(
-      httpService.makeRequest,
-      'delete',
-      `${window.env.API_URL}${productEndpoint}release/${release_uuid}`,
-    );
-    yield put({ type: DELETE_RELEASE_SUCCESS, release_uuid });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t delete Release!',
-        }),
-      ),
-      yield put({
-        type: DELETE_RELEASE_FAILURE,
         error,
       }),
     ];
@@ -883,7 +682,6 @@ function* getBoards(payload) {
       'get',
       `${window.env.API_URL}${productEndpoint}board-list/?product_uuid=${payload.product_uuid}`,
     );
-    yield put(clearBoardData());
     yield put({ type: GET_BOARD_SUCCESS, data: board.data });
   } catch (error) {
     yield [
@@ -903,28 +701,16 @@ function* getBoards(payload) {
 }
 
 function* createBoard(payload) {
+  const { data, statusData } = payload;
   try {
     const board = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${productEndpoint}board-configuration/?product_uuid=${payload.data.product_uuid}`,
-      payload.data,
+      `${window.env.API_URL}${productEndpoint}board-configuration/?product_uuid=${data.product_uuid}`,
+      data,
     );
-    if (payload.create) {
-      const prodID = payload.data.product_uuid;
-      const statusData = board?.data[0]?.feature_tool_detail?.column_list?.map((col) => ({
-        product_uuid: prodID,
-        name: col.column_name,
-        description: col.column_name,
-        status_tracking_id: col.column_id,
-      }));
-      if (statusData) {
-        statusData.push({
-          product_uuid: prodID,
-          name: 'No Status',
-          description: 'No Status',
-          status_tracking_id: null,
-        });
+    if (board && board.data) {
+      if (!_.isEmpty(statusData)) {
         yield put(createStatus(statusData));
       }
     }
@@ -934,7 +720,7 @@ function* createBoard(payload) {
         showAlert({
           type: 'success',
           open: true,
-          message: payload.create ? 'Created board successfully' : 'Data synced successfully',
+          message: 'Created board successfully',
         }),
       ),
     ];
@@ -964,12 +750,12 @@ function* validateCredential(payload) {
       payload.data,
     );
     yield [
-      yield put({ type: VALIDATE_CREDENTIAL_SUCCESS, data: payload.valid }),
+      yield put({ type: VALIDATE_CREDENTIAL_SUCCESS, tool: payload.data.tool_type }),
       yield put(
         showAlert({
           type: 'success',
           open: true,
-          message: 'Credentials are valid',
+          message: _.capitalize(cred.data.message),
         }),
       ),
     ];
@@ -1102,26 +888,6 @@ function* watchDeleteProduct() {
   yield takeLatest(DELETE_PRODUCT, deleteProduct);
 }
 
-function* watchGetAllReleases() {
-  yield takeLatest(ALL_RELEASES, allReleases);
-}
-
-function* watchGetRelease() {
-  yield takeLatest(GET_RELEASE, getRelease);
-}
-
-function* watchCreateRelease() {
-  yield takeLatest(CREATE_RELEASE, createRelease);
-}
-
-function* watchUpdateRelease() {
-  yield takeLatest(UPDATE_RELEASE, updateRelease);
-}
-
-function* watchDeleteRelease() {
-  yield takeLatest(DELETE_RELEASE, deleteRelease);
-}
-
 function* watchGetAllThirdPartyTools() {
   yield takeLatest(ALL_THIRD_PARTY_TOOLS, allThirdPartyTools);
 }
@@ -1163,29 +929,24 @@ export default function* productSaga() {
     watchGetAllCredentials(),
     watchGetAllProductTeams(),
     watchGetAllProducts(),
-    watchGetAllReleases(),
     watchGetAllThirdPartyTools(),
     watchGetCredential(),
     watchGetProductTeam(),
     watchGetProduct(),
-    watchGetRelease(),
     watchGetThirdPartyTool(),
     watchGetBoard(),
     watchCreateCredential(),
     watchCreateProductTeam(),
     watchCreateProduct(),
-    watchCreateRelease(),
     watchCreateThirdPartyTool(),
     watchCreateBoard(),
     watchUpdateCredential(),
     watchUpdateProductTeam(),
     watchUpdateProduct(),
-    watchUpdateRelease(),
     watchUpdateThirdPartyTool(),
     watchDeleteCredential(),
     watchDeleteProductTeam(),
     watchDeleteProduct(),
-    watchDeleteRelease(),
     watchDeleteThirdPartyTool(),
     watchValidateCredential(),
     watchdocIdentifier(),

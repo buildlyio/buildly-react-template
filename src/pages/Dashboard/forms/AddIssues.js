@@ -17,12 +17,9 @@ import DatePickerComponent from '@components/DatePicker/DatePicker';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
 import {
-  getAllFeatures,
-  getAllStatuses,
   createIssue,
   updateIssue,
-} from '@redux/decision/actions/decision.actions';
-import { getAllCredentials } from '@redux/product/actions/product.actions';
+} from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
 import { ISSUETYPES, TAGS } from './formConstants';
 import { routes } from '@routes/routesConstants';
@@ -69,17 +66,14 @@ const AddIssues = ({
 
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
-  const [productFeatures, setProductFeatures] = useState([]);
   const product_uuid = location.state && location.state.product_uuid;
   const prdt = _.find(products, { product_uuid });
   const [product, setProduct] = useState('');
-  const [prodStatus, setProdStatus] = useState('');
   const [repo, setRepo] = useState((editData && editData.repository) || '');
   const repoData = _.map(prdt?.issue_tool_detail?.repository_list);
   const [repoList, setRepoList] = useState((editData && repoData) || []);
   const [statusID, setStatusID] = useState((editData && editData.status) || '');
-  const currentStat = _.filter(statuses, { product_uuid });
-  const currentStatData = _.find(currentStat, { status_uuid: editData.status });
+  const currentStatData = _.find(statuses, { status_uuid: editData.status });
   const [status, setStatus] = useState('');
   const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
 
@@ -133,20 +127,6 @@ const AddIssues = ({
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
-    if (!features || _.isEmpty(features)) {
-      dispatch(getAllFeatures());
-    }
-    dispatch(getAllStatuses());
-    if (!credentials || _.isEmpty(credentials)) {
-      dispatch(getAllCredentials());
-    }
-  }, []);
-
-  useEffect(() => {
-    setProductFeatures(_.filter(features, { product_uuid }));
-  }, [features]);
-
-  useEffect(() => {
     const temp_product = _.find(products, { product_uuid });
     if (temp_product && temp_product.issue_tool_detail
       && !_.isEmpty(temp_product.issue_tool_detail)
@@ -158,18 +138,16 @@ const AddIssues = ({
   }, [products]);
 
   useEffect(() => {
-    const sta = _.filter(statuses, { product_uuid });
     const assigneeOptions = (product && product.feature_tool_detail
       && product.feature_tool_detail.user_list
       && !_.isEmpty(product.feature_tool_detail.user_list)
       && _.map(product.feature_tool_detail.user_list, 'username')) || [];
 
     if (editData) {
-      setStatus(_.find(sta, { status_uuid: editData.status }));
+      setStatus(_.find(statuses, { status_uuid: editData.status }));
     }
 
     setAssigneeData(assigneeOptions);
-    setProdStatus(sta);
   }, [product]);
 
   const closeFormModal = () => {
@@ -186,10 +164,7 @@ const AddIssues = ({
       || (_.isEmpty(editData) && !_.isEmpty(tags))
       || estimate.hasChanged()
       || complexity.hasChanged()
-      || (product
-        && product.issue_tool_detail
-        && !_.isEmpty(repoList)
-        && repo !== '')
+      || (product && product.issue_tool_detail && !_.isEmpty(repoList) && repo !== '')
     );
 
     if (dataHasChanged) {
@@ -198,8 +173,8 @@ const AddIssues = ({
       setFormModal(false);
       if (location && location.state) {
         history.push(_.includes(location.state.from, 'kanban')
-          ? `${routes.DASHBOARD}/kanban`
-          : `${routes.DASHBOARD}/list`);
+          ? routes.DASHBOARD_KANBAN
+          : routes.DASHBOARD_TABULAR);
       }
     }
   };
@@ -209,8 +184,8 @@ const AddIssues = ({
     setFormModal(false);
     if (location && location.state) {
       history.push(_.includes(location.state.from, 'kanban')
-        ? `${routes.DASHBOARD}/kanban`
-        : `${routes.DASHBOARD}/list`);
+        ? routes.DASHBOARD_KANBAN
+        : routes.DASHBOARD_TABULAR);
     }
   };
 
@@ -245,13 +220,14 @@ const AddIssues = ({
     }
   };
 
-  const issueCred = _.find(
-    credentials,
-    { product_uuid, auth_detail: { tool_type: 'Issue' } },
-  );
   const handleSubmit = (event) => {
     event.preventDefault();
     const dateTime = new Date();
+    const issueCred = _.find(
+      credentials,
+      { product_uuid, auth_detail: { tool_type: 'Issue' } },
+    );
+
     const formData = {
       ...editData,
       edit_date: dateTime,
@@ -284,8 +260,8 @@ const AddIssues = ({
       dispatch(createIssue(formData));
     }
     history.push(_.includes(location.state.from, 'kanban')
-      ? `${routes.DASHBOARD}/kanban`
-      : `${routes.DASHBOARD}/list`);
+      ? routes.DASHBOARD_KANBAN
+      : routes.DASHBOARD_TABULAR);
   };
 
   const handleBlur = (e, validation, input, parentId) => {
@@ -315,10 +291,7 @@ const AddIssues = ({
       || !feature.value
       || !type.value
       || !statusID
-      || (product
-        && product.issue_tool_detail
-        && !_.isEmpty(repoList)
-        && !repo)
+      || (product && product.issue_tool_detail && !_.isEmpty(repoList) && !repo)
     ) {
       return true;
     }
@@ -421,7 +394,8 @@ const AddIssues = ({
                   onBlur={(e) => handleBlur(e, 'required', feature)}
                   {...feature.bind}
                 >
-                  {_.map(productFeatures, (feat) => (
+                  <MenuItem value="">------------------------</MenuItem>
+                  {_.map(features, (feat) => (
                     <MenuItem
                       key={`feature-${feat.feature_uuid}-${feat.name}`}
                       value={feat.feature_uuid}
@@ -454,6 +428,7 @@ const AddIssues = ({
                   onBlur={(e) => handleBlur(e, 'required', type)}
                   {...type.bind}
                 >
+                  <MenuItem value="">------------------------</MenuItem>
                   {_.map(ISSUETYPES, (tp, idx) => (
                     <MenuItem
                       key={`issue-type-${idx}`}
@@ -479,6 +454,7 @@ const AddIssues = ({
                     value={repo}
                     onChange={(e) => setRepo(e.target.value)}
                   >
+                    <MenuItem value="">------------------------</MenuItem>
                     {_.map(repoList, (rep) => (
                       <MenuItem
                         key={`rep-${rep.id}-${rep.name}`}
@@ -525,7 +501,8 @@ const AddIssues = ({
                     setColID(stat.status_tracking_id);
                   }}
                 >
-                  {_.map(prodStatus, (sts) => (
+                  <MenuItem value="">------------------------</MenuItem>
+                  {_.map(statuses, (sts) => (
                     <MenuItem
                       key={`status-${sts.status_uuid}-${sts.name}`}
                       value={sts}
@@ -680,8 +657,8 @@ const AddIssues = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  statuses: state.decisionReducer.statuses,
-  features: state.decisionReducer.features,
+  statuses: state.releaseReducer.statuses,
+  features: state.releaseReducer.features,
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,
 });

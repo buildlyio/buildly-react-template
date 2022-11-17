@@ -18,7 +18,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faTrello } from '@fortawesome/free-brands-svg-icons';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import { useInput } from '@hooks/useInput';
-import { validators } from '@utils/validators';
 import { getOrganization } from '@context/User.context';
 import {
   saveProductFormData, getAllThirdPartyTools, validateCredential,
@@ -92,6 +91,8 @@ const ProductSetup = ({
   viewPage,
   featCred,
   issueCred,
+  featureCredValid,
+  issueCredValid,
 }) => {
   const classes = useStyles();
 
@@ -144,28 +145,19 @@ const ProductSetup = ({
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
-    if (productFormData && !_.isEmpty(productFormData.creds)) {
-      _.forEach(productFormData.creds, (cred) => {
-        switch (true) {
-          case cred && cred.auth_detail && cred.auth_detail.tool_type === 'Feature':
-            if (cred.auth_detail.tool_name === 'Trello') {
-              setTrelloAuth(cred.auth_detail);
-            }
-            if (cred.auth_detail.tool_name === 'GitHub') {
-              setGithubFeatureAuth(cred.auth_detail);
-            }
-            break;
+    if (productFormData && !_.isEmpty(productFormData.featureCreds)) {
+      if (_.toLower(productFormData.featureCreds.auth_detail.tool_name) === 'trello') {
+        setTrelloAuth(productFormData.featureCreds.auth_detail);
+      }
+      if (_.toLower(productFormData.featureCreds.auth_detail.tool_name) === 'github') {
+        setGithubFeatureAuth(productFormData.featureCreds.auth_detail);
+      }
+    }
 
-          case cred && cred.auth_detail && cred.auth_detail.tool_type === 'Issue':
-            if (cred.auth_detail.tool_name === 'GitHub') {
-              setGithubIssueAuth(cred.auth_detail);
-            }
-            break;
-
-          default:
-            break;
-        }
-      });
+    if (productFormData && !_.isEmpty(productFormData.issueCreds)) {
+      if (_.toLower(productFormData.issueCreds.auth_detail.tool_name) === 'github') {
+        setGithubIssueAuth(productFormData.issueCreds.auth_detail);
+      }
     }
   }, [productFormData]);
 
@@ -219,10 +211,10 @@ const ProductSetup = ({
       _.forEach(productFormData.third_party_tool, (id) => {
         const tool = _.find(thirdPartyTools, { thirdpartytool_uuid: id });
         if (tool) {
-          if (_.lowerCase(tool.tool_type) === 'feature') {
-            featuresTool.setNewValue(_.lowerCase(tool.name));
+          if (_.toLower(tool.tool_type) === 'feature') {
+            featuresTool.setNewValue(_.toLower(tool.name));
           } else {
-            issuesTool.setNewValue(_.lowerCase(tool.name));
+            issuesTool.setNewValue(_.toLower(tool.name));
           }
         }
       });
@@ -235,40 +227,15 @@ const ProductSetup = ({
       _.forEach(editData.third_party_tool, (id) => {
         const tool = _.find(thirdPartyTools, { thirdpartytool_uuid: id });
         if (tool) {
-          if (_.lowerCase(tool.tool_type) === 'feature') {
-            featuresTool.setNewValue(_.lowerCase(tool.name));
+          if (_.toLower(tool.tool_type) === 'feature') {
+            featuresTool.setNewValue(_.toLower(tool.name));
           } else {
-            issuesTool.setNewValue(_.lowerCase(tool.name));
+            issuesTool.setNewValue(_.toLower(tool.name));
           }
         }
       });
     }
   }, [thirdPartyTools]);
-
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
-  const handleBlur = (e, validation, input, parentId) => {
-    const validateObj = validators(validation, input);
-    const prevState = { ...formError };
-    if (validateObj && validateObj.error) {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: validateObj,
-      });
-    } else {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: {
-          error: false,
-          message: '',
-        },
-      });
-    }
-  };
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
@@ -278,6 +245,8 @@ const ProductSetup = ({
       || (featuresTool.value === 'trello' && (!trelloAuth.access_token || !trelloAuth.trello_key))
       || (featuresTool.value === 'github' && (!githubFeatureAuth.access_token || !githubFeatureAuth.owner_name))
       || (issuesTool.value === 'github' && (!githubIssueAuth.access_token || !githubIssueAuth.owner_name))
+      || (featuresTool.value !== 'start fresh' && !featureCredValid)
+      || (issuesTool.value !== 'start fresh' && !issueCredValid)
     ) {
       return true;
     }
@@ -297,12 +266,11 @@ const ProductSetup = ({
       (editData && _.includes(editData.third_party_tool, tool.thirdpartytool_uuid))
       || (productFormData && _.includes(productFormData.third_party_tool, tool.thirdpartytool_uuid))
     ));
-    const ft = _.lowerCase(_.find(tools, (tool) => _.lowerCase(tool.tool_type) === 'feature')?.name);
-    const it = _.lowerCase(_.find(tools, (tool) => _.lowerCase(tool.tool_type) === 'issue')?.name);
+    const ft = _.toLower(_.find(tools, (tool) => _.toLower(tool.tool_type) === 'feature')?.name);
+    const it = _.toLower(_.find(tools, (tool) => _.toLower(tool.tool_type) === 'issue')?.name);
 
     return (
-      (!editData && productFormData && !_.isEmpty(productFormData))
-      || name.hasChanged()
+      name.hasChanged()
       || description.hasChanged()
       || (ft && (featuresTool.value !== ft))
       || (it && (issuesTool.value !== it))
@@ -316,75 +284,37 @@ const ProductSetup = ({
   const handleFeatureCredential = (event) => {
     event.preventDefault();
 
-    let tools = [];
-    let creds = [];
-
+    let authDetail;
     switch (featuresTool.value) {
-      case 'trello': {
-        const ft = _.find(thirdPartyTools, (tool) => (
-          _.lowerCase(tool.name) === 'trello'
-          && _.lowerCase(tool.tool_type) === 'feature'
-        ));
-        tools = [...tools, ft?.thirdpartytool_uuid];
-        creds = [...creds, {
-          third_party_tool: ft?.thirdpartytool_uuid,
-          auth_detail: trelloAuth,
-        }];
+      case 'trello':
+        authDetail = trelloAuth;
         break;
-      }
 
-      case 'github': {
-        const ft = _.find(thirdPartyTools, (tool) => (
-          _.lowerCase(tool.name) === 'github'
-          && _.lowerCase(tool.tool_type) === 'feature'
-        ));
-        tools = [...tools, ft?.thirdpartytool_uuid];
-        creds = [...creds, {
-          third_party_tool: ft?.thirdpartytool_uuid,
-          auth_detail: githubFeatureAuth,
-        }];
+      case 'github':
+        authDetail = githubFeatureAuth;
         break;
-      }
 
       default:
         break;
     }
-    const formData = {
-      ...creds[0].auth_detail,
-    };
 
-    dispatch(validateCredential(formData));
+    dispatch(validateCredential({ ...authDetail }));
   };
 
   const handleIssueCredential = (event) => {
     event.preventDefault();
 
-    let tools = [];
-    let creds = [];
-
+    let authDetail;
     switch (issuesTool.value) {
-      case 'github': {
-        const it = _.find(thirdPartyTools, (tool) => (
-          _.lowerCase(tool.name) === 'github'
-          && _.lowerCase(tool.tool_type) === 'issue'
-        ));
-        tools = [...tools, it?.thirdpartytool_uuid];
-        creds = [...creds, {
-          third_party_tool: it?.thirdpartytool_uuid,
-          auth_detail: githubIssueAuth,
-        }];
+      case 'github':
+        authDetail = githubIssueAuth;
         break;
-      }
 
       default:
         break;
     }
 
-    const formData = {
-      ...creds[0].auth_detail,
-    };
-
-    dispatch(validateCredential(formData));
+    dispatch(validateCredential({ ...authDetail }));
   };
 
   /**
@@ -396,47 +326,33 @@ const ProductSetup = ({
 
     const dateTime = new Date();
     let tools = [];
-    let creds = [];
-    let changedData = [];
-    let featCreds = [];
-    let issCreds = [];
+    let newFeatCred;
+    let newIssueCred;
 
     switch (featuresTool.value) {
       case 'trello': {
         const ft = _.find(thirdPartyTools, (tool) => (
-          _.lowerCase(tool.name) === 'trello'
-          && _.lowerCase(tool.tool_type) === 'feature'
+          _.toLower(tool.name) === 'trello'
+          && _.toLower(tool.tool_type) === 'feature'
         ));
         tools = [...tools, ft?.thirdpartytool_uuid];
-        creds = [...creds, {
+        newFeatCred = {
           third_party_tool: ft?.thirdpartytool_uuid,
           auth_detail: trelloAuth,
-          credential_uuid: featCred?.credential_uuid,
-        }];
-        featCreds = [...featCreds, {
-          third_party_tool: ft?.thirdpartytool_uuid,
-          auth_detail: trelloAuth,
-          credential_uuid: featCred?.credential_uuid,
-        }];
+        };
         break;
       }
 
       case 'github': {
         const ft = _.find(thirdPartyTools, (tool) => (
-          _.lowerCase(tool.name) === 'github'
-          && _.lowerCase(tool.tool_type) === 'feature'
+          _.toLower(tool.name) === 'github'
+          && _.toLower(tool.tool_type) === 'feature'
         ));
         tools = [...tools, ft?.thirdpartytool_uuid];
-        creds = [...creds, {
+        newFeatCred = {
           third_party_tool: ft?.thirdpartytool_uuid,
           auth_detail: githubFeatureAuth,
-          credential_uuid: featCred?.credential_uuid,
-        }];
-        featCreds = [...featCreds, {
-          third_party_tool: ft?.thirdpartytool_uuid,
-          auth_detail: githubFeatureAuth,
-          credential_uuid: featCred?.credential_uuid,
-        }];
+        };
         break;
       }
 
@@ -447,20 +363,14 @@ const ProductSetup = ({
     switch (issuesTool.value) {
       case 'github': {
         const it = _.find(thirdPartyTools, (tool) => (
-          _.lowerCase(tool.name) === 'github'
-          && _.lowerCase(tool.tool_type) === 'issue'
+          _.toLower(tool.name) === 'github'
+          && _.toLower(tool.tool_type) === 'issue'
         ));
         tools = [...tools, it?.thirdpartytool_uuid];
-        creds = [...creds, {
+        newIssueCred = {
           third_party_tool: it?.thirdpartytool_uuid,
           auth_detail: githubIssueAuth,
-          credential_uuid: issueCred?.credential_uuid,
-        }];
-        issCreds = [...issCreds, {
-          third_party_tool: it?.thirdpartytool_uuid,
-          auth_detail: githubIssueAuth,
-          credential_uuid: issueCred?.credential_uuid,
-        }];
+        };
         break;
       }
 
@@ -469,23 +379,14 @@ const ProductSetup = ({
     }
 
     //  check tooltype of features and previous tool credentials
-    const resultFeat = !_.isMatch(
-      featCreds[0]?.auth_detail.tool_name, featCred?.auth_detail.tool_name,
+    const updatedFeatureCreds = !_.isMatch(
+      newFeatCred?.auth_detail.tool_name, featCred?.auth_detail.tool_name,
     );
 
     // check tooltype of issues and previous tool credentials
-    const resultIssue = !_.isMatch(
-      issCreds[0]?.auth_detail.tool_name, issueCred?.auth_detail.tool_name,
+    const updatedIssueCreds = !_.isMatch(
+      newIssueCred?.auth_detail.tool_name, issueCred?.auth_detail.tool_name,
     );
-
-    changedData = [{
-      changeTool: resultFeat,
-      ...featCreds[0],
-    },
-    {
-      changeTool: resultIssue,
-      ...issCreds[0],
-    }];
 
     const formData = {
       ...productFormData,
@@ -500,8 +401,18 @@ const ProductSetup = ({
       product_info: {
         ...productFormData?.product_info,
       },
-      creds,
-      changedData,
+      featureCreds: updatedFeatureCreds
+        ? {
+          ...featCred,
+          ...newFeatCred,
+          auth_detail: { ...featCred.auth_detail, ...newFeatCred.auth_detail },
+        } : newFeatCred,
+      issueCreds: updatedIssueCreds
+        ? {
+          ...issueCred,
+          ...newIssueCred,
+          auth_detail: { ...issueCred.auth_detail, ...newIssueCred.auth_detail },
+        } : newIssueCred,
     };
 
     dispatch(saveProductFormData(formData));
@@ -657,19 +568,6 @@ const ProductSetup = ({
                         })}
                       />
                     </Grid>
-
-                    <Grid item>
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        className={classes.submit}
-                        onClick={handleFeatureCredential}
-                      >
-                        Validate
-                      </Button>
-                    </Grid>
                   </>
                 )}
 
@@ -716,20 +614,22 @@ const ProductSetup = ({
                         })}
                       />
                     </Grid>
-
-                    <Grid item>
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        onClick={handleFeatureCredential}
-                        className={classes.submit}
-                      >
-                        Validate
-                      </Button>
-                    </Grid>
                   </>
+                )}
+
+                {featuresTool.value !== 'start fresh' && (
+                  <Grid item>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      className={classes.submit}
+                      onClick={handleFeatureCredential}
+                    >
+                      Validate
+                    </Button>
+                  </Grid>
                 )}
               </Box>
             </Grid>
@@ -812,20 +712,22 @@ const ProductSetup = ({
                         })}
                       />
                     </Grid>
-
-                    <Grid item>
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        onClick={handleIssueCredential}
-                        className={classes.submit}
-                      >
-                        Validate
-                      </Button>
-                    </Grid>
                   </>
+                )}
+
+                {issuesTool.value !== 'start fresh' && (
+                  <Grid item>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      onClick={handleIssueCredential}
+                      className={classes.submit}
+                    >
+                      Validate
+                    </Button>
+                  </Grid>
                 )}
               </Box>
             </Grid>
@@ -855,6 +757,8 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   productFormData: state.productReducer.productFormData,
   thirdPartyTools: state.productReducer.thirdPartyTools,
+  featureCredValid: state.productReducer.featureCredValid,
+  issueCredValid: state.productReducer.issueCredValid,
 });
 
 export default connect(mapStateToProps)(ProductSetup);

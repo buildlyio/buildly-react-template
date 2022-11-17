@@ -157,19 +157,14 @@ const DataTableWrapper = ({
             </Button>
           </Box>
         )}
+
         {tableHeader && (
-          <Typography
-            className={classes.dashboardHeading}
-            variant="h4"
-          >
+          <Typography className={classes.dashboardHeading} variant="h4">
             {tableHeader}
           </Typography>
         )}
-        <Grid
-          className={`${!noCustomTheme && classes.dataTable}`}
-          container
-          spacing={2}
-        >
+
+        <Grid className={`${!noCustomTheme && classes.dataTable}`} container spacing={2}>
           <Grid item xs={12}>
             <MUIDataTable
               data={rows}
@@ -178,17 +173,19 @@ const DataTableWrapper = ({
             />
           </Grid>
         </Grid>
+
         {children}
       </div>
 
-      {deleteAction && (
-      <ConfirmModal
-        open={openDeleteModal}
-        setOpen={setDeleteModal}
-        submitAction={handleDeleteModal}
-        title={deleteModalTitle}
-        submitText="Delete"
-      />
+      {deleteAction && openDeleteModal && setDeleteModal && handleDeleteModal
+      && deleteModalTitle && (
+        <ConfirmModal
+          open={openDeleteModal}
+          setOpen={setDeleteModal}
+          submitAction={handleDeleteModal}
+          title={deleteModalTitle}
+          submitText="Delete"
+        />
       )}
     </Box>
   );

@@ -135,14 +135,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_DEV_TEAM_SUCCESS: {
-      const { devTeams } = state;
-      _.remove(devTeams, { devteam_uuid: action.devteam_uuid });
+      const dts = _.filter(state.devTeams, (dt) => (dt.devteam_uuid !== action.devteam_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        devTeams,
+        devTeams: dts,
       };
     }
 
@@ -178,17 +177,15 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_TIMESHEET_HOUR_SUCCESS: {
-      const { timesheetHours } = state;
-      _.remove(
-        timesheetHours,
-        { timesheethour_uuid: action.timesheethour_uuid },
-      );
+      const tshs = _.filter(state.timesheetHours, (th) => (
+        th.timesheethour_uuid !== action.timesheethour_uuid
+      ));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        timesheetHours,
+        timesheetHours: tshs,
       };
     }
 
@@ -224,14 +221,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_TIMESHEET_SUCCESS: {
-      const { timesheets } = state;
-      _.remove(timesheets, { timesheet_uuid: action.timesheet_uuid });
+      const tss = _.filter(state.timesheets, (t) => (t.timesheet_uuid !== action.timesheet_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        timesheets,
+        timesheets: tss,
       };
     }
 

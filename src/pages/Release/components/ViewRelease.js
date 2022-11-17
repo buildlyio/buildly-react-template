@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { isMobile } from '@utils/mediaQuery';
-import { getAllReleases } from '@redux/product/actions/product.actions';
+import { getAllReleases } from '@redux/release/actions/release.actions';
 import { routes } from '@routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({

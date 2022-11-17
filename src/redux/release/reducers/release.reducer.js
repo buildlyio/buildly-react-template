@@ -1,9 +1,13 @@
 import _ from 'lodash';
 import {
   SAVE_FEATURE_FORM_DATA,
-  ALL_DECISIONS,
-  ALL_DECISIONS_SUCCESS,
-  ALL_DECISIONS_FAILURE,
+  CLEAR_PRODUCT_RELATED_RELEASE_DATA,
+  ALL_RELEASES,
+  ALL_RELEASES_SUCCESS,
+  ALL_RELEASES_FAILURE,
+  ALL_COMMENTS,
+  ALL_COMMENTS_SUCCESS,
+  ALL_COMMENTS_FAILURE,
   ALL_FEATURES,
   ALL_FEATURES_SUCCESS,
   ALL_FEATURES_FAILURE,
@@ -16,9 +20,12 @@ import {
   ALL_STATUSES,
   ALL_STATUSES_SUCCESS,
   ALL_STATUSES_FAILURE,
-  GET_DECISION,
-  GET_DECISION_SUCCESS,
-  GET_DECISION_FAILURE,
+  GET_RELEASE,
+  GET_RELEASE_SUCCESS,
+  GET_RELEASE_FAILURE,
+  GET_COMMENT,
+  GET_COMMENT_SUCCESS,
+  GET_COMMENT_FAILURE,
   GET_FEATURE,
   GET_FEATURE_SUCCESS,
   GET_FEATURE_FAILURE,
@@ -31,9 +38,12 @@ import {
   GET_STATUS,
   GET_STATUS_SUCCESS,
   GET_STATUS_FAILURE,
-  CREATE_DECISION,
-  CREATE_DECISION_SUCCESS,
-  CREATE_DECISION_FAILURE,
+  CREATE_RELEASE,
+  CREATE_RELEASE_SUCCESS,
+  CREATE_RELEASE_FAILURE,
+  CREATE_COMMENT,
+  CREATE_COMMENT_SUCCESS,
+  CREATE_COMMENT_FAILURE,
   CREATE_FEATURE,
   CREATE_FEATURE_SUCCESS,
   CREATE_FEATURE_FAILURE,
@@ -46,9 +56,12 @@ import {
   CREATE_STATUS,
   CREATE_STATUS_SUCCESS,
   CREATE_STATUS_FAILURE,
-  UPDATE_DECISION,
-  UPDATE_DECISION_SUCCESS,
-  UPDATE_DECISION_FAILURE,
+  UPDATE_RELEASE,
+  UPDATE_RELEASE_SUCCESS,
+  UPDATE_RELEASE_FAILURE,
+  UPDATE_COMMENT,
+  UPDATE_COMMENT_SUCCESS,
+  UPDATE_COMMENT_FAILURE,
   UPDATE_FEATURE,
   UPDATE_FEATURE_SUCCESS,
   UPDATE_FEATURE_FAILURE,
@@ -61,9 +74,12 @@ import {
   UPDATE_STATUS,
   UPDATE_STATUS_SUCCESS,
   UPDATE_STATUS_FAILURE,
-  DELETE_DECISION,
-  DELETE_DECISION_SUCCESS,
-  DELETE_DECISION_FAILURE,
+  DELETE_RELEASE,
+  DELETE_RELEASE_SUCCESS,
+  DELETE_RELEASE_FAILURE,
+  DELETE_COMMENT,
+  DELETE_COMMENT_SUCCESS,
+  DELETE_COMMENT_FAILURE,
   DELETE_FEATURE,
   DELETE_FEATURE_SUCCESS,
   DELETE_FEATURE_FAILURE,
@@ -82,13 +98,14 @@ import {
   CLEAR_PRODUCT_DATA,
   CLEAR_PRODUCT_DATA_FAILURE,
   CLEAR_PRODUCT_DATA_SUCCESS,
-} from '../actions/decision.actions';
+} from '../actions/release.actions';
 
 const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  decisions: [],
+  releases: [],
+  comments: [],
   features: [],
   feedbacks: [],
   issues: [],
@@ -104,31 +121,51 @@ export default (state = initialState, action) => {
     case SAVE_FEATURE_FORM_DATA:
       return {
         ...state,
+        loading: false,
+        loaded: true,
         featureFormData: action.formData,
       };
 
-    case ALL_DECISIONS:
+    case CLEAR_PRODUCT_RELATED_RELEASE_DATA:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        comments: [],
+        features: [],
+        issues: [],
+        statuses: [],
+        importLoaded: false,
+        featureFormData: null,
+      };
+
+    case ALL_RELEASES:
+    case ALL_COMMENTS:
     case ALL_FEATURES:
     case ALL_FEEDBACKS:
     case ALL_ISSUES:
     case ALL_STATUSES:
-    case GET_DECISION:
+    case GET_RELEASE:
+    case GET_COMMENT:
     case GET_FEATURE:
     case GET_FEEDBACK:
     case GET_ISSUE:
     case GET_STATUS:
-    case CREATE_DECISION:
+    case CREATE_RELEASE:
+    case CREATE_COMMENT:
     case CREATE_FEATURE:
     case CREATE_FEEDBACK:
     case CREATE_ISSUE:
     case CREATE_STATUS:
     case IMPORT_TICKETS:
-    case UPDATE_DECISION:
+    case UPDATE_RELEASE:
+    case UPDATE_COMMENT:
     case UPDATE_FEATURE:
     case UPDATE_FEEDBACK:
     case UPDATE_ISSUE:
     case UPDATE_STATUS:
-    case DELETE_DECISION:
+    case DELETE_RELEASE:
+    case DELETE_COMMENT:
     case DELETE_FEATURE:
     case DELETE_FEEDBACK:
     case DELETE_ISSUE:
@@ -141,28 +178,33 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case ALL_DECISIONS_FAILURE:
+    case ALL_RELEASES_FAILURE:
+    case ALL_COMMENTS_FAILURE:
     case ALL_FEATURES_FAILURE:
     case ALL_FEEDBACKS_FAILURE:
     case ALL_ISSUES_FAILURE:
     case ALL_STATUSES_FAILURE:
-    case GET_DECISION_FAILURE:
+    case GET_RELEASE_FAILURE:
+    case GET_COMMENT_FAILURE:
     case GET_FEATURE_FAILURE:
     case GET_FEEDBACK_FAILURE:
     case GET_ISSUE_FAILURE:
     case GET_STATUS_FAILURE:
-    case CREATE_DECISION_FAILURE:
+    case CREATE_RELEASE_FAILURE:
+    case CREATE_COMMENT_FAILURE:
     case CREATE_FEATURE_FAILURE:
     case CREATE_FEEDBACK_FAILURE:
     case CREATE_ISSUE_FAILURE:
     case CREATE_STATUS_FAILURE:
     case IMPORT_TICKETS_FAILURE:
-    case UPDATE_DECISION_FAILURE:
+    case UPDATE_RELEASE_FAILURE:
+    case UPDATE_COMMENT_FAILURE:
     case UPDATE_FEATURE_FAILURE:
     case UPDATE_FEEDBACK_FAILURE:
     case UPDATE_ISSUE_FAILURE:
     case UPDATE_STATUS_FAILURE:
-    case DELETE_DECISION_FAILURE:
+    case DELETE_RELEASE_FAILURE:
+    case DELETE_COMMENT_FAILURE:
     case DELETE_FEATURE_FAILURE:
     case DELETE_FEEDBACK_FAILURE:
     case DELETE_ISSUE_FAILURE:
@@ -175,46 +217,87 @@ export default (state = initialState, action) => {
         error: action.error,
       };
 
-    case ALL_DECISIONS_SUCCESS:
+    case ALL_RELEASES_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        decisions: action.data,
+        releases: action.data,
       };
 
-    case GET_DECISION_SUCCESS:
-    case CREATE_DECISION_SUCCESS:
-    case UPDATE_DECISION_SUCCESS: {
+    case GET_RELEASE_SUCCESS:
+    case CREATE_RELEASE_SUCCESS:
+    case UPDATE_RELEASE_SUCCESS: {
       const found = _.find(
-        state.decisions,
-        { decision_uuid: action.data.decision_uuid },
+        state.releases,
+        { release_uuid: action.data.release_uuid },
       );
-      const decisions = found
-        ? _.map(state.decisions, (decision) => (
-          decision.decision_uuid === action.data.decision_uuid
+      const releases = found
+        ? _.map(state.releases, (release) => (
+          release.release_uuid === action.data.release_uuid
             ? action.data
-            : decision
+            : release
         ))
-        : [...state.decisions, action.data];
+        : [...state.releases, action.data];
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        decisions,
+        releases,
       };
     }
 
-    case DELETE_DECISION_SUCCESS: {
-      const { decisions } = state;
-      _.remove(decisions, { decision_uuid: action.decision_uuid });
+    case DELETE_RELEASE_SUCCESS: {
+      const rels = _.filter(state.releases, (rel) => (rel.release_uuid !== action.release_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        decisions,
+        releases: rels,
+      };
+    }
+
+    case ALL_COMMENTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        comments: action.data,
+      };
+
+    case GET_COMMENT_SUCCESS:
+    case CREATE_COMMENT_SUCCESS:
+    case UPDATE_COMMENT_SUCCESS: {
+      const found = _.find(
+        state.comments,
+        { comment_uuid: action.data.comment_uuid },
+      );
+      const comments = found
+        ? _.map(state.comments, (comment) => (
+          comment.comment_uuid === action.data.comment_uuid
+            ? action.data
+            : comment
+        ))
+        : [...state.comments, action.data];
+
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        comments,
+      };
+    }
+
+    case DELETE_COMMENT_SUCCESS: {
+      const comms = _.filter(state.comments, (comm) => (comm.comment_uuid !== action.comment_uuid));
+
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        comments: comms,
       };
     }
 
@@ -250,14 +333,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_FEATURE_SUCCESS: {
-      const { features } = state;
-      _.remove(features, { feature_uuid: action.feature_uuid });
+      const feats = _.filter(state.features, (feat) => (feat.feature_uuid !== action.feature_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        features,
+        features: feats,
       };
     }
 
@@ -293,14 +375,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_FEEDBACK_SUCCESS: {
-      const { feedbacks } = state;
-      _.remove(feedbacks, { feedback_uuid: action.feedback_uuid });
+      const fbs = _.filter(state.feedbacks, (fb) => (fb.feedback_uuid !== action.feedback_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        feedbacks,
+        feedbacks: fbs,
       };
     }
 
@@ -336,14 +417,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_ISSUE_SUCCESS: {
-      const { issues } = state;
-      _.remove(issues, { issue_uuid: action.issue_uuid });
+      const iss = _.filter(state.issues, (issue) => (issue.issue_uuid !== action.issue_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        issues,
+        issues: iss,
       };
     }
 
@@ -356,7 +436,6 @@ export default (state = initialState, action) => {
       };
 
     case GET_STATUS_SUCCESS:
-    case CREATE_STATUS_SUCCESS:
     case UPDATE_STATUS_SUCCESS: {
       const found = _.find(
         state.statuses,
@@ -378,15 +457,22 @@ export default (state = initialState, action) => {
       };
     }
 
+    case CREATE_STATUS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        statuses: action.data,
+      };
+
     case DELETE_STATUS_SUCCESS: {
-      const { statuses } = state;
-      _.remove(statuses, { status_uuid: action.status_uuid });
+      const sts = _.filter(state.statuses, (st) => (st.status_uuid !== action.status_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        statuses,
+        statuses: sts,
       };
     }
 
@@ -412,19 +498,14 @@ export default (state = initialState, action) => {
       };
     }
 
-    case CLEAR_PRODUCT_DATA_SUCCESS: {
-      const { features, issues } = state;
-      _.remove(features, { product_uuid: action.data.product_uuid });
-      _.remove(issues, { product_uuid: action.data.product_uuid });
-
+    case CLEAR_PRODUCT_DATA_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        features,
-        issues,
+        features: [],
+        issues: [],
       };
-    }
 
     default:
       return state;

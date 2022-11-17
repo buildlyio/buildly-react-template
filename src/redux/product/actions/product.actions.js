@@ -1,6 +1,6 @@
 // Product Action types
 export const SAVE_PRODUCT_FORM_DATA = 'PRODUCT/SAVE_PRODUCT_FORM_DATA';
-export const CLEAR_BOARD_DATA = 'PRODUCT/CLEAR_BOARD_DATA';
+export const CLEAR_PRODUCT_RELATED_PRODUCT_DATA = 'PRODUCT/CLEAR_PRODUCT_RELATED_PRODUCT_DATA';
 
 export const ALL_CREDENTIALS = 'PRODUCT/ALL_CREDENTIALS';
 export const ALL_CREDENTIALS_SUCCESS = 'PRODUCT/ALL_CREDENTIALS_SUCCESS';
@@ -62,26 +62,6 @@ export const DELETE_PRODUCT = 'PRODUCT/DELETE_PRODUCT';
 export const DELETE_PRODUCT_SUCCESS = 'PRODUCT/DELETE_PRODUCT_SUCCESS';
 export const DELETE_PRODUCT_FAILURE = 'PRODUCT/DELETE_PRODUCT_FAILURE';
 
-export const ALL_RELEASES = 'PRODUCT/ALL_RELEASES';
-export const ALL_RELEASES_SUCCESS = 'PRODUCT/ALL_RELEASES_SUCCESS';
-export const ALL_RELEASES_FAILURE = 'PRODUCT/ALL_RELEASES_FAILURE';
-
-export const GET_RELEASE = 'PRODUCT/GET_RELEASE';
-export const GET_RELEASE_SUCCESS = 'PRODUCT/GET_RELEASE_SUCCESS';
-export const GET_RELEASE_FAILURE = 'PRODUCT/GET_RELEASE_FAILURE';
-
-export const CREATE_RELEASE = 'PRODUCT/CREATE_RELEASE';
-export const CREATE_RELEASE_SUCCESS = 'PRODUCT/CREATE_RELEASE_SUCCESS';
-export const CREATE_RELEASE_FAILURE = 'PRODUCT/CREATE_RELEASE_FAILURE';
-
-export const UPDATE_RELEASE = 'PRODUCT/UPDATE_RELEASE';
-export const UPDATE_RELEASE_SUCCESS = 'PRODUCT/UPDATE_RELEASE_SUCCESS';
-export const UPDATE_RELEASE_FAILURE = 'PRODUCT/UPDATE_RELEASE_FAILURE';
-
-export const DELETE_RELEASE = 'PRODUCT/DELETE_RELEASE';
-export const DELETE_RELEASE_SUCCESS = 'PRODUCT/DELETE_RELEASE_SUCCESS';
-export const DELETE_RELEASE_FAILURE = 'PRODUCT/DELETE_RELEASE_FAILURE';
-
 export const ALL_THIRD_PARTY_TOOLS = 'PRODUCT/ALL_THIRD_PARTY_TOOLS';
 export const ALL_THIRD_PARTY_TOOLS_SUCCESS = 'PRODUCT/ALL_THIRD_PARTY_TOOLS_SUCCESS';
 export const ALL_THIRD_PARTY_TOOLS_FAILURE = 'PRODUCT/ALL_THIRD_PARTY_TOOLS_FAILURE';
@@ -128,17 +108,20 @@ export const saveProductFormData = (formData) => ({
 });
 
 /**
- * Clear Board Data
- * @param {Object} formData
+ * Clear Product Related Data
  */
-export const clearBoardData = () => ({
-  type: CLEAR_BOARD_DATA,
+export const clearProductRelatedProductData = () => ({
+  type: CLEAR_PRODUCT_RELATED_PRODUCT_DATA,
 });
 
 /**
  * Get all Credentials
+ * @param {uuid} product_uuid
  */
-export const getAllCredentials = () => ({ type: ALL_CREDENTIALS });
+export const getAllCredentials = (product_uuid) => ({
+  type: ALL_CREDENTIALS,
+  product_uuid,
+});
 
 /**
  * Get a Credential
@@ -219,8 +202,12 @@ export const deleteProductTeam = (productteam_uuid) => ({
 
 /**
  * Get all Products
+ * @param {uuid} organization_uuid
  */
-export const getAllProducts = () => ({ type: ALL_PRODUCTS });
+export const getAllProducts = (organization_uuid) => ({
+  type: ALL_PRODUCTS,
+  organization_uuid,
+});
 
 /**
  * Get a Product
@@ -258,47 +245,6 @@ export const updateProduct = (data) => ({
 export const deleteProduct = (product_uuid) => ({
   type: DELETE_PRODUCT,
   product_uuid,
-});
-
-/**
- * Get all Releases
- */
-export const getAllReleases = () => ({ type: ALL_RELEASES });
-
-/**
- * Get a Release
- * @param {uuid} release_uuid
- */
-export const getRelease = (release_uuid) => ({
-  type: GET_RELEASE,
-  release_uuid,
-});
-
-/**
- * Create a Release
- * @param {Object} data
- */
-export const createRelease = (data) => ({
-  type: CREATE_RELEASE,
-  data,
-});
-
-/**
- * Update a Release
- * @param {Object} data
- */
-export const updateRelease = (data) => ({
-  type: UPDATE_RELEASE,
-  data,
-});
-
-/**
- * Delete a Release
- * @param {uuid} release_uuid
- */
-export const deleteRelease = (release_uuid) => ({
-  type: DELETE_RELEASE,
-  release_uuid,
 });
 
 /**
@@ -354,21 +300,21 @@ export const getBoard = (product_uuid) => ({
 /**
  * Create a board
  * @param {Object} data
+ * @param {Array} statusData
  */
-export const createBoard = (data, create) => ({
+export const createBoard = (data, statusData) => ({
   type: CREATE_BOARD,
   data,
-  create,
+  statusData,
 });
 
 /**
  * Validate tool Credential
  * @param {Object} data
  */
-export const validateCredential = (data, valid) => ({
+export const validateCredential = (data) => ({
   type: VALIDATE_CREDENTIAL,
   data,
-  valid,
 });
 
 /**

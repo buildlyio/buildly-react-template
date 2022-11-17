@@ -1,13 +1,16 @@
+import _ from 'lodash';
 import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
 import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
-import { routes } from '@routes/routesConstants';
 import {
-  ALL_DECISIONS,
-  ALL_DECISIONS_SUCCESS,
-  ALL_DECISIONS_FAILURE,
+  ALL_RELEASES,
+  ALL_RELEASES_SUCCESS,
+  ALL_RELEASES_FAILURE,
+  ALL_COMMENTS,
+  ALL_COMMENTS_SUCCESS,
+  ALL_COMMENTS_FAILURE,
   ALL_FEATURES,
   ALL_FEATURES_SUCCESS,
   ALL_FEATURES_FAILURE,
@@ -20,9 +23,12 @@ import {
   ALL_STATUSES,
   ALL_STATUSES_SUCCESS,
   ALL_STATUSES_FAILURE,
-  GET_DECISION,
-  GET_DECISION_SUCCESS,
-  GET_DECISION_FAILURE,
+  GET_RELEASE,
+  GET_RELEASE_SUCCESS,
+  GET_RELEASE_FAILURE,
+  GET_COMMENT,
+  GET_COMMENT_SUCCESS,
+  GET_COMMENT_FAILURE,
   GET_FEATURE,
   GET_FEATURE_SUCCESS,
   GET_FEATURE_FAILURE,
@@ -35,9 +41,12 @@ import {
   GET_STATUS,
   GET_STATUS_SUCCESS,
   GET_STATUS_FAILURE,
-  CREATE_DECISION,
-  CREATE_DECISION_SUCCESS,
-  CREATE_DECISION_FAILURE,
+  CREATE_RELEASE,
+  CREATE_RELEASE_SUCCESS,
+  CREATE_RELEASE_FAILURE,
+  CREATE_COMMENT,
+  CREATE_COMMENT_SUCCESS,
+  CREATE_COMMENT_FAILURE,
   CREATE_FEATURE,
   CREATE_FEATURE_SUCCESS,
   CREATE_FEATURE_FAILURE,
@@ -50,9 +59,12 @@ import {
   CREATE_STATUS,
   CREATE_STATUS_SUCCESS,
   CREATE_STATUS_FAILURE,
-  UPDATE_DECISION,
-  UPDATE_DECISION_SUCCESS,
-  UPDATE_DECISION_FAILURE,
+  UPDATE_RELEASE,
+  UPDATE_RELEASE_SUCCESS,
+  UPDATE_RELEASE_FAILURE,
+  UPDATE_COMMENT,
+  UPDATE_COMMENT_SUCCESS,
+  UPDATE_COMMENT_FAILURE,
   UPDATE_FEATURE,
   UPDATE_FEATURE_SUCCESS,
   UPDATE_FEATURE_FAILURE,
@@ -65,9 +77,12 @@ import {
   UPDATE_STATUS,
   UPDATE_STATUS_SUCCESS,
   UPDATE_STATUS_FAILURE,
-  DELETE_DECISION,
-  DELETE_DECISION_SUCCESS,
-  DELETE_DECISION_FAILURE,
+  DELETE_RELEASE,
+  DELETE_RELEASE_SUCCESS,
+  DELETE_RELEASE_FAILURE,
+  DELETE_COMMENT,
+  DELETE_COMMENT_SUCCESS,
+  DELETE_COMMENT_FAILURE,
   DELETE_FEATURE,
   DELETE_FEATURE_SUCCESS,
   DELETE_FEATURE_FAILURE,
@@ -87,135 +102,263 @@ import {
   CLEAR_PRODUCT_DATA,
   CLEAR_PRODUCT_DATA_SUCCESS,
   CLEAR_PRODUCT_DATA_FAILURE,
-} from '../actions/decision.actions';
+} from '../actions/release.actions';
 import {
   deleteProduct,
 } from '../../product/actions/product.actions';
 
-const decisionEndpoint = 'decision/';
+const releaseEndpoint = 'release/';
 
-function* allDecisions(payload) {
+function* allReleases(payload) {
   try {
-    const decisions = yield call(
+    const releases = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${decisionEndpoint}decision/`,
+      `${window.env.API_URL}${releaseEndpoint}release/`,
     );
-    yield put({ type: ALL_DECISIONS_SUCCESS, data: decisions.data });
+    yield put({ type: ALL_RELEASES_SUCCESS, data: releases.data });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t fetch all Decisions!',
+          message: 'Couldn\'t fetch all Releases!',
         }),
       ),
       yield put({
-        type: ALL_DECISIONS_FAILURE,
+        type: ALL_RELEASES_FAILURE,
         error,
       }),
     ];
   }
 }
 
-function* getDecision(payload) {
+function* getRelease(payload) {
   try {
-    const decision = yield call(
+    const release = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${decisionEndpoint}decision/?decision_uuid=${payload.decision_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}release/?release_uuid=${payload.release_uuid}`,
     );
-    yield put({ type: GET_DECISION_SUCCESS, data: decision.data });
+    yield put({ type: GET_RELEASE_SUCCESS, data: release.data });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t fetch Decision!',
+          message: 'Couldn\'t fetch Release!',
         }),
       ),
       yield put({
-        type: GET_DECISION_FAILURE,
+        type: GET_RELEASE_FAILURE,
         error,
       }),
     ];
   }
 }
 
-function* createDecision(payload) {
+function* createRelease(payload) {
   try {
-    const decision = yield call(
+    const release = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${decisionEndpoint}decision/`,
+      `${window.env.API_URL}${releaseEndpoint}release/`,
       payload.data,
     );
-    yield put({ type: CREATE_DECISION_SUCCESS, data: decision.data });
+    yield put({ type: CREATE_RELEASE_SUCCESS, data: release.data });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t create Decision!',
+          message: 'Couldn\'t create Release!',
         }),
       ),
       yield put({
-        type: CREATE_DECISION_FAILURE,
+        type: CREATE_RELEASE_FAILURE,
         error,
       }),
     ];
   }
 }
 
-function* updateDecision(payload) {
+function* updateRelease(payload) {
   try {
-    const decision = yield call(
+    const release = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${decisionEndpoint}decision/${payload.data.decision_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}release/${payload.data.release_uuid}`,
       payload.data,
     );
-    yield put({ type: UPDATE_DECISION_SUCCESS, data: decision.data });
+    yield put({ type: UPDATE_RELEASE_SUCCESS, data: release.data });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t update Decision!',
+          message: 'Couldn\'t update Release!',
         }),
       ),
       yield put({
-        type: UPDATE_DECISION_FAILURE,
+        type: UPDATE_RELEASE_FAILURE,
         error,
       }),
     ];
   }
 }
 
-function* deleteDecision(payload) {
-  const { decision_uuid } = payload;
+function* deleteRelease(payload) {
+  const { release_uuid } = payload;
   try {
-    const decision = yield call(
+    const release = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${decisionEndpoint}decision/${decision_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}release/${release_uuid}`,
     );
-    yield put({ type: DELETE_DECISION_SUCCESS, decision_uuid });
+    yield put({ type: DELETE_RELEASE_SUCCESS, release_uuid });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t delete Decision!',
+          message: 'Couldn\'t delete Release!',
         }),
       ),
       yield put({
-        type: DELETE_DECISION_FAILURE,
+        type: DELETE_RELEASE_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* allComments(payload) {
+  try {
+    const comments = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}${releaseEndpoint}comment/?product_uuid=${payload.product_uuid}`,
+    );
+    yield put({ type: ALL_COMMENTS_SUCCESS, data: comments.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t fetch all Comments!',
+        }),
+      ),
+      yield put({
+        type: ALL_COMMENTS_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* getComment(payload) {
+  try {
+    const comment = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}${releaseEndpoint}comment/?comment_uuid=${payload.comment_uuid}`,
+    );
+    yield put({ type: GET_COMMENT_SUCCESS, data: comment.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t fetch Comment!',
+        }),
+      ),
+      yield put({
+        type: GET_COMMENT_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* createComment(payload) {
+  try {
+    const comment = yield call(
+      httpService.makeRequest,
+      'post',
+      `${window.env.API_URL}${releaseEndpoint}comment/`,
+      payload.data,
+    );
+    yield put({ type: CREATE_COMMENT_SUCCESS, data: comment.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t create Comment!',
+        }),
+      ),
+      yield put({
+        type: CREATE_COMMENT_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* updateComment(payload) {
+  try {
+    const comment = yield call(
+      httpService.makeRequest,
+      'put',
+      `${window.env.API_URL}${releaseEndpoint}comment/${payload.data.comment_uuid}`,
+      payload.data,
+    );
+    yield put({ type: UPDATE_COMMENT_SUCCESS, data: comment.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t update Comment!',
+        }),
+      ),
+      yield put({
+        type: UPDATE_COMMENT_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* deleteComment(payload) {
+  const { comment_uuid } = payload;
+  try {
+    const comment = yield call(
+      httpService.makeRequest,
+      'delete',
+      `${window.env.API_URL}${releaseEndpoint}comment/${comment_uuid}`,
+    );
+    yield put({ type: DELETE_COMMENT_SUCCESS, comment_uuid });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t delete Comment!',
+        }),
+      ),
+      yield put({
+        type: DELETE_COMMENT_FAILURE,
         error,
       }),
     ];
@@ -227,7 +370,7 @@ function* allFeatures(payload) {
     const features = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${decisionEndpoint}feature/`,
+      `${window.env.API_URL}${releaseEndpoint}feature/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_FEATURES_SUCCESS, data: features.data });
   } catch (error) {
@@ -252,7 +395,7 @@ function* getFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${decisionEndpoint}feature/?feature_uuid=${payload.feature_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}feature/?feature_uuid=${payload.feature_uuid}`,
     );
     yield put({ type: GET_FEATURE_SUCCESS, data: feature.data });
   } catch (error) {
@@ -277,7 +420,7 @@ function* createFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${decisionEndpoint}feature/`,
+      `${window.env.API_URL}${releaseEndpoint}feature/`,
       payload.data,
     );
     yield [
@@ -313,7 +456,7 @@ function* updateFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${decisionEndpoint}feature/${payload.data.feature_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}feature/${payload.data.feature_uuid}`,
       payload.data,
     );
     yield [
@@ -349,7 +492,7 @@ function* deleteFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${decisionEndpoint}feature/${feature_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}feature/${feature_uuid}`,
       payload.data,
     );
     yield [
@@ -384,7 +527,7 @@ function* allFeedbacks(payload) {
     const feedbacks = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${decisionEndpoint}feedback/`,
+      `${window.env.API_URL}${releaseEndpoint}feedback/`,
     );
     yield put({ type: ALL_FEEDBACKS_SUCCESS, data: feedbacks.data });
   } catch (error) {
@@ -409,7 +552,7 @@ function* getFeedback(payload) {
     const feedback = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${decisionEndpoint}feedback/?feedback_uuid=${payload.feedback_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}feedback/?feedback_uuid=${payload.feedback_uuid}`,
     );
     yield put({ type: GET_FEEDBACK_SUCCESS, data: feedback.data });
   } catch (error) {
@@ -434,7 +577,7 @@ function* createFeedback(payload) {
     const feedback = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${decisionEndpoint}feedback/`,
+      `${window.env.API_URL}${releaseEndpoint}feedback/`,
       payload.data,
     );
     yield put({ type: CREATE_FEEDBACK_SUCCESS, data: feedback.data });
@@ -460,7 +603,7 @@ function* updateFeedback(payload) {
     const feedback = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${decisionEndpoint}feedback/${payload.data.feedback_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}feedback/${payload.data.feedback_uuid}`,
       payload.data,
     );
     yield put({ type: UPDATE_FEEDBACK_SUCCESS, data: feedback.data });
@@ -487,7 +630,7 @@ function* deleteFeedback(payload) {
     const feedback = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${decisionEndpoint}feedback/${feedback_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}feedback/${feedback_uuid}`,
     );
     yield put({ type: DELETE_FEEDBACK_SUCCESS, feedback_uuid });
   } catch (error) {
@@ -512,7 +655,7 @@ function* allIssues(payload) {
     const issues = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${decisionEndpoint}issue/`,
+      `${window.env.API_URL}${releaseEndpoint}issue/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_ISSUES_SUCCESS, data: issues.data });
   } catch (error) {
@@ -537,7 +680,7 @@ function* getIssue(payload) {
     const issue = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${decisionEndpoint}issue/?issue_uuid=${payload.issue_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}issue/?issue_uuid=${payload.issue_uuid}`,
     );
     yield put({ type: GET_ISSUE_SUCCESS, data: issue.data });
   } catch (error) {
@@ -564,7 +707,7 @@ function* createIssue(payload) {
         const issue = yield call(
           httpService.makeRequest,
           'post',
-          `${window.env.API_URL}${decisionEndpoint}issue/`,
+          `${window.env.API_URL}${releaseEndpoint}issue/`,
           payload.data[i],
         );
         yield put({ type: CREATE_ISSUE_SUCCESS, data: issue.data });
@@ -573,7 +716,7 @@ function* createIssue(payload) {
       const issue = yield call(
         httpService.makeRequest,
         'post',
-        `${window.env.API_URL}${decisionEndpoint}issue/`,
+        `${window.env.API_URL}${releaseEndpoint}issue/`,
         payload.data,
       );
       yield [
@@ -609,7 +752,7 @@ function* updateIssue(payload) {
     const issue = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${decisionEndpoint}issue/${payload.data.issue_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}issue/${payload.data.issue_uuid}`,
       payload.data,
     );
     yield [
@@ -645,7 +788,7 @@ function* deleteIssue(payload) {
     const issue = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${decisionEndpoint}issue/${issue_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}issue/${issue_uuid}`,
       payload.data,
     );
     yield [
@@ -680,7 +823,7 @@ function* allStatuses(payload) {
     const statuses = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${decisionEndpoint}status/`,
+      `${window.env.API_URL}${releaseEndpoint}status/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_STATUSES_SUCCESS, data: statuses.data });
   } catch (error) {
@@ -705,7 +848,7 @@ function* getStatus(payload) {
     const status = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${decisionEndpoint}status/?product_uuid=${payload.product_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}status/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: GET_STATUS_SUCCESS, data: status.data });
   } catch (error) {
@@ -726,23 +869,24 @@ function* getStatus(payload) {
 }
 
 function* createStatus(payload) {
+  const { data } = payload;
   try {
-    if (payload.data.length > 0) {
-      for (let i = 0; i < payload.data.length; i += 1) {
-        const status = yield call(
+    if (_.size(data) > 1) {
+      const statuses = yield all(_.map(data, (status_data) => (
+        call(
           httpService.makeRequest,
           'post',
-          `${window.env.API_URL}${decisionEndpoint}status/`,
-          payload.data[i],
-        );
-        yield put({ type: CREATE_STATUS_SUCCESS, data: status.data });
-      }
+          `${window.env.API_URL}${releaseEndpoint}status/`,
+          status_data,
+        )
+      )));
+      yield put({ type: CREATE_STATUS_SUCCESS, data: _.flatMap(_.map(statuses, 'data')) });
     } else {
       const status = yield call(
         httpService.makeRequest,
         'post',
-        `${window.env.API_URL}${decisionEndpoint}status/`,
-        payload.data,
+        `${window.env.API_URL}${releaseEndpoint}status/`,
+        data,
       );
       yield put({ type: CREATE_STATUS_SUCCESS, data: status.data });
     }
@@ -768,7 +912,7 @@ function* updateStatus(payload) {
     const status = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${decisionEndpoint}status/${payload.data.status_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}status/${payload.data.status_uuid}`,
       payload.data,
     );
     yield put({ type: UPDATE_STATUS_SUCCESS, data: status.data });
@@ -795,7 +939,7 @@ function* deleteStatus(payload) {
     const status = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${decisionEndpoint}status/${status_uuid}`,
+      `${window.env.API_URL}${releaseEndpoint}status/${status_uuid}`,
     );
     yield put({ type: DELETE_STATUS_SUCCESS, status_uuid });
   } catch (error) {
@@ -820,7 +964,7 @@ function* importTickets(payload) {
     const ticket = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${decisionEndpoint}import-project-tickets/`,
+      `${window.env.API_URL}${releaseEndpoint}import-project-tickets/`,
       payload.data,
     );
     yield [
@@ -855,7 +999,7 @@ function* clearProductData(payload) {
     const product = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${decisionEndpoint}clear-product-data/`,
+      `${window.env.API_URL}${releaseEndpoint}clear-product-data/`,
       payload.data,
     );
     yield put({ type: CLEAR_PRODUCT_DATA_SUCCESS, data: payload.data });
@@ -878,24 +1022,44 @@ function* clearProductData(payload) {
 }
 
 // Watchers
-function* watchGetAllDecisions() {
-  yield takeLatest(ALL_DECISIONS, allDecisions);
+function* watchGetAllReleases() {
+  yield takeLatest(ALL_RELEASES, allReleases);
 }
 
-function* watchGetDecision() {
-  yield takeLatest(GET_DECISION, getDecision);
+function* watchGetRelease() {
+  yield takeLatest(GET_RELEASE, getRelease);
 }
 
-function* watchCreateDecision() {
-  yield takeLatest(CREATE_DECISION, createDecision);
+function* watchCreateRelease() {
+  yield takeLatest(CREATE_RELEASE, createRelease);
 }
 
-function* watchUpdateDecision() {
-  yield takeLatest(UPDATE_DECISION, updateDecision);
+function* watchUpdateRelease() {
+  yield takeLatest(UPDATE_RELEASE, updateRelease);
 }
 
-function* watchDeleteDecision() {
-  yield takeLatest(DELETE_DECISION, deleteDecision);
+function* watchDeleteRelease() {
+  yield takeLatest(DELETE_RELEASE, deleteRelease);
+}
+
+function* watchGetAllComments() {
+  yield takeLatest(ALL_COMMENTS, allComments);
+}
+
+function* watchGetComment() {
+  yield takeLatest(GET_COMMENT, getComment);
+}
+
+function* watchCreateComment() {
+  yield takeLatest(CREATE_COMMENT, createComment);
+}
+
+function* watchUpdateComment() {
+  yield takeLatest(UPDATE_COMMENT, updateComment);
+}
+
+function* watchDeleteComment() {
+  yield takeLatest(DELETE_COMMENT, deleteComment);
 }
 
 function* watchGetAllFeatures() {
@@ -986,30 +1150,35 @@ function* watchClearProductData() {
   yield takeLatest(CLEAR_PRODUCT_DATA, clearProductData);
 }
 
-export default function* decisionSaga() {
+export default function* releaseSaga() {
   yield all([
-    watchGetAllDecisions(),
+    watchGetAllReleases(),
+    watchGetAllComments(),
     watchGetAllFeatures(),
     watchGetAllFeedbacks(),
     watchGetAllIssues(),
     watchGetAllStatuses(),
-    watchGetDecision(),
+    watchGetRelease(),
+    watchGetComment(),
     watchGetFeature(),
     watchGetFeedback(),
     watchGetIssue(),
     watchGetStatus(),
-    watchCreateDecision(),
+    watchCreateRelease(),
+    watchCreateComment(),
     watchCreateFeature(),
     watchCreateFeedback(),
     watchCreateIssue(),
     watchCreateStatus(),
     watchImportTickets(),
-    watchUpdateDecision(),
+    watchUpdateRelease(),
+    watchUpdateComment(),
     watchUpdateFeature(),
     watchUpdateFeedback(),
     watchUpdateIssue(),
     watchUpdateStatus(),
-    watchDeleteDecision(),
+    watchDeleteRelease(),
+    watchDeleteComment(),
     watchDeleteFeature(),
     watchDeleteFeedback(),
     watchDeleteIssue(),

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {
   SAVE_PRODUCT_FORM_DATA,
-  CLEAR_BOARD_DATA,
+  CLEAR_PRODUCT_RELATED_PRODUCT_DATA,
   ALL_CREDENTIALS,
   ALL_CREDENTIALS_SUCCESS,
   ALL_CREDENTIALS_FAILURE,
@@ -11,9 +11,6 @@ import {
   ALL_PRODUCTS,
   ALL_PRODUCTS_SUCCESS,
   ALL_PRODUCTS_FAILURE,
-  ALL_RELEASES,
-  ALL_RELEASES_SUCCESS,
-  ALL_RELEASES_FAILURE,
   ALL_THIRD_PARTY_TOOLS,
   ALL_THIRD_PARTY_TOOLS_SUCCESS,
   ALL_THIRD_PARTY_TOOLS_FAILURE,
@@ -26,9 +23,6 @@ import {
   GET_PRODUCT,
   GET_PRODUCT_SUCCESS,
   GET_PRODUCT_FAILURE,
-  GET_RELEASE,
-  GET_RELEASE_SUCCESS,
-  GET_RELEASE_FAILURE,
   GET_THIRD_PARTY_TOOL,
   GET_THIRD_PARTY_TOOL_SUCCESS,
   GET_THIRD_PARTY_TOOL_FAILURE,
@@ -44,9 +38,6 @@ import {
   CREATE_PRODUCT,
   CREATE_PRODUCT_SUCCESS,
   CREATE_PRODUCT_FAILURE,
-  CREATE_RELEASE,
-  CREATE_RELEASE_SUCCESS,
-  CREATE_RELEASE_FAILURE,
   CREATE_THIRD_PARTY_TOOL,
   CREATE_THIRD_PARTY_TOOL_SUCCESS,
   CREATE_THIRD_PARTY_TOOL_FAILURE,
@@ -62,9 +53,6 @@ import {
   UPDATE_PRODUCT,
   UPDATE_PRODUCT_SUCCESS,
   UPDATE_PRODUCT_FAILURE,
-  UPDATE_RELEASE,
-  UPDATE_RELEASE_SUCCESS,
-  UPDATE_RELEASE_FAILURE,
   UPDATE_THIRD_PARTY_TOOL,
   UPDATE_THIRD_PARTY_TOOL_SUCCESS,
   UPDATE_THIRD_PARTY_TOOL_FAILURE,
@@ -77,9 +65,6 @@ import {
   DELETE_PRODUCT,
   DELETE_PRODUCT_SUCCESS,
   DELETE_PRODUCT_FAILURE,
-  DELETE_RELEASE,
-  DELETE_RELEASE_SUCCESS,
-  DELETE_RELEASE_FAILURE,
   DELETE_THIRD_PARTY_TOOL,
   DELETE_THIRD_PARTY_TOOL_SUCCESS,
   DELETE_THIRD_PARTY_TOOL_FAILURE,
@@ -98,52 +83,62 @@ const initialState = {
   credentials: [],
   productTeams: [],
   products: [],
-  releases: [],
   thirdPartyTools: [],
-  boards: [],
+  boards: {},
   productFormData: null,
+  featureCredValid: false,
+  issueCredValid: false,
 };
 
 // Reducer
 export default (state = initialState, action) => {
   switch (action.type) {
-    case SAVE_PRODUCT_FORM_DATA:
-      return {
+    case SAVE_PRODUCT_FORM_DATA: {
+      let updatedState = {
         ...state,
+        loading: false,
+        loaded: true,
         productFormData: action.formData,
       };
-    case CLEAR_BOARD_DATA:
+      if (!action.formData) {
+        updatedState = { ...updatedState, featureCredValid: false, issueCredValid: false };
+      }
+      return updatedState;
+    }
+
+    case CLEAR_PRODUCT_RELATED_PRODUCT_DATA:
       return {
         ...state,
-        boards: [],
+        loading: false,
+        loaded: true,
+        credentials: [],
+        boards: {},
+        productFormData: null,
+        featureCredValid: false,
+        issueCredValid: false,
       };
 
     case ALL_CREDENTIALS:
     case ALL_PRODUCT_TEAMS:
     case ALL_PRODUCTS:
-    case ALL_RELEASES:
     case ALL_THIRD_PARTY_TOOLS:
     case GET_CREDENTIAL:
     case GET_PRODUCT_TEAM:
     case GET_PRODUCT:
     case GET_BOARD:
-    case GET_RELEASE:
     case GET_THIRD_PARTY_TOOL:
     case CREATE_CREDENTIAL:
     case CREATE_PRODUCT_TEAM:
     case CREATE_PRODUCT:
-    case CREATE_RELEASE:
     case CREATE_THIRD_PARTY_TOOL:
     case CREATE_BOARD:
     case UPDATE_CREDENTIAL:
     case UPDATE_PRODUCT_TEAM:
     case UPDATE_PRODUCT:
-    case UPDATE_RELEASE:
     case UPDATE_THIRD_PARTY_TOOL:
     case DELETE_CREDENTIAL:
     case DELETE_PRODUCT_TEAM:
     case DELETE_PRODUCT:
-    case DELETE_RELEASE:
     case DELETE_THIRD_PARTY_TOOL:
     case VALIDATE_CREDENTIAL:
     case ADD_DOC_IDENTIFIER:
@@ -157,29 +152,24 @@ export default (state = initialState, action) => {
     case ALL_CREDENTIALS_FAILURE:
     case ALL_PRODUCT_TEAMS_FAILURE:
     case ALL_PRODUCTS_FAILURE:
-    case ALL_RELEASES_FAILURE:
     case ALL_THIRD_PARTY_TOOLS_FAILURE:
     case GET_CREDENTIAL_FAILURE:
     case GET_PRODUCT_TEAM_FAILURE:
     case GET_PRODUCT_FAILURE:
     case GET_BOARD_FAILURE:
-    case GET_RELEASE_FAILURE:
     case GET_THIRD_PARTY_TOOL_FAILURE:
     case CREATE_CREDENTIAL_FAILURE:
     case CREATE_PRODUCT_TEAM_FAILURE:
     case CREATE_PRODUCT_FAILURE:
-    case CREATE_RELEASE_FAILURE:
     case CREATE_THIRD_PARTY_TOOL_FAILURE:
     case CREATE_BOARD_FAILURE:
     case UPDATE_CREDENTIAL_FAILURE:
     case UPDATE_PRODUCT_TEAM_FAILURE:
     case UPDATE_PRODUCT_FAILURE:
-    case UPDATE_RELEASE_FAILURE:
     case UPDATE_THIRD_PARTY_TOOL_FAILURE:
     case DELETE_CREDENTIAL_FAILURE:
     case DELETE_PRODUCT_TEAM_FAILURE:
     case DELETE_PRODUCT_FAILURE:
-    case DELETE_RELEASE_FAILURE:
     case DELETE_THIRD_PARTY_TOOL_FAILURE:
     case VALIDATE_CREDENTIAL_FAILURE:
     case ADD_DOC_IDENTIFIER_FAILURE:
@@ -222,17 +212,15 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_CREDENTIAL_SUCCESS: {
-      const { credentials } = state;
-      _.remove(
-        credentials,
-        { credential_uuid: action.credential_uuid },
-      );
+      const creds = _.filter(state.credentials, (cred) => (
+        cred.credential_uuid !== action.credential_uuid
+      ));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        credentials,
+        credentials: creds,
       };
     }
 
@@ -268,17 +256,15 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_PRODUCT_TEAM_SUCCESS: {
-      const { productTeams } = state;
-      _.remove(
-        productTeams,
-        { productteam_uuid: action.productteam_uuid },
-      );
+      const pts = _.filter(state.productTeams, (pt) => (
+        pt.productteam_uuid !== action.productteam_uuid
+      ));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        productTeams,
+        productTeams: pts,
       };
     }
 
@@ -314,57 +300,13 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_PRODUCT_SUCCESS: {
-      const { products } = state;
-      _.remove(products, { product_uuid: action.product_uuid });
+      const prods = _.filter(state.products, (prod) => (prod.product_uuid !== action.product_uuid));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        products,
-      };
-    }
-
-    case ALL_RELEASES_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        releases: action.data,
-      };
-
-    case GET_RELEASE_SUCCESS:
-    case CREATE_RELEASE_SUCCESS:
-    case UPDATE_RELEASE_SUCCESS: {
-      const found = _.find(
-        state.releases,
-        { release_uuid: action.data.release_uuid },
-      );
-      const releases = found
-        ? _.map(state.releases, (release) => (
-          release.release_uuid === action.data.release_uuid
-            ? action.data
-            : release
-        ))
-        : [...state.releases, action.data];
-
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        releases,
-      };
-    }
-
-    case DELETE_RELEASE_SUCCESS: {
-      const { releases } = state;
-      _.remove(releases, { release_uuid: action.release_uuid });
-
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        releases,
+        products: prods,
       };
     }
 
@@ -400,48 +342,47 @@ export default (state = initialState, action) => {
     }
 
     case DELETE_THIRD_PARTY_TOOL_SUCCESS: {
-      const { thirdPartyTools } = state;
-      _.remove(
-        thirdPartyTools,
-        { thirdpartytool_uuid: action.thirdpartytool_uuid },
-      );
+      const tpts = _.filter(state.thirdPartyTools, (tp) => (
+        tp.thirdpartytool_uuid !== action.thirdpartytool_uuid
+      ));
 
       return {
         ...state,
         loading: false,
         loaded: true,
-        thirdPartyTools,
+        thirdPartyTools: tpts,
       };
     }
 
     case GET_BOARD_SUCCESS:
-    case CREATE_BOARD_SUCCESS: {
-      const found = _.find(
-        state.boards,
-        { product_uuid: action.data.product_uuid },
-      );
-      const boards = found
-        ? _.map(state.boards, (board) => (
-          board.product_uuid === action.data.product_uuid
-            ? action.data
-            : board
-        ))
-        : [...state.boards, action.data];
-
+    case CREATE_BOARD_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        boards,
+        boards: action.data,
       };
-    }
 
     case VALIDATE_CREDENTIAL_SUCCESS: {
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-      };
+      let updatedState;
+      if (_.toLower(action.tool) === 'feature') {
+        updatedState = {
+          ...state,
+          loading: false,
+          loaded: true,
+          featureCredValid: true,
+        };
+      }
+      if (_.toLower(action.tool) === 'issue') {
+        updatedState = {
+          ...state,
+          loading: false,
+          loaded: true,
+          issueCredValid: true,
+        };
+      }
+
+      return updatedState;
     }
 
     case ADD_DOC_IDENTIFIER_SUCCESS:

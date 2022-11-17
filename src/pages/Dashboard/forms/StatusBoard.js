@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -11,12 +11,10 @@ import {
   Button,
   Autocomplete,
   Chip,
+  MenuItem,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
-import {
-  createStatus,
-} from '@redux/decision/actions/decision.actions';
-import { validators } from '@utils/validators';
+import { createStatus } from '@redux/release/actions/release.actions';
 import { STATUSTYPES } from './formConstants';
 
 const useStyles = makeStyles((theme) => ({
@@ -59,6 +57,7 @@ const StatusBoard = ({
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [status, setStatus] = useState([]);
+  const [defaultStatus, setDefaultStatus] = useState('');
   const [formError, setFormError] = useState({});
 
   const closeFormModal = () => {
@@ -103,49 +102,24 @@ const StatusBoard = ({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const statusData = status.map((col) => ({
+    const statusData = _.map(status, (col) => ({
       product_uuid,
       name: col,
       description: col,
       status_tracking_id: null,
+      is_default_status: !!(col === defaultStatus),
     }));
-    statusData.push({
-      product_uuid,
-      name: 'No Status',
-      description: 'No Status',
-      status_tracking_id: null,
-    });
 
     dispatch(createStatus(statusData));
     history.push(redirectTo);
   };
 
-  const handleBlur = (e, validation, input, parentId) => {
-    const validateObj = validators(validation, input);
-    const prevState = { ...formError };
-    if (validateObj && validateObj.error) {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: validateObj,
-      });
-    } else {
-      setFormError({
-        ...prevState,
-        [e.target.id || parentId]: {
-          error: false,
-          message: '',
-        },
-      });
-    }
-  };
-
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (
-      !status
-    ) {
+    if (_.isEmpty(status) || !defaultStatus) {
       return true;
     }
+
     let errorExists = false;
     _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
@@ -169,11 +143,7 @@ const StatusBoard = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
-          <form
-            className={classes.form}
-            noValidate
-            onSubmit={handleSubmit}
-          >
+          <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <Autocomplete
@@ -200,21 +170,38 @@ const StatusBoard = ({
                       variant="outlined"
                       label="Select the list of Columns"
                       margin="normal"
-                      // onKeyDown={(e) => {
-                      //   if (e.key === 13 && e.target.value) {
-                      //     onStatusChange(e.target.value);
-                      //   }
-                      // }}
                     />
                   )}
                 />
               </Grid>
+
+              {!_.isEmpty(status) && (
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    select
+                    id="defaultStatus"
+                    label="Default Status to be used while creating cards/tasks"
+                    name="defaultStatus"
+                    value={defaultStatus}
+                    autoComplete="defaultStatus"
+                    onChange={(e) => setDefaultStatus(e.target.value)}
+                  >
+                    <MenuItem value="">--------------------</MenuItem>
+                    {_.map(status, (sts, idx) => (
+                      <MenuItem key={`sts-${idx}`} value={sts}>
+                        {sts}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              )}
             </Grid>
-            <Grid
-              container
-              spacing={isDesktop ? 3 : 0}
-              justifyContent="center"
-            >
+
+            <Grid container spacing={isDesktop ? 3 : 0} justifyContent="center">
               <Grid item xs={12} sm={4}>
                 <Button
                   type="submit"
@@ -227,6 +214,7 @@ const StatusBoard = ({
                   Configure Board
                 </Button>
               </Grid>
+
               <Grid item xs={12} sm={4}>
                 <Button
                   type="button"

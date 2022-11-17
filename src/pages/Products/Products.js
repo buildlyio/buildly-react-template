@@ -8,7 +8,7 @@ import { getAllProducts } from '@redux/product/actions/product.actions';
 import { routes } from '@routes/routesConstants';
 import AddProduct from '@pages/NewProduct/NewProduct';
 import { productColumns, getProductsData } from './ProductConstants';
-import { clearProductData } from '@redux/decision/actions/decision.actions';
+import { clearProductData } from '@redux/release/actions/release.actions';
 
 const useStyles = makeStyles((theme) => ({
   root: {

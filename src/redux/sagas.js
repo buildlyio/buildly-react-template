@@ -6,7 +6,7 @@ import coregroupSaga from './coregroup/sagas/coregroup.saga';
 import coreuserSaga from './coreuser/coreuser.saga';
 import googleSheetSaga from './googleSheet/sagas/googleSheet.saga';
 import productSaga from './product/sagas/product.saga';
-import decisionSaga from './decision/sagas/decision.saga';
+import releaseSaga from './release/sagas/release.saga';
 import devpartnerSaga from './devpartner/sagas/devpartner.saga';
 
 export default function* rootSaga() {
@@ -17,7 +17,7 @@ export default function* rootSaga() {
     crudSaga(),
     googleSheetSaga(),
     productSaga(),
-    decisionSaga(),
+    releaseSaga(),
     devpartnerSaga(),
   ]);
 }

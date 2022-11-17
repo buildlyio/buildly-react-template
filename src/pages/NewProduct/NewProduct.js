@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import Loader from '@components/Loader/Loader';
 import FormModal from '@components/Modal/FormModal';
-import { getAllStatuses } from '@redux/decision/actions/decision.actions';
+import { getAllStatuses } from '@redux/release/actions/release.actions';
 import { saveProductFormData, getAllCredentials } from '@redux/product/actions/product.actions';
 import ApplicationMarket, { checkIfApplicationMarketEdited } from './components/ApplicationMarket';
 import BudgetTechnology, { checkIfBudgetTechnologyEdited } from './components/BudgetTechnology';
@@ -185,12 +185,11 @@ const getStepContent = (
 
 const NewProductForm = (props) => {
   const {
-    history, dispatch, location, statuses, credentials, loading,
+    history, dispatch, location, credentials, loading, productFormData,
   } = props;
   const classes = useStyles();
   const steps = getSteps();
   const maxSteps = steps.length;
-  const [status, setStatus] = useState('');
 
   const redirectTo = (location.state && location.state.from) || routes.DASHBOARD;
   const product_uuid = location.state && location.state.product_uuid;
@@ -207,19 +206,20 @@ const NewProductForm = (props) => {
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [confirmModalFor, setConfirmModalFor] = useState(null);
-
-  const featCred = _.find(credentials, { product_uuid, auth_detail: { tool_type: 'Feature' } });
-  const issueCred = _.find(credentials, { product_uuid, auth_detail: { tool_type: 'Issue' } });
-
-  useEffect(() => {
-    dispatch(getAllStatuses());
-    dispatch(getAllCredentials());
-  }, []);
+  const [featCred, setFeatCred] = useState(null);
+  const [issueCred, setIssueCred] = useState(null);
 
   useEffect(() => {
-    const sta = _.filter(statuses, { product_uuid });
-    setStatus(sta);
-  }, [statuses, product_uuid]);
+    if (product_uuid) {
+      dispatch(getAllStatuses(product_uuid));
+      dispatch(getAllCredentials(product_uuid));
+    }
+  }, [product_uuid]);
+
+  useEffect(() => {
+    setFeatCred(_.find(credentials, { auth_detail: { tool_type: 'Feature' } }));
+    setIssueCred(_.find(credentials, { auth_detail: { tool_type: 'Issue' } }));
+  }, [credentials]);
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -235,7 +235,8 @@ const NewProductForm = (props) => {
   };
 
   const handleClose = () => {
-    if (checkIfFormEdited(activeStep)) {
+    if ((!editData && productFormData && !_.isEmpty(productFormData))
+    || checkIfFormEdited(activeStep)) {
       setConfirmModal(true);
       setConfirmModalFor(null);
     } else {
@@ -340,9 +341,9 @@ const NewProductForm = (props) => {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  loading: state.productReducer.loading || state.decisionReducer.loading,
-  statuses: state.decisionReducer.statuses,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
   credentials: state.productReducer.credentials,
+  productFormData: state.productReducer.productFormData,
 });
 
 export default connect(mapStateToProps)(NewProductForm);

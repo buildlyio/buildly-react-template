@@ -30,7 +30,7 @@ function makeRequest(method, url, body, useJwt, contentType, responseType) {
     Authorization: `${tokenType} ${token}`,
     // 'Content-Type': contentType || 'application/json', // Commenting to make it work for GCP
   };
-  if (_.includes(['post', 'put', 'delete'], _.lowerCase(method))) {
+  if (_.includes(['post', 'put', 'delete'], _.toLower(method))) {
     headers['Content-Type'] = contentType || 'application/json';
   }
   const options = {

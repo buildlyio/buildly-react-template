@@ -13,11 +13,7 @@ import {
   Chip,
 } from '@mui/material';
 import { useInput } from '@hooks/useInput';
-import {
-  getAllStatuses,
-  saveFeatureFormData,
-} from '@redux/decision/actions/decision.actions';
-import { getAllCredentials } from '@redux/product/actions/product.actions';
+import { saveFeatureFormData } from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
 import { PRIORITIES, TAGS } from './formConstants';
 
@@ -53,14 +49,13 @@ const AddFeatures = ({
   const editPage = location.state && (location.state.type === 'edit' || location.state.type === 'view');
   const editData = (editPage && location.state.data) || {};
   const product_uuid = location.state && location.state.product_uuid;
-  const viewPage = (location.state && location.state.viewOnly) || false;
+  const viewPage = (location.state && location.state.type === 'view') || false;
 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   const [formError, setFormError] = useState({});
   const [product, setProduct] = useState('');
-  const [prodStatus, setProdStatus] = useState('');
   const [assigneeData, setAssigneeData] = useState([]);
 
   const name = useInput(
@@ -82,8 +77,7 @@ const AddFeatures = ({
     || (featureFormData && featureFormData.tags) || []);
 
   const [statusID, setStatusID] = useState((editData && editData.status) || (featureFormData && featureFormData.status) || '');
-  const currentStat = _.filter(statuses, { product_uuid });
-  const currentStatData = _.find(currentStat, { status_uuid: statusID });
+  const currentStatData = _.find(statuses, { status_uuid: statusID });
   const [status, setStatus] = useState('');
   const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
 
@@ -96,28 +90,19 @@ const AddFeatures = ({
   );
 
   useEffect(() => {
-    dispatch(getAllStatuses());
-    if (!credentials || _.isEmpty(credentials)) {
-      dispatch(getAllCredentials());
-    }
-  }, []);
-
-  useEffect(() => {
     const temp_product = _.find(products, { product_uuid });
     setProduct(temp_product);
   }, [products]);
 
   useEffect(() => {
-    const sta = _.filter(statuses, { product_uuid });
     const assigneeOptions = (product && product.feature_tool_detail
       && product.feature_tool_detail.user_list
       && _.map(product.feature_tool_detail.user_list, 'username')) || [];
 
     if (editData) {
-      setStatus(_.find(sta, { status_uuid: editData.status }));
+      setStatus(_.find(statuses, { status_uuid: editData.status }));
     }
 
-    setProdStatus(sta);
     setAssigneeData(assigneeOptions);
   }, [product]);
 
@@ -317,7 +302,7 @@ const AddFeatures = ({
                   setColID(stat.status_tracking_id);
                 }}
               >
-                {_.map(prodStatus, (sts) => (
+                {_.map(statuses, (sts) => (
                   <MenuItem
                     key={`status-${sts.status_uuid}-${sts.name}`}
                     value={sts}
@@ -454,10 +439,10 @@ const AddFeatures = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  statuses: state.decisionReducer.statuses,
+  statuses: state.releaseReducer.statuses,
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,
-  featureFormData: state.decisionReducer.featureFormData,
+  featureFormData: state.releaseReducer.featureFormData,
 });
 
 export default connect(mapStateToProps)(AddFeatures);

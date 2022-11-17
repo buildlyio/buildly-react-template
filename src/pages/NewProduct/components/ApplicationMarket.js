@@ -73,13 +73,16 @@ const ApplicationMarket = ({
 }) => {
   const classes = useStyles();
 
-  const applicationType = useInput((editData && editData.product_info && editData.product_info.application_type)
-    || (productFormData && productFormData.product_info && productFormData.product_info.application_type)
-    || 'desktop',
+  const applicationType = useInput((editData && editData.product_info
+      && editData.product_info.application_type)
+    || (productFormData && productFormData.product_info
+      && productFormData.product_info.application_type)
+    || 'Desktop',
   { required: true });
 
-  const userLabels = useInput((editData && editData.product_info && editData.product_info.userLabels)
-    || (productFormData && productFormData.product_info && productFormData.product_info.userLabels)
+  const userLabels = useInput((editData && editData.product_info
+      && editData.product_info.user_labels)
+    || (productFormData && productFormData.product_info && productFormData.product_info.user_labels)
     || [{ label: '', type: '' }],
   { required: true });
 
@@ -100,8 +103,7 @@ const ApplicationMarket = ({
   };
 
   checkIfApplicationMarketEdited = () => (
-    (!editData && productFormData && !_.isEmpty(productFormData))
-    || applicationType.hasChanged()
+    applicationType.hasChanged()
     || userLabels.hasChanged()
     || !!(editData && editData.product_info
       && editData.product_info.bussiness_segment
@@ -149,25 +151,25 @@ const ApplicationMarket = ({
                 {...applicationType.bind}
               >
                 <FormControlLabel
-                  value="mobile native"
+                  value="Mobile Native"
                   control={<Radio color="info" />}
                   label="Mobile Native"
                 />
 
                 <FormControlLabel
-                  value="mobile hybrid"
+                  value="Mobile Hybrid"
                   control={<Radio color="info" />}
                   label="Mobile Hybrid"
                 />
 
                 <FormControlLabel
-                  value="desktop"
+                  value="Desktop"
                   control={<Radio color="info" />}
                   label="Desktop"
                 />
 
                 <FormControlLabel
-                  value="both"
+                  value="Both"
                   control={<Radio color="info" />}
                   label="Desktop and Mobile"
                 />
@@ -236,7 +238,7 @@ const ApplicationMarket = ({
                           idx === index
                             ? { label: e.target.value, type: ul.type }
                             : ul
-                        ))
+                        )),
                       )}
                     />
                   </Grid>
@@ -255,9 +257,9 @@ const ApplicationMarket = ({
                       onChange={(e) => userLabels.setNewValue(
                         _.map(userLabels.value, (ul, index) => (
                           idx === index
-                          ? { label: ul.label, type: e.target.value }
-                          : ul
-                        ))
+                            ? { label: ul.label, type: e.target.value }
+                            : ul
+                        )),
                       )}
                     >
                       <MenuItem value="">-----------------------</MenuItem>

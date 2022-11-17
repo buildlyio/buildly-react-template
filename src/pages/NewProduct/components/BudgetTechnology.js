@@ -113,8 +113,7 @@ const BudgetTechnology = ({
   { required: true });
 
   checkIfBudgetTechnologyEdited = () => (
-    (!editData && productFormData && !_.isEmpty(productFormData))
-    || !!(productFormData && productFormData.product_info
+    !!(productFormData && productFormData.product_info
       && productFormData.product_info.first_user_date
       && (moment(firstUserDate).format('L') !== moment(productFormData.product_info.first_user_date).format('L')))
     || !!(editData && editData.product_info && editData.product_info.first_user_date
