@@ -107,7 +107,7 @@ import {
   deleteProduct,
 } from '../../product/actions/product.actions';
 
-const releaseEndpoint = 'decision/';
+const releaseEndpoint = 'release/';
 
 function* allReleases(payload) {
   try {

@@ -445,10 +445,10 @@ const Kanban = ({
 
                                   <Typography className={classes.moment} component="div" variant="body2">
                                     {moment(item.create_date).fromNow()}
-                                    <CommentIcon
+                                    {/* <CommentIcon
                                       className={classes.comment}
                                       onClick={(e) => commentItem()}
-                                    />
+                                    /> */}
                                   </Typography>
                                 </CardContent>
                               </Card>

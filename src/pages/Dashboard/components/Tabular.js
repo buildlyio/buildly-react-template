@@ -53,19 +53,19 @@ const Tabular = ({
 
   useEffect(() => {
     const featCols = [
-      {
-        name: 'Comments',
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          customBodyRenderLite: (dataIndex) => (
-            <IconButton onClick={() => commentItem(featureRows[dataIndex])}>
-              <CommentIcon />
-            </IconButton>
-          ),
-        },
-      },
+      // {
+      //   name: 'Comments',
+      //   options: {
+      //     filter: false,
+      //     sort: false,
+      //     empty: true,
+      //     customBodyRenderLite: (dataIndex) => (
+      //       <IconButton onClick={() => commentItem(featureRows[dataIndex])}>
+      //         <CommentIcon />
+      //       </IconButton>
+      //     ),
+      //   },
+      // },
       {
         name: 'Convert to issue/ticket for dev team',
         options: {
@@ -90,19 +90,19 @@ const Tabular = ({
     ];
 
     const issCols = [
-      {
-        name: 'Comments',
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          customBodyRenderLite: (dataIndex) => (
-            <IconButton onClick={() => commentItem(issueRows[dataIndex])}>
-              <CommentIcon />
-            </IconButton>
-          ),
-        },
-      },
+      // {
+      //   name: 'Comments',
+      //   options: {
+      //     filter: false,
+      //     sort: false,
+      //     empty: true,
+      //     customBodyRenderLite: (dataIndex) => (
+      //       <IconButton onClick={() => commentItem(issueRows[dataIndex])}>
+      //         <CommentIcon />
+      //       </IconButton>
+      //     ),
+      //   },
+      // },
       {
         name: 'View linked feature',
         options: {
