@@ -3,8 +3,9 @@ import * as actions from './product.actions';
 // Test Get All Credentials
 describe('Get All Credentials action', () => {
   it('should create an action to get all credentials', () => {
-    const expectedAction = { type: actions.ALL_CREDENTIALS };
-    expect(actions.getAllCredentials()).toEqual(expectedAction);
+    const product_uuid = '25682839-jshfw2-8t29we-3r28wen';
+    const expectedAction = { type: actions.ALL_CREDENTIALS, product_uuid };
+    expect(actions.getAllCredentials(product_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -131,8 +132,9 @@ describe('Delete Product Team action', () => {
 // Test Get All Products
 describe('Get All Products action', () => {
   it('should create an action to get all products', () => {
-    const expectedAction = { type: actions.ALL_PRODUCTS };
-    expect(actions.getAllProducts()).toEqual(expectedAction);
+    const organization_uuid = '27541748-3871-138ryweh-328tywef';
+    const expectedAction = { type: actions.ALL_PRODUCTS, organization_uuid };
+    expect(actions.getAllProducts(organization_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -187,67 +189,6 @@ describe('Delete Product action', () => {
     };
 
     expect(actions.deleteProduct(product_uuid))
-      .toEqual(expectedAction);
-  });
-});
-
-// Test Get All Releases
-describe('Get All Releases action', () => {
-  it('should create an action to get all releases', () => {
-    const expectedAction = { type: actions.ALL_RELEASES };
-    expect(actions.getAllReleases()).toEqual(expectedAction);
-  });
-});
-
-// Test Get Release
-describe('Get Release action', () => {
-  it('should create an action to get release', () => {
-    const release_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
-    const expectedAction = {
-      type: actions.GET_RELEASE,
-      release_uuid,
-    };
-
-    expect(actions.getRelease(release_uuid)).toEqual(expectedAction);
-  });
-});
-
-// Test Create Release
-describe('Create Release action', () => {
-  it('should create an action to create release', () => {
-    const data = { name: 'Test Release' };
-    const expectedAction = {
-      type: actions.CREATE_RELEASE,
-      data,
-    };
-
-    expect(actions.createRelease(data)).toEqual(expectedAction);
-  });
-});
-
-// Test Update Release
-describe('Update Release action', () => {
-  it('should create an action to update release', () => {
-    const data = { name: 'Test Release Edited' };
-    const expectedAction = {
-      type: actions.UPDATE_RELEASE,
-      data,
-    };
-
-    expect(actions.updateRelease(data)).toEqual(expectedAction);
-  });
-});
-
-// Test Delete Release
-describe('Delete Release action', () => {
-  it('should create an action to delete release', () => {
-    const release_uuid = '275ac379-82a2-4937-a434-ce6c2e277c88';
-    const expectedAction = {
-      type: actions.DELETE_RELEASE,
-      release_uuid,
-    };
-
-    expect(actions.deleteRelease(release_uuid))
       .toEqual(expectedAction);
   });
 });
@@ -334,13 +275,14 @@ describe('Get Board action', () => {
 describe('Create Board action', () => {
   it('should create an action to create board', () => {
     const data = { name: 'Test Board' };
+    const statusData = [];
     const expectedAction = {
       type: actions.CREATE_BOARD,
       data,
+      statusData,
     };
 
-    expect(actions.createBoard(data))
-      .toEqual(expectedAction);
+    expect(actions.createBoard(data, statusData)).toEqual(expectedAction);
   });
 });
 

@@ -11,11 +11,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
-import {
-  getAllStatuses,
-  importTickets,
-} from '@redux/decision/actions/decision.actions';
-import { getAllCredentials } from '@redux/product/actions/product.actions';
+import { importTickets } from '@redux/release/actions/release.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -37,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DropColumn = ({
+const IgnoreColumns = ({
   dispatch,
   history,
   location,
@@ -55,26 +51,13 @@ const DropColumn = ({
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [product, setProduct] = useState('');
-  const [prodStatus, setProdStatus] = useState('');
   const [statusID, setStatusID] = useState(null);
   const [status, setStatus] = useState('');
-
-  useEffect(() => {
-    if (!status || _.isEmpty(status)) {
-      dispatch(dispatch(getAllStatuses()));
-    }
-    dispatch(getAllCredentials());
-  }, []);
 
   useEffect(() => {
     const prd = _.find(products, { product_uuid });
     setProduct(prd);
   }, [products]);
-
-  useEffect(() => {
-    const sta = _.filter(statuses, { product_uuid });
-    setProdStatus(sta);
-  }, [product]);
 
   const closeFormModal = () => {
     const dataHasChanged = (
@@ -101,14 +84,8 @@ const DropColumn = ({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const featCred = _.find(
-      credentials,
-      { product_uuid, auth_detail: { tool_type: 'Feature' } },
-    );
-    const issueCred = _.find(
-      credentials,
-      { product_uuid, auth_detail: { tool_type: 'Issue' } },
-    );
+    const featCred = _.find(credentials, { product_uuid, auth_detail: { tool_type: 'Feature' } });
+    const issueCred = _.find(credentials, { product_uuid, auth_detail: { tool_type: 'Issue' } });
     const repoData = product && product.issue_tool_detail
       && product.issue_tool_detail.repository_list
       && !_.isEmpty(product.issue_tool_detail.repository_list)
@@ -131,10 +108,12 @@ const DropColumn = ({
         board_id: product?.feature_tool_detail?.board_detail?.board_id,
         drop_col_name: statusID,
       };
+
       if (featCred?.auth_detail?.tool_name !== 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
         issueData.is_repo_issue = true;
         issueData.repo_list = repoData;
       }
+
       if (issueCred?.auth_detail) {
         dispatch(importTickets(issueData));
       }
@@ -146,6 +125,7 @@ const DropColumn = ({
         is_repo_issue: false,
         drop_col_name: statusID,
       };
+
       if (featCred?.auth_detail) {
         dispatch(importTickets(featData));
       }
@@ -157,9 +137,7 @@ const DropColumn = ({
         is_repo_issue: false,
         drop_col_name: statusID,
       };
-      if (featCred?.auth_detail) {
-        dispatch(importTickets(featData));
-      }
+
       const issueData = {
         ...issueCred?.auth_detail,
         product_uuid,
@@ -168,6 +146,11 @@ const DropColumn = ({
         repo_list: repoData,
         drop_col_name: statusID,
       };
+
+      if (featCred?.auth_detail) {
+        dispatch(importTickets(featData));
+      }
+
       if (issueCred?.auth_detail) {
         dispatch(importTickets(issueData));
       }
@@ -189,11 +172,7 @@ const DropColumn = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
-          <form
-            className={classes.form}
-            noValidate
-            onSubmit={handleSubmit}
-          >
+          <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
@@ -202,7 +181,7 @@ const DropColumn = ({
                   fullWidth
                   select
                   id="status"
-                  label="Select Column"
+                  label="Select column(s) to be ignored while importing data"
                   name="status"
                   autoComplete="status"
                   value={status}
@@ -212,11 +191,8 @@ const DropColumn = ({
                     setStatusID({ column_name: stat.name, column_id: stat.status_tracking_id });
                   }}
                 >
-                  {_.map(prodStatus, (sts) => (
-                    <MenuItem
-                      key={`status-${sts.status_uuid}-${sts.name}`}
-                      value={sts}
-                    >
+                  {_.map(statuses, (sts) => (
+                    <MenuItem key={`status-${sts.status_uuid}-${sts.name}`} value={sts}>
                       {sts.name}
                     </MenuItem>
                   ))}
@@ -224,11 +200,7 @@ const DropColumn = ({
               </Grid>
             </Grid>
 
-            <Grid
-              container
-              spacing={isDesktop ? 3 : 0}
-              justifyContent="center"
-            >
+            <Grid container spacing={isDesktop ? 3 : 0} justifyContent="center">
               <Grid item xs={12} sm={4}>
                 <Button
                   type="submit"
@@ -263,10 +235,10 @@ const DropColumn = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  statuses: state.decisionReducer.statuses,
-  features: state.decisionReducer.features,
+  statuses: state.releaseReducer.statuses,
+  features: state.releaseReducer.features,
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,
 });
 
-export default connect(mapStateToProps)(DropColumn);
+export default connect(mapStateToProps)(IgnoreColumns);

@@ -16,10 +16,11 @@ import {
   Button,
   Checkbox,
   ListItemText,
+  TextField,
 } from '@mui/material';
 import { useInput } from '@hooks/useInput';
 import { saveProductFormData } from '@redux/product/actions/product.actions';
-import { BUSSINESS_SEGMENTS, PRIMARY_USERS } from '../ProductFormConstants';
+import { AVAILABLE_USER_TYPES, BUSSINESS_SEGMENTS } from '../ProductFormConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -55,9 +56,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
+  addButton: {
+    margin: 'auto',
+  },
 }));
-
-const StyledRadio = (props) => <Radio color="info" {...props} />;
 
 // eslint-disable-next-line import/no-mutable-exports
 export let checkIfApplicationMarketEdited;
@@ -71,53 +73,41 @@ const ApplicationMarket = ({
 }) => {
   const classes = useStyles();
 
-  const applicationType = useInput((editData
-    && editData.product_info
-    && editData.product_info.application_type)
-  || (productFormData
-      && productFormData.product_info
+  const applicationType = useInput((editData && editData.product_info
+      && editData.product_info.application_type)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.application_type)
-    || 'desktop',
+    || 'Desktop',
   { required: true });
 
-  const primaryUsers = useInput((editData
-    && editData.product_info
-    && editData.product_info.primary_users)
-  || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.primary_users)
-    || '',
+  const userLabels = useInput((editData && editData.product_info
+      && editData.product_info.user_labels)
+    || (productFormData && productFormData.product_info && productFormData.product_info.user_labels)
+    || [{ label: '', type: '' }],
   { required: true });
-  const secondaryUsers = useInput((editData
-    && editData.product_info
-    && editData.product_info.secondary_users)
-  || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.secondary_users)
-    || '',
-  { required: true });
-  const [bussinessSegment, setBussinessSegment] = useState((editData
-    && editData.product_info
-    && editData.product_info.bussiness_segment)
-  || (productFormData
-      && productFormData.product_info
+
+  const [bussinessSegment, setBussinessSegment] = useState((editData && editData.product_info
+      && editData.product_info.bussiness_segment)
+    || (productFormData && productFormData.product_info
       && productFormData.product_info.bussiness_segment)
     || []);
 
   const submitDisabled = () => {
     if (!applicationType.value
-      || !primaryUsers.value
       || bussinessSegment.length <= 0
     ) {
       return true;
     }
+
     return false;
   };
 
   checkIfApplicationMarketEdited = () => (
     applicationType.hasChanged()
-    || primaryUsers.hasChanged()
-    || secondaryUsers.hasChanged()
+    || userLabels.hasChanged()
+    || !!(editData && editData.product_info
+      && editData.product_info.bussiness_segment
+      && !_.isEqual(bussinessSegment, editData.product_info.bussiness_segment))
     || !!(productFormData && productFormData.product_info
       && productFormData.product_info.bussiness_segment
       && !_.isEqual(bussinessSegment, productFormData.product_info.bussiness_segment))
@@ -134,12 +124,12 @@ const ApplicationMarket = ({
       product_info: {
         ...productFormData.product_info,
         application_type: applicationType.value,
-        primary_users: primaryUsers.value,
-        secondary_users: secondaryUsers.value,
+        user_labels: userLabels.value,
         bussiness_segment: bussinessSegment,
       },
       edit_date: new Date(),
     };
+
     dispatch(saveProductFormData(formData));
     handleNext();
   };
@@ -148,13 +138,12 @@ const ApplicationMarket = ({
     <div>
       <form className={classes.form} noValidate onSubmit={handleSubmit}>
         <Box mb={2} mt={3}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
+          <Grid container>
+            <Grid item>
               <Typography variant="h6" gutterBottom component="div">
                 Type of Application
               </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
+
               <RadioGroup
                 row
                 aria-label="Application"
@@ -162,32 +151,41 @@ const ApplicationMarket = ({
                 {...applicationType.bind}
               >
                 <FormControlLabel
-                  value="mobile"
-                  control={<StyledRadio />}
-                  label="Mobile"
+                  value="Mobile Native"
+                  control={<Radio color="info" />}
+                  label="Mobile Native"
                 />
+
                 <FormControlLabel
-                  value="desktop"
-                  control={<StyledRadio />}
+                  value="Mobile Hybrid"
+                  control={<Radio color="info" />}
+                  label="Mobile Hybrid"
+                />
+
+                <FormControlLabel
+                  value="Desktop"
+                  control={<Radio color="info" />}
                   label="Desktop"
                 />
+
                 <FormControlLabel
-                  value="both"
-                  control={<StyledRadio />}
-                  label="Both"
+                  value="Both"
+                  control={<Radio color="info" />}
+                  label="Desktop and Mobile"
                 />
               </RadioGroup>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} mt={3}>
               <Typography variant="h6" gutterBottom component="div">
-                What is your primary business segment?
+                What our your primary business segments?
               </Typography>
 
               <FormControl fullWidth>
                 <InputLabel id="bussiness-segment-label">
                   Business Segment
                 </InputLabel>
+
                 <Select
                   labelId="bussiness-segment-label"
                   id="bussiness-segment"
@@ -218,50 +216,79 @@ const ApplicationMarket = ({
               </FormControl>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} mt={3}>
               <Typography variant="h6" gutterBottom component="div">
                 Who are your users?
               </Typography>
 
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth>
-                    <InputLabel id="primary-user-label">Primary User</InputLabel>
-                    <Select
-                      labelId="primary-user-label"
-                      id="primary-user"
-                      label="Type of User"
-                      {...primaryUsers.bind}
-                    >
-                      <MenuItem value="">-----------------------</MenuItem>
-                      {_.map(PRIMARY_USERS, (user, idx) => (
-                        <MenuItem key={`user-${idx}`} value={user}>
-                          {user}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
+              {_.map(userLabels.value, (userLabel, idx) => (
+                <Grid container spacing={2} key={`user-label-${idx}`} mt={-3.5}>
+                  <Grid item xs={5}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id={`user-label-${idx}`}
+                      label="User Label"
+                      name={`user-label-${idx}`}
+                      autoComplete="user-label"
+                      value={userLabel.label}
+                      onChange={(e) => userLabels.setNewValue(
+                        _.map(userLabels.value, (ul, index) => (
+                          idx === index
+                            ? { label: e.target.value, type: ul.type }
+                            : ul
+                        )),
+                      )}
+                    />
+                  </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth>
-                    <InputLabel id="primary-user-label">Secondary User</InputLabel>
-                    <Select
-                      labelId="primary-user-label"
-                      id="primary-user"
-                      label="Type of User"
-                      {...secondaryUsers.bind}
+                  <Grid item xs={5}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      select
+                      fullWidth
+                      id={`user-type-${idx}`}
+                      label="User Type"
+                      name={`user-type-${idx}`}
+                      autoComplete="user-type"
+                      value={userLabel.type}
+                      onChange={(e) => userLabels.setNewValue(
+                        _.map(userLabels.value, (ul, index) => (
+                          idx === index
+                            ? { label: ul.label, type: e.target.value }
+                            : ul
+                        )),
+                      )}
                     >
                       <MenuItem value="">-----------------------</MenuItem>
-                      {_.map(PRIMARY_USERS, (user, idx) => (
-                        <MenuItem key={`user-${idx}`} value={user}>
-                          {user}
+                      {_.map(AVAILABLE_USER_TYPES, (ut, inx) => (
+                        <MenuItem key={`available-user-type-${inx}`} value={ut}>
+                          {ut}
                         </MenuItem>
                       ))}
-                    </Select>
-                  </FormControl>
+                    </TextField>
+                  </Grid>
+
+                  {idx === 0 && (
+                    <Grid item xs={2} className={classes.addButton}>
+                      <Button
+                        type="button"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        onClick={(e) => userLabels.setNewValue([
+                          ...userLabels.value,
+                          { label: '', type: '' },
+                        ])}
+                      >
+                        Add
+                      </Button>
+                    </Grid>
+                  )}
                 </Grid>
-              </Grid>
+              ))}
             </Grid>
           </Grid>
 
@@ -278,6 +305,7 @@ const ApplicationMarket = ({
                 Back
               </Button>
             </Grid>
+
             <Grid item xs={12} sm={4}>
               <Button
                 type="submit"

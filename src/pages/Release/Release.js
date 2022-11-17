@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { getAllReleases } from '@redux/product/actions/product.actions';
+import { getAllReleases } from '@redux/release/actions/release.actions';
 import { routes } from '@routes/routesConstants';
 import AddRelease from './components/AddRelease';
 import { releaseColumns, getReleasesData } from './ReleaseConstants';

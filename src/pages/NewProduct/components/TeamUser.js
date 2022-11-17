@@ -24,9 +24,8 @@ import {
   ImageList,
   ImageListItem,
 } from '@mui/material';
+import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
 import { useInput } from '@hooks/useInput';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
 import { docIdentifier } from '@redux/product/actions/product.actions';
 
 const useStyles = makeStyles((theme) => ({
@@ -74,8 +73,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StyledRadio = (props) => <Radio color="info" {...props} />;
-
 // eslint-disable-next-line import/no-mutable-exports
 export let checkIfTeamUserEdited;
 
@@ -85,21 +82,14 @@ const TeamUser = ({
   const classes = useStyles();
   const [filesUpload, setFilesUpload] = useState([]);
 
-  const teamSize = useInput((editData
-    && editData.product_info
-    && editData.product_info.team_size)
-  || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.team_size)
+  const teamSize = useInput((editData && editData.product_info && editData.product_info.team_size)
+    || (productFormData && productFormData.product_info && productFormData.product_info.team_size)
     || '5 - 10',
   { required: true });
 
-  const [roleCount, setRoleCount] = useState((editData
-    && editData.product_info
-    && editData.product_info.role_count)
-  || (productFormData
-      && productFormData.product_info
-      && productFormData.product_info.role_count)
+  const [roleCount, setRoleCount] = useState((editData && editData.product_info
+      && editData.product_info.role_count)
+    || (productFormData && productFormData.product_info && productFormData.product_info.role_count)
     || [
       { role: 'CTO (Budget Approval?)', count: 0 },
       { role: 'COO (Budget Approval?)', count: 0 },
@@ -110,13 +100,9 @@ const TeamUser = ({
       { role: 'Others', count: 0 },
     ]);
 
-  const doc_file = useInput((editData
-    && editData.product_info
-    && editData.product_info.doc_file)
-  || (productFormData
-    && productFormData.product_info
-    && productFormData.product_info.doc_file)
-  || []);
+  const doc_file = useInput((editData && editData.product_info && editData.product_info.doc_file)
+    || (productFormData && productFormData.product_info && productFormData.product_info.doc_file)
+    || []);
 
   const submitDisabled = () => {
     let countNum = 0;
@@ -125,19 +111,21 @@ const TeamUser = ({
         countNum += 1;
       }
     });
+
     if (countNum === roleCount.length) {
       return true;
     }
+
     return false;
   };
 
   checkIfTeamUserEdited = () => (
     teamSize.hasChanged()
-    || !!(productFormData
-      && productFormData.product_info
+    || !!(productFormData && productFormData.product_info
       && productFormData.product_info.role_count
-      && !_.isEqual(roleCount,
-        productFormData.product_info.role_count))
+      && !_.isEqual(roleCount, productFormData.product_info.role_count))
+    || !!(editData && editData.product_info && editData.product_info.role_count
+      && !_.isEqual(roleCount, editData.product_info.role_count))
     || !!(filesUpload && !_.isEmpty(filesUpload))
   );
 
@@ -191,17 +179,19 @@ const TeamUser = ({
                 >
                   <FormControlLabel
                     value="1 - 5"
-                    control={<StyledRadio />}
+                    control={<Radio color="info" />}
                     label="1 - 5"
                   />
+
                   <FormControlLabel
                     value="5 - 10"
-                    control={<StyledRadio />}
+                    control={<Radio color="info" />}
                     label="5 - 10"
                   />
+
                   <FormControlLabel
                     value="10 - 20 or more"
-                    control={<StyledRadio />}
+                    control={<Radio color="info" />}
                     label="10 - 20 or more"
                   />
                 </RadioGroup>
@@ -219,20 +209,22 @@ const TeamUser = ({
                       <TableCell />
                     </TableRow>
                   </TableHead>
+
                   <TableBody>
                     {_.map(roleCount, (row, index) => (
                       <TableRow key={index}>
                         <TableCell component="th" scope="row">
                           {row.role}
                         </TableCell>
+
                         <TableCell align="right">
                           <IconButton
                             onClick={() => {
-                              if (roleCount[index].count > 0) {
-                                setRoleCount((prc) => {
-                                  prc[index].count -= 1;
-                                  return [...prc];
-                                });
+                              if (row.count > 0) {
+                                const rc = _.map(roleCount, (r, i) => (
+                                  _.isEqual(row, r) ? { ...r, count: r.count - 1 } : r
+                                ));
+                                setRoleCount(rc);
                               }
                             }}
                             size="large"
@@ -240,30 +232,23 @@ const TeamUser = ({
                             <RemoveIcon />
                           </IconButton>
                         </TableCell>
+
                         <TableCell style={{ width: '30%' }}>
                           <TextField
                             disabled
-                            onChange={(e) => {
-                              setRoleCount((pvrc) => {
-                                pvrc[index].count += parseInt(
-                                  e.target.value,
-                                  10,
-                                );
-                                return [...pvrc];
-                              });
-                            }}
                             value={row.count}
                             type="number"
                             variant="filled"
                           />
                         </TableCell>
+
                         <TableCell align="left">
                           <IconButton
                             onClick={() => {
-                              setRoleCount((prvrc) => {
-                                prvrc[index].count += 1;
-                                return [...prvrc];
-                              });
+                              const rc = _.map(roleCount, (r, i) => (
+                                _.isEqual(row, r) ? { ...r, count: r.count + 1 } : r
+                              ));
+                              setRoleCount(rc);
                             }}
                             size="large"
                           >

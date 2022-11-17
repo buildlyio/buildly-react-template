@@ -1,11 +1,12 @@
-import * as actions from '../actions/decision.actions';
-import * as reducer from './decision.reducer';
+import * as actions from '../actions/release.actions';
+import * as reducer from './release.reducer';
 
 const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  decisions: [],
+  releases: [],
+  comments: [],
   features: [],
   feedbacks: [],
   issues: [],
@@ -27,38 +28,38 @@ describe('Save Feature Form reducer', () => {
   });
 });
 
-describe('Get all decisions reducer', () => {
+describe('Get all releases reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.ALL_DECISIONS },
+      { type: actions.ALL_RELEASES },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('get all decisions success reducer', () => {
+  it('get all releases success reducer', () => {
     const data = [{
-      decision_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
-      name: 'Test',
+      release_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Release',
     }];
 
     expect(reducer.default(
       initialState,
-      { type: actions.ALL_DECISIONS_SUCCESS, data },
+      { type: actions.ALL_RELEASES_SUCCESS, data },
     )).toEqual({
       ...initialState,
       loading: false,
       loaded: true,
-      decisions: data,
+      releases: data,
     });
   });
 
-  it('get all decisions fail reducer', () => {
+  it('get all releases fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.ALL_DECISIONS_FAILURE },
+      { type: actions.ALL_RELEASES_FAILURE },
     )).toEqual({
       ...initialState,
       loading: false,
@@ -68,38 +69,38 @@ describe('Get all decisions reducer', () => {
   });
 });
 
-describe('Get a decision reducer', () => {
+describe('Get a release reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_DECISION },
+      { type: actions.GET_RELEASE },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('get a decision success reducer', () => {
+  it('get a release success reducer', () => {
     const data = {
-      decision_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
-      name: 'Test',
+      release_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Release',
     };
 
     expect(reducer.default(
       initialState,
-      { type: actions.GET_DECISION_SUCCESS, data },
+      { type: actions.GET_RELEASE_SUCCESS, data },
     )).toEqual({
       ...initialState,
       loading: false,
       loaded: true,
-      decisions: [data],
+      releases: [data],
     });
   });
 
-  it('get a decision fail reducer', () => {
+  it('get a release fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_DECISION_FAILURE },
+      { type: actions.GET_RELEASE_FAILURE },
     )).toEqual({
       ...initialState,
       loading: false,
@@ -109,38 +110,38 @@ describe('Get a decision reducer', () => {
   });
 });
 
-describe('Create a decision reducer', () => {
+describe('Create a release reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.CREATE_DECISION },
+      { type: actions.CREATE_RELEASE },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('create a decision success reducer', () => {
+  it('create a release success reducer', () => {
     const data = {
-      decision_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
-      name: 'Test',
+      release_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Release',
     };
 
     expect(reducer.default(
       initialState,
-      { type: actions.CREATE_DECISION_SUCCESS, data },
+      { type: actions.CREATE_RELEASE_SUCCESS, data },
     )).toEqual({
       ...initialState,
       loading: false,
       loaded: true,
-      decisions: [data],
+      releases: [data],
     });
   });
 
-  it('create a decision fail reducer', () => {
+  it('create a release fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.CREATE_DECISION_FAILURE },
+      { type: actions.CREATE_RELEASE_FAILURE },
     )).toEqual({
       ...initialState,
       loading: false,
@@ -150,42 +151,42 @@ describe('Create a decision reducer', () => {
   });
 });
 
-describe('Update a decision reducer', () => {
+describe('Update a release reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.UPDATE_DECISION },
+      { type: actions.UPDATE_RELEASE },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('update a decision success reducer', () => {
+  it('update a release success reducer', () => {
     const data = {
-      decision_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
-      name: 'Test',
+      release_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Release',
     };
     const editedData = {
-      decision_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
-      name: 'Test Edited',
+      release_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Release Edited',
     };
 
     expect(reducer.default(
-      { ...initialState, decisions: [data] },
-      { type: actions.UPDATE_DECISION_SUCCESS, data: editedData },
+      { ...initialState, releases: [data] },
+      { type: actions.UPDATE_RELEASE_SUCCESS, data: editedData },
     )).toEqual({
       ...initialState,
       loading: false,
       loaded: true,
-      decisions: [editedData],
+      releases: [editedData],
     });
   });
 
-  it('update a decision fail reducer', () => {
+  it('update a release fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.UPDATE_DECISION_FAILURE },
+      { type: actions.UPDATE_RELEASE_FAILURE },
     )).toEqual({
       ...initialState,
       loading: false,
@@ -195,41 +196,253 @@ describe('Update a decision reducer', () => {
   });
 });
 
-describe('Delete a decision reducer', () => {
+describe('Delete a release reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.DELETE_DECISION },
+      { type: actions.DELETE_RELEASE },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('delete a decision success reducer', () => {
+  it('delete a release success reducer', () => {
     const data = {
-      decision_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
-      name: 'Test',
+      release_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Release',
     };
 
     expect(reducer.default(
-      { ...initialState, decisions: [data] },
+      { ...initialState, releases: [data] },
       {
-        type: actions.DELETE_DECISION_SUCCESS,
-        decision_uuid: data.decision_uuid,
+        type: actions.DELETE_RELEASE_SUCCESS,
+        release_uuid: data.release_uuid,
       },
     )).toEqual({
       ...initialState,
       loading: false,
       loaded: true,
-      decisions: [],
+      releases: [],
     });
   });
 
-  it('delete a decision fail reducer', () => {
+  it('delete a release fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.DELETE_DECISION_FAILURE },
+      { type: actions.DELETE_RELEASE_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Get all comments reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.ALL_COMMENTS },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('get all comments success reducer', () => {
+    const data = [{
+      comment_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Comment',
+    }];
+
+    expect(reducer.default(
+      initialState,
+      { type: actions.ALL_COMMENTS_SUCCESS, data },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      comments: data,
+    });
+  });
+
+  it('get all comments fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.ALL_COMMENTS_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Get a comment reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_COMMENT },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('get a comment success reducer', () => {
+    const data = {
+      comment_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Comment',
+    };
+
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_COMMENT_SUCCESS, data },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      comments: [data],
+    });
+  });
+
+  it('get a comment fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_COMMENT_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Create a comment reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_COMMENT },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('create a comment success reducer', () => {
+    const data = {
+      comment_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Comment',
+    };
+
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_COMMENT_SUCCESS, data },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      comments: [data],
+    });
+  });
+
+  it('create a comment fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_COMMENT_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Update a comment reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.UPDATE_COMMENT },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('update a comment success reducer', () => {
+    const data = {
+      comment_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Comment',
+    };
+    const editedData = {
+      comment_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Comment Edited',
+    };
+
+    expect(reducer.default(
+      { ...initialState, comments: [data] },
+      { type: actions.UPDATE_COMMENT_SUCCESS, data: editedData },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      comments: [editedData],
+    });
+  });
+
+  it('update a comment fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.UPDATE_COMMENT_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Delete a comment reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.DELETE_COMMENT },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('delete a comment success reducer', () => {
+    const data = {
+      comment_uuid: 'kfhwue-y38wgws-3i2wfhv-84gheu',
+      name: 'Test Comment',
+    };
+
+    expect(reducer.default(
+      { ...initialState, comments: [data] },
+      {
+        type: actions.DELETE_COMMENT_SUCCESS,
+        comment_uuid: data.comment_uuid,
+      },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      comments: [],
+    });
+  });
+
+  it('delete a comment fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.DELETE_COMMENT_FAILURE },
     )).toEqual({
       ...initialState,
       loading: false,

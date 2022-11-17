@@ -9,8 +9,9 @@ import {
   Hidden,
   Grid,
 } from '@mui/material';
+import Loader from '@components/Loader/Loader';
 import FormModal from '@components/Modal/FormModal';
-import { saveFeatureFormData } from '@redux/decision/actions/decision.actions';
+import { saveFeatureFormData } from '@redux/release/actions/release.actions';
 import AddFeatures, { checkIfAddFeaturesEdited } from './AddFeatures';
 import DescribeProcess, { checkIfDescribeProcessEdited } from './DescribeProcess';
 import ViewDetailsWrapper from '../../NewProduct/components/ViewDetailsWrapper';
@@ -82,7 +83,7 @@ const getStepContent = (
 
 const NewFeatureForm = (props) => {
   const {
-    history, dispatch, location,
+    history, dispatch, location, loading,
   } = props;
   const classes = useStyles();
   const steps = getSteps();
@@ -152,6 +153,7 @@ const NewFeatureForm = (props) => {
 
   return (
     <div>
+      {loading && <Loader open={loading} />}
       {openFormModal && (
         <FormModal
           open={openFormModal}
@@ -202,7 +204,7 @@ const NewFeatureForm = (props) => {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ...state.optionsReducer,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
 });
 
 export default connect(mapStateToProps)(NewFeatureForm);

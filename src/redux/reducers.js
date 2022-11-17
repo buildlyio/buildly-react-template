@@ -7,7 +7,7 @@ import coregroupReducer from './coregroup/reducers/coregroup.reducer';
 import coreuserReducer from './coreuser/coreuser.reducer';
 import googleSheetReducer from './googleSheet/reducers/googleSheet.reducer';
 import productReducer from './product/reducers/product.reducer';
-import decisionReducer from './decision/reducers/decision.reducer';
+import releaseReducer from './release/reducers/release.reducer';
 import devpartnerReducer from './devpartner/reducers/devpartner.reducer';
 import { LOGOUT_SUCCESS } from './authuser/actions/authuser.actions';
 
@@ -19,7 +19,7 @@ const appReducer = combineReducers({
   crudDataReducer,
   googleSheetReducer,
   productReducer,
-  decisionReducer,
+  releaseReducer,
   devpartnerReducer,
 });
 

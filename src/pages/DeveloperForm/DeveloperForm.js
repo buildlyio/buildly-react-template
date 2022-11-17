@@ -29,7 +29,6 @@ import { validators } from '@utils/validators';
 const useStyles = makeStyles((theme) => ({
   title: {
     margin: theme.spacing(2, 0),
-    color: theme.palette.contrast.text,
   },
   container: {
     marginTop: theme.spacing(4),
