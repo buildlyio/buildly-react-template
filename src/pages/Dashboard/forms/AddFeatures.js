@@ -69,14 +69,9 @@ const AddFeatures = ({
     (editData && editData.name) || (featureFormData && featureFormData.name) || '',
     {
       required: true,
-      productFeatures
+      productFeatures,
     },
   );
-
-  // const description = useInput(
-  //   (editData && editData.description) || (featureFormData && featureFormData.description) || '',
-  //   { required: true },
-  // );
 
   const priority = useInput(
     (editData && editData.priority) || (featureFormData && featureFormData.priority) || '',
@@ -118,6 +113,7 @@ const AddFeatures = ({
 
   checkIfAddFeaturesEdited = () => (
     name.hasChanged()
+    || (editPage && description !== editPage.description)
     || (editPage && priority.hasChanged())
     || (editPage && _.isEmpty(currentStatData) && !_.isEmpty(status))
     || (editPage && !_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
