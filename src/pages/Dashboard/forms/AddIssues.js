@@ -154,7 +154,10 @@ const AddIssues = ({
   const closeFormModal = () => {
     const dataHasChanged = (
       name.hasChanged()
-      || (description && editPage && description !== editData.description)
+      || (
+        (editPage && (description !== editData.description))
+        || (!editPage && description)
+      )
       || feature.hasChanged()
       || type.hasChanged()
       || (!_.isEmpty(editData) && !_.isEqual(startDate, editData.start_date))

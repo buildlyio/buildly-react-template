@@ -113,7 +113,10 @@ const AddFeatures = ({
 
   checkIfAddFeaturesEdited = () => (
     name.hasChanged()
-    || (editPage && description !== editPage.description)
+    || (
+      (editPage && description !== featureFormData.description)
+      || (!editPage && description)
+    )
     || (editPage && priority.hasChanged())
     || (editPage && _.isEmpty(currentStatData) && !_.isEmpty(status))
     || (editPage && !_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
