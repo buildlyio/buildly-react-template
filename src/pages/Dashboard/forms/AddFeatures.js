@@ -170,7 +170,7 @@ const AddFeatures = ({
       ...editData,
       edit_date: dateTime,
       name: name.value,
-      description: description.value,
+      description,
       product_uuid,
       ...featCred?.auth_detail,
       assignees: product && product.feature_tool_detail && product.feature_tool_detail.user_list
@@ -212,11 +212,6 @@ const AddFeatures = ({
   };
 
   const submitDisabled = () => {
-    console.log('Description', description);
-    console.log('Priority', priority.value);
-    console.log('Edit page', editPage);
-    console.log('Description', statusID);
-    console.log('Description', description);
     const errorKeys = Object.keys(formError);
     if (
       !name.value

@@ -23,6 +23,7 @@ import {
 import { validators } from '@utils/validators';
 import { ISSUETYPES, TAGS } from './formConstants';
 import { routes } from '@routes/routesConstants';
+import SmartInput from '@components/SmartInput/SmartInput';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -77,13 +78,13 @@ const AddIssues = ({
   const [status, setStatus] = useState('');
   const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
 
-  const name = useInput(
-    (convertData && convertData.name) || (editData && editData.name) || '',
-    { required: true },
+  // form fields definition
+  const [description, setDescription] = useState(
+    (convertData && convertData.description) || (editData && editData.description) || ''
   );
 
-  const description = useInput(
-    (convertData && convertData.description) || (editData && editData.description) || '',
+  const name = useInput(
+    (convertData && convertData.name) || (editData && editData.name) || '',
     { required: true },
   );
 
@@ -153,7 +154,7 @@ const AddIssues = ({
   const closeFormModal = () => {
     const dataHasChanged = (
       name.hasChanged()
-      || description.hasChanged()
+      || (description && editPage && description !== editData.description)
       || feature.hasChanged()
       || type.hasChanged()
       || (!_.isEmpty(editData) && !_.isEqual(startDate, editData.start_date))
@@ -232,7 +233,7 @@ const AddIssues = ({
       ...editData,
       edit_date: dateTime,
       name: name.value,
-      description: description.value,
+      description,
       feature_uuid: feature.value,
       issue_type: type.value,
       start_date: startDate,
@@ -287,7 +288,7 @@ const AddIssues = ({
     const errorKeys = Object.keys(formError);
     if (
       !name.value
-      || !description.value
+      || !description
       || !feature.value
       || !type.value
       || !statusID
@@ -348,27 +349,11 @@ const AddIssues = ({
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
+                <SmartInput
+                  onEditorValueChange={setDescription}
+                  value={description}
+                  inputLabel="Description"
                   required
-                  fullWidth
-                  multiline
-                  id="description"
-                  label="Description"
-                  name="description"
-                  autoComplete="description"
-                  error={
-                    formError.description
-                    && formError.description.error
-                  }
-                  helperText={
-                    formError.description
-                      ? formError.description.message
-                      : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', description)}
-                  {...description.bind}
                 />
               </Grid>
               <Grid item xs={12}>
