@@ -399,23 +399,23 @@ const Dashboard = ({
                     </MenuItem>
                   ))}
               </TextField>
-              {
-                (
-                  loaded && product && !_.isEmpty(product.third_party_tool)
-                  && !_.isEmpty(statuses) && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={syncBoard}
-                      className={classes.syncBoard}
-                    >
-                      <SyncIcon />
-                      {' '}
-                      Sync Board
-                    </Button>
-                  )
-                )
-              }
+              {/* { */}
+              {/*   ( */}
+              {/*     loaded && product && !_.isEmpty(product.third_party_tool) */}
+              {/*     && !_.isEmpty(statuses) && ( */}
+              {/*       <Button */}
+              {/*         variant="contained" */}
+              {/*         color="primary" */}
+              {/*         onClick={syncBoard} */}
+              {/*         className={classes.syncBoard} */}
+              {/*       > */}
+              {/*         <SyncIcon /> */}
+              {/*         {' '} */}
+              {/*         Sync Board */}
+              {/*       </Button> */}
+              {/*     ) */}
+              {/*   ) */}
+              {/* } */}
             </Grid>
           </Grid>
 
