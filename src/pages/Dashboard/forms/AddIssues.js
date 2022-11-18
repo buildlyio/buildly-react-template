@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import FormModal from '@components/Modal/FormModal';
+import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
 import {
   createIssue,
@@ -52,6 +53,7 @@ const AddIssues = ({
   features,
   credentials,
   products,
+  loading,
 }) => {
   const classes = useStyles();
   const editPage = location.state && location.state.type === 'edit';
@@ -318,6 +320,7 @@ const AddIssues = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {loading && <Loader open={loading} />}
           <form
             className={classes.form}
             noValidate
@@ -657,6 +660,7 @@ const AddIssues = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
   statuses: state.releaseReducer.statuses,
   features: state.releaseReducer.features,
   products: state.productReducer.products,

@@ -10,6 +10,7 @@ import {
   Button,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
+import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 
@@ -36,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
 const AddComments = ({
   history,
   location,
+  loading,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
@@ -137,6 +139,7 @@ const AddComments = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {loading && <Loader open={loading} />}
           <form
             className={classes.form}
             noValidate
@@ -206,6 +209,7 @@ const AddComments = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
   statuses: state.releaseReducer.statuses,
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,

@@ -22,6 +22,8 @@ import {
   getAllFeatures,
   getAllIssues,
   getAllStatuses,
+  importTickets,
+  resyncBoard,
 } from '@redux/release/actions/release.actions';
 import Kanban from './components/Kanban';
 import Tabular from './components/Tabular';
@@ -94,6 +96,8 @@ const Dashboard = ({
   features,
   credentials,
   statuses,
+  importLoaded,
+  issues,
 }) => {
   const classes = useStyles();
   const [route, setRoute] = useState(routes.DASHBOARD);
@@ -151,7 +155,7 @@ const Dashboard = ({
       dispatch(clearProductRelatedProductData());
       dispatch(clearProductRelatedReleaseData());
     }
-  }, [selectedProduct]);
+  }, [selectedProduct, importLoaded]);
 
   useEffect(() => {
     if (selectedProduct && !!selectedProduct && (_.size(features) >= 5)
@@ -160,7 +164,7 @@ const Dashboard = ({
     } else {
       setUpgrade(false);
     }
-  }, [selectedProduct, features]);
+  }, [selectedProduct, features, importLoaded]);
 
   useEffect(() => {
     if (selectedProduct && !!selectedProduct) {
@@ -317,7 +321,105 @@ const Dashboard = ({
     });
   };
 
-  const syncBoard = () => {};
+  const syncBoard = (e) => {
+    e.preventDefault();
+    const featCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'feature'));
+    const issueCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'issue'));
+    const repoList = _.map(product.issue_tool_detail.repository_list, 'name');
+
+    if (_.isEmpty(features) && _.isEmpty(issues)) {
+      if (product && !_.isEmpty(product.feature_tool_detail)) {
+        if (featCred?.auth_detail?.tool_name !== 'GitHub') {
+          const featData = {
+            ...featCred?.auth_detail,
+            product_uuid: selectedProduct,
+            board_id: product.feature_tool_detail.board_detail?.board_id,
+            drop_col_name: null,
+          };
+
+          if (featCred?.auth_detail) {
+            dispatch(importTickets(featData));
+          }
+
+          const issueData = {
+            ...issueCred?.auth_detail,
+            product_uuid: selectedProduct,
+            board_id: product.feature_tool_detail.board_detail?.board_id,
+            drop_col_name: null,
+          };
+
+          if (featCred?.auth_detail?.tool_name !== 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
+            issueData.is_repo_issue = true;
+            issueData.repo_list = repoList;
+          }
+
+          if (issueCred?.auth_detail) {
+            dispatch(importTickets(issueData));
+          }
+        } else if (featCred?.auth_detail?.tool_name === 'GitHub' && issueCred?.auth_detail?.tool_name === 'GitHub') {
+          const featData = {
+            ...featCred?.auth_detail,
+            product_uuid: selectedProduct,
+            board_id: product.feature_tool_detail.board_detail?.board_id,
+            is_repo_issue: false,
+            drop_col_name: null,
+          };
+
+          if (featCred?.auth_detail) {
+            dispatch(importTickets(featData));
+          }
+        } else {
+          const featData = {
+            ...featCred?.auth_detail,
+            product_uuid: selectedProduct,
+            board_id: product.feature_tool_detail.board_detail?.board_id,
+            is_repo_issue: false,
+            drop_col_name: null,
+          };
+
+          if (featCred?.auth_detail) {
+            dispatch(importTickets(featData));
+          }
+
+          const issueData = {
+            ...issueCred?.auth_detail,
+            product_uuid: selectedProduct,
+            board_id: product.feature_tool_detail.board_detail?.board_id,
+            is_repo_issue: true,
+            repo_list: repoList,
+            drop_col_name: null,
+          };
+
+          if (issueCred?.auth_detail) {
+            dispatch(importTickets(issueData));
+          }
+        }
+      } else {
+        history.push(ignoreColumnsPath, {
+          from: location.pathname,
+          product_uuid: selectedProduct,
+        });
+      }
+    } else {
+      const featData = {
+        ...featCred?.auth_detail,
+        product_uuid: selectedProduct,
+      };
+
+      if (featCred?.auth_detail) {
+        dispatch(resyncBoard(featData));
+      }
+
+      const issueData = {
+        ...issueCred?.auth_detail,
+        product_uuid: selectedProduct,
+      };
+
+      if (issueCred?.auth_detail) {
+        dispatch(resyncBoard(issueData));
+      }
+    }
+  };
 
   return (
     <>
@@ -384,14 +486,14 @@ const Dashboard = ({
                 ))}
               </TextField>
 
-              {/* {(loaded && product && !_.isEmpty(product.third_party_tool)
+              {(loaded && product && !_.isEmpty(product.third_party_tool)
               && !_.isEmpty(statuses) && (
                 <Button variant="contained" color="primary" onClick={syncBoard} className={classes.syncBoard}>
                   <SyncIcon />
                   {' '}
                   Sync Board
                 </Button>
-              ))} */}
+              ))}
             </Grid>
           </Grid>
 
@@ -536,6 +638,8 @@ const mapStateToProps = (state, ownProps) => ({
   features: state.releaseReducer.features,
   credentials: state.productReducer.credentials,
   statuses: state.releaseReducer.statuses,
+  importLoaded: state.releaseReducer.importLoaded,
+  issues: state.releaseReducer.issues,
 });
 
 export default connect(mapStateToProps)(Dashboard);

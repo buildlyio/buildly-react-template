@@ -11,7 +11,7 @@ const initialState = {
   feedbacks: [],
   issues: [],
   statuses: [],
-  tickets: [],
+  importLoaded: false,
   featureFormData: null,
 };
 
@@ -1324,7 +1324,7 @@ describe('Create a ticket reducer', () => {
       ...initialState,
       loading: false,
       loaded: true,
-      tickets: [data],
+      importLoaded: true,
     });
   });
 
@@ -1378,6 +1378,43 @@ describe('Clear a product reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.DELETE_STATUS_FAILURE },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      error: undefined,
+    });
+  });
+});
+
+describe('Resync board data reducer', () => {
+  it('Empty reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.RESYNC_BOARD_DATA },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+      importLoaded: false,
+    });
+  });
+
+  it('Resync board data success reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.RESYNC_BOARD_DATA_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loading: false,
+      loaded: true,
+      importLoaded: true,
+    });
+  });
+
+  it('Resync board data fail reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.RESYNC_BOARD_DATA_FAILURE },
     )).toEqual({
       ...initialState,
       loading: false,

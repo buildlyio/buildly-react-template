@@ -395,3 +395,16 @@ describe('Clear product action', () => {
       .toEqual(expectedAction);
   });
 });
+
+// Resync board data
+describe('Resync board data action', () => {
+  it('should create an action to import tickets', () => {
+    const data = { name: 'resync board' };
+    const expectedAction = {
+      type: actions.RESYNC_BOARD_DATA,
+      data,
+    };
+
+    expect(actions.resyncBoard(data)).toEqual(expectedAction);
+  });
+});

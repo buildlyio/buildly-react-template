@@ -93,7 +93,7 @@ function* allCredentials(payload) {
     const creds = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}credential/?product_uuid=${payload.product_uuid}`,
+      `http://localhost:8081/credential/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_CREDENTIALS_SUCCESS, data: creds.data });
   } catch (error) {
@@ -118,7 +118,7 @@ function* getCredential(payload) {
     const cred = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}credential/?credential_uuid=${payload.credential_uuid}`,
+      `http://localhost:8081/credential/?credential_uuid=${payload.credential_uuid}`,
     );
     yield put({ type: GET_CREDENTIAL_SUCCESS, data: cred.data });
   } catch (error) {
@@ -143,7 +143,7 @@ function* addCredential(payload) {
     const cred = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${productEndpoint}credential/`,
+      'http://localhost:8081/credential/',
       payload.data,
     );
     yield put({ type: CREATE_CREDENTIAL_SUCCESS, data: cred.data });
@@ -169,7 +169,7 @@ function* updateCredentials(payload) {
     const cred = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${productEndpoint}credential/${payload.data.credential_uuid}`,
+      `http://localhost:8081/credential/${payload.data.credential_uuid}`,
       payload.data,
     );
     yield put({ type: UPDATE_CREDENTIAL_SUCCESS, data: cred.data });
@@ -196,7 +196,7 @@ function* deleteCredential(payload) {
     const cred = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${productEndpoint}credential/${credential_uuid}`,
+      `http://localhost:8081/credential/${credential_uuid}`,
     );
     yield put({ type: DELETE_CREDENTIAL_SUCCESS, credential_uuid });
   } catch (error) {
@@ -221,7 +221,7 @@ function* allProductTeams(payload) {
     const teams = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}productteam/`,
+      'http://localhost:8081/productteam/',
     );
     yield put({ type: ALL_PRODUCT_TEAMS_SUCCESS, data: teams.data });
   } catch (error) {
@@ -246,7 +246,7 @@ function* getProductTeam(payload) {
     const team = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}productteam/?productteam_uuid=${payload.productteam_uuid}`,
+      `http://localhost:8081/productteam/?productteam_uuid=${payload.productteam_uuid}`,
     );
     yield put({ type: GET_PRODUCT_TEAM_SUCCESS, data: team.data });
   } catch (error) {
@@ -271,7 +271,7 @@ function* createProductTeam(payload) {
     const productTeam = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${productEndpoint}productteam/`,
+      'http://localhost:8081/productteam/',
       payload.data,
     );
     yield put({ type: CREATE_PRODUCT_TEAM_SUCCESS, data: productTeam.data });
@@ -297,7 +297,7 @@ function* updateProductTeam(payload) {
     const productTeam = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${productEndpoint}productteam/${payload.data.productteam_uuid}`,
+      `http://localhost:8081/productteam/${payload.data.productteam_uuid}`,
       payload.data,
     );
     yield put({ type: UPDATE_PRODUCT_TEAM_SUCCESS, data: productTeam.data });
@@ -324,7 +324,7 @@ function* deleteProductTeam(payload) {
     const productTeam = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${productEndpoint}productteam/${productteam_uuid}`,
+      `http://localhost:8081/productteam/${productteam_uuid}`,
     );
     yield put({ type: DELETE_PRODUCT_TEAM_SUCCESS, productteam_uuid });
   } catch (error) {
@@ -349,7 +349,7 @@ function* allProducts(payload) {
     const products = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}product/?organization_uuid=${payload.organization_uuid}`,
+      `http://localhost:8081/product/?organization_uuid=${payload.organization_uuid}`,
     );
     yield put({ type: ALL_PRODUCTS_SUCCESS, data: products.data });
   } catch (error) {
@@ -374,7 +374,7 @@ function* getProduct(payload) {
     const product = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}product/?organization_uuid=${payload.product_uuid}`,
+      `http://localhost:8081/product/${payload.product_uuid}`,
     );
     yield put({ type: GET_PRODUCT_SUCCESS, data: product.data });
   } catch (error) {
@@ -400,7 +400,7 @@ function* createProduct(payload) {
     const product = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${productEndpoint}product/`,
+      'http://localhost:8081/product/',
       data,
     );
     if (product && product.data) {
@@ -458,7 +458,7 @@ function* updateProduct(payload) {
     const product = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${productEndpoint}product/${payload.data.product_uuid}/`,
+      `http://localhost:8081/product/${payload.data.product_uuid}/`,
       payload.data,
     );
 
@@ -518,7 +518,7 @@ function* deleteProduct(payload) {
     const product = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${productEndpoint}product/${product_uuid}`,
+      `http://localhost:8081/product/${product_uuid}`,
     );
     yield [
       yield put({ type: DELETE_PRODUCT_SUCCESS, product_uuid }),
@@ -552,7 +552,7 @@ function* allThirdPartyTools(payload) {
     const tools = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}thirdpartytool/`,
+      'http://localhost:8081/thirdpartytool/',
     );
     yield put({ type: ALL_THIRD_PARTY_TOOLS_SUCCESS, data: tools.data });
   } catch (error) {
@@ -577,7 +577,7 @@ function* getThirdPartyTool(payload) {
     const tool = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}thirdpartytool/?thirdpartytool_uuid=${payload.thirdpartytool_uuid}`,
+      `http://localhost:8081/thirdpartytool/?thirdpartytool_uuid=${payload.thirdpartytool_uuid}`,
     );
     yield put({ type: GET_THIRD_PARTY_TOOL_SUCCESS, data: tool.data });
   } catch (error) {
@@ -602,7 +602,7 @@ function* createThirdPartyTool(payload) {
     const thirdpartytool = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${productEndpoint}thirdpartytool/`,
+      'http://localhost:8081/thirdpartytool/',
       payload.data,
     );
     yield put({ type: CREATE_THIRD_PARTY_TOOL_SUCCESS, data: thirdpartytool.data });
@@ -628,7 +628,7 @@ function* updateThirdPartyTool(payload) {
     const thirdpartytool = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${productEndpoint}thirdpartytool/${payload.data.thirdpartytool_uuid}`,
+      `http://localhost:8081/thirdpartytool/${payload.data.thirdpartytool_uuid}`,
       payload.data,
     );
     yield put({ type: UPDATE_THIRD_PARTY_TOOL_SUCCESS, data: thirdpartytool.data });
@@ -655,7 +655,7 @@ function* deleteThirdPartyTool(payload) {
     const thirdpartytool = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${productEndpoint}thirdpartytool/${thirdpartytool_uuid}`,
+      `http://localhost:8081/thirdpartytool/${thirdpartytool_uuid}`,
     );
     yield put({ type: DELETE_THIRD_PARTY_TOOL_SUCCESS, thirdpartytool_uuid });
   } catch (error) {
@@ -680,7 +680,7 @@ function* getBoards(payload) {
     const board = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${productEndpoint}board-list/?product_uuid=${payload.product_uuid}`,
+      `http://localhost:8081/board-list/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: GET_BOARD_SUCCESS, data: board.data });
   } catch (error) {
@@ -706,7 +706,7 @@ function* createBoard(payload) {
     const board = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${productEndpoint}board-configuration/?product_uuid=${data.product_uuid}`,
+      `http://localhost:8081/board-configuration/?product_uuid=${data.product_uuid}`,
       data,
     );
     if (board && board.data) {
@@ -746,7 +746,7 @@ function* validateCredential(payload) {
     const cred = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${productEndpoint}validate-credential/`,
+      'http://localhost:8081/validate-credential/',
       payload.data,
     );
     yield [

@@ -14,6 +14,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
+import Loader from '@components/Loader/Loader';
 import { createStatus } from '@redux/release/actions/release.actions';
 import { STATUSTYPES } from './formConstants';
 
@@ -41,6 +42,7 @@ const StatusBoard = ({
   dispatch,
   history,
   location,
+  loading,
 }) => {
   const classes = useStyles();
   const editData = (
@@ -143,6 +145,7 @@ const StatusBoard = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {loading && <Loader open={loading} />}
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
@@ -237,6 +240,7 @@ const StatusBoard = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
 });
 
 export default connect(mapStateToProps)(StatusBoard);
