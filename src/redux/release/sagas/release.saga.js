@@ -142,7 +142,7 @@ function* getRelease(payload) {
     const release = yield call(
       httpService.makeRequest,
       'get',
-      `http://localhost:8080/release/${payload.release_uuid}/`,
+      `${window.env.API_URL}release/release/${payload.release_uuid}/`,
     );
     yield put({ type: GET_RELEASE_SUCCESS, data: release.data });
   } catch (error) {
@@ -167,7 +167,7 @@ function* createRelease(payload) {
     const release = yield call(
       httpService.makeRequest,
       'post',
-      'http://localhost:8080/release/',
+      `${window.env.API_URL}/release/release/`,
       payload.data,
     );
     yield put({ type: CREATE_RELEASE_SUCCESS, data: release.data });
@@ -193,7 +193,7 @@ function* updateRelease(payload) {
     const release = yield call(
       httpService.makeRequest,
       'put',
-      `http://localhost:8080/release/${payload.data.release_uuid}/`,
+      `${window.env.API_URL}release/release/${payload.data.release_uuid}/`,
       payload.data,
     );
     yield put({ type: UPDATE_RELEASE_SUCCESS, data: release.data });
@@ -220,7 +220,7 @@ function* deleteRelease(payload) {
     const release = yield call(
       httpService.makeRequest,
       'delete',
-      `http://localhost:8080/release/${release_uuid}/`,
+      `${window.env.API_URL}release/release/${release_uuid}/`,
     );
     yield put({ type: DELETE_RELEASE_SUCCESS, release_uuid });
   } catch (error) {
@@ -245,7 +245,7 @@ function* allComments(payload) {
     const comments = yield call(
       httpService.makeRequest,
       'get',
-      `http://localhost:8080/comment/?product_uuid=${payload.product_uuid}`,
+      `${window.env.API_URL}release/comment/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_COMMENTS_SUCCESS, data: comments.data });
   } catch (error) {
@@ -270,7 +270,7 @@ function* getComment(payload) {
     const comment = yield call(
       httpService.makeRequest,
       'get',
-      `http://localhost:8080/comment/${payload.comment_uuid}/`,
+      `${window.env.API_URL}release/comment/${payload.comment_uuid}/`,
     );
     yield put({ type: GET_COMMENT_SUCCESS, data: comment.data });
   } catch (error) {
@@ -295,7 +295,7 @@ function* createComment(payload) {
     const comment = yield call(
       httpService.makeRequest,
       'post',
-      'http://localhost:8080/comment/',
+      `${window.env.API_URL}release/comment/`,
       payload.data,
     );
     yield put({ type: CREATE_COMMENT_SUCCESS, data: comment.data });
@@ -321,7 +321,7 @@ function* updateComment(payload) {
     const comment = yield call(
       httpService.makeRequest,
       'put',
-      `http://localhost:8080/comment/${payload.data.comment_uuid}/`,
+      `${window.env.API_URL}release/comment/${payload.data.comment_uuid}/`,
       payload.data,
     );
     yield put({ type: UPDATE_COMMENT_SUCCESS, data: comment.data });
@@ -348,7 +348,7 @@ function* deleteComment(payload) {
     const comment = yield call(
       httpService.makeRequest,
       'delete',
-      `http://localhost:8080/comment/${comment_uuid}/`,
+      `${window.env.API_URL}release/comment/${comment_uuid}/`,
     );
     yield put({ type: DELETE_COMMENT_SUCCESS, comment_uuid });
   } catch (error) {
@@ -373,7 +373,7 @@ function* allFeatures(payload) {
     const features = yield call(
       httpService.makeRequest,
       'get',
-      `http://localhost:8080/feature/?product_uuid=${payload.product_uuid}`,
+      `${window.env.API_URL}release/feature/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_FEATURES_SUCCESS, data: features.data });
   } catch (error) {
@@ -398,7 +398,7 @@ function* getFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'get',
-      `http://localhost:8080/feature/${payload.feature_uuid}/`,
+      `${window.env.API_URL}release/feature/${payload.feature_uuid}/`,
     );
     yield put({ type: GET_FEATURE_SUCCESS, data: feature.data });
   } catch (error) {
@@ -423,7 +423,7 @@ function* createFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'post',
-      'http://localhost:8080/feature/',
+      `${window.env.API_URL}release/feature/`,
       payload.data,
     );
     yield [
@@ -459,7 +459,7 @@ function* updateFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'put',
-      `http://localhost:8080/feature/${payload.data.feature_uuid}/`,
+      `${window.env.API_URL}release/feature/${payload.data.feature_uuid}/`,
       payload.data,
     );
     yield [
@@ -495,7 +495,7 @@ function* deleteFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'delete',
-      `http://localhost:8080/feature/${feature_uuid}/`,
+      `${window.env.API_URL}release/feature/${feature_uuid}/`,
       payload.data,
     );
     yield [
@@ -530,7 +530,7 @@ function* allFeedbacks(payload) {
     const feedbacks = yield call(
       httpService.makeRequest,
       'get',
-      'http://localhost:8080/feedback/',
+      `${window.env.API_URL}release/feedback/`,
     );
     yield put({ type: ALL_FEEDBACKS_SUCCESS, data: feedbacks.data });
   } catch (error) {
@@ -555,7 +555,7 @@ function* getFeedback(payload) {
     const feedback = yield call(
       httpService.makeRequest,
       'get',
-      `http://localhost:8080/feedback/${payload.feedback_uuid}/`,
+      `${window.env.API_URL}release/feedback/${payload.feedback_uuid}/`,
     );
     yield put({ type: GET_FEEDBACK_SUCCESS, data: feedback.data });
   } catch (error) {
@@ -580,7 +580,7 @@ function* createFeedback(payload) {
     const feedback = yield call(
       httpService.makeRequest,
       'post',
-      'http://localhost:8080/feedback/',
+      `${window.env.API_URL}release/feedback/`,
       payload.data,
     );
     yield put({ type: CREATE_FEEDBACK_SUCCESS, data: feedback.data });
@@ -606,7 +606,7 @@ function* updateFeedback(payload) {
     const feedback = yield call(
       httpService.makeRequest,
       'put',
-      `http://localhost:8080/feedback/${payload.data.feedback_uuid}/`,
+      `${window.env.API_URL}release/feedback/${payload.data.feedback_uuid}/`,
       payload.data,
     );
     yield put({ type: UPDATE_FEEDBACK_SUCCESS, data: feedback.data });
@@ -633,7 +633,7 @@ function* deleteFeedback(payload) {
     const feedback = yield call(
       httpService.makeRequest,
       'delete',
-      `http://localhost:8080/feedback/${feedback_uuid}/`,
+      `${window.env.API_URL}release/feedback/${feedback_uuid}/`,
     );
     yield put({ type: DELETE_FEEDBACK_SUCCESS, feedback_uuid });
   } catch (error) {
@@ -658,7 +658,7 @@ function* allIssues(payload) {
     const issues = yield call(
       httpService.makeRequest,
       'get',
-      `http://localhost:8080/issue/?product_uuid=${payload.product_uuid}`,
+      `${window.env.API_URL}release/issue/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_ISSUES_SUCCESS, data: issues.data });
   } catch (error) {
@@ -683,7 +683,7 @@ function* getIssue(payload) {
     const issue = yield call(
       httpService.makeRequest,
       'get',
-      `http://localhost:8080/issue/${payload.issue_uuid}/`,
+      `${window.env.API_URL}release/issue/${payload.issue_uuid}/`,
     );
     yield put({ type: GET_ISSUE_SUCCESS, data: issue.data });
   } catch (error) {
@@ -711,7 +711,7 @@ function* createIssue(payload) {
         call(
           httpService.makeRequest,
           'post',
-          'http://localhost:8080/issue/',
+          `${window.env.API_URL}release/issue/`,
           issue_data,
         )
       )));
@@ -720,7 +720,7 @@ function* createIssue(payload) {
       const issue = yield call(
         httpService.makeRequest,
         'post',
-        'http://localhost:8080/issue/',
+        `${window.env.API_URL}release/issue/`,
         payload.data,
       );
       yield [
@@ -756,7 +756,7 @@ function* updateIssue(payload) {
     const issue = yield call(
       httpService.makeRequest,
       'put',
-      `http://localhost:8080/issue/${payload.data.issue_uuid}/`,
+      `${window.env.API_URL}release/issue/${payload.data.issue_uuid}/`,
       payload.data,
     );
     yield [
@@ -792,7 +792,7 @@ function* deleteIssue(payload) {
     const issue = yield call(
       httpService.makeRequest,
       'delete',
-      `http://localhost:8080/issue/${issue_uuid}/`,
+      `${window.env.API_URL}release/issue/${issue_uuid}/`,
       payload.data,
     );
     yield [
@@ -827,7 +827,7 @@ function* allStatuses(payload) {
     const statuses = yield call(
       httpService.makeRequest,
       'get',
-      `http://localhost:8080/status/?product_uuid=${payload.product_uuid}`,
+      `${window.env.API_URL}release/status/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_STATUSES_SUCCESS, data: statuses.data });
   } catch (error) {
@@ -852,7 +852,7 @@ function* getStatus(payload) {
     const status = yield call(
       httpService.makeRequest,
       'get',
-      `http://localhost:8080/status/${payload.status_uuid}/`,
+      `${window.env.API_URL}release/status/${payload.status_uuid}/`,
     );
     yield put({ type: GET_STATUS_SUCCESS, data: status.data });
   } catch (error) {
@@ -881,7 +881,7 @@ function* createStatus(payload) {
         call(
           httpService.makeRequest,
           'post',
-          'http://localhost:8080/status/',
+          `${window.env.API_URL}release/status/`,
           status_data,
         )
       )));
@@ -890,7 +890,7 @@ function* createStatus(payload) {
       const status = yield call(
         httpService.makeRequest,
         'post',
-        'http://localhost:8080/status/',
+        `${window.env.API_URL}release/status/`,
         data,
       );
       yield put({ type: CREATE_STATUS_SUCCESS, data: status.data });
@@ -918,7 +918,7 @@ function* updateStatus(payload) {
     const status = yield call(
       httpService.makeRequest,
       'put',
-      `http://localhost:8080/status/${payload.data.status_uuid}/`,
+      `${window.env.API_URL}release/status/${payload.data.status_uuid}/`,
       payload.data,
     );
     yield put({ type: UPDATE_STATUS_SUCCESS, data: status.data });
@@ -945,7 +945,7 @@ function* deleteStatus(payload) {
     const status = yield call(
       httpService.makeRequest,
       'delete',
-      `http://localhost:8080/status/${status_uuid}/`,
+      `${window.env.API_URL}release/status/${status_uuid}/`,
     );
     yield put({ type: DELETE_STATUS_SUCCESS, status_uuid });
   } catch (error) {
@@ -970,7 +970,7 @@ function* importTickets(payload) {
     const ticket = yield call(
       httpService.makeRequest,
       'post',
-      'http://localhost:8080/import-project-tickets/',
+      `${window.env.API_URL}release/import-project-tickets/`,
       payload.data,
     );
     yield [
@@ -1005,7 +1005,7 @@ function* clearProductData(payload) {
     const product = yield call(
       httpService.makeRequest,
       'post',
-      'http://localhost:8080/clear-product-data/',
+      `${window.env.API_URL}release/clear-product-data/`,
       payload.data,
     );
     yield put({ type: CLEAR_PRODUCT_DATA_SUCCESS, data: payload.data });
@@ -1032,7 +1032,7 @@ function* resyncBoardData(payload) {
     const resyncStatus = yield call(
       httpService.makeRequest,
       'post',
-      'http://localhost:8080/update-dashboard-card/',
+      `${window.env.API_URL}release/update-dashboard-card/`,
       payload.data,
     );
     yield [
