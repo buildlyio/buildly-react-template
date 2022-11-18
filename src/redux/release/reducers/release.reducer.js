@@ -98,6 +98,9 @@ import {
   CLEAR_PRODUCT_DATA,
   CLEAR_PRODUCT_DATA_FAILURE,
   CLEAR_PRODUCT_DATA_SUCCESS,
+  RESYNC_BOARD_DATA,
+  RESYNC_BOARD_DATA_SUCCESS,
+  RESYNC_BOARD_DATA_FAILURE,
 } from '../actions/release.actions';
 
 const initialState = {
@@ -110,7 +113,6 @@ const initialState = {
   feedbacks: [],
   issues: [],
   statuses: [],
-  tickets: [],
   importLoaded: false,
   featureFormData: null,
 };
@@ -210,6 +212,7 @@ export default (state = initialState, action) => {
     case DELETE_ISSUE_FAILURE:
     case DELETE_STATUS_FAILURE:
     case CLEAR_PRODUCT_DATA_FAILURE:
+    case RESYNC_BOARD_DATA_FAILURE:
       return {
         ...state,
         loading: false,
@@ -394,7 +397,6 @@ export default (state = initialState, action) => {
       };
 
     case GET_ISSUE_SUCCESS:
-    case CREATE_ISSUE_SUCCESS:
     case UPDATE_ISSUE_SUCCESS: {
       const found = _.find(
         state.issues,
@@ -415,6 +417,14 @@ export default (state = initialState, action) => {
         issues,
       };
     }
+
+    case CREATE_ISSUE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        issues: [...state.issues, ...action.data],
+      };
 
     case DELETE_ISSUE_SUCCESS: {
       const iss = _.filter(state.issues, (issue) => (issue.issue_uuid !== action.issue_uuid));
@@ -476,27 +486,13 @@ export default (state = initialState, action) => {
       };
     }
 
-    case IMPORT_TICKETS_SUCCESS: {
-      const found = _.find(
-        state.tickets,
-        { product_uuid: action.data.product_uuid },
-      );
-      const tickets = found
-        ? _.map(state.tickets, (ticket) => (
-          ticket.product_uuid === action.data.product_uuid
-            ? action.data
-            : ticket
-        ))
-        : [...state.tickets, action.data];
-
+    case IMPORT_TICKETS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
         importLoaded: true,
-        tickets,
       };
-    }
 
     case CLEAR_PRODUCT_DATA_SUCCESS:
       return {
@@ -505,6 +501,22 @@ export default (state = initialState, action) => {
         loaded: true,
         features: [],
         issues: [],
+      };
+
+    case RESYNC_BOARD_DATA:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        importLoaded: false,
+      };
+
+    case RESYNC_BOARD_DATA_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        importLoaded: true,
       };
 
     default:

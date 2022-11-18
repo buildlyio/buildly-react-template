@@ -130,6 +130,10 @@ export const CLEAR_PRODUCT_DATA = 'RELEASE/CLEAR_PRODUCT_DATA';
 export const CLEAR_PRODUCT_DATA_SUCCESS = 'RELEASE/CLEAR_PRODUCT_DATA_SUCCESS';
 export const CLEAR_PRODUCT_DATA_FAILURE = 'RELEASE/CLEAR_PRODUCT_DATA_FAILURE';
 
+export const RESYNC_BOARD_DATA = 'RELEASE/RESYNC_BORAD_DATA';
+export const RESYNC_BOARD_DATA_SUCCESS = 'RELEASE/RESYNC_BORAD_DATA_SUCCESS';
+export const RESYNC_BOARD_DATA_FAILURE = 'RELEASE/RESYNC_BORAD_DATA_FAILURE';
+
 /**
  * Save Feature Form Data
  * @param {Object} formData
@@ -425,3 +429,9 @@ export const clearProductData = (data) => ({
 export const clearProductRelatedReleaseData = () => ({
   type: CLEAR_PRODUCT_RELATED_RELEASE_DATA,
 });
+
+/**
+ * Resync board data
+ * @param {Object} data
+ */
+export const resyncBoard = (data) => ({ type: RESYNC_BOARD_DATA, data });

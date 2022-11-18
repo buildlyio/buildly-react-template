@@ -14,6 +14,7 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
+import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
 import {
   createFeature,
@@ -54,6 +55,7 @@ const DescribeProcess = ({
   dispatch,
   handleBack,
   featureFormData,
+  loading,
 }) => {
   const classes = useStyles();
 
@@ -190,6 +192,7 @@ const DescribeProcess = ({
 
   return (
     <>
+      {loading && <Loader open={loading} />}
       <form
         className={classes.form}
         noValidate
@@ -482,6 +485,7 @@ const DescribeProcess = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
   featureFormData: state.releaseReducer.featureFormData,
 });
 

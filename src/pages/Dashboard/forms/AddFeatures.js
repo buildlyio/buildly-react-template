@@ -13,6 +13,7 @@ import {
   MenuItem,
   Chip,
 } from '@mui/material';
+import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
 import { saveFeatureFormData } from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
@@ -46,6 +47,7 @@ const AddFeatures = ({
   productFeatures,
   handleNext,
   featureFormData,
+  loading,
 }) => {
   const classes = useStyles();
   const editPage = location.state && (location.state.type === 'edit' || location.state.type === 'view');
@@ -234,6 +236,7 @@ const AddFeatures = ({
 
   return (
     <>
+      {loading && <Loader open={loading} />}
       <form
         className={classes.form}
         noValidate
@@ -433,6 +436,7 @@ const AddFeatures = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
   statuses: state.releaseReducer.statuses,
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,
