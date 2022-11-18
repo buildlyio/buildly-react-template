@@ -1,6 +1,5 @@
 import * as React from 'react';
 import 'react-notifications/lib/notifications.css';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import './App.css';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';

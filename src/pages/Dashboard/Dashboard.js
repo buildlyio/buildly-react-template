@@ -98,8 +98,14 @@ const Dashboard = ({
   const classes = useStyles();
   const [route, setRoute] = useState(routes.DASHBOARD);
   const subNav = [
-    { label: 'Tabular', value: 'tabular' },
-    { label: 'Kanban', value: 'kanban' },
+    {
+      label: 'Tabular',
+      value: 'tabular'
+    },
+    {
+      label: 'Kanban',
+      value: 'kanban'
+    },
   ];
   const viewPath = (
     subNav.find((item) => location.pathname.endsWith(item.value)) || subNav[0]
@@ -110,7 +116,10 @@ const Dashboard = ({
   const [product, setProduct] = useState(null);
   const [upgrade, setUpgrade] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [deleteItemID, setDeleteItemID] = useState({ id: 0, type: 'feat' });
+  const [deleteItemID, setDeleteItemID] = useState({
+    id: 0,
+    type: 'feat'
+  });
 
   const addFeatPath = `${routes.DASHBOARD}/add-feature/`;
   const editFeatPath = `${routes.DASHBOARD}/edit-feature/`;
@@ -155,7 +164,7 @@ const Dashboard = ({
 
   useEffect(() => {
     if (selectedProduct && !!selectedProduct && (_.size(features) >= 5)
-    && user && user.organization && !user.organization.unlimited_free_plan) {
+      && user && user.organization && !user.organization.unlimited_free_plan) {
       setUpgrade(true);
     } else {
       setUpgrade(false);
@@ -209,12 +218,18 @@ const Dashboard = ({
       ? item.feature_uuid
       : item.issue_uuid;
 
-    setDeleteItemID({ id: deleteID, type });
+    setDeleteItemID({
+      id: deleteID,
+      type
+    });
     setOpenDeleteModal(true);
   };
 
   const handleDeleteModal = () => {
-    const { id, type } = deleteItemID;
+    const {
+      id,
+      type
+    } = deleteItemID;
     const featCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'feature'));
     const issueCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'issue'));
 
@@ -317,7 +332,8 @@ const Dashboard = ({
     });
   };
 
-  const syncBoard = () => {};
+  const syncBoard = () => {
+  };
 
   return (
     <>
@@ -374,83 +390,91 @@ const Dashboard = ({
                 <MenuItem value={0}>Select</MenuItem>
                 <MenuItem value={-1}>Create New Product</MenuItem>
                 {products && !_.isEmpty(products)
-                && _.map(products, (prod) => (
-                  <MenuItem
-                    key={`product-${prod.product_uuid}`}
-                    value={prod.product_uuid}
-                  >
-                    {prod.name}
-                  </MenuItem>
-                ))}
+                  && _.map(products, (prod) => (
+                    <MenuItem
+                      key={`product-${prod.product_uuid}`}
+                      value={prod.product_uuid}
+                    >
+                      {prod.name}
+                    </MenuItem>
+                  ))}
               </TextField>
-
-              {/* {(loaded && product && !_.isEmpty(product.third_party_tool)
-              && !_.isEmpty(statuses) && (
-                <Button variant="contained" color="primary" onClick={syncBoard} className={classes.syncBoard}>
-                  <SyncIcon />
-                  {' '}
-                  Sync Board
-                </Button>
-              ))} */}
+              {
+                (
+                  loaded && product && !_.isEmpty(product.third_party_tool)
+                  && !_.isEmpty(statuses) && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={syncBoard}
+                      className={classes.syncBoard}
+                    >
+                      <SyncIcon />
+                      {' '}
+                      Sync Board
+                    </Button>
+                  )
+                )
+              }
             </Grid>
           </Grid>
 
           {loaded && _.isEmpty(statuses) && !!selectedProduct
             ? (product && !_.isEmpty(product.third_party_tool)
-              ? (
-                <>
-                  <Grid item xs={4} className={classes.configBoard}>
-                    <Typography component="div" variant="h4" align="center">
-                      Configure Project Board
-                    </Typography>
+                ? (
+                  <>
+                    <Grid item xs={4} className={classes.configBoard}>
+                      <Typography component="div" variant="h4" align="center">
+                        Configure Project Board
+                      </Typography>
 
-                    <Typography variant="subtitle1" align="center">
-                      Add a configuration to get started
-                    </Typography>
+                      <Typography variant="subtitle1" align="center">
+                        Add a configuration to get started
+                      </Typography>
 
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={configureBoard}
-                      className={classes.configBoardButton}
-                    >
-                      Add Configuration
-                    </Button>
-                  </Grid>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={configureBoard}
+                        className={classes.configBoardButton}
+                      >
+                        Add Configuration
+                      </Button>
+                    </Grid>
 
-                  <Route path={toolBoardPath} component={ToolBoard} />
-                </>
-              ) : (
-                <>
-                  <Grid item xs={4} className={classes.configBoard}>
-                    <Typography component="div" variant="h4" align="center">
-                      Configure Project Board
-                    </Typography>
+                    <Route path={toolBoardPath} component={ToolBoard}/>
+                  </>
+                ) : (
+                  <>
+                    <Grid item xs={4} className={classes.configBoard}>
+                      <Typography component="div" variant="h4" align="center">
+                        Configure Project Board
+                      </Typography>
 
-                    <Typography variant="subtitle1" align="center">
-                      Add a configuration to get started
-                    </Typography>
+                      <Typography variant="subtitle1" align="center">
+                        Add a configuration to get started
+                      </Typography>
 
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={configureStatus}
-                      className={classes.configBoardButton}
-                    >
-                      Add Configuration
-                    </Button>
-                  </Grid>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={configureStatus}
+                        className={classes.configBoardButton}
+                      >
+                        Add Configuration
+                      </Button>
+                    </Grid>
 
-                  <Route path={statusBoardPath} component={StatusBoard} />
-                </>
-              )
+                    <Route path={statusBoardPath} component={StatusBoard}/>
+                  </>
+                )
             ) : (
               <>
                 <Grid mb={3} container justifyContent="center">
                   <Grid item className={classes.viewTabs}>
                     <Tabs value={view} onChange={(event, vw) => setView(vw)}>
                       {subNav.map((itemProps, index) => (
-                        <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
+                        <Tab {...itemProps} key={`tab${index}:${itemProps.value}`}/>
                       ))}
                     </Tabs>
                   </Grid>
@@ -504,18 +528,18 @@ const Dashboard = ({
                     />
                   )}
                 />
-                <Route path={addFeatPath} component={NewFeatureForm} />
-                <Route path={editFeatPath} component={NewFeatureForm} />
-                <Route path={viewFeatPath} component={NewFeatureForm} />
-                <Route path={addIssuePath} component={AddIssues} />
-                <Route path={editIssuePath} component={AddIssues} />
-                <Route path={addCommentPath} component={AddComments} />
-                <Route path={featureToIssuePath} component={AddIssues} />
-                <Route path={ignoreColumnsPath} component={IgnoreColumns} />
+                <Route path={addFeatPath} component={NewFeatureForm}/>
+                <Route path={editFeatPath} component={NewFeatureForm}/>
+                <Route path={viewFeatPath} component={NewFeatureForm}/>
+                <Route path={addIssuePath} component={AddIssues}/>
+                <Route path={editIssuePath} component={AddIssues}/>
+                <Route path={addCommentPath} component={AddComments}/>
+                <Route path={featureToIssuePath} component={AddIssues}/>
+                <Route path={ignoreColumnsPath} component={IgnoreColumns}/>
                 <Route
                   path={issueSuggestionsPath}
                   render={(renderProps) => (
-                    <IssueSuggestions {...renderProps} convertIssue={convertIssue} />
+                    <IssueSuggestions {...renderProps} convertIssue={convertIssue}/>
                   )}
                 />
               </>

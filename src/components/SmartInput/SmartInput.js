@@ -1,39 +1,53 @@
 import React, { useState } from 'react';
-import { EditorState } from 'draft-js';
+import { EditorState, ContentState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import { convertToHTML } from 'draft-convert';
-import DOMPurify from 'dompurify';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import './App.css';
+import htmlToDraft from 'html-to-draftjs';
 
-const SmaprtInput = () => {
-  const [editorState, setEditorState] = useState(
-    () => EditorState.createEmpty(),
+import './SmartInut.css';
+import { toolbarConfig } from './config';
+
+const SmartInput = ({
+  onEditorValueChange,
+  value,
+  inputLabel,
+  required,
+}) => {
+  // check incoming value
+  const contentBlock = htmlToDraft(value);
+
+  const contentState = ContentState.createFromBlockArray(
+    contentBlock.contentBlocks,
   );
-  const [convertedContent, setConvertedContent] = useState(null);
+  const [editorState, setEditorState] = useState(
+    () => EditorState.createWithContent(contentState),
+  );
+
   const handleEditorChange = (state) => {
     setEditorState(state);
     convertContentToHTML();
   };
   const convertContentToHTML = () => {
     const currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
-    setConvertedContent(currentContentAsHTML);
+    onEditorValueChange(currentContentAsHTML);
   };
-  const createMarkup = (html) => ({
-    __html: DOMPurify.sanitize(html),
-  });
 
   return (
     <div className="SmartInput">
+      <label className="labelText">
+        {inputLabel}
+        { required && ' *'}
+      </label>
       <Editor
+        toolbar={toolbarConfig}
         editorState={editorState}
         onEditorStateChange={handleEditorChange}
         wrapperClassName="wrapper-class"
         editorClassName="editor-class"
         toolbarClassName="toolbar-class"
       />
-      <div className="preview" dangerouslySetInnerHTML={createMarkup(convertedContent)}></div>
     </div>
   );
 };
-export default SmaprtInput;
+export default SmartInput;
