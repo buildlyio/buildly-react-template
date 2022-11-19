@@ -117,7 +117,7 @@ function* allReleases(payload) {
     const releases = yield call(
       httpService.makeRequest,
       'get',
-      'http://localhost:8080/release/',
+      `${window.env.API_URL}release/release/`,
     );
     yield put({ type: ALL_RELEASES_SUCCESS, data: releases.data });
   } catch (error) {
