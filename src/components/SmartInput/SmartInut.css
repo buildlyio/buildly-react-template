@@ -1,0 +1,28 @@
+.wrapper-class {
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.editor-class {
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    color: rgba(0, 0, 0, 0.87);
+    letter-spacing: 0.00938em;
+}
+.toolbar-class {
+    border: 1px solid #ccc;
+}
+
+.labelText {
+    /*position: absolute;*/
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    color: #717171;
+    font-weight: 400;
+    font-size: 0.8rem;
+    margin-left: 8px;
+    background-color: white;
+}
