@@ -340,7 +340,7 @@ const Dashboard = ({
     e.preventDefault();
     const featCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'feature'));
     const issueCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'issue'));
-    const repoList = _.map(product.issue_tool_detail.repository_list, 'name');
+    const repoList = _.map(product.issue_tool_detail?.repository_list, 'name');
 
     if (_.isEmpty(features) && _.isEmpty(issues)) {
       if (product && !_.isEmpty(product.feature_tool_detail)) {
@@ -420,6 +420,8 @@ const Dashboard = ({
         ...featCred?.auth_detail,
         product_uuid: selectedProduct,
       };
+      console.log('Feat Data::', featData);
+      console.log('Feat Cred::', featData);
 
       if (featCred?.auth_detail) {
         dispatch(resyncBoard(featData));
@@ -438,7 +440,7 @@ const Dashboard = ({
 
   return (
     <>
-      {loading && <Loader open={loading} />}
+      {loading && <Loader open={loading}/>}
 
       {loaded && user && !user.survey_status && (
         <div className={classes.firstTimeMessage}>
@@ -502,13 +504,18 @@ const Dashboard = ({
               </TextField>
 
               {(loaded && product && !_.isEmpty(product.third_party_tool)
-              && !_.isEmpty(statuses) && (
-                <Button variant="contained" color="primary" onClick={syncBoard} className={classes.syncBoard}>
-                  <SyncIcon />
-                  {' '}
-                  Sync Board
-                </Button>
-              ))}
+                && !_.isEmpty(statuses) && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={syncBoard}
+                    className={classes.syncBoard}
+                  >
+                    <SyncIcon />
+                    {' '}
+                    Sync Board
+                  </Button>
+                ))}
             </Grid>
           </Grid>
 
