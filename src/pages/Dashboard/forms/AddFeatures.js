@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
 import {
@@ -16,6 +17,7 @@ import { useInput } from '@hooks/useInput';
 import { saveFeatureFormData } from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
 import { PRIORITIES, TAGS } from './formConstants';
+import SmartInput from '@components/SmartInput/SmartInput';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -58,14 +60,17 @@ const AddFeatures = ({
   const [product, setProduct] = useState('');
   const [assigneeData, setAssigneeData] = useState([]);
 
-  const name = useInput(
-    (editData && editData.name) || (featureFormData && featureFormData.name) || '',
-    { required: true, productFeatures },
+  // form fields definition
+  const [description, setDescription] = useState(
+    (editData && editData.description) || (featureFormData && featureFormData.description) || ''
   );
 
-  const description = useInput(
-    (editData && editData.description) || (featureFormData && featureFormData.description) || '',
-    { required: true },
+  const name = useInput(
+    (editData && editData.name) || (featureFormData && featureFormData.name) || '',
+    {
+      required: true,
+      productFeatures,
+    },
   );
 
   const priority = useInput(
@@ -108,11 +113,14 @@ const AddFeatures = ({
 
   checkIfAddFeaturesEdited = () => (
     name.hasChanged()
-      || description.hasChanged()
-      || (editPage && priority.hasChanged())
-      || (editPage && _.isEmpty(currentStatData) && !_.isEmpty(status))
-      || (editPage && !_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
-      || (editPage && _.isEmpty(editData) && !_.isEmpty(tags))
+    || (
+      (editPage && description !== featureFormData.description)
+      || (!editPage && description)
+    )
+    || (editPage && priority.hasChanged())
+    || (editPage && _.isEmpty(currentStatData) && !_.isEmpty(status))
+    || (editPage && !_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
+    || (editPage && _.isEmpty(editData) && !_.isEmpty(tags))
   );
 
   // Handle tags list
@@ -151,14 +159,17 @@ const AddFeatures = ({
     const dateTime = new Date();
     const featCred = _.find(
       credentials,
-      { product_uuid, auth_detail: { tool_type: 'Feature' } },
+      {
+        product_uuid,
+        auth_detail: { tool_type: 'Feature' }
+      },
     );
 
     const formData = {
       ...editData,
       edit_date: dateTime,
       name: name.value,
-      description: description.value,
+      description,
       product_uuid,
       ...featCred?.auth_detail,
       assignees: product && product.feature_tool_detail && product.feature_tool_detail.user_list
@@ -201,10 +212,11 @@ const AddFeatures = ({
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (!name.value
-      || !description.value
+    if (
+      !name.value
+      || !description
       || (editPage && !statusID)
-      || (editPage && !priority.value)
+      // || (editPage && !priority.value)
       || !assignees
     ) {
       return true;
@@ -254,28 +266,10 @@ const AddFeatures = ({
           </Grid>
 
           <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              multiline
-              id="description"
-              label="Description"
-              name="description"
-              autoComplete="description"
-              error={
-                formError.description
-                && formError.description.error
-              }
-              helperText={
-                formError.description
-                  ? formError.description.message
-                  : ''
-              }
-              onBlur={(e) => handleBlur(e, 'required', description)}
-              {...description.bind}
-              disabled={viewPage}
+            <SmartInput
+              onEditorValueChange={setDescription}
+              value={description}
+              inputLabel="Description"
             />
           </Grid>
         </Grid>
