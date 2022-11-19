@@ -14,6 +14,7 @@ import {
   Chip,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
+import Loader from '@components/Loader/Loader';
 import { createBoard } from '@redux/product/actions/product.actions';
 import { STATUSTYPES } from './formConstants';
 
@@ -43,6 +44,7 @@ const ToolBoard = ({
   location,
   boards,
   loaded,
+  loading,
 }) => {
   const classes = useStyles();
   const redirectTo = location.state && location.state.from;
@@ -180,6 +182,7 @@ const ToolBoard = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {loading && <Loader open={loading} />}
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
               {loaded && !_.isEmpty(featOrgList) && (
@@ -367,7 +370,8 @@ const ToolBoard = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  loaded: state.productReducer.loaded,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
+  loaded: state.productReducer.loaded && state.releaseReducer.loaded,
   boards: state.productReducer.boards,
 });
 

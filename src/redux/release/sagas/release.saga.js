@@ -102,9 +102,12 @@ import {
   CLEAR_PRODUCT_DATA,
   CLEAR_PRODUCT_DATA_SUCCESS,
   CLEAR_PRODUCT_DATA_FAILURE,
+  RESYNC_BOARD_DATA,
+  RESYNC_BOARD_DATA_SUCCESS,
+  RESYNC_BOARD_DATA_FAILURE,
 } from '../actions/release.actions';
 import {
-  deleteProduct,
+  deleteProduct, getProduct,
 } from '../../product/actions/product.actions';
 
 const releaseEndpoint = 'release/';
@@ -114,7 +117,7 @@ function* allReleases(payload) {
     const releases = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}release/`,
+      `${window.env.API_URL}release/release/`,
     );
     yield put({ type: ALL_RELEASES_SUCCESS, data: releases.data });
   } catch (error) {
@@ -139,7 +142,7 @@ function* getRelease(payload) {
     const release = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}release/?release_uuid=${payload.release_uuid}`,
+      `${window.env.API_URL}release/release/${payload.release_uuid}/`,
     );
     yield put({ type: GET_RELEASE_SUCCESS, data: release.data });
   } catch (error) {
@@ -164,7 +167,7 @@ function* createRelease(payload) {
     const release = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${releaseEndpoint}release/`,
+      `${window.env.API_URL}/release/release/`,
       payload.data,
     );
     yield put({ type: CREATE_RELEASE_SUCCESS, data: release.data });
@@ -190,7 +193,7 @@ function* updateRelease(payload) {
     const release = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${releaseEndpoint}release/${payload.data.release_uuid}`,
+      `${window.env.API_URL}release/release/${payload.data.release_uuid}/`,
       payload.data,
     );
     yield put({ type: UPDATE_RELEASE_SUCCESS, data: release.data });
@@ -217,7 +220,7 @@ function* deleteRelease(payload) {
     const release = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${releaseEndpoint}release/${release_uuid}`,
+      `${window.env.API_URL}release/release/${release_uuid}/`,
     );
     yield put({ type: DELETE_RELEASE_SUCCESS, release_uuid });
   } catch (error) {
@@ -242,7 +245,7 @@ function* allComments(payload) {
     const comments = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}comment/?product_uuid=${payload.product_uuid}`,
+      `${window.env.API_URL}release/comment/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_COMMENTS_SUCCESS, data: comments.data });
   } catch (error) {
@@ -267,7 +270,7 @@ function* getComment(payload) {
     const comment = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}comment/?comment_uuid=${payload.comment_uuid}`,
+      `${window.env.API_URL}release/comment/${payload.comment_uuid}/`,
     );
     yield put({ type: GET_COMMENT_SUCCESS, data: comment.data });
   } catch (error) {
@@ -292,7 +295,7 @@ function* createComment(payload) {
     const comment = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${releaseEndpoint}comment/`,
+      `${window.env.API_URL}release/comment/`,
       payload.data,
     );
     yield put({ type: CREATE_COMMENT_SUCCESS, data: comment.data });
@@ -318,7 +321,7 @@ function* updateComment(payload) {
     const comment = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${releaseEndpoint}comment/${payload.data.comment_uuid}`,
+      `${window.env.API_URL}release/comment/${payload.data.comment_uuid}/`,
       payload.data,
     );
     yield put({ type: UPDATE_COMMENT_SUCCESS, data: comment.data });
@@ -345,7 +348,7 @@ function* deleteComment(payload) {
     const comment = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${releaseEndpoint}comment/${comment_uuid}`,
+      `${window.env.API_URL}release/comment/${comment_uuid}/`,
     );
     yield put({ type: DELETE_COMMENT_SUCCESS, comment_uuid });
   } catch (error) {
@@ -370,7 +373,7 @@ function* allFeatures(payload) {
     const features = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}feature/?product_uuid=${payload.product_uuid}`,
+      `${window.env.API_URL}release/feature/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_FEATURES_SUCCESS, data: features.data });
   } catch (error) {
@@ -395,7 +398,7 @@ function* getFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}feature/?feature_uuid=${payload.feature_uuid}`,
+      `${window.env.API_URL}release/feature/${payload.feature_uuid}/`,
     );
     yield put({ type: GET_FEATURE_SUCCESS, data: feature.data });
   } catch (error) {
@@ -420,7 +423,7 @@ function* createFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${releaseEndpoint}feature/`,
+      `${window.env.API_URL}release/feature/`,
       payload.data,
     );
     yield [
@@ -456,7 +459,7 @@ function* updateFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${releaseEndpoint}feature/${payload.data.feature_uuid}`,
+      `${window.env.API_URL}release/feature/${payload.data.feature_uuid}/`,
       payload.data,
     );
     yield [
@@ -492,7 +495,7 @@ function* deleteFeature(payload) {
     const feature = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${releaseEndpoint}feature/${feature_uuid}`,
+      `${window.env.API_URL}release/feature/${feature_uuid}/`,
       payload.data,
     );
     yield [
@@ -527,7 +530,7 @@ function* allFeedbacks(payload) {
     const feedbacks = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}feedback/`,
+      `${window.env.API_URL}release/feedback/`,
     );
     yield put({ type: ALL_FEEDBACKS_SUCCESS, data: feedbacks.data });
   } catch (error) {
@@ -552,7 +555,7 @@ function* getFeedback(payload) {
     const feedback = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}feedback/?feedback_uuid=${payload.feedback_uuid}`,
+      `${window.env.API_URL}release/feedback/${payload.feedback_uuid}/`,
     );
     yield put({ type: GET_FEEDBACK_SUCCESS, data: feedback.data });
   } catch (error) {
@@ -577,7 +580,7 @@ function* createFeedback(payload) {
     const feedback = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${releaseEndpoint}feedback/`,
+      `${window.env.API_URL}release/feedback/`,
       payload.data,
     );
     yield put({ type: CREATE_FEEDBACK_SUCCESS, data: feedback.data });
@@ -603,7 +606,7 @@ function* updateFeedback(payload) {
     const feedback = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${releaseEndpoint}feedback/${payload.data.feedback_uuid}`,
+      `${window.env.API_URL}release/feedback/${payload.data.feedback_uuid}/`,
       payload.data,
     );
     yield put({ type: UPDATE_FEEDBACK_SUCCESS, data: feedback.data });
@@ -630,7 +633,7 @@ function* deleteFeedback(payload) {
     const feedback = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${releaseEndpoint}feedback/${feedback_uuid}`,
+      `${window.env.API_URL}release/feedback/${feedback_uuid}/`,
     );
     yield put({ type: DELETE_FEEDBACK_SUCCESS, feedback_uuid });
   } catch (error) {
@@ -655,7 +658,7 @@ function* allIssues(payload) {
     const issues = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}issue/?product_uuid=${payload.product_uuid}`,
+      `${window.env.API_URL}release/issue/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_ISSUES_SUCCESS, data: issues.data });
   } catch (error) {
@@ -680,7 +683,7 @@ function* getIssue(payload) {
     const issue = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}issue/?issue_uuid=${payload.issue_uuid}`,
+      `${window.env.API_URL}release/issue/${payload.issue_uuid}/`,
     );
     yield put({ type: GET_ISSUE_SUCCESS, data: issue.data });
   } catch (error) {
@@ -701,22 +704,23 @@ function* getIssue(payload) {
 }
 
 function* createIssue(payload) {
+  const { data } = payload;
   try {
-    if (payload.data.length > 0) {
-      for (let i = 0; i < payload.data.length; i += 1) {
-        const issue = yield call(
+    if (_.size(data) > 1) {
+      const issues = yield all(_.map(data, (issue_data) => (
+        call(
           httpService.makeRequest,
           'post',
-          `${window.env.API_URL}${releaseEndpoint}issue/`,
-          payload.data[i],
-        );
-        yield put({ type: CREATE_ISSUE_SUCCESS, data: issue.data });
-      }
+          `${window.env.API_URL}release/issue/`,
+          issue_data,
+        )
+      )));
+      yield put({ type: CREATE_ISSUE_SUCCESS, data: _.flatMap(_.map(issues, 'data')) });
     } else {
       const issue = yield call(
         httpService.makeRequest,
         'post',
-        `${window.env.API_URL}${releaseEndpoint}issue/`,
+        `${window.env.API_URL}release/issue/`,
         payload.data,
       );
       yield [
@@ -752,7 +756,7 @@ function* updateIssue(payload) {
     const issue = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${releaseEndpoint}issue/${payload.data.issue_uuid}`,
+      `${window.env.API_URL}release/issue/${payload.data.issue_uuid}/`,
       payload.data,
     );
     yield [
@@ -788,7 +792,7 @@ function* deleteIssue(payload) {
     const issue = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${releaseEndpoint}issue/${issue_uuid}`,
+      `${window.env.API_URL}release/issue/${issue_uuid}/`,
       payload.data,
     );
     yield [
@@ -823,7 +827,7 @@ function* allStatuses(payload) {
     const statuses = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}status/?product_uuid=${payload.product_uuid}`,
+      `${window.env.API_URL}release/status/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_STATUSES_SUCCESS, data: statuses.data });
   } catch (error) {
@@ -848,7 +852,7 @@ function* getStatus(payload) {
     const status = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${releaseEndpoint}status/?product_uuid=${payload.product_uuid}`,
+      `${window.env.API_URL}release/status/${payload.status_uuid}/`,
     );
     yield put({ type: GET_STATUS_SUCCESS, data: status.data });
   } catch (error) {
@@ -871,12 +875,13 @@ function* getStatus(payload) {
 function* createStatus(payload) {
   const { data } = payload;
   try {
+    const { product_uuid } = data[0];
     if (_.size(data) > 1) {
       const statuses = yield all(_.map(data, (status_data) => (
         call(
           httpService.makeRequest,
           'post',
-          `${window.env.API_URL}${releaseEndpoint}status/`,
+          `${window.env.API_URL}release/status/`,
           status_data,
         )
       )));
@@ -885,11 +890,12 @@ function* createStatus(payload) {
       const status = yield call(
         httpService.makeRequest,
         'post',
-        `${window.env.API_URL}${releaseEndpoint}status/`,
+        `${window.env.API_URL}release/status/`,
         data,
       );
       yield put({ type: CREATE_STATUS_SUCCESS, data: status.data });
     }
+    yield put(getProduct(product_uuid));
   } catch (error) {
     yield [
       yield put(
@@ -912,7 +918,7 @@ function* updateStatus(payload) {
     const status = yield call(
       httpService.makeRequest,
       'put',
-      `${window.env.API_URL}${releaseEndpoint}status/${payload.data.status_uuid}`,
+      `${window.env.API_URL}release/status/${payload.data.status_uuid}/`,
       payload.data,
     );
     yield put({ type: UPDATE_STATUS_SUCCESS, data: status.data });
@@ -939,7 +945,7 @@ function* deleteStatus(payload) {
     const status = yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${releaseEndpoint}status/${status_uuid}`,
+      `${window.env.API_URL}release/status/${status_uuid}/`,
     );
     yield put({ type: DELETE_STATUS_SUCCESS, status_uuid });
   } catch (error) {
@@ -964,7 +970,7 @@ function* importTickets(payload) {
     const ticket = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${releaseEndpoint}import-project-tickets/`,
+      `${window.env.API_URL}release/import-project-tickets/`,
       payload.data,
     );
     yield [
@@ -999,7 +1005,7 @@ function* clearProductData(payload) {
     const product = yield call(
       httpService.makeRequest,
       'post',
-      `${window.env.API_URL}${releaseEndpoint}clear-product-data/`,
+      `${window.env.API_URL}release/clear-product-data/`,
       payload.data,
     );
     yield put({ type: CLEAR_PRODUCT_DATA_SUCCESS, data: payload.data });
@@ -1011,6 +1017,41 @@ function* clearProductData(payload) {
           type: 'error',
           open: true,
           message: 'Couldn\'t clear product!',
+        }),
+      ),
+      yield put({
+        type: CLEAR_PRODUCT_DATA_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* resyncBoardData(payload) {
+  try {
+    const resyncStatus = yield call(
+      httpService.makeRequest,
+      'post',
+      `${window.env.API_URL}release/update-dashboard-card/`,
+      payload.data,
+    );
+    yield [
+      yield put({ type: RESYNC_BOARD_DATA_SUCCESS }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: resyncStatus.data.message,
+        }),
+      ),
+    ];
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t resync board data!',
         }),
       ),
       yield put({
@@ -1150,6 +1191,10 @@ function* watchClearProductData() {
   yield takeLatest(CLEAR_PRODUCT_DATA, clearProductData);
 }
 
+function* watchResyncBoardData() {
+  yield takeLatest(RESYNC_BOARD_DATA, resyncBoardData);
+}
+
 export default function* releaseSaga() {
   yield all([
     watchGetAllReleases(),
@@ -1184,5 +1229,6 @@ export default function* releaseSaga() {
     watchDeleteIssue(),
     watchDeleteStatus(),
     watchClearProductData(),
+    watchResyncBoardData(),
   ]);
 }
