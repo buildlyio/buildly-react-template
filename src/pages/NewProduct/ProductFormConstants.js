@@ -79,7 +79,7 @@ export const INTEGRATION_TYPES = [
   { value: 'ERP', text: 'ERP data system' },
   { value: 'HR', text: 'HR system' },
   { value: 'Accounting', text: 'Accounting/Bookeeping' },
-  { value: 'Ssales', text: 'Sales (SalesForce)' },
+  { value: 'Sales', text: 'Sales (SalesForce)' },
   { value: 'Other', text: 'Other' },
 ];
 

@@ -17,7 +17,6 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   MoreVert as MoreVertIcon,
-  Menu as MenuIcon,
 } from '@mui/icons-material';
 import Loader from '@components/Loader/Loader';
 import ConfirmModal from '@components/Modal/ConfirmModal';
@@ -41,7 +40,7 @@ const DataTableWrapper = ({
   onAddButtonClick,
   children,
   editAction,
-  detailsAction,
+  menuActions,
   deleteAction,
   openDeleteModal,
   setDeleteModal,
@@ -56,14 +55,17 @@ const DataTableWrapper = ({
   noCustomTheme,
   noSpace,
   noOptionsIcon,
+  menuIndex,
+  setMenuIndex,
 }) => {
   const classes = useStyles();
   // dropdown menu variables
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
-  const handleClick = (event) => {
+  const handleClick = (event, dataIndex) => {
     setAnchorEl(event.currentTarget);
+    setMenuIndex(dataIndex);
   };
 
   const handleClose = () => {
@@ -77,7 +79,7 @@ const DataTableWrapper = ({
     ...columns,
   ];
 
-  if (editAction || deleteAction || detailsAction) {
+  if (editAction || deleteAction || menuActions) {
     finalColumns = [
       ...finalColumns,
       {
@@ -88,7 +90,7 @@ const DataTableWrapper = ({
           empty: true,
           customBodyRenderLite: (dataIndex) => (
             <>
-              <IconButton onClick={handleClick}>
+              <IconButton onClick={(e) => handleClick(e, dataIndex)}>
                 <MoreVertIcon />
               </IconButton>
               <Menu
@@ -134,7 +136,7 @@ const DataTableWrapper = ({
               >
                 {
                   editAction && (
-                    <MenuItem onClick={() => editAction(rows[dataIndex])}>
+                    <MenuItem onClick={(e) => editAction(rows[menuIndex])}>
                       <ListItemIcon>
                         <EditIcon fontSize="small" />
                       </ListItemIcon>
@@ -142,21 +144,12 @@ const DataTableWrapper = ({
                     </MenuItem>
                   )
                 }
-                {
-                  detailsAction && (
-                    <MenuItem onClick={() => detailsAction(rows[dataIndex])}>
-                      <ListItemIcon>
-                        <MenuIcon fontSize="small" />
-                      </ListItemIcon>
-                      Details
-                    </MenuItem>
-                  )
-                }
+                { menuActions }
                 {
                   deleteAction && (
                     <div>
                       <Divider />
-                      <MenuItem onClick={() => deleteAction(rows[dataIndex])}>
+                      <MenuItem onClick={() => deleteAction(rows[menuIndex])}>
                         <ListItemIcon>
                           <DeleteIcon style={{ color: 'red' }} fontSize="small" />
                         </ListItemIcon>

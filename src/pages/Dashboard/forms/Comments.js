@@ -1,94 +1,98 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import makeStyles from '@mui/styles/makeStyles';
 import {
-  useTheme,
-  useMediaQuery,
-  Grid,
-  TextField,
-  Button,
+  Button, Card, CardContent, Grid, TextField, Typography, useMediaQuery, useTheme,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
+import { createComment } from '@redux/release/actions/release.actions';
 
 const useStyles = makeStyles((theme) => ({
+  formTitle: {
+    fontWeight: 'bold',
+    marginTop: '1em',
+    textAlign: 'center',
+  },
   form: {
     width: '100%',
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(5),
     [theme.breakpoints.up('sm')]: {
       width: '70%',
       margin: 'auto',
+      marginTop: theme.spacing(5),
     },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
     borderRadius: '18px',
   },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
+  commentCard: {
+    width: '100%',
+    marginTop: theme.spacing(3),
+    boxShadow: '0px 0px 16px 1px rgba(0,0,0,0.2)',
+    [theme.breakpoints.up('sm')]: {
+      width: '70%',
+      margin: 'auto',
+      marginTop: theme.spacing(3),
+    },
+  },
+  fromNow: {
+    textAlign: 'end',
   },
 }));
 
-const AddComments = ({
-  history,
-  location,
-  loading,
+const Comments = ({
+  location, history, loading, credentials, dispatch, comments,
 }) => {
   const classes = useStyles();
-  const [openFormModal, setFormModal] = useState(true);
-  const [openConfirmModal, setConfirmModal] = useState(false);
-  const [formError, setFormError] = useState({});
-
   const redirectTo = location.state && location.state.from;
-  const editPage = location.state && location.state.type === 'edit';
-  const editData = (editPage && location.state.data) || {};
-
-  const comment = useInput((editData && editData.comment) || '', {
-    required: true,
-  });
-
-  const buttonText = editPage ? 'Save' : 'Add Comment';
-  const formTitle = editPage ? 'Edit Comment' : 'Add Comment';
+  const { feature, issue } = location && location.state;
 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
+  const [openFormModal, setFormModal] = useState(true);
+  const [openConfirmModal, setConfirmModal] = useState(false);
+  const commentText = useInput('');
+  const [formError, setFormError] = useState({});
+
   const closeFormModal = () => {
-    const dataHasChanged = (
-      comment.hasChanged()
-    );
-    if (dataHasChanged) {
+    if (commentText.value) {
       setConfirmModal(true);
     } else {
       setFormModal(false);
-      if (location && location.state) {
-        history.push(redirectTo);
-      }
+      history.push(redirectTo);
     }
   };
 
   const discardFormData = () => {
     setConfirmModal(false);
     setFormModal(false);
-    if (location && location.state) {
-      history.push(redirectTo);
-    }
+    history.push(redirectTo);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const dateTime = new Date();
-    const formData = {
-      ...editData,
-      edit_date: dateTime,
-      comment: comment.value,
+    const featCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'feature'));
+    const issueCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'issue'));
+    const authDetail = !_.isEmpty(feature) ? featCred?.auth_detail : issueCred?.auth_detail;
+
+    const commentData = {
+      ...authDetail,
+      comment: commentText.value,
+      product_uuid: feature?.product_uuid || issue?.product_uuid,
+      feature: feature?.feature_uuid,
+      issue: issue?.issue_uuid,
+      card_number: feature?.feature_tracker_id || issue?.issue_number,
+      repository: issue?.repository,
     };
-    history.push(redirectTo);
+
+    dispatch(createComment(commentData));
   };
 
   const handleBlur = (e, validation, input, parentId) => {
@@ -112,16 +116,17 @@ const AddComments = ({
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (!comment.value
-    ) {
+    if (!commentText.value) {
       return true;
     }
+
     let errorExists = false;
     _.forEach(errorKeys, (key) => {
       if (formError[key].error) {
         errorExists = true;
       }
     });
+
     return errorExists;
   };
 
@@ -131,7 +136,7 @@ const AddComments = ({
         <FormModal
           open={openFormModal}
           handleClose={closeFormModal}
-          title={formTitle}
+          title="Comments"
           titleClass={classes.formTitle}
           maxWidth="md"
           wantConfirm
@@ -140,11 +145,22 @@ const AddComments = ({
           handleConfirmModal={discardFormData}
         >
           {loading && <Loader open={loading} />}
-          <form
-            className={classes.form}
-            noValidate
-            onSubmit={handleSubmit}
-          >
+
+          {!_.isEmpty(comments) && _.map(comments, (comment, index) => (
+            <Card key={comment.comment_uuid} className={classes.commentCard}>
+              <CardContent>
+                <Typography variant="body1">
+                  {comment.comment}
+                </Typography>
+
+                <Typography variant="caption" component="p" className={classes.fromNow}>
+                  {moment(comment.create_date).fromNow()}
+                </Typography>
+              </CardContent>
+            </Card>
+          ))}
+
+          <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
@@ -152,29 +168,17 @@ const AddComments = ({
                   margin="normal"
                   required
                   fullWidth
-                  id="comment"
-                  label="Leave a comment"
-                  name="comment"
-                  autoComplete="comment"
-                  error={
-                    formError.comment
-                    && formError.comment.error
-                  }
-                  helperText={
-                    formError.comment
-                      ? formError.comment.message
-                      : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', comment)}
-                  {...comment.bind}
+                  id="commentText"
+                  placeholder="Leave a comment"
+                  name="commentText"
+                  autoComplete="commentText"
+                  onBlur={(e) => handleBlur(e, 'required', commentText)}
+                  {...commentText.bind}
                 />
               </Grid>
             </Grid>
-            <Grid
-              container
-              spacing={isDesktop ? 3 : 0}
-              justifyContent="center"
-            >
+
+            <Grid container spacing={isDesktop ? 3 : 0} justifyContent="right">
               <Grid item xs={12} sm={4}>
                 <Button
                   type="submit"
@@ -184,19 +188,7 @@ const AddComments = ({
                   className={classes.submit}
                   disabled={submitDisabled()}
                 >
-                  {buttonText}
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="button"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={discardFormData}
-                  className={classes.submit}
-                >
-                  Cancel
+                  Comment
                 </Button>
               </Grid>
             </Grid>
@@ -210,9 +202,8 @@ const AddComments = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   loading: state.productReducer.loading || state.releaseReducer.loading,
-  statuses: state.releaseReducer.statuses,
-  products: state.productReducer.products,
   credentials: state.productReducer.credentials,
+  comments: state.releaseReducer.comments,
 });
 
-export default connect(mapStateToProps)(AddComments);
+export default connect(mapStateToProps)(Comments);

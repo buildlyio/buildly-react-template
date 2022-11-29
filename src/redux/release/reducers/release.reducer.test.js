@@ -11,22 +11,8 @@ const initialState = {
   feedbacks: [],
   issues: [],
   statuses: [],
-  importLoaded: false,
-  featureFormData: null,
+  dataSynced: false,
 };
-
-describe('Save Feature Form reducer', () => {
-  it('should save feature form data', () => {
-    const formData = { name: 'Test' };
-    expect(reducer.default(
-      initialState,
-      { type: actions.SAVE_FEATURE_FORM_DATA, formData },
-    )).toEqual({
-      ...initialState,
-      featureFormData: formData,
-    });
-  });
-});
 
 describe('Get all releases reducer', () => {
   it('Empty reducer', () => {
@@ -1300,47 +1286,6 @@ describe('Delete a status reducer', () => {
   });
 });
 
-describe('Create a ticket reducer', () => {
-  it('Empty reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.IMPORT_TICKETS },
-    )).toEqual({
-      ...initialState,
-      loading: true,
-    });
-  });
-
-  it('create a ticket success reducer', () => {
-    const data = {
-      product_uuid: '275ac379-82a2-4937-a434-ce6c2e277c88',
-      name: 'Test',
-    };
-
-    expect(reducer.default(
-      initialState,
-      { type: actions.IMPORT_TICKETS_SUCCESS, data },
-    )).toEqual({
-      ...initialState,
-      loading: false,
-      loaded: true,
-      importLoaded: true,
-    });
-  });
-
-  it('create a ticket fail reducer', () => {
-    expect(reducer.default(
-      initialState,
-      { type: actions.IMPORT_TICKETS_FAILURE },
-    )).toEqual({
-      ...initialState,
-      loading: false,
-      loaded: true,
-      error: undefined,
-    });
-  });
-});
-
 describe('Clear a product reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
@@ -1387,34 +1332,34 @@ describe('Clear a product reducer', () => {
   });
 });
 
-describe('Resync board data reducer', () => {
+describe('Sync third party tool(s) reducer', () => {
   it('Empty reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.RESYNC_BOARD_DATA },
+      { type: actions.THIRD_PARTY_TOOL_SYNC },
     )).toEqual({
       ...initialState,
       loading: true,
-      importLoaded: false,
+      dataSynced: false,
     });
   });
 
-  it('Resync board data success reducer', () => {
+  it('Sync third party tool(s) success reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.RESYNC_BOARD_DATA_SUCCESS },
+      { type: actions.THIRD_PARTY_TOOL_SYNC_SUCCESS },
     )).toEqual({
       ...initialState,
       loading: false,
       loaded: true,
-      importLoaded: true,
+      dataSynced: true,
     });
   });
 
-  it('Resync board data fail reducer', () => {
+  it('Sync third party tool(s) fail reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.RESYNC_BOARD_DATA_FAILURE },
+      { type: actions.THIRD_PARTY_TOOL_SYNC_FAILURE },
     )).toEqual({
       ...initialState,
       loading: false,

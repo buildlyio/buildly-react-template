@@ -63,9 +63,9 @@ describe('Delete Release action', () => {
 // Test Get All Comments
 describe('Get All Comments action', () => {
   it('should create an action to get all comment', () => {
-    const product_uuid = '38625-dkjhg8934-832r2ehf-382fie22w';
-    const expectedAction = { type: actions.ALL_COMMENTS, product_uuid };
-    expect(actions.getAllComments(product_uuid)).toEqual(expectedAction);
+    const searchQuery = 'feature_uuid=38625-dkjhg8934-832r2ehf-382fie22w';
+    const expectedAction = { type: actions.ALL_COMMENTS, searchQuery };
+    expect(actions.getAllComments(searchQuery)).toEqual(expectedAction);
   });
 });
 
@@ -369,19 +369,6 @@ describe('Delete Status action', () => {
   });
 });
 
-// Import Tickets
-describe('Import Tickets action', () => {
-  it('should create an action to import tickets', () => {
-    const data = { name: 'Import Tickets' };
-    const expectedAction = {
-      type: actions.IMPORT_TICKETS,
-      data,
-    };
-
-    expect(actions.importTickets(data)).toEqual(expectedAction);
-  });
-});
-
 // Test Delete Features and Issues
 describe('Clear product action', () => {
   it('should create an action to clear product', () => {
@@ -396,15 +383,15 @@ describe('Clear product action', () => {
   });
 });
 
-// Resync board data
-describe('Resync board data action', () => {
-  it('should create an action to import tickets', () => {
-    const data = { name: 'resync board' };
+// Third party tool sync
+describe('Sync data from third party tool(s) action', () => {
+  it('should create an action to sync data from third party tool(s)', () => {
+    const creds = [{ tool_type: 'Feature' }, { tool_type: 'Issue' }];
     const expectedAction = {
-      type: actions.RESYNC_BOARD_DATA,
-      data,
+      type: actions.THIRD_PARTY_TOOL_SYNC,
+      creds,
     };
 
-    expect(actions.resyncBoard(data)).toEqual(expectedAction);
+    expect(actions.thirdPartyToolSync(creds)).toEqual(expectedAction);
   });
 });

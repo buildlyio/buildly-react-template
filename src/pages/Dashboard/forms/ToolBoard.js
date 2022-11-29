@@ -16,7 +16,7 @@ import {
 import FormModal from '@components/Modal/FormModal';
 import Loader from '@components/Loader/Loader';
 import { createBoard } from '@redux/product/actions/product.actions';
-import { STATUSTYPES } from './formConstants';
+import { STATUSTYPES } from '../DashboardConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -75,12 +75,8 @@ const ToolBoard = ({
   }, [boards]);
 
   const closeFormModal = () => {
-    const dataHasChanged = (
-      (!_.isEmpty(featOrgList)
-      && !featOrgID)
-    || (!_.isEmpty(issueOrgList)
-    && !issueOrgID)
-    );
+    const dataHasChanged = featOrgID || featBoardID || issueOrgID
+      || !_.isEmpty(status) || !_.isEmpty(featStatusList) || defaultStatus;
 
     if (dataHasChanged) {
       setConfirmModal(true);

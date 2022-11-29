@@ -73,15 +73,12 @@ const IssueSuggestions = ({
   useEffect(() => {
     const prod = _.find(products, { product_uuid });
     setProduct(prod);
-  }, []);
+  }, [products]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const dateTime = new Date();
-    const issueCred = _.find(
-      credentials,
-      { product_uuid, auth_detail: { tool_type: 'Issue' } },
-    );
+    const issueCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'issue'));
 
     const formData = {
       ...editData,
@@ -114,17 +111,13 @@ const IssueSuggestions = ({
 
   const closeFormModal = () => {
     setFormModal(false);
-    if (location && location.state) {
-      history.push(redirectTo);
-    }
+    history.push(redirectTo);
   };
 
   const discardFormData = () => {
     setConfirmModal(false);
     setFormModal(false);
-    if (location && location.state) {
-      history.push(redirectTo);
-    }
+    history.push(redirectTo);
   };
 
   return (
