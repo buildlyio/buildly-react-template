@@ -6,11 +6,10 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PieChartComponent = ({ pieType }) => {
   const options = {
-    responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top',
+        position: 'right',
       },
       title: {
         display: true,
