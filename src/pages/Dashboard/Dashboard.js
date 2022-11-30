@@ -25,6 +25,7 @@ import {
 } from '@redux/release/actions/release.actions';
 import Kanban from './components/Kanban';
 import Tabular from './components/Tabular';
+import Report from './components/Report/Report';
 import AddIssues from './forms/AddIssues';
 import AddComments from './forms/AddComments';
 import IgnoreColumns from './forms/IgnoreColumns';
@@ -100,11 +101,15 @@ const Dashboard = ({
   const subNav = [
     {
       label: 'Tabular',
-      value: 'tabular'
+      value: 'tabular',
     },
     {
       label: 'Kanban',
-      value: 'kanban'
+      value: 'kanban',
+    },
+    {
+      label: 'Report',
+      value: 'report',
     },
   ];
   const viewPath = (
@@ -118,7 +123,7 @@ const Dashboard = ({
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [deleteItemID, setDeleteItemID] = useState({
     id: 0,
-    type: 'feat'
+    type: 'feat',
   });
 
   const addFeatPath = `${routes.DASHBOARD}/add-feature/`;
@@ -220,7 +225,7 @@ const Dashboard = ({
 
     setDeleteItemID({
       id: deleteID,
-      type
+      type,
     });
     setOpenDeleteModal(true);
   };
@@ -228,7 +233,7 @@ const Dashboard = ({
   const handleDeleteModal = () => {
     const {
       id,
-      type
+      type,
     } = deleteItemID;
     const featCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'feature'));
     const issueCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'issue'));
@@ -525,6 +530,14 @@ const Dashboard = ({
                       }
                       createSuggestedFeature={createSuggestedFeature}
                       removeSuggestedFeature={removeSuggestedFeature}
+                    />
+                  )}
+                />
+                <Route
+                  path={routes.DASHBOARD_REPORT}
+                  render={(prps) => (
+                    <Report
+                      {...prps}
                     />
                   )}
                 />
