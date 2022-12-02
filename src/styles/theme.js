@@ -62,6 +62,24 @@ const theme = createTheme(({
         },
       },
     },
+    MuiMenu: {
+      styleOverrides: {
+        list: {
+          paddingTop: 0,
+          paddingBottom: 0,
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          '+.MuiDivider-root': {
+            marginTop: 0,
+            marginBottom: 0,
+          },
+        },
+      },
+    },
   },
 }));
 

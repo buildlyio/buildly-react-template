@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
-import { IconButton, Typography } from '@mui/material';
+import {
+  Divider, IconButton, ListItemIcon, MenuItem, Typography,
+} from '@mui/material';
 import {
   AddTask as AddTaskIcon,
   Close as CloseIcon,
@@ -46,87 +48,66 @@ const Tabular = ({
 }) => {
   const classes = useStyles();
   const [featureRows, setFeatureRows] = useState([]);
-  const [finalFeatCols, setFinalFeatCols] = useState([]);
+  const [featMenuActions, setFeatMenuActions] = useState([]);
   const [issueRows, setIssueRows] = useState([]);
-  const [finalIssCols, setFinalIssCols] = useState([]);
+  const [issueMenuActions, setIssueMenuActions] = useState([]);
   const [finalSugCols, setFinalSugCols] = useState([]);
+  const [menuIndex, setMenuIndex] = useState(0);
 
   useEffect(() => {
-    const featCols = [
-      // {
-      //   name: 'Comments',
-      //   options: {
-      //     filter: false,
-      //     sort: false,
-      //     empty: true,
-      //     customBodyRenderLite: (dataIndex) => (
-      //       <IconButton onClick={() => commentItem(featureRows[dataIndex])}>
-      //         <CommentIcon />
-      //       </IconButton>
-      //     ),
-      //   },
-      // },
-      {
-        name: 'Convert to issue/ticket for dev team',
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          customBodyRenderLite: (dataIndex) => {
-            const issuePresent = !!(_.find(issueRows, {
-              feature_uuid: featureRows[dataIndex]?.feature_uuid,
-            }));
+    const fma = (
+      <div>
+        <Divider />
+        <MenuItem onClick={(e) => commentItem(featureRows[menuIndex])}>
+          <ListItemIcon>
+            <CommentIcon fontSize="small" />
+          </ListItemIcon>
+          Comments
+        </MenuItem>
 
-            return !issuePresent
-              ? (
-                <IconButton onClick={() => issueSuggestions(featureRows[dataIndex])}>
-                  <TaskIcon />
-                </IconButton>
-              ) : '';
-          },
-        },
-      },
-      ...featureColumns,
-    ];
+        <Divider />
+        <MenuItem onClick={(e) => issueSuggestions(featureRows[menuIndex])}>
+          <ListItemIcon>
+            <TaskIcon fontSize="small" />
+          </ListItemIcon>
+          Convert to issue/ticket for dev team
+        </MenuItem>
+      </div>
+    );
+    setFeatMenuActions(fma);
+  }, [featureRows, menuIndex]);
 
-    const issCols = [
-      // {
-      //   name: 'Comments',
-      //   options: {
-      //     filter: false,
-      //     sort: false,
-      //     empty: true,
-      //     customBodyRenderLite: (dataIndex) => (
-      //       <IconButton onClick={() => commentItem(issueRows[dataIndex])}>
-      //         <CommentIcon />
-      //       </IconButton>
-      //     ),
-      //   },
-      // },
-      {
-        name: 'View linked feature',
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          customBodyRenderLite: (dataIndex) => (
-            <IconButton
-              onClick={() => {
-                const feat = _.find(features, { feature_uuid: issueRows[dataIndex]?.feature_uuid });
+  useEffect(() => {
+    const ima = (
+      <div>
+        <Divider />
+        <MenuItem onClick={(e) => commentItem(issueRows[menuIndex])}>
+          <ListItemIcon>
+            <CommentIcon fontSize="small" />
+          </ListItemIcon>
+          Comments
+        </MenuItem>
+
+        {!!issueRows[menuIndex] && !!issueRows[menuIndex].feature_uuid && (
+          <>
+            <Divider />
+            <MenuItem
+              onClick={(e) => {
+                const feat = _.find(features, { feature_uuid: issueRows[menuIndex].feature_uuid });
                 editItem(feat, 'feat', true);
               }}
             >
-              <LinkIcon />
-            </IconButton>
-          ),
-        },
-      },
-      ...issueColumns,
-    ];
-
-    setFinalFeatCols(featCols);
-    setFinalIssCols(issCols);
-  }, [featureRows, issueRows]);
+              <ListItemIcon>
+                <LinkIcon fontSize="small" />
+              </ListItemIcon>
+              View linked feature
+            </MenuItem>
+          </>
+        )}
+      </div>
+    );
+    setIssueMenuActions(ima);
+  }, [features, issueRows, menuIndex]);
 
   useEffect(() => {
     const featRows = _.map(features, (feat) => ({
@@ -237,7 +218,7 @@ const Tabular = ({
           <DataTableWrapper
             loading={loading}
             rows={featureRows}
-            columns={finalFeatCols}
+            columns={featureColumns}
             filename="FeaturesList"
             hideAddButton={!selectedProduct || (!!selectedProduct && upgrade)}
             addButtonHeading="Add Feature"
@@ -245,6 +226,9 @@ const Tabular = ({
             editAction={(feat) => editItem(feat, 'feat')}
             deleteAction={(feat) => deleteItem(feat, 'feat')}
             tableHeader="Features"
+            menuActions={featMenuActions}
+            menuIndex={menuIndex}
+            setMenuIndex={setMenuIndex}
           />
         </div>
       )}
@@ -254,7 +238,7 @@ const Tabular = ({
           <DataTableWrapper
             loading={loading}
             rows={issueRows}
-            columns={finalIssCols}
+            columns={issueColumns}
             filename="IssuesList"
             hideAddButton={!selectedProduct || (!!selectedProduct && upgrade)}
             addButtonHeading="Add Issue"
@@ -262,6 +246,9 @@ const Tabular = ({
             editAction={(issue) => editItem(issue, 'issue')}
             deleteAction={(issue) => deleteItem(issue, 'issue')}
             tableHeader="Issues"
+            menuActions={issueMenuActions}
+            menuIndex={menuIndex}
+            setMenuIndex={setMenuIndex}
           />
         </div>
       )}

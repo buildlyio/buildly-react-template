@@ -25,6 +25,7 @@ const Products = ({
   const [rows, setRows] = useState([]);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
+  const [menuIndex, setMenuIndex] = useState(0);
 
   const addProductPath = redirectTo
     ? `${redirectTo}/product`
@@ -48,19 +49,11 @@ const Products = ({
   };
 
   useEffect(() => {
-    if (!products || _.isEmpty(products)) {
-      dispatch(getAllProducts());
-    }
-  }, []);
+    dispatch(getAllProducts(user.organization.organization_uuid));
+  }, [user]);
 
   useEffect(() => {
-    const filteredProducts = _.filter(
-      products,
-      { organization_uuid: user.organization.organization_uuid },
-    );
-
-    const sorted_products = _.orderBy(getProductsData(filteredProducts), 'create_date', 'desc');
-    setRows(sorted_products);
+    setRows(_.orderBy(getProductsData(products), 'create_date', 'desc'));
   }, [products]);
 
   const onAddButtonClick = () => {
@@ -94,6 +87,8 @@ const Products = ({
         handleDeleteModal={handleConfirmModal}
         deleteModalTitle="Are you sure you want to delete this product?"
         tableHeader="Products"
+        menuIndex={menuIndex}
+        setMenuIndex={setMenuIndex}
       >
         <Route path={addProductPath} component={AddProduct} />
         <Route path={`${editProductPath}/:id`} component={AddProduct} />

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import { Container, Typography } from '@mui/material';
+import { Container } from '@mui/material';
 import { UserContext, getUser } from '@context/User.context';
 import TopBar from '@layout/TopBar/TopBar';
 import Dashboard from '@pages/Dashboard/Dashboard';
@@ -51,11 +51,11 @@ const ContainerDashboard = ({ location, history }) => {
               path={routes.APP}
               render={() => <Redirect to={routes.DASHBOARD} />}
             />
+            <Route exact path={`${routes.RELEASE}/view/:releaseID`} component={ViewRelease} />
             <Route path={routes.DASHBOARD} component={Dashboard} />
             <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
             <Route path={routes.NEW_PRODUCT} component={NewProduct} />
             <Route path={routes.DEVELOPER_FORM} component={DeveloperForm} />
-            <Route exact path={`${routes.RELEASE}/view/:releaseID`} component={ViewRelease} />
             <Route path={routes.RELEASE} component={Release} />
             <Route path={routes.PRODUCTS} component={Products} />
           </Switch>

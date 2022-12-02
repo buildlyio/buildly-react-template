@@ -19,17 +19,18 @@ import {
   createFeature,
   deleteFeature,
   deleteIssue,
+  getAllComments,
   getAllFeatures,
   getAllIssues,
   getAllStatuses,
+  thirdPartyToolSync,
 } from '@redux/release/actions/release.actions';
 import Kanban from './components/Kanban';
 import Tabular from './components/Tabular';
+import AddFeatures from './forms/AddFeatures';
 import AddIssues from './forms/AddIssues';
-import AddComments from './forms/AddComments';
-import IgnoreColumns from './forms/IgnoreColumns';
+import Comments from './forms/Comments';
 import IssueSuggestions from './forms/IssueSuggestions';
-import NewFeatureForm from './forms/NewFeatureForm';
 import StatusBoard from './forms/StatusBoard';
 import ToolBoard from './forms/ToolBoard';
 
@@ -78,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
   configBoardButton: {
     marginTop: theme.spacing(1),
   },
-  syncBoard: {
+  syncDataFromTools: {
     height: theme.spacing(6),
     marginRight: theme.spacing(2),
   },
@@ -94,12 +95,19 @@ const Dashboard = ({
   features,
   credentials,
   statuses,
+  importLoaded,
 }) => {
   const classes = useStyles();
   const [route, setRoute] = useState(routes.DASHBOARD);
   const subNav = [
-    { label: 'Tabular', value: 'tabular' },
-    { label: 'Kanban', value: 'kanban' },
+    {
+      label: 'Tabular',
+      value: 'tabular',
+    },
+    {
+      label: 'Kanban',
+      value: 'kanban',
+    },
   ];
   const viewPath = (
     subNav.find((item) => location.pathname.endsWith(item.value)) || subNav[0]
@@ -110,19 +118,10 @@ const Dashboard = ({
   const [product, setProduct] = useState(null);
   const [upgrade, setUpgrade] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [deleteItemID, setDeleteItemID] = useState({ id: 0, type: 'feat' });
-
-  const addFeatPath = `${routes.DASHBOARD}/add-feature/`;
-  const editFeatPath = `${routes.DASHBOARD}/edit-feature/`;
-  const viewFeatPath = `${routes.DASHBOARD}/view-feature/`;
-  const addIssuePath = `${routes.DASHBOARD}/add-issue/`;
-  const editIssuePath = `${routes.DASHBOARD}/edit-issue/`;
-  const addCommentPath = `${routes.DASHBOARD}/add-comment`;
-  const issueSuggestionsPath = `${routes.DASHBOARD}/issue-suggestions`;
-  const featureToIssuePath = `${routes.DASHBOARD}/convert-issue`;
-  const ignoreColumnsPath = `${routes.DASHBOARD}/ignore-columns`;
-  const statusBoardPath = `${routes.DASHBOARD}/tool-status`;
-  const toolBoardPath = `${routes.DASHBOARD}/tool-board`;
+  const [deleteItemID, setDeleteItemID] = useState({
+    id: 0,
+    type: 'feat',
+  });
 
   // this will be triggered whenever the content switcher is clicked to change the view
   useEffect(() => {
@@ -151,16 +150,16 @@ const Dashboard = ({
       dispatch(clearProductRelatedProductData());
       dispatch(clearProductRelatedReleaseData());
     }
-  }, [selectedProduct]);
+  }, [selectedProduct, importLoaded]);
 
   useEffect(() => {
     if (selectedProduct && !!selectedProduct && (_.size(features) >= 5)
-    && user && user.organization && !user.organization.unlimited_free_plan) {
+      && user && user.organization && !user.organization.unlimited_free_plan) {
       setUpgrade(true);
     } else {
       setUpgrade(false);
     }
-  }, [selectedProduct, features]);
+  }, [selectedProduct, features, importLoaded]);
 
   useEffect(() => {
     if (selectedProduct && !!selectedProduct) {
@@ -177,9 +176,9 @@ const Dashboard = ({
   const addItem = (type) => {
     let path;
     if (type === 'feat') {
-      path = addFeatPath;
+      path = routes.ADD_FEATURE;
     } else if (type === 'issue') {
-      path = addIssuePath;
+      path = routes.ADD_ISSUE;
     }
 
     history.push(path, {
@@ -191,9 +190,9 @@ const Dashboard = ({
   const editItem = (item, type, viewOnly = false) => {
     let path;
     if (type === 'feat') {
-      path = `${viewOnly ? viewFeatPath : editFeatPath}:${item.feature_uuid}`;
+      path = `${viewOnly ? routes.VIEW_FEATURE : routes.EDIT_FEATURE}:${item.feature_uuid}`;
     } else if (type === 'issue') {
-      path = `${editIssuePath}:${item.issue_uuid}`;
+      path = `${routes.EDIT_ISSUE}:${item.issue_uuid}`;
     }
 
     history.push(path, {
@@ -209,12 +208,18 @@ const Dashboard = ({
       ? item.feature_uuid
       : item.issue_uuid;
 
-    setDeleteItemID({ id: deleteID, type });
+    setDeleteItemID({
+      id: deleteID,
+      type,
+    });
     setOpenDeleteModal(true);
   };
 
   const handleDeleteModal = () => {
-    const { id, type } = deleteItemID;
+    const {
+      id,
+      type,
+    } = deleteItemID;
     const featCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'feature'));
     const issueCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'issue'));
 
@@ -235,15 +240,23 @@ const Dashboard = ({
     setOpenDeleteModal(false);
   };
 
-  const commentItem = () => {
-    history.push(addCommentPath, {
-      from: location.pathname,
-      product_uuid: selectedProduct,
-    });
+  const commentItem = (item) => {
+    let data = { from: location.pathname };
+    let query;
+    if (item.issue_uuid) {
+      data = { ...data, issue: item };
+      query = `issue=${item.issue_uuid}`;
+    } else {
+      data = { ...data, feature: item };
+      query = `feature=${item.feature_uuid}`;
+    }
+
+    dispatch(getAllComments(query));
+    history.push(routes.COMMENTS, { ...data });
   };
 
   const issueSuggestions = (item) => {
-    history.push(issueSuggestionsPath, {
+    history.push(routes.ISSUE_SUGGESTIONS, {
       type: 'show',
       from: location.pathname,
       product_uuid: selectedProduct,
@@ -254,7 +267,7 @@ const Dashboard = ({
   const convertIssue = (item, type) => {
     let path;
     if (type === 'convert') {
-      path = featureToIssuePath;
+      path = routes.FEATURE_TO_ISSUE;
     }
 
     history.push(path, {
@@ -304,20 +317,53 @@ const Dashboard = ({
   };
 
   const configureBoard = () => {
-    history.push(toolBoardPath, {
+    history.push(routes.TOOL_BOARD, {
       from: location.pathname,
       product_uuid: selectedProduct,
     });
   };
 
   const configureStatus = () => {
-    history.push(statusBoardPath, {
+    history.push(routes.STATUS_BOARD, {
       from: location.pathname,
       product_uuid: selectedProduct,
     });
   };
 
-  const syncBoard = () => {};
+  const syncDataFromTools = (e) => {
+    e.preventDefault();
+    const featCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'feature'));
+    const issueCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'issue'));
+
+    if (!_.isEmpty(product) && (!_.isEmpty(featCred) || !_.isEmpty(issueCred))) {
+      let creds = [];
+
+      if (!_.isEmpty(product.feature_tool_detail) && !_.isEmpty(featCred)) {
+        creds = [
+          ...creds,
+          {
+            ...featCred?.auth_detail,
+            product_uuid: selectedProduct,
+            board_id: product.feature_tool_detail.board_detail?.board_id,
+          },
+        ];
+      }
+
+      if (!_.isEmpty(product.issue_tool_detail) && !_.isEmpty(issueCred)) {
+        creds = [
+          ...creds,
+          {
+            ...issueCred?.auth_detail,
+            product_uuid: selectedProduct,
+            board_id: product.issue_tool_detail.board_detail?.board_id,
+            repo_list: _.map(product.issue_tool_detail.repository_list, 'name'),
+          },
+        ];
+      }
+
+      dispatch(thirdPartyToolSync(creds));
+    }
+  };
 
   return (
     <>
@@ -374,24 +420,31 @@ const Dashboard = ({
                 <MenuItem value={0}>Select</MenuItem>
                 <MenuItem value={-1}>Create New Product</MenuItem>
                 {products && !_.isEmpty(products)
-                && _.map(products, (prod) => (
-                  <MenuItem
-                    key={`product-${prod.product_uuid}`}
-                    value={prod.product_uuid}
-                  >
-                    {prod.name}
-                  </MenuItem>
-                ))}
+                  && _.map(products, (prod) => (
+                    <MenuItem
+                      key={`product-${prod.product_uuid}`}
+                      value={prod.product_uuid}
+                    >
+                      {prod.name}
+                    </MenuItem>
+                  ))}
               </TextField>
 
-              {/* {(loaded && product && !_.isEmpty(product.third_party_tool)
-              && !_.isEmpty(statuses) && (
-                <Button variant="contained" color="primary" onClick={syncBoard} className={classes.syncBoard}>
-                  <SyncIcon />
-                  {' '}
-                  Sync Board
-                </Button>
-              ))} */}
+              {
+                (loaded && product && !_.isEmpty(product.third_party_tool)
+                  && !_.isEmpty(statuses) && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={syncDataFromTools}
+                      className={classes.syncDataFromTools}
+                    >
+                      <SyncIcon />
+                      {' '}
+                      Sync Data from Tool(s)
+                    </Button>
+                ))
+              }
             </Grid>
           </Grid>
 
@@ -418,7 +471,7 @@ const Dashboard = ({
                     </Button>
                   </Grid>
 
-                  <Route path={toolBoardPath} component={ToolBoard} />
+                  <Route path={routes.TOOL_BOARD} component={ToolBoard} />
                 </>
               ) : (
                 <>
@@ -441,7 +494,7 @@ const Dashboard = ({
                     </Button>
                   </Grid>
 
-                  <Route path={statusBoardPath} component={StatusBoard} />
+                  <Route path={routes.STATUS_BOARD} component={StatusBoard} />
                 </>
               )
             ) : (
@@ -504,16 +557,15 @@ const Dashboard = ({
                     />
                   )}
                 />
-                <Route path={addFeatPath} component={NewFeatureForm} />
-                <Route path={editFeatPath} component={NewFeatureForm} />
-                <Route path={viewFeatPath} component={NewFeatureForm} />
-                <Route path={addIssuePath} component={AddIssues} />
-                <Route path={editIssuePath} component={AddIssues} />
-                <Route path={addCommentPath} component={AddComments} />
-                <Route path={featureToIssuePath} component={AddIssues} />
-                <Route path={ignoreColumnsPath} component={IgnoreColumns} />
+                <Route path={routes.ADD_FEATURE} component={AddFeatures} />
+                <Route path={routes.EDIT_FEATURE} component={AddFeatures} />
+                <Route path={routes.VIEW_FEATURE} component={AddFeatures} />
+                <Route path={routes.ADD_ISSUE} component={AddIssues} />
+                <Route path={routes.EDIT_ISSUE} component={AddIssues} />
+                <Route path={routes.FEATURE_TO_ISSUE} component={AddIssues} />
+                <Route path={routes.COMMENTS} component={Comments} />
                 <Route
-                  path={issueSuggestionsPath}
+                  path={routes.ISSUE_SUGGESTIONS}
                   render={(renderProps) => (
                     <IssueSuggestions {...renderProps} convertIssue={convertIssue} />
                   )}
@@ -536,6 +588,7 @@ const mapStateToProps = (state, ownProps) => ({
   features: state.releaseReducer.features,
   credentials: state.productReducer.credentials,
   statuses: state.releaseReducer.statuses,
+  importLoaded: state.releaseReducer.importLoaded,
 });
 
 export default connect(mapStateToProps)(Dashboard);

@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import moment from 'moment-timezone';
+import parse from 'html-react-parser';
 
 export const featureColumns = [
   {
@@ -19,7 +19,7 @@ export const featureColumns = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => value || '-',
+      customBodyRender: (value) => ((value && parse(value)) || '-'),
     },
   },
   {
@@ -74,7 +74,7 @@ export const issueColumns = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => value || '-',
+      customBodyRender: (value) => ((value && parse(value)) || '-'),
     },
   },
   {
@@ -119,4 +119,27 @@ export const issueColumns = [
         : '-'),
     },
   },
+];
+
+export const PRIORITIES = [
+  'Low',
+  'Medium',
+  'High',
+  'Urgent',
+];
+
+export const ISSUETYPES = [
+  'FE',
+  'BE',
+  'UI/UX',
+  'Documentation',
+];
+
+export const STATUSTYPES = [
+  'Backlog',
+  'Sprint Ready',
+  'To Do',
+  'In Progress',
+  'Doing',
+  'Done',
 ];

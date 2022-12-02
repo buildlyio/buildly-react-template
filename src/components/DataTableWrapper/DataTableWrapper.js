@@ -7,11 +7,16 @@ import {
   IconButton,
   Box,
   Typography,
+  MenuItem,
+  Menu,
+  Divider,
+  ListItemIcon,
 } from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
+  MoreVert as MoreVertIcon,
 } from '@mui/icons-material';
 import Loader from '@components/Loader/Loader';
 import ConfirmModal from '@components/Modal/ConfirmModal';
@@ -35,6 +40,7 @@ const DataTableWrapper = ({
   onAddButtonClick,
   children,
   editAction,
+  menuActions,
   deleteAction,
   openDeleteModal,
   setDeleteModal,
@@ -49,55 +55,116 @@ const DataTableWrapper = ({
   noCustomTheme,
   noSpace,
   noOptionsIcon,
+  menuIndex,
+  setMenuIndex,
 }) => {
   const classes = useStyles();
+  // dropdown menu variables
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event, dataIndex) => {
+    setAnchorEl(event.currentTarget);
+    setMenuIndex(dataIndex);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   let finalColumns = [];
-  if (editAction) {
-    finalColumns = [
-      ...finalColumns,
-      {
-        name: 'Edit',
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          customBodyRenderLite: (dataIndex) => (
-            <IconButton
-              className={classes.iconButton}
-              onClick={() => editAction(rows[dataIndex])}
-            >
-              <EditIcon />
-            </IconButton>
-          ),
-        },
-      },
-    ];
-  }
-  if (deleteAction) {
-    finalColumns = [
-      ...finalColumns,
-      {
-        name: 'Delete',
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          customBodyRenderLite: (dataIndex) => (
-            <IconButton
-              onClick={() => deleteAction(rows[dataIndex])}
-            >
-              <DeleteIcon />
-            </IconButton>
-          ),
-        },
-      },
-    ];
-  }
+
   finalColumns = [
     ...finalColumns,
     ...columns,
   ];
+
+  if (editAction || deleteAction || menuActions) {
+    finalColumns = [
+      ...finalColumns,
+      {
+        name: 'Actions',
+        options: {
+          sort: false,
+          filter: false,
+          empty: true,
+          customBodyRenderLite: (dataIndex) => (
+            <>
+              <IconButton onClick={(e) => handleClick(e, dataIndex)}>
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                id="account-menu"
+                open={open}
+                onClose={handleClose}
+                onClick={handleClose}
+                PaperProps={
+                  {
+                    elevation: 0,
+                    sx: {
+                      overflow: 'visible',
+                      filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                      mt: 1.5,
+                      '& .MuiAvatar-root': {
+                        width: 32,
+                        height: 32,
+                      },
+                      '&:before': {
+                        content: '""',
+                        display: 'block',
+                        position: 'absolute',
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: 'background.paper',
+                        transform: 'translateY(-50%) rotate(45deg)',
+                        zIndex: 0,
+                      },
+                    },
+                  }
+                }
+                transformOrigin={{
+                  horizontal: 'right',
+                  vertical: 'top',
+                }}
+                anchorOrigin={{
+                  horizontal: 'right',
+                  vertical: 'bottom',
+                }}
+              >
+                {
+                  editAction && (
+                    <MenuItem onClick={(e) => editAction(rows[menuIndex])}>
+                      <ListItemIcon>
+                        <EditIcon fontSize="small" />
+                      </ListItemIcon>
+                      Edit
+                    </MenuItem>
+                  )
+                }
+                { menuActions }
+                {
+                  deleteAction && (
+                    <div>
+                      <Divider />
+                      <MenuItem onClick={() => deleteAction(rows[menuIndex])}>
+                        <ListItemIcon>
+                          <DeleteIcon style={{ color: 'red' }} fontSize="small" />
+                        </ListItemIcon>
+                        <span style={{ color: 'red' }}>Delete</span>
+                      </MenuItem>
+                    </div>
+                  )
+                }
+              </Menu>
+            </>
+          ),
+        },
+      },
+    ];
+  }
 
   const options = {
     download: !noOptionsIcon,
