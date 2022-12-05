@@ -95,7 +95,7 @@ const Dashboard = ({
   features,
   credentials,
   statuses,
-  importLoaded,
+  dataSynced,
 }) => {
   const classes = useStyles();
   const [route, setRoute] = useState(routes.DASHBOARD);
@@ -150,7 +150,7 @@ const Dashboard = ({
       dispatch(clearProductRelatedProductData());
       dispatch(clearProductRelatedReleaseData());
     }
-  }, [selectedProduct, importLoaded]);
+  }, [selectedProduct, dataSynced]);
 
   useEffect(() => {
     if (selectedProduct && !!selectedProduct && (_.size(features) >= 5)
@@ -159,7 +159,7 @@ const Dashboard = ({
     } else {
       setUpgrade(false);
     }
-  }, [selectedProduct, features, importLoaded]);
+  }, [selectedProduct, features, dataSynced]);
 
   useEffect(() => {
     if (selectedProduct && !!selectedProduct) {
@@ -588,7 +588,7 @@ const mapStateToProps = (state, ownProps) => ({
   features: state.releaseReducer.features,
   credentials: state.productReducer.credentials,
   statuses: state.releaseReducer.statuses,
-  importLoaded: state.releaseReducer.importLoaded,
+  dataSynced: state.releaseReducer.dataSynced,
 });
 
 export default connect(mapStateToProps)(Dashboard);
