@@ -113,11 +113,13 @@ const Tabular = ({
     const featRows = _.map(features, (feat) => ({
       ...feat,
       _status: _.find(statuses, { status_uuid: feat.status })?.name,
+      _url: feat.feature_detail?.url || '',
     }));
 
     const issRows = _.map(issues, (iss) => ({
       ...iss,
       _status: _.find(statuses, { status_uuid: iss.status })?.name,
+      _url: iss.issue_detail?.url || '',
     }));
 
     setFeatureRows(featRows);
