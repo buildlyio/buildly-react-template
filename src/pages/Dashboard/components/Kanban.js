@@ -22,6 +22,7 @@ import {
   FormHelperText,
   ListItemIcon,
   Badge,
+  Divider,
 } from '@mui/material';
 import {
   AddRounded as AddRoundedIcon,
@@ -122,6 +123,8 @@ const Kanban = ({
   const [columns, setColumns] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentNumber, setCurrentNumber] = useState(null);
+  const [addAnchorEl, setAddAnchorEl] = useState(null);
+  const [currentColId, setCurrentColId] = useState(null);
 
   const handleClick = (event, number) => {
     setAnchorEl(event.currentTarget);
@@ -131,6 +134,16 @@ const Kanban = ({
   const handleClose = () => {
     setAnchorEl(null);
     setCurrentNumber(null);
+  };
+
+  const handleAddClick = (event, id) => {
+    setAddAnchorEl(event.currentTarget);
+    setCurrentColId(id);
+  };
+
+  const handleAddClose = () => {
+    setAddAnchorEl(null);
+    setCurrentColId(null);
   };
 
   useEffect(() => {
@@ -289,9 +302,33 @@ const Kanban = ({
                     {column.name}
                   </Typography>
 
-                  <IconButton onClick={(e) => addItem(index === 0 ? 'feat' : 'issue')} size="large">
+                  <IconButton onClick={(e) => handleAddClick(e, columnId)} size="large">
                     <AddRoundedIcon fontSize="small" className={classes.addIcon} />
                   </IconButton>
+
+                  <Menu
+                    id="add-menu"
+                    MenuListProps={{
+                      'aria-labelledby': 'add-button',
+                    }}
+                    anchorEl={addAnchorEl}
+                    open={currentColId === columnId}
+                    PaperProps={{
+                      style: {
+                        maxHeight: 48 * 4.5,
+                        marginLeft: 16,
+                      },
+                    }}
+                    onClick={handleAddClose}
+                  >
+                    <MenuItem onClick={(e) => addItem('feat')}>
+                      Add Feature
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={(e) => addItem('issue')}>
+                      Add Issue
+                    </MenuItem>
+                  </Menu>
                 </div>
 
                 <div className={classes.columnBody}>
