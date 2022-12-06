@@ -45,6 +45,7 @@ const Tabular = ({
   suggestedFeatures,
   createSuggestedFeature,
   removeSuggestedFeature,
+  comments,
 }) => {
   const classes = useStyles();
   const [featureRows, setFeatureRows] = useState([]);
@@ -62,7 +63,9 @@ const Tabular = ({
           <ListItemIcon>
             <CommentIcon fontSize="small" />
           </ListItemIcon>
-          Comments
+          Comments (
+          {_.size(_.filter(comments, { feature: featureRows[menuIndex]?.feature_uuid }))}
+          )
         </MenuItem>
 
         <Divider />
@@ -75,7 +78,7 @@ const Tabular = ({
       </div>
     );
     setFeatMenuActions(fma);
-  }, [featureRows, menuIndex]);
+  }, [featureRows, menuIndex, comments]);
 
   useEffect(() => {
     const ima = (
@@ -85,7 +88,9 @@ const Tabular = ({
           <ListItemIcon>
             <CommentIcon fontSize="small" />
           </ListItemIcon>
-          Comments
+          Comments (
+          {_.size(_.filter(comments, { issue: issueRows[menuIndex]?.issue_uuid }))}
+          )
         </MenuItem>
 
         {!!issueRows[menuIndex] && !!issueRows[menuIndex].feature_uuid && (
@@ -107,7 +112,7 @@ const Tabular = ({
       </div>
     );
     setIssueMenuActions(ima);
-  }, [features, issueRows, menuIndex]);
+  }, [features, issueRows, menuIndex, comments]);
 
   useEffect(() => {
     const featRows = _.map(features, (feat) => ({
@@ -263,6 +268,7 @@ const mapStateToProps = (state, ownProps) => ({
   features: state.releaseReducer.features,
   issues: state.releaseReducer.issues,
   statuses: state.releaseReducer.statuses,
+  comments: state.releaseReducer.comments,
 });
 
 export default connect(mapStateToProps)(Tabular);

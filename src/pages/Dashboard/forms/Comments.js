@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
@@ -56,10 +56,21 @@ const Comments = ({
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
+  const [filteredComments, setFilteredComments] = useState([]);
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const commentText = useInput('');
   const [formError, setFormError] = useState({});
+
+  useEffect(() => {
+    if (!_.isEmpty(feature)) {
+      setFilteredComments(_.filter(comments, { feature: feature.feature_uuid }));
+    }
+
+    if (!_.isEmpty(issue)) {
+      setFilteredComments(_.filter(comments, { issue: issue.issue_uuid }));
+    }
+  }, [comments]);
 
   const closeFormModal = () => {
     if (commentText.value) {
@@ -146,7 +157,7 @@ const Comments = ({
         >
           {loading && <Loader open={loading} />}
 
-          {!_.isEmpty(comments) && _.map(comments, (comment, index) => (
+          {!_.isEmpty(filteredComments) && _.map(filteredComments, (comment, index) => (
             <Card key={comment.comment_uuid} className={classes.commentCard}>
               <CardContent>
                 <Typography variant="body1">

@@ -21,6 +21,7 @@ import {
   MenuItem,
   FormHelperText,
   ListItemIcon,
+  Badge,
 } from '@mui/material';
 import {
   AddRounded as AddRoundedIcon,
@@ -79,6 +80,9 @@ const useStyles = makeStyles((theme) => ({
   moment: {
     marginTop: theme.spacing(3),
     textAlign: 'left',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   iconButton: {
     padding: 0,
@@ -112,6 +116,7 @@ const Kanban = ({
   suggestedFeatures,
   createSuggestedFeature,
   removeSuggestedFeature,
+  comments,
 }) => {
   const classes = useStyles();
   const [columns, setColumns] = useState({});
@@ -445,10 +450,26 @@ const Kanban = ({
 
                                   <Typography className={classes.moment} component="div" variant="body2">
                                     {moment(item.create_date).fromNow()}
-                                    <CommentIcon
-                                      className={classes.comment}
-                                      onClick={(e) => commentItem(item)}
-                                    />
+                                    <Badge
+                                      badgeContent={_.size(_.filter(comments, (c) => (
+                                        item.issue_uuid
+                                          ? c.issue === item.issue_uuid
+                                          : c.feature === item.feature_uuid
+                                      )))}
+                                      anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                      }}
+                                      color="info"
+                                      overlap="circular"
+                                      showZero
+                                    >
+                                      <CommentIcon
+                                        className={classes.comment}
+                                        onClick={(e) => commentItem(item)}
+                                        fontSize="large"
+                                      />
+                                    </Badge>
                                   </Typography>
                                 </CardContent>
                               </Card>
@@ -475,6 +496,7 @@ const mapStateToProps = (state, ownProps) => ({
   issues: state.releaseReducer.issues,
   statuses: state.releaseReducer.statuses,
   credentials: state.productReducer.credentials,
+  comments: state.releaseReducer.comments,
 });
 
 export default connect(mapStateToProps)(Kanban);

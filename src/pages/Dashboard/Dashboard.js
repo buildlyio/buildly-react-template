@@ -146,6 +146,7 @@ const Dashboard = ({
       dispatch(getAllFeatures(selectedProduct));
       dispatch(getAllIssues(selectedProduct));
       dispatch(getAllCredentials(selectedProduct));
+      dispatch(getAllComments(selectedProduct));
     } else {
       dispatch(clearProductRelatedProductData());
       dispatch(clearProductRelatedReleaseData());
@@ -242,16 +243,12 @@ const Dashboard = ({
 
   const commentItem = (item) => {
     let data = { from: location.pathname };
-    let query;
     if (item.issue_uuid) {
       data = { ...data, issue: item };
-      query = `issue=${item.issue_uuid}`;
     } else {
       data = { ...data, feature: item };
-      query = `feature=${item.feature_uuid}`;
     }
 
-    dispatch(getAllComments(query));
     history.push(routes.COMMENTS, { ...data });
   };
 
