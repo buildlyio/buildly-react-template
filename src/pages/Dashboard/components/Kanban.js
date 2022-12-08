@@ -27,9 +27,10 @@ import {
 import {
   AddRounded as AddRoundedIcon,
   AddTask as AddTaskIcon,
-  AltRoute as AltRouteIcon,
-  Comment as CommentIcon,
+  CallMerge as CallMergeIcon,
   Close as CloseIcon,
+  Comment as CommentIcon,
+  CallSplit as CallSplitIcon,
   DateRange as DateRangeIcon,
   MoreHoriz as MoreHorizIcon,
   Update as UpdateIcon,
@@ -89,8 +90,8 @@ const useStyles = makeStyles((theme) => ({
     padding: 0,
     marginLeft: theme.spacing(1),
   },
-  comment: {
-    float: 'right',
+  bottomIcon: {
+    marginLeft: theme.spacing(1),
     cursor: 'pointer',
   },
   columnBody: {
@@ -118,6 +119,7 @@ const Kanban = ({
   createSuggestedFeature,
   removeSuggestedFeature,
   comments,
+  showRelatedIssues,
 }) => {
   const classes = useStyles();
   const [columns, setColumns] = useState({});
@@ -478,7 +480,7 @@ const Kanban = ({
                                         variant="outlined"
                                         color="primary"
                                         className={classes.chip}
-                                        icon={<AltRouteIcon fontSize="small" />}
+                                        icon={<CallMergeIcon fontSize="small" />}
                                         label={feat.name}
                                         onClick={() => editItem(feat, 'feat', true)}
                                       />
@@ -487,26 +489,37 @@ const Kanban = ({
 
                                   <Typography className={classes.moment} component="div" variant="body2">
                                     {moment(item.create_date).fromNow()}
-                                    <Badge
-                                      badgeContent={_.size(_.filter(comments, (c) => (
-                                        item.issue_uuid
-                                          ? c.issue === item.issue_uuid
-                                          : c.feature === item.feature_uuid
-                                      )))}
-                                      anchorOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                      }}
-                                      color="info"
-                                      overlap="circular"
-                                      showZero
-                                    >
-                                      <CommentIcon
-                                        className={classes.comment}
-                                        onClick={(e) => commentItem(item)}
-                                        fontSize="large"
-                                      />
-                                    </Badge>
+
+                                    <div style={{ display: 'flex' }}>
+                                      {!item.issue_uuid && (
+                                        <CallSplitIcon
+                                          className={classes.bottomIcon}
+                                          fontSize="large"
+                                          onClick={(e) => showRelatedIssues(item.feature_uuid)}
+                                        />
+                                      )}
+
+                                      <Badge
+                                        badgeContent={_.size(_.filter(comments, (c) => (
+                                          item.issue_uuid
+                                            ? c.issue === item.issue_uuid
+                                            : c.feature === item.feature_uuid
+                                        )))}
+                                        anchorOrigin={{
+                                          vertical: 'top',
+                                          horizontal: 'right',
+                                        }}
+                                        color="info"
+                                        overlap="circular"
+                                        showZero
+                                      >
+                                        <CommentIcon
+                                          className={classes.bottomIcon}
+                                          onClick={(e) => commentItem(item)}
+                                          fontSize="large"
+                                        />
+                                      </Badge>
+                                    </div>
                                   </Typography>
                                 </CardContent>
                               </Card>

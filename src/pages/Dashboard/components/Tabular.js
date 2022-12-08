@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import {
   AddTask as AddTaskIcon,
+  CallSplit as CallSplitIcon,
   Close as CloseIcon,
   Comment as CommentIcon,
   Link as LinkIcon,
@@ -46,6 +47,7 @@ const Tabular = ({
   createSuggestedFeature,
   removeSuggestedFeature,
   comments,
+  showRelatedIssues,
 }) => {
   const classes = useStyles();
   const [featureRows, setFeatureRows] = useState([]);
@@ -74,6 +76,14 @@ const Tabular = ({
             <TaskIcon fontSize="small" />
           </ListItemIcon>
           Convert to issue/ticket for dev team
+        </MenuItem>
+
+        <Divider />
+        <MenuItem onClick={(e) => showRelatedIssues(featureRows[menuIndex]?.feature_uuid)}>
+          <ListItemIcon>
+            <CallSplitIcon fontSize="small" />
+          </ListItemIcon>
+          Show Related Issues
         </MenuItem>
       </div>
     );
