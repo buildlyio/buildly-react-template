@@ -172,11 +172,11 @@ export const deleteRelease = (release_uuid) => ({
 
 /**
  * Get all Comments
- * @param {String} searchQuery
+ * @param {uuid} product_uuid
  */
-export const getAllComments = (searchQuery) => ({
+export const getAllComments = (product_uuid) => ({
   type: ALL_COMMENTS,
-  searchQuery,
+  product_uuid,
 });
 
 /**

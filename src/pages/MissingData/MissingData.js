@@ -243,7 +243,7 @@ const MissingData = ({
                         margin="normal"
                         required
                         fullWidth
-                        label="Organisation Name"
+                        label="Organization Name"
                         className={classes.textField}
                       />
                     )}

@@ -29,4 +29,5 @@ export const routes = {
   STATUS_BOARD: '/app/dashboard/tool-status',
   TOOL_BOARD: '/app/dashboard/tool-board',
   COMMENTS: '/app/dashboard/comments',
+  SHOW_RELATED_ISSUES: '/app/dashboard/show-related-issues',
 };

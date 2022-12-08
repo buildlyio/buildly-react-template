@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import {
   AddTask as AddTaskIcon,
+  CallSplit as CallSplitIcon,
   Close as CloseIcon,
   Comment as CommentIcon,
   Link as LinkIcon,
@@ -45,6 +46,8 @@ const Tabular = ({
   suggestedFeatures,
   createSuggestedFeature,
   removeSuggestedFeature,
+  comments,
+  showRelatedIssues,
 }) => {
   const classes = useStyles();
   const [featureRows, setFeatureRows] = useState([]);
@@ -62,7 +65,9 @@ const Tabular = ({
           <ListItemIcon>
             <CommentIcon fontSize="small" />
           </ListItemIcon>
-          Comments
+          Comments (
+          {_.size(_.filter(comments, { feature: featureRows[menuIndex]?.feature_uuid }))}
+          )
         </MenuItem>
 
         <Divider />
@@ -72,10 +77,18 @@ const Tabular = ({
           </ListItemIcon>
           Convert to issue/ticket for dev team
         </MenuItem>
+
+        <Divider />
+        <MenuItem onClick={(e) => showRelatedIssues(featureRows[menuIndex]?.feature_uuid)}>
+          <ListItemIcon>
+            <CallSplitIcon fontSize="small" />
+          </ListItemIcon>
+          Show Related Issues
+        </MenuItem>
       </div>
     );
     setFeatMenuActions(fma);
-  }, [featureRows, menuIndex]);
+  }, [featureRows, menuIndex, comments]);
 
   useEffect(() => {
     const ima = (
@@ -85,7 +98,9 @@ const Tabular = ({
           <ListItemIcon>
             <CommentIcon fontSize="small" />
           </ListItemIcon>
-          Comments
+          Comments (
+          {_.size(_.filter(comments, { issue: issueRows[menuIndex]?.issue_uuid }))}
+          )
         </MenuItem>
 
         {!!issueRows[menuIndex] && !!issueRows[menuIndex].feature_uuid && (
@@ -107,17 +122,19 @@ const Tabular = ({
       </div>
     );
     setIssueMenuActions(ima);
-  }, [features, issueRows, menuIndex]);
+  }, [features, issueRows, menuIndex, comments]);
 
   useEffect(() => {
     const featRows = _.map(features, (feat) => ({
       ...feat,
       _status: _.find(statuses, { status_uuid: feat.status })?.name,
+      _url: feat.feature_detail?.url || '',
     }));
 
     const issRows = _.map(issues, (iss) => ({
       ...iss,
       _status: _.find(statuses, { status_uuid: iss.status })?.name,
+      _url: iss.issue_detail?.url || '',
     }));
 
     setFeatureRows(featRows);
@@ -261,6 +278,7 @@ const mapStateToProps = (state, ownProps) => ({
   features: state.releaseReducer.features,
   issues: state.releaseReducer.issues,
   statuses: state.releaseReducer.statuses,
+  comments: state.releaseReducer.comments,
 });
 
 export default connect(mapStateToProps)(Tabular);
