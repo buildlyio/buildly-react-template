@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import App from './App';
 import './i18n';
 import configureStore from './redux/store';
+import './index.css';
 
 if (window.env.PRODUCTION) {
   const script = document.createElement('script');
