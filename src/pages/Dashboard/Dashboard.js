@@ -33,6 +33,7 @@ import Comments from './forms/Comments';
 import IssueSuggestions from './forms/IssueSuggestions';
 import StatusBoard from './forms/StatusBoard';
 import ToolBoard from './forms/ToolBoard';
+import ShowRelatedIssues from './forms/ShowRelatedIssues';
 
 const useStyles = makeStyles((theme) => ({
   firstTimeMessage: {
@@ -146,6 +147,7 @@ const Dashboard = ({
       dispatch(getAllFeatures(selectedProduct));
       dispatch(getAllIssues(selectedProduct));
       dispatch(getAllCredentials(selectedProduct));
+      dispatch(getAllComments(selectedProduct));
     } else {
       dispatch(clearProductRelatedProductData());
       dispatch(clearProductRelatedReleaseData());
@@ -242,16 +244,12 @@ const Dashboard = ({
 
   const commentItem = (item) => {
     let data = { from: location.pathname };
-    let query;
     if (item.issue_uuid) {
       data = { ...data, issue: item };
-      query = `issue=${item.issue_uuid}`;
     } else {
       data = { ...data, feature: item };
-      query = `feature=${item.feature_uuid}`;
     }
 
-    dispatch(getAllComments(query));
     history.push(routes.COMMENTS, { ...data });
   };
 
@@ -363,6 +361,13 @@ const Dashboard = ({
 
       dispatch(thirdPartyToolSync(creds));
     }
+  };
+
+  const showRelatedIssues = (feature_uuid) => {
+    history.push(routes.SHOW_RELATED_ISSUES, {
+      from: location.pathname,
+      feature_uuid,
+    });
   };
 
   return (
@@ -534,6 +539,7 @@ const Dashboard = ({
                       }
                       createSuggestedFeature={createSuggestedFeature}
                       removeSuggestedFeature={removeSuggestedFeature}
+                      showRelatedIssues={showRelatedIssues}
                     />
                   )}
                 />
@@ -554,6 +560,7 @@ const Dashboard = ({
                       }
                       createSuggestedFeature={createSuggestedFeature}
                       removeSuggestedFeature={removeSuggestedFeature}
+                      showRelatedIssues={showRelatedIssues}
                     />
                   )}
                 />
@@ -564,6 +571,7 @@ const Dashboard = ({
                 <Route path={routes.EDIT_ISSUE} component={AddIssues} />
                 <Route path={routes.FEATURE_TO_ISSUE} component={AddIssues} />
                 <Route path={routes.COMMENTS} component={Comments} />
+                <Route path={routes.SHOW_RELATED_ISSUES} component={ShowRelatedIssues} />
                 <Route
                   path={routes.ISSUE_SUGGESTIONS}
                   render={(renderProps) => (

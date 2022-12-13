@@ -190,7 +190,7 @@ const ToolBoard = ({
                     fullWidth
                     select
                     id="featOrgID"
-                    label="Feature Organisation"
+                    label="Feature Organization"
                     name="featOrgID"
                     autoComplete="featOrgID"
                     value={featOrgID}
@@ -310,7 +310,7 @@ const ToolBoard = ({
                     fullWidth
                     select
                     id="issueOrgID"
-                    label="Issue Organisation"
+                    label="Issue Organization"
                     name="issueOrgID"
                     autoComplete="issueOrgID"
                     value={issueOrgID}

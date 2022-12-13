@@ -1,5 +1,9 @@
+import React from 'react';
 import moment from 'moment-timezone';
 import parse from 'html-react-parser';
+import { Link } from '@mui/material';
+import { OpenInNew as OpenInNewIcon } from '@mui/icons-material';
+import _ from 'lodash';
 
 export const featureColumns = [
   {
@@ -54,6 +58,21 @@ export const featureColumns = [
         : '-'),
     },
   },
+  {
+    name: '_url',
+    label: 'Link to original card',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (value
+        ? (
+          <Link href={value} target="_blank" rel="noopener">
+            <OpenInNewIcon />
+          </Link>
+        ) : ''),
+    },
+  },
 ];
 
 export const issueColumns = [
@@ -74,6 +93,12 @@ export const issueColumns = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: (value) => ({
+        style: { maxWidth: 500 },
+      }),
+      setCellHeaderProps: (value) => ({
+        style: { maxWidth: 500 },
+      }),
       customBodyRender: (value) => ((value && parse(value)) || '-'),
     },
   },
@@ -117,6 +142,21 @@ export const issueColumns = [
       customBodyRender: (value) => (value
         ? moment(value).format('MMM DD YYYY, h:mm a')
         : '-'),
+    },
+  },
+  {
+    name: '_url',
+    label: 'Link to original issue',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (value
+        ? (
+          <Link href={value} target="_blank" rel="noopener">
+            <OpenInNewIcon />
+          </Link>
+        ) : ''),
     },
   },
 ];

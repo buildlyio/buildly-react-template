@@ -63,9 +63,9 @@ describe('Delete Release action', () => {
 // Test Get All Comments
 describe('Get All Comments action', () => {
   it('should create an action to get all comment', () => {
-    const searchQuery = 'feature_uuid=38625-dkjhg8934-832r2ehf-382fie22w';
-    const expectedAction = { type: actions.ALL_COMMENTS, searchQuery };
-    expect(actions.getAllComments(searchQuery)).toEqual(expectedAction);
+    const product_uuid = '38625-dkjhg8934-832r2ehf-382fie22w';
+    const expectedAction = { type: actions.ALL_COMMENTS, product_uuid };
+    expect(actions.getAllComments(product_uuid)).toEqual(expectedAction);
   });
 });
 
