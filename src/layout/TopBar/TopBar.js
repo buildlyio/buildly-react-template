@@ -3,42 +3,86 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  TextField,
-  MenuItem,
-  Button,
-  Menu,
-} from '@mui/material';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 import { styled, alpha } from '@mui/material/styles';
 import {
-  ExitToApp as ExitToAppIcon,
   Group as GroupIcon,
-  KeyboardArrowDown,
+  Logout, Person,
 } from '@mui/icons-material';
 import logo from '@assets/insights-logo.png';
 import { UserContext } from '@context/User.context';
 import { logout, loadOrgNames } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
 import { hasGlobalAdminRights, hasAdminRights } from '@utils/permissions';
+import {
+  Avatar,
+  Divider, ListItemIcon, Tooltip, Typography,
+} from '@mui/material';
+
+const pages = [{ label: 'Dashboard', value: routes.DASHBOARD },
+  { label: 'Products', value: routes.PRODUCTS },
+  { label: 'Releases', value: routes.RELEASE }];
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    backgroundColor: theme.palette.contrast.main,
+    backgroundColor: theme.palette.primary.main,
     zIndex: theme.zIndex.drawer + 1,
     width: '100%',
   },
   logo: {
-    maxWidth: 144,
+    maxWidth: 176,
     objectFit: 'contain',
+  },
+  navItems: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexGrow: 1,
+  },
+  navButton: {
+    textTransform: 'uppercase',
+    fontSize: 15,
+    fontWeight: 400,
+    alignItems: 'center',
+    textAlign: 'center',
+    color: theme.palette.contrast.text,
+    '&:disabled': {
+      backgroundColor: theme.palette.contrast.text,
+      color: theme.palette.primary.main,
+      borderRadius: 32,
+      paddingLeft: 16,
+      paddingRight: 16,
+    },
   },
   menuButton: {
     marginRight: theme.spacing(2),
   },
   menuRight: {
     marginLeft: 'auto',
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  userInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+    placeContent: 'flex-end center',
+    alignItems: 'flex-end',
+    color: theme.palette.contrast.text,
+    '& p': {
+      fontSize: 12,
+    },
+  },
+  accountMenuIcon: {
+    backgroundColor: theme.palette.contrast.text,
+  },
+  userIcon: {
+    fill: theme.palette.primary.main,
   },
   menuIcon: {
     color: theme.palette.contrast.text,
@@ -108,6 +152,7 @@ const TopBar = ({
 
   const [organization, setOrganization] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
 
   if (!organization) {
     setOrganization(user.organization.name);
@@ -130,12 +175,34 @@ const TopBar = ({
     history.push(routes.DASHBOARD);
   };
 
+  // handleCollapseAccountMenu
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
         <Link to={routes.DASHBOARD}>
           <img src={logo} alt="Logo" className={classes.logo} />
         </Link>
+
+        <Box className={classes.navItems}>
+          {pages.map((page) => (
+            <Button
+              key={page.value}
+              sx={{ m: 1, display: 'block' }}
+              className={classes.navButton}
+              disabled={location.pathname === page.value}
+              onClick={() => {
+                setAnchorEl(null);
+                history.push(page.value);
+              }}
+            >
+              {page.label}
+            </Button>
+          ))}
+        </Box>
 
         <div className={classes.menuRight}>
           {isSuperAdmin && (
@@ -160,80 +227,96 @@ const TopBar = ({
             </TextField>
           )}
 
-          <>
-            <Button
-              id="topbar-menu"
-              aria-controls="topbar-menu"
+          {/*    <MenuItem */}
+          {/*      disabled={ */}
+          {/*        (location.pathname === routes.DASHBOARD_TABULAR) */}
+          {/*        || (location.pathname === routes.DASHBOARD_KANBAN) */}
+          {/*      } */}
+          {/*      onClick={() => { */}
+          {/*        setAnchorEl(null); */}
+          {/*        history.push(routes.DASHBOARD); */}
+          {/*      }} */}
+          {/*    > */}
+          {/*      Dashboard */}
+          {/*    </MenuItem> */}
+
+          <div className={classes.userInfo}>
+            <Typography>{user.first_name}</Typography>
+            <Typography>
+              {user.organization.name}
+              ,
+              {' '}
+              {user.user_type}
+            </Typography>
+          </div>
+          <Tooltip title="Account settings">
+            <IconButton
+              size="small"
+              aria-controls={open ? 'account-menu' : undefined}
               aria-haspopup="true"
-              variant="contained"
-              disableElevation
-              endIcon={<KeyboardArrowDown />}
-              className={classes.navMenu}
+              aria-expanded={open ? 'true' : undefined}
               onClick={(e) => setAnchorEl(e.currentTarget)}
             >
-              Navigate To
-            </Button>
-
-            <StyledMenu
-              id="topbar-menu"
-              MenuListProps={{
-                'aria-labelledby': 'topbar-menu',
-              }}
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={() => setAnchorEl(null)}
-            >
-              <MenuItem
-                disabled={
-                  (location.pathname === routes.DASHBOARD_TABULAR)
-                  || (location.pathname === routes.DASHBOARD_KANBAN)
-                }
-                onClick={() => {
-                  setAnchorEl(null);
-                  history.push(routes.DASHBOARD);
-                }}
-              >
-                Dashboard
-              </MenuItem>
-
-              <MenuItem
-                disabled={location.pathname === routes.PRODUCTS}
-                onClick={() => {
-                  setAnchorEl(null);
-                  history.push(routes.PRODUCTS);
-                }}
-              >
-                Products
-              </MenuItem>
-
-              <MenuItem
-                disabled={location.pathname === routes.RELEASE}
-                onClick={() => {
-                  setAnchorEl(null);
-                  history.push(routes.RELEASE);
-                }}
-              >
-                Releases
-              </MenuItem>
-            </StyledMenu>
-          </>
-
-          {isAdmin && (
-            <Link to={routes.USER_MANAGEMENT}>
-              <IconButton aria-label="user-management" color="inherit" size="large">
-                <GroupIcon fontSize="large" className={classes.menuIcon} />
-              </IconButton>
-            </Link>
-          )}
-
-          <IconButton
-            aria-label="logout"
-            color="inherit"
-            onClick={handleLogoutClick}
-            size="large"
+              <Avatar className={classes.accountMenuIcon} sx={{ width: 32, height: 32 }}>
+                <Person className={classes.userIcon} />
+              </Avatar>
+            </IconButton>
+          </Tooltip>
+          <Menu
+            id="account-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={() => setAnchorEl(null)}
+            onClick={handleClose}
+            PaperProps={{
+              elevation: 0,
+              sx: {
+                overflow: 'visible',
+                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                mt: 1.5,
+                '& .MuiAvatar-root': {
+                  width: 32,
+                  height: 32,
+                  ml: -0.5,
+                  mr: 1,
+                },
+                '&:before': {
+                  content: '""',
+                  display: 'block',
+                  position: 'absolute',
+                  top: 0,
+                  right: 14,
+                  width: 10,
+                  height: 10,
+                  bgcolor: 'background.paper',
+                  transform: 'translateY(-50%) rotate(45deg)',
+                  zIndex: 0,
+                },
+              },
+            }}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <ExitToAppIcon fontSize="large" className={classes.menuIcon} />
-          </IconButton>
+            <MenuItem>
+              <Person />
+              {' '}
+              My profile
+            </MenuItem>
+            {isAdmin && (
+            <MenuItem to={routes.USER_MANAGEMENT}>
+              <GroupIcon />
+              {' '}
+              User management
+            </MenuItem>
+            )}
+            <Divider />
+            <MenuItem onClick={handleLogoutClick}>
+              <ListItemIcon aria-label="logout">
+                <Logout fontSize="small" />
+              </ListItemIcon>
+              Logout
+            </MenuItem>
+          </Menu>
         </div>
       </Toolbar>
     </AppBar>
