@@ -22,6 +22,12 @@ import Loader from '@components/Loader/Loader';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 
 const useStyles = makeStyles((theme) => ({
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    placeContent: 'center space-between',
+    alignItems: 'center',
+  },
   dashboardHeading: {
     fontWeight: 'bold',
     marginBottom: '0.5em',
@@ -211,7 +217,14 @@ const DataTableWrapper = ({
     <Box mt={noSpace ? 0 : 5} mb={noSpace ? 0 : 5}>
       {loading && <Loader open={loading} />}
       <div>
-        {!hideAddButton && (
+        <section className={classes.header}>
+          {tableHeader && (
+          <Typography className={classes.dashboardHeading} variant="h4">
+            {tableHeader}
+          </Typography>
+          )}
+
+          {!hideAddButton && (
           <Box mb={3} mt={2}>
             <Button
               type="button"
@@ -223,13 +236,8 @@ const DataTableWrapper = ({
               {` ${addButtonHeading}`}
             </Button>
           </Box>
-        )}
-
-        {tableHeader && (
-          <Typography className={classes.dashboardHeading} variant="h4">
-            {tableHeader}
-          </Typography>
-        )}
+          )}
+        </section>
 
         <Grid className={`${!noCustomTheme && classes.dataTable}`} container spacing={2}>
           <Grid item xs={12}>
