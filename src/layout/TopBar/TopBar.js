@@ -26,9 +26,9 @@ import {
   Divider, ListItemIcon, Tooltip, Typography,
 } from '@mui/material';
 
-const pages = [{ label: 'Dashboard', value: routes.DASHBOARD },
-  { label: 'Products', value: routes.PRODUCTS },
-  { label: 'Releases', value: routes.RELEASE }];
+const pages = [{ label: 'Dashboard', value: routes.DASHBOARD, pathName: [routes.DASHBOARD, routes.DASHBOARD_TABULAR, routes.DASHBOARD_KANBAN] },
+  { label: 'Products', value: routes.PRODUCTS, pathName: [routes.PRODUCTS] },
+  { label: 'Releases', value: routes.RELEASE, pathName: [routes.RELEASE] }];
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -77,6 +77,9 @@ const useStyles = makeStyles((theme) => ({
     '& p': {
       fontSize: 12,
     },
+  },
+  accountMenuIItem: {
+    margin: 8,
   },
   accountMenuIcon: {
     backgroundColor: theme.palette.contrast.text,
@@ -193,7 +196,7 @@ const TopBar = ({
               key={page.value}
               sx={{ m: 1, display: 'block' }}
               className={classes.navButton}
-              disabled={location.pathname === page.value}
+              disabled={page.pathName.includes(location.pathname)}
               onClick={() => {
                 setAnchorEl(null);
                 history.push(page.value);
@@ -226,19 +229,6 @@ const TopBar = ({
               ))}
             </TextField>
           )}
-
-          {/*    <MenuItem */}
-          {/*      disabled={ */}
-          {/*        (location.pathname === routes.DASHBOARD_TABULAR) */}
-          {/*        || (location.pathname === routes.DASHBOARD_KANBAN) */}
-          {/*      } */}
-          {/*      onClick={() => { */}
-          {/*        setAnchorEl(null); */}
-          {/*        history.push(routes.DASHBOARD); */}
-          {/*      }} */}
-          {/*    > */}
-          {/*      Dashboard */}
-          {/*    </MenuItem> */}
 
           <div className={classes.userInfo}>
             <Typography>{user.first_name}</Typography>
@@ -297,20 +287,20 @@ const TopBar = ({
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem>
+            <MenuItem className={classes.accountMenuIItem}>
               <Person />
               {' '}
               My profile
             </MenuItem>
             {isAdmin && (
-            <MenuItem to={routes.USER_MANAGEMENT}>
+            <MenuItem className={classes.accountMenuIItem} to={routes.USER_MANAGEMENT}>
               <GroupIcon />
               {' '}
               User management
             </MenuItem>
             )}
             <Divider />
-            <MenuItem onClick={handleLogoutClick}>
+            <MenuItem className={classes.accountMenuIItem} onClick={handleLogoutClick}>
               <ListItemIcon aria-label="logout">
                 <Logout fontSize="small" />
               </ListItemIcon>

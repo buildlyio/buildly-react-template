@@ -35,6 +35,9 @@ const useStyles = makeStyles((theme) => ({
   iconButton: {
     padding: theme.spacing(1.5, 0.5),
   },
+  addButton: {
+    backgroundColor: theme.palette.contrast.text,
+  },
 }));
 
 const DataTableWrapper = ({
@@ -228,8 +231,8 @@ const DataTableWrapper = ({
           <Box mb={3} mt={2}>
             <Button
               type="button"
-              variant="contained"
-              color="primary"
+              variant="outlined"
+              className={classes.addButton}
               onClick={onAddButtonClick}
             >
               <AddIcon />
