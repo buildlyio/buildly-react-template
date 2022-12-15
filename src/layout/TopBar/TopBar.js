@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
   navButton: {
     textTransform: 'uppercase',
     fontSize: 15,
-    fontWeight: 400,
+    lineHeight: 1.25,
     alignItems: 'center',
     textAlign: 'center',
     color: theme.palette.contrast.text,
