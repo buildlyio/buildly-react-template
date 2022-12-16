@@ -20,17 +20,23 @@ import {
   Menu,
   MenuItem,
   FormHelperText,
+  ListItemIcon,
+  Badge,
+  Divider,
 } from '@mui/material';
 import {
   AddRounded as AddRoundedIcon,
   AddTask as AddTaskIcon,
-  AltRoute as AltRouteIcon,
-  Comment as CommentIcon,
+  CallMerge as CallMergeIcon,
   Close as CloseIcon,
+  Comment as CommentIcon,
+  CallSplit as CallSplitIcon,
   DateRange as DateRangeIcon,
   MoreHoriz as MoreHorizIcon,
-  Task as TaskIcon,
   Update as UpdateIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Task as TaskIcon,
 } from '@mui/icons-material';
 import { updateFeature, updateIssue } from '@redux/release/actions/release.actions';
 
@@ -76,13 +82,16 @@ const useStyles = makeStyles((theme) => ({
   moment: {
     marginTop: theme.spacing(3),
     textAlign: 'left',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   iconButton: {
     padding: 0,
     marginLeft: theme.spacing(1),
   },
-  comment: {
-    float: 'right',
+  bottomIcon: {
+    marginLeft: theme.spacing(1),
     cursor: 'pointer',
   },
   columnBody: {
@@ -92,11 +101,6 @@ const useStyles = makeStyles((theme) => ({
     overflowY: 'auto',
   },
 }));
-
-const options = [
-  'Edit',
-  'Delete',
-];
 
 const Kanban = ({
   dispatch,
@@ -114,11 +118,15 @@ const Kanban = ({
   suggestedFeatures,
   createSuggestedFeature,
   removeSuggestedFeature,
+  comments,
+  showRelatedIssues,
 }) => {
   const classes = useStyles();
   const [columns, setColumns] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentNumber, setCurrentNumber] = useState(null);
+  const [addAnchorEl, setAddAnchorEl] = useState(null);
+  const [currentColId, setCurrentColId] = useState(null);
 
   const handleClick = (event, number) => {
     setAnchorEl(event.currentTarget);
@@ -128,6 +136,16 @@ const Kanban = ({
   const handleClose = () => {
     setAnchorEl(null);
     setCurrentNumber(null);
+  };
+
+  const handleAddClick = (event, id) => {
+    setAddAnchorEl(event.currentTarget);
+    setCurrentColId(id);
+  };
+
+  const handleAddClose = () => {
+    setAddAnchorEl(null);
+    setCurrentColId(null);
   };
 
   useEffect(() => {
@@ -286,9 +304,33 @@ const Kanban = ({
                     {column.name}
                   </Typography>
 
-                  <IconButton onClick={(e) => addItem(index === 0 ? 'feat' : 'issue')} size="large">
+                  <IconButton onClick={(e) => handleAddClick(e, columnId)} size="large">
                     <AddRoundedIcon fontSize="small" className={classes.addIcon} />
                   </IconButton>
+
+                  <Menu
+                    id="add-menu"
+                    MenuListProps={{
+                      'aria-labelledby': 'add-button',
+                    }}
+                    anchorEl={addAnchorEl}
+                    open={currentColId === columnId}
+                    PaperProps={{
+                      style: {
+                        maxHeight: 48 * 4.5,
+                        marginLeft: 16,
+                      },
+                    }}
+                    onClick={handleAddClose}
+                  >
+                    <MenuItem onClick={(e) => addItem('feat')}>
+                      Add Feature
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={(e) => addItem('issue')}>
+                      Add Issue
+                    </MenuItem>
+                  </Menu>
                 </div>
 
                 <div className={classes.columnBody}>
@@ -317,34 +359,18 @@ const Kanban = ({
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 style={{
+                                  ...provided.draggableProps.style,
                                   userSelect: 'none',
                                   backgroundColor: item?.feature_detail?.is_imported
                                   || item?.issue_detail?.is_imported
                                     ? '#e0e0e0'
                                     : '#FFFFFF',
-                                  ...provided.draggableProps.style,
                                 }}
                               >
                                 <CardHeader
                                   subheader={item.name}
                                   action={(
                                     <div>
-                                      {!item.issue_uuid && _.filter(issues, (issue) => (
-                                        issue.feature_uuid === item.feature_uuid
-                                      )).length === 0 && (
-                                        <IconButton
-                                          aria-label="issue-suggestion"
-                                          aria-controls="menu-card"
-                                          aria-haspopup="false"
-                                          color="secondary"
-                                          onClick={(e) => issueSuggestions(item, 'show')}
-                                          size="large"
-                                          className={classes.iconButton}
-                                        >
-                                          <TaskIcon fontSize="small" />
-                                        </IconButton>
-                                      )}
-
                                       <IconButton
                                         id="menu-button"
                                         aria-label="column-options"
@@ -367,27 +393,45 @@ const Kanban = ({
                                         PaperProps={{
                                           style: {
                                             maxHeight: 48 * 4.5,
-                                            width: '20ch',
+                                            // width: '20ch',
                                           },
                                         }}
                                         onClick={handleClose}
                                       >
-                                        {_.map(options, (option, optInd) => (
-                                          <MenuItem
-                                            key={optInd}
-                                            selected={option === 'Edit'}
-                                            onClick={(e) => {
-                                              const type = item.issue_uuid ? 'issue' : 'feat';
-                                              if (option === 'Edit') {
-                                                editItem(item, type);
-                                              } else {
-                                                deleteItem(item, type);
-                                              }
-                                            }}
-                                          >
-                                            {option}
+                                        <MenuItem
+                                          onClick={(e) => {
+                                            const type = item.issue_uuid ? 'issue' : 'feat';
+                                            editItem(item, type);
+                                          }}
+                                        >
+                                          <ListItemIcon>
+                                            <EditIcon fontSize="small" />
+                                          </ListItemIcon>
+                                          Edit
+                                        </MenuItem>
+
+                                        {!item.issue_uuid && _.filter(issues, (issue) => (
+                                          issue.feature_uuid === item.feature_uuid
+                                        )).length === 0 && (
+                                          <MenuItem onClick={(e) => issueSuggestions(item, 'show')}>
+                                            <ListItemIcon>
+                                              <TaskIcon fontSize="small" />
+                                            </ListItemIcon>
+                                            Convert to issue/ticket for dev team
                                           </MenuItem>
-                                        ))}
+                                        )}
+
+                                        <MenuItem
+                                          onClick={(e) => {
+                                            const type = item.issue_uuid ? 'issue' : 'feat';
+                                            deleteItem(item, type);
+                                          }}
+                                        >
+                                          <ListItemIcon>
+                                            <DeleteIcon fontSize="small" />
+                                          </ListItemIcon>
+                                          Delete
+                                        </MenuItem>
                                       </Menu>
                                     </div>
                                   )}
@@ -436,7 +480,7 @@ const Kanban = ({
                                         variant="outlined"
                                         color="primary"
                                         className={classes.chip}
-                                        icon={<AltRouteIcon fontSize="small" />}
+                                        icon={<CallMergeIcon fontSize="small" />}
                                         label={feat.name}
                                         onClick={() => editItem(feat, 'feat', true)}
                                       />
@@ -445,10 +489,37 @@ const Kanban = ({
 
                                   <Typography className={classes.moment} component="div" variant="body2">
                                     {moment(item.create_date).fromNow()}
-                                    {/* <CommentIcon
-                                      className={classes.comment}
-                                      onClick={(e) => commentItem()}
-                                    /> */}
+
+                                    <div style={{ display: 'flex' }}>
+                                      {!item.issue_uuid && (
+                                        <CallSplitIcon
+                                          className={classes.bottomIcon}
+                                          fontSize="large"
+                                          onClick={(e) => showRelatedIssues(item.feature_uuid)}
+                                        />
+                                      )}
+
+                                      <Badge
+                                        badgeContent={_.size(_.filter(comments, (c) => (
+                                          item.issue_uuid
+                                            ? c.issue === item.issue_uuid
+                                            : c.feature === item.feature_uuid
+                                        )))}
+                                        anchorOrigin={{
+                                          vertical: 'top',
+                                          horizontal: 'right',
+                                        }}
+                                        color="info"
+                                        overlap="circular"
+                                        showZero
+                                      >
+                                        <CommentIcon
+                                          className={classes.bottomIcon}
+                                          onClick={(e) => commentItem(item)}
+                                          fontSize="large"
+                                        />
+                                      </Badge>
+                                    </div>
                                   </Typography>
                                 </CardContent>
                               </Card>
@@ -475,6 +546,7 @@ const mapStateToProps = (state, ownProps) => ({
   issues: state.releaseReducer.issues,
   statuses: state.releaseReducer.statuses,
   credentials: state.productReducer.credentials,
+  comments: state.releaseReducer.comments,
 });
 
 export default connect(mapStateToProps)(Kanban);

@@ -116,13 +116,6 @@ const ProductSetup = ({
     tool_name: 'Trello',
   });
 
-  const [githubFeatureAuth, setGithubFeatureAuth] = useState({
-    owner_name: '',
-    access_token: '',
-    tool_type: 'Feature',
-    tool_name: 'GitHub',
-  });
-
   const [githubIssueAuth, setGithubIssueAuth] = useState({
     owner_name: '',
     access_token: '',
@@ -146,17 +139,24 @@ const ProductSetup = ({
 
   useEffect(() => {
     if (productFormData && !_.isEmpty(productFormData.featureCreds)) {
-      if (_.toLower(productFormData.featureCreds.auth_detail.tool_name) === 'trello') {
-        setTrelloAuth(productFormData.featureCreds.auth_detail);
-      }
-      if (_.toLower(productFormData.featureCreds.auth_detail.tool_name) === 'github') {
-        setGithubFeatureAuth(productFormData.featureCreds.auth_detail);
+      switch (_.toLower(productFormData.featureCreds.auth_detail.tool_name)) {
+        case 'trello':
+          setTrelloAuth(productFormData.featureCreds.auth_detail);
+          break;
+
+        default:
+          break;
       }
     }
 
     if (productFormData && !_.isEmpty(productFormData.issueCreds)) {
-      if (_.toLower(productFormData.issueCreds.auth_detail.tool_name) === 'github') {
-        setGithubIssueAuth(productFormData.issueCreds.auth_detail);
+      switch (_.toLower(productFormData.issueCreds.auth_detail.tool_name)) {
+        case 'github':
+          setGithubIssueAuth(productFormData.issueCreds.auth_detail);
+          break;
+
+        default:
+          break;
       }
     }
   }, [productFormData]);
@@ -174,24 +174,26 @@ const ProductSetup = ({
 
     if (editData && !_.isEmpty(editCreds)) {
       _.forEach(editCreds, (cred) => {
-        switch (true) {
-          case cred && cred.auth_detail && cred.auth_detail.tool_type === 'Feature':
-            if (cred.auth_detail.tool_name === 'Trello') {
+        if (cred && cred.auth_detail && _.toLower(cred.auth_detail.tool_type) === 'feature') {
+          switch (_.toLower(cred.auth_detail.tool_name)) {
+            case 'trello':
               setTrelloAuth(cred.auth_detail);
-            }
-            if (cred.auth_detail.tool_name === 'GitHub') {
-              setGithubFeatureAuth(cred.auth_detail);
-            }
-            break;
+              break;
 
-          case cred && cred.auth_detail && cred.auth_detail.tool_type === 'Issue':
-            if (cred.auth_detail.tool_name === 'GitHub') {
+            default:
+              break;
+          }
+        }
+
+        if (cred && cred.auth_detail && _.toLower(cred.auth_detail.tool_type) === 'issue') {
+          switch (_.toLower(cred.auth_detail.tool_name)) {
+            case 'github':
               setGithubIssueAuth(cred.auth_detail);
-            }
-            break;
+              break;
 
-          default:
-            break;
+            default:
+              break;
+          }
         }
       });
     }
@@ -243,7 +245,6 @@ const ProductSetup = ({
     if (!name.value
       || !description.value
       || (featuresTool.value === 'trello' && (!trelloAuth.access_token || !trelloAuth.trello_key))
-      || (featuresTool.value === 'github' && (!githubFeatureAuth.access_token || !githubFeatureAuth.owner_name))
       || (issuesTool.value === 'github' && (!githubIssueAuth.access_token || !githubIssueAuth.owner_name))
       || (featuresTool.value !== 'start fresh' && !featureCredValid)
       || (issuesTool.value !== 'start fresh' && !issueCredValid)
@@ -288,10 +289,6 @@ const ProductSetup = ({
     switch (featuresTool.value) {
       case 'trello':
         authDetail = trelloAuth;
-        break;
-
-      case 'github':
-        authDetail = githubFeatureAuth;
         break;
 
       default:
@@ -343,19 +340,6 @@ const ProductSetup = ({
         break;
       }
 
-      case 'github': {
-        const ft = _.find(thirdPartyTools, (tool) => (
-          _.toLower(tool.name) === 'github'
-          && _.toLower(tool.tool_type) === 'feature'
-        ));
-        tools = [...tools, ft?.thirdpartytool_uuid];
-        newFeatCred = {
-          third_party_tool: ft?.thirdpartytool_uuid,
-          auth_detail: githubFeatureAuth,
-        };
-        break;
-      }
-
       default:
         break;
     }
@@ -390,8 +374,8 @@ const ProductSetup = ({
 
     const formData = {
       ...productFormData,
-      product_name: name.value,
-      product_description: description.value,
+      name: name.value,
+      description: description.value,
       start_date: startDate,
       end_date: endDate,
       create_date: dateTime,
@@ -504,18 +488,6 @@ const ProductSetup = ({
                     />
 
                     <FormControlLabel
-                      value="github"
-                      control={<StyledRadio />}
-                      disabled={viewPage}
-                      label={(
-                        <>
-                          <FontAwesomeIcon icon={faGithub} className="fa-4x" />
-                          <Typography align="center">Github</Typography>
-                        </>
-                      )}
-                    />
-
-                    <FormControlLabel
                       value="start fresh"
                       className={classes.radioLeft}
                       disabled={viewPage}
@@ -565,52 +537,6 @@ const ProductSetup = ({
                         onChange={(e) => setTrelloAuth({
                           ...trelloAuth,
                           trello_key: e.target.value,
-                        })}
-                      />
-                    </Grid>
-                  </>
-                )}
-
-                {featuresTool.value === 'github' && (
-                  <>
-                    <Grid item>
-                      <a href="https://docs.google.com/document/d/1T04LhZjsNsS7ufRZmp-ZGBD60iEOAcMR0aAtAAkdxgs/edit" target="_blank" rel="noopener noreferrer">
-                        How to get the access token?
-                      </a>
-                    </Grid>
-
-                    <Grid item>
-                      <TextField
-                        required
-                        fullWidth
-                        variant="outlined"
-                        margin="normal"
-                        id="github-feature-access-token"
-                        label="Github Access Token"
-                        name="github-feature-access-token"
-                        autoComplete="github-feature-access-token"
-                        value={githubFeatureAuth.access_token}
-                        onChange={(e) => setGithubFeatureAuth({
-                          ...githubFeatureAuth,
-                          access_token: e.target.value,
-                        })}
-                      />
-                    </Grid>
-
-                    <Grid item>
-                      <TextField
-                        required
-                        fullWidth
-                        variant="outlined"
-                        margin="normal"
-                        id="github-feature-owner-name"
-                        label="Github Owner Name"
-                        name="github-feature-owner-name"
-                        autoComplete="github-feature-owner-name"
-                        value={githubFeatureAuth.owner_name}
-                        onChange={(e) => setGithubFeatureAuth({
-                          ...githubFeatureAuth,
-                          owner_name: e.target.value,
                         })}
                       />
                     </Grid>

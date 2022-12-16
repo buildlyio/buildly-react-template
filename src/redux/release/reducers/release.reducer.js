@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import {
-  SAVE_FEATURE_FORM_DATA,
   CLEAR_PRODUCT_RELATED_RELEASE_DATA,
   ALL_RELEASES,
   ALL_RELEASES_SUCCESS,
@@ -92,12 +91,12 @@ import {
   DELETE_STATUS,
   DELETE_STATUS_SUCCESS,
   DELETE_STATUS_FAILURE,
-  IMPORT_TICKETS,
-  IMPORT_TICKETS_SUCCESS,
-  IMPORT_TICKETS_FAILURE,
   CLEAR_PRODUCT_DATA,
   CLEAR_PRODUCT_DATA_FAILURE,
   CLEAR_PRODUCT_DATA_SUCCESS,
+  THIRD_PARTY_TOOL_SYNC,
+  THIRD_PARTY_TOOL_SYNC_SUCCESS,
+  THIRD_PARTY_TOOL_SYNC_FAILURE,
 } from '../actions/release.actions';
 
 const initialState = {
@@ -110,22 +109,12 @@ const initialState = {
   feedbacks: [],
   issues: [],
   statuses: [],
-  tickets: [],
-  importLoaded: false,
-  featureFormData: null,
+  dataSynced: false,
 };
 
 // Reducer
 export default (state = initialState, action) => {
   switch (action.type) {
-    case SAVE_FEATURE_FORM_DATA:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        featureFormData: action.formData,
-      };
-
     case CLEAR_PRODUCT_RELATED_RELEASE_DATA:
       return {
         ...state,
@@ -135,7 +124,7 @@ export default (state = initialState, action) => {
         features: [],
         issues: [],
         statuses: [],
-        importLoaded: false,
+        dataSynced: false,
         featureFormData: null,
       };
 
@@ -157,7 +146,6 @@ export default (state = initialState, action) => {
     case CREATE_FEEDBACK:
     case CREATE_ISSUE:
     case CREATE_STATUS:
-    case IMPORT_TICKETS:
     case UPDATE_RELEASE:
     case UPDATE_COMMENT:
     case UPDATE_FEATURE:
@@ -171,11 +159,13 @@ export default (state = initialState, action) => {
     case DELETE_ISSUE:
     case DELETE_STATUS:
     case CLEAR_PRODUCT_DATA:
+    case THIRD_PARTY_TOOL_SYNC:
       return {
         ...state,
         loading: true,
         loaded: false,
         error: null,
+        dataSynced: false,
       };
 
     case ALL_RELEASES_FAILURE:
@@ -196,7 +186,6 @@ export default (state = initialState, action) => {
     case CREATE_FEEDBACK_FAILURE:
     case CREATE_ISSUE_FAILURE:
     case CREATE_STATUS_FAILURE:
-    case IMPORT_TICKETS_FAILURE:
     case UPDATE_RELEASE_FAILURE:
     case UPDATE_COMMENT_FAILURE:
     case UPDATE_FEATURE_FAILURE:
@@ -210,6 +199,7 @@ export default (state = initialState, action) => {
     case DELETE_ISSUE_FAILURE:
     case DELETE_STATUS_FAILURE:
     case CLEAR_PRODUCT_DATA_FAILURE:
+    case THIRD_PARTY_TOOL_SYNC_FAILURE:
       return {
         ...state,
         loading: false,
@@ -264,7 +254,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        comments: action.data,
+        comments: _.orderBy(action.data, 'create_date', 'asc'),
       };
 
     case GET_COMMENT_SUCCESS:
@@ -394,7 +384,6 @@ export default (state = initialState, action) => {
       };
 
     case GET_ISSUE_SUCCESS:
-    case CREATE_ISSUE_SUCCESS:
     case UPDATE_ISSUE_SUCCESS: {
       const found = _.find(
         state.issues,
@@ -415,6 +404,14 @@ export default (state = initialState, action) => {
         issues,
       };
     }
+
+    case CREATE_ISSUE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        issues: [...state.issues, ...action.data],
+      };
 
     case DELETE_ISSUE_SUCCESS: {
       const iss = _.filter(state.issues, (issue) => (issue.issue_uuid !== action.issue_uuid));
@@ -476,28 +473,6 @@ export default (state = initialState, action) => {
       };
     }
 
-    case IMPORT_TICKETS_SUCCESS: {
-      const found = _.find(
-        state.tickets,
-        { product_uuid: action.data.product_uuid },
-      );
-      const tickets = found
-        ? _.map(state.tickets, (ticket) => (
-          ticket.product_uuid === action.data.product_uuid
-            ? action.data
-            : ticket
-        ))
-        : [...state.tickets, action.data];
-
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        importLoaded: true,
-        tickets,
-      };
-    }
-
     case CLEAR_PRODUCT_DATA_SUCCESS:
       return {
         ...state,
@@ -505,6 +480,14 @@ export default (state = initialState, action) => {
         loaded: true,
         features: [],
         issues: [],
+      };
+
+    case THIRD_PARTY_TOOL_SYNC_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        dataSynced: true,
       };
 
     default:

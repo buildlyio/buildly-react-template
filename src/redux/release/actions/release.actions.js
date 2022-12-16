@@ -1,5 +1,4 @@
 // Release Action types
-export const SAVE_FEATURE_FORM_DATA = 'RELEASE/SAVE_FEATURE_FORM_DATA';
 export const CLEAR_PRODUCT_RELATED_RELEASE_DATA = 'RELEASE/CLEAR_PRODUCT_RELATED_RELEASE_DATA';
 
 export const ALL_RELEASES = 'RELEASE/ALL_RELEASES';
@@ -122,22 +121,13 @@ export const DELETE_STATUS = 'RELEASE/DELETE_STATUS';
 export const DELETE_STATUS_SUCCESS = 'RELEASE/DELETE_STATUS_SUCCESS';
 export const DELETE_STATUS_FAILURE = 'RELEASE/DELETE_STATUS_FAILURE';
 
-export const IMPORT_TICKETS = 'RELEASE/IMPORT_TICKETS';
-export const IMPORT_TICKETS_SUCCESS = 'RELEASE/IMPORT_TICKETS_SUCCESS';
-export const IMPORT_TICKETS_FAILURE = 'RELEASE/IMPORT_TICKETS_FAILURE';
-
 export const CLEAR_PRODUCT_DATA = 'RELEASE/CLEAR_PRODUCT_DATA';
 export const CLEAR_PRODUCT_DATA_SUCCESS = 'RELEASE/CLEAR_PRODUCT_DATA_SUCCESS';
 export const CLEAR_PRODUCT_DATA_FAILURE = 'RELEASE/CLEAR_PRODUCT_DATA_FAILURE';
 
-/**
- * Save Feature Form Data
- * @param {Object} formData
- */
-export const saveFeatureFormData = (formData) => ({
-  type: SAVE_FEATURE_FORM_DATA,
-  formData,
-});
+export const THIRD_PARTY_TOOL_SYNC = 'RELEASE/THIRD_PARTY_TOOL_SYNC';
+export const THIRD_PARTY_TOOL_SYNC_SUCCESS = 'RELEASE/THIRD_PARTY_TOOL_SYNC_SUCCESS';
+export const THIRD_PARTY_TOOL_SYNC_FAILURE = 'RELEASE/THIRD_PARTY_TOOL_SYNC_FAILURE';
 
 /**
  * Get all Releases
@@ -402,15 +392,6 @@ export const deleteStatus = (status_uuid) => ({
 });
 
 /**
- * Import Tickets
- * @param {Object} data
- */
-export const importTickets = (data) => ({
-  type: IMPORT_TICKETS,
-  data,
-});
-
-/**
  * Clear Product Features and Issues
  * @param {Object} data
  */
@@ -424,4 +405,13 @@ export const clearProductData = (data) => ({
  */
 export const clearProductRelatedReleaseData = () => ({
   type: CLEAR_PRODUCT_RELATED_RELEASE_DATA,
+});
+
+/**
+ * Sync data from third party tool(s)
+ * @param {Array} creds
+ */
+export const thirdPartyToolSync = (creds) => ({
+  type: THIRD_PARTY_TOOL_SYNC,
+  creds,
 });

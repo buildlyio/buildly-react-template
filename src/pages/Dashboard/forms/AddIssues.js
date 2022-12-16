@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import makeStyles from '@mui/styles/makeStyles';
 import {
   useTheme,
@@ -15,13 +16,14 @@ import {
 } from '@mui/material';
 import DatePickerComponent from '@components/DatePicker/DatePicker';
 import FormModal from '@components/Modal/FormModal';
+import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
 import {
   createIssue,
   updateIssue,
 } from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
-import { ISSUETYPES, TAGS } from './formConstants';
+import { ISSUETYPES } from '../DashboardConstants';
 import { routes } from '@routes/routesConstants';
 import SmartInput from '@components/SmartInput/SmartInput';
 
@@ -53,14 +55,13 @@ const AddIssues = ({
   features,
   credentials,
   products,
+  loading,
 }) => {
   const classes = useStyles();
   const editPage = location.state && location.state.type === 'edit';
-  const convertPage = location.state && location.state.type === 'convert';
   const editData = (editPage && location.state.data) || {};
-  const convertData = (convertPage && location.state.data) || {};
-  const buttonText = convertPage ? 'Convert to Issue' : editPage ? 'Save' : 'Add Issue';
-  const formTitle = convertPage ? 'Convert to Issue' : editPage ? 'Edit Issue' : 'Add Issue';
+  const buttonText = editPage ? 'Save' : 'Add Issue';
+  const formTitle = editPage ? 'Edit Issue' : 'Add Issue';
 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
@@ -68,107 +69,67 @@ const AddIssues = ({
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const product_uuid = location.state && location.state.product_uuid;
-  const prdt = _.find(products, { product_uuid });
-  const [product, setProduct] = useState('');
-  const [repo, setRepo] = useState((editData && editData.repository) || '');
-  const repoData = _.map(prdt?.issue_tool_detail?.repository_list);
-  const [repoList, setRepoList] = useState((editData && repoData) || []);
-  const [statusID, setStatusID] = useState((editData && editData.status) || '');
-  const currentStatData = _.find(statuses, { status_uuid: editData.status });
-  const [status, setStatus] = useState('');
-  const [colID, setColID] = useState((editData && currentStatData?.status_tracking_id) || '');
 
   // form fields definition
-  const [description, setDescription] = useState(
-    (convertData && convertData.description) || (editData && editData.description) || ''
-  );
-
-  const name = useInput(
-    (convertData && convertData.name) || (editData && editData.name) || '',
-    { required: true },
-  );
-
-  const feature = useInput(
-    (convertData && convertData.feature_uuid) || (editData && editData.feature_uuid) || '',
-    { required: true },
-  );
-
+  const [description, setDescription] = useState((editData && editData.description) || '');
+  const name = useInput((editData && editData.name) || '', { required: true });
+  const feature = useInput((editData && editData.feature_uuid) || '', { required: true });
   const type = useInput((editData && editData.issue_type) || '', { required: true });
-
-  const [startDate, handleStartDateChange] = useState(
-    (editData && editData.start_date) || new Date(),
-  );
-
-  const [endDate, handleEndDateChange] = useState(
-    (editData && editData.end_date) || new Date(),
-  );
-
-  const [tags, setTags] = useState(
-    (convertData && convertData.tags)
-    || (editData && editData.tags)
-    || [],
-  );
-
-  const estimate = useInput(
-    (convertData && convertData.total_estimate)
-    || (editData && editData.estimate)
-    || '',
-  );
-
+  const [startDate, handleStartDateChange] = useState(moment(
+    (editData && editData.start_date) || moment(),
+  ));
+  const [endDate, handleEndDateChange] = useState(moment(
+    (editData && editData.end_date) || moment(),
+  ));
+  const [tagList, setTagList] = useState([]);
+  const [tags, setTags] = useState((editData && editData.tags) || []);
+  const estimate = useInput((editData && editData.estimate) || '');
   const complexity = useInput((editData && editData.complexity) || 0);
-
   const [assignees, setAssignees] = useState(
-    (editData && editData.issue_detail && editData.issue_detail.assignees
-      && !_.isEmpty(editData.issue_detail.assignees)
-      && _.map(editData.issue_detail.assignees, 'username'))
+    (editData && editData.issue_detail && _.map(editData.issue_detail.assignees, 'username'))
     || [],
   );
-
   const [assigneeData, setAssigneeData] = useState([]);
+  const [repoList, setRepoList] = useState([]);
+  const repo = useInput((editData && editData.repository) || '', { required: true });
+  const statusID = useInput((editData && editData.status) || '');
+  const [status, setStatus] = useState('');
+  const [colID, setColID] = useState((editData && status?.status_tracking_id) || '');
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
-    const temp_product = _.find(products, { product_uuid });
-    if (temp_product && temp_product.issue_tool_detail
-      && !_.isEmpty(temp_product.issue_tool_detail)
-    ) {
-      setRepoList(_.map(temp_product.issue_tool_detail.repository_list));
-    }
+    const prod = _.find(products, { product_uuid });
+    const assigneeOptions = _.map(prod?.issue_tool_detail?.user_list, 'username') || [];
 
-    setProduct(temp_product);
+    setRepoList(prod?.issue_tool_detail?.repository_list || []);
+    setAssigneeData(assigneeOptions);
   }, [products]);
 
   useEffect(() => {
-    const assigneeOptions = (product && product.feature_tool_detail
-      && product.feature_tool_detail.user_list
-      && !_.isEmpty(product.feature_tool_detail.user_list)
-      && _.map(product.feature_tool_detail.user_list, 'username')) || [];
-
     if (editData) {
-      setStatus(_.find(statuses, { status_uuid: editData.status }));
+      const sts = _.find(statuses, { status_uuid: editData.status });
+      setStatus(sts);
+      setColID(sts?.status_tracking_id);
     }
-
-    setAssigneeData(assigneeOptions);
-  }, [product]);
+  }, [statuses]);
 
   const closeFormModal = () => {
     const dataHasChanged = (
       name.hasChanged()
-      || (
-        (editPage && (description !== editData.description))
-        || (!editPage && description)
-      )
       || feature.hasChanged()
       || type.hasChanged()
-      || (!_.isEmpty(editData) && !_.isEqual(startDate, editData.start_date))
-      || (!_.isEmpty(editData) && !_.isEqual(endDate, editData.end_date))
-      || (_.isEmpty(currentStatData) && !_.isEmpty(status))
-      || (!_.isEmpty(convertData) && !_.isEqual(tags, convertData.tags))
-      || (!_.isEmpty(editData) && !_.isEqual(tags, editData.tags))
-      || (_.isEmpty(editData) && !_.isEmpty(tags))
       || estimate.hasChanged()
       || complexity.hasChanged()
-      || (product && product.issue_tool_detail && !_.isEmpty(repoList) && repo !== '')
+      || statusID.hasChanged()
+      || repo.hasChanged()
+      || !!((editData && editData.start_date)
+        && !_.isEqual(moment(editData.start_date).format('L'), moment(startDate).format('L')))
+      || !!((editData && editData.end_date)
+        && !_.isEqual(moment(editData.end_date).format('L'), moment(endDate).format('L')))
+      || (!editPage && (!_.isEmpty(tags) || !_.isEmpty(assignees)))
+      || !!(editPage && editData && !_.isEqual((editData.tags || []), tags))
+      || !!(editPage && editData && editData.issue_detail
+        && !_.isEqual(_.map(editData.issue_detail.assigneees, 'username'), assignees))
     );
 
     if (dataHasChanged) {
@@ -186,51 +147,15 @@ const AddIssues = ({
   const discardFormData = () => {
     setConfirmModal(false);
     setFormModal(false);
-    if (location && location.state) {
-      history.push(_.includes(location.state.from, 'kanban')
-        ? routes.DASHBOARD_KANBAN
-        : routes.DASHBOARD_TABULAR);
-    }
-  };
-
-  // Handle tags list
-  const onTagsChange = (value) => {
-    switch (true) {
-      case (value.length > tags.length):
-        setTags([...tags, _.last(value)]);
-        break;
-
-      case (value.length < tags.length):
-        setTags(value);
-        break;
-
-      default:
-        break;
-    }
-  };
-
-  const onAssigneeChange = (value) => {
-    switch (true) {
-      case (value.length > assignees.length):
-        setAssignees([...assignees, _.last(value)]);
-        break;
-
-      case (value.length < assignees.length):
-        setAssignees(value);
-        break;
-
-      default:
-        break;
-    }
+    history.push(_.includes(location?.state?.from, 'kanban')
+      ? routes.DASHBOARD_KANBAN
+      : routes.DASHBOARD_TABULAR);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const dateTime = new Date();
-    const issueCred = _.find(
-      credentials,
-      { product_uuid, auth_detail: { tool_type: 'Issue' } },
-    );
+    const issueCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'issue'));
 
     const formData = {
       ...editData,
@@ -241,18 +166,17 @@ const AddIssues = ({
       issue_type: type.value,
       start_date: startDate,
       end_date: endDate,
-      status: statusID,
+      status: statusID.value,
       tags,
       product_uuid,
       estimate: estimate.value,
       complexity: Number(complexity.value),
-      repository: repo,
+      repository: repo.value,
       column_id: colID,
       issue_detail: {
-        assignees: product && product.issue_tool_detail && product.issue_tool_detail.user_list
-          && _.filter(product.issue_tool_detail.user_list, (user) => (
-            user && _.includes(assignees, user.username)
-          )),
+        assignees: _.filter(assigneeData, (user) => (
+          !!user && _.includes(assignees, user.username)
+        )),
       },
       ...issueCred?.auth_detail,
     };
@@ -294,8 +218,8 @@ const AddIssues = ({
       || !description
       || !feature.value
       || !type.value
-      || !statusID
-      || (product && product.issue_tool_detail && !_.isEmpty(repoList) && !repo)
+      || !statusID.value
+      || (!_.isEmpty(repoList) && !repo.value)
     ) {
       return true;
     }
@@ -322,11 +246,8 @@ const AddIssues = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
-          <form
-            className={classes.form}
-            noValidate
-            onSubmit={handleSubmit}
-          >
+          {loading && <Loader open={loading} />}
+          <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
@@ -351,6 +272,7 @@ const AddIssues = ({
                   {...name.bind}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <SmartInput
                   onEditorValueChange={setDescription}
@@ -359,6 +281,7 @@ const AddIssues = ({
                   required
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -382,7 +305,6 @@ const AddIssues = ({
                   onBlur={(e) => handleBlur(e, 'required', feature)}
                   {...feature.bind}
                 >
-                  <MenuItem value="">------------------------</MenuItem>
                   {_.map(features, (feat) => (
                     <MenuItem
                       key={`feature-${feat.feature_uuid}-${feat.name}`}
@@ -393,6 +315,7 @@ const AddIssues = ({
                   ))}
                 </TextField>
               </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -416,7 +339,6 @@ const AddIssues = ({
                   onBlur={(e) => handleBlur(e, 'required', type)}
                   {...type.bind}
                 >
-                  <MenuItem value="">------------------------</MenuItem>
                   {_.map(ISSUETYPES, (tp, idx) => (
                     <MenuItem
                       key={`issue-type-${idx}`}
@@ -427,6 +349,7 @@ const AddIssues = ({
                   ))}
                 </TextField>
               </Grid>
+
               {!_.isEmpty(repoList) && (
                 <Grid item xs={12}>
                   <TextField
@@ -439,14 +362,17 @@ const AddIssues = ({
                     label="Repository"
                     name="repo"
                     autoComplete="repo"
-                    value={repo}
-                    onChange={(e) => setRepo(e.target.value)}
+                    value={repo.value}
+                    onChange={(e) => {
+                      const repository = e.target.value;
+                      repo.setNewValue(repository.name);
+                      setTagList(repository.labels || []);
+                    }}
                   >
-                    <MenuItem value="">------------------------</MenuItem>
                     {_.map(repoList, (rep) => (
                       <MenuItem
                         key={`rep-${rep.id}-${rep.name}`}
-                        value={rep.name}
+                        value={rep}
                       >
                         {rep.name}
                       </MenuItem>
@@ -454,6 +380,7 @@ const AddIssues = ({
                   </TextField>
                 </Grid>
               )}
+
               <Grid item xs={12} md={6}>
                 <DatePickerComponent
                   label="Start Date"
@@ -462,6 +389,7 @@ const AddIssues = ({
                   handleDateChange={handleStartDateChange}
                 />
               </Grid>
+
               <Grid item xs={12} md={6}>
                 <DatePickerComponent
                   label="End Date"
@@ -470,6 +398,7 @@ const AddIssues = ({
                   handleDateChange={handleEndDateChange}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -485,11 +414,10 @@ const AddIssues = ({
                   onChange={(e) => {
                     const stat = e.target.value;
                     setStatus(stat);
-                    setStatusID(stat.status_uuid);
-                    setColID(stat.status_tracking_id);
+                    statusID.setNewValue(stat?.status_uuid);
+                    setColID(stat?.status_tracking_id);
                   }}
                 >
-                  <MenuItem value="">------------------------</MenuItem>
                   {_.map(statuses, (sts) => (
                     <MenuItem
                       key={`status-${sts.status_uuid}-${sts.name}`}
@@ -500,35 +428,39 @@ const AddIssues = ({
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12}>
-                <Autocomplete
-                  fullWidth
-                  multiple
-                  filterSelectedOptions
-                  id="tags"
-                  options={TAGS}
-                  value={tags}
-                  onChange={(e, newValue) => onTagsChange(newValue)}
-                  renderTags={(value, getTagProps) => (
-                    _.map(value, (option, index) => (
-                      <Chip
-                        variant="default"
-                        label={option}
-                        {...getTagProps({ index })}
+
+              {!_.isEmpty(repo) && (
+                <Grid item xs={12}>
+                  <Autocomplete
+                    fullWidth
+                    multiple
+                    filterSelectedOptions
+                    id="tags"
+                    options={tagList}
+                    value={tags}
+                    onChange={(e, newValue) => setTags(newValue)}
+                    renderTags={(value, getTagProps) => (
+                      _.map(value, (option, index) => (
+                        <Chip
+                          variant="default"
+                          label={option}
+                          {...getTagProps({ index })}
+                        />
+                      ))
+                    )}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        label="Tags"
+                        margin="normal"
                       />
-                    ))
-                  )}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      variant="outlined"
-                      label="Tags"
-                      margin="normal"
-                    />
-                  )}
-                />
-              </Grid>
-              {!_.isEmpty(product?.issue_tool_detail?.user_list) && (
+                    )}
+                  />
+                </Grid>
+              )}
+
+              {!_.isEmpty(assigneeData) && (
               <Grid item xs={12}>
                 <Autocomplete
                   fullWidth
@@ -537,7 +469,7 @@ const AddIssues = ({
                   id="assignees"
                   options={assigneeData}
                   value={assignees}
-                  onChange={(e, newValue) => onAssigneeChange(newValue)}
+                  onChange={(e, newValue) => setAssignees(newValue)}
                   renderTags={(value, getAssigneeProps) => (
                     _.map(value, (option, index) => (
                       <Chip
@@ -558,6 +490,7 @@ const AddIssues = ({
                 />
               </Grid>
               )}
+
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -581,6 +514,7 @@ const AddIssues = ({
                   {...estimate.bind}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -606,11 +540,8 @@ const AddIssues = ({
                 />
               </Grid>
             </Grid>
-            <Grid
-              container
-              spacing={isDesktop ? 3 : 0}
-              justifyContent="center"
-            >
+
+            <Grid container spacing={isDesktop ? 3 : 0} justifyContent="center">
               <Grid item xs={12} sm={4}>
                 <Button
                   type="submit"
@@ -623,6 +554,7 @@ const AddIssues = ({
                   {buttonText}
                 </Button>
               </Grid>
+
               <Grid item xs={12} sm={4}>
                 <Button
                   type="button"
@@ -645,6 +577,7 @@ const AddIssues = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
   statuses: state.releaseReducer.statuses,
   features: state.releaseReducer.features,
   products: state.productReducer.products,

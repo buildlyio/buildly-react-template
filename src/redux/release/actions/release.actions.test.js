@@ -369,19 +369,6 @@ describe('Delete Status action', () => {
   });
 });
 
-// Import Tickets
-describe('Import Tickets action', () => {
-  it('should create an action to import tickets', () => {
-    const data = { name: 'Import Tickets' };
-    const expectedAction = {
-      type: actions.IMPORT_TICKETS,
-      data,
-    };
-
-    expect(actions.importTickets(data)).toEqual(expectedAction);
-  });
-});
-
 // Test Delete Features and Issues
 describe('Clear product action', () => {
   it('should create an action to clear product', () => {
@@ -393,5 +380,18 @@ describe('Clear product action', () => {
 
     expect(actions.clearProductData(data))
       .toEqual(expectedAction);
+  });
+});
+
+// Third party tool sync
+describe('Sync data from third party tool(s) action', () => {
+  it('should create an action to sync data from third party tool(s)', () => {
+    const creds = [{ tool_type: 'Feature' }, { tool_type: 'Issue' }];
+    const expectedAction = {
+      type: actions.THIRD_PARTY_TOOL_SYNC,
+      creds,
+    };
+
+    expect(actions.thirdPartyToolSync(creds)).toEqual(expectedAction);
   });
 });

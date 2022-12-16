@@ -19,20 +19,22 @@ import {
   createFeature,
   deleteFeature,
   deleteIssue,
+  getAllComments,
   getAllFeatures,
   getAllIssues,
   getAllStatuses,
+  thirdPartyToolSync,
 } from '@redux/release/actions/release.actions';
 import Kanban from './components/Kanban';
 import Tabular from './components/Tabular';
 import Report from './components/Report/Report';
+import AddFeatures from './forms/AddFeatures';
 import AddIssues from './forms/AddIssues';
-import AddComments from './forms/AddComments';
-import IgnoreColumns from './forms/IgnoreColumns';
+import Comments from './forms/Comments';
 import IssueSuggestions from './forms/IssueSuggestions';
-import NewFeatureForm from './forms/NewFeatureForm';
 import StatusBoard from './forms/StatusBoard';
 import ToolBoard from './forms/ToolBoard';
+import ShowRelatedIssues from './forms/ShowRelatedIssues';
 
 const useStyles = makeStyles((theme) => ({
   firstTimeMessage: {
@@ -79,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
   configBoardButton: {
     marginTop: theme.spacing(1),
   },
-  syncBoard: {
+  syncDataFromTools: {
     height: theme.spacing(6),
     marginRight: theme.spacing(2),
   },
@@ -95,6 +97,7 @@ const Dashboard = ({
   features,
   credentials,
   statuses,
+  dataSynced,
 }) => {
   const classes = useStyles();
   const [route, setRoute] = useState(routes.DASHBOARD);
@@ -126,18 +129,6 @@ const Dashboard = ({
     type: 'feat',
   });
 
-  const addFeatPath = `${routes.DASHBOARD}/add-feature/`;
-  const editFeatPath = `${routes.DASHBOARD}/edit-feature/`;
-  const viewFeatPath = `${routes.DASHBOARD}/view-feature/`;
-  const addIssuePath = `${routes.DASHBOARD}/add-issue/`;
-  const editIssuePath = `${routes.DASHBOARD}/edit-issue/`;
-  const addCommentPath = `${routes.DASHBOARD}/add-comment`;
-  const issueSuggestionsPath = `${routes.DASHBOARD}/issue-suggestions`;
-  const featureToIssuePath = `${routes.DASHBOARD}/convert-issue`;
-  const ignoreColumnsPath = `${routes.DASHBOARD}/ignore-columns`;
-  const statusBoardPath = `${routes.DASHBOARD}/tool-status`;
-  const toolBoardPath = `${routes.DASHBOARD}/tool-board`;
-
   // this will be triggered whenever the content switcher is clicked to change the view
   useEffect(() => {
     history.push(`/app/dashboard/${view || location.state}`);
@@ -161,11 +152,12 @@ const Dashboard = ({
       dispatch(getAllFeatures(selectedProduct));
       dispatch(getAllIssues(selectedProduct));
       dispatch(getAllCredentials(selectedProduct));
+      dispatch(getAllComments(selectedProduct));
     } else {
       dispatch(clearProductRelatedProductData());
       dispatch(clearProductRelatedReleaseData());
     }
-  }, [selectedProduct]);
+  }, [selectedProduct, dataSynced]);
 
   useEffect(() => {
     if (selectedProduct && !!selectedProduct && (_.size(features) >= 5)
@@ -174,7 +166,7 @@ const Dashboard = ({
     } else {
       setUpgrade(false);
     }
-  }, [selectedProduct, features]);
+  }, [selectedProduct, features, dataSynced]);
 
   useEffect(() => {
     if (selectedProduct && !!selectedProduct) {
@@ -191,9 +183,9 @@ const Dashboard = ({
   const addItem = (type) => {
     let path;
     if (type === 'feat') {
-      path = addFeatPath;
+      path = routes.ADD_FEATURE;
     } else if (type === 'issue') {
-      path = addIssuePath;
+      path = routes.ADD_ISSUE;
     }
 
     history.push(path, {
@@ -205,9 +197,9 @@ const Dashboard = ({
   const editItem = (item, type, viewOnly = false) => {
     let path;
     if (type === 'feat') {
-      path = `${viewOnly ? viewFeatPath : editFeatPath}:${item.feature_uuid}`;
+      path = `${viewOnly ? routes.VIEW_FEATURE : routes.EDIT_FEATURE}:${item.feature_uuid}`;
     } else if (type === 'issue') {
-      path = `${editIssuePath}:${item.issue_uuid}`;
+      path = `${routes.EDIT_ISSUE}:${item.issue_uuid}`;
     }
 
     history.push(path, {
@@ -255,15 +247,19 @@ const Dashboard = ({
     setOpenDeleteModal(false);
   };
 
-  const commentItem = () => {
-    history.push(addCommentPath, {
-      from: location.pathname,
-      product_uuid: selectedProduct,
-    });
+  const commentItem = (item) => {
+    let data = { from: location.pathname };
+    if (item.issue_uuid) {
+      data = { ...data, issue: item };
+    } else {
+      data = { ...data, feature: item };
+    }
+
+    history.push(routes.COMMENTS, { ...data });
   };
 
   const issueSuggestions = (item) => {
-    history.push(issueSuggestionsPath, {
+    history.push(routes.ISSUE_SUGGESTIONS, {
       type: 'show',
       from: location.pathname,
       product_uuid: selectedProduct,
@@ -274,7 +270,7 @@ const Dashboard = ({
   const convertIssue = (item, type) => {
     let path;
     if (type === 'convert') {
-      path = featureToIssuePath;
+      path = routes.FEATURE_TO_ISSUE;
     }
 
     history.push(path, {
@@ -324,20 +320,59 @@ const Dashboard = ({
   };
 
   const configureBoard = () => {
-    history.push(toolBoardPath, {
+    history.push(routes.TOOL_BOARD, {
       from: location.pathname,
       product_uuid: selectedProduct,
     });
   };
 
   const configureStatus = () => {
-    history.push(statusBoardPath, {
+    history.push(routes.STATUS_BOARD, {
       from: location.pathname,
       product_uuid: selectedProduct,
     });
   };
 
-  const syncBoard = () => {
+  const syncDataFromTools = (e) => {
+    e.preventDefault();
+    const featCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'feature'));
+    const issueCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'issue'));
+
+    if (!_.isEmpty(product) && (!_.isEmpty(featCred) || !_.isEmpty(issueCred))) {
+      let creds = [];
+
+      if (!_.isEmpty(product.feature_tool_detail) && !_.isEmpty(featCred)) {
+        creds = [
+          ...creds,
+          {
+            ...featCred?.auth_detail,
+            product_uuid: selectedProduct,
+            board_id: product.feature_tool_detail.board_detail?.board_id,
+          },
+        ];
+      }
+
+      if (!_.isEmpty(product.issue_tool_detail) && !_.isEmpty(issueCred)) {
+        creds = [
+          ...creds,
+          {
+            ...issueCred?.auth_detail,
+            product_uuid: selectedProduct,
+            board_id: product.issue_tool_detail.board_detail?.board_id,
+            repo_list: _.map(product.issue_tool_detail.repository_list, 'name'),
+          },
+        ];
+      }
+
+      dispatch(thirdPartyToolSync(creds));
+    }
+  };
+
+  const showRelatedIssues = (feature_uuid) => {
+    history.push(routes.SHOW_RELATED_ISSUES, {
+      from: location.pathname,
+      feature_uuid,
+    });
   };
 
   return (
@@ -404,82 +439,81 @@ const Dashboard = ({
                     </MenuItem>
                   ))}
               </TextField>
-              {/* { */}
-              {/*   ( */}
-              {/*     loaded && product && !_.isEmpty(product.third_party_tool) */}
-              {/*     && !_.isEmpty(statuses) && ( */}
-              {/*       <Button */}
-              {/*         variant="contained" */}
-              {/*         color="primary" */}
-              {/*         onClick={syncBoard} */}
-              {/*         className={classes.syncBoard} */}
-              {/*       > */}
-              {/*         <SyncIcon /> */}
-              {/*         {' '} */}
-              {/*         Sync Board */}
-              {/*       </Button> */}
-              {/*     ) */}
-              {/*   ) */}
-              {/* } */}
+
+              {
+                (loaded && product && !_.isEmpty(product.third_party_tool)
+                  && !_.isEmpty(statuses) && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={syncDataFromTools}
+                      className={classes.syncDataFromTools}
+                    >
+                      <SyncIcon />
+                      {' '}
+                      Sync Data from Tool(s)
+                    </Button>
+                ))
+              }
             </Grid>
           </Grid>
 
           {loaded && _.isEmpty(statuses) && !!selectedProduct
             ? (product && !_.isEmpty(product.third_party_tool)
-                ? (
-                  <>
-                    <Grid item xs={4} className={classes.configBoard}>
-                      <Typography component="div" variant="h4" align="center">
-                        Configure Project Board
-                      </Typography>
+              ? (
+                <>
+                  <Grid item xs={4} className={classes.configBoard}>
+                    <Typography component="div" variant="h4" align="center">
+                      Configure Project Board
+                    </Typography>
 
-                      <Typography variant="subtitle1" align="center">
-                        Add a configuration to get started
-                      </Typography>
+                    <Typography variant="subtitle1" align="center">
+                      Add a configuration to get started
+                    </Typography>
 
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={configureBoard}
-                        className={classes.configBoardButton}
-                      >
-                        Add Configuration
-                      </Button>
-                    </Grid>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={configureBoard}
+                      className={classes.configBoardButton}
+                    >
+                      Add Configuration
+                    </Button>
+                  </Grid>
 
-                    <Route path={toolBoardPath} component={ToolBoard}/>
-                  </>
-                ) : (
-                  <>
-                    <Grid item xs={4} className={classes.configBoard}>
-                      <Typography component="div" variant="h4" align="center">
-                        Configure Project Board
-                      </Typography>
+                  <Route path={routes.TOOL_BOARD} component={ToolBoard} />
+                </>
+              ) : (
+                <>
+                  <Grid item xs={4} className={classes.configBoard}>
+                    <Typography component="div" variant="h4" align="center">
+                      Configure Project Board
+                    </Typography>
 
-                      <Typography variant="subtitle1" align="center">
-                        Add a configuration to get started
-                      </Typography>
+                    <Typography variant="subtitle1" align="center">
+                      Add a configuration to get started
+                    </Typography>
 
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={configureStatus}
-                        className={classes.configBoardButton}
-                      >
-                        Add Configuration
-                      </Button>
-                    </Grid>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={configureStatus}
+                      className={classes.configBoardButton}
+                    >
+                      Add Configuration
+                    </Button>
+                  </Grid>
 
-                    <Route path={statusBoardPath} component={StatusBoard}/>
-                  </>
-                )
+                  <Route path={routes.STATUS_BOARD} component={StatusBoard} />
+                </>
+              )
             ) : (
               <>
                 <Grid mb={3} container justifyContent="center">
                   <Grid item className={classes.viewTabs}>
                     <Tabs value={view} onChange={(event, vw) => setView(vw)}>
                       {subNav.map((itemProps, index) => (
-                        <Tab {...itemProps} key={`tab${index}:${itemProps.value}`}/>
+                        <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
                       ))}
                     </Tabs>
                   </Grid>
@@ -510,6 +544,7 @@ const Dashboard = ({
                       }
                       createSuggestedFeature={createSuggestedFeature}
                       removeSuggestedFeature={removeSuggestedFeature}
+                      showRelatedIssues={showRelatedIssues}
                     />
                   )}
                 />
@@ -530,6 +565,7 @@ const Dashboard = ({
                       }
                       createSuggestedFeature={createSuggestedFeature}
                       removeSuggestedFeature={removeSuggestedFeature}
+                      showRelatedIssues={showRelatedIssues}
                     />
                   )}
                 />
@@ -541,18 +577,18 @@ const Dashboard = ({
                     />
                   )}
                 />
-                <Route path={addFeatPath} component={NewFeatureForm}/>
-                <Route path={editFeatPath} component={NewFeatureForm}/>
-                <Route path={viewFeatPath} component={NewFeatureForm}/>
-                <Route path={addIssuePath} component={AddIssues}/>
-                <Route path={editIssuePath} component={AddIssues}/>
-                <Route path={addCommentPath} component={AddComments}/>
-                <Route path={featureToIssuePath} component={AddIssues}/>
-                <Route path={ignoreColumnsPath} component={IgnoreColumns}/>
+                <Route path={routes.ADD_FEATURE} component={AddFeatures} />
+                <Route path={routes.EDIT_FEATURE} component={AddFeatures} />
+                <Route path={routes.VIEW_FEATURE} component={AddFeatures} />
+                <Route path={routes.ADD_ISSUE} component={AddIssues} />
+                <Route path={routes.EDIT_ISSUE} component={AddIssues} />
+                <Route path={routes.FEATURE_TO_ISSUE} component={AddIssues} />
+                <Route path={routes.COMMENTS} component={Comments} />
+                <Route path={routes.SHOW_RELATED_ISSUES} component={ShowRelatedIssues} />
                 <Route
-                  path={issueSuggestionsPath}
+                  path={routes.ISSUE_SUGGESTIONS}
                   render={(renderProps) => (
-                    <IssueSuggestions {...renderProps} convertIssue={convertIssue}/>
+                    <IssueSuggestions {...renderProps} convertIssue={convertIssue} />
                   )}
                 />
               </>
@@ -573,6 +609,7 @@ const mapStateToProps = (state, ownProps) => ({
   features: state.releaseReducer.features,
   credentials: state.productReducer.credentials,
   statuses: state.releaseReducer.statuses,
+  dataSynced: state.releaseReducer.dataSynced,
 });
 
 export default connect(mapStateToProps)(Dashboard);

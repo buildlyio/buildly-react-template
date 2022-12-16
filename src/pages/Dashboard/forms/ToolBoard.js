@@ -14,8 +14,9 @@ import {
   Chip,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
+import Loader from '@components/Loader/Loader';
 import { createBoard } from '@redux/product/actions/product.actions';
-import { STATUSTYPES } from './formConstants';
+import { STATUSTYPES } from '../DashboardConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -43,6 +44,7 @@ const ToolBoard = ({
   location,
   boards,
   loaded,
+  loading,
 }) => {
   const classes = useStyles();
   const redirectTo = location.state && location.state.from;
@@ -73,12 +75,8 @@ const ToolBoard = ({
   }, [boards]);
 
   const closeFormModal = () => {
-    const dataHasChanged = (
-      (!_.isEmpty(featOrgList)
-      && !featOrgID)
-    || (!_.isEmpty(issueOrgList)
-    && !issueOrgID)
-    );
+    const dataHasChanged = featOrgID || featBoardID || issueOrgID
+      || !_.isEmpty(status) || !_.isEmpty(featStatusList) || defaultStatus;
 
     if (dataHasChanged) {
       setConfirmModal(true);
@@ -180,6 +178,7 @@ const ToolBoard = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {loading && <Loader open={loading} />}
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
               {loaded && !_.isEmpty(featOrgList) && (
@@ -191,7 +190,7 @@ const ToolBoard = ({
                     fullWidth
                     select
                     id="featOrgID"
-                    label="Feature Organisation"
+                    label="Feature Organization"
                     name="featOrgID"
                     autoComplete="featOrgID"
                     value={featOrgID}
@@ -311,7 +310,7 @@ const ToolBoard = ({
                     fullWidth
                     select
                     id="issueOrgID"
-                    label="Issue Organisation"
+                    label="Issue Organization"
                     name="issueOrgID"
                     autoComplete="issueOrgID"
                     value={issueOrgID}
@@ -367,7 +366,8 @@ const ToolBoard = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  loaded: state.productReducer.loaded,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
+  loaded: state.productReducer.loaded && state.releaseReducer.loaded,
   boards: state.productReducer.boards,
 });
 

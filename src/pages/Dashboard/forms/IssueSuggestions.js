@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
+import Loader from '@components/Loader/Loader';
 import {
   createIssue,
 } from '@redux/release/actions/release.actions';
@@ -46,6 +47,7 @@ const IssueSuggestions = ({
   credentials,
   products,
   convertIssue,
+  loading,
 }) => {
   const classes = useStyles();
   const redirectTo = location.state && location.state.from;
@@ -71,15 +73,12 @@ const IssueSuggestions = ({
   useEffect(() => {
     const prod = _.find(products, { product_uuid });
     setProduct(prod);
-  }, []);
+  }, [products]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const dateTime = new Date();
-    const issueCred = _.find(
-      credentials,
-      { product_uuid, auth_detail: { tool_type: 'Issue' } },
-    );
+    const issueCred = _.find(credentials, (cred) => (_.toLower(cred.auth_detail.tool_type) === 'issue'));
 
     const formData = {
       ...editData,
@@ -112,17 +111,13 @@ const IssueSuggestions = ({
 
   const closeFormModal = () => {
     setFormModal(false);
-    if (location && location.state) {
-      history.push(redirectTo);
-    }
+    history.push(redirectTo);
   };
 
   const discardFormData = () => {
     setConfirmModal(false);
     setFormModal(false);
-    if (location && location.state) {
-      history.push(redirectTo);
-    }
+    history.push(redirectTo);
   };
 
   return (
@@ -139,6 +134,7 @@ const IssueSuggestions = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {loading && <Loader open={loading} />}
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container rowGap={2}>
               {showData && _.isEmpty(showData.issue_suggestion) && (
@@ -199,6 +195,7 @@ const IssueSuggestions = ({
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  loading: state.productReducer.loading || state.releaseReducer.loading,
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,
 });
