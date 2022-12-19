@@ -5,6 +5,7 @@ import App from './App';
 import './i18n';
 import configureStore from './redux/store';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css';
 
 if (window.env.PRODUCTION) {
   const script = document.createElement('script');

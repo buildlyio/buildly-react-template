@@ -32,7 +32,7 @@ const requiredValidator = (input) => {
 
 const emailValidator = (input) => {
   // eslint-disable-next-line no-useless-escape
-  const pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  const pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
   const { value, required } = input;
   if (!value && required) {
     return {

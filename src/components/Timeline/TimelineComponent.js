@@ -14,7 +14,7 @@ const TimelineComponent = () => {
         action={
           (
             <div className="feature-list m-2" style={{ backgroundColor: '#E0E0E0' }}>
-              <ul>
+              <ul className="p-2">
                 <li>Feature 1</li>
                 <li>Feature 2</li>
                 <li>Feature 3</li>
@@ -26,14 +26,14 @@ const TimelineComponent = () => {
         }
       />
       <TimelineEvent
-        color="#87a2c7"
+        color="#F9943B"
         icon={FaRegCalendarCheck}
         title="MVP"
         subtitle="15/03/2023"
         action={
           (
-            <div className="feature-list m-2" style={{ backgroundColor: '#86a2c7' }}>
-              <ul>
+            <div className="feature-list m-2" style={{ backgroundColor: '#F9943B' }}>
+              <ul className="p-2">
                 <li>Feature 1</li>
                 <li>Feature 2</li>
                 <li>Feature 3</li>
@@ -45,14 +45,14 @@ const TimelineComponent = () => {
         }
       />
       <TimelineEvent
-        color="#9c2919"
+        color="#0C5594"
         icon={FaBug}
         title="Version 1.0.0"
         subtitle="15/06/2020"
         action={
           (
-            <div className="feature-list m-2" style={{ backgroundColor: '#9c2819' }}>
-              <ul>
+            <div className="feature-list m-2" style={{ backgroundColor: '#0C5594', color: '#fff' }}>
+              <ul className="p-2">
                 <li>Feature 1</li>
                 <li>Feature 2</li>
                 <li>Feature 3</li>
@@ -64,14 +64,14 @@ const TimelineComponent = () => {
         }
       />
       <TimelineEvent
-        color="#87a2c7"
+        color="#152944"
         icon={FaRegCalendarCheck}
         title="Version 1.2.0"
         subtitle="15/09/2023"
         action={
           (
-            <div className="feature-list m-2" style={{ backgroundColor: '#86a2c7' }}>
-              <ul>
+            <div className="feature-list m-2" style={{ backgroundColor: '#152944', color: '#fff' }}>
+              <ul className="p-2">
                 <li>Feature 1</li>
                 <li>Feature 2</li>
                 <li>Feature 3</li>
