@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Image from 'react-bootstrap/Image';
 import Card from 'react-bootstrap/Card';
@@ -15,8 +15,20 @@ import RangeSlider from '@components/RangeSlider/RangeSlider';
 import microservice from '@assets/architecture-suggestions/GCP - MicroServices.png';
 import monolith from '@assets/architecture-suggestions/GCP - Monolithic.png';
 import FlowChartComponent from '@components/FlowChart/FlowChart';
+import { httpService } from '@modules/http/http.service';
 
 const Report = ({ product }) => {
+  const [projectData, setProjectData] = useState([]);
+  const [releaseData, setReleaseData] = useState([]);
+
+  useEffect(() => {
+    httpService.makeRequest(
+      'GET',
+      'http://localhost:8080/product/53d42614-c4b8-4a5e-8875-a36a0bd7f1eb/report/',
+      null,
+      false,
+    ).then((response) => setProjectData(response.data));
+  }, []);
   const data = [];
   return (
     <>
@@ -59,7 +71,7 @@ const Report = ({ product }) => {
               <Card className="mb-2 row">
                 <Card.Body>
                   <div className="m-2">
-                    <RangeSlider />
+                    <RangeSlider rangeValues={projectData?.budget_range} />
                   </div>
                 </Card.Body>
               </Card>
@@ -94,7 +106,7 @@ const Report = ({ product }) => {
                       <td>$4000</td>
                     </tr>
                     <tr>
-                      <td>Project Manager</td>
+                      <td>Product Owner</td>
                       <td>$6000</td>
                     </tr>
                     <tr>
