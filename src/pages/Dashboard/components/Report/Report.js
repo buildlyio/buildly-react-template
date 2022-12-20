@@ -129,7 +129,10 @@ const Report = ({ product }) => {
                       }
                       <tr>
                         <th className="text-right totals-header">Payroll Total</th>
-                        <th className="totals-header">$32000</th>
+                        <th className="totals-header">
+                          {`$${(productData && productData.budget
+                          && productData.budget?.total_budget) || '0.00'}`}
+                        </th>
                       </tr>
                     </tbody>
                     <thead>
@@ -152,7 +155,10 @@ const Report = ({ product }) => {
                       }
                       <tr>
                         <th className="text-right totals-header">Additional Total</th>
-                        <th className="totals-header">$5000</th>
+                        <th className="totals-header">
+                          {`$${(productData && productData.budget
+                            && productData.budget?.total_costs) || '0.00'}`}
+                        </th>
                       </tr>
                     </tbody>
                   </Table>
@@ -162,8 +168,12 @@ const Report = ({ product }) => {
             <div className="col-md-5 row">
               <div className="col-md-6">
                 <ListGroup as="ul">
-                  <ListGroup.Item as="li"
-                                  style={{ backgroundColor: '#FAFAFA' }}><b>POC</b></ListGroup.Item>
+                  <ListGroup.Item
+                    as="li"
+                    style={{ backgroundColor: '#FAFAFA' }}
+                  >
+                    <b>POC</b>
+                  </ListGroup.Item>
                   <ListGroup.Item as="li"><strong>8 Weeks</strong></ListGroup.Item>
                   <ListGroup.Item as="li" disabled>2 FTE Engineering</ListGroup.Item>
                   <ListGroup.Item as="li" disabled>1 Product Team</ListGroup.Item>
