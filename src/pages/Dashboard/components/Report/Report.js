@@ -107,80 +107,53 @@ const Report = ({ product }) => {
                 <Card.Body>
                   <Table striped bordered hover>
                     <thead>
-                    <tr>
-                      <th>PLATFORM DEV EXPENSES</th>
-                      <th>BUDGET</th>
-                    </tr>
-                    <tr>
-                      <th className="light-header">Payroll</th>
-                      <th className="light-header">Monthly ($)</th>
-                    </tr>
+                      <tr>
+                        <th>PLATFORM DEV EXPENSES</th>
+                        <th>BUDGET</th>
+                      </tr>
+                      <tr>
+                        <th className="light-header">Payroll</th>
+                        <th className="light-header">Monthly ($)</th>
+                      </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                      <td>Lead Engineer (FullStack)</td>
-                      <td>$6000</td>
-                    </tr>
-                    <tr>
-                      <td>FronEnd Engineer</td>
-                      <td>$4000</td>
-                    </tr>
-                    <tr>
-                      <td>BackEnd Engineer</td>
-                      <td>$5000</td>
-                    </tr>
-                    <tr>
-                      <td>QA/Test Engineer</td>
-                      <td>$4000</td>
-                    </tr>
-                    <tr>
-                      <td>Product Owner</td>
-                      <td>$6000</td>
-                    </tr>
-                    <tr>
-                      <td>Technical Project Manager (Insights)</td>
-                      <td>$0</td>
-                    </tr>
-                    <tr>
-                      <td>Software Architect/CTO</td>
-                      <td>$7000</td>
-                    </tr>
-                    <tr>
-                      <th className="text-right totals-header">Payroll Total</th>
-                      <th className="totals-header">$32000</th>
-                    </tr>
+                      {
+                        productData && productData.budget && productData.budget?.team_data.map(
+                          (item, index) => (
+                            <tr key={index}>
+                              <td>{item.role}</td>
+                              <td>{`$${item.budget}`}</td>
+                            </tr>
+                          ),
+                        )
+                      }
+                      <tr>
+                        <th className="text-right totals-header">Payroll Total</th>
+                        <th className="totals-header">$32000</th>
+                      </tr>
                     </tbody>
                     <thead>
-                    <tr>
-                      <th className="light-header">Additional</th>
-                      <th className="light-header">Monthly ($)</th>
-                    </tr>
+                      <tr>
+                        <th className="light-header">Additional</th>
+                        <th className="light-header">Monthly ($)</th>
+                      </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                      <td>Dev Hosting</td>
-                      <td>$500</td>
-                    </tr>
-                    <tr>
-                      <td>Team Management</td>
-                      <td>$500</td>
-                    </tr>
-                    <tr>
-                      <td>Admin Hosting</td>
-                      <td>$0</td>
-                    </tr>
-                    <tr>
-                      <td>Licences & Fee</td>
-                      <td>$0</td>
-                    </tr>
-                    <tr>
-                      <td>Support(2 FTEs)</td>
-                      <td>$4000</td>
-                    </tr>
-                    <tr>
-                      <th className="text-right totals-header">Additional Total</th>
-                      <th className="totals-header">$5000</th>
-                    </tr>
+                      {
+                        productData && productData.budget
+                        && productData.budget.other_costs?.map(
+                          (item, index) => (
+                            <tr key={index}>
+                              <td>{item.item}</td>
+                              <td>{`$${item.cost}`}</td>
+                            </tr>
+                          ),
+                        )
+                      }
+                      <tr>
+                        <th className="text-right totals-header">Additional Total</th>
+                        <th className="totals-header">$5000</th>
+                      </tr>
                     </tbody>
                   </Table>
                 </Card.Body>
