@@ -46,7 +46,7 @@ const theme = createTheme(({
       styleOverrides: {
         body: {
           padding: 0,
-          backgroundColor: '#DCDCE0',
+          backgroundColor: '#F5F5F5',
           color: '#000',
           '&#fc_frame, #fc_frame.fc-widget-normal': {
             bottom: '100px !important',
