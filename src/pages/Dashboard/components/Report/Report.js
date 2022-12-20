@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import Image from 'react-bootstrap/Image';
 import Card from 'react-bootstrap/Card';
-import Badge from 'react-bootstrap/Badge';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Table from 'react-bootstrap/Table';
 
@@ -18,6 +17,7 @@ import microservice from '@assets/architecture-suggestions/GCP - MicroServices.p
 import monolith from '@assets/architecture-suggestions/GCP - Monolithic.png';
 import multiCloud from '@assets/architecture-suggestions/GCP - MicroServices w_ DataPipeline.png';
 import microApp from '@assets/architecture-suggestions/Digital Ocean - MicroApp w_ FrontEnd.png';
+import { addColorsAndIcons, getReleaseBudgetData } from '@pages/Dashboard/components/Report/utils';
 
 const Report = ({ product }) => {
   // states
@@ -38,22 +38,42 @@ const Report = ({ product }) => {
         // set report data
 
         console.log('Report Data: ', reportData);
+        if (reportData) {
+          // set the image to display
+          let img = null;
+          if (reportData.architecture_type.toLowerCase() === 'monolith') {
+            img = monolith;
+          } else if (reportData.architecture_type.toLowerCase() === 'microservice') {
+            img = microservice;
+          } else if (reportData.architecture_type.toLowerCase() === 'micro-app') {
+            img = microApp;
+          } else if (reportData.architecture_type.toLowerCase() === 'multicloud microservice') {
+            img = multiCloud;
+          }
+          // set states
+          setProductData(reportData);
+          setArchitectureImg(img);
 
-        // set the image to display
-        let img = null;
-        if (reportData.architecture_type.toLowerCase() === 'monolith') {
-          img = monolith;
-        } else if (reportData.architecture_type.toLowerCase() === 'microservice') {
-          img = microservice;
-        } else if (reportData.architecture_type.toLowerCase() === 'micro-app') {
-          img = microApp;
-        } else if (reportData.architecture_type.toLowerCase() === 'multicloud microservice') {
-          img = multiCloud;
+          // get release data
+          httpService.makeRequest(
+            'GET',
+            'http://localhost:8081/product_report/4b7434ad-ff6d-42ec-ac40-efd71ef09d98/',
+            null,
+            false,
+          ).then((releaseRes) => {
+            const releaseReport = releaseRes.data;
+            releaseReport.release_budget = getReleaseBudgetData(
+              reportData.budget?.team_data,
+              releaseReport.release_data,
+            );
+
+            releaseReport.release_data = addColorsAndIcons(
+              JSON.parse(JSON.stringify(releaseReport.release_data)),
+            );
+            // set release data
+            setReleaseData(releaseReport);
+          });
         }
-
-        // set states
-        setProductData(reportData);
-        setArchitectureImg(img);
       });
   }, []);
   return (
@@ -87,7 +107,7 @@ const Report = ({ product }) => {
         <Card.Body>
           <Card.Title>Timeline</Card.Title>
           <div className="m-2">
-            <TimelineComponent/>
+            <TimelineComponent reportData={releaseData.release_data} />
           </div>
         </Card.Body>
       </Card>
@@ -198,10 +218,15 @@ const Report = ({ product }) => {
               </div>
               <div className="col-md-6">
                 <ListGroup as="ul">
-                  <ListGroup.Item as="li" style={{
-                    backgroundColor: '#0C5594',
-                    color: '#fff'
-                  }}>
+                  <ListGroup.Item
+                    as="li"
+                    style={
+                      {
+                        backgroundColor: '#0C5594',
+                        color: '#fff',
+                      }
+                    }
+                  >
                     <b>Version 1.0.0</b>
                   </ListGroup.Item>
                   <ListGroup.Item as="li"><strong>12 Weeks</strong></ListGroup.Item>
