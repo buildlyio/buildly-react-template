@@ -16,7 +16,7 @@ import {
   Group as GroupIcon,
   Logout, Person,
 } from '@mui/icons-material';
-import logo from '@assets/insights-logo.png';
+import logo from '@assets/insights-orange-white.png';
 import { UserContext } from '@context/User.context';
 import { logout, loadOrgNames } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
@@ -32,7 +32,7 @@ const pages = [{ label: 'Dashboard', value: routes.DASHBOARD, pathName: [routes.
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.secondary.main,
     zIndex: theme.zIndex.drawer + 1,
     width: '100%',
   },
@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.contrast.text,
     '&:disabled': {
       backgroundColor: theme.palette.contrast.text,
-      color: theme.palette.primary.main,
+      color: theme.palette.secondary.main,
       borderRadius: 32,
       paddingLeft: 16,
       paddingRight: 16,
@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.contrast.text,
   },
   userIcon: {
-    fill: theme.palette.primary.main,
+    fill: theme.palette.secondary.main,
   },
   menuIcon: {
     color: theme.palette.contrast.text,
