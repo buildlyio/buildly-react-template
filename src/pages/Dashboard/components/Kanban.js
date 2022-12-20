@@ -51,20 +51,28 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(4),
   },
   swimlane: {
-    backgroundColor: theme.palette.secondary.main,
+    border: `1.5px solid ${theme.palette.secondary.main}`,
+    borderRadius: '6px',
+    backgroundColor: theme.palette.contrast.text,
     display: 'flex',
     flexDirection: 'column',
     minWidth: '22%',
     height: '100%',
   },
+  titleContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottom: `1px solid ${theme.palette.secondary.main}`,
+  },
   title: {
-    color: theme.palette.contrast.text,
-    borderBottom: `1px solid ${theme.palette.contrast.text}`,
+    color: theme.palette.secondary.main,
+    fontWeight: 500,
     padding: '16px',
-    fontWeight: 600,
   },
   addIcon: {
-    color: theme.palette.contrast.text,
+    color: theme.palette.secondary.main,
   },
   card: {
     margin: theme.spacing(1),
@@ -300,14 +308,15 @@ const Kanban = ({
             {_.map(Object.entries(columns), ([columnId, column], index) => (
               <Grid key={columnId} item xs={2.6} sm={2.75} lg={2.85} className={classes.swimlane}>
                 <div>
-                  <Typography className={classes.title} component="div" variant="body1">
-                    {column.name}
-                  </Typography>
+                  <div className={classes.titleContainer}>
+                    <Typography className={classes.title} component="div" variant="body1">
+                      {column.name}
+                    </Typography>
 
-                  <IconButton onClick={(e) => handleAddClick(e, columnId)} size="large">
-                    <AddRoundedIcon fontSize="small" className={classes.addIcon} />
-                  </IconButton>
-
+                    <IconButton onClick={(e) => handleAddClick(e, columnId)} size="medium" variant="outlined">
+                      <AddRoundedIcon fontSize="small" className={classes.addIcon} />
+                    </IconButton>
+                  </div>
                   <Menu
                     id="add-menu"
                     MenuListProps={{
@@ -364,7 +373,7 @@ const Kanban = ({
                                   backgroundColor: item?.feature_detail?.is_imported
                                   || item?.issue_detail?.is_imported
                                     ? '#e0e0e0'
-                                    : '#FFFFFF',
+                                    : '#F2F2F2',
                                 }}
                               >
                                 <CardHeader
