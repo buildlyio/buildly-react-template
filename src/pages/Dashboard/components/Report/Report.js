@@ -10,35 +10,63 @@ import './Report.css';
 
 import TimelineComponent from '@components/Timeline/TimelineComponent';
 import RangeSlider from '@components/RangeSlider/RangeSlider';
+import FlowChartComponent from '@components/FlowChart/FlowChart';
+import { httpService } from '@modules/http/http.service';
 
 // architecture designs
 import microservice from '@assets/architecture-suggestions/GCP - MicroServices.png';
 import monolith from '@assets/architecture-suggestions/GCP - Monolithic.png';
-import FlowChartComponent from '@components/FlowChart/FlowChart';
-import { httpService } from '@modules/http/http.service';
+import multiCloud from '@assets/architecture-suggestions/GCP - MicroServices w_ DataPipeline.png';
+import microApp from '@assets/architecture-suggestions/Digital Ocean - MicroApp w_ FrontEnd.png';
 
 const Report = ({ product }) => {
-  const [projectData, setProjectData] = useState([]);
+  // states
+  const [productData, setProductData] = useState([]);
   const [releaseData, setReleaseData] = useState([]);
-
+  const [architectureImg, setArchitectureImg] = useState(null);
+  // effects
   useEffect(() => {
+    // Load product data
     httpService.makeRequest(
       'GET',
       'http://localhost:8080/product/53d42614-c4b8-4a5e-8875-a36a0bd7f1eb/report/',
       null,
       false,
-    ).then((response) => setProjectData(response.data));
+    )
+      .then((response) => {
+        const reportData = response.data;
+        // set report data
+
+        console.log('Report Data: ', reportData);
+
+        // set the image to display
+        let img = null;
+        if (reportData.architecture_type.toLowerCase() === 'monolith') {
+          img = monolith;
+        } else if (reportData.architecture_type.toLowerCase() === 'microservice') {
+          img = microservice;
+        } else if (reportData.architecture_type.toLowerCase() === 'micro-app') {
+          img = microApp;
+        } else if (reportData.architecture_type.toLowerCase() === 'multicloud microservice') {
+          img = multiCloud;
+        }
+
+        // set states
+        setProductData(reportData);
+        setArchitectureImg(img);
+      });
   }, []);
-  const data = [];
   return (
     <>
       <div className="row">
         <div className="col-md-7">
           <Card className="w-100">
             <Card.Body>
-              <Card.Title>Architecture suggestion: MicroServices</Card.Title>
+              <Card.Title>
+                {`Architecture suggestion: (${productData?.architecture_type?.toUpperCase()})`}
+              </Card.Title>
               <div className="image-responsive m-2" style={{ height: 350 }}>
-                <Image src={microservice} fluid style={{ height: '100%' }} />
+                <Image src={architectureImg} fluid style={{ height: '100%' }} />
               </div>
             </Card.Body>
           </Card>
@@ -48,7 +76,7 @@ const Report = ({ product }) => {
             <Card.Body>
               <Card.Title>Buidly components</Card.Title>
               <div className="w-100 m-2">
-                <FlowChartComponent />
+                <FlowChartComponent/>
               </div>
             </Card.Body>
           </Card>
@@ -59,7 +87,7 @@ const Report = ({ product }) => {
         <Card.Body>
           <Card.Title>Timeline</Card.Title>
           <div className="m-2">
-            <TimelineComponent />
+            <TimelineComponent/>
           </div>
         </Card.Body>
       </Card>
@@ -71,7 +99,7 @@ const Report = ({ product }) => {
               <Card className="mb-2 row">
                 <Card.Body>
                   <div className="m-2">
-                    <RangeSlider rangeValues={projectData?.budget_range} />
+                    <RangeSlider rangeValues={productData?.budget_range}/>
                   </div>
                 </Card.Body>
               </Card>
@@ -161,7 +189,8 @@ const Report = ({ product }) => {
             <div className="col-md-5 row">
               <div className="col-md-6">
                 <ListGroup as="ul">
-                  <ListGroup.Item as="li" style={{ backgroundColor: '#FAFAFA' }}><b>POC</b></ListGroup.Item>
+                  <ListGroup.Item as="li"
+                                  style={{ backgroundColor: '#FAFAFA' }}><b>POC</b></ListGroup.Item>
                   <ListGroup.Item as="li"><strong>8 Weeks</strong></ListGroup.Item>
                   <ListGroup.Item as="li" disabled>2 FTE Engineering</ListGroup.Item>
                   <ListGroup.Item as="li" disabled>1 Product Team</ListGroup.Item>
@@ -173,7 +202,8 @@ const Report = ({ product }) => {
               </div>
               <div className="col-md-6">
                 <ListGroup as="ul">
-                  <ListGroup.Item as="li" style={{ backgroundColor: '#F9943B' }}><b>MVP</b></ListGroup.Item>
+                  <ListGroup.Item as="li"
+                                  style={{ backgroundColor: '#F9943B' }}><b>MVP</b></ListGroup.Item>
                   <ListGroup.Item as="li"><strong>21 Weeks</strong></ListGroup.Item>
                   <ListGroup.Item as="li" disabled>2 FTE Engineering</ListGroup.Item>
                   <ListGroup.Item as="li" disabled>1 Product Team</ListGroup.Item>
@@ -182,10 +212,13 @@ const Report = ({ product }) => {
                   <ListGroup.Item as="li" disabled>1 Lead Engineer</ListGroup.Item>
                   <ListGroup.Item as="li"><b>Cost: $35000</b></ListGroup.Item>
                 </ListGroup>
-                </div>
+              </div>
               <div className="col-md-6">
                 <ListGroup as="ul">
-                  <ListGroup.Item as="li" style={{ backgroundColor: '#0C5594', color: '#fff' }}>
+                  <ListGroup.Item as="li" style={{
+                    backgroundColor: '#0C5594',
+                    color: '#fff'
+                  }}>
                     <b>Version 1.0.0</b>
                   </ListGroup.Item>
                   <ListGroup.Item as="li"><strong>12 Weeks</strong></ListGroup.Item>
@@ -199,7 +232,10 @@ const Report = ({ product }) => {
               </div>
               <div className="col-md-6">
                 <ListGroup as="ul">
-                  <ListGroup.Item as="li" style={{ backgroundColor: '#152944', color: '#fff' }}>
+                  <ListGroup.Item as="li" style={{
+                    backgroundColor: '#152944',
+                    color: '#fff'
+                  }}>
                     <b>Version 1.2.0</b>
                   </ListGroup.Item>
                   <ListGroup.Item as="li"><strong>16 Weeks</strong></ListGroup.Item>
