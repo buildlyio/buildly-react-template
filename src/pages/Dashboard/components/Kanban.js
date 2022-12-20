@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(4),
   },
   swimlane: {
-    border: `1.5px solid ${theme.palette.secondary.main}`,
+    border: `1px solid ${theme.palette.secondary.main}`,
     borderRadius: '6px',
     backgroundColor: theme.palette.contrast.text,
     display: 'flex',

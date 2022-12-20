@@ -16,7 +16,7 @@ import {
   Group as GroupIcon,
   Logout, Person,
 } from '@mui/icons-material';
-import logo from '@assets/insights-blue-white.png';
+import logo from '@assets/insights-orange-white.png';
 import { UserContext } from '@context/User.context';
 import { logout, loadOrgNames } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
