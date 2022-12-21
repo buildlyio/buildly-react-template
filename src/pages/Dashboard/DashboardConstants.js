@@ -183,3 +183,26 @@ export const STATUSTYPES = [
   'Doing',
   'Done',
 ];
+
+export const PRIORITIES = [
+  'Low',
+  'Medium',
+  'High',
+  'Urgent',
+];
+
+export const ISSUETYPES = [
+  'FE',
+  'BE',
+  'UI/UX',
+  'Documentation',
+];
+
+export const STATUSTYPES = [
+  'Backlog',
+  'Sprint Ready',
+  'To Do',
+  'In Progress',
+  'Doing',
+  'Done',
+];

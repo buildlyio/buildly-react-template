@@ -98,9 +98,7 @@ const Tabular = ({
           <ListItemIcon>
             <CommentIcon fontSize="small" />
           </ListItemIcon>
-          Comments (
-          {_.size(_.filter(comments, { issue: issueRows[menuIndex]?.issue_uuid }))}
-          )
+          Comments
         </MenuItem>
 
         {!!issueRows[menuIndex] && !!issueRows[menuIndex].feature_uuid && (
