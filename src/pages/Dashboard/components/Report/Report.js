@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import Image from 'react-bootstrap/Image';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
