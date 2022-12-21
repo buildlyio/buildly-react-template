@@ -574,6 +574,7 @@ const Dashboard = ({
                   render={(prps) => (
                     <Report
                       {...prps}
+                      selectedProduct={selectedProduct}
                     />
                   )}
                 />

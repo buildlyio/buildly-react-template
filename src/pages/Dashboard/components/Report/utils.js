@@ -11,8 +11,7 @@ import {
 export const getReleaseBudgetData = (teamData, releases) => {
   if (releases) {
     return releases.map((release) => {
-      const budgetDict = {};
-      budgetDict.title = release.name;
+      const budgetDict = { ...release };
       const data = [];
       if (teamData) {
         if (release.name.toLowerCase()
@@ -56,6 +55,7 @@ export const getReleaseBudgetData = (teamData, releases) => {
       }
 
       budgetDict.team = data;
+      budgetDict.totalCost = data.map((x) => x.cost).reduce((prev, next) => prev + next);
       return budgetDict;
     });
   }

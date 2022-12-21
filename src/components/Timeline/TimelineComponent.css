@@ -1,7 +1,10 @@
 .feature-list {
-    height: 120px;
+    height: 180px;
     overflow-y: scroll;
     padding: 2px;
     border-radius:4px;
-    background-color: #E0E0E0;
+}
+
+ul {
+    list-style-type: square !important;
 }

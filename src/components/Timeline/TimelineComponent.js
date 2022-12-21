@@ -9,7 +9,7 @@ const TimelineComponent = ({ reportData }) => {
     setReleaseData(reportData);
   }, [reportData]);
   return (
-    <Timeline minEvents={4} height={360} placeholder>
+    <Timeline minEvents={6} height={360} placeholder>
       {(
         releaseData && releaseData.map((releaseItem, idx) => (
           <TimelineEvent
@@ -20,7 +20,7 @@ const TimelineComponent = ({ reportData }) => {
             subtitle={releaseItem.release_date}
             action={
               (
-                <div className="feature-list m-2" style={{ backgroundColor: releaseItem.bgColor }}>
+                <div className="feature-list m-2 p-2" style={{ backgroundColor: releaseItem.bgColor }}>
                   <ul className="p-2">
                     {(
                       releaseItem.features && releaseItem.features.map(
