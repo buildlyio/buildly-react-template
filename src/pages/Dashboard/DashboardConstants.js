@@ -184,13 +184,6 @@ export const STATUSTYPES = [
   'Done',
 ];
 
-export const PRIORITIES = [
-  'Low',
-  'Medium',
-  'High',
-  'Urgent',
-];
-
 export const ISSUETYPES = [
   'FE',
   'BE',
