@@ -130,3 +130,13 @@ export const BUDGET_CATEGORY = [
   { value: 9, label: '300-500k' },
   { value: 10, label: '500k+' },
 ];
+
+export const ROLES = [
+  { role: 'Lead engineer', count: 0 },
+  { role: 'FrontEnd Engineer', count: 0 },
+  { role: 'BackEnd Engineer', count: 0 },
+  { role: 'QA/Test Engineer', count: 0 },
+  { role: 'Product Owner', count: 0 },
+  { role: 'Technical Project Manager', count: 0 },
+  { role: 'Software Architect/CTO', count: 0 },
+];
