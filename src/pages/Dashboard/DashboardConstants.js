@@ -3,7 +3,6 @@ import moment from 'moment-timezone';
 import parse from 'html-react-parser';
 import { Link } from '@mui/material';
 import { OpenInNew as OpenInNewIcon } from '@mui/icons-material';
-import _ from 'lodash';
 
 export const featureColumns = [
   {
@@ -54,7 +53,8 @@ export const featureColumns = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (value
-        ? moment(value).format('MMM DD YYYY, h:mm a')
+        ? moment(value)
+          .format('MMM DD YYYY, h:mm a')
         : '-'),
     },
   },
@@ -140,7 +140,8 @@ export const issueColumns = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (value
-        ? moment(value).format('MMM DD YYYY, h:mm a')
+        ? moment(value)
+          .format('MMM DD YYYY, h:mm a')
         : '-'),
     },
   },
@@ -168,13 +169,6 @@ export const PRIORITIES = [
   'Urgent',
 ];
 
-export const ISSUETYPES = [
-  'FE',
-  'BE',
-  'UI/UX',
-  'Documentation',
-];
-
 export const STATUSTYPES = [
   'Backlog',
   'Sprint Ready',
@@ -189,13 +183,4 @@ export const ISSUETYPES = [
   'BE',
   'UI/UX',
   'Documentation',
-];
-
-export const STATUSTYPES = [
-  'Backlog',
-  'Sprint Ready',
-  'To Do',
-  'In Progress',
-  'Doing',
-  'Done',
 ];
