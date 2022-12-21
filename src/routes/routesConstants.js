@@ -9,6 +9,7 @@ export const routes = {
   DASHBOARD: '/app/dashboard',
   DASHBOARD_TABULAR: '/app/dashboard/tabular',
   DASHBOARD_KANBAN: '/app/dashboard/kanban',
+  DASHBOARD_REPORT: '/app/dashboard/report',
   USER_MANAGEMENT: '/app/profile/users',
   CURRENT_USERS: '/app/profile/users/current-users',
   USER_GROUPS: '/app/profile/users/groups',

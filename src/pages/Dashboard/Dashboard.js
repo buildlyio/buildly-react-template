@@ -27,6 +27,7 @@ import {
 } from '@redux/release/actions/release.actions';
 import Kanban from './components/Kanban';
 import Tabular from './components/Tabular';
+import Report from './components/Report/Report';
 import AddFeatures from './forms/AddFeatures';
 import AddIssues from './forms/AddIssues';
 import Comments from './forms/Comments';
@@ -108,6 +109,10 @@ const Dashboard = ({
     {
       label: 'Kanban',
       value: 'kanban',
+    },
+    {
+      label: 'Report',
+      value: 'report',
     },
   ];
   const viewPath = (
@@ -561,6 +566,15 @@ const Dashboard = ({
                       createSuggestedFeature={createSuggestedFeature}
                       removeSuggestedFeature={removeSuggestedFeature}
                       showRelatedIssues={showRelatedIssues}
+                    />
+                  )}
+                />
+                <Route
+                  path={routes.DASHBOARD_REPORT}
+                  render={(prps) => (
+                    <Report
+                      {...prps}
+                      selectedProduct={selectedProduct}
                     />
                   )}
                 />

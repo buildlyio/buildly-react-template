@@ -1,0 +1,28 @@
+table {
+    /*...all table attributes like fontsize etc*/
+    font-size:13px;
+    color:#333333;
+}
+table th {
+    background-color: #162944  !important;
+    color: #fff;
+    padding: 8px;
+}
+table td {
+    /*...all td attributes like padding etc*/
+    padding: 8px;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.light-header {
+    background-color: #0C5595 !important;
+}
+
+.totals-header {
+    background-color: #fff !important;
+    color: #162944 !important;
+}
+
