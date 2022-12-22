@@ -13,7 +13,7 @@ import {
   Typography,
   Container,
   Grid,
-  MenuItem,
+  MenuItem, Checkbox,
 } from '@mui/material';
 import logo from '@assets/insights-logo.png';
 import Copyright from '@components/Copyright/Copyright';
@@ -82,6 +82,16 @@ const useStyles = makeStyles((theme) => ({
   hidden: {
     display: 'none',
   },
+  consentContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    placeContent: 'center flex-start',
+    alignItems: 'center',
+  },
+  pageLink: {
+    color: theme.palette.primary.main,
+    textDecoration: 'none',
+  },
 }));
 
 const Register = ({
@@ -103,6 +113,7 @@ const Register = ({
   const last_name = useInput('');
   const coupon_code = useInput(window.env.FREE_COUPON_CODE || '');
   const [formError, setFormError] = useState({});
+  const [checked, setChecked] = React.useState(false);
 
   // eslint-disable-next-line consistent-return
   useEffect(() => {
@@ -170,6 +181,10 @@ const Register = ({
         },
       });
     }
+  };
+
+  const handleChange = (e) => {
+    setChecked(e.target.checked);
   };
 
   const submitDisabled = () => {
@@ -409,6 +424,24 @@ const Register = ({
                   </Grid>
                 </Grid>
 
+                <Grid container spacing={isMobile() ? 0 : 3}>
+                  <Grid item xs={12}>
+                    <div className={classes.consentContainer}>
+                      <Checkbox
+                        id="igin "
+                        checked={checked}
+                        onChange={handleChange}
+                      />
+                      <p>
+                        <span>I have read and accept the </span>
+                        <a className={classes.pageLink} href="https://buildly.io/tos/" target="_blank" rel="noopener noreferrer">terms of service</a>
+                        <span> and </span>
+                        <a className={classes.pageLink} href="https://buildly.io/privacy/" target="_blank" rel="noopener noreferrer">privacy policy</a>
+                      </p>
+                    </div>
+                  </Grid>
+                </Grid>
+
                 <div className={classes.loadingWrapper}>
                   <Button
                     type="submit"
@@ -416,7 +449,7 @@ const Register = ({
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    disabled={loading || submitDisabled()}
+                    disabled={loading || submitDisabled() || !checked}
                   >
                     Register
                   </Button>
