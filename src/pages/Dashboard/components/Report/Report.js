@@ -129,7 +129,7 @@ const Report = ({ selectedProduct }) => {
                 <Card className="mb-2 row">
                   <Card.Body>
                     <div className="m-2">
-                      <RangeSlider rangeValues={productData?.budget_range}/>
+                      <RangeSlider rangeValues={productData?.budget_range} />
                     </div>
                   </Card.Body>
                 </Card>

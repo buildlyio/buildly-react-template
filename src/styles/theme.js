@@ -80,6 +80,24 @@ const theme = createTheme(({
         },
       },
     },
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          backgroundColor: '#EDEDED !important',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        containedPrimary: {
+          backgroundColor: '#F9943B !important',
+          color: '#ffffff !important',
+          '&:disabled': {
+            backgroundColor: '#EDEDED !important',
+          },
+        },
+      },
+    },
   },
 }));
 

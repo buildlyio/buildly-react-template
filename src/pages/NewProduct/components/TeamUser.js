@@ -200,7 +200,7 @@ const TeamUser = ({
                   <TableBody>
                     {_.map(roleCount, (row, index) => (
                       <TableRow key={index}>
-                        <TableCell component="th" scope="row">
+                        <TableCell scope="row">
                           {row.role}
                         </TableCell>
 
