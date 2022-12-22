@@ -41,7 +41,7 @@ const Report = ({ selectedProduct }) => {
         .then((response) => {
           const reportData = response.data;
           // set report data
-          if (reportData) {
+          if (reportData && reportData.budget) {
             // set the image to display
             let img = null;
             if (reportData.architecture_type.toLowerCase() === 'monolith') {
