@@ -46,7 +46,7 @@ const theme = createTheme(({
       styleOverrides: {
         body: {
           padding: 0,
-          backgroundColor: '#DCDCE0',
+          backgroundColor: '#F5F5F5',
           color: '#000',
           '&#fc_frame, #fc_frame.fc-widget-normal': {
             bottom: '100px !important',
@@ -76,6 +76,24 @@ const theme = createTheme(({
           '+.MuiDivider-root': {
             marginTop: 0,
             marginBottom: 0,
+          },
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          backgroundColor: '#EDEDED !important',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        containedPrimary: {
+          backgroundColor: '#F9943B !important',
+          color: '#ffffff !important',
+          '&:disabled': {
+            backgroundColor: '#EDEDED !important',
           },
         },
       },

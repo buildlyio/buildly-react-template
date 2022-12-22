@@ -306,7 +306,7 @@ const UseInfo = ({
             <Grid item xs={12} sm={4}>
               <Button
                 type="button"
-                variant="contained"
+                variant="outlined"
                 color="primary"
                 fullWidth
                 onClick={handleBack}

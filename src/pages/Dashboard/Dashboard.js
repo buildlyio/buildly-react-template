@@ -27,12 +27,14 @@ import {
 } from '@redux/release/actions/release.actions';
 import Kanban from './components/Kanban';
 import Tabular from './components/Tabular';
+import Report from './components/Report/Report';
 import AddFeatures from './forms/AddFeatures';
 import AddIssues from './forms/AddIssues';
 import Comments from './forms/Comments';
 import IssueSuggestions from './forms/IssueSuggestions';
 import StatusBoard from './forms/StatusBoard';
 import ToolBoard from './forms/ToolBoard';
+import ShowRelatedIssues from './forms/ShowRelatedIssues';
 
 const useStyles = makeStyles((theme) => ({
   firstTimeMessage: {
@@ -95,7 +97,7 @@ const Dashboard = ({
   features,
   credentials,
   statuses,
-  importLoaded,
+  dataSynced,
 }) => {
   const classes = useStyles();
   const [route, setRoute] = useState(routes.DASHBOARD);
@@ -107,6 +109,10 @@ const Dashboard = ({
     {
       label: 'Kanban',
       value: 'kanban',
+    },
+    {
+      label: 'Report',
+      value: 'report',
     },
   ];
   const viewPath = (
@@ -146,11 +152,12 @@ const Dashboard = ({
       dispatch(getAllFeatures(selectedProduct));
       dispatch(getAllIssues(selectedProduct));
       dispatch(getAllCredentials(selectedProduct));
+      dispatch(getAllComments(selectedProduct));
     } else {
       dispatch(clearProductRelatedProductData());
       dispatch(clearProductRelatedReleaseData());
     }
-  }, [selectedProduct, importLoaded]);
+  }, [selectedProduct, dataSynced]);
 
   useEffect(() => {
     if (selectedProduct && !!selectedProduct && (_.size(features) >= 5)
@@ -159,7 +166,7 @@ const Dashboard = ({
     } else {
       setUpgrade(false);
     }
-  }, [selectedProduct, features, importLoaded]);
+  }, [selectedProduct, features, dataSynced]);
 
   useEffect(() => {
     if (selectedProduct && !!selectedProduct) {
@@ -242,16 +249,12 @@ const Dashboard = ({
 
   const commentItem = (item) => {
     let data = { from: location.pathname };
-    let query;
     if (item.issue_uuid) {
       data = { ...data, issue: item };
-      query = `issue=${item.issue_uuid}`;
     } else {
       data = { ...data, feature: item };
-      query = `feature=${item.feature_uuid}`;
     }
 
-    dispatch(getAllComments(query));
     history.push(routes.COMMENTS, { ...data });
   };
 
@@ -363,6 +366,13 @@ const Dashboard = ({
 
       dispatch(thirdPartyToolSync(creds));
     }
+  };
+
+  const showRelatedIssues = (feature_uuid) => {
+    history.push(routes.SHOW_RELATED_ISSUES, {
+      from: location.pathname,
+      feature_uuid,
+    });
   };
 
   return (
@@ -534,6 +544,7 @@ const Dashboard = ({
                       }
                       createSuggestedFeature={createSuggestedFeature}
                       removeSuggestedFeature={removeSuggestedFeature}
+                      showRelatedIssues={showRelatedIssues}
                     />
                   )}
                 />
@@ -554,6 +565,16 @@ const Dashboard = ({
                       }
                       createSuggestedFeature={createSuggestedFeature}
                       removeSuggestedFeature={removeSuggestedFeature}
+                      showRelatedIssues={showRelatedIssues}
+                    />
+                  )}
+                />
+                <Route
+                  path={routes.DASHBOARD_REPORT}
+                  render={(prps) => (
+                    <Report
+                      {...prps}
+                      selectedProduct={selectedProduct}
                     />
                   )}
                 />
@@ -564,6 +585,7 @@ const Dashboard = ({
                 <Route path={routes.EDIT_ISSUE} component={AddIssues} />
                 <Route path={routes.FEATURE_TO_ISSUE} component={AddIssues} />
                 <Route path={routes.COMMENTS} component={Comments} />
+                <Route path={routes.SHOW_RELATED_ISSUES} component={ShowRelatedIssues} />
                 <Route
                   path={routes.ISSUE_SUGGESTIONS}
                   render={(renderProps) => (
@@ -588,7 +610,7 @@ const mapStateToProps = (state, ownProps) => ({
   features: state.releaseReducer.features,
   credentials: state.productReducer.credentials,
   statuses: state.releaseReducer.statuses,
-  importLoaded: state.releaseReducer.importLoaded,
+  dataSynced: state.releaseReducer.dataSynced,
 });
 
 export default connect(mapStateToProps)(Dashboard);

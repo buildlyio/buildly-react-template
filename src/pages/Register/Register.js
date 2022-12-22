@@ -13,22 +13,19 @@ import {
   Typography,
   Container,
   Grid,
-  MenuItem,
+  MenuItem, Checkbox,
 } from '@mui/material';
-import Autocomplete from '@mui/material/Autocomplete';
 import logo from '@assets/insights-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import GithubLogin from '@components/SocialLogin/GithubLogin';
 import { useInput } from '@hooks/useInput';
-import {
-  register,
-  loadOrgNames,
-} from '@redux/authuser/actions/authuser.actions';
+import { register } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
 import { validators } from '@utils/validators';
 import { isMobile } from '@utils/mediaQuery';
 import { providers } from '@utils/socialLogin';
 import Loader from '@components/Loader/Loader';
+import { showAlert } from '@redux/alert/actions/alert.actions';
 
 const useStyles = makeStyles((theme) => ({
   logoDiv: {
@@ -85,10 +82,20 @@ const useStyles = makeStyles((theme) => ({
   hidden: {
     display: 'none',
   },
+  consentContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    placeContent: 'center flex-start',
+    alignItems: 'center',
+  },
+  pageLink: {
+    color: theme.palette.primary.main,
+    textDecoration: 'none',
+  },
 }));
 
 const Register = ({
-  dispatch, loading, history, socialLogin, orgNames,
+  dispatch, loading, history, socialLogin,
 }) => {
   const classes = useStyles();
 
@@ -100,12 +107,13 @@ const Register = ({
     confirm: true,
     matchField: password,
   });
-  const [orgName, setOrgName] = useState('');
+  const orgName = useInput('', { required: true });
   const userType = useInput('', { required: true });
   const first_name = useInput('', { required: true });
   const last_name = useInput('');
   const coupon_code = useInput(window.env.FREE_COUPON_CODE || '');
   const [formError, setFormError] = useState({});
+  const [checked, setChecked] = React.useState(false);
 
   // eslint-disable-next-line consistent-return
   useEffect(() => {
@@ -121,12 +129,6 @@ const Register = ({
     }
   }, []);
 
-  useEffect(() => {
-    if (!orgNames) {
-      dispatch(loadOrgNames());
-    }
-  }, []);
-
   /**
    * Submit the form to the backend and attempts to authenticate
    * @param {Event} event the default submit event
@@ -137,14 +139,22 @@ const Register = ({
       username: username.value,
       email: email.value,
       password: password.value,
-      organization_name: orgName,
+      organization_name: orgName.value,
       user_type: userType.value,
       first_name: first_name.value,
       last_name: last_name.value,
       coupon_code: coupon_code.value,
     };
 
-    dispatch(register(registerFormValue, history));
+    if (_.includes(_.toLower(_.trim(orgName.value)), 'buildly')) {
+      dispatch(showAlert({
+        type: 'error',
+        open: true,
+        message: 'Organization name cannot have word Buildly in it',
+      }));
+    } else {
+      dispatch(register(registerFormValue, history));
+    }
   };
 
   /**
@@ -173,6 +183,10 @@ const Register = ({
     }
   };
 
+  const handleChange = (e) => {
+    setChecked(e.target.checked);
+  };
+
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     let errorExists = false;
@@ -181,7 +195,7 @@ const Register = ({
       || !password.value
       || !email.value
       || !re_password.value
-      || !orgName
+      || !orgName.value
       || !userType.value
       || !first_name.value
     ) return true;
@@ -293,29 +307,22 @@ const Register = ({
 
                 <Grid container spacing={isMobile() ? 0 : 3}>
                   <Grid item xs={12}>
-                    <Autocomplete
-                      freeSolo
-                      disableClearable
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      required
+                      fullWidth
                       id="organization_name"
+                      label="Organization Name"
                       name="organization_name"
-                      options={orgNames || []}
-                      getOptionLabel={(label) => _.capitalize(label)}
-                      value={orgName}
-                      onChange={(e, newValue) => setOrgName(newValue || '')}
-                      inputValue={orgName}
-                      onInputChange={(event, newInputValue) => setOrgName(newInputValue)}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="outlined"
-                          margin="normal"
-                          required
-                          fullWidth
-                          id="organization_name"
-                          label="Organisation Name"
-                          className={classes.textField}
-                        />
-                      )}
+                      autoComplete="organization_name"
+                      error={formError.orgName && formError.orgName.error}
+                      helperText={
+                        formError.orgName ? formError.orgName.message : ''
+                      }
+                      className={classes.textField}
+                      onBlur={(e) => handleBlur(e, 'required', orgName)}
+                      {...orgName.bind}
                     />
                   </Grid>
                 </Grid>
@@ -417,6 +424,24 @@ const Register = ({
                   </Grid>
                 </Grid>
 
+                <Grid container spacing={isMobile() ? 0 : 3}>
+                  <Grid item xs={12}>
+                    <div className={classes.consentContainer}>
+                      <Checkbox
+                        id="igin "
+                        checked={checked}
+                        onChange={handleChange}
+                      />
+                      <p>
+                        <span>I have read and accept the </span>
+                        <a className={classes.pageLink} href="https://buildly.io/tos/" target="_blank" rel="noopener noreferrer">terms of service</a>
+                        <span> and </span>
+                        <a className={classes.pageLink} href="https://buildly.io/privacy/" target="_blank" rel="noopener noreferrer">privacy policy</a>
+                      </p>
+                    </div>
+                  </Grid>
+                </Grid>
+
                 <div className={classes.loadingWrapper}>
                   <Button
                     type="submit"
@@ -424,7 +449,7 @@ const Register = ({
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    disabled={loading || submitDisabled()}
+                    disabled={loading || submitDisabled() || !checked}
                   >
                     Register
                   </Button>

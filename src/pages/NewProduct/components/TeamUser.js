@@ -27,6 +27,7 @@ import {
 import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
 import { useInput } from '@hooks/useInput';
 import { docIdentifier } from '@redux/product/actions/product.actions';
+import { ROLES } from '../ProductFormConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -87,37 +88,23 @@ const TeamUser = ({
     || '5 - 10',
   { required: true });
 
-  const [roleCount, setRoleCount] = useState((editData && editData.product_info
-      && editData.product_info.role_count)
+  const roles = (editData && editData.product_info && editData.product_info.role_count)
     || (productFormData && productFormData.product_info && productFormData.product_info.role_count)
-    || [
-      { role: 'CTO (Budget Approval?)', count: 0 },
-      { role: 'COO (Budget Approval?)', count: 0 },
-      { role: 'UI/UX', count: 0 },
-      { role: 'Lead Developer', count: 0 },
-      { role: 'Product Manager', count: 0 },
-      { role: 'Product Manager (Budget Approval?)', count: 0 },
-      { role: 'Others', count: 0 },
-    ]);
+    || [];
+  const [roleCount, setRoleCount] = useState(
+    (ROLES.map((role) => {
+      const currentRole = roles.find((item) => item.role === role.role);
+      return {
+        role: role.role,
+        count: currentRole ? currentRole.count : role.count,
+      };
+    })),
+
+  );
 
   const doc_file = useInput((editData && editData.product_info && editData.product_info.doc_file)
     || (productFormData && productFormData.product_info && productFormData.product_info.doc_file)
     || []);
-
-  const submitDisabled = () => {
-    let countNum = 0;
-    _.forEach(roleCount, (roleCountObject) => {
-      if (roleCountObject.count === 0) {
-        countNum += 1;
-      }
-    });
-
-    if (countNum === roleCount.length) {
-      return true;
-    }
-
-    return false;
-  };
 
   checkIfTeamUserEdited = () => (
     teamSize.hasChanged()
@@ -213,7 +200,7 @@ const TeamUser = ({
                   <TableBody>
                     {_.map(roleCount, (row, index) => (
                       <TableRow key={index}>
-                        <TableCell component="th" scope="row">
+                        <TableCell scope="row">
                           {row.role}
                         </TableCell>
 
@@ -314,7 +301,7 @@ const TeamUser = ({
             <Grid item xs={12} sm={4}>
               <Button
                 type="button"
-                variant="contained"
+                variant="outlined"
                 color="primary"
                 fullWidth
                 onClick={handleBack}
@@ -330,7 +317,6 @@ const TeamUser = ({
                 variant="contained"
                 color="primary"
                 fullWidth
-                disabled={submitDisabled()}
                 className={classes.submit}
               >
                 Next

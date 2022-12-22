@@ -1,5 +1,8 @@
+import React from 'react';
 import moment from 'moment-timezone';
 import parse from 'html-react-parser';
+import { Link } from '@mui/material';
+import { OpenInNew as OpenInNewIcon } from '@mui/icons-material';
 
 export const featureColumns = [
   {
@@ -50,8 +53,24 @@ export const featureColumns = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (value
-        ? moment(value).format('MMM DD YYYY, h:mm a')
+        ? moment(value)
+          .format('MMM DD YYYY, h:mm a')
         : '-'),
+    },
+  },
+  {
+    name: '_url',
+    label: 'Link to original card',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (value
+        ? (
+          <Link href={value} target="_blank" rel="noopener">
+            <OpenInNewIcon />
+          </Link>
+        ) : ''),
     },
   },
 ];
@@ -74,6 +93,12 @@ export const issueColumns = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: (value) => ({
+        style: { maxWidth: 500 },
+      }),
+      setCellHeaderProps: (value) => ({
+        style: { maxWidth: 500 },
+      }),
       customBodyRender: (value) => ((value && parse(value)) || '-'),
     },
   },
@@ -115,8 +140,24 @@ export const issueColumns = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (value
-        ? moment(value).format('MMM DD YYYY, h:mm a')
+        ? moment(value)
+          .format('MMM DD YYYY, h:mm a')
         : '-'),
+    },
+  },
+  {
+    name: '_url',
+    label: 'Link to original issue',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (value
+        ? (
+          <Link href={value} target="_blank" rel="noopener">
+            <OpenInNewIcon />
+          </Link>
+        ) : ''),
     },
   },
 ];
@@ -128,13 +169,6 @@ export const PRIORITIES = [
   'Urgent',
 ];
 
-export const ISSUETYPES = [
-  'FE',
-  'BE',
-  'UI/UX',
-  'Documentation',
-];
-
 export const STATUSTYPES = [
   'Backlog',
   'Sprint Ready',
@@ -142,4 +176,11 @@ export const STATUSTYPES = [
   'In Progress',
   'Doing',
   'Done',
+];
+
+export const ISSUETYPES = [
+  'FE',
+  'BE',
+  'UI/UX',
+  'Documentation',
 ];
