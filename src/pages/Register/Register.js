@@ -13,7 +13,7 @@ import {
   Typography,
   Container,
   Grid,
-  MenuItem, Checkbox, FormControlLabel,
+  MenuItem, Checkbox,
 } from '@mui/material';
 import logo from '@assets/insights-logo.png';
 import Copyright from '@components/Copyright/Copyright';
@@ -84,9 +84,13 @@ const useStyles = makeStyles((theme) => ({
   },
   consentContainer: {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
     placeContent: 'center flex-start',
     alignItems: 'center',
+  },
+  pageLink: {
+    color: theme.palette.primary.main,
+    textDecoration: 'none',
   },
 }));
 
@@ -108,7 +112,6 @@ const Register = ({
   const first_name = useInput('', { required: true });
   const last_name = useInput('');
   const coupon_code = useInput(window.env.FREE_COUPON_CODE || '');
-  const accept = useInput(false);
   const [formError, setFormError] = useState({});
   const [checked, setChecked] = React.useState(false);
 
@@ -181,12 +184,7 @@ const Register = ({
   };
 
   const handleChange = (e) => {
-    console.log('e : ', e.target.checked);
-    // checked = e.target.checked;
     setChecked(e.target.checked);
-    accept.value = e.target.checked;
-    console.log('checked : ', checked);
-    console.log('accept : ', accept);
   };
 
   const submitDisabled = () => {
@@ -200,7 +198,6 @@ const Register = ({
       || !orgName.value
       || !userType.value
       || !first_name.value
-      || !accept.value
     ) return true;
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
@@ -429,38 +426,19 @@ const Register = ({
 
                 <Grid container spacing={isMobile() ? 0 : 3}>
                   <Grid item xs={12}>
-                    {/* <Checkbox */}
-                    {/*  id="accept" */}
-                    {/*  value="accept" */}
-                    {/*  checked={checked} */}
-                    {/*  onChange={handleChange} */}
-                    {/* /> */}
-                    {/* <div> */}
-                    {/*  <span>I have read and accept the </span> */}
-                    {/*  <Link to="https://buildly.io/tos/" target="_blank" rel="noopener">terms of service</Link> */}
-                    {/*  <span> and </span> */}
-                    {/*  <Link to="https://buildly.io/privacy/" target="_blank" rel="noopener">privacy policy</Link> */}
-                    {/* </div> */}
-
-                    <FormControlLabel
-                      control={(
-                        <Checkbox
-                          id="accept"
-                          value="accept"
-                          required
-                        />
-                        )}
-                      label={(
-                        <div>
-                          <span>I have read and accept the </span>
-                          <Link to="https://buildly.io/tos/" target="_blank" rel="noopener" underline="none">terms of service</Link>
-                          <span> and </span>
-                          <Link to="/privacy" underline="none">privacy policy</Link>
-                        </div>
-                      )}
-                      onChange={handleChange}
-                      {...accept.bind}
-                    />
+                    <div className={classes.consentContainer}>
+                      <Checkbox
+                        id="accept"
+                        checked={checked}
+                        onChange={handleChange}
+                      />
+                      <p>
+                        <span>I have read and accept the </span>
+                        <a className={classes.pageLink} href="https://buildly.io/tos/" target="_blank" rel="noopener noreferrer">terms of service</a>
+                        <span> and </span>
+                        <a className={classes.pageLink} href="https://buildly.io/privacy/" target="_blank" rel="noopener noreferrer">privacy policy</a>
+                      </p>
+                    </div>
                   </Grid>
                 </Grid>
 
@@ -471,7 +449,7 @@ const Register = ({
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    disabled={loading || !accept.value || submitDisabled()}
+                    disabled={loading || submitDisabled() || !checked}
                   >
                     Register
                   </Button>
