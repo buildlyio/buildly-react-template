@@ -428,7 +428,7 @@ const Register = ({
                   <Grid item xs={12}>
                     <div className={classes.consentContainer}>
                       <Checkbox
-                        id="accept"
+                        id="igin "
                         checked={checked}
                         onChange={handleChange}
                       />
