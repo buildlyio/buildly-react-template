@@ -389,13 +389,13 @@ const ProductSetup = ({
         ? {
           ...featCred,
           ...newFeatCred,
-          auth_detail: { ...featCred.auth_detail, ...newFeatCred.auth_detail },
+          auth_detail: { ...featCred?.auth_detail, ...newFeatCred?.auth_detail },
         } : newFeatCred,
       issueCreds: updatedIssueCreds
         ? {
           ...issueCred,
           ...newIssueCred,
-          auth_detail: { ...issueCred.auth_detail, ...newIssueCred.auth_detail },
+          auth_detail: { ...issueCred?.auth_detail, ...newIssueCred?.auth_detail },
         } : newIssueCred,
     };
 

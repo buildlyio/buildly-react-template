@@ -89,7 +89,8 @@ const TeamUser = ({
   { required: true });
 
   const roles = (editData && editData.product_info && editData.product_info.role_count)
-    || (productFormData && productFormData.product_info && productFormData.product_info.role_count);
+    || (productFormData && productFormData.product_info && productFormData.product_info.role_count)
+    || [];
   const [roleCount, setRoleCount] = useState(
     (ROLES.map((role) => {
       const currentRole = roles.find((item) => item.role === role.role);
