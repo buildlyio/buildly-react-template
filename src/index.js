@@ -8,7 +8,7 @@ import './index.css';
 
 if (window.env.PRODUCTION) {
   const script = document.createElement('script');
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=UA-226504961-1';
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=UA-145772893-1';
   script.async = true;
 
   const script2 = document.createElement('script');
@@ -16,7 +16,7 @@ if (window.env.PRODUCTION) {
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
-    gtag('config', 'UA-226504961-1', { 'send_page_view': false });
+    gtag('config', 'UA-145772893-1', { 'send_page_view': false });
   `;
 
   document.body.appendChild(script);

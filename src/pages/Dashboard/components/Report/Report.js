@@ -40,6 +40,14 @@ const Report = ({ selectedProduct }) => {
       )
         .then((response) => {
           const reportData = response.data;
+          httpService.makeRequest(
+            'GET',
+            `${window.env.API_URL}release/product_report/${selectedProduct}/`,
+            null,
+            false,
+          ).then((releaseRes) => {
+            console.log(releaseRes);
+          });
           // set report data
           if (reportData && reportData.budget) {
             // set the image to display
