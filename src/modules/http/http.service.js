@@ -67,7 +67,5 @@ function sendDirectServiceRequest(url, method, body, service) {
     returnPromise: true,
     responseType: null,
   };
-  console.log(options);
-  console.log(url);
   return http.request(apiUrl, options);
 }

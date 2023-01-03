@@ -59,7 +59,6 @@ const Report = ({ selectedProduct }) => {
       );
       // handle promises
       Promise.all(requestsArray).then((results) => {
-        console.log(results);
         const reportData = results[0].data;
         const releaseReport = results[1].data;
 
