@@ -30,66 +30,70 @@ const Report = ({ selectedProduct }) => {
   const [architectureImg, setArchitectureImg] = useState(null);
   // effects
   useEffect(() => {
-    // Load product data
     if (selectedProduct) {
-      httpService.makeRequest(
-        'GET',
-        `${window.env.API_URL}product/product/${selectedProduct}/report/`,
-        null,
-        false,
-      )
-        .then((response) => {
-          const reportData = response.data;
-          httpService.makeRequest(
-            'GET',
-            `${window.env.API_URL}release/product_report/${selectedProduct}/`,
-            null,
-            false,
-          ).then((releaseRes) => {
-            console.log(releaseRes);
-          });
-          // set report data
-          if (reportData && reportData.budget) {
-            // set the image to display
-            let img = null;
-            if (reportData.architecture_type.toLowerCase() === 'monolith') {
-              img = monolith;
-            } else if (reportData.architecture_type.toLowerCase() === 'microservice') {
-              img = microservice;
-            } else if (reportData.architecture_type.toLowerCase() === 'micro-app') {
-              img = microApp;
-            } else if (reportData.architecture_type.toLowerCase() === 'multicloud microservice') {
-              img = multiCloud;
-            }
-            // set states
-            setProductData(reportData);
-            setArchitectureImg(img);
-
-            // get release data
-            httpService.makeRequest(
-              'GET',
-              `${window.env.API_URL}release/product_report/${selectedProduct}/`,
-              null,
-              false,
-            ).then((releaseRes) => {
-              const releaseReport = releaseRes.data;
-              releaseReport.release_budget = getReleaseBudgetData(
-                reportData.budget?.team_data,
-                releaseReport.release_data,
-              );
-
-              releaseReport.release_budget = addColorsAndIcons(
-                JSON.parse(JSON.stringify(releaseReport.release_budget)),
-              );
-              // set release data
-              setReleaseData(releaseReport);
-            }).catch((error) => {
-              displayReport = false;
-            });
+      // define requests
+      const requestsArray = [];
+      // Load product data
+      [`product/${selectedProduct}/report/`, `product_report/${selectedProduct}/`].forEach(
+        (url, index) => {
+          if (index === 0) {
+            requestsArray.push(
+              httpService.sendDirectServiceRequest(
+                `product/${selectedProduct}/report/`,
+                'GET',
+                null,
+                'product',
+              ),
+            );
+          } else {
+            requestsArray.push(
+              httpService.sendDirectServiceRequest(
+                `product_report/${selectedProduct}/`,
+                'GET',
+                null,
+                'release',
+              ),
+            );
           }
-        }).catch((error) => {
-          displayReport = false;
-        });
+        },
+      );
+      // handle promises
+      Promise.all(requestsArray).then((results) => {
+        console.log(results);
+        const reportData = results[0].data;
+        const releaseReport = results[1].data;
+
+        if (reportData && reportData.budget) {
+          // set the image to display
+          let img = null;
+          if (reportData.architecture_type.toLowerCase() === 'monolith') {
+            img = monolith;
+          } else if (reportData.architecture_type.toLowerCase() === 'microservice') {
+            img = microservice;
+          } else if (['micro-app', 'mini-app'].includes(reportData.architecture_type.toLowerCase())) {
+            img = microApp;
+          } else if (reportData.architecture_type.toLowerCase() === 'multicloud microservice') {
+            img = multiCloud;
+          }
+          // set states
+          setProductData(reportData);
+          setArchitectureImg(img);
+
+          // get release data
+          releaseReport.release_budget = getReleaseBudgetData(
+            productData.budget?.team_data,
+            releaseReport.release_data,
+          );
+
+          releaseReport.release_budget = addColorsAndIcons(
+            JSON.parse(JSON.stringify(releaseReport.release_budget)),
+          );
+          // set release data
+          setReleaseData(releaseReport);
+        }
+      }).catch((error) => {
+        displayReport = false;
+      });
     }
   }, []);
 
@@ -104,7 +108,7 @@ const Report = ({ selectedProduct }) => {
                   {`Architecture suggestion: (${productData?.architecture_type?.toUpperCase()})`}
                 </Card.Title>
                 <div className="image-responsive m-2" style={{ height: 350 }}>
-                  <Image src={architectureImg} fluid style={{ height: '100%' }} />
+                  <Image src={architectureImg} fluid style={{ height: '100%' }}/>
                 </div>
               </Card.Body>
             </Card>
@@ -114,7 +118,7 @@ const Report = ({ selectedProduct }) => {
               <Card.Body>
                 <Card.Title>Buidly components</Card.Title>
                 <div className="w-100 m-2">
-                  <FlowChartComponent componentsData={productData && productData.components_tree} />
+                  <FlowChartComponent componentsData={productData && productData.components_tree}/>
                 </div>
               </Card.Body>
             </Card>
@@ -125,7 +129,7 @@ const Report = ({ selectedProduct }) => {
           <Card.Body>
             <Card.Title>Timeline</Card.Title>
             <div className="m-2">
-              <TimelineComponent reportData={releaseData.release_budget} />
+              <TimelineComponent reportData={releaseData.release_budget}/>
             </div>
           </Card.Body>
         </Card>
@@ -137,7 +141,7 @@ const Report = ({ selectedProduct }) => {
                 <Card className="mb-2 row">
                   <Card.Body>
                     <div className="m-2">
-                      <RangeSlider rangeValues={productData?.budget_range} />
+                      <RangeSlider rangeValues={productData?.budget_range}/>
                     </div>
                   </Card.Body>
                 </Card>
@@ -145,59 +149,59 @@ const Report = ({ selectedProduct }) => {
                   <Card.Body>
                     <Table striped bordered hover>
                       <thead>
-                        <tr>
-                          <th>PLATFORM DEV EXPENSES</th>
-                          <th>BUDGET</th>
-                        </tr>
-                        <tr>
-                          <th className="light-header">Payroll</th>
-                          <th className="light-header">Monthly ($)</th>
-                        </tr>
+                      <tr>
+                        <th>PLATFORM DEV EXPENSES</th>
+                        <th>BUDGET</th>
+                      </tr>
+                      <tr>
+                        <th className="light-header">Payroll</th>
+                        <th className="light-header">Monthly ($)</th>
+                      </tr>
                       </thead>
                       <tbody>
-                        {
-                          productData && productData.budget && productData.budget?.team_data.map(
-                            (item, index) => (
-                              <tr key={`budget-${index}`}>
-                                <td>{item.role}</td>
-                                <td>{`$${item.budget}`}</td>
-                              </tr>
-                            ),
-                          )
-                        }
-                        <tr>
-                          <th className="text-right totals-header">Payroll Total</th>
-                          <th className="totals-header">
-                            {`$${(productData && productData.budget
+                      {
+                        productData && productData.budget && productData.budget?.team_data.map(
+                          (item, index) => (
+                            <tr key={`budget-${index}`}>
+                              <td>{item.role}</td>
+                              <td>{`$${item.budget}`}</td>
+                            </tr>
+                          ),
+                        )
+                      }
+                      <tr>
+                        <th className="text-right totals-header">Payroll Total</th>
+                        <th className="totals-header">
+                          {`$${(productData && productData.budget
                             && productData.budget?.total_budget) || '0.00'}`}
-                          </th>
-                        </tr>
+                        </th>
+                      </tr>
                       </tbody>
                       <thead>
-                        <tr>
-                          <th className="light-header">Additional</th>
-                          <th className="light-header">Monthly ($)</th>
-                        </tr>
+                      <tr>
+                        <th className="light-header">Additional</th>
+                        <th className="light-header">Monthly ($)</th>
+                      </tr>
                       </thead>
                       <tbody>
-                        {
-                          productData && productData.budget
-                          && productData.budget.other_costs?.map(
-                            (item, index) => (
-                              <tr key={`add-${index}`}>
-                                <td>{item.item}</td>
-                                <td>{`$${item.cost}`}</td>
-                              </tr>
-                            ),
-                          )
-                        }
-                        <tr>
-                          <th className="text-right totals-header">Additional Total</th>
-                          <th className="totals-header">
-                            {`$${(productData && productData.budget
-                              && productData.budget?.total_costs) || '0.00'}`}
-                          </th>
-                        </tr>
+                      {
+                        productData && productData.budget
+                        && productData.budget.other_costs?.map(
+                          (item, index) => (
+                            <tr key={`add-${index}`}>
+                              <td>{item.item}</td>
+                              <td>{`$${item.cost}`}</td>
+                            </tr>
+                          ),
+                        )
+                      }
+                      <tr>
+                        <th className="text-right totals-header">Additional Total</th>
+                        <th className="totals-header">
+                          {`$${(productData && productData.budget
+                            && productData.budget?.total_costs) || '0.00'}`}
+                        </th>
+                      </tr>
                       </tbody>
                     </Table>
                   </Card.Body>
