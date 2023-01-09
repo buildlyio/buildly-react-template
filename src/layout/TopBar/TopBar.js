@@ -293,7 +293,12 @@ const TopBar = ({
               My profile
             </MenuItem>
             {isAdmin && (
-            <MenuItem className={classes.accountMenuIItem} to={routes.USER_MANAGEMENT}>
+            <MenuItem
+              className={classes.accountMenuIItem}
+              onClick={() => {
+                history.push(routes.USER_MANAGEMENT);
+              }}
+            >
               <GroupIcon />
               {' '}
               User management
