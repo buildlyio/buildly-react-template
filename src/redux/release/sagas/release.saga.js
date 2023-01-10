@@ -239,7 +239,7 @@ function* allComments(payload) {
     const comments = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}release/comment/?product_uuid=${payload.product_uuid}`,
+      `${window.env.API_URL}release/comment/?product_uuid=${payload.product_uuid || payload.searchQuery}`,
     );
     yield put({ type: ALL_COMMENTS_SUCCESS, data: comments.data });
   } catch (error) {

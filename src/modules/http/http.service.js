@@ -4,6 +4,7 @@ import { oauthService } from '@modules/oauth/oauth.service';
 
 export const httpService = {
   makeRequest,
+  sendDirectServiceRequest,
 };
 
 /**
@@ -41,4 +42,30 @@ function makeRequest(method, url, body, useJwt, contentType, responseType) {
     responseType: responseType || null,
   };
   return http.request(url, options);
+}
+
+function sendDirectServiceRequest(url, method, body, service) {
+  let authHeader = 'Bearer ';
+  let apiUrl = '';
+  if (service.toLowerCase() === 'product') {
+    authHeader += `${window.env.PRODUCT_SERVICE_TOKEN}`;
+    apiUrl = `${window.env.PRODUCT_SERVICE_URL}${url}`;
+  } else if (service.toLowerCase() === 'release') {
+    authHeader += `${window.env.RELEASE_SERVICE_TOKEN}`;
+    apiUrl = `${window.env.RELEASE_SERVICE_URL}${url}`;
+  } else {
+    return new Promise(null);
+  }
+  const headers = {
+    Authorization: `${authHeader}`,
+  };
+  headers['Content-Type'] = 'application/json';
+  const options = {
+    method,
+    data: body,
+    headers,
+    returnPromise: true,
+    responseType: null,
+  };
+  return http.request(apiUrl, options);
 }
