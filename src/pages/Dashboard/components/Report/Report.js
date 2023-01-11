@@ -58,41 +58,43 @@ const Report = ({ selectedProduct }) => {
         },
       );
       // handle promises
-      Promise.all(requestsArray).then((results) => {
-        const reportData = results[0].data;
-        const releaseReport = results[1].data;
+      Promise.all(requestsArray)
+        .then((results) => {
+          const reportData = results[0].data;
+          const releaseReport = JSON.parse(JSON.stringify(results[1].data));
 
-        if (reportData && reportData.budget) {
-          // set the image to display
-          let img = null;
-          if (reportData.architecture_type.toLowerCase() === 'monolith') {
-            img = monolith;
-          } else if (reportData.architecture_type.toLowerCase() === 'microservice') {
-            img = microservice;
-          } else if (['micro-app', 'mini-app'].includes(reportData.architecture_type.toLowerCase())) {
-            img = microApp;
-          } else if (reportData.architecture_type.toLowerCase() === 'multicloud microservice') {
-            img = multiCloud;
+          if (reportData && reportData.budget) {
+            // set the image to display
+            let img = null;
+            if (reportData.architecture_type.toLowerCase() === 'monolith') {
+              img = monolith;
+            } else if (reportData.architecture_type.toLowerCase() === 'microservice') {
+              img = microservice;
+            } else if (['micro-app', 'mini-app'].includes(reportData.architecture_type.toLowerCase())) {
+              img = microApp;
+            } else if (reportData.architecture_type.toLowerCase() === 'multicloud microservice') {
+              img = multiCloud;
+            }
+            // set states
+            setProductData(reportData);
+            setArchitectureImg(img);
+
+            // get release data
+            releaseReport.release_budget = getReleaseBudgetData(
+              reportData.budget?.team_data,
+              releaseReport.release_data,
+            );
+
+            releaseReport.release_budget = addColorsAndIcons(
+              JSON.parse(JSON.stringify(releaseReport.release_budget)),
+            );
+            // set release data
+            setReleaseData(releaseReport);
           }
-          // set states
-          setProductData(reportData);
-          setArchitectureImg(img);
-
-          // get release data
-          releaseReport.release_budget = getReleaseBudgetData(
-            productData.budget?.team_data,
-            releaseReport.release_data,
-          );
-
-          releaseReport.release_budget = addColorsAndIcons(
-            JSON.parse(JSON.stringify(releaseReport.release_budget)),
-          );
-          // set release data
-          setReleaseData(releaseReport);
-        }
-      }).catch((error) => {
-        displayReport = false;
-      });
+        })
+        .catch((error) => {
+          displayReport = false;
+        });
     }
   }, []);
 
