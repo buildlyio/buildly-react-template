@@ -78,7 +78,6 @@ const Report = ({ selectedProduct }) => {
             // set states
             setProductData(reportData);
             setArchitectureImg(img);
-
             // get release data
             releaseReport.release_budget = getReleaseBudgetData(
               reportData.budget?.team_data,
@@ -130,7 +129,10 @@ const Report = ({ selectedProduct }) => {
           <Card.Body>
             <Card.Title>Timeline</Card.Title>
             <div className="m-2">
-              <TimelineComponent reportData={releaseData.release_budget}/>
+              <TimelineComponent
+                reportData={releaseData.release_budget}
+                suggestedFeatures={productData?.feature_suggestions}
+              />
             </div>
           </Card.Body>
         </Card>

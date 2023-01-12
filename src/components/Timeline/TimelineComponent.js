@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import './TimelineComponent.css';
 import { Timeline, TimelineEvent } from '@mailtop/horizontal-timeline';
 
-const TimelineComponent = ({ reportData }) => {
+const TimelineComponent = ({ reportData, suggestedFeatures }) => {
   const [releaseData, setReleaseData] = useState([]);
+  const [features, setFeatures] = useState([]);
 
   useEffect(() => {
     setReleaseData(reportData);
-  }, [reportData]);
+    setFeatures(suggestedFeatures);
+  }, [reportData, suggestedFeatures]);
   return (
     <Timeline minEvents={6} height={360} placeholder>
       {(
@@ -34,7 +36,20 @@ const TimelineComponent = ({ reportData }) => {
                       </ul>
                     </div>
                   )
-                ) || ''
+                ) || (
+                  <div className="feature-list m-2 p-2" style={{ backgroundColor: releaseItem.bgColor }}>
+                    <ul className="p-2">
+                      {(
+                        suggestedFeatures && suggestedFeatures.map(
+                          (feature, index) => (
+                            <li key={`feat-${index}`}>{`${feature?.suggested_feature}(Sug.)`}</li>
+                          ),
+                        )
+                      )}
+                    </ul>
+                  </div>
+                )
+                || ''
               )
             }
           />

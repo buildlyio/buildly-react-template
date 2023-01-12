@@ -1,5 +1,5 @@
 .feature-list {
-    height: 180px;
+    max-height: 180px;
     overflow-y: scroll;
     padding: 2px;
     border-radius:4px;
