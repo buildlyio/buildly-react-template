@@ -220,7 +220,11 @@ const Report = ({ selectedProduct }) => {
                           >
                             <b>{releaseItem.name}</b>
                           </ListGroup.Item>
-                          <ListGroup.Item as="li"><strong>8 Weeks</strong></ListGroup.Item>
+                          <ListGroup.Item as="li">
+                            <strong>
+                              { `${releaseItem?.duration.weeks} Weeks`}
+                            </strong>
+                          </ListGroup.Item>
                           {(
                             releaseItem.team && releaseItem.team.map(
                               (team, idx) => (
@@ -236,7 +240,9 @@ const Report = ({ selectedProduct }) => {
                           )}
                           <ListGroup.Item as="li">
                             <b>
-                              {`Cost: $${releaseItem.totalCost || 0.00}`}
+                              {
+                                `Cost: $${(releaseItem.totalCost || 0.00) * releaseItem?.duration.months}`
+                              }
                             </b>
                           </ListGroup.Item>
                         </ListGroup>
