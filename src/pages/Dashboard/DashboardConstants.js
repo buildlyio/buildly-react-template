@@ -1,6 +1,5 @@
 import React from 'react';
 import moment from 'moment-timezone';
-import parse from 'html-react-parser';
 import { Link } from '@mui/material';
 import { OpenInNew as OpenInNewIcon } from '@mui/icons-material';
 
@@ -13,16 +12,6 @@ export const featureColumns = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => value || '-',
-    },
-  },
-  {
-    name: 'description',
-    label: 'Description',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => ((value && parse(value)) || '-'),
     },
   },
   {
@@ -84,22 +73,6 @@ export const issueColumns = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => value || '-',
-    },
-  },
-  {
-    name: 'description',
-    label: 'Description',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      setCellProps: (value) => ({
-        style: { maxWidth: 500 },
-      }),
-      setCellHeaderProps: (value) => ({
-        style: { maxWidth: 500 },
-      }),
-      customBodyRender: (value) => ((value && parse(value)) || '-'),
     },
   },
   {
