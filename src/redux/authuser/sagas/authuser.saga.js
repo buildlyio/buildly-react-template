@@ -44,6 +44,9 @@ import {
   VERIFY_EMAIL,
   VERIFY_EMAIL_SUCCESS,
   VERIFY_EMAIL_FAIL,
+  LOAD_STRIPE_PRODUCTS,
+  LOAD_STRIPE_PRODUCTS_SUCCESS,
+  LOAD_STRIPE_PRODUCTS_FAIL,
 } from '@redux/authuser/actions/authuser.actions';
 import {
   put, takeLatest, all, call,
@@ -561,6 +564,19 @@ function* verifyEmail(payload) {
   }
 }
 
+function* loadStripeProducts() {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}subscription/stripe_products/`,
+    );
+    yield put({ type: LOAD_STRIPE_PRODUCTS_SUCCESS, stripeProducts: data.data });
+  } catch (error) {
+    yield put({ type: LOAD_STRIPE_PRODUCTS_FAIL, error });
+  }
+}
+
 function* watchLogout() {
   yield takeLatest(LOGOUT, logout);
 }
@@ -617,6 +633,10 @@ function* watchVerifyEmail() {
   yield takeLatest(VERIFY_EMAIL, verifyEmail);
 }
 
+function* watchLoadStripeProducts() {
+  yield takeLatest(LOAD_STRIPE_PRODUCTS, loadStripeProducts);
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
@@ -633,5 +653,6 @@ export default function* authSaga() {
     watchLoadOrganizationNames(),
     watchAddOrgSocialUser(),
     watchVerifyEmail(),
+    watchLoadStripeProducts(),
   ]);
 }
