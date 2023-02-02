@@ -129,10 +129,19 @@ const Report = ({ selectedProduct }) => {
           <Card.Body>
             <Card.Title>Timeline</Card.Title>
             <div className="m-2">
-              <TimelineComponent
-                reportData={releaseData.release_budget}
-                suggestedFeatures={productData?.feature_suggestions}
-              />
+              {
+                releaseData.release_budget && releaseData.release_budget.length
+                  ? (
+                    <TimelineComponent
+                      reportData={releaseData.release_budget}
+                      suggestedFeatures={productData?.feature_suggestions}
+                    />
+                  ) : (
+                    <div className="alert alert-warning" role="alert">
+                      No releases for this product!
+                    </div>
+                  )
+              }
             </div>
           </Card.Body>
         </Card>
@@ -224,7 +233,7 @@ const Report = ({ selectedProduct }) => {
                           </ListGroup.Item>
                           <ListGroup.Item as="li">
                             <strong>
-                              { `${releaseItem?.duration.weeks} Weeks`}
+                              {`${releaseItem?.duration.weeks} Weeks`}
                             </strong>
                           </ListGroup.Item>
                           {(
