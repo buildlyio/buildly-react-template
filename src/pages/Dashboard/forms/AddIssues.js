@@ -538,6 +538,19 @@ const AddIssues = ({
             <Grid container spacing={isDesktop ? 3 : 0} justifyContent="center">
               <Grid item xs={12} sm={4}>
                 <Button
+                  type="button"
+                  fullWidth
+                  variant="outlined"
+                  color="primary"
+                  onClick={discardFormData}
+                  className={classes.submit}
+                >
+                  Cancel
+                </Button>
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <Button
                   type="submit"
                   fullWidth
                   variant="contained"
@@ -546,19 +559,6 @@ const AddIssues = ({
                   disabled={submitDisabled()}
                 >
                   {buttonText}
-                </Button>
-              </Grid>
-
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="button"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={discardFormData}
-                  className={classes.submit}
-                >
-                  Cancel
                 </Button>
               </Grid>
             </Grid>
