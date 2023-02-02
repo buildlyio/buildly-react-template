@@ -26,7 +26,7 @@ import {
   Divider, ListItemIcon, Tooltip, Typography,
 } from '@mui/material';
 
-const pages = [{ label: 'Dashboard', value: routes.DASHBOARD, pathName: [routes.DASHBOARD, routes.DASHBOARD_TABULAR, routes.DASHBOARD_KANBAN] },
+const pages = [{ label: 'Dashboard', value: routes.DASHBOARD, pathName: [routes.DASHBOARD, routes.DASHBOARD_TABULAR, routes.DASHBOARD_KANBAN, routes.DASHBOARD_REPORT] },
   { label: 'Products', value: routes.PRODUCTS, pathName: [routes.PRODUCTS] },
   { label: 'Releases', value: routes.RELEASE, pathName: [routes.RELEASE] }];
 
