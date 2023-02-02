@@ -118,8 +118,6 @@ const AddIssues = ({
       name.hasChanged()
       || feature.hasChanged()
       || type.hasChanged()
-      || estimate.hasChanged()
-      || complexity.hasChanged()
       || statusID.hasChanged()
       || repo.hasChanged()
       || !!((editData && editData.start_date)
@@ -491,57 +489,66 @@ const AddIssues = ({
               </Grid>
               )}
 
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="estimate"
-                  label="Estimate"
-                  name="estimate"
-                  autoComplete="estimate"
-                  error={
-                    formError.estimate
-                    && formError.estimate.error
-                  }
-                  helperText={
-                    formError.estimate
-                      ? formError.estimate.message
-                      : ''
-                  }
-                  onBlur={(e) => handleBlur(e, '', estimate)}
-                  {...estimate.bind}
-                />
-              </Grid>
+              {editPage && (
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    disabled
+                    id="estimate"
+                    label="Estimate"
+                    name="estimate"
+                    autoComplete="estimate"
+                    helperText={
+                      formError.estimate
+                        ? formError.estimate.message
+                        : ''
+                    }
+                    {...estimate.bind}
+                  />
+                </Grid>
+              )}
 
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  type="number"
-                  id="complexity"
-                  label="Complexity"
-                  name="complexity"
-                  autoComplete="complexity"
-                  error={
-                    formError.complexity
-                    && formError.complexity.error
-                  }
-                  helperText={
-                    formError.complexity
-                      ? formError.complexity.message
-                      : ''
-                  }
-                  onBlur={(e) => handleBlur(e, '', complexity)}
-                  {...complexity.bind}
-                />
-              </Grid>
+              {editPage && (
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    disabled
+                    type="number"
+                    id="complexity"
+                    label="Complexity"
+                    name="complexity"
+                    autoComplete="complexity"
+                    helperText={
+                      formError.complexity
+                        ? formError.complexity.message
+                        : ''
+                    }
+                    {...complexity.bind}
+                  />
+                </Grid>
+              )}
             </Grid>
 
             <Grid container spacing={isDesktop ? 3 : 0} justifyContent="center">
+              <Grid item xs={12} sm={4}>
+                <Button
+                  type="button"
+                  fullWidth
+                  variant="outlined"
+                  color="primary"
+                  onClick={discardFormData}
+                  className={classes.submit}
+                >
+                  Cancel
+                </Button>
+              </Grid>
+
               <Grid item xs={12} sm={4}>
                 <Button
                   type="submit"
@@ -552,19 +559,6 @@ const AddIssues = ({
                   disabled={submitDisabled()}
                 >
                   {buttonText}
-                </Button>
-              </Grid>
-
-              <Grid item xs={12} sm={4}>
-                <Button
-                  type="button"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={discardFormData}
-                  className={classes.submit}
-                >
-                  Cancel
                 </Button>
               </Grid>
             </Grid>
