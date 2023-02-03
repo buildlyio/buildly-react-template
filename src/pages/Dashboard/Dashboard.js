@@ -177,9 +177,18 @@ const Dashboard = ({
   useEffect(() => {
     if (selectedProduct && !!selectedProduct) {
       dispatch(getBoard(selectedProduct));
+    } else {
+      const activeProd = localStorage.getItem('activeProduct')
+      if (activeProd) {
+        setSelectedProduct(activeProd);
+      }
     }
   }, [selectedProduct, statuses]);
 
+  const setActiveProduct = (prod) => {
+    localStorage.setItem('activeProduct', prod);
+    setSelectedProduct(prod);
+  };
   const addItem = (type) => {
     let path;
     if (type === 'feat') {
@@ -250,9 +259,15 @@ const Dashboard = ({
   const commentItem = (item) => {
     let data = { from: location.pathname };
     if (item.issue_uuid) {
-      data = { ...data, issue: item };
+      data = {
+        ...data,
+        issue: item
+      };
     } else {
-      data = { ...data, feature: item };
+      data = {
+        ...data,
+        feature: item
+      };
     }
 
     history.push(routes.COMMENTS, { ...data });
@@ -377,7 +392,7 @@ const Dashboard = ({
 
   return (
     <>
-      {loading && <Loader open={loading} />}
+      {loading && <Loader open={loading}/>}
 
       {loaded && user && !user.survey_status && (
         <div className={classes.firstTimeMessage}>
@@ -423,7 +438,7 @@ const Dashboard = ({
                       from: routes.DASHBOARD_TABULAR,
                     });
                   } else {
-                    setSelectedProduct(e.target.value);
+                    setActiveProduct(e.target.value);
                   }
                 }}
               >
@@ -449,71 +464,71 @@ const Dashboard = ({
                       onClick={syncDataFromTools}
                       className={classes.syncDataFromTools}
                     >
-                      <SyncIcon />
+                      <SyncIcon/>
                       {' '}
                       Sync Data from Tool(s)
                     </Button>
-                ))
+                  ))
               }
             </Grid>
           </Grid>
 
           {loaded && _.isEmpty(statuses) && !!selectedProduct
             ? (product && !_.isEmpty(product.third_party_tool)
-              ? (
-                <>
-                  <Grid item xs={4} className={classes.configBoard}>
-                    <Typography component="div" variant="h4" align="center">
-                      Configure Project Board
-                    </Typography>
+                ? (
+                  <>
+                    <Grid item xs={4} className={classes.configBoard}>
+                      <Typography component="div" variant="h4" align="center">
+                        Configure Project Board
+                      </Typography>
 
-                    <Typography variant="subtitle1" align="center">
-                      Add a configuration to get started
-                    </Typography>
+                      <Typography variant="subtitle1" align="center">
+                        Add a configuration to get started
+                      </Typography>
 
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={configureBoard}
-                      className={classes.configBoardButton}
-                    >
-                      Add Configuration
-                    </Button>
-                  </Grid>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={configureBoard}
+                        className={classes.configBoardButton}
+                      >
+                        Add Configuration
+                      </Button>
+                    </Grid>
 
-                  <Route path={routes.TOOL_BOARD} component={ToolBoard} />
-                </>
-              ) : (
-                <>
-                  <Grid item xs={4} className={classes.configBoard}>
-                    <Typography component="div" variant="h4" align="center">
-                      Configure Project Board
-                    </Typography>
+                    <Route path={routes.TOOL_BOARD} component={ToolBoard}/>
+                  </>
+                ) : (
+                  <>
+                    <Grid item xs={4} className={classes.configBoard}>
+                      <Typography component="div" variant="h4" align="center">
+                        Configure Project Board
+                      </Typography>
 
-                    <Typography variant="subtitle1" align="center">
-                      Add a configuration to get started
-                    </Typography>
+                      <Typography variant="subtitle1" align="center">
+                        Add a configuration to get started
+                      </Typography>
 
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={configureStatus}
-                      className={classes.configBoardButton}
-                    >
-                      Add Configuration
-                    </Button>
-                  </Grid>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={configureStatus}
+                        className={classes.configBoardButton}
+                      >
+                        Add Configuration
+                      </Button>
+                    </Grid>
 
-                  <Route path={routes.STATUS_BOARD} component={StatusBoard} />
-                </>
-              )
+                    <Route path={routes.STATUS_BOARD} component={StatusBoard}/>
+                  </>
+                )
             ) : (
               <>
                 <Grid mb={3} container justifyContent="center">
                   <Grid item className={classes.viewTabs}>
                     <Tabs value={view} onChange={(event, vw) => setView(vw)}>
                       {subNav.map((itemProps, index) => (
-                        <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
+                        <Tab {...itemProps} key={`tab${index}:${itemProps.value}`}/>
                       ))}
                     </Tabs>
                   </Grid>
@@ -578,18 +593,18 @@ const Dashboard = ({
                     />
                   )}
                 />
-                <Route path={routes.ADD_FEATURE} component={AddFeatures} />
-                <Route path={routes.EDIT_FEATURE} component={AddFeatures} />
-                <Route path={routes.VIEW_FEATURE} component={AddFeatures} />
-                <Route path={routes.ADD_ISSUE} component={AddIssues} />
-                <Route path={routes.EDIT_ISSUE} component={AddIssues} />
-                <Route path={routes.FEATURE_TO_ISSUE} component={AddIssues} />
-                <Route path={routes.COMMENTS} component={Comments} />
-                <Route path={routes.SHOW_RELATED_ISSUES} component={ShowRelatedIssues} />
+                <Route path={routes.ADD_FEATURE} component={AddFeatures}/>
+                <Route path={routes.EDIT_FEATURE} component={AddFeatures}/>
+                <Route path={routes.VIEW_FEATURE} component={AddFeatures}/>
+                <Route path={routes.ADD_ISSUE} component={AddIssues}/>
+                <Route path={routes.EDIT_ISSUE} component={AddIssues}/>
+                <Route path={routes.FEATURE_TO_ISSUE} component={AddIssues}/>
+                <Route path={routes.COMMENTS} component={Comments}/>
+                <Route path={routes.SHOW_RELATED_ISSUES} component={ShowRelatedIssues}/>
                 <Route
                   path={routes.ISSUE_SUGGESTIONS}
                   render={(renderProps) => (
-                    <IssueSuggestions {...renderProps} convertIssue={convertIssue} />
+                    <IssueSuggestions {...renderProps} convertIssue={convertIssue}/>
                   )}
                 />
               </>
