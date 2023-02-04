@@ -116,7 +116,8 @@ const Dashboard = ({
     },
   ];
   const viewPath = (
-    subNav.find((item) => location.pathname.endsWith(item.value)) || subNav[0]
+    subNav.find((item) => location.pathname.endsWith(item.value))
+    || subNav.find((item) => item.value.toLowerCase() === 'report')
   ).value;
   const [view, setView] = useState(viewPath);
   const [selectedProduct, setSelectedProduct] = useState((history && history.location
@@ -178,7 +179,7 @@ const Dashboard = ({
     if (selectedProduct && !!selectedProduct) {
       dispatch(getBoard(selectedProduct));
     } else {
-      const activeProd = localStorage.getItem('activeProduct')
+      const activeProd = localStorage.getItem('activeProduct');
       if (activeProd) {
         setSelectedProduct(activeProd);
       }
@@ -473,8 +474,9 @@ const Dashboard = ({
             </Grid>
           </Grid>
 
-          {loaded && _.isEmpty(statuses) && !!selectedProduct
-            ? (product && !_.isEmpty(product.third_party_tool)
+          {loaded && _.isEmpty(statuses) && !!selectedProduct && !_.isEqual(view, 'report')
+            ? (
+              product && !_.isEmpty(product.third_party_tool)
                 ? (
                   <>
                     <Grid item xs={4} className={classes.configBoard}>
@@ -541,7 +543,15 @@ const Dashboard = ({
                   title="Are you sure you want to delete?"
                   submitText="Delete"
                 />
-
+                <Route
+                  path={routes.DASHBOARD_REPORT}
+                  render={(prps) => (
+                    <Report
+                      {...prps}
+                      selectedProduct={selectedProduct}
+                    />
+                  )}
+                />
                 <Route
                   path={routes.DASHBOARD_TABULAR}
                   render={(prps) => (
@@ -581,15 +591,6 @@ const Dashboard = ({
                       createSuggestedFeature={createSuggestedFeature}
                       removeSuggestedFeature={removeSuggestedFeature}
                       showRelatedIssues={showRelatedIssues}
-                    />
-                  )}
-                />
-                <Route
-                  path={routes.DASHBOARD_REPORT}
-                  render={(prps) => (
-                    <Report
-                      {...prps}
-                      selectedProduct={selectedProduct}
                     />
                   )}
                 />
