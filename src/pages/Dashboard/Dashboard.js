@@ -457,7 +457,8 @@ const Dashboard = ({
               </TextField>
 
               {
-                (loaded && product && !_.isEmpty(product.third_party_tool)
+                (
+                  loaded && product && !_.isEmpty(product.third_party_tool)
                   && !_.isEmpty(statuses) && (
                     <Button
                       variant="contained"
@@ -465,16 +466,17 @@ const Dashboard = ({
                       onClick={syncDataFromTools}
                       className={classes.syncDataFromTools}
                     >
-                      <SyncIcon/>
+                      <SyncIcon />
                       {' '}
                       Sync Data from Tool(s)
                     </Button>
-                  ))
+                  )
+                )
               }
             </Grid>
           </Grid>
 
-          {loaded && _.isEmpty(statuses) && !!selectedProduct && !_.isEqual(view, 'report')
+          {loaded && _.isEmpty(statuses) && !!selectedProduct && !['report', 'tabular'].includes(view.toLocaleString())
             ? (
               product && !_.isEmpty(product.third_party_tool)
                 ? (
