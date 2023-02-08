@@ -143,6 +143,7 @@ const Dashboard = ({
         setRoute(routes.NEW_PRODUCT);
       }
     }
+    console.log('user : ', user);
     dispatch(getAllProducts(user.organization.organization_uuid));
   }, [user]);
 

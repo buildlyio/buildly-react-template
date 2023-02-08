@@ -21,9 +21,9 @@ import {
   Divider, Grid, ListItemIcon, Tooltip, Typography,
 } from '@mui/material';
 import logo from '@assets/insights-orange-white.png';
-import { getUser, UserContext } from '@context/User.context';
+import { UserContext } from '@context/User.context';
 import {
-  logout, loadOrgNames, loadStripeProducts, VERIFY_EMAIL_SUCCESS,
+  logout, loadOrgNames, loadStripeProducts, VERIFY_EMAIL_SUCCESS, getUser,
 } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
 import { hasGlobalAdminRights, hasAdminRights } from '@utils/permissions';
@@ -183,11 +183,16 @@ const TopBar = ({
     setOrganization(user.organization.name);
   }
 
+  // Open upgrade plan dialog
   const handleDialogOpen = () => {
     setOpen(true);
   };
 
-  const handleDialogClose = () => {
+  // Close upgrade plan dialog
+  const handleDialogClose = (event, reason) => {
+    if (reason && reason === ('backdropClick' || 'escapeKeyDown')) {
+      return;
+    }
     setOpen(false);
   };
 
@@ -252,19 +257,20 @@ const TopBar = ({
    * @returns {boolean}
    */
   const submitDisabled = () => {
-    const errorKeys = Object.keys(formError);
-    let errorExists = false;
-    if (
-      (showProducts && !product.value)
-        || (showProducts && cardError)
-        || (showProducts && !elements)
-        // eslint-disable-next-line no-underscore-dangle
-        || (showProducts && elements && elements.getElement('card')._empty)
-    ) return true;
-    errorKeys.forEach((key) => {
-      if (formError[key].error) errorExists = true;
-    });
-    return errorExists;
+    if (planDialogOpen) {
+      const errorKeys = Object.keys(formError);
+      let errorExists = false;
+      if (
+          (showProducts && !product.value)
+          || (showProducts && cardError)
+          || (showProducts && !elements)
+          // eslint-disable-next-line no-underscore-dangle
+          || (showProducts && elements && elements.getElement('card')._empty)
+      ) return true;
+      errorKeys.forEach((key) => {
+        if (formError[key].error) errorExists = true;
+      });
+    }
   };
 
   /**
@@ -295,8 +301,7 @@ const TopBar = ({
         try {
           httpService.makeRequest('post',
             `${window.env.API_URL}subscription/`,
-            formValue).pipe(() => {
-            console.log('here');
+            formValue).then(() => {
             dispatch(getUser());
           });
         } catch (httpError) { console.log('httpError : ', httpError); }

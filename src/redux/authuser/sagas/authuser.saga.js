@@ -113,6 +113,13 @@ function* getUserDetails() {
       'get',
       `${window.env.API_URL}coreuser/me/`,
     );
+    yield call(oauthService.setOauthUser, user);
+    const coreuser = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}coreuser/`,
+    );
+    yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield put({ type: GET_USER_SUCCESS, user });
     if (user && user.data && user.data.organization) {
       yield put(getOrganization(user.data.organization.organization_uuid));
