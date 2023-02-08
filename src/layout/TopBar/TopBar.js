@@ -257,20 +257,19 @@ const TopBar = ({
    * @returns {boolean}
    */
   const submitDisabled = () => {
-    if (planDialogOpen) {
-      const errorKeys = Object.keys(formError);
-      let errorExists = false;
-      if (
-          (showProducts && !product.value)
+    const errorKeys = Object.keys(formError);
+    let errorExists = false;
+    if (
+      (showProducts && !product.value)
           || (showProducts && cardError)
           || (showProducts && !elements)
           // eslint-disable-next-line no-underscore-dangle
           || (showProducts && elements && elements.getElement('card')._empty)
-      ) return true;
-      errorKeys.forEach((key) => {
-        if (formError[key].error) errorExists = true;
-      });
-    }
+    ) return true;
+    errorKeys.forEach((key) => {
+      if (formError[key].error) errorExists = true;
+    });
+    return errorExists;
   };
 
   /**
@@ -419,7 +418,12 @@ const TopBar = ({
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem className={classes.accountMenuIItem}>
+            <MenuItem
+              className={classes.accountMenuIItem}
+              onClick={() => {
+                history.push(routes.USER_PROFILE);
+              }}
+            >
               <Person />
               {' '}
               My profile
