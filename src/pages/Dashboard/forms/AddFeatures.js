@@ -85,30 +85,30 @@ const AddFeatures = ({
 
   // form fields definition
   const name = useInput((editData && editData.name) || '', { required: true, productFeatures: features });
-  const description = useInput((editData && editData.description) || '');
+  const description = useInput((editData && editData.description) || '', { required: true });
   const priority = useInput((editData && editData.priority) || '', { required: true });
 
   const [tagList, setTagList] = useState([]);
   const [tags, setTags] = useState((editData && editData.tags) || []);
 
-  const statusID = useInput((editData && editData.status) || '');
-  const [status, setStatus] = useState('');
-  const [colID, setColID] = useState((editData && status?.status_tracking_id) || '');
+  const statusID = useInput((editData && editData.status) || '', { required: true });
+  const [status, setStatus] = useState({ status: '' });
+  const [colID, setColID] = useState({ colID: (editData && status?.status_tracking_id) || '' });
 
   const [assignees, setAssignees] = useState(
     (editData && editData.feature_detail && _.map(editData.feature_detail.assigneees, 'username'))
     || [],
   );
 
-  const quest1 = useInput((editData && editData.feature_detail?.collecting_data) || '');
-  const quest2 = useInput((editData && editData.feature_detail?.field_desc) || '', { required: true });
-  const quest3 = useInput((editData && editData.feature_detail?.displaying_data) || '');
-  const quest4 = useInput((editData && editData.feature_detail?.display_desc) || '', { required: true });
-  const quest5 = useInput((editData && editData.feature_detail?.business_logic) || '');
-  const quest6 = useInput((editData && editData.feature_detail?.enabled) || '');
-  const quest7 = useInput((editData && editData.feature_detail?.enabled_desc) || '', { required: true });
-  const quest8 = useInput((editData && editData.feature_detail?.search_or_nav) || '');
-  const quest9 = useInput((editData && editData.feature_detail?.links) || '');
+  const collecting_data = useInput((editData && editData.feature_detail?.collecting_data) || '');
+  const field_desc = useInput((editData && editData.feature_detail?.field_desc) || '', { required: true });
+  const displaying_data = useInput((editData && editData.feature_detail?.displaying_data) || '');
+  const display_desc = useInput((editData && editData.feature_detail?.display_desc) || '', { required: true });
+  const business_logic = useInput((editData && editData.feature_detail?.business_logic) || '');
+  const enabled = useInput((editData && editData.feature_detail?.enabled) || '');
+  const enabled_desc = useInput((editData && editData.feature_detail?.enabled_desc) || '', { required: true });
+  const search_or_nav = useInput((editData && editData.feature_detail?.search_or_nav) || '');
+  const links = useInput((editData && editData.feature_detail?.links) || '');
 
   useEffect(() => {
     const prod = _.find(products, { product_uuid });
@@ -136,18 +136,21 @@ const AddFeatures = ({
       edit_date: dateTime,
       name: name.value,
       description: description.value,
+      status: statusID.value,
+      priority: priority.value,
+      tags,
       product_uuid,
       ...featCred?.auth_detail,
       feature_detail: {
-        collecting_data: quest1.value,
-        field_desc: quest2.value,
-        displaying_data: quest3.value,
-        display_desc: quest4.value,
-        business_logic: quest5.value,
-        enabled: quest6.value,
-        enabled_desc: quest7.value,
-        search_or_nav: quest8.value,
-        links: quest9.value,
+        collecting_data: collecting_data.value,
+        field_desc: field_desc.value,
+        displaying_data: displaying_data.value,
+        display_desc: display_desc.value,
+        business_logic: business_logic.value,
+        enabled: enabled.value,
+        enabled_desc: enabled_desc.value,
+        search_or_nav: search_or_nav.value,
+        links: links.value,
         assigneees: _.filter(assigneeData, (user) => (
           !!user && _.includes(assignees, user.username)
         )),
@@ -155,9 +158,6 @@ const AddFeatures = ({
     };
 
     if (editPage) {
-      formData.status = statusID.value;
-      formData.tags = tags;
-      formData.priority = priority.value;
       formData.column_id = colID;
       dispatch(updateFeature(formData));
     } else {
@@ -187,19 +187,21 @@ const AddFeatures = ({
     }
   };
 
+  const sanitizeString = (value) => value.replace(/(<([^>]+)>)/gi, '');
+
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
+
     if (
       !name.value
-      || !description.value
-      || !quest1.value
-      || (quest1.value === 'yes' && !quest2.value)
-      || !quest3.value
-      || (quest3.value === 'yes' && !quest4.value)
-      || (quest3.value === 'yes' && !quest5.value)
-      || !quest6.value
-      || (quest6.value === 'yes' && !quest7.value)
-      || (quest5.value === 'no' && !quest8.value)
+      || !sanitizeString(description.value).length
+      || !statusID.value
+      || !priority.value
+      || (collecting_data.value === 'yes' && !field_desc.value)
+      || (displaying_data.value === 'yes' && !display_desc.value)
+      || (displaying_data.value === 'yes' && !business_logic.value)
+      || (enabled.value === 'yes' && !enabled_desc.value)
+      || (business_logic.value === 'no' && !search_or_nav.value)
     ) {
       return true;
     }
@@ -217,17 +219,17 @@ const AddFeatures = ({
   const handleClose = () => {
     const dataHasChanged = (
       name.hasChanged()
-    || quest1.hasChanged()
-    || quest2.hasChanged()
-    || quest3.hasChanged()
-    || quest4.hasChanged()
-    || quest5.hasChanged()
-    || quest6.hasChanged()
-    || quest7.hasChanged()
-    || quest8.hasChanged()
-    || quest9.hasChanged()
     || priority.hasChanged()
     || statusID.hasChanged()
+    || collecting_data.hasChanged()
+    || field_desc.hasChanged()
+    || displaying_data.hasChanged()
+    || display_desc.hasChanged()
+    || business_logic.hasChanged()
+    || enabled.hasChanged()
+    || enabled_desc.hasChanged()
+    || search_or_nav.hasChanged()
+    || links.hasChanged()
     || (!editPage && (!_.isEmpty(tags) || !_.isEmpty(assignees)))
     || !!(editPage && editData && !_.isEqual((editData.tags || []), tags))
     || !!(editPage && editData && editData.feature_detail
@@ -259,6 +261,7 @@ const AddFeatures = ({
           {loading && <Loader open={loading} />}
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
+              {/* Name */}
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -284,6 +287,7 @@ const AddFeatures = ({
                 />
               </Grid>
 
+              {/* Description */}
               <Grid item xs={12}>
                 <SmartInput
                   onEditorValueChange={description.setNewValue}
@@ -294,6 +298,8 @@ const AddFeatures = ({
             </Grid>
 
             <Grid container spacing={2}>
+
+              {/* Status */}
               <Grid item xs={12} md={8}>
                 <TextField
                   variant="outlined"
@@ -325,6 +331,7 @@ const AddFeatures = ({
                 </TextField>
               </Grid>
 
+              {/* Priority */}
               <Grid item xs={12} md={4}>
                 <TextField
                   variant="outlined"
@@ -361,6 +368,7 @@ const AddFeatures = ({
               </Grid>
             </Grid>
 
+            {/* Tags */}
             {!_.isEmpty(tagList) && (
               <Grid item xs={12}>
                 <Autocomplete
@@ -393,6 +401,7 @@ const AddFeatures = ({
               </Grid>
             )}
 
+            {/* Assignees */}
             {!_.isEmpty(assigneeData) && (
               <Grid item xs={12} md={8}>
                 <Autocomplete
@@ -433,8 +442,8 @@ const AddFeatures = ({
                   </FormLabel>
                   <RadioGroup
                     aria-label="collecting-data"
-                    name="quest1"
-                    {...quest1.bind}
+                    name="collecting_data"
+                    {...collecting_data.bind}
                   >
                     <FormControlLabel
                       value="yes"
@@ -450,25 +459,25 @@ const AddFeatures = ({
                 </FormControl>
               </Grid>
 
-              {quest1.value === 'yes' && (
+              {collecting_data.value === 'yes' && (
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
                     margin="normal"
                     required
                     fullWidth
-                    id="quest2"
+                    id="field_desc"
                     label="Describe the fields"
-                    name="quest2"
-                    autoComplete="quest2"
-                    error={formError.quest2 && formError.quest2.error}
+                    name="field_desc"
+                    autoComplete="field_desc"
+                    error={formError.field_desc && formError.field_desc.error}
                     helperText={
-                      formError && formError.quest2
-                        ? formError.quest2.message
+                      formError && formError.field_desc
+                        ? formError.field_desc.message
                         : ''
                     }
-                    onBlur={(e) => handleBlur(e, 'required', quest2)}
-                    {...quest2.bind}
+                    onBlur={(e) => handleBlur(e, 'required', field_desc)}
+                    {...field_desc.bind}
                     disabled={viewPage}
                   />
                 </Grid>
@@ -481,8 +490,8 @@ const AddFeatures = ({
                   </FormLabel>
                   <RadioGroup
                     aria-label="displaying-data"
-                    name="quest3"
-                    {...quest3.bind}
+                    name="displaying_data"
+                    {...displaying_data.bind}
                   >
                     <FormControlLabel
                       value="yes"
@@ -498,31 +507,31 @@ const AddFeatures = ({
                 </FormControl>
               </Grid>
 
-              {quest3.value === 'yes' && (
+              {displaying_data.value === 'yes' && (
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
                     margin="normal"
                     required
                     fullWidth
-                    id="quest4"
+                    id="display_desc"
                     label="Describe how data will be displayed"
-                    name="quest4"
-                    autoComplete="quest4"
-                    error={formError.quest4 && formError.quest4.error}
+                    name="display_desc"
+                    autoComplete="display_desc"
+                    error={formError.display_desc && formError.display_desc.error}
                     helperText={
-                      formError && formError.quest4
-                        ? formError.quest4.message
+                      formError && formError.display_desc
+                        ? formError.display_desc.message
                         : ''
                     }
-                    onBlur={(e) => handleBlur(e, 'required', quest4)}
-                    {...quest4.bind}
+                    onBlur={(e) => handleBlur(e, 'required', display_desc)}
+                    {...display_desc.bind}
                     disabled={viewPage}
                   />
                 </Grid>
               )}
 
-              {quest3.value === 'yes' && (
+              {displaying_data.value === 'yes' && (
                 <Grid item xs={12}>
                   <FormControl fullWidth component="fieldset" disabled={viewPage}>
                     <FormLabel component="legend">
@@ -531,8 +540,8 @@ const AddFeatures = ({
                     </FormLabel>
                     <RadioGroup
                       aria-label="business-logic"
-                      name="quest5"
-                      {...quest5.bind}
+                      name="business_logic"
+                      {...business_logic.bind}
                     >
                       <FormControlLabel
                         value="yes"
@@ -556,8 +565,8 @@ const AddFeatures = ({
                   </FormLabel>
                   <RadioGroup
                     aria-label="making-decision"
-                    name="quest6"
-                    {...quest6.bind}
+                    name="enabled"
+                    {...enabled.bind}
                   >
                     <FormControlLabel
                       value="yes"
@@ -573,31 +582,31 @@ const AddFeatures = ({
                 </FormControl>
               </Grid>
 
-              {quest6.value === 'yes' && (
+              {enabled.value === 'yes' && (
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
                     margin="normal"
                     required
                     fullWidth
-                    id="quest7"
+                    id="enabled_desc"
                     label="Describe how decision will be displayed"
-                    name="quest7"
-                    autoComplete="quest7"
-                    error={formError.quest7 && formError.quest7.error}
+                    name="enabled_desc"
+                    autoComplete="enabled_desc"
+                    error={formError.enabled_desc && formError.enabled_desc.error}
                     helperText={
-                      formError && formError.quest7
-                        ? formError.quest7.message
+                      formError && formError.enabled_desc
+                        ? formError.enabled_desc.message
                         : ''
                     }
-                    onBlur={(e) => handleBlur(e, 'required', quest7)}
-                    {...quest7.bind}
+                    onBlur={(e) => handleBlur(e, 'required', enabled_desc)}
+                    {...enabled_desc.bind}
                     disabled={viewPage}
                   />
                 </Grid>
               )}
 
-              {quest5.value === 'no' && (
+              {business_logic.value === 'no' && (
                 <Grid item xs={12}>
                   <FormControl fullWidth component="fieldset" disabled={viewPage}>
                     <FormLabel component="legend">
@@ -605,8 +614,8 @@ const AddFeatures = ({
                     </FormLabel>
                     <RadioGroup
                       aria-label="user-find-data"
-                      name="quest8"
-                      {...quest8.bind}
+                      name="search_or_nav"
+                      {...search_or_nav.bind}
                     >
                       <FormControlLabel
                         value="search"
@@ -623,7 +632,7 @@ const AddFeatures = ({
                 </Grid>
               )}
 
-              {(quest8.value === 'nav' || quest6.value === 'no') && (
+              {(search_or_nav.value === 'nav' || enabled.value === 'no') && (
                 <Grid item xs={12}>
                   <FormControl fullWidth component="fieldset" disabled={viewPage}>
                     <FormLabel component="legend">
@@ -631,8 +640,8 @@ const AddFeatures = ({
                     </FormLabel>
                     <RadioGroup
                       aria-label="links"
-                      name="quest9"
-                      {...quest9.bind}
+                      name="links"
+                      {...links.bind}
                     >
                       <FormControlLabel
                         value="top"
@@ -659,7 +668,7 @@ const AddFeatures = ({
               <Grid item xs={12} sm={4}>
                 <Button
                   type="button"
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
                   fullWidth
                   onClick={handleClose}

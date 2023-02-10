@@ -97,9 +97,44 @@ const Report = ({ selectedProduct }) => {
     }
   }, []);
 
+  /**
+   * Download pdf report
+   */
+  const getPdf = () => {
+    httpService.sendDirectServiceRequest(
+      `pdf_report/${selectedProduct}/`,
+      'GET',
+      null,
+      'product',
+      false,
+    )
+      .then((response) => {
+        const a = document.createElement('a');
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+
+        a.href = url;
+        a.download = 'pdf_report.pdf';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      });
+  };
+
   if (selectedProduct && displayReport) {
     return (
       <>
+        <div className="row text-right m-2">
+          <div className="col-3 offset-9">
+            {/* eslint-disable-next-line react/button-has-type */}
+            <button
+              onClick={getPdf}
+              className="btn btn-small btn-primary"
+            >
+              Download PDF
+            </button>
+          </div>
+        </div>
         <div className="row">
           <div className="col-md-7">
             <Card className="w-100">
@@ -129,10 +164,19 @@ const Report = ({ selectedProduct }) => {
           <Card.Body>
             <Card.Title>Timeline</Card.Title>
             <div className="m-2">
-              <TimelineComponent
-                reportData={releaseData.release_budget}
-                suggestedFeatures={productData?.feature_suggestions}
-              />
+              {
+                releaseData.release_budget && releaseData.release_budget.length
+                  ? (
+                    <TimelineComponent
+                      reportData={releaseData.release_budget}
+                      suggestedFeatures={productData?.feature_suggestions}
+                    />
+                  ) : (
+                    <div className="alert alert-warning" role="alert">
+                      No releases for this product!
+                    </div>
+                  )
+              }
             </div>
           </Card.Body>
         </Card>
@@ -224,7 +268,7 @@ const Report = ({ selectedProduct }) => {
                           </ListGroup.Item>
                           <ListGroup.Item as="li">
                             <strong>
-                              { `${releaseItem?.duration.weeks} Weeks`}
+                              {`${releaseItem?.duration.weeks} Weeks`}
                             </strong>
                           </ListGroup.Item>
                           {(

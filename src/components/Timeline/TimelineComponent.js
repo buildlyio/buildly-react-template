@@ -40,7 +40,7 @@ const TimelineComponent = ({ reportData, suggestedFeatures }) => {
                   <div className="feature-list m-2 p-2" style={{ backgroundColor: releaseItem.bgColor }}>
                     <ul className="p-2">
                       {(
-                        suggestedFeatures && suggestedFeatures.map(
+                        features && features.map(
                           (feature, index) => (
                             <li key={`feat-${index}`}>{`${feature?.suggested_feature}(Sug.)`}</li>
                           ),
