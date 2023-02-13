@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import { Card, CardContent } from '@mui/material';
-import { MapComponent } from '@components/MapComponent/MapComponent';
+import { MapComponent } from '../../../components/MapComponent/MapComponent';
 import {
   getFormattedCustodyRows,
 } from '../ShipmentConstants';

@@ -6,13 +6,14 @@ import {
   DateTimePicker,
   LocalizationProvider,
 } from '@mui/lab';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
+import CustomizedTooltips from '../../components/ToolTip/ToolTip';
 import { TextField } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
+    margin: '0px',
   },
 }));
 
@@ -23,6 +24,7 @@ const DatePickerComponent = ({
   hasTime,
   helpText,
   disabled,
+  required,
 }) => {
   const classes = useStyles();
 
@@ -36,6 +38,7 @@ const DatePickerComponent = ({
             ampm={false}
             fullWidth
             margin="normal"
+            required={required}
             disabled={disabled}
             label={label}
             value={selectedDate}
@@ -52,6 +55,7 @@ const DatePickerComponent = ({
             format="MM/dd/yyyy"
             margin="normal"
             disabled={disabled}
+            required={required}
             id="date-picker-inline"
             label={label}
             value={selectedDate}
@@ -63,9 +67,9 @@ const DatePickerComponent = ({
           />
         )}
       </LocalizationProvider>
-      {helpText && (
+      {/* {helpText && (
         <CustomizedTooltips toolTipText={helpText} />
-      )}
+      )} */}
     </div>
   );
 };

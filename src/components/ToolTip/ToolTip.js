@@ -11,19 +11,19 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '16px',
     marginLeft: theme.spacing(1),
     cursor: 'pointer',
-    color: '#fff',
+    color: theme.palette.secondary.main,
   },
 }));
 
 const StyledToolTip = withStyles((theme) => ({
   tooltip: {
-    backgroundColor: '#343434',
-    color: '#fff',
+    backgroundColor: theme.palette.common.darkGrey,
+    color: theme.palette.secondary.main,
     maxWidth: 220,
     fontSize: theme.typography.pxToRem(12),
   },
   arrow: {
-    color: '#f5f5f9',
+    color: theme.palette.common.arrow,
   },
 }))(Tooltip);
 

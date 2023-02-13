@@ -15,12 +15,12 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import logo from '@assets/tp-logo.png';
-import Copyright from '@components/Copyright/Copyright';
-import { useInput } from '@hooks/useInput';
-import { confirmResetPassword } from '@redux/authuser/actions/authuser.actions';
-import { routes } from '@routes/routesConstants';
-import { isMobile } from '@utils/mediaQuery';
-import { validators } from '@utils/validators';
+import Copyright from '../../components/Copyright/Copyright';
+import { useInput } from '../../hooks/useInput';
+import { confirmResetPassword } from '../../redux/authuser/actions/authuser.actions';
+import { routes } from '../../routes/routesConstants';
+import { isMobile } from '../../utils/mediaQuery';
+import { validators } from '../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   container: {

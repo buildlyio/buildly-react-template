@@ -20,21 +20,21 @@ import {
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   CheckBox as CheckBoxIcon,
 } from '@mui/icons-material';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
+import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import { UserContext } from '../../../context/User.context';
 import {
-  getFormattedRow,
-  getFormattedSensorRow,
+  getGatewayFormattedRow,
+  getSensorFormattedRow,
   getAvailableGateways,
-} from '@pages/SensorsGateway/Constants';
+} from '../../../pages/SensorsGateway/Constants';
 import {
   SENSOR_PLATFORM,
-} from '@utils/mock';
-import { setOptionsData } from '@utils/utilMethods';
-import { editGateway } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { editShipment } from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../../utils/mock';
+import { setOptionsData } from '../../../utils/utilMethods';
+import { editGateway } from '../../../redux/sensorsGateway/actions/sensorsGateway.actions';
+import { editShipment } from '../../../redux/shipment/actions/shipment.actions';
+import { routes } from '../../../routes/routesConstants';
 import { gatewayColumns, sensorsColumns } from '../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
@@ -122,8 +122,8 @@ const SensorsGatewayInfo = ({
         }
       }
     });
-    rows = getFormattedRow(selectedRows, gatewayTypeList, shipmentData);
-    sensorsRow = getFormattedSensorRow(selectedSensors, sensorTypeList);
+    rows = getGatewayFormattedRow(selectedRows, gatewayTypeList, shipmentData);
+    sensorsRow = getSensorFormattedRow(selectedSensors, sensorTypeList);
   }
 
   useEffect(() => {

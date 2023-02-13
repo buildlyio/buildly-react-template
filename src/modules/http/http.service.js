@@ -1,5 +1,5 @@
 import { http } from 'midgard-core';
-import { oauthService } from '@modules/oauth/oauth.service';
+import { oauthService } from '../oauth/oauth.service';
 
 /**
  * function to send a Http request to the API

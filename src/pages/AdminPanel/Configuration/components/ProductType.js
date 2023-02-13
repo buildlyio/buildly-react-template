@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import {
   getProductType,
   deleteProductType,
-} from '@redux/items/actions/items.actions';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '@context/User.context';
-import { routes } from '@routes/routesConstants';
+} from '../../../../redux/items/actions/items.actions';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../../context/User.context';
+import { routes } from '../../../../routes/routesConstants';
 import { getColumns } from '../ConfigurationConstants';
 import AddProductType from '../forms/AddProductType';
 

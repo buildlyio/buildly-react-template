@@ -8,6 +8,7 @@ import {
   IconButton,
   TextField,
   MenuItem,
+  Button,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import {
@@ -15,6 +16,7 @@ import {
   Refresh as RefreshIcon,
   Settings as SettingsIcon,
   Menu as MenuIcon,
+  Add as AddIcon,
 } from '@mui/icons-material';
 import logo from '@assets/tp-logo.png';
 import {
@@ -22,27 +24,27 @@ import {
   getUser,
   loadAllOrgs,
   updateUser,
-} from '@redux/authuser/actions/authuser.actions';
+} from '../../redux/authuser/actions/authuser.actions';
 import {
   getUserOptions,
   getOrganizationOptions,
   setTimezone,
-} from '@redux/options/actions/options.actions';
+} from '../../redux/options/actions/options.actions';
 import {
   getNewGateways,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
+import { routes } from '../../routes/routesConstants';
 import {
   checkForAdmin,
   checkForGlobalAdmin,
-} from '@utils/utilMethods';
-import Loader from '@components/Loader/Loader';
+} from '../../utils/utilMethods';
+import Loader from '../../components/Loader/Loader';
 import AdminMenu from './AdminMenu';
 import AccountMenu from './AccountMenu';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    backgroundColor: '#383636',
+    backgroundColor: theme.palette.background.dark,
     zIndex: theme.zIndex.drawer + 1,
     [theme.breakpoints.down('sm')]: {
       overflowX: 'auto',
@@ -138,12 +140,12 @@ const TopBar = ({
   };
 
   const handleAdminPanelClick = () => {
-    history.push(routes.ADMIN_PANEL);
+    history.push(`${routes.ADMIN_PANEL}/configuration`);
     setSettingEl(null);
   };
 
   const handleUserManagementClick = () => {
-    history.push(routes.USER_MANAGEMENT);
+    history.push(`${routes.USER_MANAGEMENT}/current-users`);
     setSettingEl(null);
   };
 

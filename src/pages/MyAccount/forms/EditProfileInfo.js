@@ -13,12 +13,12 @@ import {
   Checkbox,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import FormModal from '@components/Modal/FormModal';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { useInput } from '@hooks/useInput';
-import { updateUser } from '@redux/authuser/actions/authuser.actions';
-import { setOptionsData } from '@utils/utilMethods';
-import { validators } from '@utils/validators';
+import FormModal from '../../../components/Modal/FormModal';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import { useInput } from '../../../hooks/useInput';
+import { updateUser } from '../../../redux/authuser/actions/authuser.actions';
+import { setOptionsData } from '../../../utils/utilMethods';
+import { validators } from '../../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   form: {

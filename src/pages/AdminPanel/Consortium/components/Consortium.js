@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
 import {
   loadAllOrgs,
-} from '@redux/authuser/actions/authuser.actions';
+} from '../../../../redux/authuser/actions/authuser.actions';
 import {
   getAllConsortiums,
   deleteConsortium,
-} from '@redux/consortium/actions/consortium.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../../../redux/consortium/actions/consortium.actions';
+import { routes } from '../../../../routes/routesConstants';
 import { getConsortiumColumns } from '../ConsortiumConstant';
 import AddConsortium from '../forms/AddConsortium';
 

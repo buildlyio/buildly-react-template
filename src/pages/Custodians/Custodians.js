@@ -1,23 +1,23 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '@context/User.context';
+import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../context/User.context';
 import {
   getCustodians,
   getCustodianType,
   deleteCustodian,
   getContact,
   getCustody,
-} from '@redux/custodian/actions/custodian.actions';
+} from '../../redux/custodian/actions/custodian.actions';
 import {
   getCustodianOptions,
   getContactOptions,
-} from '@redux/options/actions/options.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../redux/options/actions/options.actions';
+import { routes } from '../../routes/routesConstants';
 import {
   custodianColumns,
-  getFormattedRow,
+  getCustodianFormattedRow,
   getUniqueContactInfo,
 } from './CustodianConstants';
 import AddCustodians from './forms/AddCustodians';
@@ -65,10 +65,10 @@ const Custodian = ({
   }, []);
 
   useEffect(() => {
-    if (custodianData && custodianData.length && contactInfo) {
-      setRows(getFormattedRow(custodianData, contactInfo));
+    if (custodianData && custodianData.length && contactInfo && contactInfo.length) {
+      setRows(getCustodianFormattedRow(custodianData, contactInfo));
     }
-  }, [custodianData, contactInfo, custodyData]);
+  }, [JSON.stringify(custodianData), JSON.stringify(contactInfo)]);
 
   const editItem = (item) => {
     const contactObj = getUniqueContactInfo(item, contactInfo);

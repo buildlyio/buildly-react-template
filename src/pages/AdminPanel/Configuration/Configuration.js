@@ -8,9 +8,9 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
-import { checkForGlobalAdmin } from '@utils/utilMethods';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import { UserContext } from '../../../context/User.context';
+import { checkForGlobalAdmin } from '../../../utils/utilMethods';
 import {
   CUSTODIAN_TYPE_TOOLTIP,
   GATEWAY_TYPE_TOOLTIP,
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(6),
   },
   accordion: {
-    backgroundColor: '#4F4D4D',
+    backgroundColor: theme.palette.background.dark,
     marginBottom: theme.spacing(4),
     overflow: 'scroll hidden',
     scrollbarWidth: 'none',
@@ -212,6 +212,7 @@ const Configuration = (props) => {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
+  ...state,
 });
 
 export default connect(mapStateToProps)(Configuration);

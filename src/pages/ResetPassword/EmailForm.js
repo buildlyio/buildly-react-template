@@ -14,12 +14,12 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import logo from '@assets/tp-logo.png';
-import { useInput } from '@hooks/useInput';
+import { useInput } from '../../hooks/useInput';
 import {
   resetPassword,
-} from '@redux/authuser/actions/authuser.actions';
-import { routes } from '@routes/routesConstants';
-import { validators } from '@utils/validators';
+} from '../../redux/authuser/actions/authuser.actions';
+import { routes } from '../../routes/routesConstants';
+import { validators } from '../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   container: {

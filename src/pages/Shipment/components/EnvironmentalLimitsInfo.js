@@ -11,11 +11,11 @@ import {
   Grid,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import RangeSlider from '@components/Slider/RangeSlider';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
-import { editShipment } from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
+import RangeSlider from '../../../components/Slider/RangeSlider';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import { UserContext } from '../../../context/User.context';
+import { editShipment } from '../../../redux/shipment/actions/shipment.actions';
+import { routes } from '../../../routes/routesConstants';
 
 const useStyles = makeStyles((theme) => ({
   slider: {

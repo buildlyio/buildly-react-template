@@ -14,7 +14,7 @@ import ExportData from './forms/ExportData';
 
 const useStyles = makeStyles((theme) => ({
   accordion: {
-    backgroundColor: '#393636',
+    backgroundColor: theme.palette.background.dark,
     marginBottom: theme.spacing(4),
     scrollbarWidth: 'none',
     msOverflowStyle: 'none',
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   form: {
     width: '100%',
     margin: theme.spacing(1),
-    backgroundColor: '#424242',
+    backgroundColor: theme.palette.common.darkGrey2,
     padding: theme.spacing(1, 2),
   },
 }));

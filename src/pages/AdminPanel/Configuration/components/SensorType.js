@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import {
   getSensorType,
   deleteSensorType,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { routes } from '@routes/routesConstants';
+} from '../../../../redux/sensorsGateway/actions/sensorsGateway.actions';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
+import { routes } from '../../../../routes/routesConstants';
 import { getColumns } from '../ConfigurationConstants';
 import AddSensorType from '../forms/AddSensorType';
 

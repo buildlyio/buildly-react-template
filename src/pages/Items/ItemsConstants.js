@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { numberWithCommas } from '@utils/utilMethods';
+import { numberWithCommas } from '../../utils/utilMethods';
 
 export const itemColumns = [
   {
@@ -69,7 +69,7 @@ export const itemColumns = [
   },
 ];
 
-export const getFormattedRow = (data, itemTypeList, unitsOfMeasure) => {
+export const getItemFormattedRow = (data, itemTypeList, unitsOfMeasure) => {
   if (data && itemTypeList) {
     let formattedData = [];
     _.forEach(data, (element) => {

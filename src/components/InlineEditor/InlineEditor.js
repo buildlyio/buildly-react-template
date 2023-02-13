@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0),
   },
   placeholder: {
-    color: '#aaa',
+    color: theme.palette.common.placeholder,
   },
 }));
 

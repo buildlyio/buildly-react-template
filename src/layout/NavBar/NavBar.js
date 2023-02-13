@@ -11,7 +11,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { isMobile } from '@utils/mediaQuery';
+import { isMobile } from '../../utils/mediaQuery';
 import { NAVIGATION_ITEMS } from './NavBarConstants';
 
 const useStyles = makeStyles((theme) => ({
@@ -20,13 +20,13 @@ const useStyles = makeStyles((theme) => ({
       width: 240,
       flexShrink: 0,
     },
-    backgroundColor: '#646262',
+    backgroundColor: theme.palette.common.drawer,
   },
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: 240,
-    backgroundColor: '#383636',
-    color: '#fff',
+    backgroundColor: theme.palette.background.dark,
+    color: theme.palette.secondary.main,
   },
   active: {
     backgroundColor: '#887C5E !important',
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   navLink: {
     display: 'block',
     textDecoration: 'none',
-    color: '#fff',
+    color: theme.palette.secondary.main,
   },
   navItems: {
     padding: theme.spacing(3, 4),

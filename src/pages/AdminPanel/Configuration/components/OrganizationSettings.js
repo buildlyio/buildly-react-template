@@ -10,15 +10,15 @@ import {
   MenuItem,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import Loader from '@components/Loader/Loader';
+import Loader from '../../../../components/Loader/Loader';
 import {
   updateOrganization,
-} from '@redux/authuser/actions/authuser.actions';
+} from '../../../../redux/authuser/actions/authuser.actions';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    backgroundColor: '#424242',
+    backgroundColor: theme.palette.common.darkGrey2,
     margin: theme.spacing(0.25, 0, 0.25, 0.25),
   },
   checkbox: {
@@ -142,7 +142,6 @@ const OrganizationSettings = ({
           <TextField
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             select
             id="org-type"

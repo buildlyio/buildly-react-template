@@ -1,4 +1,4 @@
-import { addAll, deleteOne, upsertOne } from '@redux/reducer.utils';
+import { addAll, deleteOne, upsertOne } from '../../../redux/reducer.utils';
 import PropTypes from 'prop-types';
 import {
   CRUD_CREATE_COMMIT,

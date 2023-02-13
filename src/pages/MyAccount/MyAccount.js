@@ -14,8 +14,8 @@ import {
 import { makeStyles } from '@mui/styles';
 import { Edit as EditIcon } from '@mui/icons-material';
 import profile from '@assets/profile.png';
-import Loader from '@components/Loader/Loader';
-import { routes } from '@routes/routesConstants';
+import Loader from '../../components/Loader/Loader';
+import { routes } from '../../routes/routesConstants';
 import EditProfileInfo from './forms/EditProfileInfo';
 
 const useStyles = makeStyles((theme) => ({

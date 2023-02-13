@@ -41,7 +41,7 @@ export const getUniqueContactInfo = (rowItem, contactInfo) => {
   return obj;
 };
 
-export const getFormattedRow = (data, contactInfo, custodyData) => {
+export const getCustodianFormattedRow = (data, contactInfo, custodyData) => {
   if (data && data.length && contactInfo && contactInfo.length) {
     let customizedRow = [];
     _.forEach(data, (rowItem) => {

@@ -10,14 +10,14 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import FormModal from '@components/Modal/FormModal';
-import { useInput } from '@hooks/useInput';
-import { validators } from '@utils/validators';
+import FormModal from '../../../../components/Modal/FormModal';
+import { useInput } from '../../../../hooks/useInput';
+import { validators } from '../../../../utils/validators';
 import {
   addProductType,
   editProductType,
-} from '@redux/items/actions/items.actions';
-import { UserContext } from '@context/User.context';
+} from '../../../../redux/items/actions/items.actions';
+import { UserContext } from '../../../../context/User.context';
 
 const useStyles = makeStyles((theme) => ({
   form: {

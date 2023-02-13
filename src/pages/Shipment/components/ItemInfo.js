@@ -19,11 +19,11 @@ import {
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   CheckBox as CheckBoxIcon,
 } from '@mui/icons-material';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '@context/User.context';
-import { getFormattedRow } from '@pages/Items/ItemsConstants';
-import { editShipment } from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
+import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../context/User.context';
+import { getItemFormattedRow } from '../../../pages/Items/ItemsConstants';
+import { editShipment } from '../../../redux/shipment/actions/shipment.actions';
+import { routes } from '../../../routes/routesConstants';
 import { itemColumns } from '../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
@@ -90,7 +90,7 @@ const ItemsInfo = ({
         selectedRows = [...selectedRows, item];
       }
     });
-    rows = getFormattedRow(selectedRows, itemTypeList, unitsOfMeasure);
+    rows = getItemFormattedRow(selectedRows, itemTypeList, unitsOfMeasure);
   }
 
   const onInputChange = (value) => {
@@ -160,6 +160,7 @@ const ItemsInfo = ({
                   multiple
                   id="tags-outlined"
                   disabled={viewOnly}
+                  disableCloseOnSelect
                   options={
                     (
                       itemData

@@ -8,6 +8,8 @@ const theme = createTheme({
     type: 'dark',
     background: {
       default: '#605e5e',
+      dark: '#383636',
+      contrast: '#4F4D4D',
     },
     primary: {
       main: '#EBC645',
@@ -16,6 +18,20 @@ const theme = createTheme({
     secondary: {
       main: '#fff',
       contrastText: '#000',
+    },
+    common: {
+      success: '#009900',
+      info: '#0099CC',
+      warning: '#FFCC33',
+      error: '#FF0033',
+      placeholder: '#aaa',
+      grey: '#7C7A7A',
+      darkGrey: '#343434',
+      arrow: '#f5f5f9',
+      drawer: '#646262',
+      active: '#887C5E',
+      darkGrey2: '#424242',
+      tab: '#222222',
     },
   },
   typography: {
@@ -183,6 +199,9 @@ const theme = createTheme({
         root: {
           backgroundColor: '#424242',
           color: '#fff',
+          '&.MuiDialog-paper': {
+            overflowY: 'hidden',
+          },
         },
         outlined: {
           borderColor: 'rgba(255, 255, 255, 0.12)',
@@ -228,6 +247,7 @@ const theme = createTheme({
           },
           '&.MuiTableRow-hover:hover': {
             backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            cursor: 'pointer',
           },
         },
       },
@@ -317,6 +337,15 @@ const theme = createTheme({
         },
       },
     },
+    MuiButtonGroup: {
+      styleOverrides: {
+        root: {
+          '& > .MuiButton-root.MuiButton-contained.Mui-disabled': {
+            color: 'rgba(255, 255, 255, 0.4)',
+          },
+        },
+      },
+    },
     MuiFormHelperText: {
       styleOverrides: {
         root: {
@@ -382,6 +411,35 @@ const theme = createTheme({
           '.MuiSvgIcon-root': {
             color: '#fff !important',
           },
+        },
+      },
+    },
+    MuiCalendarPicker: {
+      styleOverrides: {
+        root: {
+          '& > .MuiButtonBase-root.MuiPickersDay-root:hover': {
+            backgroundColor: '#000 !important',
+            color: '#fff !important',
+          },
+        },
+      },
+    },
+    MuiClockPicker: {
+      styleOverrides: {
+        arrowSwitcher: {
+          '& .css-eziifo': {
+            backgroundColor: 'rgb(255 255 255 / 33%) !important',
+          },
+        },
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        '& .Mui-selected': {
+          color: '#EBC645',
+        },
+        root: {
+          color: '#fff',
         },
       },
     },

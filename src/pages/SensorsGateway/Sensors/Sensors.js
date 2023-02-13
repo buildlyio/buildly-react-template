@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '@context/User.context';
+import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../context/User.context';
 import {
   getSensors,
   getSensorType,
   deleteSensor,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+} from '../../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getSensorOptions,
-} from '@redux/options/actions/options.actions';
-import { routes } from '@routes/routesConstants';
-import { sensorsColumns, getFormattedSensorRow } from '../Constants';
+} from '../../../redux/options/actions/options.actions';
+import { routes } from '../../../routes/routesConstants';
+import { sensorsColumns, getSensorFormattedRow } from '../Constants';
 import AddSensors from '../forms/AddSensors';
 
 const Sensors = ({
@@ -56,7 +56,7 @@ const Sensors = ({
       && sensorTypeList
       && sensorTypeList.length
     ) {
-      setRows(getFormattedSensorRow(sensorData, sensorTypeList, gatewayData));
+      setRows(getSensorFormattedRow(sensorData, sensorTypeList, gatewayData));
     }
   }, [sensorData, sensorTypeList]);
 

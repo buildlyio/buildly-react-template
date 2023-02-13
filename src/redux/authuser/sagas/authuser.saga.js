@@ -124,6 +124,10 @@ function* getUserDetails() {
       });
     }
   } catch (error) {
+    if (error.toString().includes('Request failed with status code 403')) {
+      yield call(logout);
+      window.location.href = '/';
+    }
     yield [
       yield put({
         type: GET_USER_FAIL,

@@ -31,7 +31,7 @@ const StyledMenuItem = withStyles((theme) => ({
   root: {
     '&:focus': {
       '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-        color: theme.palette.common.white,
+        color: theme.palette.secondary.main,
       },
     },
     padding: theme.spacing(2),

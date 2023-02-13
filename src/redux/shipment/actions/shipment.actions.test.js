@@ -21,8 +21,11 @@ describe('Get Shipment Details action', () => {
     const expectedAction = {
       type: actions.GET_SHIPMENTS,
       organization_uuid,
-      id,
+      id: null,
       getUpdatedSensorData: false,
+      getUpdatedCustody: false,
+      shipmentAction: null,
+      status: 1,
     };
     expect(actions.getShipmentDetails(
       organization_uuid,
@@ -120,7 +123,13 @@ describe('Add PDF Identifier action', () => {
     const organization_uuid = 'gweiug-3t2igf-3yfhf-329hgds73';
     const expectedAction = {
       type: actions.ADD_PDF_IDENTIFIER,
-      payload: data,
+      data,
+      filename,
+      identifier,
+      payload,
+      history,
+      redirectTo,
+      organization_uuid,
     };
     expect(actions.pdfIdentifier(
       data,

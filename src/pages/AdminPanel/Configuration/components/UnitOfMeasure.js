@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import {
   getUnitsOfMeasure,
   deleteUnitsOfMeasure,
-} from '@redux/items/actions/items.actions';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { routes } from '@routes/routesConstants';
+} from '../../../../redux/items/actions/items.actions';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
+import { routes } from '../../../../routes/routesConstants';
 import { getUnitsOfMeasureColumns } from '../ConfigurationConstants';
 import AddUnitOfMeasure from '../forms/AddUnitOfMeasure';
 

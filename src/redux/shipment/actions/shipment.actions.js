@@ -24,6 +24,8 @@ export const ADD_PDF_IDENTIFIER = 'SHIPMENT/ADD_PDF_IDENTIFIER';
 export const ADD_PDF_IDENTIFIER_SUCCESS = 'SHIPMENT/ADD_PDF_IDENTIFIER_SUCCESS';
 export const ADD_PDF_IDENTIFIER_FAILURE = 'SHIPMENT/ADD_PDF_IDENTIFIER_FAILURE';
 
+export const GET_REPORT_AND_ALERTS = 'SHIPMENT/GET_REPORT_AND_ALERTS';
+
 /**
  * Save Shipment Form Data
  * @param {Object} formData
@@ -31,6 +33,15 @@ export const ADD_PDF_IDENTIFIER_FAILURE = 'SHIPMENT/ADD_PDF_IDENTIFIER_FAILURE';
 export const saveShipmentFormData = (formData) => ({
   type: SAVE_SHIPMENT_FORM_DATA,
   formData,
+});
+
+/**
+ * Get Aggregate Report and Alerts for given shipment
+ * @param {Object} shipment_id
+ */
+export const getReportAndAlerts = (shipment_id) => ({
+  type: GET_REPORT_AND_ALERTS,
+  shipment_id,
 });
 
 /**

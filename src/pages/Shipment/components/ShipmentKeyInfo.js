@@ -16,9 +16,9 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { PictureAsPdf as PictureAsPdfIcon } from '@mui/icons-material';
-import Loader from '@components/Loader/Loader';
-import { pdfIdentifier } from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
+import Loader from '../../../components/Loader/Loader';
+import { pdfIdentifier } from '../../../redux/shipment/actions/shipment.actions';
+import { routes } from '../../../routes/routesConstants';
 import PdfViewer from './PDFViewer';
 
 const useStyles = makeStyles((theme) => ({
