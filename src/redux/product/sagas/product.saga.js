@@ -411,6 +411,8 @@ function* createProduct(payload) {
       ),
     ];
     if (history) {
+      // save active product uuid in local storage
+      localStorage.setItem('activeProduct', product.data.product_uuid);
       history.push(routes.DASHBOARD, { selected_product: product.data.product_uuid });
     }
   } catch (error) {

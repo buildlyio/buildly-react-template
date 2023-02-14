@@ -58,47 +58,83 @@ const Report = ({ selectedProduct }) => {
         },
       );
       // handle promises
-      Promise.all(requestsArray).then((results) => {
-        const reportData = results[0].data;
-        const releaseReport = results[1].data;
+      Promise.all(requestsArray)
+        .then((results) => {
+          const reportData = results[0].data;
+          const releaseReport = JSON.parse(JSON.stringify(results[1].data));
 
-        if (reportData && reportData.budget) {
-          // set the image to display
-          let img = null;
-          if (reportData.architecture_type.toLowerCase() === 'monolith') {
-            img = monolith;
-          } else if (reportData.architecture_type.toLowerCase() === 'microservice') {
-            img = microservice;
-          } else if (['micro-app', 'mini-app'].includes(reportData.architecture_type.toLowerCase())) {
-            img = microApp;
-          } else if (reportData.architecture_type.toLowerCase() === 'multicloud microservice') {
-            img = multiCloud;
+          if (reportData && reportData.budget) {
+            // set the image to display
+            let img = null;
+            if (reportData.architecture_type.toLowerCase() === 'monolith') {
+              img = monolith;
+            } else if (reportData.architecture_type.toLowerCase() === 'microservice') {
+              img = microservice;
+            } else if (['micro-app', 'mini-app'].includes(reportData.architecture_type.toLowerCase())) {
+              img = microApp;
+            } else if (reportData.architecture_type.toLowerCase() === 'multicloud microservice') {
+              img = multiCloud;
+            }
+            // set states
+            setProductData(reportData);
+            setArchitectureImg(img);
+            // get release data
+            releaseReport.release_budget = getReleaseBudgetData(
+              reportData.budget?.team_data,
+              releaseReport.release_data,
+            );
+
+            releaseReport.release_budget = addColorsAndIcons(
+              JSON.parse(JSON.stringify(releaseReport.release_budget)),
+            );
+            // set release data
+            setReleaseData(releaseReport);
           }
-          // set states
-          setProductData(reportData);
-          setArchitectureImg(img);
-
-          // get release data
-          releaseReport.release_budget = getReleaseBudgetData(
-            productData.budget?.team_data,
-            releaseReport.release_data,
-          );
-
-          releaseReport.release_budget = addColorsAndIcons(
-            JSON.parse(JSON.stringify(releaseReport.release_budget)),
-          );
-          // set release data
-          setReleaseData(releaseReport);
-        }
-      }).catch((error) => {
-        displayReport = false;
-      });
+        })
+        .catch((error) => {
+          displayReport = false;
+        });
     }
   }, []);
+
+  /**
+   * Download pdf report
+   */
+  const getPdf = () => {
+    httpService.sendDirectServiceRequest(
+      `pdf_report/${selectedProduct}/`,
+      'GET',
+      null,
+      'product',
+      false,
+    )
+      .then((response) => {
+        const a = document.createElement('a');
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+
+        a.href = url;
+        a.download = 'pdf_report.pdf';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      });
+  };
 
   if (selectedProduct && displayReport) {
     return (
       <>
+        <div className="row text-right m-2">
+          <div className="col-3 offset-9">
+            {/* eslint-disable-next-line react/button-has-type */}
+            <button
+              onClick={getPdf}
+              className="btn btn-small btn-primary"
+            >
+              Download PDF
+            </button>
+          </div>
+        </div>
         <div className="row">
           <div className="col-md-7">
             <Card className="w-100">
@@ -128,7 +164,19 @@ const Report = ({ selectedProduct }) => {
           <Card.Body>
             <Card.Title>Timeline</Card.Title>
             <div className="m-2">
-              <TimelineComponent reportData={releaseData.release_budget} />
+              {
+                releaseData.release_budget && releaseData.release_budget.length
+                  ? (
+                    <TimelineComponent
+                      reportData={releaseData.release_budget}
+                      suggestedFeatures={productData?.feature_suggestions}
+                    />
+                  ) : (
+                    <div className="alert alert-warning" role="alert">
+                      No releases for this product!
+                    </div>
+                  )
+              }
             </div>
           </Card.Body>
         </Card>
@@ -218,7 +266,11 @@ const Report = ({ selectedProduct }) => {
                           >
                             <b>{releaseItem.name}</b>
                           </ListGroup.Item>
-                          <ListGroup.Item as="li"><strong>8 Weeks</strong></ListGroup.Item>
+                          <ListGroup.Item as="li">
+                            <strong>
+                              {`${releaseItem?.duration.weeks} Weeks`}
+                            </strong>
+                          </ListGroup.Item>
                           {(
                             releaseItem.team && releaseItem.team.map(
                               (team, idx) => (
@@ -234,7 +286,9 @@ const Report = ({ selectedProduct }) => {
                           )}
                           <ListGroup.Item as="li">
                             <b>
-                              {`Cost: $${releaseItem.totalCost || 0.00}`}
+                              {
+                                `Cost: $${(releaseItem.totalCost || 0.00) * releaseItem?.duration.months}`
+                              }
                             </b>
                           </ListGroup.Item>
                         </ListGroup>

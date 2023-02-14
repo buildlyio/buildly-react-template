@@ -44,7 +44,7 @@ function makeRequest(method, url, body, useJwt, contentType, responseType) {
   return http.request(url, options);
 }
 
-function sendDirectServiceRequest(url, method, body, service) {
+function sendDirectServiceRequest(url, method, body, service, jsonRequest = true) {
   let authHeader = 'Bearer ';
   let apiUrl = '';
   if (service.toLowerCase() === 'product') {
@@ -59,7 +59,11 @@ function sendDirectServiceRequest(url, method, body, service) {
   const headers = {
     Authorization: `${authHeader}`,
   };
-  headers['Content-Type'] = 'application/json';
+  if (jsonRequest) {
+    headers['Content-Type'] = 'application/json';
+  } else {
+    headers['Content-Type'] = 'application/pdf';
+  }
   const options = {
     method,
     data: body,
@@ -67,5 +71,8 @@ function sendDirectServiceRequest(url, method, body, service) {
     returnPromise: true,
     responseType: null,
   };
+  if (!jsonRequest) {
+    options.responseType = 'arraybuffer';
+  }
   return http.request(apiUrl, options);
 }
