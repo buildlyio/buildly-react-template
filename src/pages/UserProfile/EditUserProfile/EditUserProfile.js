@@ -108,10 +108,10 @@ const EditUserProfile = ({ dispatch }) => {
   return (
     <>
       <div className="row border rounded">
-        <div className="col-4">
+        <div className="col-4 m-auto">
           <div className="d-flex flex-column align-items-center">
             <Avatar sx={{ width: 96, height: 96 }}>
-              <Person />
+              <Person color="secondary" sx={{ fontSize: 72 }} />
             </Avatar>
             <Typography>
               {user.first_name}
@@ -120,6 +120,7 @@ const EditUserProfile = ({ dispatch }) => {
             </Typography>
             <Typography>
               Organization:
+              {' '}
               {user.organization.name}
             </Typography>
           </div>
