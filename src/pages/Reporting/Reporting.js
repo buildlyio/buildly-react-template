@@ -543,21 +543,21 @@ const Reporting = ({
       </Grid>
       <SensorReport
         loading={loading}
-        aggregateReport={selectedShipment?.sensor_report}
+        aggregateReport={selectedShipment && selectedShipment.sensor_report}
         alerts={_.filter(
           allAlerts,
-          { shipment_id: selectedShipment?.partner_shipment_id },
+          { shipment_id: selectedShipment && selectedShipment.partner_shipment_id },
         )}
-        shipmentName={selectedShipment?.name}
+        shipmentName={selectedShipment && selectedShipment.name}
         selectedMarker={selectedShipment && selectedMarker}
       />
       <AlertsReport
         loading={loading}
         alerts={_.filter(
           allAlerts,
-          { shipment_id: selectedShipment?.partner_shipment_id },
+          { shipment_id: selectedShipment && selectedShipment.partner_shipment_id },
         )}
-        shipmentName={selectedShipment?.name}
+        shipmentName={selectedShipment && selectedShipment.name}
         timezone={timezone}
       />
     </Box>

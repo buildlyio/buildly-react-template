@@ -186,8 +186,8 @@ const ItemsInfo = ({
                       <Chip
                         variant="default"
                         label={
-                          itemData
-                            ? _.find(itemData, { url: option })?.name
+                          !_.isEmpty(itemData) && _.find(itemData, { url: option })
+                            ? _.find(itemData, { url: option }).name
                             : ''
                         }
                         {...getTagProps({ index })}

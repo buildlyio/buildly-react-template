@@ -309,8 +309,8 @@ const SensorsGatewayInfo = ({
                       <Chip
                         variant="default"
                         label={
-                          gatewayData
-                            ? _.find(gatewayData, { gateway_uuid: option })?.name
+                          !_.isEmpty(gatewayData) && _.find(gatewayData, { gateway_uuid: option })
+                            ? _.find(gatewayData, { gateway_uuid: option }).name
                             : ''
                         }
                         {...getTagProps({ index })}

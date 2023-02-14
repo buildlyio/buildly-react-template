@@ -77,28 +77,6 @@ const initialState = {
 
 // Reducer
 export default (state = initialState, action) => {
-  let deletedGatewayType;
-  let editedGatewayType = state.gatewayTypeList;
-  const gatewayTypePresent = _.remove(
-    editedGatewayType,
-    { id: action.gatewayType?.id },
-  )[0];
-  if (gatewayTypePresent) {
-    deletedGatewayType = editedGatewayType;
-    editedGatewayType = [...editedGatewayType, action.gatewayType];
-  }
-
-  let deletedSensorType;
-  let editedSensorType = state.sensorTypeList;
-  const sensorTypePresent = _.remove(
-    editedSensorType,
-    { id: action.sensorType?.id },
-  )[0];
-  if (sensorTypePresent) {
-    deletedSensorType = editedSensorType;
-    editedSensorType = [...editedSensorType, action.sensorType];
-  }
-
   switch (action.type) {
     case GET_GATEWAYS:
       return {
@@ -278,13 +256,20 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case EDIT_GATEWAYS_TYPE_SUCCESS:
+    case EDIT_GATEWAYS_TYPE_SUCCESS: {
+      const gatewayTypes = _.map(state.gatewayTypeList, (gt) => (
+        action.gatewayType && (gt.id === action.gatewayType.id)
+          ? action.gatewayType
+          : gt
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        gatewayTypeList: editedGatewayType,
+        gatewayTypeList: gatewayTypes,
       };
+    }
 
     case EDIT_GATEWAYS_TYPE_FAILURE:
       return {
@@ -302,13 +287,18 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case DELETE_GATEWAYS_TYPE_SUCCESS:
+    case DELETE_GATEWAYS_TYPE_SUCCESS: {
+      const gatewayTypes = _.filter(state.gatewayTypeList, (gt) => (
+        action.gatewayType && (gt.id !== action.gatewayType.id)
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        gatewayTypeList: deletedGatewayType,
+        gatewayTypeList: gatewayTypes,
       };
+    }
 
     case DELETE_GATEWAYS_TYPE_FAILURE:
       return {
@@ -473,13 +463,20 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case EDIT_SENSORS_TYPE_SUCCESS:
+    case EDIT_SENSORS_TYPE_SUCCESS: {
+      const sensorTypes = _.map(state.sensorTypeList, (st) => (
+        action.sensorType && (st.id === action.sensorType.id)
+          ? action.sensorType
+          : st
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        sensorTypeList: editedSensorType,
+        sensorTypeList: sensorTypes,
       };
+    }
 
     case EDIT_SENSORS_TYPE_FAILURE:
       return {
@@ -497,13 +494,18 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case DELETE_SENSORS_TYPE_SUCCESS:
+    case DELETE_SENSORS_TYPE_SUCCESS: {
+      const sensorTypes = _.filter(state.sensorTypeList, (st) => (
+        action.sensorType && (st.id !== action.sensorType.id)
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        sensorTypeList: deletedSensorType,
+        sensorTypeList: sensorTypes,
       };
+    }
 
     case DELETE_SENSORS_TYPE_FAILURE:
       return {
