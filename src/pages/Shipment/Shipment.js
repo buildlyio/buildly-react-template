@@ -226,11 +226,9 @@ const Shipment = (props) => {
       if (!selectedShipment && formattedRows.length) {
         if (shipmentFilter === 'Cancelled') {
           handleShipmentSelection(CANCELLED_ROWS[0]);
-        }
-        // else if (shipmentFilter === 'Completed') {
+        // } else if (shipmentFilter === 'Completed') {
         //   handleShipmentSelection(COMPLETED_ROWS[0]);
-        // }
-        else {
+        } else {
           handleShipmentSelection(ACTIVE_ROWS[0]);
         }
       }
@@ -253,11 +251,9 @@ const Shipment = (props) => {
     if (shipmentFilter && rows.length) {
       if (shipmentFilter === 'Cancelled') {
         handleShipmentSelection(cancelledRows[0]);
-      }
       // } else if (shipmentFilter === 'Completed') {
       //   handleShipmentSelection(completedRows[0]);
-      // }
-      else {
+      } else {
         handleShipmentSelection(activeRows[0]);
       }
     }
@@ -522,8 +518,8 @@ const Shipment = (props) => {
       </Grid>
       <SensorReport
         loading={loading}
-        aggregateReport={selectedShipment && selectedShipment?.sensor_report}
-        shipmentName={selectedShipment && selectedShipment?.name}
+        aggregateReport={selectedShipment && selectedShipment.sensor_report}
+        shipmentName={selectedShipment && selectedShipment.name}
         selectedMarker={selectedShipment && selectedMarker}
       />
       <Route

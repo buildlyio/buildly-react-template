@@ -75,56 +75,6 @@ const initialState = {
 
 // Reducer
 export default (state = initialState, action) => {
-  let deletedItemType;
-  let editedItemType = state.itemTypeList;
-  const itemTypePresent = _.remove(
-    editedItemType,
-    { id: action.itemType?.id },
-  )[0];
-  if (itemTypePresent) {
-    deletedItemType = editedItemType;
-    editedItemType = [...editedItemType, action.itemType];
-  }
-
-  let deletedProducts;
-  let editedProducts = state.products;
-  const productsPresent = _.remove(
-    editedProducts,
-    { id: action.product?.id },
-  )[0];
-  if (productsPresent) {
-    deletedProducts = editedProducts;
-    editedProducts = [...editedProducts, action.product];
-  }
-
-  let deletedProductType;
-  let editedProductType = state.productType;
-  const ProductTypePresent = _.remove(
-    editedProductType,
-    { id: action.productType?.id },
-  )[0];
-  if (ProductTypePresent) {
-    deletedProductType = editedProductType;
-    editedProductType = [
-      ...editedProductType,
-      action.productType,
-    ];
-  }
-
-  let deletedUnitsOfMeasure;
-  let editedUnitsOfMeasure = state.unitsOfMeasure;
-  const UnitsOfMeasurePresent = _.remove(
-    editedUnitsOfMeasure,
-    { id: action.unitsOfMeasure?.id },
-  )[0];
-  if (UnitsOfMeasurePresent) {
-    deletedUnitsOfMeasure = editedUnitsOfMeasure;
-    editedUnitsOfMeasure = [
-      ...editedUnitsOfMeasure,
-      action.unitsOfMeasure,
-    ];
-  }
-
   switch (action.type) {
     case GET_ITEMS:
       return {
@@ -281,13 +231,20 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case EDIT_ITEMS_TYPE_SUCCESS:
+    case EDIT_ITEMS_TYPE_SUCCESS: {
+      const itemTypes = _.map(state.itemTypeList, (it) => (
+        action.itemType && (it.id === action.itemType.id)
+          ? action.itemType
+          : it
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        itemTypeList: editedItemType,
+        itemTypeList: itemTypes,
       };
+    }
 
     case EDIT_ITEMS_TYPE_FAILURE:
       return {
@@ -305,13 +262,18 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case DELETE_ITEMS_TYPE_SUCCESS:
+    case DELETE_ITEMS_TYPE_SUCCESS: {
+      const itemTypes = _.filter(state.itemTypeList, (it) => (
+        action.itemType && (it.id !== action.itemType.id)
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        itemTypeList: deletedItemType,
+        itemTypeList: itemTypes,
       };
+    }
 
     case DELETE_ITEMS_TYPE_FAILURE:
       return {
@@ -379,13 +341,20 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case EDIT_PRODUCTS_SUCCESS:
+    case EDIT_PRODUCTS_SUCCESS: {
+      const products = _.map(state.products, (prod) => (
+        action.product && (prod.id === action.product.id)
+          ? action.product
+          : prod
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        products: editedProducts,
+        products,
       };
+    }
 
     case EDIT_PRODUCTS_FAILURE:
       return {
@@ -403,13 +372,18 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case DELETE_PRODUCTS_SUCCESS:
+    case DELETE_PRODUCTS_SUCCESS: {
+      const products = _.filter(state.products, (prod) => (
+        action.product && (prod.id !== action.product.id)
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        products: deletedProducts,
+        products,
       };
+    }
 
     case DELETE_PRODUCTS_FAILURE:
       return {
@@ -477,13 +451,20 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case EDIT_PRODUCTS_TYPE_SUCCESS:
+    case EDIT_PRODUCTS_TYPE_SUCCESS: {
+      const productTypes = _.map(state.productType, (pt) => (
+        action.productType && (pt.id === action.productType.id)
+          ? action.productType
+          : pt
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        productType: editedProductType,
+        productType: productTypes,
       };
+    }
 
     case EDIT_PRODUCTS_TYPE_FAILURE:
       return {
@@ -501,13 +482,18 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case DELETE_PRODUCTS_TYPE_SUCCESS:
+    case DELETE_PRODUCTS_TYPE_SUCCESS: {
+      const productTypes = _.filter(state.productType, (pt) => (
+        action.productType && (pt.id !== action.productType.id)
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        productType: deletedProductType,
+        productType: productTypes,
       };
+    }
 
     case DELETE_PRODUCTS_TYPE_FAILURE:
       return {
@@ -575,13 +561,20 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case EDIT_UNITS_OF_MEASURE_SUCCESS:
+    case EDIT_UNITS_OF_MEASURE_SUCCESS: {
+      const uoms = _.map(state.unitsOfMeasure, (uom) => (
+        action.unitsOfMeasure && (uom.id === action.unitsOfMeasure.id)
+          ? action.unitsOfMeasure
+          : uom
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        unitsOfMeasure: editedUnitsOfMeasure,
+        unitsOfMeasure: uoms,
       };
+    }
 
     case EDIT_UNITS_OF_MEASURE_FAILURE:
       return {
@@ -599,13 +592,18 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case DELETE_UNITS_OF_MEASURE_SUCCESS:
+    case DELETE_UNITS_OF_MEASURE_SUCCESS: {
+      const uoms = _.filter(state.unitsOfMeasure, (uom) => (
+        action.unitsOfMeasure && (uom.id !== action.unitsOfMeasure.id)
+      ));
+
       return {
         ...state,
         loading: false,
         loaded: true,
-        unitsOfMeasure: deletedUnitsOfMeasure,
+        unitsOfMeasure: uoms,
       };
+    }
 
     case DELETE_UNITS_OF_MEASURE_FAILURE:
       return {

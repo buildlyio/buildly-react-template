@@ -241,8 +241,8 @@ const AddConsortium = ({
                       <Chip
                         variant="default"
                         label={
-                          allOrgs
-                            ? _.find(allOrgs, { organization_uuid: option })?.name
+                          !_.isEmpty(allOrgs) && _.find(allOrgs, { organization_uuid: option })
+                            ? _.find(allOrgs, { organization_uuid: option }).name
                             : ''
                         }
                         {...getTagProps({ index })}

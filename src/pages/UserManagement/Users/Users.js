@@ -318,7 +318,7 @@ const Users = ({ data, dispatch }) => {
                               : null
                           }
                           >
-                            {organization.name ?? organization_name}
+                            {organization.name || organization_name}
                           </Typography>
                         );
                       },

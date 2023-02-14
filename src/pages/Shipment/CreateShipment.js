@@ -1038,10 +1038,10 @@ const CreateShipment = (props) => {
                               variant="default"
                               key={`item-${index}:${option}`}
                               label={
-                          itemData
-                            ? _.find(itemData, { url: option })?.name
-                            : ''
-                        }
+                                !_.isEmpty(itemData) && _.find(itemData, { url: option })
+                                  ? _.find(itemData, { url: option }).name
+                                  : ''
+                              }
                               {...getTagProps({ index })}
                             />
                           ))
@@ -1453,10 +1453,10 @@ const CreateShipment = (props) => {
                         <Chip
                           variant="default"
                           label={
-                          gatewayData
-                            ? _.find(gatewayData, { gateway_uuid: option })?.name
-                            : ''
-                        }
+                            !_.isEmpty(gatewayData) && _.find(gatewayData, { gateway_uuid: option })
+                              ? _.find(gatewayData, { gateway_uuid: option }).name
+                              : ''
+                          }
                           {...getTagProps({ index })}
                         />
                       ))
