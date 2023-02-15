@@ -12,7 +12,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 const UserProfile = ({ history, location }) => {
   const subNav = [
     {
-      label: 'My profile',
+      label: 'Profile',
       value: 'edit-profile',
       icon: <PersonIcon />,
     },

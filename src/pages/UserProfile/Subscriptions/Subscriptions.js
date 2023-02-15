@@ -9,7 +9,6 @@ import MUIDataTable from 'mui-datatables';
 const Subscriptions = ({ dispatch }) => {
   // Initialize variables
   const user = useContext(UserContext);
-  console.log('user : ', user);
 
   const columns = [
     { name: 'subscription_uuid', options: { display: false, filter: false, sort: false } },
@@ -19,27 +18,27 @@ const Subscriptions = ({ dispatch }) => {
     { name: 'trial_end_date', label: 'Trial end date', options: { filter: true, sort: true } },
     { name: 'subscription_start_date', label: 'Subscription start date', options: { filter: true, sort: true } },
     { name: 'subscription_end_date', label: 'Subscription end date', options: { filter: true, sort: true } },
-    {
-      name: '',
-      label: '',
-      options: {
-        filter: false,
-        sort: false,
-        empty: true,
-        customBodyRenderLite: (dataIndex) => (
-          <>
-            <Button
-              type="submit"
-              variant="outlined"
-              color="primary"
-              size="small"
-            >
-              Renew
-            </Button>
-          </>
-        ),
-      },
-    },
+    // {
+    //   name: '',
+    //   label: '',
+    //   options: {
+    //     filter: false,
+    //     sort: false,
+    //     empty: true,
+    //     customBodyRenderLite: (dataIndex) => (
+    //       <>
+    //         <Button
+    //           type="submit"
+    //           variant="outlined"
+    //           color="primary"
+    //           size="small"
+    //         >
+    //           Renew
+    //         </Button>
+    //       </>
+    //     ),
+    //   },
+    // },
   ];
 
   const options = {

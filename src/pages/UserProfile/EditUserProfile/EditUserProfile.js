@@ -21,7 +21,7 @@ const EditUserProfile = ({ dispatch, user }) => {
   const [disableSubmitBtn, setBtnDisabled] = useState(true);
 
   const first_name = useInput(user && user.first_name, { required: true });
-  const last_name = useInput(user && user.last_name);
+  const last_name = useInput(user && user.last_name, { required: true });
   const email = useInput(user && user.email, { required: true });
   const username = useInput(user && user.username, { required: true });
   const userType = useInput(user && user.user_type, { required: true });
@@ -64,6 +64,7 @@ const EditUserProfile = ({ dispatch, user }) => {
     let errorExists = false;
     if (
       !first_name.value
+        || !last_name.value
         || !username.value
         || !email.value
         || !userType.value
@@ -150,7 +151,7 @@ const EditUserProfile = ({ dispatch, user }) => {
                       formError.last_name ? formError.last_name.message : ''
                     }
                   className="textField"
-                  onKeyUp={(e) => handleBlur(e)}
+                  onKeyUp={(e) => handleBlur(e, 'required', last_name)}
                   {...last_name.bind}
                 />
               </Grid>
