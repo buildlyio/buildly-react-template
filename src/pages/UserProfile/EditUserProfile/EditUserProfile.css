@@ -1,0 +1,22 @@
+.form {
+    margin: 1rem;
+}
+.textField {
+    min-height: 5rem;
+    margin: 0.25rem 0;
+}
+.buttonProgress {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -12px;
+    margin-left: -12px;
+}
+.loadingWrapper {
+    margin: 1rem;
+    position: relative;
+}
+.submit {
+    float: right;
+    margin-bottom: 1rem;
+}

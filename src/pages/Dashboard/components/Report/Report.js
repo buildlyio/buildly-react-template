@@ -143,7 +143,7 @@ const Report = ({ selectedProduct }) => {
                   {`Architecture suggestion: (${productData?.architecture_type?.toUpperCase()})`}
                 </Card.Title>
                 <div className="image-responsive m-2" style={{ height: 350 }}>
-                  <Image src={architectureImg} fluid style={{ height: '100%' }}/>
+                  <Image src={architectureImg} fluid style={{ height: '100%' }} />
                 </div>
               </Card.Body>
             </Card>
@@ -153,7 +153,7 @@ const Report = ({ selectedProduct }) => {
               <Card.Body>
                 <Card.Title>Buidly components</Card.Title>
                 <div className="w-100 m-2">
-                  <FlowChartComponent componentsData={productData && productData.components_tree}/>
+                  <FlowChartComponent componentsData={productData && productData.components_tree} />
                 </div>
               </Card.Body>
             </Card>
@@ -188,7 +188,7 @@ const Report = ({ selectedProduct }) => {
                 <Card className="mb-2 row">
                   <Card.Body>
                     <div className="m-2">
-                      <RangeSlider rangeValues={productData?.budget_range}/>
+                      <RangeSlider rangeValues={productData?.budget_range} />
                     </div>
                   </Card.Body>
                 </Card>
@@ -196,17 +196,17 @@ const Report = ({ selectedProduct }) => {
                   <Card.Body>
                     <Table striped bordered hover>
                       <thead>
-                      <tr>
-                        <th>PLATFORM DEV EXPENSES</th>
-                        <th>BUDGET</th>
-                      </tr>
-                      <tr>
-                        <th className="light-header">Payroll</th>
-                        <th className="light-header">Monthly ($)</th>
-                      </tr>
+                        <tr>
+                          <th>PLATFORM DEV EXPENSES</th>
+                          <th>BUDGET</th>
+                        </tr>
+                        <tr>
+                          <th className="light-header">Payroll</th>
+                          <th className="light-header">Monthly ($)</th>
+                        </tr>
                       </thead>
                       <tbody>
-                      {
+                        {
                         productData && productData.budget && productData.budget?.team_data.map(
                           (item, index) => (
                             <tr key={`budget-${index}`}>
@@ -216,22 +216,22 @@ const Report = ({ selectedProduct }) => {
                           ),
                         )
                       }
-                      <tr>
-                        <th className="text-right totals-header">Payroll Total</th>
-                        <th className="totals-header">
-                          {`$${(productData && productData.budget
+                        <tr>
+                          <th className="text-right totals-header">Payroll Total</th>
+                          <th className="totals-header">
+                            {`$${(productData && productData.budget
                             && productData.budget?.total_budget) || '0.00'}`}
-                        </th>
-                      </tr>
+                          </th>
+                        </tr>
                       </tbody>
                       <thead>
-                      <tr>
-                        <th className="light-header">Additional</th>
-                        <th className="light-header">Monthly ($)</th>
-                      </tr>
+                        <tr>
+                          <th className="light-header">Additional</th>
+                          <th className="light-header">Monthly ($)</th>
+                        </tr>
                       </thead>
                       <tbody>
-                      {
+                        {
                         productData && productData.budget
                         && productData.budget.other_costs?.map(
                           (item, index) => (
@@ -242,13 +242,13 @@ const Report = ({ selectedProduct }) => {
                           ),
                         )
                       }
-                      <tr>
-                        <th className="text-right totals-header">Additional Total</th>
-                        <th className="totals-header">
-                          {`$${(productData && productData.budget
+                        <tr>
+                          <th className="text-right totals-header">Additional Total</th>
+                          <th className="totals-header">
+                            {`$${(productData && productData.budget
                             && productData.budget?.total_costs) || '0.00'}`}
-                        </th>
-                      </tr>
+                          </th>
+                        </tr>
                       </tbody>
                     </Table>
                   </Card.Body>
