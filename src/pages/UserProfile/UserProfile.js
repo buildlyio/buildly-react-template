@@ -6,16 +6,20 @@ import { Route } from 'react-router-dom';
 import { routes } from '@routes/routesConstants';
 import EditUserProfile from './EditUserProfile/EditUserProfile';
 import Subscriptions from './Subscriptions/Subscriptions';
+import PersonIcon from '@mui/icons-material/Person';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
 const UserProfile = ({ history, location }) => {
   const subNav = [
     {
       label: 'My profile',
       value: 'edit-profile',
+      icon: <PersonIcon />,
     },
     {
       label: 'Subscriptions',
       value: 'subscriptions',
+      icon: <AccountBalanceWalletIcon />,
     },
   ];
   const viewPath = (
@@ -31,14 +35,14 @@ const UserProfile = ({ history, location }) => {
     <>
       <Grid container my={3} justifyContent="space-between" alignItems="start">
         <Typography variant="h4">
-          User profile
+          My account
         </Typography>
       </Grid>
-      <Grid mb={3} container justifyContent="center">
+      <Grid mb={3} sx={{ width: '100%' }}>
         <Grid item>
           <Tabs value={view} onChange={(event, vw) => setView(vw)}>
             {subNav.map((itemProps, index) => (
-              <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
+              <Tab icon={itemProps.icon} iconPosition="start" {...itemProps} key={`tab${index}:${itemProps.value}`} />
             ))}
           </Tabs>
         </Grid>

@@ -1,9 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './EditUserProfile.css';
 
-import { UserContext } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
 import {
   Avatar,
@@ -15,11 +14,10 @@ import {
   Person,
 } from '@mui/icons-material';
 import { updateUser } from '@redux/authuser/actions/authuser.actions';
+import { connect } from 'react-redux';
 
-const EditUserProfile = ({ dispatch }) => {
+const EditUserProfile = ({ dispatch, user }) => {
   // Initialize variables
-  const user = useContext(UserContext);
-  console.log('user : ', user);
   const [disableSubmitBtn, setBtnDisabled] = useState(true);
 
   const first_name = useInput(user && user.first_name, { required: true });
@@ -55,17 +53,7 @@ const EditUserProfile = ({ dispatch }) => {
 
     // Update submit btn toggle status
     setBtnDisabled(toggleSubmitBtn());
-    console.log('disableSubmitBtn : ', disableSubmitBtn);
   };
-
-  // checkIfUseInfoEdited = () => (
-  //     productUse.hasChanged()
-  //     || useWhen.hasChanged()
-  //     || useSituation.hasChanged()
-  //     || impFunction.hasChanged()
-  //     || deliveryRisk.hasChanged()
-  //     || toolReq.hasChanged()
-  // );
 
   /**
    * Enable/disable submit button
@@ -80,7 +68,7 @@ const EditUserProfile = ({ dispatch }) => {
         || !email.value
         || !userType.value
     ) return true;
-    console.log('errorKeys : ', errorKeys);
+
     errorKeys.forEach((key) => {
       if (formError[key].error) errorExists = true;
     });
@@ -93,7 +81,7 @@ const EditUserProfile = ({ dispatch }) => {
    */
   const saveUserProfile = (event) => {
     event.preventDefault();
-    const userProfileValues = {
+    const profileValues = {
       id: user.id,
       first_name: first_name.value,
       last_name: last_name.value,
@@ -102,16 +90,16 @@ const EditUserProfile = ({ dispatch }) => {
       user_type: userType.value,
     };
 
-    dispatch(updateUser(userProfileValues));
+    dispatch(updateUser(profileValues));
   };
 
   return (
     <>
       <div className="row border rounded">
-        <div className="col-4">
+        <div className="col-4 m-auto">
           <div className="d-flex flex-column align-items-center">
             <Avatar sx={{ width: 96, height: 96 }}>
-              <Person />
+              <Person color="secondary" sx={{ fontSize: 72 }} />
             </Avatar>
             <Typography>
               {user.first_name}
@@ -120,6 +108,7 @@ const EditUserProfile = ({ dispatch }) => {
             </Typography>
             <Typography>
               Organization:
+              {' '}
               {user.organization.name}
             </Typography>
           </div>
@@ -142,7 +131,7 @@ const EditUserProfile = ({ dispatch }) => {
                       formError.first_name ? formError.first_name.message : ''
                     }
                   className="textField"
-                  onBlur={(e) => handleBlur(e, 'required', first_name)}
+                  onKeyUp={(e) => handleBlur(e, 'required', first_name)}
                   {...first_name.bind}
                 />
               </Grid>
@@ -161,7 +150,7 @@ const EditUserProfile = ({ dispatch }) => {
                       formError.last_name ? formError.last_name.message : ''
                     }
                   className="textField"
-                  onBlur={(e) => handleBlur(e)}
+                  onKeyUp={(e) => handleBlur(e)}
                   {...last_name.bind}
                 />
               </Grid>
@@ -183,7 +172,7 @@ const EditUserProfile = ({ dispatch }) => {
                       formError.username ? formError.username.message : ''
                     }
                   className="textField"
-                  onBlur={(e) => handleBlur(e, 'required', username)}
+                  onKeyUp={(e) => handleBlur(e, 'required', username)}
                   {...username.bind}
                 />
               </Grid>
@@ -204,7 +193,7 @@ const EditUserProfile = ({ dispatch }) => {
                       formError.email ? formError.email.message : ''
                     }
                   className="textField"
-                  onBlur={(e) => handleBlur(e, 'email', email)}
+                  onKeyUp={(e) => handleBlur(e, 'email', email)}
                   {...email.bind}
                 />
               </Grid>
@@ -254,4 +243,8 @@ const EditUserProfile = ({ dispatch }) => {
     </>
   );
 };
-export default EditUserProfile;
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  user: state.authReducer.data,
+});
+export default connect(mapStateToProps)(EditUserProfile);
