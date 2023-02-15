@@ -34,9 +34,21 @@ import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 import { httpService } from '@modules/http/http.service';
 
-const pages = [{ label: 'Dashboard', value: routes.DASHBOARD, pathName: [routes.DASHBOARD, routes.DASHBOARD_TABULAR, routes.DASHBOARD_KANBAN, routes.DASHBOARD_REPORT] },
-  { label: 'Products', value: routes.PRODUCTS, pathName: [routes.PRODUCTS] },
-  { label: 'Releases', value: routes.RELEASE, pathName: [routes.RELEASE] }];
+const pages = [{
+  label: 'Dashboard',
+  value: routes.DASHBOARD,
+  pathName: [routes.DASHBOARD, routes.DASHBOARD_TABULAR, routes.DASHBOARD_KANBAN, routes.DASHBOARD_REPORT]
+},
+  {
+    label: 'Products',
+    value: routes.PRODUCTS,
+    pathName: [routes.PRODUCTS]
+  },
+  {
+    label: 'Releases',
+    value: routes.RELEASE,
+    pathName: [routes.RELEASE]
+  }];
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -157,7 +169,11 @@ const StyledMenu = styled((props) => (
  * Component for the top bar header.
  */
 const TopBar = ({
-  history, dispatch, orgNames, location, stripeProducts,
+  history,
+  dispatch,
+  orgNames,
+  location,
+  stripeProducts,
 }) => {
   const classes = useStyles();
   const user = useContext(UserContext);
@@ -257,19 +273,21 @@ const TopBar = ({
    * @returns {boolean}
    */
   const submitDisabled = () => {
-    const errorKeys = Object.keys(formError);
-    let errorExists = false;
-    if (
-      (showProducts && !product.value)
-          || (showProducts && cardError)
-          || (showProducts && !elements)
-          // eslint-disable-next-line no-underscore-dangle
-          || (showProducts && elements && elements.getElement('card')._empty)
-    ) return true;
-    errorKeys.forEach((key) => {
-      if (formError[key].error) errorExists = true;
-    });
-    return errorExists;
+    try {
+      if (
+        (showProducts && !product.value)
+        || (showProducts && cardError)
+        || (showProducts && !elements)
+        // eslint-disable-next-line no-underscore-dangle
+        || (showProducts && elements && elements.getElement('card')._empty)
+      ) {
+        return true;
+      }
+    } catch (e) {
+      return false;
+    }
+    return !!Object.keys(formError)
+      .find((key) => formError[key].error);
   };
 
   /**
@@ -281,7 +299,10 @@ const TopBar = ({
     let validationError = '';
 
     if (showProducts) {
-      const { error, paymentMethod } = await stripe.createPaymentMethod({
+      const {
+        error,
+        paymentMethod,
+      } = await stripe.createPaymentMethod({
         type: 'card',
         card: elements.getElement('card'),
         billing_details: {
@@ -300,28 +321,42 @@ const TopBar = ({
         try {
           httpService.makeRequest('post',
             `${window.env.API_URL}subscription/`,
-            formValue).then(() => {
-            dispatch(getUser());
-          });
-        } catch (httpError) { console.log('httpError : ', httpError); }
+            formValue)
+            .then(() => {
+              dispatch(getUser());
+            });
+        } catch (httpError) {
+          console.log('httpError : ', httpError);
+        }
 
         handleDialogClose();
       }
     }
   };
 
+  const displayUpgradeBtn = () => {
+    console.log('user:::', user && user.subscriptions);
+    // return !(user && user.subscriptions && user.subscriptions.length);
+    return false;
+  };
+
+  // const displayUpgradeBtn = false;
+
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
         <Link to={routes.DASHBOARD}>
-          <img src={logo} alt="Logo" className={classes.logo} />
+          <img src={logo} alt="Logo" className={classes.logo}/>
         </Link>
 
         <Box className={classes.navItems}>
           {pages.map((page) => (
             <Button
               key={page.value}
-              sx={{ m: 1, display: 'block' }}
+              sx={{
+                m: 1,
+                display: 'block',
+              }}
               className={classes.navButton}
               disabled={page.pathName.includes(location.pathname)}
               onClick={() => {
@@ -333,9 +368,17 @@ const TopBar = ({
             </Button>
           ))}
 
-          <Button variant="contained" size="small" onClick={handleDialogOpen}>
-            Upgrade plan
-          </Button>
+          {
+            !(user && user.subscriptions && user.subscriptions.length) && (
+              <Button
+                variant="contained"
+                size="small"
+                onClick={handleDialogOpen}
+              >
+                Upgrade plan
+              </Button>
+            )
+          }
         </Box>
 
         <div className={classes.menuRight}>
@@ -378,8 +421,14 @@ const TopBar = ({
               aria-expanded={open ? 'true' : undefined}
               onClick={(e) => setAnchorEl(e.currentTarget)}
             >
-              <Avatar className={classes.accountMenuIcon} sx={{ width: 32, height: 32 }}>
-                <Person className={classes.userIcon} />
+              <Avatar
+                className={classes.accountMenuIcon}
+                sx={{
+                  width: 32,
+                  height: 32,
+                }}
+              >
+                <Person className={classes.userIcon}/>
               </Avatar>
             </IconButton>
           </Tooltip>
@@ -415,8 +464,14 @@ const TopBar = ({
                 },
               },
             }}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            transformOrigin={{
+              horizontal: 'right',
+              vertical: 'top'
+            }}
+            anchorOrigin={{
+              horizontal: 'right',
+              vertical: 'bottom'
+            }}
           >
             <MenuItem
               className={classes.accountMenuIItem}
@@ -424,23 +479,23 @@ const TopBar = ({
                 history.push(routes.USER_PROFILE);
               }}
             >
-              <Person />
+              <Person/>
               {' '}
               My profile
             </MenuItem>
             {isAdmin && (
-            <MenuItem
-              className={classes.accountMenuIItem}
-              onClick={() => {
-                history.push(routes.USER_MANAGEMENT);
-              }}
-            >
-              <GroupIcon />
-              {' '}
-              User management
-            </MenuItem>
+              <MenuItem
+                className={classes.accountMenuIItem}
+                onClick={() => {
+                  history.push(routes.USER_MANAGEMENT);
+                }}
+              >
+                <GroupIcon/>
+                {' '}
+                User management
+              </MenuItem>
             )}
-            <Divider />
+            <Divider/>
             <MenuItem className={classes.accountMenuIItem} onClick={handleLogoutClick}>
               <ListItemIcon aria-label="logout">
                 <Logout fontSize="small" />
@@ -472,18 +527,18 @@ const TopBar = ({
                   autoComplete="product"
                   error={formError.product && formError.product.error}
                   helperText={
-                      formError.product ? formError.product.message : ''
-                    }
+                    formError.product ? formError.product.message : ''
+                  }
                   onBlur={(e) => handleBlur(e, 'required', product)}
                   {...product.bind}
                 >
                   <MenuItem value="">----------</MenuItem>
                   {stripeProducts && !_.isEmpty(stripeProducts)
-                  && _.map(stripeProducts, (prd) => (
-                    <MenuItem key={`sub-product-${prd.id}`} value={prd.id}>
-                      {`${prd.name} - ${prd.description}`}
-                    </MenuItem>
-                  ))}
+                    && _.map(stripeProducts, (prd) => (
+                      <MenuItem key={`sub-product-${prd.id}`} value={prd.id}>
+                        {`${prd.name} - ${prd.description}`}
+                      </MenuItem>
+                    ))}
                 </TextField>
               </Grid>
             </Grid>
@@ -502,7 +557,13 @@ const TopBar = ({
           </DialogContent>
           <DialogActions className={classes.dialogActionButtons}>
             <Button onClick={handleDialogClose}>Cancel</Button>
-            <Button variant="contained" disabled={submitDisabled()} onClick={handleSubmit}>Upgrade</Button>
+            <Button
+              variant="contained"
+              disabled={submitDisabled()}
+              onClick={handleSubmit}
+            >
+              Upgrade
+            </Button>
           </DialogActions>
         </Dialog>
 

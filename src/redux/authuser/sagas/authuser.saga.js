@@ -108,6 +108,7 @@ function* login(payload) {
 
 function* getUserDetails() {
   try {
+    // @todo: this is like loading a user twice. The /me/ endpoint should return the user
     const user = yield call(
       httpService.makeRequest,
       'get',
