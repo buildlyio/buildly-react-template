@@ -13,7 +13,8 @@ const Subscriptions = ({ dispatch }) => {
   const columns = [
     { name: 'subscription_uuid', options: { display: false, filter: false, sort: false } },
     { name: 'stripe_card_id', options: { display: false, filter: false, sort: false } },
-    { name: 'stripe_product', label: 'Product', options: { filter: true, sort: true } },
+    { name: 'stripe_product_info.name', label: 'Product', options: { filter: true, sort: true } },
+    { name: 'stripe_product', label: 'Product', options: { display: false, filter: true, sort: true } },
     { name: 'trial_start_date', label: 'Trial start date', options: { filter: true, sort: true } },
     { name: 'trial_end_date', label: 'Trial end date', options: { filter: true, sort: true } },
     { name: 'subscription_start_date', label: 'Subscription start date', options: { filter: true, sort: true } },
@@ -49,6 +50,7 @@ const Subscriptions = ({ dispatch }) => {
     print: false,
     filter: false,
     viewColumns: false,
+    enableNestedDataAccess: '.',
   };
 
   return (

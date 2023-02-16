@@ -37,18 +37,18 @@ import { httpService } from '@modules/http/http.service';
 const pages = [{
   label: 'Dashboard',
   value: routes.DASHBOARD,
-  pathName: [routes.DASHBOARD, routes.DASHBOARD_TABULAR, routes.DASHBOARD_KANBAN, routes.DASHBOARD_REPORT]
+  pathName: [routes.DASHBOARD, routes.DASHBOARD_TABULAR, routes.DASHBOARD_KANBAN, routes.DASHBOARD_REPORT],
 },
-  {
-    label: 'Products',
-    value: routes.PRODUCTS,
-    pathName: [routes.PRODUCTS]
-  },
-  {
-    label: 'Releases',
-    value: routes.RELEASE,
-    pathName: [routes.RELEASE]
-  }];
+{
+  label: 'Products',
+  value: routes.PRODUCTS,
+  pathName: [routes.PRODUCTS],
+},
+{
+  label: 'Releases',
+  value: routes.RELEASE,
+  pathName: [routes.RELEASE],
+}];
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -346,7 +346,7 @@ const TopBar = ({
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
         <Link to={routes.DASHBOARD}>
-          <img src={logo} alt="Logo" className={classes.logo}/>
+          <img src={logo} alt="Logo" className={classes.logo} />
         </Link>
 
         <Box className={classes.navItems}>
@@ -428,7 +428,7 @@ const TopBar = ({
                   height: 32,
                 }}
               >
-                <Person className={classes.userIcon}/>
+                <Person className={classes.userIcon} />
               </Avatar>
             </IconButton>
           </Tooltip>
@@ -466,11 +466,11 @@ const TopBar = ({
             }}
             transformOrigin={{
               horizontal: 'right',
-              vertical: 'top'
+              vertical: 'top',
             }}
             anchorOrigin={{
               horizontal: 'right',
-              vertical: 'bottom'
+              vertical: 'bottom',
             }}
           >
             <MenuItem
@@ -479,7 +479,7 @@ const TopBar = ({
                 history.push(routes.USER_PROFILE);
               }}
             >
-              <Person/>
+              <Person />
               {' '}
               My profile
             </MenuItem>
@@ -490,12 +490,12 @@ const TopBar = ({
                   history.push(routes.USER_MANAGEMENT);
                 }}
               >
-                <GroupIcon/>
+                <GroupIcon />
                 {' '}
                 User management
               </MenuItem>
             )}
-            <Divider/>
+            <Divider />
             <MenuItem className={classes.accountMenuIItem} onClick={handleLogoutClick}>
               <ListItemIcon aria-label="logout">
                 <Logout fontSize="small" />
@@ -536,7 +536,7 @@ const TopBar = ({
                   {stripeProducts && !_.isEmpty(stripeProducts)
                     && _.map(stripeProducts, (prd) => (
                       <MenuItem key={`sub-product-${prd.id}`} value={prd.id}>
-                        {`${prd.name} - ${prd.description}`}
+                        {`${prd.name}`}
                       </MenuItem>
                     ))}
                 </TextField>
