@@ -22,7 +22,6 @@ import NewPasswordForm from './pages/ResetPassword/NewPasswordForm';
 import { PrivateRoute } from './routes/Private.route';
 import { routes } from './routes/routesConstants';
 import theme from './styles/theme';
-import PushNotification from './PushNotification';
 
 const App = () => (
   <Router>
@@ -59,7 +58,6 @@ const App = () => (
             />
           </div>
           <Alert />
-          <PushNotification />
         </ThemeProvider>
       </StyledEngineProvider>
     </AppContext.Provider>
