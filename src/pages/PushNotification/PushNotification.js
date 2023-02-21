@@ -6,9 +6,9 @@ import addNotification from 'react-push-notification';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import { AppContext } from '@context/App.context';
-import { showAlert } from '@redux/alert/actions/alert.actions';
+import { saveSocket, showAlert } from '@redux/alert/actions/alert.actions';
 
-const PushNotification = ({ dispatch, loaded, data }) => {
+const PushNotification = ({ dispatch, loaded, user }) => {
   const [alerts, setAlerts] = useState([]);
   const [pushGrp, setPushGrp] = useState('');
   const [pushGeo, setPushGeo] = useState(false);
@@ -17,12 +17,12 @@ const PushNotification = ({ dispatch, loaded, data }) => {
   const appTitle = useContext(AppContext).title;
 
   useEffect(() => {
-    if (!_.isEmpty(data) && loaded) {
-      setPushGrp(data.organization.organization_uuid);
-      setPushGeo(data.push_preferences.geofence || false);
-      setPushEnv(data.push_preferences.environmental || false);
+    if (!_.isEmpty(user) && loaded) {
+      setPushGrp(user.organization.organization_uuid);
+      setPushGeo(user.push_preferences.geofence || false);
+      setPushEnv(user.push_preferences.environmental || false);
     }
-  }, [loaded, data]);
+  }, [loaded, user]);
 
   useEffect(() => {
     if (pushGrp && (pushGeo || pushEnv)) {
@@ -30,6 +30,7 @@ const PushNotification = ({ dispatch, loaded, data }) => {
         `${window.env.ALERT_SOCKET_URL}${pushGrp}/`,
       );
       alertsSocket.current.onopen = () => {
+        dispatch(saveSocket(alertsSocket.current));
         alertsSocket.current.send(JSON.stringify({
           command: 'fetch_alerts',
           organization_uuid: pushGrp,
@@ -141,6 +142,7 @@ const PushNotification = ({ dispatch, loaded, data }) => {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
+  user: state.authReducer.data.data,
 });
 
 export default connect(mapStateToProps)(PushNotification);

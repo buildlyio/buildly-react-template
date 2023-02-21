@@ -112,6 +112,7 @@ const Reporting = ({
   unitsOfMeasure,
   timezone,
   allAlerts,
+  socket,
 }) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -124,6 +125,17 @@ const Reporting = ({
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState({});
   const [formattedShipmentData, setFormattedShipmentData] = useState([]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.onmessage = (message) => {
+        const msg = JSON.parse(message.data);
+        if (msg.command === 'reload_data') {
+          handleShipmentSelection();
+        }
+      };
+    }
+  }, []);
 
   const getShipmentValue = (value) => {
     let returnValue;
@@ -571,6 +583,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.custodianReducer,
   ...state.itemsReducer,
   ...state.optionsReducer,
+  socket: state.alertReducer.socket,
   loading: (
     state.shipmentReducer.loading
     || state.sensorsGatewayReducer.loading
