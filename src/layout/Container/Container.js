@@ -24,6 +24,7 @@ import {
   checkForGlobalAdmin,
 } from '../../utils/utilMethods';
 import { isMobile } from '../../utils/mediaQuery';
+import PushNotification from '@pages/PushNotification/PushNotification';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -128,6 +129,7 @@ const ContainerDashboard = ({ location, history }) => {
             component={CreateShipment}
           />
         </Container>
+        <PushNotification />
       </UserContext.Provider>
     </div>
   );

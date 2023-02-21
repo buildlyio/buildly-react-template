@@ -114,6 +114,7 @@ const Shipment = (props) => {
     shipmentFormData,
     contactInfo,
     allAlerts,
+    socket,
   } = props;
   const classes = useStyles();
 
@@ -189,6 +190,14 @@ const Shipment = (props) => {
     }
     if (!custodyOptions) {
       dispatch(getCustodyOptions());
+    }
+    if (socket) {
+      socket.onmessage = (message) => {
+        const msg = JSON.parse(message.data);
+        if (msg.command === 'reload_data') {
+          handleShipmentSelection();
+        }
+      };
     }
   }, []);
 
@@ -548,6 +557,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.itemsReducer,
   ...state.sensorsGatewayReducer,
   ...state.optionsReducer,
+  socket: state.alertReducer.socket,
   loading: (
     state.shipmentReducer.loading
     || state.custodianReducer.loading

@@ -5,11 +5,10 @@ import { connect } from 'react-redux';
 import addNotification from 'react-push-notification';
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { AppContext } from './context/App.context';
-import { oauthService } from './modules/oauth/oauth.service';
-import { showAlert } from './redux/alert/actions/alert.actions';
+import { AppContext } from '@context/App.context';
+import { saveSocket, showAlert } from '@redux/alert/actions/alert.actions';
 
-const PushNotification = ({ dispatch, loaded }) => {
+const PushNotification = ({ dispatch, loaded, user }) => {
   const [alerts, setAlerts] = useState([]);
   const [pushGrp, setPushGrp] = useState('');
   const [pushGeo, setPushGeo] = useState(false);
@@ -18,14 +17,12 @@ const PushNotification = ({ dispatch, loaded }) => {
   const appTitle = useContext(AppContext).title;
 
   useEffect(() => {
-    const loggedIn = oauthService.hasValidAccessToken();
-    if (!loggedIn || (loggedIn && loaded)) {
-      const { alertGrp, geoPref, envPref } = oauthService.getPushSettings();
-      setPushGrp(alertGrp);
-      setPushGeo(geoPref);
-      setPushEnv(envPref);
+    if (!_.isEmpty(user) && loaded) {
+      setPushGrp(user.organization.organization_uuid);
+      setPushGeo(user.push_preferences.geofence || false);
+      setPushEnv(user.push_preferences.environmental || false);
     }
-  }, [loaded]);
+  }, [loaded, user]);
 
   useEffect(() => {
     if (pushGrp && (pushGeo || pushEnv)) {
@@ -33,6 +30,7 @@ const PushNotification = ({ dispatch, loaded }) => {
         `${window.env.ALERT_SOCKET_URL}${pushGrp}/`,
       );
       alertsSocket.current.onopen = () => {
+        dispatch(saveSocket(alertsSocket.current));
         alertsSocket.current.send(JSON.stringify({
           command: 'fetch_alerts',
           organization_uuid: pushGrp,
@@ -144,6 +142,7 @@ const PushNotification = ({ dispatch, loaded }) => {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
+  user: state.authReducer.data.data,
 });
 
 export default connect(mapStateToProps)(PushNotification);
