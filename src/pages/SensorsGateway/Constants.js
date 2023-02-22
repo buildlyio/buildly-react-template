@@ -103,7 +103,7 @@ export const getGatewayFormattedRow = (data, gatewayTypeList, shipmentData, cust
       });
       if (shipmentData && shipmentData.length) {
         _.forEach(shipmentData, (shipment) => {
-          if (shipment.partner_shipment_id !== null && element.shipment_ids.length > 0
+          if (shipment.partner_shipment_id !== null && !_.isEmpty(element.shipment_ids)
             && element.shipment_ids.includes(shipment.id.toString())
           ) {
             edited = {

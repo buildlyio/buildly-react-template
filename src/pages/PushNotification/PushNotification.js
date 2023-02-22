@@ -31,11 +31,8 @@ const PushNotification = ({ dispatch, loaded, user }) => {
       );
       alertsSocket.current.onopen = () => {
         dispatch(saveSocket(alertsSocket.current));
-        alertsSocket.current.send(JSON.stringify({
-          command: 'fetch_alerts',
-          organization_uuid: pushGrp,
-          hours_range: 24,
-        }));
+        const fetch_payload = { command: 'fetch_alerts', organization_uuid: pushGrp, hours_range: 24 };
+        alertsSocket.current.send(JSON.stringify(fetch_payload));
       };
       alertsSocket.current.onerror = (error) => {
         console.error(error);
@@ -142,7 +139,7 @@ const PushNotification = ({ dispatch, loaded, user }) => {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
-  user: state.authReducer.data.data,
+  user: (state.authReducer.data && state.authReducer.data.data) || state.authReducer.data,
 });
 
 export default connect(mapStateToProps)(PushNotification);
