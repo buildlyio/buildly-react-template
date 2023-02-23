@@ -73,7 +73,8 @@ const AddIssues = ({
   // form fields definition
   const [description, setDescription] = useState((editData && editData.description) || '');
   const name = useInput((editData && editData.name) || '', { required: true });
-  const feature = useInput((editData && editData.feature_uuid) || '', { required: true });
+  // const feature = useInput((editData && editData.feature_uuid) || '', { required: true });
+  const [feature, setFeatureValue] = useState((editData && editData.feature_uuid) || '');
   const type = useInput((editData && editData.issue_type) || '', { required: true });
   const [startDate, handleStartDateChange] = useState(moment(
     (editData && editData.start_date) || moment(),
@@ -160,7 +161,7 @@ const AddIssues = ({
       edit_date: dateTime,
       name: name.value,
       description,
-      feature_uuid: feature.value,
+      feature_uuid: feature,
       issue_type: type.value,
       start_date: startDate,
       end_date: endDate,
@@ -179,15 +180,17 @@ const AddIssues = ({
       ...issueCred?.auth_detail,
     };
 
-    if (editPage) {
-      dispatch(updateIssue(formData));
-    } else {
-      formData.create_date = dateTime;
-      dispatch(createIssue(formData));
-    }
-    history.push(_.includes(location.state.from, 'kanban')
-      ? routes.DASHBOARD_KANBAN
-      : routes.DASHBOARD_TABULAR);
+    console.log('formData : ', formData);
+
+    // if (editPage) {
+    //   dispatch(updateIssue(formData));
+    // } else {
+    //   formData.create_date = dateTime;
+    //   dispatch(createIssue(formData));
+    // }
+    // history.push(_.includes(location.state.from, 'kanban')
+    //   ? routes.DASHBOARD_KANBAN
+    //   : routes.DASHBOARD_TABULAR);
   };
 
   const handleBlur = (e, validation, input, parentId) => {
@@ -214,7 +217,7 @@ const AddIssues = ({
     if (
       !name.value
       || !description
-      || !feature.value
+      || !feature
       || !type.value
       || !statusID.value
       || (!_.isEmpty(repoList) && !repo.value)
@@ -281,37 +284,32 @@ const AddIssues = ({
               </Grid>
 
               <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  select
+                <Autocomplete
+                  disablePortal
                   id="feature"
-                  label="Feature"
                   name="feature"
-                  autoComplete="feature"
-                  error={
-                    formError.feature
-                    && formError.feature.error
-                  }
-                  helperText={
-                    formError.feature
-                      ? formError.feature.message
-                      : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', feature)}
-                  {...feature.bind}
-                >
-                  {_.map(features, (feat) => (
-                    <MenuItem
-                      key={`feature-${feat.feature_uuid}-${feat.name}`}
-                      value={feat.feature_uuid}
-                    >
-                      {feat.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  options={features}
+                  getOptionLabel={(option) => option.name}
+                  onChange={(event, value) => setFeatureValue(value.feature_uuid)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      required
+                      fullWidth
+                      label="Feature"
+                      error={
+                              formError.feature
+                              && formError.feature.error
+                            }
+                      helperText={
+                              formError.feature
+                                ? formError.feature.message
+                                : ''
+                            }
+                      {...feature.bind}
+                    />
+                  )}
+                />
               </Grid>
 
               <Grid item xs={12}>
@@ -362,8 +360,11 @@ const AddIssues = ({
                     autoComplete="repo"
                     value={repo.value}
                     onChange={(e) => {
+                      console.log('e : ', e);
                       const repository = e.target.value;
                       repo.setNewValue(repository.name);
+                      console.log('repo : ', repo);
+                      console.log('repoList : ', repoList);
                       setTagList(repository.labels || []);
                     }}
                   >
