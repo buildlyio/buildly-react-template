@@ -73,7 +73,6 @@ const AddIssues = ({
   // form fields definition
   const [description, setDescription] = useState((editData && editData.description) || '');
   const name = useInput((editData && editData.name) || '', { required: true });
-  // const feature = useInput((editData && editData.feature_uuid) || '', { required: true });
   const [feature, setFeatureValue] = useState((editData && editData.feature_uuid) || '');
   const type = useInput((editData && editData.issue_type) || '', { required: true });
   const [startDate, handleStartDateChange] = useState(moment(
