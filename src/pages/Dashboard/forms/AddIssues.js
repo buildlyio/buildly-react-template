@@ -180,17 +180,15 @@ const AddIssues = ({
       ...issueCred?.auth_detail,
     };
 
-    console.log('formData : ', formData);
-
-    // if (editPage) {
-    //   dispatch(updateIssue(formData));
-    // } else {
-    //   formData.create_date = dateTime;
-    //   dispatch(createIssue(formData));
-    // }
-    // history.push(_.includes(location.state.from, 'kanban')
-    //   ? routes.DASHBOARD_KANBAN
-    //   : routes.DASHBOARD_TABULAR);
+    if (editPage) {
+      dispatch(updateIssue(formData));
+    } else {
+      formData.create_date = dateTime;
+      dispatch(createIssue(formData));
+    }
+    history.push(_.includes(location.state.from, 'kanban')
+      ? routes.DASHBOARD_KANBAN
+      : routes.DASHBOARD_TABULAR);
   };
 
   const handleBlur = (e, validation, input, parentId) => {
@@ -360,11 +358,8 @@ const AddIssues = ({
                     autoComplete="repo"
                     value={repo.value}
                     onChange={(e) => {
-                      console.log('e : ', e);
                       const repository = e.target.value;
                       repo.setNewValue(repository.name);
-                      console.log('repo : ', repo);
-                      console.log('repoList : ', repoList);
                       setTagList(repository.labels || []);
                     }}
                   >
