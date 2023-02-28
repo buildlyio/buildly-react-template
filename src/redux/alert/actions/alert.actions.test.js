@@ -29,13 +29,3 @@ describe('hide alert action', () => {
       .toEqual(expectedAction);
   });
 });
-
-// Test for save alert socket
-describe('save alert socket action', () => {
-  it('should create an action to save alert socket', () => {
-    const socket = 'test';
-    const expectedAction = { type: actions.SOCKET, socket };
-
-    expect(actions.saveSocket(socket)).toEqual(expectedAction);
-  });
-});

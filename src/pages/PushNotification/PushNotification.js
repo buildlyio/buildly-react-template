@@ -6,7 +6,8 @@ import addNotification from 'react-push-notification';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import { AppContext } from '@context/App.context';
-import { saveSocket, showAlert } from '@redux/alert/actions/alert.actions';
+import { showAlert } from '@redux/alert/actions/alert.actions';
+import { getShipmentDetails } from '@redux/shipment/actions/shipment.actions';
 
 const PushNotification = ({ dispatch, loaded, user }) => {
   const [alerts, setAlerts] = useState([]);
@@ -26,64 +27,7 @@ const PushNotification = ({ dispatch, loaded, user }) => {
 
   useEffect(() => {
     if (pushGrp && (pushGeo || pushEnv)) {
-      alertsSocket.current = new WebSocket(
-        `${window.env.ALERT_SOCKET_URL}${pushGrp}/`,
-      );
-      alertsSocket.current.onopen = () => {
-        dispatch(saveSocket(alertsSocket.current));
-        const fetch_payload = { command: 'fetch_alerts', organization_uuid: pushGrp, hours_range: 24 };
-        alertsSocket.current.send(JSON.stringify(fetch_payload));
-      };
-      alertsSocket.current.onerror = (error) => {
-        console.error(error);
-      };
-      alertsSocket.current.onclose = () => {
-        console.log('Alerts Socket Closed');
-      };
-
-      alertsSocket.current.onmessage = (message) => {
-        const msg = JSON.parse(message.data);
-        let pushAlerts;
-
-        switch (true) {
-          case (pushGeo && pushEnv):
-            pushAlerts = [...msg.alerts];
-            break;
-
-          case pushGeo:
-            pushAlerts = _.filter(
-              [...msg.alerts],
-              { severity: 'info' },
-            );
-            break;
-
-          case pushEnv:
-            pushAlerts = _.filter(
-              [...msg.alerts],
-              (alert) => _.includes(
-                ['error', 'warning', 'success'],
-                alert.severity,
-              ),
-            );
-            break;
-
-          default:
-            pushAlerts = [];
-            break;
-        }
-
-        if (msg.command === 'fetch_alerts') {
-          const viewed = getViewedNotifications();
-          const filteredAlerts = _.filter(
-            pushAlerts,
-            (alert) => !_.includes(viewed, alert.id),
-          );
-          setAlerts(filteredAlerts);
-        }
-        if (msg.command === 'new_alert') {
-          setAlerts([...alerts, ...pushAlerts]);
-        }
-      };
+      connectSocket();
     }
 
     return () => {
@@ -116,6 +60,79 @@ const PushNotification = ({ dispatch, loaded, user }) => {
       }));
     }
   }, [alerts]);
+
+  const connectSocket = () => {
+    alertsSocket.current = new WebSocket(
+      `${window.env.ALERT_SOCKET_URL}${pushGrp}/`,
+    );
+
+    alertsSocket.current.onopen = () => {
+      const fetch_payload = { command: 'fetch_alerts', organization_uuid: pushGrp, hours_range: 24 };
+      alertsSocket.current.send(JSON.stringify(fetch_payload));
+    };
+    alertsSocket.current.onerror = (error) => {
+      console.error(error);
+    };
+    alertsSocket.current.onclose = () => {
+      console.log('Alerts socket closed. Trying to reconnect.');
+      connectSocket();
+    };
+
+    alertsSocket.current.onmessage = (message) => {
+      const msg = JSON.parse(message.data);
+      let pushAlerts;
+
+      switch (true) {
+        case (pushGeo && pushEnv):
+          pushAlerts = [...msg.alerts];
+          break;
+
+        case pushGeo:
+          pushAlerts = _.filter(
+            [...msg.alerts],
+            { severity: 'info' },
+          );
+          break;
+
+        case pushEnv:
+          pushAlerts = _.filter(
+            [...msg.alerts],
+            (alert) => _.includes(
+              ['error', 'warning', 'success'],
+              alert.severity,
+            ),
+          );
+          break;
+
+        default:
+          pushAlerts = [];
+          break;
+      }
+
+      if (msg.command === 'fetch_alerts') {
+        const viewed = getViewedNotifications();
+        const filteredAlerts = _.filter(
+          pushAlerts,
+          (alert) => !_.includes(viewed, alert.id),
+        );
+        setAlerts(filteredAlerts);
+      }
+      if (msg.command === 'new_alert') {
+        setAlerts([...alerts, ...pushAlerts]);
+      }
+      if (msg.command === 'reload_data') {
+        console.log('Reloading data');
+        dispatch(getShipmentDetails(
+          user.organization.organization_uuid,
+          'Planned,Enroute',
+          null,
+          true,
+          true,
+          'get',
+        ));
+      }
+    };
+  };
 
   const getViewedNotifications = () => (
     localStorage.getItem('viewedNotifications')

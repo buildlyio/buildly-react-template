@@ -3,7 +3,6 @@ import * as reducer from './alert.reducer';
 
 const initialState = {
   data: null,
-  socket: null,
 };
 
 // Test Alert Reducer
@@ -34,15 +33,6 @@ describe('Hide alert reducer', () => {
   it('should update redux state to remove data for hide alert ',
     () => {
       const action = { type: actions.HIDE_ALERT };
-      expect(reducer.default(initialState, action))
-        .toEqual(initialState);
-    });
-});
-
-describe('Save alert socker reducer', () => {
-  it('should update redux state to save alert socket',
-    () => {
-      const action = { type: actions.SOCKET };
       expect(reducer.default(initialState, action))
         .toEqual(initialState);
     });

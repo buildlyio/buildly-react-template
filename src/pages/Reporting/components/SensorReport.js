@@ -75,16 +75,8 @@ const SensorReport = ({
 
   useEffect(() => {
     if (selectedMarker) {
-      const selectedIndex = _.map(
-        _.keys(
-          _.pickBy(
-            rows,
-            { lat: selectedMarker.lat, lng: selectedMarker.lng },
-          ),
-        ),
-        Number,
-      );
-      setSelected(selectedIndex);
+      const highlightIndex = _.findIndex(rows, { lat: selectedMarker.lat, lng: selectedMarker.lng });
+      setSelected([highlightIndex]);
     } else {
       setSelected([]);
     }

@@ -60,6 +60,7 @@ export const getShipmentDetails = (
   getUpdatedSensorData = false,
   getUpdatedCustody = false,
   shipmentAction = null,
+  addEdit = {},
 ) => ({
   type: GET_SHIPMENTS,
   organization_uuid,
@@ -68,6 +69,7 @@ export const getShipmentDetails = (
   getUpdatedSensorData,
   getUpdatedCustody,
   shipmentAction,
+  addEdit,
 });
 
 /**
