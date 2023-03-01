@@ -91,6 +91,7 @@ const AddIssues = ({
   );
   const [assigneeData, setAssigneeData] = useState([]);
   const [repoList, setRepoList] = useState([]);
+
   const repo = useInput((editData && editData.repository) || '', { required: true });
   const statusID = useInput((editData && editData.status) || '');
   const [status, setStatus] = useState('');
@@ -358,14 +359,15 @@ const AddIssues = ({
                     value={repo.value}
                     onChange={(e) => {
                       const repository = e.target.value;
-                      repo.setNewValue(repository.name);
-                      setTagList(repository.labels || []);
+                      repo.setNewValue(repository);
+                      const repoLabels = _.find(repoList, (item) => item.id === repository);
+                      setTagList(repoLabels.labels || []);
                     }}
                   >
                     {_.map(repoList, (rep) => (
                       <MenuItem
                         key={`rep-${rep.id}-${rep.name}`}
-                        value={rep}
+                        value={rep.id}
                       >
                         {rep.name}
                       </MenuItem>
