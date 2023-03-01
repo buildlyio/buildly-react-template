@@ -139,7 +139,11 @@ const Shipment = (props) => {
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
-    if (!shipmentData) {
+    if (_.isEmpty(shipmentData) || (
+      !_.isEmpty(shipmentData) && _.isEmpty(_.filter(shipmentData, (ship) => (
+        _.includes(['Planned', 'Enroute'], ship.status)
+      )))
+    )) {
       const getUpdatedSensorData = !aggregateReportData;
       const getUpdatedCustody = !custodyData;
       dispatch(getShipmentDetails(

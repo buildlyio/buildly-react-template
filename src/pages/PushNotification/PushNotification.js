@@ -73,9 +73,13 @@ const PushNotification = ({ dispatch, loaded, user }) => {
     alertsSocket.current.onerror = (error) => {
       console.error(error);
     };
-    alertsSocket.current.onclose = () => {
-      console.log('Alerts socket closed. Trying to reconnect.');
-      connectSocket();
+    alertsSocket.current.onclose = (event) => {
+      if (event.wasClean) {
+        console.log('Alerts socket closed.');
+      } else {
+        console.log('Alerts socket closed. Trying to reconnect.');
+        connectSocket();
+      }
     };
 
     alertsSocket.current.onmessage = (message) => {
