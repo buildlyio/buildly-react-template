@@ -84,17 +84,17 @@ const EnvironmentalLimitsInfo = ({
   const [minMaxTempValue, setMinMaxTempValue] = useState(
     shipmentFormData && [
       shipmentFormData.min_excursion_temp || 0,
-      shipmentFormData.min_warning_temp || 35,
-      shipmentFormData.max_warning_temp || 75,
+      // shipmentFormData.min_warning_temp || 35,
+      // shipmentFormData.max_warning_temp || 75,
       shipmentFormData.max_excursion_temp || 100,
     ],
   );
-  const [low_temp_val, changeLowTempVal] = useState(
-    (shipmentFormData && shipmentFormData.min_warning_temp) || 35,
-  );
-  const [high_temp_val, changeHighTempVal] = useState(
-    (shipmentFormData && shipmentFormData.max_warning_temp) || 75,
-  );
+  // const [low_temp_val, changeLowTempVal] = useState(
+  //   (shipmentFormData && shipmentFormData.min_warning_temp) || 35,
+  // );
+  // const [high_temp_val, changeHighTempVal] = useState(
+  //   (shipmentFormData && shipmentFormData.max_warning_temp) || 75,
+  // );
 
   const [min_humid_val, changeMinHumidVal] = useState(
     (shipmentFormData && shipmentFormData.min_excursion_humidity) || 0,
@@ -105,17 +105,17 @@ const EnvironmentalLimitsInfo = ({
   const [minMaxHumidValue, setMinMaxHumidValue] = useState(
     shipmentFormData && [
       shipmentFormData.min_excursion_humidity || 0,
-      shipmentFormData.min_warning_humidity || 35,
-      shipmentFormData.max_warning_humidity || 75,
+      // shipmentFormData.min_warning_humidity || 35,
+      // shipmentFormData.max_warning_humidity || 75,
       shipmentFormData.max_excursion_humidity || 100,
     ],
   );
-  const [low_humid_val, changeLowHumidVal] = useState(
-    (shipmentFormData && shipmentFormData.min_warning_humidity) || 35,
-  );
-  const [high_humid_val, changeHighHumidVal] = useState(
-    (shipmentFormData && shipmentFormData.max_warning_humidity) || 75,
-  );
+  // const [low_humid_val, changeLowHumidVal] = useState(
+  //   (shipmentFormData && shipmentFormData.min_warning_humidity) || 35,
+  // );
+  // const [high_humid_val, changeHighHumidVal] = useState(
+  //   (shipmentFormData && shipmentFormData.max_warning_humidity) || 75,
+  // );
 
   const [shipmentMetaData, setShipmentMetaData] = useState({});
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -129,17 +129,17 @@ const EnvironmentalLimitsInfo = ({
   const handleTempMinMaxChange = (e, value) => {
     setMinMaxTempValue(value);
     changeMinTempVal(value[0]);
-    changeMaxTempVal(value[3]);
-    changeHighTempVal(value[2]);
-    changeLowTempVal(value[1]);
+    changeMaxTempVal(value[1]);
+    // changeHighTempVal(value[2]);
+    // changeLowTempVal(value[1]);
   };
 
   const handleHumidMinMaxChange = (e, value) => {
     setMinMaxHumidValue(value);
     changeMinHumidVal(value[0]);
-    changeMaxHumidVal(value[3]);
-    changeHighHumidVal(value[2]);
-    changeLowHumidVal(value[1]);
+    changeMaxHumidVal(value[1]);
+    // changeHighHumidVal(value[2]);
+    // changeLowHumidVal(value[1]);
   };
 
   /**
@@ -151,12 +151,12 @@ const EnvironmentalLimitsInfo = ({
     const shipmentFormValue = {
       ...{
         ...shipmentFormData,
-        max_warning_temp: high_temp_val,
-        min_warning_temp: low_temp_val,
+        // max_warning_temp: high_temp_val,
+        // min_warning_temp: low_temp_val,
         max_excursion_temp: max_temp_val,
         min_excursion_temp: min_temp_val,
-        max_warning_humidity: high_humid_val,
-        min_warning_humidity: low_humid_val,
+        // max_warning_humidity: high_humid_val,
+        // min_warning_humidity: low_humid_val,
         max_excursion_humidity: max_humid_val,
         min_excursion_humidity: min_humid_val,
       },
@@ -173,15 +173,15 @@ const EnvironmentalLimitsInfo = ({
 
   const shipmentFormMinMaxHumid = [
     shipmentFormData.min_excursion_humidity || 0,
-    shipmentFormData.min_warning_humidity || 35,
-    shipmentFormData.max_warning_humidity || 75,
+    // shipmentFormData.min_warning_humidity || 35,
+    // shipmentFormData.max_warning_humidity || 75,
     shipmentFormData.max_excursion_humidity || 100,
   ];
 
   const shipmentFormMinMaxTemp = [
     shipmentFormData.min_excursion_temp || 0,
-    shipmentFormData.min_warning_temp || 35,
-    shipmentFormData.max_warning_temp || 75,
+    // shipmentFormData.min_warning_temp || 35,
+    // shipmentFormData.max_warning_temp || 75,
     shipmentFormData.max_excursion_temp || 100,
   ];
 
@@ -214,21 +214,21 @@ const EnvironmentalLimitsInfo = ({
     switch (type) {
       case 'max_temp_val':
         changeMaxTempVal(newValue);
-        temp[3] = parseFloat(newValue);
-        setMinMaxTempValue(temp);
-        break;
-
-      case 'high_temp_val':
-        changeHighTempVal(newValue);
-        temp[2] = parseFloat(newValue);
-        setMinMaxTempValue(temp);
-        break;
-
-      case 'low_temp_val':
-        changeLowTempVal(newValue);
         temp[1] = parseFloat(newValue);
         setMinMaxTempValue(temp);
         break;
+
+        // case 'high_temp_val':
+        //   changeHighTempVal(newValue);
+        //   temp[2] = parseFloat(newValue);
+        //   setMinMaxTempValue(temp);
+        //   break;
+
+        // case 'low_temp_val':
+        //   changeLowTempVal(newValue);
+        //   temp[1] = parseFloat(newValue);
+        //   setMinMaxTempValue(temp);
+        //   break;
 
       case 'min_temp_val':
         changeMinTempVal(newValue);
@@ -238,21 +238,21 @@ const EnvironmentalLimitsInfo = ({
 
       case 'max_humid_val':
         changeMaxHumidVal(newValue);
-        humidity[3] = parseFloat(newValue);
-        setMinMaxHumidValue(humidity);
-        break;
-
-      case 'high_humid_val':
-        changeHighHumidVal(newValue);
-        humidity[2] = parseFloat(newValue);
-        setMinMaxHumidValue(humidity);
-        break;
-
-      case 'low_humid_val':
-        changeLowHumidVal(newValue);
         humidity[1] = parseFloat(newValue);
         setMinMaxHumidValue(humidity);
         break;
+
+        // case 'high_humid_val':
+        //   changeHighHumidVal(newValue);
+        //   humidity[2] = parseFloat(newValue);
+        //   setMinMaxHumidValue(humidity);
+        //   break;
+
+        // case 'low_humid_val':
+        //   changeLowHumidVal(newValue);
+        //   humidity[1] = parseFloat(newValue);
+        //   setMinMaxHumidValue(humidity);
+        //   break;
 
       case 'min_humid_val':
         changeMinHumidVal(newValue);
@@ -308,7 +308,7 @@ const EnvironmentalLimitsInfo = ({
                       />
                     )}
                   </div>
-                  <div className={classes.inputWithTooltip}>
+                  {/* <div className={classes.inputWithTooltip}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -332,8 +332,8 @@ const EnvironmentalLimitsInfo = ({
                         }
                       />
                     )}
-                  </div>
-                  <div className={classes.inputWithTooltip}>
+                  </div> */}
+                  {/* <div className={classes.inputWithTooltip}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -357,7 +357,7 @@ const EnvironmentalLimitsInfo = ({
                         }
                       />
                     )}
-                  </div>
+                  </div> */}
                   <div className={classes.inputWithTooltip}>
                     <TextField
                       variant="outlined"
@@ -396,7 +396,7 @@ const EnvironmentalLimitsInfo = ({
                     handleSliderChange={handleTempMinMaxChange}
                     rangeText=""
                     step={0.1}
-                    max={minMaxTempValue[3]}
+                    max={minMaxTempValue[1]}
                     min={minMaxTempValue[0]}
                     marks={[
                       {
@@ -450,7 +450,7 @@ const EnvironmentalLimitsInfo = ({
                       />
                     )}
                   </div>
-                  <div className={classes.inputWithTooltip}>
+                  {/* <div className={classes.inputWithTooltip}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -474,8 +474,8 @@ const EnvironmentalLimitsInfo = ({
                         }
                       />
                     )}
-                  </div>
-                  <div className={classes.inputWithTooltip}>
+                  </div> */}
+                  {/* <div className={classes.inputWithTooltip}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -499,7 +499,7 @@ const EnvironmentalLimitsInfo = ({
                         }
                       />
                     )}
-                  </div>
+                  </div> */}
                   <div className={classes.inputWithTooltip}>
                     <TextField
                       variant="outlined"
@@ -538,7 +538,7 @@ const EnvironmentalLimitsInfo = ({
                     handleSliderChange={handleHumidMinMaxChange}
                     rangeText=""
                     step={0.1}
-                    max={minMaxHumidValue[3]}
+                    max={minMaxHumidValue[1]}
                     min={minMaxHumidValue[0]}
                     marks={[
                       {
