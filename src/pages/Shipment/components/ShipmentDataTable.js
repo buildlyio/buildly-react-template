@@ -68,9 +68,10 @@ const ShipmentDataTable = ({
   timezone,
   copyAction,
   rowsType,
+  selectedShipment,
 }) => {
   const classes = useStyles();
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(_.findIndex(rows, selectedShipment) || 0);
   const [columns, setColumns] = useState([]);
   const user = useContext(UserContext);
   const isAdmin = checkForGlobalAdmin(user);
@@ -192,6 +193,12 @@ const ShipmentDataTable = ({
       setColumns(restCols);
     }
   }, [timezone, rowsType, rows]);
+
+  useEffect(() => {
+    if (!_.isEmpty(selectedShipment)) {
+      setSelected(_.findIndex(rows, selectedShipment) || 0);
+    }
+  }, [selectedShipment]);
 
   return (
     <div className={classes.root}>

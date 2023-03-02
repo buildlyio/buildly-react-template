@@ -444,6 +444,7 @@ const Shipment = (props) => {
             deleteAction={handleDelete}
             copyAction={handleCopy}
             rowsType={shipmentFilter}
+            selectedShipment={selectedShipment}
             setSelectedShipment={handleShipmentSelection}
             tileView={tileView}
             timezone={timezone}
