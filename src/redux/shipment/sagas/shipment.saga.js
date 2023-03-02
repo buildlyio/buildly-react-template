@@ -1,5 +1,5 @@
 import {
-  put, takeLatest, all, call, delay,
+  put, takeLatest, all, call,
 } from 'redux-saga/effects';
 import _ from 'lodash';
 import { httpService } from '@modules/http/http.service';
@@ -39,48 +39,6 @@ import {
 import { GET_CUSTODY_SUCCESS } from '../../custodian/actions/custodian.actions';
 
 const shipmentApiEndPoint = 'shipment/';
-
-function* processShipments(payload, data) {
-  let uuids = '';
-  let shipment_id = '';
-  if (data instanceof Array) {
-    const UUIDS = _.map(data, 'shipment_uuid');
-    uuids = _.toString(_.without(UUIDS, null));
-    // eslint-disable-next-line prefer-destructuring
-    shipment_id = UUIDS[0];
-  } else {
-    uuids = data.shipment_uuid;
-    shipment_id = data.shipment_uuid;
-  }
-
-  if (payload.id && data.length > 0) {
-    yield put(
-      saveShipmentFormData(
-        data.find((shipment) => shipment.id === payload.id),
-      ),
-    );
-    yield getReportAndAlerts({ shipment_id: payload.partner_shipment_id });
-  } else if (typeof (data) === 'object' && data.length === undefined) {
-    yield put(
-      saveShipmentFormData(
-        data,
-      ),
-    );
-    yield getReportAndAlerts({ shipment_id: data.partner_shipment_id });
-  }
-  // Fetch updated custody
-  const encodedUUIDs = encodeURIComponent(uuids);
-  if (payload.getUpdatedCustody && encodedUUIDs) {
-    yield [
-      yield put(getCustody(encodedUUIDs)),
-    ];
-  } else {
-    yield put({
-      type: GET_CUSTODY_SUCCESS,
-      data: [],
-    });
-  }
-}
 
 function* configureGatewayCustody(shipmentData, payload, isEdit, shipment_gw) {
   if ('shipment' in payload) {
@@ -206,17 +164,36 @@ function* getShipmentList(payload) {
     );
     if (data && data.data) {
       let shipment_data = data.data;
-      if (data.data instanceof Array) {
-        shipment_data = _.filter(data.data, (shipment) => _.lowerCase(shipment.platform_name) !== 'iclp');
+      if (_.isArray(shipment_data)) {
+        shipment_data = _.filter(shipment_data, (shipment) => _.lowerCase(shipment.platform_name) !== 'iclp');
       }
+
+      // Fetch updated custody
+      let uuids = '';
+      if (_.isArray(shipment_data)) {
+        uuids = _.toString(_.without(_.map(shipment_data, 'shipment_uuid'), null));
+      } else {
+        uuids = data.shipment_uuid;
+      }
+
+      const encodedUUIDs = encodeURIComponent(uuids);
+      if (payload.getUpdatedCustody && encodedUUIDs) {
+        yield [
+          yield put(getCustody(encodedUUIDs)),
+        ];
+      } else {
+        yield put({
+          type: GET_CUSTODY_SUCCESS,
+          data: [],
+        });
+      }
+
       yield put({
         type: GET_SHIPMENTS_SUCCESS,
         data: shipment_data,
         shipmentAction: payload.shipmentAction,
         status: payload.status ? payload.status : 'All',
       });
-      // Splitting code to take care of once the response is back
-      yield processShipments(payload, shipment_data);
 
       const { shipmentAction } = payload;
       const { history, redirectTo, shipment } = payload.addEdit;

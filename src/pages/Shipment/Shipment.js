@@ -168,41 +168,36 @@ const Shipment = (props) => {
         dispatch(getAggregateReport(encodedIds));
       }
     }
-    if (!custodianData) {
+    if (_.isEmpty(custodianData)) {
       dispatch(getCustodians(organization));
       dispatch(getCustodianType());
       dispatch(getContact(organization));
     }
-    if (!itemData) {
+    if (_.isEmpty(itemData)) {
       dispatch(getItems(organization));
       dispatch(getItemType(organization));
     }
-    if (!gatewayData) {
+    if (_.isEmpty(gatewayData)) {
       dispatch(getGateways(organization));
       dispatch(getGatewayType());
     }
-    if (!unitsOfMeasure) {
+    if (_.isEmpty(unitsOfMeasure)) {
       dispatch(getUnitsOfMeasure());
     }
-    if (!sensorData) {
+    if (_.isEmpty(sensorData)) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
-    if (!shipmentOptions) {
+    if (_.isEmpty(shipmentOptions)) {
       dispatch(getShipmentOptions());
     }
-    if (!custodyOptions) {
+    if (_.isEmpty(custodyOptions)) {
       dispatch(getCustodyOptions());
     }
   }, []);
 
   useEffect(() => {
-    if (
-      shipmentData
-      && custodianData
-      && custodyData
-      && contactInfo
-    ) {
+    if (shipmentData && custodianData && custodyData && contactInfo) {
       const formattedRows = getShipmentFormattedRow(
         shipmentData,
         custodianData,
@@ -211,6 +206,7 @@ const Shipment = (props) => {
         shipmentFormData,
         dispatch,
       );
+
       const ACTIVE_ROWS = _.filter(
         formattedRows,
         { type: 'Active' },
@@ -223,21 +219,21 @@ const Shipment = (props) => {
         formattedRows,
         { type: 'Cancelled' },
       );
+
       setRows(formattedRows);
       setActiveRows(ACTIVE_ROWS);
       // setCompletedRows(COMPLETED_ROWS);
       setCancelledRows(CANCELLED_ROWS);
-      if (!selectedShipment && formattedRows.length) {
-        if (shipmentFilter === 'Cancelled') {
-          handleShipmentSelection(CANCELLED_ROWS[0]);
-        // } else if (shipmentFilter === 'Completed') {
-        //   handleShipmentSelection(COMPLETED_ROWS[0]);
-        } else {
-          handleShipmentSelection(ACTIVE_ROWS[0]);
-        }
+
+      if (shipmentFilter === 'Cancelled') {
+        handleShipmentSelection(CANCELLED_ROWS[0]);
+      // } else if (shipmentFilter === 'Completed') {
+      //   handleShipmentSelection(COMPLETED_ROWS[0]);
+      } else {
+        handleShipmentSelection(ACTIVE_ROWS[0]);
       }
     }
-  }, [shipmentData, custodianData, custodyData, contactInfo, timezone]);
+  }, [shipmentFilter, shipmentData, custodianData, custodyData, contactInfo, timezone]);
 
   useEffect(() => {
     if (selectedShipment && selectedShipment.markers_to_set) {
@@ -252,24 +248,9 @@ const Shipment = (props) => {
   });
 
   useEffect(() => {
-    if (shipmentFilter && rows.length) {
-      if (shipmentFilter === 'Cancelled') {
-        handleShipmentSelection(cancelledRows[0]);
-      // } else if (shipmentFilter === 'Completed') {
-      //   handleShipmentSelection(completedRows[0]);
-      } else {
-        handleShipmentSelection(activeRows[0]);
-      }
-    }
-  }, [shipmentFilter, shipmentData]);
-
-  useEffect(() => {
-    if (aggregateReportData
-      && shipmentData
-      && allAlerts
-      && custodianData
-      && custodyData
-      && contactInfo) {
+    if (aggregateReportData && shipmentData
+      && allAlerts && custodianData
+      && custodyData && contactInfo) {
       const overview = getShipmentOverview(
         shipmentData,
         custodianData,
@@ -279,6 +260,7 @@ const Shipment = (props) => {
         contactInfo,
         timezone,
       );
+
       if (overview.length > 0) {
         setShipmentOverview(overview);
         if (selectedShipment) {
