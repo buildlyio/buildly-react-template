@@ -303,10 +303,11 @@ function* editShipment(action) {
       `${window.env.API_URL}${shipmentApiEndPoint}shipment/${shipment_payload.id}/`,
       shipment_payload,
     );
-    if (shipment_payload.gateway_ids.length > 0 && gateway && !(shipment_payload.status in ['Completed', 'Cancelled'])) {
-      yield [
-        yield configureGatewayCustody(data.data, payload, true, gateway),
-      ];
+    if (!_.isEmpty(shipment_payload.gateway_ids)
+      && !_.isEmpty(gateway)
+      && !_.includes(['Completed', 'Cancelled'], shipment_payload.status)
+    ) {
+      yield configureGatewayCustody(data.data, payload, true, gateway);
     }
     yield [
       yield put(

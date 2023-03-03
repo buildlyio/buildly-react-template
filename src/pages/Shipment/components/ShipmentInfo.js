@@ -312,7 +312,7 @@ const ShipmentInfo = (props) => {
           gatewayData, (gateway) => gateway.gateway_uuid === shipmentFormValue.gateway_ids[0],
         );
         if (shipmentFormValue.status === 'Completed' || shipmentFormValue.status === 'Cancelled') {
-          gateway_status = 'available';
+          gateway_status = 'unavailable';
         } else if (shipmentFormValue.status === 'Enroute' && shipmentFormValue.gateway_ids.length > 0) {
           gateway_status = 'assigned';
           shipment_ids = [shipmentFormValue.id];
@@ -322,22 +322,22 @@ const ShipmentInfo = (props) => {
           gateway_status = attachedGateway[0].gateway_status;
         }
 
+        const updatedGatewayData = {
+          ...attachedGateway[0],
+          gateway_status,
+          shipment_ids,
+        };
+
         dispatch(
           editShipment(
             shipmentFormValue,
             history,
             `${routes.SHIPMENT}/edit/:${editData.id}`,
             organization,
-            attachedGateway[0],
+            updatedGatewayData,
           ),
         );
-        dispatch(
-          editGateway({
-            ...attachedGateway[0],
-            gateway_status,
-            shipment_ids,
-          }),
-        );
+        dispatch(editGateway(updatedGatewayData));
       } else {
         dispatch(
           editShipment(
