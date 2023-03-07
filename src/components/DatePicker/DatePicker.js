@@ -1,11 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@mui/styles';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import {
-  DatePicker,
-  DateTimePicker,
-  LocalizationProvider,
-} from '@mui/lab';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import CustomizedTooltips from '../../components/ToolTip/ToolTip';
 import { TextField } from '@mui/material';
 
@@ -14,6 +12,23 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     margin: '0px',
+  },
+  popperSx: {
+    '& .MuiPaper-root': {
+      border: '1px solid black',
+      padding: 2,
+      marginTop: 1,
+      backgroundColor: 'rgba(120, 120, 120, 0.2)',
+    },
+    '& .MuiCalendarPicker-root': {
+      backgroundColor: 'rgba(45, 85, 255, 0.4)',
+    },
+    '& .PrivatePickersSlideTransition-root': {},
+    '& .MuiPickersDay-dayWithMargin': {
+      color: 'rgb(229,228,226)',
+      backgroundColor: 'rgba(50, 136, 153)',
+    },
+    '& .MuiTabs-root': { backgroundColor: 'rgba(120, 120, 120, 0.4)' },
   },
 }));
 
@@ -30,7 +45,7 @@ const DatePickerComponent = ({
 
   return (
     <div className={classes.root}>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
         {hasTime ? (
           <DateTimePicker
             variant="inline"
@@ -42,8 +57,11 @@ const DatePickerComponent = ({
             disabled={disabled}
             label={label}
             value={selectedDate}
-            onChange={handleDateChange}
+            onChange={(value, keyInput) => handleDateChange(value.$d)}
             format="MM/dd/yyyy HH:mm:ss"
+            PopperProps={{
+              sx: classes.popperSx,
+            }}
             renderInput={(props) => <TextField {...props} />}
           />
         ) : (
@@ -59,9 +77,12 @@ const DatePickerComponent = ({
             id="date-picker-inline"
             label={label}
             value={selectedDate}
-            onChange={handleDateChange}
+            onChange={(value, keyInput) => handleDateChange(value.$d)}
             KeyboardButtonProps={{
               'aria-label': 'change date',
+            }}
+            PopperProps={{
+              sx: classes.popperSx,
             }}
             renderInput={(props) => <TextField {...props} />}
           />
