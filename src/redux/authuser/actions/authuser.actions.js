@@ -59,6 +59,10 @@ export const VERIFY_EMAIL = 'AUTH/VERIFY_EMAIL';
 export const VERIFY_EMAIL_SUCCESS = 'AUTH/VERIFY_EMAIL_SUCCESS';
 export const VERIFY_EMAIL_FAIL = 'AUTH/VERIFY_EMAIL_FAIL';
 
+export const LOAD_STRIPE_PRODUCTS = 'AUTH/LOAD_STRIPE_PRODUCTS';
+export const LOAD_STRIPE_PRODUCTS_SUCCESS = 'AUTH/LOAD_STRIPE_PRODUCTS_SUCCESS';
+export const LOAD_STRIPE_PRODUCTS_FAIL = 'AUTH/LOAD_STRIPE_PRODUCTS_FAIL';
+
 /**
  * Login action
  * @param {{ username, password }} credentials
@@ -172,3 +176,11 @@ export const addOrgSocialUser = (data, existingOrg, history) => ({
  * @param data
  */
 export const verifyEmail = (data, history) => ({ type: VERIFY_EMAIL, data, history });
+
+/**
+ * Stripe actions
+ * @returns {{type: string}}
+ */
+export const loadStripeProducts = () => ({
+  type: LOAD_STRIPE_PRODUCTS,
+});

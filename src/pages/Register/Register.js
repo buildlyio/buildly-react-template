@@ -408,7 +408,6 @@ const Register = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
-                      disabled
                       id="coupon_code"
                       label="Coupon Code"
                       name="coupon_code"

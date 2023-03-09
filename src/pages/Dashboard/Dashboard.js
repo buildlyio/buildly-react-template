@@ -144,6 +144,7 @@ const Dashboard = ({
         setRoute(routes.NEW_PRODUCT);
       }
     }
+
     dispatch(getAllProducts(user.organization.organization_uuid));
   }, [user]);
 
@@ -262,12 +263,12 @@ const Dashboard = ({
     if (item.issue_uuid) {
       data = {
         ...data,
-        issue: item
+        issue: item,
       };
     } else {
       data = {
         ...data,
-        feature: item
+        feature: item,
       };
     }
 
@@ -393,7 +394,7 @@ const Dashboard = ({
 
   return (
     <>
-      {loading && <Loader open={loading}/>}
+      {loading && <Loader open={loading} />}
 
       {loaded && user && !user.survey_status && (
         <div className={classes.firstTimeMessage}>
@@ -500,7 +501,7 @@ const Dashboard = ({
                       </Button>
                     </Grid>
 
-                    <Route path={routes.TOOL_BOARD} component={ToolBoard}/>
+                    <Route path={routes.TOOL_BOARD} component={ToolBoard} />
                   </>
                 ) : (
                   <>
@@ -523,7 +524,7 @@ const Dashboard = ({
                       </Button>
                     </Grid>
 
-                    <Route path={routes.STATUS_BOARD} component={StatusBoard}/>
+                    <Route path={routes.STATUS_BOARD} component={StatusBoard} />
                   </>
                 )
             ) : (
@@ -532,7 +533,7 @@ const Dashboard = ({
                   <Grid item className={classes.viewTabs}>
                     <Tabs value={view} onChange={(event, vw) => setView(vw)}>
                       {subNav.map((itemProps, index) => (
-                        <Tab {...itemProps} key={`tab${index}:${itemProps.value}`}/>
+                        <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
                       ))}
                     </Tabs>
                   </Grid>
@@ -596,18 +597,18 @@ const Dashboard = ({
                     />
                   )}
                 />
-                <Route path={routes.ADD_FEATURE} component={AddFeatures}/>
-                <Route path={routes.EDIT_FEATURE} component={AddFeatures}/>
-                <Route path={routes.VIEW_FEATURE} component={AddFeatures}/>
-                <Route path={routes.ADD_ISSUE} component={AddIssues}/>
-                <Route path={routes.EDIT_ISSUE} component={AddIssues}/>
-                <Route path={routes.FEATURE_TO_ISSUE} component={AddIssues}/>
-                <Route path={routes.COMMENTS} component={Comments}/>
-                <Route path={routes.SHOW_RELATED_ISSUES} component={ShowRelatedIssues}/>
+                <Route path={routes.ADD_FEATURE} component={AddFeatures} />
+                <Route path={routes.EDIT_FEATURE} component={AddFeatures} />
+                <Route path={routes.VIEW_FEATURE} component={AddFeatures} />
+                <Route path={routes.ADD_ISSUE} component={AddIssues} />
+                <Route path={routes.EDIT_ISSUE} component={AddIssues} />
+                <Route path={routes.FEATURE_TO_ISSUE} component={AddIssues} />
+                <Route path={routes.COMMENTS} component={Comments} />
+                <Route path={routes.SHOW_RELATED_ISSUES} component={ShowRelatedIssues} />
                 <Route
                   path={routes.ISSUE_SUGGESTIONS}
                   render={(renderProps) => (
-                    <IssueSuggestions {...renderProps} convertIssue={convertIssue}/>
+                    <IssueSuggestions {...renderProps} convertIssue={convertIssue} />
                   )}
                 />
               </>

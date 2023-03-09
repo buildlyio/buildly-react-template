@@ -12,6 +12,7 @@ import Release from '@pages/Release/Release';
 import ViewRelease from '@pages/Release/components/ViewRelease';
 import DeveloperForm from '@pages/DeveloperForm/DeveloperForm';
 import Products from '@pages/Products/Products';
+import UserProfile from '@pages/UserProfile/UserProfile';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,6 +54,7 @@ const ContainerDashboard = ({ location, history }) => {
             />
             <Route exact path={`${routes.RELEASE}/view/:releaseID`} component={ViewRelease} />
             <Route path={routes.DASHBOARD} component={Dashboard} />
+            <Route path={routes.USER_PROFILE} component={UserProfile} />
             <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
             <Route path={routes.NEW_PRODUCT} component={NewProduct} />
             <Route path={routes.DEVELOPER_FORM} component={DeveloperForm} />

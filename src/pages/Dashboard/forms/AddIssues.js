@@ -73,7 +73,7 @@ const AddIssues = ({
   // form fields definition
   const [description, setDescription] = useState((editData && editData.description) || '');
   const name = useInput((editData && editData.name) || '', { required: true });
-  const feature = useInput((editData && editData.feature_uuid) || '', { required: true });
+  const [feature, setFeatureValue] = useState((editData && editData.feature_uuid) || '');
   const type = useInput((editData && editData.issue_type) || '', { required: true });
   const [startDate, handleStartDateChange] = useState(moment(
     (editData && editData.start_date) || moment(),
@@ -91,6 +91,7 @@ const AddIssues = ({
   );
   const [assigneeData, setAssigneeData] = useState([]);
   const [repoList, setRepoList] = useState([]);
+
   const repo = useInput((editData && editData.repository) || '', { required: true });
   const statusID = useInput((editData && editData.status) || '');
   const [status, setStatus] = useState('');
@@ -160,7 +161,7 @@ const AddIssues = ({
       edit_date: dateTime,
       name: name.value,
       description,
-      feature_uuid: feature.value,
+      feature_uuid: feature,
       issue_type: type.value,
       start_date: startDate,
       end_date: endDate,
@@ -214,7 +215,7 @@ const AddIssues = ({
     if (
       !name.value
       || !description
-      || !feature.value
+      || !feature
       || !type.value
       || !statusID.value
       || (!_.isEmpty(repoList) && !repo.value)
@@ -281,37 +282,32 @@ const AddIssues = ({
               </Grid>
 
               <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  select
+                <Autocomplete
+                  disablePortal
                   id="feature"
-                  label="Feature"
                   name="feature"
-                  autoComplete="feature"
-                  error={
-                    formError.feature
-                    && formError.feature.error
-                  }
-                  helperText={
-                    formError.feature
-                      ? formError.feature.message
-                      : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', feature)}
-                  {...feature.bind}
-                >
-                  {_.map(features, (feat) => (
-                    <MenuItem
-                      key={`feature-${feat.feature_uuid}-${feat.name}`}
-                      value={feat.feature_uuid}
-                    >
-                      {feat.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  options={features}
+                  getOptionLabel={(option) => option.name}
+                  onChange={(event, value) => setFeatureValue(value.feature_uuid)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      required
+                      fullWidth
+                      label="Feature"
+                      error={
+                              formError.feature
+                              && formError.feature.error
+                            }
+                      helperText={
+                              formError.feature
+                                ? formError.feature.message
+                                : ''
+                            }
+                      {...feature.bind}
+                    />
+                  )}
+                />
               </Grid>
 
               <Grid item xs={12}>
@@ -363,14 +359,15 @@ const AddIssues = ({
                     value={repo.value}
                     onChange={(e) => {
                       const repository = e.target.value;
-                      repo.setNewValue(repository.name);
-                      setTagList(repository.labels || []);
+                      repo.setNewValue(repository);
+                      const repoLabels = _.find(repoList, (item) => item.id === repository);
+                      setTagList(repoLabels.labels || []);
                     }}
                   >
                     {_.map(repoList, (rep) => (
                       <MenuItem
                         key={`rep-${rep.id}-${rep.name}`}
-                        value={rep}
+                        value={rep.id}
                       >
                         {rep.name}
                       </MenuItem>

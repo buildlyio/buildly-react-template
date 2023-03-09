@@ -47,6 +47,7 @@ function setOauthUser(oauthUser) {
   if (oauthUser) {
     return oauthUser;
   }
+  return null;
 }
 
 function setCurrentCoreUser(user, coreuser) {

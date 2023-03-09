@@ -44,6 +44,9 @@ import {
   VERIFY_EMAIL,
   VERIFY_EMAIL_SUCCESS,
   VERIFY_EMAIL_FAIL,
+  LOAD_STRIPE_PRODUCTS,
+  LOAD_STRIPE_PRODUCTS_SUCCESS,
+  LOAD_STRIPE_PRODUCTS_FAIL,
 } from '@redux/authuser/actions/authuser.actions';
 import {
   put, takeLatest, all, call,
@@ -105,11 +108,19 @@ function* login(payload) {
 
 function* getUserDetails() {
   try {
+    // @todo: this is like loading a user twice. The /me/ endpoint should return the user
     const user = yield call(
       httpService.makeRequest,
       'get',
       `${window.env.API_URL}coreuser/me/`,
     );
+    yield call(oauthService.setOauthUser, user);
+    const coreuser = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}coreuser/`,
+    );
+    yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield put({ type: GET_USER_SUCCESS, user });
     if (user && user.data && user.data.organization) {
       yield put(getOrganization(user.data.organization.organization_uuid));
@@ -561,6 +572,19 @@ function* verifyEmail(payload) {
   }
 }
 
+function* loadStripeProducts() {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}subscription/stripe_products/`,
+    );
+    yield put({ type: LOAD_STRIPE_PRODUCTS_SUCCESS, stripeProducts: data.data });
+  } catch (error) {
+    yield put({ type: LOAD_STRIPE_PRODUCTS_FAIL, error });
+  }
+}
+
 function* watchLogout() {
   yield takeLatest(LOGOUT, logout);
 }
@@ -617,6 +641,10 @@ function* watchVerifyEmail() {
   yield takeLatest(VERIFY_EMAIL, verifyEmail);
 }
 
+function* watchLoadStripeProducts() {
+  yield takeLatest(LOAD_STRIPE_PRODUCTS, loadStripeProducts);
+}
+
 export default function* authSaga() {
   yield all([
     watchLogin(),
@@ -633,5 +661,6 @@ export default function* authSaga() {
     watchLoadOrganizationNames(),
     watchAddOrgSocialUser(),
     watchVerifyEmail(),
+    watchLoadStripeProducts(),
   ]);
 }
