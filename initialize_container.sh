@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#fix node compatibility issue
+export NODE_OPTIONS=--openssl-legacy-provider
+
 #Export the current commitID, branch and remote that the build was made from
 export GIT_FETCH_HEAD=`cat .git/FETCH_HEAD`
 
