@@ -11,7 +11,10 @@ jobs:
     env:
       IMAGE_NAME: gcr.io/dev-buildly/insights/dev/buildly-ui
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
 
     - name: Docker login
       uses: docker/login-action@v1
