@@ -9,4 +9,4 @@ EXPOSE 9000
 CMD ["sh", "-c", "./initialize_container.sh && nginx -g 'daemon off;'"]
 
 # Specify tag name to be created on github
-LABEL version="0.5.2"
+LABEL version="0.5.3"

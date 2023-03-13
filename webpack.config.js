@@ -96,6 +96,7 @@ module.exports = (env, argv) => {
       path: path.resolve(__dirname, 'dist/'),
       publicPath: '/',
       filename: 'bundle.js',
+      hashFunction: 'sha256',
     },
     devServer: {
       contentBase: path.join(__dirname, 'public/'),

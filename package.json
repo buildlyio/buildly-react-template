@@ -1,6 +1,6 @@
 {
   "name": "buildly-react-template",
-  "version": "v0.5.10",
+  "version": "v0.5.11",
   "description": "Frontend Template from Buildly built using the React framework",
   "main": "src/index.js",
   "private": true,
@@ -119,13 +119,13 @@
     "babel-loader": "8.2.5"
   },
   "scripts": {
-    "build": "webpack --mode development",
-    "start": "webpack-dev-server --mode development",
-    "build:dev": "webpack --mode development --env.build=dev",
-    "start:dev": "webpack-dev-server --mode development --env.build=dev",
-    "https:local": "webpack-dev-server --https --cert /Users/radhikapatel/localhost.pem --key /Users/radhikapatel/localhost-key.pem --mode development --env.build=local",
-    "start:local": "webpack-dev-server --mode development --env.build=local",
-    "build:prod": "webpack --mode development --env.build=prod",
+    "build": "webpack --mode development --openssl-legacy-provider",
+    "start": "webpack-dev-server --mode development --openssl-legacy-provider",
+    "build:dev": "webpack --mode development --env.build=dev --openssl-legacy-provider",
+    "start:dev": "webpack-dev-server --mode development --env.build=dev --openssl-legacy-provider",
+    "https:local": "webpack-dev-server --https --cert /Users/radhikapatel/localhost.pem --key /Users/radhikapatel/localhost-key.pem --mode development --env.build=local --openssl-legacy-provider",
+    "start:local": "webpack-dev-server --mode development --env.build=local --openssl-legacy-provider",
+    "build:prod": "webpack --mode development --env.build=prod --openssl-legacy-provider",
     "start:prod": "webpack-dev-server --mode development --env.build=prod",
     "test": "jest --watch",
     "test:prod": "jest",

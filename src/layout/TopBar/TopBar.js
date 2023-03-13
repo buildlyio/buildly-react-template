@@ -33,6 +33,7 @@ import { isMobile } from '@utils/mediaQuery';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 import { httpService } from '@modules/http/http.service';
+import { showAlert } from '@redux/alert/actions/alert.actions';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -350,10 +351,21 @@ const TopBar = ({
             `${window.env.API_URL}subscription/`,
             formValue)
             .then(() => {
+              dispatch(showAlert({
+                type: 'success',
+                open: true,
+                message: 'Subscription successfully saved',
+              }));
+
               dispatch(getUser());
             });
         } catch (httpError) {
           console.log('httpError : ', httpError);
+          dispatch(showAlert({
+            type: 'error',
+            open: true,
+            message: 'Couldn\'t save subscription!',
+          }));
         }
 
         handleDialogClose();
@@ -389,13 +401,13 @@ const TopBar = ({
 
           {
             !(user && user.subscriptions && user.subscriptions.length) && (
-              <Button
-                variant="contained"
-                size="small"
-                onClick={handleDialogOpen}
-              >
-                Upgrade plan
-              </Button>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleDialogOpen}
+            >
+              Upgrade plan
+            </Button>
             )
           }
         </Box>
@@ -595,6 +607,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
   ...state.googleSheetReducer,
+  // user: state.authReducer.data,
 });
 
 export default connect(mapStateToProps)(TopBar);
