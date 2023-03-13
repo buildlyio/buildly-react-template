@@ -34,22 +34,6 @@ import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
 import { httpService } from '@modules/http/http.service';
 
-const pages = [{
-  label: 'Dashboard',
-  value: routes.DASHBOARD,
-  pathName: [routes.DASHBOARD, routes.DASHBOARD_TABULAR, routes.DASHBOARD_KANBAN, routes.DASHBOARD_REPORT],
-},
-{
-  label: 'Products',
-  value: routes.PRODUCTS,
-  pathName: [routes.PRODUCTS],
-},
-{
-  label: 'Releases',
-  value: routes.RELEASE,
-  pathName: [routes.RELEASE],
-}];
-
 const useStyles = makeStyles((theme) => ({
   appBar: {
     backgroundColor: theme.palette.secondary.main,
@@ -72,7 +56,25 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     textAlign: 'center',
     color: theme.palette.contrast.text,
+    '&:active': {
+      backgroundColor: theme.palette.contrast.text,
+      color: theme.palette.secondary.main,
+      borderRadius: 32,
+      paddingLeft: 16,
+      paddingRight: 16,
+    },
     '&:disabled': {
+      color: theme.palette.secondary.dark,
+      cursor: 'not-allowed',
+    },
+  },
+  isActive: {
+    backgroundColor: theme.palette.contrast.text,
+    color: theme.palette.secondary.main,
+    borderRadius: 32,
+    paddingLeft: 16,
+    paddingRight: 16,
+    '&:hover': {
       backgroundColor: theme.palette.contrast.text,
       color: theme.palette.secondary.main,
       borderRadius: 32,
@@ -181,6 +183,31 @@ const TopBar = ({
   const isSuperAdmin = hasGlobalAdminRights(user);
 
   const [organization, setOrganization] = useState(null);
+
+  // Check if there is an active subscription
+  const maxDate = new Date();
+  maxDate.setHours(0, 0, 0, 0);
+  maxDate.setDate(maxDate.getDate() + 1);
+
+  const activePlan = user.subscriptions
+    .find((subscription) => new Date(subscription.subscription_end_date) > maxDate);
+
+  const pages = [{
+    label: 'Dashboard',
+    value: routes.DASHBOARD,
+    pathName: [routes.DASHBOARD, routes.DASHBOARD_TABULAR, routes.DASHBOARD_KANBAN, routes.DASHBOARD_REPORT],
+  },
+  {
+    label: 'Products',
+    value: routes.PRODUCTS,
+    pathName: [routes.PRODUCTS],
+  },
+  {
+    label: 'Releases',
+    value: routes.RELEASE,
+    pathName: [routes.RELEASE],
+    disabled: !activePlan,
+  }];
 
   const stripe = useStripe();
   const elements = useElements();
@@ -334,14 +361,6 @@ const TopBar = ({
     }
   };
 
-  const displayUpgradeBtn = () => {
-    console.log('user:::', user && user.subscriptions);
-    // return !(user && user.subscriptions && user.subscriptions.length);
-    return false;
-  };
-
-  // const displayUpgradeBtn = false;
-
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
@@ -357,8 +376,8 @@ const TopBar = ({
                 m: 1,
                 display: 'block',
               }}
-              className={classes.navButton}
-              disabled={page.pathName.includes(location.pathname)}
+              className={`${classes.navButton} ${page.pathName.includes(location.pathname) ? classes.isActive : ''}`}
+              disabled={page.disabled}
               onClick={() => {
                 setAnchorEl(null);
                 history.push(page.value);
