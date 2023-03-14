@@ -227,39 +227,13 @@ export const getShipmentFormattedRow = (
   );
 };
 
-export const custodyColumns = (timezone) => ([
+export const custodyColumns = [
   {
     name: 'custodian_name',
     label: 'Custodian Name',
     options: {
       sort: true,
       sortThirdClickReset: true,
-    },
-  },
-  {
-    name: 'start_of_custody',
-    label: 'Start of Custody',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      customBodyRender: (value) => (
-        value && value !== '-'
-          ? moment(value).tz(timezone).format('MM/DD/yyyy')
-          : value
-      ),
-    },
-  },
-  {
-    name: 'end_of_custody',
-    label: 'End of Custody',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      customBodyRender: (value) => (
-        value && value !== '-'
-          ? moment(value).tz(timezone).format('MM/DD/yyyy')
-          : value
-      ),
     },
   },
   {
@@ -311,7 +285,7 @@ export const custodyColumns = (timezone) => ([
       ),
     },
   },
-]);
+];
 
 export const getUniqueContactInfo = (rowItem, contactInfo) => {
   let obj = '';

@@ -190,7 +190,7 @@ const AddGateway = ({
       last_known_battery_level: battery_level.value,
       ...(editPage && editData && { id: editData.id }),
       mac_address: mac_address.value,
-      custodian_uuid,
+      custodian_uuid: custodian_uuid || null,
       last_known_location: [
         last_known_location === '' ? 'null, null' : last_known_location,
       ],
@@ -235,7 +235,7 @@ const AddGateway = ({
     if (!gateway_type.value || !gateway_name.value) {
       return true;
     }
-    if (editData.shipment_ids.length > 0) {
+    if (!_.isEmpty(editData.shipment_ids)) {
       return true;
     }
     let errorExists = false;
@@ -548,7 +548,6 @@ const AddGateway = ({
                       id="custodian_uuid"
                       select
                       fullWidth
-                      required
                       label="Custodian"
                       disabled={viewOnly}
                       error={

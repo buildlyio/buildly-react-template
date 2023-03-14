@@ -61,21 +61,19 @@ const SensorReport = ({
   );
 
   useEffect(() => {
-    if (aggregateReport) {
-      const sortedData = _.orderBy(
-        aggregateReport,
-        (item) => moment(item.timestamp),
-        ['desc'],
-      );
-      setRows(sortedData);
-    } else {
-      setRows([]);
-    }
+    const sortedData = _.orderBy(
+      aggregateReport,
+      (item) => moment(item.timestamp),
+      ['desc'],
+    );
+    setRows(sortedData);
   }, [aggregateReport]);
 
   useEffect(() => {
     if (selectedMarker) {
-      const highlightIndex = _.findIndex(rows, { lat: selectedMarker.lat, lng: selectedMarker.lng });
+      const highlightIndex = _.findIndex(rows, {
+        lat: selectedMarker.lat, lng: selectedMarker.lng,
+      });
       setSelected([highlightIndex]);
     } else {
       setSelected([]);

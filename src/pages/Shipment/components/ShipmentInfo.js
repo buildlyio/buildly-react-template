@@ -32,6 +32,7 @@ import { setOptionsData } from '../../../utils/utilMethods';
 import { validators } from '../../../utils/validators';
 import ShipmentRouteInfo from './ShipmentRouteInfo';
 import { editGateway } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+import Loader from '@components/Loader/Loader';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -383,6 +384,7 @@ const ShipmentInfo = (props) => {
   return (
     <>
       <div>
+        {loading && <Loader open={loading} />}
         {!isDesktop && (
           <Box mb={2}>
             <Typography variant="h4">

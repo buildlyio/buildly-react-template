@@ -122,6 +122,14 @@ const PushNotification = ({ dispatch, loaded, user }) => {
         setAlerts(filteredAlerts);
       }
       if (msg.command === 'new_alert') {
+        dispatch(getShipmentDetails(
+          user.organization.organization_uuid,
+          'Planned,Enroute',
+          null,
+          true,
+          true,
+          'get',
+        ));
         setAlerts([...alerts, ...pushAlerts]);
       }
       if (msg.command === 'reload_data') {

@@ -238,6 +238,8 @@ const Shipment = (props) => {
   useEffect(() => {
     if (selectedShipment && selectedShipment.markers_to_set) {
       setMarkers(selectedShipment.markers_to_set);
+    } else {
+      setMarkers([]);
     }
   }, [selectedShipment, timezone, shipmentOverview]);
 
@@ -505,7 +507,7 @@ const Shipment = (props) => {
       </Grid>
       <SensorReport
         loading={loading}
-        aggregateReport={selectedShipment && selectedShipment.sensor_report}
+        aggregateReport={(!loading && selectedShipment && selectedShipment.sensor_report) || []}
         shipmentName={selectedShipment && selectedShipment.name}
         selectedMarker={selectedShipment && selectedMarker}
       />

@@ -36,6 +36,7 @@ import { editGateway } from '../../../redux/sensorsGateway/actions/sensorsGatewa
 import { editShipment } from '../../../redux/shipment/actions/shipment.actions';
 import { routes } from '../../../routes/routesConstants';
 import { gatewayColumns, sensorsColumns } from '../ShipmentConstants';
+import Loader from '@components/Loader/Loader';
 
 const useStyles = makeStyles((theme) => ({
   buttonContainer: {
@@ -230,6 +231,7 @@ const SensorsGatewayInfo = ({
 
   return (
     <Box mb={5} mt={3}>
+      {loading && <Loader open={loading} />}
       <form noValidate onSubmit={handleSubmit}>
         <Card variant="outlined" className={classes.form}>
           <CardContent>

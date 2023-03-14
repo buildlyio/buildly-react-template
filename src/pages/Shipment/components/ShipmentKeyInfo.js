@@ -250,7 +250,7 @@ const ShipmentKeyInfo = ({
 
   return (
     <Container className={classes.root} maxWidth="sm">
-      {loadingText && (
+      {(loading || loadingText) && (
       <Loader
         open={loadingText}
         label="Extracting text from selected PDF"

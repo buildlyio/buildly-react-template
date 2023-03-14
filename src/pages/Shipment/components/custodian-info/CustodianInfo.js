@@ -49,7 +49,6 @@ const CustodianInfo = (props) => {
     custodyData,
     viewOnly,
     loading,
-    timezone,
   } = props;
   const classes = useStyles();
   const [itemIds, setItemIds] = useState(
@@ -134,7 +133,7 @@ const CustodianInfo = (props) => {
               <DataTableWrapper
                 loading={loading}
                 rows={rows}
-                columns={custodyColumns(timezone)}
+                columns={custodyColumns}
                 editAction={editCustody}
                 deleteAction={deleteCustodyItem}
                 openDeleteModal={openDeleteModal}
