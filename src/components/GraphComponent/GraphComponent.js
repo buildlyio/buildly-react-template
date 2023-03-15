@@ -58,7 +58,7 @@ const GraphComponent = ({ data, selectedGraph }) => {
             showLine: true,
             spanGaps: true,
             borderColor: '#EBC645',
-            backgroundColor: '#383636',
+            backgroundColor: '#605e5e',
             borderCapStyle: 'butt',
             borderDash: [],
             borderDashOffset: 0.0,

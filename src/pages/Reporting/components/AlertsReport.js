@@ -6,8 +6,8 @@ import {
   Typography,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
 import {
   getAlertsReportColumns,
   ALERTS_REPORT_TOOLTIP,
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   tooltip: {
-    background: '#383636',
+    background: theme.palette.background.dark,
     width: '100%',
     display: 'flex',
     minHeight: '40px',

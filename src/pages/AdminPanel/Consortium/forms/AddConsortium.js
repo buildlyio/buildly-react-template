@@ -12,13 +12,13 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Autocomplete } from '@mui/material';
-import FormModal from '@components/Modal/FormModal';
-import { useInput } from '@hooks/useInput';
-import { validators } from '@utils/validators';
+import FormModal from '../../../../components/Modal/FormModal';
+import { useInput } from '../../../../hooks/useInput';
+import { validators } from '../../../../utils/validators';
 import {
   createConsortium,
   editConsortium,
-} from '@redux/consortium/actions/consortium.actions';
+} from '../../../../redux/consortium/actions/consortium.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -241,8 +241,8 @@ const AddConsortium = ({
                       <Chip
                         variant="default"
                         label={
-                          allOrgs
-                            ? _.find(allOrgs, { organization_uuid: option })?.name
+                          !_.isEmpty(allOrgs) && _.find(allOrgs, { organization_uuid: option })
+                            ? _.find(allOrgs, { organization_uuid: option }).name
                             : ''
                         }
                         {...getTagProps({ index })}

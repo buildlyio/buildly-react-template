@@ -10,21 +10,21 @@ import {
   Typography,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import ConfirmModal from '@components/Modal/ConfirmModal';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { useInput } from '@hooks/useInput';
-import { validators } from '@utils/validators';
+import ConfirmModal from '../../../../components/Modal/ConfirmModal';
+import CustomizedTooltips from '../../../../components/ToolTip/ToolTip';
+import { useInput } from '../../../../hooks/useInput';
+import { validators } from '../../../../utils/validators';
 import {
   getItemsOptions,
   getProductsOptions,
   getGatewayOptions,
   getSensorOptions,
-} from '@redux/options/actions/options.actions';
+} from '../../../../redux/options/actions/options.actions';
 import {
   getApiResponse,
   addApiSetup,
-} from '@redux/importExport/actions/importExport.actions';
-import { UserContext } from '@context/User.context';
+} from '../../../../redux/importExport/actions/importExport.actions';
+import { UserContext } from '../../../../context/User.context';
 
 const useStyles = makeStyles((theme) => ({
   form: {

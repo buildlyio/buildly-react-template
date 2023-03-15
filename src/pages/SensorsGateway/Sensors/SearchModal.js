@@ -9,7 +9,7 @@ import {
   Autocomplete,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
 
 const useStyles = makeStyles((theme) => ({
   root: {

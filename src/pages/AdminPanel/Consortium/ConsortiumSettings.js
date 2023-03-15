@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
 import {
   MAPPING_TOOLTIP,
   CONSORTIUM_TOOLTIP,
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(6),
   },
   accordion: {
-    backgroundColor: '#4F4D4D',
+    backgroundColor: theme.palette.background.dark,
     marginBottom: theme.spacing(4),
     overflowX: 'scroll',
     scrollbarWidth: 'none',

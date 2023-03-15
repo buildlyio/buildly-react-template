@@ -84,7 +84,7 @@ export const gatewayColumns = (timezone) => ([
   },
 ]);
 
-export const getFormattedRow = (data, gatewayTypeList, shipmentData, custodianData) => {
+export const getGatewayFormattedRow = (data, gatewayTypeList, shipmentData, custodianData) => {
   if (
     data
     && gatewayTypeList
@@ -103,8 +103,8 @@ export const getFormattedRow = (data, gatewayTypeList, shipmentData, custodianDa
       });
       if (shipmentData && shipmentData.length) {
         _.forEach(shipmentData, (shipment) => {
-          if (shipment.partner_shipment_id !== null && element.shipment_ids.length > 0
-            && element.shipment_ids.includes(shipment.partner_shipment_id)
+          if (shipment.partner_shipment_id !== null && !_.isEmpty(element.shipment_ids)
+            && element.shipment_ids.includes(shipment.id.toString())
           ) {
             edited = {
               ...edited,
@@ -192,7 +192,7 @@ export const sensorsColumns = (timezone) => ([
   },
 ]);
 
-export const getFormattedSensorRow = (data, sensorTypeList, gatewayData) => {
+export const getSensorFormattedRow = (data, sensorTypeList, gatewayData) => {
   if (data && sensorTypeList) {
     let formattedData = [];
     _.forEach(data, (element) => {
@@ -241,14 +241,14 @@ export const getAvailableGateways = (
   shipmentData,
   shipmentFormData,
 ) => {
-  const gatewayData = getFormattedRow(data, gatewayTypeList, shipmentData);
+  const gatewayData = getGatewayFormattedRow(data, gatewayTypeList, shipmentData);
   let filteredGateways = (
     _.orderBy(gatewayData, ['name'], ['asc'])
     && _.filter(gatewayData, (gateway) => gateway.gateway_status === 'available'
       && gateway.gateway_type_value.toLowerCase().includes(gateway_type))
   );
 
-  if (shipmentFormData.custody_info && shipmentFormData.custody_info.length > 0
+  if (shipmentFormData && shipmentFormData.custody_info && shipmentFormData.custody_info.length > 0
     && shipmentFormData.first_custody !== null) {
     const firstCustodian = shipmentFormData.first_custody.custodian_data.custodian_uuid;
     filteredGateways = _.filter(

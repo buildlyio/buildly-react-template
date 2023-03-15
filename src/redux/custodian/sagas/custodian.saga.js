@@ -16,11 +16,9 @@ import {
   DELETE_CUSTODIANS,
   DELETE_CUSTODIANS_FAILURE,
   getContact,
-  getCustodians,
   GET_CUSTODY,
   GET_CUSTODY_SUCCESS,
   GET_CUSTODY_FAILURE,
-  getCustody,
   ADD_CUSTODY,
   ADD_CUSTODY_FAILURE,
   EDIT_CUSTODY,
@@ -44,10 +42,19 @@ import {
   GET_CONTACT,
   GET_CONTACT_SUCCESS,
   GET_CONTACT_FAILURE,
+  DELETE_CUSTODIANS_SUCCESS,
+  ADD_CUSTODIANS_SUCCESS,
+  EDIT_CUSTODIANS_SUCCESS,
+  UPDATE_CUSTODIAN_SUCCESS,
+  ADD_CUSTODY_SUCCESS,
+  EDIT_CUSTODY_SUCCESS,
+  UPDATE_CUSTODY_SUCCESS,
+  DELETE_CUSTODY_SUCCESS,
 } from '../actions/custodian.actions';
 import {
   getShipmentDetails,
 } from '../../shipment/actions/shipment.actions';
+import { loadAllOrgs } from '@redux/authuser/actions/authuser.actions';
 
 const custodiansApiEndPoint = 'custodian/';
 
@@ -92,6 +99,7 @@ function* addCustodian(action) {
         custodian_type: payload.custodian_type,
         contact_data: [contactInfo],
         organization_uuid: payload.organization_uuid,
+        custody_org_uuid: payload.custody_org_uuid,
       };
       const data = yield call(
         httpService.makeRequest,
@@ -101,6 +109,7 @@ function* addCustodian(action) {
       );
       if (data && data.data) {
         yield [
+          yield put({ type: ADD_CUSTODIANS_SUCCESS, data: data.data }),
           yield put(
             showAlert({
               type: 'success',
@@ -108,8 +117,8 @@ function* addCustodian(action) {
               message: 'Successfully Added Custodian. Please ensure your organization admin assigns an organization to this custodian',
             }),
           ),
-          yield put(getCustodians(payload.organization_uuid)),
           yield put(getContact(payload.organization_uuid)),
+          yield put(loadAllOrgs()),
         ];
         if (history && redirectTo) {
           yield call(history.push, redirectTo);
@@ -161,8 +170,9 @@ function* editCustodian(action) {
       );
       if (data && data.data) {
         yield [
-          yield put(getCustodians(payload.organization_uuid)),
+          yield put({ type: EDIT_CUSTODIANS_SUCCESS, data: data.data }),
           yield put(getContact(payload.organization_uuid)),
+          yield put(loadAllOrgs()),
           yield put(
             showAlert({
               type: 'success',
@@ -208,7 +218,7 @@ function* updateCustodian(action) {
     );
     if (data && data.data) {
       yield [
-        yield put(getCustodians(payload.organization_uuid)),
+        yield put({ type: UPDATE_CUSTODIAN_SUCCESS, data: data.data }),
         yield put(
           showAlert({
             type: 'success',
@@ -249,9 +259,13 @@ function* deleteCustodian(payload) {
     yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}custodian/contact/${contactObjId}/`,
+      `${window.env.API_URL}${custodiansApiEndPoint}contact/${contactObjId}/`,
     );
     yield [
+      yield put({
+        type: DELETE_CUSTODIANS_SUCCESS,
+        data: { custodianId: payload.custodianId, contactId: payload.contactObjId },
+      }),
       yield put(
         showAlert({
           type: 'success',
@@ -259,7 +273,6 @@ function* deleteCustodian(payload) {
           message: 'Custodian deleted successfully!',
         }),
       ),
-      yield put(getCustodians(organization_uuid)),
     ];
   } catch (error) {
     yield [
@@ -331,17 +344,17 @@ function* addCustody(action) {
         );
         if (data && data.data) {
           yield [
+            yield put({ type: ADD_CUSTODY_SUCCESS, data: data.data }),
             yield put(
               getShipmentDetails(
                 data.data.organization_uuid,
-                'Planned,Enroute',
+                'Planned,Enroute,Cancelled',
                 null,
                 false,
                 true,
                 'get',
               ),
             ),
-            // yield put(getCustody(payload.shipment_id)),
             yield put(
               showAlert({
                 type: 'success',
@@ -382,17 +395,17 @@ function* editCustody(action) {
     );
     if (data && data.data) {
       yield [
+        yield put({ type: EDIT_CUSTODY_SUCCESS, data: data.data }),
         yield put(
           getShipmentDetails(
             data.data.organization_uuid,
-            'Planned,Enroute',
+            'Planned,Enroute,Cancelled',
             null,
             false,
             true,
             'get',
           ),
         ),
-        // yield put(getCustody(payload.shipment_id)),
         yield put(
           showAlert({
             type: 'success',
@@ -430,7 +443,8 @@ function* updateCustody(action) {
     );
     if (data && data.data) {
       yield [
-        yield put(getCustody(payload.shipment_id)),
+        yield put({ type: UPDATE_CUSTODY_SUCCESS, data: data.data }),
+        // yield put(getCustody(payload.shipment_id)),
         yield put(
           showAlert({
             type: 'success',
@@ -466,10 +480,11 @@ function* deleteCustody(payload) {
       `${window.env.API_URL}${custodiansApiEndPoint}custody/${custodyId}/`,
     );
     yield [
+      yield put({ type: DELETE_CUSTODY_SUCCESS, data: { id: payload.custodyId } }),
       yield put(
         getShipmentDetails(
           organization_uuid,
-          'Planned,Enroute',
+          'Planned,Enroute,Cancelled',
           null,
           false,
           true,
@@ -543,7 +558,7 @@ function* addCustodianType(action) {
       yield [
         yield put({
           type: ADD_CUSTODIAN_TYPE_SUCCESS,
-          custodianType: data.data,
+          data: data.data,
         }),
         yield put(
           showAlert({
@@ -584,7 +599,7 @@ function* editCustodianType(action) {
       yield [
         yield put({
           type: EDIT_CUSTODIAN_TYPE_SUCCESS,
-          custodianType: data.data,
+          data: data.data,
         }),
         yield put(
           showAlert({
@@ -622,7 +637,7 @@ function* deleteCustodianType(payload) {
     yield [
       yield put({
         type: DELETE_CUSTODIAN_TYPE_SUCCESS,
-        custodianType: { id: payload.id },
+        data: { id: payload.id },
       }),
       yield put(
         showAlert({

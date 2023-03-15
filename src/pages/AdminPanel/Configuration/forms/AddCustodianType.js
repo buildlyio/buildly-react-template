@@ -10,13 +10,13 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import FormModal from '@components/Modal/FormModal';
-import { useInput } from '@hooks/useInput';
-import { validators } from '@utils/validators';
+import FormModal from '../../../../components/Modal/FormModal';
+import { useInput } from '../../../../hooks/useInput';
+import { validators } from '../../../../utils/validators';
 import {
   addCustodianType,
   editCustodianType,
-} from '@redux/custodian/actions/custodian.actions';
+} from '../../../../redux/custodian/actions/custodian.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {

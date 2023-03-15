@@ -15,18 +15,18 @@ import {
   Typography,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import DatePickerComponent from '@components/DatePicker/DatePicker';
-import { MapComponent } from '@components/MapComponent/MapComponent';
-import FormModal from '@components/Modal/FormModal';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
-import { useInput } from '@hooks/useInput';
+import DatePickerComponent from '../../../components/DatePicker/DatePicker';
+import { MapComponent } from '../../../components/MapComponent/MapComponent';
+import FormModal from '../../../components/Modal/FormModal';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import { UserContext } from '../../../context/User.context';
+import { useInput } from '../../../hooks/useInput';
 import {
   addGateway,
   editGateway,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import { validators } from '@utils/validators';
-import { getFormattedRow } from '@pages/Custodians/CustodianConstants';
+} from '../../../redux/sensorsGateway/actions/sensorsGateway.actions';
+import { validators } from '../../../utils/validators';
+import { getCustodianFormattedRow } from '../../../pages/Custodians/CustodianConstants';
 import { GATEWAY_STATUS } from '../Constants';
 
 const useStyles = makeStyles((theme) => ({
@@ -137,7 +137,7 @@ const AddGateway = ({
       && contactInfo
       && custodianData.length
     ) {
-      setCustodianList(getFormattedRow(
+      setCustodianList(getCustodianFormattedRow(
         custodianData,
         contactInfo,
       ));
@@ -190,7 +190,7 @@ const AddGateway = ({
       last_known_battery_level: battery_level.value,
       ...(editPage && editData && { id: editData.id }),
       mac_address: mac_address.value,
-      custodian_uuid,
+      custodian_uuid: custodian_uuid || null,
       last_known_location: [
         last_known_location === '' ? 'null, null' : last_known_location,
       ],
@@ -233,6 +233,9 @@ const AddGateway = ({
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     if (!gateway_type.value || !gateway_name.value) {
+      return true;
+    }
+    if (!_.isEmpty(editData.shipment_ids)) {
       return true;
     }
     let errorExists = false;
@@ -545,7 +548,6 @@ const AddGateway = ({
                       id="custodian_uuid"
                       select
                       fullWidth
-                      required
                       label="Custodian"
                       disabled={viewOnly}
                       error={

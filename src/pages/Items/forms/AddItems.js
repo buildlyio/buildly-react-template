@@ -16,12 +16,12 @@ import {
   Autocomplete,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import FormModal from '@components/Modal/FormModal';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
-import { useInput } from '@hooks/useInput';
-import { editItem, addItem } from '@redux/items/actions/items.actions';
-import { validators } from '@utils/validators';
+import FormModal from '../../../components/Modal/FormModal';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import { UserContext } from '../../../context/User.context';
+import { useInput } from '../../../hooks/useInput';
+import { editItem, addItem } from '../../../redux/items/actions/items.actions';
+import { validators } from '../../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -258,6 +258,8 @@ const AddItems = ({
       !item_type.value
       || !item_name.value
       || !product
+      || !units
+      || !unit_of_measure
     ) {
       return true;
     }
@@ -307,8 +309,8 @@ const AddItems = ({
     const previousValue = product_value;
     const previousWeight = product_weight;
     setContainerUnits(e.target.value);
-    setItemValue(e.target.value * previousValue);
-    setItemWeight(e.target.value * previousWeight);
+    setItemValue(Number(e.target.value * previousValue).toFixed(2));
+    setItemWeight(Number(e.target.value * previousWeight).toFixed(2));
   };
 
   return (
@@ -775,6 +777,7 @@ const AddItems = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
+                  required
                   id="units"
                   type="number"
                   label="# of Units"
@@ -864,6 +867,7 @@ const AddItems = ({
                   variant="outlined"
                   margin="normal"
                   fullWidth
+                  required
                   id="unit_of_measure"
                   select
                   label="Units of Measure"

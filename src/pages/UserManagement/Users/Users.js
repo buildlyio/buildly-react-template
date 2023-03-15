@@ -14,13 +14,13 @@ import { makeStyles } from '@mui/styles';
 import { MoreHoriz } from '@mui/icons-material';
 import {
   PermissionsTable,
-} from '@components/PermissionsTable/PermissionsTable';
-import { UserContext } from '@context/User.context';
-import Crud from '@modules/crud/Crud';
+} from '../../../components/PermissionsTable/PermissionsTable';
+import { UserContext } from '../../../context/User.context';
+import Crud from '../../../modules/crud/Crud';
 import {
   getCoregroups,
-} from '@redux/coregroup/actions/coregroup.actions';
-import { checkForAdmin } from '@utils/utilMethods';
+} from '../../../redux/coregroup/actions/coregroup.actions';
+import { checkForAdmin } from '../../../utils/utilMethods';
 
 const useStyles = makeStyles((theme) => ({
   btnPermission: {
@@ -149,7 +149,10 @@ const Users = ({ data, dispatch }) => {
   };
 
   return (
-    <Box>
+    <Box sx={{
+      overflowX: 'auto',
+    }}
+    >
       <Crud
         deleteAction="DELETE_COREUSER"
         updateAction="UPDATE_COREUSER"
@@ -315,7 +318,7 @@ const Users = ({ data, dispatch }) => {
                               : null
                           }
                           >
-                            {organization.name ?? organization_name}
+                            {organization.name || organization_name}
                           </Typography>
                         );
                       },

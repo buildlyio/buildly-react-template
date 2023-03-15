@@ -9,11 +9,11 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { useInput } from '@hooks/useInput';
-import { validators } from '@utils/validators';
+import { useInput } from '../../../../hooks/useInput';
+import { validators } from '../../../../utils/validators';
 import {
   addFromFile,
-} from '@redux/importExport/actions/importExport.actions';
+} from '../../../../redux/importExport/actions/importExport.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {

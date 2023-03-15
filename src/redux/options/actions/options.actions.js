@@ -1,5 +1,7 @@
-import { httpService } from '@modules/http/http.service';
-
+import { httpService } from '../../../modules/http/http.service';
+import {
+  logout,
+} from '../../authuser/actions/authuser.actions';
 // Options Actions Types
 export const SET_TIMEZONE = 'OPTIONS/SET_TIMEZONE';
 
@@ -58,7 +60,13 @@ export const getUserOptions = () => (dispatch) => {
       `${window.env.API_URL}coreuser/`,
       true,
     )
-    .then((response) => response.json())
+    .then((response) => {
+      if (response.status === 403) {
+        dispatch(logout());
+        window.location.href = '/';
+      }
+      return response.json();
+    })
     .then((data) => {
       dispatch({ type: GET_USER_OPTIONS_SUCCESS, data });
     })

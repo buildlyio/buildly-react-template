@@ -19,6 +19,7 @@ import {
   ADD_PDF_IDENTIFIER,
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
+  GET_REPORT_AND_ALERTS,
 } from '../actions/shipment.actions';
 
 const initialState = {
@@ -41,6 +42,14 @@ export default (state = initialState, action) => {
         shipmentFormData: action.formData,
       };
 
+    case GET_REPORT_AND_ALERTS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: null,
+      };
+
     case GET_SHIPMENTS:
       return {
         ...state,
@@ -50,35 +59,11 @@ export default (state = initialState, action) => {
       };
 
     case GET_SHIPMENTS_SUCCESS: {
-      let initialShipmentData = state.shipmentData || [];
-      let shipmentData = [];
-
-      if (!(action.data instanceof Array)) {
-        const shipmentIndex = initialShipmentData.findIndex((el) => el.id === action.data.id);
-        if (shipmentIndex < 0) {
-          initialShipmentData.push(action.data);
-        } else {
-          initialShipmentData[shipmentIndex] = action.data;
-        }
-        shipmentData = initialShipmentData;
-      } else if (action.data.length < initialShipmentData.length && action.shipmentAction === 'delete') {
-        const shipmentStatus = action.status in ['Completed', 'Cancelled'] ? action.status : 'Active';
-        let filteredShipment = _.filter(initialShipmentData, { type: shipmentStatus });
-        // eslint-disable-next-line max-len
-        initialShipmentData = _.filter(initialShipmentData, (shipment) => shipment.type !== shipmentStatus);
-        filteredShipment = action.data;
-        shipmentData = [...filteredShipment, ...initialShipmentData];
+      let shipmentData = state.shipmentData || [];
+      if (!_.isArray(action.data)) {
+        shipmentData = [...shipmentData, action.data];
       } else {
-        // eslint-disable-next-line max-len
-        shipmentData = Object.values([...initialShipmentData, ...action.data].reduce((result, { id, ...rest }) => {
-          // eslint-disable-next-line no-param-reassign
-          result[id] = {
-            ...(result[id] || {}),
-            id,
-            ...rest,
-          };
-          return result;
-        }, {}));
+        shipmentData = action.data;
       }
 
       return {

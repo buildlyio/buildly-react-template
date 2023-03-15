@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Geocode from 'react-geocode';
 import _ from 'lodash';
-import moment from 'moment-timezone';
 import {
   TextField,
   Box,
@@ -13,16 +12,15 @@ import {
   MenuItem,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import DatePickerComponent from '@components/DatePicker/DatePicker';
-import { MapComponent } from '@components/MapComponent/MapComponent';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { useInput } from '@hooks/useInput';
-import { getFormattedRow } from '@pages/Custodians/CustodianConstants';
+import { MapComponent } from '../../../../components/MapComponent/MapComponent';
+import CustomizedTooltips from '../../../../components/ToolTip/ToolTip';
+import { useInput } from '../../../../hooks/useInput';
+import { getCustodianFormattedRow } from '../../../../pages/Custodians/CustodianConstants';
 import {
   addCustody,
   editCustody,
-} from '@redux/custodian/actions/custodian.actions';
-import { validators } from '@utils/validators';
+} from '../../../../redux/custodian/actions/custodian.actions';
+import { validators } from '../../../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   buttonContainer: {
@@ -82,12 +80,6 @@ const AddCustodyForm = ({
     (editItem && editItem.custodian_data && editItem.custodian_data.url) || '',
   );
   const [custodianList, setCustodianList] = useState([]);
-  const [start_of_custody, handleStartChange] = useState(
-    (editItem && editItem.start_of_custody) || new Date(),
-  );
-  const [end_of_custody, handleEndChange] = useState(
-    (editItem && editItem.end_of_custody) || new Date(),
-  );
   const [start_of_custody_location, setStartLocation] = useState(
     (editItem && editItem.start_of_custody_location) || '',
   );
@@ -130,7 +122,7 @@ const AddCustodyForm = ({
       && contactInfo
       && custodianData.length
     ) {
-      setCustodianList(getFormattedRow(
+      setCustodianList(getCustodianFormattedRow(
         custodianData,
         contactInfo,
       ));
@@ -199,8 +191,6 @@ const AddCustodyForm = ({
   const onAddCustodyClick = (event) => {
     event.preventDefault();
     const custodyFormValues = {
-      start_of_custody,
-      end_of_custody,
       custodian: [custodianURL],
       start_of_custody_location: start_of_custody_location || null,
       end_of_custody_location: end_of_custody_location || null,
@@ -293,8 +283,6 @@ const AddCustodyForm = ({
       (editItem && editItem.custodian_data && editItem.custodian_data.url)
       || '')
     || load_id.hasChanged()
-    || (editItem && (start_of_custody !== editItem.start_of_custody))
-    || (editItem && (end_of_custody !== editItem.end_of_custody))
     || latLongChanged
     || has_current_custody.hasChanged()
     || first_custody.hasChanged()
@@ -421,42 +409,6 @@ const AddCustodyForm = ({
                   }
                   onBlur={(e) => handleBlur(e, 'required', load_id)}
                   {...load_id.bind}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <DatePickerComponent
-                  label="Start of Custody"
-                  selectedDate={
-                    moment(start_of_custody).tz(timezone)
-                      .format('MMMM DD, YYYY HH:mm:ss')
-                  }
-                  hasTime
-                  disabled={viewOnly}
-                  helpText={
-                    custodyMetaData.start_of_custody
-                    && custodyMetaData.start_of_custody.help_text
-                      ? custodyMetaData.start_of_custody.help_text
-                      : ''
-                  }
-                  handleDateChange={handleStartChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <DatePickerComponent
-                  label="End of Custody"
-                  selectedDate={
-                    moment(end_of_custody).tz(timezone)
-                      .format('MMMM DD, YYYY HH:mm:ss')
-                  }
-                  hasTime
-                  handleDateChange={handleEndChange}
-                  disabled={viewOnly}
-                  helpText={
-                    custodyMetaData.end_of_custody
-                    && custodyMetaData.end_of_custody.help_text
-                      ? custodyMetaData.end_of_custody.help_text
-                      : ''
-                  }
                 />
               </Grid>
               <Grid item xs={12}>

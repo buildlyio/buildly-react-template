@@ -100,7 +100,7 @@ describe('Create consortium reducer', () => {
       ...initialState,
       loaded: true,
       loading: false,
-      data: [undefined],
+      allConsortiums: [undefined],
     });
   });
 
@@ -136,7 +136,7 @@ describe('Edit consortium reducer', () => {
       ...initialState,
       loaded: true,
       loading: false,
-      data: [undefined],
+      allConsortiums: [undefined],
     });
   });
 
@@ -172,7 +172,7 @@ describe('Delete consortium reducer', () => {
       ...initialState,
       loaded: true,
       loading: false,
-      data: [],
+      allConsortiums: [],
     });
   });
 

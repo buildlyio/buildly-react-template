@@ -9,9 +9,9 @@ import {
   Tab,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { UserContext } from '@context/User.context';
-import { routes } from '@routes/routesConstants';
-import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
+import { UserContext } from '../../context/User.context';
+import { routes } from '../../routes/routesConstants';
+import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
 import Configuration from './Configuration/Configuration';
 import ImportExport from './ImportExport/ImportExport';
 import ConsortiumSettings from './Consortium/ConsortiumSettings';

@@ -11,7 +11,7 @@ import { makeStyles } from '@mui/styles';
 import {
   clearData,
   getExportData,
-} from '@redux/importExport/actions/importExport.actions';
+} from '../../../../redux/importExport/actions/importExport.actions';
 
 const useStyles = makeStyles((theme) => ({
   root: {

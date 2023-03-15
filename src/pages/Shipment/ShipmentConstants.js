@@ -1,12 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { numberWithCommas } from '@utils/utilMethods';
+import { numberWithCommas } from '../../utils/utilMethods';
 import { Typography } from '@mui/material';
 import { Warning as WarningIcon } from '@mui/icons-material';
 import {
   saveShipmentFormData,
-} from '@redux/shipment/actions/shipment.actions';
+} from '../../redux/shipment/actions/shipment.actions';
 
 export const MAP_TOOLTIP = 'Locations of the shipment from starting point till current time';
 
@@ -112,10 +112,9 @@ export const getShipmentDataTableColumns = (timezone) => ([
   },
 ]);
 
-export const getFormattedRow = (
+export const getShipmentFormattedRow = (
   shipmentData,
   custodianData,
-  itemData,
   custodyData,
   aggregateReportData,
   shipmentFormData,
@@ -204,18 +203,18 @@ export const getFormattedRow = (
 
     editedShipment.sensor_report = aggregateReportInfo;
 
-    if (
-      itemData
-      && shipment.items
-      && shipment.items.length) {
-      _.forEach(itemData, (item) => {
-        let shipmentValue = 0;
-        if (_.indexOf(shipment.items, item.url) !== -1) {
-          shipmentValue += item.value;
-          editedShipment.value = shipmentValue;
-        }
-      });
-    }
+    // if (
+    //   itemData
+    //   && shipment.items
+    //   && shipment.items.length) {
+    //   _.forEach(itemData, (item) => {
+    //     let shipmentValue = 0;
+    //     if (_.indexOf(shipment.items, item.url) !== -1) {
+    //       shipmentValue += item.value;
+    //       editedShipment.value = shipmentValue;
+    //     }
+    //   });
+    // }
 
     shipmentList = [...shipmentList, editedShipment];
   });
@@ -228,39 +227,13 @@ export const getFormattedRow = (
   );
 };
 
-export const custodyColumns = (timezone) => ([
+export const custodyColumns = [
   {
     name: 'custodian_name',
     label: 'Custodian Name',
     options: {
       sort: true,
       sortThirdClickReset: true,
-    },
-  },
-  {
-    name: 'start_of_custody',
-    label: 'Start of Custody',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      customBodyRender: (value) => (
-        value && value !== '-'
-          ? moment(value).tz(timezone).format('MM/DD/yyyy')
-          : value
-      ),
-    },
-  },
-  {
-    name: 'end_of_custody',
-    label: 'End of Custody',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      customBodyRender: (value) => (
-        value && value !== '-'
-          ? moment(value).tz(timezone).format('MM/DD/yyyy')
-          : value
-      ),
     },
   },
   {
@@ -312,7 +285,7 @@ export const custodyColumns = (timezone) => ([
       ),
     },
   },
-]);
+];
 
 export const getUniqueContactInfo = (rowItem, contactInfo) => {
   let obj = '';

@@ -13,8 +13,8 @@ import {
   Delete as DeleteIcon,
   FileCopy as FileCopyIcon,
 } from '@mui/icons-material';
-import { UserContext } from '@context/User.context';
-import { checkForGlobalAdmin } from '@utils/utilMethods';
+import { UserContext } from '../../../context/User.context';
+import { checkForGlobalAdmin } from '../../../utils/utilMethods';
 import { getShipmentDataTableColumns } from '../ShipmentConstants';
 
 const useStyles = makeStyles((theme) => ({
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiPaper-root > .MuiToolbar-regular': {
       marginTop: '-60px',
       paddingRight: '35px',
-      backgroundColor: '#222222',
+      backgroundColor: theme.palette.common.tab,
       '&>:nth-child(1)': {
         margin: '0 25%',
       },
@@ -68,9 +68,10 @@ const ShipmentDataTable = ({
   timezone,
   copyAction,
   rowsType,
+  selectedShipment,
 }) => {
   const classes = useStyles();
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(_.findIndex(rows, selectedShipment) || 0);
   const [columns, setColumns] = useState([]);
   const user = useContext(UserContext);
   const isAdmin = checkForGlobalAdmin(user);
@@ -105,7 +106,7 @@ const ShipmentDataTable = ({
   };
 
   useEffect(() => {
-    setSelected(0);
+    // setSelected(0);
     let cols = [
       {
         name: 'COPY',
@@ -192,6 +193,12 @@ const ShipmentDataTable = ({
       setColumns(restCols);
     }
   }, [timezone, rowsType, rows]);
+
+  useEffect(() => {
+    if (!_.isEmpty(selectedShipment)) {
+      setSelected(_.findIndex(rows, selectedShipment) || 0);
+    }
+  }, [selectedShipment]);
 
   return (
     <div className={classes.root}>

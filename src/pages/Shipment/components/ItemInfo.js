@@ -19,12 +19,13 @@ import {
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   CheckBox as CheckBoxIcon,
 } from '@mui/icons-material';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '@context/User.context';
-import { getFormattedRow } from '@pages/Items/ItemsConstants';
-import { editShipment } from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
+import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../context/User.context';
+import { getItemFormattedRow } from '../../../pages/Items/ItemsConstants';
+import { editShipment } from '../../../redux/shipment/actions/shipment.actions';
+import { routes } from '../../../routes/routesConstants';
 import { itemColumns } from '../ShipmentConstants';
+import Loader from '@components/Loader/Loader';
 
 const useStyles = makeStyles((theme) => ({
   buttonContainer: {
@@ -90,7 +91,7 @@ const ItemsInfo = ({
         selectedRows = [...selectedRows, item];
       }
     });
-    rows = getFormattedRow(selectedRows, itemTypeList, unitsOfMeasure);
+    rows = getItemFormattedRow(selectedRows, itemTypeList, unitsOfMeasure);
   }
 
   const onInputChange = (value) => {
@@ -113,7 +114,7 @@ const ItemsInfo = ({
     || itemData === null
   );
 
-  checkIfItemInfoEdited = () => !!(itemIds.length !== shipmentFormData.items.length);
+  checkIfItemInfoEdited = () => !_.isEqual(itemIds, shipmentFormData.items);
   /**
    * Submit The form and add/edit custodian
    * @param {Event} event the default submit event
@@ -121,7 +122,8 @@ const ItemsInfo = ({
   const handleSubmit = (event) => {
     event.preventDefault();
     const shipmentFormValue = {
-      ...{ ...shipmentFormData, items: itemIds },
+      ...shipmentFormData,
+      items: itemIds,
     };
     dispatch(
       editShipment(
@@ -151,6 +153,7 @@ const ItemsInfo = ({
 
   return (
     <Box mb={5} mt={3}>
+      {loading && <Loader open={loading} />}
       <form noValidate onSubmit={handleSubmit}>
         <Card variant="outlined" className={classes.form}>
           <CardContent>
@@ -160,6 +163,7 @@ const ItemsInfo = ({
                   multiple
                   id="tags-outlined"
                   disabled={viewOnly}
+                  disableCloseOnSelect
                   options={
                     (
                       itemData
@@ -185,8 +189,8 @@ const ItemsInfo = ({
                       <Chip
                         variant="default"
                         label={
-                          itemData
-                            ? _.find(itemData, { url: option })?.name
+                          !_.isEmpty(itemData) && _.find(itemData, { url: option })
+                            ? _.find(itemData, { url: option }).name
                             : ''
                         }
                         {...getTagProps({ index })}

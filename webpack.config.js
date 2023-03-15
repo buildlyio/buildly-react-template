@@ -116,7 +116,7 @@ module.exports = (env, argv) => {
       }),
       fileCopy,
       new GenerateSW({
-        maximumFileSizeToCacheInBytes: 2000000,
+        maximumFileSizeToCacheInBytes: 200000000,
         clientsClaim: true,
         skipWaiting: true,
       }),

@@ -1,4 +1,4 @@
-import { routes } from '@routes/routesConstants';
+import { routes } from '../../routes/routesConstants';
 
 export const NAVIGATION_ITEMS = [
   {

@@ -14,23 +14,25 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import DatePickerComponent from '@components/DatePicker/DatePicker';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
-import { useInput } from '@hooks/useInput';
+import DatePickerComponent from '../../../components/DatePicker/DatePicker';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import { UserContext } from '../../../context/User.context';
+import { useInput } from '../../../hooks/useInput';
 import {
   editShipment,
   addShipment,
   saveShipmentFormData,
-} from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
+} from '../../../redux/shipment/actions/shipment.actions';
+import { routes } from '../../../routes/routesConstants';
 import {
   SHIPMENT_STATUS,
   TRANSPORT_MODE,
-} from '@utils/mock';
-import { setOptionsData } from '@utils/utilMethods';
-import { validators } from '@utils/validators';
+} from '../../../utils/mock';
+import { setOptionsData } from '../../../utils/utilMethods';
+import { validators } from '../../../utils/validators';
 import ShipmentRouteInfo from './ShipmentRouteInfo';
+import { editGateway } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
+import Loader from '@components/Loader/Loader';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -99,10 +101,10 @@ const ShipmentInfo = (props) => {
     (editData && editData.name) || '',
     { required: true },
   );
-  const lading_bill = useInput(
+  const carrier = useInput(
     (editData && editData.bol_order_id) || '',
   );
-  const load_no = useInput('');
+  // const load_no = useInput('');
   const shipment_status = useInput(
     (editData && editData.status) || '',
     { required: true },
@@ -136,7 +138,7 @@ const ShipmentInfo = (props) => {
   const [fieldsMetadata, setFieldsMetaData] = useState({
     shipment_name: '',
     shipment_status: '',
-    lading_bill: '',
+    carrier: '',
     route_desc: '',
     mode_type: '',
     scheduled_departure: '',
@@ -169,9 +171,9 @@ const ShipmentInfo = (props) => {
         shipmentOptions.actions.POST,
         'route_description',
       );
-      metadata.lading_bill = setOptionsData(
+      metadata.carrier = setOptionsData(
         shipmentOptions.actions.POST,
-        'bol_order_id',
+        'carrier',
       );
       metadata.mode_type = setOptionsData(
         shipmentOptions.actions.POST,
@@ -281,7 +283,7 @@ const ShipmentInfo = (props) => {
       ...copyData,
       name: shipment_name.value,
       status: shipment_status.value ? shipment_status.value : 'Planned',
-      bol_order_id: lading_bill.value,
+      carrier: carrier.value ? [carrier.value] : [],
       route_description: route_desc.value,
       transport_mode: mode_type.value,
       estimated_time_of_arrival: scheduled_arrival,
@@ -303,20 +305,40 @@ const ShipmentInfo = (props) => {
     };
 
     if (editPage && editData) {
-      if (shipmentFormData.gateway_ids.length > 0) {
+      if (shipmentFormValue.gateway_ids.length > 0) {
+        let gateway_status = null;
+        let shipment_ids = [];
         let attachedGateway = null;
         attachedGateway = _.filter(
-          gatewayData, (gateway) => gateway.gateway_uuid === shipmentFormData.gateway_ids[0],
+          gatewayData, (gateway) => gateway.gateway_uuid === shipmentFormValue.gateway_ids[0],
         );
+        if (shipmentFormValue.status === 'Completed' || shipmentFormValue.status === 'Cancelled') {
+          gateway_status = 'unavailable';
+        } else if (shipmentFormValue.status === 'Enroute' && shipmentFormValue.gateway_ids.length > 0) {
+          gateway_status = 'assigned';
+          shipment_ids = [shipmentFormValue.id];
+        }
+
+        if (gateway_status === null) {
+          gateway_status = attachedGateway[0].gateway_status;
+        }
+
+        const updatedGatewayData = {
+          ...attachedGateway[0],
+          gateway_status,
+          shipment_ids,
+        };
+
         dispatch(
           editShipment(
             shipmentFormValue,
             history,
             `${routes.SHIPMENT}/edit/:${editData.id}`,
             organization,
-            attachedGateway[0],
+            updatedGatewayData,
           ),
         );
+        dispatch(editGateway(updatedGatewayData));
       } else {
         dispatch(
           editShipment(
@@ -335,8 +357,8 @@ const ShipmentInfo = (props) => {
 
   checkIfShipmentInfoEdited = () => (
     shipment_name.hasChanged()
-    || lading_bill.hasChanged()
-    || load_no.hasChanged()
+    || carrier.hasChanged()
+    // || load_no.hasChanged()
     || shipment_status.hasChanged()
     || route_desc.hasChanged()
     || mode_type.hasChanged()
@@ -362,6 +384,7 @@ const ShipmentInfo = (props) => {
   return (
     <>
       <div>
+        {loading && <Loader open={loading} />}
         {!isDesktop && (
           <Box mb={2}>
             <Typography variant="h4">
@@ -433,18 +456,18 @@ const ShipmentInfo = (props) => {
                       variant="outlined"
                       margin="normal"
                       fullWidth
-                      id="lading_bill"
-                      label="Bill of lading"
-                      name="lading_bill"
-                      autoComplete="lading_bill"
+                      id="carrier"
+                      label="Lading Bill"
+                      name="carrier"
+                      autoComplete="carrier"
                       disabled={viewOnly}
-                      {...lading_bill.bind}
+                      {...carrier.bind}
                     />
-                    {fieldsMetadata.lading_bill.help_text
+                    {fieldsMetadata.carrier.help_text
                     && (
                       <CustomizedTooltips
                         toolTipText={
-                          fieldsMetadata.lading_bill.help_text
+                          fieldsMetadata.carrier.help_text
                         }
                       />
                     )}

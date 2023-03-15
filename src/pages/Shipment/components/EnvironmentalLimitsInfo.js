@@ -11,11 +11,12 @@ import {
   Grid,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import RangeSlider from '@components/Slider/RangeSlider';
-import CustomizedTooltips from '@components/ToolTip/ToolTip';
-import { UserContext } from '@context/User.context';
-import { editShipment } from '@redux/shipment/actions/shipment.actions';
-import { routes } from '@routes/routesConstants';
+import RangeSlider from '../../../components/Slider/RangeSlider';
+import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
+import { UserContext } from '../../../context/User.context';
+import { editShipment } from '../../../redux/shipment/actions/shipment.actions';
+import { routes } from '../../../routes/routesConstants';
+import Loader from '@components/Loader/Loader';
 
 const useStyles = makeStyles((theme) => ({
   slider: {
@@ -84,17 +85,17 @@ const EnvironmentalLimitsInfo = ({
   const [minMaxTempValue, setMinMaxTempValue] = useState(
     shipmentFormData && [
       shipmentFormData.min_excursion_temp || 0,
-      shipmentFormData.min_warning_temp || 35,
-      shipmentFormData.max_warning_temp || 75,
+      // shipmentFormData.min_warning_temp || 35,
+      // shipmentFormData.max_warning_temp || 75,
       shipmentFormData.max_excursion_temp || 100,
     ],
   );
-  const [low_temp_val, changeLowTempVal] = useState(
-    (shipmentFormData && shipmentFormData.min_warning_temp) || 35,
-  );
-  const [high_temp_val, changeHighTempVal] = useState(
-    (shipmentFormData && shipmentFormData.max_warning_temp) || 75,
-  );
+  // const [low_temp_val, changeLowTempVal] = useState(
+  //   (shipmentFormData && shipmentFormData.min_warning_temp) || 35,
+  // );
+  // const [high_temp_val, changeHighTempVal] = useState(
+  //   (shipmentFormData && shipmentFormData.max_warning_temp) || 75,
+  // );
 
   const [min_humid_val, changeMinHumidVal] = useState(
     (shipmentFormData && shipmentFormData.min_excursion_humidity) || 0,
@@ -105,17 +106,17 @@ const EnvironmentalLimitsInfo = ({
   const [minMaxHumidValue, setMinMaxHumidValue] = useState(
     shipmentFormData && [
       shipmentFormData.min_excursion_humidity || 0,
-      shipmentFormData.min_warning_humidity || 35,
-      shipmentFormData.max_warning_humidity || 75,
+      // shipmentFormData.min_warning_humidity || 35,
+      // shipmentFormData.max_warning_humidity || 75,
       shipmentFormData.max_excursion_humidity || 100,
     ],
   );
-  const [low_humid_val, changeLowHumidVal] = useState(
-    (shipmentFormData && shipmentFormData.min_warning_humidity) || 35,
-  );
-  const [high_humid_val, changeHighHumidVal] = useState(
-    (shipmentFormData && shipmentFormData.max_warning_humidity) || 75,
-  );
+  // const [low_humid_val, changeLowHumidVal] = useState(
+  //   (shipmentFormData && shipmentFormData.min_warning_humidity) || 35,
+  // );
+  // const [high_humid_val, changeHighHumidVal] = useState(
+  //   (shipmentFormData && shipmentFormData.max_warning_humidity) || 75,
+  // );
 
   const [shipmentMetaData, setShipmentMetaData] = useState({});
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -129,17 +130,17 @@ const EnvironmentalLimitsInfo = ({
   const handleTempMinMaxChange = (e, value) => {
     setMinMaxTempValue(value);
     changeMinTempVal(value[0]);
-    changeMaxTempVal(value[3]);
-    changeHighTempVal(value[2]);
-    changeLowTempVal(value[1]);
+    changeMaxTempVal(value[1]);
+    // changeHighTempVal(value[2]);
+    // changeLowTempVal(value[1]);
   };
 
   const handleHumidMinMaxChange = (e, value) => {
     setMinMaxHumidValue(value);
     changeMinHumidVal(value[0]);
-    changeMaxHumidVal(value[3]);
-    changeHighHumidVal(value[2]);
-    changeLowHumidVal(value[1]);
+    changeMaxHumidVal(value[1]);
+    // changeHighHumidVal(value[2]);
+    // changeLowHumidVal(value[1]);
   };
 
   /**
@@ -151,12 +152,12 @@ const EnvironmentalLimitsInfo = ({
     const shipmentFormValue = {
       ...{
         ...shipmentFormData,
-        max_warning_temp: high_temp_val,
-        min_warning_temp: low_temp_val,
+        // max_warning_temp: high_temp_val,
+        // min_warning_temp: low_temp_val,
         max_excursion_temp: max_temp_val,
         min_excursion_temp: min_temp_val,
-        max_warning_humidity: high_humid_val,
-        min_warning_humidity: low_humid_val,
+        // max_warning_humidity: high_humid_val,
+        // min_warning_humidity: low_humid_val,
         max_excursion_humidity: max_humid_val,
         min_excursion_humidity: min_humid_val,
       },
@@ -173,15 +174,15 @@ const EnvironmentalLimitsInfo = ({
 
   const shipmentFormMinMaxHumid = [
     shipmentFormData.min_excursion_humidity || 0,
-    shipmentFormData.min_warning_humidity || 35,
-    shipmentFormData.max_warning_humidity || 75,
+    // shipmentFormData.min_warning_humidity || 35,
+    // shipmentFormData.max_warning_humidity || 75,
     shipmentFormData.max_excursion_humidity || 100,
   ];
 
   const shipmentFormMinMaxTemp = [
     shipmentFormData.min_excursion_temp || 0,
-    shipmentFormData.min_warning_temp || 35,
-    shipmentFormData.max_warning_temp || 75,
+    // shipmentFormData.min_warning_temp || 35,
+    // shipmentFormData.max_warning_temp || 75,
     shipmentFormData.max_excursion_temp || 100,
   ];
 
@@ -214,21 +215,21 @@ const EnvironmentalLimitsInfo = ({
     switch (type) {
       case 'max_temp_val':
         changeMaxTempVal(newValue);
-        temp[3] = parseFloat(newValue);
-        setMinMaxTempValue(temp);
-        break;
-
-      case 'high_temp_val':
-        changeHighTempVal(newValue);
-        temp[2] = parseFloat(newValue);
-        setMinMaxTempValue(temp);
-        break;
-
-      case 'low_temp_val':
-        changeLowTempVal(newValue);
         temp[1] = parseFloat(newValue);
         setMinMaxTempValue(temp);
         break;
+
+        // case 'high_temp_val':
+        //   changeHighTempVal(newValue);
+        //   temp[2] = parseFloat(newValue);
+        //   setMinMaxTempValue(temp);
+        //   break;
+
+        // case 'low_temp_val':
+        //   changeLowTempVal(newValue);
+        //   temp[1] = parseFloat(newValue);
+        //   setMinMaxTempValue(temp);
+        //   break;
 
       case 'min_temp_val':
         changeMinTempVal(newValue);
@@ -238,21 +239,21 @@ const EnvironmentalLimitsInfo = ({
 
       case 'max_humid_val':
         changeMaxHumidVal(newValue);
-        humidity[3] = parseFloat(newValue);
-        setMinMaxHumidValue(humidity);
-        break;
-
-      case 'high_humid_val':
-        changeHighHumidVal(newValue);
-        humidity[2] = parseFloat(newValue);
-        setMinMaxHumidValue(humidity);
-        break;
-
-      case 'low_humid_val':
-        changeLowHumidVal(newValue);
         humidity[1] = parseFloat(newValue);
         setMinMaxHumidValue(humidity);
         break;
+
+        // case 'high_humid_val':
+        //   changeHighHumidVal(newValue);
+        //   humidity[2] = parseFloat(newValue);
+        //   setMinMaxHumidValue(humidity);
+        //   break;
+
+        // case 'low_humid_val':
+        //   changeLowHumidVal(newValue);
+        //   humidity[1] = parseFloat(newValue);
+        //   setMinMaxHumidValue(humidity);
+        //   break;
 
       case 'min_humid_val':
         changeMinHumidVal(newValue);
@@ -266,339 +267,342 @@ const EnvironmentalLimitsInfo = ({
   };
 
   return (
-    <form
-      className={classes.form}
-      noValidate
-      onSubmit={handleSubmit}
-    >
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6} sm={6}>
-          <Card variant="outlined">
-            <Typography
-              className={classes.boxHeading}
-              variant="body2"
-            >
-              Temperature settings (°F)
-            </Typography>
-            <CardContent>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <div className={classes.inputWithTooltip}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="max_temp_val"
-                      label="Max"
-                      name="max_temp_val"
-                      autoComplete="max_temp_val"
-                      value={max_temp_val}
-                      disabled={viewOnly}
-                      onChange={(e) => {
-                        handleSliderUpdate(e, 'max_temp_val');
-                      }}
-                    />
-                    {shipmentMetaData.max_excursion_temp
-                    && shipmentMetaData.max_excursion_temp.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          shipmentMetaData.max_excursion_temp.help_text
-                        }
-                      />
-                    )}
-                  </div>
-                  <div className={classes.inputWithTooltip}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="high_temp_val"
-                      label="Warning high"
-                      name="high_temp_val"
-                      autoComplete="high_temp_val"
-                      value={high_temp_val}
-                      disabled={viewOnly}
-                      onChange={(e) => {
-                        handleSliderUpdate(e, 'high_temp_val');
-                      }}
-                    />
-                    {shipmentMetaData.max_warning_temp
-                    && shipmentMetaData.max_warning_temp.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          shipmentMetaData.max_warning_temp.help_text
-                        }
-                      />
-                    )}
-                  </div>
-                  <div className={classes.inputWithTooltip}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="low_temp_val"
-                      label="Warning low"
-                      name="low_temp_val"
-                      autoComplete="low_temp_val"
-                      value={low_temp_val}
-                      disabled={viewOnly}
-                      onChange={(e) => {
-                        handleSliderUpdate(e, 'low_temp_val');
-                      }}
-                    />
-                    {shipmentMetaData.min_warning_temp
-                    && shipmentMetaData.min_warning_temp.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          shipmentMetaData.min_warning_temp.help_text
-                        }
-                      />
-                    )}
-                  </div>
-                  <div className={classes.inputWithTooltip}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="min_temp_val"
-                      label="Min"
-                      name="min_temp_val"
-                      autoComplete="min_temp_val"
-                      value={min_temp_val}
-                      disabled={viewOnly}
-                      onChange={(e) => {
-                        handleSliderUpdate(e, 'min_temp_val');
-                      }}
-                    />
-                    {shipmentMetaData.min_excursion_temp
-                    && shipmentMetaData.min_excursion_temp.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          shipmentMetaData.min_excursion_temp.help_text
-                        }
-                      />
-                    )}
-                  </div>
-                </Grid>
-                <Grid
-                  item
-                  xs={6}
-                  className={classes.slider}
-                >
-                  <RangeSlider
-                    value={minMaxTempValue}
-                    disabled={viewOnly}
-                    orientation="vertical"
-                    handleSliderChange={handleTempMinMaxChange}
-                    rangeText=""
-                    step={0.1}
-                    max={minMaxTempValue[3]}
-                    min={minMaxTempValue[0]}
-                    marks={[
-                      {
-                        value: 0,
-                        label: '0°F',
-                      },
-                      {
-                        value: 100,
-                        label: '100°F',
-                      },
-                    ]}
-                  />
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={6} sm={6}>
-          <Card variant="outlined">
-            <Typography
-              className={classes.boxHeading}
-              variant="body2"
-            >
-              Humidity settings (%)
-            </Typography>
-            <CardContent>
-              <Grid container spacing={4}>
-                <Grid item xs={6}>
-                  <div className={classes.inputWithTooltip}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="max_humid_val"
-                      label="Max"
-                      name="max_humid_val"
-                      autoComplete="max_humid_val"
-                      value={max_humid_val}
-                      disabled={viewOnly}
-                      onChange={(e) => {
-                        handleSliderUpdate(e, 'max_humid_val');
-                      }}
-                    />
-                    {shipmentMetaData.max_excursion_humidity
-                    && shipmentMetaData.max_excursion_humidity.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          shipmentMetaData.max_excursion_humidity.help_text
-                        }
-                      />
-                    )}
-                  </div>
-                  <div className={classes.inputWithTooltip}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="high_humid_val"
-                      label="Warning high"
-                      name="high_humid_val"
-                      autoComplete="high_humid_val"
-                      value={high_humid_val}
-                      disabled={viewOnly}
-                      onChange={(e) => {
-                        handleSliderUpdate(e, 'high_humid_val');
-                      }}
-                    />
-                    {shipmentMetaData.max_warning_humidity
-                    && shipmentMetaData.max_warning_humidity.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          shipmentMetaData.max_warning_humidity.help_text
-                        }
-                      />
-                    )}
-                  </div>
-                  <div className={classes.inputWithTooltip}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="low_humid_val"
-                      label="Warning low"
-                      name="low_humid_val"
-                      autoComplete="low_humid_val"
-                      value={low_humid_val}
-                      disabled={viewOnly}
-                      onChange={(e) => {
-                        handleSliderUpdate(e, 'low_humid_val');
-                      }}
-                    />
-                    {shipmentMetaData.min_warning_humidity
-                    && shipmentMetaData.min_warning_humidity.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          shipmentMetaData.min_warning_humidity.help_text
-                        }
-                      />
-                    )}
-                  </div>
-                  <div className={classes.inputWithTooltip}>
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="min_humid_val"
-                      label="Min"
-                      name="min_humid_val"
-                      autoComplete="min_humid_val"
-                      value={min_humid_val}
-                      disabled={viewOnly}
-                      onChange={(e) => {
-                        handleSliderUpdate(e, 'min_humid_val');
-                      }}
-                    />
-                    {shipmentMetaData.min_excursion_humidity
-                    && shipmentMetaData.min_excursion_humidity.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          shipmentMetaData.min_excursion_humidity.help_text
-                        }
-                      />
-                    )}
-                  </div>
-                </Grid>
-                <Grid
-                  item
-                  xs={6}
-                  className={classes.slider}
-                >
-                  <RangeSlider
-                    value={minMaxHumidValue}
-                    disabled={viewOnly}
-                    orientation="vertical"
-                    handleSliderChange={handleHumidMinMaxChange}
-                    rangeText=""
-                    step={0.1}
-                    max={minMaxHumidValue[3]}
-                    min={minMaxHumidValue[0]}
-                    marks={[
-                      {
-                        value: 0,
-                        label: '0%',
-                      },
-                      {
-                        value: 100,
-                        label: '100%',
-                      },
-                    ]}
-                  />
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-      <Grid
-        container
-        spacing={3}
-        justifyContent="center"
-        className={classes.buttonContainer}
+    <>
+      {loading && <Loader open={loading} />}
+      <form
+        className={classes.form}
+        noValidate
+        onSubmit={handleSubmit}
       >
-        <Grid item xs={6} sm={4}>
-          {!viewOnly && (
-            <div className={classes.loadingWrapper}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                disabled={viewOnly || loading}
-                className={classes.submit}
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6} sm={6}>
+            <Card variant="outlined">
+              <Typography
+                className={classes.boxHeading}
+                variant="body2"
               >
-                Save
-              </Button>
-              {loading && (
-                <CircularProgress
-                  size={24}
-                  className={classes.buttonProgress}
-                />
-              )}
-            </div>
-          )}
+                Temperature settings (°F)
+              </Typography>
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <div className={classes.inputWithTooltip}>
+                      <TextField
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        id="max_temp_val"
+                        label="Max"
+                        name="max_temp_val"
+                        autoComplete="max_temp_val"
+                        value={max_temp_val}
+                        disabled={viewOnly}
+                        onChange={(e) => {
+                          handleSliderUpdate(e, 'max_temp_val');
+                        }}
+                      />
+                      {shipmentMetaData.max_excursion_temp
+                      && shipmentMetaData.max_excursion_temp.help_text
+                      && (
+                        <CustomizedTooltips
+                          toolTipText={
+                            shipmentMetaData.max_excursion_temp.help_text
+                          }
+                        />
+                      )}
+                    </div>
+                    {/* <div className={classes.inputWithTooltip}>
+                      <TextField
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        id="high_temp_val"
+                        label="Warning high"
+                        name="high_temp_val"
+                        autoComplete="high_temp_val"
+                        value={high_temp_val}
+                        disabled={viewOnly}
+                        onChange={(e) => {
+                          handleSliderUpdate(e, 'high_temp_val');
+                        }}
+                      />
+                      {shipmentMetaData.max_warning_temp
+                      && shipmentMetaData.max_warning_temp.help_text
+                      && (
+                        <CustomizedTooltips
+                          toolTipText={
+                            shipmentMetaData.max_warning_temp.help_text
+                          }
+                        />
+                      )}
+                    </div> */}
+                    {/* <div className={classes.inputWithTooltip}>
+                      <TextField
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        id="low_temp_val"
+                        label="Warning low"
+                        name="low_temp_val"
+                        autoComplete="low_temp_val"
+                        value={low_temp_val}
+                        disabled={viewOnly}
+                        onChange={(e) => {
+                          handleSliderUpdate(e, 'low_temp_val');
+                        }}
+                      />
+                      {shipmentMetaData.min_warning_temp
+                      && shipmentMetaData.min_warning_temp.help_text
+                      && (
+                        <CustomizedTooltips
+                          toolTipText={
+                            shipmentMetaData.min_warning_temp.help_text
+                          }
+                        />
+                      )}
+                    </div> */}
+                    <div className={classes.inputWithTooltip}>
+                      <TextField
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        id="min_temp_val"
+                        label="Min"
+                        name="min_temp_val"
+                        autoComplete="min_temp_val"
+                        value={min_temp_val}
+                        disabled={viewOnly}
+                        onChange={(e) => {
+                          handleSliderUpdate(e, 'min_temp_val');
+                        }}
+                      />
+                      {shipmentMetaData.min_excursion_temp
+                      && shipmentMetaData.min_excursion_temp.help_text
+                      && (
+                        <CustomizedTooltips
+                          toolTipText={
+                            shipmentMetaData.min_excursion_temp.help_text
+                          }
+                        />
+                      )}
+                    </div>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={6}
+                    className={classes.slider}
+                  >
+                    <RangeSlider
+                      value={minMaxTempValue}
+                      disabled={viewOnly}
+                      orientation="vertical"
+                      handleSliderChange={handleTempMinMaxChange}
+                      rangeText=""
+                      step={0.1}
+                      max={minMaxTempValue[1]}
+                      min={minMaxTempValue[0]}
+                      marks={[
+                        {
+                          value: 0,
+                          label: '0°F',
+                        },
+                        {
+                          value: 100,
+                          label: '100°F',
+                        },
+                      ]}
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={6} sm={6}>
+            <Card variant="outlined">
+              <Typography
+                className={classes.boxHeading}
+                variant="body2"
+              >
+                Humidity settings (%)
+              </Typography>
+              <CardContent>
+                <Grid container spacing={4}>
+                  <Grid item xs={6}>
+                    <div className={classes.inputWithTooltip}>
+                      <TextField
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        id="max_humid_val"
+                        label="Max"
+                        name="max_humid_val"
+                        autoComplete="max_humid_val"
+                        value={max_humid_val}
+                        disabled={viewOnly}
+                        onChange={(e) => {
+                          handleSliderUpdate(e, 'max_humid_val');
+                        }}
+                      />
+                      {shipmentMetaData.max_excursion_humidity
+                      && shipmentMetaData.max_excursion_humidity.help_text
+                      && (
+                        <CustomizedTooltips
+                          toolTipText={
+                            shipmentMetaData.max_excursion_humidity.help_text
+                          }
+                        />
+                      )}
+                    </div>
+                    {/* <div className={classes.inputWithTooltip}>
+                      <TextField
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        id="high_humid_val"
+                        label="Warning high"
+                        name="high_humid_val"
+                        autoComplete="high_humid_val"
+                        value={high_humid_val}
+                        disabled={viewOnly}
+                        onChange={(e) => {
+                          handleSliderUpdate(e, 'high_humid_val');
+                        }}
+                      />
+                      {shipmentMetaData.max_warning_humidity
+                      && shipmentMetaData.max_warning_humidity.help_text
+                      && (
+                        <CustomizedTooltips
+                          toolTipText={
+                            shipmentMetaData.max_warning_humidity.help_text
+                          }
+                        />
+                      )}
+                    </div> */}
+                    {/* <div className={classes.inputWithTooltip}>
+                      <TextField
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        id="low_humid_val"
+                        label="Warning low"
+                        name="low_humid_val"
+                        autoComplete="low_humid_val"
+                        value={low_humid_val}
+                        disabled={viewOnly}
+                        onChange={(e) => {
+                          handleSliderUpdate(e, 'low_humid_val');
+                        }}
+                      />
+                      {shipmentMetaData.min_warning_humidity
+                      && shipmentMetaData.min_warning_humidity.help_text
+                      && (
+                        <CustomizedTooltips
+                          toolTipText={
+                            shipmentMetaData.min_warning_humidity.help_text
+                          }
+                        />
+                      )}
+                    </div> */}
+                    <div className={classes.inputWithTooltip}>
+                      <TextField
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        id="min_humid_val"
+                        label="Min"
+                        name="min_humid_val"
+                        autoComplete="min_humid_val"
+                        value={min_humid_val}
+                        disabled={viewOnly}
+                        onChange={(e) => {
+                          handleSliderUpdate(e, 'min_humid_val');
+                        }}
+                      />
+                      {shipmentMetaData.min_excursion_humidity
+                      && shipmentMetaData.min_excursion_humidity.help_text
+                      && (
+                        <CustomizedTooltips
+                          toolTipText={
+                            shipmentMetaData.min_excursion_humidity.help_text
+                          }
+                        />
+                      )}
+                    </div>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={6}
+                    className={classes.slider}
+                  >
+                    <RangeSlider
+                      value={minMaxHumidValue}
+                      disabled={viewOnly}
+                      orientation="vertical"
+                      handleSliderChange={handleHumidMinMaxChange}
+                      rangeText=""
+                      step={0.1}
+                      max={minMaxHumidValue[1]}
+                      min={minMaxHumidValue[0]}
+                      marks={[
+                        {
+                          value: 0,
+                          label: '0%',
+                        },
+                        {
+                          value: 100,
+                          label: '100%',
+                        },
+                      ]}
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-        <Grid item xs={6} sm={4}>
-          <Button
-            type="button"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={onCancelClick}
-          >
-            Done
-          </Button>
+        <Grid
+          container
+          spacing={3}
+          justifyContent="center"
+          className={classes.buttonContainer}
+        >
+          <Grid item xs={6} sm={4}>
+            {!viewOnly && (
+              <div className={classes.loadingWrapper}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  disabled={viewOnly || loading}
+                  className={classes.submit}
+                >
+                  Save
+                </Button>
+                {loading && (
+                  <CircularProgress
+                    size={24}
+                    className={classes.buttonProgress}
+                  />
+                )}
+              </div>
+            )}
+          </Grid>
+          <Grid item xs={6} sm={4}>
+            <Button
+              type="button"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={onCancelClick}
+            >
+              Cancel
+            </Button>
+          </Grid>
         </Grid>
-      </Grid>
-    </form>
+      </form>
+    </>
   );
 };
 

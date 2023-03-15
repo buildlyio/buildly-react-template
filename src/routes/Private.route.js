@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { oauthService } from '@modules/oauth/oauth.service';
+import { oauthService } from '../modules/oauth/oauth.service';
 
 /**
  * Generic component for a protected route

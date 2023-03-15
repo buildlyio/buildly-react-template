@@ -12,10 +12,10 @@ import {
   PressureIcon,
   TiltIcon,
   ShockIcon,
-} from '@components/Icons/Icons';
+} from '../../components/Icons/Icons';
 import {
   getFormattedCustodyRows,
-} from '@pages/Shipment/ShipmentConstants';
+} from '../../pages/Shipment/ShipmentConstants';
 
 export const SHIPMENT_OVERVIEW_TOOL_TIP = 'Select a shipment to view reporting data';
 
@@ -98,8 +98,8 @@ export const getShipmentOverview = (
   custodianData,
   custodyData,
   aggregateReportData,
+  alertsData,
   contactData,
-  unitsOfMeasure,
   timezone,
 ) => {
   let shipmentList = [];
@@ -127,12 +127,11 @@ export const getShipmentOverview = (
     let batteryData = [];
     let pressureData = [];
     let markersToSet = [];
+    editedShipment.sensor_report = [];
 
-    const temperatureUnit = _.lowerCase(
-      _.find(
-        unitsOfMeasure,
-        { supported_class: 'Temperature' },
-      ).name,
+    const alerts = _.filter(
+      alertsData,
+      (alert) => alert.parameter_type !== 'location' && alert.shipment_id === shipment.partner_shipment_id,
     );
 
     if (custodyRows.length > 0) {
@@ -182,6 +181,7 @@ export const getShipmentOverview = (
       aggregateReportData
       && aggregateReportData.length > 0
     ) {
+      let counter = 0;
       _.forEach(aggregateReportData, (report) => {
         if (
           report.shipment_id === shipment.partner_shipment_id
@@ -189,8 +189,11 @@ export const getShipmentOverview = (
         ) {
           _.forEach(report.report_entries, (report_entry) => {
             try {
+              counter += 1;
+              let marker = {};
               const temperature = report_entry.report_temp;
               let dateTime = '';
+              let alert_status = '-';
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
                   dateTime = moment(report_entry.report_timestamp)
@@ -202,21 +205,62 @@ export const getShipmentOverview = (
                 ).tz(timezone).format('MMM DD YYYY, h:mm:ss a');
               }
 
+              _.forEach(alerts, (alert) => {
+                const alertTime = moment(alert.create_date).tz(timezone).format('MMM DD YYYY, h:mm:ss a');
+                if (alertTime === dateTime) {
+                  if (alert.recovered_alert_id !== null) {
+                    alert_status = 'RECOVERED';
+                  } else {
+                    alert_status = 'YES';
+                  }
+                }
+              });
               // For a valid (latitude, longitude) pair: -90<=X<=+90 and -180<=Y<=180
-              const latitude = report_entry.report_latitude
+              if (report_entry.report_location !== null
+                && report_entry.report_latitude !== null
+                && report_entry.report_longitude !== null) {
+                const latitude = report_entry.report_latitude
                 || report_entry.report_location.latitude;
-              const longitude = report_entry.report_longitude
+                const longitude = report_entry.report_longitude
                 || report_entry.report_location.longitude;
-              if (
-                (latitude >= -90
+                if (
+                  (latitude >= -90
                   && latitude <= 90)
                 && (longitude >= -180
                   && longitude <= 180)
                 && dateTime !== ''
-              ) {
-                const marker = {
-                  lat: latitude,
-                  lng: longitude,
+                ) {
+                  marker = {
+                    lat: latitude,
+                    lng: longitude,
+                    label: 'Clustered',
+                    temperature,
+                    light: report_entry.report_light,
+                    shock: report_entry.report_shock,
+                    tilt: report_entry.report_tilt,
+                    humidity: report_entry.report_humidity,
+                    battery: report_entry.report_battery,
+                    pressure: report_entry.report_pressure,
+                    color: 'green',
+                    timestamp: dateTime,
+                    alert_status,
+                  };
+                  // Considered use case: If a shipment stays at some
+                  // position for long, other value changes can be
+                  // critical
+                  const markerFound = _.find(markersToSet, {
+                    lat: marker.lat,
+                    lng: marker.lng,
+                  });
+
+                  if (!markerFound) {
+                    markersToSet = [...markersToSet, marker];
+                  }
+                }
+              } else {
+                marker = {
+                  lat: '*',
+                  lng: '*',
                   label: 'Clustered',
                   temperature,
                   light: report_entry.report_light,
@@ -227,74 +271,67 @@ export const getShipmentOverview = (
                   pressure: report_entry.report_pressure,
                   color: 'green',
                   timestamp: dateTime,
+                  alert_status,
                 };
-                // Considered use case: If a shipment stays at some
-                // position for long, other value changes can be
-                // critical
-                const markerFound = _.find(markersToSet, {
-                  lat: marker.lat,
-                  lng: marker.lng,
-                  // temperature: marker.temperature,
-                  // humidity: marker.humidity,
-                });
-                if (!markerFound) {
-                  markersToSet = [...markersToSet, marker];
-                }
-                aggregateReportInfo = [...aggregateReportInfo, marker];
-                const graphPoint = _.find(temperatureData, {
-                  x: dateTime,
-                });
-                if (!graphPoint) {
-                  temperatureData = [
-                    ...temperatureData,
-                    {
-                      x: dateTime,
-                      y: temperature,
-                    },
-                  ];
-                  lightData = [
-                    ...lightData,
-                    {
-                      x: dateTime,
-                      y: report_entry.report_light,
-                    },
-                  ];
-                  shockData = [
-                    ...shockData,
-                    {
-                      x: dateTime,
-                      y: report_entry.report_shock,
-                    },
-                  ];
-                  tiltData = [
-                    ...tiltData,
-                    {
-                      x: dateTime,
-                      y: report_entry.report_tilt,
-                    },
-                  ];
-                  humidityData = [
-                    ...humidityData,
-                    {
-                      x: dateTime,
-                      y: report_entry.report_humidity,
-                    },
-                  ];
-                  batteryData = [
-                    ...batteryData,
-                    {
-                      x: dateTime,
-                      y: report_entry.report_battery,
-                    },
-                  ];
-                  pressureData = [
-                    ...pressureData,
-                    {
-                      x: dateTime,
-                      y: report_entry.report_pressure,
-                    },
-                  ];
-                }
+              }
+              aggregateReportInfo = [
+                ...aggregateReportInfo,
+                marker,
+              ];
+
+              const graphPoint = _.find(temperatureData, {
+                x: dateTime,
+              });
+              if (!graphPoint) {
+                temperatureData = [
+                  ...temperatureData,
+                  {
+                    x: dateTime,
+                    y: temperature,
+                  },
+                ];
+                lightData = [
+                  ...lightData,
+                  {
+                    x: dateTime,
+                    y: report_entry.report_light,
+                  },
+                ];
+                shockData = [
+                  ...shockData,
+                  {
+                    x: dateTime,
+                    y: report_entry.report_shock,
+                  },
+                ];
+                tiltData = [
+                  ...tiltData,
+                  {
+                    x: dateTime,
+                    y: report_entry.report_tilt,
+                  },
+                ];
+                humidityData = [
+                  ...humidityData,
+                  {
+                    x: dateTime,
+                    y: report_entry.report_humidity,
+                  },
+                ];
+                batteryData = [
+                  ...batteryData,
+                  {
+                    x: dateTime,
+                    y: report_entry.report_battery,
+                  },
+                ];
+                pressureData = [
+                  ...pressureData,
+                  {
+                    x: dateTime,
+                    y: report_entry.report_pressure,
+                  },
+                ];
               }
             } catch (e) {
               // eslint-disable-next-line no-console
@@ -343,7 +380,7 @@ export const REPORT_TYPES = [
 export const SENSOR_REPORT_COLUMNS = [
   {
     name: 'alert_status',
-    label: 'Alert Status',
+    label: 'ALERT STATUS',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -370,7 +407,7 @@ export const SENSOR_REPORT_COLUMNS = [
       customBodyRender: (value) => (
         _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
-          : '-'
+          : '*'
       ),
     },
   },
@@ -384,7 +421,7 @@ export const SENSOR_REPORT_COLUMNS = [
       customBodyRender: (value) => (
         _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
-          : '-'
+          : '*'
       ),
     },
   },
@@ -451,6 +488,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      display: false,
       customBodyRender: (value) => (
         _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
@@ -465,6 +503,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      display: false,
       customBodyRender: (value) => (
         _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
@@ -479,6 +518,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      display: false,
       customBodyRender: (value) => (
         _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
@@ -489,17 +529,17 @@ export const SENSOR_REPORT_COLUMNS = [
 ];
 
 export const getAlertsReportColumns = (timezone) => ([
-  {
-    name: 'id',
-    label: 'Alert ID',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-    },
-  },
+  // {
+  //   name: 'id',
+  //   label: 'Alert ID',
+  //   options: {
+  //     sort: true,
+  //     sortThirdClickReset: true,
+  //   },
+  // },
   {
     name: 'parameter_type',
-    label: 'Parameter Type',
+    label: 'Condition',
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -507,6 +547,20 @@ export const getAlertsReportColumns = (timezone) => ([
       customBodyRender: (value) => (
         value && value !== '-'
           ? _.capitalize(value)
+          : '-'
+      ),
+    },
+  },
+  {
+    name: 'parameter_value',
+    label: 'Value',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? value
           : '-'
       ),
     },
@@ -556,19 +610,19 @@ export const getAlertsReportColumns = (timezone) => ([
       customBodyRender: (value) => (value ? 'YES' : 'NO'),
     },
   },
-  {
-    name: 'recovered_alert_id',
-    label: 'Recovered Alert ID',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (value || '-'),
-    },
-  },
+  // {
+  //   name: 'recovered_alert_id',
+  //   label: 'Recovered Alert ID',
+  //   options: {
+  //     sort: true,
+  //     sortThirdClickReset: true,
+  //     filter: true,
+  //     customBodyRender: (value) => (value || '-'),
+  //   },
+  // },
   {
     name: 'create_date',
-    label: 'Alert Created At',
+    label: 'Date/Time stamp',
     options: {
       sort: true,
       sortThirdClickReset: true,

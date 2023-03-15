@@ -6,7 +6,7 @@ import {
   Typography,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
 import {
   SENSOR_REPORT_COLUMNS,
 } from '../ReportingConstants';
@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   tooltip: {
-    background: '#383636',
+    background: theme.palette.background.dark,
     width: '100%',
     display: 'flex',
     minHeight: '40px',
@@ -61,30 +61,20 @@ const SensorReport = ({
   );
 
   useEffect(() => {
-    if (aggregateReport) {
-      const sortedData = _.orderBy(
-        aggregateReport,
-        (item) => moment(item.timestamp),
-        ['desc'],
-      );
-      setRows(sortedData);
-    } else {
-      setRows([]);
-    }
+    const sortedData = _.orderBy(
+      aggregateReport,
+      (item) => moment(item.timestamp),
+      ['desc'],
+    );
+    setRows(sortedData);
   }, [aggregateReport]);
 
   useEffect(() => {
     if (selectedMarker) {
-      const selectedIndex = _.map(
-        _.keys(
-          _.pickBy(
-            rows,
-            { lat: selectedMarker.lat, lng: selectedMarker.lng },
-          ),
-        ),
-        Number,
-      );
-      setSelected(selectedIndex);
+      const highlightIndex = _.findIndex(rows, {
+        lat: selectedMarker.lat, lng: selectedMarker.lng,
+      });
+      setSelected([highlightIndex]);
     } else {
       setSelected([]);
     }

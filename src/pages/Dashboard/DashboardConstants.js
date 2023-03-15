@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { numberWithCommas } from '@utils/utilMethods';
-import { getFormattedCustodyRows } from '@pages/Shipment/ShipmentConstants';
+import { numberWithCommas } from '../../utils/utilMethods';
+import { getFormattedCustodyRows } from '../../pages/Shipment/ShipmentConstants';
 
 export const DASHBOARD_MAP_TOOLTIP = 'Start and end locations of custodians which have current custody of the shipments that are currently enroute.';
 
