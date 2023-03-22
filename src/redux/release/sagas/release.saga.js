@@ -708,7 +708,7 @@ function* getIssue(payload) {
 function* createIssue(payload) {
   const { data } = payload;
   try {
-    if (_.size(data) > 1) {
+    if (Array.isArray(data)) {
       const issues = yield all(_.map(data, (issue_data) => (
         call(
           httpService.makeRequest,
@@ -723,7 +723,7 @@ function* createIssue(payload) {
         httpService.makeRequest,
         'post',
         `${window.env.API_URL}release/issue/`,
-        payload.data,
+        data,
       );
       yield [
         yield put({ type: CREATE_ISSUE_SUCCESS, data: issue.data }),
