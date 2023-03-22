@@ -742,7 +742,7 @@ function* createIssue(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t create Issue!',
+          message: 'Could not create Issue!',
         }),
       ),
       yield put({

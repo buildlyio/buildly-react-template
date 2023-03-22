@@ -410,7 +410,11 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        issues: [...state.issues, ...action.data],
+        issues: (
+          Array.isArray(action.data)
+            ? [...state.issues, ...action.data]
+            : [...state.issues, action.data]
+        ),
       };
 
     case DELETE_ISSUE_SUCCESS: {
