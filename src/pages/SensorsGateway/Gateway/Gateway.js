@@ -50,29 +50,22 @@ const Gateway = ({
     : `${routes.SENSORS_GATEWAY}/gateway/edit`;
 
   useEffect(() => {
-    if (gatewayData === null) {
-      dispatch(getGateways(organization));
-      dispatch(getGatewayType());
-    }
-    if (gatewayOptions === null) {
-      dispatch(getGatewayOptions());
-    }
-    if (shipmentData === null) {
-      const getUpdatedSensorData = !aggregateReportData;
-      dispatch(getShipmentDetails(
-        organization,
-        'Planned,Enroute',
-        null,
-        getUpdatedSensorData,
-        true,
-        'get',
-      ));
-    }
-    if (custodianData === null) {
-      dispatch(getCustodians(organization));
-      dispatch(getCustodianType());
-      dispatch(getContact(organization));
-    }
+    dispatch(getGateways(organization));
+    dispatch(getGatewayType());
+    dispatch(getGatewayOptions());
+
+    dispatch(getShipmentDetails(
+      organization,
+      'Planned,Enroute',
+      null,
+      !aggregateReportData,
+      true,
+      'get',
+    ));
+
+    dispatch(getCustodians(organization));
+    dispatch(getCustodianType());
+    dispatch(getContact(organization));
   }, []);
 
   useEffect(() => {

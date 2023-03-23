@@ -65,6 +65,7 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
 export const getIcon = (item, color) => {
   switch (item.id) {
     case 'temperature':
+    case 'probe':
       return <TempIcon color={color} name={item.name} />;
 
     case 'light':
@@ -126,6 +127,7 @@ export const getShipmentOverview = (
     let humidityData = [];
     let batteryData = [];
     let pressureData = [];
+    let probeData = [];
     let markersToSet = [];
     editedShipment.sensor_report = [];
 
@@ -241,6 +243,7 @@ export const getShipmentOverview = (
                     humidity: report_entry.report_humidity,
                     battery: report_entry.report_battery,
                     pressure: report_entry.report_pressure,
+                    probe: report_entry.report_probe,
                     color: 'green',
                     timestamp: dateTime,
                     alert_status,
@@ -269,6 +272,7 @@ export const getShipmentOverview = (
                   humidity: report_entry.report_humidity,
                   battery: report_entry.report_battery,
                   pressure: report_entry.report_pressure,
+                  probe: report_entry.report_probe,
                   color: 'green',
                   timestamp: dateTime,
                   alert_status,
@@ -332,6 +336,13 @@ export const getShipmentOverview = (
                     y: report_entry.report_pressure,
                   },
                 ];
+                probeData = [
+                  ...probeData,
+                  {
+                    x: dateTime,
+                    y: report_entry.report_probe,
+                  },
+                ];
               }
             } catch (e) {
               // eslint-disable-next-line no-console
@@ -355,6 +366,7 @@ export const getShipmentOverview = (
     editedShipment.humidity = humidityData;
     editedShipment.battery = batteryData;
     editedShipment.pressure = pressureData;
+    editedShipment.probe = probeData;
 
     shipmentList = [...shipmentList, editedShipment];
   });
@@ -369,12 +381,13 @@ export const getShipmentOverview = (
 
 export const REPORT_TYPES = [
   { id: 'temperature', name: 'Temperature', unit: '\u00b0F' },
-  { id: 'light', name: 'Light', unit: 'lux' },
-  { id: 'shock', name: 'Shock', unit: 'mg' },
+  { id: 'light', name: 'Light', unit: 'LUX' },
+  { id: 'shock', name: 'Shock', unit: 'G' },
   { id: 'tilt', name: 'Tilt', unit: 'deg' },
   { id: 'humidity', name: 'Humidity', unit: '%' },
   { id: 'battery', name: 'Battery', unit: '%' },
   { id: 'pressure', name: 'Pressure', unit: 'Pa' },
+  { id: 'probe', name: 'Probe Temperature', unit: '\u00b0F' },
 ];
 
 export const SENSOR_REPORT_COLUMNS = [
@@ -405,9 +418,9 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        _.isNumber(value)
+        value && _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
-          : '*'
+          : 'N/A'
       ),
     },
   },
@@ -419,23 +432,9 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        _.isNumber(value)
+        value && _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
-          : '*'
-      ),
-    },
-  },
-  {
-    name: 'battery',
-    label: 'BATTERY',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (
-        _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : '-'
+          : 'N/A'
       ),
     },
   },
@@ -447,9 +446,9 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        _.isNumber(Number(value))
+        value && _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
-          : '-'
+          : 'N/A'
       ),
     },
   },
@@ -461,38 +460,37 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        _.isNumber(value)
+        value && _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
-          : '-'
+          : 'N/A'
       ),
     },
   },
   {
     name: 'light',
-    label: 'LIGHT (lux)',
+    label: 'LIGHT (LUX)',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        _.isNumber(value)
+        value && _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
-          : '-'
+          : 'N/A'
       ),
     },
   },
   {
     name: 'shock',
-    label: 'SHOCK (mg)',
+    label: 'SHOCK (G)',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      display: false,
       customBodyRender: (value) => (
-        _.isNumber(value)
+        value && _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
-          : '-'
+          : 'N/A'
       ),
     },
   },
@@ -505,9 +503,9 @@ export const SENSOR_REPORT_COLUMNS = [
       filter: true,
       display: false,
       customBodyRender: (value) => (
-        _.isNumber(value)
+        value && _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
-          : '-'
+          : 'N/A'
       ),
     },
   },
@@ -520,9 +518,39 @@ export const SENSOR_REPORT_COLUMNS = [
       filter: true,
       display: false,
       customBodyRender: (value) => (
-        _.isNumber(value)
+        value && _.isNumber(value)
           ? _.round(value, 2).toFixed(2)
-          : '-'
+          : 'N/A'
+      ),
+    },
+  },
+  {
+    name: 'battery',
+    label: 'BATTERY',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      display: false,
+      customBodyRender: (value) => (
+        value && _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : 'N/A'
+      ),
+    },
+  },
+  {
+    name: 'probe',
+    label: 'PROBE TEMP (\u00b0F)',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      display: false,
+      customBodyRender: (value) => (
+        value && _.isNumber(value)
+          ? _.round(value, 2).toFixed(2)
+          : 'N/A'
       ),
     },
   },
