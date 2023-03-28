@@ -417,11 +417,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (
-        value && _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : 'N/A'
-      ),
+      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
     },
   },
   {
@@ -431,11 +427,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (
-        value && _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : 'N/A'
-      ),
+      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
     },
   },
   {
@@ -445,11 +437,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (
-        value && _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : 'N/A'
-      ),
+      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
     },
   },
   {
@@ -459,11 +447,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (
-        value && _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : 'N/A'
-      ),
+      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
     },
   },
   {
@@ -473,11 +457,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (
-        value && _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : 'N/A'
-      ),
+      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
     },
   },
   {
@@ -487,11 +467,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (
-        value && _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : 'N/A'
-      ),
+      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
     },
   },
   {
@@ -502,11 +478,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       display: false,
-      customBodyRender: (value) => (
-        value && _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : 'N/A'
-      ),
+      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
     },
   },
   {
@@ -517,11 +489,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       display: false,
-      customBodyRender: (value) => (
-        value && _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : 'N/A'
-      ),
+      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
     },
   },
   {
@@ -532,11 +500,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       display: false,
-      customBodyRender: (value) => (
-        value && _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : 'N/A'
-      ),
+      customBodyRender: (value) => (_.isNumber(value) ? value : 'N/A'),
     },
   },
   {
@@ -547,11 +511,7 @@ export const SENSOR_REPORT_COLUMNS = [
       sortThirdClickReset: true,
       filter: true,
       display: false,
-      customBodyRender: (value) => (
-        value && _.isNumber(value)
-          ? _.round(value, 2).toFixed(2)
-          : 'N/A'
-      ),
+      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
     },
   },
 ];
