@@ -6,6 +6,7 @@ import { httpService } from '@modules/http/http.service';
 import { showAlert } from '@redux/alert/actions/alert.actions';
 import {
   getAggregateReport,
+  getGateways,
   editGateway,
   getAllSensorAlerts,
   GET_ALL_SENSOR_ALERTS_SUCCESS,
@@ -188,12 +189,17 @@ function* getShipmentList(payload) {
         });
       }
 
-      yield put({
-        type: GET_SHIPMENTS_SUCCESS,
-        data: shipment_data,
-        shipmentAction: payload.shipmentAction,
-        status: payload.status ? payload.status : 'All',
-      });
+      yield [
+        yield put(getGateways(
+          payload.id ? shipment_data.organization_uuid : payload.organization_uuid,
+        )),
+        yield put({
+          type: GET_SHIPMENTS_SUCCESS,
+          data: shipment_data,
+          shipmentAction: payload.shipmentAction,
+          status: payload.status ? payload.status : 'All',
+        }),
+      ];
 
       const { shipmentAction } = payload;
       const { history, redirectTo, shipment } = payload.addEdit;
