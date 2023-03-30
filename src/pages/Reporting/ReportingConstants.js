@@ -235,6 +235,7 @@ export const getShipmentOverview = (
                   marker = {
                     lat: latitude,
                     lng: longitude,
+                    location: report_entry.report_location,
                     label: 'Clustered',
                     temperature,
                     light: report_entry.report_light,
@@ -264,6 +265,7 @@ export const getShipmentOverview = (
                 marker = {
                   lat: '*',
                   lng: '*',
+                  location: 'N/A',
                   label: 'Clustered',
                   temperature,
                   light: report_entry.report_light,
@@ -411,23 +413,13 @@ export const SENSOR_REPORT_COLUMNS = [
     },
   },
   {
-    name: 'lng',
-    label: 'LONGITUDE',
+    name: 'location',
+    label: 'Location',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
-    },
-  },
-  {
-    name: 'lat',
-    label: 'LATITUDE',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
+      setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
     },
   },
   {
