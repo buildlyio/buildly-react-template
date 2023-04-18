@@ -136,15 +136,6 @@ const Dashboard = ({
   }, [view]);
 
   useEffect(() => {
-    if (loaded && !user.survey_status) {
-      if (user.user_type === 'Developer') {
-        setRoute(routes.DEVELOPER_FORM);
-      }
-      if (user.user_type === 'Product Team') {
-        setRoute(routes.NEW_PRODUCT);
-      }
-    }
-
     dispatch(getAllProducts(user.organization.organization_uuid));
   }, [user]);
 
@@ -398,55 +389,80 @@ const Dashboard = ({
 
       {loaded && user && !user.survey_status && (
         <div className={classes.firstTimeMessage}>
-          <Typography variant="h6" component="h6">
-            Thanks for registering. To get you started we want to take your through a new product
-            wizard. This will help you get oriented with the system, and create your first product
-            with Inisights!
-          </Typography>
-
-          <Button
-            variant="contained"
-            type="button"
-            className={classes.firstTimeButton}
-            onClick={(e) => history.push(route)}
-          >
-            Let's get started!
-          </Button>
+          {user.user_type.toLowerCase() === 'developer'
+            ? (
+              <>
+                <Typography variant="h6" component="h6">
+                  Thanks for registering.
+                  It will be greatly appreciated if you could complete out a
+                  short survey to assist us guide the application's future path
+                  and find a match within the Buildly ecosystem of tools.
+                </Typography>
+                <Button
+                  variant="contained"
+                  type="button"
+                  className={classes.firstTimeButton}
+                  onClick={(e) => history.push(routes.DEVELOPER_FORM)}
+                >
+                  Fill in the developer survey form!
+                </Button>
+              </>
+            )
+            : (
+              <>
+                <Typography variant="h6" component="h6">
+                  Thanks for registering.
+                  To get you started we want to take your through a new product
+                  wizard. This will help you get oriented with the system, and
+                  create your first product with Insights!
+                </Typography>
+                <Button
+                  variant="contained"
+                  type="button"
+                  className={classes.firstTimeButton}
+                  onClick={(e) => history.push(routes.NEW_PRODUCT)}
+                >
+                  Let's get started!
+                </Button>
+              </>
+            )}
         </div>
       )}
 
       {loaded && user && user.survey_status && (
-        <div className={classes.dashboardRoot}>
-          <Grid container mb={2} alignItems="center">
-            <Grid item md={4}>
-              <Typography variant="h4">
-                Dashboard
-              </Typography>
-            </Grid>
+      <>
+        {products && products.length ? (
+          <div className={classes.dashboardRoot}>
+            <Grid container mb={2} alignItems="center">
+              <Grid item md={4}>
+                <Typography variant="h4">
+                  Dashboard
+                </Typography>
+              </Grid>
 
-            <Grid item md={8} className={classes.menuRight}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                select
-                id="selected-product"
-                color="primary"
-                label="Product Options"
-                className={classes.selectedProduct}
-                value={selectedProduct}
-                onChange={(e) => {
-                  if (e.target.value === -1) {
-                    history.push(routes.NEW_PRODUCT, {
-                      from: routes.DASHBOARD_TABULAR,
-                    });
-                  } else {
-                    setActiveProduct(e.target.value);
-                  }
-                }}
-              >
-                <MenuItem value={0}>Select</MenuItem>
-                <MenuItem value={-1}>Create New Product</MenuItem>
-                {products && !_.isEmpty(products)
+              <Grid item md={8} className={classes.menuRight}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  select
+                  id="selected-product"
+                  color="primary"
+                  label="Product Options"
+                  className={classes.selectedProduct}
+                  value={selectedProduct}
+                  onChange={(e) => {
+                    if (e.target.value === -1) {
+                      history.push(routes.NEW_PRODUCT, {
+                        from: routes.DASHBOARD_TABULAR,
+                      });
+                    } else {
+                      setActiveProduct(e.target.value);
+                    }
+                  }}
+                >
+                  <MenuItem value={0}>Select</MenuItem>
+                  <MenuItem value={-1}>Create New Product</MenuItem>
+                  {products && !_.isEmpty(products)
                   && _.map(products, (prod) => (
                     <MenuItem
                       key={`product-${prod.product_uuid}`}
@@ -455,9 +471,9 @@ const Dashboard = ({
                       {prod.name}
                     </MenuItem>
                   ))}
-              </TextField>
+                </TextField>
 
-              {
+                {
                 (
                   loaded && product && !_.isEmpty(product.third_party_tool)
                   && !_.isEmpty(statuses) && (
@@ -474,146 +490,165 @@ const Dashboard = ({
                   )
                 )
               }
+              </Grid>
             </Grid>
-          </Grid>
 
-          {loaded && _.isEmpty(statuses) && !!selectedProduct && !['report', 'tabular'].includes(view.toLocaleString())
-            ? (
-              product && !_.isEmpty(product.third_party_tool)
-                ? (
-                  <>
-                    <Grid item xs={4} className={classes.configBoard}>
-                      <Typography component="div" variant="h4" align="center">
-                        Configure Project Board
-                      </Typography>
+            {loaded && _.isEmpty(statuses) && !!selectedProduct && !['report', 'tabular'].includes(view.toLocaleString())
+              ? (
+                product && !_.isEmpty(product.third_party_tool)
+                  ? (
+                    <>
+                      <Grid item xs={4} className={classes.configBoard}>
+                        <Typography component="div" variant="h4" align="center">
+                          Configure Project Board
+                        </Typography>
 
-                      <Typography variant="subtitle1" align="center">
-                        Add a configuration to get started
-                      </Typography>
+                        <Typography variant="subtitle1" align="center">
+                          Add a configuration to get started
+                        </Typography>
 
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={configureBoard}
-                        className={classes.configBoardButton}
-                      >
-                        Add Configuration
-                      </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={configureBoard}
+                          className={classes.configBoardButton}
+                        >
+                          Add Configuration
+                        </Button>
+                      </Grid>
+
+                      <Route path={routes.TOOL_BOARD} component={ToolBoard} />
+                    </>
+                  ) : (
+                    <>
+                      <Grid item xs={4} className={classes.configBoard}>
+                        <Typography component="div" variant="h4" align="center">
+                          Configure Project Board
+                        </Typography>
+
+                        <Typography variant="subtitle1" align="center">
+                          Add a configuration to get started
+                        </Typography>
+
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={configureStatus}
+                          className={classes.configBoardButton}
+                        >
+                          Add Configuration
+                        </Button>
+                      </Grid>
+
+                      <Route path={routes.STATUS_BOARD} component={StatusBoard} />
+                    </>
+                  )
+              ) : (
+                <>
+                  <Grid mb={3} container justifyContent="center">
+                    <Grid item className={classes.viewTabs}>
+                      <Tabs value={view} onChange={(event, vw) => setView(vw)}>
+                        {subNav.map((itemProps, index) => (
+                          <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
+                        ))}
+                      </Tabs>
                     </Grid>
-
-                    <Route path={routes.TOOL_BOARD} component={ToolBoard} />
-                  </>
-                ) : (
-                  <>
-                    <Grid item xs={4} className={classes.configBoard}>
-                      <Typography component="div" variant="h4" align="center">
-                        Configure Project Board
-                      </Typography>
-
-                      <Typography variant="subtitle1" align="center">
-                        Add a configuration to get started
-                      </Typography>
-
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={configureStatus}
-                        className={classes.configBoardButton}
-                      >
-                        Add Configuration
-                      </Button>
-                    </Grid>
-
-                    <Route path={routes.STATUS_BOARD} component={StatusBoard} />
-                  </>
-                )
-            ) : (
-              <>
-                <Grid mb={3} container justifyContent="center">
-                  <Grid item className={classes.viewTabs}>
-                    <Tabs value={view} onChange={(event, vw) => setView(vw)}>
-                      {subNav.map((itemProps, index) => (
-                        <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
-                      ))}
-                    </Tabs>
                   </Grid>
-                </Grid>
 
-                <ConfirmModal
-                  open={openDeleteModal}
-                  setOpen={setOpenDeleteModal}
-                  submitAction={handleDeleteModal}
-                  title="Are you sure you want to delete?"
-                  submitText="Delete"
-                />
-                <Route
-                  path={routes.DASHBOARD_REPORT}
-                  render={(prps) => (
-                    <Report
-                      {...prps}
-                      selectedProduct={selectedProduct}
-                    />
-                  )}
-                />
-                <Route
-                  path={routes.DASHBOARD_TABULAR}
-                  render={(prps) => (
-                    <Tabular
-                      {...prps}
-                      selectedProduct={selectedProduct}
-                      addItem={addItem}
-                      editItem={editItem}
-                      deleteItem={deleteItem}
-                      commentItem={commentItem}
-                      issueSuggestions={issueSuggestions}
-                      upgrade={upgrade}
-                      suggestedFeatures={
+                  <ConfirmModal
+                    open={openDeleteModal}
+                    setOpen={setOpenDeleteModal}
+                    submitAction={handleDeleteModal}
+                    title="Are you sure you want to delete?"
+                    submitText="Delete"
+                  />
+                  <Route
+                    path={routes.DASHBOARD_REPORT}
+                    render={(prps) => (
+                      <Report
+                        {...prps}
+                        selectedProduct={selectedProduct}
+                      />
+                    )}
+                  />
+                  <Route
+                    path={routes.DASHBOARD_TABULAR}
+                    render={(prps) => (
+                      <Tabular
+                        {...prps}
+                        selectedProduct={selectedProduct}
+                        addItem={addItem}
+                        editItem={editItem}
+                        deleteItem={deleteItem}
+                        commentItem={commentItem}
+                        issueSuggestions={issueSuggestions}
+                        upgrade={upgrade}
+                        suggestedFeatures={
                         product && product.product_info && product.product_info.suggestions
                       }
-                      createSuggestedFeature={createSuggestedFeature}
-                      removeSuggestedFeature={removeSuggestedFeature}
-                      showRelatedIssues={showRelatedIssues}
-                    />
-                  )}
-                />
-                <Route
-                  path={routes.DASHBOARD_KANBAN}
-                  render={(prps) => (
-                    <Kanban
-                      {...prps}
-                      selectedProduct={selectedProduct}
-                      addItem={addItem}
-                      editItem={editItem}
-                      deleteItem={deleteItem}
-                      commentItem={commentItem}
-                      issueSuggestions={issueSuggestions}
-                      upgrade={upgrade}
-                      suggestedFeatures={
+                        createSuggestedFeature={createSuggestedFeature}
+                        removeSuggestedFeature={removeSuggestedFeature}
+                        showRelatedIssues={showRelatedIssues}
+                      />
+                    )}
+                  />
+                  <Route
+                    path={routes.DASHBOARD_KANBAN}
+                    render={(prps) => (
+                      <Kanban
+                        {...prps}
+                        selectedProduct={selectedProduct}
+                        addItem={addItem}
+                        editItem={editItem}
+                        deleteItem={deleteItem}
+                        commentItem={commentItem}
+                        issueSuggestions={issueSuggestions}
+                        upgrade={upgrade}
+                        suggestedFeatures={
                         product && product.product_info && product.product_info.suggestions
                       }
-                      createSuggestedFeature={createSuggestedFeature}
-                      removeSuggestedFeature={removeSuggestedFeature}
-                      showRelatedIssues={showRelatedIssues}
-                    />
-                  )}
-                />
-                <Route path={routes.ADD_FEATURE} component={AddFeatures} />
-                <Route path={routes.EDIT_FEATURE} component={AddFeatures} />
-                <Route path={routes.VIEW_FEATURE} component={AddFeatures} />
-                <Route path={routes.ADD_ISSUE} component={AddIssues} />
-                <Route path={routes.EDIT_ISSUE} component={AddIssues} />
-                <Route path={routes.FEATURE_TO_ISSUE} component={AddIssues} />
-                <Route path={routes.COMMENTS} component={Comments} />
-                <Route path={routes.SHOW_RELATED_ISSUES} component={ShowRelatedIssues} />
-                <Route
-                  path={routes.ISSUE_SUGGESTIONS}
-                  render={(renderProps) => (
-                    <IssueSuggestions {...renderProps} convertIssue={convertIssue} />
-                  )}
-                />
-              </>
-            )}
-        </div>
+                        createSuggestedFeature={createSuggestedFeature}
+                        removeSuggestedFeature={removeSuggestedFeature}
+                        showRelatedIssues={showRelatedIssues}
+                      />
+                    )}
+                  />
+                  <Route path={routes.ADD_FEATURE} component={AddFeatures} />
+                  <Route path={routes.EDIT_FEATURE} component={AddFeatures} />
+                  <Route path={routes.VIEW_FEATURE} component={AddFeatures} />
+                  <Route path={routes.ADD_ISSUE} component={AddIssues} />
+                  <Route path={routes.EDIT_ISSUE} component={AddIssues} />
+                  <Route path={routes.FEATURE_TO_ISSUE} component={AddIssues} />
+                  <Route path={routes.COMMENTS} component={Comments} />
+                  <Route path={routes.SHOW_RELATED_ISSUES} component={ShowRelatedIssues} />
+                  <Route
+                    path={routes.ISSUE_SUGGESTIONS}
+                    render={(renderProps) => (
+                      <IssueSuggestions {...renderProps} convertIssue={convertIssue} />
+                    )}
+                  />
+                </>
+              )}
+          </div>
+        ) : (
+          <div className={classes.firstTimeMessage}>
+            <Typography variant="h6" component="h6">
+              Thanks for registering.
+              To get you started we want to take your through a new product
+              wizard. This will help you get oriented with the system, and
+              create your first product with Insights!
+            </Typography>
+            <Button
+              variant="contained"
+              type="button"
+              className={classes.firstTimeButton}
+              onClick={(e) => history.push(routes.NEW_PRODUCT)}
+            >
+              Let's get started!
+            </Button>
+          </div>
+        ) }
+      </>
       )}
     </>
   );
