@@ -69,6 +69,7 @@ const Gateway = ({
     dispatch(getCustodians(organization));
     dispatch(getCustodianType());
     dispatch(getContact(organization));
+
     if (!unitOfMeasure) {
       dispatch(getUnitOfMeasure(organization));
     }
