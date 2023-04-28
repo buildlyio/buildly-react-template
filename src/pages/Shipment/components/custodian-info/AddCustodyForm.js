@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import Geocode from 'react-geocode';
 import _ from 'lodash';
 import {
@@ -12,7 +13,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { MapComponent } from '../../../../components/MapComponent/MapComponent';
+import MapComponent from '../../../../components/MapComponent/MapComponent';
 import CustomizedTooltips from '../../../../components/ToolTip/ToolTip';
 import { useInput } from '../../../../hooks/useInput';
 import { getCustodianFormattedRow } from '../../../../pages/Custodians/CustodianConstants';
@@ -71,7 +72,7 @@ const AddCustodyForm = ({
   viewOnly,
   organizationData,
   rows,
-  timezone,
+  unitOfMeasure,
 }) => {
   const classes = useStyles();
   let latLongChanged = false;
@@ -203,6 +204,9 @@ const AddCustodyForm = ({
       ...(editItem !== null && { id: editItem.id }),
       shipment_name: shipment_name.value,
       shipment: shipmentFormData.id,
+      unit_of_measure: _.find(unitOfMeasure, (unit) => (
+        _.toLower(unit.unit_of_measure_for) === 'distance'
+      )).unit_of_measure,
     };
     if (editItem !== null) {
       dispatch(editCustody(custodyFormValues));
@@ -627,4 +631,9 @@ const AddCustodyForm = ({
   );
 };
 
-export default AddCustodyForm;
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.itemsReducer,
+});
+
+export default connect(mapStateToProps)(AddCustodyForm);

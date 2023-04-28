@@ -22,10 +22,6 @@ import {
   addCustodians,
   editCustodian,
 } from '../../../redux/custodian/actions/custodian.actions';
-import {
-  STATE_CHOICES,
-  COUNTRY_CHOICES,
-} from '../../../utils/mock';
 import { validators } from '../../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
@@ -80,6 +76,7 @@ const AddCustodians = ({
   custodianOptions,
   contactOptions,
   allOrgs,
+  countries,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
@@ -589,10 +586,14 @@ const AddCustodians = ({
                       }
                       onBlur={(e) => handleBlur(e, 'required', state, 'state')}
                       {...state.bind}
+                      disabled={countries && !country.value}
+                      placeholder={countries && !country.value
+                        ? 'Select country for states options'
+                        : ''}
                     >
                       <MenuItem value="">Select</MenuItem>
-                      {_.map(
-                        _.sortBy(STATE_CHOICES),
+                      {countries && country.value && _.map(
+                        _.sortBy(_.find(countries, { country: country.value }).states),
                         (value, index) => (
                           <MenuItem
                             key={`custodianState${index}${value}`}
@@ -640,8 +641,8 @@ const AddCustodians = ({
                       {...country.bind}
                     >
                       <MenuItem value="">Select</MenuItem>
-                      {_.map(
-                        _.sortBy(COUNTRY_CHOICES),
+                      {countries && _.map(
+                        _.sortBy(_.map(countries, 'country')),
                         (value, index) => (
                           <MenuItem
                             key={`custodianCountry${index}${value}`}
@@ -716,10 +717,12 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.custodianReducer,
   ...state.authReducer,
   ...state.optionsReducer,
+  ...state.shipmentReducer,
   loading: (
     state.custodianReducer.loading
     || state.authReducer.loading
     || state.optionsReducer.loading
+    || state.shipmentReducer.loading
   ),
 });
 

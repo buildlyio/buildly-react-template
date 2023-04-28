@@ -13,7 +13,7 @@ import {
   Apps as AppsIcon,
 } from '@mui/icons-material';
 import Loader from '../../components/Loader/Loader';
-import { MapComponent } from '../../components/MapComponent/MapComponent';
+import MapComponent from '../../components/MapComponent/MapComponent';
 import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
 import CustomizedTooltips from '../../components/ToolTip/ToolTip';
 import { UserContext } from '../../context/User.context';
@@ -29,7 +29,6 @@ import {
 import {
   getItems,
   getItemType,
-  getUnitsOfMeasure,
 } from '../../redux/items/actions/items.actions';
 import {
   getGateways,
@@ -93,7 +92,6 @@ const Dashboard = (props) => {
     dispatch,
     itemData,
     gatewayData,
-    unitsOfMeasure,
     custodyData,
     sensorData,
     aggregateReportData,
@@ -133,9 +131,6 @@ const Dashboard = (props) => {
     if (gatewayData === null) {
       dispatch(getGateways(organization));
       dispatch(getGatewayType());
-    }
-    if (!unitsOfMeasure) {
-      dispatch(getUnitsOfMeasure());
     }
     // if (!custodyData) {
     //   dispatch(getCustody());

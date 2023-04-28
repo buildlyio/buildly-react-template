@@ -1,24 +1,26 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   getProducts,
   deleteProduct,
+  getUnitOfMeasure,
 } from '../../../../redux/items/actions/items.actions';
 import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '../../../../context/User.context';
 import { routes } from '../../../../routes/routesConstants';
-import { getProductColumns, unitMeasures } from '../ConfigurationConstants';
+import { getProductColumns } from '../ConfigurationConstants';
 import AddProduct from '../forms/AddProduct';
 
 const Product = ({
   dispatch,
   loading,
   products,
-  unitsOfMeasure,
   redirectTo,
   history,
   timezone,
+  unitOfMeasure,
 }) => {
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
@@ -40,9 +42,11 @@ const Product = ({
 
   useEffect(() => {
     if (!loading) {
-      unitMeasures(unitsOfMeasure);
+      if (_.isEmpty(unitOfMeasure)) {
+        dispatch(getUnitOfMeasure(organization));
+      }
     }
-  }, [unitsOfMeasure]);
+  }, [unitOfMeasure]);
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -73,7 +77,18 @@ const Product = ({
       noSpace
       loading={loading}
       rows={products || []}
-      columns={getProductColumns(timezone)}
+      columns={getProductColumns(
+        timezone,
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight')).unit_of_measure
+          : '',
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '',
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+          : '',
+      )}
       filename="Products"
       addButtonHeading="Product"
       onAddButtonClick={onAddButtonClick}

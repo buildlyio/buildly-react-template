@@ -63,21 +63,24 @@ export const DELETE_PRODUCTS_TYPE = 'ITEMS/DELETE_PRODUCTS_TYPE';
 export const DELETE_PRODUCTS_TYPE_SUCCESS = 'ITEMS/DELETE_PRODUCTS_TYPE_SUCCESS';
 export const DELETE_PRODUCTS_TYPE_FAILURE = 'ITEMS/DELETE_PRODUCTS_TYPE_FAILURE';
 
-export const GET_UNITS_OF_MEASURE = 'ITEMS/GET_UNITS_OF_MEASURE';
-export const GET_UNITS_OF_MEASURE_SUCCESS = 'ITEMS/GET_UNITS_OF_MEASURE_SUCCESS';
-export const GET_UNITS_OF_MEASURE_FAILURE = 'ITEMS/GET_UNITS_OF_MEASURE_FAILURE';
+export const GET_UNIT_OF_MEASURE = 'ITEMS/GET_UNIT_OF_MEASURE';
+export const GET_UNIT_OF_MEASURE_SUCCESS = 'ITEMS/GET_UNIT_OF_MEASURE_SUCCESS';
+export const GET_UNIT_OF_MEASURE_FAILURE = 'ITEMS/GET_UNIT_OF_MEASURE_FAILURE';
 
-export const ADD_UNITS_OF_MEASURE = 'ITEMS/ADD_UNITS_OF_MEASURE';
-export const ADD_UNITS_OF_MEASURE_SUCCESS = 'ITEMS/ADD_UNITS_OF_MEASURE_SUCCESS';
-export const ADD_UNITS_OF_MEASURE_FAILURE = 'ITEMS/ADD_UNITS_OF_MEASURE_FAILURE';
+export const ADD_UNIT_OF_MEASURE = 'ITEMS/ADD_UNIT_OF_MEASURE';
+export const ADD_UNIT_OF_MEASURE_SUCCESS = 'ITEMS/ADD_UNIT_OF_MEASURE_SUCCESS';
+export const ADD_UNIT_OF_MEASURE_FAILURE = 'ITEMS/ADD_UNIT_OF_MEASURE_FAILURE';
 
-export const EDIT_UNITS_OF_MEASURE = 'ITEMS/EDIT_UNITS_OF_MEASURE';
-export const EDIT_UNITS_OF_MEASURE_SUCCESS = 'ITEMS/EDIT_UNITS_OF_MEASURE_SUCCESS';
-export const EDIT_UNITS_OF_MEASURE_FAILURE = 'ITEMS/EDIT_UNITS_OF_MEASURE_FAILURE';
+export const EDIT_UNIT_OF_MEASURE = 'ITEMS/EDIT_UNIT_OF_MEASURE';
+export const EDIT_UNIT_OF_MEASURE_SUCCESS = 'ITEMS/EDIT_UNIT_OF_MEASURE_SUCCESS';
+export const EDIT_UNIT_OF_MEASURE_FAILURE = 'ITEMS/EDIT_UNIT_OF_MEASURE_FAILURE';
 
-export const DELETE_UNITS_OF_MEASURE = 'ITEMS/DELETE_UNITS_OF_MEASURE';
-export const DELETE_UNITS_OF_MEASURE_SUCCESS = 'ITEMS/DELETE_UNITS_OF_MEASURE_SUCCESS';
-export const DELETE_UNITS_OF_MEASURE_FAILURE = 'ITEMS/DELETE_UNITS_OF_MEASURE_FAILURE';
+export const DELETE_UNIT_OF_MEASURE = 'ITEMS/DELETE_UNIT_OF_MEASURE';
+export const DELETE_UNIT_OF_MEASURE_SUCCESS = 'ITEMS/DELETE_UNIT_OF_MEASURE_SUCCESS';
+export const DELETE_UNIT_OF_MEASURE_FAILURE = 'ITEMS/DELETE_UNIT_OF_MEASURE_FAILURE';
+
+export const CREATE_DEFAULT_UNITS = 'ITEMS/CREATE_DEFAULT_UNITS';
+export const CREATE_DEFAULT_UNITS_FAILURE = 'ITEMS/CREATE_DEFAULT_UNITS_FAILURE';
 
 /**
  * Get Item List
@@ -235,17 +238,19 @@ export const deleteProductType = (id) => ({
 
 /**
  * Get Unit of Measure
+ * @param {String} organization_uuid
  */
-export const getUnitsOfMeasure = () => ({
-  type: GET_UNITS_OF_MEASURE,
+export const getUnitOfMeasure = (organization_uuid) => ({
+  type: GET_UNIT_OF_MEASURE,
+  organization_uuid,
 });
 
 /**
  * Add Unit of Measure
  * @param {Object} payload
  */
-export const addUnitsOfMeasure = (payload) => ({
-  type: ADD_UNITS_OF_MEASURE,
+export const addUnitOfMeasure = (payload) => ({
+  type: ADD_UNIT_OF_MEASURE,
   payload,
 });
 
@@ -253,8 +258,8 @@ export const addUnitsOfMeasure = (payload) => ({
  * Edit Unit of Measure
  * @param {Object} payload
  */
-export const editUnitsOfMeasure = (payload) => ({
-  type: EDIT_UNITS_OF_MEASURE,
+export const editUnitOfMeasure = (payload) => ({
+  type: EDIT_UNIT_OF_MEASURE,
   payload,
 });
 
@@ -262,7 +267,16 @@ export const editUnitsOfMeasure = (payload) => ({
  * Delete Unit of Measure
  * @param {Number} id
  */
-export const deleteUnitsOfMeasure = (id) => ({
-  type: DELETE_UNITS_OF_MEASURE,
+export const deleteUnitOfMeasure = (id) => ({
+  type: DELETE_UNIT_OF_MEASURE,
   id,
+});
+
+/**
+ * Create default unit of measures
+ * @param {String} organization
+ */
+export const createDefaultUnits = (organization) => ({
+  type: CREATE_DEFAULT_UNITS,
+  organization,
 });

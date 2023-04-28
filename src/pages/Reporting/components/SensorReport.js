@@ -42,13 +42,14 @@ const SensorReport = ({
   aggregateReport,
   shipmentName,
   selectedMarker,
+  unitOfMeasure,
 }) => {
   const classes = useStyles();
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
 
   const columns = _.map(
-    SENSOR_REPORT_COLUMNS,
+    SENSOR_REPORT_COLUMNS(unitOfMeasure),
     (column) => ({
       ...column,
       options: {

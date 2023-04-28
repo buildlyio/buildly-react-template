@@ -69,6 +69,7 @@ const ShipmentDataTable = ({
   copyAction,
   rowsType,
   selectedShipment,
+  dateFormat,
 }) => {
   const classes = useStyles();
   const [selected, setSelected] = useState(_.findIndex(rows, selectedShipment) || 0);
@@ -175,7 +176,7 @@ const ShipmentDataTable = ({
 
     cols = [
       ...cols,
-      ..._.map(getShipmentDataTableColumns(timezone), (column) => ({
+      ..._.map(getShipmentDataTableColumns(timezone, dateFormat), (column) => ({
         ...column,
         options: {
           ...column.options,

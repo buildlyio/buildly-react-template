@@ -7,6 +7,8 @@ const initialState = {
   error: null,
   shipmentFormData: null,
   shipmentData: null,
+  countries: null,
+  currencies: null,
 };
 
 describe('Save Shipment Form Data reducer', () => {
@@ -234,6 +236,78 @@ describe('Add PDF Identifier reducer', () => {
     expect(reducer.default(
       initialState,
       { type: actions.ADD_PDF_IDENTIFIER_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});
+
+describe('Get countries and related states reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_COUNTRIES_STATES },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('Get countries and related states success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_COUNTRIES_STATES_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      countries: undefined,
+    });
+  });
+
+  it('Get countries and related states fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_COUNTRIES_STATES_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});
+
+describe('Get currencies reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_CURRENCIES },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('Get currencies success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_CURRENCIES_SUCCESS },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      currencies: undefined,
+    });
+  });
+
+  it('Get currencies fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_CURRENCIES_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,

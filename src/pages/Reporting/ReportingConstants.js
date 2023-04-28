@@ -102,6 +102,7 @@ export const getShipmentOverview = (
   alertsData,
   contactData,
   timezone,
+  unitOfMeasure,
 ) => {
   let shipmentList = [];
   let custodyRows = [];
@@ -130,6 +131,8 @@ export const getShipmentOverview = (
     let probeData = [];
     let markersToSet = [];
     editedShipment.sensor_report = [];
+    const dateFormat = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure;
+    const timeFormat = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure;
 
     const alerts = _.filter(
       alertsData,
@@ -199,16 +202,16 @@ export const getShipmentOverview = (
               if ('report_timestamp' in report_entry) {
                 if (report_entry.report_timestamp !== null) {
                   dateTime = moment(report_entry.report_timestamp)
-                    .tz(timezone).format('MMM DD YYYY, h:mm:ss a');
+                    .tz(timezone).format(`${dateFormat} ${timeFormat}`);
                 }
               } else if ('report_location' in report_entry) {
                 dateTime = moment(
                   report_entry.report_location.timeOfPosition,
-                ).tz(timezone).format('MMM DD YYYY, h:mm:ss a');
+                ).tz(timezone).format(`${dateFormat} ${timeFormat}`);
               }
 
               _.forEach(alerts, (alert) => {
-                const alertTime = moment(alert.create_date).tz(timezone).format('MMM DD YYYY, h:mm:ss a');
+                const alertTime = moment(alert.create_date).tz(timezone).format(`${dateFormat} ${timeFormat}`);
                 if (alertTime === dateTime) {
                   if (alert.recovered_alert_id !== null) {
                     alert_status = 'RECOVERED';
@@ -235,6 +238,7 @@ export const getShipmentOverview = (
                   marker = {
                     lat: latitude,
                     lng: longitude,
+                    location: report_entry.report_location,
                     label: 'Clustered',
                     temperature,
                     light: report_entry.report_light,
@@ -264,6 +268,7 @@ export const getShipmentOverview = (
                 marker = {
                   lat: '*',
                   lng: '*',
+                  location: 'N/A',
                   label: 'Clustered',
                   temperature,
                   light: report_entry.report_light,
@@ -379,18 +384,31 @@ export const getShipmentOverview = (
   );
 };
 
-export const REPORT_TYPES = [
-  { id: 'temperature', name: 'Temperature', unit: '\u00b0F' },
+export const tempUnit = (uomt) => {
+  let unit = '';
+  if (uomt) {
+    if (_.toLower(uomt.unit_of_measure) === 'fahrenheit') {
+      unit = '\u00b0F';
+    } else if (_.toLower(uomt.unit_of_measure) === 'celsius') {
+      unit = '\u00b0C';
+    }
+  }
+
+  return unit;
+};
+
+export const REPORT_TYPES = (unitOfMeasure) => ([
+  { id: 'temperature', name: 'Temperature', unit: tempUnit(_.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))) },
   { id: 'light', name: 'Light', unit: 'LUX' },
   { id: 'shock', name: 'Shock', unit: 'G' },
   { id: 'tilt', name: 'Tilt', unit: 'deg' },
   { id: 'humidity', name: 'Humidity', unit: '%' },
   { id: 'battery', name: 'Battery', unit: '%' },
   { id: 'pressure', name: 'Pressure', unit: 'Pa' },
-  { id: 'probe', name: 'Probe Temperature', unit: '\u00b0F' },
-];
+  { id: 'probe', name: 'Probe Temperature', unit: tempUnit(_.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))) },
+]);
 
-export const SENSOR_REPORT_COLUMNS = [
+export const SENSOR_REPORT_COLUMNS = (unitOfMeasure) => ([
   {
     name: 'alert_status',
     label: 'ALERT STATUS',
@@ -411,28 +429,18 @@ export const SENSOR_REPORT_COLUMNS = [
     },
   },
   {
-    name: 'lng',
-    label: 'LONGITUDE',
+    name: 'location',
+    label: 'Location',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
-    },
-  },
-  {
-    name: 'lat',
-    label: 'LATITUDE',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
+      setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
     },
   },
   {
     name: 'temperature',
-    label: 'TEMP (\u00b0F)',
+    label: `TEMP ${tempUnit(_.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')))}`,
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -505,7 +513,7 @@ export const SENSOR_REPORT_COLUMNS = [
   },
   {
     name: 'probe',
-    label: 'PROBE TEMP (\u00b0F)',
+    label: `PROBE TEMP ${tempUnit(_.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')))}`,
     options: {
       sort: true,
       sortThirdClickReset: true,
@@ -514,9 +522,9 @@ export const SENSOR_REPORT_COLUMNS = [
       customBodyRender: (value) => (_.isNumber(value) ? _.round(value, 2).toFixed(2) : 'N/A'),
     },
   },
-];
+]);
 
-export const getAlertsReportColumns = (timezone) => ([
+export const getAlertsReportColumns = (timezone, dateFormat, timeFormat) => ([
   // {
   //   name: 'id',
   //   label: 'Alert ID',
@@ -617,7 +625,7 @@ export const getAlertsReportColumns = (timezone) => ([
       filter: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? moment(value).tz(timezone).format('MMM DD YYYY, h:mm:ss a')
+          ? moment(value).tz(timezone).format(`${dateFormat} ${timeFormat}`)
           : value
       ),
     },

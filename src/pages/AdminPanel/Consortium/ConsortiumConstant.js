@@ -36,7 +36,7 @@ export const getMappingOrg = (allOrgs) => ([
   },
 ]);
 
-export const getConsortiumColumns = (timezone) => ([
+export const getConsortiumColumns = (timezone, dateFormat, timeFormat) => ([
   {
     name: 'name',
     label: 'Name',
@@ -55,7 +55,7 @@ export const getConsortiumColumns = (timezone) => ([
       filter: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? moment(value).tz(timezone).format('MMM DD YYYY, h:mm a')
+          ? moment(value).tz(timezone).format(`${dateFormat} ${timeFormat}`)
           : value
       ),
     },
@@ -69,7 +69,7 @@ export const getConsortiumColumns = (timezone) => ([
       filter: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? moment(value).tz(timezone).format('MMM DD YYYY, h:mm a')
+          ? moment(value).tz(timezone).format(`${dateFormat} ${timeFormat}`)
           : value
       ),
     },

@@ -19,7 +19,6 @@ import {
   PRODUCT_TOOLTIP,
   PRODUCT_TYPE_TOOLTIP,
   SENSOR_TYPE_TOOLTIP,
-  UNITS_OF_MEASURE_TOOLTIP,
   ORG_SETTINGS_TOOLTIP,
 } from './ConfigurationConstants';
 import CustodianType from './components/CustodianType';
@@ -29,7 +28,6 @@ import OrganizationType from './components/OrganizationType';
 import Product from './components/Product';
 import ProductType from './components/ProductType';
 import SensorType from './components/SensorType';
-import UnitOfMeasure from './components/UnitOfMeasure';
 import OrganizationSettings from './components/OrganizationSettings';
 import Forbidden from '../Forbidden';
 
@@ -184,23 +182,6 @@ const Configuration = (props) => {
           </AccordionSummary>
           <AccordionDetails>
             <SensorType {...props} />
-          </AccordionDetails>
-        </Accordion>
-        <Accordion className={classes.accordion}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="unit-of-measure-content"
-            id="unit-of-measure-header"
-          >
-            <Typography variant="h5">
-              Units of Measure
-              <CustomizedTooltips
-                toolTipText={UNITS_OF_MEASURE_TOOLTIP}
-              />
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <UnitOfMeasure {...props} />
           </AccordionDetails>
         </Accordion>
       </div>

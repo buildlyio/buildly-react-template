@@ -23,7 +23,7 @@ import {
 } from '@mui/icons-material';
 import GraphComponent from '../../components/GraphComponent/GraphComponent';
 import Loader from '../../components/Loader/Loader';
-import { MapComponent } from '../../components/MapComponent/MapComponent';
+import MapComponent from '../../components/MapComponent/MapComponent';
 import CustomizedTooltips from '../../components/ToolTip/ToolTip';
 import { UserContext } from '../../context/User.context';
 import {
@@ -41,7 +41,7 @@ import {
   getReportAndAlerts,
 } from '../../redux/shipment/actions/shipment.actions';
 import {
-  getUnitsOfMeasure,
+  getUnitOfMeasure,
 } from '../../redux/items/actions/items.actions';
 import AlertsReport from './components/AlertsReport';
 import SensorReport from './components/SensorReport';
@@ -109,7 +109,7 @@ const Reporting = ({
   custodyData,
   sensorData,
   contactInfo,
-  unitsOfMeasure,
+  unitOfMeasure,
   timezone,
   allAlerts,
 }) => {
@@ -129,8 +129,10 @@ const Reporting = ({
     let returnValue;
     if (selectedShipment[value] !== null) {
       if (moment(selectedShipment[value], true).isValid()) {
+        const dateFormat = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure;
+        const timeFormat = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure;
         returnValue = moment(selectedShipment[value])
-          .tz(timezone).format('MMMM DD, YYYY hh:mm:ss a');
+          .tz(timezone).format(`${dateFormat} ${timeFormat}`);
       } else if (typeof (selectedShipment[value]) !== 'object') {
         if (value === 'had_alert') {
           returnValue = selectedShipment[value]
@@ -158,6 +160,12 @@ const Reporting = ({
     setSelectedShipment(null);
     setMarkers([]);
   };
+
+  useEffect(() => {
+    if (!unitOfMeasure) {
+      dispatch(getUnitOfMeasure(organization));
+    }
+  }, []);
 
   useEffect(() => {
     if (!shipmentData || shipmentFilter === 'Active') {
@@ -214,9 +222,6 @@ const Reporting = ({
       dispatch(getSensors(organization));
       dispatch(getSensorType());
     }
-    if (!unitsOfMeasure) {
-      dispatch(getUnitsOfMeasure());
-    }
   }, [shipmentFilter]);
 
   useEffect(() => {
@@ -246,6 +251,7 @@ const Reporting = ({
         allAlerts,
         contactInfo,
         timezone,
+        unitOfMeasure,
       );
       if (overview.length > 0) {
         setShipmentOverview(overview);
@@ -507,7 +513,7 @@ const Reporting = ({
             aria-label="main graph-type"
             className={classes.iconBar}
           >
-            {_.map(REPORT_TYPES, (item, index) => (
+            {_.map(REPORT_TYPES(unitOfMeasure), (item, index) => (
               <React.Fragment
                 key={`iconItem${index}${item.id}`}
               >
@@ -550,6 +556,7 @@ const Reporting = ({
         )}
         shipmentName={selectedShipment && selectedShipment.name}
         selectedMarker={selectedShipment && selectedMarker}
+        unitOfMeasure={unitOfMeasure}
       />
       <AlertsReport
         loading={loading}

@@ -80,61 +80,25 @@ export const CUSTODIAN_DATA = [
   },
 ];
 
-export const COUNTRY_CHOICES = ['USA'];
+export const CURRENCY_CHOICES = ['Dollar'];
 
-export const STATE_CHOICES = [
-  'AL',
-  'AZ',
-  'AR',
-  'CA',
-  'CO',
-  'CT',
-  'DE',
-  'DC',
-  'FL',
-  'GA',
-  'ID',
-  'IL',
-  'IN',
-  'IA',
-  'KS',
-  'KY',
-  'LA',
-  'ME',
-  'MD',
-  'MA',
-  'MI',
-  'MN',
-  'MS',
-  'MO',
-  'MT',
-  'NE',
-  'NV',
-  'NH',
-  'NJ',
-  'NM',
-  'NY',
-  'NC',
-  'ND',
-  'OH',
-  'OK',
-  'OR',
-  'PA',
-  'RI',
-  'SC',
-  'SD',
-  'TN',
-  'TX',
-  'UT',
-  'VT',
-  'VA',
-  'WA',
-  'WV',
-  'WI',
-  'WY',
-  'AK',
-  'HI',
+export const DATE_DISPLAY_CHOICES = [
+  { label: 'Mar 31, 1990', value: 'MMM DD, YYYY' },
+  { label: '31 Mar, 1990', value: 'DD MMM, YYYY' },
+  { label: '03/31/1990', value: 'MM/DD/YYYY' },
+  { label: '31/03/1990', value: 'DD/MM/YYYY' },
 ];
+
+export const TIME_DISPLAY_CHOICES = [
+  { label: '12 Hour clock', value: 'hh:mm:ss A' },
+  { label: '24 Hour clock', value: 'HH:mm:ss' },
+];
+
+export const UOM_DISTANCE_CHOICES = ['Miles', 'Kilometers'];
+
+export const UOM_TEMPERATURE_CHOICES = ['Fahrenheit', 'Celsius'];
+
+export const UOM_WEIGHT_CHOICES = ['Pounds', 'Kilograms', 'Liters'];
 
 export const ADDRESS_TYPE = [
   'home',
@@ -190,7 +154,6 @@ export const PRODUCT_MOCK = [
     product_type: 'Produces',
     inbound_bin_id: '',
     producer_bin_id: '',
-    unit_of_measure: 'https://tp-dev-shipment.buildly.io/unit_of_measure/1/',
     paper_tag_number: '12345',
     processor_bin_id: '',
     producer_batch_id: '',
@@ -211,7 +174,6 @@ export const PRODUCT_MOCK = [
     product_type: 'Grains',
     inbound_bin_id: '',
     producer_bin_id: '',
-    unit_of_measure: 'https://tp-dev-shipment.buildly.io/unit_of_measure/5/',
     paper_tag_number: '12345',
     processor_bin_id: '',
     producer_batch_id: '',

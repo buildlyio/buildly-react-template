@@ -33,6 +33,7 @@ import { validators } from '../../../utils/validators';
 import ShipmentRouteInfo from './ShipmentRouteInfo';
 import { editGateway } from '@redux/sensorsGateway/actions/sensorsGateway.actions';
 import Loader from '@components/Loader/Loader';
+import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -80,13 +81,13 @@ const ShipmentInfo = (props) => {
     dispatch,
     handleCancel,
     location,
-    unitsOfMeasure,
     shipmentOptions,
     viewOnly,
     setConfirmModal,
     setConfirmModalFor,
     timezone,
     gatewayData,
+    unitOfMeasure,
   } = props;
   const classes = useStyles();
   const theme = useTheme();
@@ -106,14 +107,14 @@ const ShipmentInfo = (props) => {
   );
   // const load_no = useInput('');
   const shipment_status = useInput(
-    (editData && editData.status) || '',
+    (editData && editData.status) || _.find(SHIPMENT_STATUS, { label: 'Planned' }).value,
     { required: true },
   );
   const route_desc = useInput(
     (editData && editData.route_description) || '',
   );
   const mode_type = useInput(
-    (editData && editData.transport_mode) || '',
+    (editData && editData.transport_mode) || _.find(TRANSPORT_MODE, { label: 'Land Road' }).value,
   );
   const route_dist = useInput('');
   const [scheduled_departure, handleDepartureDateChange] = useState(
@@ -123,15 +124,6 @@ const ShipmentInfo = (props) => {
   const [scheduled_arrival, handleScheduledDateChange] = useState(
     (editData && editData.estimated_time_of_arrival)
     || new Date(),
-  );
-  const [uom_temp, setUomTemp] = useState(
-    (editData && editData.uom_temp) || '',
-  );
-  const [uom_weight, setUomWeight] = useState(
-    (editData && editData.uom_weight) || '',
-  );
-  const [uom_distance, setUomDistance] = useState(
-    (editData && editData.uom_distance) || '',
   );
 
   const [formError, setFormError] = useState({});
@@ -143,9 +135,6 @@ const ShipmentInfo = (props) => {
     mode_type: '',
     scheduled_departure: '',
     scheduled_arrival: '',
-    uom_temp: '',
-    uom_distance: '',
-    uom_weight,
   });
 
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -187,51 +176,16 @@ const ShipmentInfo = (props) => {
         shipmentOptions.actions.POST,
         'estimated_time_of_arrival',
       );
-      metadata.uom_temp = setOptionsData(
-        shipmentOptions.actions.POST,
-        'uom_temp',
-      );
-      metadata.uom_distance = setOptionsData(
-        shipmentOptions.actions.POST,
-        'uom_distance',
-      );
-      metadata.uom_weight = setOptionsData(
-        shipmentOptions.actions.POST,
-        'uom_weight',
-      );
     }
 
     setFieldsMetaData(metadata);
   }, [shipmentOptions]);
 
   useEffect(() => {
-    if (unitsOfMeasure && unitsOfMeasure.length) {
-      _.forEach(unitsOfMeasure, (unit) => {
-        if (
-          _.includes(
-            _.lowerCase(unit.supported_class),
-            'temp',
-          ) && unit.is_default_for_class
-        ) {
-          setUomTemp(unit.url);
-        } else if (
-          _.includes(
-            _.lowerCase(unit.supported_class),
-            'distance',
-          ) && unit.is_default_for_class
-        ) {
-          setUomDistance(unit.url);
-        } else if (
-          _.includes(
-            _.lowerCase(unit.supported_class),
-            'weight',
-          ) && unit.is_default_for_class
-        ) {
-          setUomWeight(unit.url);
-        }
-      });
+    if (!unitOfMeasure) {
+      dispatch(getUnitOfMeasure(organization));
     }
-  }, [unitsOfMeasure]);
+  }, []);
 
   /**
    * Handle input field blur event
@@ -297,9 +251,6 @@ const ShipmentInfo = (props) => {
       ) || [],
       wallet_ids: (editData && editData.wallet_ids) || [],
       custodian_ids: (editData && editData.custodian_ids) || [],
-      uom_distance,
-      uom_temp,
-      uom_weight,
       organization_uuid: organization,
       // platform_name,
     };
@@ -538,50 +489,6 @@ const ShipmentInfo = (props) => {
                       />
                     )}
                   </Grid>
-                  <Grid
-                    className={classes.inputWithTooltip}
-                    item
-                    xs={12}
-                  >
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      required
-                      id="uom_temp"
-                      select
-                      label="Unit of measure temperature"
-                      disabled={viewOnly}
-                      value={uom_temp}
-                      onChange={(e) => setUomTemp(e.target.value)}
-                    >
-                      <MenuItem value="">Select</MenuItem>
-                      {unitsOfMeasure
-                      && _.map(
-                        _.orderBy(
-                          _.filter(unitsOfMeasure, { supported_class: 'Temperature' }),
-                          ['name'],
-                          ['asc'],
-                        ),
-                        (item, index) => (
-                          <MenuItem
-                            key={`temperature${index}:${item.id}`}
-                            value={item.url}
-                          >
-                            {item.name}
-                          </MenuItem>
-                        ),
-                      )}
-                    </TextField>
-                    {fieldsMetadata.uom_temp.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          fieldsMetadata.uom_temp.help_text
-                        }
-                      />
-                    )}
-                  </Grid>
                 </Grid>
               </Grid>
               <Grid
@@ -638,7 +545,6 @@ const ShipmentInfo = (props) => {
                       label="Scheduled departure"
                       selectedDate={
                         moment(scheduled_departure).tz(timezone)
-                          .format('MMMM DD, YYYY HH:mm:ss')
                       }
                       hasTime
                       handleDateChange={handleDepartureDateChange}
@@ -649,6 +555,16 @@ const ShipmentInfo = (props) => {
                           ? fieldsMetadata.scheduled_departure.help_text
                           : ''
                       }
+                      dateFormat={
+                        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                          : ''
+                      }
+                      timeFormat={
+                        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                          : ''
+                      }
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -656,7 +572,6 @@ const ShipmentInfo = (props) => {
                       label="Scheduled arrival"
                       selectedDate={
                         moment(scheduled_arrival).tz(timezone)
-                          .format('MMMM DD, YYYY HH:mm:ss')
                       }
                       hasTime
                       handleDateChange={handleScheduledDateChange}
@@ -667,95 +582,17 @@ const ShipmentInfo = (props) => {
                           ? fieldsMetadata.scheduled_arrival.help_text
                           : ''
                       }
+                      dateFormat={
+                        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                          : ''
+                      }
+                      timeFormat={
+                        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                          : ''
+                      }
                     />
-                  </Grid>
-                  <Grid
-                    className={classes.inputWithTooltip}
-                    item
-                    xs={12}
-                  >
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      required
-                      id="uom_distance"
-                      select
-                      label="Unit of measure distance"
-                      value={uom_distance}
-                      disabled={viewOnly}
-                      onChange={(e) => setUomDistance(e.target.value)}
-                    >
-                      <MenuItem value="">Select</MenuItem>
-                      {unitsOfMeasure
-                      && _.map(
-                        _.orderBy(
-                          _.filter(unitsOfMeasure, { supported_class: 'Distance and Length' }),
-                          ['name'],
-                          ['asc'],
-                        ),
-                        (item, index) => (
-                          <MenuItem
-                            key={`lengthUnit${index}:${item.id}`}
-                            value={item.url}
-                          >
-                            {item.name}
-                          </MenuItem>
-                        ),
-                      )}
-                    </TextField>
-                    {fieldsMetadata.uom_distance.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          fieldsMetadata.uom_distance.help_text
-                        }
-                      />
-                    )}
-                  </Grid>
-                  <Grid
-                    className={classes.inputWithTooltip}
-                    item
-                    xs={12}
-                  >
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      required
-                      id="uom_weight"
-                      select
-                      label="Unit of measure mass/weight"
-                      value={uom_weight}
-                      disabled={viewOnly}
-                      onChange={(e) => setUomWeight(e.target.value)}
-                    >
-                      <MenuItem value="">Select</MenuItem>
-                      {unitsOfMeasure
-                      && _.map(
-                        _.orderBy(
-                          _.filter(unitsOfMeasure, { supported_class: 'Mass and Weight' }),
-                          ['name'],
-                          ['asc'],
-                        ),
-                        (item, index) => (
-                          <MenuItem
-                            key={`weightUnit${index}:${item.id}`}
-                            value={item.url}
-                          >
-                            {item.name}
-                          </MenuItem>
-                        ),
-                      )}
-                    </TextField>
-                    {fieldsMetadata.uom_weight.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          fieldsMetadata.uom_weight.help_text
-                        }
-                      />
-                    )}
                   </Grid>
 
                 </Grid>

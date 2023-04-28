@@ -40,6 +40,8 @@ const DatePickerComponent = ({
   helpText,
   disabled,
   required,
+  dateFormat,
+  timeFormat,
 }) => {
   const classes = useStyles();
 
@@ -58,7 +60,7 @@ const DatePickerComponent = ({
             label={label}
             value={selectedDate}
             onChange={(value, keyInput) => handleDateChange(value.$d)}
-            format="MM/dd/yyyy HH:mm:ss"
+            inputFormat={`${dateFormat} ${timeFormat}`}
             PopperProps={{
               sx: classes.popperSx,
             }}
@@ -70,7 +72,7 @@ const DatePickerComponent = ({
             fullWidth
             inputVariant="outlined"
             variant="inline"
-            format="MM/dd/yyyy"
+            inputFormat={`${dateFormat}`}
             margin="normal"
             disabled={disabled}
             required={required}

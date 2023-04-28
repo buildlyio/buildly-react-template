@@ -50,18 +50,20 @@ import {
   DELETE_PRODUCTS_TYPE,
   DELETE_PRODUCTS_TYPE_SUCCESS,
   DELETE_PRODUCTS_TYPE_FAILURE,
-  GET_UNITS_OF_MEASURE,
-  GET_UNITS_OF_MEASURE_SUCCESS,
-  GET_UNITS_OF_MEASURE_FAILURE,
-  ADD_UNITS_OF_MEASURE,
-  ADD_UNITS_OF_MEASURE_SUCCESS,
-  ADD_UNITS_OF_MEASURE_FAILURE,
-  EDIT_UNITS_OF_MEASURE,
-  EDIT_UNITS_OF_MEASURE_SUCCESS,
-  EDIT_UNITS_OF_MEASURE_FAILURE,
-  DELETE_UNITS_OF_MEASURE,
-  DELETE_UNITS_OF_MEASURE_SUCCESS,
-  DELETE_UNITS_OF_MEASURE_FAILURE,
+  GET_UNIT_OF_MEASURE,
+  GET_UNIT_OF_MEASURE_SUCCESS,
+  GET_UNIT_OF_MEASURE_FAILURE,
+  ADD_UNIT_OF_MEASURE,
+  ADD_UNIT_OF_MEASURE_SUCCESS,
+  ADD_UNIT_OF_MEASURE_FAILURE,
+  EDIT_UNIT_OF_MEASURE,
+  EDIT_UNIT_OF_MEASURE_SUCCESS,
+  EDIT_UNIT_OF_MEASURE_FAILURE,
+  DELETE_UNIT_OF_MEASURE,
+  DELETE_UNIT_OF_MEASURE_SUCCESS,
+  DELETE_UNIT_OF_MEASURE_FAILURE,
+  CREATE_DEFAULT_UNITS,
+  CREATE_DEFAULT_UNITS_FAILURE,
 } from '../actions/items.actions';
 
 const shipmentApiEndPoint = 'shipment/';
@@ -640,15 +642,15 @@ function* deleteProductType(payload) {
   }
 }
 
-function* getUnits() {
+function* getUnit(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}${shipmentApiEndPoint}unit_of_measure/`,
+      `${window.env.API_URL}${shipmentApiEndPoint}unit_of_measure/?organization_uuid=${payload.organization_uuid}`,
     );
     yield put({
-      type: GET_UNITS_OF_MEASURE_SUCCESS,
+      type: GET_UNIT_OF_MEASURE_SUCCESS,
       data: data.data,
     });
   } catch (error) {
@@ -661,14 +663,14 @@ function* getUnits() {
         }),
       ),
       yield put({
-        type: GET_UNITS_OF_MEASURE_FAILURE,
+        type: GET_UNIT_OF_MEASURE_FAILURE,
         error,
       }),
     ];
   }
 }
 
-function* addUnitsOfMeasure(action) {
+function* addUnitOfMeasure(action) {
   const { payload } = action;
   try {
     const data = yield call(
@@ -680,8 +682,8 @@ function* addUnitsOfMeasure(action) {
     if (data && data.data) {
       yield [
         yield put({
-          type: ADD_UNITS_OF_MEASURE_SUCCESS,
-          unitsOfMeasure: data.data,
+          type: ADD_UNIT_OF_MEASURE_SUCCESS,
+          unitOfMeasure: data.data,
         }),
         yield put(
           showAlert({
@@ -702,14 +704,14 @@ function* addUnitsOfMeasure(action) {
         }),
       ),
       yield put({
-        type: ADD_UNITS_OF_MEASURE_FAILURE,
+        type: ADD_UNIT_OF_MEASURE_FAILURE,
         error,
       }),
     ];
   }
 }
 
-function* editUnitsOfMeasure(action) {
+function* editUnitOfMeasure(action) {
   const { payload } = action;
   try {
     const data = yield call(
@@ -721,8 +723,8 @@ function* editUnitsOfMeasure(action) {
     if (data && data.data) {
       yield [
         yield put({
-          type: EDIT_UNITS_OF_MEASURE_SUCCESS,
-          unitsOfMeasure: data.data,
+          type: EDIT_UNIT_OF_MEASURE_SUCCESS,
+          unitOfMeasure: data.data,
         }),
         yield put(
           showAlert({
@@ -743,14 +745,14 @@ function* editUnitsOfMeasure(action) {
         }),
       ),
       yield put({
-        type: EDIT_UNITS_OF_MEASURE_FAILURE,
+        type: EDIT_UNIT_OF_MEASURE_FAILURE,
         error,
       }),
     ];
   }
 }
 
-function* deleteUnitsOfMeasure(payload) {
+function* deleteUnitOfMeasure(payload) {
   try {
     const data = yield call(
       httpService.makeRequest,
@@ -759,8 +761,8 @@ function* deleteUnitsOfMeasure(payload) {
     );
     yield [
       yield put({
-        type: DELETE_UNITS_OF_MEASURE_SUCCESS,
-        unitsOfMeasure: { id: payload.id },
+        type: DELETE_UNIT_OF_MEASURE_SUCCESS,
+        unitOfMeasure: { id: payload.id },
       }),
       yield put(
         showAlert({
@@ -780,7 +782,32 @@ function* deleteUnitsOfMeasure(payload) {
         }),
       ),
       yield put({
-        type: DELETE_UNITS_OF_MEASURE_FAILURE,
+        type: DELETE_UNIT_OF_MEASURE_FAILURE,
+        error,
+      }),
+    ];
+  }
+}
+
+function* createDefaultUnits(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'post',
+      `${window.env.API_URL}${shipmentApiEndPoint}create_default_unit_of_measures/`,
+      { organization: payload.organization },
+    );
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t Create Default Unit of Measures due to some error!',
+        }),
+      ),
+      yield put({
+        type: CREATE_DEFAULT_UNITS_FAILURE,
         error,
       }),
     ];
@@ -851,20 +878,24 @@ function* watchDeleteProductType() {
   yield takeLatest(DELETE_PRODUCTS_TYPE, deleteProductType);
 }
 
-function* watchGetUnitsOfMeasure() {
-  yield takeLatest(GET_UNITS_OF_MEASURE, getUnits);
+function* watchGetUnitOfMeasure() {
+  yield takeLatest(GET_UNIT_OF_MEASURE, getUnit);
 }
 
-function* watchAddUnitsOfMeasure() {
-  yield takeLatest(ADD_UNITS_OF_MEASURE, addUnitsOfMeasure);
+function* watchAddUnitOfMeasure() {
+  yield takeLatest(ADD_UNIT_OF_MEASURE, addUnitOfMeasure);
 }
 
-function* watchEditUnitsOfMeasure() {
-  yield takeLatest(EDIT_UNITS_OF_MEASURE, editUnitsOfMeasure);
+function* watchEditUnitOfMeasure() {
+  yield takeLatest(EDIT_UNIT_OF_MEASURE, editUnitOfMeasure);
 }
 
-function* watchDeleteUnitsOfMeasure() {
-  yield takeLatest(DELETE_UNITS_OF_MEASURE, deleteUnitsOfMeasure);
+function* watchDeleteUnitOfMeasure() {
+  yield takeLatest(DELETE_UNIT_OF_MEASURE, deleteUnitOfMeasure);
+}
+
+function* watchCreateDefaultUnits() {
+  yield takeLatest(CREATE_DEFAULT_UNITS, createDefaultUnits);
 }
 
 export default function* itemSaga() {
@@ -885,9 +916,10 @@ export default function* itemSaga() {
     watchAddProductType(),
     watchEditProductType(),
     watchDeleteProductType(),
-    watchGetUnitsOfMeasure(),
-    watchAddUnitsOfMeasure(),
-    watchEditUnitsOfMeasure(),
-    watchDeleteUnitsOfMeasure(),
+    watchGetUnitOfMeasure(),
+    watchAddUnitOfMeasure(),
+    watchEditUnitOfMeasure(),
+    watchDeleteUnitOfMeasure(),
+    watchCreateDefaultUnits(),
   ]);
 }

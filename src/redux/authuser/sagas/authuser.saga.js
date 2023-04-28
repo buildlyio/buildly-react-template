@@ -58,6 +58,7 @@ import {
   DELETE_ORG_TYPE_SUCCESS,
   DELETE_ORG_TYPE_FAILURE,
 } from '@redux/authuser/actions/authuser.actions';
+import { createDefaultUnits } from '@redux/items/actions/items.actions';
 
 function* logout() {
   try {
@@ -82,6 +83,7 @@ function* login(payload) {
       `${window.env.API_URL}coreuser/me/`,
     );
     yield call(oauthService.setOauthUser, user, payload);
+    yield put(createDefaultUnits(user.data.organization.organization_uuid));
     const coreuser = yield call(
       httpService.makeRequest,
       'get',

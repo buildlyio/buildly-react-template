@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   getOrgTypes,
   deleteOrgType,
@@ -9,6 +10,8 @@ import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableW
 import { routes } from '../../../../routes/routesConstants';
 import { getColumns } from '../ConfigurationConstants';
 import AddOrganizationType from '../forms/AddOrganizationType';
+import { UserContext } from '@context/User.context';
+import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
 
 const OrganizationType = ({
   dispatch,
@@ -17,9 +20,11 @@ const OrganizationType = ({
   redirectTo,
   history,
   timezone,
+  unitOfMeasure,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   const addPath = redirectTo
     ? `${redirectTo}/org-type`
@@ -28,6 +33,12 @@ const OrganizationType = ({
   const editPath = redirectTo
     ? `${redirectTo}/org-type`
     : `${routes.CONFIGURATION}/org-type/edit`;
+
+  useEffect(() => {
+    if (!unitOfMeasure) {
+      dispatch(getUnitOfMeasure(organization));
+    }
+  }, []);
 
   useEffect(() => {
     if (
@@ -70,7 +81,15 @@ const OrganizationType = ({
       noSpace
       loading={loading}
       rows={orgTypes || []}
-      columns={getColumns(timezone)}
+      columns={getColumns(
+        timezone,
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '',
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+          : '',
+      )}
       filename="OrganizationType"
       addButtonHeading="Organization Type"
       onAddButtonClick={onAddButtonClick}
@@ -92,6 +111,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
   ...state.optionsReducer,
+  ...state.itemsReducer,
 });
 
 export default connect(mapStateToProps)(OrganizationType);

@@ -142,3 +142,19 @@ describe('Add PDF Identifier action', () => {
     )).toEqual(expectedAction);
   });
 });
+
+// Test Get countries and related states action
+describe('Get countries and related states action', () => {
+  it('should create an action to get countries and related states', () => {
+    const expectedAction = { type: actions.GET_COUNTRIES_STATES };
+    expect(actions.getCountries()).toEqual(expectedAction);
+  });
+});
+
+// Test Get currencies action
+describe('Get currencies action', () => {
+  it('should create an action to get currencies', () => {
+    const expectedAction = { type: actions.GET_CURRENCIES };
+    expect(actions.getCurrencies()).toEqual(expectedAction);
+  });
+});

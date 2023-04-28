@@ -66,11 +66,11 @@ const AddItems = ({
   history,
   location,
   itemTypeList,
-  unitsOfMeasure,
   products,
   productType,
   productOptions,
   itemOptions,
+  unitOfMeasure,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
@@ -90,9 +90,6 @@ const AddItems = ({
   const [item_value, setItemValue] = useState(editData.value || 0);
   const [item_weight, setItemWeight] = useState(
     editData.gross_weight || 0,
-  );
-  const [unit_of_measure, setUomContainer] = useState(
-    editData.unit_of_measure || '',
   );
   const [units, setContainerUnits] = useState(
     editData.number_of_units || 0,
@@ -118,10 +115,6 @@ const AddItems = ({
   const [product_weight, setProductWeight] = useState(
     editData.product_weight || '',
   );
-  const [product_uom, setProductUom] = useState(
-    editData.product_weight_unit_of_measure || '',
-  );
-  const [product_uom_name, setProductUomName] = useState('');
 
   const [formError, setFormError] = useState({});
 
@@ -149,7 +142,6 @@ const AddItems = ({
       && editData
       && products
       && productType
-      && unitsOfMeasure
     ) {
       let selectedProduct = '';
       _.forEach(products, (obj) => {
@@ -164,7 +156,7 @@ const AddItems = ({
       setItemWeight(editData.gross_weight);
       setItemValue(editData.value);
     }
-  }, [editPage, editData, products, productType, unitsOfMeasure]);
+  }, [editPage, editData, products, productType]);
 
   const closeFormModal = () => {
     const dataHasChanged = (
@@ -204,8 +196,6 @@ const AddItems = ({
       name: item_name.value,
       value: item_value,
       gross_weight: item_weight,
-      unit_of_measure,
-      product_weight_unit_of_measure: product_uom,
       number_of_units: units,
       ean,
       upc,
@@ -259,7 +249,6 @@ const AddItems = ({
       || !item_name.value
       || !product
       || !units
-      || !unit_of_measure
     ) {
       return true;
     }
@@ -287,15 +276,6 @@ const AddItems = ({
     setContainerUnits(1);
     setItemWeight(value.gross_weight);
     setItemValue(value.value);
-    if (unitsOfMeasure && unitsOfMeasure.length) {
-      _.forEach(unitsOfMeasure, (unit) => {
-        if (unit.url === value.unit_of_measure) {
-          setProductUom(value.unit_of_measure);
-          setProductUomName(unit.name);
-          setUomContainer(value.unit_of_measure);
-        }
-      });
-    }
     if (productType && productType.length) {
       _.forEach(productType, (type) => {
         if (type.url === value.product_type) {
@@ -523,7 +503,9 @@ const AddItems = ({
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            $
+                            {_.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
+                              ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
+                              : ''}
                           </InputAdornment>
                         ),
                       }}
@@ -542,8 +524,6 @@ const AddItems = ({
                     className={classes.inputWithTooltip}
                     item
                     xs={12}
-                    md={6}
-                    sm={6}
                   >
                     <TextField
                       variant="outlined"
@@ -561,32 +541,6 @@ const AddItems = ({
                       <CustomizedTooltips
                         toolTipText={
                           productMetData.gross_weight.help_text
-                        }
-                      />
-                    )}
-                  </Grid>
-                  <Grid
-                    className={classes.inputWithTooltip}
-                    item
-                    xs={12}
-                    md={6}
-                    sm={6}
-                  >
-                    <TextField
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      disabled
-                      id="product_uom"
-                      label="Units of Measure"
-                      value={product_uom_name}
-                    />
-                    {productMetData.unit_of_measure
-                    && productMetData.unit_of_measure.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          productMetData.unit_of_measure.help_text
                         }
                       />
                     )}
@@ -814,7 +768,9 @@ const AddItems = ({
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        $
+                        {_.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
+                          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
+                          : ''}
                       </InputAdornment>
                     ),
                   }}
@@ -833,8 +789,6 @@ const AddItems = ({
                 className={classes.inputWithTooltip}
                 item
                 xs={12}
-                md={6}
-                sm={6}
               >
                 <TextField
                   variant="outlined"
@@ -852,52 +806,6 @@ const AddItems = ({
                   <CustomizedTooltips
                     toolTipText={
                       itemMetData.gross_weight.help_text
-                    }
-                  />
-                )}
-              </Grid>
-              <Grid
-                className={classes.inputWithTooltip}
-                item
-                xs={12}
-                md={6}
-                sm={6}
-              >
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  required
-                  id="unit_of_measure"
-                  select
-                  label="Units of Measure"
-                  value={unit_of_measure}
-                  onChange={(e) => setUomContainer(e.target.value)}
-                >
-                  <MenuItem value="">Select</MenuItem>
-                  {unitsOfMeasure
-                    && _.map(
-                      _.orderBy(
-                        _.filter(unitsOfMeasure, { supported_class: 'Mass and Weight' }),
-                        ['name'],
-                        ['asc'],
-                      ),
-                      (item, index) => (
-                        <MenuItem
-                          key={`weightUnit${index}:${item.id}`}
-                          value={item.url}
-                        >
-                          {item.name}
-                        </MenuItem>
-                      ),
-                    )}
-                </TextField>
-                {itemMetData.unit_of_measure
-                && itemMetData.unit_of_measure.help_text
-                && (
-                  <CustomizedTooltips
-                    toolTipText={
-                      itemMetData.unit_of_measure.help_text
                     }
                   />
                 )}

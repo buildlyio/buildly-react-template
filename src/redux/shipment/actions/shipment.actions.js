@@ -26,6 +26,14 @@ export const ADD_PDF_IDENTIFIER_FAILURE = 'SHIPMENT/ADD_PDF_IDENTIFIER_FAILURE';
 
 export const GET_REPORT_AND_ALERTS = 'SHIPMENT/GET_REPORT_AND_ALERTS';
 
+export const GET_COUNTRIES_STATES = 'SHIPMENT/GET_COUNTRIES_STATES';
+export const GET_COUNTRIES_STATES_SUCCESS = 'SHIPMENT/GET_COUNTRIES_STATES_SUCCESS';
+export const GET_COUNTRIES_STATES_FAILURE = 'SHIPMENT/GET_COUNTRIES_STATES_FAILURE';
+
+export const GET_CURRENCIES = 'SHIPMENT/GET_CURRENCIES';
+export const GET_CURRENCIES_SUCCESS = 'SHIPMENT/GET_CURRENCIES_SUCCESS';
+export const GET_CURRENCIES_FAILURE = 'SHIPMENT/GET_CURRENCIES_FAILURE';
+
 /**
  * Save Shipment Form Data
  * @param {Object} formData
@@ -163,3 +171,13 @@ export const pdfIdentifier = (
   redirectTo,
   organization_uuid,
 });
+
+/**
+ * Get countries and related states
+ */
+export const getCountries = () => ({ type: GET_COUNTRIES_STATES });
+
+/**
+ * Get currencies
+ */
+export const getCurrencies = () => ({ type: GET_CURRENCIES });

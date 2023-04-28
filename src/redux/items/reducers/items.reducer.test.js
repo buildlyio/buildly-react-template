@@ -9,7 +9,7 @@ const initialState = {
   itemTypeList: null,
   products: null,
   productType: null,
-  unitsOfMeasure: null,
+  unitOfMeasure: null,
 };
 
 describe('Get Item reducer', () => {
@@ -606,33 +606,33 @@ describe('Delete Product type reducer', () => {
   });
 });
 
-describe('Get Units of Measure reducer', () => {
+describe('Get Unit of Measure reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_UNITS_OF_MEASURE },
+      { type: actions.GET_UNIT_OF_MEASURE },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('Get Units of Measure success Reducer', () => {
+  it('Get Unit of Measure success Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_UNITS_OF_MEASURE_SUCCESS },
+      { type: actions.GET_UNIT_OF_MEASURE_SUCCESS },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      unitsOfMeasure: undefined,
+      unitOfMeasure: undefined,
     });
   });
 
-  it('Get Units of Measure fail Reducer', () => {
+  it('Get Unit of Measure fail Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_UNITS_OF_MEASURE_FAILURE },
+      { type: actions.GET_UNIT_OF_MEASURE_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,
@@ -642,36 +642,36 @@ describe('Get Units of Measure reducer', () => {
   });
 });
 
-describe('Add Units of Measure reducer', () => {
+describe('Add Unit of Measure reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.ADD_UNITS_OF_MEASURE },
+      { type: actions.ADD_UNIT_OF_MEASURE },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('Add Units of Measure success Reducer', () => {
+  it('Add Unit of Measure success Reducer', () => {
     expect(reducer.default(
       {
         ...initialState,
-        unitsOfMeasure: [],
+        unitOfMeasure: [],
       },
-      { type: actions.ADD_UNITS_OF_MEASURE_SUCCESS },
+      { type: actions.ADD_UNIT_OF_MEASURE_SUCCESS },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      unitsOfMeasure: [undefined],
+      unitOfMeasure: [undefined],
     });
   });
 
-  it('Add Units of Measure fail Reducer', () => {
+  it('Add Unit of Measure fail Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.ADD_UNITS_OF_MEASURE_FAILURE },
+      { type: actions.ADD_UNIT_OF_MEASURE_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,
@@ -681,36 +681,36 @@ describe('Add Units of Measure reducer', () => {
   });
 });
 
-describe('Edit Units of Measure reducer', () => {
+describe('Edit Unit of Measure reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.EDIT_UNITS_OF_MEASURE },
+      { type: actions.EDIT_UNIT_OF_MEASURE },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('Edit Units of Measure success Reducer', () => {
+  it('Edit Unit of Measure success Reducer', () => {
     expect(reducer.default(
       {
         ...initialState,
-        unitsOfMeasure: [],
+        unitOfMeasure: [],
       },
-      { type: actions.EDIT_UNITS_OF_MEASURE_SUCCESS },
+      { type: actions.EDIT_UNIT_OF_MEASURE_SUCCESS },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      unitsOfMeasure: [],
+      unitOfMeasure: [],
     });
   });
 
-  it('Edit Units of Measure fail Reducer', () => {
+  it('Edit Unit of Measure fail Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.EDIT_UNITS_OF_MEASURE_FAILURE },
+      { type: actions.EDIT_UNIT_OF_MEASURE_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,
@@ -720,33 +720,57 @@ describe('Edit Units of Measure reducer', () => {
   });
 });
 
-describe('Delete Units of Measure reducer', () => {
+describe('Delete Unit of Measure reducer', () => {
   it('Empty Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.DELETE_UNITS_OF_MEASURE },
+      { type: actions.DELETE_UNIT_OF_MEASURE },
     )).toEqual({
       ...initialState,
       loading: true,
     });
   });
 
-  it('Delete Units of Measure success Reducer', () => {
+  it('Delete Unit of Measure success Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.DELETE_UNITS_OF_MEASURE_SUCCESS },
+      { type: actions.DELETE_UNIT_OF_MEASURE_SUCCESS },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      unitsOfMeasure: undefined,
+      unitOfMeasure: undefined,
     });
   });
 
-  it('Delete Units of Measure fail Reducer', () => {
+  it('Delete Unit of Measure fail Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.DELETE_UNITS_OF_MEASURE_FAILURE },
+      { type: actions.DELETE_UNIT_OF_MEASURE_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});
+
+describe('Create Default Unit of Measure reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_DEFAULT_UNITS },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('Create Default Unit of Measure fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_DEFAULT_UNITS_FAILURE },
     )).toEqual({
       ...initialState,
       error: undefined,

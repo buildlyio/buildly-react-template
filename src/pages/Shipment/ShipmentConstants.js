@@ -12,7 +12,7 @@ export const MAP_TOOLTIP = 'Locations of the shipment from starting point till c
 
 export const SHIPMENT_DATA_TABLE_TOOLTIP = 'Click on a shipment to view it on the map';
 
-export const getShipmentDataTableColumns = (timezone) => ([
+export const getShipmentDataTableColumns = (timezone, dateFormat) => ([
   {
     name: 'name',
     label: 'SHIPMENT NAME',
@@ -40,7 +40,7 @@ export const getShipmentDataTableColumns = (timezone) => ([
       customBodyRender: (value) => (
         value && value !== '-'
           ? moment(value).tz(timezone)
-            .format('MMM DD, YYYY')
+            .format(`${dateFormat}`)
           : value
       ),
     },
@@ -55,7 +55,7 @@ export const getShipmentDataTableColumns = (timezone) => ([
       customBodyRender: (value) => (
         value && value !== '-'
           ? moment(value).tz(timezone)
-            .format('MMM DD, YYYY')
+            .format(`${dateFormat}`)
           : value
       ),
     },
@@ -237,7 +237,7 @@ export const custodyColumns = [
     },
   },
   {
-    name: 'start_of_custody_location',
+    name: 'start_address',
     label: 'Start Location',
     options: {
       sort: true,
@@ -245,7 +245,7 @@ export const custodyColumns = [
     },
   },
   {
-    name: 'end_of_custody_location',
+    name: 'end_address',
     label: 'End Location',
     options: {
       sort: true,
@@ -333,7 +333,7 @@ export const getFormattedCustodyRows = (custodyData, custodianData) => {
   );
 };
 
-export const itemColumns = [
+export const itemColumns = (currUnit) => ([
   {
     name: 'name',
     label: 'Item Name',
@@ -366,7 +366,7 @@ export const itemColumns = [
       sortThirdClickReset: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? `$${numberWithCommas(value)}`
+          ? `${numberWithCommas(value)} ${currUnit}`
           : value
       ),
     },
@@ -385,16 +385,16 @@ export const itemColumns = [
     },
   },
   {
-    name: 'unitsMeasure',
-    label: 'Units of Measure',
+    name: 'unitMeasure',
+    label: 'Unit of Measure',
     options: {
       sort: true,
       sortThirdClickReset: true,
     },
   },
-];
+]);
 
-export const gatewayColumns = (timezone) => ([
+export const gatewayColumns = (timezone, dateFormat) => ([
   {
     name: 'name',
     label: 'Gateway Name',
@@ -449,14 +449,14 @@ export const gatewayColumns = (timezone) => ([
       sortThirdClickReset: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? moment(value).tz(timezone).format('MM/DD/yyyy')
+          ? moment(value).tz(timezone).format(`${dateFormat}`)
           : value
       ),
     },
   },
 ]);
 
-export const sensorsColumns = (timezone) => ([
+export const sensorsColumns = (timezone, dateFormat) => ([
   {
     name: 'name',
     label: 'Sensor Name',
@@ -482,7 +482,7 @@ export const sensorsColumns = (timezone) => ([
       sortThirdClickReset: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? moment(value).tz(timezone).format('MM/DD/yyyy')
+          ? moment(value).tz(timezone).format(`${dateFormat}`)
           : value
       ),
     },

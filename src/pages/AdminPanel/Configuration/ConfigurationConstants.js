@@ -1,11 +1,9 @@
 import moment from 'moment-timezone';
 import _ from 'lodash';
 
-let units = [];
-
-const showValue = (value, timezone) => (
+const showValue = (value, timezone, dateFormat, timeFormat) => (
   value && value !== '-'
-    ? moment(value).tz(timezone).format('MMM DD YYYY, h:mm a')
+    ? moment(value).tz(timezone).format(`${dateFormat} ${timeFormat}`)
     : value
 );
 
@@ -25,9 +23,7 @@ export const PRODUCT_TYPE_TOOLTIP = 'Product Type(s) available in the system';
 
 export const SENSOR_TYPE_TOOLTIP = 'Sensor Type(s) available in the system';
 
-export const UNITS_OF_MEASURE_TOOLTIP = 'Unit(s) of Measure available in the system';
-
-export const getColumns = (timezone) => ([
+export const getColumns = (timezone, dateFormat, timeFormat) => ([
   {
     name: 'name',
     label: 'Name',
@@ -44,7 +40,7 @@ export const getColumns = (timezone) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
+      customBodyRender: (value) => showValue(value, timezone, dateFormat, timeFormat),
     },
   },
   {
@@ -54,12 +50,12 @@ export const getColumns = (timezone) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
+      customBodyRender: (value) => showValue(value, timezone, dateFormat, timeFormat),
     },
   },
 ]);
 
-export const getProductColumns = (timezone) => ([
+export const getProductColumns = (timezone, uomw, dateFormat, timeFormat) => ([
   {
     name: 'name',
     label: 'Name',
@@ -99,67 +95,13 @@ export const getProductColumns = (timezone) => ([
     },
   },
   {
-    name: 'unit_of_measure',
-    label: 'Unit of Measure',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => {
-        const unit = _.find(units, { url: value });
-        return unit ? unit.name : '';
-      },
-    },
-  },
-  {
-    name: 'create_date',
-    label: 'Created At',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
-    },
-  },
-  {
-    name: 'edit_date',
-    label: 'Last Edited At',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
-    },
-  },
-]);
-
-export const getUnitsOfMeasureColumns = (timezone) => ([
-  {
     name: 'name',
     label: 'Unit of Measure',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-    },
-  },
-  {
-    name: 'supported_class',
-    label: 'Unit Class',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
-  },
-  {
-    name: 'is_default_for_class',
-    label: 'Default for Unit Class',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (value ? 'YES' : 'NO'),
+      customBodyRender: () => uomw,
     },
   },
   {
@@ -169,7 +111,7 @@ export const getUnitsOfMeasureColumns = (timezone) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
+      customBodyRender: (value) => showValue(value, timezone, dateFormat, timeFormat),
     },
   },
   {
@@ -179,11 +121,7 @@ export const getUnitsOfMeasureColumns = (timezone) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => showValue(value, timezone),
+      customBodyRender: (value) => showValue(value, timezone, dateFormat, timeFormat),
     },
   },
 ]);
-
-export const unitMeasures = (data) => {
-  units = data;
-};

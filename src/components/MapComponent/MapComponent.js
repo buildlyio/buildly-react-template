@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import {
   withScriptjs,
   withGoogleMap,
@@ -9,7 +10,6 @@ import {
   Polygon,
   Circle,
 } from 'react-google-maps';
-import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
 import _ from 'lodash';
 import {
   REPORT_TYPES,
@@ -18,7 +18,7 @@ import {
 
 export const MapComponent = (props) => {
   const {
-    markers, setSelectedMarker, geofence, shipmentFilter,
+    markers, setSelectedMarker, geofence, shipmentFilter, unitOfMeasure,
   } = props;
   const [center, setCenter] = useState({
     lat: 47.606209,
@@ -85,6 +85,7 @@ export const MapComponent = (props) => {
       polygon={polygon}
       showInfoIndex={showInfoIndex}
       onMarkerSelect={onMarkerSelect}
+      unitOfMeasure={unitOfMeasure}
     />
   );
 };
@@ -130,7 +131,7 @@ const RenderedMap = withScriptjs(
                     width: '200px',
                   }}
                 >
-                  {_.map(REPORT_TYPES, (item, idx) => (
+                  {_.map(REPORT_TYPES(props.unitOfMeasure), (item, idx) => (
                     <div
                       key={`iconItem${idx}${item.id}`}
                       style={{
@@ -246,7 +247,11 @@ const RenderedMap = withScriptjs(
             />
             <InfoWindow>
               <div style={{ color: 'black' }}>
-                {`Geofence of ${mark.radius} miles`}
+                {`Geofence of ${mark.radius} ${_.toLower(
+                  _.find(props.unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance'))
+                    ? _.find(props.unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance')).unit_of_measure
+                    : ''
+                )}`}
               </div>
             </InfoWindow>
           </Marker>
@@ -290,3 +295,10 @@ const RenderedMap = withScriptjs(
     </GoogleMap>
   )),
 );
+
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.itemsReducer,
+});
+
+export default connect(mapStateToProps)(MapComponent);

@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
+import _ from 'lodash';
 import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '../../context/User.context';
 import {
   getItems,
   deleteItem,
   getItemType,
-  getUnitsOfMeasure,
+  getUnitOfMeasure,
   getProducts,
   getProductType,
 } from '../../redux/items/actions/items.actions';
@@ -26,7 +27,7 @@ const Items = ({
   loading,
   itemTypeList,
   redirectTo,
-  unitsOfMeasure,
+  unitOfMeasure,
   products,
   itemOptions,
   productOptions,
@@ -49,8 +50,8 @@ const Items = ({
       dispatch(getItems(organization));
       dispatch(getItemType(organization));
     }
-    if (!unitsOfMeasure) {
-      dispatch(getUnitsOfMeasure());
+    if (!unitOfMeasure) {
+      dispatch(getUnitOfMeasure(organization));
     }
     if (products === null) {
       dispatch(getProducts(organization));
@@ -70,16 +71,16 @@ const Items = ({
       && itemData.length
       && itemTypeList
       && itemTypeList.length
-      && unitsOfMeasure
-      && unitsOfMeasure.length
+      && unitOfMeasure
+      && unitOfMeasure.length
     ) {
       setRows(getItemFormattedRow(
         itemData,
         itemTypeList,
-        unitsOfMeasure,
+        unitOfMeasure,
       ));
     }
-  }, [itemData, itemTypeList, unitsOfMeasure]);
+  }, [itemData, itemTypeList, unitOfMeasure]);
 
   const editItems = (item) => {
     history.push(`${editItemPath}/:${item.id}`, {
@@ -109,7 +110,11 @@ const Items = ({
     <DataTableWrapper
       loading={loading}
       rows={rows || []}
-      columns={itemColumns}
+      columns={itemColumns(
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
+          : '',
+      )}
       filename="ItemsData"
       addButtonHeading="Add Item"
       onAddButtonClick={onAddButtonClick}

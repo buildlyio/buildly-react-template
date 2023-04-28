@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import DatePickerComponent from '../../../components/DatePicker/DatePicker';
-import { MapComponent } from '../../../components/MapComponent/MapComponent';
+import MapComponent from '../../../components/MapComponent/MapComponent';
 import FormModal from '../../../components/Modal/FormModal';
 import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
 import { UserContext } from '../../../context/User.context';
@@ -29,6 +29,7 @@ import {
 import { routes } from '../../../routes/routesConstants';
 import { validators } from '../../../utils/validators';
 import SearchModal from '../Sensors/SearchModal';
+import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
 
 const useStyles = makeStyles((theme) => ({
   chip: {
@@ -79,6 +80,7 @@ const AddSensor = ({
   gatewayData,
   sensorOptions,
   timezone,
+  unitOfMeasure,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
@@ -124,6 +126,12 @@ const AddSensor = ({
   const organization = useContext(UserContext).organization.organization_uuid;
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+
+  useEffect(() => {
+    if (!unitOfMeasure) {
+      dispatch(getUnitOfMeasure(organization));
+    }
+  }, []);
 
   useEffect(() => {
     if (sensorOptions && sensorOptions.actions) {
@@ -445,13 +453,17 @@ const AddSensor = ({
                       selectedDate={
                         moment(activation_date)
                           .tz(timezone)
-                          .formzt('l')
                       }
                       handleDateChange={handleDateChange}
                       helpText={
                         sensorMetaData.activation_date
                         && sensorMetaData.activation_date.help_text
                           ? sensorMetaData.activation_date.help_text
+                          : ''
+                      }
+                      dateFormat={
+                        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
                           : ''
                       }
                     />
@@ -576,9 +588,11 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
   ...state.optionsReducer,
+  ...state.itemsReducer,
   loading: (
     state.sensorsGatewayReducer.loading
     || state.optionsReducer.loading
+    || state.itemsReducer.loading
   ),
 });
 
