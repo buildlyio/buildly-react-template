@@ -98,7 +98,7 @@ const IssueSuggestions = ({
       issue_detail: {},
     };
 
-    const issueSuggestionsData = _.map(showData.issue_suggestion, (issue) => ({
+    const issueSuggestionsData = _.map(showData.suggested_issues, (issue) => ({
       ...formData,
       name: issue.name,
       description: issue.description,
@@ -137,14 +137,14 @@ const IssueSuggestions = ({
           {loading && <Loader open={loading} />}
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container rowGap={2}>
-              {showData && _.isEmpty(showData.issue_suggestion) && (
+              {showData && _.isEmpty(showData.suggested_issues) && (
                 <Typography variant="body1" className={classes.noSuggestions}>
                   No suggested issues found
                 </Typography>
               )}
 
-              {showData && !_.isEmpty(showData.issue_suggestion)
-              && _.map(showData.issue_suggestion, (issue, index) => (
+              {showData && !_.isEmpty(showData.suggested_issues)
+              && _.map(showData.suggested_issues, (issue, index) => (
                 <Button
                   key={`${issue.name}-${index}`}
                   style={{ cursor: 'text' }}
@@ -166,7 +166,7 @@ const IssueSuggestions = ({
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    disabled={_.isEmpty(showData.issue_suggestion)}
+                    disabled={_.isEmpty(showData.suggested_issues)}
                   >
                     Go with suggestions
                   </Button>
