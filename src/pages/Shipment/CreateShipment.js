@@ -6,7 +6,7 @@ import Geocode from 'react-geocode';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import { routes } from '../../routes/routesConstants';
-import { MapComponent } from '../../components/MapComponent/MapComponent';
+import MapComponent from '../../components/MapComponent/MapComponent';
 import {
   Button,
   useTheme,
@@ -48,7 +48,6 @@ import {
 import {
   getItems,
   getItemType,
-  getUnitsOfMeasure,
 } from '../../redux/items/actions/items.actions';
 import {
   getGateways,
@@ -169,7 +168,6 @@ const CreateShipment = (props) => {
     loading,
     dispatch,
     location,
-    unitsOfMeasure,
     timezone,
     gatewayData,
     itemData,
@@ -290,16 +288,6 @@ const CreateShipment = (props) => {
 
   const [gatewayOptions, setGatewayOptions] = useState([]);
 
-  const [uom_temp, setUomTemp] = useState(
-    (editData && editData.uom_temp) || '',
-  );
-  const [uom_weight, setUomWeight] = useState(
-    (editData && editData.uom_weight) || '',
-  );
-  const [uom_distance, setUomDistance] = useState(
-    (editData && editData.uom_distance) || '',
-  );
-
   let formTitle;
   if (!editPage) {
     formTitle = 'Create Shipment';
@@ -334,9 +322,6 @@ const CreateShipment = (props) => {
     if (!gatewayData) {
       dispatch(getGateways(organization_uuid));
       dispatch(getGatewayType());
-    }
-    if (!unitsOfMeasure) {
-      dispatch(getUnitsOfMeasure());
     }
     if (!sensorData) {
       dispatch(getSensors(organization_uuid));
@@ -395,35 +380,6 @@ const CreateShipment = (props) => {
     itemData, platform_name, gatewayTypeList,
     shipmentData, start_of_custody]);
 
-  useEffect(() => {
-    if (unitsOfMeasure && unitsOfMeasure.length) {
-      _.forEach(unitsOfMeasure, (unit) => {
-        if (
-          _.includes(
-            _.lowerCase(unit.supported_class),
-            'temp',
-          ) && unit.is_default_for_class
-        ) {
-          setUomTemp(unit.url);
-        } else if (
-          _.includes(
-            _.lowerCase(unit.supported_class),
-            'distance',
-          ) && unit.is_default_for_class
-        ) {
-          setUomDistance(unit.url);
-        } else if (
-          _.includes(
-            _.lowerCase(unit.supported_class),
-            'weight',
-          ) && unit.is_default_for_class
-        ) {
-          setUomWeight(unit.url);
-        }
-      });
-    }
-  }, [unitsOfMeasure]);
-
   const updateShipmentFormData = () => {
     const updateGateway = _.find(gatewayData, { gateway_uuid: gatewayIds[0] });
     const imei_number = updateGateway ? [updateGateway.imei_number] : [];
@@ -444,9 +400,6 @@ const CreateShipment = (props) => {
       gateway_ids: (editData && editData.gateway_ids) || gatewayIds,
       gateway_imei: (editData && editData.gateway_imei)
         || imei_number,
-      uom_distance,
-      uom_temp,
-      uom_weight,
       organization_uuid,
       platform_name,
       max_excursion_temp: parseInt(max_excursion_temp.value, 10),
@@ -625,9 +578,6 @@ const CreateShipment = (props) => {
       gateway_ids: (editData && editData.gateway_ids) || gatewayIds,
       gateway_imei: (editData && editData.gateway_imei)
         || imei_number,
-      uom_distance,
-      uom_temp,
-      uom_weight,
       organization_uuid,
       platform_name,
       max_excursion_temp: parseInt(max_excursion_temp.value, 10),

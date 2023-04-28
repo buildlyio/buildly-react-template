@@ -18,7 +18,7 @@ import {
   ViewCompact as ViewCompactIcon,
 } from '@mui/icons-material';
 import Loader from '../../components/Loader/Loader';
-import { MapComponent } from '../../components/MapComponent/MapComponent';
+import MapComponent from '../../components/MapComponent/MapComponent';
 import ConfirmModal from '../../components/Modal/ConfirmModal';
 import CustomizedTooltips from '../../components/ToolTip/ToolTip';
 import { UserContext } from '../../context/User.context';
@@ -32,7 +32,7 @@ import {
 import {
   getItems,
   getItemType,
-  getUnitsOfMeasure,
+  getUnitOfMeasure,
 } from '../../redux/items/actions/items.actions';
 import {
   getCustodyOptions,
@@ -103,7 +103,6 @@ const Shipment = (props) => {
     dispatch,
     itemData,
     gatewayData,
-    unitsOfMeasure,
     custodyData,
     sensorData,
     aggregateReportData,
@@ -114,6 +113,7 @@ const Shipment = (props) => {
     shipmentFormData,
     contactInfo,
     allAlerts,
+    unitOfMeasure,
   } = props;
   const classes = useStyles();
 
@@ -181,9 +181,6 @@ const Shipment = (props) => {
       dispatch(getGateways(organization));
       dispatch(getGatewayType());
     }
-    if (_.isEmpty(unitsOfMeasure)) {
-      dispatch(getUnitsOfMeasure());
-    }
     if (_.isEmpty(sensorData)) {
       dispatch(getSensors(organization));
       dispatch(getSensorType());
@@ -193,6 +190,9 @@ const Shipment = (props) => {
     }
     if (_.isEmpty(custodyOptions)) {
       dispatch(getCustodyOptions());
+    }
+    if (_.isEmpty(unitOfMeasure)) {
+      dispatch(getUnitOfMeasure(organization));
     }
   }, []);
 
@@ -261,6 +261,7 @@ const Shipment = (props) => {
         allAlerts,
         contactInfo,
         timezone,
+        unitOfMeasure,
       );
 
       if (overview.length > 0) {
@@ -346,14 +347,10 @@ const Shipment = (props) => {
       max_warning_humidity: item.max_warning_humidity,
       min_warning_humidity: item.min_warning_humidity,
       route_description: item.route_description,
-      unit_of_measure: item.unit_of_measure,
       value: item.value,
       gross_weight: item.gross_weight,
       net_weight: item.net_weight,
       organization_uuid: item.organization_uuid,
-      uom_weight: item.uom_weight,
-      uom_temp: item.uom_temp,
-      uom_distance: item.uom_distance,
       items: item.items,
     };
 
@@ -450,6 +447,11 @@ const Shipment = (props) => {
             setSelectedShipment={handleShipmentSelection}
             tileView={tileView}
             timezone={timezone}
+            dateFormat={
+              _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                : ''
+            }
           />
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
@@ -510,6 +512,7 @@ const Shipment = (props) => {
         aggregateReport={(!loading && selectedShipment && selectedShipment.sensor_report) || []}
         shipmentName={selectedShipment && selectedShipment.name}
         selectedMarker={selectedShipment && selectedMarker}
+        unitOfMeasure={unitOfMeasure}
       />
       <Route
         path={`${routes.SHIPMENT}/add`}

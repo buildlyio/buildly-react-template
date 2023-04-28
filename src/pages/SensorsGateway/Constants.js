@@ -1,7 +1,7 @@
 import moment from 'moment-timezone';
 import _ from 'lodash';
 
-export const gatewayColumns = (timezone) => ([
+export const gatewayColumns = (timezone, dateFormat) => ([
   {
     name: 'name',
     label: 'Gateway Name',
@@ -77,7 +77,7 @@ export const gatewayColumns = (timezone) => ([
       filter: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? moment(value).tz(timezone).format('MM/DD/yyyy')
+          ? moment(value).tz(timezone).format(`${dateFormat}`)
           : value
       ),
     },
@@ -147,7 +147,7 @@ export const getGatewayFormattedRow = (data, gatewayTypeList, shipmentData, cust
   return data;
 };
 
-export const sensorsColumns = (timezone) => ([
+export const sensorsColumns = (timezone, dateFormat) => ([
   {
     name: 'name',
     label: 'Sensor Name',
@@ -176,7 +176,7 @@ export const sensorsColumns = (timezone) => ([
       filter: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? moment(value).tz(timezone).format('MM/DD/yyyy')
+          ? moment(value).tz(timezone).format(`${dateFormat}`)
           : value
       ),
     },

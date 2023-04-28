@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   getCustodianType,
   deleteCustodianType,
@@ -9,6 +10,8 @@ import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableW
 import { routes } from '../../../../routes/routesConstants';
 import { getColumns } from '../ConfigurationConstants';
 import AddCustodianType from '../forms/AddCustodianType';
+import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
+import { UserContext } from '@context/User.context';
 
 const CustodianType = ({
   dispatch,
@@ -17,9 +20,11 @@ const CustodianType = ({
   redirectTo,
   history,
   timezone,
+  unitOfMeasure,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   const addPath = redirectTo
     ? `${redirectTo}/custodian-type`
@@ -28,6 +33,12 @@ const CustodianType = ({
   const editPath = redirectTo
     ? `${redirectTo}/custodian-type`
     : `${routes.CONFIGURATION}/custodian-type/edit`;
+
+  useEffect(() => {
+    if (!unitOfMeasure) {
+      dispatch(getUnitOfMeasure(organization));
+    }
+  }, []);
 
   useEffect(() => {
     if (!loading && !custodianTypeList) {
@@ -64,7 +75,15 @@ const CustodianType = ({
       noSpace
       loading={loading}
       rows={custodianTypeList || []}
-      columns={getColumns(timezone)}
+      columns={getColumns(
+        timezone,
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '',
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+          : '',
+      )}
       filename="CustodianType"
       addButtonHeading="Custodian Type"
       onAddButtonClick={onAddButtonClick}
@@ -86,6 +105,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
   ...state.optionsReducer,
+  ...state.itemsReducer,
 });
 
 export default connect(mapStateToProps)(CustodianType);

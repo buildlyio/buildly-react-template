@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
@@ -12,6 +13,8 @@ import {
   getAlertsReportColumns,
   ALERTS_REPORT_TOOLTIP,
 } from '../ReportingConstants';
+import { UserContext } from '@context/User.context';
+import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,9 +42,18 @@ const AlertsReport = ({
   alerts,
   shipmentName,
   timezone,
+  dispatch,
+  unitOfMeasure,
 }) => {
   const classes = useStyles();
   const [rows, setRows] = useState([]);
+  const organization = useContext(UserContext).organization.organization_uuid;
+
+  useEffect(() => {
+    if (!unitOfMeasure) {
+      dispatch(getUnitOfMeasure(organization));
+    }
+  }, []);
 
   useEffect(() => {
     if (alerts) {
@@ -78,7 +90,15 @@ const AlertsReport = ({
           noSpace
           loading={loading}
           rows={rows}
-          columns={getAlertsReportColumns(timezone)}
+          columns={getAlertsReportColumns(
+            timezone,
+            _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+              ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+              : '',
+            _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+              ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+              : '',
+          )}
           filename="ShipmentAlerts"
           hideAddButton
         />
@@ -87,4 +107,9 @@ const AlertsReport = ({
   );
 };
 
-export default AlertsReport;
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.itemsReducer,
+});
+
+export default connect(mapStateToProps)(AlertsReport);

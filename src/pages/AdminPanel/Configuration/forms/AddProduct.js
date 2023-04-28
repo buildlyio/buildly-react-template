@@ -55,7 +55,6 @@ const AddProduct = ({
   location,
   loading,
   dispatch,
-  unitsOfMeasure,
 }) => {
   const classes = useStyles();
   const organization = useContext(UserContext).organization.organization_uuid;
@@ -81,9 +80,6 @@ const AddProduct = ({
   const grossWeight = useInput((editData && editData.gross_weight) || 0, {
     required: true,
   });
-  const unit = useInput((editData && editData.unit_of_measure) || '', {
-    required: true,
-  });
   const [formError, setFormError] = useState({});
 
   const buttonText = editPage ? 'Save' : 'Add Product';
@@ -98,7 +94,6 @@ const AddProduct = ({
       || description.hasChanged()
       || value.hasChanged()
       || grossWeight.hasChanged()
-      || unit.hasChanged()
     );
 
     if (dataHasChanged) {
@@ -132,7 +127,6 @@ const AddProduct = ({
       description: description.value,
       value: value.value,
       gross_weight: grossWeight.value,
-      unit_of_measure: unit.value,
       organization_uuid: organization,
       edit_date: currentDateTime,
     };
@@ -184,7 +178,6 @@ const AddProduct = ({
       || !description.value
       || !value.value
       || !grossWeight.value
-      || !unit.value
     ) {
       return true;
     }
@@ -299,37 +292,6 @@ const AddProduct = ({
                   onBlur={(e) => handleBlur(e, 'required', grossWeight)}
                   {...grossWeight.bind}
                 />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  required
-                  id="unit"
-                  label="Unit of Measure"
-                  select
-                  error={formError.unit && formError.unit.error}
-                  helperText={
-                    formError.unit ? formError.unit.message : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', unit)}
-                  {...unit.bind}
-                >
-                  <MenuItem value="">--------</MenuItem>
-                  {unitsOfMeasure
-                  && _.map(
-                    unitsOfMeasure,
-                    (unitVal, index) => (
-                      <MenuItem
-                        key={`unit-${index}`}
-                        value={`${unitVal.url}`}
-                      >
-                        {`${unitVal.name}`}
-                      </MenuItem>
-                    ),
-                  )}
-                </TextField>
               </Grid>
               <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={6} sm={4}>

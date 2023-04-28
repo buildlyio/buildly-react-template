@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
+import _ from 'lodash';
 import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '../../../context/User.context';
 import {
@@ -14,6 +15,7 @@ import {
 import { routes } from '../../../routes/routesConstants';
 import { sensorsColumns, getSensorFormattedRow } from '../Constants';
 import AddSensors from '../forms/AddSensors';
+import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
 
 const Sensors = ({
   dispatch,
@@ -25,6 +27,7 @@ const Sensors = ({
   gatewayData,
   sensorOptions,
   timezone,
+  unitOfMeasure,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteSensorId, setDeleteSensorId] = useState('');
@@ -46,6 +49,9 @@ const Sensors = ({
     }
     if (sensorOptions === null) {
       dispatch(getSensorOptions());
+    }
+    if (!unitOfMeasure) {
+      dispatch(getUnitOfMeasure(organization));
     }
   }, []);
 
@@ -88,7 +94,12 @@ const Sensors = ({
     <DataTableWrapper
       loading={loading}
       rows={rows || []}
-      columns={sensorsColumns(timezone)}
+      columns={sensorsColumns(
+        timezone,
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '',
+      )}
       filename="SensorData"
       addButtonHeading="Add Sensor"
       onAddButtonClick={onAddButtonClick}
@@ -111,9 +122,11 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
   ...state.optionsReducer,
+  ...state.itemsReducer,
   loading: (
     state.sensorsGatewayReducer.loading
     || state.optionsReducer.loading
+    || state.itemsReducer.loading
   ),
 });
 

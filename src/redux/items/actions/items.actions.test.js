@@ -229,55 +229,71 @@ describe('Delete Product Type action', () => {
   });
 });
 
-// Test Get Units of Measure
-describe('Get Units of Measure action', () => {
-  it('should create an action to get units of measure', () => {
+// Test Get Unit of Measure
+describe('Get Unit of Measure action', () => {
+  it('should create an action to get unit of measure for an organization', () => {
+    const organization_uuid = '58374g-ekjshfiw43-tw3iuge-3t8wyefj';
     const expectedAction = {
-      type: actions.GET_UNITS_OF_MEASURE,
+      type: actions.GET_UNIT_OF_MEASURE,
+      organization_uuid,
     };
-    expect(actions.getUnitsOfMeasure()).toEqual(expectedAction);
+    expect(actions.getUnitOfMeasure()).toEqual(expectedAction);
   });
 });
 
-// Test Add Units of Measure
-describe('Add Units of Measure action', () => {
-  it('should create an action to add units of measure', () => {
+// Test Add Unit of Measure
+describe('Add Unit of Measure action', () => {
+  it('should create an action to add unit of measure', () => {
     const payload = {
-      name: 'test unit',
+      unit_of_measure: 'Pounds',
+      unit_of_measure_for: 'Weight',
+      organization_uuid: '35t8egn-38tyw3htj-wwesh83-dsnfiu3w',
       create_date: new Date(),
       edit_date: new Date(),
     };
     const expectedAction = {
-      type: actions.ADD_UNITS_OF_MEASURE,
+      type: actions.ADD_UNIT_OF_MEASURE,
       payload,
     };
-    expect(actions.addUnitsOfMeasure(payload)).toEqual(expectedAction);
+    expect(actions.addUnitOfMeasure(payload)).toEqual(expectedAction);
   });
 });
 
-// Test Edit Units of Measure
-describe('Edit Units of Measure action', () => {
-  it('should create an action to edit units of measure', () => {
+// Test Edit Unit of Measure
+describe('Edit Unit of Measure action', () => {
+  it('should create an action to edit unit of measure', () => {
     const payload = {
-      name: 'test unit - edited',
-      edit_date: new Date(),
+      id: 1,
+      unit_of_measure: 'Kilograms',
     };
     const expectedAction = {
-      type: actions.EDIT_UNITS_OF_MEASURE,
+      type: actions.EDIT_UNIT_OF_MEASURE,
       payload,
     };
-    expect(actions.editUnitsOfMeasure(payload)).toEqual(expectedAction);
+    expect(actions.editUnitOfMeasure(payload)).toEqual(expectedAction);
   });
 });
 
-// Test Delete Units of Measure
-describe('Delete Units of Measure action', () => {
-  it('should create an action to delete units of measure', () => {
+// Test Delete Unit of Measure
+describe('Delete Unit of Measure action', () => {
+  it('should create an action to delete unit of measure', () => {
     const id = 1;
     const expectedAction = {
-      type: actions.DELETE_UNITS_OF_MEASURE,
+      type: actions.DELETE_UNIT_OF_MEASURE,
       id,
     };
-    expect(actions.deleteUnitsOfMeasure(id)).toEqual(expectedAction);
+    expect(actions.deleteUnitOfMeasure(id)).toEqual(expectedAction);
+  });
+});
+
+// Test Create Default Unit of Measure
+describe('Create Default Unit of Measure action', () => {
+  it('should create an action to create default unit of measure', () => {
+    const organization = '37r82-dsbfew8-37yrtwejf-eshf38';
+    const expectedAction = {
+      type: actions.CREATE_DEFAULT_UNITS,
+      organization,
+    };
+    expect(actions.createDefaultUnits(organization)).toEqual(expectedAction);
   });
 });

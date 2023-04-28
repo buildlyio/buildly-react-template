@@ -20,6 +20,12 @@ import {
   ADD_PDF_IDENTIFIER_SUCCESS,
   ADD_PDF_IDENTIFIER_FAILURE,
   GET_REPORT_AND_ALERTS,
+  GET_COUNTRIES_STATES,
+  GET_COUNTRIES_STATES_SUCCESS,
+  GET_COUNTRIES_STATES_FAILURE,
+  GET_CURRENCIES,
+  GET_CURRENCIES_SUCCESS,
+  GET_CURRENCIES_FAILURE,
 } from '../actions/shipment.actions';
 
 const initialState = {
@@ -28,6 +34,8 @@ const initialState = {
   error: null,
   shipmentFormData: null,
   shipmentData: null,
+  countries: null,
+  currencies: null,
 };
 
 // Reducer
@@ -201,6 +209,54 @@ export default (state = initialState, action) => {
       };
 
     case ADD_PDF_IDENTIFIER_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_COUNTRIES_STATES:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case GET_COUNTRIES_STATES_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        countries: action.countries,
+      };
+
+    case GET_COUNTRIES_STATES_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_CURRENCIES:
+      return {
+        ...state,
+        loading: true,
+        loaded: false,
+        error: null,
+      };
+
+    case GET_CURRENCIES_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        currencies: action.currencies,
+      };
+
+    case GET_CURRENCIES_FAILURE:
       return {
         ...state,
         loading: false,

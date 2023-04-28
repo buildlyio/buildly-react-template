@@ -17,6 +17,8 @@ import { UserContext } from '../../../context/User.context';
 import { editShipment } from '../../../redux/shipment/actions/shipment.actions';
 import { routes } from '../../../routes/routesConstants';
 import Loader from '@components/Loader/Loader';
+import { tempUnit } from '@pages/Reporting/ReportingConstants';
+import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
 
 const useStyles = makeStyles((theme) => ({
   slider: {
@@ -74,6 +76,7 @@ const EnvironmentalLimitsInfo = ({
   viewOnly,
   setConfirmModal,
   setConfirmModalFor,
+  unitOfMeasure,
 }) => {
   const classes = useStyles();
   const [min_temp_val, changeMinTempVal] = useState(
@@ -126,6 +129,12 @@ const EnvironmentalLimitsInfo = ({
       setShipmentMetaData(shipmentOptions.actions.POST);
     }
   }, [shipmentOptions]);
+
+  useEffect(() => {
+    if (!loading && _.isEmpty(unitOfMeasure)) {
+      dispatch(getUnitOfMeasure(organization));
+    }
+  }, [unitOfMeasure]);
 
   const handleTempMinMaxChange = (e, value) => {
     setMinMaxTempValue(value);
@@ -281,7 +290,10 @@ const EnvironmentalLimitsInfo = ({
                 className={classes.boxHeading}
                 variant="body2"
               >
-                Temperature settings (°F)
+                {`Temperature settings (${tempUnit(
+                  _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                  || '',
+                )})`}
               </Typography>
               <CardContent>
                 <Grid container spacing={2}>
@@ -404,11 +416,17 @@ const EnvironmentalLimitsInfo = ({
                       marks={[
                         {
                           value: 0,
-                          label: '0°F',
+                          label: `0${tempUnit(
+                            _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                            || '',
+                          )}`,
                         },
                         {
                           value: 100,
-                          label: '100°F',
+                          label: `100${tempUnit(
+                            _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                            || '',
+                          )}`,
                         },
                       ]}
                     />
@@ -611,10 +629,12 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.sensorsGatewayReducer,
   ...state.shipmentReducer,
   ...state.optionsReducer,
+  ...state.itemsReducer,
   loading: (
     state.sensorsGatewayReducer.loading
     || state.shipmentReducer.loading
     || state.optionsReducer.loading
+    || state.itemsReducer.loading
   ),
 });
 

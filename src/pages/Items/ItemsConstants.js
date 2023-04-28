@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment-timezone';
 import { numberWithCommas } from '../../utils/utilMethods';
 
-export const itemColumns = [
+export const itemColumns = (currUnit) => ([
   {
     name: 'name',
     label: 'Item Name',
@@ -39,7 +39,7 @@ export const itemColumns = [
       filter: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? `$${numberWithCommas(value)}`
+          ? `${numberWithCommas(value)} ${currUnit}`
           : value
       ),
     },
@@ -59,19 +59,22 @@ export const itemColumns = [
     },
   },
   {
-    name: 'unitsMeasure',
-    label: 'Units of Measure',
+    name: 'unitMeasure',
+    label: 'Unit of Measure',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
     },
   },
-];
+]);
 
-export const getItemFormattedRow = (data, itemTypeList, unitsOfMeasure) => {
+export const getItemFormattedRow = (data, itemTypeList, unitOfMeasure) => {
   if (data && itemTypeList) {
     let formattedData = [];
+    const uomw = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight')) || '';
+    const uom = uomw ? uomw.unit_of_measure : '';
+
     _.forEach(data, (element) => {
       let editedData = element;
       _.forEach(itemTypeList, (type) => {
@@ -79,19 +82,10 @@ export const getItemFormattedRow = (data, itemTypeList, unitsOfMeasure) => {
           editedData = {
             ...editedData,
             item_type_value: type.name,
+            unitMeasure: uom,
           };
         }
       });
-      if (unitsOfMeasure) {
-        _.forEach(unitsOfMeasure, (unit) => {
-          if (unit.url === element.unit_of_measure) {
-            editedData = {
-              ...editedData,
-              unitsMeasure: unit.name,
-            };
-          }
-        });
-      }
       formattedData = [...formattedData, editedData];
     });
 

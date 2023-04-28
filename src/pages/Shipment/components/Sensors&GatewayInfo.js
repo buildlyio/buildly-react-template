@@ -37,6 +37,7 @@ import { editShipment } from '../../../redux/shipment/actions/shipment.actions';
 import { routes } from '../../../routes/routesConstants';
 import { gatewayColumns, sensorsColumns } from '../ShipmentConstants';
 import Loader from '@components/Loader/Loader';
+import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
 
 const useStyles = makeStyles((theme) => ({
   buttonContainer: {
@@ -88,6 +89,7 @@ const SensorsGatewayInfo = ({
   setConfirmModalFor,
   timezone,
   shipmentOptions,
+  unitOfMeasure,
 }) => {
   const classes = useStyles();
   const [gatewayIds, setGatewayIds] = useState(
@@ -126,6 +128,12 @@ const SensorsGatewayInfo = ({
     rows = getGatewayFormattedRow(selectedRows, gatewayTypeList, shipmentData);
     sensorsRow = getSensorFormattedRow(selectedSensors, sensorTypeList);
   }
+
+  useEffect(() => {
+    if (!unitOfMeasure) {
+      dispatch(getUnitOfMeasure(organization));
+    }
+  }, []);
 
   useEffect(() => {
     const metadata = { ...fieldsMetadata };
@@ -362,7 +370,12 @@ const SensorsGatewayInfo = ({
                   <DataTableWrapper
                     loading={loading}
                     rows={rows}
-                    columns={gatewayColumns(timezone)}
+                    columns={gatewayColumns(
+                      timezone,
+                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                        ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                        : '',
+                    )}
                     hideAddButton
                     noOptionsIcon
                     noSpace
@@ -379,7 +392,12 @@ const SensorsGatewayInfo = ({
                   <DataTableWrapper
                     loading={loading}
                     rows={sensorsRow}
-                    columns={sensorsColumns(timezone)}
+                    columns={sensorsColumns(
+                      timezone,
+                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                        ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                        : '',
+                    )}
                     hideAddButton
                     noOptionsIcon
                     noSpace
@@ -449,9 +467,11 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.sensorsGatewayReducer,
   ...state.shipmentReducer,
+  ...state.itemsReducer,
   loading: (
     state.sensorsGatewayReducer.loading
     || state.shipmentReducer.loading
+    || state.itemsReducer.loading
   ),
 });
 

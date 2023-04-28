@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
+import _ from 'lodash';
 import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '../../../context/User.context';
 import {
@@ -22,6 +23,7 @@ import {
 import { routes } from '../../../routes/routesConstants';
 import { gatewayColumns, getGatewayFormattedRow } from '../Constants';
 import AddGateway from '../forms/AddGateway';
+import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
 
 const Gateway = ({
   dispatch,
@@ -35,6 +37,7 @@ const Gateway = ({
   timezone,
   custodianData,
   aggregateReportData,
+  unitOfMeasure,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteGatewayId, setDeleteGatewayId] = useState('');
@@ -66,6 +69,9 @@ const Gateway = ({
     dispatch(getCustodians(organization));
     dispatch(getCustodianType());
     dispatch(getContact(organization));
+    if (!unitOfMeasure) {
+      dispatch(getUnitOfMeasure(organization));
+    }
   }, []);
 
   useEffect(() => {
@@ -107,7 +113,12 @@ const Gateway = ({
     <DataTableWrapper
       loading={loading}
       rows={rows || []}
-      columns={gatewayColumns(timezone)}
+      columns={gatewayColumns(
+        timezone,
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '',
+      )}
       filename="GatewayData"
       addButtonHeading="Add Gateway"
       onAddButtonClick={onAddButtonClick}
@@ -132,11 +143,13 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.optionsReducer,
   ...state.shipmentReducer,
   ...state.custodianReducer,
+  ...state.itemsReducer,
   loading: (
     state.sensorsGatewayReducer.loading
     || state.optionsReducer.loading
     || state.shipmentReducer.loading
     || state.custodianReducer.loading
+    || state.itemsReducer.loading
   ),
 });
 

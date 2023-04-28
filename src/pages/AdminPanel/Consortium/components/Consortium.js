@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
 import {
   loadAllOrgs,
@@ -12,6 +13,8 @@ import {
 import { routes } from '../../../../routes/routesConstants';
 import { getConsortiumColumns } from '../ConsortiumConstant';
 import AddConsortium from '../forms/AddConsortium';
+import { UserContext } from '@context/User.context';
+import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
 
 const Consortium = ({
   dispatch,
@@ -21,9 +24,11 @@ const Consortium = ({
   redirectTo,
   timezone,
   allOrgs,
+  unitOfMeasure,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const organization = useContext(UserContext).organization.organization_uuid;
 
   const addPath = redirectTo || `${routes.CONSORTIUM}/add`;
   const editPath = redirectTo || `${routes.CONSORTIUM}/edit`;
@@ -34,6 +39,9 @@ const Consortium = ({
     }
     if (!allConsortiums) {
       dispatch(getAllConsortiums());
+    }
+    if (!unitOfMeasure) {
+      dispatch(getUnitOfMeasure(organization));
     }
   }, []);
 
@@ -66,7 +74,15 @@ const Consortium = ({
       noSpace
       loading={loading}
       rows={allConsortiums || []}
-      columns={getConsortiumColumns(timezone)}
+      columns={getConsortiumColumns(
+        timezone,
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '',
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+          : '',
+      )}
       filename="Consortiums"
       addButtonHeading="Consortium"
       onAddButtonClick={onAddButtonClick}
@@ -88,6 +104,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.consortiumReducer,
   ...state.optionsReducer,
   ...state.authReducer,
+  ...state.itemsReducer,
 });
 
 export default connect(mapStateToProps)(Consortium);

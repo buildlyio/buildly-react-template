@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import {
   getItemType,
   deleteItemType,
+  getUnitOfMeasure,
 } from '../../../../redux/items/actions/items.actions';
 import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '../../../../context/User.context';
@@ -18,6 +20,7 @@ const ItemType = ({
   redirectTo,
   history,
   timezone,
+  unitOfMeasure,
 }) => {
   const organization = useContext(UserContext).organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
@@ -30,6 +33,12 @@ const ItemType = ({
   const editPath = redirectTo
     ? `${redirectTo}/item-type`
     : `${routes.CONFIGURATION}/item-type/edit`;
+
+  useEffect(() => {
+    if (!unitOfMeasure) {
+      dispatch(getUnitOfMeasure(organization));
+    }
+  }, []);
 
   useEffect(() => {
     if (!loading && !itemTypeList) {
@@ -66,7 +75,15 @@ const ItemType = ({
       noSpace
       loading={loading}
       rows={itemTypeList || []}
-      columns={getColumns(timezone)}
+      columns={getColumns(
+        timezone,
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '',
+        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+          : '',
+      )}
       filename="ItemType"
       addButtonHeading="Item Type"
       onAddButtonClick={onAddButtonClick}
