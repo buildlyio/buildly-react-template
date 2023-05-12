@@ -51,13 +51,13 @@ describe('Update User action', () => {
       first_name: 'Test Edited',
       last_name: 'User Edited',
     };
-    const reload = false;
+    const history = {};
     const expectedAction = {
       type: actions.UPDATE_USER,
       data,
-      reload,
+      history,
     };
-    expect(actions.updateUser(data, reload)).toEqual(expectedAction);
+    expect(actions.updateUser(data, history)).toEqual(expectedAction);
   });
 });
 

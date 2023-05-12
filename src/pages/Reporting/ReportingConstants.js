@@ -524,7 +524,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure) => ([
   },
 ]);
 
-export const getAlertsReportColumns = (timezone, dateFormat, timeFormat) => ([
+export const getAlertsReportColumns = (aggregateReport, timezone, dateFormat, timeFormat) => ([
   // {
   //   name: 'id',
   //   label: 'Alert ID',
@@ -616,6 +616,28 @@ export const getAlertsReportColumns = (timezone, dateFormat, timeFormat) => ([
   //     customBodyRender: (value) => (value || '-'),
   //   },
   // },
+  {
+    name: 'create_date',
+    label: 'Occurred at',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => {
+        let location = '';
+        if (value && value !== '-') {
+          const dt = moment(value).tz(timezone).format(`${dateFormat} ${timeFormat}`);
+          const report = _.find(aggregateReport, { timestamp: dt });
+          if (report) {
+            location = report.location;
+          }
+        }
+
+        return location;
+      },
+      setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
+    },
+  },
   {
     name: 'create_date',
     label: 'Date/Time stamp',

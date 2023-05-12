@@ -560,6 +560,7 @@ const Reporting = ({
       />
       <AlertsReport
         loading={loading}
+        aggregateReport={(!loading && selectedShipment && selectedShipment.sensor_report) || []}
         alerts={_.filter(
           allAlerts,
           { shipment_id: selectedShipment && selectedShipment.partner_shipment_id },
