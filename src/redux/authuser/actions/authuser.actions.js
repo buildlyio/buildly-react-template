@@ -98,10 +98,10 @@ export const register = (data, history) => ({
  * Update user action
  * @param {{ first_name, last_name }} data
  */
-export const updateUser = (data, reload) => ({
+export const updateUser = (data, history) => ({
   type: UPDATE_USER,
   data,
-  reload,
+  history,
 });
 
 /**
