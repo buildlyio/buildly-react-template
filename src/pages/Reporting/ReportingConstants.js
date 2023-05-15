@@ -618,7 +618,7 @@ export const getAlertsReportColumns = (aggregateReport, timezone, dateFormat, ti
   // },
   {
     name: 'create_date',
-    label: 'Occurred at',
+    label: 'Location',
     options: {
       sort: true,
       sortThirdClickReset: true,
