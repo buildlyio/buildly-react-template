@@ -1,6 +1,6 @@
 {
   "name": "buildly-react-template",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Frontend Template from Buildly built using the React framework",
   "main": "src/index.js",
   "private": true,
@@ -111,7 +111,7 @@
   "scripts": {
     "build": "webpack --mode development",
     "start:local": "webpack-dev-server --mode development --env.build=local",
-    "https:local": "webpack-dev-server --https --cert ~/certs/localhost.crt --key ~/certs/localhost.key --mode development --env.build=local",
+    "https:local": "webpack-dev-server --https --cert ~/.localhost-ssl/localhost.crt --key ~/.localhost-ssl/localhost.key --mode development --env.build=local",
     "build:dev": "webpack --mode development --env.build=dev",
     "start:dev": "webpack-dev-server --mode development --env.build=dev",
     "build:prod": "webpack --mode production --env.build=prod",

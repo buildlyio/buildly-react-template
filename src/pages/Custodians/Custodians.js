@@ -14,6 +14,7 @@ import {
   getCustodianOptions,
   getContactOptions,
 } from '../../redux/options/actions/options.actions';
+import { getCountries } from '../../redux/shipment/actions/shipment.actions';
 import { routes } from '../../routes/routesConstants';
 import {
   custodianColumns,
@@ -62,6 +63,7 @@ const Custodian = ({
     if (contactOptions === null) {
       dispatch(getContactOptions());
     }
+    dispatch(getCountries());
   }, []);
 
   useEffect(() => {
