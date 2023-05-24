@@ -593,13 +593,13 @@ const AddCustodians = ({
                     >
                       <MenuItem value="">Select</MenuItem>
                       {countries && country.value && _.map(
-                        _.sortBy(_.find(countries, { country: country.value }).states),
+                        _.sortBy(_.find(countries, { iso3: country.value }).states),
                         (value, index) => (
                           <MenuItem
                             key={`custodianState${index}${value}`}
-                            value={value}
+                            value={value.state_code}
                           >
-                            {value}
+                            {value.name}
                           </MenuItem>
                         ),
                       )}
@@ -642,13 +642,13 @@ const AddCustodians = ({
                     >
                       <MenuItem value="">Select</MenuItem>
                       {countries && _.map(
-                        _.sortBy(_.map(countries, 'country')),
+                        _.sortBy(_.map(countries, (c) => _.pick(c, 'country', 'iso3'))),
                         (value, index) => (
                           <MenuItem
-                            key={`custodianCountry${index}${value}`}
-                            value={value}
+                            key={`custodianCountry${index}${value.country}`}
+                            value={value.iso3}
                           >
-                            {value}
+                            {value.country}
                           </MenuItem>
                         ),
                       )}

@@ -539,7 +539,7 @@ function* getCountries() {
             {
               country: country.name,
               iso3: country.iso3,
-              states: _.sortBy(_.without(_.uniq(_.map(country.states, 'name')), [''])),
+              states: _.sortBy(_.without(_.uniq(country.states), [''])),
             },
           ];
         }
