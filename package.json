@@ -1,6 +1,6 @@
 {
   "name": "buildly-react-template",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Frontend Template from Buildly built using the React framework",
   "main": "src/index.js",
   "private": true,

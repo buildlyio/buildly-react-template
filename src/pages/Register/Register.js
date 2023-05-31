@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment-timezone';
+import _ from 'lodash';
 import {
   Button,
   CssBaseline,
@@ -18,6 +19,7 @@ import {
   FormControlLabel,
   Checkbox,
   Autocomplete,
+  MenuItem,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import logo from '@assets/tp-logo.png';
@@ -27,8 +29,16 @@ import {
   register,
   loadOrgNames,
 } from '../../redux/authuser/actions/authuser.actions';
+import { getCountries, getCurrencies } from '../../redux/shipment/actions/shipment.actions';
 import { routes } from '../../routes/routesConstants';
 import { isMobile } from '../../utils/mediaQuery';
+import {
+  DATE_DISPLAY_CHOICES,
+  TIME_DISPLAY_CHOICES,
+  UOM_DISTANCE_CHOICES,
+  UOM_TEMPERATURE_CHOICES,
+  UOM_WEIGHT_CHOICES,
+} from '../../utils/mock';
 import { validators } from '../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
@@ -79,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Register = ({
-  dispatch, loading, history, orgNames, timezone,
+  dispatch, loading, history, orgNames, countries, currencies,
 }) => {
   const classes = useStyles();
   const email = useInput('', { required: true });
@@ -101,13 +111,40 @@ const Register = ({
     geofence: false,
     environmental: false,
   });
+  const country = useInput('United States', { required: true });
+  const currency = useInput('USD', { required: true });
+  const dateFormat = useInput('MMM DD, YYYY', { required: true });
+  const timeFormat = useInput('hh:mm:ss A', { required: true });
+  const distance = useInput('Miles', { required: true });
+  const temp = useInput('Fahrenheit', { required: true });
+  const weight = useInput('Pounds', { required: true });
+  const [countryList, setCountryList] = useState([]);
+  const [currencyList, setCurrencyList] = useState([]);
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
     if (!orgNames) {
       dispatch(loadOrgNames());
     }
+    if (!countries) {
+      dispatch(getCountries());
+    }
+    if (!currencies) {
+      dispatch(getCurrencies());
+    }
   }, []);
+
+  useEffect(() => {
+    if (!_.isEmpty(countries)) {
+      setCountryList(_.sortBy(_.without(_.uniq(_.map(countries, 'country')), [''])));
+    }
+  }, [countries]);
+
+  useEffect(() => {
+    if (!_.isEmpty(currencies)) {
+      setCurrencyList(_.sortBy(_.without(_.uniq(_.map(currencies, 'currency')), [''])));
+    }
+  }, [currencies]);
 
   /**
    * Submit the form to the backend and attempts to authenticate
@@ -126,6 +163,13 @@ const Register = ({
       push_preferences: pushOptions,
       email_preferences: emailOptions,
       user_timezone: moment.tz.guess(),
+      country: country.value,
+      currency: currency.value,
+      date_format: dateFormat.value,
+      time_format: timeFormat.value,
+      distance: distance.value,
+      temperature: temp.value,
+      weight: weight.value,
     };
     dispatch(register(registerFormValue, history));
   };
@@ -166,6 +210,9 @@ const Register = ({
       || !re_password.value
       || !organization_name.value
       || !first_name.value
+      || (organization_name.value && !_.includes(orgNames, organization_name.value)
+        && (!country.value || !currency.value || !dateFormat.value || !timeFormat.value
+          || !distance.value || !temp.value || !weight.value))
     ) {
       return true;
     }
@@ -336,6 +383,200 @@ const Register = ({
                       />
                     )}
                   />
+                </Grid>
+              </Grid>
+              <Grid
+                container
+                spacing={isMobile() ? 0 : 3}
+                style={{
+                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
+                }}
+              >
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="country"
+                    name="country"
+                    label="Default Country"
+                    autoComplete="country"
+                    value={country.value}
+                    onChange={(e) => {
+                      const curr = _.find(currencies, {
+                        country: _.find(countries, { country: e.target.value })
+                          ? _.find(countries, { country: e.target.value }).iso3
+                          : '',
+                      });
+                      currency.setValue(curr ? curr.currency : '');
+                      country.setValue(e.target.value);
+                    }}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {countryList && _.map(countryList, (cntry, index) => (
+                      <MenuItem
+                        key={`country-${index}-${cntry}`}
+                        value={cntry}
+                      >
+                        {cntry}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="currency"
+                    name="currency"
+                    label="Default Currency"
+                    autoComplete="currency"
+                    {...currency.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {currencyList && _.map(currencyList, (curr, index) => (
+                      <MenuItem
+                        key={`currency-${index}-${curr}`}
+                        value={curr}
+                      >
+                        {curr}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              </Grid>
+              <Grid
+                container
+                spacing={isMobile() ? 0 : 3}
+                style={{
+                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
+                }}
+              >
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="date-format"
+                    name="date-format"
+                    label="Default Date Format"
+                    autoComplete="date-format"
+                    {...dateFormat.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {_.map(DATE_DISPLAY_CHOICES, (date, index) => (
+                      <MenuItem
+                        key={`date-${index}-${date.label}`}
+                        value={date.value}
+                      >
+                        {date.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="time-format"
+                    name="time-format"
+                    label="Default Time Format"
+                    autoComplete="time-format"
+                    {...timeFormat.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {_.map(TIME_DISPLAY_CHOICES, (time, index) => (
+                      <MenuItem
+                        key={`time-${index}-${time.label}`}
+                        value={time.value}
+                      >
+                        {time.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              </Grid>
+              <Grid
+                container
+                spacing={isMobile() ? 0 : 3}
+                style={{
+                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
+                }}
+              >
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="distance"
+                    name="distance"
+                    label="Default Unit of Measure for Distance"
+                    autoComplete="distance"
+                    {...distance.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {_.map(UOM_DISTANCE_CHOICES, (dist, index) => (
+                      <MenuItem
+                        key={`distance-${index}-${dist}`}
+                        value={dist}
+                      >
+                        {dist}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="temp"
+                    name="temp"
+                    label="Default Unit of Measure for Temperature"
+                    autoComplete="temp"
+                    {...temp.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {_.map(UOM_TEMPERATURE_CHOICES, (tmp, index) => (
+                      <MenuItem
+                        key={`temperature-${index}-${tmp}`}
+                        value={tmp}
+                      >
+                        {tmp}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="weight"
+                    name="weight"
+                    label="Default Unit of Measure for Weight"
+                    autoComplete="weight"
+                    {...weight.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {_.map(UOM_WEIGHT_CHOICES, (wgt, index) => (
+                      <MenuItem
+                        key={`weight-${index}-${wgt}`}
+                        value={wgt}
+                      >
+                        {wgt}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
               </Grid>
               <Grid container spacing={isMobile() ? 0 : 3}>
@@ -517,6 +758,8 @@ const Register = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
+  ...state.shipmentReducer,
+  loading: state.authReducer.loading || state.shipmentReducer.loading,
 });
 
 export default connect(mapStateToProps)(Register);
