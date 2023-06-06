@@ -297,6 +297,7 @@ const Register = ({
                   />
                 </Grid>
               </Grid>
+
               <Grid container spacing={isMobile() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -348,237 +349,7 @@ const Register = ({
                   />
                 </Grid>
               </Grid>
-              <Grid container spacing={isMobile() ? 0 : 3}>
-                <Grid item xs={12}>
-                  <Autocomplete
-                    freeSolo
-                    disableClearable
-                    id="organization_name"
-                    name="organization_name"
-                    options={orgNames || []}
-                    onChange={(e, newValue) => {
-                      organization_name.setValue(newValue || '');
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        label="Organization Name"
-                        autoComplete="organization_name"
-                        error={
-                          formError.organization_name
-                          && formError.organization_name.error
-                        }
-                        helperText={
-                          formError.organization_name
-                            ? formError.organization_name.message
-                            : ''
-                        }
-                        className={classes.textField}
-                        onBlur={(e) => handleBlur(e, 'required', organization_name)}
-                        {...organization_name.bind}
-                      />
-                    )}
-                  />
-                </Grid>
-              </Grid>
-              <Grid
-                container
-                spacing={isMobile() ? 0 : 3}
-                style={{
-                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
-                }}
-              >
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    select
-                    id="country"
-                    name="country"
-                    label="Default Country"
-                    autoComplete="country"
-                    value={country.value}
-                    onChange={(e) => {
-                      const curr = _.find(currencies, {
-                        country: _.find(countries, { country: e.target.value })
-                          ? _.find(countries, { country: e.target.value }).iso3
-                          : '',
-                      });
-                      currency.setValue(curr ? curr.currency : '');
-                      country.setValue(e.target.value);
-                    }}
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {countryList && _.map(countryList, (cntry, index) => (
-                      <MenuItem
-                        key={`country-${index}-${cntry}`}
-                        value={cntry}
-                      >
-                        {cntry}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    select
-                    id="currency"
-                    name="currency"
-                    label="Default Currency"
-                    autoComplete="currency"
-                    {...currency.bind}
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {currencyList && _.map(currencyList, (curr, index) => (
-                      <MenuItem
-                        key={`currency-${index}-${curr}`}
-                        value={curr}
-                      >
-                        {curr}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-              </Grid>
-              <Grid
-                container
-                spacing={isMobile() ? 0 : 3}
-                style={{
-                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
-                }}
-              >
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    select
-                    id="date-format"
-                    name="date-format"
-                    label="Default Date Format"
-                    autoComplete="date-format"
-                    {...dateFormat.bind}
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {_.map(DATE_DISPLAY_CHOICES, (date, index) => (
-                      <MenuItem
-                        key={`date-${index}-${date.label}`}
-                        value={date.value}
-                      >
-                        {date.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    select
-                    id="time-format"
-                    name="time-format"
-                    label="Default Time Format"
-                    autoComplete="time-format"
-                    {...timeFormat.bind}
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {_.map(TIME_DISPLAY_CHOICES, (time, index) => (
-                      <MenuItem
-                        key={`time-${index}-${time.label}`}
-                        value={time.value}
-                      >
-                        {time.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-              </Grid>
-              <Grid
-                container
-                spacing={isMobile() ? 0 : 3}
-                style={{
-                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
-                }}
-              >
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    select
-                    id="distance"
-                    name="distance"
-                    label="Default Unit of Measure for Distance"
-                    autoComplete="distance"
-                    {...distance.bind}
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {_.map(UOM_DISTANCE_CHOICES, (dist, index) => (
-                      <MenuItem
-                        key={`distance-${index}-${dist}`}
-                        value={dist}
-                      >
-                        {dist}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    select
-                    id="temp"
-                    name="temp"
-                    label="Default Unit of Measure for Temperature"
-                    autoComplete="temp"
-                    {...temp.bind}
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {_.map(UOM_TEMPERATURE_CHOICES, (tmp, index) => (
-                      <MenuItem
-                        key={`temperature-${index}-${tmp}`}
-                        value={tmp}
-                      >
-                        {tmp}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    select
-                    id="weight"
-                    name="weight"
-                    label="Default Unit of Measure for Weight"
-                    autoComplete="weight"
-                    {...weight.bind}
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {_.map(UOM_WEIGHT_CHOICES, (wgt, index) => (
-                      <MenuItem
-                        key={`weight-${index}-${wgt}`}
-                        value={wgt}
-                      >
-                        {wgt}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-              </Grid>
+
               <Grid container spacing={isMobile() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -631,7 +402,251 @@ const Register = ({
                     {...re_password.bind}
                   />
                 </Grid>
+              </Grid>
 
+              <Grid container spacing={isMobile() ? 0 : 3}>
+                <Grid item xs={12}>
+                  <Autocomplete
+                    freeSolo
+                    disableClearable
+                    id="organization_name"
+                    name="organization_name"
+                    options={orgNames || []}
+                    onChange={(e, newValue) => {
+                      organization_name.setValue(newValue || '');
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Organization Name"
+                        autoComplete="organization_name"
+                        error={
+                          formError.organization_name
+                          && formError.organization_name.error
+                        }
+                        helperText={
+                          formError.organization_name
+                            ? formError.organization_name.message
+                            : ''
+                        }
+                        className={classes.textField}
+                        onBlur={(e) => handleBlur(e, 'required', organization_name)}
+                        {...organization_name.bind}
+                      />
+                    )}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid
+                container
+                spacing={isMobile() ? 0 : 3}
+                style={{
+                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
+                }}
+              >
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="country"
+                    name="country"
+                    label="Default Country"
+                    autoComplete="country"
+                    className={classes.textField}
+                    value={country.value}
+                    onChange={(e) => {
+                      const curr = _.find(currencies, {
+                        country: _.find(countries, { country: e.target.value })
+                          ? _.find(countries, { country: e.target.value }).iso3
+                          : '',
+                      });
+                      currency.setValue(curr ? curr.currency : '');
+                      country.setValue(e.target.value);
+                    }}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {countryList && _.map(countryList, (cntry, index) => (
+                      <MenuItem
+                        key={`country-${index}-${cntry}`}
+                        value={cntry}
+                      >
+                        {cntry}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="currency"
+                    name="currency"
+                    label="Default Currency"
+                    autoComplete="currency"
+                    className={classes.textField}
+                    {...currency.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {currencyList && _.map(currencyList, (curr, index) => (
+                      <MenuItem
+                        key={`currency-${index}-${curr}`}
+                        value={curr}
+                      >
+                        {curr}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              </Grid>
+
+              <Grid
+                container
+                spacing={isMobile() ? 0 : 3}
+                style={{
+                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
+                }}
+              >
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="date-format"
+                    name="date-format"
+                    label="Default Date Format"
+                    autoComplete="date-format"
+                    className={classes.textField}
+                    {...dateFormat.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {_.map(DATE_DISPLAY_CHOICES, (date, index) => (
+                      <MenuItem
+                        key={`date-${index}-${date.label}`}
+                        value={date.value}
+                      >
+                        {date.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="time-format"
+                    name="time-format"
+                    label="Default Time Format"
+                    autoComplete="time-format"
+                    className={classes.textField}
+                    {...timeFormat.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {_.map(TIME_DISPLAY_CHOICES, (time, index) => (
+                      <MenuItem
+                        key={`time-${index}-${time.label}`}
+                        value={time.value}
+                      >
+                        {time.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              </Grid>
+
+              <Grid
+                container
+                spacing={isMobile() ? 0 : 3}
+                style={{
+                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
+                }}
+              >
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="distance"
+                    name="distance"
+                    label="Default Unit of Measure for Distance"
+                    autoComplete="distance"
+                    className={classes.textField}
+                    {...distance.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {_.map(UOM_DISTANCE_CHOICES, (dist, index) => (
+                      <MenuItem
+                        key={`distance-${index}-${dist}`}
+                        value={dist}
+                      >
+                        {dist}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="temp"
+                    name="temp"
+                    label="Default Unit of Measure for Temperature"
+                    autoComplete="temp"
+                    className={classes.textField}
+                    {...temp.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {_.map(UOM_TEMPERATURE_CHOICES, (tmp, index) => (
+                      <MenuItem
+                        key={`temperature-${index}-${tmp}`}
+                        value={tmp}
+                      >
+                        {tmp}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="weight"
+                    name="weight"
+                    label="Default Unit of Measure for Weight"
+                    autoComplete="weight"
+                    className={classes.textField}
+                    {...weight.bind}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {_.map(UOM_WEIGHT_CHOICES, (wgt, index) => (
+                      <MenuItem
+                        key={`weight-${index}-${wgt}`}
+                        value={wgt}
+                      >
+                        {wgt}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={isMobile() ? 0 : 3}>
                 <Grid item xs={12}>
                   <span className={classes.alertOptionsLabel}>
                     Push Notification Preference
@@ -715,6 +730,7 @@ const Register = ({
                   </div>
                 </Grid>
               </Grid>
+
               <div className={classes.loadingWrapper}>
                 <Button
                   type="submit"
