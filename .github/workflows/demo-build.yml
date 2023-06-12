@@ -11,7 +11,7 @@ jobs:
     env:
       IMAGE_NAME: gcr.io/spry-bricolage-298920/transparent-path/demo/react-ui
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - uses: actions/setup-node@v3
@@ -19,7 +19,7 @@ jobs:
         node-version: 16
 
     - name: Docker login
-      uses: docker/login-action@v1
+      uses: docker/login-action@v2
       with:
         registry: gcr.io
         username: _json_key

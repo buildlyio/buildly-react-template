@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const numberWithCommas = (x) => {
   if (!x) return '';
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -45,4 +47,23 @@ export const setOptionsData = (options, fieldName) => {
     result = options[fieldName];
   }
   return result;
+};
+
+export const uomDistanceUpdate = (currentUom, radius) => {
+  let convertedRadius = 0;
+  switch (true) {
+    case _.toLower(currentUom) === 'kilometers':
+      convertedRadius = radius / 0.62137;
+      break;
+
+    case _.toLower(currentUom) === 'miles':
+      convertedRadius = radius * 0.62137;
+      break;
+
+    default:
+      convertedRadius = radius;
+      break;
+  }
+
+  return convertedRadius;
 };

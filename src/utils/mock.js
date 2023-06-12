@@ -1,3 +1,5 @@
+import moment from 'moment-timezone';
+
 export const RECALL_DATA = [
   {
     shipmentId: '10000',
@@ -83,10 +85,10 @@ export const CUSTODIAN_DATA = [
 export const CURRENCY_CHOICES = ['Dollar'];
 
 export const DATE_DISPLAY_CHOICES = [
-  { label: 'Mar 31, 1990', value: 'MMM DD, YYYY' },
-  { label: '31 Mar, 1990', value: 'DD MMM, YYYY' },
-  { label: '03/31/1990', value: 'MM/DD/YYYY' },
-  { label: '31/03/1990', value: 'DD/MM/YYYY' },
+  { label: moment().format('MMM DD, YYYY'), value: 'MMM DD, YYYY' },
+  { label: moment().format('DD MMM, YYYY'), value: 'DD MMM, YYYY' },
+  { label: moment().format('MM/DD/YYYY'), value: 'MM/DD/YYYY' },
+  { label: moment().format('DD/MM/YYYY'), value: 'DD/MM/YYYY' },
 ];
 
 export const TIME_DISPLAY_CHOICES = [
@@ -98,7 +100,7 @@ export const UOM_DISTANCE_CHOICES = ['Miles', 'Kilometers'];
 
 export const UOM_TEMPERATURE_CHOICES = ['Fahrenheit', 'Celsius'];
 
-export const UOM_WEIGHT_CHOICES = ['Pounds', 'Kilograms', 'Liters'];
+export const UOM_WEIGHT_CHOICES = ['Pounds', 'Kilograms'];
 
 export const ADDRESS_TYPE = [
   'home',

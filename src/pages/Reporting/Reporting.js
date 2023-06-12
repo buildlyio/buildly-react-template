@@ -535,6 +535,7 @@ const Reporting = ({
               <GraphComponent
                 data={selectedShipment[selectedGraph]}
                 selectedGraph={selectedGraph}
+                unitOfMeasure={unitOfMeasure}
               />
             )
             : (
