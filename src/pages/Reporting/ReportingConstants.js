@@ -451,7 +451,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value ? _.round(value, 2).toFixed(2) : 'N/A'),
+      customBodyRender: (value) => (value && (value > 0) ? _.round(value, 2).toFixed(2) : 'N/A'),
     },
   },
   {
@@ -525,7 +525,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure) => ([
       sortThirdClickReset: true,
       filter: true,
       display: false,
-      customBodyRender: (value) => (value ? _.round(value, 2).toFixed(2) : 'N/A'),
+      customBodyRender: (value) => (value && (value > 0) ? _.round(value, 2).toFixed(2) : 'N/A'),
     },
   },
 ]);
