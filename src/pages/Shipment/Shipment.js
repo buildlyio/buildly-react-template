@@ -513,6 +513,7 @@ const Shipment = (props) => {
         shipmentName={selectedShipment && selectedShipment.name}
         selectedMarker={selectedShipment && selectedMarker}
         unitOfMeasure={unitOfMeasure}
+        timezone={timezone}
       />
       <Route
         path={`${routes.SHIPMENT}/add`}

@@ -43,13 +43,14 @@ const SensorReport = ({
   shipmentName,
   selectedMarker,
   unitOfMeasure,
+  timezone,
 }) => {
   const classes = useStyles();
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
 
   const columns = _.map(
-    SENSOR_REPORT_COLUMNS(unitOfMeasure),
+    SENSOR_REPORT_COLUMNS(unitOfMeasure, timezone),
     (column) => ({
       ...column,
       options: {
