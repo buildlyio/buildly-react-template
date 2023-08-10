@@ -4,7 +4,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { Container } from '@mui/material';
 import { UserContext, getUser } from '@context/User.context';
 import TopBar from '@layout/TopBar/TopBar';
-import Dashboard from '@pages/Dashboard/Dashboard';
+import Roadmap from '@pages/Roadmap/Roadmap';
 import UserManagement from '@pages/UserManagement/UserManagement';
 import { routes } from '@routes/routesConstants';
 import NewProduct from '@pages/NewProduct/NewProduct';
@@ -50,10 +50,10 @@ const ContainerDashboard = ({ location, history }) => {
             <Route
               exact
               path={routes.APP}
-              render={() => <Redirect to={routes.DASHBOARD} />}
+              render={() => <Redirect to={routes.ROADMAP} />}
             />
             <Route exact path={`${routes.RELEASE}/view/:releaseID`} component={ViewRelease} />
-            <Route path={routes.DASHBOARD} component={Dashboard} />
+            <Route path={routes.ROADMAP} component={Roadmap} />
             <Route path={routes.USER_PROFILE} component={UserProfile} />
             <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
             <Route path={routes.NEW_PRODUCT} component={NewProduct} />

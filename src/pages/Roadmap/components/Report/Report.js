@@ -20,7 +20,7 @@ import microservice from '@assets/architecture-suggestions/GCP - MicroServices.p
 import monolith from '@assets/architecture-suggestions/GCP - Monolithic.png';
 import multiCloud from '@assets/architecture-suggestions/GCP - MicroServices w_ DataPipeline.png';
 import microApp from '@assets/architecture-suggestions/Digital Ocean - MicroApp w_ FrontEnd.png';
-import { addColorsAndIcons, getReleaseBudgetData } from '@pages/Dashboard/components/Report/utils';
+import { addColorsAndIcons, getReleaseBudgetData } from '@pages/Roadmap/components/Report/utils';
 
 const Report = ({ selectedProduct }) => {
   let displayReport = true;

@@ -6,15 +6,15 @@ import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { ThemeProvider, StyledEngineProvider, CssBaseline } from '@mui/material';
 import Alerts from './components/Alerts/Alerts';
 import ContainerDashboard from './layout/Container/Container';
-import { oauthService } from './modules/oauth/oauth.service';
+import { oauthService } from '@modules/oauth/oauth.service';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
 import Help from './pages/Help/Help';
 import TicketStatus from './pages/TicketStatus/TicketStatus';
-import { routes } from './routes/routesConstants';
-import { PrivateRoute } from './routes/Private.route';
+import { routes } from '@routes/routesConstants';
+import { PrivateRoute } from '@routes/Private.route';
 import theme from './styles/theme';
 import MissingData from '@pages/MissingData/MissingData';
 import Home from '@pages/Home/Home';
@@ -31,7 +31,7 @@ const App = () => (
             path="/"
             // eslint-disable-next-line no-nested-ternary
             render={() => (oauthService.hasValidAccessToken() ? (
-              <Redirect to={routes.DASHBOARD} />
+              <Redirect to={routes.ROADMAP} />
             ) : (
               window.env.PRODUCTION ? <Home /> : <Redirect to={routes.LOGIN} />
             ))}

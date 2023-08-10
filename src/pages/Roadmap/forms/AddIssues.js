@@ -23,7 +23,7 @@ import {
   updateIssue,
 } from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
-import { ISSUETYPES } from '../DashboardConstants';
+import { ISSUETYPES } from '../RoadmapConstants';
 import { routes } from '@routes/routesConstants';
 import SmartInput from '@components/SmartInput/SmartInput';
 
@@ -137,8 +137,8 @@ const AddIssues = ({
       setFormModal(false);
       if (location && location.state) {
         history.push(_.includes(location.state.from, 'kanban')
-          ? routes.DASHBOARD_KANBAN
-          : routes.DASHBOARD_TABULAR);
+          ? routes.ROADMAP_KANBAN
+          : routes.ROADMAP_TABULAR);
       }
     }
   };
@@ -147,8 +147,8 @@ const AddIssues = ({
     setConfirmModal(false);
     setFormModal(false);
     history.push(_.includes(location?.state?.from, 'kanban')
-      ? routes.DASHBOARD_KANBAN
-      : routes.DASHBOARD_TABULAR);
+      ? routes.ROADMAP_KANBAN
+      : routes.ROADMAP_TABULAR);
   };
 
   const handleSubmit = (event) => {
@@ -187,8 +187,8 @@ const AddIssues = ({
       dispatch(createIssue(formData));
     }
     history.push(_.includes(location.state.from, 'kanban')
-      ? routes.DASHBOARD_KANBAN
-      : routes.DASHBOARD_TABULAR);
+      ? routes.ROADMAP_KANBAN
+      : routes.ROADMAP_TABULAR);
   };
 
   const handleBlur = (e, validation, input, parentId) => {

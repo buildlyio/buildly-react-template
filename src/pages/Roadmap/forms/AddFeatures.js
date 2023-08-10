@@ -23,7 +23,7 @@ import SmartInput from '@components/SmartInput/SmartInput';
 import { useInput } from '@hooks/useInput';
 import { createFeature, updateFeature } from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
-import { PRIORITIES } from '../DashboardConstants';
+import { PRIORITIES } from '../RoadmapConstants';
 
 const useStyles = makeStyles((theme) => ({
   formTitle: {

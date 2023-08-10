@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   firstTimeButton: {
     marginTop: theme.spacing(2),
   },
-  dashboardRoot: {
+  roadmapRoot: {
     marginTop: theme.spacing(2),
   },
   menuRight: {
@@ -87,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Dashboard = ({
+const Roadmap = ({
   history,
   loading,
   loaded,
@@ -100,7 +100,7 @@ const Dashboard = ({
   dataSynced,
 }) => {
   const classes = useStyles();
-  const [route, setRoute] = useState(routes.DASHBOARD);
+  const [route, setRoute] = useState(routes.ROADMAP);
   const subNav = [
     {
       label: 'Tabular',
@@ -132,7 +132,7 @@ const Dashboard = ({
 
   // this will be triggered whenever the content switcher is clicked to change the view
   useEffect(() => {
-    history.push(`/app/dashboard/${view || location.state}`);
+    history.push(`/app/roadmap/${view || location.state}`);
   }, [view]);
 
   useEffect(() => {
@@ -432,11 +432,11 @@ const Dashboard = ({
       {loaded && user && user.survey_status && (
       <>
         {products && products.length ? (
-          <div className={classes.dashboardRoot}>
+          <div className={classes.roadmapRoot}>
             <Grid container mb={2} alignItems="center">
               <Grid item md={4}>
                 <Typography variant="h4">
-                  Dashboard
+                  Roadmap
                 </Typography>
               </Grid>
 
@@ -453,7 +453,7 @@ const Dashboard = ({
                   onChange={(e) => {
                     if (e.target.value === -1) {
                       history.push(routes.NEW_PRODUCT, {
-                        from: routes.DASHBOARD_TABULAR,
+                        from: routes.ROADMAP_TABULAR,
                       });
                     } else {
                       setActiveProduct(e.target.value);
@@ -563,7 +563,7 @@ const Dashboard = ({
                     submitText="Delete"
                   />
                   <Route
-                    path={routes.DASHBOARD_REPORT}
+                    path={routes.ROADMAP_REPORT}
                     render={(prps) => (
                       <Report
                         {...prps}
@@ -572,7 +572,7 @@ const Dashboard = ({
                     )}
                   />
                   <Route
-                    path={routes.DASHBOARD_TABULAR}
+                    path={routes.ROADMAP_TABULAR}
                     render={(prps) => (
                       <Tabular
                         {...prps}
@@ -593,7 +593,7 @@ const Dashboard = ({
                     )}
                   />
                   <Route
-                    path={routes.DASHBOARD_KANBAN}
+                    path={routes.ROADMAP_KANBAN}
                     render={(prps) => (
                       <Kanban
                         {...prps}
@@ -667,4 +667,4 @@ const mapStateToProps = (state, ownProps) => ({
   dataSynced: state.releaseReducer.dataSynced,
 });
 
-export default connect(mapStateToProps)(Dashboard);
+export default connect(mapStateToProps)(Roadmap);

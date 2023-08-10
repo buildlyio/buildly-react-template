@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     placeContent: 'center space-between',
     alignItems: 'center',
   },
-  dashboardHeading: {
+  roadmapHeading: {
     fontWeight: 'bold',
     marginBottom: '0.5em',
   },
@@ -225,7 +225,7 @@ const DataTableWrapper = ({
       <div>
         <section className={classes.header}>
           {tableHeader && (
-          <Typography className={classes.dashboardHeading} variant="h4">
+          <Typography className={classes.roadmapHeading} variant="h4">
             {tableHeader}
           </Typography>
           )}
