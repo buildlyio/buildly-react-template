@@ -199,7 +199,7 @@ const TopBar = ({
     pathName: [routes.ROADMAP, routes.ROADMAP_TABULAR, routes.ROADMAP_KANBAN, routes.ROADMAP_REPORT],
   },
   {
-    label: 'Products',
+    label: 'Dashboard',
     value: routes.PRODUCTS,
     pathName: [routes.PRODUCTS],
   },
