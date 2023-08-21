@@ -17,13 +17,13 @@ import {
   Logout, Person,
 } from '@mui/icons-material';
 import {
-  Avatar, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+  Avatar, Dialog, DialogActions, DialogContent, DialogTitle,
   Divider, Grid, ListItemIcon, Tooltip, Typography,
 } from '@mui/material';
 import logo from '@assets/insights-orange-white.png';
 import { UserContext } from '@context/User.context';
 import {
-  logout, loadOrgNames, loadStripeProducts, VERIFY_EMAIL_SUCCESS, getUser,
+  logout, loadOrgNames, loadStripeProducts, getUser,
 } from '@redux/authuser/actions/authuser.actions';
 import { routes } from '@routes/routesConstants';
 import { hasGlobalAdminRights, hasAdminRights } from '@utils/permissions';
@@ -194,12 +194,12 @@ const TopBar = ({
     .find((subscription) => new Date(subscription.subscription_end_date) > maxDate);
 
   const pages = [{
-    label: 'Dashboard',
-    value: routes.DASHBOARD,
-    pathName: [routes.DASHBOARD, routes.DASHBOARD_TABULAR, routes.DASHBOARD_KANBAN, routes.DASHBOARD_REPORT],
+    label: 'Roadmap',
+    value: routes.ROADMAP,
+    pathName: [routes.ROADMAP, routes.ROADMAP_TABULAR, routes.ROADMAP_KANBAN, routes.ROADMAP_REPORT],
   },
   {
-    label: 'Products',
+    label: 'Dashboard',
     value: routes.PRODUCTS,
     pathName: [routes.PRODUCTS],
   },
@@ -248,7 +248,7 @@ const TopBar = ({
   const handleOrganizationChange = (e) => {
     const organization_name = e.target.value;
     setOrganization(organization_name);
-    history.push(routes.DASHBOARD);
+    history.push(routes.ROADMAP);
   };
 
   // handleCollapseAccountMenu
@@ -376,7 +376,7 @@ const TopBar = ({
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
-        <Link to={routes.DASHBOARD}>
+        <Link to={routes.ROADMAP}>
           <img src={logo} alt="Logo" className={classes.logo} />
         </Link>
 

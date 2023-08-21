@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {
   ADD_DATA,
   ADD_DATA_SUCCESS,
@@ -33,7 +32,7 @@ function* addData(payload) {
     ];
 
     if (history) {
-      history.push(routes.DASHBOARD);
+      history.push(routes.ROADMAP);
     }
   } catch (error) {
     console.log('error', error);

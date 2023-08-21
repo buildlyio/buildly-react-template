@@ -191,7 +191,7 @@ const NewProductForm = (props) => {
   const steps = getSteps();
   const maxSteps = steps.length;
 
-  const redirectTo = (location.state && location.state.from) || routes.DASHBOARD;
+  const redirectTo = (location.state && location.state.from) || routes.ROADMAP;
   const product_uuid = location.state && location.state.product_uuid;
   const editPage = location.state && location.state.type === 'editP';
   const editData = (

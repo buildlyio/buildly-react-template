@@ -17,6 +17,7 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   MoreVert as MoreVertIcon,
+  Dashboard as DashboardIcon,
 } from '@mui/icons-material';
 import Loader from '@components/Loader/Loader';
 import ConfirmModal from '@components/Modal/ConfirmModal';
@@ -28,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     placeContent: 'center space-between',
     alignItems: 'center',
   },
-  dashboardHeading: {
+  roadmapHeading: {
     fontWeight: 'bold',
     marginBottom: '0.5em',
   },
@@ -52,6 +53,7 @@ const DataTableWrapper = ({
   onAddButtonClick,
   children,
   editAction,
+  roadmapAction,
   menuActions,
   deleteAction,
   openDeleteModal,
@@ -91,7 +93,7 @@ const DataTableWrapper = ({
     ...columns,
   ];
 
-  if (editAction || deleteAction || menuActions) {
+  if (editAction || deleteAction || menuActions || roadmapAction) {
     finalColumns = [
       ...finalColumns,
       {
@@ -154,6 +156,16 @@ const DataTableWrapper = ({
                       </ListItemIcon>
                       Edit
                     </MenuItem>
+                  )
+                }
+                {
+                  roadmapAction && (
+                  <MenuItem onClick={(e) => roadmapAction(rows[menuIndex])}>
+                    <ListItemIcon>
+                      <DashboardIcon fontSize="small" />
+                    </ListItemIcon>
+                    Roadmap
+                  </MenuItem>
                   )
                 }
                 { menuActions }
@@ -225,7 +237,7 @@ const DataTableWrapper = ({
       <div>
         <section className={classes.header}>
           {tableHeader && (
-          <Typography className={classes.dashboardHeading} variant="h4">
+          <Typography className={classes.roadmapHeading} variant="h4">
             {tableHeader}
           </Typography>
           )}

@@ -16,7 +16,7 @@ import {
 import FormModal from '@components/Modal/FormModal';
 import Loader from '@components/Loader/Loader';
 import { createBoard } from '@redux/product/actions/product.actions';
-import { STATUSTYPES } from '../DashboardConstants';
+import { STATUSTYPES } from '../RoadmapConstants';
 
 const useStyles = makeStyles((theme) => ({
   form: {

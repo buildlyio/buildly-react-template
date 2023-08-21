@@ -71,6 +71,11 @@ const Products = ({
     });
   };
 
+  const viewProductRoadmap = (item) => {
+    localStorage.setItem('activeProduct', item.product_uuid);
+    history.push(routes.ROADMAP_REPORT);
+  };
+
   return (
     <div className={classes.root}>
       <DataTableWrapper
@@ -81,12 +86,13 @@ const Products = ({
         addButtonHeading="Add Product"
         onAddButtonClick={onAddButtonClick}
         editAction={editProduct}
+        roadmapAction={viewProductRoadmap}
         deleteAction={deleteProduct}
         openDeleteModal={openConfirmModal}
         setDeleteModal={setConfirmModal}
         handleDeleteModal={handleConfirmModal}
         deleteModalTitle="Are you sure you want to delete this product?"
-        tableHeader="Products"
+        tableHeader="Dashboard"
         menuIndex={menuIndex}
         setMenuIndex={setMenuIndex}
       >
