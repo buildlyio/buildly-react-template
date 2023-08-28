@@ -22,6 +22,11 @@ import multiCloud from '@assets/architecture-suggestions/GCP - MicroServices w_ 
 import microApp from '@assets/architecture-suggestions/Digital Ocean - MicroApp w_ FrontEnd.png';
 import { addColorsAndIcons, getReleaseBudgetData } from '@pages/Roadmap/components/Report/utils';
 
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+
 const Report = ({ selectedProduct }) => {
   let displayReport = true;
   // states
@@ -119,22 +124,49 @@ const Report = ({ selectedProduct }) => {
         window.URL.revokeObjectURL(url);
         a.remove();
       });
+
+    closeDownloadMenu();
+  };
+
+  // Dropdown menu
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const expandDownloadMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const closeDownloadMenu = () => {
+    setAnchorEl(null);
   };
 
   if (selectedProduct && displayReport) {
     return (
       <>
-        <div className="row text-right m-2">
-          <div className="col-3 offset-9">
-            {/* eslint-disable-next-line react/button-has-type */}
-            <button
-              onClick={getPdf}
+        <div className="row mb-3">
+          <section className="text-end">
+            <Button
+              aria-controls={open ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
               className="btn btn-small btn-primary"
+              endIcon={<KeyboardArrowDownIcon />}
+              onClick={expandDownloadMenu}
             >
-              Download PDF
-            </button>
-          </div>
+              Dashboard PDF
+            </Button>
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={closeDownloadMenu}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              <MenuItem onClick={getPdf}>Download Report</MenuItem>
+              {/* <MenuItem onClick={closeDownloadMenu}>Email report</MenuItem> */}
+            </Menu>
+          </section>
         </div>
+
         <div className="row">
           <div className="col-md-7">
             <Card className="w-100">
