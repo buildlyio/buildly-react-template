@@ -2,15 +2,15 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../../context/User.context';
 import {
   getItemType,
   deleteItemType,
   getUnitOfMeasure,
 } from '../../../../redux/items/actions/items.actions';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '../../../../context/User.context';
 import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../ConfigurationConstants';
+import { getColumns } from '../../../../utils/constants';
 import AddItemType from '../forms/AddItemType';
 
 const ItemType = ({
@@ -35,16 +35,13 @@ const ItemType = ({
     : `${routes.CONFIGURATION}/item-type/edit`;
 
   useEffect(() => {
-    if (!unitOfMeasure) {
+    if (_.isEmpty(unitOfMeasure)) {
       dispatch(getUnitOfMeasure(organization));
     }
-  }, []);
-
-  useEffect(() => {
-    if (!loading && !itemTypeList) {
+    if (_.isEmpty(itemTypeList)) {
       dispatch(getItemType(organization));
     }
-  }, [itemTypeList]);
+  }, []);
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {

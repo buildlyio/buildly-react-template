@@ -1,18 +1,20 @@
 import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
-import { httpService } from '@modules/http/http.service';
-import { showAlert } from '@redux/alert/actions/alert.actions';
+import { httpService } from '../../../modules/http/http.service';
+import { showAlert } from '../../alert/actions/alert.actions';
 import {
-  getItems,
   GET_ITEMS,
   GET_ITEMS_SUCCESS,
   GET_ITEMS_FAILURE,
   ADD_ITEMS,
+  ADD_ITEMS_SUCCESS,
   ADD_ITEMS_FAILURE,
   EDIT_ITEMS,
+  EDIT_ITEMS_SUCCESS,
   EDIT_ITEMS_FAILURE,
   DELETE_ITEMS,
+  DELETE_ITEMS_SUCCESS,
   DELETE_ITEMS_FAILURE,
   GET_ITEMS_TYPE,
   GET_ITEMS_TYPE_SUCCESS,
@@ -63,6 +65,7 @@ import {
   DELETE_UNIT_OF_MEASURE_SUCCESS,
   DELETE_UNIT_OF_MEASURE_FAILURE,
   CREATE_DEFAULT_UNITS,
+  CREATE_DEFAULT_UNITS_SUCCESS,
   CREATE_DEFAULT_UNITS_FAILURE,
 } from '../actions/items.actions';
 
@@ -82,7 +85,7 @@ function* getItemsList(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t load data due to some error!',
+          message: 'Couldn\'t load items due to some error!',
         }),
       ),
       yield put({
@@ -103,12 +106,12 @@ function* addItem(action) {
       payload,
     );
     yield [
-      yield put(getItems(payload.organization_uuid)),
+      yield put({ type: ADD_ITEMS_SUCCESS, item: data.data }),
       yield put(
         showAlert({
           type: 'success',
           open: true,
-          message: 'Successfully Added Item',
+          message: 'Successfully added item',
         }),
       ),
     ];
@@ -121,7 +124,7 @@ function* addItem(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Error in creating Item',
+          message: 'Error in creating item',
         }),
       ),
       yield put({
@@ -137,17 +140,17 @@ function* editItem(action) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      'put',
+      'patch',
       `${window.env.API_URL}${shipmentApiEndPoint}item/${payload.id}/`,
       payload,
     );
     yield [
-      yield put(getItems(payload.organization_uuid)),
+      yield put({ type: EDIT_ITEMS_SUCCESS, item: data.data }),
       yield put(
         showAlert({
           type: 'success',
           open: true,
-          message: 'Item successfully Edited!',
+          message: 'Item successfully edited!',
         }),
       ),
     ];
@@ -160,7 +163,7 @@ function* editItem(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t edit Item!',
+          message: 'Couldn\'t edit item!',
         }),
       ),
       yield put({
@@ -172,7 +175,7 @@ function* editItem(action) {
 }
 
 function* deleteItem(payload) {
-  const { itemId, organization_uuid } = payload;
+  const { itemId } = payload;
   try {
     yield call(
       httpService.makeRequest,
@@ -180,7 +183,7 @@ function* deleteItem(payload) {
       `${window.env.API_URL}${shipmentApiEndPoint}item/${itemId}/`,
     );
     yield [
-      yield put(getItems(organization_uuid)),
+      yield put({ type: DELETE_ITEMS_SUCCESS, id: itemId }),
       yield put(
         showAlert({
           type: 'success',
@@ -196,7 +199,7 @@ function* deleteItem(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Error in deleting Item!',
+          message: 'Error in deleting item!',
         }),
       ),
       yield put({
@@ -224,7 +227,7 @@ function* getItemType(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t load data due to some error!',
+          message: 'Couldn\'t load item types due to some error!',
         }),
       ),
       yield put({
@@ -254,7 +257,7 @@ function* addItemType(action) {
           showAlert({
             type: 'success',
             open: true,
-            message: 'Successfully Added Item Type',
+            message: 'Successfully added item type',
           }),
         ),
       ];
@@ -265,7 +268,7 @@ function* addItemType(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Add Item Type due to some error!',
+          message: 'Couldn\'t add item type due to some error!',
         }),
       ),
       yield put({
@@ -281,7 +284,7 @@ function* editItemType(action) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      'put',
+      'patch',
       `${window.env.API_URL}${shipmentApiEndPoint}item_type/${payload.id}`,
       payload,
     );
@@ -295,7 +298,7 @@ function* editItemType(action) {
           showAlert({
             type: 'success',
             open: true,
-            message: 'Successfully Edited Item Type',
+            message: 'Successfully edited item type',
           }),
         ),
       ];
@@ -306,7 +309,7 @@ function* editItemType(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Edit Item Type due to some error!',
+          message: 'Couldn\'t edit item type due to some error!',
         }),
       ),
       yield put({
@@ -327,13 +330,13 @@ function* deleteItemType(payload) {
     yield [
       yield put({
         type: DELETE_ITEMS_TYPE_SUCCESS,
-        itemType: { id: payload.id },
+        id: payload.id,
       }),
       yield put(
         showAlert({
           type: 'success',
           open: true,
-          message: 'Successfully Deleted Item Type',
+          message: 'Successfully deleted item type',
         }),
       ),
     ];
@@ -343,7 +346,7 @@ function* deleteItemType(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Delete Item Type due to some error!',
+          message: 'Couldn\'t delete item type due to some error!',
         }),
       ),
       yield put({
@@ -368,7 +371,7 @@ function* getProductList(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t load data due to some error!',
+          message: 'Couldn\'t load products due to some error!',
         }),
       ),
       yield put({
@@ -398,7 +401,7 @@ function* addProducts(action) {
           showAlert({
             type: 'success',
             open: true,
-            message: 'Successfully Added Product',
+            message: 'Successfully added product',
           }),
         ),
       ];
@@ -409,7 +412,7 @@ function* addProducts(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Add Product due to some error!',
+          message: 'Couldn\'t add product due to some error!',
         }),
       ),
       yield put({
@@ -425,7 +428,7 @@ function* editProducts(action) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      'put',
+      'patch',
       `${window.env.API_URL}${shipmentApiEndPoint}product/${payload.id}`,
       payload,
     );
@@ -439,7 +442,7 @@ function* editProducts(action) {
           showAlert({
             type: 'success',
             open: true,
-            message: 'Successfully Edited Product',
+            message: 'Successfully edited product',
           }),
         ),
       ];
@@ -450,7 +453,7 @@ function* editProducts(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Edit Product due to some error!',
+          message: 'Couldn\'t edit product due to some error!',
         }),
       ),
       yield put({
@@ -471,13 +474,13 @@ function* deleteProducts(payload) {
     yield [
       yield put({
         type: DELETE_PRODUCTS_SUCCESS,
-        product: { id: payload.id },
+        id: payload.id,
       }),
       yield put(
         showAlert({
           type: 'success',
           open: true,
-          message: 'Successfully Deleted Product',
+          message: 'Successfully deleted product',
         }),
       ),
     ];
@@ -487,7 +490,7 @@ function* deleteProducts(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Delete Product due to some error!',
+          message: 'Couldn\'t delete product due to some error!',
         }),
       ),
       yield put({
@@ -512,7 +515,7 @@ function* getProductTypeList(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t load data due to some error!',
+          message: 'Couldn\'t load product types due to some error!',
         }),
       ),
       yield put({
@@ -542,7 +545,7 @@ function* addProductType(action) {
           showAlert({
             type: 'success',
             open: true,
-            message: 'Successfully Added Product Type',
+            message: 'Successfully added product type',
           }),
         ),
       ];
@@ -553,7 +556,7 @@ function* addProductType(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Add Product Type due to some error!',
+          message: 'Couldn\'t add product type due to some error!',
         }),
       ),
       yield put({
@@ -569,7 +572,7 @@ function* editProductType(action) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      'put',
+      'patch',
       `${window.env.API_URL}${shipmentApiEndPoint}product_type/${payload.id}`,
       payload,
     );
@@ -583,7 +586,7 @@ function* editProductType(action) {
           showAlert({
             type: 'success',
             open: true,
-            message: 'Successfully Edited Product Type',
+            message: 'Successfully edited product type',
           }),
         ),
       ];
@@ -594,7 +597,7 @@ function* editProductType(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Edit Product Type due to some error!',
+          message: 'Couldn\'t edit product type due to some error!',
         }),
       ),
       yield put({
@@ -615,13 +618,13 @@ function* deleteProductType(payload) {
     yield [
       yield put({
         type: DELETE_PRODUCTS_TYPE_SUCCESS,
-        productType: { id: payload.id },
+        id: payload.id,
       }),
       yield put(
         showAlert({
           type: 'success',
           open: true,
-          message: 'Successfully Deleted Product Type',
+          message: 'Successfully deleted product type',
         }),
       ),
     ];
@@ -631,7 +634,7 @@ function* deleteProductType(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Delete Product Type due to some error!',
+          message: 'Couldn\'t delete product type due to some error!',
         }),
       ),
       yield put({
@@ -659,7 +662,7 @@ function* getUnit(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t load data due to some error!',
+          message: 'Couldn\'t load unit of measurements due to some error!',
         }),
       ),
       yield put({
@@ -689,7 +692,7 @@ function* addUnitOfMeasure(action) {
           showAlert({
             type: 'success',
             open: true,
-            message: 'Successfully Added Unit of Measure',
+            message: 'Successfully added unit of measure',
           }),
         ),
       ];
@@ -700,7 +703,7 @@ function* addUnitOfMeasure(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Add Unit of Measure due to some error!',
+          message: 'Couldn\'t add unit of measure due to some error!',
         }),
       ),
       yield put({
@@ -716,7 +719,7 @@ function* editUnitOfMeasure(action) {
   try {
     const data = yield call(
       httpService.makeRequest,
-      'put',
+      'patch',
       `${window.env.API_URL}${shipmentApiEndPoint}unit_of_measure/${payload.id}`,
       payload,
     );
@@ -730,7 +733,7 @@ function* editUnitOfMeasure(action) {
           showAlert({
             type: 'success',
             open: true,
-            message: 'Successfully Edited Unit of Measure',
+            message: 'Successfully edited unit of measure',
           }),
         ),
       ];
@@ -741,7 +744,7 @@ function* editUnitOfMeasure(action) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Edit Unit of Measure due to some error!',
+          message: 'Couldn\'t edit unit of measure due to some error!',
         }),
       ),
       yield put({
@@ -762,13 +765,13 @@ function* deleteUnitOfMeasure(payload) {
     yield [
       yield put({
         type: DELETE_UNIT_OF_MEASURE_SUCCESS,
-        unitOfMeasure: { id: payload.id },
+        id: payload.id,
       }),
       yield put(
         showAlert({
           type: 'success',
           open: true,
-          message: 'Successfully Deleted Unit of Measure',
+          message: 'Successfully deleted unit of measure',
         }),
       ),
     ];
@@ -778,7 +781,7 @@ function* deleteUnitOfMeasure(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Delete Unit of Measure due to some error!',
+          message: 'Couldn\'t delete unit of measure due to some error!',
         }),
       ),
       yield put({
@@ -797,13 +800,14 @@ function* createDefaultUnits(payload) {
       `${window.env.API_URL}${shipmentApiEndPoint}create_default_unit_of_measures/`,
       { organization: payload.organization },
     );
+    yield put({ type: CREATE_DEFAULT_UNITS_SUCCESS, units: data.data });
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t Create Default Unit of Measures due to some error!',
+          message: 'Couldn\'t create default unit of measures due to some error!',
         }),
       ),
       yield put({

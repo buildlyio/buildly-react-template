@@ -37,10 +37,6 @@ export const GET_GATEWAY_OPTIONS = 'OPTIONS/GET_GATEWAY_OPTIONS';
 export const GET_GATEWAY_OPTIONS_SUCCESS = 'OPTIONS/GET_GATEWAY_OPTIONS_SUCCESS';
 export const GET_GATEWAY_OPTIONS_FAILURE = 'OPTIONS/GET_GATEWAY_OPTIONS_FAILURE';
 
-export const GET_SENSOR_OPTIONS = 'OPTIONS/GET_SENSOR_OPTIONS';
-export const GET_SENSOR_OPTIONS_SUCCESS = 'OPTIONS/GET_SENSOR_OPTIONS_SUCCESS';
-export const GET_SENSOR_OPTIONS_FAILURE = 'OPTIONS/GET_SENSOR_OPTIONS_FAILURE';
-
 export const GET_SHIPMENT_OPTIONS = 'ITEMS/GET_SHIPMENT_OPTIONS';
 export const GET_SHIPMENT_OPTIONS_SUCCESS = 'ITEMS/GET_SHIPMENT_OPTIONS_SUCCESS';
 export const GET_SHIPMENT_OPTIONS_FAILURE = 'ITEMS/GET_SHIPMENT_OPTIONS_FAILURE';
@@ -198,24 +194,6 @@ export const getGatewayOptions = () => (dispatch) => {
     })
     .catch((error) => {
       dispatch({ type: GET_GATEWAY_OPTIONS_FAILURE, error });
-    });
-};
-
-// Sensor Options call
-export const getSensorOptions = () => (dispatch) => {
-  dispatch({ type: GET_SENSOR_OPTIONS });
-  httpService
-    .makeOptionsRequest(
-      'options',
-      `${window.env.API_URL}sensors/sensor/`,
-      true,
-    )
-    .then((response) => response.json())
-    .then((res) => {
-      dispatch({ type: GET_SENSOR_OPTIONS_SUCCESS, data: res });
-    })
-    .catch((error) => {
-      dispatch({ type: GET_SENSOR_OPTIONS_FAILURE, error });
     });
 };
 

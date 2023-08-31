@@ -2,15 +2,15 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../../context/User.context';
 import {
   getProductType,
   deleteProductType,
   getUnitOfMeasure,
 } from '../../../../redux/items/actions/items.actions';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '../../../../context/User.context';
 import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../ConfigurationConstants';
+import { getColumns } from '../../../../utils/constants';
 import AddProductType from '../forms/AddProductType';
 
 const ProductType = ({
@@ -35,16 +35,13 @@ const ProductType = ({
     : `${routes.CONFIGURATION}/product-type/edit`;
 
   useEffect(() => {
-    if (!unitOfMeasure) {
+    if (_.isEmpty(unitOfMeasure)) {
       dispatch(getUnitOfMeasure(organization));
     }
-  }, []);
-
-  useEffect(() => {
-    if (!loading && !productType) {
+    if (_.isEmpty(productType)) {
       dispatch(getProductType(organization));
     }
-  }, [productType]);
+  }, []);
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {

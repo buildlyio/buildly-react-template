@@ -5,7 +5,6 @@ import moment from 'moment-timezone';
 import {
   Button,
   TextField,
-  CircularProgress,
   Typography,
   Grid,
   useMediaQuery,
@@ -13,6 +12,7 @@ import {
   Checkbox,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import Loader from '../../../components/Loader/Loader';
 import FormModal from '../../../components/Modal/FormModal';
 import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
 import { useInput } from '../../../hooks/useInput';
@@ -39,9 +39,6 @@ const useStyles = makeStyles((theme) => ({
     left: '50%',
     marginTop: -12,
     marginLeft: -12,
-  },
-  loadingWrapper: {
-    position: 'relative',
   },
   formTitle: {
     fontWeight: 'bold',
@@ -260,6 +257,7 @@ const EditProfileInfo = ({
       setConfirmModal={setConfirmModal}
       handleConfirmModal={discardFormData}
     >
+      {loading && <Loader open={loading} />}
       <form
         className={classes.form}
         noValidate
@@ -479,30 +477,22 @@ const EditProfileInfo = ({
           justifyContent="center"
         >
           <Grid item xs={12} sm={4}>
-            <div className={classes.loadingWrapper}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                disabled={loading || submitDisabled()}
-              >
-                Save
-              </Button>
-              {loading && (
-                <CircularProgress
-                  size={24}
-                  className={classes.buttonProgress}
-                />
-              )}
-            </div>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              disabled={loading || submitDisabled()}
+            >
+              Save
+            </Button>
           </Grid>
           <Grid item xs={12} sm={4}>
             <Button
               type="button"
               fullWidth
-              variant="contained"
+              variant="outlined"
               color="primary"
               onClick={discardFormData}
               className={classes.submit}

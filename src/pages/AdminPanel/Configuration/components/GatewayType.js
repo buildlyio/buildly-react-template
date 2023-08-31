@@ -2,16 +2,16 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { getUnitOfMeasure } from '../../../../redux/items/actions/items.actions';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../../context/User.context';
 import {
   getGatewayType,
   deleteGatewayType,
 } from '../../../../redux/sensorsGateway/actions/sensorsGateway.actions';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
 import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../ConfigurationConstants';
+import { getColumns } from '../../../../utils/constants';
 import AddGatewayType from '../forms/AddGatewayType';
-import { UserContext } from '@context/User.context';
-import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
 
 const GatewayType = ({
   dispatch,
@@ -35,16 +35,13 @@ const GatewayType = ({
     : `${routes.CONFIGURATION}/gateway-type/edit`;
 
   useEffect(() => {
-    if (!unitOfMeasure) {
+    if (_.isEmpty(unitOfMeasure)) {
       dispatch(getUnitOfMeasure(organization));
     }
-  }, []);
-
-  useEffect(() => {
-    if (!loading && !gatewayTypeList) {
+    if (_.isEmpty(gatewayTypeList)) {
       dispatch(getGatewayType());
     }
-  }, [gatewayTypeList]);
+  }, []);
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {

@@ -1,8 +1,8 @@
 import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
-import { httpService } from '@modules/http/http.service';
-import { showAlert } from '@redux/alert/actions/alert.actions';
+import { httpService } from '../../../modules/http/http.service';
+import { showAlert } from '../../alert/actions/alert.actions';
 import {
   GET_ALL_CONSORTIUMS,
   GET_ALL_CONSORTIUMS_SUCCESS,
@@ -19,7 +19,7 @@ import {
   DELETE_CONSORTIUM,
   DELETE_CONSORTIUM_SUCCESS,
   DELETE_CONSORTIUM_FAILURE,
-} from '@redux/consortium/actions/consortium.actions';
+} from '../actions/consortium.actions';
 
 function* getAllConsortiums() {
   try {

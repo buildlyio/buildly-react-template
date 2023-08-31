@@ -22,26 +22,29 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '0.5em',
   },
   iconButton: {
-    padding: theme.spacing(1.5, 0.5),
-    color: theme.palette.secondary.main,
+    padding: 0,
+    color: theme.palette.primary.dark,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.light,
+    },
   },
   dataTableBody: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.background.dark,
-    },
-    '&:nth-of-type(even)': {
-      backgroundColor: theme.palette.background.dark,
-    },
     '&:hover': {
-      backgroundColor: '#000 !important',
+      backgroundColor: 'none',
     },
   },
   dataTable: {
-    '& .MuiPaper-root': {
-      backgroundColor: theme.palette.background.dark,
+    '& .MuiPaper-root > .MuiToolbar-root': {
+      backgroundColor: theme.palette.primary.dark,
+      '& .MuiSvgIcon-root': {
+        fill: theme.palette.background.default,
+      },
     },
     '& tr > th': {
-      backgroundColor: theme.palette.background.dark,
+      backgroundColor: theme.palette.primary.light,
+    },
+    '& .MuiTableFooter-root': {
+      backgroundColor: theme.palette.primary.light,
     },
   },
 }));
@@ -66,9 +69,11 @@ const DataTableWrapper = ({
   selectable,
   selected,
   customSort,
-  noCustomTheme,
+  customTheme,
   noSpace,
   noOptionsIcon,
+  centerLabel,
+  extraOptions,
 }) => {
   const classes = useStyles();
 
@@ -82,6 +87,7 @@ const DataTableWrapper = ({
           filter: false,
           sort: false,
           empty: true,
+          setCellHeaderProps: () => ({ style: { textAlign: centerLabel ? 'center' : 'start' } }),
           customBodyRenderLite: (dataIndex) => (
             <IconButton
               className={classes.iconButton}
@@ -105,6 +111,7 @@ const DataTableWrapper = ({
           empty: true,
           customBodyRenderLite: (dataIndex) => (
             <IconButton
+              className={classes.iconButton}
               onClick={() => deleteAction(rows[dataIndex])}
             >
               <DeleteIcon />
@@ -160,10 +167,11 @@ const DataTableWrapper = ({
         noMatch: 'No data to display',
       },
     },
-    setRowProps: (row, dataIndex, rowIndex) => !noCustomTheme && ({
+    setRowProps: (row, dataIndex, rowIndex) => !customTheme && ({
       className: classes.dataTableBody,
     }),
     customSort,
+    ...extraOptions,
   };
 
   return (
@@ -192,7 +200,7 @@ const DataTableWrapper = ({
           </Typography>
         )}
         <Grid
-          className={`${!noCustomTheme && classes.dataTable}`}
+          className={`${!customTheme && classes.dataTable}`}
           container
           spacing={2}
         >

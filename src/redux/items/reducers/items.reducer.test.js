@@ -5,11 +5,11 @@ const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  itemData: null,
-  itemTypeList: null,
-  products: null,
-  productType: null,
-  unitOfMeasure: null,
+  itemData: [],
+  itemTypeList: [],
+  products: [],
+  productType: [],
+  unitOfMeasure: [],
 };
 
 describe('Get Item reducer', () => {
@@ -26,12 +26,12 @@ describe('Get Item reducer', () => {
   it('get Item success Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_ITEMS_SUCCESS },
+      { type: actions.GET_ITEMS_SUCCESS, data: [] },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      itemData: undefined,
+      itemData: [],
     });
   });
 
@@ -60,14 +60,15 @@ describe('Add Item reducer', () => {
   });
 
   it('Add Item success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
     expect(reducer.default(
       initialState,
-      { type: actions.ADD_ITEMS_SUCCESS },
+      { type: actions.ADD_ITEMS_SUCCESS, item: data },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      itemData: undefined,
+      itemData: [data],
     });
   });
 
@@ -96,14 +97,16 @@ describe('Edit Item reducer', () => {
   });
 
   it('Edit Custodian success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
+    const editedData = { id: 1, name: 'Test data edited' };
     expect(reducer.default(
-      initialState,
-      { type: actions.EDIT_ITEMS_SUCCESS },
+      { ...initialState, itemData: [data] },
+      { type: actions.EDIT_ITEMS_SUCCESS, item: editedData },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      itemData: undefined,
+      itemData: [editedData],
     });
   });
 
@@ -132,14 +135,15 @@ describe('Delete Item reducer', () => {
   });
 
   it('Delete Item success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
     expect(reducer.default(
-      initialState,
-      { type: actions.DELETE_ITEMS_SUCCESS },
+      { ...initialState, itemData: [data] },
+      { type: actions.DELETE_ITEMS_SUCCESS, id: data.id },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      itemData: undefined,
+      itemData: [],
     });
   });
 
@@ -170,12 +174,12 @@ describe('Get Item type reducer', () => {
   it('Get Item type success Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_ITEMS_TYPE_SUCCESS },
+      { type: actions.GET_ITEMS_TYPE_SUCCESS, data: [] },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      itemTypeList: undefined,
+      itemTypeList: [],
     });
   });
 
@@ -204,17 +208,15 @@ describe('Add Item type reducer', () => {
   });
 
   it('Add Item type success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
     expect(reducer.default(
-      {
-        ...initialState,
-        itemTypeList: [],
-      },
-      { type: actions.ADD_ITEMS_TYPE_SUCCESS },
+      initialState,
+      { type: actions.ADD_ITEMS_TYPE_SUCCESS, itemType: data },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      itemTypeList: [undefined],
+      itemTypeList: [data],
     });
   });
 
@@ -243,17 +245,19 @@ describe('Edit Item type reducer', () => {
   });
 
   it('Edit Item type success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
+    const editedData = { id: 1, name: 'Test data edited' };
     expect(reducer.default(
       {
         ...initialState,
-        itemTypeList: [],
+        itemTypeList: [data],
       },
-      { type: actions.EDIT_ITEMS_TYPE_SUCCESS },
+      { type: actions.EDIT_ITEMS_TYPE_SUCCESS, itemType: editedData },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      itemTypeList: [],
+      itemTypeList: [editedData],
     });
   });
 
@@ -282,14 +286,15 @@ describe('Delete Item type reducer', () => {
   });
 
   it('Delete Item type success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
     expect(reducer.default(
-      initialState,
-      { type: actions.DELETE_ITEMS_TYPE_SUCCESS },
+      { ...initialState, itemTypeList: [data] },
+      { type: actions.DELETE_ITEMS_TYPE_SUCCESS, id: data.id },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      itemTypeList: undefined,
+      itemTypeList: [],
     });
   });
 
@@ -320,12 +325,12 @@ describe('Get Products reducer', () => {
   it('Get Products success Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_PRODUCTS_SUCCESS },
+      { type: actions.GET_PRODUCTS_SUCCESS, data: [] },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      products: undefined,
+      products: [],
     });
   });
 
@@ -354,17 +359,16 @@ describe('Add Products reducer', () => {
   });
 
   it('Add Products success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
+    const editedData = { id: 1, name: 'Test data edited' };
     expect(reducer.default(
-      {
-        ...initialState,
-        products: [],
-      },
-      { type: actions.ADD_PRODUCTS_SUCCESS },
+      initialState,
+      { type: actions.ADD_PRODUCTS_SUCCESS, product: data },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      products: [undefined],
+      products: [data],
     });
   });
 
@@ -393,17 +397,19 @@ describe('Edit Products reducer', () => {
   });
 
   it('Edit Products success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
+    const editedData = { id: 1, name: 'Test data edited' };
     expect(reducer.default(
       {
         ...initialState,
-        products: [],
+        products: [data],
       },
-      { type: actions.EDIT_PRODUCTS_SUCCESS },
+      { type: actions.EDIT_PRODUCTS_SUCCESS, product: editedData },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      products: [],
+      products: [editedData],
     });
   });
 
@@ -432,14 +438,15 @@ describe('Delete Products reducer', () => {
   });
 
   it('Delete Products success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
     expect(reducer.default(
-      initialState,
-      { type: actions.DELETE_PRODUCTS_SUCCESS },
+      { ...initialState, products: [data] },
+      { type: actions.DELETE_PRODUCTS_SUCCESS, id: data.id },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      products: undefined,
+      products: [],
     });
   });
 
@@ -470,12 +477,12 @@ describe('Get Product type reducer', () => {
   it('Get Product type success Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_PRODUCTS_TYPE_SUCCESS },
+      { type: actions.GET_PRODUCTS_TYPE_SUCCESS, data: [] },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      productType: undefined,
+      productType: [],
     });
   });
 
@@ -504,17 +511,15 @@ describe('Add Product type reducer', () => {
   });
 
   it('Add Product type success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
     expect(reducer.default(
-      {
-        ...initialState,
-        productType: [],
-      },
-      { type: actions.ADD_PRODUCTS_TYPE_SUCCESS },
+      initialState,
+      { type: actions.ADD_PRODUCTS_TYPE_SUCCESS, productType: data },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      productType: [undefined],
+      productType: [data],
     });
   });
 
@@ -543,17 +548,19 @@ describe('Edit Product type reducer', () => {
   });
 
   it('Edit Product type success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
+    const editedData = { id: 1, name: 'Test data edited' };
     expect(reducer.default(
       {
         ...initialState,
-        productType: [],
+        productType: [data],
       },
-      { type: actions.EDIT_PRODUCTS_TYPE_SUCCESS },
+      { type: actions.EDIT_PRODUCTS_TYPE_SUCCESS, productType: editedData },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      productType: [],
+      productType: [editedData],
     });
   });
 
@@ -582,14 +589,15 @@ describe('Delete Product type reducer', () => {
   });
 
   it('Delete Products type success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
     expect(reducer.default(
-      initialState,
-      { type: actions.DELETE_PRODUCTS_TYPE_SUCCESS },
+      { ...initialState, productType: [data] },
+      { type: actions.DELETE_PRODUCTS_TYPE_SUCCESS, id: data.id },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      productType: undefined,
+      productType: [],
     });
   });
 
@@ -620,12 +628,12 @@ describe('Get Unit of Measure reducer', () => {
   it('Get Unit of Measure success Reducer', () => {
     expect(reducer.default(
       initialState,
-      { type: actions.GET_UNIT_OF_MEASURE_SUCCESS },
+      { type: actions.GET_UNIT_OF_MEASURE_SUCCESS, data: [] },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      unitOfMeasure: undefined,
+      unitOfMeasure: [],
     });
   });
 
@@ -654,17 +662,16 @@ describe('Add Unit of Measure reducer', () => {
   });
 
   it('Add Unit of Measure success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
+    const editedData = { id: 1, name: 'Test data edited' };
     expect(reducer.default(
-      {
-        ...initialState,
-        unitOfMeasure: [],
-      },
-      { type: actions.ADD_UNIT_OF_MEASURE_SUCCESS },
+      initialState,
+      { type: actions.ADD_UNIT_OF_MEASURE_SUCCESS, unitOfMeasure: data },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      unitOfMeasure: [undefined],
+      unitOfMeasure: [data],
     });
   });
 
@@ -693,17 +700,19 @@ describe('Edit Unit of Measure reducer', () => {
   });
 
   it('Edit Unit of Measure success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
+    const editedData = { id: 1, name: 'Test data edited' };
     expect(reducer.default(
       {
         ...initialState,
-        unitOfMeasure: [],
+        unitOfMeasure: [data],
       },
-      { type: actions.EDIT_UNIT_OF_MEASURE_SUCCESS },
+      { type: actions.EDIT_UNIT_OF_MEASURE_SUCCESS, unitOfMeasure: editedData },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      unitOfMeasure: [],
+      unitOfMeasure: [editedData],
     });
   });
 
@@ -732,14 +741,15 @@ describe('Delete Unit of Measure reducer', () => {
   });
 
   it('Delete Unit of Measure success Reducer', () => {
+    const data = { id: 1, name: 'Test data' };
     expect(reducer.default(
-      initialState,
-      { type: actions.DELETE_UNIT_OF_MEASURE_SUCCESS },
+      { ...initialState, unitOfMeasure: [data] },
+      { type: actions.DELETE_UNIT_OF_MEASURE_SUCCESS, id: data.id },
     )).toEqual({
       ...initialState,
       loaded: true,
       loading: false,
-      unitOfMeasure: undefined,
+      unitOfMeasure: [],
     });
   });
 
@@ -764,6 +774,19 @@ describe('Create Default Unit of Measure reducer', () => {
     )).toEqual({
       ...initialState,
       loading: true,
+    });
+  });
+
+  it('Create Default Unit of Measure success Reducer', () => {
+    const data = [{ id: 1, name: 'Test data' }];
+    expect(reducer.default(
+      initialState,
+      { type: actions.CREATE_DEFAULT_UNITS_SUCCESS, units: data },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      unitOfMeasure: data,
     });
   });
 

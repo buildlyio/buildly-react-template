@@ -4,12 +4,8 @@ import * as actions from './items.actions';
 describe('Get Items action', () => {
   it('should create an action to get items', () => {
     const organization_uuid = '224761f5-0010-4a46-d92a4fdc1d21';
-    const expectedAction = {
-      type: actions.GET_ITEMS,
-      organization_uuid,
-    };
-    expect(actions.getItems(organization_uuid))
-      .toEqual(expectedAction);
+    const expectedAction = { type: actions.GET_ITEMS, organization_uuid };
+    expect(actions.getItems(organization_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -25,8 +21,7 @@ describe('Add Item action', () => {
       history,
       redirectTo,
     };
-    expect(actions.addItem(payload, history))
-      .toEqual(expectedAction);
+    expect(actions.addItem(payload, history, redirectTo)).toEqual(expectedAction);
   });
 });
 
@@ -42,7 +37,7 @@ describe('Edit Item action', () => {
       history,
       redirectTo,
     };
-    expect(actions.editItem(payload)).toEqual(expectedAction);
+    expect(actions.editItem(payload, history, redirectTo)).toEqual(expectedAction);
   });
 });
 
@@ -50,14 +45,8 @@ describe('Edit Item action', () => {
 describe('Delete Item action', () => {
   it('should create an action to delete item', () => {
     const itemId = '123';
-    const organization_uuid = '224761f5-0010-4a46-d92a4fdc1d21';
-    const expectedAction = {
-      type: actions.DELETE_ITEMS,
-      itemId,
-      organization_uuid,
-    };
-    expect(actions.deleteItem(itemId, organization_uuid))
-      .toEqual(expectedAction);
+    const expectedAction = { type: actions.DELETE_ITEMS, itemId };
+    expect(actions.deleteItem(itemId)).toEqual(expectedAction);
   });
 });
 
@@ -65,12 +54,8 @@ describe('Delete Item action', () => {
 describe('Get Item Type action', () => {
   it('should create an action to get item type', () => {
     const organization_uuid = '224761f5-0010-4a46-d92a4fdc1d21';
-    const expectedAction = {
-      type: actions.GET_ITEMS_TYPE,
-      organization_uuid,
-    };
-    expect(actions.getItemType(organization_uuid))
-      .toEqual(expectedAction);
+    const expectedAction = { type: actions.GET_ITEMS_TYPE, organization_uuid };
+    expect(actions.getItemType(organization_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -82,10 +67,7 @@ describe('Add Item Type action', () => {
       create_date: new Date(),
       edit_date: new Date(),
     };
-    const expectedAction = {
-      type: actions.ADD_ITEMS_TYPE,
-      payload,
-    };
+    const expectedAction = { type: actions.ADD_ITEMS_TYPE, payload };
     expect(actions.addItemType(payload)).toEqual(expectedAction);
   });
 });
@@ -97,10 +79,7 @@ describe('Edit Item Type action', () => {
       name: 'test type - edited',
       edit_date: new Date(),
     };
-    const expectedAction = {
-      type: actions.EDIT_ITEMS_TYPE,
-      payload,
-    };
+    const expectedAction = { type: actions.EDIT_ITEMS_TYPE, payload };
     expect(actions.editItemType(payload)).toEqual(expectedAction);
   });
 });
@@ -109,10 +88,7 @@ describe('Edit Item Type action', () => {
 describe('Delete Item Type action', () => {
   it('should create an action to delete item type', () => {
     const id = 1;
-    const expectedAction = {
-      type: actions.DELETE_ITEMS_TYPE,
-      id,
-    };
+    const expectedAction = { type: actions.DELETE_ITEMS_TYPE, id };
     expect(actions.deleteItemType(id)).toEqual(expectedAction);
   });
 });
@@ -121,10 +97,7 @@ describe('Delete Item Type action', () => {
 describe('Get Products action', () => {
   it('should create an action to get products', () => {
     const organization_uuid = '224761f5-0010-4a46-d92a4fdc1d21';
-    const expectedAction = {
-      type: actions.GET_PRODUCTS,
-      organization_uuid,
-    };
+    const expectedAction = { type: actions.GET_PRODUCTS, organization_uuid };
     expect(actions.getProducts(organization_uuid))
       .toEqual(expectedAction);
   });
@@ -138,10 +111,7 @@ describe('Add Product action', () => {
       create_date: new Date(),
       edit_date: new Date(),
     };
-    const expectedAction = {
-      type: actions.ADD_PRODUCTS,
-      payload,
-    };
+    const expectedAction = { type: actions.ADD_PRODUCTS, payload };
     expect(actions.addProduct(payload)).toEqual(expectedAction);
   });
 });
@@ -153,10 +123,7 @@ describe('Edit Product action', () => {
       name: 'test product - edited',
       edit_date: new Date(),
     };
-    const expectedAction = {
-      type: actions.EDIT_PRODUCTS,
-      payload,
-    };
+    const expectedAction = { type: actions.EDIT_PRODUCTS, payload };
     expect(actions.editProduct(payload)).toEqual(expectedAction);
   });
 });
@@ -165,10 +132,7 @@ describe('Edit Product action', () => {
 describe('Delete Product action', () => {
   it('should create an action to delete product', () => {
     const id = 1;
-    const expectedAction = {
-      type: actions.DELETE_PRODUCTS,
-      id,
-    };
+    const expectedAction = { type: actions.DELETE_PRODUCTS, id };
     expect(actions.deleteProduct(id)).toEqual(expectedAction);
   });
 });
@@ -177,10 +141,7 @@ describe('Delete Product action', () => {
 describe('Get Product Type action', () => {
   it('should create an action to get product type', () => {
     const organization_uuid = '224761f5-0010-4a46-d92a4fdc1d21';
-    const expectedAction = {
-      type: actions.GET_PRODUCTS_TYPE,
-      organization_uuid,
-    };
+    const expectedAction = { type: actions.GET_PRODUCTS_TYPE, organization_uuid };
     expect(actions.getProductType(organization_uuid))
       .toEqual(expectedAction);
   });
@@ -194,10 +155,7 @@ describe('Add Product Type action', () => {
       create_date: new Date(),
       edit_date: new Date(),
     };
-    const expectedAction = {
-      type: actions.ADD_PRODUCTS_TYPE,
-      payload,
-    };
+    const expectedAction = { type: actions.ADD_PRODUCTS_TYPE, payload };
     expect(actions.addProductType(payload)).toEqual(expectedAction);
   });
 });
@@ -209,10 +167,7 @@ describe('Edit Product Type action', () => {
       name: 'test product type - edited',
       edit_date: new Date(),
     };
-    const expectedAction = {
-      type: actions.EDIT_PRODUCTS_TYPE,
-      payload,
-    };
+    const expectedAction = { type: actions.EDIT_PRODUCTS_TYPE, payload };
     expect(actions.editProductType(payload)).toEqual(expectedAction);
   });
 });
@@ -221,10 +176,7 @@ describe('Edit Product Type action', () => {
 describe('Delete Product Type action', () => {
   it('should create an action to delete product type', () => {
     const id = 1;
-    const expectedAction = {
-      type: actions.DELETE_PRODUCTS_TYPE,
-      id,
-    };
+    const expectedAction = { type: actions.DELETE_PRODUCTS_TYPE, id };
     expect(actions.deleteProductType(id)).toEqual(expectedAction);
   });
 });
@@ -233,11 +185,8 @@ describe('Delete Product Type action', () => {
 describe('Get Unit of Measure action', () => {
   it('should create an action to get unit of measure for an organization', () => {
     const organization_uuid = '58374g-ekjshfiw43-tw3iuge-3t8wyefj';
-    const expectedAction = {
-      type: actions.GET_UNIT_OF_MEASURE,
-      organization_uuid,
-    };
-    expect(actions.getUnitOfMeasure()).toEqual(expectedAction);
+    const expectedAction = { type: actions.GET_UNIT_OF_MEASURE, organization_uuid };
+    expect(actions.getUnitOfMeasure(organization_uuid)).toEqual(expectedAction);
   });
 });
 
@@ -251,10 +200,7 @@ describe('Add Unit of Measure action', () => {
       create_date: new Date(),
       edit_date: new Date(),
     };
-    const expectedAction = {
-      type: actions.ADD_UNIT_OF_MEASURE,
-      payload,
-    };
+    const expectedAction = { type: actions.ADD_UNIT_OF_MEASURE, payload };
     expect(actions.addUnitOfMeasure(payload)).toEqual(expectedAction);
   });
 });
@@ -266,10 +212,7 @@ describe('Edit Unit of Measure action', () => {
       id: 1,
       unit_of_measure: 'Kilograms',
     };
-    const expectedAction = {
-      type: actions.EDIT_UNIT_OF_MEASURE,
-      payload,
-    };
+    const expectedAction = { type: actions.EDIT_UNIT_OF_MEASURE, payload };
     expect(actions.editUnitOfMeasure(payload)).toEqual(expectedAction);
   });
 });
@@ -278,10 +221,7 @@ describe('Edit Unit of Measure action', () => {
 describe('Delete Unit of Measure action', () => {
   it('should create an action to delete unit of measure', () => {
     const id = 1;
-    const expectedAction = {
-      type: actions.DELETE_UNIT_OF_MEASURE,
-      id,
-    };
+    const expectedAction = { type: actions.DELETE_UNIT_OF_MEASURE, id };
     expect(actions.deleteUnitOfMeasure(id)).toEqual(expectedAction);
   });
 });
@@ -290,10 +230,7 @@ describe('Delete Unit of Measure action', () => {
 describe('Create Default Unit of Measure action', () => {
   it('should create an action to create default unit of measure', () => {
     const organization = '37r82-dsbfew8-37yrtwejf-eshf38';
-    const expectedAction = {
-      type: actions.CREATE_DEFAULT_UNITS,
-      organization,
-    };
+    const expectedAction = { type: actions.CREATE_DEFAULT_UNITS, organization };
     expect(actions.createDefaultUnits(organization)).toEqual(expectedAction);
   });
 });

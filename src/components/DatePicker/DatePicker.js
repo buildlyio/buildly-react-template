@@ -1,17 +1,21 @@
 import React from 'react';
+import _ from 'lodash';
 import { makeStyles } from '@mui/styles';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import CustomizedTooltips from '../../components/ToolTip/ToolTip';
 import { TextField } from '@mui/material';
+import CustomizedTooltips from '../../components/ToolTip/ToolTip';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
     margin: '0px',
+    '& .MuiFormControl-root': {
+      width: '100%',
+    },
   },
   popperSx: {
     '& .MuiPaper-root': {
@@ -52,7 +56,7 @@ const DatePickerComponent = ({
           <DateTimePicker
             variant="inline"
             inputVariant="outlined"
-            ampm={false}
+            ampm={!!(timeFormat && _.includes(timeFormat, ' A'))}
             fullWidth
             margin="normal"
             required={required}

@@ -80,16 +80,14 @@ export const DELETE_UNIT_OF_MEASURE_SUCCESS = 'ITEMS/DELETE_UNIT_OF_MEASURE_SUCC
 export const DELETE_UNIT_OF_MEASURE_FAILURE = 'ITEMS/DELETE_UNIT_OF_MEASURE_FAILURE';
 
 export const CREATE_DEFAULT_UNITS = 'ITEMS/CREATE_DEFAULT_UNITS';
+export const CREATE_DEFAULT_UNITS_SUCCESS = 'ITEMS/CREATE_DEFAULT_UNITS_SUCCESS';
 export const CREATE_DEFAULT_UNITS_FAILURE = 'ITEMS/CREATE_DEFAULT_UNITS_FAILURE';
 
 /**
  * Get Item List
  * @param {String} organization_uuid
  */
-export const getItems = (organization_uuid) => ({
-  type: GET_ITEMS,
-  organization_uuid,
-});
+export const getItems = (organization_uuid) => ({ type: GET_ITEMS, organization_uuid });
 
 /**
  * Add Item
@@ -120,85 +118,56 @@ export const editItem = (payload, history, redirectTo) => ({
 /**
  * Delete Item
  * @param {Number} itemId
- * @param {String} organization_uuid
  */
-export const deleteItem = (itemId, organization_uuid) => ({
-  type: DELETE_ITEMS,
-  itemId,
-  organization_uuid,
-});
+export const deleteItem = (itemId) => ({ type: DELETE_ITEMS, itemId });
 
 /**
  * Get Item Type
  * @param {String} organization_uuid
  */
-export const getItemType = (organization_uuid) => ({
-  type: GET_ITEMS_TYPE,
-  organization_uuid,
-});
+export const getItemType = (organization_uuid) => ({ type: GET_ITEMS_TYPE, organization_uuid });
 
 /**
  * Add Item Type
  * @param {Object} payload
  */
-export const addItemType = (payload) => ({
-  type: ADD_ITEMS_TYPE,
-  payload,
-});
+export const addItemType = (payload) => ({ type: ADD_ITEMS_TYPE, payload });
 
 /**
  * Edit Item Type
  * @param {Object} payload
  */
-export const editItemType = (payload) => ({
-  type: EDIT_ITEMS_TYPE,
-  payload,
-});
+export const editItemType = (payload) => ({ type: EDIT_ITEMS_TYPE, payload });
 
 /**
  * Delete Item Type
  * @param {Number} id
  */
-export const deleteItemType = (id) => ({
-  type: DELETE_ITEMS_TYPE,
-  id,
-});
+export const deleteItemType = (id) => ({ type: DELETE_ITEMS_TYPE, id });
 
 /**
  * Get Product List
  * @param {String} organization_uuid
  */
-export const getProducts = (organization_uuid) => ({
-  type: GET_PRODUCTS,
-  organization_uuid,
-});
+export const getProducts = (organization_uuid) => ({ type: GET_PRODUCTS, organization_uuid });
 
 /**
  * Add Product
  * @param {Object} payload
  */
-export const addProduct = (payload) => ({
-  type: ADD_PRODUCTS,
-  payload,
-});
+export const addProduct = (payload) => ({ type: ADD_PRODUCTS, payload });
 
 /**
  * Edit Product
  * @param {Object} payload
  */
-export const editProduct = (payload) => ({
-  type: EDIT_PRODUCTS,
-  payload,
-});
+export const editProduct = (payload) => ({ type: EDIT_PRODUCTS, payload });
 
 /**
  * Delete Product
  * @param {Number} id
  */
-export const deleteProduct = (id) => ({
-  type: DELETE_PRODUCTS,
-  id,
-});
+export const deleteProduct = (id) => ({ type: DELETE_PRODUCTS, id });
 
 /**
  * Get Product Type
@@ -213,28 +182,19 @@ export const getProductType = (organization_uuid) => ({
  * Add Product Type
  * @param {Object} payload
  */
-export const addProductType = (payload) => ({
-  type: ADD_PRODUCTS_TYPE,
-  payload,
-});
+export const addProductType = (payload) => ({ type: ADD_PRODUCTS_TYPE, payload });
 
 /**
  * Edit Product Type
  * @param {Object} payload
  */
-export const editProductType = (payload) => ({
-  type: EDIT_PRODUCTS_TYPE,
-  payload,
-});
+export const editProductType = (payload) => ({ type: EDIT_PRODUCTS_TYPE, payload });
 
 /**
  * Delete Product Type
  * @param {Number} id
  */
-export const deleteProductType = (id) => ({
-  type: DELETE_PRODUCTS_TYPE,
-  id,
-});
+export const deleteProductType = (id) => ({ type: DELETE_PRODUCTS_TYPE, id });
 
 /**
  * Get Unit of Measure
@@ -249,34 +209,22 @@ export const getUnitOfMeasure = (organization_uuid) => ({
  * Add Unit of Measure
  * @param {Object} payload
  */
-export const addUnitOfMeasure = (payload) => ({
-  type: ADD_UNIT_OF_MEASURE,
-  payload,
-});
+export const addUnitOfMeasure = (payload) => ({ type: ADD_UNIT_OF_MEASURE, payload });
 
 /**
  * Edit Unit of Measure
  * @param {Object} payload
  */
-export const editUnitOfMeasure = (payload) => ({
-  type: EDIT_UNIT_OF_MEASURE,
-  payload,
-});
+export const editUnitOfMeasure = (payload) => ({ type: EDIT_UNIT_OF_MEASURE, payload });
 
 /**
  * Delete Unit of Measure
  * @param {Number} id
  */
-export const deleteUnitOfMeasure = (id) => ({
-  type: DELETE_UNIT_OF_MEASURE,
-  id,
-});
+export const deleteUnitOfMeasure = (id) => ({ type: DELETE_UNIT_OF_MEASURE, id });
 
 /**
  * Create default unit of measures
  * @param {String} organization
  */
-export const createDefaultUnits = (organization) => ({
-  type: CREATE_DEFAULT_UNITS,
-  organization,
-});
+export const createDefaultUnits = (organization) => ({ type: CREATE_DEFAULT_UNITS, organization });

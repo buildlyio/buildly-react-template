@@ -6,25 +6,23 @@ import {
   TextField,
   MenuItem,
   Button,
-  CircularProgress,
   Typography,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import ConfirmModal from '../../../../components/Modal/ConfirmModal';
 import CustomizedTooltips from '../../../../components/ToolTip/ToolTip';
+import { UserContext } from '../../../../context/User.context';
 import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
 import {
   getItemsOptions,
   getProductsOptions,
   getGatewayOptions,
-  getSensorOptions,
 } from '../../../../redux/options/actions/options.actions';
 import {
   getApiResponse,
   addApiSetup,
 } from '../../../../redux/importExport/actions/importExport.actions';
-import { UserContext } from '../../../../context/User.context';
+import { validators } from '../../../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -43,9 +41,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: -12,
     marginLeft: -12,
   },
-  loadingWrapper: {
-    position: 'relative',
-  },
   title: {
     margin: theme.spacing(2, 0),
     textAlign: 'center',
@@ -53,7 +48,6 @@ const useStyles = makeStyles((theme) => ({
   apiResponse: {
     width: '100%',
     backgroundColor: theme.palette.secondary.main,
-    color: theme.palette.secondary.contrastText,
     overflow: 'wrap',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
@@ -83,7 +77,6 @@ const AddFromAPI = ({
   dispatch,
   itemOptions,
   productOptions,
-  sensorOptions,
   gatewayOptions,
   apiResponse,
 }) => {
@@ -99,12 +92,6 @@ const AddFromAPI = ({
       name: 'Products',
       value: 'product',
       option: productOptions,
-      externalProvider: [],
-    },
-    {
-      name: 'Sensors',
-      value: 'sensor',
-      option: sensorOptions,
       externalProvider: [],
     },
     {
@@ -138,17 +125,14 @@ const AddFromAPI = ({
   });
 
   useEffect(() => {
-    if (itemOptions === null) {
+    if (_.isEmpty(itemOptions)) {
       dispatch(getItemsOptions());
     }
-    if (productOptions === null) {
+    if (_.isEmpty(productOptions)) {
       dispatch(getProductsOptions());
     }
-    if (gatewayOptions === null) {
+    if (_.isEmpty(gatewayOptions)) {
       dispatch(getGatewayOptions());
-    }
-    if (sensorOptions === null) {
-      dispatch(getSensorOptions());
     }
   }, []);
 
@@ -651,24 +635,16 @@ const AddFromAPI = ({
             )}
           <Grid container spacing={2} justifyContent="center">
             <Grid item xs={6} sm={4}>
-              <div className={classes.loadingWrapper}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  disabled={loading || submitDisabled()}
-                >
-                  Set Mapping and Import
-                </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                )}
-              </div>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                disabled={loading || submitDisabled()}
+              >
+                Set Mapping and Import
+              </Button>
             </Grid>
           </Grid>
         </Grid>

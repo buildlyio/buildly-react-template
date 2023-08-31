@@ -1,7 +1,7 @@
 import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
-import { httpService } from '@modules/http/http.service';
+import { httpService } from '../../modules/http/http.service';
 import {
   LOAD_DATA_COREUSER,
   LOAD_DATA_COREUSER_COMMIT,

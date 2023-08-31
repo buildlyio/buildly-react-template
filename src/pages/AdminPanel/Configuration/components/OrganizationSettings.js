@@ -13,25 +13,24 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import Loader from '../../../../components/Loader/Loader';
+import { useInput } from '../../../../hooks/useInput';
 import {
   updateOrganization,
 } from '../../../../redux/authuser/actions/authuser.actions';
-import { editUnitOfMeasure, getUnitOfMeasure } from '@redux/items/actions/items.actions';
+import { editUnitOfMeasure, getUnitOfMeasure } from '../../../../redux/items/actions/items.actions';
+import { getCountries, getCurrencies } from '../../../../redux/shipment/actions/shipment.actions';
 import {
   DATE_DISPLAY_CHOICES,
   TIME_DISPLAY_CHOICES,
   UOM_DISTANCE_CHOICES,
   UOM_TEMPERATURE_CHOICES,
   UOM_WEIGHT_CHOICES,
-} from '@utils/mock';
-import { useInput } from '@hooks/useInput';
-import { getCountries, getCurrencies } from '@redux/shipment/actions/shipment.actions';
-import { uomDistanceUpdate } from '@utils/utilMethods';
+} from '../../../../utils/mock';
+import { uomDistanceUpdate } from '../../../../utils/utilMethods';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    backgroundColor: theme.palette.common.darkGrey2,
     margin: theme.spacing(0.25, 0, 0.25, 0.25),
   },
   checkbox: {
@@ -61,9 +60,6 @@ const useStyles = makeStyles((theme) => ({
     left: '50%',
     marginTop: -12,
     marginLeft: -12,
-  },
-  loadingWrapper: {
-    position: 'relative',
   },
   formTitle: {
     fontWeight: 'bold',
@@ -96,6 +92,7 @@ const OrganizationSettings = ({
     (organizationData
       && organizationData.organization_type) || '',
   );
+  const orgAbb = useInput((organizationData && organizationData.abbrevation) || '');
   const country = useInput(
     _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
       ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
@@ -135,10 +132,10 @@ const OrganizationSettings = ({
   const [currencyList, setCurrencyList] = useState([]);
 
   useEffect(() => {
-    if (!countries) {
+    if (_.isEmpty(countries)) {
       dispatch(getCountries());
     }
-    if (!currencies) {
+    if (_.isEmpty(currencies)) {
       dispatch(getCurrencies());
     }
   }, []);
@@ -156,7 +153,7 @@ const OrganizationSettings = ({
   }, [currencies]);
 
   useEffect(() => {
-    if (organizationData && !unitOfMeasure) {
+    if (!_.isEmpty(organizationData) && _.isEmpty(unitOfMeasure)) {
       dispatch(getUnitOfMeasure(organizationData.organization_uuid));
     }
   }, [organizationData]);
@@ -171,6 +168,7 @@ const OrganizationSettings = ({
     allowImportExport.reset();
     radius.reset();
     orgType.reset();
+    orgAbb.reset();
     country.reset();
     currency.reset();
     dateFormat.reset();
@@ -185,6 +183,7 @@ const OrganizationSettings = ({
     allowImportExport.hasChanged()
     || radius.hasChanged()
     || orgType.hasChanged()
+    || orgAbb.hasChanged()
     || country.hasChanged()
     || currency.hasChanged()
     || dateFormat.hasChanged()
@@ -204,6 +203,7 @@ const OrganizationSettings = ({
     if (allowImportExport.hasChanged()
       || radius.hasChanged()
       || orgType.hasChanged()
+      || orgAbb.hasChanged()
       || distance.hasChanged()
     ) {
       let data = {
@@ -212,6 +212,7 @@ const OrganizationSettings = ({
         allow_import_export: allowImportExport.value,
         radius: radius.value || 0,
         organization_type: orgType.value,
+        abbrevation: _.toUpper(orgAbb.value),
       };
 
       if (distance.hasChanged()) {
@@ -310,28 +311,48 @@ const OrganizationSettings = ({
             {...radius.bind}
           />
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            select
-            id="org-type"
-            name="org-type"
-            label="Organization Type"
-            autoComplete="orgType"
-            {...orgType.bind}
-          >
-            <MenuItem value="">Select</MenuItem>
-            {_.map(orgTypes, (type) => (
-              <MenuItem
-                key={`orgType-${type.id}`}
-                value={type.id}
-              >
-                {_.capitalize(type.name)}
-              </MenuItem>
-            ))}
-          </TextField>
+
+        <Grid container spacing={isDesktop ? 2 : 0}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              select
+              id="org-type"
+              name="org-type"
+              label="Organization Type"
+              autoComplete="orgType"
+              {...orgType.bind}
+            >
+              <MenuItem value="">Select</MenuItem>
+              {_.map(orgTypes, (type) => (
+                <MenuItem
+                  key={`orgType-${type.id}`}
+                  value={type.id}
+                >
+                  {_.capitalize(type.name)}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              id="org-abb"
+              name="org-abb"
+              label="Organization Abbrevation"
+              autoComplete="orgAbb"
+              inputProps={{
+                maxLength: 7,
+                style: { textTransform: 'uppercase' },
+              }}
+              {...orgAbb.bind}
+              />
+          </Grid>
         </Grid>
 
         <Grid container spacing={isDesktop ? 2 : 0}>
@@ -517,18 +538,16 @@ const OrganizationSettings = ({
 
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={6} sm={4}>
-            <div className={classes.loadingWrapper}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                disabled={loading || !submitDisabled()}
-              >
-                Save
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              disabled={loading || !submitDisabled()}
+            >
+              Save
+            </Button>
           </Grid>
           <Grid item xs={6} sm={4}>
             <Button

@@ -11,17 +11,11 @@ import { withStyles } from '@mui/styles';
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.background.dark,
-    },
-    '&:nth-of-type(even)': {
-      backgroundColor: theme.palette.background.dark,
-    },
     '&:nth-of-type(odd):hover': {
-      backgroundColor: theme.palette.secondary.contrastText,
+      backgroundColor: theme.palette.background.light,
     },
     '&:nth-of-type(even):hover': {
-      backgroundColor: theme.palette.secondary.contrastText,
+      backgroundColor: theme.palette.background.light,
     },
   },
 }))(TableRow);
@@ -32,8 +26,8 @@ const StyledTableHeadCell = withStyles((theme) => ({
     fontSize: 12.5,
     fontWeight: '400',
     padding: theme.spacing(1, 2),
-    color: theme.palette.common.grey,
-    background: theme.palette.background.dark,
+    color: theme.palette.background.default,
+    background: theme.palette.primary.main,
   },
 }))(TableCell);
 

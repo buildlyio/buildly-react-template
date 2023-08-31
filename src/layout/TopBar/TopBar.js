@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment-timezone';
+import { useTimezoneSelect, allTimezones } from 'react-timezone-select';
 import _ from 'lodash';
 import {
   AppBar,
@@ -8,7 +8,6 @@ import {
   IconButton,
   TextField,
   MenuItem,
-  Button,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import {
@@ -16,9 +15,9 @@ import {
   Refresh as RefreshIcon,
   Settings as SettingsIcon,
   Menu as MenuIcon,
-  Add as AddIcon,
 } from '@mui/icons-material';
-import logo from '@assets/tp-logo.png';
+import logo from '../../assets/tp-logo.png';
+import Loader from '../../components/Loader/Loader';
 import {
   logout,
   getUser,
@@ -38,13 +37,12 @@ import {
   checkForAdmin,
   checkForGlobalAdmin,
 } from '../../utils/utilMethods';
-import Loader from '../../components/Loader/Loader';
 import AdminMenu from './AdminMenu';
 import AccountMenu from './AccountMenu';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    backgroundColor: theme.palette.background.dark,
+    backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
     [theme.breakpoints.down('sm')]: {
       overflowX: 'auto',
@@ -90,6 +88,7 @@ const TopBar = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [settingEl, setSettingEl] = useState(null);
   const [organization, setOrganization] = useState(null);
+  const { options: tzOptions } = useTimezoneSelect({ labelStyle: 'original', timezones: allTimezones });
 
   let user;
   let isAdmin = false;
@@ -169,7 +168,6 @@ const TopBar = ({
           edge="start"
           className={classes.menuButton}
           onClick={() => setNavHidden(!navHidden)}
-          color="default"
           aria-label="menu"
           sx={{
             display: {
@@ -197,9 +195,9 @@ const TopBar = ({
             value={timezone}
             onChange={(e) => dispatch(setTimezone(e.target.value))}
           >
-            {_.map(moment.tz.names(), (name, index) => (
-              <MenuItem key={`${name}-${index}`} value={name}>
-                {name}
+            {_.map(tzOptions, (tzOption, index) => (
+              <MenuItem key={`${tzOption.value}-${index}`} value={tzOption.value}>
+                {tzOption.label}
               </MenuItem>
             ))}
           </TextField>
@@ -231,7 +229,7 @@ const TopBar = ({
             aria-controls="menu-appbar"
             aria-haspopup="true"
             onClick={settingMenu}
-            color="default"
+            color="primary"
           >
             <SettingsIcon fontSize="large" />
           </IconButton>
@@ -247,7 +245,7 @@ const TopBar = ({
             aria-controls="menu-appbar"
             aria-haspopup="false"
             onClick={refreshPage}
-            color="default"
+            color="primary"
           >
             <RefreshIcon fontSize="large" />
           </IconButton>
@@ -256,7 +254,7 @@ const TopBar = ({
             aria-controls="menu-appbar"
             aria-haspopup="true"
             onClick={handleMenu}
-            color="default"
+            color="primary"
           >
             <AccountCircle fontSize="large" />
           </IconButton>

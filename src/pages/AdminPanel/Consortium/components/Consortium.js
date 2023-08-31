@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../../context/User.context';
 import {
   loadAllOrgs,
 } from '../../../../redux/authuser/actions/authuser.actions';
@@ -10,11 +11,10 @@ import {
   getAllConsortiums,
   deleteConsortium,
 } from '../../../../redux/consortium/actions/consortium.actions';
+import { getUnitOfMeasure } from '../../../../redux/items/actions/items.actions';
 import { routes } from '../../../../routes/routesConstants';
-import { getConsortiumColumns } from '../ConsortiumConstant';
+import { getConsortiumColumns } from '../../../../utils/constants';
 import AddConsortium from '../forms/AddConsortium';
-import { UserContext } from '@context/User.context';
-import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
 
 const Consortium = ({
   dispatch,
@@ -34,13 +34,13 @@ const Consortium = ({
   const editPath = redirectTo || `${routes.CONSORTIUM}/edit`;
 
   useEffect(() => {
-    if (!allOrgs) {
+    if (_.isEmpty(allOrgs)) {
       dispatch(loadAllOrgs());
     }
-    if (!allConsortiums) {
+    if (_.isEmpty(allConsortiums)) {
       dispatch(getAllConsortiums());
     }
-    if (!unitOfMeasure) {
+    if (_.isEmpty(unitOfMeasure)) {
       dispatch(getUnitOfMeasure(organization));
     }
   }, []);

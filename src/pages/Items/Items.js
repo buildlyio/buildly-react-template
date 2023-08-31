@@ -12,12 +12,8 @@ import {
   getProducts,
   getProductType,
 } from '../../redux/items/actions/items.actions';
-import {
-  getItemsOptions,
-  getProductsOptions,
-} from '../../redux/options/actions/options.actions';
 import { routes } from '../../routes/routesConstants';
-import { itemColumns, getItemFormattedRow } from './ItemsConstants';
+import { itemColumns, getItemFormattedRow } from '../../utils/constants';
 import AddItems from './forms/AddItems';
 
 const Items = ({
@@ -28,9 +24,6 @@ const Items = ({
   itemTypeList,
   redirectTo,
   unitOfMeasure,
-  products,
-  itemOptions,
-  productOptions,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
@@ -46,34 +39,15 @@ const Items = ({
     : `${routes.ITEMS}/edit`;
 
   useEffect(() => {
-    if (itemData === null) {
-      dispatch(getItems(organization));
-      dispatch(getItemType(organization));
-    }
-    if (!unitOfMeasure) {
-      dispatch(getUnitOfMeasure(organization));
-    }
-    if (products === null) {
-      dispatch(getProducts(organization));
-      dispatch(getProductType(organization));
-    }
-    if (itemOptions === null) {
-      dispatch(getItemsOptions());
-    }
-    if (productOptions === null) {
-      dispatch(getProductsOptions());
-    }
+    dispatch(getItems(organization));
+    dispatch(getItemType(organization));
+    dispatch(getProducts(organization));
+    dispatch(getProductType(organization));
+    dispatch(getUnitOfMeasure(organization));
   }, []);
 
   useEffect(() => {
-    if (
-      itemData
-      && itemData.length
-      && itemTypeList
-      && itemTypeList.length
-      && unitOfMeasure
-      && unitOfMeasure.length
-    ) {
+    if (!_.isEmpty(itemData) && !_.isEmpty(itemTypeList) && !_.isEmpty(unitOfMeasure)) {
       setRows(getItemFormattedRow(
         itemData,
         itemTypeList,
@@ -125,6 +99,7 @@ const Items = ({
       handleDeleteModal={handleDeleteModal}
       deleteModalTitle="Are you sure you want to delete this Item?"
       tableHeader="Items"
+      centerLabel
     >
       <Route path={`${addItemPath}`} component={AddItems} />
       <Route path={`${editItemPath}/:id`} component={AddItems} />

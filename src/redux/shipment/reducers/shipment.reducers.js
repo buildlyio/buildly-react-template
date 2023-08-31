@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import {
-  SAVE_SHIPMENT_FORM_DATA,
   GET_SHIPMENTS,
   GET_SHIPMENTS_FAILURE,
   GET_SHIPMENTS_SUCCESS,
@@ -13,52 +12,49 @@ import {
   DELETE_SHIPMENT,
   DELETE_SHIPMENT_SUCCESS,
   DELETE_SHIPMENT_FAILURE,
-  GET_DASHBOARD_ITEMS,
-  GET_DASHBOARD_ITEMS_SUCCESS,
-  GET_DASHBOARD_ITEMS_FAILURE,
-  ADD_PDF_IDENTIFIER,
-  ADD_PDF_IDENTIFIER_SUCCESS,
-  ADD_PDF_IDENTIFIER_FAILURE,
-  GET_REPORT_AND_ALERTS,
   GET_COUNTRIES_STATES,
   GET_COUNTRIES_STATES_SUCCESS,
   GET_COUNTRIES_STATES_FAILURE,
   GET_CURRENCIES,
   GET_CURRENCIES_SUCCESS,
   GET_CURRENCIES_FAILURE,
+  GET_SHIPMENT_TEMPLATES,
+  GET_SHIPMENT_TEMPLATES_SUCCESS,
+  GET_SHIPMENT_TEMPLATES_FAILURE,
+  ADD_SHIPMENT_TEMPLATE,
+  ADD_SHIPMENT_TEMPLATE_SUCCESS,
+  ADD_SHIPMENT_TEMPLATE_FAILURE,
+  EDIT_SHIPMENT_TEMPLATE,
+  EDIT_SHIPMENT_TEMPLATE_SUCCESS,
+  EDIT_SHIPMENT_TEMPLATE_FAILURE,
+  DELETE_SHIPMENT_TEMPLATE,
+  DELETE_SHIPMENT_TEMPLATE_SUCCESS,
+  DELETE_SHIPMENT_TEMPLATE_FAILURE,
 } from '../actions/shipment.actions';
 
 const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  shipmentFormData: null,
-  shipmentData: null,
-  countries: null,
-  currencies: null,
+  shipmentData: [],
+  countries: [],
+  currencies: [],
+  templates: [],
 };
 
 // Reducer
 export default (state = initialState, action) => {
   switch (action.type) {
-    case SAVE_SHIPMENT_FORM_DATA:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: null,
-        shipmentFormData: action.formData,
-      };
-
-    case GET_REPORT_AND_ALERTS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: null,
-      };
-
     case GET_SHIPMENTS:
+    case ADD_SHIPMENT:
+    case EDIT_SHIPMENT:
+    case DELETE_SHIPMENT:
+    case GET_COUNTRIES_STATES:
+    case GET_CURRENCIES:
+    case GET_SHIPMENT_TEMPLATES:
+    case ADD_SHIPMENT_TEMPLATE:
+    case EDIT_SHIPMENT_TEMPLATE:
+    case DELETE_SHIPMENT_TEMPLATE:
       return {
         ...state,
         loading: true,
@@ -66,13 +62,54 @@ export default (state = initialState, action) => {
         error: null,
       };
 
-    case GET_SHIPMENTS_SUCCESS: {
-      let shipmentData = state.shipmentData || [];
-      if (!_.isArray(action.data)) {
-        shipmentData = [...shipmentData, action.data];
-      } else {
-        shipmentData = action.data;
-      }
+    case GET_SHIPMENTS_FAILURE:
+    case ADD_SHIPMENT_FAILURE:
+    case EDIT_SHIPMENT_FAILURE:
+    case DELETE_SHIPMENT_FAILURE:
+    case GET_COUNTRIES_STATES_FAILURE:
+    case GET_CURRENCIES_FAILURE:
+    case GET_SHIPMENT_TEMPLATES_FAILURE:
+    case ADD_SHIPMENT_TEMPLATE_FAILURE:
+    case EDIT_SHIPMENT_TEMPLATE_FAILURE:
+    case DELETE_SHIPMENT_TEMPLATE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        error: action.error,
+      };
+
+    case GET_SHIPMENTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        shipmentData: action.data,
+      };
+
+    case ADD_SHIPMENT_SUCCESS:
+    case EDIT_SHIPMENT_SUCCESS: {
+      const found = _.find(
+        state.shipmentData,
+        { id: action.shipment.id },
+      );
+      const shipmentData = found
+        ? _.map(state.shipmentData, (shipment) => (
+          shipment.id === action.shipment.id
+            ? action.shipment
+            : shipment
+        ))
+        : [...state.shipmentData, action.shipment];
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        shipmentData,
+      };
+    }
+
+    case DELETE_SHIPMENT_SUCCESS: {
+      const shipmentData = _.filter(state.shipmentData, (shipment) => shipment.id !== action.id);
 
       return {
         ...state,
@@ -82,170 +119,12 @@ export default (state = initialState, action) => {
       };
     }
 
-    case GET_SHIPMENTS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case ADD_SHIPMENT:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case ADD_SHIPMENT_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        shipmentData: action.data,
-      };
-
-    case ADD_SHIPMENT_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case EDIT_SHIPMENT:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case EDIT_SHIPMENT_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        shipmentData: action.data,
-        error: null,
-      };
-
-    case EDIT_SHIPMENT_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case DELETE_SHIPMENT:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case DELETE_SHIPMENT_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        shipmentData: action.data,
-      };
-
-    case DELETE_SHIPMENT_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case GET_DASHBOARD_ITEMS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case GET_DASHBOARD_ITEMS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        dashboardItems: action.data,
-      };
-
-    case GET_DASHBOARD_ITEMS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case ADD_PDF_IDENTIFIER:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
-    case ADD_PDF_IDENTIFIER_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        shipmentFormData: {
-          ...state.shipmentFormData,
-          uploaded_pdf: action.uploaded_pdf,
-          uploaded_pdf_link: action.uploaded_pdf_link,
-          unique_identifier: action.unique_identifier,
-        },
-      };
-
-    case ADD_PDF_IDENTIFIER_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case GET_COUNTRIES_STATES:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
-      };
-
     case GET_COUNTRIES_STATES_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
         countries: action.countries,
-      };
-
-    case GET_COUNTRIES_STATES_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: action.error,
-      };
-
-    case GET_CURRENCIES:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        error: null,
       };
 
     case GET_CURRENCIES_SUCCESS:
@@ -256,13 +135,45 @@ export default (state = initialState, action) => {
         currencies: action.currencies,
       };
 
-    case GET_CURRENCIES_FAILURE:
+    case GET_SHIPMENT_TEMPLATES_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        error: action.error,
+        templates: action.data,
       };
+
+    case ADD_SHIPMENT_TEMPLATE_SUCCESS:
+    case EDIT_SHIPMENT_TEMPLATE_SUCCESS: {
+      const found = _.find(
+        state.templates,
+        { id: action.template.id },
+      );
+      const templates = found
+        ? _.map(state.templates, (template) => (
+          template.id === action.template.id
+            ? action.template
+            : template
+        ))
+        : [...state.templates, action.template];
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        templates,
+      };
+    }
+
+    case DELETE_SHIPMENT_TEMPLATE_SUCCESS: {
+      const templates = _.filter(state.templates, (tmp) => tmp.id !== action.id);
+
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        templates,
+      };
+    }
 
     default:
       return state;

@@ -2,8 +2,8 @@ import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
 import _ from 'lodash';
-import { httpService } from '@modules/http/http.service';
-import { showAlert } from '@redux/alert/actions/alert.actions';
+import { httpService } from '../../../modules/http/http.service';
+import { showAlert } from '../../alert/actions/alert.actions';
 import {
   ADD_FROM_FILE,
   ADD_FROM_FILE_SUCCESS,
@@ -27,7 +27,6 @@ function* addFromFile(payload) {
       endPoint = 'shipment/file_upload/';
       break;
 
-      // case 'sensor':
       // case 'gateway':
       //   endPoint = 'sensors/file_upload/';
       //   break;
@@ -68,7 +67,7 @@ function* addFromFile(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: `Couldn't import ${_.capitalize(payload.model)} Data due to some error!`,
+          message: `Couldn't import ${_.capitalize(payload.model)} data due to some error!`,
         }),
       ),
     ];
@@ -113,7 +112,6 @@ function* getExportData(payload) {
       endPoint = 'shipment/file_export/';
       break;
 
-      // case 'sensor':
       // case 'gateway':
       //   endPoint = 'sensors/file_export/';
       //   break;
@@ -158,7 +156,6 @@ function* addApiSetup(action) {
       endPoint = 'shipment/third_party_api_import/';
       break;
 
-    case 'sensor':
     case 'gateway':
       endPoint = 'sensors/third_party_api_import/';
       break;

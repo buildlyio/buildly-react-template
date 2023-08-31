@@ -7,17 +7,16 @@ import {
   Grid,
   Button,
   TextField,
-  CircularProgress,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import FormModal from '../../../../components/Modal/FormModal';
+import { UserContext } from '../../../../context/User.context';
 import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
 import {
   addItemType,
   editItemType,
 } from '../../../../redux/items/actions/items.actions';
-import { UserContext } from '../../../../context/User.context';
+import { validators } from '../../../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -38,9 +37,6 @@ const useStyles = makeStyles((theme) => ({
     left: '50%',
     marginTop: -12,
     marginLeft: -12,
-  },
-  loadingWrapper: {
-    position: 'relative',
   },
   formTitle: {
     fontWeight: 'bold',
@@ -204,30 +200,22 @@ const AddItemType = ({
               </Grid>
               <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={6} sm={4}>
-                  <div className={classes.loadingWrapper}>
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      className={classes.submit}
-                      disabled={loading || submitDisabled()}
-                    >
-                      {buttonText}
-                    </Button>
-                    {loading && (
-                      <CircularProgress
-                        size={24}
-                        className={classes.buttonProgress}
-                      />
-                    )}
-                  </div>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    disabled={loading || submitDisabled()}
+                  >
+                    {buttonText}
+                  </Button>
                 </Grid>
                 <Grid item xs={6} sm={4}>
                   <Button
                     type="button"
                     fullWidth
-                    variant="contained"
+                    variant="outlined"
                     color="primary"
                     onClick={discardFormData}
                     className={classes.submit}

@@ -2,15 +2,15 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../../context/User.context';
 import {
   getProducts,
   deleteProduct,
   getUnitOfMeasure,
 } from '../../../../redux/items/actions/items.actions';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '../../../../context/User.context';
 import { routes } from '../../../../routes/routesConstants';
-import { getProductColumns } from '../ConfigurationConstants';
+import { getProductColumns } from '../../../../utils/constants';
 import AddProduct from '../forms/AddProduct';
 
 const Product = ({
@@ -35,18 +35,13 @@ const Product = ({
     : `${routes.CONFIGURATION}/product/edit`;
 
   useEffect(() => {
-    if (!loading && !products) {
+    if (_.isEmpty(products)) {
       dispatch(getProducts(organization));
     }
-  }, [products]);
-
-  useEffect(() => {
-    if (!loading) {
-      if (_.isEmpty(unitOfMeasure)) {
-        dispatch(getUnitOfMeasure(organization));
-      }
+    if (_.isEmpty(unitOfMeasure)) {
+      dispatch(getUnitOfMeasure(organization));
     }
-  }, [unitOfMeasure]);
+  }, []);
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {

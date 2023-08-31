@@ -6,14 +6,13 @@ import {
   TextField,
   MenuItem,
   Button,
-  CircularProgress,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
 import {
   addFromFile,
 } from '../../../../redux/importExport/actions/importExport.actions';
+import { validators } from '../../../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -31,9 +30,6 @@ const useStyles = makeStyles((theme) => ({
     left: '50%',
     marginTop: -12,
     marginLeft: -12,
-  },
-  loadingWrapper: {
-    position: 'relative',
   },
 }));
 
@@ -146,24 +142,16 @@ const AddFromFile = ({ loading, dispatch }) => {
         </Grid>
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={6} sm={4}>
-            <div className={classes.loadingWrapper}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                disabled={loading || submitDisabled()}
-              >
-                Upload
-              </Button>
-              {loading && (
-                <CircularProgress
-                  size={24}
-                  className={classes.buttonProgress}
-                />
-              )}
-            </div>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              disabled={loading || submitDisabled()}
+            >
+              Upload
+            </Button>
           </Grid>
         </Grid>
       </Grid>

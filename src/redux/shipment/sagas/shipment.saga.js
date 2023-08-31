@@ -1,232 +1,105 @@
 import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
+import Geocode from 'react-geocode';
 import _ from 'lodash';
-import { httpService } from '@modules/http/http.service';
-import { showAlert } from '@redux/alert/actions/alert.actions';
+import { httpService } from '../../../modules/http/http.service';
+import { showAlert } from '../../alert/actions/alert.actions';
+import { addCustody, editCustody, getCustody } from '../../custodian/actions/custodian.actions';
+import { editGateway, getAllSensorAlerts, getSensorReports } from '../../sensorsGateway/actions/sensorsGateway.actions';
 import {
-  getAggregateReport,
-  getGateways,
-  editGateway,
-  getAllSensorAlerts,
-  GET_ALL_SENSOR_ALERTS_SUCCESS,
-  GET_AGGREGATE_REPORT_SUCCESS,
-} from '@redux/sensorsGateway/actions/sensorsGateway.actions';
-import {
-  getCustody,
-  addCustody,
-  editCustody,
-} from '@redux/custodian/actions/custodian.actions';
-import { routes } from '@routes/routesConstants';
-import {
-  saveShipmentFormData,
   GET_SHIPMENTS,
   GET_SHIPMENTS_SUCCESS,
   GET_SHIPMENTS_FAILURE,
-  getShipmentDetails,
   ADD_SHIPMENT,
+  ADD_SHIPMENT_SUCCESS,
   ADD_SHIPMENT_FAILURE,
   EDIT_SHIPMENT,
+  EDIT_SHIPMENT_SUCCESS,
   EDIT_SHIPMENT_FAILURE,
   DELETE_SHIPMENT,
+  DELETE_SHIPMENT_SUCCESS,
   DELETE_SHIPMENT_FAILURE,
-  GET_DASHBOARD_ITEMS_SUCCESS,
-  GET_DASHBOARD_ITEMS_FAILURE,
-  ADD_PDF_IDENTIFIER,
-  ADD_PDF_IDENTIFIER_SUCCESS,
-  ADD_PDF_IDENTIFIER_FAILURE,
-  GET_REPORT_AND_ALERTS,
   GET_COUNTRIES_STATES,
   GET_COUNTRIES_STATES_SUCCESS,
   GET_COUNTRIES_STATES_FAILURE,
   GET_CURRENCIES,
   GET_CURRENCIES_SUCCESS,
   GET_CURRENCIES_FAILURE,
+  GET_SHIPMENT_TEMPLATES,
+  GET_SHIPMENT_TEMPLATES_SUCCESS,
+  GET_SHIPMENT_TEMPLATES_FAILURE,
+  ADD_SHIPMENT_TEMPLATE,
+  ADD_SHIPMENT_TEMPLATE_SUCCESS,
+  ADD_SHIPMENT_TEMPLATE_FAILURE,
+  EDIT_SHIPMENT_TEMPLATE,
+  EDIT_SHIPMENT_TEMPLATE_SUCCESS,
+  EDIT_SHIPMENT_TEMPLATE_FAILURE,
+  DELETE_SHIPMENT_TEMPLATE,
+  DELETE_SHIPMENT_TEMPLATE_SUCCESS,
+  DELETE_SHIPMENT_TEMPLATE_FAILURE,
 } from '../actions/shipment.actions';
-import { GET_CUSTODY_SUCCESS } from '../../custodian/actions/custodian.actions';
 
 const shipmentApiEndPoint = 'shipment/';
 
-function* configureGatewayCustody(shipmentData, payload, isEdit, shipment_gw) {
-  if ('shipment' in payload) {
-    const { gateway, start_custody, end_custody } = payload;
-    const start_custody_form = {
-      ...start_custody,
-      shipment: shipmentData.id,
-      shipment_id: shipmentData.shipment_uuid,
-    };
-    const end_custody_form = {
-      ...end_custody,
-      shipment: shipmentData.id,
-      shipment_id: shipmentData.shipment_uuid,
-    };
-    if (isEdit) {
-      yield [
-        yield put(
-          editGateway(
-            shipment_gw,
-          ),
-        ),
-        yield put(
-          editCustody(start_custody_form),
-        ),
-        yield put(
-          editCustody(end_custody_form),
-        ),
-      ];
-    } else if (gateway) {
-      yield [
-        yield put(
-          editGateway({
-            ...gateway,
-            gateway_status: 'assigned',
-            shipment_ids: [shipmentData.id],
-          }),
-        ),
-        yield put(
-          addCustody(start_custody_form),
-        ),
-        yield put(
-          addCustody(end_custody_form),
-        ),
-      ];
-    } else {
-      yield [
-        yield put(
-          addCustody(start_custody_form),
-        ),
-        yield put(
-          addCustody(end_custody_form),
-        ),
-      ];
-    }
-  } else if (isEdit && shipment_gw) {
-    yield [
-      yield put(
-        editGateway(
-          shipment_gw,
-        ),
-      ),
-    ];
-  }
-}
+function* getLocations(carrierLocations) {
+  Geocode.setApiKey(window.env.GEO_CODE_API);
+  Geocode.setLanguage('en');
 
-function* getReportAndAlerts(payload) {
-  try {
-    const { shipment_id } = payload;
-    if (shipment_id) {
-      yield [
-        yield put(getAggregateReport(shipment_id)),
-        yield put(getAllSensorAlerts(shipment_id)),
-      ];
-    } else {
-      yield [
-        yield put({
-          type: GET_AGGREGATE_REPORT_SUCCESS,
-          data: [],
-        }),
-        yield put({
-          type: GET_ALL_SENSOR_ALERTS_SUCCESS,
-          data: [],
-        }),
-      ];
-    }
-  } catch (error) {
-    yield put(
-      showAlert({
-        type: 'error',
-        open: true,
-        message: 'Couldn\'t load data due to some error!',
-      }),
-    );
-  }
+  const reponses = yield all(_.map(carrierLocations, (loc) => (
+    Geocode.fromAddress(loc)
+  )));
+  const locations = _.map(reponses, (res) => {
+    const { lat, lng } = res.results[0].geometry.location;
+    return `${lat},${lng}`;
+  });
+
+  return locations;
 }
 
 function* getShipmentList(payload) {
+  const {
+    organization_uuid, status, fetchRelatedData, fetchSensorReports,
+  } = payload;
   try {
-    let query_params;
-    if (payload.id) {
-      query_params = `${payload.id}/`;
-    } else {
-      const response = yield call(
-        httpService.makeRequest,
-        'get',
-        `${window.env.API_URL}consortium/?organization_uuid=${payload.organization_uuid}`,
-      );
-      const consortium_uuid = _.join(_.map(response.data, 'consortium_uuid'), ',');
-      query_params = `?organization_uuid=${payload.organization_uuid}`;
-      if (payload.status) {
-        // eslint-disable-next-line no-param-reassign
-        payload.status = encodeURIComponent(payload.status);
-        query_params = query_params.concat(`&status=${payload.status}`);
-      }
-      if (consortium_uuid) {
-        query_params = query_params.concat(`&consortium_uuid=${consortium_uuid}`);
-      }
+    let query_params = `?organization_uuid=${organization_uuid}`;
+
+    const response = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}consortium/?organization_uuid=${organization_uuid}`,
+    );
+    const consortium_uuid = _.join(_.map(response.data, 'consortium_uuid'), ',');
+    if (consortium_uuid) {
+      query_params = query_params.concat(`&consortium_uuid=${consortium_uuid}`);
     }
+    if (status) {
+      query_params = query_params.concat(`&status=${status}`);
+    }
+
     const data = yield call(
       httpService.makeRequest,
       'get',
       `${window.env.API_URL}${shipmentApiEndPoint}shipment/${query_params}`,
     );
     if (data && data.data) {
-      let shipment_data = data.data;
-      if (_.isArray(shipment_data)) {
-        shipment_data = _.filter(shipment_data, (shipment) => _.lowerCase(shipment.platform_name) !== 'iclp');
-      }
-
-      // Fetch updated custody
-      let uuids = '';
-      if (_.isArray(shipment_data)) {
-        uuids = _.toString(_.without(_.map(shipment_data, 'shipment_uuid'), null));
-      } else {
-        uuids = data.shipment_uuid;
-      }
-
+      const shipments = _.filter(data.data, (shipment) => _.toLower(shipment.platform_name) !== 'iclp');
+      const uuids = _.toString(_.without(_.map(shipments, 'shipment_uuid'), null));
+      const partnerIds = _.toString(_.without(_.map(shipments, 'partner_shipment_id'), null));
       const encodedUUIDs = encodeURIComponent(uuids);
-      if (payload.getUpdatedCustody && encodedUUIDs) {
-        yield [
-          yield put(getCustody(encodedUUIDs)),
-        ];
-      } else {
-        yield put({
-          type: GET_CUSTODY_SUCCESS,
-          data: [],
-        });
+      const encodedPartnerIds = encodeURIComponent(partnerIds);
+
+      if (encodedUUIDs && fetchRelatedData) {
+        yield put(getCustody(encodedUUIDs));
+      }
+      if (encodedPartnerIds && fetchRelatedData) {
+        yield put(getAllSensorAlerts(encodedPartnerIds));
+      }
+      if (encodedPartnerIds && fetchSensorReports) {
+        yield put(getSensorReports(encodedPartnerIds));
       }
 
-      yield [
-        yield put(getGateways(
-          payload.id ? shipment_data.organization_uuid : payload.organization_uuid,
-        )),
-        yield put({
-          type: GET_SHIPMENTS_SUCCESS,
-          data: shipment_data,
-          shipmentAction: payload.shipmentAction,
-          status: payload.status ? payload.status : 'All',
-        }),
-      ];
-
-      const { shipmentAction } = payload;
-      const { history, redirectTo, shipment } = payload.addEdit;
-      if (shipmentAction && shipmentAction === 'add' && history) {
-        if (redirectTo) {
-          yield call(history.push, redirectTo);
-        } else {
-          yield call(history.push, `${routes.SHIPMENT}/edit/:${shipment.id}`, {
-            type: 'edit',
-            data: shipment,
-            from: routes.SHIPMENT,
-          });
-        }
-      }
-      if (shipmentAction && shipmentAction === 'edit' && history && redirectTo) {
-        yield call(history.push, redirectTo, {
-          type: 'edit',
-          data: shipment,
-          from: routes.SHIPMENT,
-        });
-      }
+      yield put({ type: GET_SHIPMENTS_SUCCESS, data: shipments });
     }
   } catch (error) {
     yield [
@@ -234,137 +107,284 @@ function* getShipmentList(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Couldn\'t load data due to some error!',
+          message: 'Couldn\'t load shipments due to some error!',
         }),
       ),
-      yield put({
-        type: GET_SHIPMENTS_FAILURE,
-        error,
-      }),
+      yield put({ type: GET_SHIPMENTS_FAILURE, error }),
     ];
   }
 }
 
 function* addShipment(action) {
   const { history, payload, redirectTo } = action;
+  const {
+    start_custody, end_custody, files, carriers, updateGateway,
+  } = payload;
+
   try {
-    let shipment_payload;
-    if ('shipment' in payload) {
-      shipment_payload = payload.shipment;
-    } else {
-      shipment_payload = payload;
+    let shipmentPayload = payload.shipment;
+    let uploadFile = null;
+
+    if (!_.isEmpty(files)) {
+      const responses = yield all(_.map(files, (file) => {
+        uploadFile = new FormData();
+        uploadFile.append('file', file, file.name);
+
+        return call(
+          httpService.makeRequest,
+          'post',
+          `${window.env.API_URL}${shipmentApiEndPoint}upload_file/`,
+          uploadFile,
+        );
+      }));
+
+      shipmentPayload = {
+        ...shipmentPayload,
+        uploaded_pdf: _.map(files, 'name'),
+        uploaded_pdf_link: _.map(_.flatMap(_.map(responses, 'data')), 'aws url'),
+      };
     }
+
     const data = yield call(
       httpService.makeRequest,
       'post',
       `${window.env.API_URL}${shipmentApiEndPoint}shipment/`,
-      shipment_payload,
+      shipmentPayload,
     );
+    if (start_custody && data.data) {
+      yield put(addCustody({
+        ...start_custody,
+        shipment_id: data.data.shipment_uuid,
+        shipment: data.data.id,
+      }));
+    }
+    if (end_custody && data.data) {
+      yield put(addCustody({
+        ...end_custody,
+        shipment_id: data.data.shipment_uuid,
+        shipment: data.data.id,
+      }));
+    }
+    if (!_.isEmpty(carriers) && data.data) {
+      const locations = yield getLocations(_.map(carriers, 'location'));
+
+      yield all(_.map(carriers, (carrier, index) => (
+        put(addCustody({
+          ...carrier,
+          start_of_custody_location: locations[index],
+          end_of_custody_location: locations[index],
+          shipment_id: data.data.shipment_uuid,
+          shipment: data.data.id,
+        }))
+      )));
+    }
+    if (updateGateway && data.data) {
+      yield call(
+        httpService.makeRequest,
+        'patch',
+        `${window.env.API_URL}${shipmentApiEndPoint}shipment/${data.data.id}`,
+        {
+          ...shipmentPayload,
+          gateway_ids: [updateGateway.gateway_uuid],
+          gateway_imei: [_.toString(updateGateway.imei_number)],
+        },
+      );
+      yield put(editGateway({
+        ...updateGateway,
+        gateway_status: 'assigned',
+        shipment_ids: [data.data.partner_shipment_id],
+      }));
+    }
+
     yield [
-      yield configureGatewayCustody(data.data, payload, false, null),
       yield put(
         showAlert({
           type: 'success',
           open: true,
-          message: 'Successfully Added Shipment',
+          message: 'Successfully added shipment',
         }),
       ),
-      yield put(
-        getShipmentDetails(
-          shipment_payload.organization_uuid,
-          'Planned,Enroute',
-          null,
-          true,
-          true,
-          'add',
-          { history, redirectTo, shipment: data.data },
-        ),
-      ),
+      yield put({ type: ADD_SHIPMENT_SUCCESS, shipment: data.data }),
     ];
+    if (history && redirectTo) {
+      yield call(history.push, redirectTo);
+    }
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Error in creating Shipment',
+          message: 'Error in creating shipment',
         }),
       ),
-      yield put({
-        type: ADD_SHIPMENT_FAILURE,
-        error,
-      }),
+      yield put({ type: ADD_SHIPMENT_FAILURE, error }),
     ];
   }
 }
 
 function* editShipment(action) {
+  const { history, payload, redirectTo } = action;
   const {
-    payload, history, redirectTo, gateway,
-  } = action;
+    start_custody, end_custody, files, carriers, updateGateway, deleteFiles,
+  } = payload;
+
   try {
-    let shipment_payload;
-    if (!_.isEmpty(payload.shipment)) {
-      shipment_payload = payload.shipment;
-    } else {
-      shipment_payload = payload;
+    let shipmentPayload = payload.shipment;
+    let uploadFile = null;
+
+    if (!_.isEmpty(files)) {
+      const responses = yield all(_.map(files, (file) => {
+        uploadFile = new FormData();
+        uploadFile.append('file', file, file.name);
+
+        return call(
+          httpService.makeRequest,
+          'post',
+          `${window.env.API_URL}${shipmentApiEndPoint}upload_file/`,
+          uploadFile,
+        );
+      }));
+
+      shipmentPayload = {
+        ...shipmentPayload,
+        uploaded_pdf: shipmentPayload.uploaded_pdf
+          ? [...shipmentPayload.uploaded_pdf, ..._.map(files, 'name')]
+          : _.map(files, 'name'),
+        uploaded_pdf_link: shipmentPayload.uploaded_pdf_link
+          ? [...shipmentPayload.uploaded_pdf_link, ..._.map(_.flatMap(_.map(responses, 'data')), 'aws url')]
+          : _.map(_.flatMap(_.map(responses, 'data')), 'aws url'),
+      };
     }
+
+    if (!_.isEmpty(deleteFiles)) {
+      const responses = yield all(_.map(deleteFiles, (file) => (
+        call(
+          httpService.makeRequest,
+          'post',
+          `${window.env.API_URL}${shipmentApiEndPoint}delete_file/`,
+          { filename: file },
+        )
+      )));
+    }
+
+    if (!_.isEmpty(updateGateway)) {
+      shipmentPayload = {
+        ...shipmentPayload,
+        gateway_ids: [updateGateway.gateway_uuid],
+        gateway_imei: [_.toString(updateGateway.imei_number)],
+      };
+    }
+
     const data = yield call(
       httpService.makeRequest,
-      'put',
-      `${window.env.API_URL}${shipmentApiEndPoint}shipment/${shipment_payload.id}/`,
-      shipment_payload,
+      'patch',
+      `${window.env.API_URL}${shipmentApiEndPoint}shipment/${shipmentPayload.id}`,
+      shipmentPayload,
     );
-    if (!_.isEmpty(shipment_payload.gateway_ids)
-      && !_.isEmpty(gateway)
-      && !_.includes(['Completed', 'Cancelled'], shipment_payload.status)
-    ) {
-      yield configureGatewayCustody(data.data, payload, true, gateway);
+
+    if (updateGateway && data.data) {
+      let gateway_status = '';
+      let shipment_ids = [];
+      switch (data.data.status) {
+        case 'Completed':
+        case 'Cancelled':
+          gateway_status = 'unavailable';
+          shipment_ids = [];
+          break;
+
+        case 'Planned':
+        case 'Enroute':
+          gateway_status = 'assigned';
+          shipment_ids = [data.data.partner_shipment_id];
+          break;
+
+        default:
+          break;
+      }
+
+      yield put(editGateway({
+        ...updateGateway,
+        gateway_status,
+        shipment_ids,
+      }));
     }
+    if (start_custody && data.data) {
+      if (start_custody.id) {
+        yield put(editCustody(start_custody));
+      } else {
+        yield put(addCustody({
+          ...start_custody,
+          shipment_id: data.data.shipment_uuid,
+          shipment: data.data.id,
+        }));
+      }
+    }
+    if (end_custody && data.data) {
+      if (end_custody.id) {
+        yield put(editCustody(end_custody));
+      } else {
+        yield put(addCustody({
+          ...end_custody,
+          shipment_id: data.data.shipment_uuid,
+          shipment: data.data.id,
+        }));
+      }
+    }
+    if (!_.isEmpty(carriers) && data.data) {
+      const locations = yield getLocations(_.map(carriers, 'location'));
+
+      yield all(_.map(carriers, (carrier, index) => {
+        if (carrier.id) {
+          return put(editCustody({
+            ...carrier,
+            start_of_custody_location: locations[index],
+            end_of_custody_location: locations[index],
+          }));
+        }
+        return put(addCustody({
+          ...carrier,
+          start_of_custody_location: locations[index],
+          end_of_custody_location: locations[index],
+          shipment_id: data.data.shipment_uuid,
+          shipment: data.data.id,
+        }));
+      }));
+    }
+
     yield [
-      yield put(
-        getShipmentDetails(
-          shipment_payload.organization_uuid,
-          'Planned,Enroute,Cancelled',
-          null,
-          false,
-          true,
-          'edit',
-          { history, redirectTo, shipment: data.data },
-        ),
-      ),
+      yield put({ type: EDIT_SHIPMENT_SUCCESS, shipment: data.data }),
       yield put(
         showAlert({
           type: 'success',
           open: true,
-          message: 'Shipment successfully Edited!',
+          message: 'Shipment successfully edited!',
         }),
       ),
     ];
+    if (history && redirectTo) {
+      yield call(history.push, redirectTo);
+    }
   } catch (error) {
     yield [
       yield put(
         showAlert({
           type: 'error',
           open: true,
-          message: 'Error in Updating Shipment!',
+          message: 'Error in updating Shipment!',
         }),
       ),
-      yield put({
-        type: EDIT_SHIPMENT_FAILURE,
-        error,
-      }),
+      yield put({ type: EDIT_SHIPMENT_FAILURE, error }),
     ];
   }
 }
 
 function* deleteShipment(payload) {
-  const { shipmentId, organization_uuid } = payload;
   try {
     yield call(
       httpService.makeRequest,
       'delete',
-      `${window.env.API_URL}${shipmentApiEndPoint}shipment/${shipmentId}/`,
+      `${window.env.API_URL}${shipmentApiEndPoint}shipment/${payload.id}/`,
     );
     yield [
       yield put(
@@ -374,14 +394,7 @@ function* deleteShipment(payload) {
           message: 'Shipment deleted successfully!',
         }),
       ),
-      yield put(getShipmentDetails(
-        organization_uuid,
-        'Planned,Enroute,Cancelled',
-        null,
-        true,
-        true,
-        'delete',
-      )),
+      yield put({ type: DELETE_SHIPMENT_SUCCESS, id: payload.id }),
     ];
   } catch (error) {
     yield [
@@ -389,133 +402,10 @@ function* deleteShipment(payload) {
         showAlert({
           type: 'error',
           open: true,
-          message: 'Error in deleting Shipment!',
+          message: 'Error in deleting shipment!',
         }),
       ),
-      yield put({
-        type: DELETE_SHIPMENT_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* getDashboard(payload) {
-  try {
-    const data = yield call(
-      httpService.makeRequest,
-      'get',
-      `${window.env.API_URL}${shipmentApiEndPoint}dashboard/?organization_uuid=${payload.organization_uuid}`,
-    );
-    yield put({
-      type: GET_DASHBOARD_ITEMS_SUCCESS,
-      data: data.data,
-    });
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t load data due to some error!',
-        }),
-      ),
-      yield put({
-        type: GET_DASHBOARD_ITEMS_FAILURE,
-        error,
-      }),
-    ];
-  }
-}
-
-function* pdfIdentifier(action) {
-  const {
-    data,
-    filename,
-    identifier,
-    payload,
-    history,
-    redirectTo,
-    organization_uuid,
-  } = action;
-  try {
-    let { uploaded_pdf, uploaded_pdf_link } = payload;
-    if (data && filename) {
-      const response = yield call(
-        httpService.makeRequest,
-        'post',
-        `${window.env.API_URL}${shipmentApiEndPoint}upload_file/`,
-        data,
-      );
-      uploaded_pdf = payload.uploaded_pdf
-        ? [...payload.uploaded_pdf, filename]
-        : [filename];
-      uploaded_pdf_link = payload.uploaded_pdf_link
-        ? [...payload.uploaded_pdf_link, response.data['aws url']]
-        : [response.data['aws url']];
-    }
-
-    const unique_identifier = identifier;
-    yield [
-      yield put({
-        type: ADD_PDF_IDENTIFIER_SUCCESS,
-        uploaded_pdf,
-        uploaded_pdf_link,
-        unique_identifier,
-      }),
-      yield put({
-        type: EDIT_SHIPMENT,
-        payload: {
-          ...payload,
-          uploaded_pdf,
-          uploaded_pdf_link,
-          unique_identifier,
-        },
-        history,
-        redirectTo,
-        organization_uuid,
-      }),
-    ];
-    if (data && filename && identifier) {
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Successfully Added PDF and Unique Identifer',
-        }),
-      );
-    }
-    if (data && filename && !identifier) {
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Successfully Added PDF',
-        }),
-      );
-    }
-    if (!data && !filename && identifier) {
-      yield put(
-        showAlert({
-          type: 'success',
-          open: true,
-          message: 'Successfully Added Unique Identifer',
-        }),
-      );
-    }
-  } catch (error) {
-    yield [
-      yield put(
-        showAlert({
-          type: 'error',
-          open: true,
-          message: 'Couldn\'t Upload Bill due to some error!',
-        }),
-      ),
-      yield put({
-        type: ADD_PDF_IDENTIFIER_FAILURE,
-        error,
-      }),
+      yield put({ type: DELETE_SHIPMENT_FAILURE, error }),
     ];
   }
 }
@@ -588,6 +478,130 @@ function* getCurrencies() {
   }
 }
 
+function* getShipmentTemplates(payload) {
+  const { organization_uuid } = payload;
+  try {
+    const response = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}${shipmentApiEndPoint}shipment_template/?organization_uuid=${organization_uuid}`,
+    );
+    yield put({ type: GET_SHIPMENT_TEMPLATES_SUCCESS, data: response.data });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t load shipment template(s) due to some error!',
+        }),
+      ),
+      yield put({ type: GET_SHIPMENT_TEMPLATES_FAILURE, error }),
+    ];
+  }
+}
+
+function* addShipmentTemplate(action) {
+  const { payload } = action;
+  try {
+    const response = yield call(
+      httpService.makeRequest,
+      'post',
+      `${window.env.API_URL}${shipmentApiEndPoint}shipment_template/`,
+      payload,
+    );
+
+    yield [
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: `Successfully added template ${response.data.name}`,
+        }),
+      ),
+      yield put({ type: ADD_SHIPMENT_TEMPLATE_SUCCESS, template: response.data }),
+    ];
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Error in creating shipment template',
+        }),
+      ),
+      yield put({ type: ADD_SHIPMENT_TEMPLATE_FAILURE, error }),
+    ];
+  }
+}
+
+function* editShipmentTemplate(action) {
+  const { payload } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'patch',
+      `${window.env.API_URL}${shipmentApiEndPoint}shipment_template/${payload.id}/`,
+      payload,
+    );
+
+    yield [
+      yield put({ type: EDIT_SHIPMENT_TEMPLATE_SUCCESS, template: data.data }),
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: `Successfully edited template ${data.data.name}`,
+        }),
+      ),
+    ];
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Error in updating shipment template!',
+        }),
+      ),
+      yield put({ type: EDIT_SHIPMENT_TEMPLATE_FAILURE, error }),
+    ];
+  }
+}
+
+function* deleteShipmentTemplate(action) {
+  const { id, showMessage } = action;
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'delete',
+      `${window.env.API_URL}${shipmentApiEndPoint}shipment_template/${id}/`,
+    );
+
+    yield put({ type: DELETE_SHIPMENT_TEMPLATE_SUCCESS, id });
+    if (showMessage) {
+      yield put(
+        showAlert({
+          type: 'success',
+          open: true,
+          message: 'Successfully deleted template',
+        }),
+      );
+    }
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Error in deleting shipment template!',
+        }),
+      ),
+      yield put({ type: DELETE_SHIPMENT_TEMPLATE_FAILURE, error }),
+    ];
+  }
+}
+
 function* watchGetShipment() {
   yield takeLatest(GET_SHIPMENTS, getShipmentList);
 }
@@ -604,14 +618,6 @@ function* watchDeleteShipment() {
   yield takeLatest(DELETE_SHIPMENT, deleteShipment);
 }
 
-function* watchPdfIdentifier() {
-  yield takeLatest(ADD_PDF_IDENTIFIER, pdfIdentifier);
-}
-
-function* watchReportAndAlerts() {
-  yield takeLatest(GET_REPORT_AND_ALERTS, getReportAndAlerts);
-}
-
 function* watchGetCountries() {
   yield takeLatest(GET_COUNTRIES_STATES, getCountries);
 }
@@ -620,15 +626,33 @@ function* watchGetCurrencies() {
   yield takeLatest(GET_CURRENCIES, getCurrencies);
 }
 
+function* watchGetShipmentTemplates() {
+  yield takeLatest(GET_SHIPMENT_TEMPLATES, getShipmentTemplates);
+}
+
+function* watchAddShipmentTemplate() {
+  yield takeLatest(ADD_SHIPMENT_TEMPLATE, addShipmentTemplate);
+}
+
+function* watchEditShipmentTemplate() {
+  yield takeLatest(EDIT_SHIPMENT_TEMPLATE, editShipmentTemplate);
+}
+
+function* watchDeleteShipmentTemplate() {
+  yield takeLatest(DELETE_SHIPMENT_TEMPLATE, deleteShipmentTemplate);
+}
+
 export default function* shipmentSaga() {
   yield all([
     watchGetShipment(),
     watchAddShipment(),
     watchDeleteShipment(),
     watchEditShipment(),
-    watchPdfIdentifier(),
-    watchReportAndAlerts(),
     watchGetCountries(),
     watchGetCurrencies(),
+    watchGetShipmentTemplates(),
+    watchAddShipmentTemplate(),
+    watchEditShipmentTemplate(),
+    watchDeleteShipmentTemplate(),
   ]);
 }

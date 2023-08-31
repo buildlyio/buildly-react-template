@@ -30,10 +30,10 @@ const StyledMenu = withStyles({
 
 const StyledMenuItem = withStyles((theme) => ({
   root: {
-    '&:focus': {
-      backgroundColor: theme.palette.primary.main,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.light,
       '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-        color: theme.palette.secondary.main,
+        color: theme.palette.primary.dark,
       },
     },
     padding: theme.spacing(2),

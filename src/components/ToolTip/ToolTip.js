@@ -17,13 +17,13 @@ const useStyles = makeStyles((theme) => ({
 
 const StyledToolTip = withStyles((theme) => ({
   tooltip: {
-    backgroundColor: theme.palette.common.darkGrey,
+    backgroundColor: theme.palette.background.light,
     color: theme.palette.secondary.main,
     maxWidth: 220,
     fontSize: theme.typography.pxToRem(12),
   },
   arrow: {
-    color: theme.palette.common.arrow,
+    color: theme.palette.background.light,
   },
 }))(Tooltip);
 

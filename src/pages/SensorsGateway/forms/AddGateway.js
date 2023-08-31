@@ -6,7 +6,6 @@ import {
   useTheme,
   Button,
   TextField,
-  CircularProgress,
   Grid,
   MenuItem,
   useMediaQuery,
@@ -16,19 +15,19 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import DatePickerComponent from '../../../components/DatePicker/DatePicker';
+import Loader from '../../../components/Loader/Loader';
 import MapComponent from '../../../components/MapComponent/MapComponent';
 import FormModal from '../../../components/Modal/FormModal';
 import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
 import { UserContext } from '../../../context/User.context';
 import { useInput } from '../../../hooks/useInput';
+import { getUnitOfMeasure } from '../../../redux/items/actions/items.actions';
 import {
   addGateway,
   editGateway,
 } from '../../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import { validators } from '../../../utils/validators';
-import { getCustodianFormattedRow } from '../../../pages/Custodians/CustodianConstants';
-import { GATEWAY_STATUS } from '../Constants';
-import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
+import { getCustodianFormattedRow, GATEWAY_STATUS } from '../../../utils/constants';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -49,9 +48,6 @@ const useStyles = makeStyles((theme) => ({
     left: '50%',
     marginTop: -12,
     marginLeft: -12,
-  },
-  loadingWrapper: {
-    position: 'relative',
   },
   cardItems: {
     marginTop: theme.spacing(4),
@@ -128,7 +124,7 @@ const AddGateway = ({
   const organization = useContext(UserContext).organization.organization_uuid;
 
   useEffect(() => {
-    if (!unitOfMeasure) {
+    if (_.isEmpty(unitOfMeasure)) {
       dispatch(getUnitOfMeasure(organization));
     }
   }, []);
@@ -140,11 +136,7 @@ const AddGateway = ({
   }, [gatewayOptions]);
 
   useEffect(() => {
-    if (
-      custodianData
-      && contactInfo
-      && custodianData.length
-    ) {
+    if (!_.isEmpty(custodianData) && contactInfo) {
       setCustodianList(getCustodianFormattedRow(
         custodianData,
         contactInfo,
@@ -292,6 +284,7 @@ const AddGateway = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {loading && <Loader open={loading} />}
           <form
             className={classes.form}
             noValidate
@@ -656,30 +649,22 @@ const AddGateway = ({
 
             <Grid container spacing={2} justifyContent="center">
               <Grid item xs={6} sm={4}>
-                <div className={classes.loadingWrapper}>
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                    disabled={loading || submitDisabled()}
-                  >
-                    {buttonText}
-                  </Button>
-                  {loading && (
-                    <CircularProgress
-                      size={24}
-                      className={classes.buttonProgress}
-                    />
-                  )}
-                </div>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  disabled={loading || submitDisabled()}
+                >
+                  {buttonText}
+                </Button>
               </Grid>
               <Grid item xs={6} sm={4}>
                 <Button
                   type="button"
                   fullWidth
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
                   onClick={discardFormData}
                   className={classes.submit}

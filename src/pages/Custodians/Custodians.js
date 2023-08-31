@@ -1,26 +1,22 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
+import _ from 'lodash';
 import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
 import { UserContext } from '../../context/User.context';
 import {
   getCustodians,
-  getCustodianType,
   deleteCustodian,
   getContact,
-  getCustody,
+  getCustodianType,
 } from '../../redux/custodian/actions/custodian.actions';
-import {
-  getCustodianOptions,
-  getContactOptions,
-} from '../../redux/options/actions/options.actions';
 import { getCountries } from '../../redux/shipment/actions/shipment.actions';
 import { routes } from '../../routes/routesConstants';
 import {
   custodianColumns,
   getCustodianFormattedRow,
   getUniqueContactInfo,
-} from './CustodianConstants';
+} from '../../utils/constants';
 import AddCustodians from './forms/AddCustodians';
 
 const Custodian = ({
@@ -30,9 +26,6 @@ const Custodian = ({
   loading,
   contactInfo,
   redirectTo,
-  custodyData,
-  custodianOptions,
-  contactOptions,
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
@@ -49,28 +42,17 @@ const Custodian = ({
     : `${routes.CUSTODIANS}/edit`;
 
   useEffect(() => {
-    if (custodianData === null) {
-      dispatch(getCustodians(organization));
-      dispatch(getCustodianType());
-      dispatch(getContact(organization));
-    }
-    if (!custodyData) {
-      dispatch(getCustody());
-    }
-    if (custodianOptions === null) {
-      dispatch(getCustodianOptions());
-    }
-    if (contactOptions === null) {
-      dispatch(getContactOptions());
-    }
+    dispatch(getCustodians(organization));
+    dispatch(getCustodianType());
+    dispatch(getContact(organization));
     dispatch(getCountries());
   }, []);
 
   useEffect(() => {
-    if (custodianData && custodianData.length && contactInfo && contactInfo.length) {
+    if (!_.isEmpty(custodianData) && !_.isEmpty(contactInfo)) {
       setRows(getCustodianFormattedRow(custodianData, contactInfo));
     }
-  }, [JSON.stringify(custodianData), JSON.stringify(contactInfo)]);
+  }, [custodianData, contactInfo]);
 
   const editItem = (item) => {
     const contactObj = getUniqueContactInfo(item, contactInfo);
@@ -93,7 +75,6 @@ const Custodian = ({
     dispatch(deleteCustodian(
       deleteItemId,
       deleteContactObjId,
-      organization,
     ));
     setDeleteModal(false);
   };
@@ -129,11 +110,6 @@ const Custodian = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
-  ...state.optionsReducer,
-  loading: (
-    state.custodianReducer.loading
-    || state.optionsReducer.loading
-  ),
 });
 
 export default connect(mapStateToProps)(Custodian);

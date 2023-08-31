@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Edit as EditIcon } from '@mui/icons-material';
-import profile from '@assets/profile.png';
+import profile from '../../assets/profile.png';
 import Loader from '../../components/Loader/Loader';
 import { routes } from '../../routes/routesConstants';
 import EditProfileInfo from './forms/EditProfileInfo';
@@ -76,7 +76,7 @@ const MyAccount = ({
               <div className={classes.iconRight}>
                 <IconButton
                   edge="end"
-                  color="secondary"
+                  color="primary"
                   aria-label="edit"
                   onClick={() => setFormModal(true)}
                 >
@@ -162,7 +162,7 @@ const MyAccount = ({
                       </Typography>
                       <div className={classes.infoSection}>
                         <Typography variant="body2">
-                          GeoFence Alerts:
+                          Shipment Status Change Alerts:
                         </Typography>
                         <Typography variant="body1">
                           {user
@@ -195,7 +195,7 @@ const MyAccount = ({
                       </Typography>
                       <div className={classes.infoSection}>
                         <Typography variant="body2">
-                          GeoFence Alerts:
+                          Shipment Status Change Alerts:
                         </Typography>
                         <Typography variant="body1">
                           {user
