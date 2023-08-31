@@ -4,7 +4,6 @@ import _ from 'lodash';
 import {
   Divider,
   Drawer,
-  Hidden,
   List,
   ListItem,
   ListItemText,
@@ -20,25 +19,32 @@ const useStyles = makeStyles((theme) => ({
       width: 240,
       flexShrink: 0,
     },
-    backgroundColor: theme.palette.common.drawer,
+    backgroundColor: theme.palette.background.dark,
   },
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: 240,
-    backgroundColor: theme.palette.background.dark,
-    color: theme.palette.secondary.main,
+    backgroundColor: theme.palette.background.default,
+    color: theme.palette.primary.main,
   },
   active: {
-    backgroundColor: '#887C5E !important',
-    borderRightColor: theme.palette.primary.main,
-    borderRightWidth: 10,
-    borderRightStyle: 'solid',
+    backgroundColor: theme.palette.primary.light,
     fontWeight: 'bold',
+    color: `${theme.palette.primary.dark} !important`,
+    '&:hover': {
+      backgroundColor: `${theme.palette.primary.light} !important`,
+    },
   },
   navLink: {
     display: 'block',
     textDecoration: 'none',
-    color: theme.palette.secondary.main,
+    color: theme.palette.primary.main,
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.main,
+      '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+        color: theme.palette.primary.dark,
+      },
+    },
   },
   navItems: {
     padding: theme.spacing(3, 4),

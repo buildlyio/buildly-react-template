@@ -4,46 +4,44 @@ import * as actions from './custodian.actions';
 describe('Get Custodians action', () => {
   it('should create an action to get custodians', () => {
     const organization_uuid = '224761f5-0010-4a46-ba2f-d92a4fdc1d21';
-    const expectedAction = {
-      type: actions.GET_CUSTODIANS,
-      organization_uuid,
-    };
-    expect(actions.getCustodians(organization_uuid))
-      .toEqual(expectedAction);
+    const expectedAction = { type: actions.GET_CUSTODIANS, organization_uuid };
+    expect(actions.getCustodians(organization_uuid)).toEqual(expectedAction);
   });
 });
 
 // Test Add Custodians action
 describe('Add Custodian action', () => {
   it('should create an action to add custodian', () => {
-    const payload = { id: 123, name: 'Abc' };
+    const custodian = { name: 'Abc' };
+    const contact = { address: 'Test' };
     const history = {};
     const redirectTo = '/test';
     const expectedAction = {
       type: actions.ADD_CUSTODIANS,
-      payload,
+      custodian,
+      contact,
       history,
       redirectTo,
     };
-    expect(actions.addCustodians(payload, history, redirectTo))
-      .toEqual(expectedAction);
+    expect(actions.addCustodians(custodian, contact, history, redirectTo)).toEqual(expectedAction);
   });
 });
 
 // Test Edit Custodian action
 describe('Edit Custodian action', () => {
   it('should create an action to edit custodian', () => {
-    const payload = { id: 123 };
+    const custodian = { id: 1, name: 'Abc Edited' };
+    const contact = { id: 1, address: 'Test Edited' };
     const history = {};
     const redirectTo = '/test';
     const expectedAction = {
       type: actions.EDIT_CUSTODIANS,
-      payload,
+      custodian,
+      contact,
       history,
       redirectTo,
     };
-    expect(actions.editCustodian(payload, history, redirectTo))
-      .toEqual(expectedAction);
+    expect(actions.editCustodian(custodian, contact, history, redirectTo)).toEqual(expectedAction);
   });
 });
 
@@ -51,19 +49,9 @@ describe('Edit Custodian action', () => {
 describe('Delete Custodian action', () => {
   it('should create an action to delete custodian', () => {
     const custodianId = '123';
-    const contactObjId = '21';
-    const organization_uuid = '224761f5-0010-4a46-ba2f-d92a4fdc1d21';
-    const expectedAction = {
-      type: actions.DELETE_CUSTODIANS,
-      custodianId,
-      contactObjId,
-      organization_uuid,
-    };
-    expect(actions.deleteCustodian(
-      custodianId,
-      contactObjId,
-      organization_uuid,
-    )).toEqual(expectedAction);
+    const contactId = '21';
+    const expectedAction = { type: actions.DELETE_CUSTODIANS, custodianId, contactId };
+    expect(actions.deleteCustodian(custodianId, contactId)).toEqual(expectedAction);
   });
 });
 
@@ -95,6 +83,7 @@ describe('Add Custody action', () => {
 describe('Edit Custody action', () => {
   it('should create an action to edit custody', () => {
     const payload = {
+      id: 1,
       name: 'Test Edited',
     };
     const expectedAction = {
@@ -102,6 +91,18 @@ describe('Edit Custody action', () => {
       payload,
     };
     expect(actions.editCustody(payload)).toEqual(expectedAction);
+  });
+});
+
+// Test Delete Custody action
+describe('Delete Custody action', () => {
+  it('should create an action to delete custody', () => {
+    const custodyId = 1;
+    const expectedAction = {
+      type: actions.DELETE_CUSTODY,
+      custodyId,
+    };
+    expect(actions.deleteCustody(custodyId)).toEqual(expectedAction);
   });
 });
 

@@ -2,16 +2,16 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
+import { UserContext } from '../../../../context/User.context';
 import {
   getCustodianType,
   deleteCustodianType,
 } from '../../../../redux/custodian/actions/custodian.actions';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
 import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../ConfigurationConstants';
+import { getColumns } from '../../../../utils/constants';
 import AddCustodianType from '../forms/AddCustodianType';
-import { getUnitOfMeasure } from '@redux/items/actions/items.actions';
-import { UserContext } from '@context/User.context';
+import { getUnitOfMeasure } from '../../../../redux/items/actions/items.actions';
 
 const CustodianType = ({
   dispatch,
@@ -35,16 +35,13 @@ const CustodianType = ({
     : `${routes.CONFIGURATION}/custodian-type/edit`;
 
   useEffect(() => {
-    if (!unitOfMeasure) {
+    if (_.isEmpty(unitOfMeasure)) {
       dispatch(getUnitOfMeasure(organization));
     }
-  }, []);
-
-  useEffect(() => {
-    if (!loading && !custodianTypeList) {
+    if (_.isEmpty(custodianTypeList)) {
       dispatch(getCustodianType());
     }
-  }, [custodianTypeList]);
+  }, []);
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {

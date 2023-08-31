@@ -11,10 +11,6 @@ export const EDIT_CUSTODIANS = 'CUSTODIAN/EDIT_CUSTODIANS';
 export const EDIT_CUSTODIANS_SUCCESS = 'CUSTODIAN/EDIT_CUSTODIANS_SUCCESS';
 export const EDIT_CUSTODIANS_FAILURE = 'CUSTODIAN/EDIT_CUSTODIANS_FAILURE';
 
-export const UPDATE_CUSTODIAN = 'CUSTODIAN/UPDATE_CUSTODIAN';
-export const UPDATE_CUSTODIAN_SUCCESS = 'CUSTODIAN/UPDATE_CUSTODIAN_SUCCESS';
-export const UPDATE_CUSTODIAN_FAILURE = 'CUSTODIAN/UPDATE_CUSTODIAN_FAILURE';
-
 export const DELETE_CUSTODIANS = 'CUSTODIAN/DELETE_CUSTODIANS';
 export const DELETE_CUSTODIANS_SUCCESS = 'CUSTODIAN/DELETE_CUSTODIANS_SUCCESS';
 export const DELETE_CUSTODIANS_FAILURE = 'CUSTODIAN/DELETE_CUSTODIANS_FAILURE';
@@ -30,10 +26,6 @@ export const ADD_CUSTODY_FAILURE = 'CUSTODIAN/ADD_CUSTODY_FAILURE';
 export const EDIT_CUSTODY = 'CUSTODIAN/EDIT_CUSTODY';
 export const EDIT_CUSTODY_SUCCESS = 'CUSTODIAN/EDIT_CUSTODY_SUCCESS';
 export const EDIT_CUSTODY_FAILURE = 'CUSTODIAN/EDIT_CUSTODY_FAILURE';
-
-export const UPDATE_CUSTODY = 'CUSTODIAN/UPDATE_CUSTODY';
-export const UPDATE_CUSTODY_SUCCESS = 'CUSTODIAN/UPDATE_CUSTODY_SUCCESS';
-export const UPDATE_CUSTODY_FAILURE = 'CUSTODIAN/UPDATE_CUSTODY_FAILURE';
 
 export const DELETE_CUSTODY = 'CUSTODIAN/DELETE_CUSTODY';
 export const DELETE_CUSTODY_SUCCESS = 'CUSTODIAN/DELETE_CUSTODY_SUCCESS';
@@ -71,9 +63,10 @@ export const getCustodians = (organization_uuid) => ({ type: GET_CUSTODIANS, org
  * @param {Object} history
  * @param {String} redirectTo
  */
-export const addCustodians = (payload, history, redirectTo) => ({
+export const addCustodians = (custodian, contact, history, redirectTo) => ({
   type: ADD_CUSTODIANS,
-  payload,
+  custodian,
+  contact,
   history,
   redirectTo,
 });
@@ -84,40 +77,24 @@ export const addCustodians = (payload, history, redirectTo) => ({
  * @param {Object} history
  * @param {String} redirectTo
  */
-export const editCustodian = (payload, history, redirectTo) => ({
+export const editCustodian = (custodian, contact, history, redirectTo) => ({
   type: EDIT_CUSTODIANS,
-  payload,
+  custodian,
+  contact,
   history,
   redirectTo,
 });
 
-/**
- * Update Custodian
- * @param {Object} payload
- * @param {Object} history
- * @param {String} redirectTo
- */
-export const updateCustodian = (payload, history, redirectTo) => ({
-  type: UPDATE_CUSTODIAN,
-  payload,
-  history,
-  redirectTo,
-});
 /**
  * Delete Custodain
  * @param {Number} custodianId
  * @param {Number} contactObjId
  * @param {String} organization_uuid
  */
-export const deleteCustodian = (
-  custodianId,
-  contactObjId,
-  organization_uuid,
-) => ({
+export const deleteCustodian = (custodianId, contactId) => ({
   type: DELETE_CUSTODIANS,
   custodianId,
-  contactObjId,
-  organization_uuid,
+  contactId,
 });
 
 /**
@@ -147,30 +124,12 @@ export const editCustody = (payload) => ({
 });
 
 /**
- * Update Custody
- * @param {Object} payload
- */
-export const updateCustody = (payload) => ({
-  type: UPDATE_CUSTODY,
-  payload,
-});
-
-/**
  * Delete Custody
  * @param {Number} custodyId
  * @param {String} shipmentId
  * @param {String} organization_uuid
  */
-export const deleteCustody = (
-  custodyId,
-  shipmentId,
-  organization_uuid,
-) => ({
-  type: DELETE_CUSTODY,
-  custodyId,
-  shipmentId,
-  organization_uuid,
-});
+export const deleteCustody = (custodyId) => ({ type: DELETE_CUSTODY, custodyId });
 
 /**
  * Get Custodian Type

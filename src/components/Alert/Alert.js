@@ -13,22 +13,21 @@ const useStyles = makeStyles((theme) => ({
     '& > * + *': {
       marginTop: theme.spacing(2),
     },
+    '& .MuiSnackbarContent-root': {
+      backgroundColor: 'transparent',
+    },
   },
   success: {
-    backgroundColor: theme.palette.common.success,
-    color: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.success.main,
   },
   info: {
-    backgroundColor: theme.palette.common.info,
-    color: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.info.main,
   },
   warning: {
-    backgroundColor: theme.palette.common.warning,
-    color: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.warning.main,
   },
   error: {
-    backgroundColor: theme.palette.common.error,
-    color: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.error.main,
   },
 }));
 

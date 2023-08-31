@@ -1,4 +1,4 @@
-import moment from 'moment-timezone';
+import { getUser } from '../../../context/User.context';
 import {
   SET_TIMEZONE,
   GET_USER_OPTIONS,
@@ -25,9 +25,6 @@ import {
   GET_GATEWAY_OPTIONS,
   GET_GATEWAY_OPTIONS_SUCCESS,
   GET_GATEWAY_OPTIONS_FAILURE,
-  GET_SENSOR_OPTIONS,
-  GET_SENSOR_OPTIONS_SUCCESS,
-  GET_SENSOR_OPTIONS_FAILURE,
   GET_SHIPMENT_OPTIONS,
   GET_SHIPMENT_OPTIONS_SUCCESS,
   GET_SHIPMENT_OPTIONS_FAILURE,
@@ -37,7 +34,7 @@ const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  timezone: moment.tz.guess(),
+  timezone: getUser() ? getUser().user_timezone : null,
   userOptions: null,
   orgOptions: null,
   custodianOptions: null,
@@ -46,7 +43,6 @@ const initialState = {
   itemOptions: null,
   productOptions: null,
   gatewayOptions: null,
-  sensorOptions: null,
   shipmentOptions: null,
 };
 
@@ -272,33 +268,6 @@ export default (state = initialState, action) => {
         loading: false,
         loaded: true,
         gatewayOptions: null,
-        error: action.error,
-      };
-
-    case GET_SENSOR_OPTIONS:
-      return {
-        ...state,
-        loading: true,
-        loaded: false,
-        sensorOptions: null,
-        error: null,
-      };
-
-    case GET_SENSOR_OPTIONS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        sensorOptions: action.data,
-        error: null,
-      };
-
-    case GET_SENSOR_OPTIONS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        sensorOptions: null,
         error: action.error,
       };
 

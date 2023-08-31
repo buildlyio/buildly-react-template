@@ -8,12 +8,11 @@ const Copyright = () => {
   return (
     <Typography
       variant="body2"
-      color="textSecondary"
       align="center"
     >
       {'Copyright © '}
       <Link
-        color="inherit"
+        color="primary"
         href="https://xparent.io/"
         target="_blank"
         sx={{

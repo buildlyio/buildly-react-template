@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { getUser } from '@context/User.context';
+import { getUser } from '../../../context/User.context';
 import {
   LOGIN,
   LOGIN_SUCCESS,

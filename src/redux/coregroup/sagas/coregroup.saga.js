@@ -1,7 +1,7 @@
 import {
   put, takeLatest, all, call,
 } from 'redux-saga/effects';
-import { httpService } from '@modules/http/http.service';
+import { httpService } from '../../../modules/http/http.service';
 import {
   LOAD_DATA_COREGROUP,
   LOAD_DATA_COREGROUP_FAIL,
@@ -15,7 +15,7 @@ import {
   DELETE_COREGROUP,
   DELETE_COREGROUP_FAIL,
   DELETE_COREGROUP_COMMIT,
-} from '@redux/coregroup/actions/coregroup.actions';
+} from '../actions/coregroup.actions';
 
 function* loadCoregroups() {
   try {

@@ -15,6 +15,7 @@ import {
   ToggleButtonGroup,
   CardContent,
   Card,
+  useTheme,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import {
@@ -24,34 +25,27 @@ import {
 import GraphComponent from '../../components/GraphComponent/GraphComponent';
 import Loader from '../../components/Loader/Loader';
 import MapComponent from '../../components/MapComponent/MapComponent';
-import CustomizedTooltips from '../../components/ToolTip/ToolTip';
 import { UserContext } from '../../context/User.context';
 import {
   getCustodians,
-  getCustodianType,
   getContact,
-  getCustody,
 } from '../../redux/custodian/actions/custodian.actions';
-import {
-  getSensors,
-  getSensorType,
-} from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
-import {
-  getShipmentDetails,
-  getReportAndAlerts,
-} from '../../redux/shipment/actions/shipment.actions';
 import {
   getUnitOfMeasure,
 } from '../../redux/items/actions/items.actions';
-import AlertsReport from './components/AlertsReport';
-import SensorReport from './components/SensorReport';
+import { getGateways, getSensorReports } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
+import {
+  getShipmentDetails,
+} from '../../redux/shipment/actions/shipment.actions';
 import {
   getShipmentOverview,
   SHIPMENT_OVERVIEW_COLUMNS,
-  SHIPMENT_OVERVIEW_TOOL_TIP,
   REPORT_TYPES,
   getIcon,
-} from './ReportingConstants';
+  processReportsAndMarkers,
+} from '../../utils/constants';
+import AlertsReport from './components/AlertsReport';
+import SensorReport from './components/SensorReport';
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -67,13 +61,23 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   switchViewSection: {
-    background: theme.palette.background.dark,
+    background: theme.palette.primary.main,
+    color: theme.palette.background.default,
+    width: '100%',
+    display: 'flex',
+    minHeight: '40px',
+    alignItems: 'center',
+  },
+  switchViewSection2: {
+    background: theme.palette.primary.light,
     width: '100%',
     display: 'flex',
     minHeight: '40px',
     alignItems: 'center',
   },
   iconBar: {
+    backgroundColor: theme.palette.primary.light,
+    height: '100%',
     '& svg': {
       margin: '0 auto',
     },
@@ -86,14 +90,16 @@ const useStyles = makeStyles((theme) => ({
     height: '100px',
   },
   infoContainer: {
-    height: '525px',
+    height: '550px',
     overflowX: 'auto',
-    backgroundColor: theme.palette.common.darkGrey2,
+    overflowY: 'hidden',
+    '& .MuiPaper-root': {
+      boxShadow: 'none',
+    },
   },
   reportContainer: {
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(3),
-    backgroundColor: theme.palette.common.darkGrey2,
   },
   selectInput: {
     marginLeft: theme.spacing(1),
@@ -103,27 +109,98 @@ const useStyles = makeStyles((theme) => ({
 const Reporting = ({
   dispatch,
   loading,
-  aggregateReportData,
   shipmentData,
   custodianData,
   custodyData,
-  sensorData,
   contactInfo,
   unitOfMeasure,
   timezone,
-  allAlerts,
+  allSensorAlerts,
+  sensorReports,
+  gatewayData,
 }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const organization = useContext(UserContext).organization.organization_uuid;
   const [tileView, setTileView] = useState(true);
   const [shipmentFilter, setShipmentFilter] = useState('Active');
   const [selectedGraph, setSelectedGraph] = useState('temperature');
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [shipmentOverview, setShipmentOverview] = useState([]);
-  const [isMapLoaded, setMapLoaded] = useState(true);
+  const [reports, setReports] = useState([]);
+  const [allGraphs, setAllGraphs] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState({});
-  const [formattedShipmentData, setFormattedShipmentData] = useState([]);
+
+  useEffect(() => {
+    dispatch(getUnitOfMeasure(organization));
+    dispatch(getCustodians(organization));
+    dispatch(getContact(organization));
+    dispatch(getGateways(organization));
+    dispatch(getShipmentDetails(organization, 'Planned,Enroute', true));
+  }, []);
+
+  useEffect(() => {
+    if (shipmentFilter === 'Active') {
+      dispatch(getShipmentDetails(organization, 'Planned,Enroute', true));
+    } else {
+      const completedShipments = _.filter(shipmentData, (shipment) => shipment.type === 'Completed');
+      // const cancelledShipments =
+      // _.filter(shipmentData, (shipment) => shipment.type === 'Cancelled');
+
+      if (_.isEmpty(completedShipments) && shipmentFilter === 'Completed') {
+        dispatch(getShipmentDetails(organization, 'Completed', true));
+      }
+      // if (_.isEmpty(cancelledShipments) && shipmentFilter === 'Completed') {
+      //   dispatch(getShipmentDetails(organization, 'Cancelled', true));
+      // }
+    }
+    if (_.isEmpty(custodianData)) {
+      dispatch(getCustodians(organization));
+      dispatch(getContact(organization));
+    }
+  }, [shipmentFilter]);
+
+  useEffect(() => {
+    if (shipmentData && custodianData && custodyData && contactInfo) {
+      const overview = getShipmentOverview(
+        shipmentData,
+        custodianData,
+        custodyData,
+        contactInfo,
+        gatewayData,
+      );
+      if (!_.isEmpty(overview)) {
+        setShipmentOverview(overview);
+        if (selectedShipment) {
+          const selected = _.find(overview, { id: selectedShipment.id });
+          setSelectedShipment(selected);
+        }
+      }
+    }
+  }, [shipmentData, custodianData, custodyData, contactInfo, gatewayData]);
+
+  useEffect(() => {
+    const alerts = _.filter(
+      allSensorAlerts,
+      (alert) => alert.parameter_type !== 'location' && selectedShipment && alert.shipment_id === selectedShipment.partner_shipment_id,
+    );
+    if (selectedShipment && !_.isEmpty(sensorReports)) {
+      const { sensorReportInfo, markersToSet, graphs } = processReportsAndMarkers(
+        sensorReports,
+        alerts,
+        timezone,
+        unitOfMeasure,
+        theme.palette.error.main,
+        theme.palette.info.main,
+        selectedShipment,
+      );
+
+      setReports(sensorReportInfo);
+      setAllGraphs(graphs);
+      setMarkers(markersToSet);
+    }
+  }, [sensorReports, allSensorAlerts, timezone]);
 
   const getShipmentValue = (value) => {
     let returnValue;
@@ -151,149 +228,17 @@ const Reporting = ({
   const handleShipmentSelection = (shipment) => {
     setSelectedShipment(shipment);
     if (shipment.partner_shipment_id) {
-      dispatch(getReportAndAlerts(shipment.partner_shipment_id));
+      dispatch(getSensorReports(encodeURIComponent(shipment.partner_shipment_id)));
     }
   };
 
   const makeFilterSelection = (value) => {
     setShipmentFilter(value);
     setSelectedShipment(null);
+    setReports([]);
+    setAllGraphs([]);
     setMarkers([]);
   };
-
-  useEffect(() => {
-    if (!unitOfMeasure) {
-      dispatch(getUnitOfMeasure(organization));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!shipmentData || shipmentFilter === 'Active') {
-      const aggregate = !aggregateReportData;
-      const custody = !custodyData;
-      dispatch(getShipmentDetails(
-        organization,
-        'Planned,Enroute',
-        null,
-        aggregate,
-        custody,
-        'get',
-      ));
-    } else {
-      const completedShipments = _.filter(shipmentData, (shipment) => shipment.type === 'Completed');
-      // const cancelledShipments =
-      // _.filter(shipmentData, (shipment) => shipment.type === 'Cancelled');
-
-      if (!completedShipments.length || shipmentFilter === 'Completed') {
-        dispatch(getShipmentDetails(
-          organization,
-          'Completed',
-          null,
-          true,
-          true,
-          'get',
-        ));
-      }
-      // if (!cancelledShipments.length) {
-      //   dispatch(getShipmentDetails(
-      //     organization,
-      //     'Cancelled',
-      //     null,
-      //     true,
-      //     true,
-      //     'get',
-      //   ));
-      // }
-      const UUIDS = _.map(shipmentData, 'shipment_uuid');
-      const encodedUUIDs = encodeURIComponent(UUIDS);
-      if (encodedUUIDs) {
-        dispatch(getCustody(encodedUUIDs));
-      }
-    }
-    if (!custodianData) {
-      dispatch(getCustodians(organization));
-      dispatch(getCustodianType());
-      dispatch(getContact(organization));
-    }
-    // if (!custodyData) {
-    //   dispatch(getCustody());
-    // }
-    if (!sensorData) {
-      dispatch(getSensors(organization));
-      dispatch(getSensorType());
-    }
-  }, [shipmentFilter]);
-
-  useEffect(() => {
-    if (selectedShipment && selectedShipment.markers_to_set) {
-      setMarkers(selectedShipment.markers_to_set);
-    }
-  }, [selectedShipment, shipmentOverview]);
-
-  useEffect(() => {
-    if (markers && markers.length > 0) {
-      setTimeout(() => setMapLoaded(true), 1000);
-    }
-  });
-
-  useEffect(() => {
-    if (aggregateReportData
-      && shipmentData
-      && allAlerts
-      && custodianData
-      && custodyData
-      && contactInfo) {
-      const overview = getShipmentOverview(
-        shipmentData,
-        custodianData,
-        custodyData,
-        aggregateReportData,
-        allAlerts,
-        contactInfo,
-        timezone,
-        unitOfMeasure,
-      );
-      if (overview.length > 0) {
-        setShipmentOverview(overview);
-        if (selectedShipment) {
-          const selected = _.find(overview, { id: selectedShipment.id });
-          setSelectedShipment(selected);
-        }
-      }
-    }
-  }, [aggregateReportData, allAlerts]);
-
-  useEffect(() => {
-    if (shipmentData) {
-      let shipmentList = [];
-      _.forEach(shipmentData, (shipment) => {
-        const editedShipment = shipment;
-
-        switch (_.lowerCase(shipment.status)) {
-          case 'planned':
-          case 'enroute':
-            editedShipment.type = 'Active';
-            break;
-
-          case 'completed':
-            editedShipment.type = 'Completed';
-            break;
-
-          case 'cancelled':
-            editedShipment.type = 'Cancelled';
-            break;
-
-          default:
-            break;
-        }
-        shipmentList = [...shipmentList, editedShipment];
-      });
-      setFormattedShipmentData(_.orderBy(shipmentList,
-        (shipment) => moment(shipment.estimated_time_of_departure)
-          && moment(shipment.create_date),
-        ['desc']));
-    }
-  }, [shipmentData]);
 
   return (
     <Box mt={5} mb={5}>
@@ -311,13 +256,11 @@ const Reporting = ({
               {selectedShipment
               && selectedShipment.name
               && `Map View - Shipment: ${selectedShipment.name}`}
-              <CustomizedTooltips
-                toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
-              />
+              {!selectedShipment && 'Map View'}
             </Typography>
             <IconButton
               onClick={() => setTileView(!tileView)}
-              color="default"
+              color="inherit"
               aria-label="menu"
               sx={{
                 display: {
@@ -332,17 +275,17 @@ const Reporting = ({
             </IconButton>
           </div>
           <MapComponent
-            isMarkerShown={isMapLoaded}
+            isMarkerShown={!_.isEmpty(markers)}
             showPath
             markers={markers}
             googleMapURL={window.env.MAP_API_URL}
-            zoom={12}
+            zoom={_.isEmpty(markers) ? 4 : 12}
             setSelectedMarker={setSelectedMarker}
             loadingElement={
               <div style={{ height: '100%' }} />
             }
             containerElement={
-              <div style={{ height: '550px' }} />
+              <div style={{ height: '625px' }} />
             }
             mapElement={
               <div style={{ height: '100%' }} />
@@ -352,7 +295,7 @@ const Reporting = ({
         <Grid item xs={12} md={tileView ? 6 : 12}>
           <div className={classes.switchViewSection}>
             <ToggleButtonGroup
-              color="primary"
+              color="secondary"
               value={shipmentFilter}
               exclusive
               fullWidth
@@ -377,7 +320,7 @@ const Reporting = ({
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
-          <div className={classes.switchViewSection}>
+          <div className={classes.switchViewSection2}>
             <TextField
               variant="outlined"
               margin="normal"
@@ -393,15 +336,14 @@ const Reporting = ({
                   : ''
               }
               onChange={(e) => {
-                const selected = _.find(formattedShipmentData, { id: e.target.value });
+                const selected = _.find(shipmentOverview, { id: e.target.value });
                 handleShipmentSelection(selected);
               }}
             >
               <MenuItem value="">Select</MenuItem>
-              {formattedShipmentData
-              && formattedShipmentData.length > 0
+              {shipmentOverview && !_.isEmpty(shipmentOverview)
               && _.map(
-                _.filter(formattedShipmentData, { type: shipmentFilter }),
+                _.filter(shipmentOverview, { type: shipmentFilter }),
                 (shipment, index) => (
                   <MenuItem
                     key={index}
@@ -412,9 +354,6 @@ const Reporting = ({
                 ),
               )}
             </TextField>
-            <CustomizedTooltips
-              toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
-            />
             <IconButton
               onClick={() => setTileView(!tileView)}
               color="default"
@@ -449,28 +388,22 @@ const Reporting = ({
                           <Typography variant="h6">
                             {column.label}
                           </Typography>
-                          {column.name === 'custody_info'
-                      && selectedShipment[column.name]
-                            ? _.map(
-                              selectedShipment[column.name],
-                              (value, idx) => (
-                                <div
-                                  key={`custody_info_${idx}`}
-                                  style={{
-                                    marginBottom: 10,
-                                    color: value.custody_type === 'Current'
-                                      ? '#EBC645'
-                                      : '#ffffff',
-                                  }}
-                                >
-                                  <Typography variant="body1">
-                                    {`Custody Type: ${value.custody_type}`}
-                                  </Typography>
-                                  <Typography variant="body1">
-                                    {`Custodian Address: ${selectedShipment.contact_info[idx].address}`}
-                                  </Typography>
-                                </div>
-                              ),
+                          {column.name === 'custody_info' && selectedShipment[column.name]
+                            ? (
+                              <div
+                                key="custody_info_last"
+                                style={{
+                                  marginBottom: 10,
+                                  color: theme.palette.background.dark,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {`Name: ${_.find(selectedShipment[column.name], { has_current_custody: true }).custodian_name}`}
+                                </Typography>
+                                <Typography variant="body1">
+                                  {`Custodian Address: ${selectedShipment.contact_info[_.findIndex(selectedShipment[column.name], { has_current_custody: true })].address}`}
+                                </Typography>
+                              </div>
                             ) : (
                               <Typography variant="body1">
                                 {getShipmentValue(column.name)}
@@ -484,7 +417,7 @@ const Reporting = ({
                         variant="h6"
                         align="center"
                       >
-                        {SHIPMENT_OVERVIEW_TOOL_TIP}
+                        Select a shipment to view reporting data
                       </Typography>
                     )}
                 </Grid>
@@ -502,9 +435,7 @@ const Reporting = ({
             {selectedShipment
             && selectedShipment.name
             && `Graph View - Shipment: ${selectedShipment.name}`}
-            <CustomizedTooltips
-              toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
-            />
+            {!selectedShipment && 'Graph View'}
           </Typography>
         </div>
         <Grid item xs={1} md={1}>
@@ -514,28 +445,31 @@ const Reporting = ({
             className={classes.iconBar}
           >
             {_.map(REPORT_TYPES(unitOfMeasure), (item, index) => (
-              <React.Fragment
+              <ListItem
                 key={`iconItem${index}${item.id}`}
+                button
+                selected={selectedGraph === item.id}
+                onClick={() => setSelectedGraph(item.id)}
+                style={{ margin: '12px 0' }}
               >
-                <ListItem
-                  button
-                  selected={selectedGraph === item.id}
-                  onClick={() => setSelectedGraph(item.id)}
-                >
-                  {getIcon(item, 'white')}
-                </ListItem>
-              </React.Fragment>
+                {getIcon({ ...item, color: theme.palette.background.dark })}
+              </ListItem>
             ))}
           </List>
         </Grid>
         <Grid item xs={10} md={10}>
-          {selectedShipment
-          && selectedShipment[selectedGraph]
+          {selectedGraph && allGraphs && !_.isEmpty(allGraphs) && allGraphs[selectedGraph]
             ? (
               <GraphComponent
-                data={selectedShipment[selectedGraph]}
+                data={allGraphs[selectedGraph]}
                 selectedGraph={selectedGraph}
                 unitOfMeasure={unitOfMeasure}
+                minTemp={allGraphs.minTemp}
+                maxTemp={allGraphs.maxTemp}
+                minHumidity={allGraphs.minHumidity}
+                maxHumidity={allGraphs.maxHumidity}
+                shockThreshold={allGraphs.shockThreshold}
+                lightThreshold={allGraphs.lightThreshold}
               />
             )
             : (
@@ -543,16 +477,16 @@ const Reporting = ({
                 variant="h6"
                 align="center"
               >
-                {SHIPMENT_OVERVIEW_TOOL_TIP}
+                Select a shipment to view reporting data
               </Typography>
             )}
         </Grid>
       </Grid>
       <SensorReport
         loading={loading}
-        aggregateReport={(!loading && selectedShipment && selectedShipment.sensor_report) || []}
+        sensorReport={reports}
         alerts={_.filter(
-          allAlerts,
+          allSensorAlerts,
           { shipment_id: selectedShipment && selectedShipment.partner_shipment_id },
         )}
         shipmentName={selectedShipment && selectedShipment.name}
@@ -562,9 +496,9 @@ const Reporting = ({
       />
       <AlertsReport
         loading={loading}
-        aggregateReport={(!loading && selectedShipment && selectedShipment.sensor_report) || []}
+        sensorReport={reports}
         alerts={_.filter(
-          allAlerts,
+          allSensorAlerts,
           { shipment_id: selectedShipment && selectedShipment.partner_shipment_id },
         )}
         shipmentName={selectedShipment && selectedShipment.name}

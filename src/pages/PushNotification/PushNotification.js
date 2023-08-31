@@ -5,11 +5,13 @@ import { connect } from 'react-redux';
 import addNotification from 'react-push-notification';
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { AppContext } from '@context/App.context';
-import { showAlert } from '@redux/alert/actions/alert.actions';
-import { getShipmentDetails } from '@redux/shipment/actions/shipment.actions';
+import { AppContext } from '../../context/App.context';
+import { showAlert } from '../../redux/alert/actions/alert.actions';
+import { getSensorReports } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
 
-const PushNotification = ({ dispatch, loaded, user }) => {
+const PushNotification = ({
+  dispatch, loaded, user, timezone, sensorReports,
+}) => {
   const [alerts, setAlerts] = useState([]);
   const [pushGrp, setPushGrp] = useState('');
   const [pushGeo, setPushGeo] = useState(false);
@@ -38,15 +40,61 @@ const PushNotification = ({ dispatch, loaded, user }) => {
   }, [pushGrp, pushGeo, pushEnv]);
 
   useEffect(() => {
+    const shipmentIDs = _.uniq(_.map(sensorReports, 'shipment_id')).toString();
+    if (alertsSocket.current && shipmentIDs) {
+      alertsSocket.current.onmessage = (message) => {
+        const msg = JSON.parse(message.data);
+        let pushAlerts;
+
+        switch (true) {
+          case (pushGeo && pushEnv):
+            pushAlerts = [...msg.alerts];
+            break;
+
+          case pushGeo:
+            pushAlerts = _.filter(
+              [...msg.alerts],
+              { severity: 'info' },
+            );
+            break;
+
+          case pushEnv:
+            pushAlerts = _.filter(
+              [...msg.alerts],
+              (alert) => _.includes(
+                ['error', 'warning', 'success'],
+                alert.severity,
+              ),
+            );
+            break;
+
+          default:
+            pushAlerts = [];
+            break;
+        }
+
+        if (msg.command === 'new_alert') {
+          dispatch(getSensorReports(encodeURIComponent(shipmentIDs)));
+          setAlerts([...alerts, ...pushAlerts]);
+        }
+        if (msg.command === 'reload_data') {
+          dispatch(getSensorReports(encodeURIComponent(shipmentIDs)));
+        }
+      };
+    }
+  }, [sensorReports]);
+
+  useEffect(() => {
     if (alerts.length > 0) {
       const alert = _.first(alerts);
+      const datetime = moment(alert.alert_time, 'YYYY-MM-DDTHH:mm:ss.SSSSSSZ').tz(timezone).format('LLL');
 
       addNotification({
         native: true,
         duration: window.env.hide_notification,
         title: appTitle,
         subtitle: '',
-        message: `${alert.alert_message} | ${moment(alert.create_date).fromNow()}`,
+        message: `${alert.shipment_name} | ${alert.alert_message}${datetime}`,
         onClick: (event) => {
           closeNotification(alert.id);
         },
@@ -54,7 +102,7 @@ const PushNotification = ({ dispatch, loaded, user }) => {
       dispatch(showAlert({
         type: alert.severity,
         open: true,
-        message: `${alert.alert_message} | ${moment(alert.create_date).fromNow()}`,
+        message: `${alert.shipment_name} | ${alert.alert_message}${datetime}`,
         id: alert.id,
         onClose: closeNotification,
       }));
@@ -122,26 +170,7 @@ const PushNotification = ({ dispatch, loaded, user }) => {
         setAlerts(filteredAlerts);
       }
       if (msg.command === 'new_alert') {
-        dispatch(getShipmentDetails(
-          user.organization.organization_uuid,
-          'Planned,Enroute',
-          null,
-          true,
-          true,
-          'get',
-        ));
         setAlerts([...alerts, ...pushAlerts]);
-      }
-      if (msg.command === 'reload_data') {
-        console.log('Reloading data');
-        dispatch(getShipmentDetails(
-          user.organization.organization_uuid,
-          'Planned,Enroute',
-          null,
-          true,
-          true,
-          'get',
-        ));
       }
     };
   };
@@ -168,7 +197,14 @@ const PushNotification = ({ dispatch, loaded, user }) => {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
+  ...state.optionsReducer,
+  ...state.sensorsGatewayReducer,
   user: (state.authReducer.data && state.authReducer.data.data) || state.authReducer.data,
+  loaded: (
+    state.authReducer.loaded
+    && state.optionsReducer.loaded
+    && state.sensorsGatewayReducer.loaded
+  ),
 });
 
 export default connect(mapStateToProps)(PushNotification);

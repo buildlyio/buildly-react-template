@@ -1,5 +1,3 @@
-export const SAVE_SHIPMENT_FORM_DATA = 'SHIPMENT/SAVE_SHIPMENT_FORM_DATA';
-
 export const GET_SHIPMENTS = 'SHIPMENT/GET_SHIPMENTS';
 export const GET_SHIPMENTS_SUCCESS = 'SHIPMENT/GET_SHIPMENTS_SUCCESS';
 export const GET_SHIPMENTS_FAILURE = 'SHIPMENT/GET_SHIPMENTS_FAILURE';
@@ -16,16 +14,6 @@ export const DELETE_SHIPMENT = 'SHIPMENT/DELETE_SHIPMENT';
 export const DELETE_SHIPMENT_SUCCESS = 'SHIPMENT/DELETE_SHIPMENT_SUCCESS';
 export const DELETE_SHIPMENT_FAILURE = 'SHIPMENT/DELETE_SHIPMENT_FAILURE';
 
-export const GET_DASHBOARD_ITEMS = 'SHIPMENT/GET_DASHBOARD_ITEMS';
-export const GET_DASHBOARD_ITEMS_SUCCESS = 'SHIPMENT/GET_DASHBOARD_ITEMS_SUCCESS';
-export const GET_DASHBOARD_ITEMS_FAILURE = 'SHIPMENT/GET_DASHBOARD_ITEMS_FAILURE';
-
-export const ADD_PDF_IDENTIFIER = 'SHIPMENT/ADD_PDF_IDENTIFIER';
-export const ADD_PDF_IDENTIFIER_SUCCESS = 'SHIPMENT/ADD_PDF_IDENTIFIER_SUCCESS';
-export const ADD_PDF_IDENTIFIER_FAILURE = 'SHIPMENT/ADD_PDF_IDENTIFIER_FAILURE';
-
-export const GET_REPORT_AND_ALERTS = 'SHIPMENT/GET_REPORT_AND_ALERTS';
-
 export const GET_COUNTRIES_STATES = 'SHIPMENT/GET_COUNTRIES_STATES';
 export const GET_COUNTRIES_STATES_SUCCESS = 'SHIPMENT/GET_COUNTRIES_STATES_SUCCESS';
 export const GET_COUNTRIES_STATES_FAILURE = 'SHIPMENT/GET_COUNTRIES_STATES_FAILURE';
@@ -34,50 +22,37 @@ export const GET_CURRENCIES = 'SHIPMENT/GET_CURRENCIES';
 export const GET_CURRENCIES_SUCCESS = 'SHIPMENT/GET_CURRENCIES_SUCCESS';
 export const GET_CURRENCIES_FAILURE = 'SHIPMENT/GET_CURRENCIES_FAILURE';
 
-/**
- * Save Shipment Form Data
- * @param {Object} formData
- */
-export const saveShipmentFormData = (formData) => ({
-  type: SAVE_SHIPMENT_FORM_DATA,
-  formData,
-});
+export const GET_SHIPMENT_TEMPLATES = 'SHIPMENT/GET_SHIPMENT_TEMPLATES';
+export const GET_SHIPMENT_TEMPLATES_SUCCESS = 'SHIPMENT/GET_SHIPMENT_TEMPLATES_SUCCESS';
+export const GET_SHIPMENT_TEMPLATES_FAILURE = 'SHIPMENT/GET_SHIPMENT_TEMPLATES_FAILURE';
 
-/**
- * Get Aggregate Report and Alerts for given shipment
- * @param {Object} shipment_id
- */
-export const getReportAndAlerts = (shipment_id) => ({
-  type: GET_REPORT_AND_ALERTS,
-  shipment_id,
-});
+export const ADD_SHIPMENT_TEMPLATE = 'SHIPMENT/ADD_SHIPMENT_TEMPLATE';
+export const ADD_SHIPMENT_TEMPLATE_SUCCESS = 'SHIPMENT/ADD_SHIPMENT_TEMPLATE_SUCCESS';
+export const ADD_SHIPMENT_TEMPLATE_FAILURE = 'SHIPMENT/ADD_SHIPMENT_TEMPLATE_FAILURE';
+
+export const EDIT_SHIPMENT_TEMPLATE = 'SHIPMENT/EDIT_SHIPMENT_TEMPLATE';
+export const EDIT_SHIPMENT_TEMPLATE_SUCCESS = 'SHIPMENT/EDIT_SHIPMENT_TEMPLATE_SUCCESS';
+export const EDIT_SHIPMENT_TEMPLATE_FAILURE = 'SHIPMENT/EDIT_SHIPMENT_TEMPLATE_FAILURE';
+
+export const DELETE_SHIPMENT_TEMPLATE = 'SHIPMENT/DELETE_SHIPMENT_TEMPLATE';
+export const DELETE_SHIPMENT_TEMPLATE_SUCCESS = 'SHIPMENT/DELETE_SHIPMENT_TEMPLATE_SUCCESS';
+export const DELETE_SHIPMENT_TEMPLATE_FAILURE = 'SHIPMENT/DELETE_SHIPMENT_TEMPLATE_FAILURE';
 
 /**
  * Get Shipment Details
  * @param {String} organization_uuid
- * @param {String} status
- * @param {Number} id
- * @param {Boolean} getUpdatedSensorData
- * @param {Boolean} getUpdatedCustody
- * @param {String} shipmentAction
  */
 export const getShipmentDetails = (
-  organization_uuid,
+  organization_uuid = null,
   status = null,
-  id = null,
-  getUpdatedSensorData = false,
-  getUpdatedCustody = false,
-  shipmentAction = null,
-  addEdit = {},
+  fetchRelatedData = false,
+  fetchSensorReports = false,
 ) => ({
   type: GET_SHIPMENTS,
   organization_uuid,
   status,
-  id,
-  getUpdatedSensorData,
-  getUpdatedCustody,
-  shipmentAction,
-  addEdit,
+  fetchRelatedData,
+  fetchSensorReports,
 });
 
 /**
@@ -85,92 +60,32 @@ export const getShipmentDetails = (
  * @param {Object} payload
  * @param {Object} history
  * @param {String} redirectTo
- * @param {String} organization_uuid
  */
-export const addShipment = (
-  payload,
-  history,
-  redirectTo,
-  organization_uuid,
-) => ({
+export const addShipment = (payload, history, redirectTo) => ({
   type: ADD_SHIPMENT,
   payload,
   history,
   redirectTo,
-  organization_uuid,
 });
 
 /**
  * Edit Shipment
  * @param {Object} payload
  * @param {Object} history
- * @param {String} redirectTo path to redirect
- * @param {String} organization_uuid
- * @param {String} gateway
+ * @param {String} redirectTo
  */
-export const editShipment = (
-  payload,
-  history,
-  redirectTo,
-  organization_uuid,
-  gateway,
-) => ({
+export const editShipment = (payload, history, redirectTo) => ({
   type: EDIT_SHIPMENT,
   payload,
   history,
   redirectTo,
-  organization_uuid,
-  gateway,
 });
 
 /**
  * Delete Shipment entity
- * @param {string} shipmentId
- * @param {string} organization_uuid
+ * @param {string} id
  */
-export const deleteShipment = (shipmentId, organization_uuid) => ({
-  type: DELETE_SHIPMENT,
-  shipmentId,
-  organization_uuid,
-});
-
-/**
- * Get Dashboard Items
- * @param {String} organization_uuid
- */
-export const getDashboardItems = (organization_uuid) => ({
-  type: GET_DASHBOARD_ITEMS,
-  organization_uuid,
-});
-
-/**
- * PDF Identifier
- * @param {FormData} data
- * @param {String} filename
- * @param {String} identifier
- * @param {Object} payload
- * @param {Object} history
- * @param {String} redirectTo
- * @param {String} organization_uuid
- */
-export const pdfIdentifier = (
-  data,
-  filename,
-  identifier,
-  payload,
-  history,
-  redirectTo,
-  organization_uuid,
-) => ({
-  type: ADD_PDF_IDENTIFIER,
-  data,
-  filename,
-  identifier,
-  payload,
-  history,
-  redirectTo,
-  organization_uuid,
-});
+export const deleteShipment = (id) => ({ type: DELETE_SHIPMENT, id });
 
 /**
  * Get countries and related states
@@ -181,3 +96,34 @@ export const getCountries = () => ({ type: GET_COUNTRIES_STATES });
  * Get currencies
  */
 export const getCurrencies = () => ({ type: GET_CURRENCIES });
+
+/**
+ * Get Shipment templates
+ * @param {String} organization_uuid
+ */
+export const getShipmentTemplates = (organization_uuid) => ({
+  type: GET_SHIPMENT_TEMPLATES,
+  organization_uuid,
+});
+
+/**
+ * Add Shipment Template
+ * @param {Object} payload
+ */
+export const addShipmentTemplate = (payload) => ({ type: ADD_SHIPMENT_TEMPLATE, payload });
+
+/**
+ * Edit Shipment Template
+ * @param {Object} payload
+ */
+export const editShipmentTemplate = (payload) => ({ type: EDIT_SHIPMENT_TEMPLATE, payload });
+
+/**
+ * Delete Shipment Template
+ * @param {Number} id
+ */
+export const deleteShipmentTemplate = (id, showMessage = true) => ({
+  type: DELETE_SHIPMENT_TEMPLATE,
+  id,
+  showMessage,
+});

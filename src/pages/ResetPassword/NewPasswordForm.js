@@ -6,7 +6,6 @@ import {
   TextField,
   Link,
   Card,
-  CircularProgress,
   CardContent,
   Typography,
   Container,
@@ -14,8 +13,9 @@ import {
   Box,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import logo from '@assets/tp-logo.png';
+import logo from '../../assets/tp-logo.png';
 import Copyright from '../../components/Copyright/Copyright';
+import Loader from '../../components/Loader/Loader';
 import { useInput } from '../../hooks/useInput';
 import { confirmResetPassword } from '../../redux/authuser/actions/authuser.actions';
 import { routes } from '../../routes/routesConstants';
@@ -53,10 +53,6 @@ const useStyles = makeStyles((theme) => ({
     left: '50%',
     marginTop: -12,
     marginLeft: -12,
-  },
-  loadingWrapper: {
-    margin: theme.spacing(1),
-    position: 'relative',
   },
 }));
 
@@ -141,6 +137,7 @@ const NewPassword = ({
       maxWidth="xs"
       className={classes.container}
     >
+      {loading && <Loader open={loading} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
@@ -210,30 +207,22 @@ const NewPassword = ({
                   />
                 </Grid>
               </Grid>
-              <div className={classes.loadingWrapper}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  disabled={loading || submitDisabled()}
-                >
-                  Submit
-                </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                )}
-              </div>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                disabled={loading || submitDisabled()}
+              >
+                Submit
+              </Button>
               <Grid container>
                 <Grid item>
                   <Link
                     href={routes.LOGIN}
                     variant="body2"
-                    color="secondary"
+                    color="primary"
                   >
                     Go back to Sign in
                   </Link>

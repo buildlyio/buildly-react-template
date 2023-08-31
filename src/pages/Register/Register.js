@@ -9,7 +9,6 @@ import {
   Link,
   Box,
   Card,
-  CircularProgress,
   CardContent,
   Typography,
   Container,
@@ -22,8 +21,9 @@ import {
   MenuItem,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import logo from '@assets/tp-logo.png';
+import logo from '../../assets/tp-logo.png';
 import Copyright from '../../components/Copyright/Copyright';
+import Loader from '../../components/Loader/Loader';
 import { useInput } from '../../hooks/useInput';
 import {
   register,
@@ -73,10 +73,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: -12,
     marginLeft: -12,
   },
-  loadingWrapper: {
-    margin: theme.spacing(1),
-    position: 'relative',
-  },
   alertGrid: {
     marginTop: theme.spacing(2),
   },
@@ -101,6 +97,7 @@ const Register = ({
     matchField: password,
   });
   const organization_name = useInput('', { required: true });
+  const organization_abbrevation = useInput('', { required: true });
   const first_name = useInput('', { required: true });
   const last_name = useInput('');
   const [pushOptions, setPushOptions] = useState({
@@ -123,13 +120,13 @@ const Register = ({
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
-    if (!orgNames) {
+    if (_.isEmpty(orgNames)) {
       dispatch(loadOrgNames());
     }
-    if (!countries) {
+    if (_.isEmpty(countries)) {
       dispatch(getCountries());
     }
-    if (!currencies) {
+    if (_.isEmpty(currencies)) {
       dispatch(getCurrencies());
     }
   }, []);
@@ -153,7 +150,7 @@ const Register = ({
   const handleSubmit = (event) => {
     event.preventDefault();
     location.register = true;
-    const registerFormValue = {
+    let registerFormValue = {
       username: username.value,
       email: email.value,
       password: password.value,
@@ -163,14 +160,20 @@ const Register = ({
       push_preferences: pushOptions,
       email_preferences: emailOptions,
       user_timezone: moment.tz.guess(),
-      country: country.value,
-      currency: currency.value,
-      date_format: dateFormat.value,
-      time_format: timeFormat.value,
-      distance: distance.value,
-      temperature: temp.value,
-      weight: weight.value,
     };
+    if (organization_name.value && !_.includes(orgNames, organization_name.value)) {
+      registerFormValue = {
+        ...registerFormValue,
+        organization_abbrevation: _.toUpper(organization_abbrevation.value),
+        country: country.value,
+        currency: currency.value,
+        date_format: dateFormat.value,
+        time_format: timeFormat.value,
+        distance: distance.value,
+        temperature: temp.value,
+        weight: weight.value,
+      };
+    }
     dispatch(register(registerFormValue, history));
   };
 
@@ -212,7 +215,7 @@ const Register = ({
       || !first_name.value
       || (organization_name.value && !_.includes(orgNames, organization_name.value)
         && (!country.value || !currency.value || !dateFormat.value || !timeFormat.value
-          || !distance.value || !temp.value || !weight.value))
+          || !distance.value || !temp.value || !weight.value || !organization_abbrevation.value))
     ) {
       return true;
     }
@@ -231,6 +234,7 @@ const Register = ({
       maxWidth="sm"
       className={classes.container}
     >
+      {loading && <Loader open={loading} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
@@ -435,7 +439,11 @@ const Register = ({
                         }
                         className={classes.textField}
                         onBlur={(e) => handleBlur(e, 'required', organization_name)}
-                        {...organization_name.bind}
+                        value={organization_name}
+                        onChange={(e) => {
+                          organization_name.setValue(e.target.value);
+                          organization_abbrevation.setValue(e.target.value.replace(/[^A-Z0-9]/g, ''));
+                        }}
                       />
                     )}
                   />
@@ -454,12 +462,38 @@ const Register = ({
                     variant="outlined"
                     margin="normal"
                     fullWidth
+                    id="organization_abbrevation"
+                    label="Organization Abbreviation"
+                    name="organization_abbrevation"
+                    autoComplete="organization_abbrevation"
+                    error={
+                      formError.organization_abbrevation
+                      && formError.organization_abbrevation.error
+                    }
+                    helperText={
+                      formError.organization_abbrevation
+                        ? formError.organization_abbrevation.message
+                        : ''
+                    }
+                    inputProps={{
+                      maxLength: 7,
+                      style: { textTransform: 'uppercase' },
+                    }}
+                    onBlur={(e) => handleBlur(e, 'required', organization_abbrevation)}
+                    {...organization_abbrevation.bind}
+                  />
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
                     select
                     id="country"
                     name="country"
                     label="Default Country"
                     autoComplete="country"
-                    className={classes.textField}
                     value={country.value}
                     onChange={(e) => {
                       const curr = _.find(currencies, {
@@ -482,6 +516,7 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
+
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -492,7 +527,6 @@ const Register = ({
                     name="currency"
                     label="Default Currency"
                     autoComplete="currency"
-                    className={classes.textField}
                     {...currency.bind}
                   >
                     <MenuItem value="">Select</MenuItem>
@@ -506,15 +540,7 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-              </Grid>
 
-              <Grid
-                container
-                spacing={isMobile() ? 0 : 3}
-                style={{
-                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
-                }}
-              >
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -525,7 +551,6 @@ const Register = ({
                     name="date-format"
                     label="Default Date Format"
                     autoComplete="date-format"
-                    className={classes.textField}
                     {...dateFormat.bind}
                   >
                     <MenuItem value="">Select</MenuItem>
@@ -539,6 +564,7 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
+
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -549,7 +575,6 @@ const Register = ({
                     name="time-format"
                     label="Default Time Format"
                     autoComplete="time-format"
-                    className={classes.textField}
                     {...timeFormat.bind}
                   >
                     <MenuItem value="">Select</MenuItem>
@@ -563,16 +588,8 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-              </Grid>
 
-              <Grid
-                container
-                spacing={isMobile() ? 0 : 3}
-                style={{
-                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
-                }}
-              >
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -582,7 +599,6 @@ const Register = ({
                     name="distance"
                     label="Default Unit of Measure for Distance"
                     autoComplete="distance"
-                    className={classes.textField}
                     {...distance.bind}
                   >
                     <MenuItem value="">Select</MenuItem>
@@ -596,7 +612,8 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} md={4}>
+
+                <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -606,7 +623,6 @@ const Register = ({
                     name="temp"
                     label="Default Unit of Measure for Temperature"
                     autoComplete="temp"
-                    className={classes.textField}
                     {...temp.bind}
                   >
                     <MenuItem value="">Select</MenuItem>
@@ -620,7 +636,8 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} md={4}>
+
+                <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -630,7 +647,6 @@ const Register = ({
                     name="weight"
                     label="Default Unit of Measure for Weight"
                     autoComplete="weight"
-                    className={classes.textField}
                     {...weight.bind}
                   >
                     <MenuItem value="">Select</MenuItem>
@@ -646,7 +662,12 @@ const Register = ({
                 </Grid>
               </Grid>
 
-              <Grid container spacing={isMobile() ? 0 : 3}>
+              <Grid
+                container
+                spacing={isMobile() ? 0 : 3}
+                mt={(!organization_name.value || _.includes(orgNames, organization_name.value))
+                  && -2}
+              >
                 <Grid item xs={12}>
                   <span className={classes.alertOptionsLabel}>
                     Push Notification Preference
@@ -731,30 +752,22 @@ const Register = ({
                 </Grid>
               </Grid>
 
-              <div className={classes.loadingWrapper}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  disabled={loading || submitDisabled()}
-                >
-                  Register
-                </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                )}
-              </div>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                disabled={loading || submitDisabled()}
+              >
+                Register
+              </Button>
               <Grid container>
                 <Grid item>
                   <Link
                     href={routes.LOGIN}
                     variant="body2"
-                    color="secondary"
+                    color="primary"
                   >
                     Already have an account? Sign in
                   </Link>

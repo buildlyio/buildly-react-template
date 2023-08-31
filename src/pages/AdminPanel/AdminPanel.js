@@ -9,6 +9,7 @@ import {
   Tab,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import Loader from '../../components/Loader/Loader';
 import { UserContext } from '../../context/User.context';
 import { routes } from '../../routes/routesConstants';
 import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
@@ -27,7 +28,9 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Outputs the admin panel page.
  */
-const AdminPanel = ({ history, location, organizationData }) => {
+const AdminPanel = ({
+  history, location, organizationData, loading,
+}) => {
   const classes = useStyles();
   const isAdmin = checkForAdmin(useContext(UserContext))
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -70,42 +73,41 @@ const AdminPanel = ({ history, location, organizationData }) => {
 
   return (
     <Box mt={5} mb={5}>
-      {isAdmin
-    && (
-    <Box mt={5} mb={5}>
+      {loading && <Loader open={loading} />}
+      {isAdmin && (
+        <Box mt={5} mb={5}>
+          <Box mb={3}>
+            <Typography className={classes.heading} variant="h4">
+              Admin Panel
+            </Typography>
+          </Box>
 
-      <Box mb={3}>
-        <Typography className={classes.heading} variant="h4">
-          Admin Panel
-        </Typography>
-      </Box>
-      <Box mb={3}>
-        <Tabs value={view} onChange={viewTabClicked}>
-          {_.map(subNav, (itemProps, index) => (
-            <Tab
-              {...itemProps}
-              key={`tab${index}:${itemProps.value}`}
+          <Box mb={3}>
+            <Tabs value={view} onChange={viewTabClicked}>
+              {_.map(subNav, (itemProps, index) => (
+                <Tab
+                  {...itemProps}
+                  key={`tab${index}:${itemProps.value}`}
+                />
+              ))}
+            </Tabs>
+          </Box>
+
+          <Route path={routes.CONFIGURATION} component={Configuration} />
+          {organizationData && organizationData.allow_import_export && (
+            <Route
+              path={routes.IMPORT_EXPORT}
+              component={ImportExport}
             />
-          ))}
-        </Tabs>
-      </Box>
-      <Route path={routes.CONFIGURATION} component={Configuration} />
-      {organizationData
-      && organizationData.allow_import_export
-      && (
-        <Route
-          path={routes.IMPORT_EXPORT}
-          component={ImportExport}
-        />
+          )}
+          <Route path={routes.CONSORTIUM} component={ConsortiumSettings} />
+        </Box>
       )}
-      <Route path={routes.CONSORTIUM} component={ConsortiumSettings} />
-    </Box>
-    )}
       {!isAdmin && (
-      <Forbidden
-        history={history}
-        location={location}
-      />
+        <Forbidden
+          history={history}
+          location={location}
+        />
       )}
     </Box>
 
@@ -115,6 +117,20 @@ const AdminPanel = ({ history, location, organizationData }) => {
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
+  loading: (
+    state.alertReducer.loading
+    || state.authReducer.loading
+    || state.consortiumReducer.loading
+    || state.coreGroupReducer.loading
+    || state.coreuserReducer.loading
+    || state.crudDataReducer.loading
+    || state.custodianReducer.loading
+    || state.importExportReducer.loading
+    || state.itemsReducer.loading
+    || state.optionsReducer.loading
+    || state.sensorsGatewayReducer.loading
+    || state.shipmentReducer.loading
+  ),
 });
 
 export default connect(mapStateToProps)(AdminPanel);

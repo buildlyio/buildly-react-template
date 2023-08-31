@@ -9,14 +9,15 @@ import { makeStyles } from '@mui/styles';
 import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
 import {
   SENSOR_REPORT_COLUMNS,
-} from '../ReportingConstants';
+} from '../../../utils/constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(1),
   },
   tooltip: {
-    background: theme.palette.background.dark,
+    background: theme.palette.primary.main,
+    color: theme.palette.background.default,
     width: '100%',
     display: 'flex',
     minHeight: '40px',
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SensorReport = ({
   loading,
-  aggregateReport,
+  sensorReport,
   shipmentName,
   selectedMarker,
   unitOfMeasure,
@@ -64,12 +65,12 @@ const SensorReport = ({
 
   useEffect(() => {
     const sortedData = _.orderBy(
-      aggregateReport,
+      sensorReport,
       (item) => moment(item.timestamp),
       ['desc'],
     );
     setRows(sortedData);
-  }, [aggregateReport]);
+  }, [sensorReport]);
 
   useEffect(() => {
     if (selectedMarker) {
@@ -106,17 +107,17 @@ const SensorReport = ({
           >
             {shipmentName
             && `Sensor Report - Shipment: ${shipmentName}`}
+            {!shipmentName && 'Sensor Report'}
           </Typography>
         </div>
         <DataTableWrapper
-          noCustomTheme
           noSpace
+          hideAddButton
+          filename="SensorReportData"
+          tableHeight="500px"
           loading={loading}
           rows={rows}
           columns={columns}
-          filename="AggregateReportData"
-          tableHeight="500px"
-          hideAddButton
           selectable={{
             rows: 'multiple',
             rowsHeader: false,

@@ -9,22 +9,22 @@ import {
 } from '../../context/User.context';
 import NavBar from '../NavBar/NavBar';
 import TopBar from '../TopBar/TopBar';
-import Custodians from '../../pages/Custodians/Custodians';
-import UserManagement from '../../pages/UserManagement/UserManagement';
-import MyAccount from '../../pages/MyAccount/MyAccount';
-import Items from '../../pages/Items/Items';
-import SensorsGateway from '../../pages/SensorsGateway/SensorsGateway';
-import Shipment from '../../pages/Shipment/Shipment';
-import Reporting from '../../pages/Reporting/Reporting';
 import AdminPanel from '../../pages/AdminPanel/AdminPanel';
+import Custodians from '../../pages/Custodians/Custodians';
+import Items from '../../pages/Items/Items';
+import MyAccount from '../../pages/MyAccount/MyAccount';
+import PushNotification from '../../pages/PushNotification/PushNotification';
+import Reporting from '../../pages/Reporting/Reporting';
+import Gateway from '../../pages/SensorsGateway/Gateway';
 import CreateShipment from '../../pages/Shipment/CreateShipment';
+import Shipment from '../../pages/Shipment/Shipment';
+import UserManagement from '../../pages/UserManagement/UserManagement';
 import { routes } from '../../routes/routesConstants';
 import {
   checkForAdmin,
   checkForGlobalAdmin,
 } from '../../utils/utilMethods';
 import { isMobile } from '../../utils/mediaQuery';
-import PushNotification from '@pages/PushNotification/PushNotification';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
   contentMaxWidth: {
     width: 'calc(100vw - 240px)',
-    maxWidth: theme.breakpoints.values.lg,
+    maxWidth: '100%',
   },
 }));
 
@@ -109,8 +109,8 @@ const ContainerDashboard = ({ location, history }) => {
             component={Items}
           />
           <Route
-            path={routes.SENSORS_GATEWAY}
-            component={SensorsGateway}
+            path={routes.TRACKERS}
+            component={Gateway}
           />
           <Route
             path={routes.SHIPMENT}

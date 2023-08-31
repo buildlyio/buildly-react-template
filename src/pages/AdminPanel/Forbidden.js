@@ -3,13 +3,9 @@ import { connect } from 'react-redux';
 import {
   Typography,
   Box,
-  Grid,
   Card,
   CardContent,
-  IconButton,
-  Divider,
   Button,
-  Avatar,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { routes } from '../../routes/routesConstants';

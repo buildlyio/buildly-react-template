@@ -8,26 +8,14 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
 import { UserContext } from '../../../context/User.context';
 import { checkForGlobalAdmin } from '../../../utils/utilMethods';
-import {
-  CUSTODIAN_TYPE_TOOLTIP,
-  GATEWAY_TYPE_TOOLTIP,
-  ITEM_TYPE_TOOLTIP,
-  ORGANIZATION_TYPE_TOOLTIP,
-  PRODUCT_TOOLTIP,
-  PRODUCT_TYPE_TOOLTIP,
-  SENSOR_TYPE_TOOLTIP,
-  ORG_SETTINGS_TOOLTIP,
-} from './ConfigurationConstants';
 import CustodianType from './components/CustodianType';
 import GatewayType from './components/GatewayType';
 import ItemType from './components/ItemType';
 import OrganizationType from './components/OrganizationType';
 import Product from './components/Product';
 import ProductType from './components/ProductType';
-import SensorType from './components/SensorType';
 import OrganizationSettings from './components/OrganizationSettings';
 import Forbidden from '../Forbidden';
 
@@ -37,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(6),
   },
   accordion: {
-    backgroundColor: theme.palette.background.dark,
     marginBottom: theme.spacing(4),
     overflow: 'scroll hidden',
     scrollbarWidth: 'none',
@@ -70,7 +57,6 @@ const Configuration = (props) => {
           >
             <Typography variant="h5">
               Organization Settings
-              <CustomizedTooltips toolTipText={ORG_SETTINGS_TOOLTIP} />
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -85,7 +71,6 @@ const Configuration = (props) => {
           >
             <Typography variant="h5">
               Custodian Type
-              <CustomizedTooltips toolTipText={CUSTODIAN_TYPE_TOOLTIP} />
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -100,7 +85,6 @@ const Configuration = (props) => {
           >
             <Typography variant="h5">
               Gateway Type
-              <CustomizedTooltips toolTipText={GATEWAY_TYPE_TOOLTIP} />
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -115,7 +99,6 @@ const Configuration = (props) => {
           >
             <Typography variant="h5">
               Item Type
-              <CustomizedTooltips toolTipText={ITEM_TYPE_TOOLTIP} />
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -130,9 +113,6 @@ const Configuration = (props) => {
           >
             <Typography variant="h5">
               Organization Type
-              <CustomizedTooltips
-                toolTipText={ORGANIZATION_TYPE_TOOLTIP}
-              />
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -147,7 +127,6 @@ const Configuration = (props) => {
           >
             <Typography variant="h5">
               Products
-              <CustomizedTooltips toolTipText={PRODUCT_TOOLTIP} />
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -162,26 +141,10 @@ const Configuration = (props) => {
           >
             <Typography variant="h5">
               Product Type
-              <CustomizedTooltips toolTipText={PRODUCT_TYPE_TOOLTIP} />
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
             <ProductType {...props} />
-          </AccordionDetails>
-        </Accordion>
-        <Accordion className={classes.accordion}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="sensor-type-content"
-            id="sensor-type-header"
-          >
-            <Typography variant="h5">
-              Sensor Type
-              <CustomizedTooltips toolTipText={SENSOR_TYPE_TOOLTIP} />
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <SensorType {...props} />
           </AccordionDetails>
         </Accordion>
       </div>
