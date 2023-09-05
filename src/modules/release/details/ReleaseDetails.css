@@ -1,0 +1,18 @@
+.chart-container {
+  /*position: relative;*/
+  /*height: 40vh;*/
+  /*width: 80vw;*/
+  background-color: #ffffff;
+  border: 1px solid #d4d4d4;
+  border-radius: 6px;
+  box-sizing: border-box;
+  margin: 4px;
+  /*margin: 4px;*/
+}
+
+.tab-content {
+  border: 1px solid #e0e0e0;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 8px;
+}

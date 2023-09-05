@@ -1,0 +1,34 @@
+:root {
+  --blue: #0c5595;
+  --orange: #f9943b;
+  --orange-dark: #fd9037;
+  --orange-darker: #ed833e;
+  --red: #c81b1b;
+  --white: #ffffff;
+}
+
+.btn-secondary {
+  background-color: var(--orange);
+  /*--bs-btn-bg: var(--orange);*/
+  --bs-btn-border-color: var(--orange);
+  --bs-btn-hover-bg: var(--orange-darker);
+  --bs-btn-hover-border-color: var(--orange-darker);
+  --bs-btn-focus-shadow-rgb: var(--orange-darker);
+  --bs-btn-active-bg: var(--orange-darker);
+  --bs-btn-active-border-color: var(--orange-darker);
+  --bs-btn-active-shadow: none;
+  --bs-btn-disabled-bg: var(--orange);
+  --bs-btn-disabled-border-color: var(--orange);
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--orange) !important;
+  --bs-btn-border-color: var(--orange) !important;
+  --bs-btn-hover-bg: var(--orange) !important;
+  --bs-btn-hover-border-color: var(--orange) !important;
+  --bs-btn-active-color: var(--orange) !important;
+  --bs-btn-active-bg: var(--orange) !important;
+  --bs-btn-active-border-color: var(--orange) !important;
+  --bs-btn-disabled-color: var(--orange) !important;
+  --bs-btn-disabled-border-color: var(--orange) !important;
+}

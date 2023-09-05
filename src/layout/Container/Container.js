@@ -8,11 +8,11 @@ import Roadmap from '@pages/Roadmap/Roadmap';
 import UserManagement from '@pages/UserManagement/UserManagement';
 import { routes } from '@routes/routesConstants';
 import NewProduct from '@pages/NewProduct/NewProduct';
-import Release from '@pages/Release/Release';
-import ViewRelease from '@pages/Release/components/ViewRelease';
 import DeveloperForm from '@pages/DeveloperForm/DeveloperForm';
 import Products from '@pages/Products/Products';
 import UserProfile from '@pages/UserProfile/UserProfile';
+import ReleaseList from '../../modules/release/list/ReleaseList';
+import ReleaseDetails from '../../modules/release/details/ReleaseDetails';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,14 +52,14 @@ const ContainerDashboard = ({ location, history }) => {
               path={routes.APP}
               render={() => <Redirect to={routes.ROADMAP} />}
             />
-            <Route exact path={`${routes.RELEASE}/view/:releaseID`} component={ViewRelease} />
+            <Route exact path={`${routes.RELEASE}/:releaseUuid`} component={ReleaseDetails} />
             <Route path={routes.ROADMAP} component={Roadmap} />
             <Route path={routes.USER_PROFILE} component={UserProfile} />
             <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
             <Route path={routes.NEW_PRODUCT} component={NewProduct} />
             <Route path={routes.DEVELOPER_FORM} component={DeveloperForm} />
-            <Route path={routes.RELEASE} component={Release} />
             <Route path={routes.PRODUCTS} component={Products} />
+            <Route path={routes.RELEASE} component={ReleaseList} />
           </Switch>
         </Container>
       </UserContext.Provider>

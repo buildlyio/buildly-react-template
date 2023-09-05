@@ -1,0 +1,60 @@
+.custom-navbar {
+  background-color: #0c5595 !important;
+}
+
+.navbar-brand {
+  background: url("/src/assets/img/logo.png") center / contain no-repeat;
+  width: 10rem;
+  height: 2.5rem;
+}
+
+.main-nav-link .nav-link {
+  color: #ffffff !important;
+  text-transform: uppercase;
+  font-size: 15px;
+  line-height: 1.25rem;
+  align-items: center;
+  text-align: center;
+}
+
+.user-info {
+  font-size: 12px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  place-content: flex-end center;
+  align-items: flex-end;
+}
+
+/*.account-menu-icon {*/
+/*  background-color: white;*/
+/*}*/
+
+.dropdown-toggle::after {
+  display: none !important;
+}
+
+/*.dropdown-menu {*/
+/*  right: 0;*/
+/*  left: auto;*/
+/*}*/
+
+/*.nav-button {*/
+/*  texttransform: uppercase;*/
+/*  fontsize: 15;*/
+/*  lineheight: 1.25;*/
+/*  alignitems: center;*/
+/*  textalign: center;*/
+/*  !*color: theme.palette.contrast.text;*!*/
+/*  !*'&:active': {*!*/
+/*  !*            backgroundColor: theme.palette.contrast.text,*!*/
+/*  !*            color: theme.palette.secondary.main,*!*/
+/*  !*            borderRadius: 32,*!*/
+/*  !*            paddingLeft: 16,*!*/
+/*  !*            paddingRight: 16,*!*/
+/*  !*          },*!*/
+/*  !*'&:disabled': {*!*/
+/*  !*              color: theme.palette.secondary.dark,*!*/
+/*  !*              cursor: 'not-allowed',*!*/
+/*  !*            },*!*/
+/*}*/
