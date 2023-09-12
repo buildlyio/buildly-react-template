@@ -3,8 +3,7 @@ import { releaseMachine } from "../../../state/release/release";
 import { ReleaseService } from "../../../services/release.service";
 import Table from "react-bootstrap/Table";
 import { Release } from "../../../interfaces/release";
-import React, { useState } from "react";
-import CustomModal from "../../../components/ReleaseModal/Modal";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import { Card, ProgressBar, Stack } from "react-bootstrap";
@@ -24,23 +23,54 @@ import {
 import Paper from "@mui/material/Paper";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { productMachine } from "../../../state/product/product";
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
 
-const orgUuid = "baa50960-1a98-4ced-bb16-b60662ddea55";
 const releaseService = new ReleaseService();
 
 function ReleaseList() {
-  const [state, send] = useMachine(releaseMachine, {
-    services: {
-      loadReleases: async (): Promise<any> => {
-        return releaseService.loadReleases("");
-      },
+  // @ts-ignore
+  const [productState] = useMachine(productMachine, {
+    context: {
+      products: [],
+      error: undefined,
+      organization_uuid: "baa50960-1a98-4ced-bb16-b60662ddea55",
+      selectedProduct: null,
     },
   });
 
+  // @ts-ignore
+  const [state, send] = useMachine(releaseMachine);
+
+  useEffect(() => {
+    const currentProduct = productState.context.selectedProduct;
+    if (currentProduct) {
+      send("Load", { product_uuid: currentProduct.value });
+    }
+  }, [productState]);
+
   // Add/Edit release modal
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
+  const [showReleaseModal, setShow] = useState(false);
   const handleShow = () => setShow(true);
+  const handleClose = () => setShow(false);
+
+  // Release form
+  const [formData, setFormData] = useState({} as Release);
+
+  // Update formData on form value change
+  const updateFormData = (e: any) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const submitRelease = (event: any) => {
+    event.preventDefault();
+    console.log("formData : ", formData);
+    releaseService.submitRelease(formData).then();
+  };
 
   // Sample data
   const pieChartLabel = "Releases summary";
@@ -190,7 +220,13 @@ function ReleaseList() {
 
   return (
     <>
-      {/*handleShow*/}
+      <div className="d-flex justify-content-between">
+        <Typography variant="h5">Releases</Typography>
+
+        <Button variant="outline-secondary" size="sm" onClick={handleShow}>
+          New release
+        </Button>
+      </div>
 
       <div className="container-fluid my-2">
         <div className="row">
@@ -253,15 +289,6 @@ function ReleaseList() {
           <Card.Title>
             <Stack direction="horizontal" gap={3}>
               <h4>Releases</h4>
-
-              {/*<Button*/}
-              {/*  className=" ms-auto"*/}
-              {/*  variant="outline-secondary"*/}
-              {/*  size="sm"*/}
-              {/*  onClick={handleShow}*/}
-              {/*>*/}
-              {/*  New release*/}
-              {/*</Button>*/}
             </Stack>
           </Card.Title>
           <Table striped bordered hover>
@@ -273,7 +300,7 @@ function ReleaseList() {
               </tr>
             </thead>
             <tbody>
-              {state.matches("Releases Loaded") &&
+              {state.matches("Entry.Loaded") &&
                 state.context.releases.map((release: Release) => (
                   <tr key={release.release_uuid}>
                     <td>
@@ -296,7 +323,81 @@ function ReleaseList() {
       </Card>
 
       {/*Add/Edit release modal*/}
-      <CustomModal show={show} />
+      <div
+        className="modal show"
+        style={{ display: "block", position: "initial" }}
+      >
+        <Modal
+          show={showReleaseModal}
+          onHide={handleClose}
+          backdrop="static"
+          keyboard={false}
+          centered
+          size="lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>New release</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {" "}
+            <Form noValidate>
+              {/*name*/}
+              <Form.Group className="mb-3" controlId="name">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  size="sm"
+                  type="text"
+                  placeholder="Name"
+                  name="name"
+                  required
+                  onChange={(event) => updateFormData(event)}
+                />
+              </Form.Group>
+              {/*description*/}
+              <Form.Group className="mb-3" controlId="description">
+                <Form.Label>Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={2}
+                  name="description"
+                  onChange={(event) => updateFormData(event)}
+                />
+              </Form.Group>
+              {/*release date*/}
+              <Form.Group className="mb-3" controlId="date">
+                <Form.Label>Release date</Form.Label>
+                <Form.Control
+                  size="sm"
+                  type="date"
+                  placeholder="Release date"
+                  name="release_date"
+                  required
+                  onChange={(event) => updateFormData(event)}
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={() => handleClose()}
+            >
+              Close
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              type="submit"
+              disabled={!(formData.name && formData.release_date)}
+              onClick={(event) => submitRelease(event)}
+            >
+              Save
+            </Button>
+            {/* todo - form validation formData.product_uuid*/}
+          </Modal.Footer>
+        </Modal>
+      </div>
     </>
   );
 }

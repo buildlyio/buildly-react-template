@@ -1,6 +1,6 @@
 import {HttpService} from './http.service';
 
-export class ProductService{
+export class ProductService {
     private beService = 'product';
     private httpService = new HttpService();
 

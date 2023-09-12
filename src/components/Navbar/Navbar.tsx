@@ -6,6 +6,7 @@ import { Avatar } from "@mui/material";
 import { Logout, Person } from "@mui/icons-material";
 import { PeopleFill } from "react-bootstrap-icons";
 import "./Navbar.css";
+import Button from "react-bootstrap/Button";
 
 const MainNavbar = (props: any) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -16,30 +17,26 @@ const MainNavbar = (props: any) => {
       <Navbar
         collapseOnSelect
         expand="lg"
-        variant="dark"
+        bg="primary"
+        data-bs-theme="dark"
         fixed="top"
         sticky="top"
-        className="custom-navbar px-4"
+        className="px-4"
       >
         {/*<Container>*/}
         <a className="navbar-brand" href="#home">
-          {/*<img src="/src/assets/img/logo.png" />*/}
+          {/*<img src="/src/assets/insights-orange-white.png" />*/}
         </a>
-        {/*<Navbar.Brand href="#home">*/}
-        {/*  <img*/}
-        {/*    src="./../../assets/img/logo.png"*/}
-        {/*    width="180"*/}
-        {/*    className="d-inline-block align-top"*/}
-        {/*    alt="Buildly insights"*/}
-        {/*  />*/}
-        {/*</Navbar.Brand>*/}
+
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mx-auto main-nav-link">
             <Nav.Link href="#roadmap">Roadmap</Nav.Link>
             <Nav.Link href="#dashboard">Dashboard</Nav.Link>
             <Nav.Link href="#releases">Releases</Nav.Link>
-            <Nav.Link href="#upgrade-plan">Upgrade plan</Nav.Link>
+            <Button variant="secondary" size="sm">
+              Upgrade plan
+            </Button>
           </Nav>
           <Nav>
             <section className="user-info">

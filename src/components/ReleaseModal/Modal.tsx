@@ -10,11 +10,11 @@ const releaseService = new ReleaseService();
 
 interface ModalProps {
   show: boolean;
-  // products: { label: string; value: string }[];
 }
 
 const CustomModal = (props: ModalProps) => {
   const [formData, setFormData] = useState({} as Release);
+
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
 
@@ -102,7 +102,11 @@ const CustomModal = (props: ModalProps) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-secondary" size="sm">
+          <Button
+            variant="outline-secondary"
+            size="sm"
+            onClick={() => (props.show = false)}
+          >
             Close
           </Button>
           <Button

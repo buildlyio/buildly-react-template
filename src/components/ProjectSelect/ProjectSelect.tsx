@@ -3,7 +3,6 @@ import { useMachine } from "@xstate/react";
 import { productMachine } from "../../state/product/product";
 import { ProductService } from "../../services/product.service";
 import Select from "../Select";
-import Button from "react-bootstrap/Button";
 import CustomModal from "../ReleaseModal/Modal";
 import "./ProjectSelect.css";
 
@@ -15,28 +14,13 @@ const ProjectSelect = ({ orgUuid }: any) => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  let selectedProduct = null;
-
+  // @ts-ignore
   const [productState] = useMachine(productMachine, {
-    services: {
-      loadProducts: async (): Promise<any> =>
-        productService.getProducts(orgUuid).then((products) => {
-          if (products?.length) {
-            selectedProduct = products[0];
-
-            return products.map((product: any) => {
-              return {
-                label: product.name,
-                value: product.product_uuid,
-              };
-
-              // return selectOptions.sort((a: any, b: any) =>
-              //   a.label > b.label ? 1 : -1
-              // );
-            });
-          }
-          return [];
-        }),
+    context: {
+      products: [],
+      error: undefined,
+      organization_uuid: "baa50960-1a98-4ced-bb16-b60662ddea55",
+      selectedProduct: null,
     },
   });
 
@@ -53,9 +37,9 @@ const ProjectSelect = ({ orgUuid }: any) => {
           />
         </section>
 
-        <Button variant="outline-secondary" size="sm" onClick={handleShow}>
-          New release
-        </Button>
+        {/*<Button variant="outline-secondary" size="sm" onClick={handleShow}>*/}
+        {/*  New release*/}
+        {/*</Button>*/}
       </div>
 
       {/*Add/Edit release modal*/}
