@@ -33,7 +33,7 @@ export class ReleaseService {
                 'name and product_uuid are required to create a release'
             )
         }
-        return this.httpService.postItem('/release/', release).then(
+        return this.httpService.postItem('/release/', release, this.beService).then(
             (response) => response.data
         );
     }

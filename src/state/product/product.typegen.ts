@@ -9,17 +9,18 @@
 "xstate.init": { type: "xstate.init" };
         };
         invokeSrcNameMap: {
-          "loadProducts": "done.invoke.product.Products Loading:invocation[0]";
+          
         };
         missingImplementations: {
           actions: never;
           delays: never;
           guards: never;
-          services: "loadProducts";
+          services: never;
         };
         eventsCausingActions: {
           "addErrorToCxt": "error.platform.product.Products Loading:invocation[0]";
 "addProductsToCxt": "done.invoke.product.Products Loading:invocation[0]";
+"setSelectedProduct": "SelectProduct";
         };
         eventsCausingDelays: {
           
@@ -28,7 +29,7 @@
           
         };
         eventsCausingServices: {
-          "loadProducts": "xstate.init";
+          
         };
         matchesStates: "Products Loaded" | "Products Loading" | "Products Loading Failed";
         tags: never;

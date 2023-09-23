@@ -16,3 +16,9 @@
   border-radius: 0 0 6px 6px;
   padding: 8px;
 }
+
+.toolbar-header {
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+}

@@ -6,7 +6,7 @@ import { Release } from "../../../interfaces/release";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
-import { Card, ProgressBar, Stack } from "react-bootstrap";
+import { Dropdown, ProgressBar } from "react-bootstrap";
 import DoughnutChart from "../../../components/ReleaseCharts/Doughnut";
 import BarChart from "../../../components/ReleaseCharts/BarChart";
 import {
@@ -26,10 +26,29 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { productMachine } from "../../../state/product/product";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import { HttpService } from "../../../services/http.service";
+import { interpret } from "xstate";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Tooltip from "@mui/material/Tooltip";
+import "./ReleaseList.css";
 
 const releaseService = new ReleaseService();
+const httpService = new HttpService();
+
+interface BarChartData {
+  label: string;
+  key: string;
+  backgroundColor: string;
+  data: number[];
+}
 
 function ReleaseList() {
+  // define current product (select from product state)
+  const [currentProduct, setCurrentProduct] = useState(null as any);
+
+  // define release summary
+  const [releasesSummary, setReleasesSummary] = useState(null as any);
+
   // @ts-ignore
   const [productState] = useMachine(productMachine, {
     context: {
@@ -41,14 +60,98 @@ function ReleaseList() {
   });
 
   // @ts-ignore
-  const [state, send] = useMachine(releaseMachine);
+  const [releasesState, send, service] = useMachine(releaseMachine, {
+    context: {
+      releases: [],
+    },
+  });
 
+  let featuresReleaseNames: string[] = [];
+  let issuesReleaseNames: string[] = [];
   useEffect(() => {
-    const currentProduct = productState.context.selectedProduct;
-    if (currentProduct) {
-      send("Load", { product_uuid: currentProduct.value });
+    // set current product
+    if (productState.context.selectedProduct) {
+      setCurrentProduct(productState.context.selectedProduct);
+      send("Load", {
+        product_uuid: productState.context.selectedProduct.product_uuid,
+      });
+
+      try {
+        httpService
+          .fetchData(
+            `/release/release_summary/?product_uuid=${productState.context.selectedProduct.product_uuid}`,
+            "release"
+          )
+          .then((response: any) => {
+            // Construct issues summary data
+            const issuesSummaryObj = generateBarChartData(
+              response.data.issues,
+              "issues_data"
+            );
+            issuesReleaseNames = issuesSummaryObj.releaseNames;
+
+            // Construct features summary data
+            const featuresSummaryObj = generateBarChartData(
+              response.data.features,
+              "features_data"
+            );
+            featuresReleaseNames = featuresSummaryObj.releaseNames;
+
+            setReleasesSummary({
+              releases: Object.values(response.data.releases),
+              features: featuresSummaryObj.barChartSummaryData,
+              issues: issuesSummaryObj.barChartSummaryData,
+            });
+          });
+      } catch (httpError) {
+        console.log("httpError : ", httpError);
+      }
     }
   }, [productState]);
+
+  /**
+   * Construct bar chart data
+   * @param data
+   * @param dataField
+   */
+  const generateBarChartData = (data: any, dataField: string) => {
+    const releaseNames: string[] = [];
+    const barChartSummaryData: BarChartData[] = [
+      {
+        label: "Completed",
+        key: "completed",
+        backgroundColor: "#0D5595",
+        data: [],
+      },
+      {
+        label: "In progress",
+        key: "in_progress",
+        backgroundColor: "#F8943C",
+        data: [],
+      },
+      {
+        label: "Overdue",
+        key: "overdue",
+        backgroundColor: "#C91B1A",
+        data: [],
+      },
+    ];
+
+    data.forEach((entry: any) => {
+      releaseNames.push(entry.release);
+      Object.keys(entry[dataField]).forEach((key) => {
+        const index = barChartSummaryData.findIndex(
+          (summaryEntry) => summaryEntry.key === key
+        );
+
+        if (index > -1) {
+          barChartSummaryData[index].data.push(entry[dataField][key]);
+        }
+      });
+    });
+
+    return { releaseNames, barChartSummaryData };
+  };
 
   // Add/Edit release modal
   const [showReleaseModal, setShow] = useState(false);
@@ -68,61 +171,43 @@ function ReleaseList() {
 
   const submitRelease = (event: any) => {
     event.preventDefault();
-    console.log("formData : ", formData);
-    releaseService.submitRelease(formData).then();
+    if (currentProduct) {
+      const data = { product_uuid: currentProduct.product_uuid, ...formData };
+      send("Submit", { release: data });
+    }
+  };
+
+  const deleteRelease = (row: any) => {
+    console.log("Row:: ", row);
+    send("Delete", { release_uuid: row.release_uuid });
   };
 
   // Sample data
-  const pieChartLabel = "Releases summary";
-  const pieChartLabels = ["Done", "In progress", "Overdue"];
-  const pieChartData = [7, 5, 3];
-
-  const barChartLabels = [
-    "Release 1",
-    "Release 2",
-    "Release 3",
-    "Release 4",
-    "Release 5",
-    "Release 6",
-  ];
-  const barChartData = [
-    {
-      label: "Done",
-      backgroundColor: "#0D5595",
-      data: [17, 16, 4, 11, 8, 9],
-    },
-    {
-      label: "In progress",
-      backgroundColor: "#F8943C",
-      data: [14, 2, 10, 6, 12, 16],
-    },
-    {
-      label: "Overdue",
-      backgroundColor: "#C91B1A",
-      data: [2, 21, 13, 3, 24, 7],
-    },
-  ];
+  const pieChartLabels = ["Completed", "Overdue", "In progress"];
   const backgroundColor = "#02b844";
   const borderWidth = 1;
   const borderColor = "#000000";
 
   // Table
   function createData(
+    release_uuid: string,
     name: string,
-    progress: number,
-    progress_bar_variant: string,
-    status: number,
-    features: number,
-    issues: number,
+    features_done: number,
+    // progress_bar_variant: string,
+    // status: number,
+    features_count: number,
+    issues_count: number,
     release_date: string
   ) {
+    const barValue = (features_done / features_count) * 100;
     return {
+      release_uuid,
       name,
-      progress,
-      progress_bar_variant,
-      status,
-      features,
-      issues,
+      features_done,
+      // progress_bar_variant,
+      // status,
+      features_count,
+      issues_count,
       release_date,
       history: [
         {
@@ -139,9 +224,44 @@ function ReleaseList() {
     };
   }
 
+  /**
+   * Init progress bar
+   * @param row
+   */
+  const initProgressBar = (row: any) => {
+    const value = (row.features_done / row.features_count) * 100;
+    const theme = value > 74 ? "info" : value > 40 ? "warning" : "danger";
+    return { value, theme };
+  };
+
   function Row(props: { row: ReturnType<typeof createData> }) {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
+
+    let progressBarObj = {
+      value: 0,
+      theme: "danger",
+    };
+
+    if (row.features_count > 0) {
+      progressBarObj = initProgressBar(row);
+    }
+
+    let featuresList: any[] = [];
+    if (open && row) {
+      try {
+        httpService
+          .fetchData(
+            `/feature/?release_features__release_uuid=${row.release_uuid}`,
+            "release"
+          )
+          .then((response: any) => {
+            featuresList = response.data;
+          });
+      } catch (httpError) {
+        console.log("httpError : ", httpError);
+      }
+    }
 
     return (
       <React.Fragment>
@@ -156,50 +276,98 @@ function ReleaseList() {
             </IconButton>
           </TableCell>
           <TableCell component="th" scope="row">
-            {row.name}
+            <Link
+              to={{
+                pathname: `/releases/${row.release_uuid}`,
+              }}
+            >
+              {row.name}
+            </Link>{" "}
           </TableCell>
           <TableCell>
-            <ProgressBar
-              now={row.progress}
-              label={`${row.progress}%`}
-              variant={row.progress_bar_variant}
-            />
+            <Tooltip
+              title={`${progressBarObj.value}% achieved`}
+              placement="right-start"
+            >
+              <ProgressBar
+                now={progressBarObj.value}
+                label={`${progressBarObj.value}%`}
+                variant={progressBarObj.theme}
+              />
+            </Tooltip>
           </TableCell>
-          <TableCell align="right">{row.status}</TableCell>
-          <TableCell align="center">{row.features}</TableCell>
-          <TableCell align="center">{row.issues}</TableCell>
-          <TableCell align="right">{row.release_date}</TableCell>
+          {/*<TableCell align="right">{row.status}</TableCell>*/}
+          <TableCell align="center">{row.features_count}</TableCell>
+          <TableCell align="center">{row.issues_count}</TableCell>
+          <TableCell align="center">{row.release_date}</TableCell>
+          <TableCell align="right">
+            <Dropdown>
+              <Dropdown.Toggle variant="success" id="dropdown-basic">
+                <IconButton aria-label="expand row" size="small">
+                  <MoreVertIcon />
+                </IconButton>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={() => deleteRelease(row)}>
+                  Delete release
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <TableCell
+            style={{
+              paddingBottom: 0,
+              paddingTop: 0,
+              paddingLeft: 8,
+              backgroundColor: "#f5f5f5",
+            }}
+            colSpan={12}
+          >
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{ margin: 1 }}>
-                <Typography variant="h6" gutterBottom component="div">
-                  History
-                </Typography>
-                <Table size="small" aria-label="purchases">
+                {/*<Typography variant="h6" gutterBottom component="div">*/}
+                {/*  Features*/}
+                {/*</Typography>*/}
+                <Table size="small" aria-label="features">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Customer</TableCell>
-                      <TableCell align="right">Amount</TableCell>
-                      <TableCell align="right">Total price ($)</TableCell>
+                      <TableCell>Name</TableCell>
+                      <TableCell>Progress</TableCell>
+                      {/*<TableCell>Status</TableCell>*/}
+                      <TableCell>Issues</TableCell>
+                      <TableCell align="right">Assignees</TableCell>
+                      <TableCell align="right">Date Due</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {row.history.map((historyRow) => (
-                      <TableRow key={historyRow.date}>
-                        <TableCell component="th" scope="row">
-                          {historyRow.date}
-                        </TableCell>
-                        <TableCell>{historyRow.customerId}</TableCell>
-                        <TableCell align="right">{historyRow.amount}</TableCell>
-                        <TableCell align="right">
-                          {Math.round(historyRow.amount * row.status * 100) /
-                            100}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {featuresList.length ? (
+                      featuresList.map((feature) => (
+                        <TableRow key={feature.feature_uuid}>
+                          <TableCell component="th" scope="row">
+                            {feature.name}
+                          </TableCell>
+                          <TableCell>{feature.progress}</TableCell>
+                          <TableCell>{feature.status}</TableCell>
+                          <TableCell>{feature.issues}</TableCell>
+                          <TableCell align="right">
+                            {feature.assignees}
+                          </TableCell>
+                          <TableCell align="right">
+                            {feature.date_due}
+                          </TableCell>
+                          {/*<TableCell align="right">*/}
+                          {/*  {Math.round(*/}
+                          {/*      feature.amount * row.features_count * 100*/}
+                          {/*  ) / 100}*/}
+                          {/*</TableCell>*/}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <div className="p-2">No features to display</div>
+                    )}
                   </TableBody>
                 </Table>
               </Box>
@@ -210,194 +378,202 @@ function ReleaseList() {
     );
   }
 
-  const rows = [
-    createData("Release 1", 59, "info", 6.0, 24, 4.0, "2020-01-05"),
-    createData("Release 2", 37, "warning", 9.0, 37, 4.3, "2020-01-05"),
-    createData("Release 3", 62, "info", 16.0, 24, 6.0, "2020-01-05"),
-    createData("Release 4", 15, "danger", 3.7, 67, 4.3, "2020-01-05"),
-    createData("Release 5", 56, "info", 16.0, 49, 3.9, "2020-01-05"),
-  ];
-
   return (
     <>
-      <div className="d-flex justify-content-between">
-        <Typography variant="h5">Releases</Typography>
+      {releasesState.context.releases.length ? (
+        <>
+          <div className="d-flex justify-content-between">
+            <Typography variant="h6">Releases summary</Typography>
 
-        <Button variant="outline-secondary" size="sm" onClick={handleShow}>
-          New release
-        </Button>
-      </div>
-
-      <div className="container-fluid my-2">
-        <div className="row">
-          <div className="col chart-container">
-            <DoughnutChart
-              id="releases"
-              labels={pieChartLabels}
-              label={pieChartLabel}
-              data={pieChartData}
-            />
-          </div>
-          <div className="col chart-container">
-            <BarChart
-              id="features"
-              label="Features summary"
-              labels={barChartLabels}
-              data={barChartData}
-              backgroundColor={backgroundColor}
-              borderWidth={borderWidth}
-              borderColor={borderColor}
-            />
-          </div>
-          <div className="col chart-container">
-            <BarChart
-              id="issues"
-              label="Issues summary"
-              labels={barChartLabels}
-              data={barChartData}
-              backgroundColor={backgroundColor}
-              borderWidth={borderWidth}
-              borderColor={borderColor}
-            />
-          </div>
-        </div>
-      </div>
-
-      <TableContainer component={Paper}>
-        <Table aria-label="collapsible table">
-          <TableHead>
-            <TableRow>
-              <TableCell />
-              <TableCell>Name</TableCell>
-              <TableCell>Progress</TableCell>
-              <TableCell align="right">Status</TableCell>
-              <TableCell align="center">Features</TableCell>
-              <TableCell align="center">Issues</TableCell>
-              <TableCell align="right">Release date</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <Row key={row.name} row={row} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <Card>
-        <Card.Body>
-          <Card.Title>
-            <Stack direction="horizontal" gap={3}>
-              <h4>Releases</h4>
-            </Stack>
-          </Card.Title>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Release date</th>
-                <th>Features</th>
-              </tr>
-            </thead>
-            <tbody>
-              {state.matches("Entry.Loaded") &&
-                state.context.releases.map((release: Release) => (
-                  <tr key={release.release_uuid}>
-                    <td>
-                      <Link
-                        to={{
-                          pathname: `/releases/${release.release_uuid}`,
-                        }}
-                      >
-                        {release.name}
-                      </Link>{" "}
-                    </td>
-                    <td>{release.release_date}</td>
-                    <td>{release.features_count}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </Table>
-          <Button variant="primary">Go somewhere</Button>
-        </Card.Body>
-      </Card>
-
-      {/*Add/Edit release modal*/}
-      <div
-        className="modal show"
-        style={{ display: "block", position: "initial" }}
-      >
-        <Modal
-          show={showReleaseModal}
-          onHide={handleClose}
-          backdrop="static"
-          keyboard={false}
-          centered
-          size="lg"
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>New release</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {" "}
-            <Form noValidate>
-              {/*name*/}
-              <Form.Group className="mb-3" controlId="name">
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  size="sm"
-                  type="text"
-                  placeholder="Name"
-                  name="name"
-                  required
-                  onChange={(event) => updateFormData(event)}
-                />
-              </Form.Group>
-              {/*description*/}
-              <Form.Group className="mb-3" controlId="description">
-                <Form.Label>Description</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={2}
-                  name="description"
-                  onChange={(event) => updateFormData(event)}
-                />
-              </Form.Group>
-              {/*release date*/}
-              <Form.Group className="mb-3" controlId="date">
-                <Form.Label>Release date</Form.Label>
-                <Form.Control
-                  size="sm"
-                  type="date"
-                  placeholder="Release date"
-                  name="release_date"
-                  required
-                  onChange={(event) => updateFormData(event)}
-                />
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="outline-secondary"
-              size="sm"
-              onClick={() => handleClose()}
-            >
-              Close
+            <Button variant="outline-secondary" size="sm" onClick={handleShow}>
+              New release
             </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              type="submit"
-              disabled={!(formData.name && formData.release_date)}
-              onClick={(event) => submitRelease(event)}
-            >
-              Save
+          </div>
+
+          {/*style={{ position: "relative", height: "33%" }}*/}
+
+          {releasesSummary ? (
+            <div className="container-fluid charts-parent-container">
+              <div
+                className="row flex-nowrap justify-content-between"
+                style={{ height: "100%" }}
+              >
+                <div
+                  className="chart-container"
+                  style={{
+                    width: "32%",
+                  }}
+                >
+                  <DoughnutChart
+                    id="releases"
+                    labels={pieChartLabels}
+                    label="Releases summary"
+                    data={releasesSummary?.releases}
+                  />
+                </div>
+                <div
+                  className="chart-container"
+                  style={{
+                    width: "32%",
+                  }}
+                >
+                  <BarChart
+                    id="features"
+                    label="Features summary"
+                    labels={featuresReleaseNames}
+                    data={releasesSummary?.features}
+                    backgroundColor={backgroundColor}
+                    borderWidth={borderWidth}
+                    borderColor={borderColor}
+                  />
+                </div>
+                <div
+                  className="chart-container"
+                  style={{
+                    width: "32%",
+                  }}
+                >
+                  <BarChart
+                    id="issues"
+                    label="Issues summary"
+                    labels={issuesReleaseNames}
+                    data={releasesSummary?.issues}
+                    backgroundColor={backgroundColor}
+                    borderWidth={borderWidth}
+                    borderColor={borderColor}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          <div className="d-flex justify-content-between">
+            <Typography variant="h6">Releases </Typography>
+          </div>
+          <p>{productState.context?.selectedProduct?.name}</p>
+
+          <TableContainer component={Paper} className="mt-2">
+            <Table aria-label="collapsible table">
+              <TableHead
+                sx={{
+                  "& .MuiTableCell-root": {
+                    backgroundColor: "#EDEDED",
+                  },
+                }}
+              >
+                <TableRow
+                  sx={{
+                    "& th": {
+                      fontWeight: "500",
+                    },
+                  }}
+                >
+                  <TableCell width="12" />
+                  <TableCell width="33%">Name</TableCell>
+                  <TableCell>Progress</TableCell>
+                  {/*<TableCell align="right">Status</TableCell>*/}
+                  <TableCell align="center">Features</TableCell>
+                  <TableCell align="center">Issues</TableCell>
+                  <TableCell align="center">Release date</TableCell>
+                  <TableCell align="right" />
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {releasesState.context.releases.length
+                  ? releasesState.context.releases.map((row: any) => (
+                      <Row key={row.release_uuid} row={row} />
+                    ))
+                  : []}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {/*Add/Edit release modal*/}
+          <Modal
+            show={showReleaseModal}
+            onHide={handleClose}
+            backdrop="static"
+            keyboard={false}
+            centered
+            size="lg"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>New release</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {" "}
+              <Form noValidate>
+                {/*name*/}
+                <Form.Group className="mb-3" controlId="name">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control
+                    size="sm"
+                    type="text"
+                    placeholder="Name"
+                    name="name"
+                    required
+                    onChange={(event) => updateFormData(event)}
+                  />
+                </Form.Group>
+                {/*description*/}
+                <Form.Group className="mb-3" controlId="description">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={2}
+                    name="description"
+                    onChange={(event) => updateFormData(event)}
+                  />
+                </Form.Group>
+                {/*release date*/}
+                <Form.Group className="mb-3" controlId="date">
+                  <Form.Label>Release date</Form.Label>
+                  <Form.Control
+                    size="sm"
+                    type="date"
+                    placeholder="Release date"
+                    name="release_date"
+                    required
+                    onChange={(event) => updateFormData(event)}
+                  />
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="outline-secondary"
+                size="sm"
+                onClick={() => handleClose()}
+              >
+                Close
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                type="submit"
+                disabled={!(formData.name && formData.release_date)}
+                onClick={(event) => submitRelease(event)}
+              >
+                Save
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+      ) : (
+        <>
+          {" "}
+          <div className="d-flex flex-column align-items-center justify-content-center h-50">
+            <Typography variant="h6" className="text-center pb-2">
+              No releases to display for the current product. <br />
+              To get you started, create a release!
+            </Typography>
+
+            <Button variant="outline-secondary" size="sm" onClick={handleShow}>
+              New release
             </Button>
-            {/* todo - form validation formData.product_uuid*/}
-          </Modal.Footer>
-        </Modal>
-      </div>
+          </div>
+        </>
+      )}
     </>
   );
 }

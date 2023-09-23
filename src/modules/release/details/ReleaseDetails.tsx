@@ -1,5 +1,5 @@
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import DoughnutChart from "../../../components/ReleaseCharts/Doughnut";
 import BarChart from "../../../components/ReleaseCharts/BarChart";
 import "./ReleaseDetails.css";
@@ -18,8 +18,12 @@ import {
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { ProgressBar, Tab, Tabs } from "react-bootstrap";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import { Button, ProgressBar, Tab, Tabs } from "react-bootstrap";
 import ReleaseForm from "./components/ReleaseForm";
+import { HttpService } from "../../../services/http.service";
+
+const httpService = new HttpService();
 
 function ReleaseDetails() {
   const { releaseUuid } = useParams();
@@ -56,6 +60,7 @@ function ReleaseDetails() {
 
   // Table
   function createData(
+    feature_uuid: string,
     name: string,
     progress: number,
     progress_bar_variant: string,
@@ -65,6 +70,7 @@ function ReleaseDetails() {
     release_date: string
   ) {
     return {
+      feature_uuid,
       name,
       progress,
       progress_bar_variant,
@@ -87,9 +93,60 @@ function ReleaseDetails() {
     };
   }
 
+  // Initialize release details
+  const [releasesDetails, setReleaseDetails] = useState(null as any);
+  const [releaseFeatures, setReleaseFeatures] = useState(null as any);
+  if (releaseUuid) {
+    if (!releasesDetails) {
+      try {
+        httpService
+          .fetchData(`/release/${releaseUuid}/`, "release")
+          .then((response: any) => {
+            if (response && response.data) {
+              setReleaseDetails(response.data);
+            }
+          });
+      } catch (httpError) {
+        console.log("httpError : ", httpError);
+      }
+    }
+
+    if (!releaseFeatures) {
+      try {
+        httpService
+          .fetchData(
+            `/feature/?release_features__release_uuid=${releaseUuid}`,
+            "release"
+          )
+          .then((response: any) => {
+            if (response && response.data) {
+              setReleaseFeatures(response.data);
+            }
+          });
+      } catch (httpError) {
+        console.log("httpError : ", httpError);
+      }
+    }
+  }
+
   function Row(props: { row: ReturnType<typeof createData> }) {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
+
+    let issuesList: any[] = [];
+    if (open && row) {
+      try {
+        httpService
+          .fetchData(`/issue/?feature=${row.feature_uuid}`, "release")
+          .then((response: any) => {
+            if (response && response.data) {
+              issuesList = response.data;
+            }
+          });
+      } catch (httpError) {
+        console.log("httpError : ", httpError);
+      }
+    }
 
     return (
       <React.Fragment>
@@ -106,46 +163,45 @@ function ReleaseDetails() {
           <TableCell component="th" scope="row">
             {row.name}
           </TableCell>
-          <TableCell>
-            <ProgressBar
-              now={row.progress}
-              label={`${row.progress}%`}
-              variant={row.progress_bar_variant}
-            />
-          </TableCell>
+          {/*<TableCell>*/}
+          {/*  <ProgressBar*/}
+          {/*    now={row.progress}*/}
+          {/*    label={`${row.progress}%`}*/}
+          {/*    variant={row.progress_bar_variant}*/}
+          {/*  />*/}
+          {/*</TableCell>*/}
           <TableCell align="right">{row.status}</TableCell>
-          <TableCell align="center">{row.features}</TableCell>
-          <TableCell align="center">{row.issues}</TableCell>
-          <TableCell align="right">{row.release_date}</TableCell>
+          {/*<TableCell align="center">{row.features}</TableCell>*/}
+          {/*<TableCell align="center">{row.issues}</TableCell>*/}
+          {/*<TableCell align="right">{row.release_date}</TableCell>*/}
         </TableRow>
         <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{ margin: 1 }}>
-                <Typography variant="h6" gutterBottom component="div">
-                  History
-                </Typography>
-                <Table size="small" aria-label="purchases">
+                {/*<Typography variant="h6" gutterBottom component="div">*/}
+                {/*  History*/}
+                {/*</Typography>*/}
+                <Table size="small" aria-label="issues">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Customer</TableCell>
-                      <TableCell align="right">Amount</TableCell>
-                      <TableCell align="right">Total price ($)</TableCell>
+                      <TableCell>Name</TableCell>
+                      <TableCell>Status</TableCell>
+                      {/*<TableCell align="right">Amount</TableCell>*/}
+                      {/*<TableCell align="right">Total price ($)</TableCell>*/}
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {row.history.map((historyRow) => (
-                      <TableRow key={historyRow.date}>
+                    {issuesList.map((issue) => (
+                      <TableRow key={issue.issue_uuid}>
                         <TableCell component="th" scope="row">
-                          {historyRow.date}
+                          {issue.name}
                         </TableCell>
-                        <TableCell>{historyRow.customerId}</TableCell>
-                        <TableCell align="right">{historyRow.amount}</TableCell>
-                        <TableCell align="right">
-                          {Math.round(historyRow.amount * row.status * 100) /
-                            100}
-                        </TableCell>
+                        <TableCell>{issue.status}</TableCell>
+                        {/*<TableCell align="right">{issue.amount}</TableCell>*/}
+                        {/*<TableCell align="right">*/}
+                        {/*  {Math.round(issue.amount * row.status * 100) / 100}*/}
+                        {/*</TableCell>*/}
                       </TableRow>
                     ))}
                   </TableBody>
@@ -158,19 +214,21 @@ function ReleaseDetails() {
     );
   }
 
-  const rows = [
-    createData("Release 1", 59, "info", 6.0, 24, 4.0, "2020-01-05"),
-    createData("Release 2", 37, "warning", 9.0, 37, 4.3, "2020-01-05"),
-    createData("Release 3", 62, "info", 16.0, 24, 6.0, "2020-01-05"),
-    createData("Release 4", 15, "danger", 3.7, 67, 4.3, "2020-01-05"),
-    createData("Release 5", 56, "info", 16.0, 49, 3.9, "2020-01-05"),
-  ];
-
   return (
     <>
-      <section className="toolbar">
+      <section className="toolbar ">
         {" "}
-        <h6>{releaseUuid}</h6>
+        <Button variant="dark" size="sm">
+          <KeyboardArrowLeftIcon />
+        </Button>
+        <Link
+          className="toolbar-header"
+          to={{
+            pathname: `/releases/`,
+          }}
+        >
+          {releasesDetails && releasesDetails.name}
+        </Link>{" "}
       </section>
 
       <Tabs
@@ -182,6 +240,7 @@ function ReleaseDetails() {
           }
         }}
       >
+        {/*Release summary tab*/}
         <Tab eventKey="report" title="Report">
           <div className="container-fluid my-2">
             <div className="row">
@@ -238,27 +297,33 @@ function ReleaseDetails() {
             </div>
           </div>
         </Tab>
+
+        {/*Edit details tab*/}
         <Tab eventKey="details" title="Details">
-          <ReleaseForm />
+          <ReleaseForm releasesDetails={releasesDetails} />
         </Tab>
+
+        {/*Features & Issues summary*/}
         <Tab eventKey="features-issues" title="Features & Issues">
           <TableContainer component={Paper}>
             <Table aria-label="collapsible table">
               <TableHead>
                 <TableRow>
-                  <TableCell />
-                  <TableCell>Name</TableCell>
-                  <TableCell>Progress</TableCell>
-                  <TableCell align="right">Status</TableCell>
-                  <TableCell align="center">Features</TableCell>
-                  <TableCell align="center">Issues</TableCell>
-                  <TableCell align="right">Release date</TableCell>
+                  <TableCell width="12" />
+                  <TableCell width="33%">Name</TableCell>
+                  {/*<TableCell>Progress</TableCell>*/}
+                  <TableCell align="center">Status</TableCell>
+                  {/*<TableCell align="center">Features</TableCell>*/}
+                  {/*<TableCell align="center">Issues</TableCell>*/}
+                  {/*<TableCell align="right">Release date</TableCell>*/}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
-                  <Row key={row.name} row={row} />
-                ))}
+                {releaseFeatures && releaseFeatures.length
+                  ? releaseFeatures.map((row: any) => (
+                      <Row key={row.feature_uuid} row={row} />
+                    ))
+                  : []}
               </TableBody>
             </Table>
           </TableContainer>

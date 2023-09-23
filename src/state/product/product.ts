@@ -2,8 +2,6 @@ import {assign, createMachine} from 'xstate';
 
 import {loadProducts} from './actions';
 
-// @ts-ignore
-// @ts-ignore
 export const productMachine = createMachine({
         id: 'product',
         tsTypes: {} as import("./product.typegen").Typegen0,
@@ -34,7 +32,11 @@ export const productMachine = createMachine({
                 }
             },
 
-            "Products Loaded": {},
+            "Products Loaded": {
+                on: {
+                    SelectProduct: {actions: "setSelectedProduct"}
+                }
+            },
             "Products Loading Failed": {}
         }
     },
@@ -43,9 +45,17 @@ export const productMachine = createMachine({
             addProductsToCxt: assign(
                 (cxt, event) => {
                     const data: any = event.data
-                    return {products: data, selectedProduct: data[0] }
+                    return {products: data, selectedProduct: data[0]}
                 }
             ),
-            addErrorToCxt: assign((cxt, event) => ({error: (event.data as Error).message}))
+            addErrorToCxt: assign((cxt, event) => (
+                {error: (event.data as Error).message})
+            ),
+            setSelectedProduct: assign({
+                selectedProduct: (cxt, event) => {
+                    const data: any = event;
+                    return cxt.products.find((item: any) => item.product_uuid === data.product_uuid)
+                }
+            })
         }
     });

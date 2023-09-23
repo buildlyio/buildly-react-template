@@ -1,18 +1,23 @@
 .releases-list-header {
   max-width: 100% !important;
-  /*padding: 16px 24px;*/
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   flex-grow: 1;
-  /*box-sizing: border-box;*/
+}
+
+.charts-parent-container {
+  height: 33%;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .chart-container {
   background-color: #ffffff;
   border: 1px solid #d4d4d4;
   border-radius: 6px;
-  box-sizing: border-box;
-  margin: 4px;
+  padding: 12px;
+  width: 32%;
+  text-align: -webkit-center;
 }

@@ -7,9 +7,9 @@ import { ReleaseService } from "../../../../services/release.service";
 
 const releaseService = new ReleaseService();
 
-function ReleaseForm() {
+function ReleaseForm({ releasesDetails }: any) {
   // Update formData on form value change
-  const [formData, setFormData] = useState({} as Release);
+  let [formData, setFormData] = useState({} as Release);
   const updateFormData = (e: any) => {
     setFormData({
       ...formData,
@@ -23,17 +23,31 @@ function ReleaseForm() {
     releaseService.submitRelease(formData).then();
   };
 
+  const resetForm = () => {};
+
+  // Init form values
+  if (releasesDetails && !Object.keys(formData).length) {
+    setFormData({
+      ...formData,
+      release_uuid: releasesDetails.release_uuid,
+      name: releasesDetails.name,
+      description: releasesDetails.description,
+      release_date: releasesDetails.release_date,
+    });
+  }
+
   return (
     <>
       <Form noValidate>
         {/*name*/}
-        <Form.Group className="mb-3" controlId="name">
+        <Form.Group className="mb-3 col-md-6 col-sm-12" controlId="name">
           <Form.Label>Name</Form.Label>
           <Form.Control
             size="sm"
             type="text"
             placeholder="Name"
             name="name"
+            defaultValue={formData.name}
             required
             onChange={(event) => updateFormData(event)}
           />
@@ -45,43 +59,40 @@ function ReleaseForm() {
             as="textarea"
             rows={2}
             name="description"
+            defaultValue={formData.description}
             onChange={(event) => updateFormData(event)}
           />
         </Form.Group>
         {/*release date*/}
-        <Form.Group className="mb-3" controlId="date">
+        <Form.Group className="mb-3 col-md-3 col-sm-12" controlId="date">
           <Form.Label>Release date</Form.Label>
           <Form.Control
             size="sm"
             type="date"
             placeholder="Release date"
             name="release_date"
+            defaultValue={formData.release_date}
             required
             onChange={(event) => updateFormData(event)}
           />
         </Form.Group>
-        {/*product*/}
-        {/*<Form.Group className="mb-3" controlId="product">*/}
-        {/*  <Select*/}
-        {/*    name="product_uuid"*/}
-        {/*    label="Select a product"*/}
-        {/*    options={props.products}*/}
-        {/*    required={true}*/}
-        {/*    onChange={(event) => updateFormData(event)}*/}
-        {/*  />*/}
-        {/*</Form.Group>*/}
       </Form>
-      <div>
-        <Button variant="outline-secondary" size="sm">
-          Close
-        </Button>
+      <div className="d-flex flex-row justify-content-end">
         <Button
-          variant="primary"
+          className="mx-2"
+          variant="outline-secondary"
+          size="sm"
+          onClick={() => resetForm()}
+        >
+          Cancel
+        </Button>
+
+        <Button
+          className="mx-2"
+          variant="secondary"
           size="sm"
           type="submit"
-          disabled={
-            !(formData.name && formData.release_date && formData.product_uuid)
-          }
+          disabled={!(formData.name && formData.release_date)}
           onClick={(event) => submitRelease(event)}
         >
           Save
