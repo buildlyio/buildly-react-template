@@ -33,6 +33,7 @@ import Tooltip from "@mui/material/Tooltip";
 import "./ReleaseList.css";
 import { GlobalStateContext } from "../../../context/globalState";
 import LoadingSpinner from "../../../components/Spinner";
+import { routes } from "../../../routes/routesConstants";
 
 const httpService = new HttpService();
 
@@ -279,7 +280,7 @@ function ReleaseList() {
           <TableCell component="th" scope="row">
             <Link
               to={{
-                pathname: `/releases/${row.release_uuid}`,
+                pathname: `${routes.RELEASE}/${row.release_uuid}`,
               }}
             >
               {row.name}

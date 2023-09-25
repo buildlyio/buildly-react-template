@@ -39,7 +39,7 @@ const CustomModal = (props: ModalProps) => {
   return (
     <div
       className="modal show"
-      style={{ display: "block", position: "initial" }}
+      style={{ position: "initial" }}
     >
       <Modal
         show={props.show}

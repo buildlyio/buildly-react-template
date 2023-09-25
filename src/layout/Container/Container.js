@@ -14,6 +14,8 @@ import UserProfile from '@pages/UserProfile/UserProfile';
 import ReleaseList from '../../modules/release/list/ReleaseList';
 import ReleaseDetails from '../../modules/release/details/ReleaseDetails';
 import { GlobalStateProvider } from '../../context/globalState';
+import _ from 'lodash';
+import ProjectSelect from '../../components/ProjectSelect/ProjectSelect';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
 const ContainerDashboard = ({ location, history }) => {
   const classes = useStyles();
   const [navHidden, setNavHidden] = useState(false);
+  const { organization } = getUser();
 
   return (
     <div className={classes.root}>
@@ -48,6 +51,9 @@ const ContainerDashboard = ({ location, history }) => {
             history={history}
           />
           <Container className={classes.content}>
+            {location && location.pathname && _.includes(routes.RELEASE, location.pathname) && (
+              <ProjectSelect orgUuid={organization?.organization_uuid} />
+            )}
             <Switch>
               <Route
                 exact
