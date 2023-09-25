@@ -3,14 +3,13 @@ import {assign, createMachine} from 'xstate';
 import {loadProducts} from './actions';
 
 export const productMachine = createMachine({
-        id: 'product',
+        id: 'productMachine',
         tsTypes: {} as import("./product.typegen").Typegen0,
         context: {
             products: [] as any,
             error: undefined as string | undefined,
-            organization_uuid: null as any,
+            organization_uuid: undefined as string | undefined,
             selectedProduct: null as any
-
         },
         initial: "Products Loading",
         states: {
@@ -51,11 +50,10 @@ export const productMachine = createMachine({
             addErrorToCxt: assign((cxt, event) => (
                 {error: (event.data as Error).message})
             ),
-            setSelectedProduct: assign({
-                selectedProduct: (cxt, event) => {
-                    const data: any = event;
-                    return cxt.products.find((item: any) => item.product_uuid === data.product_uuid)
-                }
+            setSelectedProduct: assign((cxt, event: any) => {
+                const data: any = event;
+                const selectedProduct = cxt.products.find((item: any) => item.product_uuid === data.product_uuid)
+                return {selectedProduct: selectedProduct}
             })
         }
     });

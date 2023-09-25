@@ -8,3 +8,11 @@
   align-items: center;
   box-sizing: border-box;
 }
+
+Select {
+  background-color: #f5f5f5 !important;
+}
+
+.label {
+  background-color: #f5f5f5 !important;
+}

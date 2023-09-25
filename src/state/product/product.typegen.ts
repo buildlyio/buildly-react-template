@@ -4,8 +4,8 @@
   export interface Typegen0 {
         '@@xstate/typegen': true;
         internalEvents: {
-          "done.invoke.product.Products Loading:invocation[0]": { type: "done.invoke.product.Products Loading:invocation[0]"; data: unknown; __tip: "See the XState TS docs to learn how to strongly type this." };
-"error.platform.product.Products Loading:invocation[0]": { type: "error.platform.product.Products Loading:invocation[0]"; data: unknown };
+          "done.invoke.productMachine.Products Loading:invocation[0]": { type: "done.invoke.productMachine.Products Loading:invocation[0]"; data: unknown; __tip: "See the XState TS docs to learn how to strongly type this." };
+"error.platform.productMachine.Products Loading:invocation[0]": { type: "error.platform.productMachine.Products Loading:invocation[0]"; data: unknown };
 "xstate.init": { type: "xstate.init" };
         };
         invokeSrcNameMap: {
@@ -18,8 +18,8 @@
           services: never;
         };
         eventsCausingActions: {
-          "addErrorToCxt": "error.platform.product.Products Loading:invocation[0]";
-"addProductsToCxt": "done.invoke.product.Products Loading:invocation[0]";
+          "addErrorToCxt": "error.platform.productMachine.Products Loading:invocation[0]";
+"addProductsToCxt": "done.invoke.productMachine.Products Loading:invocation[0]";
 "setSelectedProduct": "SelectProduct";
         };
         eventsCausingDelays: {

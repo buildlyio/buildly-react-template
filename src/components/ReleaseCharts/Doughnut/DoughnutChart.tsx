@@ -13,7 +13,7 @@ import { Doughnut } from "react-chartjs-2";
 ChartJS.register(ArcElement, LinearScale, Title, Tooltip, Legend);
 
 const DoughnutChart = ({ id, labels, label, data }: any) => {
-  const backgroundColor = ["#0D5595", "#F8943C", "#C91B1A"];
+  const backgroundColor = ["#0D5595", "#C91B1A", "#F8943C"];
   const chartData = { labels, datasets: [{ label, data, backgroundColor }] };
 
   const options = {
