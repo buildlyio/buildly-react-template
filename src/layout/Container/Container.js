@@ -13,6 +13,7 @@ import Products from '@pages/Products/Products';
 import UserProfile from '@pages/UserProfile/UserProfile';
 import ReleaseList from '../../modules/release/list/ReleaseList';
 import ReleaseDetails from '../../modules/release/details/ReleaseDetails';
+import { GlobalStateProvider } from '../../context/globalState';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,31 +39,33 @@ const ContainerDashboard = ({ location, history }) => {
 
   return (
     <div className={classes.root}>
-      <UserContext.Provider value={getUser()}>
-        <TopBar
-          navHidden={navHidden}
-          setNavHidden={setNavHidden}
-          location={location}
-          history={history}
-        />
-        <Container className={classes.content}>
-          <Switch>
-            <Route
-              exact
-              path={routes.APP}
-              render={() => <Redirect to={routes.ROADMAP} />}
-            />
-            <Route exact path={`${routes.RELEASE}/:releaseUuid`} component={ReleaseDetails} />
-            <Route path={routes.ROADMAP} component={Roadmap} />
-            <Route path={routes.USER_PROFILE} component={UserProfile} />
-            <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
-            <Route path={routes.NEW_PRODUCT} component={NewProduct} />
-            <Route path={routes.DEVELOPER_FORM} component={DeveloperForm} />
-            <Route path={routes.PRODUCTS} component={Products} />
-            <Route path={routes.RELEASE} component={ReleaseList} />
-          </Switch>
-        </Container>
-      </UserContext.Provider>
+      <GlobalStateProvider>
+        <UserContext.Provider value={getUser()}>
+          <TopBar
+            navHidden={navHidden}
+            setNavHidden={setNavHidden}
+            location={location}
+            history={history}
+          />
+          <Container className={classes.content}>
+            <Switch>
+              <Route
+                exact
+                path={routes.APP}
+                render={() => <Redirect to={routes.ROADMAP} />}
+              />
+              <Route exact path={`${routes.RELEASE}/:releaseUuid`} component={ReleaseDetails} />
+              <Route path={routes.ROADMAP} component={Roadmap} />
+              <Route path={routes.USER_PROFILE} component={UserProfile} />
+              <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
+              <Route path={routes.NEW_PRODUCT} component={NewProduct} />
+              <Route path={routes.DEVELOPER_FORM} component={DeveloperForm} />
+              <Route path={routes.PRODUCTS} component={Products} />
+              <Route path={routes.RELEASE} component={ReleaseList} />
+            </Switch>
+          </Container>
+        </UserContext.Provider>
+      </GlobalStateProvider>
     </div>
   );
 };
