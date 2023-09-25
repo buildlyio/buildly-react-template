@@ -7,7 +7,7 @@ export default function (options = {} as any) {
     let baseURL = '';
     const token = oauthService.getAccessToken();
     if (service === 'release') {
-        baseURL = `${window.env.API_URL}release/`;
+        baseURL = `${window.env.RELEASE_SERVICE_URL}`;
     } else if (service === 'product'){
         baseURL = `${window.env.API_URL}product/`
     } else {
