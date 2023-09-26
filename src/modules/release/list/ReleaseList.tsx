@@ -5,7 +5,7 @@ import Table from "react-bootstrap/Table";
 import { Release } from "../../../interfaces/release";
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Button from "react-bootstrap/Button";
+import { Button } from "@mui/material";
 import { Dropdown, ProgressBar } from "react-bootstrap";
 import DoughnutChart from "../../../components/ReleaseCharts/Doughnut";
 import BarChart from "../../../components/ReleaseCharts/BarChart";
@@ -178,6 +178,7 @@ function ReleaseList() {
       const data = { product_uuid: currentProduct.product_uuid, ...formData };
       sendRelease({ type: "Submit", release: data });
     }
+    handleClose();
   };
 
   const deleteRelease = (row: any) => {
@@ -277,7 +278,7 @@ function ReleaseList() {
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
           </TableCell>
-          <TableCell component="th" scope="row">
+          <TableCell>
             <Link
               to={{
                 pathname: `${routes.RELEASE}/${row.release_uuid}`,
@@ -304,7 +305,7 @@ function ReleaseList() {
           <TableCell align="center">{row.release_date}</TableCell>
           <TableCell align="right">
             <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
+              <Dropdown.Toggle variant="link">
                 <IconButton aria-label="expand row" size="small">
                   <MoreVertIcon />
                 </IconButton>
@@ -397,7 +398,9 @@ function ReleaseList() {
                 <Typography variant="h6">Releases summary</Typography>
 
                 <Button
-                  variant="outline-secondary"
+                    type="button"
+                    variant="outlined"
+                    color="primary"
                   size="sm"
                   onClick={handleShow}
                 >
@@ -554,14 +557,18 @@ function ReleaseList() {
                 </Modal.Body>
                 <Modal.Footer>
                   <Button
-                    variant="outline-secondary"
+                      type="button"
+                      variant="outlined"
+                      color="primary"
                     size="sm"
                     onClick={() => handleClose()}
                   >
                     Close
                   </Button>
                   <Button
-                    variant="secondary"
+                    v type="button"
+                    variant="contained"
+                    color="primary"
                     size="sm"
                     type="submit"
                     disabled={!(formData.name && formData.release_date)}
@@ -582,7 +589,9 @@ function ReleaseList() {
                 </Typography>
 
                 <Button
-                  variant="outline-secondary"
+                    type="button"
+                    variant="contained"
+                    color="primary"
                   size="sm"
                   onClick={handleShow}
                 >
