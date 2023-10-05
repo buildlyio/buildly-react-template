@@ -67,34 +67,29 @@ const UseInfo = ({
 
   const productUse = useInput((editData && editData.product_info && editData.product_info.use)
     || (productFormData && productFormData.product_info && productFormData.product_info.use)
-    || '',
-  { required: true });
+    || '');
 
   const useWhen = useInput((editData && editData.product_info && editData.product_info.use_when)
     || (productFormData && productFormData.product_info && productFormData.product_info.use_when)
-    || '',
-  { required: true });
+    || '');
 
   const useSituation = useInput((editData && editData.product_info
       && editData.product_info.use_situation)
     || (productFormData && productFormData.product_info
       && productFormData.product_info.use_situation)
-    || '',
-  { required: true });
+    || '');
 
   const impFunction = useInput((editData && editData.product_info
       && editData.product_info.imp_function)
     || (productFormData && productFormData.product_info
       && productFormData.product_info.imp_function)
-    || '',
-  { required: true });
+    || '');
 
   const deliveryRisk = useInput((editData && editData.product_info
       && editData.product_info.delivery_risk)
     || (productFormData && productFormData.product_info
       && productFormData.product_info.delivery_risk)
-    || '',
-  { required: true });
+    || '');
 
   const toolReq = useInput((editData && editData.product_info && editData.product_info.tool_req)
     || (productFormData && productFormData.product_info && productFormData.product_info.tool_req)
@@ -322,7 +317,6 @@ const UseInfo = ({
                 variant="contained"
                 color="primary"
                 fullWidth
-                disabled={submitDisabled()}
                 className={classes.submit}
               >
                 Next
