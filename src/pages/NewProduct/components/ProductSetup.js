@@ -103,8 +103,7 @@ const ProductSetup = ({
 
   const description = useInput((editData && editData.description)
     || (productFormData && productFormData.product_description)
-    || '',
-  { required: true });
+    || '');
 
   const featuresTool = useInput('start fresh', { required: true });
   const issuesTool = useInput('start fresh', { required: true });
@@ -243,7 +242,6 @@ const ProductSetup = ({
     const errorKeys = Object.keys(formError);
 
     if (!name.value
-      || !description.value
       || (featuresTool.value === 'trello' && (!trelloAuth.access_token || !trelloAuth.trello_key))
       || (issuesTool.value === 'github' && (!githubIssueAuth.access_token || !githubIssueAuth.owner_name))
       || (featuresTool.value !== 'start fresh' && !featureCredValid)
