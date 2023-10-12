@@ -9,6 +9,7 @@ import {
   Hidden,
   Grid,
 } from '@mui/material';
+import Chatbot from '@components/Chatbot/Chatbot';
 import Loader from '@components/Loader/Loader';
 import FormModal from '@components/Modal/FormModal';
 import { getAllStatuses } from '@redux/release/actions/release.actions';
@@ -333,6 +334,7 @@ const NewProductForm = (props) => {
               )}
             </div>
           </div>
+          <Chatbot />
         </FormModal>
       )}
     </div>

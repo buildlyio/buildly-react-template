@@ -8,6 +8,7 @@ import {
   Button, Grid, MenuItem, Tab, Tabs, TextField, Typography,
 } from '@mui/material';
 import { Sync as SyncIcon } from '@mui/icons-material';
+import Chatbot from '@components/Chatbot/Chatbot';
 import ConfirmModal from '@components/Modal/ConfirmModal';
 import Loader from '@components/Loader/Loader';
 import { routes } from '@routes/routesConstants';
@@ -650,6 +651,7 @@ const Roadmap = ({
         ) }
       </>
       )}
+      <Chatbot />
     </>
   );
 };

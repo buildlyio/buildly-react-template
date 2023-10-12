@@ -22,6 +22,7 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import { Button, ProgressBar, Tab, Tabs } from "react-bootstrap";
 import ReleaseForm from "./components/ReleaseForm";
 import { HttpService } from "../../../services/http.service";
+import Chatbot from "../../../components/Chatbot/Chatbot";
 
 const httpService = new HttpService();
 
@@ -329,6 +330,7 @@ function ReleaseDetails() {
           </TableContainer>
         </Tab>
       </Tabs>
+      <Chatbot />
     </>
   );
 }

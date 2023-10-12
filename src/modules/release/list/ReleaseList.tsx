@@ -34,6 +34,7 @@ import "./ReleaseList.css";
 import { GlobalStateContext } from "../../../context/globalState";
 import LoadingSpinner from "../../../components/Spinner";
 import { routes } from "../../../routes/routesConstants";
+import Chatbot from "../../../components/Chatbot/Chatbot";
 
 const httpService = new HttpService();
 
@@ -602,6 +603,7 @@ function ReleaseList() {
           )}
         </>
       )}
+      <Chatbot />
     </>
   );
 }
