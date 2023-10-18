@@ -25,6 +25,11 @@ const DoughnutChart = ({ id, labels, label, data }: any) => {
         display: true,
         text: label,
       },
+      emptyDoughnut: {
+        color: "rgba(255, 128, 0, 0.5)",
+        width: 2,
+        radiusDecrease: 20,
+      },
     },
   };
 

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import DoughnutChart from "../../../components/ReleaseCharts/Doughnut";
-import BarChart from "../../../components/ReleaseCharts/BarChart";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useHistory, useParams } from "react-router-dom";
+import DoughnutChart from "../../../components/Charts/Doughnut";
+import BarChart from "../../../components/Charts/BarChart";
 import "./ReleaseDetails.css";
 import {
   Box,
@@ -22,12 +22,31 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import { Button, ProgressBar, Tab, Tabs } from "react-bootstrap";
 import ReleaseForm from "./components/ReleaseForm";
 import { HttpService } from "../../../services/http.service";
+import LoadingSpinner from "../../../components/Spinner";
+import { useActor } from "@xstate/react";
+import { GlobalStateContext } from "../../../context/globalState";
 import Chatbot from "../../../components/Chatbot/Chatbot";
+import { routes } from "../../../routes/routesConstants";
+
+interface BarChartData {
+  label: string;
+  key: string;
+  backgroundColor: string;
+  data: number[];
+}
 
 const httpService = new HttpService();
 
 function ReleaseDetails() {
   const { releaseUuid } = useParams();
+  const history = useHistory();
+
+  // define release summary
+  const [releaseSummary, setReleaseSummary] = useState(null as any);
+  const [summaryLoading, setSummaryLoading] = useState(true);
+
+  const globalContext = useContext(GlobalStateContext);
+  const [productState] = useActor(globalContext.productMachineService);
 
   // Tabs
   const [tabKey, setTabKey] = React.useState<string>("report");
@@ -37,24 +56,9 @@ function ReleaseDetails() {
   const pieChartLabel = "Releases summary";
   const pieChartData = [7, 5, 3];
 
-  const barChartLabels = ["bike", "car", "scooter", "truck", "auto", "Bus"];
-  const barChartData = [
-    {
-      label: "Done",
-      backgroundColor: "#0D5595",
-      data: [17, 16, 4, 11, 8, 9],
-    },
-    {
-      label: "In progress",
-      backgroundColor: "#F8943C",
-      data: [14, 2, 10, 6, 12, 16],
-    },
-    {
-      label: "Overdue",
-      backgroundColor: "#C91B1A",
-      data: [2, 21, 13, 3, 24, 7],
-    },
-  ];
+  let featureNames: string[] = [];
+  let barChartSummaryData: any[] = [];
+
   const backgroundColor = "#02b844";
   const borderWidth = 1;
   const borderColor = "#000000";
@@ -95,40 +99,126 @@ function ReleaseDetails() {
   }
 
   // Initialize release details
-  const [releasesDetails, setReleaseDetails] = useState(null as any);
+  const [releaseDetails, setReleaseDetails] = useState(null as any);
   const [releaseFeatures, setReleaseFeatures] = useState(null as any);
-  if (releaseUuid) {
-    if (!releasesDetails) {
-      try {
-        httpService
-          .fetchData(`/release/${releaseUuid}/`, "release")
-          .then((response: any) => {
-            if (response && response.data) {
-              setReleaseDetails(response.data);
-            }
-          });
-      } catch (httpError) {
-        console.log("httpError : ", httpError);
-      }
-    }
 
-    if (!releaseFeatures) {
-      try {
-        httpService
-          .fetchData(
-            `/feature/?release_features__release_uuid=${releaseUuid}`,
-            "release"
-          )
-          .then((response: any) => {
-            if (response && response.data) {
-              setReleaseFeatures(response.data);
-            }
-          });
-      } catch (httpError) {
-        console.log("httpError : ", httpError);
+  useEffect(() => {
+    if (releaseUuid) {
+      // Fetch release details
+      if (!releaseDetails) {
+        setSummaryLoading(true);
+        try {
+          httpService
+            .fetchData(
+              `/release/release_summary/?release_uuid=${releaseUuid}`,
+              "release"
+            )
+            .then((response: any) => {
+              if (response && response.data) {
+                setReleaseDetails(response.data);
+
+                const releaseSummaryObj = response.data;
+
+                if (releaseSummaryObj && releaseSummaryObj.summary) {
+                  // Construct issues summary data
+                  const featuresSummaryObj = generateBarChartData(
+                    releaseSummaryObj.summary.feature_issues
+                  );
+
+                  setReleaseSummary({
+                    progressSummary: {
+                      labels: Object.keys(
+                        releaseSummaryObj.summary.features_summary
+                      ),
+                      values: Object.values(
+                        releaseSummaryObj.summary.features_summary
+                      ),
+                    },
+                    features: featuresSummaryObj,
+                    assignees: {
+                      labels: releaseSummaryObj.summary.assignee_data
+                        ? Object.keys(releaseSummaryObj.summary.assignee_data)
+                        : [],
+                      values: Object.keys(
+                        releaseSummaryObj.summary.assignee_data
+                      ).length
+                        ? Object.values(releaseSummaryObj.summary.assignee_data)
+                        : [],
+                    },
+                  });
+                }
+
+                setSummaryLoading(false);
+              }
+            });
+        } catch (httpError) {
+          console.log("httpError : ", httpError);
+          setSummaryLoading(false);
+        }
+      }
+
+      if (!releaseFeatures) {
+        try {
+          httpService
+            .fetchData(
+              `/feature/?release_features__release_uuid=${releaseUuid}`,
+              "release"
+            )
+            .then((response: any) => {
+              if (response && response.data) {
+                setReleaseFeatures(response.data);
+              }
+            });
+        } catch (httpError) {
+          console.log("httpError : ", httpError);
+        }
       }
     }
-  }
+  }, [productState]);
+
+  /**
+   * Construct bar chart data
+   * @param data
+   * @param dataField
+   */
+  const generateBarChartData = (data: any) => {
+    featureNames = [];
+    barChartSummaryData = [
+      {
+        label: "Completed",
+        key: "completed",
+        backgroundColor: "#0D5595",
+        data: [],
+      },
+      {
+        label: "In progress",
+        key: "in_progress",
+        backgroundColor: "#F8943C",
+        data: [],
+      },
+      {
+        label: "Overdue",
+        key: "overdue",
+        backgroundColor: "#C91B1A",
+        data: [],
+      },
+    ];
+
+    data.forEach((entry: any) => {
+      featureNames.push(entry.name);
+      Object.keys(entry["issues_data"]).forEach((key) => {
+        const index = barChartSummaryData.findIndex(
+          (summaryEntry) => summaryEntry.key === key
+        );
+
+        if (index > -1) {
+          barChartSummaryData[index].data.push(entry["issues_data"][key]);
+        }
+      });
+    });
+
+    return { featureNames, barChartSummaryData };
+  };
 
   function Row(props: { row: ReturnType<typeof createData> }) {
     const { row } = props;
@@ -219,16 +309,16 @@ function ReleaseDetails() {
     <>
       <section className="toolbar ">
         {" "}
-        <Button variant="dark" size="sm">
+        <Button variant="dark" size="sm" onClick={(e) => history.push(routes.RELEASE)}>
           <KeyboardArrowLeftIcon />
         </Button>
         <Link
           className="toolbar-header"
           to={{
-            pathname: `/releases/`,
+            pathname: routes.RELEASE,
           }}
         >
-          {releasesDetails && releasesDetails.name}
+          {releaseDetails && releaseDetails.name}
         </Link>{" "}
       </section>
 
@@ -243,65 +333,154 @@ function ReleaseDetails() {
       >
         {/*Release summary tab*/}
         <Tab eventKey="report" title="Report">
-          <div className="container-fluid my-2">
-            <div className="row">
-              <div className="col chart-container">
-                <DoughnutChart
-                  id="releases"
-                  labels={pieChartLabels}
-                  label={pieChartLabel}
-                  data={pieChartData}
-                />
+          {summaryLoading ? (
+            <>
+              <div className="d-flex flex-column align-items-center justify-content-center h-75">
+                <LoadingSpinner />
               </div>
-              <div className="col chart-container">
-                <BarChart
-                  id="features"
-                  label="Features summary"
-                  labels={barChartLabels}
-                  data={barChartData}
-                  backgroundColor={backgroundColor}
-                  borderWidth={borderWidth}
-                  borderColor={borderColor}
-                />
-              </div>
-              <div className="col chart-container">
-                <BarChart
-                  id="issues"
-                  label="Bugs summary"
-                  labels={barChartLabels}
-                  data={barChartData}
-                  backgroundColor={backgroundColor}
-                  borderWidth={borderWidth}
-                  borderColor={borderColor}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="container-fluid my-2">
-            <div className="row">
-              <div className="col chart-container">
-                <DoughnutChart
-                  id="releases"
-                  labels={pieChartLabels}
-                  label={pieChartLabel}
-                  data={pieChartData}
-                />
-              </div>
-              <div className="col chart-container">
-                <DoughnutChart
-                  id="releases"
-                  labels={pieChartLabels}
-                  label={pieChartLabel}
-                  data={pieChartData}
-                />
-              </div>
-            </div>
-          </div>
+            </>
+          ) : (
+            <>
+              {releaseDetails?.features?.length ? (
+                <>
+                  {" "}
+                  <div className="container-fluid release-summary-container">
+                    <div className="row flex-nowrap justify-content-between">
+                      <div
+                        className="chart-container"
+                        style={{
+                          width: "32%",
+                          height: "100%",
+                        }}
+                      >
+                        {/*<Typography variant="h6" className="release-summary-entry">*/}
+                        {/*  Summary*/}
+                        {/*</Typography>*/}
+                        {/*<hr />*/}
+                        {/*<section className="summary-container">*/}
+                        {/*  <section className="release-summary-entry">*/}
+                        {/*    <label>Start date</label>{" "}*/}
+                        {/*    <label>*/}
+                        {/*      {releaseDetails && releaseDetails.start_date}*/}
+                        {/*    </label>*/}
+                        {/*  </section>*/}
+                        {/*  <hr />*/}
+                        {/*  <section className="release-summary-entry">*/}
+                        {/*    <label>Release date</label>{" "}*/}
+                        {/*    <label>*/}
+                        {/*      {releaseDetails && releaseDetails.release_date}*/}
+                        {/*    </label>*/}
+                        {/*  </section>*/}
+                        {/*  <hr />*/}
+                        {/*  <section className="release-summary-entry">*/}
+                        {/*    <label>Status</label> <label>Status</label>*/}
+                        {/*  </section>*/}
+                        {/*  <hr />*/}
+                        {/*  <section className="release-summary-entry">*/}
+                        {/*    <label>Progress</label> <label>progress bar</label>*/}
+                        {/*  </section>*/}
+                        {/*</section>*/}
+                        <DoughnutChart
+                          id="progressSummary"
+                          label="Progress summary"
+                          labels={releaseSummary?.progressSummary?.labels}
+                          data={releaseSummary?.progressSummary?.values}
+                        />
+                      </div>
+                      <div
+                        className="chart-container"
+                        style={{
+                          width: "32%",
+                        }}
+                      >
+                        <BarChart
+                          id="features"
+                          label="Features summary"
+                          labels={releaseSummary?.features?.featureNames}
+                          data={releaseSummary?.features?.barChartSummaryData}
+                          backgroundColor={backgroundColor}
+                          borderWidth={borderWidth}
+                          borderColor={borderColor}
+                        />
+                      </div>
+                      <div
+                        className="chart-container"
+                        style={{
+                          width: "32%",
+                        }}
+                      >
+                        {releaseSummary?.assignees?.labels.length ? (
+                          <DoughnutChart
+                            id="resourceAllocation"
+                            label="Resource allocation"
+                            labels={releaseSummary?.assignees?.labels}
+                            data={releaseSummary?.assignees?.values}
+                          />
+                        ) : (
+                          <>
+                            {" "}
+                            <Typography>Resource allocation</Typography>
+                            <Typography className="m-auto">
+                              No data to display
+                            </Typography>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {/*<div className="container-fluid summary-parent-container">*/}
+                  {/*  <div className="row flex-nowrap justify-content-between">*/}
+                  {/*    <div*/}
+                  {/*      className="chart-container"*/}
+                  {/*      style={{*/}
+                  {/*        width: "49%",*/}
+                  {/*      }}*/}
+                  {/*    >*/}
+                  {/*      <div*/}
+                  {/*        style={{*/}
+                  {/*          width: "50%",*/}
+                  {/*        }}*/}
+                  {/*      >*/}
+                  {/*        <DoughnutChart*/}
+                  {/*          id="releases"*/}
+                  {/*          labels={pieChartLabels}*/}
+                  {/*          label={pieChartLabel}*/}
+                  {/*          data={pieChartData}*/}
+                  {/*        />*/}
+                  {/*      </div>*/}
+                  {/*    </div>*/}
+                  {/*    <div*/}
+                  {/*      className="chart-container"*/}
+                  {/*      style={{*/}
+                  {/*        width: "49%",*/}
+                  {/*      }}*/}
+                  {/*    >*/}
+                  {/*      <div*/}
+                  {/*        style={{*/}
+                  {/*          width: "50%",*/}
+                  {/*        }}*/}
+                  {/*      >*/}
+                  {/*        <DoughnutChart*/}
+                  {/*          id="releases"*/}
+                  {/*          labels={pieChartLabels}*/}
+                  {/*          label={pieChartLabel}*/}
+                  {/*          data={pieChartData}*/}
+                  {/*        />*/}
+                  {/*      </div>*/}
+                  {/*    </div>*/}
+                  {/*  </div>*/}
+                  {/*</div>*/}
+                </>
+              ) : (
+                <Typography>No features added yet</Typography>
+              )}
+            </>
+          )}
         </Tab>
 
         {/*Edit details tab*/}
         <Tab eventKey="details" title="Details">
-          <ReleaseForm releasesDetails={releasesDetails} />
+          <ReleaseForm releasesDetails={releaseDetails} />
         </Tab>
 
         {/*Features & Issues summary*/}

@@ -1,14 +1,12 @@
-import { useActor, useMachine, useSelector } from "@xstate/react";
-import { releaseMachine } from "../../../state/release/release";
-import { ReleaseService } from "../../../services/release.service";
+import { useActor, useSelector } from "@xstate/react";
 import Table from "react-bootstrap/Table";
 import { Release } from "../../../interfaces/release";
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@mui/material";
+import Button from "react-bootstrap/Button";
 import { Dropdown, ProgressBar } from "react-bootstrap";
-import DoughnutChart from "../../../components/ReleaseCharts/Doughnut";
-import BarChart from "../../../components/ReleaseCharts/BarChart";
+import DoughnutChart from "../../../components/Charts/Doughnut";
+import BarChart from "../../../components/Charts/BarChart";
 import {
   Box,
   Collapse,
@@ -23,18 +21,16 @@ import {
 import Paper from "@mui/material/Paper";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { productMachine } from "../../../state/product/product";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { HttpService } from "../../../services/http.service";
-import { interpret } from "xstate";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Tooltip from "@mui/material/Tooltip";
 import "./ReleaseList.css";
 import { GlobalStateContext } from "../../../context/globalState";
 import LoadingSpinner from "../../../components/Spinner";
-import { routes } from "../../../routes/routesConstants";
 import Chatbot from "../../../components/Chatbot/Chatbot";
+import { routes } from "../../../routes/routesConstants";
 
 const httpService = new HttpService();
 
@@ -58,8 +54,8 @@ function ReleaseList() {
   const [releaseState, sendRelease] = useActor(
     globalContext.releaseMachineService
   );
-  const selectCurrentProduct = (state: any) => state && state.context && state.context.selectedProduct;
-  const selectReleases = (state: any) => state && state.context && state.context.releases;
+  const selectCurrentProduct = (state: any) => state.context.selectedProduct;
+  const selectReleases = (state: any) => state.context.releases;
 
   const currentProduct = useSelector(
     globalContext.productMachineService,
@@ -179,7 +175,6 @@ function ReleaseList() {
       const data = { product_uuid: currentProduct.product_uuid, ...formData };
       sendRelease({ type: "Submit", release: data });
     }
-    handleClose();
   };
 
   const deleteRelease = (row: any) => {
@@ -306,7 +301,7 @@ function ReleaseList() {
           <TableCell align="center">{row.release_date}</TableCell>
           <TableCell align="right">
             <Dropdown>
-              <Dropdown.Toggle variant="link">
+              <Dropdown.Toggle variant="success" id="dropdown-basic">
                 <IconButton aria-label="expand row" size="small">
                   <MoreVertIcon />
                 </IconButton>
@@ -393,15 +388,13 @@ function ReleaseList() {
       ) : (
         <>
           {" "}
-          {releases && releases.length ? (
+          {releases.length ? (
             <>
               <div className="d-flex justify-content-between">
                 <Typography variant="h6">Releases summary</Typography>
 
                 <Button
-                    type="button"
-                    variant="outlined"
-                    color="primary"
+                  variant="outline-secondary"
                   size="sm"
                   onClick={handleShow}
                 >
@@ -558,18 +551,14 @@ function ReleaseList() {
                 </Modal.Body>
                 <Modal.Footer>
                   <Button
-                      type="button"
-                      variant="outlined"
-                      color="primary"
+                    variant="outline-secondary"
                     size="sm"
                     onClick={() => handleClose()}
                   >
                     Close
                   </Button>
                   <Button
-                    v type="button"
-                    variant="contained"
-                    color="primary"
+                    variant="secondary"
                     size="sm"
                     type="submit"
                     disabled={!(formData.name && formData.release_date)}
@@ -590,9 +579,7 @@ function ReleaseList() {
                 </Typography>
 
                 <Button
-                    type="button"
-                    variant="contained"
-                    color="primary"
+                  variant="outline-secondary"
                   size="sm"
                   onClick={handleShow}
                 >
