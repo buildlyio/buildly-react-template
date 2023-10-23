@@ -359,7 +359,7 @@ const Shipment = ({
 
     if (setExpanded) {
       const rowIndex = _.findIndex(rows, shipment);
-      setExpandedRows([...expandedRows, rowIndex]);
+      setExpandedRows([rowIndex]);
     }
 
     setSelectedShipment(shipment);
@@ -497,7 +497,7 @@ const Shipment = ({
                 } else {
                   processMarkers(rows[_.last(allExpanded).dataIndex]);
                 }
-                setExpandedRows(_.map(allExpanded, 'dataIndex'));
+                setExpandedRows([_.last(allExpanded).dataIndex]);
               },
               renderExpandableRow: (rowData, rowMeta) => {
                 const colSpan = rowData.length + 1;
