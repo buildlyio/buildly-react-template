@@ -19,7 +19,7 @@ import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import { Button, ProgressBar, Tab, Tabs } from "react-bootstrap";
+// import { Button, ProgressBar, Tab, Tabs } from "react-bootstrap";
 import ReleaseForm from "./components/ReleaseForm";
 import { HttpService } from "../../../services/http.service";
 import LoadingSpinner from "../../../components/Spinner";
@@ -27,6 +27,10 @@ import { useActor } from "@xstate/react";
 import { GlobalStateContext } from "../../../context/globalState";
 import Chatbot from "../../../components/Chatbot/Chatbot";
 import { routes } from "../../../routes/routesConstants";
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
 
 interface BarChartData {
   label: string;
@@ -50,6 +54,11 @@ function ReleaseDetails() {
 
   // Tabs
   const [tabKey, setTabKey] = React.useState<string>("report");
+  const [value, setValue] = React.useState('1');
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
 
   // Sample data
   const pieChartLabels = ["Done", "In progress", "Overdue"];
@@ -307,208 +316,160 @@ function ReleaseDetails() {
 
   return (
     <>
-      <section className="toolbar ">
-        {" "}
-        <Button variant="dark" size="sm" onClick={(e) => history.push(routes.RELEASE)}>
+      <Box className="toolbar" display="flex" alignItems="center">
+        <IconButton aria-label="back" onClick={(e) => history.push(routes.RELEASE)}>
           <KeyboardArrowLeftIcon />
-        </Button>
+        </IconButton>
         <Link
-          className="toolbar-header"
-          to={{
-            pathname: routes.RELEASE,
-          }}
+            className="toolbar-header"
+            to={{
+              pathname: routes.RELEASE,
+            }}
         >
           {releaseDetails && releaseDetails.name}
-        </Link>{" "}
-      </section>
+        </Link>
+      </Box>
 
-      <Tabs
-        id="release-details-tabs"
-        activeKey={tabKey}
-        onSelect={(k) => {
-          if (k) {
-            setTabKey(k);
-          }
-        }}
-      >
-        {/*Release summary tab*/}
-        <Tab eventKey="report" title="Report">
-          {summaryLoading ? (
-            <>
-              <div className="d-flex flex-column align-items-center justify-content-center h-75">
-                <LoadingSpinner />
-              </div>
-            </>
-          ) : (
-            <>
-              {releaseDetails?.features?.length ? (
+      <Box sx={{ width: '100%', typography: 'body1' }}>
+        <TabContext value={value}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <TabList onChange={handleChange} aria-label="release tabs">
+              <Tab label="Report" value="1" />
+              <Tab label="Details" value="2" />
+              <Tab label="Features & Issues" value="3" />
+            </TabList>
+          </Box>
+          <TabPanel value="1">
+            {summaryLoading ? (
                 <>
-                  {" "}
-                  <div className="container-fluid release-summary-container">
-                    <div className="row flex-nowrap justify-content-between">
-                      <div
-                        className="chart-container"
-                        style={{
-                          width: "32%",
-                          height: "100%",
-                        }}
-                      >
-                        {/*<Typography variant="h6" className="release-summary-entry">*/}
-                        {/*  Summary*/}
-                        {/*</Typography>*/}
-                        {/*<hr />*/}
-                        {/*<section className="summary-container">*/}
-                        {/*  <section className="release-summary-entry">*/}
-                        {/*    <label>Start date</label>{" "}*/}
-                        {/*    <label>*/}
-                        {/*      {releaseDetails && releaseDetails.start_date}*/}
-                        {/*    </label>*/}
-                        {/*  </section>*/}
-                        {/*  <hr />*/}
-                        {/*  <section className="release-summary-entry">*/}
-                        {/*    <label>Release date</label>{" "}*/}
-                        {/*    <label>*/}
-                        {/*      {releaseDetails && releaseDetails.release_date}*/}
-                        {/*    </label>*/}
-                        {/*  </section>*/}
-                        {/*  <hr />*/}
-                        {/*  <section className="release-summary-entry">*/}
-                        {/*    <label>Status</label> <label>Status</label>*/}
-                        {/*  </section>*/}
-                        {/*  <hr />*/}
-                        {/*  <section className="release-summary-entry">*/}
-                        {/*    <label>Progress</label> <label>progress bar</label>*/}
-                        {/*  </section>*/}
-                        {/*</section>*/}
-                        <DoughnutChart
-                          id="progressSummary"
-                          label="Progress summary"
-                          labels={releaseSummary?.progressSummary?.labels}
-                          data={releaseSummary?.progressSummary?.values}
-                        />
-                      </div>
-                      <div
-                        className="chart-container"
-                        style={{
-                          width: "32%",
-                        }}
-                      >
-                        <BarChart
-                          id="features"
-                          label="Features summary"
-                          labels={releaseSummary?.features?.featureNames}
-                          data={releaseSummary?.features?.barChartSummaryData}
-                          backgroundColor={backgroundColor}
-                          borderWidth={borderWidth}
-                          borderColor={borderColor}
-                        />
-                      </div>
-                      <div
-                        className="chart-container"
-                        style={{
-                          width: "32%",
-                        }}
-                      >
-                        {releaseSummary?.assignees?.labels.length ? (
-                          <DoughnutChart
-                            id="resourceAllocation"
-                            label="Resource allocation"
-                            labels={releaseSummary?.assignees?.labels}
-                            data={releaseSummary?.assignees?.values}
-                          />
-                        ) : (
-                          <>
-                            {" "}
-                            <Typography>Resource allocation</Typography>
-                            <Typography className="m-auto">
-                              No data to display
-                            </Typography>
-                          </>
-                        )}
-                      </div>
-                    </div>
+                  <div className="d-flex flex-column align-items-center justify-content-center h-75">
+                    <LoadingSpinner />
                   </div>
-                  {/*<div className="container-fluid summary-parent-container">*/}
-                  {/*  <div className="row flex-nowrap justify-content-between">*/}
-                  {/*    <div*/}
-                  {/*      className="chart-container"*/}
-                  {/*      style={{*/}
-                  {/*        width: "49%",*/}
-                  {/*      }}*/}
-                  {/*    >*/}
-                  {/*      <div*/}
-                  {/*        style={{*/}
-                  {/*          width: "50%",*/}
-                  {/*        }}*/}
-                  {/*      >*/}
-                  {/*        <DoughnutChart*/}
-                  {/*          id="releases"*/}
-                  {/*          labels={pieChartLabels}*/}
-                  {/*          label={pieChartLabel}*/}
-                  {/*          data={pieChartData}*/}
-                  {/*        />*/}
-                  {/*      </div>*/}
-                  {/*    </div>*/}
-                  {/*    <div*/}
-                  {/*      className="chart-container"*/}
-                  {/*      style={{*/}
-                  {/*        width: "49%",*/}
-                  {/*      }}*/}
-                  {/*    >*/}
-                  {/*      <div*/}
-                  {/*        style={{*/}
-                  {/*          width: "50%",*/}
-                  {/*        }}*/}
-                  {/*      >*/}
-                  {/*        <DoughnutChart*/}
-                  {/*          id="releases"*/}
-                  {/*          labels={pieChartLabels}*/}
-                  {/*          label={pieChartLabel}*/}
-                  {/*          data={pieChartData}*/}
-                  {/*        />*/}
-                  {/*      </div>*/}
-                  {/*    </div>*/}
-                  {/*  </div>*/}
-                  {/*</div>*/}
                 </>
-              ) : (
-                <Typography>No features added yet</Typography>
-              )}
-            </>
-          )}
-        </Tab>
+            ) : (
+                <>
+                  {releaseDetails?.features?.length ? (
+                      <>
+                        {" "}
+                        <div className="container-fluid release-summary-container">
+                          <div className="row flex-nowrap justify-content-between">
+                            <div
+                                className="chart-container"
+                                style={{
+                                  width: "32%",
+                                  height: "100%",
+                                }}
+                            >
+                              <DoughnutChart
+                                  id="progressSummary"
+                                  label="Progress summary"
+                                  labels={releaseSummary?.progressSummary?.labels}
+                                  data={releaseSummary?.progressSummary?.values}
+                              />
+                            </div>
+                            <div
+                                className="chart-container"
+                                style={{
+                                  width: "32%",
+                                }}
+                            >
+                              <BarChart
+                                  id="features"
+                                  label="Features summary"
+                                  labels={releaseSummary?.features?.featureNames}
+                                  data={releaseSummary?.features?.barChartSummaryData}
+                                  backgroundColor={backgroundColor}
+                                  borderWidth={borderWidth}
+                                  borderColor={borderColor}
+                              />
+                            </div>
+                            <div
+                                className="chart-container"
+                                style={{
+                                  width: "32%",
+                                }}
+                            >
+                              {releaseSummary?.assignees?.labels.length ? (
+                                  <DoughnutChart
+                                      id="resourceAllocation"
+                                      label="Resource allocation"
+                                      labels={releaseSummary?.assignees?.labels}
+                                      data={releaseSummary?.assignees?.values}
+                                  />
+                              ) : (
+                                  <>
+                                    {" "}
+                                    <Typography>Resource allocation</Typography>
+                                    <Typography className="m-auto">
+                                      No data to display
+                                    </Typography>
+                                  </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
 
-        {/*Edit details tab*/}
-        <Tab eventKey="details" title="Details">
-          <ReleaseForm releasesDetails={releaseDetails} />
-        </Tab>
+                      </>
+                  ) : (
+                      <Typography>No features added yet</Typography>
+                  )}
+                </>
+            )}
+          </TabPanel>
+          <TabPanel value="2">
+            <ReleaseForm releasesDetails={releaseDetails} />
+          </TabPanel>
+          <TabPanel value="3">
+            <TableContainer component={Paper}>
+              <Table aria-label="collapsible table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell width="12" />
+                    <TableCell width="33%">Name</TableCell>
+                    {/*<TableCell>Progress</TableCell>*/}
+                    <TableCell align="center">Status</TableCell>
+                    {/*<TableCell align="center">Features</TableCell>*/}
+                    {/*<TableCell align="center">Issues</TableCell>*/}
+                    {/*<TableCell align="right">Release date</TableCell>*/}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {releaseFeatures && releaseFeatures.length
+                      ? releaseFeatures.map((row: any) => (
+                          <Row key={row.feature_uuid} row={row} />
+                      ))
+                      : []}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </TabPanel>
+        </TabContext>
+      </Box>
 
-        {/*Features & Issues summary*/}
-        <Tab eventKey="features-issues" title="Features & Issues">
-          <TableContainer component={Paper}>
-            <Table aria-label="collapsible table">
-              <TableHead>
-                <TableRow>
-                  <TableCell width="12" />
-                  <TableCell width="33%">Name</TableCell>
-                  {/*<TableCell>Progress</TableCell>*/}
-                  <TableCell align="center">Status</TableCell>
-                  {/*<TableCell align="center">Features</TableCell>*/}
-                  {/*<TableCell align="center">Issues</TableCell>*/}
-                  {/*<TableCell align="right">Release date</TableCell>*/}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {releaseFeatures && releaseFeatures.length
-                  ? releaseFeatures.map((row: any) => (
-                      <Row key={row.feature_uuid} row={row} />
-                    ))
-                  : []}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Tab>
-      </Tabs>
+      {/*<Tabs*/}
+      {/*  id="release-details-tabs"*/}
+      {/*  activeKey={tabKey}*/}
+      {/*  onSelect={(k) => {*/}
+      {/*    if (k) {*/}
+      {/*      setTabKey(k);*/}
+      {/*    }*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  /!*Release summary tab*!/*/}
+      {/*  /!*<Tab eventKey="report" title="Report">*!/*/}
+
+      {/*  /!*</Tab>*!/*/}
+
+      {/*  /!*Edit details tab*!/*/}
+      {/*  /!*<Tab eventKey="details" title="Details">*!/*/}
+      {/*  /!*  <ReleaseForm releasesDetails={releaseDetails} />*!/*/}
+      {/*  /!*</Tab>*!/*/}
+
+      {/*  /!*Features & Issues summary*!/*/}
+      {/*  /!*<Tab eventKey="features-issues" title="Features & Issues">*!/*/}
+      {/*  /!* *!/*/}
+      {/*  /!*</Tab>*!/*/}
+      {/*</Tabs>*/}
       <Chatbot />
     </>
   );

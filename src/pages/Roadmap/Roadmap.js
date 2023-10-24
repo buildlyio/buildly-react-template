@@ -494,6 +494,17 @@ const Roadmap = ({
               </Grid>
             </Grid>
 
+            {/* Tabs */}
+            <Grid mb={3} container justifyContent="center">
+              <Grid item className={classes.viewTabs}>
+                <Tabs value={view} onChange={(event, vw) => setView(vw)}>
+                  {subNav.map((itemProps, index) => (
+                    <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
+                  ))}
+                </Tabs>
+              </Grid>
+            </Grid>
+
             {loaded && _.isEmpty(statuses) && !!selectedProduct && !['report', 'tabular'].includes(view.toLocaleString())
               ? (
                 product && !_.isEmpty(product.third_party_tool)
@@ -546,15 +557,15 @@ const Roadmap = ({
                   )
               ) : (
                 <>
-                  <Grid mb={3} container justifyContent="center">
-                    <Grid item className={classes.viewTabs}>
-                      <Tabs value={view} onChange={(event, vw) => setView(vw)}>
-                        {subNav.map((itemProps, index) => (
-                          <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} />
-                        ))}
-                      </Tabs>
-                    </Grid>
-                  </Grid>
+                  {/* <Grid mb={3} container justifyContent="center"> */}
+                  {/*  <Grid item className={classes.viewTabs}> */}
+                  {/*    <Tabs value={view} onChange={(event, vw) => setView(vw)}> */}
+                  {/*      {subNav.map((itemProps, index) => ( */}
+                  {/*        <Tab {...itemProps} key={`tab${index}:${itemProps.value}`} /> */}
+                  {/*      ))} */}
+                  {/*    </Tabs> */}
+                  {/*  </Grid> */}
+                  {/* </Grid> */}
 
                   <ConfirmModal
                     open={openDeleteModal}
