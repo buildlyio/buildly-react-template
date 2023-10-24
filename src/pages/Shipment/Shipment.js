@@ -494,10 +494,10 @@ const Shipment = ({
                   setSelectedShipment(null);
                   setMarkers([]);
                   setSelectedMarker({});
+                  setExpandedRows([]);
                 } else {
-                  processMarkers(rows[_.last(allExpanded).dataIndex]);
+                  processMarkers(rows[_.last(allExpanded).dataIndex], true);
                 }
-                setExpandedRows([_.last(allExpanded).dataIndex]);
               },
               renderExpandableRow: (rowData, rowMeta) => {
                 const colSpan = rowData.length + 1;
