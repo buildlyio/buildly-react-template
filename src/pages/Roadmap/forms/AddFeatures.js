@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -15,7 +15,7 @@ import {
   FormLabel,
   RadioGroup,
   FormControlLabel,
-  Radio,
+  Radio, Slider, Typography,
 } from '@mui/material';
 import FormModal from '@components/Modal/FormModal';
 import Loader from '@components/Loader/Loader';
@@ -24,6 +24,8 @@ import { useInput } from '@hooks/useInput';
 import { createFeature, updateFeature } from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
 import { PRIORITIES } from '../RoadmapConstants';
+import { useActor, useSelector } from '@xstate/react';
+import { GlobalStateContext } from '../../../context/globalState';
 
 const useStyles = makeStyles((theme) => ({
   formTitle: {
@@ -95,6 +97,12 @@ const AddFeatures = ({
   const [status, setStatus] = useState({ status: '' });
   const [colID, setColID] = useState({ colID: (editData && status?.status_tracking_id) || '' });
 
+  const releaseUuid = useInput((editData && editData.release_uuid) || '', { required: true });
+  const [release, setRelease] = useState({ release: '' });
+
+  const complexityValue = useInput((editData && editData.complexity) || 1, { required: true });
+  const [complexity, setComplexity] = useState(complexityValue.value);
+
   const [assignees, setAssignees] = useState(
     (editData && editData.feature_detail && _.map(editData.feature_detail.assigneees, 'username'))
     || [],
@@ -109,6 +117,42 @@ const AddFeatures = ({
   const enabled_desc = useInput((editData && editData.feature_detail?.enabled_desc) || '', { required: true });
   const search_or_nav = useInput((editData && editData.feature_detail?.search_or_nav) || '');
   const links = useInput((editData && editData.feature_detail?.links) || '');
+
+  const globalContext = useContext(GlobalStateContext);
+  const [productState] = useActor(globalContext.productMachineService);
+  const [releaseState, sendRelease] = useActor(
+    globalContext.releaseMachineService,
+  );
+  const selectReleases = (state) => state.context.releases;
+  const releases = useSelector(
+    globalContext.releaseMachineService,
+    selectReleases,
+  );
+
+  const complexityMarkers = [
+    {
+      value: 1,
+      label: 1,
+    },
+    {
+      value: 2,
+      label: 2,
+    },
+    {
+      value: 3,
+      label: 3,
+    },
+    {
+      value: 4,
+      label: 4,
+    },
+    {
+      value: 5,
+      label: 5,
+    },
+  ];
+
+  const valuetext = (value) => value.toString();
 
   useEffect(() => {
     const prod = _.find(products, { product_uuid });
@@ -126,6 +170,15 @@ const AddFeatures = ({
     }
   }, [statuses]);
 
+  useEffect(() => {
+    if (product_uuid) {
+      sendRelease({
+        type: 'LoadReleases',
+        product_uuid,
+      });
+    }
+  }, [productState]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const dateTime = new Date();
@@ -136,6 +189,8 @@ const AddFeatures = ({
       edit_date: dateTime,
       name: name.value,
       description: description.value,
+      complexity,
+      release_uuid: release.release_uuid,
       status: statusID.value,
       priority: priority.value,
       tags,
@@ -298,6 +353,57 @@ const AddFeatures = ({
             </Grid>
 
             <Grid container spacing={2}>
+
+              {/* Release */}
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  select
+                  id="release"
+                  label="Release"
+                  name="release"
+                  value={release}
+                  autoComplete="release"
+                  disabled={viewPage}
+                  onChange={(e) => {
+                    const selectedRelease = e.target.value;
+                    setRelease(selectedRelease);
+                    releaseUuid.setNewValue(selectedRelease.release_uuid);
+                  }}
+                >
+                  {_.map(releases, (rl) => (
+                    <MenuItem
+                      key={`release-${rl.release_uuid}-${rl.name}`}
+                      value={rl}
+                    >
+                      {rl.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+
+              {/* Complexity */}
+              <Grid item xs={12}>
+                <Typography gutterBottom>Complexity</Typography>
+                <Slider
+                  aria-label="Complexity"
+                  defaultValue={complexity.value}
+                  step={1}
+                  min={1}
+                  max={5}
+                  getAriaValueText={valuetext}
+                  valueLabelDisplay="auto"
+                  marks={complexityMarkers}
+                  onChange={(e) => {
+                    const complexityObj = e.target.value;
+                    setComplexity(complexityObj);
+                    complexityValue.setNewValue(complexityObj.value);
+                  }}
+                />
+              </Grid>
 
               {/* Status */}
               <Grid item xs={12} md={8}>
