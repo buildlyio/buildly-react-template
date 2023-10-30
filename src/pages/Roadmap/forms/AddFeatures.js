@@ -97,7 +97,7 @@ const AddFeatures = ({
   const [status, setStatus] = useState({ status: '' });
   const [colID, setColID] = useState({ colID: (editData && status?.status_tracking_id) || '' });
 
-  const releaseUuid = useInput((editData && editData.release) || '', { required: true });
+  const releaseUuid = useInput((editData && editData.release_uuid) || '', { required: true });
   const [release, setRelease] = useState({ release: '' });
 
   const complexityValue = useInput((editData && editData.complexity) || 1, { required: true });
@@ -190,7 +190,7 @@ const AddFeatures = ({
       name: name.value,
       description: description.value,
       complexity,
-      release: release.release_uuid,
+      release_uuid: release.release_uuid,
       status: statusID.value,
       priority: priority.value,
       tags,
