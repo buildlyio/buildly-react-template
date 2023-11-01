@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import makeStyles from '@mui/styles/makeStyles';
@@ -24,8 +24,6 @@ import { useInput } from '@hooks/useInput';
 import { createFeature, updateFeature } from '@redux/release/actions/release.actions';
 import { validators } from '@utils/validators';
 import { PRIORITIES } from '../RoadmapConstants';
-import { useActor, useSelector } from '@xstate/react';
-import { GlobalStateContext } from '../../../context/globalState';
 
 const useStyles = makeStyles((theme) => ({
   formTitle: {
@@ -58,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
 const AddFeatures = ({
   location,
   statuses,
+  releases,
   dispatch,
   products,
   credentials,
@@ -66,7 +65,6 @@ const AddFeatures = ({
   features,
 }) => {
   const classes = useStyles();
-
   const redirectTo = location.state && location.state.from;
   const editPage = location.state && (location.state.type === 'edit' || location.state.type === 'view');
   const editData = (editPage && location.state.data) || {};
@@ -98,7 +96,7 @@ const AddFeatures = ({
   const [colID, setColID] = useState({ colID: (editData && status?.status_tracking_id) || '' });
 
   const releaseUuid = useInput((editData && editData.release_uuid) || '', { required: true });
-  const [release, setRelease] = useState({ release: '' });
+  const [release, setRelease] = useState(releaseUuid.value);
 
   const complexityValue = useInput((editData && editData.complexity) || 1, { required: true });
   const [complexity, setComplexity] = useState(complexityValue.value);
@@ -117,17 +115,6 @@ const AddFeatures = ({
   const enabled_desc = useInput((editData && editData.feature_detail?.enabled_desc) || '', { required: true });
   const search_or_nav = useInput((editData && editData.feature_detail?.search_or_nav) || '');
   const links = useInput((editData && editData.feature_detail?.links) || '');
-
-  const globalContext = useContext(GlobalStateContext);
-  const [productState] = useActor(globalContext.productMachineService);
-  const [releaseState, sendRelease] = useActor(
-    globalContext.releaseMachineService,
-  );
-  const selectReleases = (state) => state.context.releases;
-  const releases = useSelector(
-    globalContext.releaseMachineService,
-    selectReleases,
-  );
 
   const complexityMarkers = [
     {
@@ -170,15 +157,6 @@ const AddFeatures = ({
     }
   }, [statuses]);
 
-  useEffect(() => {
-    if (product_uuid) {
-      sendRelease({
-        type: 'LoadReleases',
-        product_uuid,
-      });
-    }
-  }, [productState]);
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const dateTime = new Date();
@@ -190,7 +168,7 @@ const AddFeatures = ({
       name: name.value,
       description: description.value,
       complexity,
-      release_uuid: release.release_uuid,
+      release_uuid: release,
       status: statusID.value,
       priority: priority.value,
       tags,
@@ -371,13 +349,13 @@ const AddFeatures = ({
                   onChange={(e) => {
                     const selectedRelease = e.target.value;
                     setRelease(selectedRelease);
-                    releaseUuid.setNewValue(selectedRelease.release_uuid);
+                    releaseUuid.setNewValue(selectedRelease);
                   }}
                 >
                   {_.map(releases, (rl) => (
                     <MenuItem
                       key={`release-${rl.release_uuid}-${rl.name}`}
-                      value={rl}
+                      value={rl.release_uuid}
                     >
                       {rl.name}
                     </MenuItem>
@@ -813,6 +791,7 @@ const mapStateToProps = (state, ownProps) => ({
   products: state.productReducer.products,
   credentials: state.productReducer.credentials,
   features: state.releaseReducer.features,
+  releases: state.releaseReducer.releases,
 });
 
 export default connect(mapStateToProps)(AddFeatures);

@@ -131,8 +131,9 @@ export const THIRD_PARTY_TOOL_SYNC_FAILURE = 'RELEASE/THIRD_PARTY_TOOL_SYNC_FAIL
 
 /**
  * Get all Releases
+ * @param {uuid} product_uuid
  */
-export const getAllReleases = () => ({ type: ALL_RELEASES });
+export const getAllReleases = (product_uuid) => ({ type: ALL_RELEASES, product_uuid });
 
 /**
  * Get a Release

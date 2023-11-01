@@ -3,8 +3,9 @@ import * as actions from './release.actions';
 // Test Get All Releases
 describe('Get All Releases action', () => {
   it('should create an action to get all release', () => {
-    const expectedAction = { type: actions.ALL_RELEASES };
-    expect(actions.getAllReleases()).toEqual(expectedAction);
+    const product_uuid = 'product_uuid';
+    const expectedAction = { type: actions.ALL_RELEASES, product_uuid };
+    expect(actions.getAllReleases(product_uuid)).toEqual(expectedAction);
   });
 });
 

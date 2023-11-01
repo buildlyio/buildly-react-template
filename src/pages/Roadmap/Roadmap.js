@@ -24,7 +24,7 @@ import {
   getAllFeatures,
   getAllIssues,
   getAllStatuses,
-  thirdPartyToolSync,
+  thirdPartyToolSync, getAllReleases,
 } from '@redux/release/actions/release.actions';
 import Kanban from './components/Kanban';
 import Tabular from './components/Tabular';
@@ -143,6 +143,7 @@ const Roadmap = ({
   useEffect(() => {
     if (selectedProduct && !!selectedProduct) {
       dispatch(getAllStatuses(selectedProduct));
+      dispatch(getAllReleases(selectedProduct));
       dispatch(getAllFeatures(selectedProduct));
       dispatch(getAllIssues(selectedProduct));
       dispatch(getAllCredentials(selectedProduct));
@@ -678,6 +679,7 @@ const mapStateToProps = (state, ownProps) => ({
   credentials: state.productReducer.credentials,
   statuses: state.releaseReducer.statuses,
   dataSynced: state.releaseReducer.dataSynced,
+  releases: state.releaseReducer.releases,
 });
 
 export default connect(mapStateToProps)(Roadmap);

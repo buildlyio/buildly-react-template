@@ -111,7 +111,7 @@ function* allReleases(payload) {
     const releases = yield call(
       httpService.makeRequest,
       'get',
-      `${window.env.API_URL}release/release/`,
+      `${window.env.API_URL}release/release/?product_uuid=${payload.product_uuid}`,
     );
     yield put({ type: ALL_RELEASES_SUCCESS, data: releases.data });
   } catch (error) {

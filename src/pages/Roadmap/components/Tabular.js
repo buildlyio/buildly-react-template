@@ -277,6 +277,7 @@ const mapStateToProps = (state, ownProps) => ({
   issues: state.releaseReducer.issues,
   statuses: state.releaseReducer.statuses,
   comments: state.releaseReducer.comments,
+  releases: state.releaseReducer.releases,
 });
 
 export default connect(mapStateToProps)(Tabular);
