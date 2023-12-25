@@ -694,7 +694,8 @@ export const getShipmentOverview = (
 
     switch (_.lowerCase(shipment.status)) {
       case 'planned':
-      case 'enroute':
+      case 'en route':
+      case 'arrived':
         editedShipment.type = 'Active';
         break;
 
@@ -704,6 +705,14 @@ export const getShipmentOverview = (
 
       case 'cancelled':
         editedShipment.type = 'Cancelled';
+        break;
+
+      case 'damaged':
+        editedShipment.type = 'Damaged';
+        break;
+
+      case 'battery depleted':
+        editedShipment.type = 'Battery Depleted';
         break;
 
       default:
@@ -750,11 +759,11 @@ export const processReportsAndMarkers = (
       try {
         const { report_entry } = report;
         let marker = {};
-        let dateTime = '';
-        let date = '';
-        let time = '';
         let color = 'green';
         let allAlerts = [];
+        const date = moment(report.activation_date).tz(timezone).format(dateFormat);
+        const time = moment(report.activation_date).tz(timezone).format(timeFormat);
+        const dateTime = moment(report.activation_date).tz(timezone).format(`${dateFormat} ${timeFormat}`);
 
         const temperature = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_temp_fah
@@ -762,25 +771,6 @@ export const processReportsAndMarkers = (
         const probe = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_probe_fah
           : _.round(report_entry.report_probe_cel, 2).toFixed(2);
-
-        if ('report_timestamp' in report_entry) {
-          if (report_entry.report_timestamp !== null) {
-            date = moment(report_entry.report_timestamp).tz(timezone).format(dateFormat);
-            time = moment(report_entry.report_timestamp).tz(timezone).format(timeFormat);
-            dateTime = moment(report_entry.report_timestamp)
-              .tz(timezone).format(`${dateFormat} ${timeFormat}`);
-          }
-        } else if ('report_location' in report_entry) {
-          date = moment(
-            report_entry.report_location.timeOfPosition,
-          ).tz(timezone).format(dateFormat);
-          time = moment(
-            report_entry.report_location.timeOfPosition,
-          ).tz(timezone).format(timeFormat);
-          dateTime = moment(
-            report_entry.report_location.timeOfPosition,
-          ).tz(timezone).format(`${dateFormat} ${timeFormat}`);
-        }
 
         const preAlerts = _.orderBy(
           _.filter(alerts, (alert) => _.lte(_.toNumber(alert.report_id), report.id)),
@@ -1098,7 +1088,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2).toFixed(2) : 'N/A'),
+      customBodyRender: (value) => (value ? _.round(_.toNumber(value), 2).toFixed(2) : 'N/A'),
     },
   },
   {
@@ -1230,7 +1220,7 @@ export const getAlertsReportColumns = (sensorReport, timezone, dateFormat, timeF
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => {
-        let location = '';
+        let location = 'N/A';
         if (value && value !== '-') {
           const dt = moment(value).tz(timezone).format(`${dateFormat} ${timeFormat}`);
           const report = _.find(sensorReport, { timestamp: dt });
@@ -1349,7 +1339,7 @@ export const getGatewayFormattedRow = (data, gatewayTypeList, shipmentData, cust
       if (shipmentData && shipmentData.length) {
         _.forEach(shipmentData, (shipment) => {
           if (shipment.partner_shipment_id !== null && !_.isEmpty(element.shipment_ids)
-            && element.shipment_ids.includes(shipment.id.toString())
+            && element.shipment_ids.includes(shipment.partner_shipment_id.toString())
           ) {
             edited = {
               ...edited,
@@ -1499,7 +1489,7 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        <Typography sx={{ whiteSpace: 'nowrap' }}>
+        <Typography sx={{ whiteSpace: 'nowrap', maxWidth: '400px', overflowX: 'auto' }}>
           {value}
         </Typography>
       ),
@@ -1581,7 +1571,8 @@ export const getShipmentFormattedRow = (
 
     switch (_.lowerCase(shipment.status)) {
       case 'planned':
-      case 'enroute':
+      case 'en route':
+      case 'arrived':
         editedShipment.type = 'Active';
         break;
 
@@ -1591,6 +1582,14 @@ export const getShipmentFormattedRow = (
 
       case 'cancelled':
         editedShipment.type = 'Cancelled';
+        break;
+
+      case 'damaged':
+        editedShipment.type = 'Damaged';
+        break;
+
+      case 'battery depleted':
+        editedShipment.type = 'Battery Depleted';
         break;
 
       default:
@@ -1639,14 +1638,16 @@ export const getShipmentFormattedRow = (
     }
 
     if (!_.isEmpty(sensorReports)) {
-      editedShipment.allMarkers = _.map(
-        _.filter(sensorReports, { shipment_id: editedShipment.partner_shipment_id }),
-        (report) => ({
-          lat: report.report_entry.report_latitude,
-          lng: report.report_entry.report_longitude,
-          shipment: editedShipment,
-        }),
-      );
+      const reports = _.take(_.orderBy(_.filter(sensorReports, { shipment_id: editedShipment.partner_shipment_id }), 'create_date', 'desc'), 10);
+      editedShipment.allMarkers = _.map(reports, (report) => ({
+        lat: report.report_entry.report_latitude || '*',
+        lng: report.report_entry.report_longitude || '*',
+        shipment: editedShipment,
+      }));
+
+      if (reports[0]) {
+        editedShipment.battery_levels = reports[0].report_entry.report_battery;
+      }
     }
 
     shipmentList = [...shipmentList, editedShipment];

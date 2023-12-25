@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   IconButton,
@@ -14,7 +14,7 @@ import {
 } from '@mui/icons-material';
 import { InlineEditor } from '../../../components/InlineEditor/InlineEditor';
 import { PermissionsTable } from '../../../components/PermissionsTable/PermissionsTable';
-import { UserContext } from '../../../context/User.context';
+import { getUser } from '../../../context/User.context';
 import Crud from '../../../modules/crud/Crud';
 
 const useStyles = makeStyles((theme) => ({
@@ -30,7 +30,7 @@ const UserGroups = () => {
   const classes = useStyles();
   // state to toggle actions menus
   const [menu, setMenu] = useState({ row: null, element: null });
-  const user = useContext(UserContext);
+  const user = getUser();
 
   const permissionCellTemplate = (row, crud, operation) => (
     <Switch

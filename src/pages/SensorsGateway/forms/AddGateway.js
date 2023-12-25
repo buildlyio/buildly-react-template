@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
@@ -19,7 +19,7 @@ import Loader from '../../../components/Loader/Loader';
 import MapComponent from '../../../components/MapComponent/MapComponent';
 import FormModal from '../../../components/Modal/FormModal';
 import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
-import { UserContext } from '../../../context/User.context';
+import { getUser } from '../../../context/User.context';
 import { useInput } from '../../../hooks/useInput';
 import { getUnitOfMeasure } from '../../../redux/items/actions/items.actions';
 import {
@@ -121,7 +121,7 @@ const AddGateway = ({
   const formTitle = editPage ? 'Edit Gateway' : 'Add Gateway';
 
   const [gatewayMetaData, setGatewayMetaData] = useState({});
-  const organization = useContext(UserContext).organization.organization_uuid;
+  const organization = getUser().organization.organization_uuid;
 
   useEffect(() => {
     if (_.isEmpty(unitOfMeasure)) {

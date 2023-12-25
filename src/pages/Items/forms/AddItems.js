@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
@@ -18,7 +18,7 @@ import { makeStyles } from '@mui/styles';
 import Loader from '../../../components/Loader/Loader';
 import FormModal from '../../../components/Modal/FormModal';
 import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
-import { UserContext } from '../../../context/User.context';
+import { getUser } from '../../../context/User.context';
 import { useInput } from '../../../hooks/useInput';
 import { editItem, addItem } from '../../../redux/items/actions/items.actions';
 import { validators } from '../../../utils/validators';
@@ -120,7 +120,7 @@ const AddItems = ({
 
   const [itemMetData, setItemMetaData] = useState({});
   const [productMetData, productMetaData] = useState({});
-  const organization = useContext(UserContext).organization.organization_uuid;
+  const organization = getUser().organization.organization_uuid;
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 

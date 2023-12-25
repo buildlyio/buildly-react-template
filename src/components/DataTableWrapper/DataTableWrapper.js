@@ -15,6 +15,8 @@ import {
 } from '@mui/icons-material';
 import Loader from '../Loader/Loader';
 import ConfirmModal from '../Modal/ConfirmModal';
+import { getUser } from '../../context/User.context';
+import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
 
 const useStyles = makeStyles((theme) => ({
   dashboardHeading: {
@@ -76,9 +78,11 @@ const DataTableWrapper = ({
   extraOptions,
 }) => {
   const classes = useStyles();
+  const user = getUser();
+  const isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
 
   let finalColumns = [];
-  if (editAction) {
+  if (editAction && isAdmin) {
     finalColumns = [
       ...finalColumns,
       {
@@ -100,7 +104,7 @@ const DataTableWrapper = ({
       },
     ];
   }
-  if (deleteAction) {
+  if (deleteAction && isAdmin) {
     finalColumns = [
       ...finalColumns,
       {
@@ -178,7 +182,7 @@ const DataTableWrapper = ({
     <Box mt={noSpace ? 0 : 5} mb={noSpace ? 0 : 5}>
       {loading && <Loader open={loading} />}
       <div>
-        {!hideAddButton && (
+        {!hideAddButton && isAdmin && (
           <Box mb={3} mt={2}>
             <Button
               type="button"
@@ -215,7 +219,7 @@ const DataTableWrapper = ({
         {children}
       </div>
 
-      {deleteAction && (
+      {deleteAction && isAdmin && (
       <ConfirmModal
         open={openDeleteModal}
         setOpen={setDeleteModal}

@@ -1,5 +1,13 @@
 import * as actions from './sensorsGateway.actions';
 
+// Test Get All Gateways
+describe('Get All Gateways action', () => {
+  it('should create an action to get all Gateways', () => {
+    const expectedAction = { type: actions.GET_ALL_GATEWAYS };
+    expect(actions.getAllGateways()).toEqual(expectedAction);
+  });
+});
+
 // Test Get Gateways
 describe('Get Gateways action', () => {
   it('should create an action to get Gateways', () => {
@@ -111,5 +119,14 @@ describe('Get Sensor Reports action', () => {
     const partnerShipmentIds = ['1', '2', '3'];
     const expectedAction = { type: actions.GET_SENSOR_REPORTS, partnerShipmentIds };
     expect(actions.getSensorReports(partnerShipmentIds)).toEqual(expectedAction);
+  });
+});
+
+// Test Configure Gateway
+describe('Configure Gateway action', () => {
+  it('should create an action to configure Gateway type', () => {
+    const payload = { gateway: 'TIVE-J318667' };
+    const expectedAction = { type: actions.CONFIGURE_GATEWAY, payload };
+    expect(actions.configureGateway(payload)).toEqual(expectedAction);
   });
 });

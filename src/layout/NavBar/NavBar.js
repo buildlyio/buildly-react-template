@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import _ from 'lodash';
 import {
@@ -55,10 +56,12 @@ const useStyles = makeStyles((theme) => ({
 /**
  * Component for the side navigation.
  */
-const NavBar = ({ navHidden, setNavHidden }) => {
+const NavBar = ({ navHidden, setNavHidden, data }) => {
   const classes = useStyles();
   const theme = useTheme();
   const isMobileDevice = isMobile();
+
+  let isAdmin = false;
 
   const handleListItemClick = (event, index, item) => {
     if (isMobileDevice) {
@@ -149,4 +152,9 @@ const NavBar = ({ navHidden, setNavHidden }) => {
   );
 };
 
-export default NavBar;
+const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  ...state.authReducer,
+});
+
+export default connect(mapStateToProps)(NavBar);

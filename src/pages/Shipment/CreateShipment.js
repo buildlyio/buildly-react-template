@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, {
-  useCallback, useContext, useEffect, useState,
+  useCallback, useEffect, useState,
 } from 'react';
 import { connect } from 'react-redux';
 import Geocode from 'react-geocode';
@@ -50,7 +50,7 @@ import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper
 import DatePickerComponent from '../../components/DatePicker/DatePicker';
 import Loader from '../../components/Loader/Loader';
 import MapComponent from '../../components/MapComponent/MapComponent';
-import { UserContext } from '../../context/User.context';
+import { getUser } from '../../context/User.context';
 import { useInput } from '../../hooks/useInput';
 import {
   deleteCustody, getContact, getCustodianType, getCustodians, getCustody,
@@ -73,7 +73,14 @@ import {
   itemColumns,
   templateColumns,
 } from '../../utils/constants';
-import { SHIPMENT_STATUS, TIVE_GATEWAY_TIMES, UOM_TEMPERATURE_CHOICES } from '../../utils/mock';
+import {
+  ADMIN_SHIPMENT_STATUS,
+  CREATE_SHIPMENT_STATUS,
+  USER_SHIPMENT_STATUS,
+  TIVE_GATEWAY_TIMES,
+  UOM_TEMPERATURE_CHOICES,
+} from '../../utils/mock';
+import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
 import { validators } from '../../utils/validators';
 
 const useStyles = makeStyles((theme) => ({
@@ -226,7 +233,9 @@ const CreateShipment = ({
   const classes = useStyles();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
-  const { organization } = useContext(UserContext);
+  const user = getUser();
+  const organization = user && user.organization;
+  const isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
 
   const editData = (location.state && location.state.ship) || {};
   const formTitle = location.state && location.state.ship ? 'Update Shipment' : 'Create Shipment';
@@ -262,20 +271,41 @@ const CreateShipment = ({
     || moment().startOf('day').hour(12).minute(0),
   );
   const status = useInput((!_.isEmpty(editData) && editData.status) || 'Planned');
+  const cannotEdit = !_.isEmpty(editData) && _.includes(_.map(ADMIN_SHIPMENT_STATUS, 'value'), editData.status);
 
   const [items, setItems] = useState((!_.isEmpty(editData) && editData.items) || []);
   const [itemRows, setItemRows] = useState([]);
 
-  const min_excursion_temp = useInput((!_.isEmpty(editData) && editData.min_excursion_temp) || 0);
-  const max_excursion_temp = useInput((!_.isEmpty(editData) && editData.max_excursion_temp) || 100);
+  const min_excursion_temp = useInput(
+    (!_.isEmpty(editData) && editData.min_excursion_temp)
+    || (organization && organization.default_min_temperature)
+    || 0,
+  );
+  const max_excursion_temp = useInput(
+    (!_.isEmpty(editData) && editData.max_excursion_temp)
+    || (organization && organization.default_max_temperature)
+    || 100,
+  );
   const min_excursion_humidity = useInput(
-    (!_.isEmpty(editData) && editData.min_excursion_humidity) || 0,
+    (!_.isEmpty(editData) && editData.min_excursion_humidity)
+    || (organization && organization.default_min_humidity)
+    || 0,
   );
   const max_excursion_humidity = useInput(
-    (!_.isEmpty(editData) && editData.max_excursion_humidity) || 100,
+    (!_.isEmpty(editData) && editData.max_excursion_humidity)
+    || (organization && organization.default_max_humidity)
+    || 100,
   );
-  const shock_threshold = useInput((!_.isEmpty(editData) && editData.shock_threshold) || 4);
-  const light_threshold = useInput((!_.isEmpty(editData) && editData.light_threshold) || 5);
+  const shock_threshold = useInput(
+    (!_.isEmpty(editData) && editData.shock_threshold)
+    || (organization && organization.default_shock)
+    || 4,
+  );
+  const light_threshold = useInput(
+    (!_.isEmpty(editData) && editData.light_threshold)
+    || (organization && organization.default_light)
+    || 5,
+  );
 
   const shipmentName = useInput((!_.isEmpty(editData) && editData.order_number) || '');
   const purchaseOrderNumber = useInput((!_.isEmpty(editData) && editData.purchase_order_number) || '');
@@ -292,8 +322,16 @@ const CreateShipment = ({
   const gatewayType = useInput((!_.isEmpty(editData) && editData.platform_name) || 'tive');
   const [availableGateways, setAvailableGateways] = useState([]);
   const gateway = useInput('');
-  const transmissionInterval = useInput((!_.isEmpty(editData) && editData.transmission_time) || 20);
-  const measurementInterval = useInput((!_.isEmpty(editData) && editData.measurement_time) || 20);
+  const transmissionInterval = useInput(
+    (!_.isEmpty(editData) && editData.transmission_time)
+    || (organization && organization.default_transmission_interval)
+    || 20,
+  );
+  const measurementInterval = useInput(
+    (!_.isEmpty(editData) && editData.measurement_time)
+    || (organization && organization.default_measurement_interval)
+    || 20,
+  );
 
   const [formError, setFormError] = useState({});
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -303,15 +341,17 @@ const CreateShipment = ({
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
   useEffect(() => {
-    dispatch(getShipmentTemplates(organization.organization_uuid));
-    dispatch(getCustodians(organization.organization_uuid));
-    dispatch(getCustodianType());
-    dispatch(getContact(organization.organization_uuid));
-    dispatch(getUnitOfMeasure(organization.organization_uuid));
-    dispatch(getItems(organization.organization_uuid));
-    dispatch(getItemType(organization.organization_uuid));
-    dispatch(getGateways(organization.organization_uuid));
-    dispatch(getGatewayType());
+    if (organization) {
+      dispatch(getShipmentTemplates(organization.organization_uuid));
+      dispatch(getCustodians(organization.organization_uuid));
+      dispatch(getCustodianType());
+      dispatch(getContact(organization.organization_uuid));
+      dispatch(getUnitOfMeasure(organization.organization_uuid));
+      dispatch(getItems(organization.organization_uuid));
+      dispatch(getItemType(organization.organization_uuid));
+      dispatch(getGateways(organization.organization_uuid));
+      dispatch(getGatewayType());
+    }
 
     if (!_.isEmpty(editData)) {
       const encodedUUID = encodeURIComponent(editData.shipment_uuid);
@@ -530,6 +570,7 @@ const CreateShipment = ({
       case 'custodian':
         if (value) {
           const selectedCustodian = _.find(custodianList, { url: value });
+          const storage = _.isEqual(selectedCustodian.type, 'Warehouse');
           if (custody === 'start') {
             setOriginCustodian(value);
             setOriginAbb(getAbbreviation(selectedCustodian.abbrevation));
@@ -577,6 +618,10 @@ const CreateShipment = ({
       setTemplate(value);
       setTemplateName('');
       if (value) {
+        const oCustodian = _.find(custodianList, { url: value.origin_custodian });
+        const dCustodian = _.find(custodianList, { url: value.destination_custodian });
+        const storage = _.isEqual(oCustodian, dCustodian) && _.isEqual(dCustodian.type, 'Warehouse');
+
         onInputChange(value.origin_custodian, 'custodian', 'start');
         onInputChange(value.destination_custodian, 'custodian', 'end');
         setItems(value.items);
@@ -778,8 +823,7 @@ const CreateShipment = ({
     const startCustodyForm = {
       ...startCustody,
       custodian: [originCustodian],
-      start_of_custody_location: startingLocation,
-      end_of_custody_location: startingLocation,
+      location: startingLocation,
       has_current_custody: true,
       first_custody: true,
       last_custody: false,
@@ -791,8 +835,7 @@ const CreateShipment = ({
     const endCustodyForm = {
       ...endCustody,
       custodian: [destinationCustodian],
-      start_of_custody_location: endingLocation,
-      end_of_custody_location: endingLocation,
+      location: endingLocation,
       has_current_custody: false,
       first_custody: false,
       last_custody: true,
@@ -831,9 +874,13 @@ const CreateShipment = ({
       end_custody: endCustodyForm,
       files,
       carriers,
+      fujitsuVerification: organization.enable_fujitsu_verification,
     };
 
-    if (!draft) {
+    if (!draft && (
+      (_.isEqual('available', updateGateway.gateway_status) && _.isEqual([], updateGateway.shipment_ids))
+      || _.includes(_.map(ADMIN_SHIPMENT_STATUS, 'value'), status.value)
+    )) {
       savePayload = { ...savePayload, updateGateway };
     }
 
@@ -862,7 +909,9 @@ const CreateShipment = ({
         deleteFiles,
       };
     }
+
     setFormSubmitted(true);
+
     if (_.isEmpty(editData)) {
       dispatch(addShipment(savePayload, history, routes.SHIPMENT));
     } else {
@@ -892,6 +941,7 @@ const CreateShipment = ({
             onChange={(e) => handleTemplateChange(e.target.value)}
             InputLabelProps={{ shrink: true }}
             SelectProps={{ displayEmpty: true }}
+            disabled={cannotEdit}
           >
             <MenuItem value="">Select</MenuItem>
             {!_.isEmpty(templates) && _.map(templates, (tmp) => (
@@ -938,6 +988,7 @@ const CreateShipment = ({
                 onChange={(e) => setTemplateName(e.target.value)}
                 helperText="There is a 32-character limit on template names"
                 inputProps={{ maxLength: 32 }}
+                disabled={cannotEdit}
               />
             )}
           </Grid>
@@ -949,6 +1000,7 @@ const CreateShipment = ({
                     border: `1px solid ${theme.palette.primary.main}`,
                     borderRadius: theme.spacing(1),
                   }}
+                  disabled={cannotEdit}
                   onClick={(e) => setTemplateName(template.name)}
                 >
                   <EditIcon htmlColor={theme.palette.primary.main} />
@@ -960,6 +1012,7 @@ const CreateShipment = ({
                     borderRadius: theme.spacing(1),
                     marginLeft: theme.spacing(2),
                   }}
+                  disabled={cannotEdit}
                   onClick={(e) => setConfirmDelete(true)}
                 >
                   <DeleteIcon htmlColor={theme.palette.primary.main} />
@@ -973,6 +1026,7 @@ const CreateShipment = ({
                   type="button"
                   variant="outlined"
                   style={{ padding: `${theme.spacing(1.75)} ${theme.spacing(5)}` }}
+                  disabled={cannotEdit}
                   onClick={(e) => setTemplateName('')}
                 >
                   Cancel
@@ -985,7 +1039,7 @@ const CreateShipment = ({
                     padding: `${theme.spacing(1.75)} ${theme.spacing(5)}`,
                     marginLeft: theme.spacing(2),
                   }}
-                  disabled={_.isEqual(template.name, templateName)}
+                  disabled={_.isEqual(template.name, templateName) || cannotEdit}
                   onClick={saveTemplateName}
                 >
                   Save
@@ -1019,6 +1073,7 @@ const CreateShipment = ({
                       onChange={(e) => onInputChange(e.target.value, 'custodian', 'start')}
                       InputLabelProps={{ shrink: true }}
                       SelectProps={{ displayEmpty: true }}
+                      disabled={cannotEdit}
                     >
                       <MenuItem value="">Select</MenuItem>
                       {!_.isEmpty(custodianList) && _.map(custodianList, (cust) => (
@@ -1069,7 +1124,7 @@ const CreateShipment = ({
                         {
                           lat: startingLocation && _.includes(startingLocation, ',') && parseFloat(startingLocation.split(',')[0]),
                           lng: startingLocation && _.includes(startingLocation, ',') && parseFloat(startingLocation.split(',')[1]),
-                          radius: organization.radius,
+                          radius: (organization && organization.radius) || 0,
                         },
                       ]}
                     />
@@ -1092,6 +1147,7 @@ const CreateShipment = ({
                       onChange={(e) => onInputChange(e.target.value, 'custodian', 'end')}
                       InputLabelProps={{ shrink: true }}
                       SelectProps={{ displayEmpty: true }}
+                      disabled={cannotEdit}
                     >
                       <MenuItem value="">Select</MenuItem>
                       {!_.isEmpty(custodianList) && _.map(custodianList, (cust) => (
@@ -1142,7 +1198,7 @@ const CreateShipment = ({
                         {
                           lat: endingLocation && _.includes(endingLocation, ',') && parseFloat(endingLocation.split(',')[0]),
                           lng: endingLocation && _.includes(endingLocation, ',') && parseFloat(endingLocation.split(',')[1]),
-                          radius: organization.radius,
+                          radius: (organization && organization.radius) || 0,
                         },
                       ]}
                     />
@@ -1154,6 +1210,7 @@ const CreateShipment = ({
                 <DatePickerComponent
                   label="Shipment start"
                   selectedDate={moment(departureDateTime).tz(timezone)}
+                  disabled={cannotEdit}
                   hasTime
                   handleDateChange={(value) => {
                     setDepartureDateTime(value);
@@ -1176,6 +1233,7 @@ const CreateShipment = ({
                 <DatePickerComponent
                   label="Shipment end"
                   selectedDate={moment(arrivalDateTime).tz(timezone)}
+                  disabled={cannotEdit}
                   hasTime
                   handleDateChange={setArrivalDateTime}
                   dateFormat={
@@ -1203,9 +1261,21 @@ const CreateShipment = ({
                   InputLabelProps={{ shrink: true }}
                   SelectProps={{ displayEmpty: true }}
                   {...status.bind}
+                  disabled={cannotEdit && !isAdmin}
                 >
                   <MenuItem value="">Select</MenuItem>
-                  {_.map(SHIPMENT_STATUS, (st, idx) => (
+                  {_.isEmpty(editData) && _.map(CREATE_SHIPMENT_STATUS, (st, idx) => (
+                    <MenuItem key={`${idx}-${st.label}`} value={st.value}>
+                      {st.label}
+                    </MenuItem>
+                  ))}
+                  {!cannotEdit && !isAdmin && _.map(USER_SHIPMENT_STATUS, (st, idx) => (
+                    <MenuItem key={`${idx}-${st.label}`} value={st.value}>
+                      {st.label}
+                    </MenuItem>
+                  ))}
+                  {((cannotEdit && isAdmin) || (!_.isEmpty(editData) && !cannotEdit && isAdmin))
+                  && _.map([...CREATE_SHIPMENT_STATUS, ...ADMIN_SHIPMENT_STATUS], (st, idx) => (
                     <MenuItem key={`${idx}-${st.label}`} value={st.value}>
                       {st.label}
                     </MenuItem>
@@ -1218,6 +1288,7 @@ const CreateShipment = ({
                 <Autocomplete
                   multiple
                   id="items-multiple"
+                  disabled={cannotEdit}
                   disableCloseOnSelect
                   filterSelectedOptions
                   options={_.orderBy(itemData, ['name'], ['asc'])}
@@ -1293,6 +1364,7 @@ const CreateShipment = ({
                   <TextField
                     variant="outlined"
                     fullWidth
+                    disabled={cannotEdit}
                     type="number"
                     className={classes.numberInput}
                     id="max_excursion_temp"
@@ -1323,6 +1395,7 @@ const CreateShipment = ({
                   <TextField
                     variant="outlined"
                     fullWidth
+                    disabled={cannotEdit}
                     type="number"
                     className={classes.numberInput}
                     id="min_excursion_temp"
@@ -1361,6 +1434,7 @@ const CreateShipment = ({
                   <TextField
                     variant="outlined"
                     fullWidth
+                    disabled={cannotEdit}
                     type="number"
                     className={classes.numberInput}
                     id="max_excursion_humidity"
@@ -1382,6 +1456,7 @@ const CreateShipment = ({
                   <TextField
                     variant="outlined"
                     fullWidth
+                    disabled={cannotEdit}
                     type="number"
                     className={classes.numberInput}
                     id="min_excursion_humidity"
@@ -1411,6 +1486,7 @@ const CreateShipment = ({
                   <TextField
                     variant="outlined"
                     fullWidth
+                    disabled={cannotEdit}
                     type="number"
                     className={classes.numberInput}
                     id="shock_threshold"
@@ -1432,6 +1508,7 @@ const CreateShipment = ({
                   <TextField
                     variant="outlined"
                     fullWidth
+                    disabled={cannotEdit}
                     type="number"
                     className={classes.numberInput}
                     id="light_threshold"
@@ -1453,7 +1530,7 @@ const CreateShipment = ({
                   type="button"
                   variant="contained"
                   color="primary"
-                  disabled={loading || saveTemplateDisabled()}
+                  disabled={loading || saveTemplateDisabled() || cannotEdit}
                   onClick={(e) => {
                     const name = !!_.find(itemRows, { url: items[0] })
                       && `${originAbb}-${destinationAbb}-${_.find(itemRows, { url: items[0] }).name}`;
@@ -1489,6 +1566,7 @@ const CreateShipment = ({
                 <TextField
                   variant="outlined"
                   fullWidth
+                  disabled={cannotEdit}
                   id="shipment-name"
                   name="shipment-name"
                   label="Shipment Name"
@@ -1503,6 +1581,7 @@ const CreateShipment = ({
                 <TextField
                   variant="outlined"
                   fullWidth
+                  disabled={cannotEdit}
                   id="purchase-order-number"
                   name="purchase-order-number"
                   label="Purchase Order Number"
@@ -1515,6 +1594,7 @@ const CreateShipment = ({
                 <TextField
                   variant="outlined"
                   fullWidth
+                  disabled={cannotEdit}
                   id="bill-of-lading"
                   name="bill-of-lading"
                   label="Bill Of Lading"
@@ -1571,6 +1651,7 @@ const CreateShipment = ({
                     type="button"
                     variant="contained"
                     color="primary"
+                    disabled={cannotEdit}
                     onClick={(e) => setShowNote(true)}
                   >
                     + Add a note
@@ -1583,6 +1664,7 @@ const CreateShipment = ({
                         variant="outlined"
                         multiline
                         fullWidth
+                        disabled={cannotEdit}
                         maxRows={4}
                         id="note"
                         name="note"
@@ -1595,6 +1677,7 @@ const CreateShipment = ({
                     <Grid item xs={0.5}>
                       <Button
                         type="button"
+                        disabled={cannotEdit}
                         onClick={(e) => {
                           note.setValue('');
                           setShowNote(false);
@@ -1616,6 +1699,7 @@ const CreateShipment = ({
                         id={`add-cust-${addCust.custodian_uuid}`}
                         select
                         fullWidth
+                        disabled={cannotEdit}
                         placeholder="Select..."
                         label={`Custodian ${index + 1}`}
                         value={addCust}
@@ -1669,6 +1753,7 @@ const CreateShipment = ({
                     <Grid item xs={0.5}>
                       <Button
                         type="button"
+                        disabled={cannotEdit}
                         onClick={(e) => {
                           const newList = _.filter(
                             additionalCustodians,
@@ -1691,6 +1776,7 @@ const CreateShipment = ({
                     id="additional-custodian"
                     select
                     fullWidth
+                    disabled={cannotEdit}
                     placeholder="Select..."
                     label="Add carriers/warehouses"
                     onChange={(e) => {
@@ -1720,6 +1806,7 @@ const CreateShipment = ({
                     type="button"
                     variant="contained"
                     color="primary"
+                    disabled={cannotEdit}
                     onClick={(e) => setShowAddCustodian(true)}
                   >
                     + Add carriers/warehouses
@@ -1744,8 +1831,10 @@ const CreateShipment = ({
                   label="Tracker platform"
                   onBlur={(e) => handleBlur(e, 'required', gatewayType, 'gateway-type')}
                   disabled={
-                    !_.isEmpty(editData)
-                    && !!_.find(gatewayTypeList, { name: editData.platform_name })
+                    (!_.isEmpty(editData)
+                    && !_.isEmpty(editData.gateway_imei)
+                    && !!_.find(gatewayData, { imei_number: _.toNumber(editData.gateway_imei[0]) }))
+                    || cannotEdit
                   }
                   InputLabelProps={{ shrink: true }}
                   SelectProps={{ displayEmpty: true }}
@@ -1754,7 +1843,7 @@ const CreateShipment = ({
                   <MenuItem value="">Select</MenuItem>
                   {!_.isEmpty(gatewayTypeList) && _.map(gatewayTypeList, (gtype) => (
                     <MenuItem key={gtype.id} value={gtype.name}>
-                      {_.capitalize(gtype.name)}
+                      {_.upperFirst(gtype.name)}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -1770,9 +1859,10 @@ const CreateShipment = ({
                   label="Tracker identifier"
                   onBlur={(e) => handleBlur(e, 'required', gateway, 'gateway')}
                   disabled={
-                    !_.isEmpty(editData)
+                    (!_.isEmpty(editData)
                     && !_.isEmpty(editData.gateway_imei)
-                    && !!_.find(gatewayData, { imei_number: _.toNumber(editData.gateway_imei[0]) })
+                    && !!_.find(gatewayData, { imei_number: _.toNumber(editData.gateway_imei[0]) }))
+                    || cannotEdit
                   }
                   InputLabelProps={{ shrink: true }}
                   SelectProps={{ displayEmpty: true }}
@@ -1826,12 +1916,17 @@ const CreateShipment = ({
                       id="transmission-interval"
                       select
                       fullWidth
+                      disabled={cannotEdit}
                       placeholder="Select..."
                       label="Transmission interval"
                       onBlur={(e) => handleBlur(e, 'required', transmissionInterval, 'transmission-interval')}
                       InputLabelProps={{ shrink: true }}
                       SelectProps={{ displayEmpty: true }}
-                      {...transmissionInterval.bind}
+                      value={transmissionInterval.value}
+                      onChange={(e) => {
+                        transmissionInterval.setValue(e.target.value);
+                        measurementInterval.setValue(e.target.value);
+                      }}
                     >
                       <MenuItem value="">Select</MenuItem>
                       {!_.isEmpty(TIVE_GATEWAY_TIMES)
@@ -1847,6 +1942,7 @@ const CreateShipment = ({
                       id="measurement-interval"
                       select
                       fullWidth
+                      disabled={cannotEdit}
                       placeholder="Select..."
                       label="Measurement interval"
                       onBlur={(e) => handleBlur(e, 'required', measurementInterval, 'measurement-interval')}
@@ -1948,7 +2044,7 @@ const CreateShipment = ({
                   type="submit"
                   variant="contained"
                   fullWidth
-                  disabled={loading || submitDisabled()}
+                  disabled={loading || submitDisabled() || cannotEdit}
                   onClick={(e) => handleSubmit(e, true)}
                   className={classes.actionButtons}
                 >
@@ -2106,7 +2202,7 @@ const CreateShipment = ({
           dispatch(deleteShipmentTemplate(template.id));
           setConfirmDelete(false);
         }}
-        title={`Are you sure you want to delete the template "${templateName}"?`}
+        title={`Are you sure you want to delete the template "${template.name}"?`}
         msg1="This action cannot be undone."
         submitText="Delete template"
       />
@@ -2138,6 +2234,7 @@ const mapStateToProps = (state, ownProps) => ({
     || state.optionsReducer.loading
     || state.itemsReducer.loading
     || state.sensorsGatewayReducer.loading
+    || state.authReducer.loading
   ),
 });
 

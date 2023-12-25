@@ -416,3 +416,39 @@ describe('Get Sensor Reports reducer', () => {
     });
   });
 });
+
+describe('Get All Gateway reducer', () => {
+  it('Empty Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_ALL_GATEWAYS },
+    )).toEqual({
+      ...initialState,
+      loading: true,
+    });
+  });
+
+  it('get all Gateway success Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_ALL_GATEWAYS_SUCCESS, data: [] },
+    )).toEqual({
+      ...initialState,
+      loaded: true,
+      loading: false,
+      gatewayData: [],
+    });
+  });
+
+  it('get all Gateway fail Reducer', () => {
+    expect(reducer.default(
+      initialState,
+      { type: actions.GET_ALL_GATEWAYS_FAILURE },
+    )).toEqual({
+      ...initialState,
+      error: undefined,
+      loaded: true,
+      loading: false,
+    });
+  });
+});

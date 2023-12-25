@@ -5,6 +5,9 @@ import _ from 'lodash';
 import { httpService } from '../../../modules/http/http.service';
 import { showAlert } from '../../alert/actions/alert.actions';
 import {
+  GET_ALL_GATEWAYS,
+  GET_ALL_GATEWAYS_SUCCESS,
+  GET_ALL_GATEWAYS_FAILURE,
   GET_GATEWAYS,
   GET_GATEWAYS_SUCCESS,
   GET_GATEWAYS_FAILURE,
@@ -32,39 +35,38 @@ import {
   DELETE_GATEWAYS_TYPE,
   DELETE_GATEWAYS_TYPE_SUCCESS,
   DELETE_GATEWAYS_TYPE_FAILURE,
-  GET_SENSORS,
-  GET_SENSORS_SUCCESS,
-  GET_SENSORS_FAILURE,
-  ADD_SENSOR,
-  ADD_SENSOR_SUCCESS,
-  ADD_SENSOR_FAILURE,
-  EDIT_SENSOR,
-  EDIT_SENSOR_SUCCESS,
-  EDIT_SENSOR_FAILURE,
-  DELETE_SENSOR,
-  DELETE_SENSOR_SUCCESS,
-  DELETE_SENSOR_FAILURE,
-  GET_SENSORS_TYPE,
-  GET_SENSORS_TYPE_SUCCESS,
-  GET_SENSORS_TYPE_FAILURE,
-  ADD_SENSORS_TYPE,
-  ADD_SENSORS_TYPE_SUCCESS,
-  ADD_SENSORS_TYPE_FAILURE,
-  EDIT_SENSORS_TYPE,
-  EDIT_SENSORS_TYPE_SUCCESS,
-  EDIT_SENSORS_TYPE_FAILURE,
-  DELETE_SENSORS_TYPE,
-  DELETE_SENSORS_TYPE_SUCCESS,
-  DELETE_SENSORS_TYPE_FAILURE,
   GET_ALL_SENSOR_ALERTS,
   GET_ALL_SENSOR_ALERTS_SUCCESS,
   GET_ALL_SENSOR_ALERTS_FAILURE,
   GET_SENSOR_REPORTS,
   GET_SENSOR_REPORTS_SUCCESS,
   GET_SENSOR_REPORTS_FAILURE,
+  CONFIGURE_GATEWAY,
 } from '../actions/sensorsGateway.actions';
 
 const sensorApiEndPoint = 'sensors/';
+
+function* getAllGatewayList(payload) {
+  try {
+    const data = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}${sensorApiEndPoint}gateway/`,
+    );
+    yield put({ type: GET_ALL_GATEWAYS_SUCCESS, data: _.filter(data.data, (gateway) => !_.includes(gateway.name, 'ICLP')) });
+  } catch (error) {
+    yield [
+      yield put(
+        showAlert({
+          type: 'error',
+          open: true,
+          message: 'Couldn\'t load all gateways due to some error!',
+        }),
+      ),
+      yield put({ type: GET_ALL_GATEWAYS_FAILURE, error }),
+    ];
+  }
+}
 
 function* getGatewayList(payload) {
   try {
@@ -384,6 +386,24 @@ function* getSensorReportList(payload) {
   }
 }
 
+function* configureGateway(action) {
+  const { payload } = action;
+  try {
+    yield call(
+      httpService.makeRequest,
+      'post',
+      `${window.env.API_URL}${sensorApiEndPoint}configure_gateway/`,
+      payload,
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function* watchGetAllGateway() {
+  yield takeLatest(GET_ALL_GATEWAYS, getAllGatewayList);
+}
+
 function* watchGetGateway() {
   yield takeLatest(GET_GATEWAYS, getGatewayList);
 }
@@ -428,8 +448,13 @@ function* watchGetSensorReportList() {
   yield takeLatest(GET_SENSOR_REPORTS, getSensorReportList);
 }
 
+function* watchConfigureGateway() {
+  yield takeLatest(CONFIGURE_GATEWAY, configureGateway);
+}
+
 export default function* sensorsGatewaySaga() {
   yield all([
+    watchGetAllGateway(),
     watchGetGateway(),
     watchGetNewGateways(),
     watchAddGateway(),
@@ -441,5 +466,6 @@ export default function* sensorsGatewaySaga() {
     watchDeleteGatewayType(),
     watchGetAllSensorAlerts(),
     watchGetSensorReportList(),
+    watchConfigureGateway(),
   ]);
 }

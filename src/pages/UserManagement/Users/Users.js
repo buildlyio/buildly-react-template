@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { rem } from 'polished';
 import {
@@ -15,7 +15,7 @@ import { MoreHoriz } from '@mui/icons-material';
 import {
   PermissionsTable,
 } from '../../../components/PermissionsTable/PermissionsTable';
-import { UserContext } from '../../../context/User.context';
+import { getUser } from '../../../context/User.context';
 import Crud from '../../../modules/crud/Crud';
 import {
   getCoregroups,
@@ -38,7 +38,7 @@ const Users = ({ data, dispatch }) => {
   const [coreGroupsLoaded, setCoreGroupsLoaded] = useState(false);
   const [permissions, setPermissions] = useState([]);
   // to get currently logged in user
-  const user = useContext(UserContext);
+  const user = getUser();
   const isOrganizationAdmin = checkForAdmin(user);
 
   useEffect(() => {

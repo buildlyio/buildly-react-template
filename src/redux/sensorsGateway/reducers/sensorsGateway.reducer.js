@@ -33,6 +33,9 @@ import {
   GET_SENSOR_REPORTS,
   GET_SENSOR_REPORTS_SUCCESS,
   GET_SENSOR_REPORTS_FAILURE,
+  GET_ALL_GATEWAYS,
+  GET_ALL_GATEWAYS_SUCCESS,
+  GET_ALL_GATEWAYS_FAILURE,
 } from '../actions/sensorsGateway.actions';
 
 const initialState = {
@@ -59,6 +62,7 @@ export default (state = initialState, action) => {
     case GET_NEW_GATEWAYS:
     case GET_ALL_SENSOR_ALERTS:
     case GET_SENSOR_REPORTS:
+    case GET_ALL_GATEWAYS:
       return {
         ...state,
         loading: true,
@@ -77,6 +81,7 @@ export default (state = initialState, action) => {
     case GET_NEW_GATEWAYS_FAILURE:
     case GET_ALL_SENSOR_ALERTS_FAILURE:
     case GET_SENSOR_REPORTS_FAILURE:
+    case GET_ALL_GATEWAYS_FAILURE:
       return {
         ...state,
         loading: false,
@@ -85,6 +90,7 @@ export default (state = initialState, action) => {
       };
 
     case GET_GATEWAYS_SUCCESS:
+    case GET_ALL_GATEWAYS_SUCCESS:
       return {
         ...state,
         loading: false,

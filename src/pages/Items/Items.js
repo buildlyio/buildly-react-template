@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
 import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '../../context/User.context';
+import { getUser } from '../../context/User.context';
 import {
   getItems,
   deleteItem,
@@ -28,7 +28,9 @@ const Items = ({
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState('');
   const [rows, setRows] = useState([]);
-  const organization = useContext(UserContext).organization.organization_uuid;
+
+  const user = getUser();
+  const organization = user.organization.organization_uuid;
 
   const addItemPath = redirectTo
     ? `${redirectTo}/items`
@@ -114,6 +116,7 @@ const mapStateToProps = (state, ownProps) => ({
   loading: (
     state.itemsReducer.loading
     || state.optionsReducer.loading
+    || state.authReducer.loading
   ),
 });
 export default connect(mapStateToProps)(Items);

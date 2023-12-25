@@ -14,11 +14,16 @@ const GraphComponent = ({
   maxHumidity,
   shockThreshold,
   lightThreshold,
+  timeGap,
 }) => {
   const theme = useTheme();
   const [dataChart, setDataChart] = useState({});
-  const dateFormat = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure;
-  const timeFormat = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure;
+  const dateFormat = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+    ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+    : '';
+  const timeFormat = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+    ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+    : '';
 
   const options = {
     responsive: true,
@@ -28,7 +33,7 @@ const GraphComponent = ({
           type: 'time',
           time: {
             unit: 'minute',
-            unitStepSize: 1,
+            unitStepSize: timeGap,
             displayFormats: {
               minute: dateFormat,
             },

@@ -47,6 +47,7 @@ const AccountMenu = ({
   user,
   handleLogoutClick,
   handleMyAccountClick,
+  handleAboutClick,
   organizationData,
 }) => {
   const handleClose = () => {
@@ -84,6 +85,10 @@ const AccountMenu = ({
         <Divider />
         <StyledMenuItem onClick={handleMyAccountClick}>
           <ListItemText primary="My Account" />
+        </StyledMenuItem>
+        <Divider />
+        <StyledMenuItem onClick={handleAboutClick}>
+          <ListItemText primary="About Platform" />
         </StyledMenuItem>
         <Divider />
         <StyledMenuItem onClick={handleLogoutClick}>

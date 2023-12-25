@@ -2,19 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  Grid,
+  Button,
   Checkbox,
+  Grid,
+  MenuItem,
   TextField,
   Typography,
-  Button,
-  MenuItem,
   useTheme,
   useMediaQuery,
+  InputAdornment,
 } from '@mui/material';
+import {
+  BoltOutlined as ShockIcon,
+  LightModeOutlined as LightIcon,
+  Opacity as HumidityIcon,
+  Thermostat as TemperatureIcon,
+} from '@mui/icons-material';
 import { makeStyles } from '@mui/styles';
 import Loader from '../../../../components/Loader/Loader';
 import { useInput } from '../../../../hooks/useInput';
 import {
+  getOrgTypes,
   updateOrganization,
 } from '../../../../redux/authuser/actions/authuser.actions';
 import { editUnitOfMeasure, getUnitOfMeasure } from '../../../../redux/items/actions/items.actions';
@@ -22,6 +30,7 @@ import { getCountries, getCurrencies } from '../../../../redux/shipment/actions/
 import {
   DATE_DISPLAY_CHOICES,
   TIME_DISPLAY_CHOICES,
+  TIVE_GATEWAY_TIMES,
   UOM_DISTANCE_CHOICES,
   UOM_TEMPERATURE_CHOICES,
   UOM_WEIGHT_CHOICES,
@@ -66,6 +75,19 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '1em',
     textAlign: 'center',
   },
+  numberInput: {
+    '& input::-webkit-outer-spin-button': {
+      '-webkit-appearance': 'none',
+      margin: 0,
+    },
+    '& input::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
+      margin: 0,
+    },
+    '& input[type="number"]': {
+      '-moz-appearance': 'textfield',
+    },
+  },
 }));
 
 const OrganizationSettings = ({
@@ -93,6 +115,27 @@ const OrganizationSettings = ({
       && organizationData.organization_type) || '',
   );
   const orgAbb = useInput((organizationData && organizationData.abbrevation) || '');
+  const defaultMaxTemperature = useInput(
+    (organizationData && organizationData.default_max_temperature) || 100,
+  );
+  const defaultMinTemperature = useInput(
+    (organizationData && organizationData.default_min_temperature) || 0,
+  );
+  const defaultMaxHumidity = useInput(
+    (organizationData && organizationData.default_max_humidity) || 100,
+  );
+  const defaultMinHumidity = useInput(
+    (organizationData && organizationData.default_min_humidity) || 0,
+  );
+  const defaultShock = useInput((organizationData && organizationData.default_shock) || 4);
+  const defaultLight = useInput((organizationData && organizationData.default_light) || 5);
+  const defaultTransmissionInterval = useInput(
+    (organizationData && organizationData.default_transmission_interval) || 20,
+  );
+  const defaultMeasurementInterval = useInput(
+    (organizationData && organizationData.default_measurement_interval) || 20,
+  );
+
   const country = useInput(
     _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
       ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
@@ -138,6 +181,9 @@ const OrganizationSettings = ({
     if (_.isEmpty(currencies)) {
       dispatch(getCurrencies());
     }
+    if (_.isEmpty(orgTypes)) {
+      dispatch(getOrgTypes());
+    }
   }, []);
 
   useEffect(() => {
@@ -169,6 +215,14 @@ const OrganizationSettings = ({
     radius.reset();
     orgType.reset();
     orgAbb.reset();
+    defaultMaxTemperature.reset();
+    defaultMinTemperature.reset();
+    defaultMaxHumidity.reset();
+    defaultMinHumidity.reset();
+    defaultShock.reset();
+    defaultLight.reset();
+    defaultTransmissionInterval.reset();
+    defaultMeasurementInterval.reset();
     country.reset();
     currency.reset();
     dateFormat.reset();
@@ -184,6 +238,14 @@ const OrganizationSettings = ({
     || radius.hasChanged()
     || orgType.hasChanged()
     || orgAbb.hasChanged()
+    || defaultMaxTemperature.hasChanged()
+    || defaultMinTemperature.hasChanged()
+    || defaultMaxHumidity.hasChanged()
+    || defaultMinHumidity.hasChanged()
+    || defaultShock.hasChanged()
+    || defaultLight.hasChanged()
+    || defaultTransmissionInterval.hasChanged()
+    || defaultMeasurementInterval.hasChanged()
     || country.hasChanged()
     || currency.hasChanged()
     || dateFormat.hasChanged()
@@ -205,6 +267,14 @@ const OrganizationSettings = ({
       || orgType.hasChanged()
       || orgAbb.hasChanged()
       || distance.hasChanged()
+      || defaultMaxTemperature.hasChanged()
+      || defaultMinTemperature.hasChanged()
+      || defaultMaxHumidity.hasChanged()
+      || defaultMinHumidity.hasChanged()
+      || defaultShock.hasChanged()
+      || defaultLight.hasChanged()
+      || defaultTransmissionInterval.hasChanged()
+      || defaultMeasurementInterval.hasChanged()
     ) {
       let data = {
         ...organizationData,
@@ -213,6 +283,14 @@ const OrganizationSettings = ({
         radius: radius.value || 0,
         organization_type: orgType.value,
         abbrevation: _.toUpper(orgAbb.value),
+        default_max_temperature: defaultMaxTemperature.value,
+        default_min_temperature: defaultMinTemperature.value,
+        default_max_humidity: defaultMaxHumidity.value,
+        default_min_humidity: defaultMinHumidity.value,
+        default_shock: defaultShock.value,
+        default_light: defaultLight.value,
+        default_transmission_interval: defaultTransmissionInterval.value,
+        default_measurement_interval: defaultMeasurementInterval.value,
       };
 
       if (distance.hasChanged()) {
@@ -288,7 +366,7 @@ const OrganizationSettings = ({
         noValidate
         onSubmit={handleSubmit}
       >
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <div className={classes.checkbox}>
             <Checkbox
               checked={allowImportExport.value}
@@ -298,7 +376,7 @@ const OrganizationSettings = ({
               Allow Import Export for this Organization?
             </Typography>
           </div>
-        </Grid>
+        </Grid> */}
         <Grid item xs={12}>
           <TextField
             variant="outlined"
@@ -351,7 +429,203 @@ const OrganizationSettings = ({
                 style: { textTransform: 'uppercase' },
               }}
               {...orgAbb.bind}
-              />
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={isDesktop ? 2 : 0}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              type="number"
+              className={classes.numberInput}
+              id="default-max-temperature"
+              name="default-max-temperature"
+              label="Default Maximum Temperature for Excursion"
+              autoComplete="default-max-temperature"
+              InputProps={{
+                startAdornment: <InputAdornment position="start"><TemperatureIcon /></InputAdornment>,
+                endAdornment: (
+                  <InputAdornment position="start">
+                    {
+                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                      && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
+                        ? <span>&#8457;</span>
+                        : <span>&#8451;</span>
+                    }
+                  </InputAdornment>
+                ),
+              }}
+              {...defaultMaxTemperature.bind}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              type="number"
+              className={classes.numberInput}
+              id="default-min-temperature"
+              name="default-min-temperature"
+              label="Default Minimum Temperature for Excursion"
+              autoComplete="default-min-temperature"
+              InputProps={{
+                startAdornment: <InputAdornment position="start"><TemperatureIcon /></InputAdornment>,
+                endAdornment: (
+                  <InputAdornment position="start">
+                    {
+                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                      && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
+                        ? <span>&#8457;</span>
+                        : <span>&#8451;</span>
+                    }
+                  </InputAdornment>
+                ),
+              }}
+              {...defaultMinTemperature.bind}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={isDesktop ? 2 : 0}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              type="number"
+              className={classes.numberInput}
+              id="default-max-humidity"
+              name="default-max-humidity"
+              label="Default Maximum Humidity for Excursion"
+              autoComplete="default-max-humidity"
+              InputProps={{
+                startAdornment: <InputAdornment position="start"><HumidityIcon /></InputAdornment>,
+                endAdornment: <InputAdornment position="start">%</InputAdornment>,
+              }}
+              {...defaultMaxHumidity.bind}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              type="number"
+              className={classes.numberInput}
+              id="default-min-humidity"
+              name="default-min-humidity"
+              label="Default Minimum Humidity for Excursion"
+              autoComplete="default-min-humidity"
+              InputProps={{
+                startAdornment: <InputAdornment position="start"><HumidityIcon /></InputAdornment>,
+                endAdornment: <InputAdornment position="start">%</InputAdornment>,
+              }}
+              {...defaultMinHumidity.bind}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={isDesktop ? 2 : 0}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              type="number"
+              className={classes.numberInput}
+              id="default-shock"
+              name="default-shock"
+              label="Default Shock Threshold"
+              autoComplete="default-shock"
+              InputProps={{
+                startAdornment: <InputAdornment position="start"><ShockIcon /></InputAdornment>,
+                endAdornment: <InputAdornment position="start">G</InputAdornment>,
+              }}
+              {...defaultShock.bind}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              type="number"
+              className={classes.numberInput}
+              id="default-light"
+              name="default-light"
+              label="Default Light Threshold"
+              autoComplete="default-light"
+              InputProps={{
+                startAdornment: <InputAdornment position="start"><LightIcon /></InputAdornment>,
+                endAdornment: <InputAdornment position="start">lumens</InputAdornment>,
+              }}
+              {...defaultLight.bind}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={isDesktop ? 2 : 0}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              select
+              placeholder="Select..."
+              id="default-transmission-interval"
+              name="default-transmission-interval"
+              label="Default Sensor Data Transmission Interval"
+              autoComplete="default-transmission-interval"
+              InputLabelProps={{ shrink: true }}
+              SelectProps={{ displayEmpty: true }}
+              value={defaultTransmissionInterval.value}
+              onChange={(e) => {
+                defaultTransmissionInterval.setValue(e.target.value);
+                defaultMeasurementInterval.setValue(e.target.value);
+              }}
+            >
+              <MenuItem value="">Select</MenuItem>
+              {!_.isEmpty(TIVE_GATEWAY_TIMES)
+              && _.map(TIVE_GATEWAY_TIMES, (time, index) => (
+                <MenuItem key={`${time.value}-${index}`} value={time.value}>
+                  {time.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              select
+              placeholder="Select..."
+              id="default-measurement-interval"
+              name="default-measurement-interval"
+              label="Default Sensor Data Measurement Interval"
+              autoComplete="default-measurement-interval"
+              InputLabelProps={{ shrink: true }}
+              SelectProps={{ displayEmpty: true }}
+              {...defaultMeasurementInterval.bind}
+            >
+              <MenuItem value="">Select</MenuItem>
+              {!_.isEmpty(TIVE_GATEWAY_TIMES) && _.map(
+                _.filter(TIVE_GATEWAY_TIMES, (t) => t.value <= defaultTransmissionInterval.value),
+                (time, index) => (
+                  <MenuItem key={`${time.value}-${index}`} value={time.value}>
+                    {time.label}
+                  </MenuItem>
+                ),
+              )}
+            </TextField>
           </Grid>
         </Grid>
 

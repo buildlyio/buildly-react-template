@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import FormModal from '../../../../components/Modal/FormModal';
-import { UserContext } from '../../../../context/User.context';
+import { getUser } from '../../../../context/User.context';
 import { useInput } from '../../../../hooks/useInput';
 import {
   addItemType,
@@ -52,7 +52,7 @@ const AddItemType = ({
   dispatch,
 }) => {
   const classes = useStyles();
-  const organization = useContext(UserContext).organization.organization_uuid;
+  const organization = getUser().organization.organization_uuid;
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
 

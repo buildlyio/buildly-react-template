@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '../../../../context/User.context';
+import { getUser } from '../../../../context/User.context';
 import {
   getProductType,
   deleteProductType,
@@ -22,7 +22,7 @@ const ProductType = ({
   timezone,
   unitOfMeasure,
 }) => {
-  const organization = useContext(UserContext).organization.organization_uuid;
+  const organization = getUser().organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 

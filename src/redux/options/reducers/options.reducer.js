@@ -34,7 +34,7 @@ const initialState = {
   loading: false,
   loaded: false,
   error: null,
-  timezone: getUser() ? getUser().user_timezone : null,
+  timezone: getUser() ? getUser().user_timezone : '',
   userOptions: null,
   orgOptions: null,
   custodianOptions: null,

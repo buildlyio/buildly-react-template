@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '../../../context/User.context';
+import { getUser } from '../../../context/User.context';
 import { getUnitOfMeasure } from '../../../redux/items/actions/items.actions';
 import { getAlertsReportColumns } from '../../../utils/constants';
 
@@ -47,7 +47,7 @@ const AlertsReport = ({
   const classes = useStyles();
   const theme = useTheme();
   const [rows, setRows] = useState([]);
-  const organization = useContext(UserContext).organization.organization_uuid;
+  const organization = getUser().organization.organization_uuid;
 
   useEffect(() => {
     if (_.isEmpty(unitOfMeasure)) {

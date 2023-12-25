@@ -445,6 +445,12 @@ function* updateOrganizationData(payload) {
       `${window.env.API_URL}coreuser/me/`,
     );
     yield call(oauthService.setOauthUser, user);
+    const coreuser = yield call(
+      httpService.makeRequest,
+      'get',
+      `${window.env.API_URL}coreuser/`,
+    );
+    yield call(oauthService.setCurrentCoreUser, coreuser, user);
     yield [
       yield put({ type: UPDATE_ORGANIZATION_SUCCESS, user, org }),
       yield put(

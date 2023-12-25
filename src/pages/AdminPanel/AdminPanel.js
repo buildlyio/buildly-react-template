@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -10,13 +10,13 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import Loader from '../../components/Loader/Loader';
-import { UserContext } from '../../context/User.context';
+import Forbidden from '../../components/Forbidden/Forbidden';
+import { getUser } from '../../context/User.context';
 import { routes } from '../../routes/routesConstants';
 import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
 import Configuration from './Configuration/Configuration';
-import ImportExport from './ImportExport/ImportExport';
+// import ImportExport from './ImportExport/ImportExport';
 import ConsortiumSettings from './Consortium/ConsortiumSettings';
-import Forbidden from './Forbidden';
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -32,23 +32,21 @@ const AdminPanel = ({
   history, location, organizationData, loading,
 }) => {
   const classes = useStyles();
-  const isAdmin = checkForAdmin(useContext(UserContext))
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  || checkForGlobalAdmin(useContext(UserContext));
-  const superAdmin = checkForGlobalAdmin(useContext(UserContext));
+  const isAdmin = checkForAdmin(getUser()) || checkForGlobalAdmin(getUser());
+  const superAdmin = checkForGlobalAdmin(getUser());
 
   let subNav = [
     { label: 'Configuration', value: 'configuration' },
   ];
-  if (
-    organizationData
-    && organizationData.allow_import_export
-  ) {
-    subNav = [
-      ...subNav,
-      { label: 'Import/Export', value: 'import-export' },
-    ];
-  }
+  // if (
+  //   organizationData
+  //   && organizationData.allow_import_export
+  // ) {
+  //   subNav = [
+  //     ...subNav,
+  //     { label: 'Import/Export', value: 'import-export' },
+  //   ];
+  // }
   if (superAdmin) {
     subNav = [
       ...subNav,
@@ -94,12 +92,12 @@ const AdminPanel = ({
           </Box>
 
           <Route path={routes.CONFIGURATION} component={Configuration} />
-          {organizationData && organizationData.allow_import_export && (
+          {/* {organizationData && organizationData.allow_import_export && (
             <Route
               path={routes.IMPORT_EXPORT}
               component={ImportExport}
             />
-          )}
+          )} */}
           <Route path={routes.CONSORTIUM} component={ConsortiumSettings} />
         </Box>
       )}
