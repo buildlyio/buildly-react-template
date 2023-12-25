@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
@@ -11,7 +11,7 @@ import {
 import { makeStyles } from '@mui/styles';
 import ConfirmModal from '../../../../components/Modal/ConfirmModal';
 import CustomizedTooltips from '../../../../components/ToolTip/ToolTip';
-import { UserContext } from '../../../../context/User.context';
+import { getUser } from '../../../../context/User.context';
 import { useInput } from '../../../../hooks/useInput';
 import {
   getItemsOptions,
@@ -102,7 +102,7 @@ const AddFromAPI = ({
     },
   ];
 
-  const organization = useContext(UserContext).organization.organization_uuid;
+  const organization = getUser().organization.organization_uuid;
 
   const [tableColumns, setTableColumns] = useState({});
   const [mapColumns, setMapColumns] = useState({});

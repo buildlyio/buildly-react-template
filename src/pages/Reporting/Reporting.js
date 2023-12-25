@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
@@ -25,7 +25,7 @@ import {
 import GraphComponent from '../../components/GraphComponent/GraphComponent';
 import Loader from '../../components/Loader/Loader';
 import MapComponent from '../../components/MapComponent/MapComponent';
-import { UserContext } from '../../context/User.context';
+import { getUser } from '../../context/User.context';
 import {
   getCustodians,
   getContact,
@@ -33,7 +33,7 @@ import {
 import {
   getUnitOfMeasure,
 } from '../../redux/items/actions/items.actions';
-import { getGateways, getSensorReports } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
+import { getAllGateways, getSensorReports } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import {
   getShipmentDetails,
 } from '../../redux/shipment/actions/shipment.actions';
@@ -121,7 +121,7 @@ const Reporting = ({
 }) => {
   const classes = useStyles();
   const theme = useTheme();
-  const organization = useContext(UserContext).organization.organization_uuid;
+  const organization = getUser().organization.organization_uuid;
   const [tileView, setTileView] = useState(true);
   const [shipmentFilter, setShipmentFilter] = useState('Active');
   const [selectedGraph, setSelectedGraph] = useState('temperature');
@@ -136,24 +136,27 @@ const Reporting = ({
     dispatch(getUnitOfMeasure(organization));
     dispatch(getCustodians(organization));
     dispatch(getContact(organization));
-    dispatch(getGateways(organization));
-    dispatch(getShipmentDetails(organization, 'Planned,Enroute', true));
+    dispatch(getShipmentDetails(organization, 'Planned,En route,Arrived', true));
+    dispatch(getAllGateways());
   }, []);
 
   useEffect(() => {
     if (shipmentFilter === 'Active') {
-      dispatch(getShipmentDetails(organization, 'Planned,Enroute', true));
+      dispatch(getShipmentDetails(organization, 'Planned,En route,Arrived', true));
     } else {
       const completedShipments = _.filter(shipmentData, (shipment) => shipment.type === 'Completed');
-      // const cancelledShipments =
-      // _.filter(shipmentData, (shipment) => shipment.type === 'Cancelled');
+      const damagedShipments = _.filter(shipmentData, (shipment) => shipment.type === 'Damaged');
+      const depletedShipments = _.filter(shipmentData, (shipment) => shipment.type === 'Battery Depleted');
 
       if (_.isEmpty(completedShipments) && shipmentFilter === 'Completed') {
         dispatch(getShipmentDetails(organization, 'Completed', true));
       }
-      // if (_.isEmpty(cancelledShipments) && shipmentFilter === 'Completed') {
-      //   dispatch(getShipmentDetails(organization, 'Cancelled', true));
-      // }
+      if (_.isEmpty(damagedShipments) && shipmentFilter === 'Damaged') {
+        dispatch(getShipmentDetails(organization, 'Damaged', true));
+      }
+      if (_.isEmpty(depletedShipments) && shipmentFilter === 'Battery Depleted') {
+        dispatch(getShipmentDetails(organization, 'Battery Depleted', true));
+      }
     }
     if (_.isEmpty(custodianData)) {
       dispatch(getCustodians(organization));
@@ -320,6 +323,24 @@ const Reporting = ({
                 onClick={(event, value) => makeFilterSelection(value)}
               >
                 Completed
+
+              </ToggleButton>
+              <ToggleButton
+                value="Battery Depleted"
+                size="medium"
+                selected={shipmentFilter === 'Battery Depleted'}
+                onClick={(event, value) => makeFilterSelection(value)}
+              >
+                Battery Depleted
+
+              </ToggleButton>
+              <ToggleButton
+                value="Damaged"
+                size="medium"
+                selected={shipmentFilter === 'Damaged'}
+                onClick={(event, value) => makeFilterSelection(value)}
+              >
+                Damaged
 
               </ToggleButton>
             </ToggleButtonGroup>
@@ -532,6 +553,7 @@ const mapStateToProps = (state, ownProps) => ({
     || state.custodianReducer.loading
     || state.itemsReducer.loading
     || state.optionsReducer.loading
+    || state.authReducer.loading
   ),
 });
 

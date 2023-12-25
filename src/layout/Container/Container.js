@@ -9,6 +9,7 @@ import {
 } from '../../context/User.context';
 import NavBar from '../NavBar/NavBar';
 import TopBar from '../TopBar/TopBar';
+import AboutPlatform from '../../pages/AboutPlatform/AboutPlatform';
 import AdminPanel from '../../pages/AdminPanel/AdminPanel';
 import Custodians from '../../pages/Custodians/Custodians';
 import Items from '../../pages/Items/Items';
@@ -103,6 +104,10 @@ const ContainerDashboard = ({ location, history }) => {
           <Route
             path={routes.MY_ACCOUNT}
             component={MyAccount}
+          />
+          <Route
+            path={routes.ABOUT_PLATFORM}
+            component={AboutPlatform}
           />
           <Route
             path={routes.ITEMS}

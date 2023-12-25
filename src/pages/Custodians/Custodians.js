@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
 import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '../../context/User.context';
+import { getUser } from '../../context/User.context';
 import {
   getCustodians,
   deleteCustodian,
@@ -31,7 +31,9 @@ const Custodian = ({
   const [deleteItemId, setDeleteItemId] = useState('');
   const [deleteContactObjId, setDeleteContactObjId] = useState('');
   const [rows, setRows] = useState([]);
-  const organization = useContext(UserContext).organization.organization_uuid;
+
+  const user = getUser();
+  const organization = user.organization.organization_uuid;
 
   const addCustodianPath = redirectTo
     ? `${redirectTo}/custodian`
@@ -110,6 +112,7 @@ const Custodian = ({
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.custodianReducer,
+  loading: state.custodianReducer.loading || state.authReducer.loading,
 });
 
 export default connect(mapStateToProps)(Custodian);

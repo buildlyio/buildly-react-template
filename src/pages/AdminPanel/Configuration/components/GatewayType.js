@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { getUnitOfMeasure } from '../../../../redux/items/actions/items.actions';
 import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '../../../../context/User.context';
+import { getUser } from '../../../../context/User.context';
 import {
   getGatewayType,
   deleteGatewayType,
@@ -24,7 +24,7 @@ const GatewayType = ({
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const organization = useContext(UserContext).organization.organization_uuid;
+  const organization = getUser().organization.organization_uuid;
 
   const addPath = redirectTo
     ? `${redirectTo}/gateway-type`

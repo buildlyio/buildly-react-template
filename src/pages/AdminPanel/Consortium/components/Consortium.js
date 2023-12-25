@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '../../../../context/User.context';
+import { getUser } from '../../../../context/User.context';
 import {
   loadAllOrgs,
 } from '../../../../redux/authuser/actions/authuser.actions';
@@ -28,7 +28,7 @@ const Consortium = ({
 }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const organization = useContext(UserContext).organization.organization_uuid;
+  const organization = getUser().organization.organization_uuid;
 
   const addPath = redirectTo || `${routes.CONSORTIUM}/add`;
   const editPath = redirectTo || `${routes.CONSORTIUM}/edit`;

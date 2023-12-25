@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
@@ -16,7 +16,7 @@ import { makeStyles } from '@mui/styles';
 import Loader from '../../../components/Loader/Loader';
 import FormModal from '../../../components/Modal/FormModal';
 import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
-import { UserContext } from '../../../context/User.context';
+import { getUser } from '../../../context/User.context';
 import { useInput } from '../../../hooks/useInput';
 import {
   addCustodians,
@@ -121,7 +121,10 @@ const AddCustodians = ({
 
   const [custodianMetaData, setCustodianMetaData] = useState({});
   const [contactMetaData, setProductMetaData] = useState({});
-  const organization = useContext(UserContext).organization.organization_uuid;
+  const organization = getUser().organization.organization_uuid;
+
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
     if (_.isEmpty(unitOfMeasure)) {
@@ -154,7 +157,6 @@ const AddCustodians = ({
       || custodianType.hasChanged()
       || city.hasChanged()
       || state.hasChanged()
-      || country.hasChanged()
       || zip.hasChanged()
       || address_1.hasChanged()
       || address_2.hasChanged()
@@ -176,6 +178,18 @@ const AddCustodians = ({
     if (location && location.state) {
       history.push(redirectTo);
     }
+  };
+
+  const acronym = (str) => {
+    let abbr = '';
+    const words = _.without(_.split(str, /\s+/), '');
+
+    _.forEach(words, (word) => { abbr += word[0]; });
+
+    if (_.size(abbrevation) > 7) {
+      abbr = _.join(_.slice(abbr, 0, 7), '');
+    }
+    return _.toUpper(abbr);
   };
 
   /**
@@ -282,9 +296,6 @@ const AddCustodians = ({
     return errorExists;
   };
 
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
-
   return (
     <div>
       {openFormModal && (
@@ -334,7 +345,7 @@ const AddCustodians = ({
                   value={company.value}
                   onChange={(e) => {
                     company.setValue(e.target.value);
-                    abbrevation.setValue(e.target.value.replace(/[^A-Z0-9]/g, ''));
+                    abbrevation.setValue(acronym(e.target.value));
                   }}
                 />
                 {custodianMetaData.name
@@ -353,6 +364,7 @@ const AddCustodians = ({
                 xs={12}
                 md={6}
                 sm={6}
+                style={{ paddingTop: theme.spacing(5) }}
               >
                 <TextField
                   variant="outlined"
@@ -366,6 +378,7 @@ const AddCustodians = ({
                     maxLength: 7,
                     style: { textTransform: 'uppercase' },
                   }}
+                  helperText="Maximum of 7 charcters"
                   {...abbrevation.bind}
                 />
                 {custodianMetaData.abbrevation
@@ -479,7 +492,15 @@ const AddCustodians = ({
                           : ''
                       }
                       onBlur={(e) => handleBlur(e, 'required', country, 'country')}
-                      {...country.bind}
+                      value={country.value}
+                      onChange={(e) => {
+                        country.setValue(e.target.value);
+                        state.setValue('');
+                        address_1.setValue('');
+                        address_2.setValue('');
+                        city.setValue('');
+                        zip.setValue('');
+                      }}
                     >
                       <MenuItem value="">Select</MenuItem>
                       {countries && _.map(

@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
 import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '../../context/User.context';
+import { getUser } from '../../context/User.context';
 import { getContact, getCustodians } from '../../redux/custodian/actions/custodian.actions';
 import { getUnitOfMeasure } from '../../redux/items/actions/items.actions';
 import {
@@ -33,7 +33,9 @@ const Gateway = ({
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteGatewayId, setDeleteGatewayId] = useState('');
   const [rows, setRows] = useState([]);
-  const organization = useContext(UserContext).organization.organization_uuid;
+
+  const user = getUser();
+  const organization = user.organization.organization_uuid;
 
   const addPath = redirectTo
     ? `${redirectTo}/gateways`
@@ -48,7 +50,7 @@ const Gateway = ({
     dispatch(getGatewayType());
     dispatch(getCustodians(organization));
     dispatch(getContact(organization));
-    dispatch(getShipmentDetails(organization, 'Planned,Enroute'));
+    dispatch(getShipmentDetails(organization, 'Planned,En route,Arrived'));
     dispatch(getUnitOfMeasure(organization));
   }, []);
 
@@ -124,6 +126,7 @@ const mapStateToProps = (state, ownProps) => ({
     || state.shipmentReducer.loading
     || state.custodianReducer.loading
     || state.itemsReducer.loading
+    || state.authReducer.loading
   ),
 });
 

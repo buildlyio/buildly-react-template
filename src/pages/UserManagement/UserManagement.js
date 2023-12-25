@@ -98,7 +98,7 @@ const UserManagement = ({
 
   return (
     <Box mt={5} mb={3}>
-      <Box mb={3}>
+      {/* <Box mb={3}>
         <Popup
           trigger={(
             <Button
@@ -163,7 +163,7 @@ const UserManagement = ({
         >
           People using this system
         </Typography>
-      </Box>
+      </Box> */}
       <Box mb={3}>
         <Tabs value={view} onChange={viewTabClicked}>
           {subNav.map((itemProps, index) => (

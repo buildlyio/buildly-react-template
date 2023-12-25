@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import {
   Accordion,
@@ -8,8 +8,8 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { UserContext } from '../../../context/User.context';
-import { checkForGlobalAdmin } from '../../../utils/utilMethods';
+import { getUser } from '../../../context/User.context';
+import { checkForAdmin, checkForGlobalAdmin } from '../../../utils/utilMethods';
 import CustodianType from './components/CustodianType';
 import GatewayType from './components/GatewayType';
 import ItemType from './components/ItemType';
@@ -17,7 +17,6 @@ import OrganizationType from './components/OrganizationType';
 import Product from './components/Product';
 import ProductType from './components/ProductType';
 import OrganizationSettings from './components/OrganizationSettings';
-import Forbidden from '../Forbidden';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,19 +36,33 @@ const useStyles = makeStyles((theme) => ({
 
 const Configuration = (props) => {
   const classes = useStyles();
-  const superAdmin = checkForGlobalAdmin(useContext(UserContext));
+  const isAdmin = checkForAdmin(getUser());
+  const superAdmin = checkForGlobalAdmin(getUser());
 
   return (
     <div>
-      {!superAdmin && (
-      <Forbidden
-        history={history}
-        location={location}
-      />
+      {isAdmin && (
+      <div className={classes.root}>
+        <Accordion defaultExpanded className={classes.accordion}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="organization-setting-content"
+            id="organization-setting-header"
+          >
+            <Typography variant="h5">
+              Organization Settings
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <OrganizationSettings {...props} />
+          </AccordionDetails>
+        </Accordion>
+      </div>
       )}
+
       {superAdmin && (
       <div className={classes.root}>
-        <Accordion className={classes.accordion}>
+        <Accordion defaultExpanded className={classes.accordion}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="organization-setting-content"
@@ -150,7 +163,6 @@ const Configuration = (props) => {
       </div>
       )}
     </div>
-
   );
 };
 

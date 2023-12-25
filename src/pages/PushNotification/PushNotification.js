@@ -8,9 +8,10 @@ import moment from 'moment-timezone';
 import { AppContext } from '../../context/App.context';
 import { showAlert } from '../../redux/alert/actions/alert.actions';
 import { getSensorReports } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
+import { getShipmentDetails } from '../../redux/shipment/actions/shipment.actions';
 
 const PushNotification = ({
-  dispatch, loaded, user, timezone, sensorReports,
+  dispatch, loaded, user, timezone, shipmentData,
 }) => {
   const [alerts, setAlerts] = useState([]);
   const [pushGrp, setPushGrp] = useState('');
@@ -40,7 +41,9 @@ const PushNotification = ({
   }, [pushGrp, pushGeo, pushEnv]);
 
   useEffect(() => {
-    const shipmentIDs = _.uniq(_.map(sensorReports, 'shipment_id')).toString();
+    const shipmentIDs = _.uniq(_.map(shipmentData, 'partner_shipment_id')).toString();
+    const shipmentStatus = _.uniq(_.map(shipmentData, 'status')).toString();
+
     if (alertsSocket.current && shipmentIDs) {
       alertsSocket.current.onmessage = (message) => {
         const msg = JSON.parse(message.data);
@@ -78,11 +81,16 @@ const PushNotification = ({
           setAlerts([...alerts, ...pushAlerts]);
         }
         if (msg.command === 'reload_data') {
-          dispatch(getSensorReports(encodeURIComponent(shipmentIDs)));
+          dispatch(getShipmentDetails(
+            user.organization.organization_uuid,
+            shipmentStatus,
+            true,
+            true,
+          ));
         }
       };
     }
-  }, [sensorReports]);
+  }, [shipmentData]);
 
   useEffect(() => {
     if (alerts.length > 0) {
@@ -198,12 +206,12 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ...state.authReducer,
   ...state.optionsReducer,
-  ...state.sensorsGatewayReducer,
+  ...state.shipmentReducer,
   user: (state.authReducer.data && state.authReducer.data.data) || state.authReducer.data,
   loaded: (
     state.authReducer.loaded
     && state.optionsReducer.loaded
-    && state.sensorsGatewayReducer.loaded
+    && state.shipmentReducer.loaded
   ),
 });
 

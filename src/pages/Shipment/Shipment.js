@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
@@ -23,19 +23,20 @@ import {
 } from '@mui/material';
 import { Assignment as NoteIcon } from '@mui/icons-material';
 import { makeStyles, styled } from '@mui/styles';
+import CustomizedSteppers from '../../components/CustomizedStepper/CustomizedStepper';
+import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
 import Loader from '../../components/Loader/Loader';
 import MapComponent from '../../components/MapComponent/MapComponent';
-import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '../../context/User.context';
+import { getUser } from '../../context/User.context';
 import {
   getContact,
   getCustodians,
 } from '../../redux/custodian/actions/custodian.actions';
 import { getItems, getUnitOfMeasure } from '../../redux/items/actions/items.actions';
-import { getGateways } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
+import { getAllGateways } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import { getShipmentDetails } from '../../redux/shipment/actions/shipment.actions';
 import { routes } from '../../routes/routesConstants';
-import { getShipmentFormattedRow, shipmentColumns } from '../../utils/constants';
+import { getIcon, getShipmentFormattedRow, shipmentColumns } from '../../utils/constants';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -110,7 +111,8 @@ const Shipment = ({
   const subNav = [
     { label: 'Active', value: 'Active' },
     { label: 'Completed', value: 'Completed' },
-    { label: 'Cancelled', value: 'Cancelled' },
+    { label: 'Battery Depleted', value: 'Battery Depleted' },
+    { label: 'Damaged', value: 'Damaged' },
   ];
 
   const [shipmentFilter, setShipmentFilter] = useState('Active');
@@ -120,8 +122,10 @@ const Shipment = ({
   const [selectedMarker, setSelectedMarker] = useState({});
   const [allMarkers, setAllMarkers] = useState([]);
   const [expandedRows, setExpandedRows] = useState([]);
+  const [steps, setSteps] = useState([]);
 
-  const organization = useContext(UserContext).organization.organization_uuid;
+  const user = getUser();
+  const organization = user.organization.organization_uuid;
 
   const HeaderElements = () => (
     <Tabs
@@ -151,12 +155,12 @@ const Shipment = ({
   }));
 
   useEffect(() => {
-    dispatch(getShipmentDetails(organization, 'Planned,Enroute', true, true));
+    dispatch(getShipmentDetails(organization, 'Planned,En route,Arrived', true, true));
     dispatch(getCustodians(organization));
     dispatch(getContact(organization));
     dispatch(getItems(organization));
-    dispatch(getGateways(organization));
     dispatch(getUnitOfMeasure(organization));
+    dispatch(getAllGateways());
   }, []);
 
   useEffect(() => {
@@ -193,15 +197,45 @@ const Shipment = ({
       shipment_id: shipment.partner_shipment_id,
     });
     const filteredAlerts = _.filter(allSensorAlerts, { shipment_id: shipment.partner_shipment_id });
+    let newSteps = [];
+
+    if (!_.isEmpty(filteredAlerts)) {
+      const alerts = _.filter(filteredAlerts, (alert) => !alert.recovered_alert_id);
+
+      newSteps = _.map(alerts, (a) => {
+        const error = _.includes(_.toLower(a.alert_type), 'max') || _.includes(_.toLower(a.alert_type), 'shock') || _.includes(_.toLower(a.alert_type), 'light');
+        const info = _.includes(_.toLower(a.alert_type), 'min');
+        const item = {
+          id: a.parameter_type,
+          color: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
+          title: error ? `Maximum ${_.capitalize(a.parameter_type)} Excursion` : `Minimum ${_.capitalize(a.parameter_type)} Excursion`,
+        };
+        return ({
+          id: moment(a.create_date).unix(),
+          titleIcon: getIcon(item),
+          title: a.parameter_value,
+          titleColor: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
+          label: 'Exception',
+          content: moment(a.create_date).tz(timezone).format(`${dateFormat} ${timeFormat}`),
+          active: false,
+          completed: shipment.last_fujitsu_verification_datetime && _.lte(
+            moment(a.create_date).unix(),
+            moment(shipment.last_fujitsu_verification_datetime).unix(),
+          ),
+          error,
+          info,
+        });
+      });
+    }
 
     if (!_.isEmpty(filteredReports)) {
       _.forEach(filteredReports, (report) => {
         const { report_entry } = report;
         let marker = {};
-        let date = '';
-        let time = '';
         let color = muiTheme.palette.success.main;
         let allAlerts = [];
+        const date = moment(report.activation_date).tz(timezone).format(dateFormat);
+        const time = moment(report.activation_date).tz(timezone).format(timeFormat);
 
         const preAlerts = _.orderBy(
           _.filter(filteredAlerts, (alert) => _.lte(_.toNumber(alert.report_id), report.id)),
@@ -286,20 +320,6 @@ const Shipment = ({
           ? report_entry.report_probe_fah
           : _.round(report_entry.report_probe_cel, 2).toFixed(2);
 
-        if ('report_timestamp' in report_entry) {
-          if (report_entry.report_timestamp !== null) {
-            date = moment(report_entry.report_timestamp).tz(timezone).format(dateFormat);
-            time = moment(report_entry.report_timestamp).tz(timezone).format(timeFormat);
-          }
-        } else if ('report_location' in report_entry) {
-          date = moment(
-            report_entry.report_location.timeOfPosition,
-          ).tz(timezone).format(dateFormat);
-          time = moment(
-            report_entry.report_location.timeOfPosition,
-          ).tz(timezone).format(timeFormat);
-        }
-
         // For a valid (latitude, longitude) pair: -90<=X<=+90 and -180<=Y<=180
         if (report_entry.report_location !== null
           && report_entry.report_latitude !== null
@@ -357,9 +377,77 @@ const Shipment = ({
       });
     }
 
+    newSteps = [
+      ...newSteps,
+      {
+        id: 1,
+        title: shipment.origin,
+        titleColor: 'inherit',
+        label: 'Shipment created',
+        content: moment(shipment.create_date).tz(timezone).format(`${dateFormat} ${timeFormat}`),
+        active: true,
+        error: false,
+        info: false,
+        completed: shipment.last_fujitsu_verification_datetime && _.lte(
+          moment(shipment.create_date).unix(),
+          moment(shipment.last_fujitsu_verification_datetime).unix(),
+        ),
+      },
+      {
+        // eslint-disable-next-line max-len
+        id: moment(shipment.actual_time_of_departure || shipment.estimated_time_of_departure).unix(),
+        title: shipment.origin,
+        titleColor: 'inherit',
+        label: 'Shipment started',
+        content: moment(shipment.actual_time_of_departure || shipment.estimated_time_of_departure).tz(timezone).format(`${dateFormat} ${timeFormat}`),
+        active: !!shipment.actual_time_of_departure,
+        error: false,
+        info: false,
+        completed: shipment.last_fujitsu_verification_datetime && _.lte(
+          moment(shipment.actual_time_of_departure || shipment.estimated_time_of_departure).unix(),
+          moment(shipment.last_fujitsu_verification_datetime).unix(),
+        ),
+      },
+      {
+        id: moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).unix(),
+        title: shipment.destination,
+        titleColor: 'inherit',
+        label: 'Shipment arrived',
+        content: moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).tz(timezone).format(`${dateFormat} ${timeFormat}`),
+        active: !!shipment.actual_time_of_arrival,
+        error: false,
+        info: false,
+        completed: shipment.last_fujitsu_verification_datetime && _.lte(
+          moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).unix(),
+          moment(shipment.last_fujitsu_verification_datetime).unix(),
+        ),
+      },
+      {
+        id: _.isEqual(shipment.status, 'Completed')
+          ? moment(shipment.edit_date).unix()
+          : moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').unix(),
+        title: shipment.destination,
+        titleColor: 'inherit',
+        label: 'Shipment completed',
+        content: _.isEqual(shipment.status, 'Completed')
+          ? moment(shipment.edit_date).tz(timezone).format(`${dateFormat} ${timeFormat}`)
+          : moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').tz(timezone).format(`${dateFormat} ${timeFormat}`),
+        active: _.isEqual(shipment.status, 'Completed'),
+        error: false,
+        info: false,
+        completed: shipment.last_fujitsu_verification_datetime && _.lte(
+          _.isEqual(shipment.status, 'Completed')
+            ? moment(shipment.edit_date).unix()
+            : moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').unix(),
+          moment(shipment.last_fujitsu_verification_datetime).unix(),
+        ),
+      },
+    ];
+
     if (setExpanded) {
       const rowIndex = _.findIndex(rows, shipment);
       setExpandedRows([rowIndex]);
+      setSteps(_.orderBy(newSteps, 'id'));
     }
 
     setSelectedShipment(shipment);
@@ -374,16 +462,22 @@ const Shipment = ({
     switch (filter) {
       case 'Active':
       default:
-        shipmentStatus = 'Planned,Enroute';
+        shipmentStatus = 'Planned,En route,Arrived';
         break;
 
       case 'Completed':
-      case 'Cancelled':
+      case 'Damaged':
+      case 'Battery Depleted':
         shipmentStatus = filter;
         break;
     }
 
     dispatch(getShipmentDetails(organization, shipmentStatus, true, true));
+    setSelectedShipment(null);
+    setMarkers([]);
+    setSelectedMarker({});
+    setExpandedRows([]);
+    setSteps([]);
   };
 
   return (
@@ -495,6 +589,7 @@ const Shipment = ({
                   setMarkers([]);
                   setSelectedMarker({});
                   setExpandedRows([]);
+                  setSteps([]);
                 } else {
                   processMarkers(rows[_.last(allExpanded).dataIndex], true);
                 }
@@ -504,155 +599,163 @@ const Shipment = ({
                 const ship = rows[rowMeta.rowIndex];
 
                 return (
-                  <TableRow>
-                    <TableCell colSpan={colSpan}>
-                      <Grid container spacing={2}>
-                        <Grid item xs={2}>
-                          <Grid container rowGap={1}>
-                            <Grid item xs={12}>
-                              <Typography fontWeight={700}>
-                                Order ID:
-                              </Typography>
-                              <Typography>
-                                {ship.order_number}
-                              </Typography>
-                            </Grid>
+                  <>
+                    <TableRow>
+                      <TableCell colSpan={colSpan}>
+                        <CustomizedSteppers steps={steps} />
+                      </TableCell>
+                    </TableRow>
 
-                            <Grid item xs={12}>
-                              <Typography fontWeight={700}>
-                                Items:
-                              </Typography>
-                              {_.map(_.split(ship.itemNames, ','), (item, idx) => (
-                                <Typography key={`${item}-${idx}`}>{item}</Typography>
+                    <TableRow>
+                      <TableCell colSpan={colSpan}>
+                        <Grid container spacing={2}>
+                          <Grid item xs={2}>
+                            <Grid container rowGap={1}>
+                              <Grid item xs={12}>
+                                <Typography fontWeight={700}>
+                                  Order ID:
+                                </Typography>
+                                <Typography>
+                                  {ship.order_number}
+                                </Typography>
+                              </Grid>
+
+                              <Grid item xs={12}>
+                                <Typography fontWeight={700}>
+                                  Items:
+                                </Typography>
+                                {_.map(_.split(ship.itemNames, ','), (item, idx) => (
+                                  <Typography key={`${item}-${idx}`}>{item}</Typography>
+                                ))}
+                              </Grid>
+
+                              <Grid item xs={12}>
+                                <Typography fontWeight={700}>
+                                  Status:
+                                </Typography>
+                                <Typography>
+                                  {ship.type}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+                          </Grid>
+
+                          <Grid item xs={2}>
+                            <Grid container rowGap={1}>
+                              {_.map(ship.carriers, (carr, idx) => (
+                                <Grid key={`${carr}-${idx}`} item xs={12}>
+                                  <Typography fontWeight={700}>
+                                    {`Logistics company ${idx + 1}:`}
+                                  </Typography>
+                                  <Typography>
+                                    {carr}
+                                  </Typography>
+                                </Grid>
                               ))}
-                            </Grid>
 
-                            <Grid item xs={12}>
-                              <Typography fontWeight={700}>
-                                Status:
-                              </Typography>
-                              <Typography>
-                                {ship.type}
-                              </Typography>
-                            </Grid>
-                          </Grid>
-                        </Grid>
-
-                        <Grid item xs={2}>
-                          <Grid container rowGap={1}>
-                            {_.map(ship.carriers, (carr, idx) => (
-                              <Grid key={`${carr}-${idx}`} item xs={12}>
-                                <Typography fontWeight={700}>
-                                  {`Logistics company ${idx + 1}:`}
-                                </Typography>
-                                <Typography>
-                                  {carr}
-                                </Typography>
-                              </Grid>
-                            ))}
-
-                            <Grid item xs={12}>
-                              <Typography fontWeight={700}>
-                                Receiver:
-                              </Typography>
-                              <Typography>
-                                {ship.destination}
-                              </Typography>
-                            </Grid>
-                          </Grid>
-                        </Grid>
-
-                        <Grid item xs={2}>
-                          {!_.isEmpty(markers) && markers[0] && (
-                            <Grid container rowGap={1}>
                               <Grid item xs={12}>
                                 <Typography fontWeight={700}>
-                                  Last location:
+                                  Receiver:
                                 </Typography>
                                 <Typography>
-                                  {markers[0].location}
+                                  {ship.destination}
                                 </Typography>
                               </Grid>
                             </Grid>
-                          )}
-                        </Grid>
+                          </Grid>
 
-                        <Grid item xs={2}>
-                          {!_.isEmpty(markers) && markers[0] && (
+                          <Grid item xs={2}>
+                            {!_.isEmpty(markers) && markers[0] && (
+                              <Grid container rowGap={1}>
+                                <Grid item xs={12}>
+                                  <Typography fontWeight={700}>
+                                    Last location:
+                                  </Typography>
+                                  <Typography>
+                                    {markers[0].location}
+                                  </Typography>
+                                </Grid>
+                              </Grid>
+                            )}
+                          </Grid>
+
+                          <Grid item xs={2}>
+                            {!_.isEmpty(markers) && markers[0] && (
+                              <Grid container rowGap={1}>
+                                <Grid item xs={12}>
+                                  <Typography fontWeight={700}>
+                                    Last Reading:
+                                  </Typography>
+                                  <Typography>
+                                    {`Recorded at: ${markers[0].date} ${markers[0].time}`}
+                                  </Typography>
+                                  <Typography>
+                                    {`Temp: ${markers[0].temperature}`}
+                                  </Typography>
+                                  <Typography>
+                                    {`Humidity: ${markers[0].humidity}`}
+                                  </Typography>
+                                  <Typography>
+                                    {`Shock: ${markers[0].shock}`}
+                                  </Typography>
+                                  <Typography>
+                                    {`Light: ${markers[0].light}`}
+                                  </Typography>
+                                  <Typography>
+                                    {`Battery: ${markers[0].battery}`}
+                                  </Typography>
+                                </Grid>
+                              </Grid>
+                            )}
+                          </Grid>
+
+                          <Grid item xs={4} alignItems="end" justifyContent="end">
                             <Grid container rowGap={1}>
                               <Grid item xs={12}>
-                                <Typography fontWeight={700}>
-                                  Last Reading:
-                                </Typography>
-                                <Typography>
-                                  {`Recorded at: ${markers[0].date} ${markers[0].time}`}
-                                </Typography>
-                                <Typography>
-                                  {`Temp: ${markers[0].temperature}`}
-                                </Typography>
-                                <Typography>
-                                  {`Humidity: ${markers[0].humidity}`}
-                                </Typography>
-                                <Typography>
-                                  {`Shock: ${markers[0].shock}`}
-                                </Typography>
-                                <Typography>
-                                  {`Light: ${markers[0].light}`}
-                                </Typography>
-                                <Typography>
-                                  {`Battery: ${markers[0].battery}`}
-                                </Typography>
+                                <TextField
+                                  variant="outlined"
+                                  disabled
+                                  multiline
+                                  fullWidth
+                                  maxRows={4}
+                                  id="note"
+                                  name="note"
+                                  label="Note"
+                                  autoComplete="note"
+                                  value={ship.note || ''}
+                                />
                               </Grid>
-                            </Grid>
-                          )}
-                        </Grid>
 
-                        <Grid item xs={4} alignItems="end" justifyContent="end">
-                          <Grid container rowGap={1}>
-                            <Grid item xs={12}>
-                              <TextField
-                                variant="outlined"
-                                disabled
-                                multiline
-                                fullWidth
-                                maxRows={4}
-                                id="note"
-                                name="note"
-                                label="Note"
-                                autoComplete="note"
-                                value={ship.note || ''}
-                              />
-                            </Grid>
+                              <Grid item xs={12}>
+                                <FormControl
+                                  fullWidth
+                                  component="fieldset"
+                                  variant="outlined"
+                                  className={classes.attachedFiles}
+                                  style={{
+                                    padding: _.isEmpty(ship.uploaded_pdf)
+                                      ? muiTheme.spacing(3)
+                                      : muiTheme.spacing(1.5),
+                                  }}
+                                >
+                                  <FormLabel component="legend" className={classes.legend}>
+                                    Attached Files
+                                  </FormLabel>
 
-                            <Grid item xs={12}>
-                              <FormControl
-                                fullWidth
-                                component="fieldset"
-                                variant="outlined"
-                                className={classes.attachedFiles}
-                                style={{
-                                  padding: _.isEmpty(ship.uploaded_pdf)
-                                    ? muiTheme.spacing(3)
-                                    : muiTheme.spacing(1.5),
-                                }}
-                              >
-                                <FormLabel component="legend" className={classes.legend}>
-                                  Attached Files
-                                </FormLabel>
-
-                                <Stack direction="row" spacing={1}>
-                                  {!_.isEmpty(ship.uploaded_pdf)
-                                  && _.map(ship.uploaded_pdf, (file, idx) => (
-                                    <Chip key={`${file}-${idx}`} variant="outlined" label={file} />
-                                  ))}
-                                </Stack>
-                              </FormControl>
+                                  <Stack direction="row" spacing={1}>
+                                    {!_.isEmpty(ship.uploaded_pdf)
+                                    && _.map(ship.uploaded_pdf, (file, idx) => (
+                                      <Chip key={`${file}-${idx}`} variant="outlined" label={file} />
+                                    ))}
+                                  </Stack>
+                                </FormControl>
+                              </Grid>
                             </Grid>
                           </Grid>
                         </Grid>
-                      </Grid>
-                    </TableCell>
-                  </TableRow>
+                      </TableCell>
+                    </TableRow>
+                  </>
                 );
               },
             }}
@@ -676,6 +779,7 @@ const mapStateToProps = (state, ownProps) => ({
     || state.itemsReducer.loading
     || state.sensorsGatewayReducer.loading
     || state.optionsReducer.loading
+    || state.authReducer.loading
   ),
 });
 
