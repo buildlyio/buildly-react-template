@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   useTheme,
@@ -9,13 +8,13 @@ import {
   TextField,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import Loader from '../../../../components/Loader/Loader';
 import FormModal from '../../../../components/Modal/FormModal';
 import { useInput } from '../../../../hooks/useInput';
-import {
-  addCustodianType,
-  editCustodianType,
-} from '../../../../redux/custodian/actions/custodian.actions';
 import { validators } from '../../../../utils/validators';
+import { useAddCustodianTypeMutation } from '../../../../react-query/mutations/custodians/addCustodianTypeMutation';
+import { useEditCustodianTypeMutation } from '../../../../react-query/mutations/custodians/editCustodianTypeMutation';
+import useAlert from '@hooks/useAlert';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -47,12 +46,12 @@ const useStyles = makeStyles((theme) => ({
 const AddCustodianType = ({
   history,
   location,
-  loading,
-  dispatch,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
+
+  const { displayAlert } = useAlert();
 
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -91,6 +90,10 @@ const AddCustodianType = ({
     }
   };
 
+  const { mutate: addCustodianTypeMutation, isLoading: isAddingCustodianType } = useAddCustodianTypeMutation(history, location.state.from, displayAlert);
+
+  const { mutate: editCustodianTypeMutation, isLoading: isEditingCustodianType } = useEditCustodianTypeMutation(history, location.state.from, displayAlert);
+
   /**
    * Submit The form and add/edit custodian type
    * @param {Event} event the default submit event
@@ -104,17 +107,13 @@ const AddCustodianType = ({
       edit_date: currentDateTime,
     };
     if (editPage) {
-      dispatch(editCustodianType(data));
+      editCustodianTypeMutation(data);
     } else {
       data = {
         ...data,
         create_date: currentDateTime,
       };
-      dispatch(addCustodianType(data));
-    }
-    setFormModal(false);
-    if (location && location.state) {
-      history.push(location.state.from);
+      addCustodianTypeMutation(data);
     }
   };
 
@@ -171,6 +170,9 @@ const AddCustodianType = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {(isAddingCustodianType || isEditingCustodianType) && (
+            <Loader open={isAddingCustodianType || isEditingCustodianType} />
+          )}
           <form
             className={classes.form}
             noValidate
@@ -203,7 +205,7 @@ const AddCustodianType = ({
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    disabled={loading || submitDisabled()}
+                    disabled={isAddingCustodianType || isEditingCustodianType || submitDisabled()}
                   >
                     {buttonText}
                   </Button>
@@ -229,9 +231,4 @@ const AddCustodianType = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.custodianReducer,
-});
-
-export default connect(mapStateToProps)(AddCustodianType);
+export default AddCustodianType;

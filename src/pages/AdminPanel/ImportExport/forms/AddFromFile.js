@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   Grid,
@@ -8,11 +7,11 @@ import {
   Button,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import Loader from '../../../../components/Loader/Loader';
 import { useInput } from '../../../../hooks/useInput';
-import {
-  addFromFile,
-} from '../../../../redux/importExport/actions/importExport.actions';
 import { validators } from '../../../../utils/validators';
+import { useAddFromFileMutation } from '../../../../react-query/mutations/importExport/addFromFileMutation';
+import useAlert from '@hooks/useAlert';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -33,11 +32,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddFromFile = ({ loading, dispatch }) => {
+const AddFromFile = () => {
   const classes = useStyles();
   const uploadType = useInput('', { required: true });
   const [uploadFile, setUploadFile] = useState(null);
   const [formError, setFormError] = useState({});
+
+  const { displayAlert } = useAlert();
+
+  const { mutate: addFromFileMutation, isLoading: isAddingFromFile } = useAddFromFileMutation(uploadType.value, displayAlert);
 
   /**
    * Submit The form and add/edit custodian type
@@ -45,12 +48,10 @@ const AddFromFile = ({ loading, dispatch }) => {
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-
     const formData = new FormData();
     formData.append('file', uploadFile, uploadFile.name);
     formData.append('model', uploadType.value);
-
-    dispatch(addFromFile(uploadType.value, formData));
+    addFromFileMutation(formData);
   };
 
   /**
@@ -94,73 +95,72 @@ const AddFromFile = ({ loading, dispatch }) => {
   };
 
   return (
-    <form
-      className={classes.form}
-      encType="multipart/form-data"
-      noValidate
-      onSubmit={handleSubmit}
-    >
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            required
-            id="uploadType"
-            label="Upload Type"
-            select
-            error={
-              formError.uploadType
-              && formError.uploadType.error
-            }
-            helperText={
-              formError.uploadType
-                ? formError.uploadType.message
-                : ''
-            }
-            onBlur={(e) => handleBlur(e, 'required', uploadType)}
-            {...uploadType.bind}
-          >
-            <MenuItem value="">--------</MenuItem>
-            <MenuItem value="item">Items</MenuItem>
-            <MenuItem value="product">Products</MenuItem>
-          </TextField>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            required
-            id="uploadFile"
-            label="Upload File"
-            type="file"
-            InputLabelProps={{ shrink: true }}
-            onChange={(e) => setUploadFile(e.target.files[0])}
-          />
-        </Grid>
-        <Grid container spacing={2} justifyContent="center">
-          <Grid item xs={6} sm={4}>
-            <Button
-              type="submit"
+    <>
+      {isAddingFromFile && <Loader open={isAddingFromFile} />}
+      <form
+        className={classes.form}
+        encType="multipart/form-data"
+        noValidate
+        onSubmit={handleSubmit}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
               fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              disabled={loading || submitDisabled()}
+              required
+              id="uploadType"
+              label="Upload Type"
+              select
+              error={
+                formError.uploadType
+                && formError.uploadType.error
+              }
+              helperText={
+                formError.uploadType
+                  ? formError.uploadType.message
+                  : ''
+              }
+              onBlur={(e) => handleBlur(e, 'required', uploadType)}
+              {...uploadType.bind}
             >
-              Upload
-            </Button>
+              <MenuItem value="">--------</MenuItem>
+              <MenuItem value="item">Items</MenuItem>
+              <MenuItem value="product">Products</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              required
+              id="uploadFile"
+              label="Upload File"
+              type="file"
+              InputLabelProps={{ shrink: true }}
+              onChange={(e) => setUploadFile(e.target.files[0])}
+            />
+          </Grid>
+          <Grid container spacing={2} justifyContent="center">
+            <Grid item xs={6} sm={4}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                disabled={isAddingFromFile || submitDisabled()}
+              >
+                Upload
+              </Button>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </form>
+      </form>
+    </>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-});
-
-export default connect(mapStateToProps)(AddFromFile);
+export default AddFromFile;

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   Button,
@@ -22,12 +21,6 @@ import { makeStyles } from '@mui/styles';
 import Loader from '../../../../components/Loader/Loader';
 import { useInput } from '../../../../hooks/useInput';
 import {
-  getOrgTypes,
-  updateOrganization,
-} from '../../../../redux/authuser/actions/authuser.actions';
-import { editUnitOfMeasure, getUnitOfMeasure } from '../../../../redux/items/actions/items.actions';
-import { getCountries, getCurrencies } from '../../../../redux/shipment/actions/shipment.actions';
-import {
   DATE_DISPLAY_CHOICES,
   TIME_DISPLAY_CHOICES,
   TIVE_GATEWAY_TIMES,
@@ -36,6 +29,15 @@ import {
   UOM_WEIGHT_CHOICES,
 } from '../../../../utils/mock';
 import { uomDistanceUpdate } from '../../../../utils/utilMethods';
+import { getUser } from '../../../../context/User.context';
+import { useQuery } from 'react-query';
+import { getOrganizationTypeQuery } from '../../../../react-query/queries/authUser/getOrganizationTypeQuery';
+import { getCountriesQuery } from '../../../../react-query/queries/shipments/getCountriesQuery';
+import { getCurrenciesQuery } from '../../../../react-query/queries/shipments/getCurrenciesQuery';
+import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
+import { useUpdateOrganizationMutation } from '../../../../react-query/mutations/authUser/updateOrganizationMutation';
+import { useEditUnitMutation } from '../../../../react-query/mutations/items/editUnitMutation';
+import useAlert from '@hooks/useAlert';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -90,18 +92,34 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const OrganizationSettings = ({
-  dispatch,
-  loading,
-  organizationData,
-  orgTypes,
-  unitOfMeasure,
-  countries,
-  currencies,
-}) => {
+const OrganizationSettings = () => {
   const classes = useStyles();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+  const organizationData = getUser().organization;
+  const organization = getUser().organization.organization_uuid;
+
+  const { displayAlert } = useAlert();
+
+  const { data: organizationTypesData, isLoading: isLoadingOrganizationTypes } = useQuery(
+    ['organizationTypes'],
+    () => getOrganizationTypeQuery(displayAlert),
+  );
+
+  const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
+    ['countries'],
+    () => getCountriesQuery(displayAlert),
+  );
+
+  const { data: currenciesData, isLoading: isLoadingCurrencies } = useQuery(
+    ['currencies'],
+    () => getCurrenciesQuery(displayAlert),
+  );
+
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+  );
 
   const allowImportExport = useInput(
     (organizationData
@@ -135,80 +153,55 @@ const OrganizationSettings = ({
   const defaultMeasurementInterval = useInput(
     (organizationData && organizationData.default_measurement_interval) || 20,
   );
-
   const country = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
+    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
+      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
       : 'United States',
   );
   const currency = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
+    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
+      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
       : 'USD',
   );
   const dateFormat = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
       : 'MMM DD, YYYY',
   );
   const timeFormat = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
       : 'hh:mm:ss A',
   );
   const distance = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance')).unit_of_measure
+    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance'))
+      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance')).unit_of_measure
       : 'Miles',
   );
   const temp = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure
+    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure
       : 'Fahrenheit',
   );
   const weight = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight')).unit_of_measure
+    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight'))
+      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight')).unit_of_measure
       : 'Pounds',
   );
   const [countryList, setCountryList] = useState([]);
   const [currencyList, setCurrencyList] = useState([]);
 
   useEffect(() => {
-    if (_.isEmpty(countries)) {
-      dispatch(getCountries());
+    if (!_.isEmpty(countriesData)) {
+      setCountryList(_.sortBy(_.without(_.uniq(_.map(countriesData, 'country')), [''])));
     }
-    if (_.isEmpty(currencies)) {
-      dispatch(getCurrencies());
-    }
-    if (_.isEmpty(orgTypes)) {
-      dispatch(getOrgTypes());
-    }
-  }, []);
+  }, [countriesData]);
 
   useEffect(() => {
-    if (!_.isEmpty(countries)) {
-      setCountryList(_.sortBy(_.without(_.uniq(_.map(countries, 'country')), [''])));
+    if (!_.isEmpty(currenciesData)) {
+      setCurrencyList(_.sortBy(_.without(_.uniq(_.map(currenciesData, 'currency')), [''])));
     }
-  }, [countries]);
-
-  useEffect(() => {
-    if (!_.isEmpty(currencies)) {
-      setCurrencyList(_.sortBy(_.without(_.uniq(_.map(currencies, 'currency')), [''])));
-    }
-  }, [currencies]);
-
-  useEffect(() => {
-    if (!_.isEmpty(organizationData) && _.isEmpty(unitOfMeasure)) {
-      dispatch(getUnitOfMeasure(organizationData.organization_uuid));
-    }
-  }, [organizationData]);
-
-  useEffect(() => {
-    if (organizationData && unitOfMeasure) {
-      resetValues();
-    }
-  }, [organizationData, unitOfMeasure]);
+  }, [currenciesData]);
 
   const resetValues = () => {
     allowImportExport.reset();
@@ -255,6 +248,10 @@ const OrganizationSettings = ({
     || weight.hasChanged()
   );
 
+  const { mutate: updateOrganizationMutation, isLoading: isUpdatingOrganization } = useUpdateOrganizationMutation(displayAlert);
+
+  const { mutate: editUnitMutation, isLoading: isEditingUnit } = useEditUnitMutation(organization, displayAlert);
+
   /**
    * Submit The form and add/edit custodian type
    * @param {Event} event the default submit event
@@ -292,66 +289,56 @@ const OrganizationSettings = ({
         default_transmission_interval: defaultTransmissionInterval.value,
         default_measurement_interval: defaultMeasurementInterval.value,
       };
-
       if (distance.hasChanged()) {
         data = { ...data, radius: uomDistanceUpdate(distance.value, radius.value) };
       }
-
-      dispatch(updateOrganization(data));
+      updateOrganizationMutation(data);
     }
-
-    _.forEach(unitOfMeasure, (unit) => {
+    _.forEach(unitData, (unit) => {
       let uom = unit;
       switch (_.toLower(unit.unit_of_measure_for)) {
         case 'country':
           if (country.hasChanged()) {
             uom = { ...uom, unit_of_measure: country.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         case 'currency':
           if (currency.hasChanged()) {
             uom = { ...uom, unit_of_measure: currency.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         case 'date':
           if (dateFormat.hasChanged()) {
             uom = { ...uom, unit_of_measure: dateFormat.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         case 'time':
           if (timeFormat.hasChanged()) {
             uom = { ...uom, unit_of_measure: timeFormat.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         case 'distance':
           if (distance.hasChanged()) {
             uom = { ...uom, unit_of_measure: distance.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         case 'temperature':
           if (temp.hasChanged()) {
             uom = { ...uom, unit_of_measure: temp.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         case 'weight':
           if (weight.hasChanged()) {
             uom = { ...uom, unit_of_measure: weight.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         default:
           break;
       }
@@ -360,7 +347,21 @@ const OrganizationSettings = ({
 
   return (
     <Grid className={classes.root} container spacing={2}>
-      {loading && <Loader open={loading} />}
+      {(isLoadingOrganizationTypes
+        || isLoadingCountries
+        || isLoadingCurrencies
+        || isLoadingUnits
+        || isUpdatingOrganization
+        || isEditingUnit)
+        && (
+          <Loader open={isLoadingOrganizationTypes
+            || isLoadingCountries
+            || isLoadingCurrencies
+            || isLoadingUnits
+            || isUpdatingOrganization
+            || isEditingUnit}
+          />
+        )}
       <form
         className={classes.form}
         noValidate
@@ -389,7 +390,6 @@ const OrganizationSettings = ({
             {...radius.bind}
           />
         </Grid>
-
         <Grid container spacing={isDesktop ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
@@ -404,7 +404,7 @@ const OrganizationSettings = ({
               {...orgType.bind}
             >
               <MenuItem value="">Select</MenuItem>
-              {_.map(orgTypes, (type) => (
+              {_.map(organizationTypesData, (type) => (
                 <MenuItem
                   key={`orgType-${type.id}`}
                   value={type.id}
@@ -414,7 +414,6 @@ const OrganizationSettings = ({
               ))}
             </TextField>
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -432,7 +431,6 @@ const OrganizationSettings = ({
             />
           </Grid>
         </Grid>
-
         <Grid container spacing={isDesktop ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
@@ -450,8 +448,8 @@ const OrganizationSettings = ({
                 endAdornment: (
                   <InputAdornment position="start">
                     {
-                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
-                      && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                        && _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
                         ? <span>&#8457;</span>
                         : <span>&#8451;</span>
                     }
@@ -461,7 +459,6 @@ const OrganizationSettings = ({
               {...defaultMaxTemperature.bind}
             />
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -478,8 +475,8 @@ const OrganizationSettings = ({
                 endAdornment: (
                   <InputAdornment position="start">
                     {
-                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
-                      && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                        && _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
                         ? <span>&#8457;</span>
                         : <span>&#8451;</span>
                     }
@@ -490,7 +487,6 @@ const OrganizationSettings = ({
             />
           </Grid>
         </Grid>
-
         <Grid container spacing={isDesktop ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
@@ -510,7 +506,6 @@ const OrganizationSettings = ({
               {...defaultMaxHumidity.bind}
             />
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -530,7 +525,6 @@ const OrganizationSettings = ({
             />
           </Grid>
         </Grid>
-
         <Grid container spacing={isDesktop ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
@@ -550,7 +544,6 @@ const OrganizationSettings = ({
               {...defaultShock.bind}
             />
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -570,7 +563,6 @@ const OrganizationSettings = ({
             />
           </Grid>
         </Grid>
-
         <Grid container spacing={isDesktop ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
@@ -593,14 +585,13 @@ const OrganizationSettings = ({
             >
               <MenuItem value="">Select</MenuItem>
               {!_.isEmpty(TIVE_GATEWAY_TIMES)
-              && _.map(TIVE_GATEWAY_TIMES, (time, index) => (
-                <MenuItem key={`${time.value}-${index}`} value={time.value}>
-                  {time.label}
-                </MenuItem>
-              ))}
+                && _.map(TIVE_GATEWAY_TIMES, (time, index) => (
+                  <MenuItem key={`${time.value}-${index}`} value={time.value}>
+                    {time.label}
+                  </MenuItem>
+                ))}
             </TextField>
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -628,7 +619,6 @@ const OrganizationSettings = ({
             </TextField>
           </Grid>
         </Grid>
-
         <Grid container spacing={isDesktop ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
@@ -642,9 +632,9 @@ const OrganizationSettings = ({
               autoComplete="country"
               value={country.value}
               onChange={(e) => {
-                const curr = _.find(currencies, {
-                  country: _.find(countries, { country: e.target.value })
-                    ? _.find(countries, { country: e.target.value }).iso3
+                const curr = _.find(currenciesData, {
+                  country: _.find(countriesData, { country: e.target.value })
+                    ? _.find(countriesData, { country: e.target.value }).iso3
                     : '',
                 });
                 currency.setValue(curr ? curr.currency : '');
@@ -662,7 +652,6 @@ const OrganizationSettings = ({
               ))}
             </TextField>
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -687,7 +676,6 @@ const OrganizationSettings = ({
             </TextField>
           </Grid>
         </Grid>
-
         <Grid container spacing={isDesktop ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
@@ -712,7 +700,6 @@ const OrganizationSettings = ({
               ))}
             </TextField>
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -737,7 +724,6 @@ const OrganizationSettings = ({
             </TextField>
           </Grid>
         </Grid>
-
         <Grid item xs={12}>
           <TextField
             variant="outlined"
@@ -761,7 +747,6 @@ const OrganizationSettings = ({
             ))}
           </TextField>
         </Grid>
-
         <Grid item xs={12}>
           <TextField
             variant="outlined"
@@ -785,7 +770,6 @@ const OrganizationSettings = ({
             ))}
           </TextField>
         </Grid>
-
         <Grid item xs={12}>
           <TextField
             variant="outlined"
@@ -809,7 +793,6 @@ const OrganizationSettings = ({
             ))}
           </TextField>
         </Grid>
-
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={6} sm={4}>
             <Button
@@ -818,7 +801,13 @@ const OrganizationSettings = ({
               variant="contained"
               color="primary"
               className={classes.submit}
-              disabled={loading || !submitDisabled()}
+              disabled={isLoadingOrganizationTypes
+                || isLoadingCountries
+                || isLoadingCurrencies
+                || isLoadingUnits
+                || isUpdatingOrganization
+                || isEditingUnit
+                || !submitDisabled()}
             >
               Save
             </Button>
@@ -841,12 +830,4 @@ const OrganizationSettings = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-  ...state.itemsReducer,
-  ...state.shipmentReducer,
-  loading: state.authReducer.loading || state.itemsReducer.loading || state.shipmentReducer.loading,
-});
-
-export default connect(mapStateToProps)(OrganizationSettings);
+export default OrganizationSettings;

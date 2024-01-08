@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import {
   Button,
   CssBaseline,
@@ -17,12 +16,12 @@ import logo from '../../assets/tp-logo.png';
 import Copyright from '../../components/Copyright/Copyright';
 import Loader from '../../components/Loader/Loader';
 import { useInput } from '../../hooks/useInput';
-import {
-  login,
-  resetPasswordCheck,
-} from '../../redux/authuser/actions/authuser.actions';
 import { routes } from '../../routes/routesConstants';
 import { validators } from '../../utils/validators';
+import { useResetPasswordCheckMutation } from '../../react-query/mutations/authUser/resetPasswordCheckMutation';
+import { useLoginMutation } from '../../react-query/mutations/authUser/loginMutation';
+import useAlert from '@hooks/useAlert';
+import useTimezone from '@hooks/useTimezone';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -58,11 +57,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = ({ dispatch, loading, history }) => {
+const Login = ({ history }) => {
   const classes = useStyles();
   const username = useInput('', { required: true });
   const password = useInput('', { required: true });
   const [error, setError] = useState({});
+
+  const { displayAlert } = useAlert();
+  const { timezone } = useTimezone();
+
+  const { mutate: resetPasswordCheckMutation, isLoading: isPasswordCheck } = useResetPasswordCheckMutation(history, routes.RESET_PASSWORD_CONFIRM, routes.LOGIN, displayAlert);
+
+  const { mutate: loginMutation, isLoading: islogin } = useLoginMutation(history, routes.SHIPMENT, displayAlert, timezone);
 
   useEffect(() => {
     if (location.pathname.includes(routes.RESET_PASSWORD_CONFIRM)) {
@@ -75,7 +81,7 @@ const Login = ({ dispatch, loading, history }) => {
         uid: restPathArr[1],
         token: restPathArr[2],
       };
-      dispatch(resetPasswordCheck(resetCheckValues, history));
+      resetPasswordCheckMutation(resetCheckValues);
     }
   }, []);
 
@@ -89,7 +95,7 @@ const Login = ({ dispatch, loading, history }) => {
       username: username.value,
       password: password.value,
     };
-    dispatch(login(loginFormValue, history));
+    loginMutation(loginFormValue);
   };
 
   /**
@@ -138,7 +144,7 @@ const Login = ({ dispatch, loading, history }) => {
       maxWidth="xs"
       className={classes.container}
     >
-      {loading && <Loader open={loading} />}
+      {(isPasswordCheck || islogin) && <Loader open={isPasswordCheck || islogin} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
@@ -201,7 +207,7 @@ const Login = ({ dispatch, loading, history }) => {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                disabled={loading || submitDisabled()}
+                disabled={isPasswordCheck || islogin || submitDisabled()}
               >
                 Sign in
               </Button>
@@ -236,9 +242,4 @@ const Login = ({ dispatch, loading, history }) => {
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(Login);
+export default Login;

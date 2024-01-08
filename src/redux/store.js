@@ -7,7 +7,6 @@ import rootSaga from './sagas';
 
 const configureStore = () => {
   const sagaMiddleware = createSagaMiddleware();
-  // redux devtools
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
   return {

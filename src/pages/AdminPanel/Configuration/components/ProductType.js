@@ -1,30 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
 import { getUser } from '../../../../context/User.context';
-import {
-  getProductType,
-  deleteProductType,
-  getUnitOfMeasure,
-} from '../../../../redux/items/actions/items.actions';
 import { routes } from '../../../../routes/routesConstants';
 import { getColumns } from '../../../../utils/constants';
 import AddProductType from '../forms/AddProductType';
+import { useQuery } from 'react-query';
+import { getProductTypeQuery } from '../../../../react-query/queries/items/getProductTypeQuery';
+import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
+import { useDeleteProductTypeMutation } from '../../../../react-query/mutations/items/deleteProductTypeMutation';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '../../../../zustand/timezone/timezoneStore';
 
 const ProductType = ({
-  dispatch,
-  loading,
-  productType,
   redirectTo,
   history,
-  timezone,
-  unitOfMeasure,
 }) => {
   const organization = getUser().organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
 
   const addPath = redirectTo
     ? `${redirectTo}/product-type`
@@ -34,14 +32,15 @@ const ProductType = ({
     ? `${redirectTo}/product-type`
     : `${routes.CONFIGURATION}/product-type/edit`;
 
-  useEffect(() => {
-    if (_.isEmpty(unitOfMeasure)) {
-      dispatch(getUnitOfMeasure(organization));
-    }
-    if (_.isEmpty(productType)) {
-      dispatch(getProductType(organization));
-    }
-  }, []);
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+  );
+
+  const { data: productTypesData, isLoading: isLoadingProductTypes } = useQuery(
+    ['productTypes', organization],
+    () => getProductTypeQuery(organization, displayAlert),
+  );
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -62,23 +61,25 @@ const ProductType = ({
     setDeleteModal(true);
   };
 
+  const { mutate: deleteProductTypeMutation, isLoading: isDeletingProductType } = useDeleteProductTypeMutation(organization, displayAlert);
+
   const handleDeleteModal = () => {
-    dispatch(deleteProductType(deleteId));
+    deleteProductTypeMutation(deleteId);
     setDeleteModal(false);
   };
 
   return (
     <DataTableWrapper
       noSpace
-      loading={loading}
-      rows={productType || []}
+      loading={isLoadingUnits || isLoadingProductTypes || isDeletingProductType}
+      rows={productTypesData || []}
       columns={getColumns(
-        timezone,
-        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+        data,
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
           : '',
-        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
           : '',
       )}
       filename="ProductType"
@@ -98,10 +99,4 @@ const ProductType = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.itemsReducer,
-  ...state.optionsReducer,
-});
-
-export default connect(mapStateToProps)(ProductType);
+export default ProductType;

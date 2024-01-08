@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   Grid,
@@ -9,20 +8,19 @@ import {
   Typography,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import Loader from '../../../../components/Loader/Loader';
 import ConfirmModal from '../../../../components/Modal/ConfirmModal';
 import CustomizedTooltips from '../../../../components/ToolTip/ToolTip';
 import { getUser } from '../../../../context/User.context';
 import { useInput } from '../../../../hooks/useInput';
-import {
-  getItemsOptions,
-  getProductsOptions,
-  getGatewayOptions,
-} from '../../../../redux/options/actions/options.actions';
-import {
-  getApiResponse,
-  addApiSetup,
-} from '../../../../redux/importExport/actions/importExport.actions';
 import { validators } from '../../../../utils/validators';
+import { useQuery } from 'react-query';
+import { getItemOptionQuery } from '../../../../react-query/queries/options/getItemOptionQuery';
+import { getGatewayOptionQuery } from '../../../../react-query/queries/options/getGatewayOptionQuery';
+import { getProductOptionQuery } from '../../../../react-query/queries/options/getProductOptionQuery';
+import { getApiResponseQuery } from '../../../../react-query/queries/importExport/getApiResponseQuery';
+import { useAddApiSetupMutation } from '../../../../react-query/mutations/importExport/addApiSetupMutation';
+import useAlert from '@hooks/useAlert';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -72,37 +70,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddFromAPI = ({
-  loading,
-  dispatch,
-  itemOptions,
-  productOptions,
-  gatewayOptions,
-  apiResponse,
-}) => {
+const AddFromAPI = () => {
   const classes = useStyles();
-  const dataTypes = [
-    {
-      name: 'Items',
-      value: 'item',
-      option: itemOptions,
-      externalProvider: [],
-    },
-    {
-      name: 'Products',
-      value: 'product',
-      option: productOptions,
-      externalProvider: [],
-    },
-    {
-      name: 'Gateways',
-      value: 'gateway',
-      option: gatewayOptions,
-      externalProvider: ['Tive'],
-    },
-  ];
-
   const organization = getUser().organization.organization_uuid;
+
+  const { displayAlert } = useAlert();
 
   const [tableColumns, setTableColumns] = useState({});
   const [mapColumns, setMapColumns] = useState({});
@@ -124,17 +96,57 @@ const AddFromAPI = ({
     apiResponseData: '',
   });
 
+  const { data: itemOptionData, isLoading: isLoadingItemOptions } = useQuery(
+    ['itemOptions'],
+    () => getItemOptionQuery(),
+  );
+
+  const { data: gatewayOptionData, isLoading: isLoadingGatewayOptions } = useQuery(
+    ['gatewayOptions'],
+    () => getGatewayOptionQuery(),
+  );
+
+  const { data: productOptionData, isLoading: isLoadingProductOptions } = useQuery(
+    ['productOptions'],
+    () => getProductOptionQuery(),
+  );
+
+  const { data: apiResponse, isLoading: isLoadingApiResponse } = useQuery(
+    ['apiResponse'],
+    () => getApiResponseQuery(finalUrl, reqHeader, displayAlert),
+    {
+      enabled: !!(!provider.name && finalUrl && reqHeader),
+    },
+  );
+
+  const dataTypes = [
+    {
+      name: 'Items',
+      value: 'item',
+      option: itemOptionData,
+      externalProvider: [],
+    },
+    {
+      name: 'Products',
+      value: 'product',
+      option: productOptionData,
+      externalProvider: [],
+    },
+    {
+      name: 'Gateways',
+      value: 'gateway',
+      option: gatewayOptionData,
+      externalProvider: ['Tive'],
+    },
+  ];
+
   useEffect(() => {
-    if (_.isEmpty(itemOptions)) {
-      dispatch(getItemsOptions());
-    }
-    if (_.isEmpty(productOptions)) {
-      dispatch(getProductsOptions());
-    }
-    if (_.isEmpty(gatewayOptions)) {
-      dispatch(getGatewayOptions());
-    }
-  }, []);
+    dataTypes[0].option = itemOptionData;
+    dataTypes[1].option = productOptionData;
+    dataTypes[2].option = gatewayOptionData;
+  }, [itemOptionData, gatewayOptionData, productOptionData]);
+
+  const { mutate: addApiSetupMutation, isLoading: isAddingApiSetup } = useAddApiSetupMutation(displayAlert);
 
   /**
    * Submit The form and add/edit custodian type
@@ -161,18 +173,18 @@ const AddFromAPI = ({
       mapping.organization_uuid = organization;
     }
 
-    dispatch(addApiSetup(
-      apiURL.value,
-      keyParamName.value,
-      keyParamPlace.value,
-      apiKey.value,
-      apiResponseData.value
-        ? apiResponseData.value
-        : provider.apiResponseData,
-      dataFor.value,
+    const data = {
+      url: apiURL.value,
+      key_name: keyParamName.value,
+      key_placement: keyParamPlace.value,
+      key_value: apiKey.value,
+      values_to_pick_response_from: apiResponseData.value ? apiResponseData.value : provider.apiResponseData,
+      table_name: dataFor.value,
       mapping,
-      provider.name ? provider.name : 'Default',
-    ));
+      platform_name: provider.name ? provider.name : 'Default',
+    };
+
+    addApiSetupMutation(data);
   };
 
   /**
@@ -343,9 +355,6 @@ const AddFromAPI = ({
   };
 
   const handleConfirmModal = () => {
-    if (!provider.name) {
-      dispatch(getApiResponse(finalUrl, reqHeader));
-    }
     setOpenModal(false);
   };
 
@@ -381,6 +390,19 @@ const AddFromAPI = ({
 
   return (
     <>
+      {(isLoadingItemOptions
+        || isLoadingProductOptions
+        || isLoadingGatewayOptions
+        || isLoadingApiResponse
+        || isAddingApiSetup)
+        && (
+          <Loader open={isLoadingItemOptions
+            || isLoadingProductOptions
+            || isLoadingGatewayOptions
+            || isLoadingApiResponse
+            || isAddingApiSetup}
+          />
+        )}
       <form
         className={classes.form}
         noValidate
@@ -470,168 +492,168 @@ const AddFromAPI = ({
             />
           </Grid>
           {provider.name
-          && (
-          <Grid item xs={12}>
-            <Typography variant="body1">
-              External Provider :
-              {' '}
-              {provider.name}
-            </Typography>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                required
-                id="dataFor"
-                label="Import Provider Data For"
-                select
-                error={formError.dataFor && formError.dataFor.error}
-                helperText={
-                  formError.dataFor ? formError.dataFor.message : ''
-                }
-                onBlur={(e) => handleBlur(e, 'required', dataFor, 'dataFor')}
-                {...dataFor.bind}
-              >
-                <MenuItem value="">--------</MenuItem>
-                {_.map(
-                  provider.dataTypes,
-                  (type, index) => (
-                    <MenuItem
-                      key={index}
-                      value={type.value}
-                    >
+            && (
+              <Grid item xs={12}>
+                <Typography variant="body1">
+                  External Provider :
+                  {' '}
+                  {provider.name}
+                </Typography>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    required
+                    id="dataFor"
+                    label="Import Provider Data For"
+                    select
+                    error={formError.dataFor && formError.dataFor.error}
+                    helperText={
+                      formError.dataFor ? formError.dataFor.message : ''
+                    }
+                    onBlur={(e) => handleBlur(e, 'required', dataFor, 'dataFor')}
+                    {...dataFor.bind}
+                  >
+                    <MenuItem value="">--------</MenuItem>
+                    {_.map(
+                      provider.dataTypes,
+                      (type, index) => (
+                        <MenuItem
+                          key={index}
+                          value={type.value}
+                        >
+                          {type.name}
+                        </MenuItem>
+                      ),
+                    )}
+                  </TextField>
+                </Grid>
+              </Grid>
+            )}
+          {apiResponse
+            && (
+              <Grid item xs={12}>
+                <Typography variant="h6">API Response</Typography>
+                <pre className={classes.apiResponse}>
+                  {JSON.stringify(apiResponse)}
+                </pre>
+              </Grid>
+            )}
+          {apiResponse
+            && (
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  required
+                  id="apiResponseData"
+                  label="Pick only this from response (Optional)"
+                  name="apiResponseData"
+                  error={
+                    formError.apiResponseData
+                    && formError.apiResponseData.error
+                  }
+                  helperText={
+                    formError.apiResponseData
+                      ? formError.apiResponseData.message
+                      : ''
+                  }
+                  onBlur={(e) => handleBlur(e, '', apiResponseData)}
+                  {...apiResponseData.bind}
+                />
+              </Grid>
+            )}
+          {apiResponse
+            && (
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  required
+                  id="dataFor"
+                  label="Import Data For"
+                  select
+                  error={formError.dataFor && formError.dataFor.error}
+                  helperText={
+                    formError.dataFor ? formError.dataFor.message : ''
+                  }
+                  onBlur={(e) => handleBlur(e, 'required', dataFor, 'dataFor')}
+                  {...dataFor.bind}
+                >
+                  <MenuItem value="">--------</MenuItem>
+                  {_.map(dataTypes, (type, index) => (
+                    <MenuItem key={index} value={type.value}>
                       {type.name}
                     </MenuItem>
-                  ),
-                )}
-              </TextField>
-            </Grid>
-          </Grid>
-          )}
-          {apiResponse
-            && (
-            <Grid item xs={12}>
-              <Typography variant="h6">API Response</Typography>
-              <pre className={classes.apiResponse}>
-                {JSON.stringify(apiResponse)}
-              </pre>
-            </Grid>
-            )}
-          {apiResponse
-            && (
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                required
-                id="apiResponseData"
-                label="Pick only this from response (Optional)"
-                name="apiResponseData"
-                error={
-                  formError.apiResponseData
-                  && formError.apiResponseData.error
-                }
-                helperText={
-                  formError.apiResponseData
-                    ? formError.apiResponseData.message
-                    : ''
-                }
-                onBlur={(e) => handleBlur(e, '', apiResponseData)}
-                {...apiResponseData.bind}
-              />
-            </Grid>
-            )}
-          {apiResponse
-            && (
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                required
-                id="dataFor"
-                label="Import Data For"
-                select
-                error={formError.dataFor && formError.dataFor.error}
-                helperText={
-                  formError.dataFor ? formError.dataFor.message : ''
-                }
-                onBlur={(e) => handleBlur(e, 'required', dataFor, 'dataFor')}
-                {...dataFor.bind}
-              >
-                <MenuItem value="">--------</MenuItem>
-                {_.map(dataTypes, (type, index) => (
-                  <MenuItem key={index} value={type.value}>
-                    {type.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
+                  ))}
+                </TextField>
+              </Grid>
             )}
           {!_.isEmpty(tableColumns)
             && !_.isEmpty(mapColumns)
             && !_.isEmpty(apiColumns)
             && (
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography
-                  className={classes.title}
-                  variant="h6"
-                >
-                  Our Columns
-                </Typography>
-                {_.map(tableColumns, (column, key) => (
-                  <div key={key} className={classes.tableColumn}>
-                    <Typography variant="body1">
-                      {column.label}
-                    </Typography>
-                    {column.help_text
-                      && (
-                      <CustomizedTooltips
-                        toolTipText={column.help_text}
-                      />
-                      )}
-                  </div>
-                ))}
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  className={classes.title}
-                  variant="h6"
-                >
-                  Mapping (From API Response)
-                </Typography>
-                {_.map(mapColumns, (col, key) => (
-                  <TextField
-                    key={key}
-                    className={classes.mapCol}
-                    variant="outlined"
-                    fullWidth
-                    required={col.required}
-                    id={col.name}
-                    label={col.label}
-                    select
-                    value={col.value}
-                    onChange={(e) => handleMapColumn(e, key)}
-                    error={formError[key] && formError[key].error}
-                    helperText={
-                      formError[key] ? formError[key].message : ''
-                    }
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Typography
+                    className={classes.title}
+                    variant="h6"
                   >
-                    <MenuItem value="">--------</MenuItem>
-                    {_.map(apiColumns, (column, keyVal) => (
-                      <MenuItem key={keyVal} value={keyVal}>
-                        <div className={classes.apiMenuItem}>
-                          {_.startCase(keyVal)}
-                        </div>
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                ))}
+                    Our Columns
+                  </Typography>
+                  {_.map(tableColumns, (column, key) => (
+                    <div key={key} className={classes.tableColumn}>
+                      <Typography variant="body1">
+                        {column.label}
+                      </Typography>
+                      {column.help_text
+                        && (
+                          <CustomizedTooltips
+                            toolTipText={column.help_text}
+                          />
+                        )}
+                    </div>
+                  ))}
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    className={classes.title}
+                    variant="h6"
+                  >
+                    Mapping (From API Response)
+                  </Typography>
+                  {_.map(mapColumns, (col, key) => (
+                    <TextField
+                      key={key}
+                      className={classes.mapCol}
+                      variant="outlined"
+                      fullWidth
+                      required={col.required}
+                      id={col.name}
+                      label={col.label}
+                      select
+                      value={col.value}
+                      onChange={(e) => handleMapColumn(e, key)}
+                      error={formError[key] && formError[key].error}
+                      helperText={
+                        formError[key] ? formError[key].message : ''
+                      }
+                    >
+                      <MenuItem value="">--------</MenuItem>
+                      {_.map(apiColumns, (column, keyVal) => (
+                        <MenuItem key={keyVal} value={keyVal}>
+                          <div className={classes.apiMenuItem}>
+                            {_.startCase(keyVal)}
+                          </div>
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  ))}
+                </Grid>
               </Grid>
-            </Grid>
             )}
           <Grid container spacing={2} justifyContent="center">
             <Grid item xs={6} sm={4}>
@@ -641,7 +663,7 @@ const AddFromAPI = ({
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                disabled={loading || submitDisabled()}
+                disabled={isLoadingItemOptions || isLoadingProductOptions || isLoadingGatewayOptions || isLoadingApiResponse || isAddingApiSetup || submitDisabled()}
               >
                 Set Mapping and Import
               </Button>
@@ -660,14 +682,4 @@ const AddFromAPI = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.optionsReducer,
-  ...state.importExportReducer,
-  loading: (
-    state.optionsReducer.loading
-    || state.importExportReducer.loading
-  ),
-});
-
-export default connect(mapStateToProps)(AddFromAPI);
+export default AddFromAPI;

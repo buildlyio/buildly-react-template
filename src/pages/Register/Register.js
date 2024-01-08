@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import moment from 'moment-timezone';
 import _ from 'lodash';
 import {
@@ -25,11 +24,6 @@ import logo from '../../assets/tp-logo.png';
 import Copyright from '../../components/Copyright/Copyright';
 import Loader from '../../components/Loader/Loader';
 import { useInput } from '../../hooks/useInput';
-import {
-  register,
-  loadOrgNames,
-} from '../../redux/authuser/actions/authuser.actions';
-import { getCountries, getCurrencies } from '../../redux/shipment/actions/shipment.actions';
 import { routes } from '../../routes/routesConstants';
 import { isMobile } from '../../utils/mediaQuery';
 import {
@@ -40,6 +34,12 @@ import {
   UOM_WEIGHT_CHOICES,
 } from '../../utils/mock';
 import { validators } from '../../utils/validators';
+import { useQuery } from 'react-query';
+import { getOrganizationNameQuery } from '../../react-query/queries/authUser/getOrganizationNameQuery';
+import { getCountriesQuery } from '../../react-query/queries/shipments/getCountriesQuery';
+import { getCurrenciesQuery } from '../../react-query/queries/shipments/getCurrenciesQuery';
+import { useRegisterMutation } from '../../react-query/mutations/authUser/registerMutation';
+import useAlert from '@hooks/useAlert';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -85,11 +85,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Register = ({
-  dispatch, loading, history, orgNames, countries, currencies,
+  history,
 }) => {
+  const { displayAlert } = useAlert();
+
   const classes = useStyles();
-  const email = useInput('', { required: true });
+  const first_name = useInput('', { required: true });
+  const last_name = useInput('');
   const username = useInput('', { required: true });
+  const email = useInput('', { required: true });
   const password = useInput('', { required: true });
   const re_password = useInput('', {
     required: true,
@@ -98,8 +102,15 @@ const Register = ({
   });
   const organization_name = useInput('', { required: true });
   const organization_abbrevation = useInput('', { required: true });
-  const first_name = useInput('', { required: true });
-  const last_name = useInput('');
+  const [countryList, setCountryList] = useState([]);
+  const country = useInput('United States', { required: true });
+  const [currencyList, setCurrencyList] = useState([]);
+  const currency = useInput('USD', { required: true });
+  const dateFormat = useInput('MMM DD, YYYY', { required: true });
+  const timeFormat = useInput('hh:mm:ss A', { required: true });
+  const distance = useInput('Miles', { required: true });
+  const temp = useInput('Fahrenheit', { required: true });
+  const weight = useInput('Pounds', { required: true });
   const [pushOptions, setPushOptions] = useState({
     geofence: false,
     environmental: false,
@@ -108,40 +119,36 @@ const Register = ({
     geofence: false,
     environmental: false,
   });
-  const country = useInput('United States', { required: true });
-  const currency = useInput('USD', { required: true });
-  const dateFormat = useInput('MMM DD, YYYY', { required: true });
-  const timeFormat = useInput('hh:mm:ss A', { required: true });
-  const distance = useInput('Miles', { required: true });
-  const temp = useInput('Fahrenheit', { required: true });
-  const weight = useInput('Pounds', { required: true });
-  const [countryList, setCountryList] = useState([]);
-  const [currencyList, setCurrencyList] = useState([]);
   const [formError, setFormError] = useState({});
 
-  useEffect(() => {
-    if (_.isEmpty(orgNames)) {
-      dispatch(loadOrgNames());
-    }
-    if (_.isEmpty(countries)) {
-      dispatch(getCountries());
-    }
-    if (_.isEmpty(currencies)) {
-      dispatch(getCurrencies());
-    }
-  }, []);
+  const { data: orgNameData, isLoading: isLoadingOrgNames } = useQuery(
+    ['orgNames'],
+    () => getOrganizationNameQuery(),
+  );
+
+  const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
+    ['countries'],
+    () => getCountriesQuery(displayAlert),
+  );
+
+  const { data: currenciesData, isLoading: isLoadingCurrencies } = useQuery(
+    ['currencies'],
+    () => getCurrenciesQuery(displayAlert),
+  );
 
   useEffect(() => {
-    if (!_.isEmpty(countries)) {
-      setCountryList(_.sortBy(_.without(_.uniq(_.map(countries, 'country')), [''])));
+    if (!_.isEmpty(countriesData)) {
+      setCountryList(_.sortBy(_.without(_.uniq(_.map(countriesData, 'country')), [''])));
     }
-  }, [countries]);
+  }, [countriesData]);
 
   useEffect(() => {
-    if (!_.isEmpty(currencies)) {
-      setCurrencyList(_.sortBy(_.without(_.uniq(_.map(currencies, 'currency')), [''])));
+    if (!_.isEmpty(currenciesData)) {
+      setCurrencyList(_.sortBy(_.without(_.uniq(_.map(currenciesData, 'currency')), [''])));
     }
-  }, [currencies]);
+  }, [currenciesData]);
+
+  const { mutate: registerMutation, isLoading: isRegister } = useRegisterMutation(history, routes.LOGIN, displayAlert);
 
   /**
    * Submit the form to the backend and attempts to authenticate
@@ -161,7 +168,7 @@ const Register = ({
       email_preferences: emailOptions,
       user_timezone: moment.tz.guess(),
     };
-    if (organization_name.value && !_.includes(orgNames, organization_name.value)) {
+    if (organization_name.value && !_.includes(orgNameData, organization_name.value)) {
       registerFormValue = {
         ...registerFormValue,
         organization_abbrevation: _.toUpper(organization_abbrevation.value),
@@ -174,7 +181,7 @@ const Register = ({
         weight: weight.value,
       };
     }
-    dispatch(register(registerFormValue, history));
+    registerMutation(registerFormValue);
   };
 
   /**
@@ -213,7 +220,7 @@ const Register = ({
       || !re_password.value
       || !organization_name.value
       || !first_name.value
-      || (organization_name.value && !_.includes(orgNames, organization_name.value)
+      || (organization_name.value && !_.includes(orgNameData, organization_name.value)
         && (!country.value || !currency.value || !dateFormat.value || !timeFormat.value
           || !distance.value || !temp.value || !weight.value || !organization_abbrevation.value))
     ) {
@@ -234,7 +241,7 @@ const Register = ({
       maxWidth="sm"
       className={classes.container}
     >
-      {loading && <Loader open={loading} />}
+      {(isLoadingOrgNames || isLoadingCountries || isLoadingCurrencies || isRegister) && <Loader open={isLoadingOrgNames || isLoadingCountries || isLoadingCurrencies || isRegister} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
@@ -301,7 +308,6 @@ const Register = ({
                   />
                 </Grid>
               </Grid>
-
               <Grid container spacing={isMobile() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -353,7 +359,6 @@ const Register = ({
                   />
                 </Grid>
               </Grid>
-
               <Grid container spacing={isMobile() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -380,7 +385,6 @@ const Register = ({
                     {...password.bind}
                   />
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -407,7 +411,6 @@ const Register = ({
                   />
                 </Grid>
               </Grid>
-
               <Grid container spacing={isMobile() ? 0 : 3}>
                 <Grid item xs={12}>
                   <Autocomplete
@@ -415,7 +418,7 @@ const Register = ({
                     disableClearable
                     id="organization_name"
                     name="organization_name"
-                    options={orgNames || []}
+                    options={orgNameData || []}
                     onChange={(e, newValue) => {
                       organization_name.setValue(newValue || '');
                     }}
@@ -449,12 +452,11 @@ const Register = ({
                   />
                 </Grid>
               </Grid>
-
               <Grid
                 container
                 spacing={isMobile() ? 0 : 3}
                 style={{
-                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
+                  display: (!organization_name.value || _.includes(orgNameData, organization_name.value)) && 'none',
                 }}
               >
                 <Grid item xs={12} md={6}>
@@ -483,7 +485,6 @@ const Register = ({
                     {...organization_abbrevation.bind}
                   />
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -496,9 +497,9 @@ const Register = ({
                     autoComplete="country"
                     value={country.value}
                     onChange={(e) => {
-                      const curr = _.find(currencies, {
-                        country: _.find(countries, { country: e.target.value })
-                          ? _.find(countries, { country: e.target.value }).iso3
+                      const curr = _.find(currenciesData, {
+                        country: _.find(countriesData, { country: e.target.value })
+                          ? _.find(countriesData, { country: e.target.value }).iso3
                           : '',
                       });
                       currency.setValue(curr ? curr.currency : '');
@@ -516,7 +517,6 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -540,7 +540,6 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -564,7 +563,6 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -588,7 +586,6 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -612,7 +609,6 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -636,7 +632,6 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -661,11 +656,10 @@ const Register = ({
                   </TextField>
                 </Grid>
               </Grid>
-
               <Grid
                 container
                 spacing={isMobile() ? 0 : 3}
-                mt={(!organization_name.value || _.includes(orgNames, organization_name.value))
+                mt={(!organization_name.value || _.includes(orgNameData, organization_name.value))
                   && -2}
               >
                 <Grid item xs={12}>
@@ -751,14 +745,13 @@ const Register = ({
                   </div>
                 </Grid>
               </Grid>
-
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                disabled={loading || submitDisabled()}
+                disabled={isLoadingOrgNames || isLoadingCountries || isLoadingCurrencies || isRegister || submitDisabled()}
               >
                 Register
               </Button>
@@ -784,11 +777,4 @@ const Register = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-  ...state.shipmentReducer,
-  loading: state.authReducer.loading || state.shipmentReducer.loading,
-});
-
-export default connect(mapStateToProps)(Register);
+export default Register;

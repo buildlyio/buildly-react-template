@@ -77,7 +77,7 @@ const AccountMenu = ({
           </Typography>
           {organizationData && (
             <Typography variant="body1">
-              {`Works at: ${organizationData.name}`}
+              {`Works at: ${organizationData}`}
             </Typography>
           )}
         </Box>

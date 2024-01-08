@@ -5,13 +5,19 @@ import App from './App';
 import './i18n';
 import configureStore from './redux/store';
 import registerServiceWorker from './serviceWorkerRegistration';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 const store = configureStore();
 
+const queryClient = new QueryClient();
+
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>, document.getElementById('root'),
+  <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </QueryClientProvider>,
+  document.getElementById('root'),
 );
 
 registerServiceWorker();

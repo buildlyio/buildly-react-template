@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   useTheme,
@@ -9,13 +8,13 @@ import {
   TextField,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import Loader from '../../../../components/Loader/Loader';
 import FormModal from '../../../../components/Modal/FormModal';
 import { useInput } from '../../../../hooks/useInput';
-import {
-  addGatewayType,
-  editGatewayType,
-} from '../../../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import { validators } from '../../../../utils/validators';
+import { useAddGatewayTypeMutation } from '../../../../react-query/mutations/sensorGateways/addGatewayTypeMutation';
+import { useEditGatewayTypeMutation } from '../../../../react-query/mutations/sensorGateways/editGatewayTypeMutation';
+import useAlert from '@hooks/useAlert';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -47,12 +46,12 @@ const useStyles = makeStyles((theme) => ({
 const AddGatewayType = ({
   history,
   location,
-  loading,
-  dispatch,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
+
+  const { displayAlert } = useAlert();
 
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -91,6 +90,10 @@ const AddGatewayType = ({
     }
   };
 
+  const { mutate: addGatewayTypeMutation, isLoading: isAddingGatewayType } = useAddGatewayTypeMutation(history, location.state.from, displayAlert);
+
+  const { mutate: editGatewayTypeMutation, isLoading: isEditingGatewayType } = useEditGatewayTypeMutation(history, location.state.from, displayAlert);
+
   /**
    * Submit The form and add/edit custodian type
    * @param {Event} event the default submit event
@@ -104,17 +107,13 @@ const AddGatewayType = ({
       edit_date: currentDateTime,
     };
     if (editPage) {
-      dispatch(editGatewayType(data));
+      editGatewayTypeMutation(data);
     } else {
       data = {
         ...data,
         create_date: currentDateTime,
       };
-      dispatch(addGatewayType(data));
-    }
-    setFormModal(false);
-    if (location && location.state) {
-      history.push(location.state.from);
+      addGatewayTypeMutation(data);
     }
   };
 
@@ -171,6 +170,9 @@ const AddGatewayType = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {(isAddingGatewayType || isEditingGatewayType) && (
+            <Loader open={isAddingGatewayType || isEditingGatewayType} />
+          )}
           <form
             className={classes.form}
             noValidate
@@ -203,7 +205,7 @@ const AddGatewayType = ({
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    disabled={loading || submitDisabled()}
+                    disabled={isAddingGatewayType || isEditingGatewayType || submitDisabled()}
                   >
                     {buttonText}
                   </Button>
@@ -229,9 +231,4 @@ const AddGatewayType = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.sensorsGatewayReducer,
-});
-
-export default connect(mapStateToProps)(AddGatewayType);
+export default AddGatewayType;

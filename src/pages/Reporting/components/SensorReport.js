@@ -39,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SensorReport = ({
-  loading,
   sensorReport,
   shipmentName,
   selectedMarker,
@@ -106,7 +105,7 @@ const SensorReport = ({
             variant="h5"
           >
             {shipmentName
-            && `Sensor Report - Shipment: ${shipmentName}`}
+              && `Sensor Report - Shipment: ${shipmentName}`}
             {!shipmentName && 'Sensor Report'}
           </Typography>
         </div>
@@ -115,7 +114,6 @@ const SensorReport = ({
           hideAddButton
           filename="SensorReportData"
           tableHeight="500px"
-          loading={loading}
           rows={rows}
           columns={columns}
           selectable={{

@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import {
   Accordion,
   AccordionSummary,
@@ -8,8 +7,8 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import Consortium from './components/Consortium';
 import MappingOrg from './components/MappingOrg';
+import Consortium from './components/Consortium';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,7 +45,6 @@ const Configuration = (props) => {
           <MappingOrg {...props} />
         </AccordionDetails>
       </Accordion>
-
       <Accordion className={classes.accordion}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -65,8 +63,4 @@ const Configuration = (props) => {
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-});
-
-export default connect(mapStateToProps)(Configuration);
+export default Configuration;

@@ -1,30 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
 import { getUser } from '../../../../context/User.context';
-import {
-  getProducts,
-  deleteProduct,
-  getUnitOfMeasure,
-} from '../../../../redux/items/actions/items.actions';
 import { routes } from '../../../../routes/routesConstants';
 import { getProductColumns } from '../../../../utils/constants';
 import AddProduct from '../forms/AddProduct';
+import { useQuery } from 'react-query';
+import { getProductQuery } from '../../../../react-query/queries/items/getProductQuery';
+import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
+import { useDeleteProductMutation } from '../../../../react-query/mutations/items/deleteProductMutation';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '../../../../zustand/timezone/timezoneStore';
 
 const Product = ({
-  dispatch,
-  loading,
-  products,
   redirectTo,
   history,
-  timezone,
-  unitOfMeasure,
 }) => {
   const organization = getUser().organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
 
   const addPath = redirectTo
     ? `${redirectTo}/product`
@@ -34,14 +32,15 @@ const Product = ({
     ? `${redirectTo}/product`
     : `${routes.CONFIGURATION}/product/edit`;
 
-  useEffect(() => {
-    if (_.isEmpty(products)) {
-      dispatch(getProducts(organization));
-    }
-    if (_.isEmpty(unitOfMeasure)) {
-      dispatch(getUnitOfMeasure(organization));
-    }
-  }, []);
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+  );
+
+  const { data: productData, isLoading: isLoadingProducts } = useQuery(
+    ['products', organization],
+    () => getProductQuery(organization, displayAlert),
+  );
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -62,26 +61,28 @@ const Product = ({
     setDeleteModal(true);
   };
 
+  const { mutate: deleteProductMutation, isLoading: isDeletingProduct } = useDeleteProductMutation(organization, displayAlert);
+
   const handleDeleteModal = () => {
-    dispatch(deleteProduct(deleteId));
+    deleteProductMutation(deleteId);
     setDeleteModal(false);
   };
 
   return (
     <DataTableWrapper
       noSpace
-      loading={loading}
-      rows={products || []}
+      loading={isLoadingUnits || isLoadingProducts || isDeletingProduct}
+      rows={productData || []}
       columns={getProductColumns(
-        timezone,
-        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight'))
-          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight')).unit_of_measure
+        data,
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight')).unit_of_measure
           : '',
-        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
           : '',
-        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
           : '',
       )}
       filename="Products"
@@ -101,10 +102,4 @@ const Product = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.itemsReducer,
-  ...state.optionsReducer,
-});
-
-export default connect(mapStateToProps)(Product);
+export default Product;

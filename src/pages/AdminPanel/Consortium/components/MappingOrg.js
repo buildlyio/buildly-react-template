@@ -1,44 +1,43 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Route } from 'react-router-dom';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
 import { getUser } from '../../../../context/User.context';
-import {
-  loadAllOrgs,
-} from '../../../../redux/authuser/actions/authuser.actions';
-import {
-  getCustodians,
-} from '../../../../redux/custodian/actions/custodian.actions';
 import { routes } from '../../../../routes/routesConstants';
 import { getMappingOrg } from '../../../../utils/constants';
 import EditMapping from '../forms/EditMapping';
+import { useQuery } from 'react-query';
+import { getAllOrganizationQuery } from '../../../../react-query/queries/authUser/getAllOrganizationQuery';
+import { getCustodianQuery } from '../../../../react-query/queries/custodians/getCustodianQuery';
+import useAlert from '@hooks/useAlert';
 
 const MappingOrg = ({
-  dispatch,
-  loading,
-  custodianData,
   history,
   redirectTo,
-  allOrgs,
 }) => {
-  const editPath = redirectTo || `${routes.CONSORTIUM}/mapping-edit`;
-  const organization = getUser().organization.organization_uuid;
+  const user = getUser();
+  const organization = user.organization.organization_uuid;
 
-  useEffect(() => {
-    if (_.isEmpty(allOrgs)) {
-      dispatch(loadAllOrgs());
-    }
-    if (_.isEmpty(custodianData)) {
-      dispatch(getCustodians(organization));
-    }
-  }, []);
+  const { displayAlert } = useAlert();
+
+  const editPath = redirectTo || `${routes.CONSORTIUM}/mapping-edit`;
+
+  const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
+    ['organizations'],
+    () => getAllOrganizationQuery(displayAlert),
+  );
+
+  const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
+    ['custodians', organization],
+    () => getCustodianQuery(organization, displayAlert),
+  );
 
   const editData = (item) => {
     history.push(`${editPath}/:${item.id}`, {
       type: item.custody_org_uuid ? 'edit' : 'set',
       from: redirectTo || routes.CONSORTIUM,
       data: item,
+      orgData,
     });
   };
 
@@ -46,9 +45,9 @@ const MappingOrg = ({
     <DataTableWrapper
       noSpace
       hideAddButton
-      loading={loading}
+      loading={isLoadingOrgs || isLoadingCustodians}
       rows={custodianData || []}
-      columns={getMappingOrg(allOrgs)}
+      columns={getMappingOrg(orgData)}
       filename="Mapping Custodian to Organization"
       editAction={editData}
     >
@@ -57,10 +56,4 @@ const MappingOrg = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.custodianReducer,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(MappingOrg);
+export default MappingOrg;

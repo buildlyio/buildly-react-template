@@ -46,7 +46,9 @@
         "import/no-self-import": "off",
         "import/no-extraneous-dependencies": "off",
         "import/named": "off",
-        "import/no-useless-path-segments": "off"
+        "import/no-useless-path-segments": "off",
+        "linebreak-style": 0,
+        "max-len": "off"
 
     },
     "settings": {

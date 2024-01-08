@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   useTheme,
@@ -17,11 +16,12 @@ import {
 import { makeStyles } from '@mui/styles';
 import Loader from '../../../components/Loader/Loader';
 import FormModal from '../../../components/Modal/FormModal';
-import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
 import { getUser } from '../../../context/User.context';
 import { useInput } from '../../../hooks/useInput';
-import { editItem, addItem } from '../../../redux/items/actions/items.actions';
 import { validators } from '../../../utils/validators';
+import { useAddItemMutation } from '../../../react-query/mutations/items/addItemMutation';
+import { useEditItemMutation } from '../../../react-query/mutations/items/editItemMutation';
+import useAlert from '@hooks/useAlert';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -58,90 +58,57 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddItems = ({
-  dispatch,
-  loading,
-  history,
-  location,
-  itemTypeList,
-  products,
-  productType,
-  productOptions,
-  itemOptions,
-  unitOfMeasure,
+  history, location,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
 
+  const { displayAlert } = useAlert();
+
   const redirectTo = location.state && location.state.from;
+  const {
+    itemTypesData, productData, productTypesData, unitData,
+  } = location.state || {};
+
   const editPage = location.state && location.state.type === 'edit';
-  const editData = (
-    location.state
-    && location.state.type === 'edit'
-    && location.state.data
-  ) || {};
+  const editData = (location.state && location.state.type === 'edit' && location.state.data) || {};
 
   const item_name = useInput(editData.name || '', {
     required: true,
   });
-  const [item_value, setItemValue] = useState(editData.value || 0);
-  const [item_weight, setItemWeight] = useState(
-    editData.gross_weight || 0,
-  );
-  const [units, setContainerUnits] = useState(
-    editData.number_of_units || 0,
-  );
   const item_type = useInput(editData.item_type || '', {
     required: true,
   });
-  const [gtin, setGtin] = useState(editData.gtin || '');
-  const [ean, setEan] = useState(editData.ean || '');
-  const [upc, setUpc] = useState(editData.upc || '');
-  const [paper_tag_no, setPaperTag] = useState(
-    editData.paper_tag_number || '',
-  );
-  const [batch_id, setBatchId] = useState(editData.batch_run_id || '');
-  const [bin_id, setBinId] = useState(editData.bin_id || '');
   const [product, setProduct] = useState('');
-  const [product_url, setProductUrl] = useState(
-    editData.product || '',
-  );
+  const [product_url, setProductUrl] = useState(editData.product || '');
+  const [product_desc, setProductDesc] = useState('');
   const [product_type, setProductType] = useState('');
   const [product_value, setProductValue] = useState('');
-  const [product_desc, setProductDesc] = useState('');
-  const [product_weight, setProductWeight] = useState(
-    editData.product_weight || '',
-  );
+  const [product_weight, setProductWeight] = useState(editData.product_weight || '');
+  const [gtin, setGtin] = useState(editData.gtin || '');
+  const [upc, setUpc] = useState(editData.upc || '');
+  const [ean, setEan] = useState(editData.ean || '');
+  const [paper_tag_no, setPaperTag] = useState(editData.paper_tag_number || '');
+  const [batch_id, setBatchId] = useState(editData.batch_run_id || '');
+  const [bin_id, setBinId] = useState(editData.bin_id || '');
+  const [units, setContainerUnits] = useState(editData.number_of_units || 0);
+  const [item_value, setItemValue] = useState(editData.value || 0);
+  const [item_weight, setItemWeight] = useState(editData.gross_weight || 0);
 
   const [formError, setFormError] = useState({});
 
   const buttonText = editPage ? 'Save' : 'Add Item';
   const formTitle = editPage ? 'Edit Item' : 'Add Item';
 
-  const [itemMetData, setItemMetaData] = useState({});
-  const [productMetData, productMetaData] = useState({});
   const organization = getUser().organization.organization_uuid;
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
-    if (itemOptions && itemOptions.actions) {
-      setItemMetaData(itemOptions.actions.POST);
-    }
-    if (productOptions && productOptions.actions) {
-      productMetaData(productOptions.actions);
-    }
-  }, [productOptions, itemOptions]);
-
-  useEffect(() => {
-    if (
-      editPage
-      && editData
-      && products
-      && productType
-    ) {
+    if (editPage && editData && productData && productTypesData) {
       let selectedProduct = '';
-      _.forEach(products, (obj) => {
+      _.forEach(productData, (obj) => {
         if (obj.url === editData.product[0]) {
           selectedProduct = obj;
         }
@@ -153,17 +120,10 @@ const AddItems = ({
       setItemWeight(editData.gross_weight);
       setItemValue(editData.value);
     }
-  }, [editPage, editData, products, productType]);
+  }, [editPage, editData, productData, productTypesData]);
 
   const closeFormModal = () => {
-    const dataHasChanged = (
-      item_name.hasChanged()
-      || item_type.hasChanged()
-      || ((product && product.url) !== (
-        (editData.product && editData.product[0]) || ''))
-      || (units !== (editData.number_of_units || 0))
-    );
-
+    const dataHasChanged = item_name.hasChanged() || item_type.hasChanged() || (product && product.url) !== ((editData.product && editData.product[0]) || '') || units !== (editData.number_of_units || 0);
     if (dataHasChanged) {
       setConfirmModal(true);
     } else {
@@ -182,12 +142,17 @@ const AddItems = ({
     }
   };
 
+  const { mutate: addItemMutation, isLoading: isAddingItem } = useAddItemMutation(organization, history, redirectTo, displayAlert);
+
+  const { mutate: editItemMutation, isLoading: isEditingItem } = useEditItemMutation(organization, history, redirectTo, displayAlert);
+
   /**
    * Submit The form and add/edit custodian
    * @param {Event} event the default submit event
    */
   const handleSubmit = (event) => {
     event.preventDefault();
+
     const itemFormValue = {
       item_type: item_type.value,
       name: item_name.value,
@@ -207,9 +172,9 @@ const AddItems = ({
       organization_uuid: organization,
     };
     if (editPage) {
-      dispatch(editItem(itemFormValue, history, redirectTo));
+      editItemMutation(itemFormValue);
     } else {
-      dispatch(addItem(itemFormValue, history, redirectTo));
+      addItemMutation(itemFormValue);
     }
   };
 
@@ -241,12 +206,7 @@ const AddItems = ({
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (
-      !item_type.value
-      || !item_name.value
-      || !product
-      || !units
-    ) {
+    if (!item_type.value || !item_name.value || !product || !units) {
       return true;
     }
     let errorExists = false;
@@ -263,18 +223,18 @@ const AddItems = ({
     setProductUrl(value.url);
     setProductDesc(value.description);
     setProductValue(value.value);
-    setBinId(value.bin_id);
-    setBatchId(value.batch_run_id);
-    setEan(value.ean);
-    setUpc(value.upc);
-    setGtin(value.gtin);
-    setPaperTag(value.paper_tag_number);
     setProductWeight(value.gross_weight);
+    setGtin(value.gtin);
+    setUpc(value.upc);
+    setEan(value.ean);
+    setPaperTag(value.paper_tag_number);
+    setBatchId(value.batch_run_id);
+    setBinId(value.bin_id);
     setContainerUnits(1);
-    setItemWeight(value.gross_weight);
     setItemValue(value.value);
-    if (productType && productType.length) {
-      _.forEach(productType, (type) => {
+    setItemWeight(value.gross_weight);
+    if (productTypesData && productTypesData.length) {
+      _.forEach(productTypesData, (type) => {
         if (type.url === value.product_type) {
           setProductType(type.name);
         }
@@ -303,12 +263,10 @@ const AddItems = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
-          {loading && <Loader open={loading} />}
-          <form
-            className={classes.form}
-            noValidate
-            onSubmit={handleSubmit}
-          >
+          {(isAddingItem || isEditingItem) && (
+            <Loader open={isAddingItem || isEditingItem} />
+          )}
+          <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid className={classes.inputWithTooltip} item xs={12}>
                 <TextField
@@ -320,27 +278,13 @@ const AddItems = ({
                   label="Item Name"
                   name="item_name"
                   autoComplete="item_name"
-                  error={
-                    formError.item_name
-                    && formError.item_name.error
-                  }
+                  error={formError.item_name && formError.item_name.error}
                   helperText={
-                    formError.item_name
-                      ? formError.item_name.message
-                      : ''
+                    formError.item_name ? formError.item_name.message : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', item_name)}
                   {...item_name.bind}
                 />
-                {itemMetData.name
-                && itemMetData.name.help_text
-                && (
-                  <CustomizedTooltips
-                    toolTipText={
-                      itemMetData.name.help_text
-                    }
-                  />
-                )}
               </Grid>
               <Grid className={classes.inputWithTooltip} item xs={12}>
                 <TextField
@@ -351,47 +295,26 @@ const AddItems = ({
                   id="item_type"
                   select
                   label="Item Type"
-                  error={
-                    formError.item_type
-                    && formError.item_type.error
-                  }
+                  error={formError.item_type && formError.item_type.error}
                   helperText={
-                    formError.item_type
-                      ? formError.item_type.message
-                      : ''
+                    formError.item_type ? formError.item_type.message : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', item_type, 'item_type')}
                   {...item_type.bind}
                 >
                   <MenuItem value="">Select</MenuItem>
-                  {itemTypeList
-                    && _.map(
-                      _.orderBy(itemTypeList, ['name'], ['asc']),
-                      (item, index) => (
-                        <MenuItem
-                          key={`itemType${index}:${item.id}`}
-                          value={item.url}
-                        >
-                          {item.name}
-                        </MenuItem>
-                      ),
-                    )}
+                  {itemTypesData && _.map(_.orderBy(itemTypesData, ['name'], ['asc']), (item, index) => (
+                    <MenuItem
+                      key={`itemType${index}:${item.id}`}
+                      value={item.url}
+                    >
+                      {item.name}
+                    </MenuItem>
+                  ))}
                 </TextField>
-                {itemMetData.item_type
-                && itemMetData.item_type.help_text
-                && (
-                  <CustomizedTooltips
-                    toolTipText={
-                      itemMetData.item_type.help_text
-                    }
-                  />
-                )}
               </Grid>
             </Grid>
-            <Card
-              variant="outlined"
-              className={classes.cardItems}
-            >
+            <Card variant="outlined" className={classes.cardItems}>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
                   Product Info
@@ -401,14 +324,12 @@ const AddItems = ({
                     <div className={classes.inputWithTooltip}>
                       <Autocomplete
                         id="products"
-                        options={products || []}
+                        options={productData || []}
                         value={product}
                         onChange={(event, newValue) => onProductChange(newValue)}
                         style={{ flex: 1 }}
                         getOptionLabel={(option) => option && option.name}
-                        isOptionEqualToValue={(option, value) => (
-                          !value || (value && (option.name === value.name))
-                        )}
+                        isOptionEqualToValue={(option, value) => !value || (value && option.name === value.name)}
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -420,23 +341,9 @@ const AddItems = ({
                           />
                         )}
                       />
-                      {productMetData.name
-                        && productMetData.name.help_text
-                        && (
-                          <CustomizedTooltips
-                            toolTipText={
-                              productMetData.name.help_text
-                            }
-                          />
-                        )}
                     </div>
                   </Grid>
-
-                  <Grid
-                    className={classes.inputWithTooltip}
-                    item
-                    xs={12}
-                  >
+                  <Grid className={classes.inputWithTooltip} item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -450,15 +357,6 @@ const AddItems = ({
                       autoComplete="product_desc"
                       value={product_desc}
                     />
-                    {productMetData.description
-                    && productMetData.description.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          productMetData.description.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                   <Grid
                     className={classes.inputWithTooltip}
@@ -475,15 +373,6 @@ const AddItems = ({
                       label="Product Type"
                       value={product_type}
                     />
-                    {productMetData.product_type
-                    && productMetData.product_type.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          productMetData.product_type.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                   <Grid
                     className={classes.inputWithTooltip}
@@ -503,28 +392,21 @@ const AddItems = ({
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            {_.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
-                              ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
+                            {_.find(
+                              unitData,
+                              (unit) => _.toLower(unit.unit_of_measure_for) === 'currency',
+                            )
+                              ? _.find(
+                                unitData,
+                                (unit) => _.toLower(unit.unit_of_measure_for) === 'currency',
+                              ).unit_of_measure
                               : ''}
                           </InputAdornment>
                         ),
                       }}
                     />
-                    {productMetData.value
-                    && productMetData.value.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          productMetData.value.help_text
-                        }
-                      />
-                    )}
                   </Grid>
-                  <Grid
-                    className={classes.inputWithTooltip}
-                    item
-                    xs={12}
-                  >
+                  <Grid className={classes.inputWithTooltip} item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -535,15 +417,6 @@ const AddItems = ({
                       label="Product Weight"
                       value={product_weight}
                     />
-                    {productMetData.gross_weight
-                    && productMetData.gross_weight.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          productMetData.gross_weight.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                 </Grid>
                 <Grid container spacing={isDesktop ? 2 : 0}>
@@ -565,15 +438,6 @@ const AddItems = ({
                       autoComplete="gtin"
                       value={gtin}
                     />
-                    {productMetData.gtin
-                    && productMetData.gtin.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          productMetData.gtin.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                   <Grid
                     className={classes.inputWithTooltip}
@@ -593,15 +457,6 @@ const AddItems = ({
                       autoComplete="upc"
                       value={upc}
                     />
-                    {productMetData.upc
-                    && productMetData.upc.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          productMetData.upc.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                   <Grid
                     className={classes.inputWithTooltip}
@@ -621,15 +476,6 @@ const AddItems = ({
                       autoComplete="ean"
                       value={ean}
                     />
-                    {productMetData.ean
-                    && productMetData.ean.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          productMetData.ean.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                   <Grid
                     className={classes.inputWithTooltip}
@@ -649,15 +495,6 @@ const AddItems = ({
                       autoComplete="paper_tag_no"
                       value={paper_tag_no}
                     />
-                    {productMetData.paper_tag_number
-                    && productMetData.paper_tag_number.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          productMetData.paper_tag_number.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                   <Grid
                     className={classes.inputWithTooltip}
@@ -677,15 +514,6 @@ const AddItems = ({
                       autoComplete="batch_id"
                       value={batch_id}
                     />
-                    {productMetData.batch_run_id
-                    && productMetData.batch_run_id.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          productMetData.batch_run_id.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                   <Grid
                     className={classes.inputWithTooltip}
@@ -705,20 +533,10 @@ const AddItems = ({
                       autoComplete="bin_id"
                       value={bin_id}
                     />
-                    {productMetData.bin_id
-                    && productMetData.bin_id.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          productMetData.bin_id.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                 </Grid>
               </CardContent>
             </Card>
-
             <Grid container spacing={isDesktop ? 2 : 0}>
               <Grid
                 className={classes.inputWithTooltip}
@@ -738,17 +556,7 @@ const AddItems = ({
                   value={units}
                   onChange={(e) => onNumberOfUnitsChange(e)}
                 />
-                {itemMetData.number_of_units
-                && itemMetData.number_of_units.help_text
-                && (
-                  <CustomizedTooltips
-                    toolTipText={
-                      itemMetData.number_of_units.help_text
-                    }
-                  />
-                )}
               </Grid>
-
               <Grid
                 className={classes.inputWithTooltip}
                 item
@@ -768,28 +576,21 @@ const AddItems = ({
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        {_.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
-                          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
+                        {_.find(
+                          unitData,
+                          (unit) => _.toLower(unit.unit_of_measure_for) === 'currency',
+                        )
+                          ? _.find(
+                            unitData,
+                            (unit) => _.toLower(unit.unit_of_measure_for) === 'currency',
+                          ).unit_of_measure
                           : ''}
                       </InputAdornment>
                     ),
                   }}
                 />
-                {itemMetData.value
-                && itemMetData.value.help_text
-                && (
-                  <CustomizedTooltips
-                    toolTipText={
-                      itemMetData.value.help_text
-                    }
-                  />
-                )}
               </Grid>
-              <Grid
-                className={classes.inputWithTooltip}
-                item
-                xs={12}
-              >
+              <Grid className={classes.inputWithTooltip} item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -800,23 +601,9 @@ const AddItems = ({
                   label="Item Weight"
                   value={item_weight}
                 />
-                {itemMetData.gross_weight
-                && itemMetData.gross_weight.help_text
-                && (
-                  <CustomizedTooltips
-                    toolTipText={
-                      itemMetData.gross_weight.help_text
-                    }
-                  />
-                )}
               </Grid>
             </Grid>
-
-            <Grid
-              container
-              spacing={isDesktop ? 3 : 0}
-              justifyContent="center"
-            >
+            <Grid container spacing={isDesktop ? 3 : 0} justifyContent="center">
               <Grid item xs={12} sm={4}>
                 <Button
                   type="submit"
@@ -824,7 +611,7 @@ const AddItems = ({
                   variant="contained"
                   color="primary"
                   className={classes.submit}
-                  disabled={loading || submitDisabled()}
+                  disabled={isAddingItem || isEditingItem || submitDisabled()}
                 >
                   {buttonText}
                 </Button>
@@ -849,14 +636,4 @@ const AddItems = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.itemsReducer,
-  ...state.optionsReducer,
-  loading: (
-    state.itemsReducer.loading
-    || state.optionsReducer.loading
-  ),
-});
-
-export default connect(mapStateToProps)(AddItems);
+export default AddItems;

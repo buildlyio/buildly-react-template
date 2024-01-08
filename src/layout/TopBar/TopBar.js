@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
 import { useTimezoneSelect, allTimezones } from 'react-timezone-select';
 import _ from 'lodash';
 import {
@@ -18,20 +17,6 @@ import {
 } from '@mui/icons-material';
 import logo from '../../assets/tp-logo.png';
 import Loader from '../../components/Loader/Loader';
-import {
-  logout,
-  getUser,
-  loadAllOrgs,
-  updateUser,
-} from '../../redux/authuser/actions/authuser.actions';
-import {
-  getUserOptions,
-  getOrganizationOptions,
-  setTimezone,
-} from '../../redux/options/actions/options.actions';
-import {
-  getNewGateways,
-} from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
 import { routes } from '../../routes/routesConstants';
 import {
   checkForAdmin,
@@ -39,6 +24,13 @@ import {
 } from '../../utils/utilMethods';
 import AdminMenu from './AdminMenu';
 import AccountMenu from './AccountMenu';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '../../zustand/timezone/timezoneStore';
+import { getUser } from '../../context/User.context';
+import { useQuery } from 'react-query';
+import { getAllOrganizationQuery } from '../../react-query/queries/authUser/getAllOrganizationQuery';
+import { useUpdateUserMutation } from '../../react-query/mutations/authUser/updateUserMutation';
+import { oauthService } from '@modules/oauth/oauth.service';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -75,14 +67,6 @@ const TopBar = ({
   navHidden,
   setNavHidden,
   history,
-  dispatch,
-  data,
-  organizationData,
-  userOptions,
-  orgOptions,
-  timezone,
-  allOrgs,
-  loading,
 }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -90,12 +74,14 @@ const TopBar = ({
   const [organization, setOrganization] = useState(null);
   const { options: tzOptions } = useTimezoneSelect({ labelStyle: 'original', timezones: allTimezones });
 
-  let user;
+  const user = getUser();
   let isAdmin = false;
   let isSuperAdmin = false;
 
-  if (data && data.data) {
-    user = data.data;
+  const { displayAlert } = useAlert();
+  const { data, setTimezone } = useStore();
+
+  if (user) {
     if (!organization) {
       setOrganization(user.organization.name);
     }
@@ -103,44 +89,27 @@ const TopBar = ({
     isSuperAdmin = checkForGlobalAdmin(user);
   }
 
-  useEffect(() => {
-    dispatch(getUser());
-    if (!allOrgs) {
-      dispatch(loadAllOrgs());
-    }
-    if (userOptions === null) {
-      dispatch(getUserOptions());
-    }
-    if (orgOptions === null) {
-      dispatch(getOrganizationOptions());
-    }
-  }, []);
+  const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
+    ['organizations'],
+    () => getAllOrganizationQuery(displayAlert),
+  );
+
+  const { mutate: updateUserMutation, isLoading: isUpdateUser } = useUpdateUserMutation(history, displayAlert);
+
+  const handleOrganizationChange = (e) => {
+    const organization_name = e.target.value;
+    setOrganization(organization_name);
+    const { organization_uuid } = _.filter(orgData, (org) => org.name === organization_name)[0];
+    const updateData = {
+      id: user.id,
+      organization_uuid,
+      organization_name,
+    };
+    updateUserMutation(updateData);
+  };
 
   const settingMenu = (event) => {
     setSettingEl(event.currentTarget);
-  };
-
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const refreshPage = () => {
-    dispatch(getNewGateways());
-  };
-
-  const handleLogoutClick = () => {
-    dispatch(logout());
-    history.push('/');
-  };
-
-  const handleMyAccountClick = () => {
-    history.push(routes.MY_ACCOUNT);
-    setAnchorEl(null);
-  };
-
-  const handleAboutClick = () => {
-    history.push(routes.ABOUT_PLATFORM);
-    setAnchorEl(null);
   };
 
   const handleAdminPanelClick = () => {
@@ -153,21 +122,32 @@ const TopBar = ({
     setSettingEl(null);
   };
 
-  const handleOrganizationChange = (e) => {
-    const organization_name = e.target.value;
-    setOrganization(organization_name);
-    const { organization_uuid } = _.filter(allOrgs, (org) => org.name === organization_name)[0];
-    dispatch(updateUser({
-      id: user.id,
-      organization_uuid,
-      organization_name,
-    }, history));
-    // history.push(routes.SHIPMENT);
+  const refreshPage = () => {
+    window.location.reload();
+  };
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMyAccountClick = () => {
+    history.push(routes.MY_ACCOUNT);
+    setAnchorEl(null);
+  };
+
+  const handleAboutClick = () => {
+    history.push(routes.ABOUT_PLATFORM);
+    setAnchorEl(null);
+  };
+
+  const handleLogoutClick = () => {
+    oauthService.logout();
+    history.push('/');
   };
 
   return (
     <AppBar position="fixed" className={classes.appBar}>
-      {loading && <Loader open={loading} />}
+      {(isLoadingOrgs || isUpdateUser) && <Loader open={isLoadingOrgs || isUpdateUser} />}
       <Toolbar>
         <IconButton
           edge="start"
@@ -188,7 +168,6 @@ const TopBar = ({
           className={classes.logo}
           alt="Company text logo"
         />
-
         <div className={classes.menuRight}>
           <TextField
             className={classes.timezone}
@@ -197,8 +176,8 @@ const TopBar = ({
             id="timezone"
             label="Timezone"
             select
-            value={timezone}
-            onChange={(e) => dispatch(setTimezone(e.target.value))}
+            value={data}
+            onChange={(e) => setTimezone(e.target.value)}
           >
             {_.map(tzOptions, (tzOption, index) => (
               <MenuItem key={`${tzOption.value}-${index}`} value={tzOption.value}>
@@ -217,7 +196,7 @@ const TopBar = ({
               value={organization}
               onChange={handleOrganizationChange}
             >
-              {_.map(allOrgs, (org) => (
+              {_.map(orgData, (org) => (
                 <MenuItem
                   key={`organization-${org.id}`}
                   value={org.name || ''}
@@ -228,17 +207,17 @@ const TopBar = ({
             </TextField>
           )}
           {isAdmin
-          && (
-          <IconButton
-            aria-label="admin section"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={settingMenu}
-            color="primary"
-          >
-            <SettingsIcon fontSize="large" />
-          </IconButton>
-          )}
+            && (
+              <IconButton
+                aria-label="admin section"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={settingMenu}
+                color="primary"
+              >
+                <SettingsIcon fontSize="large" />
+              </IconButton>
+            )}
           <AdminMenu
             settingEl={settingEl}
             setSettingEl={setSettingEl}
@@ -269,10 +248,10 @@ const TopBar = ({
             anchorEl={anchorEl}
             setAnchorEl={setAnchorEl}
             user={user}
-            organizationData={organizationData}
-            handleLogoutClick={handleLogoutClick}
+            organizationData={organization}
             handleMyAccountClick={handleMyAccountClick}
             handleAboutClick={handleAboutClick}
+            handleLogoutClick={handleLogoutClick}
           />
         </div>
       </Toolbar>
@@ -280,10 +259,4 @@ const TopBar = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-  ...state.optionsReducer,
-});
-
-export default connect(mapStateToProps)(TopBar);
+export default TopBar;

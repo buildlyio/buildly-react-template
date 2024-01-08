@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   useTheme,
@@ -11,13 +10,13 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Autocomplete } from '@mui/material';
+import Loader from '../../../../components/Loader/Loader';
 import FormModal from '../../../../components/Modal/FormModal';
 import { useInput } from '../../../../hooks/useInput';
-import {
-  createConsortium,
-  editConsortium,
-} from '../../../../redux/consortium/actions/consortium.actions';
 import { validators } from '../../../../utils/validators';
+import { useAddConsortiumMutation } from '../../../../react-query/mutations/consortium/addConsortiumMutation';
+import { useEditConsortiumMutation } from '../../../../react-query/mutations/consortium/editConsortiumMutation';
+import useAlert from '@hooks/useAlert';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -49,13 +48,14 @@ const useStyles = makeStyles((theme) => ({
 const AddConsortium = ({
   history,
   location,
-  loading,
-  dispatch,
-  allOrgs,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
+
+  const { displayAlert } = useAlert();
+
+  const { orgData } = location.state || {};
 
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -97,6 +97,10 @@ const AddConsortium = ({
     }
   };
 
+  const { mutate: addConsortiumMutation, isLoading: isAddingConsortium } = useAddConsortiumMutation(history, location.state.from, displayAlert);
+
+  const { mutate: editConsortiumMutation, isLoading: isEditingConsortium } = useEditConsortiumMutation(history, location.state.from, displayAlert);
+
   /**
    * Submit The form and add/edit custodian type
    * @param {Event} event the default submit event
@@ -111,17 +115,13 @@ const AddConsortium = ({
       edit_date: currentDateTime,
     };
     if (editPage) {
-      dispatch(editConsortium(data));
+      editConsortiumMutation(data);
     } else {
       data = {
         ...data,
         create_date: currentDateTime,
       };
-      dispatch(createConsortium(data));
-    }
-    setFormModal(false);
-    if (location && location.state) {
-      history.push(location.state.from);
+      addConsortiumMutation(data);
     }
   };
 
@@ -170,11 +170,9 @@ const AddConsortium = ({
       case (value.length > orgs.length):
         setOrgs([...orgs, _.last(value).organization_uuid]);
         break;
-
       case (value.length < orgs.length):
         setOrgs(value);
         break;
-
       default:
         break;
     }
@@ -193,6 +191,9 @@ const AddConsortium = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {(isAddingConsortium || isEditingConsortium) && (
+            <Loader open={isAddingConsortium || isEditingConsortium} />
+          )}
           <form
             className={classes.form}
             noValidate
@@ -223,7 +224,7 @@ const AddConsortium = ({
                   multiple
                   filterSelectedOptions
                   id="orgs"
-                  options={allOrgs}
+                  options={orgData}
                   getOptionLabel={(option) => (
                     option && option.name
                   )}
@@ -237,8 +238,8 @@ const AddConsortium = ({
                       <Chip
                         variant="default"
                         label={
-                          !_.isEmpty(allOrgs) && _.find(allOrgs, { organization_uuid: option })
-                            ? _.find(allOrgs, { organization_uuid: option }).name
+                          !_.isEmpty(orgData) && _.find(orgData, { organization_uuid: option })
+                            ? _.find(orgData, { organization_uuid: option }).name
                             : ''
                         }
                         {...getTagProps({ index })}
@@ -264,7 +265,7 @@ const AddConsortium = ({
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    disabled={loading || submitDisabled()}
+                    disabled={isAddingConsortium || isEditingConsortium || submitDisabled()}
                   >
                     {buttonText}
                   </Button>
@@ -290,10 +291,4 @@ const AddConsortium = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.consortiumReducer,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(AddConsortium);
+export default AddConsortium;

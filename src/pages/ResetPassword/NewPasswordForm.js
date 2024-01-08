@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import {
   Button,
   CssBaseline,
@@ -17,10 +16,11 @@ import logo from '../../assets/tp-logo.png';
 import Copyright from '../../components/Copyright/Copyright';
 import Loader from '../../components/Loader/Loader';
 import { useInput } from '../../hooks/useInput';
-import { confirmResetPassword } from '../../redux/authuser/actions/authuser.actions';
 import { routes } from '../../routes/routesConstants';
 import { isMobile } from '../../utils/mediaQuery';
 import { validators } from '../../utils/validators';
+import { useResetPasswordConfirmMutation } from '../../react-query/mutations/authUser/resetPasswordConfirmMutation';
+import useAlert from '@hooks/useAlert';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NewPassword = ({
-  dispatch, loading, history, location,
+  history, location,
 }) => {
   const classes = useStyles();
   const password = useInput('', { required: true });
@@ -66,8 +66,11 @@ const NewPassword = ({
     confirm: true,
     matchField: password,
   });
-
   const [formError, setFormError] = useState({});
+
+  const { displayAlert } = useAlert();
+
+  const { mutate: resetPasswordConfirmMutation, isLoading: isResetPasswordConfirm } = useResetPasswordConfirmMutation(history, routes.LOGIN, displayAlert);
 
   /**
    * Submit the form to the backend and attempts to change password
@@ -87,7 +90,7 @@ const NewPassword = ({
         uid: restPathArr[1],
         token: restPathArr[2],
       };
-      dispatch(confirmResetPassword(registerFormValue, history));
+      resetPasswordConfirmMutation(registerFormValue);
     }
   };
 
@@ -137,7 +140,7 @@ const NewPassword = ({
       maxWidth="xs"
       className={classes.container}
     >
-      {loading && <Loader open={loading} />}
+      {isResetPasswordConfirm && <Loader open={isResetPasswordConfirm} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
@@ -213,7 +216,7 @@ const NewPassword = ({
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                disabled={loading || submitDisabled()}
+                disabled={isResetPasswordConfirm || submitDisabled()}
               >
                 Submit
               </Button>
@@ -239,9 +242,4 @@ const NewPassword = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(NewPassword);
+export default NewPassword;

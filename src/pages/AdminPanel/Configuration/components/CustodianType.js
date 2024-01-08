@@ -1,30 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
 import { getUser } from '../../../../context/User.context';
-import {
-  getCustodianType,
-  deleteCustodianType,
-} from '../../../../redux/custodian/actions/custodian.actions';
 import { routes } from '../../../../routes/routesConstants';
 import { getColumns } from '../../../../utils/constants';
 import AddCustodianType from '../forms/AddCustodianType';
-import { getUnitOfMeasure } from '../../../../redux/items/actions/items.actions';
+import { useQuery } from 'react-query';
+import { getCustodianTypeQuery } from '../../../../react-query/queries/custodians/getCustodianTypeQuery';
+import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
+import { useDeleteCustodianTypeMutation } from '../../../../react-query/mutations/custodians/deleteCustodianTypeMutation';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '../../../../zustand/timezone/timezoneStore';
 
 const CustodianType = ({
-  dispatch,
-  loading,
-  custodianTypeList,
   redirectTo,
   history,
-  timezone,
-  unitOfMeasure,
 }) => {
+  const organization = getUser().organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const organization = getUser().organization.organization_uuid;
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
 
   const addPath = redirectTo
     ? `${redirectTo}/custodian-type`
@@ -34,14 +32,15 @@ const CustodianType = ({
     ? `${redirectTo}/custodian-type`
     : `${routes.CONFIGURATION}/custodian-type/edit`;
 
-  useEffect(() => {
-    if (_.isEmpty(unitOfMeasure)) {
-      dispatch(getUnitOfMeasure(organization));
-    }
-    if (_.isEmpty(custodianTypeList)) {
-      dispatch(getCustodianType());
-    }
-  }, []);
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+  );
+
+  const { data: custodianTypesData, isLoading: isLoadingCustodianTypes } = useQuery(
+    ['custodianTypes'],
+    () => getCustodianTypeQuery(displayAlert),
+  );
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -62,23 +61,25 @@ const CustodianType = ({
     setDeleteModal(true);
   };
 
+  const { mutate: deleteCustodianTypeMutation, isLoading: isDeletingCustodianType } = useDeleteCustodianTypeMutation(displayAlert);
+
   const handleDeleteModal = () => {
-    dispatch(deleteCustodianType(deleteId));
+    deleteCustodianTypeMutation(deleteId);
     setDeleteModal(false);
   };
 
   return (
     <DataTableWrapper
       noSpace
-      loading={loading}
-      rows={custodianTypeList || []}
+      loading={isLoadingUnits || isLoadingCustodianTypes || isDeletingCustodianType}
+      rows={custodianTypesData || []}
       columns={getColumns(
-        timezone,
-        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+        data,
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
           : '',
-        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
           : '',
       )}
       filename="CustodianType"
@@ -98,11 +99,4 @@ const CustodianType = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.custodianReducer,
-  ...state.optionsReducer,
-  ...state.itemsReducer,
-});
-
-export default connect(mapStateToProps)(CustodianType);
+export default CustodianType;

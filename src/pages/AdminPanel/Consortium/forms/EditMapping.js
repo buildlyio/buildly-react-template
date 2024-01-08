@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   useTheme,
@@ -10,11 +9,12 @@ import {
   MenuItem,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import Loader from '../../../../components/Loader/Loader';
 import FormModal from '../../../../components/Modal/FormModal';
+import { getUser } from '../../../../context/User.context';
 import { useInput } from '../../../../hooks/useInput';
-import {
-  editCustodian,
-} from '../../../../redux/custodian/actions/custodian.actions';
+import { useEditCustodianMutation } from '../../../../react-query/mutations/custodians/editCustodianMutation';
+import useAlert from '@hooks/useAlert';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -46,14 +46,16 @@ const useStyles = makeStyles((theme) => ({
 const EditMapping = ({
   history,
   location,
-  loading,
-  dispatch,
-  allOrgs,
 }) => {
+  const organization = getUser().organization.organization_uuid;
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [options, setOptions] = useState([]);
+
+  const { displayAlert } = useAlert();
+
+  const { orgData } = location.state || {};
 
   const pageType = location.state && location.state.type;
   const pageData = location.state && location.state.data;
@@ -72,8 +74,8 @@ const EditMapping = ({
   ) || '');
 
   useEffect(() => {
-    if (allOrgs && pageData) {
-      const opts = _.map(allOrgs, (org) => {
+    if (orgData && pageData) {
+      const opts = _.map(orgData, (org) => {
         const suggest = _.lowerCase(org.name) === _.lowerCase(pageData.name);
         return {
           value: org.organization_uuid,
@@ -89,7 +91,7 @@ const EditMapping = ({
 
       setOptions(orderedOpts);
     }
-  }, [allOrgs, pageData]);
+  }, [orgData, pageData]);
 
   const closeFormModal = () => {
     if (custodyOrg.hasChanged()) {
@@ -110,6 +112,8 @@ const EditMapping = ({
     }
   };
 
+  const { mutate: editCustodianMutation, isLoading: isEditingCustodian } = useEditCustodianMutation(organization, history, location.state.from, displayAlert);
+
   /**
    * Submit The form and add/edit custodian type
    * @param {Event} event the default submit event
@@ -121,8 +125,7 @@ const EditMapping = ({
       custody_org_uuid: custodyOrg.value || null,
       edit_date: new Date(),
     };
-    dispatch(editCustodian(editData, null, history, location.state.from));
-
+    editCustodianMutation([editData, null]);
     setFormModal(false);
   };
 
@@ -139,6 +142,9 @@ const EditMapping = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {isEditingCustodian && (
+            <Loader open={isEditingCustodian} />
+          )}
           <form
             className={classes.form}
             noValidate
@@ -171,15 +177,15 @@ const EditMapping = ({
                 >
                   <MenuItem value="">Select</MenuItem>
                   {options
-                  && options.length > 0
-                  && _.map(options, (option, index) => (
-                    <MenuItem
-                      key={`org-option-${index}`}
-                      value={option.value}
-                    >
-                      {option.name}
-                    </MenuItem>
-                  ))}
+                    && options.length > 0
+                    && _.map(options, (option, index) => (
+                      <MenuItem
+                        key={`org-option-${index}`}
+                        value={option.value}
+                      >
+                        {option.name}
+                      </MenuItem>
+                    ))}
                 </TextField>
               </Grid>
               <Grid container spacing={2} justifyContent="center">
@@ -190,7 +196,7 @@ const EditMapping = ({
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    disabled={loading}
+                    disabled={isEditingCustodian}
                   >
                     {buttonText}
                   </Button>
@@ -216,9 +222,4 @@ const EditMapping = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(EditMapping);
+export default EditMapping;

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
@@ -10,7 +9,6 @@ import {
 import { makeStyles } from '@mui/styles';
 import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
 import { getUser } from '../../../context/User.context';
-import { getUnitOfMeasure } from '../../../redux/items/actions/items.actions';
 import { getAlertsReportColumns } from '../../../utils/constants';
 
 const useStyles = makeStyles((theme) => ({
@@ -36,24 +34,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AlertsReport = ({
-  loading,
-  alerts,
-  shipmentName,
-  timezone,
-  dispatch,
-  unitOfMeasure,
-  sensorReport,
+  sensorReport, alerts, shipmentName, timezone, unitOfMeasure,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
   const [rows, setRows] = useState([]);
   const organization = getUser().organization.organization_uuid;
-
-  useEffect(() => {
-    if (_.isEmpty(unitOfMeasure)) {
-      dispatch(getUnitOfMeasure(organization));
-    }
-  }, []);
 
   useEffect(() => {
     if (alerts) {
@@ -113,7 +99,6 @@ const AlertsReport = ({
           noSpace
           hideAddButton
           filename="ShipmentAlerts"
-          loading={loading}
           rows={rows}
           columns={getAlertsReportColumns(
             sensorReport,
@@ -131,9 +116,4 @@ const AlertsReport = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.itemsReducer,
-});
-
-export default connect(mapStateToProps)(AlertsReport);
+export default AlertsReport;

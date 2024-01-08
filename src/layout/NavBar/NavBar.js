@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import _ from 'lodash';
 import {
@@ -61,7 +60,7 @@ const NavBar = ({ navHidden, setNavHidden, data }) => {
   const theme = useTheme();
   const isMobileDevice = isMobile();
 
-  let isAdmin = false;
+  const isAdmin = false;
 
   const handleListItemClick = (event, index, item) => {
     if (isMobileDevice) {
@@ -152,9 +151,4 @@ const NavBar = ({ navHidden, setNavHidden, data }) => {
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(NavBar);
+export default NavBar;

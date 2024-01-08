@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import Geocode from 'react-geocode';
 import {
   withScriptjs,
@@ -124,60 +123,60 @@ const RenderedMap = withScriptjs(
   withGoogleMap((props) => (
     <GoogleMap zoom={props.zoom} center={props.center}>
       {!props.isMarkerShown && props.allMarkers && !_.isEmpty(props.allMarkers)
-      && _.map(props.allMarkers, (shipMarkers, idx) => (
-        <MarkerClusterer
-          key={idx}
-          averageCenter
-          enableRetinaIcons
-          zoomOnClick={false}
-          gridSize={60}
-          title={!_.isEmpty(shipMarkers) ? _.first(shipMarkers).shipment.name : ''}
-          onClick={(e) => {
-            props.clusterClick(!_.isEmpty(shipMarkers) && _.first(shipMarkers).shipment, true);
-          }}
-          styles={[
-            {
-              url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
-              height: 53,
-              width: 53,
-              anchor: [0, 0],
-              textSize: 0.001,
-            },
-            {
-              url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
-              height: 56,
-              width: 56,
-              anchor: [0, 0],
-              textSize: 0.001,
-            },
-            {
-              url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
-              height: 66,
-              width: 66,
-              anchor: [0, 0],
-              textSize: 0.001,
-            },
-            {
-              url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
-              height: 78,
-              width: 78,
-              anchor: [0, 0],
-              textSize: 0.001,
-            },
-            {
-              url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
-              height: 90,
-              width: 90,
-              anchor: [0, 0],
-              textSize: 0.001,
-            },
-          ]}
-        >
-          {_.map(shipMarkers, (marker, inx) => (
-            <Marker key={`${marker.lat}-${marker.lng}-${inx}`} position={{ lat: marker.lat, lng: marker.lng }} />
-          ))}
-        </MarkerClusterer>
-      ))}
+        && _.map(props.allMarkers, (shipMarkers, idx) => (
+          <MarkerClusterer
+            key={idx}
+            averageCenter
+            enableRetinaIcons
+            zoomOnClick={false}
+            gridSize={60}
+            title={!_.isEmpty(shipMarkers) ? _.first(shipMarkers).shipment.name : ''}
+            onClick={(e) => {
+              props.clusterClick(!_.isEmpty(shipMarkers) && _.first(shipMarkers).shipment, true);
+            }}
+            styles={[
+              {
+                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                height: 53,
+                width: 53,
+                anchor: [0, 0],
+                textSize: 0.001,
+              },
+              {
+                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                height: 56,
+                width: 56,
+                anchor: [0, 0],
+                textSize: 0.001,
+              },
+              {
+                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                height: 66,
+                width: 66,
+                anchor: [0, 0],
+                textSize: 0.001,
+              },
+              {
+                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                height: 78,
+                width: 78,
+                anchor: [0, 0],
+                textSize: 0.001,
+              },
+              {
+                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                height: 90,
+                width: 90,
+                anchor: [0, 0],
+                textSize: 0.001,
+              },
+            ]}
+          >
+            {_.map(shipMarkers, (marker, inx) => (
+              <Marker key={`${marker.lat}-${marker.lng}-${inx}`} position={{ lat: marker.lat, lng: marker.lng }} />
+            ))}
+          </MarkerClusterer>
+        ))}
       {props.isMarkerShown && props.markers && _.map(
         props.markers,
         (mark, index) => (mark.label ? (
@@ -196,90 +195,89 @@ const RenderedMap = withScriptjs(
             onClick={() => props.onMarkerSelect(mark)}
           >
             {_.isEqual(props.showInfoIndex, mark) && (
-            <InfoWindow onCloseClick={() => props.onMarkerSelect(null)}>
-              {_.isEqual(mark.label, 'Clustered')
-                ? (
-                  <Grid
-                    container
-                    spacing={1}
-                    style={{
-                      height: props.theme.spacing(13),
-                      width: props.theme.spacing(38),
-                      color: props.theme.palette.background.dark,
-                      fontSize: props.theme.spacing(1.25),
-                    }}
-                    alignItems="center"
-                  >
-                    {_.map(MARKER_DATA(props.unitOfMeasure), (item, idx) => (
-                      <Grid
-                        item
-                        xs={6}
-                        key={`${item.id}-${idx}`}
-                        style={{ display: 'flex', alignItems: 'center' }}
-                      >
-                        {_.find(mark.allAlerts, { id: item.id })
-                          ? getIcon(_.find(mark.allAlerts, { id: item.id }))
-                          : getIcon({ id: item.id, color: 'inherit' })}
-                        {!_.isEqual(mark[item.id], null) ? (
-                          <div
-                            style={{
-                              marginLeft: props.theme.spacing(0.5),
-                              color: _.find(mark.allAlerts, { id: item.id })
-                                ? _.find(mark.allAlerts, { id: item.id }).color
-                                : 'inherit',
-                            }}
-                          >
-                            {` ${mark[item.id]} ${item.unit}`}
-                          </div>
-                        ) : (
-                          <div
-                            style={{
-                              marginLeft: props.theme.spacing(0.5),
-                              color: _.find(mark.allAlerts, { id: item.id })
-                                ? _.find(mark.allAlerts, { id: item.id }).color
-                                : 'inherit',
-                            }}
-                          >
-                            {' NA'}
-                          </div>
-                        )}
-                      </Grid>
-                    ))}
-                    <Grid item xs={12} style={{ borderTop: `1px solid ${props.theme.palette.background.light}`, marginTop: props.theme.spacing(1.5) }}>
-                      <Grid container spacing={1}>
-                        <Grid item xs={5} style={{ display: 'flex', alignItems: 'center' }}>
-                          <CalendarIcon />
-                          <div style={{ marginLeft: props.theme.spacing(0.5) }}>{mark.date}</div>
+              <InfoWindow onCloseClick={() => props.onMarkerSelect(null)}>
+                {_.isEqual(mark.label, 'Clustered')
+                  ? (
+                    <Grid
+                      container
+                      spacing={1}
+                      style={{
+                        height: props.theme.spacing(13),
+                        width: props.theme.spacing(38),
+                        color: props.theme.palette.background.dark,
+                        fontSize: props.theme.spacing(1.25),
+                      }}
+                      alignItems="center"
+                    >
+                      {_.map(MARKER_DATA(props.unitOfMeasure), (item, idx) => (
+                        <Grid
+                          item
+                          xs={6}
+                          key={`${item.id}-${idx}`}
+                          style={{ display: 'flex', alignItems: 'center' }}
+                        >
+                          {_.find(mark.allAlerts, { id: item.id })
+                            ? getIcon(_.find(mark.allAlerts, { id: item.id }))
+                            : getIcon({ id: item.id, color: 'inherit' })}
+                          {!_.isEqual(mark[item.id], null) ? (
+                            <div
+                              style={{
+                                marginLeft: props.theme.spacing(0.5),
+                                color: _.find(mark.allAlerts, { id: item.id })
+                                  ? _.find(mark.allAlerts, { id: item.id }).color
+                                  : 'inherit',
+                              }}
+                            >
+                              {` ${mark[item.id]} ${item.unit}`}
+                            </div>
+                          ) : (
+                            <div
+                              style={{
+                                marginLeft: props.theme.spacing(0.5),
+                                color: _.find(mark.allAlerts, { id: item.id })
+                                  ? _.find(mark.allAlerts, { id: item.id }).color
+                                  : 'inherit',
+                              }}
+                            >
+                              {' NA'}
+                            </div>
+                          )}
                         </Grid>
-                        <Grid item xs={5} style={{ display: 'flex', alignItems: 'center' }}>
-                          <ClockIcon />
-                          <div style={{ marginLeft: props.theme.spacing(0.5) }}>{mark.time}</div>
-                        </Grid>
-                        <Grid item xs={2} style={{ display: 'flex', alignItems: 'center' }}>
-                          {mark.battery && _.gte(_.toNumber(mark.battery), 90) && (
-                            <BatteryFullIcon htmlColor={props.theme.palette.success.main} />
-                          )}
-                          {mark.battery && _.lt(_.toNumber(mark.battery), 90)
-                          && _.gte(_.toNumber(mark.battery), 60) && (
-                            <Battery80Icon htmlColor={props.theme.palette.warning.main} />
-                          )}
-                          {mark.battery && _.lt(_.toNumber(mark.battery), 60) && (
-                            <Battery50Icon htmlColor={props.theme.palette.error.main} />
-                          )}
-                          {!mark.battery && (
-                            <BatteryFullIcon />
-                          )}
-                          <div>{mark.battery ? `${mark.battery}%` : 'N/A'}</div>
+                      ))}
+                      <Grid item xs={12} style={{ borderTop: `1px solid ${props.theme.palette.background.light}`, marginTop: props.theme.spacing(1.5) }}>
+                        <Grid container spacing={1}>
+                          <Grid item xs={5} style={{ display: 'flex', alignItems: 'center' }}>
+                            <CalendarIcon />
+                            <div style={{ marginLeft: props.theme.spacing(0.5) }}>{mark.date}</div>
+                          </Grid>
+                          <Grid item xs={5} style={{ display: 'flex', alignItems: 'center' }}>
+                            <ClockIcon />
+                            <div style={{ marginLeft: props.theme.spacing(0.5) }}>{mark.time}</div>
+                          </Grid>
+                          <Grid item xs={2} style={{ display: 'flex', alignItems: 'center' }}>
+                            {mark.battery && _.gte(_.toNumber(mark.battery), 90) && (
+                              <BatteryFullIcon htmlColor={props.theme.palette.success.main} />
+                            )}
+                            {mark.battery && _.lt(_.toNumber(mark.battery), 90) && _.gte(_.toNumber(mark.battery), 60) && (
+                              <Battery80Icon htmlColor={props.theme.palette.warning.main} />
+                            )}
+                            {mark.battery && _.lt(_.toNumber(mark.battery), 60) && (
+                              <Battery50Icon htmlColor={props.theme.palette.error.main} />
+                            )}
+                            {!mark.battery && (
+                              <BatteryFullIcon />
+                            )}
+                            <div>{mark.battery ? `${mark.battery}%` : 'N/A'}</div>
+                          </Grid>
                         </Grid>
                       </Grid>
                     </Grid>
-                  </Grid>
-                ) : (
-                  <div style={{ color: props.theme.palette.background.default }}>
-                    {mark.label}
-                  </div>
-                )}
-            </InfoWindow>
+                  ) : (
+                    <div style={{ color: props.theme.palette.background.default }}>
+                      {mark.label}
+                    </div>
+                  )}
+              </InfoWindow>
             )}
           </Marker>
         ) : (
@@ -289,12 +287,12 @@ const RenderedMap = withScriptjs(
               mark.lat && mark.lng
                 ? `marker${index}:${mark.lat},${mark.lng}`
                 : `marker${index}`
-              }
+            }
             position={
               mark.lat && mark.lng
                 ? { lat: mark.lat, lng: mark.lng }
                 : props.center
-              }
+            }
             onDragEnd={(e) => {
               props.onMarkerDrag(e, mark.onMarkerDrag);
             }}
@@ -320,15 +318,15 @@ const RenderedMap = withScriptjs(
         (mark, index) => (mark.radius ? (
           <Marker
             key={
-            mark.lat && mark.lng
-              ? `marker${index}:${mark.lat},${mark.lng}`
-              : `marker${index}`
-          }
+              mark.lat && mark.lng
+                ? `marker${index}:${mark.lat},${mark.lng}`
+                : `marker${index}`
+            }
             position={
-            mark.lat && mark.lng
-              ? { lat: mark.lat, lng: mark.lng }
-              : props.center
-          }
+              mark.lat && mark.lng
+                ? { lat: mark.lat, lng: mark.lng }
+                : props.center
+            }
           >
             <Circle
               defaultCenter={{
@@ -357,15 +355,15 @@ const RenderedMap = withScriptjs(
         ) : (
           <Marker
             key={
-            mark.lat && mark.lng
-              ? `marker${index}:${mark.lat},${mark.lng}`
-              : `marker${index}`
-          }
+              mark.lat && mark.lng
+                ? `marker${index}:${mark.lat},${mark.lng}`
+                : `marker${index}`
+            }
             position={
-            mark.lat && mark.lng
-              ? { lat: mark.lat, lng: mark.lng }
-              : props.center
-          }
+              mark.lat && mark.lng
+                ? { lat: mark.lat, lng: mark.lng }
+                : props.center
+            }
           >
             <InfoWindow>
               <div style={{ color: props.theme.palette.background.dark }}>
@@ -393,9 +391,4 @@ const RenderedMap = withScriptjs(
   )),
 );
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.itemsReducer,
-});
-
-export default connect(mapStateToProps)(MapComponent);
+export default MapComponent;

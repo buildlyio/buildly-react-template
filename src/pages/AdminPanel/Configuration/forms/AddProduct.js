@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   useTheme,
@@ -9,14 +8,14 @@ import {
   TextField,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import Loader from '../../../../components/Loader/Loader';
 import FormModal from '../../../../components/Modal/FormModal';
 import { getUser } from '../../../../context/User.context';
 import { useInput } from '../../../../hooks/useInput';
-import {
-  addProduct,
-  editProduct,
-} from '../../../../redux/items/actions/items.actions';
 import { validators } from '../../../../utils/validators';
+import { useAddProductMutation } from '../../../../react-query/mutations/items/addProductMutation';
+import { useEditProductMutation } from '../../../../react-query/mutations/items/editProductMutation';
+import useAlert from '@hooks/useAlert';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -48,13 +47,13 @@ const useStyles = makeStyles((theme) => ({
 const AddProduct = ({
   history,
   location,
-  loading,
-  dispatch,
 }) => {
   const classes = useStyles();
   const organization = getUser().organization.organization_uuid;
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
+
+  const { displayAlert } = useAlert();
 
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -109,6 +108,10 @@ const AddProduct = ({
     }
   };
 
+  const { mutate: addProductMutation, isLoading: isAddingProduct } = useAddProductMutation(organization, history, location.state.from, displayAlert);
+
+  const { mutate: editProductMutation, isLoading: isEditingProduct } = useEditProductMutation(organization, history, location.state.from, displayAlert);
+
   /**
    * Submit The form and add/edit custodian type
    * @param {Event} event the default submit event
@@ -126,17 +129,13 @@ const AddProduct = ({
       edit_date: currentDateTime,
     };
     if (editPage) {
-      dispatch(editProduct(data));
+      editProductMutation(data);
     } else {
       data = {
         ...data,
         create_date: currentDateTime,
       };
-      dispatch(addProduct(data));
-    }
-    setFormModal(false);
-    if (location && location.state) {
-      history.push(location.state.from);
+      addProductMutation(data);
     }
   };
 
@@ -198,6 +197,9 @@ const AddProduct = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {(isAddingProduct || isEditingProduct) && (
+            <Loader open={isAddingProduct || isEditingProduct} />
+          )}
           <form
             className={classes.form}
             noValidate
@@ -296,7 +298,7 @@ const AddProduct = ({
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    disabled={loading || submitDisabled()}
+                    disabled={isAddingProduct || isEditingProduct || submitDisabled()}
                   >
                     {buttonText}
                   </Button>
@@ -322,9 +324,4 @@ const AddProduct = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.itemsReducer,
-});
-
-export default connect(mapStateToProps)(AddProduct);
+export default AddProduct;

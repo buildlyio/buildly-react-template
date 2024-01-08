@@ -1,41 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
 import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
 import { getUser } from '../../context/User.context';
-import { getContact, getCustodians } from '../../redux/custodian/actions/custodian.actions';
-import { getUnitOfMeasure } from '../../redux/items/actions/items.actions';
-import {
-  getGateways,
-  getGatewayType,
-  deleteGateway,
-} from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
-import {
-  getShipmentDetails,
-} from '../../redux/shipment/actions/shipment.actions';
 import { routes } from '../../routes/routesConstants';
 import { gatewayColumns, getGatewayFormattedRow } from '../../utils/constants';
 import AddGateway from './forms/AddGateway';
+import { useQuery } from 'react-query';
+import { getGatewayQuery } from '../../react-query/queries/sensorGateways/getGatewayQuery';
+import { getGatewayTypeQuery } from '../../react-query/queries/sensorGateways/getGatewayTypeQuery';
+import { getCustodianQuery } from '../../react-query/queries/custodians/getCustodianQuery';
+import { getContactQuery } from '../../react-query/queries/custodians/getContactQuery';
+import { getShipmentsQuery } from '../../react-query/queries/shipments/getShipmentsQuery';
+import { getUnitQuery } from '../../react-query/queries/items/getUnitQuery';
+import { useDeleteGatewayMutation } from '../../react-query/mutations/sensorGateways/deleteGatewayMutation';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '../../zustand/timezone/timezoneStore';
 
-const Gateway = ({
-  dispatch,
-  history,
-  gatewayData,
-  loading,
-  gatewayTypeList,
-  redirectTo,
-  shipmentData,
-  timezone,
-  custodianData,
-  unitOfMeasure,
-}) => {
-  const [openDeleteModal, setDeleteModal] = useState(false);
-  const [deleteGatewayId, setDeleteGatewayId] = useState('');
-  const [rows, setRows] = useState([]);
-
+const Gateway = ({ history, redirectTo }) => {
   const user = getUser();
   const organization = user.organization.organization_uuid;
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
+
+  const [rows, setRows] = useState([]);
+  const [openDeleteModal, setDeleteModal] = useState(false);
+  const [deleteGatewayId, setDeleteGatewayId] = useState('');
+
+  const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
+    ['gateways', organization],
+    () => getGatewayQuery(organization, displayAlert),
+  );
+
+  const { data: gatewayTypesData, isLoading: isLoadingGatewayTypes } = useQuery(
+    ['gatewayTypes'],
+    () => getGatewayTypeQuery(displayAlert),
+  );
+
+  const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
+    ['custodians', organization],
+    () => getCustodianQuery(organization, displayAlert),
+  );
+
+  const { data: contactInfo, isLoading: isLoadingContact } = useQuery(
+    ['contact', organization],
+    () => getContactQuery(organization, displayAlert),
+  );
+
+  const { data: shipmentData, isLoading: isLoadingShipments } = useQuery(
+    ['shipments', organization],
+    () => getShipmentsQuery(organization, 'Planned,En route,Arrived', displayAlert),
+  );
+
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+  );
 
   const addPath = redirectTo
     ? `${redirectTo}/gateways`
@@ -46,25 +67,27 @@ const Gateway = ({
     : `${routes.TRACKERS}/gateway/edit`;
 
   useEffect(() => {
-    dispatch(getGateways(organization));
-    dispatch(getGatewayType());
-    dispatch(getCustodians(organization));
-    dispatch(getContact(organization));
-    dispatch(getShipmentDetails(organization, 'Planned,En route,Arrived'));
-    dispatch(getUnitOfMeasure(organization));
-  }, []);
-
-  useEffect(() => {
-    if (!_.isEmpty(gatewayData) && !_.isEmpty(gatewayTypeList)) {
-      setRows(getGatewayFormattedRow(gatewayData, gatewayTypeList, shipmentData, custodianData));
+    if (!_.isEmpty(gatewayData) && !_.isEmpty(gatewayTypesData)) {
+      setRows(
+        getGatewayFormattedRow(
+          gatewayData,
+          gatewayTypesData,
+          shipmentData,
+          custodianData,
+        ),
+      );
     }
-  }, [gatewayData, gatewayTypeList, shipmentData, custodianData]);
+  }, [gatewayData, gatewayTypesData, shipmentData, custodianData]);
 
   const editGatewayAction = (item) => {
     history.push(`${editPath}/:${item.id}`, {
       type: 'edit',
       from: redirectTo || routes.TRACKERS,
       data: item,
+      gatewayTypesData,
+      unitData,
+      custodianData,
+      contactInfo,
     });
   };
 
@@ -73,61 +96,60 @@ const Gateway = ({
     setDeleteModal(true);
   };
 
+  const { mutate: deleteGatewayMutation, isLoading: isDeletingGateway } = useDeleteGatewayMutation(organization, displayAlert);
+
   const handleDeleteModal = () => {
-    dispatch(deleteGateway(deleteGatewayId, organization));
     setDeleteModal(false);
+    deleteGatewayMutation(deleteGatewayId);
   };
 
   const onAddButtonClick = () => {
     history.push(addPath, {
       from: redirectTo || routes.TRACKERS,
+      gatewayTypesData,
+      unitData,
+      custodianData,
+      contactInfo,
     });
   };
 
   return (
-    <DataTableWrapper
-      hideAddButton
-      centerLabel
-      filename="GatewayData"
-      tableHeader="Gateway"
-      loading={loading}
-      rows={rows || []}
-      columns={gatewayColumns(
-        timezone,
-        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
-          : '',
-      )}
-      addButtonHeading="Add Gateway"
-      onAddButtonClick={onAddButtonClick}
-      editAction={editGatewayAction}
-      deleteAction={deleteGatewayAction}
-      openDeleteModal={openDeleteModal}
-      setDeleteModal={setDeleteModal}
-      handleDeleteModal={handleDeleteModal}
-      deleteModalTitle="Are you sure you want to delete this Gateway?"
-    >
-      <Route path={`${addPath}`} component={AddGateway} />
-      <Route path={`${editPath}/:id`} component={AddGateway} />
-    </DataTableWrapper>
+    <div>
+      <DataTableWrapper
+        hideAddButton
+        centerLabel
+        filename="GatewayData"
+        tableHeader="Gateway"
+        loading={
+          isLoadingGateways || isLoadingGatewayTypes || isLoadingCustodians || isLoadingContact || isLoadingShipments || isLoadingUnits || isDeletingGateway
+        }
+        rows={rows || []}
+        columns={gatewayColumns(
+          data,
+          _.find(
+            unitData,
+            (unit) => _.toLower(unit.unit_of_measure_for) === 'date',
+          )
+            ? _.find(
+              unitData,
+              (unit) => _.toLower(unit.unit_of_measure_for) === 'date',
+            ).unit_of_measure
+            : '',
+        )}
+        addButtonHeading="Add Gateway"
+        onAddButtonClick={onAddButtonClick}
+        editAction={editGatewayAction}
+        deleteAction={deleteGatewayAction}
+        openDeleteModal={openDeleteModal}
+        setDeleteModal={setDeleteModal}
+        handleDeleteModal={handleDeleteModal}
+        deleteModalTitle="Are you sure you want to delete this Gateway?"
+      >
+        <Route path={`${addPath}`} component={AddGateway} />
+        <Route path={`${editPath}/:id`} component={AddGateway} />
+      </DataTableWrapper>
+    </div>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.sensorsGatewayReducer,
-  ...state.optionsReducer,
-  ...state.shipmentReducer,
-  ...state.custodianReducer,
-  ...state.itemsReducer,
-  loading: (
-    state.sensorsGatewayReducer.loading
-    || state.optionsReducer.loading
-    || state.shipmentReducer.loading
-    || state.custodianReducer.loading
-    || state.itemsReducer.loading
-    || state.authReducer.loading
-  ),
-});
-
-export default connect(mapStateToProps)(Gateway);
+export default Gateway;

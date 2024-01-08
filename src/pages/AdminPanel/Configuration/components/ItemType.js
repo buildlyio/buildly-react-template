@@ -1,30 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
 import { getUser } from '../../../../context/User.context';
-import {
-  getItemType,
-  deleteItemType,
-  getUnitOfMeasure,
-} from '../../../../redux/items/actions/items.actions';
 import { routes } from '../../../../routes/routesConstants';
 import { getColumns } from '../../../../utils/constants';
 import AddItemType from '../forms/AddItemType';
+import { useQuery } from 'react-query';
+import { getItemTypeQuery } from '../../../../react-query/queries/items/getItemTypeQuery';
+import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
+import { useDeleteItemTypeMutation } from '../../../../react-query/mutations/items/deleteItemTypeMutation';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '../../../../zustand/timezone/timezoneStore';
 
 const ItemType = ({
-  dispatch,
-  loading,
-  itemTypeList,
   redirectTo,
   history,
-  timezone,
-  unitOfMeasure,
 }) => {
   const organization = getUser().organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
 
   const addPath = redirectTo
     ? `${redirectTo}/item-type`
@@ -34,14 +32,15 @@ const ItemType = ({
     ? `${redirectTo}/item-type`
     : `${routes.CONFIGURATION}/item-type/edit`;
 
-  useEffect(() => {
-    if (_.isEmpty(unitOfMeasure)) {
-      dispatch(getUnitOfMeasure(organization));
-    }
-    if (_.isEmpty(itemTypeList)) {
-      dispatch(getItemType(organization));
-    }
-  }, []);
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+  );
+
+  const { data: itemTypesData, isLoading: isLoadingItemTypes } = useQuery(
+    ['itemTypes', organization],
+    () => getItemTypeQuery(organization, displayAlert),
+  );
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -62,23 +61,25 @@ const ItemType = ({
     setDeleteModal(true);
   };
 
+  const { mutate: deleteItemTypeMutation, isLoading: isDeletingItemType } = useDeleteItemTypeMutation(organization, displayAlert);
+
   const handleDeleteModal = () => {
-    dispatch(deleteItemType(deleteId));
+    deleteItemTypeMutation(deleteId);
     setDeleteModal(false);
   };
 
   return (
     <DataTableWrapper
       noSpace
-      loading={loading}
-      rows={itemTypeList || []}
+      loading={isLoadingUnits || isLoadingItemTypes || isDeletingItemType}
+      rows={itemTypesData || []}
       columns={getColumns(
-        timezone,
-        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+        data,
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
           : '',
-        _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-          ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
           : '',
       )}
       filename="ItemType"
@@ -98,10 +99,4 @@ const ItemType = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.itemsReducer,
-  ...state.optionsReducer,
-});
-
-export default connect(mapStateToProps)(ItemType);
+export default ItemType;

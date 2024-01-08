@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   useTheme,
@@ -9,13 +8,13 @@ import {
   TextField,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import Loader from '../../../../components/Loader/Loader';
 import FormModal from '../../../../components/Modal/FormModal';
 import { useInput } from '../../../../hooks/useInput';
-import {
-  addOrgType,
-  editOrgType,
-} from '../../../../redux/authuser/actions/authuser.actions';
 import { validators } from '../../../../utils/validators';
+import { useAddOrganizationTypeMutation } from '../../../../react-query/mutations/authUser/addOrganizationTypeMutation';
+import { useEditOrganizationTypeMutation } from '../../../../react-query/mutations/authUser/editOrganizationTypeMutation';
+import useAlert from '@hooks/useAlert';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -47,12 +46,12 @@ const useStyles = makeStyles((theme) => ({
 const AddOrganizationType = ({
   history,
   location,
-  loading,
-  dispatch,
 }) => {
   const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
+
+  const { displayAlert } = useAlert();
 
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -93,6 +92,10 @@ const AddOrganizationType = ({
     }
   };
 
+  const { mutate: addOrganizationTypeMutation, isLoading: isAddingOrganizationType } = useAddOrganizationTypeMutation(history, location.state.from, displayAlert);
+
+  const { mutate: editOrganizationTypeMutation, isLoading: isEditingOrganizationType } = useEditOrganizationTypeMutation(history, location.state.from, displayAlert);
+
   /**
    * Submit The form and add/edit custodian type
    * @param {Event} event the default submit event
@@ -106,17 +109,13 @@ const AddOrganizationType = ({
       edit_date: currentDateTime,
     };
     if (editPage) {
-      dispatch(editOrgType(data));
+      editOrganizationTypeMutation(data);
     } else {
       data = {
         ...data,
         create_date: currentDateTime,
       };
-      dispatch(addOrgType(data));
-    }
-    setFormModal(false);
-    if (location && location.state) {
-      history.push(location.state.from);
+      addOrganizationTypeMutation(data);
     }
   };
 
@@ -173,6 +172,9 @@ const AddOrganizationType = ({
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {(isAddingOrganizationType || isEditingOrganizationType) && (
+            <Loader open={isAddingOrganizationType || isEditingOrganizationType} />
+          )}
           <form
             className={classes.form}
             noValidate
@@ -205,7 +207,7 @@ const AddOrganizationType = ({
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    disabled={loading || submitDisabled()}
+                    disabled={isAddingOrganizationType || isEditingOrganizationType || submitDisabled()}
                   >
                     {buttonText}
                   </Button>
@@ -231,9 +233,4 @@ const AddOrganizationType = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(AddOrganizationType);
+export default AddOrganizationType;

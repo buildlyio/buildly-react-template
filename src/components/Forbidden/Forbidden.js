@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import {
   Typography,
   Box,
@@ -32,12 +31,9 @@ const Forbidden = ({
     <Box mt={3} textAlign="center">
       <Card variant="outlined">
         <CardContent>
-
           <Typography className={classes.pageHeading} variant="h2">
             403
-
           </Typography>
-
           <Typography className={classes.pageHeading} variant="h5">
             Access Denied
             <p>You don't have permission to access this page</p>
@@ -53,14 +49,8 @@ const Forbidden = ({
       >
         Back To Shipment Page
       </Button>
-
     </Box>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(Forbidden);
+export default Forbidden;
