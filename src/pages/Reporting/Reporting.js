@@ -117,7 +117,7 @@ const Reporting = ({
   timezone,
   allSensorAlerts,
   sensorReports,
-  gatewayData,
+  allGateways,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
@@ -171,7 +171,7 @@ const Reporting = ({
         custodianData,
         custodyData,
         contactInfo,
-        gatewayData,
+        allGateways,
       );
       if (!_.isEmpty(overview)) {
         setShipmentOverview(overview);
@@ -181,7 +181,7 @@ const Reporting = ({
         }
       }
     }
-  }, [shipmentData, custodianData, custodyData, contactInfo, gatewayData]);
+  }, [shipmentData, custodianData, custodyData, contactInfo, allGateways]);
 
   useEffect(() => {
     const alerts = _.filter(

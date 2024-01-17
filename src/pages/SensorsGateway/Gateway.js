@@ -58,6 +58,9 @@ const Gateway = ({
     if (!_.isEmpty(gatewayData) && !_.isEmpty(gatewayTypeList)) {
       setRows(getGatewayFormattedRow(gatewayData, gatewayTypeList, shipmentData, custodianData));
     }
+    if (_.isEmpty(gatewayData)) {
+      setRows([]);
+    }
   }, [gatewayData, gatewayTypeList, shipmentData, custodianData]);
 
   const editGatewayAction = (item) => {

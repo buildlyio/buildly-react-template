@@ -286,8 +286,8 @@ const AddItems = ({
     const previousValue = product_value;
     const previousWeight = product_weight;
     setContainerUnits(e.target.value);
-    setItemValue(Number(e.target.value * previousValue).toFixed(2));
-    setItemWeight(Number(e.target.value * previousWeight).toFixed(2));
+    setItemValue(_.round(_.toNumber(e.target.value * previousValue), 2));
+    setItemWeight(_.round(_.toNumber(e.target.value * previousWeight), 2));
   };
 
   return (

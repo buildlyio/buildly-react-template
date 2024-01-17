@@ -42,6 +42,7 @@ const initialState = {
   loading: false,
   loaded: false,
   error: null,
+  allGateways: [],
   gatewayData: [],
   gatewayTypeList: [],
   allSensorAlerts: [],
@@ -90,12 +91,19 @@ export default (state = initialState, action) => {
       };
 
     case GET_GATEWAYS_SUCCESS:
-    case GET_ALL_GATEWAYS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
         gatewayData: action.data,
+      };
+
+    case GET_ALL_GATEWAYS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        allGateways: action.data,
       };
 
     case ADD_GATEWAY_SUCCESS:
