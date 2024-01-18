@@ -397,7 +397,7 @@ const Shipment = ({
       },
       {
         // eslint-disable-next-line max-len
-        id: moment(shipment.actual_time_of_departure || shipment.estimated_time_of_departure).unix(),
+        id: 2,
         title: shipment.origin,
         titleColor: 'inherit',
         label: 'Shipment started',
@@ -411,7 +411,7 @@ const Shipment = ({
         ),
       },
       {
-        id: moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).unix(),
+        id: _.maxBy(newSteps, 'id').id + 1,
         title: shipment.destination,
         titleColor: 'inherit',
         label: 'Shipment arrived',
@@ -425,9 +425,7 @@ const Shipment = ({
         ),
       },
       {
-        id: _.isEqual(shipment.status, 'Completed')
-          ? moment(shipment.edit_date).unix()
-          : moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').unix(),
+        id: _.maxBy(newSteps, 'id').id + 2,
         title: shipment.destination,
         titleColor: 'inherit',
         label: 'Shipment completed',

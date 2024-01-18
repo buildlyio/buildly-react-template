@@ -39,6 +39,17 @@ const CustomizedConnector = styled(StepConnector)(({ theme }) => ({
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: `${theme.spacing(2)} 0`,
+    width: '85vw',
+    [theme.breakpoints.down('lg')]: {
+      width: '100vw',
+    },
+    [theme.breakpoints.down('md')]: {
+      width: '150vw',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '300vw',
+    },
+    overflowX: 'auto',
   },
   noLine: {
     '& .MuiStepConnector-root:first-of-type': {
