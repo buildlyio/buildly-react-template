@@ -7,12 +7,13 @@ import {
   IconButton,
   TextField,
   MenuItem,
+  Badge,
 } from '@mui/material';
 import {
   AccountCircle,
-  Refresh as RefreshIcon,
-  Settings as SettingsIcon,
   Menu as MenuIcon,
+  Notifications as NotificationsIcon,
+  Settings as SettingsIcon,
 } from '@mui/icons-material';
 import logo from '../../assets/tp-logo.png';
 import Loader from '../../components/Loader/Loader';
@@ -32,6 +33,7 @@ import { useUpdateUserMutation } from '../../react-query/mutations/authUser/upda
 import { oauthService } from '@modules/oauth/oauth.service';
 import AccountSettings from './components/AccountSettings';
 import './TopBarStyles.css';
+import AlertNotifications from './components/AlertNotifications';
 
 /**
  * Component for the top bar header.
@@ -46,6 +48,8 @@ const TopBar = ({
   const [organization, setOrganization] = useState(null);
   const { options: tzOptions } = useTimezoneSelect({ labelStyle: 'original', timezones: allTimezones });
   const [showAccountSettings, setShowAccountSettings] = useState(false);
+  const [hideAlertBadge, setHideAlertBadge] = useState(true);
+  const [showAlertNotifications, setShowAlertNotifications] = useState(false);
 
   const user = getUser();
   let isAdmin = false;
@@ -95,10 +99,6 @@ const TopBar = ({
     setSettingEl(null);
   };
 
-  const refreshPage = () => {
-    window.location.reload();
-  };
-
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -116,6 +116,11 @@ const TopBar = ({
   const handleLogoutClick = () => {
     oauthService.logout();
     history.push('/');
+  };
+
+  const handleNotificationsClick = () => {
+    setShowAlertNotifications(true);
+    setAnchorEl(null);
   };
 
   return (
@@ -179,6 +184,17 @@ const TopBar = ({
               ))}
             </TextField>
           )}
+          <IconButton
+            aria-label="notifications"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            color="primary"
+            onClick={handleNotificationsClick}
+          >
+            <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={hideAlertBadge} className="topBarNotifications">
+              <NotificationsIcon fontSize="large" />
+            </Badge>
+          </IconButton>
           {isAdmin
             && (
               <IconButton
@@ -197,17 +213,6 @@ const TopBar = ({
             handleAdminPanelClick={handleAdminPanelClick}
             handleUserManagementClick={handleUserManagementClick}
           />
-          {isAdmin && (
-            <IconButton
-              aria-label="refresh-app"
-              aria-controls="menu-appbar"
-              aria-haspopup="false"
-              onClick={refreshPage}
-              color="primary"
-            >
-              <RefreshIcon fontSize="large" />
-            </IconButton>
-          )}
           <IconButton
             aria-label="account of current user"
             aria-controls="menu-appbar"
@@ -229,6 +234,7 @@ const TopBar = ({
         </div>
       </Toolbar>
       <AccountSettings open={showAccountSettings} setOpen={setShowAccountSettings} />
+      <AlertNotifications open={showAlertNotifications} setOpen={setShowAlertNotifications} setHideAlertBadge={setHideAlertBadge} />
     </AppBar>
   );
 };
