@@ -9,7 +9,6 @@ import AboutPlatform from '../../pages/AboutPlatform/AboutPlatform';
 import AdminPanel from '../../pages/AdminPanel/AdminPanel';
 import Custodians from '../../pages/Custodians/Custodians';
 import Items from '../../pages/Items/Items';
-import MyAccount from '../../pages/MyAccount/MyAccount';
 import PushNotification from '../../pages/PushNotification/PushNotification';
 import Reporting from '../../pages/Reporting/Reporting';
 import Gateway from '../../pages/SensorsGateway/Gateway';
@@ -43,15 +42,12 @@ const ContainerDashboard = ({ location, history }) => {
           location={location}
           history={history}
         />
-        {!_.includes(location.pathname, routes.MY_ACCOUNT)
-          && (
-            <NavBar
-              navHidden={navHidden}
-              setNavHidden={setNavHidden}
-              location={location}
-              history={history}
-            />
-          )}
+        <NavBar
+          navHidden={navHidden}
+          setNavHidden={setNavHidden}
+          location={location}
+          history={history}
+        />
         <Container
           className={`content ${!isMobile() && 'contentMaxWidth'}`}
         >
@@ -71,10 +67,6 @@ const ContainerDashboard = ({ location, history }) => {
           <Route
             path={routes.CUSTODIANS}
             component={Custodians}
-          />
-          <Route
-            path={routes.MY_ACCOUNT}
-            component={MyAccount}
           />
           <Route
             path={routes.ABOUT_PLATFORM}

@@ -30,6 +30,7 @@ import { useQuery } from 'react-query';
 import { getAllOrganizationQuery } from '../../react-query/queries/authUser/getAllOrganizationQuery';
 import { useUpdateUserMutation } from '../../react-query/mutations/authUser/updateUserMutation';
 import { oauthService } from '@modules/oauth/oauth.service';
+import AccountSettings from './components/AccountSettings';
 import './TopBarStyles.css';
 
 /**
@@ -44,6 +45,7 @@ const TopBar = ({
   const [settingEl, setSettingEl] = useState(null);
   const [organization, setOrganization] = useState(null);
   const { options: tzOptions } = useTimezoneSelect({ labelStyle: 'original', timezones: allTimezones });
+  const [showAccountSettings, setShowAccountSettings] = useState(false);
 
   const user = getUser();
   let isAdmin = false;
@@ -101,8 +103,8 @@ const TopBar = ({
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMyAccountClick = () => {
-    history.push(routes.MY_ACCOUNT);
+  const handleAccountSettingsClick = () => {
+    setShowAccountSettings(true);
     setAnchorEl(null);
   };
 
@@ -219,13 +221,14 @@ const TopBar = ({
             anchorEl={anchorEl}
             setAnchorEl={setAnchorEl}
             user={user}
-            organizationData={organization}
-            handleMyAccountClick={handleMyAccountClick}
+            organizationName={organization}
+            handleAccountSettingsClick={handleAccountSettingsClick}
             handleAboutClick={handleAboutClick}
             handleLogoutClick={handleLogoutClick}
           />
         </div>
       </Toolbar>
+      <AccountSettings open={showAccountSettings} setOpen={setShowAccountSettings} />
     </AppBar>
   );
 };

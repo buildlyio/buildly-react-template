@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Button,
   CssBaseline,
   TextField,
-  Link,
   Grid,
   Card,
   CardContent,
@@ -177,7 +177,7 @@ const Login = ({ history }) => {
               <Grid container>
                 <Grid item xs>
                   <Link
-                    href={routes.RESET_PASSWORD}
+                    to={routes.RESET_PASSWORD}
                     variant="body2"
                     color="primary"
                   >
@@ -186,7 +186,7 @@ const Login = ({ history }) => {
                 </Grid>
                 <Grid item>
                   <Link
-                    href={routes.REGISTER}
+                    to={routes.REGISTER}
                     variant="body2"
                     color="primary"
                   >

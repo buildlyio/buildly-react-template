@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Button,
   CssBaseline,
   TextField,
-  Link,
   Grid,
   Card,
   CardContent,
@@ -136,7 +136,7 @@ const EmailForm = () => {
               <Grid container>
                 <Grid item xs>
                   <Link
-                    href={routes.LOGIN}
+                    to={routes.LOGIN}
                     variant="body2"
                     color="primary"
                   >

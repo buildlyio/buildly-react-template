@@ -89,7 +89,6 @@ module.exports = (env, argv) => {
         '@layout': path.resolve(__dirname, './src/layout'),
         '@modules': path.resolve(__dirname, './src/modules'),
         '@pages': path.resolve(__dirname, './src/pages'),
-        '@redux': path.resolve(__dirname, './src/redux'),
         '@routes': path.resolve(__dirname, './src/routes'),
         '@styles': path.resolve(__dirname, './src/styles'),
         '@utils': path.resolve(__dirname, './src/utils'),

@@ -14,9 +14,9 @@ const AccountMenu = ({
   setAnchorEl,
   user,
   handleLogoutClick,
-  handleMyAccountClick,
+  handleAccountSettingsClick,
   handleAboutClick,
-  organizationData,
+  organizationName,
 }) => {
   const handleClose = () => {
     setAnchorEl(null);
@@ -52,15 +52,15 @@ const AccountMenu = ({
           <Typography variant="body2">
             {user && `${user.email}`}
           </Typography>
-          {organizationData && (
+          {organizationName && (
             <Typography variant="body1">
-              {`Works at: ${organizationData}`}
+              {`Works at: ${organizationName}`}
             </Typography>
           )}
         </Box>
         <Divider />
-        <MenuItem onClick={handleMyAccountClick} className="adminMenuRoot">
-          <ListItemText primary="My Account" />
+        <MenuItem onClick={handleAccountSettingsClick} className="adminMenuRoot">
+          <ListItemText primary="Account & Settings" />
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleAboutClick} className="adminMenuRoot">

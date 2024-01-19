@@ -57,3 +57,52 @@
     height: 56px;
   }
 }
+
+/* Account Settings css */
+.accountSettingsDialogContent {
+  padding: 0;
+  padding-bottom: 80px;
+}
+
+.accountSettingsUserIconName {
+  padding: 32px;
+  border-bottom: 1px solid var(--color-palette-background-light);
+}
+
+.accountSettingsPersonalNotification {
+  padding: 32px 88px;
+  border-bottom: 1px solid var(--color-palette-background-light);
+}
+
+.accountSettingsNumberInput input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.accountSettingsNumberInput  input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.accountSettingsNumberInput  input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@media screen and (min-width: 960px) {
+  .accountSettingsDialog .MuiDialog-container {
+    position: fixed;
+    right: 0;
+    width: 50%;
+    margin-top: 64px,
+  }
+
+  .accountSettingsDialog .MuiDialog-paper {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    max-height: 100%;
+    max-width: 100%;
+  }
+
+  .accountSettingsDialog .dialogContent {
+    padding-bottom: 120px;
+  }
+}

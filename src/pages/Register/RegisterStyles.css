@@ -53,6 +53,15 @@
   margin-left: 40px;
 }
 
+.numberInput input::-webkit-outer-spin-button,
+.numberInput input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0px;
+}
+.numberInput input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 @media screen and (max-width: 960px) {
   .textField2 {
     margin: 8px 0px;

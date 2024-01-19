@@ -61,52 +61,6 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
         `${window.env.API_URL}shipment/shipment/${shipmentPayload.id}/`,
       );
       if (data && data.data) {
-        if (updateGateway) {
-          let gateway_status = '';
-          let shipment_ids = [];
-          let { battery_alert_level } = updateGateway;
-          switch (data.data.status) {
-            case 'Completed':
-            case 'Cancelled':
-            case 'Damaged':
-            case 'Battery Depleted':
-              gateway_status = 'unavailable';
-              shipment_ids = [];
-              battery_alert_level = 0;
-              break;
-            case 'Planned':
-            case 'En route':
-              gateway_status = 'assigned';
-              shipment_ids = data.data.partner_shipment_id ? [data.data.partner_shipment_id] : [];
-              break;
-            default:
-              break;
-          }
-          const gatewayPayload = {
-            ...updateGateway,
-            gateway_status,
-            shipment_ids,
-            battery_alert_level,
-          };
-          await httpService.makeRequest(
-            'patch',
-            `${window.env.API_URL}sensors/gateway/${gatewayPayload.id}`,
-            gatewayPayload,
-          );
-          if (_.includes(['Planned', 'En route'], data.data.status)) {
-            const configurePayload = {
-              platform_type: data.data.platform_name,
-              gateway: updateGateway.imei_number,
-              transmission_interval: data.data.transmission_time,
-              measurement_interval: data.data.measurement_time,
-            };
-            httpService.makeRequest(
-              'post',
-              `${window.env.API_URL}sensors/configure_gateway/`,
-              configurePayload,
-            );
-          }
-        }
         let startCustody = {
           ...start_custody,
           start_of_custody_location: start_custody.location,
@@ -117,13 +71,33 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
           start_of_custody_location: end_custody.location,
           end_of_custody_location: end_custody.location,
         };
+        let locations = [];
         if (!_.isEmpty(carriers)) {
-          const locations = getLocations(_.map(carriers, 'location'));
+          locations = getLocations(_.map(carriers, 'location'));
           const first_custody = _.first(locations);
           startCustody = {
             ...startCustody,
             end_of_custody_location: first_custody,
           };
+        }
+        if (startCustody.id) {
+          httpService.makeRequest(
+            'patch',
+            `${window.env.API_URL}custodian/custody/${startCustody.id}/`,
+            startCustody,
+          );
+        } else {
+          httpService.makeRequest(
+            'post',
+            `${window.env.API_URL}custodian/custody/`,
+            {
+              ...startCustody,
+              shipment_id: data.data.shipment_uuid,
+              shipment: data.data.id,
+            },
+          );
+        }
+        if (!_.isEmpty(carriers)) {
           _.map(carriers, (carrier, index) => {
             if (carrier.id) {
               const custodyPayload = {
@@ -154,43 +128,70 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
             );
           });
         }
-        if (startCustody) {
-          if (startCustody.id) {
-            httpService.makeRequest(
-              'patch',
-              `${window.env.API_URL}custodian/custody/${startCustody.id}/`,
-              startCustody,
-            );
-          } else {
-            httpService.makeRequest(
-              'post',
-              `${window.env.API_URL}custodian/custody/`,
-              {
-                ...startCustody,
-                shipment_id: data.data.shipment_uuid,
-                shipment: data.data.id,
-              },
-            );
-          }
+        if (endCustody.id) {
+          httpService.makeRequest(
+            'patch',
+            `${window.env.API_URL}custodian/custody/${endCustody.id}/`,
+            endCustody,
+          );
+        } else {
+          httpService.makeRequest(
+            'post',
+            `${window.env.API_URL}custodian/custody/`,
+            {
+              ...endCustody,
+              shipment_id: data.data.shipment_uuid,
+              shipment: data.data.id,
+            },
+          );
         }
-        if (endCustody) {
-          if (endCustody.id) {
-            httpService.makeRequest(
+        if (updateGateway) {
+          setTimeout(async () => {
+            let gateway_status = '';
+            let shipment_ids = [];
+            let { battery_alert_level } = updateGateway;
+            switch (data.data.status) {
+              case 'Completed':
+              case 'Cancelled':
+              case 'Damaged':
+              case 'Battery Depleted':
+                gateway_status = 'unavailable';
+                shipment_ids = [];
+                battery_alert_level = 0;
+                break;
+              case 'Planned':
+              case 'En route':
+                gateway_status = 'assigned';
+                shipment_ids = data.data.partner_shipment_id ? [data.data.partner_shipment_id] : [];
+                break;
+              default:
+                break;
+            }
+            const gatewayPayload = {
+              ...updateGateway,
+              gateway_status,
+              shipment_ids,
+              battery_alert_level,
+            };
+            await httpService.makeRequest(
               'patch',
-              `${window.env.API_URL}custodian/custody/${endCustody.id}/`,
-              endCustody,
+              `${window.env.API_URL}sensors/gateway/${gatewayPayload.id}`,
+              gatewayPayload,
             );
-          } else {
-            httpService.makeRequest(
-              'post',
-              `${window.env.API_URL}custodian/custody/`,
-              {
-                ...endCustody,
-                shipment_id: data.data.shipment_uuid,
-                shipment: data.data.id,
-              },
-            );
-          }
+            if (_.includes(['Planned', 'En route'], data.data.status)) {
+              const configurePayload = {
+                platform_type: data.data.platform_name,
+                gateway: updateGateway.imei_number,
+                transmission_interval: data.data.transmission_time,
+                measurement_interval: data.data.measurement_time,
+              };
+              httpService.makeRequest(
+                'post',
+                `${window.env.API_URL}sensors/configure_gateway/`,
+                configurePayload,
+              );
+            }
+          }, 500);
         }
       }
     },

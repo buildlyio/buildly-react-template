@@ -107,7 +107,7 @@ export const getProductColumns = (timezone, uomw, dateFormat, timeFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(1),
+      customBodyRender: (value) => _.round(_.toNumber(value), 1),
     },
   },
   {
@@ -117,7 +117,7 @@ export const getProductColumns = (timezone, uomw, dateFormat, timeFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => Number(value).toFixed(0),
+      customBodyRender: (value) => _.round(_.toNumber(value), 0),
     },
   },
   {
@@ -723,7 +723,7 @@ export const getShipmentOverview = (
       const gateways = _.filter(gatewayData, (gateway) => (
         _.includes(editedShipment.gateway_imei, _.toString(gateway.imei_number))
       ));
-      editedShipment.tracker = (!_.isEmpty(gateways) && _.toString(_.join(_.map(gateways, 'name'), ','))) || 'N/A';
+      editedShipment.tracker = (!_.isEmpty(gateways) && _.toString(_.join(_.map(gateways, 'name'), ', '))) || 'N/A';
     }
 
     shipmentList = [...shipmentList, editedShipment];
@@ -767,10 +767,10 @@ export const processReportsAndMarkers = (
 
         const temperature = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_temp_fah
-          : _.round(report_entry.report_temp_cel, 2).toFixed(2);
+          : _.round(report_entry.report_temp_cel, 2);
         const probe = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_probe_fah
-          : _.round(report_entry.report_probe_cel, 2).toFixed(2);
+          : _.round(report_entry.report_probe_cel, 2);
 
         const preAlerts = _.orderBy(
           _.filter(alerts, (alert) => _.lte(_.toNumber(alert.report_id), report.id)),
@@ -1078,7 +1078,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2).toFixed(2) : 'N/A'),
+      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
     },
   },
   {
@@ -1088,7 +1088,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (value ? _.round(_.toNumber(value), 2).toFixed(2) : 'N/A'),
+      customBodyRender: (value) => (value ? _.round(_.toNumber(value), 2) : 'N/A'),
     },
   },
   {
@@ -1098,7 +1098,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2).toFixed(2) : 'N/A'),
+      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
     },
   },
   {
@@ -1108,7 +1108,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2).toFixed(2) : 'N/A'),
+      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
     },
   },
   {
@@ -1118,7 +1118,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2).toFixed(2) : 'N/A'),
+      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
     },
   },
   {
@@ -1129,7 +1129,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => ([
       sortThirdClickReset: true,
       filter: true,
       display: false,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2).toFixed(2) : 'N/A'),
+      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
     },
   },
   {
@@ -1140,7 +1140,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => ([
       sortThirdClickReset: true,
       filter: true,
       display: false,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2).toFixed(2) : 'N/A'),
+      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
     },
   },
   {
@@ -1151,7 +1151,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => ([
       sortThirdClickReset: true,
       filter: true,
       display: false,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2).toFixed(2) : 'N/A'),
+      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
     },
   },
 ]);
@@ -1189,7 +1189,7 @@ export const getAlertsReportColumns = (sensorReport, timezone, dateFormat, timeF
         if (value && _.includes(value, ' F/') && _.includes(value, ' C')) {
           const [val1, val2] = _.split(value, ' F/');
           const [temp, unit] = _.split(val2, ' ');
-          formattedValue = `${val1} F/${_.round(Number(temp), 2).toFixed(2)} ${unit}`;
+          formattedValue = `${val1} F/${_.round(_.toNumber(temp), 2)} ${unit}`;
         } else {
           formattedValue = value || '-';
         }
@@ -1287,7 +1287,7 @@ export const gatewayColumns = (timezone, dateFormat) => ([
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        value && value !== '-' ? _.join(value, ',') : value
+        value && value !== '-' ? _.join(value, ', ') : value
       ),
     },
   },
@@ -1299,7 +1299,7 @@ export const gatewayColumns = (timezone, dateFormat) => ([
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        value && value !== '-' ? _.join(value, ',') : value
+        value && value !== '-' ? _.join(value, ', ') : value
       ),
     },
   },
@@ -1424,11 +1424,6 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       sortThirdClickReset: true,
       filter: true,
     },
-    customBodyRender: (value) => (
-      <Typography sx={{ whiteSpace: 'nowrap' }}>
-        {value}
-      </Typography>
-    ),
   },
   {
     name: 'estimated_time_of_arrival',
@@ -1453,11 +1448,6 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       sortThirdClickReset: true,
       filter: true,
     },
-    customBodyRender: (value) => (
-      <Typography sx={{ whiteSpace: 'nowrap' }}>
-        {value}
-      </Typography>
-    ),
   },
   {
     name: 'alerts',
@@ -1489,7 +1479,7 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => (
-        <Typography sx={{ whiteSpace: 'nowrap', maxWidth: '400px', overflowX: 'auto' }}>
+        <Typography sx={{ whiteSpace: 'break-spaces', maxWidth: '400px' }}>
           {value}
         </Typography>
       ),
@@ -1502,11 +1492,6 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (
-        <Typography sx={{ whiteSpace: 'nowrap' }}>
-          {value}
-        </Typography>
-      ),
     },
   },
   {
@@ -1516,11 +1501,6 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (
-        <Typography sx={{ whiteSpace: 'nowrap' }}>
-          {value}
-        </Typography>
-      ),
     },
   },
 ]);
@@ -1598,15 +1578,15 @@ export const getShipmentFormattedRow = (
 
     if (!_.isEmpty(itemData)) {
       const items = _.filter(itemData, (item) => _.includes(editedShipment.items, item.url));
-      editedShipment.itemNames = _.toString(_.join(_.map(items, 'name'), ','));
+      editedShipment.itemNames = _.toString(_.join(_.map(items, 'name'), ', '));
     }
 
     if (!_.isEmpty(gatewayData)) {
       const gateways = _.filter(gatewayData, (gateway) => (
         _.includes(editedShipment.gateway_imei, _.toString(gateway.imei_number))
       ));
-      editedShipment.tracker = (!_.isEmpty(gateways) && _.toString(_.join(_.map(gateways, 'name'), ','))) || 'N/A';
-      editedShipment.battery_levels = (!_.isEmpty(gateways) && _.toString(_.join(_.map(gateways, (g) => _.toString(_.toInteger(g.last_known_battery_level))), ','))) || 'N/A';
+      editedShipment.tracker = (!_.isEmpty(gateways) && _.toString(_.join(_.map(gateways, 'name'), ', '))) || 'N/A';
+      editedShipment.battery_levels = (!_.isEmpty(gateways) && _.toString(_.join(_.map(gateways, (g) => _.toString(_.toInteger(g.last_known_battery_level))), ', '))) || 'N/A';
     }
 
     if (editedShipment.had_alert) {
@@ -1645,7 +1625,7 @@ export const getShipmentFormattedRow = (
         shipment: editedShipment,
       }));
 
-      if (reports[0]) {
+      if (reports[0] && reports[0].report_entry.report_battery) {
         editedShipment.battery_levels = reports[0].report_entry.report_battery;
       }
     }
@@ -1729,3 +1709,76 @@ export const templateColumns = (timezone, dateFormat) => ([
     },
   },
 ]);
+
+export const getUserFormattedRows = (userData) => {
+  const formattedData = _.map(userData, (ud) => ({
+    ...ud,
+    full_name: `${ud.first_name} ${ud.last_name}`,
+    last_activity: 'Today',
+    org_display_name: ud.organization.name,
+  }));
+
+  return _.orderBy(formattedData, 'id', 'desc');
+};
+
+export const userColumns = () => ([
+  {
+    name: 'full_name',
+    label: 'Full Name',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: 'username',
+    label: 'User Name',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: 'email',
+    label: 'Email',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: 'last_activity',
+    label: 'Last Activity',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: 'org_display_name',
+    label: 'Organization',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+]);
+
+export const getGroupsFormattedRow = (groups, orgs) => {
+  const formattedData = _.map(groups, (g) => ({
+    ...g,
+    display_permission_name: _.isEqual(g.id, 1)
+      ? g.name
+      : `${g.name} - ${
+        _.find(orgs, { organization_uuid: g.organization })
+          ? _.find(orgs, { organization_uuid: g.organization }).name
+          : ''}`,
+  }));
+
+  return _.orderBy(formattedData, 'display_permission_name', 'asc');
+};

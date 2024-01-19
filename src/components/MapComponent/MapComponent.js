@@ -228,7 +228,7 @@ const RenderedMap = withScriptjs(
                                   : 'inherit',
                               }}
                             >
-                              {` ${mark[item.id]} ${item.unit}`}
+                              {mark[item.id] ? ` ${mark[item.id]} ${item.unit}` : ' N/A'}
                             </div>
                           ) : (
                             <div

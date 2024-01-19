@@ -17,11 +17,9 @@ import {
   TextField,
   Tooltip,
   Typography,
-  tooltipClasses,
   useTheme,
 } from '@mui/material';
 import { Assignment as NoteIcon } from '@mui/icons-material';
-import { styled } from '@mui/styles';
 import CustomizedSteppers from '../../components/CustomizedStepper/CustomizedStepper';
 import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
 import Loader from '../../components/Loader/Loader';
@@ -135,17 +133,6 @@ const Shipment = ({ history }) => {
       ))}
     </Tabs>
   );
-
-  const HtmlTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-  ))(({ theme }) => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: theme.palette.background.default,
-      color: theme.palette.background.dark,
-      maxWidth: theme.spacing(40),
-      border: `1px solid ${theme.palette.background.light}`,
-    },
-  }));
 
   useEffect(() => {
     const formattedRows = getShipmentFormattedRow(
@@ -309,10 +296,12 @@ const Shipment = ({ history }) => {
 
         const temperature = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_temp_fah
-          : _.round(report_entry.report_temp_cel, 2).toFixed(2);
+          : _.round(report_entry.report_temp_cel, 2);
         const probe = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_probe_fah
-          : _.round(report_entry.report_probe_cel, 2).toFixed(2);
+          : _.round(report_entry.report_probe_cel, 2);
+        const shock = report_entry.report_shock && _.round(report_entry.report_shock, 2);
+        const light = report_entry.report_light && _.round(report_entry.report_light, 2);
 
         // For a valid (latitude, longitude) pair: -90<=X<=+90 and -180<=Y<=180
         if (report_entry.report_location !== null
@@ -333,8 +322,8 @@ const Shipment = ({ history }) => {
               location: report_entry.report_location,
               label: 'Clustered',
               temperature,
-              light: report_entry.report_light,
-              shock: report_entry.report_shock,
+              light,
+              shock,
               tilt: report_entry.report_tilt,
               humidity: report_entry.report_humidity,
               battery: report_entry.report_battery,
@@ -355,8 +344,8 @@ const Shipment = ({ history }) => {
             location: 'N/A',
             label: 'Clustered',
             temperature,
-            light: report_entry.report_light,
-            shock: report_entry.report_shock,
+            light,
+            shock,
             tilt: report_entry.report_tilt,
             humidity: report_entry.report_humidity,
             battery: report_entry.report_battery,
@@ -388,7 +377,7 @@ const Shipment = ({ history }) => {
         ),
       },
       {
-        id: moment(shipment.actual_time_of_departure || shipment.estimated_time_of_departure).unix(),
+        id: 2,
         title: shipment.origin,
         titleColor: 'inherit',
         label: 'Shipment started',
@@ -402,7 +391,7 @@ const Shipment = ({ history }) => {
         ),
       },
       {
-        id: moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).unix(),
+        id: _.maxBy(newSteps, 'id').id + 1,
         title: shipment.destination,
         titleColor: 'inherit',
         label: 'Shipment arrived',
@@ -416,9 +405,7 @@ const Shipment = ({ history }) => {
         ),
       },
       {
-        id: _.isEqual(shipment.status, 'Completed')
-          ? moment(shipment.edit_date).unix()
-          : moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').unix(),
+        id: _.maxBy(newSteps, 'id').id + 2,
         title: shipment.destination,
         titleColor: 'inherit',
         label: 'Shipment completed',
@@ -531,14 +518,15 @@ const Shipment = ({ history }) => {
                   customBodyRenderLite: (dataIndex) => (
                     rows[dataIndex] && rows[dataIndex].note
                       ? (
-                        <HtmlTooltip
+                        <Tooltip
                           TransitionComponent={Fade}
                           TransitionProps={{ timeout: 600 }}
                           placement="bottom-start"
                           title={<Typography>{rows[dataIndex].note}</Typography>}
+                          className="shipmentTooltip"
                         >
                           <NoteIcon />
-                        </HtmlTooltip>
+                        </Tooltip>
                       ) : <></>
                   ),
                 },
@@ -688,19 +676,19 @@ const Shipment = ({ history }) => {
                                     {`Recorded at: ${markers[0].date} ${markers[0].time}`}
                                   </Typography>
                                   <Typography>
-                                    {`Temp: ${markers[0].temperature}`}
+                                    {`Temp: ${markers[0].temperature || 'N/A'}`}
                                   </Typography>
                                   <Typography>
-                                    {`Humidity: ${markers[0].humidity}`}
+                                    {`Humidity: ${markers[0].humidity || 'N/A'}`}
                                   </Typography>
                                   <Typography>
-                                    {`Shock: ${markers[0].shock}`}
+                                    {`Shock: ${markers[0].shock || 'N/A'}`}
                                   </Typography>
                                   <Typography>
-                                    {`Light: ${markers[0].light}`}
+                                    {`Light: ${markers[0].light || 'N/A'}`}
                                   </Typography>
                                   <Typography>
-                                    {`Battery: ${markers[0].battery}`}
+                                    {`Battery: ${markers[0].battery || 'N/A'}`}
                                   </Typography>
                                 </Grid>
                               </Grid>

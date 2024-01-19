@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { getUser } from '../../context/User.context';
 
 const useStore = create((set) => ({

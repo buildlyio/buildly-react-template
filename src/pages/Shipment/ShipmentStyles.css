@@ -45,6 +45,13 @@
   font-size: 12px;
 }
 
+.shipmentTooltip .MuiTooltip-tooltip {
+  background-color: var(--color-palette-background-default);
+  color: var(--color-palette-background-dark);
+  max-width: 320px;
+  border: 1px solid var(--color-palette-background-light);
+}
+
 @media screen and (max-width: 600px) {
   .shipmentTabs .MuiTabs-scroller {
     display: flex;
@@ -137,12 +144,10 @@
   -webkit-appearance: none;
   margin: 0px;
 }
-
 .createShipmentNumberInput input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0px;
 }
-
 .createShipmentNumberInput input[type="number"] {
   -moz-appearance: textfield;
 }

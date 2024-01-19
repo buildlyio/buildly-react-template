@@ -69,7 +69,6 @@
   -webkit-appearance: none;
   margin: 0px;
 }
-
 .numberInput input[type="number"] {
   -moz-appearance: textfield;
 }

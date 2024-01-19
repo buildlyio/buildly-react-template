@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Button,
   CssBaseline,
   TextField,
-  Link,
   Card,
   CardContent,
   Typography,
@@ -178,7 +178,7 @@ const NewPassword = ({ history, location }) => {
               <Grid container>
                 <Grid item>
                   <Link
-                    href={routes.LOGIN}
+                    to={routes.LOGIN}
                     variant="body2"
                     color="primary"
                   >

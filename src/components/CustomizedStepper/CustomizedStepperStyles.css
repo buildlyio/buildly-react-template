@@ -1,0 +1,67 @@
+.customizadStepperRoot {
+  padding: 16px 0;
+  width: 85vw;
+  overflow-x: auto;
+}
+
+.customizadStepperNoLine  .MuiStepConnector-root:first-of-type {
+  display: none;
+}
+
+.customizadStepperDefault {
+  fill: var(--color-palette-background-light) !important;
+  width: 100% !important;
+}
+
+.customizadStepperActive {
+  fill: var(--color-palette-success-main) !important;
+  width: 100% !important;
+}
+
+.customizadStepperError {
+  fill: var(--color-palette-error-main) !important;
+  width: 100% !important;
+}
+
+.customizadStepperInfo {
+  fill: var(--color-palette-info-main) !important;
+  width: 100% !important;
+}
+
+.customizadStepperConnector .MuiStepConnector-alternativeLabel {
+  top: 10;
+  left: calc(-50% + 16px);
+  right: calc(50% + 16px);
+}
+
+.customizadStepperConnector .Mui-active .MuiStepConnector-line {
+  border-color: var(--color-palette-success-main);
+}
+
+.customizadStepperConnector .Mui-completed .MuiStepConnector-line {
+  border-color: var(--color-palette-success-main);
+}
+
+.customizadStepperConnector .MuiStepConnector-line {
+  border-color: var(--color-palette-background-light);
+  border-top-width: 3;
+  border-radius: 1;
+}
+
+@media screen and (max-width: 1280) {
+  .customizadStepperRoot {
+    width: 100vw;
+  }
+}
+
+@media screen and (max-width: 960) {
+  .customizadStepperRoot {
+    width: 150vw;
+  }
+}
+
+@media screen and (max-width: 600) {
+  .customizadStepperRoot {
+    width: 300vw;
+  }
+}

@@ -1,42 +1,41 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import moment from 'moment-timezone';
 import _ from 'lodash';
 import {
   Button,
   CssBaseline,
   TextField,
-  Link,
+  Box,
   Card,
   CardContent,
   Typography,
   Container,
   Grid,
-  FormControl,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
   Autocomplete,
   MenuItem,
+  FormControlLabel,
+  Switch,
 } from '@mui/material';
-import logo from '../../assets/tp-logo.png';
-import Copyright from '../../components/Copyright/Copyright';
-import Loader from '../../components/Loader/Loader';
-import { useInput } from '../../hooks/useInput';
-import { routes } from '../../routes/routesConstants';
-import { isTablet } from '../../utils/mediaQuery';
+import logo from '@assets/tp-logo.png';
+import Copyright from '@components/Copyright/Copyright';
+import Loader from '@components/Loader/Loader';
+import { useInput } from '@hooks/useInput';
+import { routes } from '@routes/routesConstants';
+import { isMobile, isTablet } from '@utils/mediaQuery';
 import {
   DATE_DISPLAY_CHOICES,
   TIME_DISPLAY_CHOICES,
   UOM_DISTANCE_CHOICES,
   UOM_TEMPERATURE_CHOICES,
   UOM_WEIGHT_CHOICES,
-} from '../../utils/mock';
-import { validators } from '../../utils/validators';
+} from '@utils/mock';
+import { validators } from '@utils/validators';
 import { useQuery } from 'react-query';
-import { getOrganizationNameQuery } from '../../react-query/queries/authUser/getOrganizationNameQuery';
-import { getCountriesQuery } from '../../react-query/queries/shipments/getCountriesQuery';
-import { getCurrenciesQuery } from '../../react-query/queries/shipments/getCurrenciesQuery';
-import { useRegisterMutation } from '../../react-query/mutations/authUser/registerMutation';
+import { getOrganizationNameQuery } from 'react-query/queries/authUser/getOrganizationNameQuery';
+import { getCountriesQuery } from 'react-query/queries/shipments/getCountriesQuery';
+import { getCurrenciesQuery } from 'react-query/queries/shipments/getCurrenciesQuery';
+import { useRegisterMutation } from 'react-query/mutations/authUser/registerMutation';
 import useAlert from '@hooks/useAlert';
 import './RegisterStyles.css';
 
@@ -64,14 +63,9 @@ const Register = ({ history }) => {
   const distance = useInput('Miles', { required: true });
   const temp = useInput('Fahrenheit', { required: true });
   const weight = useInput('Pounds', { required: true });
-  const [pushOptions, setPushOptions] = useState({
-    geofence: false,
-    environmental: false,
-  });
-  const [emailOptions, setEmailOptions] = useState({
-    geofence: false,
-    environmental: false,
-  });
+  const [geoOptions, setGeoOptions] = useState({ email: false, sms: false, whatsApp: false });
+  const [envOptions, setEnvOptions] = useState({ email: false, sms: false, whatsApp: false });
+  const whatsAppNumber = useInput();
   const [formError, setFormError] = useState({});
 
   const { data: orgNameData, isLoading: isLoadingOrgNames } = useQuery(
@@ -117,10 +111,11 @@ const Register = ({ history }) => {
       organization_name: organization_name.value,
       first_name: first_name.value,
       last_name: last_name.value,
-      push_preferences: pushOptions,
-      email_preferences: emailOptions,
+      geo_alert_preferences: geoOptions,
+      env_alert_preferences: envOptions,
       user_timezone: moment.tz.guess(),
     };
+
     if (organization_name.value && !_.includes(orgNameData, organization_name.value)) {
       registerFormValue = {
         ...registerFormValue,
@@ -134,6 +129,11 @@ const Register = ({ history }) => {
         weight: weight.value,
       };
     }
+
+    if (whatsAppNumber.value) {
+      registerFormValue = { ...registerFormValue, whatsApp_number: whatsAppNumber.value };
+    }
+
     registerMutation(registerFormValue);
   };
 
@@ -173,6 +173,7 @@ const Register = ({ history }) => {
       || !re_password.value
       || !organization_name.value
       || !first_name.value
+      || ((geoOptions.whatsApp || envOptions.whatsApp) && !whatsAppNumber.value)
       || (organization_name.value && !_.includes(orgNameData, organization_name.value)
         && (!country.value || !currency.value || !dateFormat.value || !timeFormat.value
           || !distance.value || !temp.value || !weight.value || !organization_abbrevation.value))
@@ -372,6 +373,7 @@ const Register = ({ history }) => {
                     id="organization_name"
                     name="organization_name"
                     options={orgNameData || []}
+                    value={organization_name.value}
                     onChange={(e, newValue) => {
                       organization_name.setValue(newValue || '');
                     }}
@@ -395,7 +397,7 @@ const Register = ({ history }) => {
                         }
                         className="textField"
                         onBlur={(e) => handleBlur(e, 'required', organization_name)}
-                        value={organization_name}
+                        value={organization_name.value}
                         onChange={(e) => {
                           organization_name.setValue(e.target.value);
                           organization_abbrevation.setValue(e.target.value.replace(/[^A-Z0-9]/g, ''));
@@ -617,93 +619,106 @@ const Register = ({ history }) => {
                   </TextField>
                 </Grid>
               </Grid>
-              <Grid
-                container
-                spacing={isTablet() ? 0 : 3}
-              >
+
+              <Grid container spacing={isMobile() ? 0 : 3} mt={(!organization_name.value || _.includes(orgNameData, organization_name.value)) && -2}>
                 <Grid item xs={12}>
-                  <span className="alertOptionsLabel">
-                    Push Notification Preference
-                  </span>
-                  <div className="alertOptions">
-                    <FormControl component="fieldset">
-                      <FormGroup aria-label="position" row={false}>
-                        <FormControlLabel
-                          control={(
-                            <Checkbox
-                              size="medium"
-                              color="primary"
-                              checked={pushOptions.geofence}
-                              onChange={(e) => setPushOptions({
-                                ...pushOptions,
-                                geofence: e.target.checked,
-                              })}
-                            />
-                          )}
-                          label="GeoFence Notifications"
-                          labelPlacement="end"
-                        />
-                        <FormControlLabel
-                          control={(
-                            <Checkbox
-                              size="medium"
-                              color="primary"
-                              checked={pushOptions.environmental}
-                              onChange={(e) => setPushOptions({
-                                ...pushOptions,
-                                environmental: e.target.checked,
-                              })}
-                            />
-                          )}
-                          label="Environmental Notifications"
-                          labelPlacement="end"
-                        />
-                      </FormGroup>
-                    </FormControl>
-                  </div>
+                  <Typography variant="body1" fontWeight={700}>Shipment Status Change Alerts:</Typography>
+                  <Typography variant="caption">Enabling these alerts will send notifications of departure and arrival activity of your shipments.</Typography>
                 </Grid>
-                <Grid item xs={12} className="alertGrid">
-                  <span className="alertOptionsLabel">
-                    Email Notification Preference
-                  </span>
-                  <div className="alertOptions">
-                    <FormControl component="fieldset">
-                      <FormGroup aria-label="position" row={false}>
-                        <FormControlLabel
-                          control={(
-                            <Checkbox
-                              size="medium"
-                              color="primary"
-                              checked={emailOptions.geofence}
-                              onChange={(e) => setEmailOptions({
-                                ...emailOptions,
-                                geofence: e.target.checked,
-                              })}
-                            />
-                          )}
-                          label="GeoFence Notifications"
-                          labelPlacement="end"
-                        />
-                        <FormControlLabel
-                          control={(
-                            <Checkbox
-                              size="medium"
-                              color="primary"
-                              checked={emailOptions.environmental}
-                              onChange={(e) => setEmailOptions({
-                                ...emailOptions,
-                                environmental: e.target.checked,
-                              })}
-                            />
-                          )}
-                          label="Environmental Notifications"
-                          labelPlacement="end"
-                        />
-                      </FormGroup>
-                    </FormControl>
-                  </div>
+
+                <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>Email Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label={geoOptions && geoOptions.email ? 'ON' : 'OFF'}
+                    control={<Switch checked={geoOptions && geoOptions.email} color="primary" onChange={(e) => setGeoOptions({ ...geoOptions, email: e.target.checked })} />}
+                  />
+                </Grid>
+
+                <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>SMS text Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label="Available in a future release"
+                    control={<Switch checked={false} color="primary" disabled onChange={(e) => setGeoOptions({ ...geoOptions, sms: e.target.checked })} />}
+                  />
+                </Grid>
+
+                <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>WhatsApp Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label={geoOptions && geoOptions.whatsApp ? 'ON' : 'OFF'}
+                    control={<Switch checked={geoOptions && geoOptions.whatsApp} color="primary" onChange={(e) => setGeoOptions({ ...geoOptions, whatsApp: e.target.checked })} />}
+                  />
                 </Grid>
               </Grid>
+
+              <Grid container spacing={isMobile() ? 0 : 3} mt={3}>
+                <Grid item xs={12}>
+                  <Typography variant="body1" fontWeight={700}>Environmental Alerts:</Typography>
+                  <Typography variant="caption">
+                    Enabling these alerts will send notifications about excursions of your settings for
+                    temperature, humidity, shock, tilt, and light exposure of your shipments.
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>Email Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label={envOptions && envOptions.email ? 'ON' : 'OFF'}
+                    control={<Switch checked={envOptions && envOptions.email} color="primary" onChange={(e) => setEnvOptions({ ...envOptions, email: e.target.checked })} />}
+                  />
+                </Grid>
+
+                <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>SMS text Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label="Available in a future release"
+                    control={<Switch checked={false} color="primary" disabled onChange={(e) => setEnvOptions({ ...envOptions, sms: e.target.checked })} />}
+                  />
+                </Grid>
+
+                <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>WhatsApp Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label={envOptions && envOptions.whatsApp ? 'ON' : 'OFF'}
+                    control={<Switch checked={envOptions && envOptions.whatsApp} color="primary" onChange={(e) => setEnvOptions({ ...envOptions, whatsApp: e.target.checked })} />}
+                  />
+                </Grid>
+              </Grid>
+
+              {(geoOptions.whatsApp || envOptions.whatsApp) && (
+                <Grid item xs={12} mt={2}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    type="number"
+                    className="numberInput"
+                    id="whatsapp-number"
+                    name="whatsapp-number"
+                    label="Send WhatsApp alerts on"
+                    {...whatsAppNumber.bind}
+                  />
+                </Grid>
+              )}
+
               <Button
                 type="submit"
                 fullWidth
@@ -717,7 +732,7 @@ const Register = ({ history }) => {
               <Grid container>
                 <Grid item>
                   <Link
-                    href={routes.LOGIN}
+                    to={routes.LOGIN}
                     variant="body2"
                     color="primary"
                   >

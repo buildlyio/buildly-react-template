@@ -52,13 +52,25 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
           start_of_custody_location: end_custody.location,
           end_of_custody_location: end_custody.location,
         };
+        let locations = [];
         if (!_.isEmpty(carriers)) {
-          const locations = getLocations(_.map(carriers, 'location'));
+          locations = getLocations(_.map(carriers, 'location'));
           const first_custody = _.first(locations);
           startCustody = {
             ...startCustody,
             end_of_custody_location: first_custody,
           };
+        }
+        httpService.makeRequest(
+          'post',
+          `${window.env.API_URL}custodian/custody/`,
+          {
+            ...startCustody,
+            shipment_id: data.data.shipment_uuid,
+            shipment: data.data.id,
+          },
+        );
+        if (!_.isEmpty(carriers)) {
           _.map(carriers, (carrier, index) => (
             httpService.makeRequest(
               'post',
@@ -74,28 +86,15 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
               },
             )));
         }
-        if (startCustody) {
-          httpService.makeRequest(
-            'post',
-            `${window.env.API_URL}custodian/custody/`,
-            {
-              ...startCustody,
-              shipment_id: data.data.shipment_uuid,
-              shipment: data.data.id,
-            },
-          );
-        }
-        if (endCustody) {
-          httpService.makeRequest(
-            'post',
-            `${window.env.API_URL}custodian/custody/`,
-            {
-              ...endCustody,
-              shipment_id: data.data.shipment_uuid,
-              shipment: data.data.id,
-            },
-          );
-        }
+        httpService.makeRequest(
+          'post',
+          `${window.env.API_URL}custodian/custody/`,
+          {
+            ...endCustody,
+            shipment_id: data.data.shipment_uuid,
+            shipment: data.data.id,
+          },
+        );
         if (updateGateway) {
           setTimeout(async () => {
             shipmentPayload = {
@@ -133,7 +132,7 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
                 configureGatewayPayload,
               );
             }
-          }, 200);
+          }, 500);
         }
       }
     },
