@@ -1,0 +1,33 @@
+.dashboardHeading {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.iconButton {
+  padding: 0;
+  color: var(--color-palette-primary-dark);
+}
+
+.iconButton:hover {
+  background-color: var(--color-palette-primary-light);
+}
+
+.dataTableBody:hover {
+  background-color: none;
+}
+
+.dataTable .MuiPaper-root > .MuiToolbar-root {
+  background-color: var(--color-palette-primary-dark);
+}
+
+.dataTable .MuiPaper-root > .MuiToolbar-root .MuiSvgIcon-root {
+  fill: var(--color-palette-background-default);
+}
+
+.dataTable tr > th {
+  background-color: var(--color-palette-primary-light);
+}
+
+.dataTable .MuiTableFooter-root {
+  background-color: var(--color-palette-primary-light);
+}

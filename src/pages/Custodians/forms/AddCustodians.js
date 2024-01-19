@@ -6,66 +6,21 @@ import {
   Card,
   CardContent,
   Typography,
-  useTheme,
   Grid,
   MenuItem,
-  useMediaQuery,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import Loader from '../../../components/Loader/Loader';
 import FormModal from '../../../components/Modal/FormModal';
 import { getUser } from '../../../context/User.context';
 import { useInput } from '../../../hooks/useInput';
 import { validators } from '../../../utils/validators';
+import { isMobile, isDesktop } from '../../../utils/mediaQuery';
 import { useAddCustodianMutation } from '../../../react-query/mutations/custodians/addCustodianMutation';
 import { useEditCustodianMutation } from '../../../react-query/mutations/custodians/editCustodianMutation';
 import useAlert from '@hooks/useAlert';
+import '../CustodianStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(8),
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  logo: {
-    width: '100%',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  addressContainer: {
-    marginTop: theme.spacing(4),
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-  inputWithTooltip: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-}));
-
-const AddCustodians = ({
-  history,
-  location,
-}) => {
-  const classes = useStyles();
+const AddCustodians = ({ history, location }) => {
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
 
@@ -111,8 +66,6 @@ const AddCustodians = ({
   const formTitle = editPage ? 'Edit Custodian' : 'Add Custodian';
 
   const organization = getUser().organization.organization_uuid;
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
     const defaultCountry = !_.isEmpty(unitData) && _.find(
@@ -267,8 +220,6 @@ const AddCustodians = ({
           open={openFormModal}
           handleClose={closeFormModal}
           title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth="md"
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
@@ -276,10 +227,10 @@ const AddCustodians = ({
           {(isAddingCustodian || isEditingCustodian) && (
             <Loader open={isAddingCustodian || isEditingCustodian} />
           )}
-          <form className={classes.form} noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={isDesktop ? 2 : 0}>
+          <form className="formContainer" noValidate onSubmit={handleSubmit}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid
-                className={classes.inputWithTooltip}
+                className="inputWithTooltip"
                 item
                 xs={12}
                 md={6}
@@ -307,12 +258,12 @@ const AddCustodians = ({
                 />
               </Grid>
               <Grid
-                className={classes.inputWithTooltip}
+                className="inputWithTooltip"
                 item
                 xs={12}
                 md={6}
                 sm={6}
-                style={{ paddingTop: theme.spacing(5) }}
+                style={{ paddingTop: isDesktop() ? 39 : 10 }}
               >
                 <TextField
                   variant="outlined"
@@ -331,9 +282,9 @@ const AddCustodians = ({
                 />
               </Grid>
             </Grid>
-            <Grid container spacing={isDesktop ? 2 : 0}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid
-                className={classes.inputWithTooltip}
+                className="inputWithTooltip"
                 item
                 xs={12}
                 md={6}
@@ -371,7 +322,7 @@ const AddCustodians = ({
                 </TextField>
               </Grid>
               <Grid
-                className={classes.inputWithTooltip}
+                className="inputWithTooltip inputWithTooltip4"
                 item
                 xs={12}
                 md={6}
@@ -390,12 +341,14 @@ const AddCustodians = ({
                 />
               </Grid>
             </Grid>
-            <Card variant="outlined" className={classes.addressContainer}>
+            <Card variant="outlined" className="addressContainer">
               <CardContent>
-                <Typography variant="h6">Contact Info</Typography>
-                <Grid container spacing={isDesktop ? 2 : 0}>
+                <Typography variant="h6" gutterBottom mt={1} mb={isMobile() ? 0 : 1.65}>
+                  Contact Info
+                </Typography>
+                <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -436,9 +389,9 @@ const AddCustodians = ({
                     </TextField>
                   </Grid>
                 </Grid>
-                <Grid container spacing={isDesktop ? 2 : 0}>
+                <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -477,8 +430,8 @@ const AddCustodians = ({
                     </TextField>
                   </Grid>
                 </Grid>
-                <Grid container spacing={isDesktop ? 2 : 0}>
-                  <Grid className={classes.inputWithTooltip} item xs={12}>
+                <Grid container spacing={isDesktop() ? 2 : 0}>
+                  <Grid className="inputWithTooltip" item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -497,7 +450,7 @@ const AddCustodians = ({
                       {...address_1.bind}
                     />
                   </Grid>
-                  <Grid className={classes.inputWithTooltip} item xs={12}>
+                  <Grid className="inputWithTooltip inputWithTooltip3" item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -511,9 +464,9 @@ const AddCustodians = ({
                     />
                   </Grid>
                 </Grid>
-                <Grid container spacing={isDesktop ? 2 : 0}>
+                <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -534,7 +487,7 @@ const AddCustodians = ({
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip inputWithTooltip2"
                     item
                     xs={12}
                     md={6}
@@ -557,14 +510,14 @@ const AddCustodians = ({
                 </Grid>
               </CardContent>
             </Card>
-            <Grid container spacing={isDesktop ? 3 : 0} justifyContent="center">
+            <Grid container spacing={2} justifyContent="center">
               <Grid item xs={12} sm={4}>
                 <Button
                   type="submit"
                   fullWidth
                   variant="contained"
                   color="primary"
-                  className={classes.submit}
+                  className="submit"
                   disabled={
                     isAddingCustodian || isEditingCustodian || submitDisabled()
                   }
@@ -572,14 +525,14 @@ const AddCustodians = ({
                   {buttonText}
                 </Button>
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={4} className="submit2">
                 <Button
                   type="button"
                   fullWidth
                   variant="outlined"
                   color="primary"
                   onClick={discardFormData}
-                  className={classes.submit}
+                  className="submit"
                 >
                   Cancel
                 </Button>

@@ -14,10 +14,7 @@ import { useDeleteConsortiumMutation } from '../../../../react-query/mutations/c
 import useAlert from '@hooks/useAlert';
 import { useStore } from '../../../../zustand/timezone/timezoneStore';
 
-const Consortium = ({
-  history,
-  redirectTo,
-}) => {
+const Consortium = ({ history, redirectTo }) => {
   const user = getUser();
   const organization = user.organization.organization_uuid;
 

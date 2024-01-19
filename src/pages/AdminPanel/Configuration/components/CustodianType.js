@@ -13,10 +13,7 @@ import { useDeleteCustodianTypeMutation } from '../../../../react-query/mutation
 import useAlert from '@hooks/useAlert';
 import { useStore } from '../../../../zustand/timezone/timezoneStore';
 
-const CustodianType = ({
-  redirectTo,
-  history,
-}) => {
+const CustodianType = ({ redirectTo, history }) => {
   const organization = getUser().organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);

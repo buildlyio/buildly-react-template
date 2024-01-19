@@ -1,0 +1,28 @@
+.root {
+  width: 100%;
+}
+
+.root > * + * {
+  margin-top: 16px;
+}
+
+.root .MuiSnackbarContent-root {
+  background-color: transparent;
+  color: var(--color-palette-background-default);
+}
+
+.success {
+  background-color: var(--color-palette-success-main);
+}
+
+.info {
+  background-color: var(--color-palette-info-main);
+}
+
+.warning {
+  background-color: var(--color-palette-warning-main);
+}
+
+.error {
+  background-color: var(--color-palette-error-main);
+}

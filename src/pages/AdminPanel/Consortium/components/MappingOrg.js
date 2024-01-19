@@ -11,10 +11,7 @@ import { getAllOrganizationQuery } from '../../../../react-query/queries/authUse
 import { getCustodianQuery } from '../../../../react-query/queries/custodians/getCustodianQuery';
 import useAlert from '@hooks/useAlert';
 
-const MappingOrg = ({
-  history,
-  redirectTo,
-}) => {
+const MappingOrg = ({ history, redirectTo }) => {
   const user = getUser();
   const organization = user.organization.organization_uuid;
 

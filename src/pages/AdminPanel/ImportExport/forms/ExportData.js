@@ -6,26 +6,14 @@ import {
   MenuItem,
   Button,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import Loader from '../../../../components/Loader/Loader';
+import { isDesktop2 } from '../../../../utils/mediaQuery';
 import { useQuery, useQueryClient } from 'react-query';
 import { getExportDataQuery } from '../../../../react-query/queries/importExport/getExportDataQuery';
 import useAlert from '@hooks/useAlert';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '90%',
-    margin: 'auto',
-    marginTop: theme.spacing(1),
-  },
-  button: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-}));
+import '../../AdminPanelStyles.css';
 
 const ExportData = () => {
-  const classes = useStyles();
   const [exportTable, setExportTable] = useState('');
   const [exportType, setExportType] = useState('');
   const [ready, setReady] = useState(false);
@@ -77,14 +65,14 @@ const ExportData = () => {
   };
 
   return (
-    <>
+    <div>
       {isLoadingExportData && <Loader open={isLoadingExportData} />}
       <form
-        className={classes.root}
+        className="formRoot"
         noValidate
         onSubmit={handleSubmit}
       >
-        <Grid container spacing={2}>
+        <Grid container spacing={isDesktop2() ? 2 : 0}>
           <Grid item xs={12}>
             <TextField
               variant="outlined"
@@ -119,13 +107,13 @@ const ExportData = () => {
             </TextField>
           </Grid>
           <Grid container spacing={2} justifyContent="center">
-            <Grid item xs={6} sm={4}>
+            <Grid item xs={7} sm={6} md={4}>
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 color="primary"
-                className={classes.button}
+                className="submit"
                 disabled={isLoadingExportData || !exportTable || !exportType}
               >
                 Export
@@ -134,7 +122,7 @@ const ExportData = () => {
           </Grid>
         </Grid>
       </form>
-    </>
+    </div>
   );
 };
 

@@ -1,54 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import {
-  useTheme,
-  useMediaQuery,
   Grid,
   Button,
   TextField,
   MenuItem,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import Loader from '../../../../components/Loader/Loader';
 import FormModal from '../../../../components/Modal/FormModal';
 import { getUser } from '../../../../context/User.context';
 import { useInput } from '../../../../hooks/useInput';
+import { isDesktop } from '../../../../utils/mediaQuery';
 import { useEditCustodianMutation } from '../../../../react-query/mutations/custodians/editCustodianMutation';
 import useAlert from '@hooks/useAlert';
+import '../../AdminPanelStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-}));
-
-const EditMapping = ({
-  history,
-  location,
-}) => {
+const EditMapping = ({ history, location }) => {
   const organization = getUser().organization.organization_uuid;
-  const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [options, setOptions] = useState([]);
@@ -65,9 +33,6 @@ const EditMapping = ({
   const formTitle = pageType === 'edit'
     ? 'Edit Mapping'
     : 'Set Mapping';
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   const custodyOrg = useInput((
     pageData && pageData.custody_org_uuid
@@ -136,8 +101,6 @@ const EditMapping = ({
           open={openFormModal}
           handleClose={closeFormModal}
           title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth="md"
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
@@ -146,11 +109,11 @@ const EditMapping = ({
             <Loader open={isEditingCustodian} />
           )}
           <form
-            className={classes.form}
+            className="formContainer"
             noValidate
             onSubmit={handleSubmit}
           >
-            <Grid container spacing={isDesktop ? 2 : 0}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -195,7 +158,7 @@ const EditMapping = ({
                     fullWidth
                     variant="contained"
                     color="primary"
-                    className={classes.submit}
+                    className="submit"
                     disabled={isEditingCustodian}
                   >
                     {buttonText}
@@ -208,7 +171,7 @@ const EditMapping = ({
                     variant="outlined"
                     color="primary"
                     onClick={discardFormData}
-                    className={classes.submit}
+                    className="submit"
                   >
                     Cancel
                   </Button>

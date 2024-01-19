@@ -1,0 +1,235 @@
+.shipmentTitle {
+  padding: 16px;
+  background-color: var(--color-palette-primary-light);
+}
+
+.shipmentCreateButton {
+  margin-bottom: 24px;
+  background-color: var(--color-palette-primary-main);
+  color: var(--color-palette-background-default);
+}
+
+.shipmentCreateButton:hover {
+  background-color: var(--color-palette-primary-main);
+}
+
+.shipmentTab {
+  color: var(--color-palette-background-default);
+}
+
+.shipmentDataTable {
+  margin-top: -40px;
+}
+
+.shipmentDataTable .MuiTableCell-root {
+  color: inherit;
+}
+
+.shipmentDataTable .MuiTableCell-paddingCheckbox {
+  display: none;
+}
+
+.shipmentName {
+  text-decoration: underline;
+  text-decoration-color: var(--color-palette-background-light);
+  cursor: pointer;
+}
+
+.attachedFiles {
+  border: 1px solid var(--color-palette-background-light);
+  border-radius: 4px;
+  height: 100%;
+}
+
+.legend {
+  font-size: 12px;
+}
+
+@media screen and (max-width: 600px) {
+  .shipmentTabs .MuiTabs-scroller {
+    display: flex;
+    width: 100vw;
+    overflow-x: auto !important;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .shipmentTabs {
+    position: absolute;
+    top: 24%;
+    left: 0;
+  }
+}
+
+/* Create shipment page styles */
+.createShipmentRoot {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.createShipmentNameContainer {
+  margin: 32px 0px;
+  border: 1px solid var(--color-palette-background-light);
+  border-radius: 8px;
+}
+
+.createShipmentNameHeader {
+  padding: 16px;
+  background-color: var(--color-palette-primary-light);
+  border-bottom: 1px solid var(--color-palette-background-light);
+}
+
+.createShipmentNameData {
+  padding: 16px;
+}
+
+.createShipmentForm {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.createShipmentFieldset {
+  border: 1px solid var(--color-palette-background-light);
+  padding: 16px 32px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.createShipmentLegend {
+  font-size: 12px;
+}
+
+.createShipmentInnerAsterisk {
+  font-size: 32px;
+  color: var(--color-palette-secondary-main);
+  padding-top: 24px !important;
+}
+
+.createShipmentOuterAsterisk {
+  font-size: 32px;
+  color: var(--color-palette-secondary-main);
+  padding-left: 16px !important;
+  padding-top: 40px !important;
+}
+
+.createShipmentAdjustSpacing {
+  margin-right: 40px;
+}
+
+.createShipmentAlertSettingText {
+  color: var(--color-palette-background-light);
+}
+
+.createShipmentHighest {
+  font-weight: 700;
+  color: var(--color-palette-error-main);
+}
+
+.createShipmentLowest {
+  font-weight: 700;
+  color: var(--color-palette-info-main);
+}
+
+.createShipmentNumberInput input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0px;
+}
+
+.createShipmentNumberInput input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0px;
+}
+
+.createShipmentNumberInput input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.createShipmentAttachedFiles {
+  border: 1px solid var(--color-palette-background-light);
+  padding: 12px;
+  border-radius: 4px;
+  height: 100%;
+}
+
+.createShipmentFileButton {
+  padding-top: 40px !important;
+}
+
+.createShipmentFileButton fieldset {
+  border: 0px;
+}
+
+.createShipmentCancel {
+  margin-top: 4px;
+  margin-left: -32px;
+  fill: var(--color-palette-background-light);
+}
+
+.createShipmentGatewayDetails {
+  display: flex;
+  justify-content: end;
+  margin-right: 8px;
+  padding: 40px;
+  padding-top: 16px;
+}
+
+.createShipmentFinalName {
+  padding-top: 40px;
+  margin-left: 16px;
+  color: var(--color-palette-background-light);
+}
+
+.createShipmentFinalNameDisplay {
+  background-color: var(--color-palette-primary-light);
+}
+
+.createShipmentFinalName div {
+  padding-left: 32px !important;
+}
+
+.createShipmentActionButtons {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.createShipmentSaveTemplateModal .MuiPaper-root {
+  min-width: 70%;
+}
+
+.createShipmentCloseButton {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  color: var(--color-palette-background-dark);
+}
+
+.createShipmentModalActionButtons {
+  padding: 16px;
+  padding-top: 0px;
+}
+
+.createShipmentActionButtons2 {
+  padding: 14px 32px;
+  margin-right: 16px;
+}
+
+@media screen and (max-width: 620px) {
+  .createShipmentActionButtons2 {
+    margin-bottom: 16px;
+  }
+}
+
+@media screen and (min-width: 600px) and (max-width: 1280px) {
+  .createShipmentAdjustSpacing {
+    margin-right: 28px;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .createShipmentAdjustSpacing {
+    margin-right: 40px;
+  }
+}

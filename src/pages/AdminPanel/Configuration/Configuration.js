@@ -5,7 +5,6 @@ import {
   AccordionDetails,
   Typography,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { getUser } from '../../../context/User.context';
 import { checkForAdmin, checkForGlobalAdmin } from '../../../utils/utilMethods';
@@ -16,33 +15,17 @@ import ItemType from './components/ItemType';
 import OrganizationType from './components/OrganizationType';
 import Product from './components/Product';
 import ProductType from './components/ProductType';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    marginTop: theme.spacing(6),
-  },
-  accordion: {
-    marginBottom: theme.spacing(4),
-    overflow: 'scroll hidden',
-    scrollbarWidth: 'none',
-    msOverflowStyle: 'none',
-    '&::-webkit-scrollbar': {
-      display: 'none',
-    },
-  },
-}));
+import '../AdminPanelStyles.css';
 
 const Configuration = (props) => {
-  const classes = useStyles();
   const isAdmin = checkForAdmin(getUser());
   const superAdmin = checkForGlobalAdmin(getUser());
 
   return (
     <div>
       {isAdmin && (
-        <div className={classes.root}>
-          <Accordion defaultExpanded className={classes.accordion}>
+        <div className="root">
+          <Accordion defaultExpanded className="accordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="organization-setting-content"
@@ -59,8 +42,8 @@ const Configuration = (props) => {
         </div>
       )}
       {superAdmin && (
-        <div className={classes.root}>
-          <Accordion defaultExpanded className={classes.accordion}>
+        <div className="root">
+          <Accordion defaultExpanded className="accordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="organization-setting-content"
@@ -74,7 +57,7 @@ const Configuration = (props) => {
               <OrganizationSettings {...props} />
             </AccordionDetails>
           </Accordion>
-          <Accordion className={classes.accordion}>
+          <Accordion className="accordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="custodian-type-content"
@@ -88,7 +71,7 @@ const Configuration = (props) => {
               <CustodianType {...props} />
             </AccordionDetails>
           </Accordion>
-          <Accordion className={classes.accordion}>
+          <Accordion className="accordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="gateway-type-content"
@@ -102,7 +85,7 @@ const Configuration = (props) => {
               <GatewayType {...props} />
             </AccordionDetails>
           </Accordion>
-          <Accordion className={classes.accordion}>
+          <Accordion className="accordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="item-type-content"
@@ -116,7 +99,7 @@ const Configuration = (props) => {
               <ItemType {...props} />
             </AccordionDetails>
           </Accordion>
-          <Accordion className={classes.accordion}>
+          <Accordion className="accordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="organization-type-content"
@@ -130,7 +113,7 @@ const Configuration = (props) => {
               <OrganizationType {...props} />
             </AccordionDetails>
           </Accordion>
-          <Accordion className={classes.accordion}>
+          <Accordion className="accordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="product-content"
@@ -144,7 +127,7 @@ const Configuration = (props) => {
               <Product {...props} />
             </AccordionDetails>
           </Accordion>
-          <Accordion className={classes.accordion}>
+          <Accordion className="accordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="product-type-content"

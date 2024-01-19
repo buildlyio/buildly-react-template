@@ -8,7 +8,6 @@ import {
   TextField,
   MenuItem,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import {
   AccountCircle,
   Refresh as RefreshIcon,
@@ -31,34 +30,7 @@ import { useQuery } from 'react-query';
 import { getAllOrganizationQuery } from '../../react-query/queries/authUser/getAllOrganizationQuery';
 import { useUpdateUserMutation } from '../../react-query/mutations/authUser/updateUserMutation';
 import { oauthService } from '@modules/oauth/oauth.service';
-
-const useStyles = makeStyles((theme) => ({
-  appBar: {
-    backgroundColor: theme.palette.background.default,
-    zIndex: theme.zIndex.drawer + 1,
-    [theme.breakpoints.down('sm')]: {
-      overflowX: 'auto',
-    },
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  logo: {
-    maxWidth: 250,
-  },
-  menuRight: {
-    marginLeft: 'auto',
-    display: 'flex',
-  },
-  timezone: {
-    width: theme.spacing(24),
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(1.5),
-    '& .MuiOutlinedInput-input': {
-      padding: theme.spacing(1, 3.5, 1, 2),
-    },
-  },
-}));
+import './TopBarStyles.css';
 
 /**
  * Component for the top bar header.
@@ -68,7 +40,6 @@ const TopBar = ({
   setNavHidden,
   history,
 }) => {
-  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const [settingEl, setSettingEl] = useState(null);
   const [organization, setOrganization] = useState(null);
@@ -146,12 +117,12 @@ const TopBar = ({
   };
 
   return (
-    <AppBar position="fixed" className={classes.appBar}>
+    <AppBar position="fixed" className="appBar">
       {(isLoadingOrgs || isUpdateUser) && <Loader open={isLoadingOrgs || isUpdateUser} />}
       <Toolbar>
         <IconButton
           edge="start"
-          className={classes.menuButton}
+          className="menuButton"
           onClick={() => setNavHidden(!navHidden)}
           aria-label="menu"
           sx={{
@@ -165,12 +136,12 @@ const TopBar = ({
         </IconButton>
         <img
           src={logo}
-          className={classes.logo}
+          className="logo"
           alt="Company text logo"
         />
-        <div className={classes.menuRight}>
+        <div className="menuRight">
           <TextField
-            className={classes.timezone}
+            className="timezone"
             variant="outlined"
             fullWidth
             id="timezone"
@@ -187,7 +158,7 @@ const TopBar = ({
           </TextField>
           {isSuperAdmin && (
             <TextField
-              className={classes.timezone}
+              className="timezone"
               variant="outlined"
               fullWidth
               id="org"

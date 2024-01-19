@@ -1,0 +1,59 @@
+.appBar {
+  background-color: var(--color-palette-background-default);
+  z-index: 1201;
+  height: 64px;
+}
+
+.menuButton {
+  margin-right: 16px;
+}
+
+.logo {
+  max-width: 250px !important;
+  background-size: contain;
+  margin-top: 24px;
+}
+
+.menuRight {
+  margin-left: auto;
+  display: flex;
+}
+
+.timezone {
+  width: 192px;
+  margin-top: 8px;
+  margin-left: 12px;
+}
+
+.timezone .MuiOutlinedInput-input {
+  padding: 8px 28px 8px 16px;
+}
+
+.adminMenuRoot {
+  padding: 16px;
+  text-align: center;
+}
+
+.adminMenuRoot:hover {
+  background-color: var(--color-palette-primary-light);
+}
+
+.adminMenuRoot:hover .MuiListItemIcon-root .MuiListItemText-primary {
+  color: var(--color-palette-primary-dark);
+}
+
+.MuiMenu-paper {
+  border: 1px solid var(--color-palette-background-light2);
+}
+
+@media screen and (max-width: 960px) {
+  .appBar {
+    overflow-x: auto;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .appBar {
+    height: 56px;
+  }
+}

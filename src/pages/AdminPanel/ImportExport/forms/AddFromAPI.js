@@ -7,13 +7,13 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import Loader from '../../../../components/Loader/Loader';
 import ConfirmModal from '../../../../components/Modal/ConfirmModal';
 import CustomizedTooltips from '../../../../components/ToolTip/ToolTip';
 import { getUser } from '../../../../context/User.context';
 import { useInput } from '../../../../hooks/useInput';
 import { validators } from '../../../../utils/validators';
+import { isDesktop2 } from '../../../../utils/mediaQuery';
 import { useQuery } from 'react-query';
 import { getItemOptionQuery } from '../../../../react-query/queries/options/getItemOptionQuery';
 import { getGatewayOptionQuery } from '../../../../react-query/queries/options/getGatewayOptionQuery';
@@ -21,57 +21,9 @@ import { getProductOptionQuery } from '../../../../react-query/queries/options/g
 import { getApiResponseQuery } from '../../../../react-query/queries/importExport/getApiResponseQuery';
 import { useAddApiSetupMutation } from '../../../../react-query/mutations/importExport/addApiSetupMutation';
 import useAlert from '@hooks/useAlert';
-
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '90%',
-    margin: 'auto',
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  title: {
-    margin: theme.spacing(2, 0),
-    textAlign: 'center',
-  },
-  apiResponse: {
-    width: '100%',
-    backgroundColor: theme.palette.secondary.main,
-    overflow: 'wrap',
-    whiteSpace: 'normal',
-    wordBreak: 'break-word',
-  },
-  tableColumn: {
-    backgroundColor: theme.palette.primary.dark,
-    borderRadius: theme.spacing(1),
-    marginBottom: theme.spacing(3),
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: theme.spacing(2),
-  },
-  mapCol: {
-    marginBottom: theme.spacing(3),
-  },
-  apiMenuItem: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-}));
+import '../../AdminPanelStyles.css';
 
 const AddFromAPI = () => {
-  const classes = useStyles();
   const organization = getUser().organization.organization_uuid;
 
   const { displayAlert } = useAlert();
@@ -389,7 +341,7 @@ const AddFromAPI = () => {
   };
 
   return (
-    <>
+    <div>
       {(isLoadingItemOptions
         || isLoadingProductOptions
         || isLoadingGatewayOptions
@@ -404,11 +356,11 @@ const AddFromAPI = () => {
           />
         )}
       <form
-        className={classes.form}
+        className="formRoot"
         noValidate
         onSubmit={handleSubmit}
       >
-        <Grid container spacing={2}>
+        <Grid container spacing={isDesktop2() ? 2 : 0}>
           <Grid item xs={12}>
             <TextField
               variant="outlined"
@@ -535,7 +487,7 @@ const AddFromAPI = () => {
             && (
               <Grid item xs={12}>
                 <Typography variant="h6">API Response</Typography>
-                <pre className={classes.apiResponse}>
+                <pre className="apiResponse">
                   {JSON.stringify(apiResponse)}
                 </pre>
               </Grid>
@@ -599,13 +551,13 @@ const AddFromAPI = () => {
               <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <Typography
-                    className={classes.title}
+                    className="title"
                     variant="h6"
                   >
                     Our Columns
                   </Typography>
                   {_.map(tableColumns, (column, key) => (
-                    <div key={key} className={classes.tableColumn}>
+                    <div key={key} className="tableColumn">
                       <Typography variant="body1">
                         {column.label}
                       </Typography>
@@ -620,7 +572,7 @@ const AddFromAPI = () => {
                 </Grid>
                 <Grid item xs={6}>
                   <Typography
-                    className={classes.title}
+                    className="title"
                     variant="h6"
                   >
                     Mapping (From API Response)
@@ -628,7 +580,7 @@ const AddFromAPI = () => {
                   {_.map(mapColumns, (col, key) => (
                     <TextField
                       key={key}
-                      className={classes.mapCol}
+                      className="mapCol"
                       variant="outlined"
                       fullWidth
                       required={col.required}
@@ -645,7 +597,7 @@ const AddFromAPI = () => {
                       <MenuItem value="">--------</MenuItem>
                       {_.map(apiColumns, (column, keyVal) => (
                         <MenuItem key={keyVal} value={keyVal}>
-                          <div className={classes.apiMenuItem}>
+                          <div className="apiMenuItem">
                             {_.startCase(keyVal)}
                           </div>
                         </MenuItem>
@@ -656,13 +608,13 @@ const AddFromAPI = () => {
               </Grid>
             )}
           <Grid container spacing={2} justifyContent="center">
-            <Grid item xs={6} sm={4}>
+            <Grid item xs={7} sm={6} md={4}>
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 color="primary"
-                className={classes.submit}
+                className="submit"
                 disabled={isLoadingItemOptions || isLoadingProductOptions || isLoadingGatewayOptions || isLoadingApiResponse || isAddingApiSetup || submitDisabled()}
               >
                 Set Mapping and Import
@@ -678,7 +630,7 @@ const AddFromAPI = () => {
         title={modalTitle}
         submitText="Correct"
       />
-    </>
+    </div>
   );
 };
 

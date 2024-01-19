@@ -1,0 +1,62 @@
+.drawer {
+  background-color: var(--color-palette-background-dark);
+}
+
+.toolbar {
+  min-height: 56px;
+}
+
+.drawerPaper {
+  width: 240px;
+  background-color: var(--color-palette-background-default);
+  color: var(--color-palette-primary-main);
+}
+
+.active {
+  background-color: var(--color-palette-primary-light);
+  font-weight: bold;
+  color: var(--color-palette-primary-dark) !important;
+}
+
+.active:hover {
+  background-color: var(--color-palette-primary-light) !important;
+}
+
+.navLink {
+  display: block;
+  text-decoration: none;
+  color: var(--color-palette-primary-main);
+}
+
+.navLink:hover {
+  background-color: var(--color-palette-secondary-main);
+}
+
+.navLink:hover .MuiListItemIcon-root,
+.navLink:hover .MuiListItemText-primary {
+  color: var(--color-palette-primary-dark);
+}
+
+.navItems {
+  padding: 24px 32px;
+  text-align: left;
+}
+
+@media screen and (min-width: 0px) and (orientation: landscape) {
+  .toolbar {
+    min-height: 48px;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .toolbar {
+    min-height: 64px;
+  }
+}
+
+@media screen and (min-width: 960px) {
+  .drawer {
+    width: 240px;
+    flex-shrink: 0;
+  }
+}

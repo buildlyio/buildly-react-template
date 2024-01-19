@@ -5,38 +5,11 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
 import {
   SENSOR_REPORT_COLUMNS,
 } from '../../../utils/constants';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(1),
-  },
-  tooltip: {
-    background: theme.palette.primary.main,
-    color: theme.palette.background.default,
-    width: '100%',
-    display: 'flex',
-    minHeight: '40px',
-    alignItems: 'center',
-  },
-  title: {
-    flex: 1,
-    padding: theme.spacing(1, 2),
-    textTransform: 'uppercase',
-    fontSize: 18,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  leftHeader: {
-    '& span': {
-      textAlign: 'left',
-    },
-  },
-}));
+import '../ReportingStyles.css';
 
 const SensorReport = ({
   sensorReport,
@@ -45,7 +18,6 @@ const SensorReport = ({
   unitOfMeasure,
   timezone,
 }) => {
-  const classes = useStyles();
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
 
@@ -56,7 +28,7 @@ const SensorReport = ({
       options: {
         ...column.options,
         setCellHeaderProps: () => ({
-          className: classes.leftHeader,
+          className: 'leftHeader',
         }),
       },
     }),
@@ -97,11 +69,11 @@ const SensorReport = ({
   };
 
   return (
-    <Grid className={classes.root} container spacing={2}>
+    <Grid className="sensorRoot" container spacing={2}>
       <Grid item xs={12}>
-        <div className={classes.tooltip}>
+        <div className="sensorTooltip">
           <Typography
-            className={classes.title}
+            className="sensorReportTitle"
             variant="h5"
           >
             {shipmentName

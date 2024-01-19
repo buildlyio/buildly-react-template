@@ -9,6 +9,8 @@ const Copyright = () => {
     <Typography
       variant="body2"
       align="center"
+      mt={8}
+      mb={1}
     >
       {'Copyright © '}
       <Link

@@ -1,36 +1,27 @@
-/* eslint-disable max-len */
 import React from 'react';
 import {
-  Grid, Link, List, ListItem, Typography,
+  Grid,
+  Link,
+  List,
+  ListItem,
+  Typography,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-
-const useStyles = makeStyles((theme) => ({
-  version: {
-    fontStyle: 'italic',
-    textDecoration: 'underline',
-  },
-  agreementContainer: {
-    padding: `${theme.spacing(5)} ${theme.spacing(40)}`,
-  },
-}));
+import './AboutPlatformStyles.css';
 
 const AboutPlatform = () => {
-  const classes = useStyles();
   // eslint-disable-next-line no-undef
   const ver = VERSION;
 
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <Typography variant="caption" component="div" className={classes.version}>
+        <Typography variant="caption" component="div" className="version">
           Platform Version:
           {' '}
           {ver}
         </Typography>
       </Grid>
-
-      <Grid container spacing={2} className={classes.agreementContainer}>
+      <Grid container spacing={2} className="agreementContainer">
         <Grid item xs={12} textAlign="center">
           <Typography variant="h5">
             Transparent Path spc

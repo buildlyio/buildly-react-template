@@ -7,7 +7,6 @@ import {
   Box,
   Typography,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -17,39 +16,7 @@ import Loader from '../Loader/Loader';
 import ConfirmModal from '../Modal/ConfirmModal';
 import { getUser } from '../../context/User.context';
 import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
-
-const useStyles = makeStyles((theme) => ({
-  dashboardHeading: {
-    fontWeight: 'bold',
-    marginBottom: '0.5em',
-  },
-  iconButton: {
-    padding: 0,
-    color: theme.palette.primary.dark,
-    '&:hover': {
-      backgroundColor: theme.palette.primary.light,
-    },
-  },
-  dataTableBody: {
-    '&:hover': {
-      backgroundColor: 'none',
-    },
-  },
-  dataTable: {
-    '& .MuiPaper-root > .MuiToolbar-root': {
-      backgroundColor: theme.palette.primary.dark,
-      '& .MuiSvgIcon-root': {
-        fill: theme.palette.background.default,
-      },
-    },
-    '& tr > th': {
-      backgroundColor: theme.palette.primary.light,
-    },
-    '& .MuiTableFooter-root': {
-      backgroundColor: theme.palette.primary.light,
-    },
-  },
-}));
+import './DataTableWrapperStyles.css';
 
 const DataTableWrapper = ({
   loading,
@@ -77,7 +44,6 @@ const DataTableWrapper = ({
   centerLabel,
   extraOptions,
 }) => {
-  const classes = useStyles();
   const user = getUser();
   const isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
 
@@ -94,7 +60,7 @@ const DataTableWrapper = ({
           setCellHeaderProps: () => ({ style: { textAlign: centerLabel ? 'center' : 'start' } }),
           customBodyRenderLite: (dataIndex) => (
             <IconButton
-              className={classes.iconButton}
+              className="iconButton"
               onClick={() => editAction(rows[dataIndex])}
             >
               <EditIcon />
@@ -115,7 +81,7 @@ const DataTableWrapper = ({
           empty: true,
           customBodyRenderLite: (dataIndex) => (
             <IconButton
-              className={classes.iconButton}
+              className="iconButton"
               onClick={() => deleteAction(rows[dataIndex])}
             >
               <DeleteIcon />
@@ -172,7 +138,7 @@ const DataTableWrapper = ({
       },
     },
     setRowProps: (row, dataIndex, rowIndex) => !customTheme && ({
-      className: classes.dataTableBody,
+      className: 'dataTableBody',
     }),
     customSort,
     ...extraOptions,
@@ -197,14 +163,14 @@ const DataTableWrapper = ({
         )}
         {tableHeader && (
           <Typography
-            className={classes.dashboardHeading}
+            className="dashboardHeading"
             variant="h4"
           >
             {tableHeader}
           </Typography>
         )}
         <Grid
-          className={`${!customTheme && classes.dataTable}`}
+          className={`${!customTheme && 'dataTable'}`}
           container
           spacing={2}
         >
@@ -218,15 +184,14 @@ const DataTableWrapper = ({
         </Grid>
         {children}
       </div>
-
       {deleteAction && isAdmin && (
-      <ConfirmModal
-        open={openDeleteModal}
-        setOpen={setDeleteModal}
-        submitAction={handleDeleteModal}
-        title={deleteModalTitle}
-        submitText="Delete"
-      />
+        <ConfirmModal
+          open={openDeleteModal}
+          setOpen={setDeleteModal}
+          submitAction={handleDeleteModal}
+          title={deleteModalTitle}
+          submitText="Delete"
+        />
       )}
     </Box>
   );

@@ -1,66 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import {
-  useTheme,
   Button,
   TextField,
   InputAdornment,
   Grid,
   MenuItem,
-  useMediaQuery,
   Card,
   CardContent,
   Typography,
   Autocomplete,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import Loader from '../../../components/Loader/Loader';
 import FormModal from '../../../components/Modal/FormModal';
 import { getUser } from '../../../context/User.context';
 import { useInput } from '../../../hooks/useInput';
 import { validators } from '../../../utils/validators';
+import { isMobile, isDesktop } from '../../../utils/mediaQuery';
 import { useAddItemMutation } from '../../../react-query/mutations/items/addItemMutation';
 import { useEditItemMutation } from '../../../react-query/mutations/items/editItemMutation';
 import useAlert from '@hooks/useAlert';
-
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  cardItems: {
-    margin: theme.spacing(4, 0),
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-  inputWithTooltip: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-}));
+import '../ItemStyles.css';
 
 const AddItems = ({
   history, location,
 }) => {
-  const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
 
@@ -102,8 +66,6 @@ const AddItems = ({
   const formTitle = editPage ? 'Edit Item' : 'Add Item';
 
   const organization = getUser().organization.organization_uuid;
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
     if (editPage && editData && productData && productTypesData) {
@@ -257,8 +219,6 @@ const AddItems = ({
           open={openFormModal}
           handleClose={closeFormModal}
           title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth="md"
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
@@ -266,9 +226,9 @@ const AddItems = ({
           {(isAddingItem || isEditingItem) && (
             <Loader open={isAddingItem || isEditingItem} />
           )}
-          <form className={classes.form} noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid className={classes.inputWithTooltip} item xs={12}>
+          <form className="formContainer" noValidate onSubmit={handleSubmit}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
+              <Grid className="inputWithTooltip" item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -286,7 +246,7 @@ const AddItems = ({
                   {...item_name.bind}
                 />
               </Grid>
-              <Grid className={classes.inputWithTooltip} item xs={12}>
+              <Grid className="inputWithTooltip" item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -314,14 +274,14 @@ const AddItems = ({
                 </TextField>
               </Grid>
             </Grid>
-            <Card variant="outlined" className={classes.cardItems}>
+            <Card variant="outlined" className="cardItems">
               <CardContent>
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="h6" gutterBottom mt={1} mb={isMobile() ? 0 : 1.65}>
                   Product Info
                 </Typography>
-                <Grid container spacing={isDesktop ? 2 : 0}>
+                <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid item xs={12}>
-                    <div className={classes.inputWithTooltip}>
+                    <div className="inputWithTooltip">
                       <Autocomplete
                         id="products"
                         options={productData || []}
@@ -343,7 +303,7 @@ const AddItems = ({
                       />
                     </div>
                   </Grid>
-                  <Grid className={classes.inputWithTooltip} item xs={12}>
+                  <Grid className="inputWithTooltip" item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -359,7 +319,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
                     sm={6}
@@ -375,7 +335,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
                     sm={6}
@@ -406,7 +366,11 @@ const AddItems = ({
                       }}
                     />
                   </Grid>
-                  <Grid className={classes.inputWithTooltip} item xs={12}>
+                  <Grid
+                    className="inputWithTooltip"
+                    item
+                    xs={12}
+                  >
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -419,9 +383,9 @@ const AddItems = ({
                     />
                   </Grid>
                 </Grid>
-                <Grid container spacing={isDesktop ? 2 : 0}>
+                <Grid container spacing={isDesktop() ? 2 : 0} mt={0.1} pb={1}>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -440,7 +404,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -459,7 +423,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -478,7 +442,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -497,7 +461,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -516,7 +480,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -537,9 +501,9 @@ const AddItems = ({
                 </Grid>
               </CardContent>
             </Card>
-            <Grid container spacing={isDesktop ? 2 : 0}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid
-                className={classes.inputWithTooltip}
+                className="inputWithTooltip"
                 item
                 xs={12}
                 md={6}
@@ -558,7 +522,7 @@ const AddItems = ({
                 />
               </Grid>
               <Grid
-                className={classes.inputWithTooltip}
+                className="inputWithTooltip"
                 item
                 xs={12}
                 md={6}
@@ -590,7 +554,7 @@ const AddItems = ({
                   }}
                 />
               </Grid>
-              <Grid className={classes.inputWithTooltip} item xs={12}>
+              <Grid className="inputWithTooltip" item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -603,27 +567,27 @@ const AddItems = ({
                 />
               </Grid>
             </Grid>
-            <Grid container spacing={isDesktop ? 3 : 0} justifyContent="center">
+            <Grid container spacing={2} justifyContent="center">
               <Grid item xs={12} sm={4}>
                 <Button
                   type="submit"
                   fullWidth
                   variant="contained"
                   color="primary"
-                  className={classes.submit}
+                  className="submit"
                   disabled={isAddingItem || isEditingItem || submitDisabled()}
                 >
                   {buttonText}
                 </Button>
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={4} className="submit2">
                 <Button
                   type="button"
                   fullWidth
                   variant="outlined"
                   color="primary"
                   onClick={discardFormData}
-                  className={classes.submit}
+                  className="submit"
                 >
                   Cancel
                 </Button>

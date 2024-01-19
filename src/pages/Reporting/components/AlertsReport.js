@@ -6,40 +6,15 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
-import { getUser } from '../../../context/User.context';
 import { getAlertsReportColumns } from '../../../utils/constants';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(1),
-  },
-  tooltip: {
-    background: theme.palette.primary.main,
-    color: theme.palette.background.default,
-    width: '100%',
-    display: 'flex',
-    minHeight: '40px',
-    alignItems: 'center',
-  },
-  title: {
-    flex: 1,
-    padding: theme.spacing(1, 2),
-    textTransform: 'uppercase',
-    fontSize: 18,
-    display: 'flex',
-    alignItems: 'center',
-  },
-}));
+import '../ReportingStyles.css';
 
 const AlertsReport = ({
   sensorReport, alerts, shipmentName, timezone, unitOfMeasure,
 }) => {
-  const classes = useStyles();
   const theme = useTheme();
   const [rows, setRows] = useState([]);
-  const organization = getUser().organization.organization_uuid;
 
   useEffect(() => {
     if (alerts) {
@@ -83,11 +58,11 @@ const AlertsReport = ({
   }, [alerts]);
 
   return (
-    <Grid className={classes.root} container spacing={2}>
+    <Grid className="alertRoot" container spacing={2}>
       <Grid item xs={12}>
-        <div className={classes.tooltip}>
+        <div className="alertTooltip">
           <Typography
-            className={classes.title}
+            className="reportingAlertTitle"
             variant="h5"
           >
             {shipmentName

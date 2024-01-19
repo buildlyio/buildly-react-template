@@ -13,10 +13,7 @@ import { useDeleteItemTypeMutation } from '../../../../react-query/mutations/ite
 import useAlert from '@hooks/useAlert';
 import { useStore } from '../../../../zustand/timezone/timezoneStore';
 
-const ItemType = ({
-  redirectTo,
-  history,
-}) => {
+const ItemType = ({ redirectTo, history }) => {
   const organization = getUser().organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);

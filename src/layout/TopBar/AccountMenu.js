@@ -7,39 +7,7 @@ import {
   Divider,
   Box,
 } from '@mui/material';
-import { withStyles } from '@mui/styles';
-
-const StyledMenu = withStyles({
-  paper: {
-    border: '1px solid #d3d4d5',
-  },
-})((props) => (
-  <Menu
-    elevation={0}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'left',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'left',
-    }}
-    {...props}
-  />
-));
-
-const StyledMenuItem = withStyles((theme) => ({
-  root: {
-    '&:hover': {
-      backgroundColor: theme.palette.primary.light,
-      '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-        color: theme.palette.primary.dark,
-      },
-    },
-    padding: theme.spacing(2),
-    textAlign: 'center',
-  },
-}))(MenuItem);
+import './TopBarStyles.css';
 
 const AccountMenu = ({
   anchorEl,
@@ -56,12 +24,21 @@ const AccountMenu = ({
 
   return (
     <div>
-      <StyledMenu
+      <Menu
         id="customized-menu"
         anchorEl={anchorEl}
         keepMounted
         open={!!anchorEl}
         onClose={handleClose}
+        elevation={0}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
       >
         <Box
           mb={2}
@@ -81,20 +58,19 @@ const AccountMenu = ({
             </Typography>
           )}
         </Box>
-
         <Divider />
-        <StyledMenuItem onClick={handleMyAccountClick}>
+        <MenuItem onClick={handleMyAccountClick} className="adminMenuRoot">
           <ListItemText primary="My Account" />
-        </StyledMenuItem>
+        </MenuItem>
         <Divider />
-        <StyledMenuItem onClick={handleAboutClick}>
+        <MenuItem onClick={handleAboutClick} className="adminMenuRoot">
           <ListItemText primary="About Platform" />
-        </StyledMenuItem>
+        </MenuItem>
         <Divider />
-        <StyledMenuItem onClick={handleLogoutClick}>
+        <MenuItem onClick={handleLogoutClick} className="adminMenuRoot">
           <ListItemText primary="Logout" />
-        </StyledMenuItem>
-      </StyledMenu>
+        </MenuItem>
+      </Menu>
     </div>
   );
 };

@@ -2,11 +2,7 @@ import React, { useState } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { Container } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import {
-  UserContext,
-  getUser,
-} from '../../context/User.context';
+import { UserContext, getUser } from '../../context/User.context';
 import NavBar from '../NavBar/NavBar';
 import TopBar from '../TopBar/TopBar';
 import AboutPlatform from '../../pages/AboutPlatform/AboutPlatform';
@@ -21,36 +17,11 @@ import CreateShipment from '../../pages/Shipment/CreateShipment';
 import Shipment from '../../pages/Shipment/Shipment';
 import UserManagement from '../../pages/UserManagement/UserManagement';
 import { routes } from '../../routes/routesConstants';
-import {
-  checkForAdmin,
-  checkForGlobalAdmin,
-} from '../../utils/utilMethods';
+import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
 import { isMobile } from '../../utils/mediaQuery';
+import './ContainerStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    height: '100%',
-    [theme.breakpoints.up('sm')]: {
-      display: 'flex',
-    },
-  },
-  content: {
-    flexGrow: 1,
-    height: '100%',
-    paddingTop: '5.25em',
-    paddingBottom: theme.spacing(1.5),
-  },
-  contentMaxWidth: {
-    width: 'calc(100vw - 240px)',
-    maxWidth: '100%',
-  },
-}));
-
-/**
- * Container for the app layout when the user is authenticated.
- */
 const ContainerDashboard = ({ location, history }) => {
-  const classes = useStyles();
   const userData = getUser();
   const [navHidden, setNavHidden] = useState(false);
   let subNavItems = [];
@@ -63,7 +34,7 @@ const ContainerDashboard = ({ location, history }) => {
   }
 
   return (
-    <div className={classes.root}>
+    <div className="containerRoot">
       <UserContext.Provider value={getUser()}>
         <TopBar
           navHidden={navHidden}
@@ -73,16 +44,16 @@ const ContainerDashboard = ({ location, history }) => {
           history={history}
         />
         {!_.includes(location.pathname, routes.MY_ACCOUNT)
-        && (
-          <NavBar
-            navHidden={navHidden}
-            setNavHidden={setNavHidden}
-            location={location}
-            history={history}
-          />
-        )}
+          && (
+            <NavBar
+              navHidden={navHidden}
+              setNavHidden={setNavHidden}
+              location={location}
+              history={history}
+            />
+          )}
         <Container
-          className={`${classes.content} ${!isMobile() && classes.contentMaxWidth}`}
+          className={`content ${!isMobile() && 'contentMaxWidth'}`}
         >
           <Route
             exact
@@ -90,13 +61,13 @@ const ContainerDashboard = ({ location, history }) => {
             render={() => <Redirect to={routes.SHIPMENT} />}
           />
           {(checkForAdmin(userData)
-          || checkForGlobalAdmin(userData))
-          && (
-            <Route
-              path={routes.USER_MANAGEMENT}
-              component={UserManagement}
-            />
-          )}
+            || checkForGlobalAdmin(userData))
+            && (
+              <Route
+                path={routes.USER_MANAGEMENT}
+                component={UserManagement}
+              />
+            )}
           <Route
             path={routes.CUSTODIANS}
             component={Custodians}

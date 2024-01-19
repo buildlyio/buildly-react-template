@@ -6,7 +6,6 @@ import {
   CssBaseline,
   TextField,
   Link,
-  Box,
   Card,
   CardContent,
   Typography,
@@ -19,13 +18,12 @@ import {
   Autocomplete,
   MenuItem,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import logo from '../../assets/tp-logo.png';
 import Copyright from '../../components/Copyright/Copyright';
 import Loader from '../../components/Loader/Loader';
 import { useInput } from '../../hooks/useInput';
 import { routes } from '../../routes/routesConstants';
-import { isMobile } from '../../utils/mediaQuery';
+import { isTablet } from '../../utils/mediaQuery';
 import {
   DATE_DISPLAY_CHOICES,
   TIME_DISPLAY_CHOICES,
@@ -40,56 +38,11 @@ import { getCountriesQuery } from '../../react-query/queries/shipments/getCountr
 import { getCurrenciesQuery } from '../../react-query/queries/shipments/getCurrenciesQuery';
 import { useRegisterMutation } from '../../react-query/mutations/authUser/registerMutation';
 import useAlert from '@hooks/useAlert';
+import './RegisterStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    paddingTop: theme.spacing(8),
-  },
-  paper: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(2),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  logo: {
-    maxWidth: '20rem',
-    width: '100%',
-    marginBottom: theme.spacing(3),
-  },
-  textField: {
-    minHeight: '5rem',
-    margin: theme.spacing(1, 0),
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  alertGrid: {
-    marginTop: theme.spacing(2),
-  },
-  alertOptionsLabel: {
-    fontSize: '1rem',
-  },
-  alertOptions: {
-    marginLeft: theme.spacing(5),
-  },
-}));
-
-const Register = ({
-  history,
-}) => {
+const Register = ({ history }) => {
   const { displayAlert } = useAlert();
 
-  const classes = useStyles();
   const first_name = useInput('', { required: true });
   const last_name = useInput('');
   const username = useInput('', { required: true });
@@ -239,27 +192,27 @@ const Register = ({
     <Container
       component="main"
       maxWidth="sm"
-      className={classes.container}
+      className="container"
     >
       {(isLoadingOrgNames || isLoadingCountries || isLoadingCurrencies || isRegister) && <Loader open={isLoadingOrgNames || isLoadingCountries || isLoadingCurrencies || isRegister} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
-          <div className={classes.paper}>
+          <div className="paper">
             <img
               src={logo}
-              className={classes.logo}
+              className="logo"
               alt="Company logo"
             />
             <Typography component="h1" variant="h5">
               Register
             </Typography>
             <form
-              className={classes.form}
+              className="form"
               noValidate
               onSubmit={handleSubmit}
             >
-              <Grid container spacing={isMobile() ? 0 : 3}>
+              <Grid container spacing={isTablet() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -279,7 +232,7 @@ const Register = ({
                         ? formError.first_name.message
                         : ''
                     }
-                    className={classes.textField}
+                    className="textField"
                     onBlur={(e) => handleBlur(e, 'required', first_name)}
                     {...first_name.bind}
                   />
@@ -302,13 +255,13 @@ const Register = ({
                         ? formError.last_name.message
                         : ''
                     }
-                    className={classes.textField}
+                    className="textField"
                     onBlur={(e) => handleBlur(e)}
                     {...last_name.bind}
                   />
                 </Grid>
               </Grid>
-              <Grid container spacing={isMobile() ? 0 : 3}>
+              <Grid container spacing={isTablet() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -328,7 +281,7 @@ const Register = ({
                         ? formError.username.message
                         : ''
                     }
-                    className={classes.textField}
+                    className="textField"
                     onBlur={(e) => handleBlur(e, 'required', username)}
                     {...username.bind}
                   />
@@ -353,13 +306,13 @@ const Register = ({
                         ? formError.email.message
                         : ''
                     }
-                    className={classes.textField}
+                    className="textField"
                     onBlur={(e) => handleBlur(e, 'email', email)}
                     {...email.bind}
                   />
                 </Grid>
               </Grid>
-              <Grid container spacing={isMobile() ? 0 : 3}>
+              <Grid container spacing={isTablet() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -380,7 +333,7 @@ const Register = ({
                         ? formError.password.message
                         : ''
                     }
-                    className={classes.textField}
+                    className="textField"
                     onBlur={(e) => handleBlur(e, 'required', password)}
                     {...password.bind}
                   />
@@ -405,13 +358,13 @@ const Register = ({
                         ? formError.re_password.message
                         : ''
                     }
-                    className={classes.textField}
+                    className="textField"
                     onBlur={(e) => handleBlur(e, 'confirm', re_password)}
                     {...re_password.bind}
                   />
                 </Grid>
               </Grid>
-              <Grid container spacing={isMobile() ? 0 : 3}>
+              <Grid container spacing={isTablet() ? 0 : 3}>
                 <Grid item xs={12}>
                   <Autocomplete
                     freeSolo
@@ -440,7 +393,7 @@ const Register = ({
                             ? formError.organization_name.message
                             : ''
                         }
-                        className={classes.textField}
+                        className="textField"
                         onBlur={(e) => handleBlur(e, 'required', organization_name)}
                         value={organization_name}
                         onChange={(e) => {
@@ -454,7 +407,7 @@ const Register = ({
               </Grid>
               <Grid
                 container
-                spacing={isMobile() ? 0 : 3}
+                spacing={isTablet() ? 0 : 3}
                 style={{
                   display: (!organization_name.value || _.includes(orgNameData, organization_name.value)) && 'none',
                 }}
@@ -481,6 +434,7 @@ const Register = ({
                       maxLength: 7,
                       style: { textTransform: 'uppercase' },
                     }}
+                    className="textField2"
                     onBlur={(e) => handleBlur(e, 'required', organization_abbrevation)}
                     {...organization_abbrevation.bind}
                   />
@@ -505,6 +459,7 @@ const Register = ({
                       currency.setValue(curr ? curr.currency : '');
                       country.setValue(e.target.value);
                     }}
+                    className="textField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {countryList && _.map(countryList, (cntry, index) => (
@@ -528,6 +483,7 @@ const Register = ({
                     label="Default Currency"
                     autoComplete="currency"
                     {...currency.bind}
+                    className="textField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {currencyList && _.map(currencyList, (curr, index) => (
@@ -551,6 +507,7 @@ const Register = ({
                     label="Default Date Format"
                     autoComplete="date-format"
                     {...dateFormat.bind}
+                    className="textField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {_.map(DATE_DISPLAY_CHOICES, (date, index) => (
@@ -574,6 +531,7 @@ const Register = ({
                     label="Default Time Format"
                     autoComplete="time-format"
                     {...timeFormat.bind}
+                    className="textField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {_.map(TIME_DISPLAY_CHOICES, (time, index) => (
@@ -597,6 +555,7 @@ const Register = ({
                     label="Default Unit of Measure for Distance"
                     autoComplete="distance"
                     {...distance.bind}
+                    className="textField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {_.map(UOM_DISTANCE_CHOICES, (dist, index) => (
@@ -620,6 +579,7 @@ const Register = ({
                     label="Default Unit of Measure for Temperature"
                     autoComplete="temp"
                     {...temp.bind}
+                    className="textField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {_.map(UOM_TEMPERATURE_CHOICES, (tmp, index) => (
@@ -643,6 +603,7 @@ const Register = ({
                     label="Default Unit of Measure for Weight"
                     autoComplete="weight"
                     {...weight.bind}
+                    className="textField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {_.map(UOM_WEIGHT_CHOICES, (wgt, index) => (
@@ -658,15 +619,13 @@ const Register = ({
               </Grid>
               <Grid
                 container
-                spacing={isMobile() ? 0 : 3}
-                mt={(!organization_name.value || _.includes(orgNameData, organization_name.value))
-                  && -2}
+                spacing={isTablet() ? 0 : 3}
               >
                 <Grid item xs={12}>
-                  <span className={classes.alertOptionsLabel}>
+                  <span className="alertOptionsLabel">
                     Push Notification Preference
                   </span>
-                  <div className={classes.alertOptions}>
+                  <div className="alertOptions">
                     <FormControl component="fieldset">
                       <FormGroup aria-label="position" row={false}>
                         <FormControlLabel
@@ -703,11 +662,11 @@ const Register = ({
                     </FormControl>
                   </div>
                 </Grid>
-                <Grid item xs={12} className={classes.alertGrid}>
-                  <span className={classes.alertOptionsLabel}>
+                <Grid item xs={12} className="alertGrid">
+                  <span className="alertOptionsLabel">
                     Email Notification Preference
                   </span>
-                  <div className={classes.alertOptions}>
+                  <div className="alertOptions">
                     <FormControl component="fieldset">
                       <FormGroup aria-label="position" row={false}>
                         <FormControlLabel
@@ -750,7 +709,7 @@ const Register = ({
                 fullWidth
                 variant="contained"
                 color="primary"
-                className={classes.submit}
+                className="submit"
                 disabled={isLoadingOrgNames || isLoadingCountries || isLoadingCurrencies || isRegister || submitDisabled()}
               >
                 Register
@@ -770,9 +729,7 @@ const Register = ({
           </div>
         </CardContent>
       </Card>
-      <Box mt={8} mb={1}>
-        <Copyright />
-      </Box>
+      <Copyright />
     </Container>
   );
 };

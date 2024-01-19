@@ -5,13 +5,11 @@ import {
   TextField,
   Link,
   Grid,
-  Box,
   Card,
   CardContent,
   Typography,
   Container,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import logo from '../../assets/tp-logo.png';
 import Copyright from '../../components/Copyright/Copyright';
 import Loader from '../../components/Loader/Loader';
@@ -23,42 +21,7 @@ import { useLoginMutation } from '../../react-query/mutations/authUser/loginMuta
 import useAlert from '@hooks/useAlert';
 import useTimezone from '@hooks/useTimezone';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    paddingTop: theme.spacing(8),
-  },
-  paper: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(2),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  logo: {
-    maxWidth: '20rem',
-    width: '100%',
-    marginBottom: theme.spacing(3),
-  },
-  textField: {
-    minHeight: '5rem',
-    margin: theme.spacing(1, 0),
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-}));
-
 const Login = ({ history }) => {
-  const classes = useStyles();
   const username = useInput('', { required: true });
   const password = useInput('', { required: true });
   const [error, setError] = useState({});
@@ -142,23 +105,23 @@ const Login = ({ history }) => {
     <Container
       component="main"
       maxWidth="xs"
-      className={classes.container}
+      className="container"
     >
       {(isPasswordCheck || islogin) && <Loader open={isPasswordCheck || islogin} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
-          <div className={classes.paper}>
+          <div className="paper">
             <img
               src={logo}
-              className={classes.logo}
+              className="logo"
               alt="Company logo"
             />
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
             <form
-              className={classes.form}
+              className="form"
               noValidate
               onSubmit={handleSubmit}
             >
@@ -177,7 +140,7 @@ const Login = ({ history }) => {
                     ? error.username.message
                     : ''
                 }
-                className={classes.textField}
+                className="textField"
                 onBlur={(e) => handleBlur(e, 'required', username)}
                 {...username.bind}
               />
@@ -197,7 +160,7 @@ const Login = ({ history }) => {
                     ? error.password.message
                     : ''
                 }
-                className={classes.textField}
+                className="textField"
                 onBlur={(e) => handleBlur(e, 'required', password)}
                 {...password.bind}
               />
@@ -206,7 +169,7 @@ const Login = ({ history }) => {
                 fullWidth
                 variant="contained"
                 color="primary"
-                className={classes.submit}
+                style={{ marginTop: 8, marginBottom: 16 }}
                 disabled={isPasswordCheck || islogin || submitDisabled()}
               >
                 Sign in
@@ -235,9 +198,7 @@ const Login = ({ history }) => {
           </div>
         </CardContent>
       </Card>
-      <Box mt={8} mb={1}>
-        <Copyright />
-      </Box>
+      <Copyright />
     </Container>
   );
 };

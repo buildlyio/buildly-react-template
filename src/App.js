@@ -22,12 +22,15 @@ import NewPasswordForm from './pages/ResetPassword/NewPasswordForm';
 import { PrivateRoute } from './routes/Private.route';
 import { routes } from './routes/routesConstants';
 import theme from './styles/theme';
+import {
+  Experimental_CssVarsProvider as CssVarsProvider,
+} from '@mui/material/styles';
 
 const App = () => (
   <Router>
     <AppContext.Provider value={app}>
       <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
+        <CssVarsProvider theme={theme} defaultMode="light">
           <div className="app">
             <CssBaseline />
             <Route
@@ -58,7 +61,7 @@ const App = () => (
             />
           </div>
           <Alert />
-        </ThemeProvider>
+        </CssVarsProvider>
       </StyledEngineProvider>
     </AppContext.Provider>
   </Router>

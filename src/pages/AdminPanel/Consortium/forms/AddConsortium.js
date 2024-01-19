@@ -1,55 +1,23 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
 import {
-  useTheme,
-  useMediaQuery,
   Grid,
   Button,
   TextField,
   Chip,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { Autocomplete } from '@mui/material';
 import Loader from '../../../../components/Loader/Loader';
 import FormModal from '../../../../components/Modal/FormModal';
 import { useInput } from '../../../../hooks/useInput';
 import { validators } from '../../../../utils/validators';
+import { isDesktop } from '../../../../utils/mediaQuery';
 import { useAddConsortiumMutation } from '../../../../react-query/mutations/consortium/addConsortiumMutation';
 import { useEditConsortiumMutation } from '../../../../react-query/mutations/consortium/editConsortiumMutation';
 import useAlert from '@hooks/useAlert';
+import '../../AdminPanelStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-}));
-
-const AddConsortium = ({
-  history,
-  location,
-}) => {
-  const classes = useStyles();
+const AddConsortium = ({ history, location }) => {
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
 
@@ -74,9 +42,6 @@ const AddConsortium = ({
 
   const buttonText = editPage ? 'Save' : 'Add Consortium';
   const formTitle = editPage ? 'Edit Consortium' : 'Add Consortium';
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   const closeFormModal = () => {
     if (name.hasChanged()) {
@@ -185,8 +150,6 @@ const AddConsortium = ({
           open={openFormModal}
           handleClose={closeFormModal}
           title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth="md"
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
@@ -195,11 +158,11 @@ const AddConsortium = ({
             <Loader open={isAddingConsortium || isEditingConsortium} />
           )}
           <form
-            className={classes.form}
+            className="formContainer"
             noValidate
             onSubmit={handleSubmit}
           >
-            <Grid container spacing={isDesktop ? 2 : 0}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -264,7 +227,7 @@ const AddConsortium = ({
                     fullWidth
                     variant="contained"
                     color="primary"
-                    className={classes.submit}
+                    className="submit"
                     disabled={isAddingConsortium || isEditingConsortium || submitDisabled()}
                   >
                     {buttonText}
@@ -277,7 +240,7 @@ const AddConsortium = ({
                     variant="outlined"
                     color="primary"
                     onClick={discardFormData}
-                    className={classes.submit}
+                    className="submit"
                   >
                     Cancel
                   </Button>

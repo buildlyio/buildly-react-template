@@ -13,10 +13,7 @@ import { useDeleteOrganizationTypeMutation } from '../../../../react-query/mutat
 import useAlert from '@hooks/useAlert';
 import { useStore } from '../../../../zustand/timezone/timezoneStore';
 
-const OrganizationType = ({
-  redirectTo,
-  history,
-}) => {
+const OrganizationType = ({ redirectTo, history }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const organization = getUser().organization.organization_uuid;

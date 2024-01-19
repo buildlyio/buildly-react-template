@@ -7,7 +7,6 @@ import {
   Tabs,
   Tab,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import Forbidden from '../../components/Forbidden/Forbidden';
 import { getUser } from '../../context/User.context';
 import { routes } from '../../routes/routesConstants';
@@ -15,21 +14,11 @@ import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
 import Configuration from './Configuration/Configuration';
 // import ImportExport from './ImportExport/ImportExport';
 import ConsortiumSettings from './Consortium/ConsortiumSettings';
+import './AdminPanelStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  heading: {
-    fontWeight: 'bold',
-    margin: '0.5em 0',
-  },
-}));
-
-/**
- * Outputs the admin panel page.
- */
 const AdminPanel = ({
   history, location, organizationData,
 }) => {
-  const classes = useStyles();
   const isAdmin = checkForAdmin(getUser()) || checkForGlobalAdmin(getUser());
   const superAdmin = checkForGlobalAdmin(getUser());
 
@@ -72,7 +61,7 @@ const AdminPanel = ({
       {isAdmin && (
         <Box mt={5} mb={5}>
           <Box mb={3}>
-            <Typography className={classes.heading} variant="h4">
+            <Typography className="heading" variant="h4">
               Admin Panel
             </Typography>
           </Box>
@@ -103,7 +92,6 @@ const AdminPanel = ({
         />
       )}
     </Box>
-
   );
 };
 

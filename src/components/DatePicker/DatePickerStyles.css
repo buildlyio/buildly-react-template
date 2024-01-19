@@ -1,0 +1,32 @@
+.datePickerRoot {
+  display: flex;
+  align-items: center;
+  margin: 0px;
+  margin-top: 16px;
+}
+.datePickerRoot .MuiFormControl-root {
+  width: 100%;
+}
+
+.popperSx .MuiPaper-root {
+  border: 1px solid var(--color-palette-background-black);
+  padding: 2px;
+  margin-top: 1px;
+  background-color: var(--color-palette-background-dark3);
+}
+
+.popperSx .MuiCalendarPicker-root {
+  background-color: var(--color-palette-primary-dark2);
+}
+
+.popperSx .PrivatePickersSlideTransition-root {
+}
+
+.popperSx .MuiPickersDay-dayWithMargin {
+  color: var(--color-palette-background-light3);
+  background-color: var(--color-palette-primary-dark3);
+}
+
+.popperSx .MuiTabs-root {
+  background-color: var(--color-palette-background-dark4);
+}

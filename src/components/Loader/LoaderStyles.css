@@ -1,0 +1,4 @@
+.backdrop {
+  z-index: 1201;
+  color: var(--color-palette-primary-light);
+}

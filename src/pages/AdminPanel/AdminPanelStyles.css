@@ -1,0 +1,123 @@
+/* Admin Panel Styles */
+
+.heading {
+  font-weight: bold;
+  margin: 0.5em 0em;
+}
+
+/* Configuration, Consortium and ImportExport Page Styles */
+.root {
+  width: 100%;
+  margin-top: 48px;
+  padding: 0px;
+  margin-bottom: -24px;
+}
+
+.accordion {
+  margin-bottom: 32px;
+  overflow: scroll hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.accordion::-webkit-scrollbar {
+  display: none;
+}
+
+/* Add and Edit Sections Styles */
+.submit {
+  margin: 24px 0px 16px;
+  border-radius: 18px;
+}
+
+.formContainer {
+  width: 100%;
+  margin-top: 8px;
+}
+
+@media screen and (min-width: 600px) {
+  .formContainer {
+    width: 70% !important;
+    margin: auto;
+  }
+}
+
+/* Organization Settings Page Styles */
+.orgRoot {
+  width: 100%;
+  margin: 2px 0px 2px 2px;
+}
+
+.orgFormContainer {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.checkbox {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.label {
+  margin-left: 16px !important;
+  font-size: 0.9rem;
+}
+
+.numberInput input::-webkit-outer-spin-button,
+.numberInput input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0px;
+}
+
+.numberInput input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@media screen and (min-width: 600px) {
+  .orgFormContainer {
+    width: 70% !important;
+    margin: auto;
+  }
+}
+
+/* Import Export Sections Styles */
+.formRoot {
+  width: 90%;
+  margin: auto;
+  margin-top: 8px;
+}
+
+.apiResponse {
+  width: 100%;
+  background-color: var(--color-palette-secondary-main);
+  overflow: wrap;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.title {
+  margin: 16px 0px;
+  text-align: center;
+}
+
+.tableColumn {
+  background-color: var(--color-palette-primary-dark);
+  border-radius: 8px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+}
+
+.mapCol {
+  margin-bottom: 24px;
+}
+
+.apiMenuItem {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

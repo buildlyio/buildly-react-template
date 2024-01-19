@@ -5,96 +5,56 @@ import {
   DialogTitle,
   IconButton,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import { Close as CloseIcon } from '@mui/icons-material';
 import ConfirmModal from './ConfirmModal';
-
-const styles = (theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.background.dark,
-  },
-});
-
-const StyledDialogTitle = withStyles(styles)(({
-  children,
-  classes,
-  onClose,
-  titleClass,
-  ...other
-}) => (
-  <DialogTitle
-    className={classes.root}
-    {...other}
-  >
-    <Typography className={titleClass} variant="inherit">
-      {children}
-    </Typography>
-    {onClose ? (
-      <IconButton
-        aria-label="close"
-        className={classes.closeButton}
-        onClick={onClose}
-      >
-        <CloseIcon />
-      </IconButton>
-    ) : null}
-  </DialogTitle>
-));
+import { isMobile } from '../../utils/mediaQuery';
+import './ModalStyles.css';
 
 const FormModal = ({
   open,
   handleClose,
   title,
   children,
-  titleClass,
-  maxWidth,
   openConfirmModal,
   setConfirmModal,
   handleConfirmModal,
-}) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  return (
-    <div>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        fullWidth
-        fullScreen={isMobile}
-        maxWidth={maxWidth}
-        aria-labelledby="form-dialog-title"
-      >
-        <StyledDialogTitle
-          id="customized-dialog-title"
-          titleClass={titleClass}
-          onClose={handleClose}
-        >
+}) => (
+  <div>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      fullScreen={isMobile()}
+      maxWidth="md"
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="dialog-title" className="modalRoot">
+        <Typography className="modalTitle" variant="inherit">
           {title}
-        </StyledDialogTitle>
-        <DialogContent>
-          {children}
-        </DialogContent>
-      </Dialog>
-      <ConfirmModal
-        open={openConfirmModal}
-        setOpen={setConfirmModal}
-        submitAction={handleConfirmModal}
-        title="Your changes are unsaved and will be discarded. Are you sure to leave?"
-        submitText="Yes"
-      />
-    </div>
-  );
-};
+        </Typography>
+        {handleClose ? (
+          <IconButton
+            aria-label="close"
+            className="modalCloseButton"
+            onClick={handleClose}
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </DialogTitle>
+      <DialogContent>
+        {children}
+      </DialogContent>
+    </Dialog>
+    <ConfirmModal
+      open={openConfirmModal}
+      setOpen={setConfirmModal}
+      submitAction={handleConfirmModal}
+      title="Your changes are unsaved and will be discarded. Are you sure to leave?"
+      submitText="Yes"
+    />
+  </div>
+);
 
 export default FormModal;

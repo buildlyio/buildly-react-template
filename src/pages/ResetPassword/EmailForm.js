@@ -10,51 +10,17 @@ import {
   Typography,
   Container,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import logo from '../../assets/tp-logo.png';
+import Copyright from '../../components/Copyright/Copyright';
 import Loader from '../../components/Loader/Loader';
 import { useInput } from '../../hooks/useInput';
 import { routes } from '../../routes/routesConstants';
 import { validators } from '../../utils/validators';
 import { useResetPasswordMutation } from '../../react-query/mutations/authUser/resetPasswordMutation';
 import useAlert from '@hooks/useAlert';
-
-const useStyles = makeStyles((theme) => ({
-  container: {
-    paddingTop: theme.spacing(8),
-  },
-  paper: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-  },
-  textField: {
-    minHeight: '5rem',
-    margin: theme.spacing(1, 0),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  logo: {
-    maxWidth: '20rem',
-    width: '100%',
-    marginBottom: theme.spacing(3),
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-}));
+import './ResetPasswordStyles.css';
 
 const EmailForm = () => {
-  const classes = useStyles();
   const email = useInput('', { required: true });
   const [error, setError] = useState({});
 
@@ -118,23 +84,23 @@ const EmailForm = () => {
     <Container
       component="main"
       maxWidth="xs"
-      className={classes.container}
+      className="container"
     >
       {isResetPassword && <Loader open={isResetPassword} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
-          <div className={classes.paper}>
+          <div className="paper">
             <img
               src={logo}
-              className={classes.logo}
+              className="logo"
               alt="Company logo"
             />
             <Typography component="h1" variant="h5" gutterBottom>
               Enter your registered Email
             </Typography>
             <form
-              className={classes.form}
+              className="form"
               noValidate
               onSubmit={handleSubmit}
             >
@@ -147,7 +113,7 @@ const EmailForm = () => {
                 label="Registered email"
                 name="email"
                 autoComplete="email"
-                className={classes.textField}
+                className="textField"
                 error={error.email && error.email.error}
                 helperText={
                   error && error.email
@@ -162,7 +128,7 @@ const EmailForm = () => {
                 fullWidth
                 variant="contained"
                 color="primary"
-                className={classes.submit}
+                style={{ marginTop: 8, marginBottom: 16 }}
                 disabled={isResetPassword || submitDisabled()}
               >
                 Submit
@@ -182,6 +148,7 @@ const EmailForm = () => {
           </div>
         </CardContent>
       </Card>
+      <Copyright />
     </Container>
   );
 };

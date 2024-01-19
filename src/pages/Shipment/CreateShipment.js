@@ -25,7 +25,6 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import {
   BatteryFull as BatteryFullIcon,
   Battery80 as Battery80Icon,
@@ -85,139 +84,10 @@ import { useAddShipmentMutation } from '../../react-query/mutations/shipments/ad
 import { useEditShipmentMutation } from '../../react-query/mutations/shipments/editShipmentMutation';
 import useAlert from '@hooks/useAlert';
 import { useStore } from '../../zustand/timezone/timezoneStore';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    maxWidth: theme.breakpoints.values.lg,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(2),
-  },
-  fieldset: {
-    border: `1px solid ${theme.palette.background.light}`,
-    padding: `${theme.spacing(2)} ${theme.spacing(4)}`,
-    borderRadius: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
-  legend: {
-    fontSize: theme.spacing(1.5),
-  },
-  innerAsterisk: {
-    fontSize: theme.spacing(4),
-    color: theme.palette.secondary.main,
-    paddingTop: `${theme.spacing(3)} !important`,
-  },
-  outerAsterisk: {
-    fontSize: theme.spacing(4),
-    color: theme.palette.secondary.main,
-    paddingLeft: `${theme.spacing(2)} !important`,
-    paddingTop: `${theme.spacing(5)} !important`,
-  },
-  adjustSpacing: {
-    marginRight: theme.spacing(6),
-  },
-  alertSettingText: {
-    color: theme.palette.background.light,
-  },
-  highest: {
-    fontWeight: 700,
-    color: theme.palette.error.main,
-  },
-  lowest: {
-    fontWeight: 700,
-    color: theme.palette.info.main,
-  },
-  cancel: {
-    marginTop: theme.spacing(0.5),
-    marginLeft: theme.spacing(-4),
-    fill: theme.palette.background.light,
-  },
-  attachedFiles: {
-    border: `1px solid ${theme.palette.background.light}`,
-    padding: theme.spacing(1.5),
-    borderRadius: theme.spacing(0.5),
-    height: '100%',
-  },
-  fileButton: {
-    paddingTop: `${theme.spacing(5)} !important`,
-    '& fieldset': {
-      border: 0,
-    },
-  },
-  gatewayDetails: {
-    display: 'flex',
-    justifyContent: 'end',
-    marginRight: theme.spacing(1),
-    padding: theme.spacing(5),
-    paddingTop: theme.spacing(2),
-  },
-  finalName: {
-    paddingTop: theme.spacing(5),
-    color: theme.palette.background.light,
-    '& div': {
-      paddingLeft: `${theme.spacing(4)} !important`,
-    },
-  },
-  finalNameDisplay: {
-    backgroundColor: theme.palette.primary.light,
-  },
-  numberInput: {
-    '& input::-webkit-outer-spin-button': {
-      '-webkit-appearance': 'none',
-      margin: 0,
-    },
-    '& input::-webkit-inner-spin-button': {
-      '-webkit-appearance': 'none',
-      margin: 0,
-    },
-    '& input[type="number"]': {
-      '-moz-appearance': 'textfield',
-    },
-  },
-  actionButtons: {
-    paddingTop: theme.spacing(3),
-    paddingBottom: theme.spacing(3),
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.background.dark,
-  },
-  saveTemplateModal: {
-    '& .MuiPaper-root': {
-      minWidth: '70%',
-    },
-  },
-  modalActionButtons: {
-    padding: theme.spacing(2),
-    paddingTop: 0,
-  },
-  nameContainer: {
-    margin: `${theme.spacing(4)} 0`,
-    border: `1px solid ${theme.palette.background.light}`,
-    borderRadius: theme.spacing(1),
-  },
-  nameHeader: {
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.primary.light,
-    borderBottom: `1px solid ${theme.palette.background.light}`,
-  },
-  nameData: {
-    padding: theme.spacing(2),
-  },
-  DTTemplatetName: {
-    textDecoration: 'underline',
-    textDecorationColor: theme.palette.background.light,
-    cursor: 'pointer',
-  },
-}));
+import './ShipmentStyles.css';
+import { isMobile } from '@utils/mediaQuery';
 
 const CreateShipment = ({ history, location }) => {
-  const classes = useStyles();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   const user = getUser();
@@ -953,7 +823,7 @@ const CreateShipment = ({ history, location }) => {
   };
 
   return (
-    <Box mt={5} mb={5} className={classes.root}>
+    <Box mt={5} mb={5} className="createShipmentRoot">
       {(isLoadingShipmentTemplates
         || isLoadingCustodians
         || isLoadingCustodianTypes
@@ -991,7 +861,7 @@ const CreateShipment = ({ history, location }) => {
         )}
       <Grid container spacing={2} alignItems="center" justifyContent="center">
         <Grid item xs={8}>
-          <Typography className={classes.dashboardHeading} variant="h5">
+          <Typography variant="h5">
             {formTitle}
           </Typography>
         </Grid>
@@ -1024,18 +894,18 @@ const CreateShipment = ({ history, location }) => {
         </Grid>
       </Grid>
       {!!template && (
-        <Grid container className={classes.nameContainer}>
-          <Grid item xs={8} className={classes.nameHeader}>
+        <Grid container className="createShipmentNameContainer">
+          <Grid item xs={6} md={8} className="createShipmentNameHeader">
             <Typography variant="body1" fontWeight={800}>
               Template name
             </Typography>
           </Grid>
-          <Grid item xs={4} className={classes.nameHeader}>
+          <Grid item xs={6} md={4} className="createShipmentNameHeader">
             <Typography variant="body1" fontWeight={800}>
               Actions
             </Typography>
           </Grid>
-          <Grid item xs={8} className={classes.nameData}>
+          <Grid item xs={6} md={8} className="createShipmentNameData">
             {!templateName && (
               <Typography component="div" style={{ padding: `${theme.spacing(1)} 0` }}>
                 {template.name}
@@ -1055,7 +925,7 @@ const CreateShipment = ({ history, location }) => {
               />
             )}
           </Grid>
-          <Grid item xs={4} className={classes.nameData}>
+          <Grid item xs={6} md={4} className="createShipmentNameData">
             {!templateName && (
               <div>
                 <IconButton
@@ -1086,19 +956,16 @@ const CreateShipment = ({ history, location }) => {
                 <Button
                   type="button"
                   variant="outlined"
-                  style={{ padding: `${theme.spacing(1.75)} ${theme.spacing(5)}` }}
                   disabled={cannotEdit}
                   onClick={(e) => setTemplateName('')}
+                  className="createShipmentActionButtons2"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="button"
                   variant="contained"
-                  style={{
-                    padding: `${theme.spacing(1.75)} ${theme.spacing(5)}`,
-                    marginLeft: theme.spacing(2),
-                  }}
+                  style={{ padding: `${theme.spacing(1.75)} ${theme.spacing(5)}` }}
                   disabled={_.isEqual(template.name, templateName) || cannotEdit}
                   onClick={saveTemplateName}
                 >
@@ -1109,10 +976,10 @@ const CreateShipment = ({ history, location }) => {
           </Grid>
         </Grid>
       )}
-      <form className={classes.form} noValidate>
+      <form className="createShipmentForm" noValidate>
         <Box mt={2}>
-          <FormControl fullWidth component="fieldset" variant="outlined" className={classes.fieldset}>
-            <FormLabel component="legend" className={classes.legend}>
+          <FormControl fullWidth component="fieldset" variant="outlined" className="createShipmentFieldset">
+            <FormLabel component="legend" className="createShipmentLegend">
               Shipment Details
             </FormLabel>
             <Grid container spacing={isDesktop ? 4 : 0}>
@@ -1150,7 +1017,7 @@ const CreateShipment = ({ history, location }) => {
                       value={originAbb}
                     />
                   </Grid>
-                  <Grid item xs={1} className={classes.innerAsterisk}>*</Grid>
+                  <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
                   <Grid item xs={11}>
                     <TextField
                       variant="outlined"
@@ -1166,7 +1033,7 @@ const CreateShipment = ({ history, location }) => {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={1} className={classes.innerAsterisk}>*</Grid>
+                  <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
                   <Grid item xs={11}>
                     <MapComponent
                       isMarkerShown
@@ -1188,7 +1055,7 @@ const CreateShipment = ({ history, location }) => {
                 </Grid>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Grid container spacing={2}>
+                <Grid container spacing={2} mt={isMobile() ? 1.5 : -2}>
                   <Grid item xs={8}>
                     <TextField
                       variant="outlined"
@@ -1221,7 +1088,7 @@ const CreateShipment = ({ history, location }) => {
                       value={destinationAbb}
                     />
                   </Grid>
-                  <Grid item xs={1} className={classes.innerAsterisk}>*</Grid>
+                  <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
                   <Grid item xs={11}>
                     <TextField
                       variant="outlined"
@@ -1237,7 +1104,7 @@ const CreateShipment = ({ history, location }) => {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={1} className={classes.innerAsterisk}>*</Grid>
+                  <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
                   <Grid item xs={11}>
                     <MapComponent
                       isMarkerShown
@@ -1258,7 +1125,7 @@ const CreateShipment = ({ history, location }) => {
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item xs={12} sm={5.5} className={classes.adjustSpacing}>
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 1.5 : -2.5} className="createShipmentAdjustSpacing">
                 <DatePickerComponent
                   label="Shipment start"
                   selectedDate={moment(departureDateTime).tz(data)}
@@ -1280,7 +1147,7 @@ const CreateShipment = ({ history, location }) => {
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={5.5}>
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 0 : -2.5} className={isMobile() && 'createShipmentAdjustSpacing'}>
                 <DatePickerComponent
                   label="Shipment end"
                   selectedDate={moment(arrivalDateTime).tz(data)}
@@ -1299,7 +1166,7 @@ const CreateShipment = ({ history, location }) => {
                   }
                 />
               </Grid>
-              <Grid item xs={11} sm={5.5}>
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 2 : 0}>
                 <TextField
                   variant="outlined"
                   id="status"
@@ -1332,8 +1199,8 @@ const CreateShipment = ({ history, location }) => {
                     ))}
                 </TextField>
               </Grid>
-              <Grid item xs={1} className={classes.outerAsterisk}>*</Grid>
-              <Grid item xs={11.5}>
+              <Grid item xs={1} className="createShipmentOuterAsterisk" mt={isMobile() ? -1.75 : 0}>*</Grid>
+              <Grid item xs={11} sm={11.5} mt={isMobile() ? 2 : 0} mb={isMobile() ? 2 : 0}>
                 <Autocomplete
                   multiple
                   id="items-multiple"
@@ -1381,7 +1248,7 @@ const CreateShipment = ({ history, location }) => {
                   )}
                 />
               </Grid>
-              <Grid item xs={0.5} className={classes.outerAsterisk}>*</Grid>
+              <Grid item xs={1} sm={0.5} className="createShipmentOuterAsterisk" mt={isMobile() ? -2 : 0}>*</Grid>
               {!_.isEmpty(itemRows) && (
                 <Grid item xs={11.5} pt={0}>
                   <DataTableWrapper
@@ -1397,13 +1264,13 @@ const CreateShipment = ({ history, location }) => {
                   />
                 </Grid>
               )}
-              <Grid item xs={12} sm={5.75} lg={3.83}>
-                <div className={classes.fieldset}>
+              <Grid item xs={12} sm={5.75} lg={3.83} mt={isMobile() ? 2.5 : 0}>
+                <div className="createShipmentFieldset">
                   <Typography variant="body1" component="div" fontWeight={700}>
                     TEMPERATURE
                   </Typography>
-                  <Typography mt={2} className={classes.alertSettingText}>
-                    <span className={classes.highest}>HIGHEST</span>
+                  <Typography mt={2} className="createShipmentAlertSettingText">
+                    <span className="createShipmentHighest">HIGHEST</span>
                     {' safe temperature'}
                   </Typography>
                   <TextField
@@ -1411,7 +1278,7 @@ const CreateShipment = ({ history, location }) => {
                     fullWidth
                     disabled={cannotEdit}
                     type="number"
-                    className={classes.numberInput}
+                    className="createShipmentNumberInput"
                     id="max_excursion_temp"
                     name="max_excursion_temp"
                     autoComplete="max_excursion_temp"
@@ -1432,8 +1299,8 @@ const CreateShipment = ({ history, location }) => {
                     value={max_excursion_temp.value}
                     onChange={(e) => max_excursion_temp.setValue(_.toString(e.target.value))}
                   />
-                  <Typography mt={3} className={classes.alertSettingText}>
-                    <span className={classes.lowest}>LOWEST</span>
+                  <Typography mt={3} className="createShipmentAlertSettingText">
+                    <span className="createShipmentLowest">LOWEST</span>
                     {' safe temperature'}
                   </Typography>
                   <TextField
@@ -1441,7 +1308,7 @@ const CreateShipment = ({ history, location }) => {
                     fullWidth
                     disabled={cannotEdit}
                     type="number"
-                    className={classes.numberInput}
+                    className="createShipmentNumberInput"
                     id="min_excursion_temp"
                     name="min_excursion_temp"
                     autoComplete="min_excursion_temp"
@@ -1465,12 +1332,12 @@ const CreateShipment = ({ history, location }) => {
                 </div>
               </Grid>
               <Grid item xs={12} sm={5.75} lg={3.83}>
-                <div className={classes.fieldset}>
+                <div className="createShipmentFieldset">
                   <Typography variant="body1" component="div" fontWeight={700}>
                     HUMIDITY
                   </Typography>
-                  <Typography mt={2} className={classes.alertSettingText}>
-                    <span className={classes.highest}>HIGHEST</span>
+                  <Typography mt={2} className="createShipmentAlertSettingText">
+                    <span className="createShipmentHighest">HIGHEST</span>
                     {' safe humidity'}
                   </Typography>
                   <TextField
@@ -1478,7 +1345,7 @@ const CreateShipment = ({ history, location }) => {
                     fullWidth
                     disabled={cannotEdit}
                     type="number"
-                    className={classes.numberInput}
+                    className="createShipmentNumberInput"
                     id="max_excursion_humidity"
                     name="max_excursion_humidity"
                     autoComplete="max_excursion_humidity"
@@ -1490,8 +1357,8 @@ const CreateShipment = ({ history, location }) => {
                     value={max_excursion_humidity.value}
                     onChange={(e) => max_excursion_humidity.setValue(_.toString(e.target.value))}
                   />
-                  <Typography mt={3} className={classes.alertSettingText}>
-                    <span className={classes.lowest}>LOWEST</span>
+                  <Typography mt={3} className="createShipmentAlertSettingText">
+                    <span className="createShipmentLowest">LOWEST</span>
                     {' safe humidity'}
                   </Typography>
                   <TextField
@@ -1499,7 +1366,7 @@ const CreateShipment = ({ history, location }) => {
                     fullWidth
                     disabled={cannotEdit}
                     type="number"
-                    className={classes.numberInput}
+                    className="createShipmentNumberInput"
                     id="min_excursion_humidity"
                     name="min_excursion_humidity"
                     autoComplete="min_excursion_humidity"
@@ -1514,12 +1381,12 @@ const CreateShipment = ({ history, location }) => {
                 </div>
               </Grid>
               <Grid item xs={12} sm={5.75} lg={3.83}>
-                <div className={classes.fieldset}>
+                <div className="createShipmentFieldset">
                   <Typography variant="body1" component="div" fontWeight={700}>
                     SHOCK & LIGHT
                   </Typography>
-                  <Typography mt={2} className={classes.alertSettingText}>
-                    <span className={classes.highest}>MAX</span>
+                  <Typography mt={2} className="createShipmentAlertSettingText">
+                    <span className="createShipmentHighest">MAX</span>
                     {' shock'}
                   </Typography>
                   <TextField
@@ -1527,7 +1394,7 @@ const CreateShipment = ({ history, location }) => {
                     fullWidth
                     disabled={cannotEdit}
                     type="number"
-                    className={classes.numberInput}
+                    className="createShipmentNumberInput"
                     id="shock_threshold"
                     name="shock_threshold"
                     autoComplete="shock_threshold"
@@ -1539,8 +1406,8 @@ const CreateShipment = ({ history, location }) => {
                     value={shock_threshold.value}
                     onChange={(e) => shock_threshold.setValue(_.toString(e.target.value))}
                   />
-                  <Typography mt={3} className={classes.alertSettingText}>
-                    <span className={classes.highest}>MAX</span>
+                  <Typography mt={3} className="createShipmentAlertSettingText">
+                    <span className="createShipmentHighest">MAX</span>
                     {' light'}
                   </Typography>
                   <TextField
@@ -1548,7 +1415,7 @@ const CreateShipment = ({ history, location }) => {
                     fullWidth
                     disabled={cannotEdit}
                     type="number"
-                    className={classes.numberInput}
+                    className="createShipmentNumberInput"
                     id="light_threshold"
                     name="light_threshold"
                     autoComplete="light_threshold"
@@ -1562,7 +1429,7 @@ const CreateShipment = ({ history, location }) => {
                   />
                 </div>
               </Grid>
-              <Grid item xs={11.5} textAlign="end">
+              <Grid item xs={12} sm={11.5} textAlign="end">
                 <Button
                   type="button"
                   variant="contained"
@@ -1585,8 +1452,8 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
             </Grid>
           </FormControl>
-          <FormControl fullWidth component="fieldset" variant="outlined" className={classes.fieldset}>
-            <FormLabel component="legend" className={classes.legend}>
+          <FormControl fullWidth component="fieldset" variant="outlined" className="createShipmentFieldset">
+            <FormLabel component="legend" className="createShipmentLegend">
               Order Information
             </FormLabel>
             <Grid container spacing={isDesktop ? 4 : 0}>
@@ -1601,7 +1468,7 @@ const CreateShipment = ({ history, location }) => {
                   value={organization && organization.abbrevation}
                 />
               </Grid>
-              <Grid item xs={9.5}>
+              <Grid item xs={8.5} sm={9.5} ml={isMobile() ? 2 : 0}>
                 <TextField
                   variant="outlined"
                   fullWidth
@@ -1614,8 +1481,8 @@ const CreateShipment = ({ history, location }) => {
                   {...shipmentName.bind}
                 />
               </Grid>
-              <Grid item xs={0.5} className={classes.outerAsterisk}>*</Grid>
-              <Grid item xs={5.75}>
+              <Grid item xs={0.5} className="createShipmentOuterAsterisk" mt={isMobile() ? -4 : 0}>*</Grid>
+              <Grid item xs={5.25} sm={5.75} mt={isMobile() ? 2 : 0}>
                 <TextField
                   variant="outlined"
                   fullWidth
@@ -1627,7 +1494,7 @@ const CreateShipment = ({ history, location }) => {
                   {...purchaseOrderNumber.bind}
                 />
               </Grid>
-              <Grid item xs={5.75}>
+              <Grid item xs={5.25} sm={5.75} mt={isMobile() ? 2 : 0} ml={isMobile() ? 2 : 0}>
                 <TextField
                   variant="outlined"
                   fullWidth
@@ -1639,12 +1506,12 @@ const CreateShipment = ({ history, location }) => {
                   {...billOfLading.bind}
                 />
               </Grid>
-              <Grid item xs={10}>
-                <FormControl fullWidth component="fieldset" variant="outlined" className={classes.attachedFiles}>
-                  <FormLabel component="legend" className={classes.legend}>
+              <Grid item xs={8} md={9} lg={9.6} mt={isMobile() ? 1 : 0}>
+                <FormControl style={{ height: 64 }} fullWidth component="fieldset" variant="outlined" className="createShipmentAttachedFiles">
+                  <FormLabel component="legend" className="createShipmentLegend">
                     Attached Files
                   </FormLabel>
-                  <Stack direction="row" spacing={1}>
+                  <Stack direction="row" spacing={1} mt={-1}>
                     {!_.isEmpty(files) && _.map(files, (file, idx) => (
                       <Chip
                         key={`${file.name}-${idx}`}
@@ -1666,7 +1533,7 @@ const CreateShipment = ({ history, location }) => {
                   </Stack>
                 </FormControl>
               </Grid>
-              <Grid item xs={1.5} className={classes.fileButton}>
+              <Grid item xs={3.5} md={2.5} lg={2} className="createShipmentFileButton" mt={isMobile() ? -3 : 0}>
                 <TextField
                   variant="outlined"
                   fullWidth
@@ -1676,9 +1543,10 @@ const CreateShipment = ({ history, location }) => {
                   InputLabelProps={{ shrink: true }}
                   inputProps={{ multiple: true }}
                   onChange={fileChange}
+                  style={{ width: '128px', overflow: 'hidden' }}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} mt={isMobile() ? 2 : 0}>
                 {!showNote && (
                   <Button
                     type="button"
@@ -1692,7 +1560,7 @@ const CreateShipment = ({ history, location }) => {
                 )}
                 {showNote && (
                   <Grid container spacing={2}>
-                    <Grid item xs={11.5}>
+                    <Grid item xs={10} sm={11.5}>
                       <TextField
                         variant="outlined"
                         multiline
@@ -1706,7 +1574,7 @@ const CreateShipment = ({ history, location }) => {
                         {...note.bind}
                       />
                     </Grid>
-                    <Grid item xs={0.5}>
+                    <Grid item xs={1} sm={0.5}>
                       <Button
                         type="button"
                         disabled={cannotEdit}
@@ -1715,7 +1583,7 @@ const CreateShipment = ({ history, location }) => {
                           setShowNote(false);
                         }}
                       >
-                        <CancelIcon fontSize="large" className={classes.cancel} />
+                        <CancelIcon fontSize="large" className="createShipmentCancel" />
                       </Button>
                     </Grid>
                   </Grid>
@@ -1724,8 +1592,8 @@ const CreateShipment = ({ history, location }) => {
               {!_.isEmpty(additionalCustodians)
                 && _.map(additionalCustodians, (addCust, index) => (
                   <Grid item xs={12} key={`${index}-${addCust.custodian_uuid}`}>
-                    <Grid container spacing={4}>
-                      <Grid item xs={5.5}>
+                    <Grid container spacing={4} mt={0}>
+                      <Grid item xs={6} sm={5} lg={5.5}>
                         <TextField
                           id={`add-cust-${addCust.custodian_uuid}`}
                           select
@@ -1758,7 +1626,7 @@ const CreateShipment = ({ history, location }) => {
                             ))}
                         </TextField>
                       </Grid>
-                      <Grid item xs={2.5}>
+                      <Grid item xs={6} sm={2.5}>
                         <TextField
                           variant="outlined"
                           id={`add-cust-abb-${addCust.custodian_uuid}`}
@@ -1768,7 +1636,7 @@ const CreateShipment = ({ history, location }) => {
                           value={addCust.abbrevation}
                         />
                       </Grid>
-                      <Grid item xs={3.5}>
+                      <Grid item xs={6} sm={3.5}>
                         <TextField
                           variant="outlined"
                           id={`add-cust-type-${addCust.custodian_uuid}`}
@@ -1778,7 +1646,7 @@ const CreateShipment = ({ history, location }) => {
                           value={addCust.type}
                         />
                       </Grid>
-                      <Grid item xs={0.5}>
+                      <Grid item xs={6} sm={0.5}>
                         <Button
                           type="button"
                           disabled={cannotEdit}
@@ -1790,13 +1658,13 @@ const CreateShipment = ({ history, location }) => {
                             setAdditionalCustocations(newList);
                           }}
                         >
-                          <CancelIcon fontSize="large" className={classes.cancel} />
+                          <CancelIcon fontSize="large" className="createShipmentCancel" />
                         </Button>
                       </Grid>
                     </Grid>
                   </Grid>
                 ))}
-              <Grid item xs={11.5}>
+              <Grid item xs={11.5} mt={isMobile() ? 2 : 0}>
                 {showAddCustodian && (
                   <TextField
                     variant="outlined"
@@ -1841,12 +1709,12 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
             </Grid>
           </FormControl>
-          <FormControl fullWidth component="fieldset" variant="outlined" className={classes.fieldset}>
-            <FormLabel component="legend" className={classes.legend}>
+          <FormControl fullWidth component="fieldset" variant="outlined" className="createShipmentFieldset">
+            <FormLabel component="legend" className="createShipmentLegend">
               Tracker
             </FormLabel>
             <Grid container spacing={isDesktop ? 4 : 0}>
-              <Grid item xs={5.5}>
+              <Grid item xs={5} sm={5.5}>
                 <TextField
                   id="gateway-type"
                   select
@@ -1872,8 +1740,8 @@ const CreateShipment = ({ history, location }) => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={0.5} className={classes.outerAsterisk}>*</Grid>
-              <Grid item xs={5.75}>
+              <Grid item xs={1} sm={0.5} className="createShipmentOuterAsterisk" mt={isMobile() ? -3.5 : 0}>*</Grid>
+              <Grid item xs={5} sm={5.75} ml={isMobile() ? 2 : 0}>
                 <TextField
                   id="gateway"
                   select
@@ -1905,7 +1773,7 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
             </Grid>
             {gateway && gateway.value && (
-              <Grid item xs={11.5} className={classes.gatewayDetails}>
+              <Grid item xs={11.5} className="createShipmentGatewayDetails">
                 <Typography variant="body1" component="div">
                   Battery Level:
                 </Typography>
@@ -1991,58 +1859,48 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
             )}
           </FormControl>
-          <Grid container spacing={2} className={classes.finalName}>
-            <Grid item xs={3}>
-              <Typography>ID</Typography>
-            </Grid>
-            <Grid item xs={5}>
-              <Typography>SHIPMENT NAME</Typography>
-            </Grid>
-            <Grid item xs={2}>
-              <Typography>ORIGIN</Typography>
-            </Grid>
-            <Grid item xs={2}>
-              <Typography>DEST</Typography>
-            </Grid>
-          </Grid>
           <Grid container spacing={2}>
-            <Grid item xs={3}>
+            <Grid item xs={6} sm={3}>
+              <Typography className="createShipmentFinalName">ID</Typography>
               <TextField
                 variant="outlined"
                 id="org-id-final"
                 fullWidth
                 disabled
-                className={classes.finalNameDisplay}
+                className="createShipmentFinalNameDisplay"
                 value={organization && organization.abbrevation}
               />
             </Grid>
-            <Grid item xs={5}>
+            <Grid item xs={6} sm={5}>
+              <Typography className="createShipmentFinalName">SHIPMENT NAME</Typography>
               <TextField
                 variant="outlined"
                 id="shipment-name-final"
                 fullWidth
                 disabled
-                className={classes.finalNameDisplay}
+                className="createShipmentFinalNameDisplay"
                 value={shipmentName.value}
               />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={6} sm={2} mt={isMobile() ? -3 : 0}>
+              <Typography className="createShipmentFinalName">ORIGIN</Typography>
               <TextField
                 variant="outlined"
                 id="origin-final"
                 fullWidth
                 disabled
-                className={classes.finalNameDisplay}
+                className="createShipmentFinalNameDisplay"
                 value={originAbb}
               />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={6} sm={2} mt={isMobile() ? -3 : 0}>
+              <Typography className="createShipmentFinalName">DEST</Typography>
               <TextField
                 variant="outlined"
                 id="dest-final"
                 fullWidth
                 disabled
-                className={classes.finalNameDisplay}
+                className="createShipmentFinalNameDisplay"
                 value={destinationAbb}
               />
             </Grid>
@@ -2055,8 +1913,14 @@ const CreateShipment = ({ history, location }) => {
               </Typography>
             </Grid>
             <Grid item xs={0.5} />
-            <Grid item xs={5.5} mt={5}>
-              <Button type="button" variant="outlined" fullWidth onClick={(e) => history.push(routes.SHIPMENT)} className={classes.actionButtons}>
+            <Grid item xs={5.5} mt={5} ml={isMobile() ? -1.5 : 0}>
+              <Button
+                type="button"
+                variant="outlined"
+                fullWidth
+                onClick={(e) => history.push(routes.SHIPMENT)}
+                className="createShipmentActionButtons"
+              >
                 Cancel
               </Button>
             </Grid>
@@ -2072,7 +1936,7 @@ const CreateShipment = ({ history, location }) => {
                     || submitDisabled()
                     || cannotEdit}
                   onClick={(e) => handleSubmit(e, true)}
-                  className={classes.actionButtons}
+                  className="createShipmentActionButtons"
                 >
                   Save as Draft
                 </Button>
@@ -2087,7 +1951,7 @@ const CreateShipment = ({ history, location }) => {
                     || isDeletingCustody
                     || submitDisabled()}
                   onClick={(e) => handleSubmit(e, false)}
-                  className={classes.actionButtons}
+                  className="createShipmentActionButtons"
                 >
                   {_.isEmpty(editData) ? 'Create a shipment' : 'Update shipment'}
                 </Button>
@@ -2110,7 +1974,7 @@ const CreateShipment = ({ history, location }) => {
           onClose={(e) => setShowTemplateDT(false)}
           aria-labelledby="save-template-title"
           aria-describedby="save-template-description"
-          className={classes.saveTemplateModal}
+          className="createShipmentSaveTemplateModal"
         >
           {(isAddingShipmentTemplate
             || isEditingShipmentTemplate
@@ -2126,7 +1990,7 @@ const CreateShipment = ({ history, location }) => {
             {saveAsName && 'Save template as...'}
             <IconButton
               aria-label="save-template-close"
-              className={classes.closeButton}
+              className="createShipmentCloseButton"
               onClick={(e) => setShowTemplateDT(false)}
             >
               <CloseIcon />
@@ -2175,7 +2039,7 @@ const CreateShipment = ({ history, location }) => {
           </DialogContent>
           {saveAsName && (
             <DialogActions>
-              <Grid container spacing={2} className={classes.modalActionButtons}>
+              <Grid container spacing={2} className="createShipmentModalActionButtons">
                 <Grid item xs={6}>
                   <TextField
                     variant="outlined"

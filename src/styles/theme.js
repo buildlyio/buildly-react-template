@@ -1,39 +1,54 @@
 import {
-  createTheme,
   responsiveFontSizes,
 } from '@mui/material';
 
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    background: {
-      default: '#FFFFFF',
-      light: '#BEBEBA',
-      dark: '#383636',
-    },
-    primary: {
-      main: '#436B93',
-      light: '#DEECF8',
-      dark: '#284663',
-      faded: '#B2BCCA',
-    },
-    secondary: {
-      main: '#F0CE7F',
-    },
-    success: {
-      main: '#009900',
-    },
-    info: {
-      main: '#0099CC',
-    },
-    warning: {
-      main: '#FFCC33',
-    },
-    error: {
-      main: '#FF0033',
-    },
-    cluster: {
-      main: '#ECDB54',
+import {
+  experimental_extendTheme as extendTheme,
+} from '@mui/material/styles';
+
+const theme = extendTheme({
+  cssVarPrefix: 'color',
+  colorSchemes: {
+    light: {
+      palette: {
+        background: {
+          default: '#FFFFFF',
+          light: '#BEBEBA',
+          light2: '#D3D4D5',
+          light3: '#E5E4E2',
+          dark: '#383636',
+          dark2: '#00000080',
+          dark3: '#78787833',
+          dark4: '#78787866',
+          black: '#000000',
+        },
+        primary: {
+          main: '#436B93',
+          light: '#DEECF8',
+          dark: '#284663',
+          dark2: '#2D55FF66',
+          dark3: '#328899',
+          faded: '#B2BCCA',
+        },
+        secondary: {
+          main: '#F0CE7F',
+        },
+        success: {
+          main: '#009900',
+        },
+        info: {
+          main: '#0099CC',
+        },
+        warning: {
+          main: '#FFCC33',
+        },
+        error: {
+          main: '#FF0033',
+        },
+        cluster: {
+          main: '#ECDB54',
+        },
+      },
     },
   },
   typography: {

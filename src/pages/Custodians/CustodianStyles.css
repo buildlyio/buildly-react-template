@@ -1,0 +1,44 @@
+.formContainer {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.inputWithTooltip {
+  display: flex;
+  align-items: center;
+}
+
+.addressContainer {
+  margin-top: 32px;
+  padding-bottom: 8px;
+}
+
+.submit {
+  margin: 24px 0px 16px;
+  border-radius: 18px;
+}
+
+@media screen and (min-width: 600px) {
+  .formContainer {
+    width: 70% !important;
+    margin: auto;
+  }
+  .inputWithTooltip3 {
+    margin-top: -14px;
+  }
+}
+
+@media screen and (min-width: 600px) and (max-width: 960px) {
+  .inputWithTooltip2 {
+    margin-top: -14px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .submit2 {
+    margin-top: -30px;
+  }
+  .inputWithTooltip4 {
+    margin-top: 12px;
+  }
+}

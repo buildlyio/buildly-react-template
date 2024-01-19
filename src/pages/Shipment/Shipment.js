@@ -21,7 +21,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { Assignment as NoteIcon } from '@mui/icons-material';
-import { makeStyles, styled } from '@mui/styles';
+import { styled } from '@mui/styles';
 import CustomizedSteppers from '../../components/CustomizedStepper/CustomizedStepper';
 import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
 import Loader from '../../components/Loader/Loader';
@@ -40,63 +40,9 @@ import { getSensorReportQuery } from '../../react-query/queries/sensorGateways/g
 import { getSensorAlertQuery } from '../../react-query/queries/sensorGateways/getSensorAlertQuery';
 import useAlert from '@hooks/useAlert';
 import { useStore } from '../../zustand/timezone/timezoneStore';
-
-const useStyles = makeStyles((theme) => ({
-  title: {
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.primary.light,
-  },
-  tabs: {
-    [theme.breakpoints.down('sm')]: {
-      '& .MuiTabs-scroller': {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      },
-    },
-    [theme.breakpoints.up('sm')]: {
-      position: 'absolute',
-      top: '24%',
-      left: '0',
-    },
-  },
-  tab: {
-    color: theme.palette.background.default,
-  },
-  dataTable: {
-    marginTop: '-40px',
-    '& .MuiTableCell-root': {
-      color: 'inherit',
-    },
-    '& .MuiTableCell-paddingCheckbox': {
-      display: 'none',
-    },
-  },
-  attachedFiles: {
-    border: `1px solid ${theme.palette.background.light}`,
-    borderRadius: theme.spacing(0.5),
-    height: '100%',
-  },
-  legend: {
-    fontSize: theme.spacing(1.5),
-  },
-  shipmentName: {
-    textDecoration: 'underline',
-    textDecorationColor: theme.palette.background.light,
-    cursor: 'pointer',
-  },
-  createButton: {
-    marginBottom: theme.spacing(3),
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.background.default,
-    '&:hover': {
-      backgroundColor: theme.palette.primary.main,
-    },
-  },
-}));
+import './ShipmentStyles.css';
 
 const Shipment = ({ history }) => {
-  const classes = useStyles();
   const muiTheme = useTheme();
   const user = getUser();
   const organization = user.organization.organization_uuid;
@@ -178,13 +124,13 @@ const Shipment = ({ history }) => {
     <Tabs
       value={shipmentFilter}
       onChange={filterTabClicked}
-      className={classes.tabs}
+      className="shipmentTabs"
     >
       {_.map(subNav, (itemProps, index) => (
         <Tab
           {...itemProps}
           key={`tab${index}:${itemProps.value}`}
-          className={classes.tab}
+          className="shipmentTab"
         />
       ))}
     </Tabs>
@@ -536,13 +482,13 @@ const Shipment = ({ history }) => {
             || isLoading}
           />
         )}
-      <Button type="button" onClick={(e) => history.push(routes.CREATE_SHIPMENT)} className={classes.createButton}>
+      <Button type="button" onClick={(e) => history.push(routes.CREATE_SHIPMENT)} className="shipmentCreateButton">
         + Create Shipment
       </Button>
       <Grid container>
         <Grid item xs={12}>
-          <div className={classes.title}>
-            <Typography className={classes.tileHeading} variant="h6">
+          <div className="shipmentTitle">
+            <Typography variant="h6">
               {selectedShipment ? selectedShipment.name : 'All shipments'}
             </Typography>
           </div>
@@ -569,7 +515,7 @@ const Shipment = ({ history }) => {
             unitOfMeasure={unitData}
           />
         </Grid>
-        <Grid item xs={12} className={classes.dataTable}>
+        <Grid item xs={12} className="shipmentDataTable">
           <DataTableWrapper
             hideAddButton
             loading={isLoading}
@@ -606,7 +552,7 @@ const Shipment = ({ history }) => {
                   filter: true,
                   customBodyRenderLite: (dataIndex) => (
                     <Typography
-                      className={classes.shipmentName}
+                      className="shipmentName"
                       onClick={(e) => {
                         history.push(routes.CREATE_SHIPMENT, {
                           ship: _.omit(rows[dataIndex], ['type', 'itemNames', 'tracker', 'battery_levels', 'alerts', 'allMarkers']),
@@ -783,14 +729,14 @@ const Shipment = ({ history }) => {
                                   fullWidth
                                   component="fieldset"
                                   variant="outlined"
-                                  className={classes.attachedFiles}
+                                  className="attachedFiles"
                                   style={{
                                     padding: _.isEmpty(ship.uploaded_pdf)
                                       ? muiTheme.spacing(3)
                                       : muiTheme.spacing(1.5),
                                   }}
                                 >
-                                  <FormLabel component="legend" className={classes.legend}>
+                                  <FormLabel component="legend" className="legend">
                                     Attached Files
                                   </FormLabel>
 

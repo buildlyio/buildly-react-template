@@ -2,17 +2,14 @@ import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
-  useTheme,
   Button,
   TextField,
   Grid,
   MenuItem,
-  useMediaQuery,
   Card,
   CardContent,
   Typography,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import DatePickerComponent from '../../../components/DatePicker/DatePicker';
 import Loader from '../../../components/Loader/Loader';
 import MapComponent from '../../../components/MapComponent/MapComponent';
@@ -20,52 +17,19 @@ import FormModal from '../../../components/Modal/FormModal';
 import { getUser } from '../../../context/User.context';
 import { useInput } from '../../../hooks/useInput';
 import { validators } from '../../../utils/validators';
+import { isMobile, isDesktop } from '../../../utils/mediaQuery';
 import { getCustodianFormattedRow, GATEWAY_STATUS } from '../../../utils/constants';
 import { useAddGatewayMutation } from '../../../react-query/mutations/sensorGateways/addGatewayMutation';
 import { useEditGatewayMutation } from '../../../react-query/mutations/sensorGateways/editGatewayMutation';
 import useAlert from '@hooks/useAlert';
 import { useStore } from '../../../zustand/timezone/timezoneStore';
-
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  cardItems: {
-    marginTop: theme.spacing(4),
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-  inputWithTooltip: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-}));
+import '../GatewayStyles.css';
 
 const AddGateway = ({
   history,
   location,
   viewOnly,
 }) => {
-  const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
 
@@ -114,8 +78,6 @@ const AddGateway = ({
   const formTitle = editPage ? 'Edit Gateway' : 'Add Gateway';
 
   const organization = getUser().organization.organization_uuid;
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
     if (!_.isEmpty(custodianData) && contactInfo) {
@@ -261,20 +223,16 @@ const AddGateway = ({
           open={openFormModal}
           handleClose={closeFormModal}
           title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth="md"
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
-          {(isAddingGateway || isEditingGateway) && <Loader open={isAddingGateway || isEditingGateway} />}
-          <form
-            className={classes.form}
-            noValidate
-            onSubmit={handleSubmit}
-          >
-            <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid className={classes.inputWithTooltip} item xs={12}>
+          {(isAddingGateway || isEditingGateway) && (
+            <Loader open={isAddingGateway || isEditingGateway} />
+          )}
+          <form className="formContainer" noValidate onSubmit={handleSubmit}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
+              <Grid className="inputWithTooltip" item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -298,20 +256,16 @@ const AddGateway = ({
                 />
               </Grid>
             </Grid>
-            <Card variant="outlined" className={classes.cardItems}>
+            <Card variant="outlined" className="cardItems">
               <CardContent>
-                <Typography
-                  className={classes.dashboardHeading}
-                  variant="body1"
-                >
+                <Typography variant="h6" gutterBottom mt={1} mb={isMobile() ? 0 : 1.65}>
                   Gateway Info
                 </Typography>
-                <Grid container spacing={isDesktop ? 2 : 0}>
+                <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
-                    md={6}
                     sm={6}
                   >
                     <TextField
@@ -350,10 +304,9 @@ const AddGateway = ({
                     </TextField>
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
-                    md={6}
                     sm={6}
                   >
                     <TextField
@@ -396,7 +349,7 @@ const AddGateway = ({
                         )}
                     </TextField>
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid item xs={12} sm={6}>
                     <DatePickerComponent
                       label="Activated"
                       selectedDate={
@@ -412,11 +365,11 @@ const AddGateway = ({
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
-                    md={6}
                     sm={6}
+                    mt={isMobile() ? 0.75 : 0}
                   >
                     <TextField
                       variant="outlined"
@@ -430,10 +383,9 @@ const AddGateway = ({
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
-                    md={6}
                     sm={6}
                   >
                     <TextField
@@ -448,10 +400,9 @@ const AddGateway = ({
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
-                    md={6}
                     sm={6}
                   >
                     <TextField
@@ -466,7 +417,7 @@ const AddGateway = ({
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="inputWithTooltip"
                     item
                     xs={12}
                   >
@@ -507,7 +458,7 @@ const AddGateway = ({
                     </TextField>
                   </Grid>
                   <Grid item xs={12}>
-                    <div className={classes.inputWithTooltip}>
+                    <div className="inputWithTooltip">
                       <TextField
                         variant="outlined"
                         margin="normal"
@@ -526,9 +477,14 @@ const AddGateway = ({
                       loadingElement={
                         <div style={{ height: '100%' }} />
                       }
-                      containerElement={
-                        <div style={{ height: '200px' }} />
-                      }
+                      containerElement={(
+                        <div style={{
+                          height: '200px',
+                          marginTop: isMobile() ? '10px' : '30px',
+                          marginBottom: '14px',
+                        }}
+                        />
+                      )}
                       mapElement={
                         <div style={{ height: '100%' }} />
                       }
@@ -552,26 +508,26 @@ const AddGateway = ({
               </CardContent>
             </Card>
             <Grid container spacing={2} justifyContent="center">
-              <Grid item xs={6} sm={4}>
+              <Grid item xs={12} sm={4} mt={-2}>
                 <Button
                   type="submit"
                   fullWidth
                   variant="contained"
                   color="primary"
-                  className={classes.submit}
+                  className="submit"
                   disabled={isAddingGateway || isEditingGateway || submitDisabled()}
                 >
                   {buttonText}
                 </Button>
               </Grid>
-              <Grid item xs={6} sm={4}>
+              <Grid item xs={12} sm={4} mt={-2} className="submit2">
                 <Button
                   type="button"
                   fullWidth
                   variant="outlined"
                   color="primary"
                   onClick={discardFormData}
-                  className={classes.submit}
+                  className="submit"
                 >
                   Cancel
                 </Button>

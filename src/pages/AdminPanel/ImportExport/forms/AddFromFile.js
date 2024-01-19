@@ -6,34 +6,15 @@ import {
   MenuItem,
   Button,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import Loader from '../../../../components/Loader/Loader';
 import { useInput } from '../../../../hooks/useInput';
 import { validators } from '../../../../utils/validators';
+import { isDesktop2 } from '../../../../utils/mediaQuery';
 import { useAddFromFileMutation } from '../../../../react-query/mutations/importExport/addFromFileMutation';
 import useAlert from '@hooks/useAlert';
-
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '90%',
-    margin: 'auto',
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-}));
+import '../../AdminPanelStyles.css';
 
 const AddFromFile = () => {
-  const classes = useStyles();
   const uploadType = useInput('', { required: true });
   const [uploadFile, setUploadFile] = useState(null);
   const [formError, setFormError] = useState({});
@@ -95,15 +76,15 @@ const AddFromFile = () => {
   };
 
   return (
-    <>
+    <div>
       {isAddingFromFile && <Loader open={isAddingFromFile} />}
       <form
-        className={classes.form}
+        className="formRoot"
         encType="multipart/form-data"
         noValidate
         onSubmit={handleSubmit}
       >
-        <Grid container spacing={2}>
+        <Grid container spacing={isDesktop2() ? 2 : 0}>
           <Grid item xs={12}>
             <TextField
               variant="outlined"
@@ -144,13 +125,13 @@ const AddFromFile = () => {
             />
           </Grid>
           <Grid container spacing={2} justifyContent="center">
-            <Grid item xs={6} sm={4}>
+            <Grid item xs={7} sm={6} md={4}>
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 color="primary"
-                className={classes.submit}
+                className="submit"
                 disabled={isAddingFromFile || submitDisabled()}
               >
                 Upload
@@ -159,7 +140,7 @@ const AddFromFile = () => {
           </Grid>
         </Grid>
       </form>
-    </>
+    </div>
   );
 };
 
