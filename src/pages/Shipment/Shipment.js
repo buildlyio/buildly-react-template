@@ -67,31 +67,36 @@ const Shipment = ({ history }) => {
   const [steps, setSteps] = useState([]);
   const [isLoading, setLoading] = useState(false);
 
-  const { data: shipmentData, isLoading: isLoadingShipments } = useQuery(
+  const { data: shipmentData, isLoading: isLoadingShipments, isFetching: isFetchingShipments } = useQuery(
     ['shipments', shipmentFilter, organization],
     () => getShipmentsQuery(organization, shipmentFilter === 'Active' ? 'Planned,En route,Arrived' : shipmentFilter, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
-  isShipmentDataAvailable = !_.isEmpty(shipmentData) && !isLoadingShipments;
+  isShipmentDataAvailable = !_.isEmpty(shipmentData) && !isLoadingShipments && !isFetchingShipments;
 
   const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
     ['custodians', organization],
     () => getCustodianQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: itemData, isLoading: isLoadingItems } = useQuery(
     ['items', organization],
     () => getItemQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
-  const { data: allGatewayData, isLoading: isLoadingAllGateways } = useQuery(
+  const { data: allGatewayData, isLoading: isLoadingAllGateways, isFetching: isFetchingAllGateways } = useQuery(
     ['allGateways'],
     () => getAllGatewayQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodyData, isLoading: isLoadingCustodies } = useQuery(
@@ -99,22 +104,25 @@ const Shipment = ({ history }) => {
     () => getCustodyQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'shipment_uuid'), null))), displayAlert),
     {
       enabled: isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'shipment_uuid'), null)))),
+      refetchOnWindowFocus: false,
     },
   );
 
-  const { data: sensorAlertData, isLoading: isLoadingSensorAlerts } = useQuery(
+  const { data: sensorAlertData, isLoading: isLoadingSensorAlerts, isFetching: isFetchingSensorAlerts } = useQuery(
     ['sensorAlerts', shipmentData, shipmentFilter],
     () => getSensorAlertQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null))), displayAlert),
     {
       enabled: isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      refetchOnWindowFocus: false,
     },
   );
 
-  const { data: sensorReportData, isLoading: isLoadingSensorReports } = useQuery(
+  const { data: sensorReportData, isLoading: isLoadingSensorReports, isFetching: isFetchingSensorReports } = useQuery(
     ['sensorReports', shipmentData, shipmentFilter],
     () => getSensorReportQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null))), displayAlert),
     {
       enabled: isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      refetchOnWindowFocus: false,
     },
   );
 
@@ -456,6 +464,10 @@ const Shipment = ({ history }) => {
         || isLoadingSensorAlerts
         || isLoadingSensorReports
         || isLoading
+        || isFetchingShipments
+        || isFetchingAllGateways
+        || isFetchingSensorAlerts
+        || isFetchingSensorReports
       )
         && (
           <Loader open={isLoadingShipments
@@ -466,7 +478,11 @@ const Shipment = ({ history }) => {
             || isLoadingCustodies
             || isLoadingSensorAlerts
             || isLoadingSensorReports
-            || isLoading}
+            || isLoading
+            || isFetchingShipments
+            || isFetchingAllGateways
+            || isFetchingSensorAlerts
+            || isFetchingSensorReports}
           />
         )}
       <Button type="button" onClick={(e) => history.push(routes.CREATE_SHIPMENT)} className="shipmentCreateButton">

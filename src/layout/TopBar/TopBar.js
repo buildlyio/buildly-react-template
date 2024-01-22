@@ -69,6 +69,7 @@ const TopBar = ({
   const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
     ['organizations'],
     () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { mutate: updateUserMutation, isLoading: isUpdateUser } = useUpdateUserMutation(history, displayAlert);

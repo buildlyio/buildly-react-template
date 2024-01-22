@@ -16,11 +16,13 @@ const UserGroups = () => {
   const { data: coregroupData, isLoading: isLoadingCoregroup } = useQuery(
     ['coregroups'],
     () => getCoregroupQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: organizations, isLoading: isLoadingOrganizations } = useQuery(
     ['organizations'],
     () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { mutate: editGroupMutation, isLoading: isEditingGroup } = useEditCoregroupMutation(displayAlert);

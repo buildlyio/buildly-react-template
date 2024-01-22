@@ -31,31 +31,37 @@ const Gateway = ({ history, redirectTo }) => {
   const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
     ['gateways', organization],
     () => getGatewayQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: gatewayTypesData, isLoading: isLoadingGatewayTypes } = useQuery(
     ['gatewayTypes'],
     () => getGatewayTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
     ['custodians', organization],
     () => getCustodianQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: contactInfo, isLoading: isLoadingContact } = useQuery(
     ['contact', organization],
     () => getContactQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: shipmentData, isLoading: isLoadingShipments } = useQuery(
     ['shipments', organization],
     () => getShipmentsQuery(organization, 'Planned,En route,Arrived', displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const addPath = redirectTo

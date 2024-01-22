@@ -30,16 +30,19 @@ const Consortium = ({ history, redirectTo }) => {
   const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
     ['organizations'],
     () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: consortiumData, isLoading: isLoadingConsortiums } = useQuery(
     ['consortiums'],
     () => getAllConsortiumQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const onAddButtonClick = () => {

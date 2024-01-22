@@ -22,11 +22,13 @@ const MappingOrg = ({ history, redirectTo }) => {
   const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
     ['organizations'],
     () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
     ['custodians', organization],
     () => getCustodianQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const editData = (item) => {

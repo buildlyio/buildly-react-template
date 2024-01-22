@@ -32,11 +32,13 @@ const ProductType = ({ redirectTo, history }) => {
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: productTypesData, isLoading: isLoadingProductTypes } = useQuery(
     ['productTypes', organization],
     () => getProductTypeQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const onAddButtonClick = () => {

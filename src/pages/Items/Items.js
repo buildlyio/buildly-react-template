@@ -28,26 +28,31 @@ const Items = ({ history, redirectTo }) => {
   const { data: itemData, isLoading: isLoadingItems } = useQuery(
     ['items', organization],
     () => getItemQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: itemTypesData, isLoading: isLoadingItemTypes } = useQuery(
     ['itemTypes', organization],
     () => getItemTypeQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: productData, isLoading: isLoadingProducts } = useQuery(
     ['products', organization],
     () => getProductQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: productTypesData, isLoading: isLoadingProductTypes } = useQuery(
     ['productTypes', organization],
     () => getProductTypeQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const addItemPath = redirectTo

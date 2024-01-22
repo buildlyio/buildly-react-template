@@ -32,11 +32,13 @@ const OrganizationType = ({ redirectTo, history }) => {
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: organizationTypesData, isLoading: isLoadingOrganizationTypes } = useQuery(
     ['organizationTypes'],
     () => getOrganizationTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const onAddButtonClick = () => {

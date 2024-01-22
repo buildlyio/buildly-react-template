@@ -47,21 +47,25 @@ const OrganizationSettings = () => {
   const { data: organizationTypesData, isLoading: isLoadingOrganizationTypes } = useQuery(
     ['organizationTypes'],
     () => getOrganizationTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
     ['countries'],
     () => getCountriesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: currenciesData, isLoading: isLoadingCurrencies } = useQuery(
     ['currencies'],
     () => getCurrenciesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const allowImportExport = useInput(

@@ -203,46 +203,55 @@ const CreateShipment = ({ history, location }) => {
   const { data: shipmentTemplateData, isLoading: isLoadingShipmentTemplates } = useQuery(
     ['shipmentTemplates', organization.organization_uuid],
     () => getShipmentTemplatesQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
     ['custodians', organization.organization_uuid],
     () => getCustodianQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodianTypesData, isLoading: isLoadingCustodianTypes } = useQuery(
     ['custodianTypes'],
     () => getCustodianTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: contactInfo, isLoading: isLoadingContact } = useQuery(
     ['contact', organization.organization_uuid],
     () => getContactQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization.organization_uuid],
     () => getUnitQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: itemData, isLoading: isLoadingItems } = useQuery(
     ['items', organization.organization_uuid],
     () => getItemQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: itemTypesData, isLoading: isLoadingItemTypes } = useQuery(
     ['itemTypes', organization.organization_uuid],
     () => getItemTypeQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
     ['gateways', organization.organization_uuid],
     () => getGatewayQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: gatewayTypesData, isLoading: isLoadingGatewayTypes } = useQuery(
     ['gatewayTypes'],
     () => getGatewayTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodyData, isLoading: isLoadingCustodies } = useQuery(
@@ -250,6 +259,7 @@ const CreateShipment = ({ history, location }) => {
     () => getCustodyQuery(encodeURIComponent(editData.shipment_uuid), displayAlert),
     {
       enabled: !_.isEmpty(editData),
+      refetchOnWindowFocus: false,
     },
   );
 

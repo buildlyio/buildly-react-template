@@ -32,11 +32,13 @@ const GatewayType = ({ redirectTo, history }) => {
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: gatewayTypesData, isLoading: isLoadingGatewayTypes } = useQuery(
     ['gatewayTypes'],
     () => getGatewayTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const onAddButtonClick = () => {

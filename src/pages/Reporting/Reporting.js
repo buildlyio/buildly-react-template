@@ -77,31 +77,36 @@ const Reporting = () => {
 
   let isShipmentDataAvailable = false;
 
-  const { data: shipmentData, isLoading: isLoadingShipments } = useQuery(
+  const { data: shipmentData, isLoading: isLoadingShipments, isFetching: isFetchingShipments } = useQuery(
     ['shipments', shipmentFilter, organization],
     () => getShipmentsQuery(organization, locStatus || (shipmentFilter === 'Active' ? 'Planned,En route,Arrived' : shipmentFilter), displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
-  isShipmentDataAvailable = !_.isEmpty(shipmentData) && !isLoadingShipments;
+  isShipmentDataAvailable = !_.isEmpty(shipmentData) && !isLoadingShipments && !isFetchingShipments;
 
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
     ['custodians', organization],
     () => getCustodianQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: contactInfo, isLoading: isLoadingContact } = useQuery(
     ['contact', organization],
     () => getContactQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
-  const { data: allGatewayData, isLoading: isLoadingAllGateways } = useQuery(
+  const { data: allGatewayData, isLoading: isLoadingAllGateways, isFetching: isFetchingAllGateways } = useQuery(
     ['allGateways'],
     () => getAllGatewayQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodyData, isLoading: isLoadingCustodies } = useQuery(
@@ -109,22 +114,25 @@ const Reporting = () => {
     () => getCustodyQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'shipment_uuid'), null))), displayAlert),
     {
       enabled: isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'shipment_uuid'), null)))),
+      refetchOnWindowFocus: false,
     },
   );
 
-  const { data: sensorAlertData, isLoading: isLoadingSensorAlerts } = useQuery(
+  const { data: sensorAlertData, isLoading: isLoadingSensorAlerts, isFetching: isFetchingSensorAlerts } = useQuery(
     ['sensorAlerts', selectedShipment, shipmentFilter],
     () => getSensorAlertQuery(encodeURIComponent(selectedShipment.partner_shipment_id), displayAlert),
     {
       enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      refetchOnWindowFocus: false,
     },
   );
 
-  const { data: sensorReportData, isLoading: isLoadingSensorReports } = useQuery(
+  const { data: sensorReportData, isLoading: isLoadingSensorReports, isFetching: isFetchingSensorReports } = useQuery(
     ['sensorReports', selectedShipment, shipmentFilter],
     () => getSensorReportQuery(encodeURIComponent(selectedShipment.partner_shipment_id), displayAlert),
     {
       enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      refetchOnWindowFocus: false,
     },
   );
 
@@ -233,7 +241,11 @@ const Reporting = () => {
         || isLoadingCustodies
         || isLoadingSensorAlerts
         || isLoadingSensorReports
-        || isLoading)
+        || isLoading
+        || isFetchingShipments
+        || isFetchingAllGateways
+        || isFetchingSensorAlerts
+        || isFetchingSensorReports)
         && (
           <Loader open={isLoadingShipments
             || isLoadingUnits
@@ -243,7 +255,11 @@ const Reporting = () => {
             || isLoadingCustodies
             || isLoadingSensorAlerts
             || isLoadingSensorReports
-            || isLoading}
+            || isLoading
+            || isFetchingShipments
+            || isFetchingAllGateways
+            || isFetchingSensorAlerts
+            || isFetchingSensorReports}
           />
         )}
       <Typography className="reportingDashboardHeading" variant="h4">

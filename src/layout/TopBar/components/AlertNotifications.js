@@ -31,7 +31,9 @@ const AlertNotifications = ({ setHideAlertBadge, open, setOpen }) => {
   }, [user]);
 
   useEffect(() => {
-    connectSocket();
+    if (pushGrp) {
+      connectSocket();
+    }
 
     return () => {
       if (alertsSocket.current) {
@@ -41,6 +43,7 @@ const AlertNotifications = ({ setHideAlertBadge, open, setOpen }) => {
   }, [pushGrp]);
 
   const reloadData = () => {
+    console.log('Reload data');
     queryClient.invalidateQueries({ queryKey: ['shipments'] });
     queryClient.invalidateQueries({ queryKey: ['allGateways'] });
     queryClient.invalidateQueries({ queryKey: ['sensorAlerts'] });
@@ -48,6 +51,7 @@ const AlertNotifications = ({ setHideAlertBadge, open, setOpen }) => {
   };
 
   const connectSocket = () => {
+    console.log(`${window.env.ALERT_SOCKET_URL}${pushGrp}/`);
     alertsSocket.current = new WebSocket(
       `${window.env.ALERT_SOCKET_URL}${pushGrp}/`,
     );
@@ -73,9 +77,11 @@ const AlertNotifications = ({ setHideAlertBadge, open, setOpen }) => {
       const pushAlerts = [...msg.alerts];
 
       if (msg.command === 'fetch_alerts') {
+        console.log('Fetching alerts');
         setAlerts(pushAlerts);
       }
       if (msg.command === 'new_alert') {
+        console.log('New alert received');
         setAlerts([...alerts, ...pushAlerts]);
         // invalidate queries to reload data
         reloadData();

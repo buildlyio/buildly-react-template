@@ -34,31 +34,37 @@ const Custodian = ({ history, redirectTo }) => {
   const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
     ['custodians', organization],
     () => getCustodianQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodianTypesData, isLoading: isLoadingCustodianTypes } = useQuery(
     ['custodianTypes'],
     () => getCustodianTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: contactInfo, isLoading: isLoadingContact } = useQuery(
     ['contact', organization],
     () => getContactQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
     ['countries'],
     () => getCountriesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
     ['organizations'],
     () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const addCustodianPath = redirectTo

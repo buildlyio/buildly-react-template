@@ -32,11 +32,13 @@ const ItemType = ({ redirectTo, history }) => {
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: itemTypesData, isLoading: isLoadingItemTypes } = useQuery(
     ['itemTypes', organization],
     () => getItemTypeQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const onAddButtonClick = () => {

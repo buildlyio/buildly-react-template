@@ -71,16 +71,19 @@ const Register = ({ history }) => {
   const { data: orgNameData, isLoading: isLoadingOrgNames } = useQuery(
     ['orgNames'],
     () => getOrganizationNameQuery(),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
     ['countries'],
     () => getCountriesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: currenciesData, isLoading: isLoadingCurrencies } = useQuery(
     ['currencies'],
     () => getCurrenciesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   useEffect(() => {

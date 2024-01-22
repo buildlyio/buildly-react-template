@@ -26,16 +26,19 @@ const Users = () => {
   const { data: coreuserData, isLoading: isLoadingCoreuser } = useQuery(
     ['users'],
     () => getCoreuserQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: coregroupData, isLoading: isLoadingCoregroup } = useQuery(
     ['coregroup'],
     () => getCoregroupQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: organizations, isLoading: isLoadingOrganizations } = useQuery(
     ['organizations'],
     () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { mutate: editUserMutation, isLoading: isEditingUser } = useEditCoreuserMutation(displayAlert);

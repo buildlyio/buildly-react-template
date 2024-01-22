@@ -32,11 +32,13 @@ const CustodianType = ({ redirectTo, history }) => {
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodianTypesData, isLoading: isLoadingCustodianTypes } = useQuery(
     ['custodianTypes'],
     () => getCustodianTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const onAddButtonClick = () => {

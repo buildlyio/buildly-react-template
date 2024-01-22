@@ -51,16 +51,19 @@ const AddFromAPI = () => {
   const { data: itemOptionData, isLoading: isLoadingItemOptions } = useQuery(
     ['itemOptions'],
     () => getItemOptionQuery(),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: gatewayOptionData, isLoading: isLoadingGatewayOptions } = useQuery(
     ['gatewayOptions'],
     () => getGatewayOptionQuery(),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: productOptionData, isLoading: isLoadingProductOptions } = useQuery(
     ['productOptions'],
     () => getProductOptionQuery(),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: apiResponse, isLoading: isLoadingApiResponse } = useQuery(
@@ -68,6 +71,7 @@ const AddFromAPI = () => {
     () => getApiResponseQuery(finalUrl, reqHeader, displayAlert),
     {
       enabled: !!(!provider.name && finalUrl && reqHeader),
+      refetchOnWindowFocus: false,
     },
   );
 

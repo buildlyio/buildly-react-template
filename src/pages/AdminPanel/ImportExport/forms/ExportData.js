@@ -26,6 +26,7 @@ const ExportData = () => {
     () => getExportDataQuery(exportTable, exportType, displayAlert),
     {
       enabled: ready,
+      refetchOnWindowFocus: false,
     },
   );
 
