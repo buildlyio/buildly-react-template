@@ -20,24 +20,24 @@ import {
   useTheme,
 } from '@mui/material';
 import { Assignment as NoteIcon } from '@mui/icons-material';
-import CustomizedSteppers from '../../components/CustomizedStepper/CustomizedStepper';
-import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
-import Loader from '../../components/Loader/Loader';
-import MapComponent from '../../components/MapComponent/MapComponent';
-import { getUser } from '../../context/User.context';
-import { routes } from '../../routes/routesConstants';
-import { getIcon, getShipmentFormattedRow, shipmentColumns } from '../../utils/constants';
+import CustomizedSteppers from '@components/CustomizedStepper/CustomizedStepper';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import Loader from '@components/Loader/Loader';
+import MapComponent from '@components/MapComponent/MapComponent';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { getIcon, getShipmentFormattedRow, shipmentColumns } from '@utils/constants';
 import { useQuery } from 'react-query';
-import { getShipmentsQuery } from '../../react-query/queries/shipments/getShipmentsQuery';
-import { getCustodianQuery } from '../../react-query/queries/custodians/getCustodianQuery';
-import { getItemQuery } from '../../react-query/queries/items/getItemQuery';
-import { getUnitQuery } from '../../react-query/queries/items/getUnitQuery';
-import { getAllGatewayQuery } from '../../react-query/queries/sensorGateways/getAllGatewayQuery';
-import { getCustodyQuery } from '../../react-query/queries/custodians/getCustodyQuery';
-import { getSensorReportQuery } from '../../react-query/queries/sensorGateways/getSensorReportQuery';
-import { getSensorAlertQuery } from '../../react-query/queries/sensorGateways/getSensorAlertQuery';
+import { getShipmentsQuery } from '@react-query/queries/shipments/getShipmentsQuery';
+import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
+import { getItemQuery } from '@react-query/queries/items/getItemQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getAllGatewayQuery } from '@react-query/queries/sensorGateways/getAllGatewayQuery';
+import { getCustodyQuery } from '@react-query/queries/custodians/getCustodyQuery';
+import { getSensorReportQuery } from '@react-query/queries/sensorGateways/getSensorReportQuery';
+import { getSensorAlertQuery } from '@react-query/queries/sensorGateways/getSensorAlertQuery';
 import useAlert from '@hooks/useAlert';
-import { useStore } from '../../zustand/timezone/timezoneStore';
+import { useStore } from '@zustand/timezone/timezoneStore';
 import './ShipmentStyles.css';
 
 const Shipment = ({ history }) => {
@@ -399,7 +399,7 @@ const Shipment = ({ history }) => {
         ),
       },
       {
-        id: _.maxBy(newSteps, 'id').id + 1,
+        id: _.maxBy(newSteps, 'id') ? (_.maxBy(newSteps, 'id').id + 1) : 3,
         title: shipment.destination,
         titleColor: 'inherit',
         label: 'Shipment arrived',
@@ -413,7 +413,7 @@ const Shipment = ({ history }) => {
         ),
       },
       {
-        id: _.maxBy(newSteps, 'id').id + 2,
+        id: _.maxBy(newSteps, 'id') ? (_.maxBy(newSteps, 'id').id + 2) : 4,
         title: shipment.destination,
         titleColor: 'inherit',
         label: 'Shipment completed',

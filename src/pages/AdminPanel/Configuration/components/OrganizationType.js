@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { getUser } from '../../../../context/User.context';
-import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../../../../utils/constants';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { getColumns } from '@utils/constants';
 import AddOrganizationType from '../forms/AddOrganizationType';
 import { useQuery } from 'react-query';
-import { getOrganizationTypeQuery } from '../../../../react-query/queries/authUser/getOrganizationTypeQuery';
-import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
-import { useDeleteOrganizationTypeMutation } from '../../../../react-query/mutations/authUser/deleteOrganizationTypeMutation';
+import { getOrganizationTypeQuery } from '@react-query/queries/authUser/getOrganizationTypeQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useDeleteOrganizationTypeMutation } from '@react-query/mutations/authUser/deleteOrganizationTypeMutation';
 import useAlert from '@hooks/useAlert';
-import { useStore } from '../../../../zustand/timezone/timezoneStore';
+import { useStore } from '@zustand/timezone/timezoneStore';
 
 const OrganizationType = ({ redirectTo, history }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);

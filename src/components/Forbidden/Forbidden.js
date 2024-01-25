@@ -6,7 +6,7 @@ import {
   CardContent,
   Button,
 } from '@mui/material';
-import { routes } from '../../routes/routesConstants';
+import { routes } from '@routes/routesConstants';
 import './ForbiddenStyles.css';
 
 const Forbidden = ({ history }) => (

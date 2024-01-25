@@ -7,13 +7,13 @@ import {
   Chip,
 } from '@mui/material';
 import { Autocomplete } from '@mui/material';
-import Loader from '../../../../components/Loader/Loader';
-import FormModal from '../../../../components/Modal/FormModal';
-import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
-import { isDesktop } from '../../../../utils/mediaQuery';
-import { useAddConsortiumMutation } from '../../../../react-query/mutations/consortium/addConsortiumMutation';
-import { useEditConsortiumMutation } from '../../../../react-query/mutations/consortium/editConsortiumMutation';
+import Loader from '@components/Loader/Loader';
+import FormModal from '@components/Modal/FormModal';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isDesktop } from '@utils/mediaQuery';
+import { useAddConsortiumMutation } from '@react-query/mutations/consortium/addConsortiumMutation';
+import { useEditConsortiumMutation } from '@react-query/mutations/consortium/editConsortiumMutation';
 import useAlert from '@hooks/useAlert';
 import '../../AdminPanelStyles.css';
 

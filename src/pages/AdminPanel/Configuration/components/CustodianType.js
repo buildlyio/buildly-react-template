@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { getUser } from '../../../../context/User.context';
-import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../../../../utils/constants';
-import AddCustodianType from '../forms/AddCustodianType';
 import { useQuery } from 'react-query';
-import { getCustodianTypeQuery } from '../../../../react-query/queries/custodians/getCustodianTypeQuery';
-import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
-import { useDeleteCustodianTypeMutation } from '../../../../react-query/mutations/custodians/deleteCustodianTypeMutation';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
 import useAlert from '@hooks/useAlert';
-import { useStore } from '../../../../zustand/timezone/timezoneStore';
+import { getCustodianTypeQuery } from '@react-query/queries/custodians/getCustodianTypeQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useDeleteCustodianTypeMutation } from '@react-query/mutations/custodians/deleteCustodianTypeMutation';
+import { routes } from '@routes/routesConstants';
+import { getColumns } from '@utils/constants';
+import { useStore } from '@zustand/timezone/timezoneStore';
+import AddCustodianType from '../forms/AddCustodianType';
 
 const CustodianType = ({ redirectTo, history }) => {
   const organization = getUser().organization.organization_uuid;

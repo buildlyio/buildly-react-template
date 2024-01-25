@@ -9,7 +9,7 @@ import {
   ListItemText,
   useTheme,
 } from '@mui/material';
-import { isMobile } from '../../utils/mediaQuery';
+import { isMobile } from '@utils/mediaQuery';
 import { NAVIGATION_ITEMS } from './NavBarConstants';
 import './NavBarStyles.css';
 

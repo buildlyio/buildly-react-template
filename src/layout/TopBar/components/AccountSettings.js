@@ -13,7 +13,6 @@ import {
   Switch,
   TextField,
   Typography,
-  useTheme,
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import profile from '@assets/profile.png';
@@ -21,14 +20,13 @@ import Loader from '@components/Loader/Loader';
 import { getUser } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
 import useAlert from '@hooks/useAlert';
-import { useUpdateUserMutation } from 'react-query/mutations/authUser/updateUserMutation';
+import { useUpdateUserMutation } from '@react-query/mutations/authUser/updateUserMutation';
 import { isTablet } from '@utils/mediaQuery';
 import '../TopBarStyles.css';
 
 const Transition = forwardRef((props, ref) => <Slide direction="left" ref={ref} {...props} />);
 
 const AccountSettings = ({ open, setOpen }) => {
-  const theme = useTheme();
   const user = getUser();
   const { displayAlert } = useAlert();
   const [geoOptions, setGeoOptions] = useState(user.geo_alert_preferences);
@@ -89,8 +87,8 @@ const AccountSettings = ({ open, setOpen }) => {
       className="accountSettingsDialog"
     >
       {isUpdatingUser && <Loader open={isUpdatingUser} />}
-      <DialogTitle sx={{ borderBottom: `${theme.spacing(0.5)} solid ${theme.palette.background.light}` }}>
-        <IconButton sx={{ marginRight: theme.spacing(2) }} onClick={closeAccountSettings}>
+      <DialogTitle className="accountSettingsDialogTitle">
+        <IconButton className="accountSettingsCloseIcon" onClick={closeAccountSettings}>
           <CloseIcon fontSize="large" />
         </IconButton>
         Account and Settings
@@ -159,7 +157,7 @@ const AccountSettings = ({ open, setOpen }) => {
             <Typography variant="h5" fontWeight={500}>Notification Preferences</Typography>
           </Grid>
 
-          <Grid item xs={12} sx={{ paddingTop: `${theme.spacing(4)} !important` }}>
+          <Grid item xs={12} className="accountSettingsStatusAlerts">
             <Typography variant="body1" fontWeight={700}>Shipment Status Change Alerts:</Typography>
             <Typography variant="caption">Enabling these alerts will send notifications of departure and arrival activity of your shipments.</Typography>
           </Grid>
@@ -197,7 +195,7 @@ const AccountSettings = ({ open, setOpen }) => {
             />
           </Grid>
 
-          <Grid item xs={12} sx={{ paddingTop: `${theme.spacing(8)} !important` }}>
+          <Grid item xs={12} className="accountSettingsEnvAlerts">
             <Typography variant="body1" fontWeight={700}>Environmental Alerts:</Typography>
             <Typography variant="caption">
               Enabling these alerts will send notifications about excursions of your settings for

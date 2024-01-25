@@ -6,12 +6,12 @@ import {
   TextField,
   MenuItem,
 } from '@mui/material';
-import Loader from '../../../../components/Loader/Loader';
-import FormModal from '../../../../components/Modal/FormModal';
-import { getUser } from '../../../../context/User.context';
-import { useInput } from '../../../../hooks/useInput';
-import { isDesktop } from '../../../../utils/mediaQuery';
-import { useEditCustodianMutation } from '../../../../react-query/mutations/custodians/editCustodianMutation';
+import Loader from '@components/Loader/Loader';
+import FormModal from '@components/Modal/FormModal';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { isDesktop } from '@utils/mediaQuery';
+import { useEditCustodianMutation } from '@react-query/mutations/custodians/editCustodianMutation';
 import useAlert from '@hooks/useAlert';
 import '../../AdminPanelStyles.css';
 

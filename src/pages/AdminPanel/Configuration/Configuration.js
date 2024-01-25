@@ -6,8 +6,8 @@ import {
   Typography,
 } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { getUser } from '../../../context/User.context';
-import { checkForAdmin, checkForGlobalAdmin } from '../../../utils/utilMethods';
+import { getUser } from '@context/User.context';
+import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
 import OrganizationSettings from './components/OrganizationSettings';
 import CustodianType from './components/CustodianType';
 import GatewayType from './components/GatewayType';

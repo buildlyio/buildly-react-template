@@ -9,10 +9,10 @@ import { IconButton, MenuItem, Select } from '@mui/material';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { getUser } from '@context/User.context';
 import useAlert from '@hooks/useAlert';
-import { getAllOrganizationQuery } from 'react-query/queries/authUser/getAllOrganizationQuery';
-import { useEditCoreuserMutation } from 'react-query/mutations/coreuser/editCoreuserMutation';
-import { getCoregroupQuery } from 'react-query/queries/coregroup/getCoregroupQuery';
-import { getCoreuserQuery } from 'react-query/queries/coreuser/getCoreuserQuery';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { useEditCoreuserMutation } from '@react-query/mutations/coreuser/editCoreuserMutation';
+import { getCoregroupQuery } from '@react-query/queries/coregroup/getCoregroupQuery';
+import { getCoreuserQuery } from '@react-query/queries/coreuser/getCoreuserQuery';
 import { getGroupsFormattedRow, getUserFormattedRows, userColumns } from '@utils/constants';
 import '../UserManagementStyles.css';
 

@@ -10,14 +10,14 @@ import {
   Typography,
   Container,
 } from '@mui/material';
-import logo from '../../assets/tp-logo.png';
-import Copyright from '../../components/Copyright/Copyright';
-import Loader from '../../components/Loader/Loader';
-import { useInput } from '../../hooks/useInput';
-import { routes } from '../../routes/routesConstants';
-import { validators } from '../../utils/validators';
-import { useResetPasswordMutation } from '../../react-query/mutations/authUser/resetPasswordMutation';
+import logo from '@assets/tp-logo.png';
+import Copyright from '@components/Copyright/Copyright';
+import Loader from '@components/Loader/Loader';
 import useAlert from '@hooks/useAlert';
+import { useInput } from '@hooks/useInput';
+import { routes } from '@routes/routesConstants';
+import { validators } from '@utils/validators';
+import { useResetPasswordMutation } from '@react-query/mutations/authUser/resetPasswordMutation';
 import './ResetPasswordStyles.css';
 
 const EmailForm = () => {

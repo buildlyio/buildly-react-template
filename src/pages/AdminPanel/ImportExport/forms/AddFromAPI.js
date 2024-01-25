@@ -7,19 +7,19 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import Loader from '../../../../components/Loader/Loader';
-import ConfirmModal from '../../../../components/Modal/ConfirmModal';
-import CustomizedTooltips from '../../../../components/ToolTip/ToolTip';
-import { getUser } from '../../../../context/User.context';
-import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
-import { isDesktop2 } from '../../../../utils/mediaQuery';
+import Loader from '@components/Loader/Loader';
+import ConfirmModal from '@components/Modal/ConfirmModal';
+import CustomizedTooltips from '@components/ToolTip/ToolTip';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isDesktop2 } from '@utils/mediaQuery';
 import { useQuery } from 'react-query';
-import { getItemOptionQuery } from '../../../../react-query/queries/options/getItemOptionQuery';
-import { getGatewayOptionQuery } from '../../../../react-query/queries/options/getGatewayOptionQuery';
-import { getProductOptionQuery } from '../../../../react-query/queries/options/getProductOptionQuery';
-import { getApiResponseQuery } from '../../../../react-query/queries/importExport/getApiResponseQuery';
-import { useAddApiSetupMutation } from '../../../../react-query/mutations/importExport/addApiSetupMutation';
+import { getItemOptionQuery } from '@react-query/queries/options/getItemOptionQuery';
+import { getGatewayOptionQuery } from '@react-query/queries/options/getGatewayOptionQuery';
+import { getProductOptionQuery } from '@react-query/queries/options/getProductOptionQuery';
+import { getApiResponseQuery } from '@react-query/queries/importExport/getApiResponseQuery';
+import { useAddApiSetupMutation } from '@react-query/mutations/importExport/addApiSetupMutation';
 import useAlert from '@hooks/useAlert';
 import '../../AdminPanelStyles.css';
 

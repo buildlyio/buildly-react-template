@@ -1,4 +1,4 @@
-import { useStore } from '../zustand/alert/alertStore';
+import { useStore } from '@zustand/alert/alertStore';
 
 const useAlert = () => {
   const { showAlert } = useStore();

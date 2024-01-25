@@ -10,14 +10,14 @@ import {
   Container,
   Grid,
 } from '@mui/material';
-import logo from '../../assets/tp-logo.png';
-import Copyright from '../../components/Copyright/Copyright';
-import Loader from '../../components/Loader/Loader';
-import { useInput } from '../../hooks/useInput';
-import { routes } from '../../routes/routesConstants';
-import { validators } from '../../utils/validators';
-import { useResetPasswordConfirmMutation } from '../../react-query/mutations/authUser/resetPasswordConfirmMutation';
+import logo from '@assets/tp-logo.png';
+import Copyright from '@components/Copyright/Copyright';
+import Loader from '@components/Loader/Loader';
 import useAlert from '@hooks/useAlert';
+import { useInput } from '@hooks/useInput';
+import { routes } from '@routes/routesConstants';
+import { validators } from '@utils/validators';
+import { useResetPasswordConfirmMutation } from '@react-query/mutations/authUser/resetPasswordConfirmMutation';
 import './ResetPasswordStyles.css';
 
 const NewPassword = ({ history, location }) => {

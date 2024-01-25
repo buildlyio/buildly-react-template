@@ -86,9 +86,20 @@
   -moz-appearance: textfield;
 }
 
-.topBarNotifications .MuiBadge-badge {
-  right: 25%;
-  top: 25%;
+.accountSettingsDialogTitle {
+  border-bottom: 4px solid var(--color-palette-background-light);
+}
+
+.accountSettingsCloseIcon {
+  margin-right: 16px;
+}
+
+.accountSettingsStatusAlerts {
+  padding-top: 32px !important;
+}
+
+.accountSettingsEnvAlerts {
+  padding-top: 64px !important;
 }
 
 @media screen and (min-width: 960px) {
@@ -113,6 +124,29 @@
 }
 
 /* Alert notifications css */
+.topBarNotifications .MuiBadge-badge {
+  right: 25%;
+  top: 25%;
+}
+
+.alertNotificationsCloseIcon {
+  float: right;
+}
+
+.alertNotificationsDialogTitle {
+  border-bottom: 4px solid var(--color-palette-background-light);
+}
+
+.alertNotificationsCount {
+  border-radius: 50%;
+}
+
+.alertNotificationsShipmentName {
+  text-decoration: underline;
+  text-decoration-color: var(--color-palette-background-light);
+  cursor: pointer;
+}
+
 @media screen and (min-width: 960px) {
   .alertNotificationsDialog .MuiDialog-container {
     position: fixed;

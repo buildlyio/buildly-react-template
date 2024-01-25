@@ -5,24 +5,26 @@ import _ from 'lodash';
 import { getUser } from '@context/User.context';
 import { useQueryClient } from 'react-query';
 import {
-  Dialog, DialogContent, DialogTitle, Grid, Slide,
+  Button,
+  Dialog, DialogContent, DialogTitle, Grid, IconButton, Slide, Typography, useTheme,
 } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
 import { isTablet } from '@utils/mediaQuery';
+import { routes } from '@routes/routesConstants';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getAlertNotificationsColumns } from '@utils/constants';
 
 const Transition = forwardRef((props, ref) => <Slide direction="left" ref={ref} {...props} />);
 
-const AlertNotifications = ({ setHideAlertBadge, open, setOpen }) => {
+const AlertNotifications = ({
+  setHideAlertBadge, open, setOpen, history, timezone, unitOfMeasure,
+}) => {
+  const theme = useTheme();
   const user = getUser();
   const queryClient = useQueryClient();
   const alertsSocket = useRef(null);
   const [pushGrp, setPushGrp] = useState('');
-  const [alerts, setAlerts] = useState([]);
-
-  if (_.size(alerts) > 0) {
-    setHideAlertBadge(false);
-  } else {
-    setHideAlertBadge(false);
-  }
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     if (!_.isEmpty(user)) {
@@ -42,6 +44,14 @@ const AlertNotifications = ({ setHideAlertBadge, open, setOpen }) => {
     };
   }, [pushGrp]);
 
+  useEffect(() => {
+    if (_.size(notifications) > 0) {
+      setHideAlertBadge(false);
+    } else {
+      setHideAlertBadge(true);
+    }
+  }, [notifications]);
+
   const reloadData = () => {
     console.log('Reload data');
     queryClient.invalidateQueries({ queryKey: ['shipments'] });
@@ -50,14 +60,20 @@ const AlertNotifications = ({ setHideAlertBadge, open, setOpen }) => {
     queryClient.invalidateQueries({ queryKey: ['sensorReports'] });
   };
 
+  // eslint-disable-next-line consistent-return
+  const customizer = (objValue, srcValue) => {
+    if (_.isArray(objValue)) {
+      return objValue.concat(srcValue);
+    }
+  };
+
   const connectSocket = () => {
-    console.log(`${window.env.ALERT_SOCKET_URL}${pushGrp}/`);
     alertsSocket.current = new WebSocket(
       `${window.env.ALERT_SOCKET_URL}${pushGrp}/`,
     );
 
     alertsSocket.current.onopen = () => {
-      const fetch_payload = { command: 'fetch_alerts', organization_uuid: pushGrp, hours_range: 24 };
+      const fetch_payload = { command: 'fetch_alerts', organization_uuid: pushGrp, hours_range: 48 };
       alertsSocket.current.send(JSON.stringify(fetch_payload));
     };
     alertsSocket.current.onerror = (error) => {
@@ -74,15 +90,37 @@ const AlertNotifications = ({ setHideAlertBadge, open, setOpen }) => {
 
     alertsSocket.current.onmessage = (message) => {
       const msg = JSON.parse(message.data);
-      const pushAlerts = [...msg.alerts];
+      let alerts = [];
+      _.forEach(msg.alerts, (a) => {
+        const parameterType = _.toLower(_.split(a.alert_message, ' of ')[0]);
+        const parameterValue = _.split(_.split(a.alert_message, ' of ')[1], ' at ')[0];
+        let alertObj = { id: parameterType, color: 'green', title: `${_.capitalize(parameterType)} Excursion Recovered` };
+        if (_.isEqual(a.severity, 'error')) {
+          alertObj = { ...alertObj, color: theme.palette.error.main, title: `Maximum ${_.capitalize(parameterType)} Excursion` };
+        }
+        if (_.isEqual(a.severity, 'info')) {
+          alertObj = { ...alertObj, color: theme.palette.info.main, title: `Minimum ${_.capitalize(parameterType)} Excursion` };
+        }
+        alerts = [...alerts, { ...a, alertObj, parameterValue }];
+      });
+
+      const shipments = _.uniqBy(_.map(alerts, (a) => ({ id: a.shipment_id, name: a.shipment_name })), 'id');
+
+      let formattedAlerts = [];
+      _.forEach(shipments, (ship) => {
+        formattedAlerts = [
+          ...formattedAlerts,
+          { shipment_id: ship.id, shipment_name: ship.name, alerts: _.filter(alerts, { shipment_id: ship.id }) },
+        ];
+      });
 
       if (msg.command === 'fetch_alerts') {
         console.log('Fetching alerts');
-        setAlerts(pushAlerts);
+        setNotifications(formattedAlerts);
       }
       if (msg.command === 'new_alert') {
-        console.log('New alert received');
-        setAlerts([...alerts, ...pushAlerts]);
+        const finalAlerts = _.mergeWith(notifications, alerts, customizer);
+        setNotifications(finalAlerts);
         // invalidate queries to reload data
         reloadData();
       }
@@ -108,12 +146,61 @@ const AlertNotifications = ({ setHideAlertBadge, open, setOpen }) => {
       TransitionComponent={Transition}
       className="alertNotificationsDialog"
     >
-      <DialogTitle>
-        <Grid>Title</Grid>
+      <DialogTitle className="alertNotificationsDialogTitle">
+        <Grid item xs={12} display="flex" alignItems="center">
+          <Typography variant="h6" flex={1}>Shipment Notifications</Typography>
+          <IconButton className="alertNotificationsCloseIcon" onClick={closeAlertNotifications}>
+            <CloseIcon fontSize="large" />
+          </IconButton>
+        </Grid>
       </DialogTitle>
 
       <DialogContent>
-        <Grid>Content</Grid>
+        {_.isEmpty(notifications) && (
+          <Grid item xs={12} display="flex" justifyContent="center" alignItems="center" height="100%">
+            <Typography variant="subtitle1">There are no new alerts for any active shipments</Typography>
+          </Grid>
+        )}
+        {!_.isEmpty(notifications) && (
+          <Grid container spacing={2} mt={2}>
+            {_.map(notifications, (noti) => (
+              <React.Fragment key={noti.shipment_id}>
+                <Grid item xs={10}>
+                  <Typography
+                    variant="subtitle1"
+                    className="alertNotificationsShipmentName"
+                    onClick={(e) => {
+                      history.push(`${routes.REPORTING}/?shipment=${noti.shipment_id}`);
+                      closeAlertNotifications();
+                    }}
+                  >
+                    {noti.shipment_name}
+                  </Typography>
+                </Grid>
+                <Grid item xs={2} textAlign="end">
+                  <Button type="button" color="error" variant="contained" className="alertNotificationsCount">{_.size(noti.alerts)}</Button>
+                </Grid>
+                <Grid item xs={12}>
+                  <DataTableWrapper
+                    noSpace
+                    hideAddButton
+                    noOptionsIcon
+                    rows={noti.alerts}
+                    columns={getAlertNotificationsColumns(
+                      timezone,
+                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                        ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                        : '',
+                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                        ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                        : '',
+                    )}
+                  />
+                </Grid>
+              </React.Fragment>
+            ))}
+          </Grid>
+        )}
       </DialogContent>
     </Dialog>
   );

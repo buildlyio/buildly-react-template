@@ -11,14 +11,14 @@ import {
   Typography,
   Autocomplete,
 } from '@mui/material';
-import Loader from '../../../components/Loader/Loader';
-import FormModal from '../../../components/Modal/FormModal';
-import { getUser } from '../../../context/User.context';
-import { useInput } from '../../../hooks/useInput';
-import { validators } from '../../../utils/validators';
-import { isMobile, isDesktop } from '../../../utils/mediaQuery';
-import { useAddItemMutation } from '../../../react-query/mutations/items/addItemMutation';
-import { useEditItemMutation } from '../../../react-query/mutations/items/editItemMutation';
+import Loader from '@components/Loader/Loader';
+import FormModal from '@components/Modal/FormModal';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isMobile, isDesktop } from '@utils/mediaQuery';
+import { useAddItemMutation } from '@react-query/mutations/items/addItemMutation';
+import { useEditItemMutation } from '@react-query/mutations/items/editItemMutation';
 import useAlert from '@hooks/useAlert';
 import '../ItemStyles.css';
 

@@ -10,19 +10,19 @@ import {
   CardContent,
   Typography,
 } from '@mui/material';
-import DatePickerComponent from '../../../components/DatePicker/DatePicker';
-import Loader from '../../../components/Loader/Loader';
-import MapComponent from '../../../components/MapComponent/MapComponent';
-import FormModal from '../../../components/Modal/FormModal';
-import { getUser } from '../../../context/User.context';
-import { useInput } from '../../../hooks/useInput';
-import { validators } from '../../../utils/validators';
-import { isMobile, isDesktop } from '../../../utils/mediaQuery';
-import { getCustodianFormattedRow, GATEWAY_STATUS } from '../../../utils/constants';
-import { useAddGatewayMutation } from '../../../react-query/mutations/sensorGateways/addGatewayMutation';
-import { useEditGatewayMutation } from '../../../react-query/mutations/sensorGateways/editGatewayMutation';
+import DatePickerComponent from '@components/DatePicker/DatePicker';
+import Loader from '@components/Loader/Loader';
+import MapComponent from '@components/MapComponent/MapComponent';
+import FormModal from '@components/Modal/FormModal';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isMobile, isDesktop } from '@utils/mediaQuery';
+import { getCustodianFormattedRow, GATEWAY_STATUS } from '@utils/constants';
+import { useAddGatewayMutation } from '@react-query/mutations/sensorGateways/addGatewayMutation';
+import { useEditGatewayMutation } from '@react-query/mutations/sensorGateways/editGatewayMutation';
 import useAlert from '@hooks/useAlert';
-import { useStore } from '../../../zustand/timezone/timezoneStore';
+import { useStore } from '@zustand/timezone/timezoneStore';
 import '../GatewayStyles.css';
 
 const AddGateway = ({

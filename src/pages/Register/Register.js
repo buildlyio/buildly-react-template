@@ -32,10 +32,10 @@ import {
 } from '@utils/mock';
 import { validators } from '@utils/validators';
 import { useQuery } from 'react-query';
-import { getOrganizationNameQuery } from 'react-query/queries/authUser/getOrganizationNameQuery';
-import { getCountriesQuery } from 'react-query/queries/shipments/getCountriesQuery';
-import { getCurrenciesQuery } from 'react-query/queries/shipments/getCurrenciesQuery';
-import { useRegisterMutation } from 'react-query/mutations/authUser/registerMutation';
+import { getOrganizationNameQuery } from '@react-query/queries/authUser/getOrganizationNameQuery';
+import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
+import { getCurrenciesQuery } from '@react-query/queries/shipments/getCurrenciesQuery';
+import { useRegisterMutation } from '@react-query/mutations/authUser/registerMutation';
 import useAlert from '@hooks/useAlert';
 import './RegisterStyles.css';
 

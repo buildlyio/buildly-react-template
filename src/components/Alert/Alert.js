@@ -1,7 +1,7 @@
 import React from 'react';
 import { Snackbar, Slide, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useStore } from '../../zustand/alert/alertStore';
+import { useStore } from '@zustand/alert/alertStore';
 import './AlertStyles.css';
 
 const Alert = () => {

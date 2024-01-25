@@ -23,7 +23,7 @@ import {
 import {
   MARKER_DATA,
   getIcon,
-} from '../../utils/constants';
+} from '@utils/constants';
 
 export const MapComponent = (props) => {
   const {

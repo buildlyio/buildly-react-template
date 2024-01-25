@@ -10,16 +10,16 @@ import {
   Typography,
   Container,
 } from '@mui/material';
-import logo from '../../assets/tp-logo.png';
-import Copyright from '../../components/Copyright/Copyright';
-import Loader from '../../components/Loader/Loader';
-import { useInput } from '../../hooks/useInput';
-import { routes } from '../../routes/routesConstants';
-import { validators } from '../../utils/validators';
-import { useResetPasswordCheckMutation } from '../../react-query/mutations/authUser/resetPasswordCheckMutation';
-import { useLoginMutation } from '../../react-query/mutations/authUser/loginMutation';
+import logo from '@assets/tp-logo.png';
+import Copyright from '@components/Copyright/Copyright';
+import Loader from '@components/Loader/Loader';
 import useAlert from '@hooks/useAlert';
+import { useInput } from '@hooks/useInput';
 import useTimezone from '@hooks/useTimezone';
+import { routes } from '@routes/routesConstants';
+import { validators } from '@utils/validators';
+import { useResetPasswordCheckMutation } from '@react-query/mutations/authUser/resetPasswordCheckMutation';
+import { useLoginMutation } from '@react-query/mutations/authUser/loginMutation';
 
 const Login = ({ history }) => {
   const username = useInput('', { required: true });

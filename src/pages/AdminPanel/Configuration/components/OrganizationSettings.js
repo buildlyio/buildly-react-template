@@ -15,8 +15,8 @@ import {
   Opacity as HumidityIcon,
   Thermostat as TemperatureIcon,
 } from '@mui/icons-material';
-import Loader from '../../../../components/Loader/Loader';
-import { useInput } from '../../../../hooks/useInput';
+import Loader from '@components/Loader/Loader';
+import { useInput } from '@hooks/useInput';
 import {
   DATE_DISPLAY_CHOICES,
   TIME_DISPLAY_CHOICES,
@@ -24,17 +24,17 @@ import {
   UOM_DISTANCE_CHOICES,
   UOM_TEMPERATURE_CHOICES,
   UOM_WEIGHT_CHOICES,
-} from '../../../../utils/mock';
-import { uomDistanceUpdate } from '../../../../utils/utilMethods';
-import { isDesktop2 } from '../../../../utils/mediaQuery';
-import { getUser } from '../../../../context/User.context';
+} from '@utils/mock';
+import { uomDistanceUpdate } from '@utils/utilMethods';
+import { isDesktop2 } from '@utils/mediaQuery';
+import { getUser } from '@context/User.context';
 import { useQuery } from 'react-query';
-import { getOrganizationTypeQuery } from '../../../../react-query/queries/authUser/getOrganizationTypeQuery';
-import { getCountriesQuery } from '../../../../react-query/queries/shipments/getCountriesQuery';
-import { getCurrenciesQuery } from '../../../../react-query/queries/shipments/getCurrenciesQuery';
-import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
-import { useUpdateOrganizationMutation } from '../../../../react-query/mutations/authUser/updateOrganizationMutation';
-import { useEditUnitMutation } from '../../../../react-query/mutations/items/editUnitMutation';
+import { getOrganizationTypeQuery } from '@react-query/queries/authUser/getOrganizationTypeQuery';
+import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
+import { getCurrenciesQuery } from '@react-query/queries/shipments/getCurrenciesQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useUpdateOrganizationMutation } from '@react-query/mutations/authUser/updateOrganizationMutation';
+import { useEditUnitMutation } from '@react-query/mutations/items/editUnitMutation';
 import useAlert from '@hooks/useAlert';
 import '../../AdminPanelStyles.css';
 

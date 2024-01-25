@@ -1782,3 +1782,71 @@ export const getGroupsFormattedRow = (groups, orgs) => {
 
   return _.orderBy(formattedData, 'display_permission_name', 'asc');
 };
+
+export const getAlertNotificationsColumns = (timezone, dateFormat, timeFormat) => ([
+  {
+    name: 'alertObj',
+    label: 'Condition',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        !_.isEmpty(value)
+          ? (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div>
+                {getIcon(value)}
+                {' '}
+              </div>
+            </div>
+          ) : ''
+      ),
+    },
+  },
+  {
+    name: 'parameterValue',
+    label: 'Value',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => {
+        let formattedValue = '';
+        if (value && _.includes(value, ' F/') && _.includes(value, ' C')) {
+          const [val1, val2] = _.split(value, ' F/');
+          const [temp, unit] = _.split(val2, ' ');
+          formattedValue = `${val1} F/${_.round(_.toNumber(temp), 2)} ${unit}`;
+        } else {
+          formattedValue = value || '-';
+        }
+
+        return formattedValue;
+      },
+    },
+  },
+  {
+    name: 'alert_time',
+    label: 'Date/Time stamp',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? moment(value).tz(timezone).format(`${dateFormat} ${timeFormat}`)
+          : value
+      ),
+    },
+  },
+  {
+    name: 'location',
+    label: 'Location',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
+    },
+  },
+]);

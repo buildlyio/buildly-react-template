@@ -15,25 +15,26 @@ import {
   Notifications as NotificationsIcon,
   Settings as SettingsIcon,
 } from '@mui/icons-material';
-import logo from '../../assets/tp-logo.png';
-import Loader from '../../components/Loader/Loader';
-import { routes } from '../../routes/routesConstants';
+import logo from '@assets/tp-logo.png';
+import Loader from '@components/Loader/Loader';
+import { getUser } from '@context/User.context';
+import useAlert from '@hooks/useAlert';
+import { oauthService } from '@modules/oauth/oauth.service';
+import { routes } from '@routes/routesConstants';
 import {
   checkForAdmin,
   checkForGlobalAdmin,
-} from '../../utils/utilMethods';
+} from '@utils/utilMethods';
+import { useStore } from '@zustand/timezone/timezoneStore';
+import { useQuery } from 'react-query';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { useUpdateUserMutation } from '@react-query/mutations/authUser/updateUserMutation';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import AccountSettings from './components/AccountSettings';
+import AlertNotifications from './components/AlertNotifications';
 import AdminMenu from './AdminMenu';
 import AccountMenu from './AccountMenu';
-import useAlert from '@hooks/useAlert';
-import { useStore } from '../../zustand/timezone/timezoneStore';
-import { getUser } from '../../context/User.context';
-import { useQuery } from 'react-query';
-import { getAllOrganizationQuery } from '../../react-query/queries/authUser/getAllOrganizationQuery';
-import { useUpdateUserMutation } from '../../react-query/mutations/authUser/updateUserMutation';
-import { oauthService } from '@modules/oauth/oauth.service';
-import AccountSettings from './components/AccountSettings';
 import './TopBarStyles.css';
-import AlertNotifications from './components/AlertNotifications';
 
 /**
  * Component for the top bar header.
@@ -54,6 +55,7 @@ const TopBar = ({
   const user = getUser();
   let isAdmin = false;
   let isSuperAdmin = false;
+  let org_uuid = user.organization.organization_uuid;
 
   const { displayAlert } = useAlert();
   const { data, setTimezone } = useStore();
@@ -64,6 +66,7 @@ const TopBar = ({
     }
     isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
     isSuperAdmin = checkForGlobalAdmin(user);
+    org_uuid = user.organization.organization_uuid;
   }
 
   const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
@@ -73,6 +76,12 @@ const TopBar = ({
   );
 
   const { mutate: updateUserMutation, isLoading: isUpdateUser } = useUpdateUserMutation(history, displayAlert);
+
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', org_uuid],
+    () => getUnitQuery(org_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
 
   const handleOrganizationChange = (e) => {
     const organization_name = e.target.value;
@@ -126,7 +135,7 @@ const TopBar = ({
 
   return (
     <AppBar position="fixed" className="appBar">
-      {(isLoadingOrgs || isUpdateUser) && <Loader open={isLoadingOrgs || isUpdateUser} />}
+      {(isLoadingOrgs || isUpdateUser || isLoadingUnits) && <Loader open={isLoadingOrgs || isUpdateUser || isLoadingUnits} />}
       <Toolbar>
         <IconButton
           edge="start"
@@ -235,7 +244,14 @@ const TopBar = ({
         </div>
       </Toolbar>
       <AccountSettings open={showAccountSettings} setOpen={setShowAccountSettings} />
-      <AlertNotifications open={showAlertNotifications} setOpen={setShowAlertNotifications} setHideAlertBadge={setHideAlertBadge} />
+      <AlertNotifications
+        open={showAlertNotifications}
+        setOpen={setShowAlertNotifications}
+        setHideAlertBadge={setHideAlertBadge}
+        // history={history}
+        timezone={data}
+        unitOfMeasure={unitData}
+      />
     </AppBar>
   );
 };

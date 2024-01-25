@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
-import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
-import { getUser } from '../../context/User.context';
-import { routes } from '../../routes/routesConstants';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
 import {
   custodianColumns,
   getCustodianFormattedRow,
   getUniqueContactInfo,
-} from '../../utils/constants';
+} from '@utils/constants';
 import AddCustodians from './forms/AddCustodians';
 import { useQuery } from 'react-query';
-import { getCustodianQuery } from '../../react-query/queries/custodians/getCustodianQuery';
-import { getCustodianTypeQuery } from '../../react-query/queries/custodians/getCustodianTypeQuery';
-import { getContactQuery } from '../../react-query/queries/custodians/getContactQuery';
-import { getCountriesQuery } from '../../react-query/queries/shipments/getCountriesQuery';
-import { getUnitQuery } from '../../react-query/queries/items/getUnitQuery';
-import { getAllOrganizationQuery } from '../../react-query/queries/authUser/getAllOrganizationQuery';
-import { useDeleteCustodianMutation } from '../../react-query/mutations/custodians/deleteCustodianMutation';
+import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
+import { getCustodianTypeQuery } from '@react-query/queries/custodians/getCustodianTypeQuery';
+import { getContactQuery } from '@react-query/queries/custodians/getContactQuery';
+import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { useDeleteCustodianMutation } from '@react-query/mutations/custodians/deleteCustodianMutation';
 import useAlert from '@hooks/useAlert';
 
 const Custodian = ({ history, redirectTo }) => {

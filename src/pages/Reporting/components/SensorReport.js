@@ -5,10 +5,10 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import {
   SENSOR_REPORT_COLUMNS,
-} from '../../../utils/constants';
+} from '@utils/constants';
 import '../ReportingStyles.css';
 
 const SensorReport = ({

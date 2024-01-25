@@ -1,14 +1,14 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { getUser } from '../../../../context/User.context';
-import { routes } from '../../../../routes/routesConstants';
-import { getMappingOrg } from '../../../../utils/constants';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { getMappingOrg } from '@utils/constants';
 import EditMapping from '../forms/EditMapping';
 import { useQuery } from 'react-query';
-import { getAllOrganizationQuery } from '../../../../react-query/queries/authUser/getAllOrganizationQuery';
-import { getCustodianQuery } from '../../../../react-query/queries/custodians/getCustodianQuery';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
 import useAlert from '@hooks/useAlert';
 
 const MappingOrg = ({ history, redirectTo }) => {

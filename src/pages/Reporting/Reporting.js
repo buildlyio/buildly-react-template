@@ -21,46 +21,40 @@ import {
   ViewComfy as ViewComfyIcon,
   ViewCompact as ViewCompactIcon,
 } from '@mui/icons-material';
-import GraphComponent from '../../components/GraphComponent/GraphComponent';
-import Loader from '../../components/Loader/Loader';
-import MapComponent from '../../components/MapComponent/MapComponent';
-import { getUser } from '../../context/User.context';
+import GraphComponent from '@components/GraphComponent/GraphComponent';
+import Loader from '@components/Loader/Loader';
+import MapComponent from '@components/MapComponent/MapComponent';
+import { getUser } from '@context/User.context';
 import {
   getShipmentOverview,
   SHIPMENT_OVERVIEW_COLUMNS,
   REPORT_TYPES,
   getIcon,
   processReportsAndMarkers,
-} from '../../utils/constants';
+} from '@utils/constants';
 import AlertsReport from './components/AlertsReport';
 import SensorReport from './components/SensorReport';
 import { useQuery } from 'react-query';
-import { getUnitQuery } from '../../react-query/queries/items/getUnitQuery';
-import { getCustodianQuery } from '../../react-query/queries/custodians/getCustodianQuery';
-import { getContactQuery } from '../../react-query/queries/custodians/getContactQuery';
-import { getShipmentsQuery } from '../../react-query/queries/shipments/getShipmentsQuery';
-import { getAllGatewayQuery } from '../../react-query/queries/sensorGateways/getAllGatewayQuery';
-import { getCustodyQuery } from '../../react-query/queries/custodians/getCustodyQuery';
-import { getSensorReportQuery } from '../../react-query/queries/sensorGateways/getSensorReportQuery';
-import { getSensorAlertQuery } from '../../react-query/queries/sensorGateways/getSensorAlertQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
+import { getContactQuery } from '@react-query/queries/custodians/getContactQuery';
+import { getShipmentsQuery } from '@react-query/queries/shipments/getShipmentsQuery';
+import { getAllGatewayQuery } from '@react-query/queries/sensorGateways/getAllGatewayQuery';
+import { getCustodyQuery } from '@react-query/queries/custodians/getCustodyQuery';
+import { getSensorReportQuery } from '@react-query/queries/sensorGateways/getSensorReportQuery';
+import { getSensorAlertQuery } from '@react-query/queries/sensorGateways/getSensorAlertQuery';
 import useAlert from '@hooks/useAlert';
-import { useStore } from '../../zustand/timezone/timezoneStore';
+import { useStore } from '@zustand/timezone/timezoneStore';
 import './ReportingStyles.css';
 import { isDesktop2 } from '@utils/mediaQuery';
 
 const Reporting = () => {
+  const location = useLocation();
   const theme = useTheme();
   const organization = getUser().organization.organization_uuid;
-  const { search: locSearch } = useLocation();
-  let locStatus = '';
-  let locShipmentID = '';
 
-  if (locSearch) {
-    locStatus = decodeURI(_.split(locSearch, '&status=')[1]);
-    // eslint-disable-next-line prefer-destructuring
-    locShipmentID = _.split(_.split(locSearch, '?shipment=')[1], '&status=')[0];
-  }
-
+  const [locStatus, setLocStatus] = useState('');
+  const [locShipmentID, setLocShipmentID] = useState('');
   const [tileView, setTileView] = useState(true);
   const [shipmentFilter, setShipmentFilter] = useState(locStatus || 'Active');
   const [selectedGraph, setSelectedGraph] = useState('temperature');
@@ -137,6 +131,29 @@ const Reporting = () => {
   );
 
   useEffect(() => {
+    if (location.search) {
+      setLocShipmentID(_.split(_.split(location.search, '?shipment=')[1], '&status=')[0]);
+      if (_.includes(location.search, '&status=')) {
+        setLocStatus(decodeURI(_.split(location.search, '&status=')[1]));
+      } else {
+        setLocStatus('');
+        if (!_.isEqual(shipmentFilter, 'Active')) {
+          setShipmentFilter('Active');
+        }
+      }
+    } else {
+      setLocStatus('');
+      setLocShipmentID('');
+    }
+  }, [location.search]);
+
+  useEffect(() => {
+    if (locStatus) {
+      setShipmentFilter(_.includes(['Planned', 'En route', 'Arrived'], locStatus) ? 'Active' : locStatus);
+    }
+  }, [locStatus]);
+
+  useEffect(() => {
     if (shipmentData && custodianData && custodyData && contactInfo) {
       const overview = getShipmentOverview(
         shipmentData,
@@ -147,17 +164,17 @@ const Reporting = () => {
       );
       if (!_.isEmpty(overview)) {
         setShipmentOverview(overview);
-        if (locShipmentID) {
-          const locShip = _.find(overview, { partner_shipment_id: locShipmentID });
-          setSelectedShipment(locShip);
-        }
         if (selectedShipment) {
           const selected = _.find(overview, { id: selectedShipment.id });
           setSelectedShipment(selected);
         }
+        if (locShipmentID) {
+          const locShip = _.find(overview, { partner_shipment_id: locShipmentID });
+          setSelectedShipment(locShip);
+        }
       }
     }
-  }, [shipmentData, custodianData, custodyData, contactInfo, allGatewayData]);
+  }, [shipmentData, custodianData, custodyData, contactInfo, allGatewayData, locShipmentID]);
 
   useEffect(() => {
     const alerts = _.filter(
@@ -178,7 +195,7 @@ const Reporting = () => {
       setAllGraphs(graphs);
       setMarkers(markersToSet);
     }
-  }, [sensorReportData, sensorAlertData]);
+  }, [sensorReportData, sensorAlertData, selectedShipment]);
 
   useEffect(() => {
     if (selectedShipment) {
@@ -219,6 +236,8 @@ const Reporting = () => {
   };
 
   const handleShipmentSelection = (shipment) => {
+    history.replaceState(null, '', location.pathname);
+    location.search = '';
     setSelectedShipment(shipment);
   };
 
@@ -502,7 +521,7 @@ const Reporting = () => {
           </List>
         </Grid>
         <Grid item xs={10} sm={10.9} md={11}>
-          {selectedGraph && allGraphs && !_.isEmpty(allGraphs) && allGraphs[selectedGraph]
+          {selectedShipment && selectedGraph && allGraphs && !_.isEmpty(allGraphs) && allGraphs[selectedGraph]
             ? (
               <GraphComponent
                 data={allGraphs[selectedGraph]}

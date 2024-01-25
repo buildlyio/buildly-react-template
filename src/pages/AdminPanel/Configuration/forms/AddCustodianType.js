@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
 import { Grid, Button, TextField } from '@mui/material';
-import Loader from '../../../../components/Loader/Loader';
-import FormModal from '../../../../components/Modal/FormModal';
-import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
-import { isDesktop } from '../../../../utils/mediaQuery';
-import { useAddCustodianTypeMutation } from '../../../../react-query/mutations/custodians/addCustodianTypeMutation';
-import { useEditCustodianTypeMutation } from '../../../../react-query/mutations/custodians/editCustodianTypeMutation';
+import Loader from '@components/Loader/Loader';
+import FormModal from '@components/Modal/FormModal';
 import useAlert from '@hooks/useAlert';
+import { useInput } from '@hooks/useInput';
+import { useAddCustodianTypeMutation } from '@react-query/mutations/custodians/addCustodianTypeMutation';
+import { useEditCustodianTypeMutation } from '@react-query/mutations/custodians/editCustodianTypeMutation';
+import { validators } from '@utils/validators';
+import { isDesktop } from '@utils/mediaQuery';
 import '../../AdminPanelStyles.css';
 
 const AddCustodianType = ({ history, location }) => {

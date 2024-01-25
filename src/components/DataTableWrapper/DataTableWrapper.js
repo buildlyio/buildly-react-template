@@ -14,8 +14,8 @@ import {
 } from '@mui/icons-material';
 import Loader from '../Loader/Loader';
 import ConfirmModal from '../Modal/ConfirmModal';
-import { getUser } from '../../context/User.context';
-import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
+import { getUser } from '@context/User.context';
+import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
 import './DataTableWrapperStyles.css';
 
 const DataTableWrapper = ({
