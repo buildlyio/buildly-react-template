@@ -2,14 +2,14 @@
   height: 100%;
 }
 
-.content {
+.containerContent {
   flex-grow: 1;
   height: 100%;
   padding-top: 5.25em;
   margin-bottom: -12px;
 }
 
-.contentMaxWidth {
+.containerContentMaxWidth {
   width: calc(100vw - 240px);
   max-width: 100%;
 }

@@ -136,7 +136,7 @@ const AddItemType = ({ history, location }) => {
             <Loader open={isAddingItemType || isEditingItemType} />
           )}
           <form
-            className="formContainer"
+            className="adminPanelFormContainer"
             noValidate
             onSubmit={handleSubmit}
           >
@@ -166,7 +166,7 @@ const AddItemType = ({ history, location }) => {
                     fullWidth
                     variant="contained"
                     color="primary"
-                    className="submit"
+                    className="adminPanelSubmit"
                     disabled={isAddingItemType || isEditingItemType || submitDisabled()}
                   >
                     {buttonText}
@@ -179,7 +179,7 @@ const AddItemType = ({ history, location }) => {
                     variant="outlined"
                     color="primary"
                     onClick={discardFormData}
-                    className="submit"
+                    className="adminPanelSubmit"
                   >
                     Cancel
                   </Button>

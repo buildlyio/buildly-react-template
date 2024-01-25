@@ -1,33 +1,25 @@
-.container {
+.loginContainer {
   padding-top: 64px;
 }
 
-.paper {
+.loginPaper {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.form {
+.loginForm {
   width: 100%;
   margin-top: 16px;
 }
 
-.logo {
+.loginLogo {
   max-width: 20rem;
   width: 100%;
   margin-bottom: 24px;
 }
 
-.textField {
+.loginTextField {
   min-height: 5rem;
   margin: 8px 0px;
-}
-
-.buttonProgress {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -12px;
-  margin-left: -12px;
 }

@@ -1,44 +1,44 @@
-.formContainer {
+.custodianFormContainer {
   width: 100%;
   margin-top: 8px;
 }
 
-.inputWithTooltip {
+.custodianInputWithTooltip {
   display: flex;
   align-items: center;
 }
 
-.addressContainer {
+.custodianAddressContainer {
   margin-top: 32px;
   padding-bottom: 8px;
 }
 
-.submit {
+.custodianSubmit {
   margin: 24px 0px 16px;
   border-radius: 18px;
 }
 
 @media screen and (min-width: 600px) {
-  .formContainer {
+  .custodianFormContainer {
     width: 70% !important;
     margin: auto;
   }
-  .inputWithTooltip3 {
+  .custodianInputWithTooltip3 {
     margin-top: -14px;
   }
 }
 
 @media screen and (min-width: 600px) and (max-width: 960px) {
-  .inputWithTooltip2 {
+  .custodianInputWithTooltip2 {
     margin-top: -14px;
   }
 }
 
 @media screen and (max-width: 600px) {
-  .submit2 {
+  .custodianSubmit2 {
     margin-top: -30px;
   }
-  .inputWithTooltip4 {
+  .custodianInputWithTooltip4 {
     margin-top: 12px;
   }
 }

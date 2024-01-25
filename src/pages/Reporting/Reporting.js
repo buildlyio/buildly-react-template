@@ -251,7 +251,7 @@ const Reporting = () => {
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md={tileView ? 6 : 12}>
-          <div className="switchViewSection">
+          <div className="reportingSwitchViewSection">
             <Typography
               className="reportingSectionTitleHeading"
               variant="h5"
@@ -298,7 +298,7 @@ const Reporting = () => {
           />
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
-          <div className="switchViewSection">
+          <div className="reportingSwitchViewSection">
             <ToggleButtonGroup
               color="secondary"
               value={shipmentFilter}
@@ -339,7 +339,7 @@ const Reporting = () => {
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
-          <div className="switchViewSection2">
+          <div className="reportingSwitchViewSection2">
             <TextField
               variant="outlined"
               margin="normal"
@@ -347,7 +347,7 @@ const Reporting = () => {
               id="shipment-name"
               select
               required
-              className="selectInput"
+              className="reportingSelectInput"
               label="Shipment Name"
               value={
                 selectedShipment
@@ -393,7 +393,7 @@ const Reporting = () => {
                 : <ViewComfyIcon />}
             </IconButton>
           </div>
-          <div className="infoContainer">
+          <div className="reportingInfoContainer">
             <Card>
               <CardContent>
                 <Grid container>
@@ -454,8 +454,8 @@ const Reporting = () => {
           </div>
         </Grid>
       </Grid>
-      <Grid container className="reportContainer" sx={{ marginTop: _.isEmpty(selectedShipment) ? 4 : -1 }}>
-        <div className="switchViewSection">
+      <Grid container className="reportingContainer" sx={{ marginTop: _.isEmpty(selectedShipment) ? 4 : -1 }}>
+        <div className="reportingSwitchViewSection">
           <Typography
             className="reportingSectionTitleHeading"
             variant="h5"
@@ -470,7 +470,7 @@ const Reporting = () => {
           <List
             component="nav"
             aria-label="main graph-type"
-            className="graphIconBar"
+            className="reportingGraphIconBar"
           >
             {_.map(REPORT_TYPES(unitData), (item, index) => (
               <ListItem

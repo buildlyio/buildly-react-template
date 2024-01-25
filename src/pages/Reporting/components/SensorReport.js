@@ -28,7 +28,7 @@ const SensorReport = ({
       options: {
         ...column.options,
         setCellHeaderProps: () => ({
-          className: 'leftHeader',
+          className: 'reportingSensorLeftHeader',
         }),
       },
     }),
@@ -69,11 +69,11 @@ const SensorReport = ({
   };
 
   return (
-    <Grid className="sensorRoot" container spacing={2}>
+    <Grid className="reportingSensorRoot" container spacing={2}>
       <Grid item xs={12}>
-        <div className="sensorTooltip">
+        <div className="reportingSensorTooltip">
           <Typography
-            className="sensorReportTitle"
+            className="reportingSensorReportTitle"
             variant="h5"
           >
             {shipmentName

@@ -34,11 +34,11 @@ const AdminMenu = ({
         horizontal: 'right',
       }}
     >
-      <MenuItem onClick={handleAdminPanelClick} className="adminMenuRoot">
+      <MenuItem onClick={handleAdminPanelClick} className="topbarAdminMenuRoot">
         <ListItemText primary="Admin Panel" />
       </MenuItem>
       <Divider />
-      <MenuItem onClick={handleUserManagementClick} className="adminMenuRoot">
+      <MenuItem onClick={handleUserManagementClick} className="topbarAdminMenuRoot">
         <ListItemText primary="User Management" />
       </MenuItem>
     </Menu>

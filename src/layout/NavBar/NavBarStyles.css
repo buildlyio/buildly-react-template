@@ -1,61 +1,61 @@
-.drawer {
+.navbarDrawer {
   background-color: var(--color-palette-background-dark);
 }
 
-.toolbar {
+.navbarToolbar {
   min-height: 56px;
 }
 
-.drawerPaper {
+.navbarDrawerPaper {
   width: 240px;
   background-color: var(--color-palette-background-default);
   color: var(--color-palette-primary-main);
 }
 
-.active {
+.navbarActive {
   background-color: var(--color-palette-primary-light);
   font-weight: bold;
   color: var(--color-palette-primary-dark) !important;
 }
 
-.active:hover {
+.navbarActive:hover {
   background-color: var(--color-palette-primary-light) !important;
 }
 
-.navLink {
+.navbarNavLink {
   display: block;
   text-decoration: none;
   color: var(--color-palette-primary-main);
 }
 
-.navLink:hover {
+.navbarNavLink:hover {
   background-color: var(--color-palette-secondary-main);
 }
 
-.navLink:hover .MuiListItemIcon-root,
-.navLink:hover .MuiListItemText-primary {
+.navbarNavLink:hover .MuiListItemIcon-root,
+.navbarNavLink:hover .MuiListItemText-primary {
   color: var(--color-palette-primary-dark);
 }
 
-.navItems {
+.navbarNavItems {
   padding: 24px 32px;
   text-align: left;
 }
 
 @media screen and (min-width: 0px) and (orientation: landscape) {
-  .toolbar {
+  .navbarToolbar {
     min-height: 48px;
   }
 }
 
 @media screen and (min-width: 600px) {
-  .toolbar {
+  .navbarToolbar {
     min-height: 64px;
   }
 }
 
 @media screen and (min-width: 960px) {
-  .drawer {
+  .navbarDrawer {
     width: 240px;
     flex-shrink: 0;
   }

@@ -230,9 +230,9 @@ const AddGateway = ({
           {(isAddingGateway || isEditingGateway) && (
             <Loader open={isAddingGateway || isEditingGateway} />
           )}
-          <form className="formContainer" noValidate onSubmit={handleSubmit}>
+          <form className="gatewayFormContainer" noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop() ? 2 : 0}>
-              <Grid className="inputWithTooltip" item xs={12}>
+              <Grid className="gatewayInputWithTooltip" item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -256,14 +256,14 @@ const AddGateway = ({
                 />
               </Grid>
             </Grid>
-            <Card variant="outlined" className="cardItems">
+            <Card variant="outlined" className="gatewayCardItems">
               <CardContent>
                 <Typography variant="h6" gutterBottom mt={1} mb={isMobile() ? 0 : 1.65}>
                   Gateway Info
                 </Typography>
                 <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid
-                    className="inputWithTooltip"
+                    className="gatewayInputWithTooltip"
                     item
                     xs={12}
                     sm={6}
@@ -304,7 +304,7 @@ const AddGateway = ({
                     </TextField>
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="gatewayInputWithTooltip"
                     item
                     xs={12}
                     sm={6}
@@ -365,7 +365,7 @@ const AddGateway = ({
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="gatewayInputWithTooltip"
                     item
                     xs={12}
                     sm={6}
@@ -383,7 +383,7 @@ const AddGateway = ({
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="gatewayInputWithTooltip"
                     item
                     xs={12}
                     sm={6}
@@ -400,7 +400,7 @@ const AddGateway = ({
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="gatewayInputWithTooltip"
                     item
                     xs={12}
                     sm={6}
@@ -417,7 +417,7 @@ const AddGateway = ({
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="gatewayInputWithTooltip"
                     item
                     xs={12}
                   >
@@ -458,7 +458,7 @@ const AddGateway = ({
                     </TextField>
                   </Grid>
                   <Grid item xs={12}>
-                    <div className="inputWithTooltip">
+                    <div className="gatewayInputWithTooltip">
                       <TextField
                         variant="outlined"
                         margin="normal"
@@ -514,20 +514,20 @@ const AddGateway = ({
                   fullWidth
                   variant="contained"
                   color="primary"
-                  className="submit"
+                  className="gatewaySubmit"
                   disabled={isAddingGateway || isEditingGateway || submitDisabled()}
                 >
                   {buttonText}
                 </Button>
               </Grid>
-              <Grid item xs={12} sm={4} mt={-2} className="submit2">
+              <Grid item xs={12} sm={4} mt={-2} className="gatewaySubmit2">
                 <Button
                   type="button"
                   fullWidth
                   variant="outlined"
                   color="primary"
                   onClick={discardFormData}
-                  className="submit"
+                  className="gatewaySubmit"
                 >
                   Cancel
                 </Button>

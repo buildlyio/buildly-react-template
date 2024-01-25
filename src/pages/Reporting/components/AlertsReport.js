@@ -58,9 +58,9 @@ const AlertsReport = ({
   }, [alerts]);
 
   return (
-    <Grid className="alertRoot" container spacing={2}>
+    <Grid className="reportingAlertRoot" container spacing={2}>
       <Grid item xs={12}>
-        <div className="alertTooltip">
+        <div className="reportingAlertTooltip">
           <Typography
             className="reportingAlertTitle"
             variant="h5"

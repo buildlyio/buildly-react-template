@@ -717,14 +717,14 @@ const Shipment = ({ history }) => {
                                   fullWidth
                                   component="fieldset"
                                   variant="outlined"
-                                  className="attachedFiles"
+                                  className="shipmentAttachedFiles"
                                   style={{
                                     padding: _.isEmpty(ship.uploaded_pdf)
                                       ? muiTheme.spacing(3)
                                       : muiTheme.spacing(1.5),
                                   }}
                                 >
-                                  <FormLabel component="legend" className="legend">
+                                  <FormLabel component="legend" className="shipmentLegend">
                                     Attached Files
                                   </FormLabel>
 

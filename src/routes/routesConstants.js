@@ -7,6 +7,7 @@ export const routes = {
   CURRENT_USERS: '/app/profile/users/current-users',
   USER_GROUPS: '/app/profile/users/groups',
   ABOUT_PLATFORM: '/app/about-platform',
+  PRIVACY_POLICY: '/app/privacy-policy',
   ITEMS: '/app/items',
   TRACKERS: '/app/trackers',
   SHIPMENT: '/app/shipment',

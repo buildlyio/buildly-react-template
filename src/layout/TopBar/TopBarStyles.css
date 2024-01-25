@@ -1,44 +1,43 @@
-.appBar {
+.topbarAppBar {
   background-color: var(--color-palette-background-default);
   z-index: 1201;
   height: 64px;
 }
 
-.menuButton {
+.topbarMenuButton {
   margin-right: 16px;
 }
 
-.logo {
+.topbarLogo {
   max-width: 250px !important;
   background-size: contain;
-  margin-top: 24px;
 }
 
-.menuRight {
+.topbarMenuRight {
   margin-left: auto;
   display: flex;
 }
 
-.timezone {
+.topbarTimezone {
   width: 192px;
   margin-top: 8px;
   margin-left: 12px;
 }
 
-.timezone .MuiOutlinedInput-input {
+.topbarTimezone .MuiOutlinedInput-input {
   padding: 8px 28px 8px 16px;
 }
 
-.adminMenuRoot {
+.topbarAdminMenuRoot {
   padding: 16px;
   text-align: center;
 }
 
-.adminMenuRoot:hover {
+.topbarAdminMenuRoot:hover {
   background-color: var(--color-palette-primary-light);
 }
 
-.adminMenuRoot:hover .MuiListItemIcon-root .MuiListItemText-primary {
+.topbarAdminMenuRoot:hover .MuiListItemIcon-root .MuiListItemText-primary {
   color: var(--color-palette-primary-dark);
 }
 
@@ -47,13 +46,13 @@
 }
 
 @media screen and (max-width: 960px) {
-  .appBar {
+  .topbarAppBar {
     overflow-x: auto;
   }
 }
 
 @media screen and (max-width: 600px) {
-  .appBar {
+  .topbarAppBar {
     height: 56px;
   }
 }
@@ -78,11 +77,11 @@
   -webkit-appearance: none;
   margin: 0;
 }
-.accountSettingsNumberInput  input::-webkit-inner-spin-button {
+.accountSettingsNumberInput input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-.accountSettingsNumberInput  input[type="number"] {
+.accountSettingsNumberInput input[type="number"] {
   -moz-appearance: textfield;
 }
 
@@ -91,7 +90,7 @@
     position: fixed;
     right: 0;
     width: 50%;
-    margin-top: 64px,
+    margin-top: 64px;
   }
 
   .accountSettingsDialog .MuiDialog-paper {

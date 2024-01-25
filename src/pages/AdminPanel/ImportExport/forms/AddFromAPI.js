@@ -356,7 +356,7 @@ const AddFromAPI = () => {
           />
         )}
       <form
-        className="formRoot"
+        className="adminPanelFormRoot"
         noValidate
         onSubmit={handleSubmit}
       >
@@ -487,7 +487,7 @@ const AddFromAPI = () => {
             && (
               <Grid item xs={12}>
                 <Typography variant="h6">API Response</Typography>
-                <pre className="apiResponse">
+                <pre className="adminPanelApiResponse">
                   {JSON.stringify(apiResponse)}
                 </pre>
               </Grid>
@@ -551,13 +551,13 @@ const AddFromAPI = () => {
               <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <Typography
-                    className="title"
+                    className="adminPanelTitle"
                     variant="h6"
                   >
                     Our Columns
                   </Typography>
                   {_.map(tableColumns, (column, key) => (
-                    <div key={key} className="tableColumn">
+                    <div key={key} className="adminPanelTableColumn">
                       <Typography variant="body1">
                         {column.label}
                       </Typography>
@@ -572,7 +572,7 @@ const AddFromAPI = () => {
                 </Grid>
                 <Grid item xs={6}>
                   <Typography
-                    className="title"
+                    className="adminPanelTitle"
                     variant="h6"
                   >
                     Mapping (From API Response)
@@ -580,7 +580,7 @@ const AddFromAPI = () => {
                   {_.map(mapColumns, (col, key) => (
                     <TextField
                       key={key}
-                      className="mapCol"
+                      className="adminPanelMapCol"
                       variant="outlined"
                       fullWidth
                       required={col.required}
@@ -597,7 +597,7 @@ const AddFromAPI = () => {
                       <MenuItem value="">--------</MenuItem>
                       {_.map(apiColumns, (column, keyVal) => (
                         <MenuItem key={keyVal} value={keyVal}>
-                          <div className="apiMenuItem">
+                          <div className="adminPanelApiMenuItem">
                             {_.startCase(keyVal)}
                           </div>
                         </MenuItem>
@@ -614,7 +614,7 @@ const AddFromAPI = () => {
                 fullWidth
                 variant="contained"
                 color="primary"
-                className="submit"
+                className="adminPanelSubmit"
                 disabled={isLoadingItemOptions || isLoadingProductOptions || isLoadingGatewayOptions || isLoadingApiResponse || isAddingApiSetup || submitDisabled()}
               >
                 Set Mapping and Import

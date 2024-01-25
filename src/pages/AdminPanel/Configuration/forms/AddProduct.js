@@ -160,7 +160,7 @@ const AddProduct = ({ history, location }) => {
             <Loader open={isAddingProduct || isEditingProduct} />
           )}
           <form
-            className="formContainer"
+            className="adminPanelFormContainer"
             noValidate
             onSubmit={handleSubmit}
           >
@@ -256,7 +256,7 @@ const AddProduct = ({ history, location }) => {
                     fullWidth
                     variant="contained"
                     color="primary"
-                    className="submit"
+                    className="adminPanelSubmit"
                     disabled={isAddingProduct || isEditingProduct || submitDisabled()}
                   >
                     {buttonText}
@@ -269,7 +269,7 @@ const AddProduct = ({ history, location }) => {
                     variant="outlined"
                     color="primary"
                     onClick={discardFormData}
-                    className="submit"
+                    className="adminPanelSubmit"
                   >
                     Cancel
                   </Button>

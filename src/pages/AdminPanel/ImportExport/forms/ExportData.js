@@ -68,7 +68,7 @@ const ExportData = () => {
     <div>
       {isLoadingExportData && <Loader open={isLoadingExportData} />}
       <form
-        className="formRoot"
+        className="adminPanelFormRoot"
         noValidate
         onSubmit={handleSubmit}
       >
@@ -113,7 +113,7 @@ const ExportData = () => {
                 fullWidth
                 variant="contained"
                 color="primary"
-                className="submit"
+                className="adminPanelSubmit"
                 disabled={isLoadingExportData || !exportTable || !exportType}
               >
                 Export

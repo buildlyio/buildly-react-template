@@ -12,8 +12,8 @@ import ExportData from './forms/ExportData';
 import '../AdminPanelStyles.css';
 
 const ImportExport = (props) => (
-  <div className="root">
-    <Accordion className="accordion">
+  <div className="adminPanelRoot">
+    <Accordion className="adminPanelAccordion">
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="import-file-content"
@@ -27,7 +27,7 @@ const ImportExport = (props) => (
         <AddFromFile {...props} />
       </AccordionDetails>
     </Accordion>
-    <Accordion className="accordion">
+    <Accordion className="adminPanelAccordion">
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="import-api-content"
@@ -41,7 +41,7 @@ const ImportExport = (props) => (
         <AddFromAPI {...props} />
       </AccordionDetails>
     </Accordion>
-    <Accordion className="accordion">
+    <Accordion className="adminPanelAccordion">
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="export-content"

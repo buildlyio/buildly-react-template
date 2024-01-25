@@ -60,7 +60,7 @@ const DataTableWrapper = ({
           setCellHeaderProps: () => ({ style: { textAlign: centerLabel ? 'center' : 'start' } }),
           customBodyRenderLite: (dataIndex) => (
             <IconButton
-              className="iconButton"
+              className="dataTableIconButton"
               onClick={() => editAction(rows[dataIndex])}
             >
               <EditIcon />
@@ -81,7 +81,7 @@ const DataTableWrapper = ({
           empty: true,
           customBodyRenderLite: (dataIndex) => (
             <IconButton
-              className="iconButton"
+              className="dataTableIconButton"
               onClick={() => deleteAction(rows[dataIndex])}
             >
               <DeleteIcon />
@@ -163,7 +163,7 @@ const DataTableWrapper = ({
         )}
         {tableHeader && (
           <Typography
-            className="dashboardHeading"
+            className="dataTableDashboardHeading"
             variant="h4"
           >
             {tableHeader}

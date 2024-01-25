@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom';
 import {
   CssBaseline,
-  ThemeProvider,
   StyledEngineProvider,
 } from '@mui/material';
 import Alert from './components/Alert/Alert';

@@ -133,7 +133,7 @@ const AddCustodianType = ({ history, location }) => {
             <Loader open={isAddingCustodianType || isEditingCustodianType} />
           )}
           <form
-            className="formContainer"
+            className="adminPanelFormContainer"
             noValidate
             onSubmit={handleSubmit}
           >
@@ -163,7 +163,7 @@ const AddCustodianType = ({ history, location }) => {
                     fullWidth
                     variant="contained"
                     color="primary"
-                    className="submit"
+                    className="adminPanelSubmit"
                     disabled={isAddingCustodianType || isEditingCustodianType || submitDisabled()}
                   >
                     {buttonText}
@@ -176,7 +176,7 @@ const AddCustodianType = ({ history, location }) => {
                     variant="outlined"
                     color="primary"
                     onClick={discardFormData}
-                    className="submit"
+                    className="adminPanelSubmit"
                   >
                     Cancel
                   </Button>

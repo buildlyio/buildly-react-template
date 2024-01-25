@@ -1,12 +1,12 @@
-.root {
+.alertRoot {
   width: 100%;
 }
 
-.root > * + * {
+.alertRoot > * + * {
   margin-top: 16px;
 }
 
-.root .MuiSnackbarContent-root {
+.alertRoot .MuiSnackbarContent-root {
   background-color: transparent;
   color: var(--color-palette-background-default);
 }

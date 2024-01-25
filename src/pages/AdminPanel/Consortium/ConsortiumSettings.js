@@ -11,8 +11,8 @@ import Consortium from './components/Consortium';
 import '../AdminPanelStyles.css';
 
 const Configuration = (props) => (
-  <div className="root">
-    <Accordion className="accordion">
+  <div className="adminPanelRoot">
+    <Accordion className="adminPanelAccordion">
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="mappingorg-content"
@@ -26,7 +26,7 @@ const Configuration = (props) => (
         <MappingOrg {...props} />
       </AccordionDetails>
     </Accordion>
-    <Accordion className="accordion">
+    <Accordion className="adminPanelAccordion">
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="consortium-content"

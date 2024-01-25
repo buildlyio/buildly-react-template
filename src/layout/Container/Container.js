@@ -3,13 +3,14 @@ import { Route, Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { Container } from '@mui/material';
 import { UserContext, getUser } from '../../context/User.context';
+import CookieConsent from '../../components/CookieConsent/CookieConsent';
 import NavBar from '../NavBar/NavBar';
 import TopBar from '../TopBar/TopBar';
 import AboutPlatform from '../../pages/AboutPlatform/AboutPlatform';
+import PrivacyPolicy from '../../pages/PrivacyPolicy/PrivacyPolicy';
 import AdminPanel from '../../pages/AdminPanel/AdminPanel';
 import Custodians from '../../pages/Custodians/Custodians';
 import Items from '../../pages/Items/Items';
-import PushNotification from '../../pages/PushNotification/PushNotification';
 import Reporting from '../../pages/Reporting/Reporting';
 import Gateway from '../../pages/SensorsGateway/Gateway';
 import CreateShipment from '../../pages/Shipment/CreateShipment';
@@ -49,7 +50,7 @@ const ContainerDashboard = ({ location, history }) => {
           history={history}
         />
         <Container
-          className={`content ${!isMobile() && 'contentMaxWidth'}`}
+          className={`containerContent ${!isMobile() && 'containerContentMaxWidth'}`}
         >
           <Route
             exact
@@ -71,6 +72,10 @@ const ContainerDashboard = ({ location, history }) => {
           <Route
             path={routes.ABOUT_PLATFORM}
             component={AboutPlatform}
+          />
+          <Route
+            path={routes.PRIVACY_POLICY}
+            component={PrivacyPolicy}
           />
           <Route
             path={routes.ITEMS}
@@ -97,8 +102,8 @@ const ContainerDashboard = ({ location, history }) => {
             component={CreateShipment}
           />
         </Container>
-        <PushNotification />
       </UserContext.Provider>
+      <CookieConsent />
     </div>
   );
 };

@@ -227,10 +227,10 @@ const AddCustodians = ({ history, location }) => {
           {(isAddingCustodian || isEditingCustodian) && (
             <Loader open={isAddingCustodian || isEditingCustodian} />
           )}
-          <form className="formContainer" noValidate onSubmit={handleSubmit}>
+          <form className="custodianFormContainer" noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid
-                className="inputWithTooltip"
+                className="custodianInputWithTooltip"
                 item
                 xs={12}
                 md={6}
@@ -258,7 +258,7 @@ const AddCustodians = ({ history, location }) => {
                 />
               </Grid>
               <Grid
-                className="inputWithTooltip"
+                className="custodianInputWithTooltip"
                 item
                 xs={12}
                 md={6}
@@ -284,7 +284,7 @@ const AddCustodians = ({ history, location }) => {
             </Grid>
             <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid
-                className="inputWithTooltip"
+                className="custodianInputWithTooltip"
                 item
                 xs={12}
                 md={6}
@@ -322,7 +322,7 @@ const AddCustodians = ({ history, location }) => {
                 </TextField>
               </Grid>
               <Grid
-                className="inputWithTooltip inputWithTooltip4"
+                className="custodianInputWithTooltip custodianInputWithTooltip4"
                 item
                 xs={12}
                 md={6}
@@ -341,14 +341,14 @@ const AddCustodians = ({ history, location }) => {
                 />
               </Grid>
             </Grid>
-            <Card variant="outlined" className="addressContainer">
+            <Card variant="outlined" className="custodianAddressContainer">
               <CardContent>
                 <Typography variant="h6" gutterBottom mt={1} mb={isMobile() ? 0 : 1.65}>
                   Contact Info
                 </Typography>
                 <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid
-                    className="inputWithTooltip"
+                    className="custodianInputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -391,7 +391,7 @@ const AddCustodians = ({ history, location }) => {
                 </Grid>
                 <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid
-                    className="inputWithTooltip"
+                    className="custodianInputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -431,7 +431,7 @@ const AddCustodians = ({ history, location }) => {
                   </Grid>
                 </Grid>
                 <Grid container spacing={isDesktop() ? 2 : 0}>
-                  <Grid className="inputWithTooltip" item xs={12}>
+                  <Grid className="custodianInputWithTooltip" item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -450,7 +450,7 @@ const AddCustodians = ({ history, location }) => {
                       {...address_1.bind}
                     />
                   </Grid>
-                  <Grid className="inputWithTooltip inputWithTooltip3" item xs={12}>
+                  <Grid className="custodianInputWithTooltip custodianInputWithTooltip3" item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -466,7 +466,7 @@ const AddCustodians = ({ history, location }) => {
                 </Grid>
                 <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid
-                    className="inputWithTooltip"
+                    className="custodianInputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -487,7 +487,7 @@ const AddCustodians = ({ history, location }) => {
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip inputWithTooltip2"
+                    className="custodianInputWithTooltip custodianInputWithTooltip2"
                     item
                     xs={12}
                     md={6}
@@ -517,7 +517,7 @@ const AddCustodians = ({ history, location }) => {
                   fullWidth
                   variant="contained"
                   color="primary"
-                  className="submit"
+                  className="custodianSubmit"
                   disabled={
                     isAddingCustodian || isEditingCustodian || submitDisabled()
                   }
@@ -525,14 +525,14 @@ const AddCustodians = ({ history, location }) => {
                   {buttonText}
                 </Button>
               </Grid>
-              <Grid item xs={12} sm={4} className="submit2">
+              <Grid item xs={12} sm={4} className="custodianSubmit2">
                 <Button
                   type="button"
                   fullWidth
                   variant="outlined"
                   color="primary"
                   onClick={discardFormData}
-                  className="submit"
+                  className="custodianSubmit"
                 >
                   Cancel
                 </Button>

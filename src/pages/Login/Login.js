@@ -20,6 +20,7 @@ import { useResetPasswordCheckMutation } from '../../react-query/mutations/authU
 import { useLoginMutation } from '../../react-query/mutations/authUser/loginMutation';
 import useAlert from '@hooks/useAlert';
 import useTimezone from '@hooks/useTimezone';
+import './LoginStyles.css';
 
 const Login = ({ history }) => {
   const username = useInput('', { required: true });
@@ -105,23 +106,23 @@ const Login = ({ history }) => {
     <Container
       component="main"
       maxWidth="xs"
-      className="container"
+      className="loginContainer"
     >
       {(isPasswordCheck || islogin) && <Loader open={isPasswordCheck || islogin} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
-          <div className="paper">
+          <div className="loginPaper">
             <img
               src={logo}
-              className="logo"
+              className="loginLogo"
               alt="Company logo"
             />
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
             <form
-              className="form"
+              className="loginForm"
               noValidate
               onSubmit={handleSubmit}
             >
@@ -140,7 +141,7 @@ const Login = ({ history }) => {
                     ? error.username.message
                     : ''
                 }
-                className="textField"
+                className="loginTextField"
                 onBlur={(e) => handleBlur(e, 'required', username)}
                 {...username.bind}
               />
@@ -160,7 +161,7 @@ const Login = ({ history }) => {
                     ? error.password.message
                     : ''
                 }
-                className="textField"
+                className="loginTextField"
                 onBlur={(e) => handleBlur(e, 'required', password)}
                 {...password.bind}
               />
