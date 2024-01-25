@@ -109,7 +109,7 @@ const EditMapping = ({ history, location }) => {
             <Loader open={isEditingCustodian} />
           )}
           <form
-            className="formContainer"
+            className="adminPanelFormContainer"
             noValidate
             onSubmit={handleSubmit}
           >
@@ -158,7 +158,7 @@ const EditMapping = ({ history, location }) => {
                     fullWidth
                     variant="contained"
                     color="primary"
-                    className="submit"
+                    className="adminPanelSubmit"
                     disabled={isEditingCustodian}
                   >
                     {buttonText}
@@ -171,7 +171,7 @@ const EditMapping = ({ history, location }) => {
                     variant="outlined"
                     color="primary"
                     onClick={discardFormData}
-                    className="submit"
+                    className="adminPanelSubmit"
                   >
                     Cancel
                   </Button>

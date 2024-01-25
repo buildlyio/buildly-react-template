@@ -99,23 +99,23 @@ const NewPassword = ({ history, location }) => {
     <Container
       component="main"
       maxWidth="xs"
-      className="container"
+      className="resetPasswordContainer"
     >
       {isResetPasswordConfirm && <Loader open={isResetPasswordConfirm} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
-          <div className="paper">
+          <div className="resetPasswordPaper">
             <img
               src={logo}
-              className="logo"
+              className="resetPasswordLogo"
               alt="Company logo"
             />
             <Typography component="h1" variant="h5">
               Reset your Password
             </Typography>
             <form
-              className="form"
+              className="resetPasswordForm"
               noValidate
               onSubmit={handleSubmit}
             >
@@ -129,7 +129,7 @@ const NewPassword = ({ history, location }) => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                className="textField"
+                className="resetPasswordTextField"
                 error={
                   formError.password
                   && formError.password.error
@@ -152,7 +152,7 @@ const NewPassword = ({ history, location }) => {
                 name="re_password"
                 type="password"
                 autoComplete="re_password"
-                className="textField"
+                className="resetPasswordTextField"
                 error={
                   formError.re_password
                   && formError.re_password.error

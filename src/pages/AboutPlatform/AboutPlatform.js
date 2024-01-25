@@ -15,13 +15,13 @@ const AboutPlatform = () => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <Typography variant="caption" component="div" className="version">
+        <Typography variant="caption" component="div" className="aboutPlatformVersion">
           Platform Version:
           {' '}
           {ver}
         </Typography>
       </Grid>
-      <Grid container spacing={2} className="agreementContainer">
+      <Grid container spacing={2} className="aboutPlatformAgreementContainer">
         <Grid item xs={12} textAlign="center">
           <Typography variant="h5">
             Transparent Path spc

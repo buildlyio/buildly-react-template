@@ -13,10 +13,10 @@ const Forbidden = ({ history }) => (
   <Box mt={3} textAlign="center">
     <Card variant="outlined">
       <CardContent>
-        <Typography className="pageHeading" variant="h2">
+        <Typography className="forbiddenPageHeading" variant="h2">
           403
         </Typography>
-        <Typography className="pageHeading" variant="h5">
+        <Typography className="forbiddenPageHeading" variant="h5">
           Access Denied
           <p>You don't have permission to access this page</p>
         </Typography>
@@ -27,7 +27,7 @@ const Forbidden = ({ history }) => (
       variant="contained"
       color="primary"
       onClick={() => history.push(routes.SHIPMENT)}
-      className="backButton"
+      className="forbiddenBackButton"
     >
       Back To Shipment Page
     </Button>

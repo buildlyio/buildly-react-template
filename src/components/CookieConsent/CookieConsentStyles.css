@@ -1,0 +1,11 @@
+.cookieConsentContainer {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 9999;
+  padding: 20px 40px;
+  align-items: center;
+  box-shadow: 0px -1px 10px var(--color-palette-background-light2);
+  background-color: var(--color-palette-background-default);
+}

@@ -79,7 +79,7 @@ const AddFromFile = () => {
     <div>
       {isAddingFromFile && <Loader open={isAddingFromFile} />}
       <form
-        className="formRoot"
+        className="adminPanelFormRoot"
         encType="multipart/form-data"
         noValidate
         onSubmit={handleSubmit}
@@ -131,7 +131,7 @@ const AddFromFile = () => {
                 fullWidth
                 variant="contained"
                 color="primary"
-                className="submit"
+                className="adminPanelSubmit"
                 disabled={isAddingFromFile || submitDisabled()}
               >
                 Upload

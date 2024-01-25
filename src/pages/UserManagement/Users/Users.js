@@ -4,6 +4,7 @@ import { useQuery } from 'react-query';
 import {
   VerifiedUser as ActivateIcon,
   VerifiedUserOutlined as DeactivateIcon,
+  Delete as DeleteIcon,
 } from '@mui/icons-material';
 import { IconButton, MenuItem, Select } from '@mui/material';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
@@ -43,6 +44,8 @@ const Users = () => {
 
   const { mutate: editUserMutation, isLoading: isEditingUser } = useEditCoreuserMutation(displayAlert);
 
+  const { mutate: deleteUserMutation, isLoading: isDeletingUser } = useDeleteCoreuserMutation(displayAlert);
+
   useEffect(() => {
     if (!_.isEmpty(coreuserData)) {
       const formattedUsers = getUserFormattedRows(coreuserData);
@@ -63,6 +66,11 @@ const Users = () => {
     editUserMutation(editData);
   };
 
+  const deleteUser = (coreuser) => {
+    const deleteData = { id: coreuser.id };
+    deleteUserMutation(deleteData);
+  };
+
   const updatePermissions = (e, coreuser) => {
     const editData = { id: coreuser.id, core_groups: [e.target.value] };
     editUserMutation(editData);
@@ -75,7 +83,11 @@ const Users = () => {
         centerLabel
         filename="Users"
         tableHeader="Users"
-        loading={isLoadingCoreuser || isLoadingCoregroup || isLoadingOrganizations || isEditingUser}
+        loading={isLoadingCoreuser
+          || isLoadingCoregroup
+          || isLoadingOrganizations
+          || isEditingUser
+          || isDeletingUser}
         rows={rows || []}
         columns={[
           ...userColumns(),
@@ -124,6 +136,30 @@ const Users = () => {
                     >
                       {coreuser.is_active ? <ActivateIcon titleAccess="Deactivate" /> : <DeactivateIcon titleAccess="Activate" />}
                     </IconButton>
+                  </div>
+                );
+              },
+            },
+          },
+          {
+            name: 'Delete User',
+            options: {
+              filter: false,
+              sort: false,
+              empty: true,
+              setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
+              customBodyRenderLite: (dataIndex) => {
+                const coreuser = rows[dataIndex];
+                return (
+                  <div className="usersIconDiv">
+                    {coreuser.is_active ? null : (
+                      <IconButton
+                        className="usersIconButton"
+                        onClick={(e) => deleteUser(coreuser)}
+                      >
+                        <DeleteIcon titleAccess="Delete" />
+                      </IconButton>
+                    )}
                   </div>
                 );
               },

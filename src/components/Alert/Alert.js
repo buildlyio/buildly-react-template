@@ -18,7 +18,7 @@ const Alert = () => {
   };
 
   return (
-    <div className="root">
+    <div className="alertRoot">
       {data && (
         <Snackbar
           key={`${data.type}-${data.message}`}

@@ -9,7 +9,7 @@ import './LoaderStyles.css';
 
 const Loader = ({ open, setOpen, label }) => (
   <div>
-    <Backdrop className="backdrop" open={open}>
+    <Backdrop className="loaderBackdrop" open={open}>
       <CircularProgress color="inherit" />
       <Box
         top={-80}

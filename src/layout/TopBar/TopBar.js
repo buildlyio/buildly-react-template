@@ -123,6 +123,11 @@ const TopBar = ({
     setAnchorEl(null);
   };
 
+  const handlePrivacyClick = () => {
+    history.push(routes.PRIVACY_POLICY);
+    setAnchorEl(null);
+  };
+
   const handleLogoutClick = () => {
     oauthService.logout();
     history.push('/');
@@ -134,12 +139,12 @@ const TopBar = ({
   };
 
   return (
-    <AppBar position="fixed" className="appBar">
+    <AppBar position="fixed" className="topbarAppBar">
       {(isLoadingOrgs || isUpdateUser || isLoadingUnits) && <Loader open={isLoadingOrgs || isUpdateUser || isLoadingUnits} />}
       <Toolbar>
         <IconButton
           edge="start"
-          className="menuButton"
+          className="topbarMenuButton"
           onClick={() => setNavHidden(!navHidden)}
           aria-label="menu"
           sx={{
@@ -153,16 +158,16 @@ const TopBar = ({
         </IconButton>
         <img
           src={logo}
-          className="logo"
+          className="topbarLogo"
           alt="Company text logo"
         />
-        <div className="menuRight">
+        <div className="topbarMenuRight">
           <TextField
-            className="timezone"
+            className="topbarTimezone"
             variant="outlined"
             fullWidth
             id="timezone"
-            label="Timezone"
+            label="Time Zone"
             select
             value={data}
             onChange={(e) => setTimezone(e.target.value)}
@@ -175,7 +180,7 @@ const TopBar = ({
           </TextField>
           {isSuperAdmin && (
             <TextField
-              className="timezone"
+              className="topbarTimezone"
               variant="outlined"
               fullWidth
               id="org"
@@ -239,6 +244,7 @@ const TopBar = ({
             organizationName={organization}
             handleAccountSettingsClick={handleAccountSettingsClick}
             handleAboutClick={handleAboutClick}
+            handlePrivacyClick={handlePrivacyClick}
             handleLogoutClick={handleLogoutClick}
           />
         </div>

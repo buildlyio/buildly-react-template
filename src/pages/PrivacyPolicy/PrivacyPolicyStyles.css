@@ -1,0 +1,35 @@
+.privacyPolicyAgreementContainer {
+  padding: 40px 195px;
+}
+
+.privacyPolicyButton {
+  text-decoration: none;
+  background-color: var(--color-palette-background-default);
+  border: 0px;
+  padding: 0px;
+  color: var(--color-palette-primary-main);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.privacyPolicyButton:hover {
+  text-decoration: underline;
+  background-color: var(--color-palette-background-default);
+}
+
+.privacyPolicyHeading {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+@media screen and (min-width: 960px) and (max-width: 1280px) {
+  .privacyPolicyAgreementContainer {
+    padding: 40px 15%;
+  }
+}
+
+@media screen and (max-width: 960px) {
+  .privacyPolicyAgreementContainer {
+    padding: 40px 10%;
+  }
+}

@@ -226,9 +226,9 @@ const AddItems = ({
           {(isAddingItem || isEditingItem) && (
             <Loader open={isAddingItem || isEditingItem} />
           )}
-          <form className="formContainer" noValidate onSubmit={handleSubmit}>
+          <form className="itemFormContainer" noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop() ? 2 : 0}>
-              <Grid className="inputWithTooltip" item xs={12}>
+              <Grid className="itemInputWithTooltip" item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -246,7 +246,7 @@ const AddItems = ({
                   {...item_name.bind}
                 />
               </Grid>
-              <Grid className="inputWithTooltip" item xs={12}>
+              <Grid className="itemInputWithTooltip" item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -274,14 +274,14 @@ const AddItems = ({
                 </TextField>
               </Grid>
             </Grid>
-            <Card variant="outlined" className="cardItems">
+            <Card variant="outlined" className="itemCardItems">
               <CardContent>
                 <Typography variant="h6" gutterBottom mt={1} mb={isMobile() ? 0 : 1.65}>
                   Product Info
                 </Typography>
                 <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid item xs={12}>
-                    <div className="inputWithTooltip">
+                    <div className="itemInputWithTooltip">
                       <Autocomplete
                         id="products"
                         options={productData || []}
@@ -303,7 +303,7 @@ const AddItems = ({
                       />
                     </div>
                   </Grid>
-                  <Grid className="inputWithTooltip" item xs={12}>
+                  <Grid className="itemInputWithTooltip" item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -319,7 +319,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="itemInputWithTooltip"
                     item
                     xs={12}
                     sm={6}
@@ -335,7 +335,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="itemInputWithTooltip"
                     item
                     xs={12}
                     sm={6}
@@ -367,7 +367,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="itemInputWithTooltip"
                     item
                     xs={12}
                   >
@@ -385,7 +385,7 @@ const AddItems = ({
                 </Grid>
                 <Grid container spacing={isDesktop() ? 2 : 0} mt={0.1} pb={1}>
                   <Grid
-                    className="inputWithTooltip"
+                    className="itemInputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -404,7 +404,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="itemInputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -423,7 +423,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="itemInputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -442,7 +442,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="itemInputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -461,7 +461,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="itemInputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -480,7 +480,7 @@ const AddItems = ({
                     />
                   </Grid>
                   <Grid
-                    className="inputWithTooltip"
+                    className="itemInputWithTooltip"
                     item
                     xs={12}
                     md={6}
@@ -503,7 +503,7 @@ const AddItems = ({
             </Card>
             <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid
-                className="inputWithTooltip"
+                className="itemInputWithTooltip"
                 item
                 xs={12}
                 md={6}
@@ -522,7 +522,7 @@ const AddItems = ({
                 />
               </Grid>
               <Grid
-                className="inputWithTooltip"
+                className="itemInputWithTooltip"
                 item
                 xs={12}
                 md={6}
@@ -554,7 +554,7 @@ const AddItems = ({
                   }}
                 />
               </Grid>
-              <Grid className="inputWithTooltip" item xs={12}>
+              <Grid className="itemInputWithTooltip" item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -574,20 +574,20 @@ const AddItems = ({
                   fullWidth
                   variant="contained"
                   color="primary"
-                  className="submit"
+                  className="itemSubmit"
                   disabled={isAddingItem || isEditingItem || submitDisabled()}
                 >
                   {buttonText}
                 </Button>
               </Grid>
-              <Grid item xs={12} sm={4} className="submit2">
+              <Grid item xs={12} sm={4} className="itemSubmit2">
                 <Button
                   type="button"
                   fullWidth
                   variant="outlined"
                   color="primary"
                   onClick={discardFormData}
-                  className="submit"
+                  className="itemSubmit"
                 >
                   Cancel
                 </Button>

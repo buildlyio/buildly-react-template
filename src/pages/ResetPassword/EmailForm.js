@@ -84,23 +84,23 @@ const EmailForm = () => {
     <Container
       component="main"
       maxWidth="xs"
-      className="container"
+      className="resetPasswordContainer"
     >
       {isResetPassword && <Loader open={isResetPassword} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
-          <div className="paper">
+          <div className="resetPasswordPaper">
             <img
               src={logo}
-              className="logo"
+              className="resetPasswordLogo"
               alt="Company logo"
             />
             <Typography component="h1" variant="h5" gutterBottom>
               Enter your registered Email
             </Typography>
             <form
-              className="form"
+              className="resetPasswordForm"
               noValidate
               onSubmit={handleSubmit}
             >
@@ -113,7 +113,7 @@ const EmailForm = () => {
                 label="Registered email"
                 name="email"
                 autoComplete="email"
-                className="textField"
+                className="resetPasswordTextField"
                 error={error.email && error.email.error}
                 helperText={
                   error && error.email

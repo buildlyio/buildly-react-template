@@ -48,7 +48,7 @@ const ContainerDashboard = ({ location, history }) => {
           history={history}
         />
         <Container
-          className={`content ${!isMobile() && 'contentMaxWidth'}`}
+          className={`containerContent ${!isMobile() && 'containerContentMaxWidth'}`}
         >
           <Route
             exact
@@ -70,6 +70,10 @@ const ContainerDashboard = ({ location, history }) => {
           <Route
             path={routes.ABOUT_PLATFORM}
             component={AboutPlatform}
+          />
+          <Route
+            path={routes.PRIVACY_POLICY}
+            component={PrivacyPolicy}
           />
           <Route
             path={routes.ITEMS}
@@ -97,6 +101,7 @@ const ContainerDashboard = ({ location, history }) => {
           />
         </Container>
       </UserContext.Provider>
+      <CookieConsent />
     </div>
   );
 };

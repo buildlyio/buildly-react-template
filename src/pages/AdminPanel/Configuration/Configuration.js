@@ -24,8 +24,8 @@ const Configuration = (props) => {
   return (
     <div>
       {isAdmin && (
-        <div className="root">
-          <Accordion defaultExpanded className="accordion">
+        <div className="adminPanelRoot">
+          <Accordion defaultExpanded className="adminPanelAccordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="organization-setting-content"
@@ -42,8 +42,8 @@ const Configuration = (props) => {
         </div>
       )}
       {superAdmin && (
-        <div className="root">
-          <Accordion defaultExpanded className="accordion">
+        <div className="adminPanelRoot">
+          <Accordion defaultExpanded className="adminPanelAccordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="organization-setting-content"
@@ -57,7 +57,7 @@ const Configuration = (props) => {
               <OrganizationSettings {...props} />
             </AccordionDetails>
           </Accordion>
-          <Accordion className="accordion">
+          <Accordion className="adminPanelAccordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="custodian-type-content"
@@ -71,7 +71,7 @@ const Configuration = (props) => {
               <CustodianType {...props} />
             </AccordionDetails>
           </Accordion>
-          <Accordion className="accordion">
+          <Accordion className="adminPanelAccordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="gateway-type-content"
@@ -85,7 +85,7 @@ const Configuration = (props) => {
               <GatewayType {...props} />
             </AccordionDetails>
           </Accordion>
-          <Accordion className="accordion">
+          <Accordion className="adminPanelAccordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="item-type-content"
@@ -99,7 +99,7 @@ const Configuration = (props) => {
               <ItemType {...props} />
             </AccordionDetails>
           </Accordion>
-          <Accordion className="accordion">
+          <Accordion className="adminPanelAccordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="organization-type-content"
@@ -113,7 +113,7 @@ const Configuration = (props) => {
               <OrganizationType {...props} />
             </AccordionDetails>
           </Accordion>
-          <Accordion className="accordion">
+          <Accordion className="adminPanelAccordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="product-content"
@@ -127,7 +127,7 @@ const Configuration = (props) => {
               <Product {...props} />
             </AccordionDetails>
           </Accordion>
-          <Accordion className="accordion">
+          <Accordion className="adminPanelAccordion">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="product-type-content"

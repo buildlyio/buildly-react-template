@@ -61,7 +61,7 @@ const AdminPanel = ({
       {isAdmin && (
         <Box mt={5} mb={5}>
           <Box mb={3}>
-            <Typography className="heading" variant="h4">
+            <Typography className="adminPanelHeading" variant="h4">
               Admin Panel
             </Typography>
           </Box>

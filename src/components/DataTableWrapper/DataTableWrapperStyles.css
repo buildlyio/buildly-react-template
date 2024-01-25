@@ -1,14 +1,14 @@
-.dashboardHeading {
+.dataTableDashboardHeading {
   font-weight: bold;
   margin-bottom: 0.5em;
 }
 
-.iconButton {
+.dataTableIconButton {
   padding: 0;
   color: var(--color-palette-primary-dark);
 }
 
-.iconButton:hover {
+.dataTableIconButton:hover {
   background-color: var(--color-palette-primary-light);
 }
 

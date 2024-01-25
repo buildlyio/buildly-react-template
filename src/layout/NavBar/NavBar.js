@@ -27,7 +27,7 @@ const NavBar = ({ navHidden, setNavHidden, data }) => {
 
   const drawer = (
     <div>
-      <div className="toolbar" />
+      <div className="navbarToolbar" />
       <List>
         {_.map(NAVIGATION_ITEMS, (item, index) => (
           <React.Fragment
@@ -35,13 +35,13 @@ const NavBar = ({ navHidden, setNavHidden, data }) => {
           >
             <NavLink
               to={item.link}
-              activeClassName="active"
+              activeClassName="navbarActive"
               title={item.name}
-              className="navLink"
+              className="navbarNavLink"
             >
               <ListItem
                 button
-                className="navItems"
+                className="navbarNavItems"
                 onClick={(event) => {
                   handleListItemClick(event, index, item);
                 }}
@@ -62,7 +62,7 @@ const NavBar = ({ navHidden, setNavHidden, data }) => {
 
   return (
     <nav
-      className="drawer"
+      className="navbarDrawer"
       aria-label="mailbox folders"
     >
       <Drawer
@@ -75,7 +75,7 @@ const NavBar = ({ navHidden, setNavHidden, data }) => {
         open={navHidden}
         onClose={handleDrawerToggle}
         classes={{
-          paper: 'drawerPaper',
+          paper: 'navbarDrawerPaper',
         }}
         ModalProps={{
           keepMounted: true, // Better open performance on mobile.
@@ -91,7 +91,7 @@ const NavBar = ({ navHidden, setNavHidden, data }) => {
       </Drawer>
       <Drawer
         classes={{
-          paper: 'drawerPaper',
+          paper: 'navbarDrawerPaper',
         }}
         variant="permanent"
         open
