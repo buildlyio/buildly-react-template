@@ -152,7 +152,7 @@ const TopBar = ({
             variant="outlined"
             fullWidth
             id="timezone"
-            label="Timezone"
+            label="Time Zone"
             select
             value={data}
             onChange={(e) => setTimezone(e.target.value)}
