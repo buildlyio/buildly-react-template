@@ -146,6 +146,19 @@
   cursor: pointer;
 }
 
+.alertNotificationsSummary .MuiAccordionSummary-expandIconWrapper.Mui-expanded {
+  transform: none;
+}
+
+.alertNotificationsSummaryBadge {
+  border-radius: 50%;
+  background-color: var(--color-palette-error-main);
+  width: 16px;
+  height: 16px;
+  align-self: center;
+  margin-right: 8px;
+}
+
 @media screen and (min-width: 960px) {
   .alertNotificationsDialog .MuiDialog-container {
     position: fixed;

@@ -5,6 +5,9 @@ import _ from 'lodash';
 import { getUser } from '@context/User.context';
 import { useQueryClient } from 'react-query';
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Button,
   Dialog, DialogContent, DialogTitle, Grid, IconButton, Slide, Typography, useTheme,
 } from '@mui/material';
@@ -45,7 +48,8 @@ const AlertNotifications = ({
   }, [pushGrp]);
 
   useEffect(() => {
-    if (_.size(notifications) > 0) {
+    const notViewed = _.filter(notifications, { viewed: false });
+    if (_.size(notViewed) > 0) {
       setHideAlertBadge(false);
     } else {
       setHideAlertBadge(true);
@@ -53,7 +57,6 @@ const AlertNotifications = ({
   }, [notifications]);
 
   const reloadData = () => {
-    console.log('Reload data');
     queryClient.invalidateQueries({ queryKey: ['shipments'] });
     queryClient.invalidateQueries({ queryKey: ['allGateways'] });
     queryClient.invalidateQueries({ queryKey: ['sensorAlerts'] });
@@ -90,8 +93,11 @@ const AlertNotifications = ({
 
     alertsSocket.current.onmessage = (message) => {
       const msg = JSON.parse(message.data);
+      const viewed = getViewedNotifications();
+      const filteredAlerts = _.filter(msg.alerts, (alert) => !_.includes(viewed, alert.id));
+
       let alerts = [];
-      _.forEach(msg.alerts, (a) => {
+      _.forEach(filteredAlerts, (a) => {
         const parameterType = _.toLower(_.split(a.alert_message, ' of ')[0]);
         const parameterValue = _.split(_.split(a.alert_message, ' of ')[1], ' at ')[0];
         let alertObj = { id: parameterType, color: 'green', title: `${_.capitalize(parameterType)} Excursion Recovered` };
@@ -110,17 +116,22 @@ const AlertNotifications = ({
       _.forEach(shipments, (ship) => {
         formattedAlerts = [
           ...formattedAlerts,
-          { shipment_id: ship.id, shipment_name: ship.name, alerts: _.filter(alerts, { shipment_id: ship.id }) },
+          {
+            shipment_id: ship.id, shipment_name: ship.name, alerts: _.filter(alerts, { shipment_id: ship.id }), viewed: false,
+          },
         ];
       });
 
       if (msg.command === 'fetch_alerts') {
-        console.log('Fetching alerts');
         setNotifications(formattedAlerts);
       }
       if (msg.command === 'new_alert') {
-        const finalAlerts = _.mergeWith(notifications, alerts, customizer);
-        setNotifications(finalAlerts);
+        let finalNotifications = notifications;
+        _.forEach(formattedAlerts, (fa) => {
+          const alertIndex = _.findIndex(finalNotifications, (fn) => _.isEqual(fa.shipment_id, fn.shipment_id));
+          finalNotifications = _.mergeWith(finalNotifications[alertIndex], fa, customizer);
+        });
+        setNotifications(finalNotifications);
         // invalidate queries to reload data
         reloadData();
       }
@@ -132,8 +143,27 @@ const AlertNotifications = ({
   };
 
   const closeAlertNotifications = () => {
+    const notViewed = _.filter(notifications, { viewed: false });
     setHideAlertBadge(true);
+    setNotifications(notViewed);
     setOpen(false);
+  };
+
+  const getViewedNotifications = () => (
+    localStorage.getItem('viewedNotifications')
+      ? JSON.parse(localStorage.getItem('viewedNotifications'))
+      : []
+  );
+
+  const handleAlertCountClick = (index) => {
+    const notiAlerts = [..._.slice(notifications, 0, index), { ...notifications[index], viewed: true }, ..._.slice(notifications, index + 1)];
+    setHideAlertBadge(true);
+    setNotifications(notiAlerts);
+    const viewed = getViewedNotifications();
+    localStorage.setItem(
+      'viewedNotifications',
+      JSON.stringify(_.uniq([...viewed, ..._.map(notiAlerts[index].alerts, 'id')])),
+    );
   };
 
   return (
@@ -163,39 +193,57 @@ const AlertNotifications = ({
         )}
         {!_.isEmpty(notifications) && (
           <Grid container spacing={2} mt={2}>
-            {_.map(notifications, (noti) => (
+            {_.map(notifications, (noti, index) => (
               <React.Fragment key={noti.shipment_id}>
-                <Grid item xs={10}>
-                  <Typography
-                    variant="subtitle1"
-                    className="alertNotificationsShipmentName"
-                    onClick={(e) => {
-                      history.push(`${routes.REPORTING}/?shipment=${noti.shipment_id}`);
-                      closeAlertNotifications();
-                    }}
-                  >
-                    {noti.shipment_name}
-                  </Typography>
-                </Grid>
-                <Grid item xs={2} textAlign="end">
-                  <Button type="button" color="error" variant="contained" className="alertNotificationsCount">{_.size(noti.alerts)}</Button>
-                </Grid>
                 <Grid item xs={12}>
-                  <DataTableWrapper
-                    noSpace
-                    hideAddButton
-                    noOptionsIcon
-                    rows={noti.alerts}
-                    columns={getAlertNotificationsColumns(
-                      timezone,
-                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-                        ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
-                        : '',
-                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-                        ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
-                        : '',
-                    )}
-                  />
+                  <Accordion>
+                    <AccordionSummary
+                      aria-controls={`${noti.shipment_id}-content`}
+                      id={`${noti.shipment_id}-header`}
+                      expandIcon={(
+                        <Button
+                          type="button"
+                          color="error"
+                          variant="contained"
+                          className="alertNotificationsCount"
+                          onClick={(e) => handleAlertCountClick(index)}
+                        >
+                          {_.size(noti.alerts)}
+                        </Button>
+                      )}
+                      className="alertNotificationsSummary"
+                    >
+                      <div className={!noti.viewed ? 'alertNotificationsSummaryBadge' : ''} />
+                      <Typography
+                        variant="subtitle1"
+                        className="alertNotificationsShipmentName"
+                        onClick={(e) => {
+                          history.push(`${routes.REPORTING}/?shipment=${noti.shipment_id}`);
+                          closeAlertNotifications();
+                        }}
+                      >
+                        {noti.shipment_name}
+                      </Typography>
+                    </AccordionSummary>
+
+                    <AccordionDetails>
+                      <DataTableWrapper
+                        noSpace
+                        hideAddButton
+                        noOptionsIcon
+                        rows={noti.alerts}
+                        columns={getAlertNotificationsColumns(
+                          timezone,
+                          _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                            ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                            : '',
+                          _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                            ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                            : '',
+                        )}
+                      />
+                    </AccordionDetails>
+                  </Accordion>
                 </Grid>
               </React.Fragment>
             ))}

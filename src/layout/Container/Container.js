@@ -18,6 +18,8 @@ import { routes } from '@routes/routesConstants';
 import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
 import { isMobile } from '@utils/mediaQuery';
 import './ContainerStyles.css';
+import PrivacyPolicy from '@pages/PrivacyPolicy/PrivacyPolicy';
+import CookieConsent from '@components/CookieConsent/CookieConsent';
 
 const ContainerDashboard = ({ location, history }) => {
   const userData = getUser();

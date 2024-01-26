@@ -45,11 +45,6 @@ const OrganizationSettings = () => {
 
   const { displayAlert } = useAlert();
 
-  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
-    ['unit', organization],
-    () => getUnitQuery(organization, displayAlert),
-  );
-
   const { data: organizationTypesData, isLoading: isLoadingOrganizationTypes } = useQuery(
     ['organizationTypes'],
     () => getOrganizationTypeQuery(displayAlert),

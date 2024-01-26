@@ -254,7 +254,7 @@ const TopBar = ({
         open={showAlertNotifications}
         setOpen={setShowAlertNotifications}
         setHideAlertBadge={setHideAlertBadge}
-        // history={history}
+        history={history}
         timezone={data}
         unitOfMeasure={unitData}
       />

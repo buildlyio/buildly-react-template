@@ -16,6 +16,7 @@ import { getCoregroupQuery } from '@react-query/queries/coregroup/getCoregroupQu
 import { getCoreuserQuery } from '@react-query/queries/coreuser/getCoreuserQuery';
 import { getGroupsFormattedRow, getUserFormattedRows, userColumns } from '@utils/constants';
 import '../UserManagementStyles.css';
+import { useDeleteCoreuserMutation } from 'react-query/mutations/coreuser/deleteCoreuserMutation';
 
 const Users = () => {
   const user = getUser();
