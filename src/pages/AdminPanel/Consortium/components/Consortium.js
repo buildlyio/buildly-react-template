@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { getUser } from '../../../../context/User.context';
-import { routes } from '../../../../routes/routesConstants';
-import { getConsortiumColumns } from '../../../../utils/constants';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { getConsortiumColumns } from '@utils/constants';
 import AddConsortium from '../forms/AddConsortium';
 import { useQuery } from 'react-query';
-import { getAllOrganizationQuery } from '../../../../react-query/queries/authUser/getAllOrganizationQuery';
-import { getAllConsortiumQuery } from '../../../../react-query/queries/consortium/getAllConsotiumQuery';
-import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
-import { useDeleteConsortiumMutation } from '../../../../react-query/mutations/consortium/deleteConsortiumMutation';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { getAllConsortiumQuery } from '@react-query/queries/consortium/getAllConsotiumQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useDeleteConsortiumMutation } from '@react-query/mutations/consortium/deleteConsortiumMutation';
 import useAlert from '@hooks/useAlert';
-import { useStore } from '../../../../zustand/timezone/timezoneStore';
+import { useStore } from '@zustand/timezone/timezoneStore';
 
 const Consortium = ({ history, redirectTo }) => {
   const user = getUser();
@@ -30,16 +30,19 @@ const Consortium = ({ history, redirectTo }) => {
   const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
     ['organizations'],
     () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: consortiumData, isLoading: isLoadingConsortiums } = useQuery(
     ['consortiums'],
     () => getAllConsortiumQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const onAddButtonClick = () => {

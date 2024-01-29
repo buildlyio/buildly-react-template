@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { getUser } from '../../../../context/User.context';
-import { routes } from '../../../../routes/routesConstants';
-import { getProductColumns } from '../../../../utils/constants';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { getProductColumns } from '@utils/constants';
 import AddProduct from '../forms/AddProduct';
 import { useQuery } from 'react-query';
-import { getProductQuery } from '../../../../react-query/queries/items/getProductQuery';
-import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
-import { useDeleteProductMutation } from '../../../../react-query/mutations/items/deleteProductMutation';
+import { getProductQuery } from '@react-query/queries/items/getProductQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useDeleteProductMutation } from '@react-query/mutations/items/deleteProductMutation';
 import useAlert from '@hooks/useAlert';
-import { useStore } from '../../../../zustand/timezone/timezoneStore';
+import { useStore } from '@zustand/timezone/timezoneStore';
 
 const Product = ({ redirectTo, history }) => {
   const organization = getUser().organization.organization_uuid;
@@ -32,11 +32,13 @@ const Product = ({ redirectTo, history }) => {
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: productData, isLoading: isLoadingProducts } = useQuery(
     ['products', organization],
     () => getProductQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const onAddButtonClick = () => {

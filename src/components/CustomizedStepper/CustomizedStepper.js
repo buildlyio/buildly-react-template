@@ -47,7 +47,7 @@ const CustomizedSteppers = ({ steps }) => {
               {step.title}
             </Typography>
           </div>
-          <Step className={index === 0 && 'customizadStepperNoLine'}>
+          <Step className={index === 0 ? 'customizadStepperNoLine' : ''}>
             <StepIcon icon={getIcon(step)} />
             <StepLabel>{step.label}</StepLabel>
             <Typography textAlign="center" fontSize={14}>{step.content}</Typography>

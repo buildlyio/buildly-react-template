@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import ConfirmModal from './ConfirmModal';
-import { isMobile } from '../../utils/mediaQuery';
+import { isMobile } from '@utils/mediaQuery';
 import './ModalStyles.css';
 
 const FormModal = ({

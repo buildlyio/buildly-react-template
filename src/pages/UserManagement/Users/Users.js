@@ -10,13 +10,13 @@ import { IconButton, MenuItem, Select } from '@mui/material';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { getUser } from '@context/User.context';
 import useAlert from '@hooks/useAlert';
-import { getAllOrganizationQuery } from 'react-query/queries/authUser/getAllOrganizationQuery';
-import { useEditCoreuserMutation } from 'react-query/mutations/coreuser/editCoreuserMutation';
-import { useDeleteCoreuserMutation } from 'react-query/mutations/coreuser/deleteCoreuserMutation';
-import { getCoregroupQuery } from 'react-query/queries/coregroup/getCoregroupQuery';
-import { getCoreuserQuery } from 'react-query/queries/coreuser/getCoreuserQuery';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { useEditCoreuserMutation } from '@react-query/mutations/coreuser/editCoreuserMutation';
+import { getCoregroupQuery } from '@react-query/queries/coregroup/getCoregroupQuery';
+import { getCoreuserQuery } from '@react-query/queries/coreuser/getCoreuserQuery';
 import { getGroupsFormattedRow, getUserFormattedRows, userColumns } from '@utils/constants';
 import '../UserManagementStyles.css';
+import { useDeleteCoreuserMutation } from 'react-query/mutations/coreuser/deleteCoreuserMutation';
 
 const Users = () => {
   const user = getUser();
@@ -28,16 +28,19 @@ const Users = () => {
   const { data: coreuserData, isLoading: isLoadingCoreuser } = useQuery(
     ['users'],
     () => getCoreuserQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: coregroupData, isLoading: isLoadingCoregroup } = useQuery(
     ['coregroup'],
     () => getCoregroupQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: organizations, isLoading: isLoadingOrganizations } = useQuery(
     ['organizations'],
     () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { mutate: editUserMutation, isLoading: isEditingUser } = useEditCoreuserMutation(displayAlert);

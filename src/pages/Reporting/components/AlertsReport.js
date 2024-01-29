@@ -6,8 +6,8 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
-import { getAlertsReportColumns } from '../../../utils/constants';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getAlertsReportColumns } from '@utils/constants';
 import '../ReportingStyles.css';
 
 const AlertsReport = ({

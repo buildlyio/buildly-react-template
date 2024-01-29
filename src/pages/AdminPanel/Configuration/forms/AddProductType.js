@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
 import { Grid, Button, TextField } from '@mui/material';
-import Loader from '../../../../components/Loader/Loader';
-import FormModal from '../../../../components/Modal/FormModal';
-import { getUser } from '../../../../context/User.context';
-import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
-import { isDesktop } from '../../../../utils/mediaQuery';
-import { useAddProductTypeMutation } from '../../../../react-query/mutations/items/addProductTypeMutation';
-import { useEditProductTypeMutation } from '../../../../react-query/mutations/items/editProductTypeMutation';
+import Loader from '@components/Loader/Loader';
+import FormModal from '@components/Modal/FormModal';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isDesktop } from '@utils/mediaQuery';
+import { useAddProductTypeMutation } from '@react-query/mutations/items/addProductTypeMutation';
+import { useEditProductTypeMutation } from '@react-query/mutations/items/editProductTypeMutation';
 import useAlert from '@hooks/useAlert';
 import '../../AdminPanelStyles.css';
 

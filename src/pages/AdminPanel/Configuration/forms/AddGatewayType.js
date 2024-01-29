@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
 import { Grid, Button, TextField } from '@mui/material';
-import Loader from '../../../../components/Loader/Loader';
-import FormModal from '../../../../components/Modal/FormModal';
-import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
-import { isDesktop } from '../../../../utils/mediaQuery';
-import { useAddGatewayTypeMutation } from '../../../../react-query/mutations/sensorGateways/addGatewayTypeMutation';
-import { useEditGatewayTypeMutation } from '../../../../react-query/mutations/sensorGateways/editGatewayTypeMutation';
+import Loader from '@components/Loader/Loader';
+import FormModal from '@components/Modal/FormModal';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isDesktop } from '@utils/mediaQuery';
+import { useAddGatewayTypeMutation } from '@react-query/mutations/sensorGateways/addGatewayTypeMutation';
+import { useEditGatewayTypeMutation } from '@react-query/mutations/sensorGateways/editGatewayTypeMutation';
 import useAlert from '@hooks/useAlert';
 import '../../AdminPanelStyles.css';
 

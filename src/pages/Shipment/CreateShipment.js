@@ -41,49 +41,49 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
 } from '@mui/icons-material';
-import ConfirmModal from '../../components/Modal/ConfirmModal';
-import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
-import DatePickerComponent from '../../components/DatePicker/DatePicker';
-import Loader from '../../components/Loader/Loader';
-import MapComponent from '../../components/MapComponent/MapComponent';
-import { getUser } from '../../context/User.context';
-import { useInput } from '../../hooks/useInput';
-import { routes } from '../../routes/routesConstants';
+import ConfirmModal from '@components/Modal/ConfirmModal';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import DatePickerComponent from '@components/DatePicker/DatePicker';
+import Loader from '@components/Loader/Loader';
+import MapComponent from '@components/MapComponent/MapComponent';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { routes } from '@routes/routesConstants';
 import {
   getCustodianFormattedRow,
   getItemFormattedRow,
   getTemplateFormattedRow,
   itemColumns,
   templateColumns,
-} from '../../utils/constants';
+} from '@utils/constants';
 import {
   ADMIN_SHIPMENT_STATUS,
   CREATE_SHIPMENT_STATUS,
   USER_SHIPMENT_STATUS,
   TIVE_GATEWAY_TIMES,
   UOM_TEMPERATURE_CHOICES,
-} from '../../utils/mock';
-import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
-import { validators } from '../../utils/validators';
+} from '@utils/mock';
+import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
+import { validators } from '@utils/validators';
 import { useQuery } from 'react-query';
-import { getShipmentTemplatesQuery } from '../../react-query/queries/shipments/getShipmentTemplatesQuery';
-import { getCustodianQuery } from '../../react-query/queries/custodians/getCustodianQuery';
-import { getCustodianTypeQuery } from '../../react-query/queries/custodians/getCustodianTypeQuery';
-import { getContactQuery } from '../../react-query/queries/custodians/getContactQuery';
-import { getUnitQuery } from '../../react-query/queries/items/getUnitQuery';
-import { getItemQuery } from '../../react-query/queries/items/getItemQuery';
-import { getItemTypeQuery } from '../../react-query/queries/items/getItemTypeQuery';
-import { getGatewayQuery } from '../../react-query/queries/sensorGateways/getGatewayQuery';
-import { getGatewayTypeQuery } from '../../react-query/queries/sensorGateways/getGatewayTypeQuery';
-import { getCustodyQuery } from '../../react-query/queries/custodians/getCustodyQuery';
-import { useDeleteCustodyMutation } from '../../react-query/mutations/custodians/deleteCustodyMutation';
-import { useAddShipmentTemplateMutation } from '../../react-query/mutations/shipments/addShipmentTemplateMutation';
-import { useEditShipmentTemplateMutation } from '../../react-query/mutations/shipments/editShipmentTemplateMutation';
-import { useDeleteShipmentTemplateMutation } from '../../react-query/mutations/shipments/deleteShipmentTemplateMutation';
-import { useAddShipmentMutation } from '../../react-query/mutations/shipments/addShipmentMutation';
-import { useEditShipmentMutation } from '../../react-query/mutations/shipments/editShipmentMutation';
+import { getShipmentTemplatesQuery } from '@react-query/queries/shipments/getShipmentTemplatesQuery';
+import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
+import { getCustodianTypeQuery } from '@react-query/queries/custodians/getCustodianTypeQuery';
+import { getContactQuery } from '@react-query/queries/custodians/getContactQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getItemQuery } from '@react-query/queries/items/getItemQuery';
+import { getItemTypeQuery } from '@react-query/queries/items/getItemTypeQuery';
+import { getGatewayQuery } from '@react-query/queries/sensorGateways/getGatewayQuery';
+import { getGatewayTypeQuery } from '@react-query/queries/sensorGateways/getGatewayTypeQuery';
+import { getCustodyQuery } from '@react-query/queries/custodians/getCustodyQuery';
+import { useDeleteCustodyMutation } from '@react-query/mutations/custodians/deleteCustodyMutation';
+import { useAddShipmentTemplateMutation } from '@react-query/mutations/shipments/addShipmentTemplateMutation';
+import { useEditShipmentTemplateMutation } from '@react-query/mutations/shipments/editShipmentTemplateMutation';
+import { useDeleteShipmentTemplateMutation } from '@react-query/mutations/shipments/deleteShipmentTemplateMutation';
+import { useAddShipmentMutation } from '@react-query/mutations/shipments/addShipmentMutation';
+import { useEditShipmentMutation } from '@react-query/mutations/shipments/editShipmentMutation';
 import useAlert from '@hooks/useAlert';
-import { useStore } from '../../zustand/timezone/timezoneStore';
+import { useStore } from '@zustand/timezone/timezoneStore';
 import './ShipmentStyles.css';
 import { isMobile } from '@utils/mediaQuery';
 
@@ -203,46 +203,55 @@ const CreateShipment = ({ history, location }) => {
   const { data: shipmentTemplateData, isLoading: isLoadingShipmentTemplates } = useQuery(
     ['shipmentTemplates', organization.organization_uuid],
     () => getShipmentTemplatesQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
     ['custodians', organization.organization_uuid],
     () => getCustodianQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodianTypesData, isLoading: isLoadingCustodianTypes } = useQuery(
     ['custodianTypes'],
     () => getCustodianTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: contactInfo, isLoading: isLoadingContact } = useQuery(
     ['contact', organization.organization_uuid],
     () => getContactQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization.organization_uuid],
     () => getUnitQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: itemData, isLoading: isLoadingItems } = useQuery(
     ['items', organization.organization_uuid],
     () => getItemQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: itemTypesData, isLoading: isLoadingItemTypes } = useQuery(
     ['itemTypes', organization.organization_uuid],
     () => getItemTypeQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
     ['gateways', organization.organization_uuid],
     () => getGatewayQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: gatewayTypesData, isLoading: isLoadingGatewayTypes } = useQuery(
     ['gatewayTypes'],
     () => getGatewayTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: custodyData, isLoading: isLoadingCustodies } = useQuery(
@@ -250,6 +259,7 @@ const CreateShipment = ({ history, location }) => {
     () => getCustodyQuery(encodeURIComponent(editData.shipment_uuid), displayAlert),
     {
       enabled: !_.isEmpty(editData),
+      refetchOnWindowFocus: false,
     },
   );
 
@@ -1147,7 +1157,7 @@ const CreateShipment = ({ history, location }) => {
                   }
                 />
               </Grid>
-              <Grid item xs={11} sm={5.5} mt={isMobile() ? 0 : -2.5} className={isMobile() && 'createShipmentAdjustSpacing'}>
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 0 : -2.5} className={isMobile() ? 'createShipmentAdjustSpacing' : ''}>
                 <DatePickerComponent
                   label="Shipment end"
                   selectedDate={moment(arrivalDateTime).tz(data)}

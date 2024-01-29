@@ -9,17 +9,17 @@ import {
   CssBaseline,
   StyledEngineProvider,
 } from '@mui/material';
-import Alert from './components/Alert/Alert';
-import { app, AppContext } from './context/App.context';
-import ContainerDashboard from './layout/Container/Container';
-import { oauthService } from './modules/oauth/oauth.service';
-import Login from './pages/Login/Login';
-import Register from './pages/Register/Register';
-import EmailForm from './pages/ResetPassword/EmailForm';
-import NewPasswordForm from './pages/ResetPassword/NewPasswordForm';
-import { PrivateRoute } from './routes/Private.route';
-import { routes } from './routes/routesConstants';
-import theme from './styles/theme';
+import Alert from '@components/Alert/Alert';
+import { app, AppContext } from '@context/App.context';
+import ContainerDashboard from '@layout/Container/Container';
+import { oauthService } from '@modules/oauth/oauth.service';
+import Login from '@pages/Login/Login';
+import Register from '@pages/Register/Register';
+import EmailForm from '@pages/ResetPassword/EmailForm';
+import NewPasswordForm from '@pages/ResetPassword/NewPasswordForm';
+import { PrivateRoute } from '@routes/Private.route';
+import { routes } from '@routes/routesConstants';
+import theme from '@styles/theme';
 import {
   Experimental_CssVarsProvider as CssVarsProvider,
 } from '@mui/material/styles';

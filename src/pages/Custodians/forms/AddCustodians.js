@@ -9,14 +9,14 @@ import {
   Grid,
   MenuItem,
 } from '@mui/material';
-import Loader from '../../../components/Loader/Loader';
-import FormModal from '../../../components/Modal/FormModal';
-import { getUser } from '../../../context/User.context';
-import { useInput } from '../../../hooks/useInput';
-import { validators } from '../../../utils/validators';
-import { isMobile, isDesktop } from '../../../utils/mediaQuery';
-import { useAddCustodianMutation } from '../../../react-query/mutations/custodians/addCustodianMutation';
-import { useEditCustodianMutation } from '../../../react-query/mutations/custodians/editCustodianMutation';
+import Loader from '@components/Loader/Loader';
+import FormModal from '@components/Modal/FormModal';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isMobile, isDesktop } from '@utils/mediaQuery';
+import { useAddCustodianMutation } from '@react-query/mutations/custodians/addCustodianMutation';
+import { useEditCustodianMutation } from '@react-query/mutations/custodians/editCustodianMutation';
 import useAlert from '@hooks/useAlert';
 import '../CustodianStyles.css';
 

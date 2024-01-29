@@ -6,10 +6,10 @@ import {
   MenuItem,
   Button,
 } from '@mui/material';
-import Loader from '../../../../components/Loader/Loader';
-import { isDesktop2 } from '../../../../utils/mediaQuery';
+import Loader from '@components/Loader/Loader';
+import { isDesktop2 } from '@utils/mediaQuery';
 import { useQuery, useQueryClient } from 'react-query';
-import { getExportDataQuery } from '../../../../react-query/queries/importExport/getExportDataQuery';
+import { getExportDataQuery } from '@react-query/queries/importExport/getExportDataQuery';
 import useAlert from '@hooks/useAlert';
 import '../../AdminPanelStyles.css';
 
@@ -26,6 +26,7 @@ const ExportData = () => {
     () => getExportDataQuery(exportTable, exportType, displayAlert),
     {
       enabled: ready,
+      refetchOnWindowFocus: false,
     },
   );
 

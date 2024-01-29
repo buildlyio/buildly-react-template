@@ -7,10 +7,10 @@ import {
   Tabs,
   Tab,
 } from '@mui/material';
-import Forbidden from '../../components/Forbidden/Forbidden';
-import { getUser } from '../../context/User.context';
-import { routes } from '../../routes/routesConstants';
-import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
+import Forbidden from '@components/Forbidden/Forbidden';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
 import Configuration from './Configuration/Configuration';
 // import ImportExport from './ImportExport/ImportExport';
 import ConsortiumSettings from './Consortium/ConsortiumSettings';

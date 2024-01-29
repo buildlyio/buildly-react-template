@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { getUser } from '../../../../context/User.context';
-import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../../../../utils/constants';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { getColumns } from '@utils/constants';
 import AddItemType from '../forms/AddItemType';
 import { useQuery } from 'react-query';
-import { getItemTypeQuery } from '../../../../react-query/queries/items/getItemTypeQuery';
-import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
-import { useDeleteItemTypeMutation } from '../../../../react-query/mutations/items/deleteItemTypeMutation';
+import { getItemTypeQuery } from '@react-query/queries/items/getItemTypeQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useDeleteItemTypeMutation } from '@react-query/mutations/items/deleteItemTypeMutation';
 import useAlert from '@hooks/useAlert';
-import { useStore } from '../../../../zustand/timezone/timezoneStore';
+import { useStore } from '@zustand/timezone/timezoneStore';
 
 const ItemType = ({ redirectTo, history }) => {
   const organization = getUser().organization.organization_uuid;
@@ -32,11 +32,13 @@ const ItemType = ({ redirectTo, history }) => {
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: itemTypesData, isLoading: isLoadingItemTypes } = useQuery(
     ['itemTypes', organization],
     () => getItemTypeQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const onAddButtonClick = () => {

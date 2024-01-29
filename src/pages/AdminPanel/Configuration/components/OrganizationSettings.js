@@ -9,6 +9,8 @@ import {
   TextField,
   Typography,
   InputAdornment,
+  FormControlLabel,
+  Switch,
 } from '@mui/material';
 import {
   BoltOutlined as ShockIcon,
@@ -16,8 +18,8 @@ import {
   Opacity as HumidityIcon,
   Thermostat as TemperatureIcon,
 } from '@mui/icons-material';
-import Loader from '../../../../components/Loader/Loader';
-import { useInput } from '../../../../hooks/useInput';
+import Loader from '@components/Loader/Loader';
+import { useInput } from '@hooks/useInput';
 import {
   DATE_DISPLAY_CHOICES,
   TIME_DISPLAY_CHOICES,
@@ -25,17 +27,17 @@ import {
   UOM_DISTANCE_CHOICES,
   UOM_TEMPERATURE_CHOICES,
   UOM_WEIGHT_CHOICES,
-} from '../../../../utils/mock';
-import { uomDistanceUpdate } from '../../../../utils/utilMethods';
-import { isDesktop2 } from '../../../../utils/mediaQuery';
-import { getUser } from '../../../../context/User.context';
+} from '@utils/mock';
+import { uomDistanceUpdate } from '@utils/utilMethods';
+import { isDesktop2 } from '@utils/mediaQuery';
+import { getUser } from '@context/User.context';
 import { useQuery } from 'react-query';
-import { getOrganizationTypeQuery } from '../../../../react-query/queries/authUser/getOrganizationTypeQuery';
-import { getCountriesQuery } from '../../../../react-query/queries/shipments/getCountriesQuery';
-import { getCurrenciesQuery } from '../../../../react-query/queries/shipments/getCurrenciesQuery';
-import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
-import { useUpdateOrganizationMutation } from '../../../../react-query/mutations/authUser/updateOrganizationMutation';
-import { useEditUnitMutation } from '../../../../react-query/mutations/items/editUnitMutation';
+import { getOrganizationTypeQuery } from '@react-query/queries/authUser/getOrganizationTypeQuery';
+import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
+import { getCurrenciesQuery } from '@react-query/queries/shipments/getCurrenciesQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useUpdateOrganizationMutation } from '@react-query/mutations/authUser/updateOrganizationMutation';
+import { useEditUnitMutation } from '@react-query/mutations/items/editUnitMutation';
 import useAlert from '@hooks/useAlert';
 import '../../AdminPanelStyles.css';
 
@@ -45,24 +47,28 @@ const OrganizationSettings = () => {
 
   const { displayAlert } = useAlert();
 
-  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
-    ['unit', organization],
-    () => getUnitQuery(organization, displayAlert),
-  );
-
   const { data: organizationTypesData, isLoading: isLoadingOrganizationTypes } = useQuery(
     ['organizationTypes'],
     () => getOrganizationTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
     ['countries'],
     () => getCountriesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: currenciesData, isLoading: isLoadingCurrencies } = useQuery(
     ['currencies'],
     () => getCurrenciesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const allowImportExport = useInput(
@@ -97,6 +103,10 @@ const OrganizationSettings = () => {
   const defaultMeasurementInterval = useInput(
     (organizationData && organizationData.default_measurement_interval) || 20,
   );
+  const supressTempAlerts = useInput((organizationData && _.includes(organizationData.alerts_to_supress, 'temperature')) || false);
+  const supressHumidityAlerts = useInput((organizationData && _.includes(organizationData.alerts_to_supress, 'humidity')) || false);
+  const supressShockAlerts = useInput((organizationData && _.includes(organizationData.alerts_to_supress, 'shock')) || false);
+  const supressLightAlerts = useInput((organizationData && _.includes(organizationData.alerts_to_supress, 'light')) || false);
   const country = useInput(_.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
     ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
     : 'United States');
@@ -193,6 +203,10 @@ const OrganizationSettings = () => {
     defaultLight.reset();
     defaultTransmissionInterval.reset();
     defaultMeasurementInterval.reset();
+    supressTempAlerts.reset();
+    supressHumidityAlerts.reset();
+    supressShockAlerts.reset();
+    supressLightAlerts.reset();
     country.reset();
     currency.reset();
     dateFormat.reset();
@@ -217,6 +231,10 @@ const OrganizationSettings = () => {
     || defaultLight.hasChanged()
     || defaultTransmissionInterval.hasChanged()
     || defaultMeasurementInterval.hasChanged()
+    || supressTempAlerts.hasChanged()
+    || supressHumidityAlerts.hasChanged()
+    || supressShockAlerts.hasChanged()
+    || supressLightAlerts.hasChanged()
     || country.hasChanged()
     || currency.hasChanged()
     || dateFormat.hasChanged()
@@ -251,6 +269,10 @@ const OrganizationSettings = () => {
       || defaultLight.hasChanged()
       || defaultTransmissionInterval.hasChanged()
       || defaultMeasurementInterval.hasChanged()
+      || supressTempAlerts.hasChanged()
+      || supressHumidityAlerts.hasChanged()
+      || supressShockAlerts.hasChanged()
+      || supressLightAlerts.hasChanged()
     ) {
       let data = {
         ...organizationData,
@@ -267,6 +289,12 @@ const OrganizationSettings = () => {
         default_light: defaultLight.value,
         default_transmission_interval: defaultTransmissionInterval.value,
         default_measurement_interval: defaultMeasurementInterval.value,
+        alerts_to_supress: _.without([
+          supressTempAlerts.value ? 'temperature' : '',
+          supressHumidityAlerts.value ? 'humidity' : '',
+          supressShockAlerts.value ? 'shock' : '',
+          supressLightAlerts.value ? 'light' : '',
+        ], ''),
       };
       if (distance.hasChanged()) {
         data = { ...data, radius: uomDistanceUpdate(distance.value, radius.value) };
@@ -360,6 +388,40 @@ const OrganizationSettings = () => {
             </Typography>
           </div>
         </Grid> */}
+        <Grid container spacing={2} mb={2}>
+          <Grid item xs={12}>
+            <Typography variant="subtitle1" fontWeight={700}>Supress Alert Email Settings:</Typography>
+          </Grid>
+          <Grid item xs={6} alignSelf="center">
+            <FormControlLabel
+              labelPlacement="end"
+              label="Supress Temperature Alert Emails"
+              control={<Switch checked={supressTempAlerts.value} color="primary" onChange={(e) => supressTempAlerts.setValue(e.target.checked)} />}
+            />
+          </Grid>
+          <Grid item xs={6} alignSelf="center">
+            <FormControlLabel
+              labelPlacement="end"
+              label="Supress Humidity Alert Emails"
+              control={<Switch checked={supressHumidityAlerts.value} color="primary" onChange={(e) => supressHumidityAlerts.setValue(e.target.checked)} />}
+            />
+          </Grid>
+          <Grid item xs={6} alignSelf="center">
+            <FormControlLabel
+              labelPlacement="end"
+              label="Supress Shock Alert Emails"
+              control={<Switch checked={supressShockAlerts.value} color="primary" onChange={(e) => supressShockAlerts.setValue(e.target.checked)} />}
+            />
+          </Grid>
+          <Grid item xs={6} alignSelf="center">
+            <FormControlLabel
+              labelPlacement="end"
+              label="Supress Light Alert Emails"
+              control={<Switch checked={supressLightAlerts.value} color="primary" onChange={(e) => supressLightAlerts.setValue(e.target.checked)} />}
+            />
+          </Grid>
+        </Grid>
+
         <Grid item xs={12}>
           <TextField
             variant="outlined"

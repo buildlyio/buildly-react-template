@@ -4,10 +4,10 @@ import { Switch } from '@mui/material';
 import { useQuery } from 'react-query';
 import useAlert from '@hooks/useAlert';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import { getCoregroupQuery } from 'react-query/queries/coregroup/getCoregroupQuery';
-import { getAllOrganizationQuery } from 'react-query/queries/authUser/getAllOrganizationQuery';
+import { getCoregroupQuery } from '@react-query/queries/coregroup/getCoregroupQuery';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
 import { getGroupsFormattedRow } from '@utils/constants';
-import { useEditCoregroupMutation } from 'react-query/mutations/coregroup/editCoregroupMutation';
+import { useEditCoregroupMutation } from '@react-query/mutations/coregroup/editCoregroupMutation';
 
 const UserGroups = () => {
   const { displayAlert } = useAlert();
@@ -16,11 +16,13 @@ const UserGroups = () => {
   const { data: coregroupData, isLoading: isLoadingCoregroup } = useQuery(
     ['coregroups'],
     () => getCoregroupQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: organizations, isLoading: isLoadingOrganizations } = useQuery(
     ['organizations'],
     () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { mutate: editGroupMutation, isLoading: isEditingGroup } = useEditCoregroupMutation(displayAlert);

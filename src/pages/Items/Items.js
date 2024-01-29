@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
-import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
-import { getUser } from '../../context/User.context';
-import { routes } from '../../routes/routesConstants';
-import { itemColumns, getItemFormattedRow } from '../../utils/constants';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { itemColumns, getItemFormattedRow } from '@utils/constants';
 import AddItems from './forms/AddItems';
 import { useQuery } from 'react-query';
-import { getItemQuery } from '../../react-query/queries/items/getItemQuery';
-import { getItemTypeQuery } from '../../react-query/queries/items/getItemTypeQuery';
-import { getUnitQuery } from '../../react-query/queries/items/getUnitQuery';
-import { getProductQuery } from '../../react-query/queries/items/getProductQuery';
-import { getProductTypeQuery } from '../../react-query/queries/items/getProductTypeQuery';
-import { useDeleteItemMutation } from '../../react-query/mutations/items/deleteItemMutation';
+import { getItemQuery } from '@react-query/queries/items/getItemQuery';
+import { getItemTypeQuery } from '@react-query/queries/items/getItemTypeQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getProductQuery } from '@react-query/queries/items/getProductQuery';
+import { getProductTypeQuery } from '@react-query/queries/items/getProductTypeQuery';
+import { useDeleteItemMutation } from '@react-query/mutations/items/deleteItemMutation';
 import useAlert from '@hooks/useAlert';
 
 const Items = ({ history, redirectTo }) => {
@@ -28,26 +28,31 @@ const Items = ({ history, redirectTo }) => {
   const { data: itemData, isLoading: isLoadingItems } = useQuery(
     ['items', organization],
     () => getItemQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: itemTypesData, isLoading: isLoadingItemTypes } = useQuery(
     ['itemTypes', organization],
     () => getItemTypeQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: productData, isLoading: isLoadingProducts } = useQuery(
     ['products', organization],
     () => getProductQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: productTypesData, isLoading: isLoadingProductTypes } = useQuery(
     ['productTypes', organization],
     () => getProductTypeQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const addItemPath = redirectTo

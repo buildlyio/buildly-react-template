@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { getUser } from '../../../../context/User.context';
-import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../../../../utils/constants';
-import AddGatewayType from '../forms/AddGatewayType';
 import { useQuery } from 'react-query';
-import { getGatewayTypeQuery } from '../../../../react-query/queries/sensorGateways/getGatewayTypeQuery';
-import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
-import { useDeleteGatewayTypeMutation } from '../../../../react-query/mutations/sensorGateways/deleteGatewayTypeMutation';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
 import useAlert from '@hooks/useAlert';
-import { useStore } from '../../../../zustand/timezone/timezoneStore';
+import { getGatewayTypeQuery } from '@react-query/queries/sensorGateways/getGatewayTypeQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useDeleteGatewayTypeMutation } from '@react-query/mutations/sensorGateways/deleteGatewayTypeMutation';
+import { routes } from '@routes/routesConstants';
+import { getColumns } from '@utils/constants';
+import { useStore } from '@zustand/timezone/timezoneStore';
+import AddGatewayType from '../forms/AddGatewayType';
 
 const GatewayType = ({ redirectTo, history }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
@@ -32,11 +32,13 @@ const GatewayType = ({ redirectTo, history }) => {
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: gatewayTypesData, isLoading: isLoadingGatewayTypes } = useQuery(
     ['gatewayTypes'],
     () => getGatewayTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const onAddButtonClick = () => {

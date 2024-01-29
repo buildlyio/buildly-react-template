@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { getUser } from '../../../../context/User.context';
-import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../../../../utils/constants';
-import AddProductType from '../forms/AddProductType';
 import { useQuery } from 'react-query';
-import { getProductTypeQuery } from '../../../../react-query/queries/items/getProductTypeQuery';
-import { getUnitQuery } from '../../../../react-query/queries/items/getUnitQuery';
-import { useDeleteProductTypeMutation } from '../../../../react-query/mutations/items/deleteProductTypeMutation';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
 import useAlert from '@hooks/useAlert';
-import { useStore } from '../../../../zustand/timezone/timezoneStore';
+import { getProductTypeQuery } from '@react-query/queries/items/getProductTypeQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useDeleteProductTypeMutation } from '@react-query/mutations/items/deleteProductTypeMutation';
+import { routes } from '@routes/routesConstants';
+import { getColumns } from '@utils/constants';
+import { useStore } from '@zustand/timezone/timezoneStore';
+import AddProductType from '../forms/AddProductType';
 
 const ProductType = ({ redirectTo, history }) => {
   const organization = getUser().organization.organization_uuid;
@@ -32,11 +32,13 @@ const ProductType = ({ redirectTo, history }) => {
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: productTypesData, isLoading: isLoadingProductTypes } = useQuery(
     ['productTypes', organization],
     () => getProductTypeQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const onAddButtonClick = () => {

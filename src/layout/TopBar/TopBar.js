@@ -7,30 +7,33 @@ import {
   IconButton,
   TextField,
   MenuItem,
+  Badge,
 } from '@mui/material';
 import {
   AccountCircle,
-  Refresh as RefreshIcon,
-  Settings as SettingsIcon,
   Menu as MenuIcon,
+  Notifications as NotificationsIcon,
+  Settings as SettingsIcon,
 } from '@mui/icons-material';
-import logo from '../../assets/tp-logo.png';
-import Loader from '../../components/Loader/Loader';
-import { routes } from '../../routes/routesConstants';
+import logo from '@assets/tp-logo.png';
+import Loader from '@components/Loader/Loader';
+import { getUser } from '@context/User.context';
+import useAlert from '@hooks/useAlert';
+import { oauthService } from '@modules/oauth/oauth.service';
+import { routes } from '@routes/routesConstants';
 import {
   checkForAdmin,
   checkForGlobalAdmin,
-} from '../../utils/utilMethods';
+} from '@utils/utilMethods';
+import { useStore } from '@zustand/timezone/timezoneStore';
+import { useQuery } from 'react-query';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { useUpdateUserMutation } from '@react-query/mutations/authUser/updateUserMutation';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import AccountSettings from './components/AccountSettings';
+import AlertNotifications from './components/AlertNotifications';
 import AdminMenu from './AdminMenu';
 import AccountMenu from './AccountMenu';
-import useAlert from '@hooks/useAlert';
-import { useStore } from '../../zustand/timezone/timezoneStore';
-import { getUser } from '../../context/User.context';
-import { useQuery } from 'react-query';
-import { getAllOrganizationQuery } from '../../react-query/queries/authUser/getAllOrganizationQuery';
-import { useUpdateUserMutation } from '../../react-query/mutations/authUser/updateUserMutation';
-import { oauthService } from '@modules/oauth/oauth.service';
-import AccountSettings from './components/AccountSettings';
 import './TopBarStyles.css';
 
 /**
@@ -46,10 +49,13 @@ const TopBar = ({
   const [organization, setOrganization] = useState(null);
   const { options: tzOptions } = useTimezoneSelect({ labelStyle: 'original', timezones: allTimezones });
   const [showAccountSettings, setShowAccountSettings] = useState(false);
+  const [hideAlertBadge, setHideAlertBadge] = useState(true);
+  const [showAlertNotifications, setShowAlertNotifications] = useState(false);
 
   const user = getUser();
   let isAdmin = false;
   let isSuperAdmin = false;
+  let org_uuid = user.organization.organization_uuid;
 
   const { displayAlert } = useAlert();
   const { data, setTimezone } = useStore();
@@ -60,14 +66,22 @@ const TopBar = ({
     }
     isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
     isSuperAdmin = checkForGlobalAdmin(user);
+    org_uuid = user.organization.organization_uuid;
   }
 
   const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
     ['organizations'],
     () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { mutate: updateUserMutation, isLoading: isUpdateUser } = useUpdateUserMutation(history, displayAlert);
+
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', org_uuid],
+    () => getUnitQuery(org_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
 
   const handleOrganizationChange = (e) => {
     const organization_name = e.target.value;
@@ -95,10 +109,6 @@ const TopBar = ({
     setSettingEl(null);
   };
 
-  const refreshPage = () => {
-    window.location.reload();
-  };
-
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -123,9 +133,14 @@ const TopBar = ({
     history.push('/');
   };
 
+  const handleNotificationsClick = () => {
+    setShowAlertNotifications(true);
+    setAnchorEl(null);
+  };
+
   return (
     <AppBar position="fixed" className="topbarAppBar">
-      {(isLoadingOrgs || isUpdateUser) && <Loader open={isLoadingOrgs || isUpdateUser} />}
+      {(isLoadingOrgs || isUpdateUser || isLoadingUnits) && <Loader open={isLoadingOrgs || isUpdateUser || isLoadingUnits} />}
       <Toolbar>
         <IconButton
           edge="start"
@@ -184,6 +199,17 @@ const TopBar = ({
               ))}
             </TextField>
           )}
+          <IconButton
+            aria-label="notifications"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            color="primary"
+            onClick={handleNotificationsClick}
+          >
+            <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={hideAlertBadge} className="topBarNotifications">
+              <NotificationsIcon fontSize="large" />
+            </Badge>
+          </IconButton>
           {isAdmin
             && (
               <IconButton
@@ -202,17 +228,6 @@ const TopBar = ({
             handleAdminPanelClick={handleAdminPanelClick}
             handleUserManagementClick={handleUserManagementClick}
           />
-          {isAdmin && (
-            <IconButton
-              aria-label="refresh-app"
-              aria-controls="menu-appbar"
-              aria-haspopup="false"
-              onClick={refreshPage}
-              color="primary"
-            >
-              <RefreshIcon fontSize="large" />
-            </IconButton>
-          )}
           <IconButton
             aria-label="account of current user"
             aria-controls="menu-appbar"
@@ -235,6 +250,14 @@ const TopBar = ({
         </div>
       </Toolbar>
       <AccountSettings open={showAccountSettings} setOpen={setShowAccountSettings} />
+      <AlertNotifications
+        open={showAlertNotifications}
+        setOpen={setShowAlertNotifications}
+        setHideAlertBadge={setHideAlertBadge}
+        history={history}
+        timezone={data}
+        unitOfMeasure={unitData}
+      />
     </AppBar>
   );
 };

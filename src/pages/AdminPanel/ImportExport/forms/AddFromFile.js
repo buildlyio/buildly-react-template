@@ -6,11 +6,11 @@ import {
   MenuItem,
   Button,
 } from '@mui/material';
-import Loader from '../../../../components/Loader/Loader';
-import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
-import { isDesktop2 } from '../../../../utils/mediaQuery';
-import { useAddFromFileMutation } from '../../../../react-query/mutations/importExport/addFromFileMutation';
+import Loader from '@components/Loader/Loader';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isDesktop2 } from '@utils/mediaQuery';
+import { useAddFromFileMutation } from '@react-query/mutations/importExport/addFromFileMutation';
 import useAlert from '@hooks/useAlert';
 import '../../AdminPanelStyles.css';
 

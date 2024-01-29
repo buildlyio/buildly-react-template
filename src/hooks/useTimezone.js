@@ -1,4 +1,4 @@
-import { useStore } from '../zustand/timezone/timezoneStore';
+import { useStore } from '@zustand/timezone/timezoneStore';
 
 const useTimezone = () => {
   const { setTimezone } = useStore();

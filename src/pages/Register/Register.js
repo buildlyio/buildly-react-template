@@ -31,10 +31,10 @@ import {
 } from '@utils/mock';
 import { validators } from '@utils/validators';
 import { useQuery } from 'react-query';
-import { getOrganizationNameQuery } from 'react-query/queries/authUser/getOrganizationNameQuery';
-import { getCountriesQuery } from 'react-query/queries/shipments/getCountriesQuery';
-import { getCurrenciesQuery } from 'react-query/queries/shipments/getCurrenciesQuery';
-import { useRegisterMutation } from 'react-query/mutations/authUser/registerMutation';
+import { getOrganizationNameQuery } from '@react-query/queries/authUser/getOrganizationNameQuery';
+import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
+import { getCurrenciesQuery } from '@react-query/queries/shipments/getCurrenciesQuery';
+import { useRegisterMutation } from '@react-query/mutations/authUser/registerMutation';
 import useAlert from '@hooks/useAlert';
 import './RegisterStyles.css';
 
@@ -72,16 +72,19 @@ const Register = ({ history }) => {
   const { data: orgNameData, isLoading: isLoadingOrgNames } = useQuery(
     ['orgNames'],
     () => getOrganizationNameQuery(),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
     ['countries'],
     () => getCountriesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: currenciesData, isLoading: isLoadingCurrencies } = useQuery(
     ['currencies'],
     () => getCurrenciesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   useEffect(() => {
