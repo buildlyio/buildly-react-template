@@ -181,26 +181,28 @@ const AddItems = ({
   };
 
   const onProductChange = (value) => {
-    setProduct(value);
-    setProductUrl(value.url);
-    setProductDesc(value.description);
-    setProductValue(value.value);
-    setProductWeight(value.gross_weight);
-    setGtin(value.gtin);
-    setUpc(value.upc);
-    setEan(value.ean);
-    setPaperTag(value.paper_tag_number);
-    setBatchId(value.batch_run_id);
-    setBinId(value.bin_id);
-    setContainerUnits(1);
-    setItemValue(value.value);
-    setItemWeight(value.gross_weight);
-    if (productTypesData && productTypesData.length) {
-      _.forEach(productTypesData, (type) => {
-        if (type.url === value.product_type) {
-          setProductType(type.name);
-        }
-      });
+    if (value) {
+      setProduct(value);
+      setProductUrl(value.url);
+      setProductDesc(value.description);
+      setProductValue(value.value);
+      setProductWeight(value.gross_weight);
+      setGtin(value.gtin);
+      setUpc(value.upc);
+      setEan(value.ean);
+      setPaperTag(value.paper_tag_number);
+      setBatchId(value.batch_run_id);
+      setBinId(value.bin_id);
+      setContainerUnits(1);
+      setItemValue(value.value);
+      setItemWeight(value.gross_weight);
+      if (productTypesData && productTypesData.length) {
+        _.forEach(productTypesData, (type) => {
+          if (type.url === value.product_type) {
+            setProductType(type.name);
+          }
+        });
+      }
     }
   };
 

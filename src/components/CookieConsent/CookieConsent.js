@@ -7,10 +7,11 @@ import {
   Button,
 } from '@mui/material';
 import { useHistory } from 'react-router-dom';
-import Loader from '../../components/Loader/Loader';
-import { getUser } from '../../context/User.context';
-import { useUpdateGDPRDateTimeMutation } from '../../react-query/mutations/authUser/updateGDPRDateTimeMutation';
+import Loader from '@components/Loader/Loader';
+import { getUser } from '@context/User.context';
+import { useUpdateUserMutation } from '@react-query/mutations/authUser/updateUserMutation';
 import useAlert from '@hooks/useAlert';
+import { routes } from '@routes/routesConstants';
 import './CookieConsentStyles.css';
 
 const CookieConsent = () => {
@@ -37,23 +38,25 @@ const CookieConsent = () => {
     }
   }, [user]);
 
-  const { mutate: updateGDPRDateTimeMutation, isLoading: isUpdatingGDPRDateTime } = useUpdateGDPRDateTimeMutation(displayAlert);
+  const { mutate: updateUserMutation, isLoading: isUpdateUser } = useUpdateUserMutation(history, displayAlert);
 
   const handleSubmit = () => {
     const data = {
       id: user.id,
+      organization_uuid: user.organization.organization_uuid,
+      organization_name: user.organization.name,
       last_gdpr_shown: moment().tz(user.user_timezone).toISOString(),
     };
-    updateGDPRDateTimeMutation(data);
+    updateUserMutation(data);
   };
 
   return (
     <>
       {visible ? (
         <Grid container className="cookieConsentContainer">
-          {isUpdatingGDPRDateTime && <Loader open={isUpdatingGDPRDateTime} />}
+          {isUpdateUser && <Loader open={isUpdateUser} />}
           <Grid item xs={12}>
-            <Typography variant="h6">Our use of cookies</Typography>
+            <Typography variant="h6">We value your privacy</Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" paragraph>
@@ -65,6 +68,16 @@ const CookieConsent = () => {
               functions.
             </Typography>
           </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body1" paragraph>
+              For more information about the cookies we collect, see our
+              {' '}
+              <Button className="cookieButton" onClick={() => history.push(routes.PRIVACY_POLICY)}>
+                Privacy Policy
+              </Button>
+              .
+            </Typography>
+          </Grid>
           <Button
             type="submit"
             variant="contained"
@@ -72,6 +85,15 @@ const CookieConsent = () => {
             onClick={() => handleSubmit()}
           >
             Accept
+          </Button>
+          <Button
+            type="submit"
+            variant="outlined"
+            color="primary"
+            onClick={() => handleSubmit()}
+            style={{ marginLeft: 16 }}
+          >
+            Decline
           </Button>
         </Grid>
       ) : null}
