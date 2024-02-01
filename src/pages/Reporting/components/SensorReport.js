@@ -95,6 +95,15 @@ const SensorReport = ({
           }}
           selected={selected}
           customSort={customSort}
+          extraOptions={{
+            customToolbar: () => (
+              <Typography variant="caption" className="reportingSensorTableTitle">
+                <span style={{ fontStyle: 'italic', fontWeight: '700' }}>bold/italic alerts</span>
+                {' '}
+                indicates alerts outside of selected transmission
+              </Typography>
+            ),
+          }}
         />
       </Grid>
     </Grid>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
@@ -11,10 +11,15 @@ import { getAlertsReportColumns } from '@utils/constants';
 import '../ReportingStyles.css';
 
 const AlertsReport = ({
-  sensorReport, alerts, shipmentName, timezone, unitOfMeasure,
+  sensorReport, alerts, shipmentName, timezone, unitOfMeasure, shouldScroll,
 }) => {
   const theme = useTheme();
   const [rows, setRows] = useState([]);
+  const scrollRef = useRef(null);
+
+  if (shouldScroll && scrollRef.current) {
+    scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+  }
 
   useEffect(() => {
     if (alerts) {
@@ -58,7 +63,7 @@ const AlertsReport = ({
   }, [alerts]);
 
   return (
-    <Grid className="reportingAlertRoot" container spacing={2}>
+    <Grid className="reportingAlertRoot" container spacing={2} ref={scrollRef}>
       <Grid item xs={12}>
         <div className="reportingAlertTooltip">
           <Typography

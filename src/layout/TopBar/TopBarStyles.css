@@ -101,10 +101,15 @@
   padding-top: 64px !important;
 }
 
+.accountSettingSpacing {
+  height: 50px;
+}
+
 @media screen and (min-width: 960px) {
   .accountSettingsDialog .MuiDialog-container {
     position: fixed;
     right: 0;
+    bottom: 0;
     width: 50%;
     margin-top: 64px;
   }
@@ -137,7 +142,7 @@
 }
 
 .alertNotificationsCount {
-  border-radius: 50%;
+  border-radius: 25px;
 }
 
 .alertNotificationsShipmentName {
@@ -164,7 +169,7 @@
     position: fixed;
     right: 0;
     width: 50%;
-    margin-top: 64px,
+    margin-top: 64px;
   }
 
   .alertNotificationsDialog .MuiDialog-paper {

@@ -228,20 +228,9 @@ const RenderedMap = withScriptjs(
                                   : 'inherit',
                               }}
                             >
-                              {mark[item.id] ? ` ${mark[item.id]} ${item.unit}` : ' N/A'}
+                              {` ${mark[item.id]} ${item.unit}`}
                             </div>
-                          ) : (
-                            <div
-                              style={{
-                                marginLeft: props.theme.spacing(0.5),
-                                color: _.find(mark.allAlerts, { id: item.id })
-                                  ? _.find(mark.allAlerts, { id: item.id }).color
-                                  : 'inherit',
-                              }}
-                            >
-                              {' NA'}
-                            </div>
-                          )}
+                          ) : null}
                         </Grid>
                       ))}
                       <Grid item xs={12} style={{ borderTop: `1px solid ${props.theme.palette.background.light}`, marginTop: props.theme.spacing(1.5) }}>

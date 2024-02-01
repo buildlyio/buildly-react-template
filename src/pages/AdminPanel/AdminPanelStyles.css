@@ -48,6 +48,17 @@
   margin: 2px 0px 2px 2px;
 }
 
+.adminPanelOrgIconContainer {
+  display: flex;
+  align-items: center;
+}
+
+.adminPanelOrgIcons {
+  margin-right: 10px;
+  fill: var(--color-palette-background-dark);
+  opacity: 0.7;
+}
+
 .adminPanelOrgFormContainer {
   width: 100%;
   margin-top: 16px;

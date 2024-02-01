@@ -102,7 +102,7 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
               gateway_ids: [updateGateway.gateway_uuid],
               gateway_imei: [_.toString(updateGateway.imei_number)],
             };
-            const shipment = httpService.makeRequest(
+            const shipment = await httpService.makeRequest(
               'patch',
               `${window.env.API_URL}shipment/shipment/${data.data.id}/`,
               shipmentPayload,
@@ -140,6 +140,12 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
       onSuccess: async () => {
         await queryClient.invalidateQueries({
           queryKey: ['shipments', 'Planned,En route,Arrived', organization],
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ['allGateways'],
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ['custodians', organization],
         });
         displayAlert('success', 'Successfully added shipment');
         if (history && redirectTo) {

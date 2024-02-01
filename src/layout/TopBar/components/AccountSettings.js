@@ -113,7 +113,7 @@ const AccountSettings = ({ open, setOpen }) => {
         </Button>
       </DialogTitle>
 
-      <DialogContent className="accountSeetingsDialogContent">
+      <DialogContent className="accountSettingsDialogContent">
         <Grid container display="flex" alignItems="center" className="accountSettingsUserIconName">
           <Avatar alt={user && `${user.first_name} ${user.last_name}`} src={profile} />
           <Typography ml={2} variant="h5" fontWeight={500}>{user && `${user.first_name} ${user.last_name}`}</Typography>
@@ -303,6 +303,7 @@ const AccountSettings = ({ open, setOpen }) => {
             </Grid>
           )} */}
         </Grid>
+        <div className="accountSettingSpacing" />
       </DialogContent>
     </Dialog>
   );

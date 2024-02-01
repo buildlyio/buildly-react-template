@@ -90,6 +90,13 @@
   text-align: left;
 }
 
+.reportingSensorTableTitle {
+  color: var(--color-palette-background-default);
+  position: absolute;
+  left: 10px;
+  bottom: 5px;
+}
+
 /* Alert Component Styles */
 .reportingAlertRoot {
   margin-top: 8px;

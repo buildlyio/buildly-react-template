@@ -200,6 +200,12 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
         await queryClient.invalidateQueries({
           queryKey: ['shipments', 'Planned,En route,Arrived', organization],
         });
+        await queryClient.invalidateQueries({
+          queryKey: ['allGateways'],
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ['custodians', organization],
+        });
         displayAlert('success', 'Successfully edited shipment');
         if (history && redirectTo) {
           history.push(redirectTo);

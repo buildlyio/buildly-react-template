@@ -76,7 +76,7 @@ const AlertNotifications = ({
     );
 
     alertsSocket.current.onopen = () => {
-      const fetch_payload = { command: 'fetch_alerts', organization_uuid: pushGrp, hours_range: 48 };
+      const fetch_payload = { command: 'fetch_alerts', organization_uuid: pushGrp };
       alertsSocket.current.send(JSON.stringify(fetch_payload));
     };
     alertsSocket.current.onerror = (error) => {
@@ -93,11 +93,9 @@ const AlertNotifications = ({
 
     alertsSocket.current.onmessage = (message) => {
       const msg = JSON.parse(message.data);
-      const viewed = getViewedNotifications();
-      const filteredAlerts = _.filter(msg.alerts, (alert) => !_.includes(viewed, alert.id));
 
       let alerts = [];
-      _.forEach(filteredAlerts, (a) => {
+      _.forEach(msg.alerts, (a) => {
         const parameterType = _.toLower(_.split(a.alert_message, ' of ')[0]);
         const parameterValue = _.split(_.split(a.alert_message, ' of ')[1], ' at ')[0];
         let alertObj = { id: parameterType, color: 'green', title: `${_.capitalize(parameterType)} Excursion Recovered` };
@@ -143,9 +141,7 @@ const AlertNotifications = ({
   };
 
   const closeAlertNotifications = () => {
-    const notViewed = _.filter(notifications, { viewed: false });
     setHideAlertBadge(true);
-    setNotifications(notViewed);
     setOpen(false);
   };
 
@@ -212,6 +208,7 @@ const AlertNotifications = ({
                         </Button>
                       )}
                       className="alertNotificationsSummary"
+                      onClick={(e) => handleAlertCountClick(index)}
                     >
                       <div className={!noti.viewed ? 'alertNotificationsSummaryBadge' : ''} />
                       <Typography

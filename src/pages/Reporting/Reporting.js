@@ -566,6 +566,7 @@ const Reporting = () => {
         shipmentName={selectedShipment && selectedShipment.name}
         timezone={data}
         unitOfMeasure={unitData}
+        shouldScroll={!!locShipmentID}
       />
     </Box>
   );
