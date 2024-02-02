@@ -252,7 +252,9 @@ const Shipment = ({ history }) => {
           return ({
             id: moment(a.create_date).unix(),
             titleIcon: getIcon(item),
-            title: a.parameter_value,
+            title: a.parameter_type === 'shock' || a.parameter_type === 'light'
+              ? `${_.toString(_.round(_.toNumber(a.parameter_value.split(' ')[0]), 2))} ${a.parameter_value.split(' ')[1]}`
+              : a.parameter_value,
             titleColor: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
             label: 'Exception',
             content: moment(a.create_date).tz(data).format(`${dateFormat} ${timeFormat}`),
@@ -277,7 +279,9 @@ const Shipment = ({ history }) => {
           return ({
             id: moment(a.create_date).unix(),
             titleIcon: getIcon(item),
-            title: a.parameter_value,
+            title: a.parameter_type === 'shock' || a.parameter_type === 'light'
+              ? `${_.toString(_.round(_.toNumber(a.parameter_value.split(' ')[0]), 2))} ${a.parameter_value.split(' ')[1]}`
+              : a.parameter_value,
             titleColor: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
             label: 'Exception',
             content: moment(a.create_date).tz(data).format(`${dateFormat} ${timeFormat}`),
@@ -301,7 +305,9 @@ const Shipment = ({ history }) => {
           return ({
             id: moment(a.create_date).unix(),
             titleIcon: getIcon(item),
-            title: a.parameter_value,
+            title: a.parameter_type === 'shock' || a.parameter_type === 'light'
+              ? `${_.toString(_.round(_.toNumber(a.parameter_value.split(' ')[0]), 2))} ${a.parameter_value.split(' ')[1]}`
+              : a.parameter_value,
             titleColor: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
             label: 'Exception',
             content: moment(a.create_date).tz(data).format(`${dateFormat} ${timeFormat}`),

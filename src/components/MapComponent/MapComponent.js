@@ -219,7 +219,7 @@ const RenderedMap = withScriptjs(
                           {_.find(mark.allAlerts, { id: item.id })
                             ? getIcon(_.find(mark.allAlerts, { id: item.id }))
                             : getIcon({ id: item.id, color: 'inherit' })}
-                          {!_.isEqual(mark[item.id], null) ? (
+                          {!_.isEqual(mark[item.id], null) && !_.isEqual(mark[item.id], undefined) ? (
                             <div
                               style={{
                                 marginLeft: props.theme.spacing(0.5),
@@ -228,7 +228,7 @@ const RenderedMap = withScriptjs(
                                   : 'inherit',
                               }}
                             >
-                              {` ${mark[item.id]} ${item.unit}`}
+                              {` ${_.toString(_.round(_.toNumber(mark[item.id]), 2))} ${item.unit}`}
                             </div>
                           ) : null}
                         </Grid>
@@ -256,7 +256,7 @@ const RenderedMap = withScriptjs(
                             {!mark.battery && (
                               <BatteryFullIcon />
                             )}
-                            <div>{mark.battery ? `${mark.battery}%` : 'N/A'}</div>
+                            <div>{!_.isEqual(mark.battery, null) && !_.isEqual(mark.battery, undefined) ? `${mark.battery}%` : ''}</div>
                           </Grid>
                         </Grid>
                       </Grid>

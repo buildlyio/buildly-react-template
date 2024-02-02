@@ -1226,6 +1226,8 @@ export const getAlertsReportColumns = (sensorReport, timezone, dateFormat, timeF
           const [val1, val2] = _.split(value, ' F/');
           const [temp, unit] = _.split(val2, ' ');
           formattedValue = `${val1} F/${_.round(_.toNumber(temp), 2)} ${unit}`;
+        } else if (_.includes(value, 'G') || _.includes(value, 'LUX')) {
+          formattedValue = `${_.toString(_.round(_.toNumber(value.split(' ')[0]), 2))} ${value.split(' ')[1]}`;
         } else {
           formattedValue = value || '-';
         }

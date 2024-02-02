@@ -3,7 +3,7 @@
 }
 
 .privacyPolicyButton {
-  text-decoration: none;
+  text-decoration: underline;
   background-color: var(--color-palette-background-default);
   border: 0px;
   padding: 0px;

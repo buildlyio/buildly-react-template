@@ -4,7 +4,7 @@
   overflow-x: auto;
 }
 
-.customizadStepperNoLine  .MuiStepConnector-root:first-of-type {
+.customizadStepperNoLine .MuiStepConnector-root:first-of-type {
   display: none;
 }
 
