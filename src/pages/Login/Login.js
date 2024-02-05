@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Button,
   CssBaseline,
@@ -26,13 +26,14 @@ const Login = ({ history }) => {
   const username = useInput('', { required: true });
   const password = useInput('', { required: true });
   const [error, setError] = useState({});
+  const location = useLocation();
 
   const { displayAlert } = useAlert();
   const { timezone } = useTimezone();
 
   const { mutate: resetPasswordCheckMutation, isLoading: isPasswordCheck } = useResetPasswordCheckMutation(history, routes.RESET_PASSWORD_CONFIRM, routes.LOGIN, displayAlert);
 
-  const { mutate: loginMutation, isLoading: islogin } = useLoginMutation(history, routes.SHIPMENT, displayAlert, timezone);
+  const { mutate: loginMutation, isLoading: islogin } = useLoginMutation(history, (location.state && location.state.from) || routes.SHIPMENT, displayAlert, timezone);
 
   useEffect(() => {
     if (location.pathname.includes(routes.RESET_PASSWORD_CONFIRM)) {

@@ -1291,7 +1291,6 @@ export const gatewayColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => _.upperCase(value),
     },
   },
   {

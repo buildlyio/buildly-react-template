@@ -18,7 +18,10 @@ const AlertsReport = ({
   const scrollRef = useRef(null);
 
   if (shouldScroll && scrollRef.current) {
-    scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+    window.scrollTo({
+      top: scrollRef.current.offsetTop - 50,
+      behavior: 'smooth',
+    });
   }
 
   useEffect(() => {
