@@ -181,19 +181,25 @@ const Reporting = () => {
       sensorAlertData,
       (alert) => alert.parameter_type !== 'location' && selectedShipment && alert.shipment_id === selectedShipment.partner_shipment_id,
     );
-    if (selectedShipment && !_.isEmpty(sensorReportData)) {
-      const { sensorReportInfo, markersToSet, graphs } = processReportsAndMarkers(
-        sensorReportData,
-        alerts,
-        data,
-        unitData,
-        theme.palette.error.main,
-        theme.palette.info.main,
-        selectedShipment,
-      );
-      setReports(sensorReportInfo);
-      setAllGraphs(graphs);
-      setMarkers(markersToSet);
+    if (selectedShipment) {
+      if (!_.isEmpty(sensorReportData)) {
+        const { sensorReportInfo, markersToSet, graphs } = processReportsAndMarkers(
+          sensorReportData,
+          alerts,
+          data,
+          unitData,
+          theme.palette.error.main,
+          theme.palette.info.main,
+          selectedShipment,
+        );
+        setReports(sensorReportInfo);
+        setAllGraphs(graphs);
+        setMarkers(markersToSet);
+      } else {
+        setReports([]);
+        setAllGraphs([]);
+        setMarkers([]);
+      }
     }
   }, [sensorReportData, sensorAlertData, selectedShipment]);
 

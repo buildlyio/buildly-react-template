@@ -15,42 +15,43 @@ const CustomizedSteppers = ({ steps }) => {
   const getIcon = (step) => {
     switch (true) {
       case step.active && !step.completed:
-        return <CircleIcon className="customizadStepperActive" />;
+        return <CircleIcon className="customizedStepperActive" />;
 
       case step.active && step.completed:
-        return <CheckIcon className="customizadStepperActive" />;
+        return <CheckIcon className="customizedStepperActive" />;
 
       case step.error && !step.completed:
-        return <CircleIcon className="customizadStepperError" />;
+        return <CircleIcon className="customizedStepperError" />;
 
       case step.error && step.completed:
-        return <CheckIcon className="customizadStepperError" />;
+        return <CheckIcon className="customizedStepperError" />;
 
       case step.info && !step.completed:
-        return <CircleIcon className="customizadStepperInfo" />;
+        return <CircleIcon className="customizedStepperInfo" />;
 
       case step.info && step.completed:
-        return <CheckIcon className="customizadStepperInfo" />;
+        return <CheckIcon className="customizedStepperInfo" />;
 
       default:
-        return <CircleIcon className="customizadStepperDefault" />;
+        return <CircleIcon className="customizedStepperDefault" />;
     }
   };
 
   return (
-    <Stepper alternativeLabel connector={<StepConnector className="customizadStepperConnector" />} className="customizadStepperRoot">
+    <Stepper alternativeLabel connector={<StepConnector className="customizedStepperConnector" />} className="customizedStepperRoot">
       {steps.map((step, index) => (
         <Stack key={index} sx={{ flex: 1 }}>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignSelf: 'center' }}>
             {step.titleIcon}
             <Typography textAlign="center" fontWeight={700} pb={2} pl={step.titleIcon ? 1 : 0} pr={1} fontSize={14} color={step.titleColor}>
               {step.title}
             </Typography>
           </div>
-          <Step className={index === 0 ? 'customizadStepperNoLine' : ''}>
+          <Step className={index === 0 ? 'customizedStepperNoLine' : ''}>
             <StepIcon icon={getIcon(step)} />
             <StepLabel>{step.label}</StepLabel>
-            <Typography textAlign="center" fontSize={14}>{step.content}</Typography>
+            <Typography textAlign="center" fontSize={14} style={{ width: 'max-content' }}>{step.content}</Typography>
+            <Typography textAlign="center" fontSize={14}>{step.caption}</Typography>
           </Step>
         </Stack>
       ))}

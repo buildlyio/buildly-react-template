@@ -212,8 +212,9 @@ const Shipment = ({ history }) => {
         titleColor: 'inherit',
         label: 'Shipment started',
         content: _.isEmpty(shipment.actual_time_of_departure)
-          ? `${moment(shipment.estimated_time_of_departure).tz(data).format(`${dateFormat} ${timeFormat}`)} (Estimated Time)`
-          : `${moment(shipment.actual_time_of_departure).tz(data).format(`${dateFormat} ${timeFormat}`)} (Actual Time)`,
+          ? moment(shipment.estimated_time_of_departure).tz(data).format(`${dateFormat} ${timeFormat}`)
+          : moment(shipment.actual_time_of_departure).tz(data).format(`${dateFormat} ${timeFormat}`),
+        caption: _.isEmpty(shipment.actual_time_of_departure) ? '(Estimated Time)' : '(Actual Time)',
         active: !!shipment.actual_time_of_departure,
         error: false,
         info: false,
@@ -330,8 +331,9 @@ const Shipment = ({ history }) => {
       titleColor: 'inherit',
       label: 'Shipment arrived',
       content: _.isEmpty(shipment.actual_time_of_arrival)
-        ? `${moment(shipment.estimated_time_of_arrival).tz(data).format(`${dateFormat} ${timeFormat}`)} (Estimated Time)`
-        : `${moment(shipment.actual_time_of_arrival).tz(data).format(`${dateFormat} ${timeFormat}`)} (Actual Time)`,
+        ? moment(shipment.estimated_time_of_arrival).tz(data).format(`${dateFormat} ${timeFormat}`)
+        : moment(shipment.actual_time_of_arrival).tz(data).format(`${dateFormat} ${timeFormat}`),
+      caption: _.isEmpty(shipment.actual_time_of_arrival) ? '(Estimated Time)' : '(Actual Time)',
       active: !!shipment.actual_time_of_arrival,
       error: false,
       info: false,
@@ -349,8 +351,9 @@ const Shipment = ({ history }) => {
       titleColor: 'inherit',
       label: 'Shipment completed',
       content: _.isEqual(shipment.status, 'Completed')
-        ? `${moment(shipment.edit_date).tz(data).format(`${dateFormat} ${timeFormat}`)} (Actual Time)`
-        : `${moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').tz(data).format(`${dateFormat} ${timeFormat}`)} (Estimated Time)`,
+        ? moment(shipment.edit_date).tz(data).format(`${dateFormat} ${timeFormat}`)
+        : moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').tz(data).format(`${dateFormat} ${timeFormat}`),
+      caption: !_.isEqual(shipment.status, 'Completed') ? '(Estimated Time)' : '(Actual Time)',
       active: _.isEqual(shipment.status, 'Completed'),
       error: false,
       info: false,

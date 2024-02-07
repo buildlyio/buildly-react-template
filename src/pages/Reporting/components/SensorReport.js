@@ -77,15 +77,14 @@ const SensorReport = ({
             variant="h5"
           >
             {shipmentName
-              && `Sensor Report - Shipment: ${shipmentName}`}
-            {!shipmentName && 'Sensor Report'}
+              ? `Sensor Report - Shipment: ${shipmentName}`
+              : 'Sensor Report'}
           </Typography>
         </div>
         <DataTableWrapper
           noSpace
           hideAddButton
           filename="SensorReportData"
-          tableHeight="500px"
           rows={rows}
           columns={columns}
           selectable={{
