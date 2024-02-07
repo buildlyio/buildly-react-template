@@ -153,7 +153,8 @@ export const CARRIER = [
 
 export const SENSOR_PLATFORM = [
   // { value: 'iclp', label: 'ICLP' },
-  { value: 'tive', label: 'Tive' },
+  { value: 'Tive', label: 'Tive' },
+  { value: 'ProofTracker Pro', label: 'ProofTracker Pro' },
 ];
 
 export const associatedGatewayMock = [

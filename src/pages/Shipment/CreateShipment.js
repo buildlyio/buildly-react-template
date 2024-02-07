@@ -179,7 +179,7 @@ const CreateShipment = ({ history, location }) => {
   const note = useInput((!_.isEmpty(editData) && editData.note) || '');
   const [additionalCustodians, setAdditionalCustocations] = useState([]);
 
-  const gatewayType = useInput((!_.isEmpty(editData) && editData.platform_name) || 'tive');
+  const gatewayType = useInput((!_.isEmpty(editData) && editData.platform_name) || 'Tive');
   const [availableGateways, setAvailableGateways] = useState([]);
   const gateway = useInput('');
   const transmissionInterval = useInput(

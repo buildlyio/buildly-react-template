@@ -14,17 +14,17 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
       let shipmentPayload = shipmentData.shipment;
       let uploadFile = null;
       if (!_.isEmpty(files)) {
-        const responses = _.map(files, (file) => {
+        const responses = await Promise.all(_.map(files, async (file) => {
           uploadFile = new FormData();
           uploadFile.append('file', file, file.name);
           uploadFile.append('shipment_uuid', shipmentPayload.shipment_uuid);
-          const uploadResponse = httpService.makeRequest(
+          const uploadResponse = await httpService.makeRequest(
             'post',
             `${window.env.API_URL}shipment/upload_file/`,
             uploadFile,
           );
           return uploadResponse;
-        });
+        }));
         shipmentPayload = {
           ...shipmentPayload,
           uploaded_pdf: shipmentPayload.uploaded_pdf
@@ -36,13 +36,14 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
         };
       }
       if (!_.isEmpty(deleteFiles)) {
-        const responses = _.map(deleteFiles, (file) => (
-          httpService.makeRequest(
+        const responses = await Promise.all(_.map(deleteFiles, async (file) => (
+          // eslint-disable-next-line no-return-await
+          await httpService.makeRequest(
             'post',
             `${window.env.API_URL}shipment/delete_file/`,
             { filename: file, shipment_uuid: shipmentPayload.shipment_uuid },
           )
-        ));
+        )));
       }
       if (!_.isEmpty(updateGateway)) {
         shipmentPayload = {
@@ -51,14 +52,10 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
           gateway_imei: [_.toString(updateGateway.imei_number)],
         };
       }
-      await httpService.makeRequest(
+      const data = await httpService.makeRequest(
         'patch',
         `${window.env.API_URL}shipment/shipment/${shipmentPayload.id}/`,
         shipmentPayload,
-      );
-      const data = await httpService.makeRequest(
-        'get',
-        `${window.env.API_URL}shipment/shipment/${shipmentPayload.id}/`,
       );
       if (data && data.data) {
         let startCustody = {
@@ -81,13 +78,13 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
           };
         }
         if (startCustody.id) {
-          httpService.makeRequest(
+          await httpService.makeRequest(
             'patch',
             `${window.env.API_URL}custodian/custody/${startCustody.id}/`,
             startCustody,
           );
         } else {
-          httpService.makeRequest(
+          await httpService.makeRequest(
             'post',
             `${window.env.API_URL}custodian/custody/`,
             {
@@ -98,44 +95,48 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
           );
         }
         if (!_.isEmpty(carriers)) {
-          _.map(carriers, (carrier, index) => {
-            if (carrier.id) {
-              const custodyPayload = {
-                ...carrier,
-                start_of_custody_location: locations[index],
-                end_of_custody_location: _.lt(index + 1, _.size(locations))
-                  ? locations[index + 1]
-                  : endCustody.start_of_custody_location,
-              };
-              return httpService.makeRequest(
-                'patch',
-                `${window.env.API_URL}custodian/custody/${custodyPayload.id}/`,
-                custodyPayload,
+          await Promise.all(
+            _.map(carriers, async (carrier, index) => {
+              if (carrier.id) {
+                const custodyPayload = {
+                  ...carrier,
+                  start_of_custody_location: locations[index],
+                  end_of_custody_location: _.lt(index + 1, _.size(locations))
+                    ? locations[index + 1]
+                    : endCustody.start_of_custody_location,
+                };
+                // eslint-disable-next-line no-return-await
+                return await httpService.makeRequest(
+                  'patch',
+                  `${window.env.API_URL}custodian/custody/${custodyPayload.id}/`,
+                  custodyPayload,
+                );
+              }
+              // eslint-disable-next-line no-return-await
+              return await httpService.makeRequest(
+                'post',
+                `${window.env.API_URL}custodian/custody/`,
+                {
+                  ...carrier,
+                  start_of_custody_location: locations[index],
+                  end_of_custody_location: _.lt(index + 1, _.size(locations))
+                    ? locations[index + 1]
+                    : end_custody.location,
+                  shipment_id: data.data.shipment_uuid,
+                  shipment: data.data.id,
+                },
               );
-            }
-            return httpService.makeRequest(
-              'post',
-              `${window.env.API_URL}custodian/custody/`,
-              {
-                ...carrier,
-                start_of_custody_location: locations[index],
-                end_of_custody_location: _.lt(index + 1, _.size(locations))
-                  ? locations[index + 1]
-                  : end_custody.location,
-                shipment_id: data.data.shipment_uuid,
-                shipment: data.data.id,
-              },
-            );
-          });
+            }),
+          );
         }
         if (endCustody.id) {
-          httpService.makeRequest(
+          await httpService.makeRequest(
             'patch',
             `${window.env.API_URL}custodian/custody/${endCustody.id}/`,
             endCustody,
           );
         } else {
-          httpService.makeRequest(
+          await httpService.makeRequest(
             'post',
             `${window.env.API_URL}custodian/custody/`,
             {
@@ -185,7 +186,7 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
                 transmission_interval: data.data.transmission_time,
                 measurement_interval: data.data.measurement_time,
               };
-              httpService.makeRequest(
+              await httpService.makeRequest(
                 'post',
                 `${window.env.API_URL}sensors/configure_gateway/`,
                 configurePayload,
