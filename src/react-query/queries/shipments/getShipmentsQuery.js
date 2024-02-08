@@ -1,7 +1,7 @@
 import { httpService } from '@modules/http/http.service';
 import _ from 'lodash';
 
-export const getShipmentsQuery = async (organization, status, displayAlert) => {
+export const getShipmentsQuery = async (organization, status, displayAlert, shipmentId = null) => {
   try {
     let query_params = `?organization_uuid=${organization}`;
     const response = await httpService.makeRequest(
@@ -15,7 +15,17 @@ export const getShipmentsQuery = async (organization, status, displayAlert) => {
     if (consortium_uuid) {
       query_params = query_params.concat(`&consortium_uuid=${consortium_uuid}`);
     }
-    if (status) {
+    if (shipmentId) {
+      const shipmentResponse = await httpService.makeRequest(
+        'get',
+        `${window.env.API_URL}shipment/shipment/?partner_shipment_id=${shipmentId}`,
+      );
+      query_params = query_params.concat(
+        _.includes(['Planned', 'En route', 'Arrived'], shipmentResponse.data[0].status)
+          ? '&status=Active'
+          : `&status=${shipmentResponse.data[0].status}`,
+      );
+    } else if (status) {
       query_params = query_params.concat(`&status=${status}`);
     }
     const shipmentResponse = await httpService.makeRequest(

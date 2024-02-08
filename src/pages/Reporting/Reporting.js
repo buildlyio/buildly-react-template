@@ -53,10 +53,9 @@ const Reporting = () => {
   const theme = useTheme();
   const organization = getUser().organization.organization_uuid;
 
-  const [locStatus, setLocStatus] = useState('');
   const [locShipmentID, setLocShipmentID] = useState('');
   const [tileView, setTileView] = useState(true);
-  const [shipmentFilter, setShipmentFilter] = useState(locStatus || 'Active');
+  const [shipmentFilter, setShipmentFilter] = useState('Active');
   const [selectedGraph, setSelectedGraph] = useState('temperature');
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [shipmentOverview, setShipmentOverview] = useState([]);
@@ -72,8 +71,8 @@ const Reporting = () => {
   let isShipmentDataAvailable = false;
 
   const { data: shipmentData, isLoading: isLoadingShipments, isFetching: isFetchingShipments } = useQuery(
-    ['shipments', shipmentFilter, organization],
-    () => getShipmentsQuery(organization, locStatus || (shipmentFilter === 'Active' ? 'Planned,En route,Arrived' : shipmentFilter), displayAlert),
+    ['shipments', shipmentFilter, locShipmentID, organization],
+    () => getShipmentsQuery(organization, (shipmentFilter === 'Active' ? 'Planned,En route,Arrived' : shipmentFilter), displayAlert, locShipmentID),
     { refetchOnWindowFocus: false },
   );
 
@@ -133,25 +132,10 @@ const Reporting = () => {
   useEffect(() => {
     if (location.search) {
       setLocShipmentID(_.split(_.split(location.search, '?shipment=')[1], '&status=')[0]);
-      if (_.includes(location.search, '&status=')) {
-        setLocStatus(decodeURI(_.split(location.search, '&status=')[1]));
-      } else {
-        setLocStatus('');
-        if (!_.isEqual(shipmentFilter, 'Active')) {
-          setShipmentFilter('Active');
-        }
-      }
     } else {
-      setLocStatus('');
       setLocShipmentID('');
     }
   }, [location.search]);
-
-  useEffect(() => {
-    if (locStatus) {
-      setShipmentFilter(_.includes(['Planned', 'En route', 'Arrived'], locStatus) ? 'Active' : locStatus);
-    }
-  }, [locStatus]);
 
   useEffect(() => {
     if (shipmentData && custodianData && custodyData && contactInfo) {
@@ -171,6 +155,7 @@ const Reporting = () => {
         if (locShipmentID) {
           const locShip = _.find(overview, { partner_shipment_id: locShipmentID });
           setSelectedShipment(locShip);
+          setShipmentFilter(locShip.status);
         }
       }
     }
@@ -244,10 +229,14 @@ const Reporting = () => {
   const handleShipmentSelection = (shipment) => {
     history.replaceState(null, '', location.pathname);
     location.search = '';
+    setLocShipmentID('');
     setSelectedShipment(shipment);
   };
 
   const makeFilterSelection = (value) => {
+    history.replaceState(null, '', location.pathname);
+    location.search = '';
+    setLocShipmentID('');
     isShipmentDataAvailable = false;
     setShipmentFilter(value);
     setSelectedShipment(null);
