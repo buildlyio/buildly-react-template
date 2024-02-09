@@ -115,7 +115,10 @@ const AlertNotifications = ({
         formattedAlerts = [
           ...formattedAlerts,
           {
-            shipment_id: ship.id, shipment_name: ship.name, alerts: _.filter(alerts, { shipment_id: ship.id }), viewed: false,
+            shipment_id: ship.id,
+            shipment_name: ship.name,
+            alerts: _.orderBy(_.filter(alerts, { shipment_id: ship.id }), ['alert_time', 'id'], ['desc', 'asc']),
+            viewed: false,
           },
         ];
       });

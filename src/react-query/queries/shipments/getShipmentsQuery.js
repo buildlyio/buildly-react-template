@@ -22,7 +22,7 @@ export const getShipmentsQuery = async (organization, status, displayAlert, ship
       );
       query_params = query_params.concat(
         _.includes(['Planned', 'En route', 'Arrived'], shipmentResponse.data[0].status)
-          ? '&status=Active'
+          ? '&status=Planned,En route,Arrived'
           : `&status=${shipmentResponse.data[0].status}`,
       );
     } else if (status) {
