@@ -7,48 +7,17 @@ import {
   Divider,
   Box,
 } from '@mui/material';
-import { withStyles } from '@mui/styles';
-
-const StyledMenu = withStyles({
-  paper: {
-    border: '1px solid #d3d4d5',
-  },
-})((props) => (
-  <Menu
-    elevation={0}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'left',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'left',
-    }}
-    {...props}
-  />
-));
-
-const StyledMenuItem = withStyles((theme) => ({
-  root: {
-    '&:hover': {
-      backgroundColor: theme.palette.primary.light,
-      '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-        color: theme.palette.primary.dark,
-      },
-    },
-    padding: theme.spacing(2),
-    textAlign: 'center',
-  },
-}))(MenuItem);
+import './TopBarStyles.css';
 
 const AccountMenu = ({
   anchorEl,
   setAnchorEl,
   user,
   handleLogoutClick,
-  handleMyAccountClick,
+  handleAccountSettingsClick,
   handleAboutClick,
-  organizationData,
+  handlePrivacyClick,
+  organizationName,
 }) => {
   const handleClose = () => {
     setAnchorEl(null);
@@ -56,12 +25,21 @@ const AccountMenu = ({
 
   return (
     <div>
-      <StyledMenu
+      <Menu
         id="customized-menu"
         anchorEl={anchorEl}
         keepMounted
         open={!!anchorEl}
         onClose={handleClose}
+        elevation={0}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
       >
         <Box
           mb={2}
@@ -75,26 +53,29 @@ const AccountMenu = ({
           <Typography variant="body2">
             {user && `${user.email}`}
           </Typography>
-          {organizationData && (
+          {organizationName && (
             <Typography variant="body1">
-              {`Works at: ${organizationData.name}`}
+              {`Works at: ${organizationName}`}
             </Typography>
           )}
         </Box>
-
         <Divider />
-        <StyledMenuItem onClick={handleMyAccountClick}>
-          <ListItemText primary="My Account" />
-        </StyledMenuItem>
+        <MenuItem onClick={handleAccountSettingsClick} className="topbarAdminMenuRoot">
+          <ListItemText primary="Account & Settings" />
+        </MenuItem>
         <Divider />
-        <StyledMenuItem onClick={handleAboutClick}>
+        <MenuItem onClick={handleAboutClick} className="topbarAdminMenuRoot">
           <ListItemText primary="About Platform" />
-        </StyledMenuItem>
+        </MenuItem>
         <Divider />
-        <StyledMenuItem onClick={handleLogoutClick}>
+        <MenuItem onClick={handlePrivacyClick} className="topbarAdminMenuRoot">
+          <ListItemText primary="Privacy Policy" />
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleLogoutClick} className="topbarAdminMenuRoot">
           <ListItemText primary="Logout" />
-        </StyledMenuItem>
-      </StyledMenu>
+        </MenuItem>
+      </Menu>
     </div>
   );
 };

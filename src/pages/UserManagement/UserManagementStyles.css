@@ -1,0 +1,14 @@
+.usersIconDiv {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.usersIconButton {
+  color: var(--color-palette-primary-dark);
+}
+
+.usersIconButton:hover {
+  background-color: var(--color-palette-primary-light);
+}

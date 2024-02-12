@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import {
   Typography,
   Box,
@@ -7,60 +6,32 @@ import {
   CardContent,
   Button,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { routes } from '../../routes/routesConstants';
+import { routes } from '@routes/routesConstants';
+import './ForbiddenStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  pageHeading: {
-    fontWeight: 'bold',
-    marginBottom: theme.spacing(5),
-  },
-  backButton: {
-    margin: theme.spacing(3, 0),
-  },
-}));
+const Forbidden = ({ history }) => (
+  <Box mt={3} textAlign="center">
+    <Card variant="outlined">
+      <CardContent>
+        <Typography className="forbiddenPageHeading" variant="h2">
+          403
+        </Typography>
+        <Typography className="forbiddenPageHeading" variant="h5">
+          Access Denied
+          <p>You don't have permission to access this page</p>
+        </Typography>
+      </CardContent>
+    </Card>
+    <Button
+      type="button"
+      variant="contained"
+      color="primary"
+      onClick={() => history.push(routes.SHIPMENT)}
+      className="forbiddenBackButton"
+    >
+      Back To Shipment Page
+    </Button>
+  </Box>
+);
 
-/**
- * Outputs the 403 Page.
- */
-const Forbidden = ({
-  history,
-}) => {
-  const classes = useStyles();
-
-  return (
-    <Box mt={3} textAlign="center">
-      <Card variant="outlined">
-        <CardContent>
-
-          <Typography className={classes.pageHeading} variant="h2">
-            403
-
-          </Typography>
-
-          <Typography className={classes.pageHeading} variant="h5">
-            Access Denied
-            <p>You don't have permission to access this page</p>
-          </Typography>
-        </CardContent>
-      </Card>
-      <Button
-        type="button"
-        variant="contained"
-        color="primary"
-        onClick={() => history.push(routes.SHIPMENT)}
-        className={classes.backButton}
-      >
-        Back To Shipment Page
-      </Button>
-
-    </Box>
-  );
-};
-
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(Forbidden);
+export default Forbidden;

@@ -1,60 +1,23 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
-import {
-  useTheme,
-  useMediaQuery,
-  Grid,
-  Button,
-  TextField,
-} from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import FormModal from '../../../../components/Modal/FormModal';
-import { getUser } from '../../../../context/User.context';
-import { useInput } from '../../../../hooks/useInput';
-import {
-  addProduct,
-  editProduct,
-} from '../../../../redux/items/actions/items.actions';
-import { validators } from '../../../../utils/validators';
+import { Grid, Button, TextField } from '@mui/material';
+import Loader from '@components/Loader/Loader';
+import FormModal from '@components/Modal/FormModal';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isDesktop } from '@utils/mediaQuery';
+import { useAddProductMutation } from '@react-query/mutations/items/addProductMutation';
+import { useEditProductMutation } from '@react-query/mutations/items/editProductMutation';
+import useAlert from '@hooks/useAlert';
+import '../../AdminPanelStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-}));
-
-const AddProduct = ({
-  history,
-  location,
-  loading,
-  dispatch,
-}) => {
-  const classes = useStyles();
+const AddProduct = ({ history, location }) => {
   const organization = getUser().organization.organization_uuid;
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
+
+  const { displayAlert } = useAlert();
 
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -79,9 +42,6 @@ const AddProduct = ({
 
   const buttonText = editPage ? 'Save' : 'Add Product';
   const formTitle = editPage ? 'Edit Product' : 'Add Product';
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   const closeFormModal = () => {
     const dataHasChanged = (
@@ -109,6 +69,10 @@ const AddProduct = ({
     }
   };
 
+  const { mutate: addProductMutation, isLoading: isAddingProduct } = useAddProductMutation(organization, history, location.state.from, displayAlert);
+
+  const { mutate: editProductMutation, isLoading: isEditingProduct } = useEditProductMutation(organization, history, location.state.from, displayAlert);
+
   /**
    * Submit The form and add/edit custodian type
    * @param {Event} event the default submit event
@@ -126,17 +90,13 @@ const AddProduct = ({
       edit_date: currentDateTime,
     };
     if (editPage) {
-      dispatch(editProduct(data));
+      editProductMutation(data);
     } else {
       data = {
         ...data,
         create_date: currentDateTime,
       };
-      dispatch(addProduct(data));
-    }
-    setFormModal(false);
-    if (location && location.state) {
-      history.push(location.state.from);
+      addProductMutation(data);
     }
   };
 
@@ -192,18 +152,19 @@ const AddProduct = ({
           open={openFormModal}
           handleClose={closeFormModal}
           title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth="md"
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {(isAddingProduct || isEditingProduct) && (
+            <Loader open={isAddingProduct || isEditingProduct} />
+          )}
           <form
-            className={classes.form}
+            className="adminPanelFormContainer"
             noValidate
             onSubmit={handleSubmit}
           >
-            <Grid container spacing={isDesktop ? 2 : 0}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -289,26 +250,26 @@ const AddProduct = ({
                 />
               </Grid>
               <Grid container spacing={2} justifyContent="center">
-                <Grid item xs={6} sm={4}>
+                <Grid item xs={6} sm={5.15} md={4}>
                   <Button
                     type="submit"
                     fullWidth
                     variant="contained"
                     color="primary"
-                    className={classes.submit}
-                    disabled={loading || submitDisabled()}
+                    className="adminPanelSubmit"
+                    disabled={isAddingProduct || isEditingProduct || submitDisabled()}
                   >
                     {buttonText}
                   </Button>
                 </Grid>
-                <Grid item xs={6} sm={4}>
+                <Grid item xs={6} sm={5.15} md={4}>
                   <Button
                     type="button"
                     fullWidth
                     variant="outlined"
                     color="primary"
                     onClick={discardFormData}
-                    className={classes.submit}
+                    className="adminPanelSubmit"
                   >
                     Cancel
                   </Button>
@@ -322,9 +283,4 @@ const AddProduct = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.itemsReducer,
-});
-
-export default connect(mapStateToProps)(AddProduct);
+export default AddProduct;

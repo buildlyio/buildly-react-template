@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Route } from 'react-router-dom';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   Box,
@@ -8,30 +7,18 @@ import {
   Tabs,
   Tab,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import Loader from '../../components/Loader/Loader';
-import Forbidden from '../../components/Forbidden/Forbidden';
-import { getUser } from '../../context/User.context';
-import { routes } from '../../routes/routesConstants';
-import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
+import Forbidden from '@components/Forbidden/Forbidden';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
 import Configuration from './Configuration/Configuration';
 // import ImportExport from './ImportExport/ImportExport';
 import ConsortiumSettings from './Consortium/ConsortiumSettings';
+import './AdminPanelStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  heading: {
-    fontWeight: 'bold',
-    margin: '0.5em 0',
-  },
-}));
-
-/**
- * Outputs the admin panel page.
- */
 const AdminPanel = ({
-  history, location, organizationData, loading,
+  history, location, organizationData,
 }) => {
-  const classes = useStyles();
   const isAdmin = checkForAdmin(getUser()) || checkForGlobalAdmin(getUser());
   const superAdmin = checkForGlobalAdmin(getUser());
 
@@ -71,15 +58,13 @@ const AdminPanel = ({
 
   return (
     <Box mt={5} mb={5}>
-      {loading && <Loader open={loading} />}
       {isAdmin && (
         <Box mt={5} mb={5}>
           <Box mb={3}>
-            <Typography className={classes.heading} variant="h4">
+            <Typography className="adminPanelHeading" variant="h4">
               Admin Panel
             </Typography>
           </Box>
-
           <Box mb={3}>
             <Tabs value={view} onChange={viewTabClicked}>
               {_.map(subNav, (itemProps, index) => (
@@ -90,7 +75,6 @@ const AdminPanel = ({
               ))}
             </Tabs>
           </Box>
-
           <Route path={routes.CONFIGURATION} component={Configuration} />
           {/* {organizationData && organizationData.allow_import_export && (
             <Route
@@ -108,27 +92,7 @@ const AdminPanel = ({
         />
       )}
     </Box>
-
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-  loading: (
-    state.alertReducer.loading
-    || state.authReducer.loading
-    || state.consortiumReducer.loading
-    || state.coreGroupReducer.loading
-    || state.coreuserReducer.loading
-    || state.crudDataReducer.loading
-    || state.custodianReducer.loading
-    || state.importExportReducer.loading
-    || state.itemsReducer.loading
-    || state.optionsReducer.loading
-    || state.sensorsGatewayReducer.loading
-    || state.shipmentReducer.loading
-  ),
-});
-
-export default connect(mapStateToProps)(AdminPanel);
+export default AdminPanel;

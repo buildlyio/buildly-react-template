@@ -1,376 +1,182 @@
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { rem } from 'polished';
+import React, { useEffect, useState } from 'react';
+import _ from 'lodash';
+import { useQuery } from 'react-query';
 import {
-  Button,
-  IconButton,
-  ButtonGroup,
-  Menu,
-  MenuItem,
-  Box,
-  Typography,
-} from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { MoreHoriz } from '@mui/icons-material';
-import {
-  PermissionsTable,
-} from '../../../components/PermissionsTable/PermissionsTable';
-import { getUser } from '../../../context/User.context';
-import Crud from '../../../modules/crud/Crud';
-import {
-  getCoregroups,
-} from '../../../redux/coregroup/actions/coregroup.actions';
-import { checkForAdmin } from '../../../utils/utilMethods';
+  VerifiedUser as ActivateIcon,
+  VerifiedUserOutlined as DeactivateIcon,
+  Delete as DeleteIcon,
+} from '@mui/icons-material';
+import { IconButton, MenuItem, Select } from '@mui/material';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import useAlert from '@hooks/useAlert';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { useEditCoreuserMutation } from '@react-query/mutations/coreuser/editCoreuserMutation';
+import { getCoregroupQuery } from '@react-query/queries/coregroup/getCoregroupQuery';
+import { getCoreuserQuery } from '@react-query/queries/coreuser/getCoreuserQuery';
+import { getGroupsFormattedRow, getUserFormattedRows, userColumns } from '@utils/constants';
+import '../UserManagementStyles.css';
+import { useDeleteCoreuserMutation } from 'react-query/mutations/coreuser/deleteCoreuserMutation';
 
-const useStyles = makeStyles((theme) => ({
-  btnPermission: {
-    fontSize: rem(10),
-  },
-}));
-
-/**
- * Current users list
- */
-const Users = ({ data, dispatch }) => {
-  const classes = useStyles();
-  // state to toggle actions menus
-  const [menu, setMenu] = useState({ row: null, element: null });
-  const [coreGroupsLoaded, setCoreGroupsLoaded] = useState(false);
-  const [permissions, setPermissions] = useState([]);
-  // to get currently logged in user
+const Users = () => {
   const user = getUser();
-  const isOrganizationAdmin = checkForAdmin(user);
+
+  const { displayAlert } = useAlert();
+  const [rows, setRows] = useState([]);
+  const [groups, setGroups] = useState([]);
+
+  const { data: coreuserData, isLoading: isLoadingCoreuser } = useQuery(
+    ['users'],
+    () => getCoreuserQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: coregroupData, isLoading: isLoadingCoregroup } = useQuery(
+    ['coregroup'],
+    () => getCoregroupQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: organizations, isLoading: isLoadingOrganizations } = useQuery(
+    ['organizations'],
+    () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { mutate: editUserMutation, isLoading: isEditingUser } = useEditCoreuserMutation(displayAlert);
+
+  const { mutate: deleteUserMutation, isLoading: isDeletingUser } = useDeleteCoreuserMutation(displayAlert);
 
   useEffect(() => {
-    if (!coreGroupsLoaded) {
-      dispatch(getCoregroups());
-      setCoreGroupsLoaded(true);
-    } else {
-      // define permissions
-      setPermissions(data.map((coregroup) => ({
-        label: coregroup.name,
-        value: coregroup.id,
-      })));
+    if (!_.isEmpty(coreuserData)) {
+      const formattedUsers = getUserFormattedRows(coreuserData);
+      const signedInUser = _.remove(formattedUsers, { id: user.id });
+
+      setRows([...signedInUser, ...formattedUsers]);
     }
-  }, [data]);
+  }, [coreuserData]);
 
-  // table templates
-  const permissionsTemplate = (row, crud) => {
-    const [active, setActive] = useState(
-      (row.core_groups[0] && row.core_groups[0].id)
-      || row.core_groups[0],
-    );
+  useEffect(() => {
+    if (!_.isEmpty(coregroupData) && !_.isEmpty(organizations)) {
+      setGroups(getGroupsFormattedRow(coregroupData, organizations));
+    }
+  }, [coregroupData, organizations]);
 
-    return coreGroupsLoaded ? (
-      <ButtonGroup
-        disableElevation
-        color="primary"
-        size="small"
-        disabled={
-          !row.is_active
-          || user.core_user_uuid === row.core_user_uuid
-        }
-      >
-        {permissions.map((permission, index) => (
-          <Button
-            className={classes.btnPermission}
-            key={`btnGroup${index}`}
-            variant={
-              permission.value === active
-                ? 'contained'
-                : 'outlined'
-            }
-            onClick={() => {
-              setActive(permission.value);
-              crud.updateItem({
-                id: row.id,
-                core_groups: [permission.value],
-              });
-            }}
-          >
-            {permission.label}
-          </Button>
-        ))}
-      </ButtonGroup>
-    ) : (
-      <></>
-    );
+  const activateDeactivateUser = (coreuser) => {
+    const editData = { id: coreuser.id, is_active: !coreuser.is_active };
+    editUserMutation(editData);
   };
 
-  const actionsTemplate = (row, crud) => {
-    const handleMenuClick = (event) => {
-      setMenu({ row, element: event.currentTarget });
-    };
+  const deleteUser = (coreuser) => {
+    const deleteData = { id: coreuser.id };
+    deleteUserMutation(deleteData);
+  };
 
-    const handleMenuItemClick = (action) => {
-      if (action === 'delete') {
-        crud.deleteItem(menu.row);
-      } else if (action === 'deactivate') {
-        crud.updateItem({ id: menu.row.id, is_active: false });
-      } else {
-        crud.updateItem({ id: menu.row.id, is_active: true });
-      }
-      setMenu({ row: null, element: null });
-    };
-
-    const handleMenuClose = () => {
-      setMenu({ row: null, element: null });
-    };
-
-    return (
-      <>
-        <IconButton
-          disabled={user.core_user_uuid === row.core_user_uuid}
-          aria-label="more"
-          aria-controls={`userActions${row.id}`}
-          aria-haspopup="true"
-          onClick={handleMenuClick}
-        >
-          <MoreHoriz />
-        </IconButton>
-        <Menu
-          id={`userActions${row.id}`}
-          anchorEl={menu.element}
-          keepMounted
-          open={!!(menu.row && (menu.row.id === row.id))}
-          onClose={handleMenuClose}
-        >
-          {row.actions.filter((option) => !(option.value === 'delete' && row.is_active)).map((option) => (
-            <MenuItem
-              key={`userActions${row.id}:${option.value}`}
-              onClick={() => handleMenuItemClick(option.value)}
-            >
-              {option.label}
-            </MenuItem>
-          ))}
-        </Menu>
-      </>
-    );
+  const updatePermissions = (e, coreuser) => {
+    const editData = { id: coreuser.id, core_groups: [e.target.value] };
+    editUserMutation(editData);
   };
 
   return (
-    <Box sx={{
-      overflowX: 'auto',
-    }}
-    >
-      <Crud
-        deleteAction="DELETE_COREUSER"
-        updateAction="UPDATE_COREUSER"
-        createAction="CREATE_COREUSER"
-        loadAction="LOAD_DATA_COREUSER"
-        reducer="coreuserReducer"
-      >
-        { (crud) => {
-          if (crud.getData()) {
-            crud.getData().forEach((row) => {
-              if (row.is_active) {
-                row.actions = [
-                  { value: 'deactivate', label: 'Deactivate' },
-                  { value: 'delete', label: 'Delete' },
-                ];
-              } else {
-                row.actions = [
-                  { value: 'activate', label: 'Activate' },
-                  { value: 'delete', label: 'Delete' },
-                ];
-              }
-            });
-          }
-
-          return (
-            isOrganizationAdmin
-              ? (
-                <PermissionsTable
-                  columns={[
-                    {
-                      label: 'Full name',
-                      prop: 'name',
-                      flex: '1',
-                      template: (row) => {
-                        const { is_active, first_name, last_name } = row;
-                        return (
-                          <Typography
-                            variant="body1"
-                            style={
-                              !is_active
-                                ? { color: '#aaa' }
-                                : null
-                            }
-                          >
-                            {`${first_name} ${last_name}`}
-                          </Typography>
-                        );
-                      },
-                    },
-                    {
-                      label: 'Email',
-                      prop: 'email',
-                      flex: '2',
-                      template: (row) => {
-                        const { is_active, email } = row;
-                        return (
-                          <Typography
-                            variant="body2"
-                            style={
-                            !is_active
-                              ? { color: '#aaa' }
-                              : null
-                          }
-                          >
-                            {email}
-                          </Typography>
-                        );
-                      },
-                    },
-                    {
-                      label: 'Last activity',
-                      prop: 'activity',
-                      flex: '1',
-                      template: () => (
-                        <Typography
-                          variant="caption"
-                          style={{ color: '#aaa' }}
-                        >
-                          Today
-                        </Typography>
-                      ),
-                    },
-                    {
-                      label: 'Permissions',
-                      prop: 'permission',
-                      flex: '2',
-                      template: (row) => permissionsTemplate(row, crud, classes),
-                    },
-                    {
-                      label: 'Actions',
-                      prop: 'options',
-                      flex: '1',
-                      template: (row) => actionsTemplate(row, crud),
-                    },
-                  ]}
-                  rows={crud.getData()}
-                  sortFn={(a, b) => {
-                    if (a.core_user_uuid === user.core_user_uuid) {
-                      return -1;
-                    }
-                    if (b.core_user_uuid === user.core_user_uuid) {
-                      return 1;
-                    }
-                    return 0;
-                  }}
-                />
-              )
-              : (
-                <PermissionsTable
-                  columns={[
-                    {
-                      label: 'Full name',
-                      prop: 'name',
-                      flex: '1',
-                      template: (row) => {
-                        const { is_active, first_name, last_name } = row;
-                        return (
-                          <Typography
-                            variant="body1"
-                            style={
-                            !is_active
-                              ? { color: '#aaa' }
-                              : null
-                          }
-                          >
-                            {`${first_name} ${last_name}`}
-                          </Typography>
-                        );
-                      },
-                    },
-                    {
-                      label: 'Email',
-                      prop: 'email',
-                      flex: '2',
-                      template: (row) => {
-                        const { is_active, email } = row;
-                        return (
-                          <Typography
-                            variant="body2"
-                            style={
-                            !is_active
-                              ? { color: '#aaa' }
-                              : null
-                          }
-                          >
-                            {email}
-                          </Typography>
-                        );
-                      },
-                    },
-                    {
-                      label: 'Organization name',
-                      prop: 'organization',
-                      flex: '2',
-                      template: (row) => {
-                        const { is_active, organization, organization_name } = row;
-                        return (
-                          <Typography
-                            variant="body2"
-                            style={
-                            !is_active
-                              ? { color: '#aaa' }
-                              : null
-                          }
-                          >
-                            {organization.name || organization_name}
-                          </Typography>
-                        );
-                      },
-                    },
-                    {
-                      label: 'Last activity',
-                      prop: 'activity',
-                      flex: '1',
-                      template: () => (
-                        <Typography
-                          variant="caption"
-                          style={{ color: '#aaa' }}
-                        >
-                          Today
-                        </Typography>
-                      ),
-                    },
-                    {
-                      label: 'Permissions',
-                      prop: 'permission',
-                      flex: '2',
-                      template: (row) => permissionsTemplate(row, crud, classes),
-                    },
-                    {
-                      label: 'Actions',
-                      prop: 'options',
-                      flex: '1',
-                      template: (row) => actionsTemplate(row, crud),
-                    },
-                  ]}
-                  rows={crud.getData()}
-                  sortFn={(a, b) => {
-                    if (a.core_user_uuid === user.core_user_uuid) {
-                      return -1;
-                    }
-                    if (b.core_user_uuid === user.core_user_uuid) {
-                      return 1;
-                    }
-                    return 0;
-                  }}
-                />
-              )
-          );
+    <div>
+      <DataTableWrapper
+        hideAddButton
+        centerLabel
+        filename="Users"
+        tableHeader="Users"
+        loading={isLoadingCoreuser
+          || isLoadingCoregroup
+          || isLoadingOrganizations
+          || isEditingUser
+          || isDeletingUser}
+        rows={rows || []}
+        columns={[
+          ...userColumns(),
+          {
+            name: 'Permissions',
+            options: {
+              sort: true,
+              sortThirdClickReset: true,
+              filter: true,
+              setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
+              customBodyRenderLite: (dataIndex) => {
+                const coreuser = rows[dataIndex];
+                return (
+                  <Select
+                    fullWidth
+                    id="coreuser-permissions"
+                    disabled={_.isEqual(user.id, coreuser.id) || !coreuser.is_active}
+                    value={coreuser.core_groups[0].id}
+                    onChange={(e) => updatePermissions(e, coreuser)}
+                  >
+                    {_.map(groups, (cg) => (
+                      <MenuItem key={`coregorup-${cg.id}`} value={cg.id}>
+                        {cg.display_permission_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                );
+              },
+            },
+          },
+          {
+            name: 'Activate/Deactivate User',
+            options: {
+              filter: false,
+              sort: false,
+              empty: true,
+              setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
+              customBodyRenderLite: (dataIndex) => {
+                const coreuser = rows[dataIndex];
+                return (
+                  <div className="usersIconDiv">
+                    <IconButton
+                      disabled={_.isEqual(user.id, coreuser.id)}
+                      className="usersIconButton"
+                      onClick={(e) => activateDeactivateUser(coreuser)}
+                    >
+                      {coreuser.is_active ? <ActivateIcon titleAccess="Deactivate" /> : <DeactivateIcon titleAccess="Activate" />}
+                    </IconButton>
+                  </div>
+                );
+              },
+            },
+          },
+          {
+            name: 'Delete User',
+            options: {
+              filter: false,
+              sort: false,
+              empty: true,
+              setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
+              customBodyRenderLite: (dataIndex) => {
+                const coreuser = rows[dataIndex];
+                return (
+                  <div className="usersIconDiv">
+                    {coreuser.is_active ? null : (
+                      <IconButton
+                        className="usersIconButton"
+                        onClick={(e) => deleteUser(coreuser)}
+                      >
+                        <DeleteIcon titleAccess="Delete" />
+                      </IconButton>
+                    )}
+                  </div>
+                );
+              },
+            },
+          },
+        ]}
+        extraOptions={{
+          setRowProps: (row, dataIndex, rowIndex) => {
+            const coreuser = rows[dataIndex];
+            const style = { backgroundColor: '#BEBEBA' };
+            return !coreuser.is_active || _.isEqual(user.id, coreuser.id) ? { style } : {};
+          },
         }}
-      </Crud>
-    </Box>
+      />
+    </div>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.coreGroupReducer,
-});
-
-export default connect(mapStateToProps)(Users);
+export default Users;

@@ -1,0 +1,18 @@
+.infoToolTip {
+  font-size: 16px;
+  margin-left: 8px;
+  cursor: pointer;
+  color: var(--color-palette-secondary-main);
+}
+
+.MuiTooltip-tooltip {
+  background-color: var(--color-palette-background-dark2);
+  color: var(--color-palette-background-default);
+  max-width: 220px;
+  font-size: 12px;
+}
+
+.MuiTooltip-arrow .MuiTooltip-popperArrow .MuiTooltip-tooltipArrow {
+  background-color: var(--color-palette-background-dark2);
+  color: var(--color-palette-background-dark2);
+}

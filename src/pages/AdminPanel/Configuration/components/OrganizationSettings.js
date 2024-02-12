@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
+import { useTimezoneSelect, allTimezones } from 'react-timezone-select';
 import {
   Button,
   Checkbox,
@@ -8,9 +8,9 @@ import {
   MenuItem,
   TextField,
   Typography,
-  useTheme,
-  useMediaQuery,
   InputAdornment,
+  FormControlLabel,
+  Switch,
 } from '@mui/material';
 import {
   BoltOutlined as ShockIcon,
@@ -18,15 +18,8 @@ import {
   Opacity as HumidityIcon,
   Thermostat as TemperatureIcon,
 } from '@mui/icons-material';
-import { makeStyles } from '@mui/styles';
-import Loader from '../../../../components/Loader/Loader';
-import { useInput } from '../../../../hooks/useInput';
-import {
-  getOrgTypes,
-  updateOrganization,
-} from '../../../../redux/authuser/actions/authuser.actions';
-import { editUnitOfMeasure, getUnitOfMeasure } from '../../../../redux/items/actions/items.actions';
-import { getCountries, getCurrencies } from '../../../../redux/shipment/actions/shipment.actions';
+import Loader from '@components/Loader/Loader';
+import { useInput } from '@hooks/useInput';
 import {
   DATE_DISPLAY_CHOICES,
   TIME_DISPLAY_CHOICES,
@@ -34,74 +27,49 @@ import {
   UOM_DISTANCE_CHOICES,
   UOM_TEMPERATURE_CHOICES,
   UOM_WEIGHT_CHOICES,
-} from '../../../../utils/mock';
-import { uomDistanceUpdate } from '../../../../utils/utilMethods';
+} from '@utils/mock';
+import { uomDistanceUpdate } from '@utils/utilMethods';
+import { isDesktop2 } from '@utils/mediaQuery';
+import { getUser } from '@context/User.context';
+import { useQuery } from 'react-query';
+import { getOrganizationTypeQuery } from '@react-query/queries/authUser/getOrganizationTypeQuery';
+import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
+import { getCurrenciesQuery } from '@react-query/queries/shipments/getCurrenciesQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useUpdateOrganizationMutation } from '@react-query/mutations/authUser/updateOrganizationMutation';
+import { useEditUnitMutation } from '@react-query/mutations/items/editUnitMutation';
+import useAlert from '@hooks/useAlert';
+import '../../AdminPanelStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    margin: theme.spacing(0.25, 0, 0.25, 0.25),
-  },
-  checkbox: {
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  label: {
-    marginLeft: `${theme.spacing(2)}px !important`,
-    fontSize: '0.9rem',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-  numberInput: {
-    '& input::-webkit-outer-spin-button': {
-      '-webkit-appearance': 'none',
-      margin: 0,
-    },
-    '& input::-webkit-inner-spin-button': {
-      '-webkit-appearance': 'none',
-      margin: 0,
-    },
-    '& input[type="number"]': {
-      '-moz-appearance': 'textfield',
-    },
-  },
-}));
+const OrganizationSettings = () => {
+  const organizationData = getUser().organization;
+  const organization = getUser().organization.organization_uuid;
 
-const OrganizationSettings = ({
-  dispatch,
-  loading,
-  organizationData,
-  orgTypes,
-  unitOfMeasure,
-  countries,
-  currencies,
-}) => {
-  const classes = useStyles();
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+  const { displayAlert } = useAlert();
+
+  const { data: organizationTypesData, isLoading: isLoadingOrganizationTypes } = useQuery(
+    ['organizationTypes'],
+    () => getOrganizationTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
+    ['countries'],
+    () => getCountriesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: currenciesData, isLoading: isLoadingCurrencies } = useQuery(
+    ['currencies'],
+    () => getCurrenciesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
 
   const allowImportExport = useInput(
     (organizationData
@@ -135,80 +103,92 @@ const OrganizationSettings = ({
   const defaultMeasurementInterval = useInput(
     (organizationData && organizationData.default_measurement_interval) || 20,
   );
-
-  const country = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
-      : 'United States',
-  );
-  const currency = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
-      : 'USD',
-  );
-  const dateFormat = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
-      : 'MMM DD, YYYY',
-  );
-  const timeFormat = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
-      : 'hh:mm:ss A',
-  );
-  const distance = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance')).unit_of_measure
-      : 'Miles',
-  );
-  const temp = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure
-      : 'Fahrenheit',
-  );
-  const weight = useInput(
-    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight'))
-      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight')).unit_of_measure
-      : 'Pounds',
-  );
+  const supressTempAlerts = useInput((organizationData && _.includes(organizationData.alerts_to_supress, 'temperature')) || false);
+  const supressHumidityAlerts = useInput((organizationData && _.includes(organizationData.alerts_to_supress, 'humidity')) || false);
+  const supressShockAlerts = useInput((organizationData && _.includes(organizationData.alerts_to_supress, 'shock')) || false);
+  const supressLightAlerts = useInput((organizationData && _.includes(organizationData.alerts_to_supress, 'light')) || false);
+  const country = useInput(_.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
+    : 'United States');
+  const currency = useInput(_.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
+    : 'USD');
+  const dateFormat = useInput(_.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+    : 'MMM DD, YYYY');
+  const timeFormat = useInput(_.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+    : 'hh:mm:ss A');
+  const distance = useInput(_.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance')).unit_of_measure
+    : 'Miles');
+  const temp = useInput(_.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure
+    : 'Fahrenheit');
+  const weight = useInput(_.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight')).unit_of_measure
+    : 'Pounds');
+  const { options: tzOptions } = useTimezoneSelect({ labelStyle: 'original', timezones: allTimezones });
+  const timezone = useInput(_.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time zone'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time zone')).unit_of_measure
+    : 'America/Los_Angeles');
   const [countryList, setCountryList] = useState([]);
   const [currencyList, setCurrencyList] = useState([]);
 
   useEffect(() => {
-    if (_.isEmpty(countries)) {
-      dispatch(getCountries());
+    if (!_.isEmpty(countriesData)) {
+      setCountryList(_.sortBy(_.without(_.uniq(_.map(countriesData, 'country')), [''])));
     }
-    if (_.isEmpty(currencies)) {
-      dispatch(getCurrencies());
-    }
-    if (_.isEmpty(orgTypes)) {
-      dispatch(getOrgTypes());
-    }
-  }, []);
+  }, [countriesData]);
 
   useEffect(() => {
-    if (!_.isEmpty(countries)) {
-      setCountryList(_.sortBy(_.without(_.uniq(_.map(countries, 'country')), [''])));
+    if (!_.isEmpty(currenciesData)) {
+      setCurrencyList(_.sortBy(_.without(_.uniq(_.map(currenciesData, 'currency')), [''])));
     }
-  }, [countries]);
+  }, [currenciesData]);
 
   useEffect(() => {
-    if (!_.isEmpty(currencies)) {
-      setCurrencyList(_.sortBy(_.without(_.uniq(_.map(currencies, 'currency')), [''])));
-    }
-  }, [currencies]);
-
-  useEffect(() => {
-    if (!_.isEmpty(organizationData) && _.isEmpty(unitOfMeasure)) {
-      dispatch(getUnitOfMeasure(organizationData.organization_uuid));
-    }
-  }, [organizationData]);
-
-  useEffect(() => {
-    if (organizationData && unitOfMeasure) {
-      resetValues();
-    }
-  }, [organizationData, unitOfMeasure]);
+    country.setValue(
+      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
+        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
+        : 'United States',
+    );
+    currency.setValue(
+      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
+        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
+        : 'USD',
+    );
+    dateFormat.setValue(
+      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+        : 'MMM DD, YYYY',
+    );
+    timeFormat.setValue(
+      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+        : 'hh:mm:ss A',
+    );
+    distance.setValue(
+      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance'))
+        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance')).unit_of_measure
+        : 'Miles',
+    );
+    temp.setValue(
+      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure
+        : 'Fahrenheit',
+    );
+    weight.setValue(
+      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight'))
+        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'weight')).unit_of_measure
+        : 'Pounds',
+    );
+    timezone.setValue(
+      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time zone'))
+        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time zone')).unit_of_measure
+        : 'America/Los_Angeles',
+    );
+  }, [unitData]);
 
   const resetValues = () => {
     allowImportExport.reset();
@@ -223,6 +203,10 @@ const OrganizationSettings = ({
     defaultLight.reset();
     defaultTransmissionInterval.reset();
     defaultMeasurementInterval.reset();
+    supressTempAlerts.reset();
+    supressHumidityAlerts.reset();
+    supressShockAlerts.reset();
+    supressLightAlerts.reset();
     country.reset();
     currency.reset();
     dateFormat.reset();
@@ -230,6 +214,7 @@ const OrganizationSettings = ({
     distance.reset();
     temp.reset();
     weight.reset();
+    timezone.reset();
   };
 
   // Check if any changes done to be saved
@@ -246,6 +231,10 @@ const OrganizationSettings = ({
     || defaultLight.hasChanged()
     || defaultTransmissionInterval.hasChanged()
     || defaultMeasurementInterval.hasChanged()
+    || supressTempAlerts.hasChanged()
+    || supressHumidityAlerts.hasChanged()
+    || supressShockAlerts.hasChanged()
+    || supressLightAlerts.hasChanged()
     || country.hasChanged()
     || currency.hasChanged()
     || dateFormat.hasChanged()
@@ -253,7 +242,12 @@ const OrganizationSettings = ({
     || distance.hasChanged()
     || temp.hasChanged()
     || weight.hasChanged()
+    || timezone.hasChanged()
   );
+
+  const { mutate: updateOrganizationMutation, isLoading: isUpdatingOrganization } = useUpdateOrganizationMutation(displayAlert);
+
+  const { mutate: editUnitMutation, isLoading: isEditingUnit } = useEditUnitMutation(organization, displayAlert);
 
   /**
    * Submit The form and add/edit custodian type
@@ -275,6 +269,10 @@ const OrganizationSettings = ({
       || defaultLight.hasChanged()
       || defaultTransmissionInterval.hasChanged()
       || defaultMeasurementInterval.hasChanged()
+      || supressTempAlerts.hasChanged()
+      || supressHumidityAlerts.hasChanged()
+      || supressShockAlerts.hasChanged()
+      || supressLightAlerts.hasChanged()
     ) {
       let data = {
         ...organizationData,
@@ -291,67 +289,70 @@ const OrganizationSettings = ({
         default_light: defaultLight.value,
         default_transmission_interval: defaultTransmissionInterval.value,
         default_measurement_interval: defaultMeasurementInterval.value,
+        alerts_to_supress: _.without([
+          supressTempAlerts.value ? 'temperature' : '',
+          supressHumidityAlerts.value ? 'humidity' : '',
+          supressShockAlerts.value ? 'shock' : '',
+          supressLightAlerts.value ? 'light' : '',
+        ], ''),
       };
-
       if (distance.hasChanged()) {
         data = { ...data, radius: uomDistanceUpdate(distance.value, radius.value) };
       }
-
-      dispatch(updateOrganization(data));
+      updateOrganizationMutation(data);
     }
 
-    _.forEach(unitOfMeasure, (unit) => {
+    _.forEach(unitData, (unit) => {
       let uom = unit;
       switch (_.toLower(unit.unit_of_measure_for)) {
         case 'country':
           if (country.hasChanged()) {
             uom = { ...uom, unit_of_measure: country.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         case 'currency':
           if (currency.hasChanged()) {
             uom = { ...uom, unit_of_measure: currency.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         case 'date':
           if (dateFormat.hasChanged()) {
             uom = { ...uom, unit_of_measure: dateFormat.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         case 'time':
           if (timeFormat.hasChanged()) {
             uom = { ...uom, unit_of_measure: timeFormat.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         case 'distance':
           if (distance.hasChanged()) {
             uom = { ...uom, unit_of_measure: distance.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         case 'temperature':
           if (temp.hasChanged()) {
             uom = { ...uom, unit_of_measure: temp.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
         case 'weight':
           if (weight.hasChanged()) {
             uom = { ...uom, unit_of_measure: weight.value };
-            dispatch(editUnitOfMeasure(uom));
+            editUnitMutation(uom);
           }
           break;
-
+        case 'time zone':
+          if (timezone.hasChanged()) {
+            uom = { ...uom, unit_of_measure: timezone.value };
+            editUnitMutation(uom);
+          }
+          break;
         default:
           break;
       }
@@ -359,24 +360,88 @@ const OrganizationSettings = ({
   };
 
   return (
-    <Grid className={classes.root} container spacing={2}>
-      {loading && <Loader open={loading} />}
-      <form
-        className={classes.form}
-        noValidate
-        onSubmit={handleSubmit}
-      >
+    <Grid className="adminPanelOrgRoot" container spacing={2}>
+      {(isLoadingOrganizationTypes
+        || isLoadingCountries
+        || isLoadingCurrencies
+        || isLoadingUnits
+        || isUpdatingOrganization
+        || isEditingUnit)
+        && (
+          <Loader open={isLoadingOrganizationTypes
+            || isLoadingCountries
+            || isLoadingCurrencies
+            || isLoadingUnits
+            || isUpdatingOrganization
+            || isEditingUnit}
+          />
+        )}
+      <form className="adminPanelOrgFormContainer" noValidate onSubmit={handleSubmit}>
         {/* <Grid item xs={12}>
-          <div className={classes.checkbox}>
+          <div className="adminPanelCheckbox">
             <Checkbox
               checked={allowImportExport.value}
               onClick={(e) => allowImportExport.setValue(e.target.checked)}
             />
-            <Typography className={classes.label}>
+            <Typography className="adminPanelLabel">
               Allow Import Export for this Organization?
             </Typography>
           </div>
         </Grid> */}
+        <Grid container spacing={2} mb={2}>
+          <Grid item xs={12}>
+            <Typography variant="subtitle1" fontWeight={700}>Suppress Alert Email Settings:</Typography>
+          </Grid>
+          <Grid item xs={6} alignSelf="center">
+            <FormControlLabel
+              labelPlacement="end"
+              label={(
+                <div className="adminPanelOrgIconContainer">
+                  <TemperatureIcon className="adminPanelOrgIcons" />
+                  Suppress Temperature Alert Emails
+                </div>
+              )}
+              control={<Switch checked={supressTempAlerts.value} color="primary" onChange={(e) => supressTempAlerts.setValue(e.target.checked)} />}
+            />
+          </Grid>
+          <Grid item xs={6} alignSelf="center">
+            <FormControlLabel
+              labelPlacement="end"
+              label={(
+                <div className="adminPanelOrgIconContainer">
+                  <HumidityIcon className="adminPanelOrgIcons" />
+                  Suppress Humidity Alert Emails
+                </div>
+              )}
+              control={<Switch checked={supressHumidityAlerts.value} color="primary" onChange={(e) => supressHumidityAlerts.setValue(e.target.checked)} />}
+            />
+          </Grid>
+          <Grid item xs={6} alignSelf="center">
+            <FormControlLabel
+              labelPlacement="end"
+              label={(
+                <div className="adminPanelOrgIconContainer">
+                  <ShockIcon className="adminPanelOrgIcons" />
+                  Suppress Shock Alert Emails
+                </div>
+              )}
+              control={<Switch checked={supressShockAlerts.value} color="primary" onChange={(e) => supressShockAlerts.setValue(e.target.checked)} />}
+            />
+          </Grid>
+          <Grid item xs={6} alignSelf="center">
+            <FormControlLabel
+              labelPlacement="end"
+              label={(
+                <div className="adminPanelOrgIconContainer">
+                  <LightIcon className="adminPanelOrgIcons" />
+                  Suppress Light Alert Emails
+                </div>
+              )}
+              control={<Switch checked={supressLightAlerts.value} color="primary" onChange={(e) => supressLightAlerts.setValue(e.target.checked)} />}
+            />
+          </Grid>
+        </Grid>
+
         <Grid item xs={12}>
           <TextField
             variant="outlined"
@@ -389,8 +454,7 @@ const OrganizationSettings = ({
             {...radius.bind}
           />
         </Grid>
-
-        <Grid container spacing={isDesktop ? 2 : 0}>
+        <Grid container spacing={isDesktop2() ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -404,7 +468,7 @@ const OrganizationSettings = ({
               {...orgType.bind}
             >
               <MenuItem value="">Select</MenuItem>
-              {_.map(orgTypes, (type) => (
+              {_.map(organizationTypesData, (type) => (
                 <MenuItem
                   key={`orgType-${type.id}`}
                   value={type.id}
@@ -414,7 +478,6 @@ const OrganizationSettings = ({
               ))}
             </TextField>
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -432,15 +495,14 @@ const OrganizationSettings = ({
             />
           </Grid>
         </Grid>
-
-        <Grid container spacing={isDesktop ? 2 : 0}>
+        <Grid container spacing={isDesktop2() ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
               margin="normal"
               fullWidth
               type="number"
-              className={classes.numberInput}
+              className="adminPanelNumberInput"
               id="default-max-temperature"
               name="default-max-temperature"
               label="Default Maximum Temperature for Excursion"
@@ -450,8 +512,8 @@ const OrganizationSettings = ({
                 endAdornment: (
                   <InputAdornment position="start">
                     {
-                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
-                      && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                        && _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
                         ? <span>&#8457;</span>
                         : <span>&#8451;</span>
                     }
@@ -461,14 +523,13 @@ const OrganizationSettings = ({
               {...defaultMaxTemperature.bind}
             />
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
               margin="normal"
               fullWidth
               type="number"
-              className={classes.numberInput}
+              className="adminPanelNumberInput"
               id="default-min-temperature"
               name="default-min-temperature"
               label="Default Minimum Temperature for Excursion"
@@ -478,8 +539,8 @@ const OrganizationSettings = ({
                 endAdornment: (
                   <InputAdornment position="start">
                     {
-                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
-                      && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                        && _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
                         ? <span>&#8457;</span>
                         : <span>&#8451;</span>
                     }
@@ -490,15 +551,14 @@ const OrganizationSettings = ({
             />
           </Grid>
         </Grid>
-
-        <Grid container spacing={isDesktop ? 2 : 0}>
+        <Grid container spacing={isDesktop2() ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
               margin="normal"
               fullWidth
               type="number"
-              className={classes.numberInput}
+              className="adminPanelNumberInput"
               id="default-max-humidity"
               name="default-max-humidity"
               label="Default Maximum Humidity for Excursion"
@@ -510,14 +570,13 @@ const OrganizationSettings = ({
               {...defaultMaxHumidity.bind}
             />
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
               margin="normal"
               fullWidth
               type="number"
-              className={classes.numberInput}
+              className="adminPanelNumberInput"
               id="default-min-humidity"
               name="default-min-humidity"
               label="Default Minimum Humidity for Excursion"
@@ -530,15 +589,14 @@ const OrganizationSettings = ({
             />
           </Grid>
         </Grid>
-
-        <Grid container spacing={isDesktop ? 2 : 0}>
+        <Grid container spacing={isDesktop2() ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
               margin="normal"
               fullWidth
               type="number"
-              className={classes.numberInput}
+              className="adminPanelNumberInput"
               id="default-shock"
               name="default-shock"
               label="Default Shock Threshold"
@@ -550,14 +608,13 @@ const OrganizationSettings = ({
               {...defaultShock.bind}
             />
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
               margin="normal"
               fullWidth
               type="number"
-              className={classes.numberInput}
+              className="adminPanelNumberInput"
               id="default-light"
               name="default-light"
               label="Default Light Threshold"
@@ -570,8 +627,7 @@ const OrganizationSettings = ({
             />
           </Grid>
         </Grid>
-
-        <Grid container spacing={isDesktop ? 2 : 0}>
+        <Grid container spacing={isDesktop2() ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -593,14 +649,13 @@ const OrganizationSettings = ({
             >
               <MenuItem value="">Select</MenuItem>
               {!_.isEmpty(TIVE_GATEWAY_TIMES)
-              && _.map(TIVE_GATEWAY_TIMES, (time, index) => (
-                <MenuItem key={`${time.value}-${index}`} value={time.value}>
-                  {time.label}
-                </MenuItem>
-              ))}
+                && _.map(TIVE_GATEWAY_TIMES, (time, index) => (
+                  <MenuItem key={`${time.value}-${index}`} value={time.value}>
+                    {time.label}
+                  </MenuItem>
+                ))}
             </TextField>
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -628,8 +683,7 @@ const OrganizationSettings = ({
             </TextField>
           </Grid>
         </Grid>
-
-        <Grid container spacing={isDesktop ? 2 : 0}>
+        <Grid container spacing={isDesktop2() ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -642,9 +696,9 @@ const OrganizationSettings = ({
               autoComplete="country"
               value={country.value}
               onChange={(e) => {
-                const curr = _.find(currencies, {
-                  country: _.find(countries, { country: e.target.value })
-                    ? _.find(countries, { country: e.target.value }).iso3
+                const curr = _.find(currenciesData, {
+                  country: _.find(countriesData, { country: e.target.value })
+                    ? _.find(countriesData, { country: e.target.value }).iso3
                     : '',
                 });
                 currency.setValue(curr ? curr.currency : '');
@@ -662,7 +716,6 @@ const OrganizationSettings = ({
               ))}
             </TextField>
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -687,8 +740,7 @@ const OrganizationSettings = ({
             </TextField>
           </Grid>
         </Grid>
-
-        <Grid container spacing={isDesktop ? 2 : 0}>
+        <Grid container spacing={isDesktop2() ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -712,7 +764,6 @@ const OrganizationSettings = ({
               ))}
             </TextField>
           </Grid>
-
           <Grid item xs={12} md={6}>
             <TextField
               variant="outlined"
@@ -737,7 +788,6 @@ const OrganizationSettings = ({
             </TextField>
           </Grid>
         </Grid>
-
         <Grid item xs={12}>
           <TextField
             variant="outlined"
@@ -761,7 +811,6 @@ const OrganizationSettings = ({
             ))}
           </TextField>
         </Grid>
-
         <Grid item xs={12}>
           <TextField
             variant="outlined"
@@ -785,7 +834,6 @@ const OrganizationSettings = ({
             ))}
           </TextField>
         </Grid>
-
         <Grid item xs={12}>
           <TextField
             variant="outlined"
@@ -809,7 +857,28 @@ const OrganizationSettings = ({
             ))}
           </TextField>
         </Grid>
-
+        <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            select
+            id="timezone"
+            name="timezone"
+            label="Default Time Zone"
+            autoComplete="timezone"
+            value={timezone.value}
+            onChange={(e) => {
+              timezone.setValue(e.target.value);
+            }}
+          >
+            {_.map(tzOptions, (tzOption, index) => (
+              <MenuItem key={`${tzOption.value}-${index}`} value={tzOption.value}>
+                {tzOption.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={6} sm={4}>
             <Button
@@ -817,8 +886,14 @@ const OrganizationSettings = ({
               fullWidth
               variant="contained"
               color="primary"
-              className={classes.submit}
-              disabled={loading || !submitDisabled()}
+              className="adminPanelSubmit"
+              disabled={isLoadingOrganizationTypes
+                || isLoadingCountries
+                || isLoadingCurrencies
+                || isLoadingUnits
+                || isUpdatingOrganization
+                || isEditingUnit
+                || !submitDisabled()}
             >
               Save
             </Button>
@@ -830,7 +905,7 @@ const OrganizationSettings = ({
               variant="contained"
               color="primary"
               onClick={() => resetValues()}
-              className={classes.submit}
+              className="adminPanelSubmit"
             >
               Reset
             </Button>
@@ -841,12 +916,4 @@ const OrganizationSettings = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-  ...state.itemsReducer,
-  ...state.shipmentReducer,
-  loading: state.authReducer.loading || state.itemsReducer.loading || state.shipmentReducer.loading,
-});
-
-export default connect(mapStateToProps)(OrganizationSettings);
+export default OrganizationSettings;

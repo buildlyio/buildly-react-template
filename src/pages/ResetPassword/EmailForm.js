@@ -1,64 +1,32 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
   Button,
   CssBaseline,
   TextField,
-  Link,
   Grid,
   Card,
   CardContent,
   Typography,
   Container,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import logo from '../../assets/tp-logo.png';
-import Loader from '../../components/Loader/Loader';
-import { useInput } from '../../hooks/useInput';
-import {
-  resetPassword,
-} from '../../redux/authuser/actions/authuser.actions';
-import { routes } from '../../routes/routesConstants';
-import { validators } from '../../utils/validators';
+import logo from '@assets/tp-logo.png';
+import Copyright from '@components/Copyright/Copyright';
+import Loader from '@components/Loader/Loader';
+import useAlert from '@hooks/useAlert';
+import { useInput } from '@hooks/useInput';
+import { routes } from '@routes/routesConstants';
+import { validators } from '@utils/validators';
+import { useResetPasswordMutation } from '@react-query/mutations/authUser/resetPasswordMutation';
+import './ResetPasswordStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    paddingTop: theme.spacing(8),
-  },
-  paper: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-  },
-  textField: {
-    minHeight: '5rem',
-    margin: theme.spacing(1, 0),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  logo: {
-    maxWidth: '20rem',
-    width: '100%',
-    marginBottom: theme.spacing(3),
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-}));
-
-const EmailForm = ({ dispatch, loading }) => {
-  const classes = useStyles();
+const EmailForm = () => {
   const email = useInput('', { required: true });
   const [error, setError] = useState({});
+
+  const { displayAlert } = useAlert();
+
+  const { mutate: resetPasswordMutation, isLoading: isResetPassword } = useResetPasswordMutation(displayAlert);
 
   /**
    * Submit the form to the backend and attempts to authenticate
@@ -69,7 +37,7 @@ const EmailForm = ({ dispatch, loading }) => {
     const loginFormValue = {
       email: email.value,
     };
-    dispatch(resetPassword(loginFormValue));
+    resetPasswordMutation(loginFormValue);
   };
 
   /**
@@ -116,23 +84,23 @@ const EmailForm = ({ dispatch, loading }) => {
     <Container
       component="main"
       maxWidth="xs"
-      className={classes.container}
+      className="resetPasswordContainer"
     >
-      {loading && <Loader open={loading} />}
+      {isResetPassword && <Loader open={isResetPassword} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
-          <div className={classes.paper}>
+          <div className="resetPasswordPaper">
             <img
               src={logo}
-              className={classes.logo}
+              className="resetPasswordLogo"
               alt="Company logo"
             />
             <Typography component="h1" variant="h5" gutterBottom>
               Enter your registered Email
             </Typography>
             <form
-              className={classes.form}
+              className="resetPasswordForm"
               noValidate
               onSubmit={handleSubmit}
             >
@@ -145,7 +113,7 @@ const EmailForm = ({ dispatch, loading }) => {
                 label="Registered email"
                 name="email"
                 autoComplete="email"
-                className={classes.textField}
+                className="resetPasswordTextField"
                 error={error.email && error.email.error}
                 helperText={
                   error && error.email
@@ -155,21 +123,20 @@ const EmailForm = ({ dispatch, loading }) => {
                 onBlur={(e) => handleBlur(e, 'email', email)}
                 {...email.bind}
               />
-
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 color="primary"
-                className={classes.submit}
-                disabled={loading || submitDisabled()}
+                style={{ marginTop: 8, marginBottom: 16 }}
+                disabled={isResetPassword || submitDisabled()}
               >
                 Submit
               </Button>
               <Grid container>
                 <Grid item xs>
                   <Link
-                    href={routes.LOGIN}
+                    to={routes.LOGIN}
                     variant="body2"
                     color="primary"
                   >
@@ -181,13 +148,9 @@ const EmailForm = ({ dispatch, loading }) => {
           </div>
         </CardContent>
       </Card>
+      <Copyright />
     </Container>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(EmailForm);
+export default EmailForm;

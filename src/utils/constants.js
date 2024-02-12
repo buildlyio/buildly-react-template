@@ -279,18 +279,12 @@ export const getCustodianFormattedRow = (data, contactInfo, type = []) => {
     _.forEach(data, (rowItem) => {
       const contactInfoItem = getUniqueContactInfo(rowItem, contactInfo);
       const location = `${contactInfoItem.address1
-        && `${contactInfoItem.address1},`
-      } ${contactInfoItem.address2
-        && `${contactInfoItem.address2},`
-      } ${contactInfoItem.city
-        && `${contactInfoItem.city},`
-      } ${contactInfoItem.state
-        && `${contactInfoItem.state},`
-      } ${contactInfoItem.country
-        && `${contactInfoItem.country},`
-      } ${contactInfoItem.postal_code
-        && `${contactInfoItem.postal_code}`
-      }`;
+        && `${contactInfoItem.address1},`} ${contactInfoItem.address2
+        && `${contactInfoItem.address2},`} ${contactInfoItem.city
+        && `${contactInfoItem.city},`} ${contactInfoItem.state
+        && `${contactInfoItem.state},`} ${contactInfoItem.country
+        && `${contactInfoItem.country},`} ${contactInfoItem.postal_code
+        && `${contactInfoItem.postal_code}`}`;
       let editedData = { ...rowItem, location };
 
       const custType = _.find(type, { url: rowItem.custodian_type });
@@ -1029,132 +1023,174 @@ export const MARKER_DATA = (unitOfMeasure) => ([
   { id: 'light', unit: 'LUX' },
 ]);
 
-export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => ([
-  {
-    name: 'allAlerts',
-    label: 'Alerts',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (
-        !_.isEmpty(value)
-          ? (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              {_.map(value, (item, idx) => (
-                <div key={`sensor-icon-${idx}-${item.id}`}>
-                  {getIcon(item)}
-                  {' '}
-                </div>
-              ))}
-            </div>
-          ) : ''
-      ),
+export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
+  const getCellStyle = (tableMeta) => ({
+    fontWeight: (
+      _.some(
+        _.range(3, 8), (i) => _.isEqual(tableMeta.rowData[i], null)
+          || _.isEqual(tableMeta.rowData[i], undefined),
+      )
+        ? '700' : '400'),
+    fontStyle: (
+      _.some(
+        _.range(3, 8), (i) => _.isEqual(tableMeta.rowData[i], null)
+          || _.isEqual(tableMeta.rowData[i], undefined),
+      )
+        ? 'italic' : 'normal'),
+  });
+
+  return ([
+    {
+      name: 'allAlerts',
+      label: 'Alerts',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        customBodyRender: (value) => (
+          !_.isEmpty(value)
+            ? (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                {_.map(value, (item, idx) => (
+                  <div key={`sensor-icon-${idx}-${item.id}`}>
+                    {getIcon(item)}
+                    {' '}
+                  </div>
+                ))}
+              </div>
+            ) : ''
+        ),
+      },
     },
-  },
-  {
-    name: 'timestamp',
-    label: 'Date Time',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
+    {
+      name: 'timestamp',
+      label: 'Date Time',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        customBodyRender: (value, tableMeta) => (
+          <div style={getCellStyle(tableMeta)}>
+            {value}
+          </div>
+        ),
+      },
     },
-  },
-  {
-    name: 'location',
-    label: 'Location',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
+    {
+      name: 'location',
+      label: 'Location',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
+      },
     },
-  },
-  {
-    name: 'temperature',
-    label: `TEMP ${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`,
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
+    {
+      name: 'temperature',
+      label: `TEMP ${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`,
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        customBodyRender: (value, tableMeta) => (
+          <div style={getCellStyle(tableMeta)}>
+            {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
+          </div>
+        ),
+      },
     },
-  },
-  {
-    name: 'humidity',
-    label: 'HUM %',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (value ? _.round(_.toNumber(value), 2) : 'N/A'),
+    {
+      name: 'humidity',
+      label: 'HUM %',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        customBodyRender: (value, tableMeta) => (
+          <div style={getCellStyle(tableMeta)}>
+            {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
+          </div>
+        ),
+      },
     },
-  },
-  {
-    name: 'light',
-    label: 'LIGHT (LUX)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
+    {
+      name: 'light',
+      label: 'LIGHT (LUX)',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        customBodyRender: (value, tableMeta) => (
+          <div style={getCellStyle(tableMeta)}>
+            {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
+          </div>
+        ),
+      },
     },
-  },
-  {
-    name: 'shock',
-    label: 'SHOCK (G)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
+    {
+      name: 'shock',
+      label: 'SHOCK (G)',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        customBodyRender: (value, tableMeta) => (
+          <div style={getCellStyle(tableMeta)}>
+            {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
+          </div>
+        ),
+      },
     },
-  },
-  {
-    name: 'battery',
-    label: 'BATTERY (%)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
+    {
+      name: 'battery',
+      label: 'BATTERY (%)',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        customBodyRender: (value, tableMeta) => (
+          <div style={getCellStyle(tableMeta)}>
+            {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
+          </div>
+        ),
+      },
     },
-  },
-  {
-    name: 'tilt',
-    label: 'TILT (deg)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      display: false,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
+    {
+      name: 'tilt',
+      label: 'TILT (deg)',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        display: false,
+        customBodyRender: (value) => (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : ''),
+      },
     },
-  },
-  {
-    name: 'pressure',
-    label: 'PRESS (Pa)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      display: false,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
+    {
+      name: 'pressure',
+      label: 'PRESS (Pa)',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        display: false,
+        customBodyRender: (value) => (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : ''),
+      },
     },
-  },
-  {
-    name: 'probe',
-    label: `PROBE TEMP ${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`,
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-      display: false,
-      customBodyRender: (value) => (!_.isEqual(value, null) ? _.round(_.toNumber(value), 2) : 'N/A'),
+    {
+      name: 'probe',
+      label: `PROBE TEMP ${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`,
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        display: false,
+        customBodyRender: (value) => (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : ''),
+      },
     },
-  },
-]);
+  ]);
+};
 
 export const getAlertsReportColumns = (sensorReport, timezone, dateFormat, timeFormat) => ([
   {
@@ -1190,6 +1226,8 @@ export const getAlertsReportColumns = (sensorReport, timezone, dateFormat, timeF
           const [val1, val2] = _.split(value, ' F/');
           const [temp, unit] = _.split(val2, ' ');
           formattedValue = `${val1} F/${_.round(_.toNumber(temp), 2)} ${unit}`;
+        } else if (_.includes(value, 'G') || _.includes(value, 'LUX')) {
+          formattedValue = `${_.toString(_.round(_.toNumber(value.split(' ')[0]), 2))} ${value.split(' ')[1]}`;
         } else {
           formattedValue = value || '-';
         }
@@ -1253,7 +1291,6 @@ export const gatewayColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => _.upperCase(value),
     },
   },
   {
@@ -1706,6 +1743,146 @@ export const templateColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+    },
+  },
+]);
+
+export const getUserFormattedRows = (userData) => {
+  const formattedData = _.map(userData, (ud) => ({
+    ...ud,
+    full_name: `${ud.first_name} ${ud.last_name}`,
+    last_activity: 'Today',
+    org_display_name: ud.organization.name,
+  }));
+
+  return _.orderBy(formattedData, 'id', 'desc');
+};
+
+export const userColumns = () => ([
+  {
+    name: 'full_name',
+    label: 'Full Name',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: 'username',
+    label: 'User Name',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: 'email',
+    label: 'Email',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: 'last_activity',
+    label: 'Last Activity',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: 'org_display_name',
+    label: 'Organization',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+]);
+
+export const getGroupsFormattedRow = (groups, orgs) => {
+  const formattedData = _.map(groups, (g) => ({
+    ...g,
+    display_permission_name: _.isEqual(g.id, 1)
+      ? g.name
+      : `${g.name} - ${_.find(orgs, { organization_uuid: g.organization })
+        ? _.find(orgs, { organization_uuid: g.organization }).name
+        : ''}`,
+  }));
+
+  return _.orderBy(formattedData, 'display_permission_name', 'asc');
+};
+
+export const getAlertNotificationsColumns = (timezone, dateFormat, timeFormat) => ([
+  {
+    name: 'alertObj',
+    label: 'Condition',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        !_.isEmpty(value)
+          ? (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div>
+                {getIcon(value)}
+                {' '}
+              </div>
+            </div>
+          ) : ''
+      ),
+    },
+  },
+  {
+    name: 'parameterValue',
+    label: 'Value',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => {
+        let formattedValue = '';
+        if (value && _.includes(value, ' F/') && _.includes(value, ' C')) {
+          const [val1, val2] = _.split(value, ' F/');
+          const [temp, unit] = _.split(val2, ' ');
+          formattedValue = `${val1} F/${_.round(_.toNumber(temp), 2)} ${unit}`;
+        } else {
+          formattedValue = value || '-';
+        }
+
+        return formattedValue;
+      },
+    },
+  },
+  {
+    name: 'alert_time',
+    label: 'Date/Time stamp',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => (
+        value && value !== '-'
+          ? moment(value).tz(timezone).format(`${dateFormat} ${timeFormat}`)
+          : value
+      ),
+    },
+  },
+  {
+    name: 'location',
+    label: 'Location',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
     },
   },
 ]);

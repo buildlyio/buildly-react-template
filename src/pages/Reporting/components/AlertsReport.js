@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState, useRef } from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
@@ -7,53 +6,23 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
-import { getUser } from '../../../context/User.context';
-import { getUnitOfMeasure } from '../../../redux/items/actions/items.actions';
-import { getAlertsReportColumns } from '../../../utils/constants';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(1),
-  },
-  tooltip: {
-    background: theme.palette.primary.main,
-    color: theme.palette.background.default,
-    width: '100%',
-    display: 'flex',
-    minHeight: '40px',
-    alignItems: 'center',
-  },
-  title: {
-    flex: 1,
-    padding: theme.spacing(1, 2),
-    textTransform: 'uppercase',
-    fontSize: 18,
-    display: 'flex',
-    alignItems: 'center',
-  },
-}));
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getAlertsReportColumns } from '@utils/constants';
+import '../ReportingStyles.css';
 
 const AlertsReport = ({
-  loading,
-  alerts,
-  shipmentName,
-  timezone,
-  dispatch,
-  unitOfMeasure,
-  sensorReport,
+  sensorReport, alerts, shipmentName, timezone, unitOfMeasure, shouldScroll,
 }) => {
-  const classes = useStyles();
   const theme = useTheme();
   const [rows, setRows] = useState([]);
-  const organization = getUser().organization.organization_uuid;
+  const scrollRef = useRef(null);
 
-  useEffect(() => {
-    if (_.isEmpty(unitOfMeasure)) {
-      dispatch(getUnitOfMeasure(organization));
-    }
-  }, []);
+  if (shouldScroll && scrollRef.current) {
+    window.scrollTo({
+      top: scrollRef.current.offsetTop - 50,
+      behavior: 'smooth',
+    });
+  }
 
   useEffect(() => {
     if (alerts) {
@@ -97,11 +66,11 @@ const AlertsReport = ({
   }, [alerts]);
 
   return (
-    <Grid className={classes.root} container spacing={2}>
+    <Grid className="reportingAlertRoot" container spacing={2} ref={scrollRef}>
       <Grid item xs={12}>
-        <div className={classes.tooltip}>
+        <div className="reportingAlertTooltip">
           <Typography
-            className={classes.title}
+            className="reportingAlertTitle"
             variant="h5"
           >
             {shipmentName
@@ -113,7 +82,6 @@ const AlertsReport = ({
           noSpace
           hideAddButton
           filename="ShipmentAlerts"
-          loading={loading}
           rows={rows}
           columns={getAlertsReportColumns(
             sensorReport,
@@ -131,9 +99,4 @@ const AlertsReport = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.itemsReducer,
-});
-
-export default connect(mapStateToProps)(AlertsReport);
+export default AlertsReport;

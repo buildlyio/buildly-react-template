@@ -1,59 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  useTheme,
-  useMediaQuery,
   Grid,
   Button,
   TextField,
   MenuItem,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import FormModal from '../../../../components/Modal/FormModal';
-import { useInput } from '../../../../hooks/useInput';
-import {
-  editCustodian,
-} from '../../../../redux/custodian/actions/custodian.actions';
+import Loader from '@components/Loader/Loader';
+import FormModal from '@components/Modal/FormModal';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { isDesktop } from '@utils/mediaQuery';
+import { useEditCustodianMutation } from '@react-query/mutations/custodians/editCustodianMutation';
+import useAlert from '@hooks/useAlert';
+import '../../AdminPanelStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-}));
-
-const EditMapping = ({
-  history,
-  location,
-  loading,
-  dispatch,
-  allOrgs,
-}) => {
-  const classes = useStyles();
+const EditMapping = ({ history, location }) => {
+  const organization = getUser().organization.organization_uuid;
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [options, setOptions] = useState([]);
+
+  const { displayAlert } = useAlert();
+
+  const { orgData } = location.state || {};
 
   const pageType = location.state && location.state.type;
   const pageData = location.state && location.state.data;
@@ -64,16 +34,13 @@ const EditMapping = ({
     ? 'Edit Mapping'
     : 'Set Mapping';
 
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
-
   const custodyOrg = useInput((
     pageData && pageData.custody_org_uuid
   ) || '');
 
   useEffect(() => {
-    if (allOrgs && pageData) {
-      const opts = _.map(allOrgs, (org) => {
+    if (orgData && pageData) {
+      const opts = _.map(orgData, (org) => {
         const suggest = _.lowerCase(org.name) === _.lowerCase(pageData.name);
         return {
           value: org.organization_uuid,
@@ -89,7 +56,7 @@ const EditMapping = ({
 
       setOptions(orderedOpts);
     }
-  }, [allOrgs, pageData]);
+  }, [orgData, pageData]);
 
   const closeFormModal = () => {
     if (custodyOrg.hasChanged()) {
@@ -110,6 +77,8 @@ const EditMapping = ({
     }
   };
 
+  const { mutate: editCustodianMutation, isLoading: isEditingCustodian } = useEditCustodianMutation(organization, history, location.state.from, displayAlert);
+
   /**
    * Submit The form and add/edit custodian type
    * @param {Event} event the default submit event
@@ -121,8 +90,7 @@ const EditMapping = ({
       custody_org_uuid: custodyOrg.value || null,
       edit_date: new Date(),
     };
-    dispatch(editCustodian(editData, null, history, location.state.from));
-
+    editCustodianMutation([editData, null]);
     setFormModal(false);
   };
 
@@ -133,18 +101,19 @@ const EditMapping = ({
           open={openFormModal}
           handleClose={closeFormModal}
           title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth="md"
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {isEditingCustodian && (
+            <Loader open={isEditingCustodian} />
+          )}
           <form
-            className={classes.form}
+            className="adminPanelFormContainer"
             noValidate
             onSubmit={handleSubmit}
           >
-            <Grid container spacing={isDesktop ? 2 : 0}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -171,15 +140,15 @@ const EditMapping = ({
                 >
                   <MenuItem value="">Select</MenuItem>
                   {options
-                  && options.length > 0
-                  && _.map(options, (option, index) => (
-                    <MenuItem
-                      key={`org-option-${index}`}
-                      value={option.value}
-                    >
-                      {option.name}
-                    </MenuItem>
-                  ))}
+                    && options.length > 0
+                    && _.map(options, (option, index) => (
+                      <MenuItem
+                        key={`org-option-${index}`}
+                        value={option.value}
+                      >
+                        {option.name}
+                      </MenuItem>
+                    ))}
                 </TextField>
               </Grid>
               <Grid container spacing={2} justifyContent="center">
@@ -189,8 +158,8 @@ const EditMapping = ({
                     fullWidth
                     variant="contained"
                     color="primary"
-                    className={classes.submit}
-                    disabled={loading}
+                    className="adminPanelSubmit"
+                    disabled={isEditingCustodian}
                   >
                     {buttonText}
                   </Button>
@@ -202,7 +171,7 @@ const EditMapping = ({
                     variant="outlined"
                     color="primary"
                     onClick={discardFormData}
-                    className={classes.submit}
+                    className="adminPanelSubmit"
                   >
                     Cancel
                   </Button>
@@ -216,9 +185,4 @@ const EditMapping = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(EditMapping);
+export default EditMapping;

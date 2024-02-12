@@ -1,5 +1,5 @@
+/* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
@@ -18,96 +18,39 @@ import {
   TextField,
   Tooltip,
   Typography,
-  tooltipClasses,
   useTheme,
 } from '@mui/material';
 import { Assignment as NoteIcon } from '@mui/icons-material';
-import { makeStyles, styled } from '@mui/styles';
-import CustomizedSteppers from '../../components/CustomizedStepper/CustomizedStepper';
-import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
-import Loader from '../../components/Loader/Loader';
-import MapComponent from '../../components/MapComponent/MapComponent';
-import { getUser } from '../../context/User.context';
-import {
-  getContact,
-  getCustodians,
-} from '../../redux/custodian/actions/custodian.actions';
-import { getItems, getUnitOfMeasure } from '../../redux/items/actions/items.actions';
-import { getAllGateways } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
-import { getShipmentDetails } from '../../redux/shipment/actions/shipment.actions';
-import { routes } from '../../routes/routesConstants';
-import { getIcon, getShipmentFormattedRow, shipmentColumns } from '../../utils/constants';
+import CustomizedSteppers from '@components/CustomizedStepper/CustomizedStepper';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import Loader from '@components/Loader/Loader';
+import MapComponent from '@components/MapComponent/MapComponent';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { getIcon, getShipmentFormattedRow, shipmentColumns } from '@utils/constants';
+import { useQuery } from 'react-query';
+import { getShipmentsQuery } from '@react-query/queries/shipments/getShipmentsQuery';
+import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
+import { getItemQuery } from '@react-query/queries/items/getItemQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getAllGatewayQuery } from '@react-query/queries/sensorGateways/getAllGatewayQuery';
+import { getCustodyQuery } from '@react-query/queries/custodians/getCustodyQuery';
+import { getSensorReportQuery } from '@react-query/queries/sensorGateways/getSensorReportQuery';
+import { getSensorAlertQuery } from '@react-query/queries/sensorGateways/getSensorAlertQuery';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '@zustand/timezone/timezoneStore';
+import './ShipmentStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  title: {
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.primary.light,
-  },
-  tabs: {
-    [theme.breakpoints.down('sm')]: {
-      '& .MuiTabs-scroller': {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      },
-    },
-    [theme.breakpoints.up('sm')]: {
-      position: 'absolute',
-      top: '24%',
-      left: '0',
-    },
-  },
-  tab: {
-    color: theme.palette.background.default,
-  },
-  dataTable: {
-    marginTop: '-40px',
-    '& .MuiTableCell-root': {
-      color: 'inherit',
-    },
-    '& .MuiTableCell-paddingCheckbox': {
-      display: 'none',
-    },
-  },
-  attachedFiles: {
-    border: `1px solid ${theme.palette.background.light}`,
-    borderRadius: theme.spacing(0.5),
-    height: '100%',
-  },
-  legend: {
-    fontSize: theme.spacing(1.5),
-  },
-  shipmentName: {
-    textDecoration: 'underline',
-    textDecorationColor: theme.palette.background.light,
-    cursor: 'pointer',
-  },
-  createButton: {
-    marginBottom: theme.spacing(3),
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.background.default,
-    '&:hover': {
-      backgroundColor: theme.palette.primary.main,
-    },
-  },
-}));
-
-const Shipment = ({
-  shipmentData,
-  custodianData,
-  dispatch,
-  itemData,
-  allGateways,
-  custodyData,
-  loading,
-  timezone,
-  unitOfMeasure,
-  allSensorAlerts,
-  history,
-  sensorReports,
-}) => {
-  const classes = useStyles();
+const Shipment = ({ history }) => {
   const muiTheme = useTheme();
+  const user = getUser();
+  const organization = user.organization.organization_uuid;
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
+
+  let isShipmentDataAvailable = false;
+
   const subNav = [
     { label: 'Active', value: 'Active' },
     { label: 'Completed', value: 'Completed' },
@@ -123,45 +66,82 @@ const Shipment = ({
   const [allMarkers, setAllMarkers] = useState([]);
   const [expandedRows, setExpandedRows] = useState([]);
   const [steps, setSteps] = useState([]);
+  const [isLoading, setLoading] = useState(false);
 
-  const user = getUser();
-  const organization = user.organization.organization_uuid;
+  const { data: shipmentData, isLoading: isLoadingShipments, isFetching: isFetchingShipments } = useQuery(
+    ['shipments', shipmentFilter, organization],
+    () => getShipmentsQuery(organization, shipmentFilter === 'Active' ? 'Planned,En route,Arrived' : shipmentFilter, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  isShipmentDataAvailable = !_.isEmpty(shipmentData) && !isLoadingShipments && !isFetchingShipments;
+
+  const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
+    ['custodians', organization],
+    () => getCustodianQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: itemData, isLoading: isLoadingItems } = useQuery(
+    ['items', organization],
+    () => getItemQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: allGatewayData, isLoading: isLoadingAllGateways, isFetching: isFetchingAllGateways } = useQuery(
+    ['allGateways'],
+    () => getAllGatewayQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: custodyData, isLoading: isLoadingCustodies } = useQuery(
+    ['custodies', shipmentData, shipmentFilter],
+    () => getCustodyQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'shipment_uuid'), null))), displayAlert),
+    {
+      enabled: isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'shipment_uuid'), null)))),
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const { data: sensorAlertData, isLoading: isLoadingSensorAlerts, isFetching: isFetchingSensorAlerts } = useQuery(
+    ['sensorAlerts', shipmentData, shipmentFilter],
+    () => getSensorAlertQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null))), displayAlert),
+    {
+      enabled: isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const { data: sensorReportData, isLoading: isLoadingSensorReports, isFetching: isFetchingSensorReports } = useQuery(
+    ['sensorReports', shipmentData, shipmentFilter],
+    () => getSensorReportQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null))), displayAlert),
+    {
+      enabled: isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      refetchOnWindowFocus: false,
+    },
+  );
 
   const HeaderElements = () => (
     <Tabs
       value={shipmentFilter}
       onChange={filterTabClicked}
-      className={classes.tabs}
+      className="shipmentTabs"
     >
       {_.map(subNav, (itemProps, index) => (
         <Tab
           {...itemProps}
           key={`tab${index}:${itemProps.value}`}
-          className={classes.tab}
+          className="shipmentTab"
         />
       ))}
     </Tabs>
   );
-
-  const HtmlTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-  ))(({ theme }) => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: theme.palette.background.default,
-      color: theme.palette.background.dark,
-      maxWidth: theme.spacing(40),
-      border: `1px solid ${theme.palette.background.light}`,
-    },
-  }));
-
-  useEffect(() => {
-    dispatch(getShipmentDetails(organization, 'Planned,En route,Arrived', true, true));
-    dispatch(getCustodians(organization));
-    dispatch(getContact(organization));
-    dispatch(getItems(organization));
-    dispatch(getUnitOfMeasure(organization));
-    dispatch(getAllGateways());
-  }, []);
 
   useEffect(() => {
     const formattedRows = getShipmentFormattedRow(
@@ -169,64 +149,221 @@ const Shipment = ({
       custodianData,
       custodyData,
       itemData,
-      allGateways,
-      allSensorAlerts,
+      allGatewayData,
+      sensorAlertData,
       muiTheme.palette.error.main,
       muiTheme.palette.info.main,
-      sensorReports,
+      sensorReportData,
     );
-
     const filteredRows = _.filter(formattedRows, { type: shipmentFilter });
     setRows(filteredRows);
     setAllMarkers(_.map(filteredRows, 'allMarkers'));
   }, [shipmentFilter, shipmentData, custodianData, custodyData,
-    itemData, allGateways, allSensorAlerts, sensorReports]);
+    itemData, allGatewayData, sensorAlertData, sensorReportData]);
 
   useEffect(() => {
     if (selectedShipment) {
       processMarkers(selectedShipment);
     }
-  }, [allSensorAlerts, sensorReports, timezone]);
+  }, [sensorAlertData, sensorReportData, data]);
+
+  useEffect(() => {
+    if (selectedShipment) {
+      setLoading(true);
+    }
+    if (expandedRows) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    }
+  }, [selectedShipment, expandedRows]);
 
   const processMarkers = (shipment, setExpanded = false) => {
-    const dateFormat = !_.isEmpty(unitOfMeasure) && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure;
-    const timeFormat = !_.isEmpty(unitOfMeasure) && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure;
-    const tempMeasure = !_.isEmpty(unitOfMeasure) && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure;
+    const dateFormat = !_.isEmpty(unitData) && _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure;
+    const timeFormat = !_.isEmpty(unitData) && _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure;
+    const tempMeasure = !_.isEmpty(unitData) && _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure;
     let markersToSet = [];
-    const filteredReports = _.filter(sensorReports, {
+    const filteredReports = _.filter(sensorReportData, {
       shipment_id: shipment.partner_shipment_id,
     });
-    const filteredAlerts = _.filter(allSensorAlerts, { shipment_id: shipment.partner_shipment_id });
+    const filteredAlerts = _.filter(sensorAlertData, { shipment_id: shipment.partner_shipment_id });
     let newSteps = [];
+    let arrivedSteps = [];
+    let activeSteps = [];
+
+    newSteps = [
+      {
+        id: 1,
+        title: shipment.origin,
+        titleColor: 'inherit',
+        label: 'Shipment created',
+        content: moment(shipment.create_date).tz(data).format(`${dateFormat} ${timeFormat}`),
+        active: true,
+        error: false,
+        info: false,
+        completed: shipment.last_fujitsu_verification_datetime && _.lte(
+          moment(shipment.create_date).unix(),
+          moment(shipment.last_fujitsu_verification_datetime).unix(),
+        ),
+      },
+      {
+        id: 2,
+        title: shipment.origin,
+        titleColor: 'inherit',
+        label: 'Shipment started',
+        content: _.isEmpty(shipment.actual_time_of_departure)
+          ? moment(shipment.estimated_time_of_departure).tz(data).format(`${dateFormat} ${timeFormat}`)
+          : moment(shipment.actual_time_of_departure).tz(data).format(`${dateFormat} ${timeFormat}`),
+        caption: _.isEmpty(shipment.actual_time_of_departure) ? '(Estimated Time)' : '(Actual Time)',
+        active: !!shipment.actual_time_of_departure,
+        error: false,
+        info: false,
+        completed: shipment.last_fujitsu_verification_datetime && _.lte(
+          moment(shipment.actual_time_of_departure || shipment.estimated_time_of_departure).unix(),
+          moment(shipment.last_fujitsu_verification_datetime).unix(),
+        ),
+      },
+    ];
 
     if (!_.isEmpty(filteredAlerts)) {
       const alerts = _.filter(filteredAlerts, (alert) => !alert.recovered_alert_id);
-
-      newSteps = _.map(alerts, (a) => {
-        const error = _.includes(_.toLower(a.alert_type), 'max') || _.includes(_.toLower(a.alert_type), 'shock') || _.includes(_.toLower(a.alert_type), 'light');
-        const info = _.includes(_.toLower(a.alert_type), 'min');
-        const item = {
-          id: a.parameter_type,
-          color: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
-          title: error ? `Maximum ${_.capitalize(a.parameter_type)} Excursion` : `Minimum ${_.capitalize(a.parameter_type)} Excursion`,
-        };
-        return ({
-          id: moment(a.create_date).unix(),
-          titleIcon: getIcon(item),
-          title: a.parameter_value,
-          titleColor: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
-          label: 'Exception',
-          content: moment(a.create_date).tz(timezone).format(`${dateFormat} ${timeFormat}`),
-          active: false,
-          completed: shipment.last_fujitsu_verification_datetime && _.lte(
-            moment(a.create_date).unix(),
-            moment(shipment.last_fujitsu_verification_datetime).unix(),
-          ),
-          error,
-          info,
-        });
+      const arrivedAlerts = _.filter(alerts, (alert) => {
+        const createDate = new Date(alert.create_date).getTime();
+        return (
+          createDate >= (new Date(shipment.actual_time_of_departure).getTime() || new Date(shipment.estimated_time_of_departure).getTime())
+          && createDate <= (new Date(shipment.actual_time_of_arrival).getTime() || new Date(shipment.estimated_time_of_arrival).getTime())
+        );
       });
+      const activeAlerts = _.filter(alerts, (alert) => {
+        const createDate = new Date(alert.create_date).getTime();
+        return !(
+          createDate >= (new Date(shipment.actual_time_of_departure).getTime() || new Date(shipment.estimated_time_of_departure).getTime())
+          && createDate <= (new Date(shipment.actual_time_of_arrival).getTime() || new Date(shipment.estimated_time_of_arrival).getTime())
+        );
+      });
+      if (_.isEmpty(shipment.actual_time_of_arrival)) {
+        arrivedSteps = _.map(alerts, (a) => {
+          const error = _.includes(_.toLower(a.alert_type), 'max') || _.includes(_.toLower(a.alert_type), 'shock') || _.includes(_.toLower(a.alert_type), 'light');
+          const info = _.includes(_.toLower(a.alert_type), 'min');
+          const item = {
+            id: a.parameter_type,
+            color: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
+            title: error ? `Maximum ${_.capitalize(a.parameter_type)} Excursion` : `Minimum ${_.capitalize(a.parameter_type)} Excursion`,
+          };
+          return ({
+            id: moment(a.create_date).unix(),
+            titleIcon: getIcon(item),
+            title: a.parameter_type === 'shock' || a.parameter_type === 'light'
+              ? `${_.toString(_.round(_.toNumber(a.parameter_value.split(' ')[0]), 2))} ${a.parameter_value.split(' ')[1]}`
+              : a.parameter_value,
+            titleColor: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
+            label: 'Exception',
+            content: moment(a.create_date).tz(data).format(`${dateFormat} ${timeFormat}`),
+            active: false,
+            completed: shipment.last_fujitsu_verification_datetime && _.lte(
+              moment(a.create_date).unix(),
+              moment(shipment.last_fujitsu_verification_datetime).unix(),
+            ),
+            error,
+            info,
+          });
+        });
+      } else {
+        arrivedSteps = _.map(arrivedAlerts, (a) => {
+          const error = _.includes(_.toLower(a.alert_type), 'max') || _.includes(_.toLower(a.alert_type), 'shock') || _.includes(_.toLower(a.alert_type), 'light');
+          const info = _.includes(_.toLower(a.alert_type), 'min');
+          const item = {
+            id: a.parameter_type,
+            color: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
+            title: error ? `Maximum ${_.capitalize(a.parameter_type)} Excursion` : `Minimum ${_.capitalize(a.parameter_type)} Excursion`,
+          };
+          return ({
+            id: moment(a.create_date).unix(),
+            titleIcon: getIcon(item),
+            title: a.parameter_type === 'shock' || a.parameter_type === 'light'
+              ? `${_.toString(_.round(_.toNumber(a.parameter_value.split(' ')[0]), 2))} ${a.parameter_value.split(' ')[1]}`
+              : a.parameter_value,
+            titleColor: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
+            label: 'Exception',
+            content: moment(a.create_date).tz(data).format(`${dateFormat} ${timeFormat}`),
+            active: false,
+            completed: shipment.last_fujitsu_verification_datetime && _.lte(
+              moment(a.create_date).unix(),
+              moment(shipment.last_fujitsu_verification_datetime).unix(),
+            ),
+            error,
+            info,
+          });
+        });
+        activeSteps = _.map(activeAlerts, (a) => {
+          const error = _.includes(_.toLower(a.alert_type), 'max') || _.includes(_.toLower(a.alert_type), 'shock') || _.includes(_.toLower(a.alert_type), 'light');
+          const info = _.includes(_.toLower(a.alert_type), 'min');
+          const item = {
+            id: a.parameter_type,
+            color: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
+            title: error ? `Maximum ${_.capitalize(a.parameter_type)} Excursion` : `Minimum ${_.capitalize(a.parameter_type)} Excursion`,
+          };
+          return ({
+            id: moment(a.create_date).unix(),
+            titleIcon: getIcon(item),
+            title: a.parameter_type === 'shock' || a.parameter_type === 'light'
+              ? `${_.toString(_.round(_.toNumber(a.parameter_value.split(' ')[0]), 2))} ${a.parameter_value.split(' ')[1]}`
+              : a.parameter_value,
+            titleColor: error ? muiTheme.palette.error.main : muiTheme.palette.info.main,
+            label: 'Exception',
+            content: moment(a.create_date).tz(data).format(`${dateFormat} ${timeFormat}`),
+            active: false,
+            completed: shipment.last_fujitsu_verification_datetime && _.lte(
+              moment(a.create_date).unix(),
+              moment(shipment.last_fujitsu_verification_datetime).unix(),
+            ),
+            error,
+            info,
+          });
+        });
+      }
     }
+    newSteps = [...newSteps, ...arrivedSteps];
+
+    newSteps = [...newSteps, {
+      id: _.maxBy(newSteps, 'id') ? (_.maxBy(newSteps, 'id').id + 1) : 3,
+      title: shipment.destination,
+      titleColor: 'inherit',
+      label: 'Shipment arrived',
+      content: _.isEmpty(shipment.actual_time_of_arrival)
+        ? moment(shipment.estimated_time_of_arrival).tz(data).format(`${dateFormat} ${timeFormat}`)
+        : moment(shipment.actual_time_of_arrival).tz(data).format(`${dateFormat} ${timeFormat}`),
+      caption: _.isEmpty(shipment.actual_time_of_arrival) ? '(Estimated Time)' : '(Actual Time)',
+      active: !!shipment.actual_time_of_arrival,
+      error: false,
+      info: false,
+      completed: shipment.last_fujitsu_verification_datetime && _.lte(
+        moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).unix(),
+        moment(shipment.last_fujitsu_verification_datetime).unix(),
+      ),
+    }];
+
+    newSteps = [...newSteps, ...activeSteps];
+
+    newSteps = [...newSteps, {
+      id: _.maxBy(newSteps, 'id') ? (_.maxBy(newSteps, 'id').id + 2) : 4,
+      title: shipment.destination,
+      titleColor: 'inherit',
+      label: 'Shipment completed',
+      content: _.isEqual(shipment.status, 'Completed')
+        ? moment(shipment.edit_date).tz(data).format(`${dateFormat} ${timeFormat}`)
+        : moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').tz(data).format(`${dateFormat} ${timeFormat}`),
+      caption: !_.isEqual(shipment.status, 'Completed') ? '(Estimated Time)' : '(Actual Time)',
+      active: _.isEqual(shipment.status, 'Completed'),
+      error: false,
+      info: false,
+      completed: shipment.last_fujitsu_verification_datetime && _.lte(
+        _.isEqual(shipment.status, 'Completed')
+          ? moment(shipment.edit_date).unix()
+          : moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').unix(),
+        moment(shipment.last_fujitsu_verification_datetime).unix(),
+      ),
+    }];
 
     if (!_.isEmpty(filteredReports)) {
       _.forEach(filteredReports, (report) => {
@@ -234,8 +371,8 @@ const Shipment = ({
         let marker = {};
         let color = muiTheme.palette.success.main;
         let allAlerts = [];
-        const date = moment(report.activation_date).tz(timezone).format(dateFormat);
-        const time = moment(report.activation_date).tz(timezone).format(timeFormat);
+        const date = moment(report.activation_date).tz(data).format(dateFormat);
+        const time = moment(report.activation_date).tz(data).format(timeFormat);
 
         const preAlerts = _.orderBy(
           _.filter(filteredAlerts, (alert) => _.lte(_.toNumber(alert.report_id), report.id)),
@@ -379,71 +516,6 @@ const Shipment = ({
       });
     }
 
-    newSteps = [
-      ...newSteps,
-      {
-        id: 1,
-        title: shipment.origin,
-        titleColor: 'inherit',
-        label: 'Shipment created',
-        content: moment(shipment.create_date).tz(timezone).format(`${dateFormat} ${timeFormat}`),
-        active: true,
-        error: false,
-        info: false,
-        completed: shipment.last_fujitsu_verification_datetime && _.lte(
-          moment(shipment.create_date).unix(),
-          moment(shipment.last_fujitsu_verification_datetime).unix(),
-        ),
-      },
-      {
-        // eslint-disable-next-line max-len
-        id: 2,
-        title: shipment.origin,
-        titleColor: 'inherit',
-        label: 'Shipment started',
-        content: moment(shipment.actual_time_of_departure || shipment.estimated_time_of_departure).tz(timezone).format(`${dateFormat} ${timeFormat}`),
-        active: !!shipment.actual_time_of_departure,
-        error: false,
-        info: false,
-        completed: shipment.last_fujitsu_verification_datetime && _.lte(
-          moment(shipment.actual_time_of_departure || shipment.estimated_time_of_departure).unix(),
-          moment(shipment.last_fujitsu_verification_datetime).unix(),
-        ),
-      },
-      {
-        id: _.maxBy(newSteps, 'id').id + 1,
-        title: shipment.destination,
-        titleColor: 'inherit',
-        label: 'Shipment arrived',
-        content: moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).tz(timezone).format(`${dateFormat} ${timeFormat}`),
-        active: !!shipment.actual_time_of_arrival,
-        error: false,
-        info: false,
-        completed: shipment.last_fujitsu_verification_datetime && _.lte(
-          moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).unix(),
-          moment(shipment.last_fujitsu_verification_datetime).unix(),
-        ),
-      },
-      {
-        id: _.maxBy(newSteps, 'id').id + 2,
-        title: shipment.destination,
-        titleColor: 'inherit',
-        label: 'Shipment completed',
-        content: _.isEqual(shipment.status, 'Completed')
-          ? moment(shipment.edit_date).tz(timezone).format(`${dateFormat} ${timeFormat}`)
-          : moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').tz(timezone).format(`${dateFormat} ${timeFormat}`),
-        active: _.isEqual(shipment.status, 'Completed'),
-        error: false,
-        info: false,
-        completed: shipment.last_fujitsu_verification_datetime && _.lte(
-          _.isEqual(shipment.status, 'Completed')
-            ? moment(shipment.edit_date).unix()
-            : moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').unix(),
-          moment(shipment.last_fujitsu_verification_datetime).unix(),
-        ),
-      },
-    ];
-
     if (setExpanded) {
       const rowIndex = _.findIndex(rows, shipment);
       setExpandedRows([rowIndex]);
@@ -455,24 +527,9 @@ const Shipment = ({
     setSelectedMarker(markersToSet[0]);
   };
 
-  const filterTabClicked = (event, filter) => {
-    let shipmentStatus = '';
+  const filterTabClicked = async (event, filter) => {
+    isShipmentDataAvailable = false;
     setShipmentFilter(filter);
-
-    switch (filter) {
-      case 'Active':
-      default:
-        shipmentStatus = 'Planned,En route,Arrived';
-        break;
-
-      case 'Completed':
-      case 'Damaged':
-      case 'Battery Depleted':
-        shipmentStatus = filter;
-        break;
-    }
-
-    dispatch(getShipmentDetails(organization, shipmentStatus, true, true));
     setSelectedShipment(null);
     setMarkers([]);
     setSelectedMarker({});
@@ -480,21 +537,98 @@ const Shipment = ({
     setSteps([]);
   };
 
+  const renderSensorData = (marker) => {
+    const isValidData = (
+      marker.temperature !== null && marker.temperature !== undefined
+      && marker.humidity !== null && marker.humidity !== undefined
+      && marker.shock !== null && marker.shock !== undefined
+      && marker.light !== null && marker.light !== undefined
+      && marker.battery !== null && marker.battery !== undefined
+    );
+
+    return isValidData && (
+      <>
+        <Typography>{`Temp: ${marker.temperature}`}</Typography>
+        <Typography>{`Humidity: ${marker.humidity}`}</Typography>
+        <Typography>{`Shock: ${marker.shock}`}</Typography>
+        <Typography>{`Light: ${marker.light}`}</Typography>
+        <Typography>{`Battery: ${marker.battery}`}</Typography>
+      </>
+    );
+  };
+
+  const renderIrregularTransmission = (marker) => {
+    const hasInvalidData = (
+      marker.temperature === null || marker.temperature === undefined
+      || marker.humidity === null || marker.humidity === undefined
+      || marker.shock === null || marker.shock === undefined
+      || marker.light === null || marker.light === undefined
+      || marker.battery === null || marker.battery === undefined
+    );
+
+    return hasInvalidData && (
+      <Grid item xs={12}>
+        <Typography fontWeight={700} fontStyle="italic">
+          Irregular Transmission:
+        </Typography>
+        {renderSensorValue('Temp', marker.temperature)}
+        {renderSensorValue('Humidity', marker.humidity)}
+        {renderSensorValue('Shock', marker.shock)}
+        {renderSensorValue('Light', marker.light)}
+        {renderSensorValue('Battery', marker.battery)}
+      </Grid>
+    );
+  };
+
+  const renderSensorValue = (label, value) => (
+    !_.isEqual(value, null) && !_.isEqual(value, undefined) && (
+      <Typography>{`${label}: ${value}`}</Typography>
+    )
+  );
+
   return (
     <Box mt={5} mb={5}>
-      {loading && <Loader open={loading} />}
-      <Button type="button" onClick={(e) => history.push(routes.CREATE_SHIPMENT)} className={classes.createButton}>
+      {(isLoadingShipments
+        || isLoadingCustodians
+        || isLoadingItems
+        || isLoadingUnits
+        || isLoadingAllGateways
+        || isLoadingCustodies
+        || isLoadingSensorAlerts
+        || isLoadingSensorReports
+        || isLoading
+        || isFetchingShipments
+        || isFetchingAllGateways
+        || isFetchingSensorAlerts
+        || isFetchingSensorReports
+      )
+        && (
+          <Loader open={isLoadingShipments
+            || isLoadingCustodians
+            || isLoadingItems
+            || isLoadingUnits
+            || isLoadingAllGateways
+            || isLoadingCustodies
+            || isLoadingSensorAlerts
+            || isLoadingSensorReports
+            || isLoading
+            || isFetchingShipments
+            || isFetchingAllGateways
+            || isFetchingSensorAlerts
+            || isFetchingSensorReports}
+          />
+        )}
+      <Button type="button" onClick={(e) => history.push(routes.CREATE_SHIPMENT)} className="shipmentCreateButton">
         + Create Shipment
       </Button>
       <Grid container>
         <Grid item xs={12}>
-          <div className={classes.title}>
-            <Typography className={classes.tileHeading} variant="h6">
+          <div className="shipmentTitle">
+            <Typography variant="h6">
               {selectedShipment ? selectedShipment.name : 'All shipments'}
             </Typography>
           </div>
         </Grid>
-
         <Grid item xs={12}>
           <MapComponent
             allMarkers={allMarkers}
@@ -514,14 +648,14 @@ const Shipment = ({
               <div style={{ height: '100%' }} />
             }
             clusterClick={processMarkers}
+            unitOfMeasure={unitData}
           />
         </Grid>
-
-        <Grid item xs={12} className={classes.dataTable}>
+        <Grid item xs={12} className="shipmentDataTable">
           <DataTableWrapper
             hideAddButton
+            loading={isLoading}
             filename="ShipmentData"
-            loading={loading}
             rows={rows}
             columns={[
               {
@@ -533,14 +667,15 @@ const Shipment = ({
                   customBodyRenderLite: (dataIndex) => (
                     rows[dataIndex] && rows[dataIndex].note
                       ? (
-                        <HtmlTooltip
+                        <Tooltip
                           TransitionComponent={Fade}
                           TransitionProps={{ timeout: 600 }}
                           placement="bottom-start"
                           title={<Typography>{rows[dataIndex].note}</Typography>}
+                          className="shipmentTooltip"
                         >
                           <NoteIcon />
-                        </HtmlTooltip>
+                        </Tooltip>
                       ) : <></>
                   ),
                 },
@@ -554,7 +689,7 @@ const Shipment = ({
                   filter: true,
                   customBodyRenderLite: (dataIndex) => (
                     <Typography
-                      className={classes.shipmentName}
+                      className="shipmentName"
                       onClick={(e) => {
                         history.push(routes.CREATE_SHIPMENT, {
                           ship: _.omit(rows[dataIndex], ['type', 'itemNames', 'tracker', 'battery_levels', 'alerts', 'allMarkers']),
@@ -567,9 +702,9 @@ const Shipment = ({
                 },
               },
               ...shipmentColumns(
-                timezone,
-                _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-                  ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                data,
+                _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                  ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
                   : '',
               ),
             ]}
@@ -689,22 +824,9 @@ const Shipment = ({
                                   <Typography>
                                     {`Recorded at: ${markers[0].date} ${markers[0].time}`}
                                   </Typography>
-                                  <Typography>
-                                    {`Temp: ${markers[0].temperature || 'N/A'}`}
-                                  </Typography>
-                                  <Typography>
-                                    {`Humidity: ${markers[0].humidity || 'N/A'}`}
-                                  </Typography>
-                                  <Typography>
-                                    {`Shock: ${markers[0].shock || 'N/A'}`}
-                                  </Typography>
-                                  <Typography>
-                                    {`Light: ${markers[0].light || 'N/A'}`}
-                                  </Typography>
-                                  <Typography>
-                                    {`Battery: ${markers[0].battery || 'N/A'}`}
-                                  </Typography>
+                                  {renderSensorData(markers[0])}
                                 </Grid>
+                                {renderIrregularTransmission(markers[0])}
                               </Grid>
                             )}
                           </Grid>
@@ -731,22 +853,22 @@ const Shipment = ({
                                   fullWidth
                                   component="fieldset"
                                   variant="outlined"
-                                  className={classes.attachedFiles}
+                                  className="shipmentAttachedFiles"
                                   style={{
                                     padding: _.isEmpty(ship.uploaded_pdf)
                                       ? muiTheme.spacing(3)
                                       : muiTheme.spacing(1.5),
                                   }}
                                 >
-                                  <FormLabel component="legend" className={classes.legend}>
+                                  <FormLabel component="legend" className="shipmentLegend">
                                     Attached Files
                                   </FormLabel>
 
                                   <Stack direction="row" spacing={1}>
                                     {!_.isEmpty(ship.uploaded_pdf)
-                                    && _.map(ship.uploaded_pdf, (file, idx) => (
-                                      <Chip key={`${file}-${idx}`} variant="outlined" label={file} />
-                                    ))}
+                                      && _.map(ship.uploaded_pdf, (file, idx) => (
+                                        <Chip key={`${file}-${idx}`} variant="outlined" label={file} />
+                                      ))}
                                   </Stack>
                                 </FormControl>
                               </Grid>
@@ -766,21 +888,4 @@ const Shipment = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.shipmentReducer,
-  ...state.custodianReducer,
-  ...state.itemsReducer,
-  ...state.sensorsGatewayReducer,
-  ...state.optionsReducer,
-  loading: (
-    state.shipmentReducer.loading
-    || state.custodianReducer.loading
-    || state.itemsReducer.loading
-    || state.sensorsGatewayReducer.loading
-    || state.optionsReducer.loading
-    || state.authReducer.loading
-  ),
-});
-
-export default connect(mapStateToProps)(Shipment);
+export default Shipment;

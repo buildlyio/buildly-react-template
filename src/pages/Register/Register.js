@@ -1,95 +1,50 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import moment from 'moment-timezone';
+import { Link } from 'react-router-dom';
+import { useTimezoneSelect, allTimezones } from 'react-timezone-select';
 import _ from 'lodash';
 import {
   Button,
   CssBaseline,
   TextField,
-  Link,
-  Box,
   Card,
   CardContent,
   Typography,
   Container,
   Grid,
-  FormControl,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
   Autocomplete,
   MenuItem,
+  FormControlLabel,
+  Switch,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import logo from '../../assets/tp-logo.png';
-import Copyright from '../../components/Copyright/Copyright';
-import Loader from '../../components/Loader/Loader';
-import { useInput } from '../../hooks/useInput';
-import {
-  register,
-  loadOrgNames,
-} from '../../redux/authuser/actions/authuser.actions';
-import { getCountries, getCurrencies } from '../../redux/shipment/actions/shipment.actions';
-import { routes } from '../../routes/routesConstants';
-import { isMobile } from '../../utils/mediaQuery';
+import logo from '@assets/tp-logo.png';
+import Copyright from '@components/Copyright/Copyright';
+import Loader from '@components/Loader/Loader';
+import { useInput } from '@hooks/useInput';
+import { routes } from '@routes/routesConstants';
+import { isMobile, isTablet } from '@utils/mediaQuery';
 import {
   DATE_DISPLAY_CHOICES,
   TIME_DISPLAY_CHOICES,
   UOM_DISTANCE_CHOICES,
   UOM_TEMPERATURE_CHOICES,
   UOM_WEIGHT_CHOICES,
-} from '../../utils/mock';
-import { validators } from '../../utils/validators';
+} from '@utils/mock';
+import { validators } from '@utils/validators';
+import { useQuery } from 'react-query';
+import { getOrganizationNameQuery } from '@react-query/queries/authUser/getOrganizationNameQuery';
+import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
+import { getCurrenciesQuery } from '@react-query/queries/shipments/getCurrenciesQuery';
+import { useRegisterMutation } from '@react-query/mutations/authUser/registerMutation';
+import useAlert from '@hooks/useAlert';
+import './RegisterStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    paddingTop: theme.spacing(8),
-  },
-  paper: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(2),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  logo: {
-    maxWidth: '20rem',
-    width: '100%',
-    marginBottom: theme.spacing(3),
-  },
-  textField: {
-    minHeight: '5rem',
-    margin: theme.spacing(1, 0),
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  alertGrid: {
-    marginTop: theme.spacing(2),
-  },
-  alertOptionsLabel: {
-    fontSize: '1rem',
-  },
-  alertOptions: {
-    marginLeft: theme.spacing(5),
-  },
-}));
+const Register = ({ history }) => {
+  const { displayAlert } = useAlert();
 
-const Register = ({
-  dispatch, loading, history, orgNames, countries, currencies,
-}) => {
-  const classes = useStyles();
-  const email = useInput('', { required: true });
+  const first_name = useInput('', { required: true });
+  const last_name = useInput('');
   const username = useInput('', { required: true });
+  const email = useInput('', { required: true });
   const password = useInput('', { required: true });
   const re_password = useInput('', {
     required: true,
@@ -98,50 +53,53 @@ const Register = ({
   });
   const organization_name = useInput('', { required: true });
   const organization_abbrevation = useInput('', { required: true });
-  const first_name = useInput('', { required: true });
-  const last_name = useInput('');
-  const [pushOptions, setPushOptions] = useState({
-    geofence: false,
-    environmental: false,
-  });
-  const [emailOptions, setEmailOptions] = useState({
-    geofence: false,
-    environmental: false,
-  });
+  const [countryList, setCountryList] = useState([]);
   const country = useInput('United States', { required: true });
+  const [currencyList, setCurrencyList] = useState([]);
   const currency = useInput('USD', { required: true });
   const dateFormat = useInput('MMM DD, YYYY', { required: true });
   const timeFormat = useInput('hh:mm:ss A', { required: true });
   const distance = useInput('Miles', { required: true });
   const temp = useInput('Fahrenheit', { required: true });
   const weight = useInput('Pounds', { required: true });
-  const [countryList, setCountryList] = useState([]);
-  const [currencyList, setCurrencyList] = useState([]);
+  const { options: tzOptions } = useTimezoneSelect({ labelStyle: 'original', timezones: allTimezones });
+  const timezone = useInput('America/Los_Angeles', { required: true });
+  const [geoOptions, setGeoOptions] = useState({ email: false, sms: false, whatsApp: false });
+  const [envOptions, setEnvOptions] = useState({ email: false, sms: false, whatsApp: false });
+  // const whatsAppNumber = useInput();
   const [formError, setFormError] = useState({});
 
-  useEffect(() => {
-    if (_.isEmpty(orgNames)) {
-      dispatch(loadOrgNames());
-    }
-    if (_.isEmpty(countries)) {
-      dispatch(getCountries());
-    }
-    if (_.isEmpty(currencies)) {
-      dispatch(getCurrencies());
-    }
-  }, []);
+  const { data: orgNameData, isLoading: isLoadingOrgNames } = useQuery(
+    ['orgNames'],
+    () => getOrganizationNameQuery(),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
+    ['countries'],
+    () => getCountriesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: currenciesData, isLoading: isLoadingCurrencies } = useQuery(
+    ['currencies'],
+    () => getCurrenciesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
 
   useEffect(() => {
-    if (!_.isEmpty(countries)) {
-      setCountryList(_.sortBy(_.without(_.uniq(_.map(countries, 'country')), [''])));
+    if (!_.isEmpty(countriesData)) {
+      setCountryList(_.sortBy(_.without(_.uniq(_.map(countriesData, 'country')), [''])));
     }
-  }, [countries]);
+  }, [countriesData]);
 
   useEffect(() => {
-    if (!_.isEmpty(currencies)) {
-      setCurrencyList(_.sortBy(_.without(_.uniq(_.map(currencies, 'currency')), [''])));
+    if (!_.isEmpty(currenciesData)) {
+      setCurrencyList(_.sortBy(_.without(_.uniq(_.map(currenciesData, 'currency')), [''])));
     }
-  }, [currencies]);
+  }, [currenciesData]);
+
+  const { mutate: registerMutation, isLoading: isRegister } = useRegisterMutation(history, routes.LOGIN, displayAlert);
 
   /**
    * Submit the form to the backend and attempts to authenticate
@@ -157,11 +115,11 @@ const Register = ({
       organization_name: organization_name.value,
       first_name: first_name.value,
       last_name: last_name.value,
-      push_preferences: pushOptions,
-      email_preferences: emailOptions,
-      user_timezone: moment.tz.guess(),
+      geo_alert_preferences: geoOptions,
+      env_alert_preferences: envOptions,
     };
-    if (organization_name.value && !_.includes(orgNames, organization_name.value)) {
+
+    if (organization_name.value && !_.includes(orgNameData, organization_name.value)) {
       registerFormValue = {
         ...registerFormValue,
         organization_abbrevation: _.toUpper(organization_abbrevation.value),
@@ -172,9 +130,15 @@ const Register = ({
         distance: distance.value,
         temperature: temp.value,
         weight: weight.value,
+        org_timezone: timezone.value,
       };
     }
-    dispatch(register(registerFormValue, history));
+
+    // if (whatsAppNumber.value) {
+    //   registerFormValue = { ...registerFormValue, whatsApp_number: whatsAppNumber.value };
+    // }
+
+    registerMutation(registerFormValue);
   };
 
   /**
@@ -213,7 +177,8 @@ const Register = ({
       || !re_password.value
       || !organization_name.value
       || !first_name.value
-      || (organization_name.value && !_.includes(orgNames, organization_name.value)
+      // || ((geoOptions.whatsApp || envOptions.whatsApp) && !whatsAppNumber.value)
+      || (organization_name.value && !_.includes(orgNameData, organization_name.value)
         && (!country.value || !currency.value || !dateFormat.value || !timeFormat.value
           || !distance.value || !temp.value || !weight.value || !organization_abbrevation.value))
     ) {
@@ -232,27 +197,27 @@ const Register = ({
     <Container
       component="main"
       maxWidth="sm"
-      className={classes.container}
+      className="registerContainer"
     >
-      {loading && <Loader open={loading} />}
+      {(isLoadingOrgNames || isLoadingCountries || isLoadingCurrencies || isRegister) && <Loader open={isLoadingOrgNames || isLoadingCountries || isLoadingCurrencies || isRegister} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
-          <div className={classes.paper}>
+          <div className="registerPaper">
             <img
               src={logo}
-              className={classes.logo}
+              className="registerLogo"
               alt="Company logo"
             />
             <Typography component="h1" variant="h5">
               Register
             </Typography>
             <form
-              className={classes.form}
+              className="registerForm"
               noValidate
               onSubmit={handleSubmit}
             >
-              <Grid container spacing={isMobile() ? 0 : 3}>
+              <Grid container spacing={isTablet() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -272,7 +237,7 @@ const Register = ({
                         ? formError.first_name.message
                         : ''
                     }
-                    className={classes.textField}
+                    className="registerTextField"
                     onBlur={(e) => handleBlur(e, 'required', first_name)}
                     {...first_name.bind}
                   />
@@ -295,14 +260,13 @@ const Register = ({
                         ? formError.last_name.message
                         : ''
                     }
-                    className={classes.textField}
+                    className="registerTextField"
                     onBlur={(e) => handleBlur(e)}
                     {...last_name.bind}
                   />
                 </Grid>
               </Grid>
-
-              <Grid container spacing={isMobile() ? 0 : 3}>
+              <Grid container spacing={isTablet() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -322,7 +286,7 @@ const Register = ({
                         ? formError.username.message
                         : ''
                     }
-                    className={classes.textField}
+                    className="registerTextField"
                     onBlur={(e) => handleBlur(e, 'required', username)}
                     {...username.bind}
                   />
@@ -347,14 +311,13 @@ const Register = ({
                         ? formError.email.message
                         : ''
                     }
-                    className={classes.textField}
+                    className="registerTextField"
                     onBlur={(e) => handleBlur(e, 'email', email)}
                     {...email.bind}
                   />
                 </Grid>
               </Grid>
-
-              <Grid container spacing={isMobile() ? 0 : 3}>
+              <Grid container spacing={isTablet() ? 0 : 3}>
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -375,12 +338,11 @@ const Register = ({
                         ? formError.password.message
                         : ''
                     }
-                    className={classes.textField}
+                    className="registerTextField"
                     onBlur={(e) => handleBlur(e, 'required', password)}
                     {...password.bind}
                   />
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -401,21 +363,21 @@ const Register = ({
                         ? formError.re_password.message
                         : ''
                     }
-                    className={classes.textField}
+                    className="registerTextField"
                     onBlur={(e) => handleBlur(e, 'confirm', re_password)}
                     {...re_password.bind}
                   />
                 </Grid>
               </Grid>
-
-              <Grid container spacing={isMobile() ? 0 : 3}>
+              <Grid container spacing={isTablet() ? 0 : 3}>
                 <Grid item xs={12}>
                   <Autocomplete
                     freeSolo
                     disableClearable
                     id="organization_name"
                     name="organization_name"
-                    options={orgNames || []}
+                    options={orgNameData || []}
+                    value={organization_name.value}
                     onChange={(e, newValue) => {
                       organization_name.setValue(newValue || '');
                     }}
@@ -437,9 +399,9 @@ const Register = ({
                             ? formError.organization_name.message
                             : ''
                         }
-                        className={classes.textField}
+                        className="registerTextField"
                         onBlur={(e) => handleBlur(e, 'required', organization_name)}
-                        value={organization_name}
+                        value={organization_name.value}
                         onChange={(e) => {
                           organization_name.setValue(e.target.value);
                           organization_abbrevation.setValue(e.target.value.replace(/[^A-Z0-9]/g, ''));
@@ -449,12 +411,11 @@ const Register = ({
                   />
                 </Grid>
               </Grid>
-
               <Grid
                 container
-                spacing={isMobile() ? 0 : 3}
+                spacing={isTablet() ? 0 : 3}
                 style={{
-                  display: (!organization_name.value || _.includes(orgNames, organization_name.value)) && 'none',
+                  display: (!organization_name.value || _.includes(orgNameData, organization_name.value)) && 'none',
                 }}
               >
                 <Grid item xs={12} md={6}>
@@ -479,11 +440,11 @@ const Register = ({
                       maxLength: 7,
                       style: { textTransform: 'uppercase' },
                     }}
+                    className="registerTextField2"
                     onBlur={(e) => handleBlur(e, 'required', organization_abbrevation)}
                     {...organization_abbrevation.bind}
                   />
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -496,14 +457,15 @@ const Register = ({
                     autoComplete="country"
                     value={country.value}
                     onChange={(e) => {
-                      const curr = _.find(currencies, {
-                        country: _.find(countries, { country: e.target.value })
-                          ? _.find(countries, { country: e.target.value }).iso3
+                      const curr = _.find(currenciesData, {
+                        country: _.find(countriesData, { country: e.target.value })
+                          ? _.find(countriesData, { country: e.target.value }).iso3
                           : '',
                       });
                       currency.setValue(curr ? curr.currency : '');
                       country.setValue(e.target.value);
                     }}
+                    className="registerTextField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {countryList && _.map(countryList, (cntry, index) => (
@@ -516,7 +478,6 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -528,6 +489,7 @@ const Register = ({
                     label="Default Currency"
                     autoComplete="currency"
                     {...currency.bind}
+                    className="registerTextField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {currencyList && _.map(currencyList, (curr, index) => (
@@ -540,7 +502,6 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -552,6 +513,7 @@ const Register = ({
                     label="Default Date Format"
                     autoComplete="date-format"
                     {...dateFormat.bind}
+                    className="registerTextField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {_.map(DATE_DISPLAY_CHOICES, (date, index) => (
@@ -564,7 +526,6 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -576,6 +537,7 @@ const Register = ({
                     label="Default Time Format"
                     autoComplete="time-format"
                     {...timeFormat.bind}
+                    className="registerTextField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {_.map(TIME_DISPLAY_CHOICES, (time, index) => (
@@ -588,7 +550,6 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -600,6 +561,7 @@ const Register = ({
                     label="Default Unit of Measure for Distance"
                     autoComplete="distance"
                     {...distance.bind}
+                    className="registerTextField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {_.map(UOM_DISTANCE_CHOICES, (dist, index) => (
@@ -612,7 +574,6 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -624,6 +585,7 @@ const Register = ({
                     label="Default Unit of Measure for Temperature"
                     autoComplete="temp"
                     {...temp.bind}
+                    className="registerTextField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {_.map(UOM_TEMPERATURE_CHOICES, (tmp, index) => (
@@ -636,7 +598,6 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -648,6 +609,7 @@ const Register = ({
                     label="Default Unit of Measure for Weight"
                     autoComplete="weight"
                     {...weight.bind}
+                    className="registerTextField2"
                   >
                     <MenuItem value="">Select</MenuItem>
                     {_.map(UOM_WEIGHT_CHOICES, (wgt, index) => (
@@ -660,112 +622,164 @@ const Register = ({
                     ))}
                   </TextField>
                 </Grid>
+                <Grid item xs={12} mt={-2}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    id="timezone"
+                    name="timezone"
+                    label="Default Time Zone"
+                    autoComplete="timezone"
+                    value={timezone.value}
+                    onChange={(e) => {
+                      timezone.setValue(e.target.value);
+                    }}
+                    className="textField2"
+                  >
+                    {_.map(tzOptions, (tzOption, index) => (
+                      <MenuItem key={`${tzOption.value}-${index}`} value={tzOption.value}>
+                        {tzOption.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
               </Grid>
 
-              <Grid
-                container
-                spacing={isMobile() ? 0 : 3}
-                mt={(!organization_name.value || _.includes(orgNames, organization_name.value))
-                  && -2}
-              >
+              <Grid container spacing={isMobile() ? 0 : 3} mt={(!organization_name.value || _.includes(orgNameData, organization_name.value)) && -2}>
                 <Grid item xs={12}>
-                  <span className={classes.alertOptionsLabel}>
-                    Push Notification Preference
-                  </span>
-                  <div className={classes.alertOptions}>
-                    <FormControl component="fieldset">
-                      <FormGroup aria-label="position" row={false}>
-                        <FormControlLabel
-                          control={(
-                            <Checkbox
-                              size="medium"
-                              color="primary"
-                              checked={pushOptions.geofence}
-                              onChange={(e) => setPushOptions({
-                                ...pushOptions,
-                                geofence: e.target.checked,
-                              })}
-                            />
-                          )}
-                          label="GeoFence Notifications"
-                          labelPlacement="end"
-                        />
-                        <FormControlLabel
-                          control={(
-                            <Checkbox
-                              size="medium"
-                              color="primary"
-                              checked={pushOptions.environmental}
-                              onChange={(e) => setPushOptions({
-                                ...pushOptions,
-                                environmental: e.target.checked,
-                              })}
-                            />
-                          )}
-                          label="Environmental Notifications"
-                          labelPlacement="end"
-                        />
-                      </FormGroup>
-                    </FormControl>
-                  </div>
+                  <Typography variant="body1" fontWeight={700}>Shipment Status Change Alerts:</Typography>
+                  <Typography variant="caption">Enabling these alerts will send notifications of departure and arrival activity of your shipments.</Typography>
                 </Grid>
-                <Grid item xs={12} className={classes.alertGrid}>
-                  <span className={classes.alertOptionsLabel}>
-                    Email Notification Preference
-                  </span>
-                  <div className={classes.alertOptions}>
-                    <FormControl component="fieldset">
-                      <FormGroup aria-label="position" row={false}>
-                        <FormControlLabel
-                          control={(
-                            <Checkbox
-                              size="medium"
-                              color="primary"
-                              checked={emailOptions.geofence}
-                              onChange={(e) => setEmailOptions({
-                                ...emailOptions,
-                                geofence: e.target.checked,
-                              })}
-                            />
-                          )}
-                          label="GeoFence Notifications"
-                          labelPlacement="end"
-                        />
-                        <FormControlLabel
-                          control={(
-                            <Checkbox
-                              size="medium"
-                              color="primary"
-                              checked={emailOptions.environmental}
-                              onChange={(e) => setEmailOptions({
-                                ...emailOptions,
-                                environmental: e.target.checked,
-                              })}
-                            />
-                          )}
-                          label="Environmental Notifications"
-                          labelPlacement="end"
-                        />
-                      </FormGroup>
-                    </FormControl>
-                  </div>
+
+                <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>Email Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label={geoOptions && geoOptions.email ? 'ON' : 'OFF'}
+                    control={<Switch checked={geoOptions && geoOptions.email} color="primary" onChange={(e) => setGeoOptions({ ...geoOptions, email: e.target.checked })} />}
+                  />
+                </Grid>
+
+                <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>SMS text Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label="Available in a future release"
+                    control={<Switch checked={false} color="primary" disabled onChange={(e) => setGeoOptions({ ...geoOptions, sms: e.target.checked })} />}
+                  />
+                </Grid>
+
+                {/* <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>WhatsApp Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label={geoOptions && geoOptions.whatsApp ? 'ON' : 'OFF'}
+                    control={<Switch checked={geoOptions && geoOptions.whatsApp} color="primary" onChange={(e) => setGeoOptions({ ...geoOptions, whatsApp: e.target.checked })} />}
+                  />
+                </Grid> */}
+                <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>WhatsApp Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label="Available in a future release"
+                    control={<Switch checked={false} color="primary" disabled onChange={(e) => setGeoOptions({ ...geoOptions, whatsApp: e.target.checked })} />}
+                  />
                 </Grid>
               </Grid>
+
+              <Grid container spacing={isMobile() ? 0 : 3} mt={3}>
+                <Grid item xs={12}>
+                  <Typography variant="body1" fontWeight={700}>Environmental Alerts:</Typography>
+                  <Typography variant="caption">
+                    Enabling these alerts will send notifications about excursions of your settings for
+                    temperature, humidity, shock, tilt, and light exposure of your shipments.
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>Email Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label={envOptions && envOptions.email ? 'ON' : 'OFF'}
+                    control={<Switch checked={envOptions && envOptions.email} color="primary" onChange={(e) => setEnvOptions({ ...envOptions, email: e.target.checked })} />}
+                  />
+                </Grid>
+
+                <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>SMS text Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label="Available in a future release"
+                    control={<Switch checked={false} color="primary" disabled onChange={(e) => setEnvOptions({ ...envOptions, sms: e.target.checked })} />}
+                  />
+                </Grid>
+
+                {/* <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>WhatsApp Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label={envOptions && envOptions.whatsApp ? 'ON' : 'OFF'}
+                    control={<Switch checked={envOptions && envOptions.whatsApp} color="primary" onChange={(e) => setEnvOptions({ ...envOptions, whatsApp: e.target.checked })} />}
+                  />
+                </Grid> */}
+                <Grid item xs={6} sm={4} alignSelf="center">
+                  <Typography variant="body1" fontWeight={500}>WhatsApp Alerts:</Typography>
+                </Grid>
+                <Grid item xs={6} sm={8} alignSelf="center">
+                  <FormControlLabel
+                    labelPlacement="end"
+                    label="Available in a future release"
+                    control={<Switch checked={false} color="primary" disabled onChange={(e) => setEnvOptions({ ...envOptions, whatsApp: e.target.checked })} />}
+                  />
+                </Grid>
+              </Grid>
+
+              {/* {(geoOptions.whatsApp || envOptions.whatsApp) && (
+                <Grid item xs={12} mt={2}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    type="number"
+                    className="registerNumberInput"
+                    id="whatsapp-number"
+                    name="whatsapp-number"
+                    label="Send WhatsApp alerts on"
+                    {...whatsAppNumber.bind}
+                  />
+                </Grid>
+              )} */}
 
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 color="primary"
-                className={classes.submit}
-                disabled={loading || submitDisabled()}
+                className="registerSubmit"
+                disabled={isLoadingOrgNames || isLoadingCountries || isLoadingCurrencies || isRegister || submitDisabled()}
               >
                 Register
               </Button>
               <Grid container>
                 <Grid item>
                   <Link
-                    href={routes.LOGIN}
+                    to={routes.LOGIN}
                     variant="body2"
                     color="primary"
                   >
@@ -777,18 +791,9 @@ const Register = ({
           </div>
         </CardContent>
       </Card>
-      <Box mt={8} mb={1}>
-        <Copyright />
-      </Box>
+      <Copyright />
     </Container>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-  ...state.shipmentReducer,
-  loading: state.authReducer.loading || state.shipmentReducer.loading,
-});
-
-export default connect(mapStateToProps)(Register);
+export default Register;

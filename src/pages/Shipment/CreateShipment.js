@@ -1,8 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, {
-  useCallback, useEffect, useState,
-} from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
 import Geocode from 'react-geocode';
 import _ from 'lodash';
 import moment from 'moment-timezone';
@@ -28,7 +25,6 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import {
   BatteryFull as BatteryFullIcon,
   Battery80 as Battery80Icon,
@@ -45,197 +41,61 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
 } from '@mui/icons-material';
-import ConfirmModal from '../../components/Modal/ConfirmModal';
-import DataTableWrapper from '../../components/DataTableWrapper/DataTableWrapper';
-import DatePickerComponent from '../../components/DatePicker/DatePicker';
-import Loader from '../../components/Loader/Loader';
-import MapComponent from '../../components/MapComponent/MapComponent';
-import { getUser } from '../../context/User.context';
-import { useInput } from '../../hooks/useInput';
-import {
-  deleteCustody, getContact, getCustodianType, getCustodians, getCustody,
-} from '../../redux/custodian/actions/custodian.actions';
-import { getItemType, getItems, getUnitOfMeasure } from '../../redux/items/actions/items.actions';
-import { getGatewayType, getGateways } from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
-import {
-  addShipment,
-  addShipmentTemplate,
-  deleteShipmentTemplate,
-  editShipment,
-  editShipmentTemplate,
-  getShipmentTemplates,
-} from '../../redux/shipment/actions/shipment.actions';
-import { routes } from '../../routes/routesConstants';
+import ConfirmModal from '@components/Modal/ConfirmModal';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import DatePickerComponent from '@components/DatePicker/DatePicker';
+import Loader from '@components/Loader/Loader';
+import MapComponent from '@components/MapComponent/MapComponent';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { routes } from '@routes/routesConstants';
 import {
   getCustodianFormattedRow,
   getItemFormattedRow,
   getTemplateFormattedRow,
   itemColumns,
   templateColumns,
-} from '../../utils/constants';
+} from '@utils/constants';
 import {
   ADMIN_SHIPMENT_STATUS,
   CREATE_SHIPMENT_STATUS,
   USER_SHIPMENT_STATUS,
   TIVE_GATEWAY_TIMES,
   UOM_TEMPERATURE_CHOICES,
-} from '../../utils/mock';
-import { checkForAdmin, checkForGlobalAdmin } from '../../utils/utilMethods';
-import { validators } from '../../utils/validators';
+} from '@utils/mock';
+import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
+import { validators } from '@utils/validators';
+import { useQuery } from 'react-query';
+import { getShipmentTemplatesQuery } from '@react-query/queries/shipments/getShipmentTemplatesQuery';
+import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
+import { getCustodianTypeQuery } from '@react-query/queries/custodians/getCustodianTypeQuery';
+import { getContactQuery } from '@react-query/queries/custodians/getContactQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getItemQuery } from '@react-query/queries/items/getItemQuery';
+import { getItemTypeQuery } from '@react-query/queries/items/getItemTypeQuery';
+import { getGatewayQuery } from '@react-query/queries/sensorGateways/getGatewayQuery';
+import { getGatewayTypeQuery } from '@react-query/queries/sensorGateways/getGatewayTypeQuery';
+import { getCustodyQuery } from '@react-query/queries/custodians/getCustodyQuery';
+import { useDeleteCustodyMutation } from '@react-query/mutations/custodians/deleteCustodyMutation';
+import { useAddShipmentTemplateMutation } from '@react-query/mutations/shipments/addShipmentTemplateMutation';
+import { useEditShipmentTemplateMutation } from '@react-query/mutations/shipments/editShipmentTemplateMutation';
+import { useDeleteShipmentTemplateMutation } from '@react-query/mutations/shipments/deleteShipmentTemplateMutation';
+import { useAddShipmentMutation } from '@react-query/mutations/shipments/addShipmentMutation';
+import { useEditShipmentMutation } from '@react-query/mutations/shipments/editShipmentMutation';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '@zustand/timezone/timezoneStore';
+import './ShipmentStyles.css';
+import { isMobile } from '@utils/mediaQuery';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    maxWidth: theme.breakpoints.values.lg,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(2),
-  },
-  fieldset: {
-    border: `1px solid ${theme.palette.background.light}`,
-    padding: `${theme.spacing(2)} ${theme.spacing(4)}`,
-    borderRadius: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
-  legend: {
-    fontSize: theme.spacing(1.5),
-  },
-  innerAsterisk: {
-    fontSize: theme.spacing(4),
-    color: theme.palette.secondary.main,
-    paddingTop: `${theme.spacing(3)} !important`,
-  },
-  outerAsterisk: {
-    fontSize: theme.spacing(4),
-    color: theme.palette.secondary.main,
-    paddingLeft: `${theme.spacing(2)} !important`,
-    paddingTop: `${theme.spacing(5)} !important`,
-  },
-  adjustSpacing: {
-    marginRight: theme.spacing(6),
-  },
-  alertSettingText: {
-    color: theme.palette.background.light,
-  },
-  highest: {
-    fontWeight: 700,
-    color: theme.palette.error.main,
-  },
-  lowest: {
-    fontWeight: 700,
-    color: theme.palette.info.main,
-  },
-  cancel: {
-    marginTop: theme.spacing(0.5),
-    marginLeft: theme.spacing(-4),
-    fill: theme.palette.background.light,
-  },
-  attachedFiles: {
-    border: `1px solid ${theme.palette.background.light}`,
-    padding: theme.spacing(1.5),
-    borderRadius: theme.spacing(0.5),
-    height: '100%',
-  },
-  fileButton: {
-    paddingTop: `${theme.spacing(5)} !important`,
-    '& fieldset': {
-      border: 0,
-    },
-  },
-  gatewayDetails: {
-    display: 'flex',
-    justifyContent: 'end',
-    marginRight: theme.spacing(1),
-    padding: theme.spacing(5),
-    paddingTop: theme.spacing(2),
-  },
-  finalName: {
-    paddingTop: theme.spacing(5),
-    color: theme.palette.background.light,
-    '& div': {
-      paddingLeft: `${theme.spacing(4)} !important`,
-    },
-  },
-  finalNameDisplay: {
-    backgroundColor: theme.palette.primary.light,
-  },
-  numberInput: {
-    '& input::-webkit-outer-spin-button': {
-      '-webkit-appearance': 'none',
-      margin: 0,
-    },
-    '& input::-webkit-inner-spin-button': {
-      '-webkit-appearance': 'none',
-      margin: 0,
-    },
-    '& input[type="number"]': {
-      '-moz-appearance': 'textfield',
-    },
-  },
-  actionButtons: {
-    paddingTop: theme.spacing(3),
-    paddingBottom: theme.spacing(3),
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.background.dark,
-  },
-  saveTemplateModal: {
-    '& .MuiPaper-root': {
-      minWidth: '70%',
-    },
-  },
-  modalActionButtons: {
-    padding: theme.spacing(2),
-    paddingTop: 0,
-  },
-  nameContainer: {
-    margin: `${theme.spacing(4)} 0`,
-    border: `1px solid ${theme.palette.background.light}`,
-    borderRadius: theme.spacing(1),
-  },
-  nameHeader: {
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.primary.light,
-    borderBottom: `1px solid ${theme.palette.background.light}`,
-  },
-  nameData: {
-    padding: theme.spacing(2),
-  },
-  DTTemplatetName: {
-    textDecoration: 'underline',
-    textDecorationColor: theme.palette.background.light,
-    cursor: 'pointer',
-  },
-}));
-
-const CreateShipment = ({
-  dispatch,
-  loading,
-  templates,
-  custodianData,
-  contactInfo,
-  timezone,
-  unitOfMeasure,
-  itemData,
-  itemTypeList,
-  custodianTypeList,
-  gatewayData,
-  gatewayTypeList,
-  history,
-  location,
-  custodyData,
-}) => {
-  const classes = useStyles();
+const CreateShipment = ({ history, location }) => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   const user = getUser();
   const organization = user && user.organization;
   const isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
 
   const editData = (location.state && location.state.ship) || {};
   const formTitle = location.state && location.state.ship ? 'Update Shipment' : 'Create Shipment';
@@ -319,7 +179,7 @@ const CreateShipment = ({
   const note = useInput((!_.isEmpty(editData) && editData.note) || '');
   const [additionalCustodians, setAdditionalCustocations] = useState([]);
 
-  const gatewayType = useInput((!_.isEmpty(editData) && editData.platform_name) || 'tive');
+  const gatewayType = useInput((!_.isEmpty(editData) && editData.platform_name) || 'Tive');
   const [availableGateways, setAvailableGateways] = useState([]);
   const gateway = useInput('');
   const transmissionInterval = useInput(
@@ -340,24 +200,80 @@ const CreateShipment = ({
   const uncheckedIcon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-  useEffect(() => {
-    if (organization) {
-      dispatch(getShipmentTemplates(organization.organization_uuid));
-      dispatch(getCustodians(organization.organization_uuid));
-      dispatch(getCustodianType());
-      dispatch(getContact(organization.organization_uuid));
-      dispatch(getUnitOfMeasure(organization.organization_uuid));
-      dispatch(getItems(organization.organization_uuid));
-      dispatch(getItemType(organization.organization_uuid));
-      dispatch(getGateways(organization.organization_uuid));
-      dispatch(getGatewayType());
-    }
+  const { data: shipmentTemplateData, isLoading: isLoadingShipmentTemplates } = useQuery(
+    ['shipmentTemplates', organization.organization_uuid],
+    () => getShipmentTemplatesQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
 
-    if (!_.isEmpty(editData)) {
-      const encodedUUID = encodeURIComponent(editData.shipment_uuid);
-      dispatch(getCustody(encodedUUID));
-    }
-  }, []);
+  const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
+    ['custodians', organization.organization_uuid],
+    () => getCustodianQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: custodianTypesData, isLoading: isLoadingCustodianTypes } = useQuery(
+    ['custodianTypes'],
+    () => getCustodianTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: contactInfo, isLoading: isLoadingContact } = useQuery(
+    ['contact', organization.organization_uuid],
+    () => getContactQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization.organization_uuid],
+    () => getUnitQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: itemData, isLoading: isLoadingItems } = useQuery(
+    ['items', organization.organization_uuid],
+    () => getItemQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: itemTypesData, isLoading: isLoadingItemTypes } = useQuery(
+    ['itemTypes', organization.organization_uuid],
+    () => getItemTypeQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
+    ['gateways', organization.organization_uuid],
+    () => getGatewayQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: gatewayTypesData, isLoading: isLoadingGatewayTypes } = useQuery(
+    ['gatewayTypes'],
+    () => getGatewayTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: custodyData, isLoading: isLoadingCustodies } = useQuery(
+    ['custodies'],
+    () => getCustodyQuery(encodeURIComponent(editData.shipment_uuid), displayAlert),
+    {
+      enabled: !_.isEmpty(editData),
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const { mutate: deleteCustodyMutation, isLoading: isDeletingCustody } = useDeleteCustodyMutation(displayAlert);
+
+  const { mutate: addShipmentTemplateMutation, isLoading: isAddingShipmentTemplate } = useAddShipmentTemplateMutation(organization.organization_uuid, displayAlert);
+
+  const { mutate: editShipmentTemplateMutation, isLoading: isEditingShipmentTemplate } = useEditShipmentTemplateMutation(organization.organization_uuid, displayAlert);
+
+  const { mutate: deleteShipmentTemplateMutation, isLoading: isDeletingShipmentTemplate } = useDeleteShipmentTemplateMutation(organization.organization_uuid, displayAlert);
+
+  const { mutate: addShipmentMutation, isLoading: isAddingShipment } = useAddShipmentMutation(organization.organization_uuid, history, routes.SHIPMENT, displayAlert);
+
+  const { mutate: editShipmentMutation, isLoading: isEditingShipment } = useEditShipmentMutation(organization.organization_uuid, history, routes.SHIPMENT, displayAlert);
 
   useEffect(() => {
     if (!_.isEmpty(editData)) {
@@ -396,13 +312,13 @@ const CreateShipment = ({
         setAvailableGateways(gateways);
       }
     }
-  }, [editData, custodianList, gatewayTypeList, gatewayData]);
+  }, [editData, custodianList, gatewayTypesData, gatewayData]);
 
   useEffect(() => {
     if (!_.isEmpty(custodianData) && !_.isEmpty(contactInfo)) {
-      setCustodianList(getCustodianFormattedRow(custodianData, contactInfo, custodianTypeList));
+      setCustodianList(getCustodianFormattedRow(custodianData, contactInfo, custodianTypesData));
     }
-  }, [custodianData, contactInfo, custodianTypeList]);
+  }, [custodianData, contactInfo, custodianTypesData]);
 
   useEffect(() => {
     if (!_.isEmpty(itemData)) {
@@ -413,14 +329,14 @@ const CreateShipment = ({
         }
       });
 
-      const rows = getItemFormattedRow(selectedRows, itemTypeList, unitOfMeasure);
+      const rows = getItemFormattedRow(selectedRows, itemTypesData, unitData);
       setItemRows(rows);
     }
-  }, [itemData, itemTypeList, unitOfMeasure, items]);
+  }, [itemData, itemTypesData, unitData, items]);
 
   useEffect(() => {
     const custodian = _.find(custodianData, { url: originCustodian });
-    const gt = _.find(gatewayTypeList, { name: gatewayType.value });
+    const gt = _.find(gatewayTypesData, { name: gatewayType.value });
 
     if (custodian && gt) {
       const gateways = !_.isEmpty(editData) && !_.isEmpty(editData.gateway_imei)
@@ -438,15 +354,15 @@ const CreateShipment = ({
 
   useEffect(() => {
     if (saveAsName) {
-      handleTemplateChange(_.find(templates, { name: saveAsName }) || '');
+      handleTemplateChange(_.find(shipmentTemplateData, { name: saveAsName }) || '');
     } else if (template) {
-      handleTemplateChange(_.find(templates, { id: template.id }) || '');
+      handleTemplateChange(_.find(shipmentTemplateData, { id: template.id }) || '');
     }
-  }, [templates]);
+  }, [shipmentTemplateData]);
 
   useEffect(() => {
-    setTemplateRows(getTemplateFormattedRow(templates, custodianData, itemData));
-  }, [templates, custodianData, itemData]);
+    setTemplateRows(getTemplateFormattedRow(shipmentTemplateData, custodianData, itemData));
+  }, [shipmentTemplateData, custodianData, itemData]);
 
   formEdited = (
     !!(_.isEmpty(editData) && (
@@ -640,7 +556,7 @@ const CreateShipment = ({
   };
 
   const saveAsTemplate = () => {
-    const tmplt = _.find(templates, { name: saveAsName }) || {};
+    const tmplt = _.find(shipmentTemplateData, { name: saveAsName }) || {};
     const templateFormValue = {
       ...tmplt,
       name: saveAsName,
@@ -656,9 +572,8 @@ const CreateShipment = ({
       light_threshold: light_threshold.value,
       organization_uuid: organization.organization_uuid,
     };
-
     if (_.isEmpty(tmplt)) {
-      dispatch(addShipmentTemplate(templateFormValue));
+      addShipmentTemplateMutation(templateFormValue);
       setShowTemplateDT(false);
     } else {
       setConfirmReplace(true);
@@ -666,21 +581,21 @@ const CreateShipment = ({
   };
 
   const saveTemplateName = () => {
-    const exists = _.find(templates, { name: templateName });
+    const exists = _.find(shipmentTemplateData, { name: templateName });
     if (exists) {
       setConfirmReplace(true);
     } else {
       const tmp = { ...template, name: templateName };
-      dispatch(editShipmentTemplate(tmp));
+      editShipmentTemplateMutation(tmp);
       setTemplateName('');
       setTemplate(tmp);
     }
   };
 
   const replaceTemplate = () => {
-    const tmplt = (templateName && _.find(templates, { name: templateName }))
-    || (saveAsName && _.find(templates, { name: saveAsName }))
-    || {};
+    const tmplt = (templateName && _.find(shipmentTemplateData, { name: templateName }))
+      || (saveAsName && _.find(shipmentTemplateData, { name: saveAsName }))
+      || {};
     const newTemplate = {
       ...tmplt,
       name: templateName || saveAsName,
@@ -700,14 +615,12 @@ const CreateShipment = ({
     if (template && (
       !_.isEqual(template.name, templateName) && !_.isEqual(template.name, saveAsName)
     )) {
-      dispatch(deleteShipmentTemplate(template.id, false));
+      deleteShipmentTemplateMutation(template.id);
     }
-
-    dispatch(editShipmentTemplate(newTemplate));
+    editShipmentTemplateMutation(newTemplate);
     setConfirmReplace(false);
     setTemplateName('');
     setTemplate(newTemplate);
-
     if (saveAsName) {
       setSaveAsName('');
       setShowTemplateDT(false);
@@ -787,7 +700,7 @@ const CreateShipment = ({
   const handleSubmit = (event, draft) => {
     event.preventDefault();
     const shipName = `${organization.abbrevation}-${shipmentName.value}-${originAbb}-${destinationAbb}`;
-    const UOMDISTANCE = _.find(unitOfMeasure, (unit) => (
+    const UOMDISTANCE = _.find(unitData, (unit) => (
       _.toLower(unit.unit_of_measure_for) === 'distance'
     ));
     const uom_distance = UOMDISTANCE ? UOMDISTANCE.unit_of_measure : '';
@@ -865,7 +778,7 @@ const CreateShipment = ({
         !_.includes(carrierCustodies, cust.custody_uuid)
         && !cust.first_custody && !cust.last_custody
       ));
-      _.forEach(removeCustodies, (cust) => dispatch(deleteCustody(cust.id)));
+      _.forEach(removeCustodies, (cust) => deleteCustodyMutation(cust.id));
     }
 
     let savePayload = {
@@ -913,22 +826,55 @@ const CreateShipment = ({
     setFormSubmitted(true);
 
     if (_.isEmpty(editData)) {
-      dispatch(addShipment(savePayload, history, routes.SHIPMENT));
+      addShipmentMutation(savePayload);
     } else {
-      dispatch(editShipment(savePayload, history, routes.SHIPMENT));
+      editShipmentMutation(savePayload);
     }
   };
 
   return (
-    <Box mt={5} mb={5} className={classes.root}>
-      {loading && <Loader open={loading} />}
+    <Box mt={5} mb={5} className="createShipmentRoot">
+      {(isLoadingShipmentTemplates
+        || isLoadingCustodians
+        || isLoadingCustodianTypes
+        || isLoadingContact
+        || isLoadingUnits
+        || isLoadingItems
+        || isLoadingItemTypes
+        || isLoadingGateways
+        || isLoadingGatewayTypes
+        || isLoadingCustodies
+        || isAddingShipmentTemplate
+        || isEditingShipmentTemplate
+        || isDeletingShipmentTemplate
+        || isAddingShipment
+        || isEditingShipment
+        || isDeletingCustody)
+        && (
+          <Loader open={isLoadingShipmentTemplates
+            || isLoadingCustodians
+            || isLoadingCustodianTypes
+            || isLoadingContact
+            || isLoadingUnits
+            || isLoadingItems
+            || isLoadingItemTypes
+            || isLoadingGateways
+            || isLoadingGatewayTypes
+            || isLoadingCustodies
+            || isAddingShipmentTemplate
+            || isEditingShipmentTemplate
+            || isDeletingShipmentTemplate
+            || isAddingShipment
+            || isEditingShipment
+            || isDeletingCustody}
+          />
+        )}
       <Grid container spacing={2} alignItems="center" justifyContent="center">
         <Grid item xs={8}>
-          <Typography className={classes.dashboardHeading} variant="h5">
+          <Typography variant="h5">
             {formTitle}
           </Typography>
         </Grid>
-
         <Grid item xs={4}>
           <TextField
             variant="outlined"
@@ -944,7 +890,7 @@ const CreateShipment = ({
             disabled={cannotEdit}
           >
             <MenuItem value="">Select</MenuItem>
-            {!_.isEmpty(templates) && _.map(templates, (tmp) => (
+            {!_.isEmpty(shipmentTemplateData) && _.map(shipmentTemplateData, (tmp) => (
               <MenuItem key={tmp.template_uuid} value={tmp}>
                 {tmp.name}
               </MenuItem>
@@ -957,27 +903,24 @@ const CreateShipment = ({
           </TextField>
         </Grid>
       </Grid>
-
       {!!template && (
-        <Grid container className={classes.nameContainer}>
-          <Grid item xs={8} className={classes.nameHeader}>
+        <Grid container className="createShipmentNameContainer">
+          <Grid item xs={6} md={8} className="createShipmentNameHeader">
             <Typography variant="body1" fontWeight={800}>
               Template name
             </Typography>
           </Grid>
-          <Grid item xs={4} className={classes.nameHeader}>
+          <Grid item xs={6} md={4} className="createShipmentNameHeader">
             <Typography variant="body1" fontWeight={800}>
               Actions
             </Typography>
           </Grid>
-
-          <Grid item xs={8} className={classes.nameData}>
+          <Grid item xs={6} md={8} className="createShipmentNameData">
             {!templateName && (
               <Typography component="div" style={{ padding: `${theme.spacing(1)} 0` }}>
                 {template.name}
               </Typography>
             )}
-
             {templateName && (
               <TextField
                 variant="outlined"
@@ -992,7 +935,7 @@ const CreateShipment = ({
               />
             )}
           </Grid>
-          <Grid item xs={4} className={classes.nameData}>
+          <Grid item xs={6} md={4} className="createShipmentNameData">
             {!templateName && (
               <div>
                 <IconButton
@@ -1005,7 +948,6 @@ const CreateShipment = ({
                 >
                   <EditIcon htmlColor={theme.palette.primary.main} />
                 </IconButton>
-
                 <IconButton
                   style={{
                     border: `1px solid ${theme.palette.primary.main}`,
@@ -1019,26 +961,21 @@ const CreateShipment = ({
                 </IconButton>
               </div>
             )}
-
             {templateName && (
               <div>
                 <Button
                   type="button"
                   variant="outlined"
-                  style={{ padding: `${theme.spacing(1.75)} ${theme.spacing(5)}` }}
                   disabled={cannotEdit}
                   onClick={(e) => setTemplateName('')}
+                  className="createShipmentActionButtons2"
                 >
                   Cancel
                 </Button>
-
                 <Button
                   type="button"
                   variant="contained"
-                  style={{
-                    padding: `${theme.spacing(1.75)} ${theme.spacing(5)}`,
-                    marginLeft: theme.spacing(2),
-                  }}
+                  style={{ padding: `${theme.spacing(1.75)} ${theme.spacing(5)}` }}
                   disabled={_.isEqual(template.name, templateName) || cannotEdit}
                   onClick={saveTemplateName}
                 >
@@ -1049,14 +986,12 @@ const CreateShipment = ({
           </Grid>
         </Grid>
       )}
-
-      <form className={classes.form} noValidate>
+      <form className="createShipmentForm" noValidate>
         <Box mt={2}>
-          <FormControl fullWidth component="fieldset" variant="outlined" className={classes.fieldset}>
-            <FormLabel component="legend" className={classes.legend}>
+          <FormControl fullWidth component="fieldset" variant="outlined" className="createShipmentFieldset">
+            <FormLabel component="legend" className="createShipmentLegend">
               Shipment Details
             </FormLabel>
-
             <Grid container spacing={isDesktop ? 4 : 0}>
               <Grid item xs={12} sm={6}>
                 <Grid container spacing={2}>
@@ -1083,7 +1018,6 @@ const CreateShipment = ({
                       ))}
                     </TextField>
                   </Grid>
-
                   <Grid item xs={3}>
                     <TextField
                       variant="outlined"
@@ -1093,8 +1027,7 @@ const CreateShipment = ({
                       value={originAbb}
                     />
                   </Grid>
-                  <Grid item xs={1} className={classes.innerAsterisk}>*</Grid>
-
+                  <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
                   <Grid item xs={11}>
                     <TextField
                       variant="outlined"
@@ -1110,8 +1043,7 @@ const CreateShipment = ({
                       }}
                     />
                   </Grid>
-                  <Grid item xs={1} className={classes.innerAsterisk}>*</Grid>
-
+                  <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
                   <Grid item xs={11}>
                     <MapComponent
                       isMarkerShown
@@ -1127,13 +1059,13 @@ const CreateShipment = ({
                           radius: (organization && organization.radius) || 0,
                         },
                       ]}
+                      unitOfMeasure={unitData}
                     />
                   </Grid>
                 </Grid>
               </Grid>
-
               <Grid item xs={12} sm={6}>
-                <Grid container spacing={2}>
+                <Grid container spacing={2} mt={isMobile() ? 1.5 : -2}>
                   <Grid item xs={8}>
                     <TextField
                       variant="outlined"
@@ -1157,7 +1089,6 @@ const CreateShipment = ({
                       ))}
                     </TextField>
                   </Grid>
-
                   <Grid item xs={3}>
                     <TextField
                       variant="outlined"
@@ -1167,8 +1098,7 @@ const CreateShipment = ({
                       value={destinationAbb}
                     />
                   </Grid>
-                  <Grid item xs={1} className={classes.innerAsterisk}>*</Grid>
-
+                  <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
                   <Grid item xs={11}>
                     <TextField
                       variant="outlined"
@@ -1184,8 +1114,7 @@ const CreateShipment = ({
                       }}
                     />
                   </Grid>
-                  <Grid item xs={1} className={classes.innerAsterisk}>*</Grid>
-
+                  <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
                   <Grid item xs={11}>
                     <MapComponent
                       isMarkerShown
@@ -1201,15 +1130,15 @@ const CreateShipment = ({
                           radius: (organization && organization.radius) || 0,
                         },
                       ]}
+                      unitOfMeasure={unitData}
                     />
                   </Grid>
                 </Grid>
               </Grid>
-
-              <Grid item xs={12} sm={5.5} className={classes.adjustSpacing}>
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 1.5 : -2.5} className="createShipmentAdjustSpacing">
                 <DatePickerComponent
                   label="Shipment start"
-                  selectedDate={moment(departureDateTime).tz(timezone)}
+                  selectedDate={moment(departureDateTime).tz(data)}
                   disabled={cannotEdit}
                   hasTime
                   handleDateChange={(value) => {
@@ -1217,39 +1146,37 @@ const CreateShipment = ({
                     setArrivalDateTime(value);
                   }}
                   dateFormat={
-                    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-                      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
                       : ''
                   }
                   timeFormat={
-                    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-                      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
                       : ''
                   }
                 />
               </Grid>
-
-              <Grid item xs={12} sm={5.5}>
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 0 : -2.5} className={isMobile() ? 'createShipmentAdjustSpacing' : ''}>
                 <DatePickerComponent
                   label="Shipment end"
-                  selectedDate={moment(arrivalDateTime).tz(timezone)}
+                  selectedDate={moment(arrivalDateTime).tz(data)}
                   disabled={cannotEdit}
                   hasTime
                   handleDateChange={setArrivalDateTime}
                   dateFormat={
-                    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-                      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
                       : ''
                   }
                   timeFormat={
-                    _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-                      ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
                       : ''
                   }
                 />
               </Grid>
-
-              <Grid item xs={11} sm={5.5}>
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 2 : 0}>
                 <TextField
                   variant="outlined"
                   id="status"
@@ -1275,16 +1202,15 @@ const CreateShipment = ({
                     </MenuItem>
                   ))}
                   {((cannotEdit && isAdmin) || (!_.isEmpty(editData) && !cannotEdit && isAdmin))
-                  && _.map([...CREATE_SHIPMENT_STATUS, ...ADMIN_SHIPMENT_STATUS], (st, idx) => (
-                    <MenuItem key={`${idx}-${st.label}`} value={st.value}>
-                      {st.label}
-                    </MenuItem>
-                  ))}
+                    && _.map([...CREATE_SHIPMENT_STATUS, ...ADMIN_SHIPMENT_STATUS], (st, idx) => (
+                      <MenuItem key={`${idx}-${st.label}`} value={st.value}>
+                        {st.label}
+                      </MenuItem>
+                    ))}
                 </TextField>
               </Grid>
-              <Grid item xs={1} className={classes.outerAsterisk}>*</Grid>
-
-              <Grid item xs={11.5}>
+              <Grid item xs={1} className="createShipmentOuterAsterisk" mt={isMobile() ? -1.75 : 0}>*</Grid>
+              <Grid item xs={11} sm={11.5} mt={isMobile() ? 2 : 0} mb={isMobile() ? 2 : 0}>
                 <Autocomplete
                   multiple
                   id="items-multiple"
@@ -1332,33 +1258,29 @@ const CreateShipment = ({
                   )}
                 />
               </Grid>
-              <Grid item xs={0.5} className={classes.outerAsterisk}>*</Grid>
-
+              <Grid item xs={1} sm={0.5} className="createShipmentOuterAsterisk" mt={isMobile() ? -2 : 0}>*</Grid>
               {!_.isEmpty(itemRows) && (
                 <Grid item xs={11.5} pt={0}>
                   <DataTableWrapper
                     hideAddButton
                     noOptionsIcon
                     noSpace
-                    loading={loading}
                     rows={itemRows}
                     columns={itemColumns(
-                      _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
-                        ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
+                        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
                         : '',
                     )}
                   />
                 </Grid>
               )}
-
-              <Grid item xs={12} sm={5.75} lg={3.83}>
-                <div className={classes.fieldset}>
+              <Grid item xs={12} sm={5.75} lg={3.83} mt={isMobile() ? 2.5 : 0}>
+                <div className="createShipmentFieldset">
                   <Typography variant="body1" component="div" fontWeight={700}>
                     TEMPERATURE
                   </Typography>
-
-                  <Typography mt={2} className={classes.alertSettingText}>
-                    <span className={classes.highest}>HIGHEST</span>
+                  <Typography mt={2} className="createShipmentAlertSettingText">
+                    <span className="createShipmentHighest">HIGHEST</span>
                     {' safe temperature'}
                   </Typography>
                   <TextField
@@ -1366,7 +1288,7 @@ const CreateShipment = ({
                     fullWidth
                     disabled={cannotEdit}
                     type="number"
-                    className={classes.numberInput}
+                    className="createShipmentNumberInput"
                     id="max_excursion_temp"
                     name="max_excursion_temp"
                     autoComplete="max_excursion_temp"
@@ -1375,8 +1297,8 @@ const CreateShipment = ({
                       endAdornment: (
                         <InputAdornment position="start">
                           {
-                            _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
-                            && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
+                            _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                              && _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
                               ? <span>&#8457;</span>
                               : <span>&#8451;</span>
                           }
@@ -1387,9 +1309,8 @@ const CreateShipment = ({
                     value={max_excursion_temp.value}
                     onChange={(e) => max_excursion_temp.setValue(_.toString(e.target.value))}
                   />
-
-                  <Typography mt={3} className={classes.alertSettingText}>
-                    <span className={classes.lowest}>LOWEST</span>
+                  <Typography mt={3} className="createShipmentAlertSettingText">
+                    <span className="createShipmentLowest">LOWEST</span>
                     {' safe temperature'}
                   </Typography>
                   <TextField
@@ -1397,7 +1318,7 @@ const CreateShipment = ({
                     fullWidth
                     disabled={cannotEdit}
                     type="number"
-                    className={classes.numberInput}
+                    className="createShipmentNumberInput"
                     id="min_excursion_temp"
                     name="min_excursion_temp"
                     autoComplete="min_excursion_temp"
@@ -1406,8 +1327,8 @@ const CreateShipment = ({
                       endAdornment: (
                         <InputAdornment position="start">
                           {
-                            _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
-                            && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
+                            _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                              && _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
                               ? <span>&#8457;</span>
                               : <span>&#8451;</span>
                           }
@@ -1420,15 +1341,13 @@ const CreateShipment = ({
                   />
                 </div>
               </Grid>
-
               <Grid item xs={12} sm={5.75} lg={3.83}>
-                <div className={classes.fieldset}>
+                <div className="createShipmentFieldset">
                   <Typography variant="body1" component="div" fontWeight={700}>
                     HUMIDITY
                   </Typography>
-
-                  <Typography mt={2} className={classes.alertSettingText}>
-                    <span className={classes.highest}>HIGHEST</span>
+                  <Typography mt={2} className="createShipmentAlertSettingText">
+                    <span className="createShipmentHighest">HIGHEST</span>
                     {' safe humidity'}
                   </Typography>
                   <TextField
@@ -1436,7 +1355,7 @@ const CreateShipment = ({
                     fullWidth
                     disabled={cannotEdit}
                     type="number"
-                    className={classes.numberInput}
+                    className="createShipmentNumberInput"
                     id="max_excursion_humidity"
                     name="max_excursion_humidity"
                     autoComplete="max_excursion_humidity"
@@ -1448,9 +1367,8 @@ const CreateShipment = ({
                     value={max_excursion_humidity.value}
                     onChange={(e) => max_excursion_humidity.setValue(_.toString(e.target.value))}
                   />
-
-                  <Typography mt={3} className={classes.alertSettingText}>
-                    <span className={classes.lowest}>LOWEST</span>
+                  <Typography mt={3} className="createShipmentAlertSettingText">
+                    <span className="createShipmentLowest">LOWEST</span>
                     {' safe humidity'}
                   </Typography>
                   <TextField
@@ -1458,7 +1376,7 @@ const CreateShipment = ({
                     fullWidth
                     disabled={cannotEdit}
                     type="number"
-                    className={classes.numberInput}
+                    className="createShipmentNumberInput"
                     id="min_excursion_humidity"
                     name="min_excursion_humidity"
                     autoComplete="min_excursion_humidity"
@@ -1472,15 +1390,13 @@ const CreateShipment = ({
                   />
                 </div>
               </Grid>
-
               <Grid item xs={12} sm={5.75} lg={3.83}>
-                <div className={classes.fieldset}>
+                <div className="createShipmentFieldset">
                   <Typography variant="body1" component="div" fontWeight={700}>
                     SHOCK & LIGHT
                   </Typography>
-
-                  <Typography mt={2} className={classes.alertSettingText}>
-                    <span className={classes.highest}>MAX</span>
+                  <Typography mt={2} className="createShipmentAlertSettingText">
+                    <span className="createShipmentHighest">MAX</span>
                     {' shock'}
                   </Typography>
                   <TextField
@@ -1488,7 +1404,7 @@ const CreateShipment = ({
                     fullWidth
                     disabled={cannotEdit}
                     type="number"
-                    className={classes.numberInput}
+                    className="createShipmentNumberInput"
                     id="shock_threshold"
                     name="shock_threshold"
                     autoComplete="shock_threshold"
@@ -1500,9 +1416,8 @@ const CreateShipment = ({
                     value={shock_threshold.value}
                     onChange={(e) => shock_threshold.setValue(_.toString(e.target.value))}
                   />
-
-                  <Typography mt={3} className={classes.alertSettingText}>
-                    <span className={classes.highest}>MAX</span>
+                  <Typography mt={3} className="createShipmentAlertSettingText">
+                    <span className="createShipmentHighest">MAX</span>
                     {' light'}
                   </Typography>
                   <TextField
@@ -1510,7 +1425,7 @@ const CreateShipment = ({
                     fullWidth
                     disabled={cannotEdit}
                     type="number"
-                    className={classes.numberInput}
+                    className="createShipmentNumberInput"
                     id="light_threshold"
                     name="light_threshold"
                     autoComplete="light_threshold"
@@ -1524,13 +1439,17 @@ const CreateShipment = ({
                   />
                 </div>
               </Grid>
-
-              <Grid item xs={11.5} textAlign="end">
+              <Grid item xs={12} sm={11.5} textAlign="end">
                 <Button
                   type="button"
                   variant="contained"
                   color="primary"
-                  disabled={loading || saveTemplateDisabled() || cannotEdit}
+                  disabled={isLoadingShipmentTemplates
+                    || isAddingShipmentTemplate
+                    || isEditingShipmentTemplate
+                    || isDeletingShipmentTemplate
+                    || saveTemplateDisabled()
+                    || cannotEdit}
                   onClick={(e) => {
                     const name = !!_.find(itemRows, { url: items[0] })
                       && `${originAbb}-${destinationAbb}-${_.find(itemRows, { url: items[0] }).name}`;
@@ -1543,12 +1462,10 @@ const CreateShipment = ({
               </Grid>
             </Grid>
           </FormControl>
-
-          <FormControl fullWidth component="fieldset" variant="outlined" className={classes.fieldset}>
-            <FormLabel component="legend" className={classes.legend}>
+          <FormControl fullWidth component="fieldset" variant="outlined" className="createShipmentFieldset">
+            <FormLabel component="legend" className="createShipmentLegend">
               Order Information
             </FormLabel>
-
             <Grid container spacing={isDesktop ? 4 : 0}>
               <Grid item xs={2}>
                 <TextField
@@ -1561,8 +1478,7 @@ const CreateShipment = ({
                   value={organization && organization.abbrevation}
                 />
               </Grid>
-
-              <Grid item xs={9.5}>
+              <Grid item xs={8.5} sm={9.5} ml={isMobile() ? 2 : 0}>
                 <TextField
                   variant="outlined"
                   fullWidth
@@ -1575,9 +1491,8 @@ const CreateShipment = ({
                   {...shipmentName.bind}
                 />
               </Grid>
-              <Grid item xs={0.5} className={classes.outerAsterisk}>*</Grid>
-
-              <Grid item xs={5.75}>
+              <Grid item xs={0.5} className="createShipmentOuterAsterisk" mt={isMobile() ? -4 : 0}>*</Grid>
+              <Grid item xs={5.25} sm={5.75} mt={isMobile() ? 2 : 0}>
                 <TextField
                   variant="outlined"
                   fullWidth
@@ -1589,8 +1504,7 @@ const CreateShipment = ({
                   {...purchaseOrderNumber.bind}
                 />
               </Grid>
-
-              <Grid item xs={5.75}>
+              <Grid item xs={5.25} sm={5.75} mt={isMobile() ? 2 : 0} ml={isMobile() ? 2 : 0}>
                 <TextField
                   variant="outlined"
                   fullWidth
@@ -1602,14 +1516,12 @@ const CreateShipment = ({
                   {...billOfLading.bind}
                 />
               </Grid>
-
-              <Grid item xs={10}>
-                <FormControl fullWidth component="fieldset" variant="outlined" className={classes.attachedFiles}>
-                  <FormLabel component="legend" className={classes.legend}>
+              <Grid item xs={8} md={9} lg={9.6} mt={isMobile() ? 1 : 0}>
+                <FormControl style={{ height: 64 }} fullWidth component="fieldset" variant="outlined" className="createShipmentAttachedFiles">
+                  <FormLabel component="legend" className="createShipmentLegend">
                     Attached Files
                   </FormLabel>
-
-                  <Stack direction="row" spacing={1}>
+                  <Stack direction="row" spacing={1} mt={-1}>
                     {!_.isEmpty(files) && _.map(files, (file, idx) => (
                       <Chip
                         key={`${file.name}-${idx}`}
@@ -1618,7 +1530,6 @@ const CreateShipment = ({
                         onDelete={(e) => setFiles(_.filter(files, (f, index) => (index !== idx)))}
                       />
                     ))}
-
                     {!_.isEmpty(attachedFiles) && _.map(attachedFiles, (pdf, idx) => (
                       <Chip
                         key={`${pdf}-${idx}`}
@@ -1632,7 +1543,7 @@ const CreateShipment = ({
                   </Stack>
                 </FormControl>
               </Grid>
-              <Grid item xs={1.5} className={classes.fileButton}>
+              <Grid item xs={3.5} md={2.5} lg={2} className="createShipmentFileButton" mt={isMobile() ? -3 : 0}>
                 <TextField
                   variant="outlined"
                   fullWidth
@@ -1642,10 +1553,10 @@ const CreateShipment = ({
                   InputLabelProps={{ shrink: true }}
                   inputProps={{ multiple: true }}
                   onChange={fileChange}
+                  style={{ width: '128px', overflow: 'hidden' }}
                 />
               </Grid>
-
-              <Grid item xs={12}>
+              <Grid item xs={12} mt={isMobile() ? 2 : 0}>
                 {!showNote && (
                   <Button
                     type="button"
@@ -1659,7 +1570,7 @@ const CreateShipment = ({
                 )}
                 {showNote && (
                   <Grid container spacing={2}>
-                    <Grid item xs={11.5}>
+                    <Grid item xs={10} sm={11.5}>
                       <TextField
                         variant="outlined"
                         multiline
@@ -1673,8 +1584,7 @@ const CreateShipment = ({
                         {...note.bind}
                       />
                     </Grid>
-
-                    <Grid item xs={0.5}>
+                    <Grid item xs={1} sm={0.5}>
                       <Button
                         type="button"
                         disabled={cannotEdit}
@@ -1683,93 +1593,88 @@ const CreateShipment = ({
                           setShowNote(false);
                         }}
                       >
-                        <CancelIcon fontSize="large" className={classes.cancel} />
+                        <CancelIcon fontSize="large" className="createShipmentCancel" />
                       </Button>
                     </Grid>
                   </Grid>
                 )}
               </Grid>
-
               {!_.isEmpty(additionalCustodians)
-              && _.map(additionalCustodians, (addCust, index) => (
-                <Grid item xs={12} key={`${index}-${addCust.custodian_uuid}`}>
-                  <Grid container spacing={4}>
-                    <Grid item xs={5.5}>
-                      <TextField
-                        id={`add-cust-${addCust.custodian_uuid}`}
-                        select
-                        fullWidth
-                        disabled={cannotEdit}
-                        placeholder="Select..."
-                        label={`Custodian ${index + 1}`}
-                        value={addCust}
-                        onChange={(e) => {
-                          const newList = _.map(
-                            additionalCustodians,
-                            (cust, idx) => (idx === index ? e.target.value : cust),
-                          );
-                          setAdditionalCustocations(newList);
-                        }}
-                        InputLabelProps={{ shrink: true }}
-                        SelectProps={{ displayEmpty: true }}
-                      >
-                        <MenuItem value="">Select</MenuItem>
-                        {!_.isEmpty(custodianList)
-                        && _.map(_.without(
-                          custodianList,
-                          _.find(custodianList, { url: originCustodian }),
-                          ..._.without(additionalCustodians, addCust),
-                          _.find(custodianList, { url: destinationCustodian }),
-                        ), (cust) => (
-                          <MenuItem key={cust.custodian_uuid} value={cust}>
-                            {cust.name}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    </Grid>
-
-                    <Grid item xs={2.5}>
-                      <TextField
-                        variant="outlined"
-                        id={`add-cust-abb-${addCust.custodian_uuid}`}
-                        label="ID"
-                        fullWidth
-                        disabled
-                        value={addCust.abbrevation}
-                      />
-                    </Grid>
-
-                    <Grid item xs={3.5}>
-                      <TextField
-                        variant="outlined"
-                        id={`add-cust-type-${addCust.custodian_uuid}`}
-                        label="Custodian Type"
-                        fullWidth
-                        disabled
-                        value={addCust.type}
-                      />
-                    </Grid>
-
-                    <Grid item xs={0.5}>
-                      <Button
-                        type="button"
-                        disabled={cannotEdit}
-                        onClick={(e) => {
-                          const newList = _.filter(
-                            additionalCustodians,
-                            (cust, idx) => (idx !== index),
-                          );
-                          setAdditionalCustocations(newList);
-                        }}
-                      >
-                        <CancelIcon fontSize="large" className={classes.cancel} />
-                      </Button>
+                && _.map(additionalCustodians, (addCust, index) => (
+                  <Grid item xs={12} key={`${index}-${addCust.custodian_uuid}`}>
+                    <Grid container spacing={4} mt={0}>
+                      <Grid item xs={6} sm={5} lg={5.5}>
+                        <TextField
+                          id={`add-cust-${addCust.custodian_uuid}`}
+                          select
+                          fullWidth
+                          disabled={cannotEdit}
+                          placeholder="Select..."
+                          label={`Custodian ${index + 1}`}
+                          value={addCust}
+                          onChange={(e) => {
+                            const newList = _.map(
+                              additionalCustodians,
+                              (cust, idx) => (idx === index ? e.target.value : cust),
+                            );
+                            setAdditionalCustocations(newList);
+                          }}
+                          InputLabelProps={{ shrink: true }}
+                          SelectProps={{ displayEmpty: true }}
+                        >
+                          <MenuItem value="">Select</MenuItem>
+                          {!_.isEmpty(custodianList)
+                            && _.map(_.without(
+                              custodianList,
+                              _.find(custodianList, { url: originCustodian }),
+                              ..._.without(additionalCustodians, addCust),
+                              _.find(custodianList, { url: destinationCustodian }),
+                            ), (cust) => (
+                              <MenuItem key={cust.custodian_uuid} value={cust}>
+                                {cust.name}
+                              </MenuItem>
+                            ))}
+                        </TextField>
+                      </Grid>
+                      <Grid item xs={6} sm={2.5}>
+                        <TextField
+                          variant="outlined"
+                          id={`add-cust-abb-${addCust.custodian_uuid}`}
+                          label="ID"
+                          fullWidth
+                          disabled
+                          value={addCust.abbrevation}
+                        />
+                      </Grid>
+                      <Grid item xs={6} sm={3.5}>
+                        <TextField
+                          variant="outlined"
+                          id={`add-cust-type-${addCust.custodian_uuid}`}
+                          label="Custodian Type"
+                          fullWidth
+                          disabled
+                          value={addCust.type}
+                        />
+                      </Grid>
+                      <Grid item xs={6} sm={0.5}>
+                        <Button
+                          type="button"
+                          disabled={cannotEdit}
+                          onClick={(e) => {
+                            const newList = _.filter(
+                              additionalCustodians,
+                              (cust, idx) => (idx !== index),
+                            );
+                            setAdditionalCustocations(newList);
+                          }}
+                        >
+                          <CancelIcon fontSize="large" className="createShipmentCancel" />
+                        </Button>
+                      </Grid>
                     </Grid>
                   </Grid>
-                </Grid>
-              ))}
-
-              <Grid item xs={11.5}>
+                ))}
+              <Grid item xs={11.5} mt={isMobile() ? 2 : 0}>
                 {showAddCustodian && (
                   <TextField
                     variant="outlined"
@@ -1788,19 +1693,18 @@ const CreateShipment = ({
                   >
                     <MenuItem value="">Select</MenuItem>
                     {!_.isEmpty(custodianList)
-                    && _.map(_.without(
-                      custodianList,
-                      _.find(custodianList, { url: originCustodian }),
-                      ...additionalCustodians,
-                      _.find(custodianList, { url: destinationCustodian }),
-                    ), (cust) => (
-                      <MenuItem key={cust.custodian_uuid} value={cust}>
-                        {cust.name}
-                      </MenuItem>
-                    ))}
+                      && _.map(_.without(
+                        custodianList,
+                        _.find(custodianList, { url: originCustodian }),
+                        ...additionalCustodians,
+                        _.find(custodianList, { url: destinationCustodian }),
+                      ), (cust) => (
+                        <MenuItem key={cust.custodian_uuid} value={cust}>
+                          {cust.name}
+                        </MenuItem>
+                      ))}
                   </TextField>
                 )}
-
                 {!showAddCustodian && (
                   <Button
                     type="button"
@@ -1815,14 +1719,12 @@ const CreateShipment = ({
               </Grid>
             </Grid>
           </FormControl>
-
-          <FormControl fullWidth component="fieldset" variant="outlined" className={classes.fieldset}>
-            <FormLabel component="legend" className={classes.legend}>
+          <FormControl fullWidth component="fieldset" variant="outlined" className="createShipmentFieldset">
+            <FormLabel component="legend" className="createShipmentLegend">
               Tracker
             </FormLabel>
-
             <Grid container spacing={isDesktop ? 4 : 0}>
-              <Grid item xs={5.5}>
+              <Grid item xs={5} sm={5.5}>
                 <TextField
                   id="gateway-type"
                   select
@@ -1832,8 +1734,8 @@ const CreateShipment = ({
                   onBlur={(e) => handleBlur(e, 'required', gatewayType, 'gateway-type')}
                   disabled={
                     (!_.isEmpty(editData)
-                    && !_.isEmpty(editData.gateway_imei)
-                    && !!_.find(gatewayData, { imei_number: _.toNumber(editData.gateway_imei[0]) }))
+                      && !_.isEmpty(editData.gateway_imei)
+                      && !!_.find(gatewayData, { imei_number: _.toNumber(editData.gateway_imei[0]) }))
                     || cannotEdit
                   }
                   InputLabelProps={{ shrink: true }}
@@ -1841,16 +1743,15 @@ const CreateShipment = ({
                   {...gatewayType.bind}
                 >
                   <MenuItem value="">Select</MenuItem>
-                  {!_.isEmpty(gatewayTypeList) && _.map(gatewayTypeList, (gtype) => (
+                  {!_.isEmpty(gatewayTypesData) && _.map(gatewayTypesData, (gtype) => (
                     <MenuItem key={gtype.id} value={gtype.name}>
                       {_.upperFirst(gtype.name)}
                     </MenuItem>
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={0.5} className={classes.outerAsterisk}>*</Grid>
-
-              <Grid item xs={5.75}>
+              <Grid item xs={1} sm={0.5} className="createShipmentOuterAsterisk" mt={isMobile() ? -3.5 : 0}>*</Grid>
+              <Grid item xs={5} sm={5.75} ml={isMobile() ? 2 : 0}>
                 <TextField
                   id="gateway"
                   select
@@ -1860,8 +1761,8 @@ const CreateShipment = ({
                   onBlur={(e) => handleBlur(e, 'required', gateway, 'gateway')}
                   disabled={
                     (!_.isEmpty(editData)
-                    && !_.isEmpty(editData.gateway_imei)
-                    && !!_.find(gatewayData, { imei_number: _.toNumber(editData.gateway_imei[0]) }))
+                      && !_.isEmpty(editData.gateway_imei)
+                      && !!_.find(gatewayData, { imei_number: _.toNumber(editData.gateway_imei[0]) }))
                     || cannotEdit
                   }
                   InputLabelProps={{ shrink: true }}
@@ -1882,23 +1783,26 @@ const CreateShipment = ({
               </Grid>
             </Grid>
             {gateway && gateway.value && (
-              <Grid item xs={11.5} className={classes.gatewayDetails}>
+              <Grid item xs={11.5} className="createShipmentGatewayDetails">
                 <Typography variant="body1" component="div">
                   Battery Level:
                 </Typography>
                 {gateway.value.last_known_battery_level
-                && _.gte(_.toNumber(gateway.value.last_known_battery_level), 90) && (
-                  <BatteryFullIcon htmlColor={theme.palette.success.main} />
-                )}
+                  && _.gte(_.toNumber(gateway.value.last_known_battery_level), 90)
+                  && (
+                    <BatteryFullIcon htmlColor={theme.palette.success.main} />
+                  )}
                 {gateway.value.last_known_battery_level
-                && _.lt(_.toNumber(gateway.value.last_known_battery_level), 90)
-                && _.gte(_.toNumber(gateway.value.last_known_battery_level), 60) && (
-                  <Battery80Icon htmlColor={theme.palette.warning.main} />
-                )}
+                  && _.lt(_.toNumber(gateway.value.last_known_battery_level), 90)
+                  && _.gte(_.toNumber(gateway.value.last_known_battery_level), 60)
+                  && (
+                    <Battery80Icon htmlColor={theme.palette.warning.main} />
+                  )}
                 {gateway.value.last_known_battery_level
-                && _.lt(_.toNumber(gateway.value.last_known_battery_level), 60) && (
-                  <Battery50Icon htmlColor={theme.palette.error.main} />
-                )}
+                  && _.lt(_.toNumber(gateway.value.last_known_battery_level), 60)
+                  && (
+                    <Battery50Icon htmlColor={theme.palette.error.main} />
+                  )}
                 {!gateway.value.last_known_battery_level && (
                   <BatteryFullIcon />
                 )}
@@ -1930,11 +1834,11 @@ const CreateShipment = ({
                     >
                       <MenuItem value="">Select</MenuItem>
                       {!_.isEmpty(TIVE_GATEWAY_TIMES)
-                      && _.map(TIVE_GATEWAY_TIMES, (time, index) => (
-                        <MenuItem key={`${time.value}-${index}`} value={time.value}>
-                          {time.label}
-                        </MenuItem>
-                      ))}
+                        && _.map(TIVE_GATEWAY_TIMES, (time, index) => (
+                          <MenuItem key={`${time.value}-${index}`} value={time.value}>
+                            {time.label}
+                          </MenuItem>
+                        ))}
                     </TextField>
                   </Grid>
                   <Grid item xs={2.75}>
@@ -1965,64 +1869,52 @@ const CreateShipment = ({
               </Grid>
             )}
           </FormControl>
-
-          <Grid container spacing={2} className={classes.finalName}>
-            <Grid item xs={3}>
-              <Typography>ID</Typography>
-            </Grid>
-            <Grid item xs={5}>
-              <Typography>SHIPMENT NAME</Typography>
-            </Grid>
-            <Grid item xs={2}>
-              <Typography>ORIGIN</Typography>
-            </Grid>
-            <Grid item xs={2}>
-              <Typography>DEST</Typography>
-            </Grid>
-          </Grid>
           <Grid container spacing={2}>
-            <Grid item xs={3}>
+            <Grid item xs={6} sm={3}>
+              <Typography className="createShipmentFinalName">ID</Typography>
               <TextField
                 variant="outlined"
                 id="org-id-final"
                 fullWidth
                 disabled
-                className={classes.finalNameDisplay}
+                className="createShipmentFinalNameDisplay"
                 value={organization && organization.abbrevation}
               />
             </Grid>
-            <Grid item xs={5}>
+            <Grid item xs={6} sm={5}>
+              <Typography className="createShipmentFinalName">SHIPMENT NAME</Typography>
               <TextField
                 variant="outlined"
                 id="shipment-name-final"
                 fullWidth
                 disabled
-                className={classes.finalNameDisplay}
+                className="createShipmentFinalNameDisplay"
                 value={shipmentName.value}
               />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={6} sm={2} mt={isMobile() ? -3 : 0}>
+              <Typography className="createShipmentFinalName">ORIGIN</Typography>
               <TextField
                 variant="outlined"
                 id="origin-final"
                 fullWidth
                 disabled
-                className={classes.finalNameDisplay}
+                className="createShipmentFinalNameDisplay"
                 value={originAbb}
               />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={6} sm={2} mt={isMobile() ? -3 : 0}>
+              <Typography className="createShipmentFinalName">DEST</Typography>
               <TextField
                 variant="outlined"
                 id="dest-final"
                 fullWidth
                 disabled
-                className={classes.finalNameDisplay}
+                className="createShipmentFinalNameDisplay"
                 value={destinationAbb}
               />
             </Grid>
           </Grid>
-
           <Grid container spacing={4}>
             <Grid item xs={12} mt={1}>
               <Typography variant="caption" component="div" textAlign="center" fontStyle="italic" color={theme.palette.background.light}>
@@ -2030,23 +1922,31 @@ const CreateShipment = ({
                 It is automatically generated from the form above.
               </Typography>
             </Grid>
-
             <Grid item xs={0.5} />
-            <Grid item xs={5.5} mt={5}>
-              <Button type="button" variant="outlined" fullWidth onClick={(e) => history.push(routes.SHIPMENT)} className={classes.actionButtons}>
+            <Grid item xs={5.5} mt={5} ml={isMobile() ? -1.5 : 0}>
+              <Button
+                type="button"
+                variant="outlined"
+                fullWidth
+                onClick={(e) => history.push(routes.SHIPMENT)}
+                className="createShipmentActionButtons"
+              >
                 Cancel
               </Button>
             </Grid>
-
             <Grid item xs={5.5} mt={5}>
               {!gateway.value && (
                 <Button
                   type="submit"
                   variant="contained"
                   fullWidth
-                  disabled={loading || submitDisabled() || cannotEdit}
+                  disabled={isAddingShipment
+                    || isEditingShipment
+                    || isDeletingCustody
+                    || submitDisabled()
+                    || cannotEdit}
                   onClick={(e) => handleSubmit(e, true)}
-                  className={classes.actionButtons}
+                  className="createShipmentActionButtons"
                 >
                   Save as Draft
                 </Button>
@@ -2056,9 +1956,12 @@ const CreateShipment = ({
                   type="submit"
                   variant="contained"
                   fullWidth
-                  disabled={loading || submitDisabled()}
+                  disabled={isAddingShipment
+                    || isEditingShipment
+                    || isDeletingCustody
+                    || submitDisabled()}
                   onClick={(e) => handleSubmit(e, false)}
-                  className={classes.actionButtons}
+                  className="createShipmentActionButtons"
                 >
                   {_.isEmpty(editData) ? 'Create a shipment' : 'Update shipment'}
                 </Button>
@@ -2066,7 +1969,6 @@ const CreateShipment = ({
             </Grid>
             <Grid item xs={0.5} />
           </Grid>
-
           <Grid container spacing={4}>
             <Grid item xs={12} mt={2}>
               <Typography variant="caption" component="div" textAlign="center" fontStyle="italic" color={theme.palette.background.light}>
@@ -2076,34 +1978,39 @@ const CreateShipment = ({
           </Grid>
         </Box>
       </form>
-
       <div>
         <Dialog
           open={showTemplateDT}
           onClose={(e) => setShowTemplateDT(false)}
           aria-labelledby="save-template-title"
           aria-describedby="save-template-description"
-          className={classes.saveTemplateModal}
+          className="createShipmentSaveTemplateModal"
         >
-          {loading && <Loader open={loading} />}
+          {(isAddingShipmentTemplate
+            || isEditingShipmentTemplate
+            || isDeletingShipmentTemplate)
+            && (
+              <Loader open={isAddingShipmentTemplate
+                || isEditingShipmentTemplate
+                || isDeletingShipmentTemplate}
+              />
+            )}
           <DialogTitle id="save-template-title">
             {!saveAsName && 'All Templates'}
             {saveAsName && 'Save template as...'}
             <IconButton
               aria-label="save-template-close"
-              className={classes.closeButton}
+              className="createShipmentCloseButton"
               onClick={(e) => setShowTemplateDT(false)}
             >
               <CloseIcon />
             </IconButton>
           </DialogTitle>
-
           <DialogContent>
             <DataTableWrapper
               hideAddButton
               noOptionsIcon
               noSpace
-              loading={loading}
               rows={templateRows}
               columns={[
                 {
@@ -2117,9 +2024,9 @@ const CreateShipment = ({
                   },
                 },
                 ...templateColumns(
-                  timezone,
-                  _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-                    ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                  data,
+                  _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
                     : '',
                 ),
               ]}
@@ -2130,7 +2037,7 @@ const CreateShipment = ({
                     setSaveAsName(rowData[0]);
                     setConfirmReplace(true);
                   } else {
-                    handleTemplateChange(_.find(templates, { name: rowData[0] }) || '');
+                    handleTemplateChange(_.find(shipmentTemplateData, { name: rowData[0] }) || '');
                     setShowTemplateDT(false);
                   }
                 },
@@ -2140,10 +2047,9 @@ const CreateShipment = ({
               }}
             />
           </DialogContent>
-
           {saveAsName && (
             <DialogActions>
-              <Grid container spacing={2} className={classes.modalActionButtons}>
+              <Grid container spacing={2} className="createShipmentModalActionButtons">
                 <Grid item xs={6}>
                   <TextField
                     variant="outlined"
@@ -2184,7 +2090,6 @@ const CreateShipment = ({
           )}
         </Dialog>
       </div>
-
       <ConfirmModal
         open={confirmReplace}
         setOpen={setConfirmReplace}
@@ -2194,19 +2099,17 @@ const CreateShipment = ({
         msg2="Replacing it will overwrite its current contents."
         submitText={templateName || saveAsName ? 'Replace template' : 'Rename template'}
       />
-
       <ConfirmModal
         open={confirmDelete}
         setOpen={setConfirmDelete}
         submitAction={(e) => {
-          dispatch(deleteShipmentTemplate(template.id));
+          deleteShipmentTemplateMutation(template.id);
           setConfirmDelete(false);
         }}
         title={`Are you sure you want to delete the template "${template.name}"?`}
         msg1="This action cannot be undone."
         submitText="Delete template"
       />
-
       <ConfirmModal
         open={confirmLeave}
         setOpen={setConfirmLeave}
@@ -2221,21 +2124,4 @@ const CreateShipment = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.shipmentReducer,
-  ...state.custodianReducer,
-  ...state.optionsReducer,
-  ...state.itemsReducer,
-  ...state.sensorsGatewayReducer,
-  loading: (
-    state.shipmentReducer.loading
-    || state.custodianReducer.loading
-    || state.optionsReducer.loading
-    || state.itemsReducer.loading
-    || state.sensorsGatewayReducer.loading
-    || state.authReducer.loading
-  ),
-});
-
-export default connect(mapStateToProps)(CreateShipment);
+export default CreateShipment;

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import 'react-notifications/lib/notifications.css';
 import { hot } from 'react-hot-loader';
 import {
   BrowserRouter as Router,
@@ -8,26 +7,28 @@ import {
 } from 'react-router-dom';
 import {
   CssBaseline,
-  ThemeProvider,
   StyledEngineProvider,
 } from '@mui/material';
-import Alert from './components/Alert/Alert';
-import { app, AppContext } from './context/App.context';
-import ContainerDashboard from './layout/Container/Container';
-import { oauthService } from './modules/oauth/oauth.service';
-import Login from './pages/Login/Login';
-import Register from './pages/Register/Register';
-import EmailForm from './pages/ResetPassword/EmailForm';
-import NewPasswordForm from './pages/ResetPassword/NewPasswordForm';
-import { PrivateRoute } from './routes/Private.route';
-import { routes } from './routes/routesConstants';
-import theme from './styles/theme';
+import Alert from '@components/Alert/Alert';
+import { app, AppContext } from '@context/App.context';
+import ContainerDashboard from '@layout/Container/Container';
+import { oauthService } from '@modules/oauth/oauth.service';
+import Login from '@pages/Login/Login';
+import Register from '@pages/Register/Register';
+import EmailForm from '@pages/ResetPassword/EmailForm';
+import NewPasswordForm from '@pages/ResetPassword/NewPasswordForm';
+import { PrivateRoute } from '@routes/Private.route';
+import { routes } from '@routes/routesConstants';
+import theme from '@styles/theme';
+import {
+  Experimental_CssVarsProvider as CssVarsProvider,
+} from '@mui/material/styles';
 
 const App = () => (
   <Router>
     <AppContext.Provider value={app}>
       <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
+        <CssVarsProvider theme={theme} defaultMode="light">
           <div className="app">
             <CssBaseline />
             <Route
@@ -58,7 +59,7 @@ const App = () => (
             />
           </div>
           <Alert />
-        </ThemeProvider>
+        </CssVarsProvider>
       </StyledEngineProvider>
     </AppContext.Provider>
   </Router>

@@ -4,118 +4,54 @@ import {
   Step,
   StepConnector,
   StepLabel,
-  styled,
   Stack,
   Typography,
   StepIcon,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { stepConnectorClasses } from '@mui/material/StepConnector';
 import { CircleRounded as CircleIcon, CheckCircleRounded as CheckIcon } from '@mui/icons-material';
-
-const CustomizedConnector = styled(StepConnector)(({ theme }) => ({
-  [`&.${stepConnectorClasses.alternativeLabel}`]: {
-    top: 10,
-    left: 'calc(-50% + 16px)',
-    right: 'calc(50% + 16px)',
-  },
-  [`&.${stepConnectorClasses.active}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: theme.palette.success.main,
-    },
-  },
-  [`&.${stepConnectorClasses.completed}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: theme.palette.success.main,
-    },
-  },
-  [`& .${stepConnectorClasses.line}`]: {
-    borderColor: theme.palette.background.light,
-    borderTopWidth: 3,
-    borderRadius: 1,
-  },
-}));
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: `${theme.spacing(2)} 0`,
-    width: '85vw',
-    [theme.breakpoints.down('lg')]: {
-      width: '100vw',
-    },
-    [theme.breakpoints.down('md')]: {
-      width: '150vw',
-    },
-    [theme.breakpoints.down('sm')]: {
-      width: '300vw',
-    },
-    overflowX: 'auto',
-  },
-  noLine: {
-    '& .MuiStepConnector-root:first-of-type': {
-      display: 'none',
-    },
-  },
-  default: {
-    fill: `${theme.palette.background.light} !important`,
-    width: '100% !important',
-  },
-  active: {
-    fill: `${theme.palette.success.main} !important`,
-    width: '100% !important',
-  },
-  error: {
-    fill: `${theme.palette.error.main} !important`,
-    width: '100% !important',
-  },
-  info: {
-    fill: `${theme.palette.info.main} !important`,
-    width: '100% !important',
-  },
-}));
+import './CustomizedStepperStyles.css';
 
 const CustomizedSteppers = ({ steps }) => {
-  const classes = useStyles();
-
   const getIcon = (step) => {
     switch (true) {
       case step.active && !step.completed:
-        return <CircleIcon className={classes.active} />;
+        return <CircleIcon className="customizedStepperActive" />;
 
       case step.active && step.completed:
-        return <CheckIcon className={classes.active} />;
+        return <CheckIcon className="customizedStepperActive" />;
 
       case step.error && !step.completed:
-        return <CircleIcon className={classes.error} />;
+        return <CircleIcon className="customizedStepperError" />;
 
       case step.error && step.completed:
-        return <CheckIcon className={classes.error} />;
+        return <CheckIcon className="customizedStepperError" />;
 
       case step.info && !step.completed:
-        return <CircleIcon className={classes.info} />;
+        return <CircleIcon className="customizedStepperInfo" />;
 
       case step.info && step.completed:
-        return <CheckIcon className={classes.info} />;
+        return <CheckIcon className="customizedStepperInfo" />;
 
       default:
-        return <CircleIcon className={classes.default} />;
+        return <CircleIcon className="customizedStepperDefault" />;
     }
   };
 
   return (
-    <Stepper alternativeLabel connector={<CustomizedConnector />} className={classes.root}>
+    <Stepper alternativeLabel connector={<StepConnector className="customizedStepperConnector" />} className="customizedStepperRoot">
       {steps.map((step, index) => (
         <Stack key={index} sx={{ flex: 1 }}>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignSelf: 'center' }}>
             {step.titleIcon}
             <Typography textAlign="center" fontWeight={700} pb={2} pl={step.titleIcon ? 1 : 0} pr={1} fontSize={14} color={step.titleColor}>
               {step.title}
             </Typography>
           </div>
-          <Step className={index === 0 ? classes.noLine : ''}>
+          <Step className={index === 0 ? 'customizedStepperNoLine' : ''}>
             <StepIcon icon={getIcon(step)} />
             <StepLabel>{step.label}</StepLabel>
-            <Typography textAlign="center" fontSize={14}>{step.content}</Typography>
+            <Typography textAlign="center" fontSize={14} style={{ width: 'max-content', margin: 'auto' }}>{step.content}</Typography>
+            <Typography textAlign="center" fontSize={14}>{step.caption}</Typography>
           </Step>
         </Stack>
       ))}

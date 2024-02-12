@@ -2,55 +2,26 @@ import React, { useState } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { Container } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import {
-  UserContext,
-  getUser,
-} from '../../context/User.context';
+import { UserContext, getUser } from '@context/User.context';
 import NavBar from '../NavBar/NavBar';
 import TopBar from '../TopBar/TopBar';
-import AboutPlatform from '../../pages/AboutPlatform/AboutPlatform';
-import AdminPanel from '../../pages/AdminPanel/AdminPanel';
-import Custodians from '../../pages/Custodians/Custodians';
-import Items from '../../pages/Items/Items';
-import MyAccount from '../../pages/MyAccount/MyAccount';
-import PushNotification from '../../pages/PushNotification/PushNotification';
-import Reporting from '../../pages/Reporting/Reporting';
-import Gateway from '../../pages/SensorsGateway/Gateway';
-import CreateShipment from '../../pages/Shipment/CreateShipment';
-import Shipment from '../../pages/Shipment/Shipment';
-import UserManagement from '../../pages/UserManagement/UserManagement';
-import { routes } from '../../routes/routesConstants';
-import {
-  checkForAdmin,
-  checkForGlobalAdmin,
-} from '../../utils/utilMethods';
-import { isMobile } from '../../utils/mediaQuery';
+import AboutPlatform from '@pages/AboutPlatform/AboutPlatform';
+import AdminPanel from '@pages/AdminPanel/AdminPanel';
+import Custodians from '@pages/Custodians/Custodians';
+import Items from '@pages/Items/Items';
+import Reporting from '@pages/Reporting/Reporting';
+import Gateway from '@pages/SensorsGateway/Gateway';
+import CreateShipment from '@pages/Shipment/CreateShipment';
+import Shipment from '@pages/Shipment/Shipment';
+import UserManagement from '@pages/UserManagement/UserManagement';
+import { routes } from '@routes/routesConstants';
+import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
+import { isMobile } from '@utils/mediaQuery';
+import './ContainerStyles.css';
+import PrivacyPolicy from '@pages/PrivacyPolicy/PrivacyPolicy';
+import CookieConsent from '@components/CookieConsent/CookieConsent';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    height: '100%',
-    [theme.breakpoints.up('sm')]: {
-      display: 'flex',
-    },
-  },
-  content: {
-    flexGrow: 1,
-    height: '100%',
-    paddingTop: '5.25em',
-    paddingBottom: theme.spacing(1.5),
-  },
-  contentMaxWidth: {
-    width: 'calc(100vw - 240px)',
-    maxWidth: '100%',
-  },
-}));
-
-/**
- * Container for the app layout when the user is authenticated.
- */
 const ContainerDashboard = ({ location, history }) => {
-  const classes = useStyles();
   const userData = getUser();
   const [navHidden, setNavHidden] = useState(false);
   let subNavItems = [];
@@ -63,7 +34,7 @@ const ContainerDashboard = ({ location, history }) => {
   }
 
   return (
-    <div className={classes.root}>
+    <div className="containerRoot">
       <UserContext.Provider value={getUser()}>
         <TopBar
           navHidden={navHidden}
@@ -72,17 +43,14 @@ const ContainerDashboard = ({ location, history }) => {
           location={location}
           history={history}
         />
-        {!_.includes(location.pathname, routes.MY_ACCOUNT)
-        && (
-          <NavBar
-            navHidden={navHidden}
-            setNavHidden={setNavHidden}
-            location={location}
-            history={history}
-          />
-        )}
+        <NavBar
+          navHidden={navHidden}
+          setNavHidden={setNavHidden}
+          location={location}
+          history={history}
+        />
         <Container
-          className={`${classes.content} ${!isMobile() && classes.contentMaxWidth}`}
+          className={`containerContent ${!isMobile() && 'containerContentMaxWidth'}`}
         >
           <Route
             exact
@@ -90,24 +58,24 @@ const ContainerDashboard = ({ location, history }) => {
             render={() => <Redirect to={routes.SHIPMENT} />}
           />
           {(checkForAdmin(userData)
-          || checkForGlobalAdmin(userData))
-          && (
-            <Route
-              path={routes.USER_MANAGEMENT}
-              component={UserManagement}
-            />
-          )}
+            || checkForGlobalAdmin(userData))
+            && (
+              <Route
+                path={routes.USER_MANAGEMENT}
+                component={UserManagement}
+              />
+            )}
           <Route
             path={routes.CUSTODIANS}
             component={Custodians}
           />
           <Route
-            path={routes.MY_ACCOUNT}
-            component={MyAccount}
-          />
-          <Route
             path={routes.ABOUT_PLATFORM}
             component={AboutPlatform}
+          />
+          <Route
+            path={routes.PRIVACY_POLICY}
+            component={PrivacyPolicy}
           />
           <Route
             path={routes.ITEMS}
@@ -134,8 +102,8 @@ const ContainerDashboard = ({ location, history }) => {
             component={CreateShipment}
           />
         </Container>
-        <PushNotification />
       </UserContext.Provider>
+      <CookieConsent />
     </div>
   );
 };

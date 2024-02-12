@@ -1,68 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Button,
   CssBaseline,
   TextField,
-  Link,
   Grid,
-  Box,
   Card,
   CardContent,
   Typography,
   Container,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import logo from '../../assets/tp-logo.png';
-import Copyright from '../../components/Copyright/Copyright';
-import Loader from '../../components/Loader/Loader';
-import { useInput } from '../../hooks/useInput';
-import {
-  login,
-  resetPasswordCheck,
-} from '../../redux/authuser/actions/authuser.actions';
-import { routes } from '../../routes/routesConstants';
-import { validators } from '../../utils/validators';
+import logo from '@assets/tp-logo.png';
+import Copyright from '@components/Copyright/Copyright';
+import Loader from '@components/Loader/Loader';
+import useAlert from '@hooks/useAlert';
+import { useInput } from '@hooks/useInput';
+import useTimezone from '@hooks/useTimezone';
+import { routes } from '@routes/routesConstants';
+import { validators } from '@utils/validators';
+import { useResetPasswordCheckMutation } from '@react-query/mutations/authUser/resetPasswordCheckMutation';
+import { useLoginMutation } from '@react-query/mutations/authUser/loginMutation';
+import './LoginStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    paddingTop: theme.spacing(8),
-  },
-  paper: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(2),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  logo: {
-    maxWidth: '20rem',
-    width: '100%',
-    marginBottom: theme.spacing(3),
-  },
-  textField: {
-    minHeight: '5rem',
-    margin: theme.spacing(1, 0),
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-}));
-
-const Login = ({ dispatch, loading, history }) => {
-  const classes = useStyles();
+const Login = ({ history }) => {
   const username = useInput('', { required: true });
   const password = useInput('', { required: true });
   const [error, setError] = useState({});
+  const location = useLocation();
+
+  const { displayAlert } = useAlert();
+  const { timezone } = useTimezone();
+
+  const { mutate: resetPasswordCheckMutation, isLoading: isPasswordCheck } = useResetPasswordCheckMutation(history, routes.RESET_PASSWORD_CONFIRM, routes.LOGIN, displayAlert);
+
+  const { mutate: loginMutation, isLoading: islogin } = useLoginMutation(history, (location.state && location.state.from) || routes.SHIPMENT, displayAlert, timezone);
 
   useEffect(() => {
     if (location.pathname.includes(routes.RESET_PASSWORD_CONFIRM)) {
@@ -75,7 +46,7 @@ const Login = ({ dispatch, loading, history }) => {
         uid: restPathArr[1],
         token: restPathArr[2],
       };
-      dispatch(resetPasswordCheck(resetCheckValues, history));
+      resetPasswordCheckMutation(resetCheckValues);
     }
   }, []);
 
@@ -89,7 +60,7 @@ const Login = ({ dispatch, loading, history }) => {
       username: username.value,
       password: password.value,
     };
-    dispatch(login(loginFormValue, history));
+    loginMutation(loginFormValue);
   };
 
   /**
@@ -136,23 +107,23 @@ const Login = ({ dispatch, loading, history }) => {
     <Container
       component="main"
       maxWidth="xs"
-      className={classes.container}
+      className="loginContainer"
     >
-      {loading && <Loader open={loading} />}
+      {(isPasswordCheck || islogin) && <Loader open={isPasswordCheck || islogin} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
-          <div className={classes.paper}>
+          <div className="loginPaper">
             <img
               src={logo}
-              className={classes.logo}
+              className="loginLogo"
               alt="Company logo"
             />
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
             <form
-              className={classes.form}
+              className="loginForm"
               noValidate
               onSubmit={handleSubmit}
             >
@@ -171,7 +142,7 @@ const Login = ({ dispatch, loading, history }) => {
                     ? error.username.message
                     : ''
                 }
-                className={classes.textField}
+                className="loginTextField"
                 onBlur={(e) => handleBlur(e, 'required', username)}
                 {...username.bind}
               />
@@ -191,7 +162,7 @@ const Login = ({ dispatch, loading, history }) => {
                     ? error.password.message
                     : ''
                 }
-                className={classes.textField}
+                className="loginTextField"
                 onBlur={(e) => handleBlur(e, 'required', password)}
                 {...password.bind}
               />
@@ -200,15 +171,15 @@ const Login = ({ dispatch, loading, history }) => {
                 fullWidth
                 variant="contained"
                 color="primary"
-                className={classes.submit}
-                disabled={loading || submitDisabled()}
+                style={{ marginTop: 8, marginBottom: 16 }}
+                disabled={isPasswordCheck || islogin || submitDisabled()}
               >
                 Sign in
               </Button>
               <Grid container>
                 <Grid item xs>
                   <Link
-                    href={routes.RESET_PASSWORD}
+                    to={routes.RESET_PASSWORD}
                     variant="body2"
                     color="primary"
                   >
@@ -217,7 +188,7 @@ const Login = ({ dispatch, loading, history }) => {
                 </Grid>
                 <Grid item>
                   <Link
-                    href={routes.REGISTER}
+                    to={routes.REGISTER}
                     variant="body2"
                     color="primary"
                   >
@@ -229,16 +200,9 @@ const Login = ({ dispatch, loading, history }) => {
           </div>
         </CardContent>
       </Card>
-      <Box mt={8} mb={1}>
-        <Copyright />
-      </Box>
+      <Copyright />
     </Container>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(Login);
+export default Login;
