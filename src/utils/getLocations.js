@@ -1,17 +1,20 @@
 import Geocode from 'react-geocode';
 import _ from 'lodash';
 
-export default function getLocations(carrierLocations) {
+const getLocations = async (carrierLocations) => {
   Geocode.setApiKey(window.env.GEO_CODE_API);
   Geocode.setLanguage('en');
 
-  const reponses = _.map(carrierLocations, (loc) => (
-    Geocode.fromAddress(loc)
-  ));
+  const reponses = await Promise.all(_.map(carrierLocations, async (loc) => (
+    // eslint-disable-next-line no-return-await
+    await Geocode.fromAddress(loc)
+  )));
   const locations = _.map(reponses, (res) => {
     const { lat, lng } = res.results[0].geometry.location;
     return `${lat},${lng}`;
   });
 
   return locations;
-}
+};
+
+export default getLocations;

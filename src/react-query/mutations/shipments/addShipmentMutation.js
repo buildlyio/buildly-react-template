@@ -20,23 +20,23 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
       );
       if (data && data.data) {
         if (!_.isEmpty(files)) {
-          const responses = _.map(files, (file) => {
+          const responses = await Promise.all(_.map(files, async (file) => {
             uploadFile = new FormData();
             uploadFile.append('file', file, file.name);
             uploadFile.append('shipment_uuid', data.data.shipment_uuid);
-            const uploadResponse = httpService.makeRequest(
+            const uploadResponse = await httpService.makeRequest(
               'post',
               `${window.env.API_URL}shipment/upload_file/`,
               uploadFile,
             );
             return uploadResponse;
-          });
+          }));
           shipmentPayload = {
             ...data.data,
             uploaded_pdf: _.map(files, 'name'),
             uploaded_pdf_link: _.map(_.flatMap(_.map(responses, 'data')), 'aws url'),
           };
-          httpService.makeRequest(
+          await httpService.makeRequest(
             'patch',
             `${window.env.API_URL}shipment/shipment/${data.data.id}/`,
             shipmentPayload,
@@ -61,7 +61,7 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
             end_of_custody_location: first_custody,
           };
         }
-        httpService.makeRequest(
+        await httpService.makeRequest(
           'post',
           `${window.env.API_URL}custodian/custody/`,
           {
@@ -71,8 +71,9 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
           },
         );
         if (!_.isEmpty(carriers)) {
-          _.map(carriers, (carrier, index) => (
-            httpService.makeRequest(
+          await Promise.all(_.map(carriers, async (carrier, index) => (
+            // eslint-disable-next-line no-return-await
+            await httpService.makeRequest(
               'post',
               `${window.env.API_URL}custodian/custody/`,
               {
@@ -84,9 +85,9 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
                 shipment_id: data.data.shipment_uuid,
                 shipment: data.data.id,
               },
-            )));
+            ))));
         }
-        httpService.makeRequest(
+        await httpService.makeRequest(
           'post',
           `${window.env.API_URL}custodian/custody/`,
           {
