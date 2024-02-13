@@ -155,7 +155,7 @@ const Reporting = () => {
         if (locShipmentID) {
           const locShip = _.find(overview, { partner_shipment_id: locShipmentID });
           setSelectedShipment(locShip);
-          setShipmentFilter(locShip.status);
+          setShipmentFilter(_.includes(['Planned', 'En route', 'Arrived'], locShip.status) ? 'Active' : locShip.status);
         }
       }
     }
