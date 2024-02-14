@@ -54,7 +54,7 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
         };
         let locations = [];
         if (!_.isEmpty(carriers)) {
-          locations = getLocations(_.map(carriers, 'location'));
+          locations = await getLocations(_.map(carriers, 'location'));
           const first_custody = _.first(locations);
           startCustody = {
             ...startCustody,
