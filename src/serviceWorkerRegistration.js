@@ -1,7 +1,7 @@
 const showRefreshUI = (registration) => {
   //   registration.waiting.postMessage('force-activate');
   alert('New version available for the application. It will automatically reload the page to move to the latest version of the application.');
-  window.location.reload();
+  window.location.reload(true);
 };
 
 const onNewServiceWorker = (registration, callback) => {
