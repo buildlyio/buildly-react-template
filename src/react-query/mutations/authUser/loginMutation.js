@@ -29,8 +29,8 @@ export const useLoginMutation = (
     return user;
   },
   {
-    onSuccess: (data) => {
-      timezone(data.data.user_timezone);
+    onSuccess: async (data) => {
+      await timezone(data.data.user_timezone);
       history.push(redirectTo);
     },
   },
