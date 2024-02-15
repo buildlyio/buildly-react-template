@@ -119,8 +119,8 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
               const configureGatewayPayload = {
                 platform_type: shipment.data.platform_name,
                 gateway: updateGateway.imei_number,
-                transmission_interval: shipment.data.transmission_time,
-                measurement_interval: shipment.data.measurement_time,
+                transmission_interval: _.isEqual(_.toLower(shipment.data.status), 'planned') ? 5 : shipment.data.transmission_time,
+                measurement_interval: _.isEqual(_.toLower(shipment.data.status), 'planned') ? 5 : shipment.data.measurement_time,
               };
               await httpService.makeRequest(
                 'patch',

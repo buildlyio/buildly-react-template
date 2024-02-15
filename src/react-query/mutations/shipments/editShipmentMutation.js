@@ -179,12 +179,12 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
               `${window.env.API_URL}sensors/gateway/${gatewayPayload.id}`,
               gatewayPayload,
             );
-            if (_.includes(['Planned', 'En route'], data.data.status)) {
+            if (_.includes(['planned', 'en route'], _.toLower(data.data.status))) {
               const configurePayload = {
                 platform_type: data.data.platform_name,
                 gateway: updateGateway.imei_number,
-                transmission_interval: data.data.transmission_time,
-                measurement_interval: data.data.measurement_time,
+                transmission_interval: _.isEqual(_.toLower(data.data.status), 'planned') ? 5 : data.data.transmission_time,
+                measurement_interval: _.isEqual(_.toLower(shipment.data.status), 'planned') ? 5 : data.data.measurement_time,
               };
               await httpService.makeRequest(
                 'post',
