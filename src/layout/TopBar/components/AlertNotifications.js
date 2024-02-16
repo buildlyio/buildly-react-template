@@ -1,6 +1,7 @@
 import React, {
   forwardRef, useEffect, useRef, useState,
 } from 'react';
+import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { getUser } from '@context/User.context';
 import { useQueryClient } from 'react-query';
@@ -16,6 +17,7 @@ import { isTablet } from '@utils/mediaQuery';
 import { routes } from '@routes/routesConstants';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { getAlertNotificationsColumns } from '@utils/constants';
+import { oauthService } from '@modules/oauth/oauth.service';
 
 const Transition = forwardRef((props, ref) => <Slide direction="left" ref={ref} {...props} />);
 
@@ -28,6 +30,7 @@ const AlertNotifications = ({
   const alertsSocket = useRef(null);
   const [pushGrp, setPushGrp] = useState('');
   const [notifications, setNotifications] = useState([]);
+  const [redirectToLogin, setRedirectToLogin] = useState(false);
 
   useEffect(() => {
     if (!_.isEmpty(user)) {
@@ -57,10 +60,16 @@ const AlertNotifications = ({
   }, [notifications]);
 
   const reloadData = () => {
-    queryClient.invalidateQueries({ queryKey: ['shipments'] });
-    queryClient.invalidateQueries({ queryKey: ['allGateways'] });
-    queryClient.invalidateQueries({ queryKey: ['sensorAlerts'] });
-    queryClient.invalidateQueries({ queryKey: ['sensorReports'] });
+    if (oauthService.hasValidAccessToken()) {
+      queryClient.invalidateQueries({ queryKey: ['shipments'] });
+      queryClient.invalidateQueries({ queryKey: ['allGateways'] });
+      queryClient.invalidateQueries({ queryKey: ['sensorAlerts'] });
+      queryClient.invalidateQueries({ queryKey: ['sensorReports'] });
+      setRedirectToLogin(false);
+    } else {
+      oauthService.logout();
+      setRedirectToLogin(true);
+    }
   };
 
   // eslint-disable-next-line consistent-return
@@ -166,91 +175,94 @@ const AlertNotifications = ({
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={closeAlertNotifications}
-      fullWidth
-      fullScreen={isTablet()}
-      aria-labelledby="alert-notifications"
-      TransitionComponent={Transition}
-      className="alertNotificationsDialog"
-    >
-      <DialogTitle className="alertNotificationsDialogTitle">
-        <Grid item xs={12} display="flex" alignItems="center">
-          <Typography variant="h6" flex={1}>Shipment Notifications</Typography>
-          <IconButton className="alertNotificationsCloseIcon" onClick={closeAlertNotifications}>
-            <CloseIcon fontSize="large" />
-          </IconButton>
-        </Grid>
-      </DialogTitle>
-
-      <DialogContent>
-        {_.isEmpty(notifications) && (
-          <Grid item xs={12} display="flex" justifyContent="center" alignItems="center" height="100%">
-            <Typography variant="subtitle1">There are no new alerts for any active shipments</Typography>
+    <>
+      {redirectToLogin && <Redirect to="/login" />}
+      <Dialog
+        open={open}
+        onClose={closeAlertNotifications}
+        fullWidth
+        fullScreen={isTablet()}
+        aria-labelledby="alert-notifications"
+        TransitionComponent={Transition}
+        className="alertNotificationsDialog"
+      >
+        <DialogTitle className="alertNotificationsDialogTitle">
+          <Grid item xs={12} display="flex" alignItems="center">
+            <Typography variant="h6" flex={1}>Shipment Notifications</Typography>
+            <IconButton className="alertNotificationsCloseIcon" onClick={closeAlertNotifications}>
+              <CloseIcon fontSize="large" />
+            </IconButton>
           </Grid>
-        )}
-        {!_.isEmpty(notifications) && (
-          <Grid container spacing={2} mt={2}>
-            {_.map(notifications, (noti, index) => (
-              <React.Fragment key={noti.shipment_id}>
-                <Grid item xs={12}>
-                  <Accordion>
-                    <AccordionSummary
-                      aria-controls={`${noti.shipment_id}-content`}
-                      id={`${noti.shipment_id}-header`}
-                      expandIcon={(
-                        <Button
-                          type="button"
-                          color="error"
-                          variant="contained"
-                          className="alertNotificationsCount"
-                          onClick={(e) => handleAlertCountClick(index)}
-                        >
-                          {_.size(noti.alerts)}
-                        </Button>
-                      )}
-                      className="alertNotificationsSummary"
-                      onClick={(e) => handleAlertCountClick(index)}
-                    >
-                      <div className={!noti.viewed ? 'alertNotificationsSummaryBadge' : ''} />
-                      <Typography
-                        variant="subtitle1"
-                        className="alertNotificationsShipmentName"
-                        onClick={(e) => {
-                          history.push(`${routes.REPORTING}/?shipment=${noti.shipment_id}`);
-                          closeAlertNotifications();
-                        }}
-                      >
-                        {noti.shipment_name}
-                      </Typography>
-                    </AccordionSummary>
+        </DialogTitle>
 
-                    <AccordionDetails>
-                      <DataTableWrapper
-                        noSpace
-                        hideAddButton
-                        noOptionsIcon
-                        rows={noti.alerts}
-                        columns={getAlertNotificationsColumns(
-                          timezone,
-                          _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-                            ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
-                            : '',
-                          _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-                            ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
-                            : '',
+        <DialogContent>
+          {_.isEmpty(notifications) && (
+            <Grid item xs={12} display="flex" justifyContent="center" alignItems="center" height="100%">
+              <Typography variant="subtitle1">There are no new alerts for any active shipments</Typography>
+            </Grid>
+          )}
+          {!_.isEmpty(notifications) && (
+            <Grid container spacing={2} mt={2}>
+              {_.map(notifications, (noti, index) => (
+                <React.Fragment key={noti.shipment_id}>
+                  <Grid item xs={12}>
+                    <Accordion>
+                      <AccordionSummary
+                        aria-controls={`${noti.shipment_id}-content`}
+                        id={`${noti.shipment_id}-header`}
+                        expandIcon={(
+                          <Button
+                            type="button"
+                            color="error"
+                            variant="contained"
+                            className="alertNotificationsCount"
+                            onClick={(e) => handleAlertCountClick(index)}
+                          >
+                            {_.size(noti.alerts)}
+                          </Button>
                         )}
-                      />
-                    </AccordionDetails>
-                  </Accordion>
-                </Grid>
-              </React.Fragment>
-            ))}
-          </Grid>
-        )}
-      </DialogContent>
-    </Dialog>
+                        className="alertNotificationsSummary"
+                        onClick={(e) => handleAlertCountClick(index)}
+                      >
+                        <div className={!noti.viewed ? 'alertNotificationsSummaryBadge' : ''} />
+                        <Typography
+                          variant="subtitle1"
+                          className="alertNotificationsShipmentName"
+                          onClick={(e) => {
+                            history.push(`${routes.REPORTING}/?shipment=${noti.shipment_id}`);
+                            closeAlertNotifications();
+                          }}
+                        >
+                          {noti.shipment_name}
+                        </Typography>
+                      </AccordionSummary>
+
+                      <AccordionDetails>
+                        <DataTableWrapper
+                          noSpace
+                          hideAddButton
+                          noOptionsIcon
+                          rows={noti.alerts}
+                          columns={getAlertNotificationsColumns(
+                            timezone,
+                            _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                              ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                              : '',
+                            _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                              ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                              : '',
+                          )}
+                        />
+                      </AccordionDetails>
+                    </Accordion>
+                  </Grid>
+                </React.Fragment>
+              ))}
+            </Grid>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
