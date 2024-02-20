@@ -13,7 +13,7 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
       } = shipmentData;
       let shipmentPayload = shipmentData.shipment;
       let uploadFile = null;
-      const data = await httpService.makeRequest(
+      let data = await httpService.makeRequest(
         'post',
         `${window.env.API_URL}shipment/shipment/`,
         shipmentPayload,
@@ -36,7 +36,7 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
             uploaded_pdf: _.map(files, 'name'),
             uploaded_pdf_link: _.map(_.flatMap(_.map(responses, 'data')), 'aws url'),
           };
-          await httpService.makeRequest(
+          data = await httpService.makeRequest(
             'patch',
             `${window.env.API_URL}shipment/shipment/${data.data.id}/`,
             shipmentPayload,
@@ -119,8 +119,8 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
               const configureGatewayPayload = {
                 platform_type: shipment.data.platform_name,
                 gateway: updateGateway.imei_number,
-                transmission_interval: shipment.data.transmission_time,
-                measurement_interval: shipment.data.measurement_time,
+                transmission_interval: _.isEqual(_.toLower(shipment.data.status), 'planned') ? 5 : shipment.data.transmission_time,
+                measurement_interval: _.isEqual(_.toLower(shipment.data.status), 'planned') ? 5 : shipment.data.measurement_time,
               };
               await httpService.makeRequest(
                 'patch',
