@@ -731,7 +731,7 @@ const Shipment = ({ history }) => {
               },
               renderExpandableRow: (rowData, rowMeta) => {
                 const colSpan = rowData.length + 1;
-                const ship = rows[rowMeta.rowIndex];
+                const ship = rows[rowMeta.dataIndex];
 
                 return (
                   <>
