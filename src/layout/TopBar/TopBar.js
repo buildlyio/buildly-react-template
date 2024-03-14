@@ -14,6 +14,8 @@ import {
   Menu as MenuIcon,
   Notifications as NotificationsIcon,
   Settings as SettingsIcon,
+  Sensors as SensorsIcon,
+  Cached as CachedIcon,
 } from '@mui/icons-material';
 import logo from '@assets/tp-logo.png';
 import Loader from '@components/Loader/Loader';
@@ -26,8 +28,9 @@ import {
   checkForGlobalAdmin,
 } from '@utils/utilMethods';
 import { useStore } from '@zustand/timezone/timezoneStore';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { createGatewayQuery } from '@react-query/queries/sensorGateways/createGatewayQuery';
 import { useUpdateUserMutation } from '@react-query/mutations/authUser/updateUserMutation';
 import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
 import AccountSettings from './components/AccountSettings';
@@ -36,9 +39,6 @@ import AdminMenu from './AdminMenu';
 import AccountMenu from './AccountMenu';
 import './TopBarStyles.css';
 
-/**
- * Component for the top bar header.
- */
 const TopBar = ({
   navHidden,
   setNavHidden,
@@ -51,11 +51,13 @@ const TopBar = ({
   const [showAccountSettings, setShowAccountSettings] = useState(false);
   const [hideAlertBadge, setHideAlertBadge] = useState(true);
   const [showAlertNotifications, setShowAlertNotifications] = useState(false);
+  const [refreshClicked, setRefreshClicked] = useState(false);
 
   const user = getUser();
   let isAdmin = false;
   let isSuperAdmin = false;
   let org_uuid = user.organization.organization_uuid;
+  const queryClient = useQueryClient();
 
   const { displayAlert } = useAlert();
   const { data, setTimezone } = useStore();
@@ -73,6 +75,12 @@ const TopBar = ({
     ['organizations'],
     () => getAllOrganizationQuery(displayAlert),
     { refetchOnWindowFocus: false },
+  );
+
+  const { isLoading: isCreatingGateways } = useQuery(
+    ['createGateways'],
+    () => createGatewayQuery(displayAlert, setRefreshClicked, org_uuid, queryClient),
+    { refetchOnWindowFocus: false, enabled: refreshClicked },
   );
 
   const { mutate: updateUserMutation, isLoading: isUpdateUser } = useUpdateUserMutation(history, displayAlert);
@@ -113,6 +121,11 @@ const TopBar = ({
     setAnchorEl(event.currentTarget);
   };
 
+  const handleFetchGatewaysClick = () => {
+    setRefreshClicked(true);
+    setAnchorEl(null);
+  };
+
   const handleAccountSettingsClick = () => {
     setShowAccountSettings(true);
     setAnchorEl(null);
@@ -140,7 +153,7 @@ const TopBar = ({
 
   return (
     <AppBar position="fixed" className="topbarAppBar">
-      {(isLoadingOrgs || isUpdateUser || isLoadingUnits) && <Loader open={isLoadingOrgs || isUpdateUser || isLoadingUnits} />}
+      {(isLoadingOrgs || isUpdateUser || isLoadingUnits || isCreatingGateways || refreshClicked) && <Loader open={isLoadingOrgs || isUpdateUser || isLoadingUnits || isCreatingGateways || refreshClicked} />}
       <Toolbar>
         <IconButton
           edge="start"
@@ -198,6 +211,12 @@ const TopBar = ({
                 </MenuItem>
               ))}
             </TextField>
+          )}
+          {isSuperAdmin && (
+            <IconButton color="primary" onClick={handleFetchGatewaysClick}>
+              <SensorsIcon fontSize="large" />
+              <CachedIcon className="topBarRefreshIcon" />
+            </IconButton>
           )}
           <IconButton
             aria-label="notifications"

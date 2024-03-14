@@ -14,13 +14,16 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   FormLabel,
   Grid,
   IconButton,
   InputAdornment,
   MenuItem,
   Stack,
+  Switch,
   TextField,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -124,11 +127,11 @@ const CreateShipment = ({ history, location }) => {
 
   const [departureDateTime, setDepartureDateTime] = useState(
     (!_.isEmpty(editData) && editData.estimated_time_of_departure)
-    || moment().startOf('day').hour(12).minute(0),
+    || moment(),
   );
   const [arrivalDateTime, setArrivalDateTime] = useState(
     (!_.isEmpty(editData) && editData.estimated_time_of_arrival)
-    || moment().startOf('day').hour(12).minute(0),
+    || moment().add(1, 'day'),
   );
   const status = useInput((!_.isEmpty(editData) && editData.status) || 'Planned');
   const cannotEdit = !_.isEmpty(editData) && _.includes(_.map(ADMIN_SHIPMENT_STATUS, 'value'), editData.status);
@@ -165,6 +168,31 @@ const CreateShipment = ({ history, location }) => {
     (!_.isEmpty(editData) && editData.light_threshold)
     || (organization && organization.default_light)
     || 5,
+  );
+
+  const supressTempAlerts = useInput(
+    (!_.isEmpty(editData) && _.includes(editData.alerts_to_suppress, 'temperature'))
+    || (organization && _.includes(organization.alerts_to_suppress, 'temperature'))
+    || (template && _.includes(template.alerts_to_suppress, 'temperature'))
+    || false,
+  );
+  const supressHumidityAlerts = useInput(
+    (!_.isEmpty(editData) && _.includes(editData.alerts_to_suppress, 'humidity'))
+    || (organization && _.includes(organization.alerts_to_suppress, 'humidity'))
+    || (template && _.includes(template.alerts_to_suppress, 'humidity'))
+    || false,
+  );
+  const supressShockAlerts = useInput(
+    (!_.isEmpty(editData) && _.includes(editData.alerts_to_suppress, 'shock'))
+    || (organization && _.includes(organization.alerts_to_suppress, 'shock'))
+    || (template && _.includes(template.alerts_to_suppress, 'shock'))
+    || false,
+  );
+  const supressLightAlerts = useInput(
+    (!_.isEmpty(editData) && _.includes(editData.alerts_to_suppress, 'light'))
+    || (organization && _.includes(organization.alerts_to_suppress, 'light'))
+    || (template && _.includes(template.alerts_to_suppress, 'light'))
+    || false,
   );
 
   const shipmentName = useInput((!_.isEmpty(editData) && editData.order_number) || '');
@@ -382,6 +410,10 @@ const CreateShipment = ({ history, location }) => {
       || max_excursion_humidity.hasChanged()
       || shock_threshold.hasChanged()
       || light_threshold.hasChanged()
+      || supressTempAlerts.hasChanged()
+      || supressHumidityAlerts.hasChanged()
+      || supressShockAlerts.hasChanged()
+      || supressLightAlerts.hasChanged()
       || shipmentName.hasChanged()
       || purchaseOrderNumber.hasChanged()
       || billOfLading.hasChanged()
@@ -526,6 +558,10 @@ const CreateShipment = ({ history, location }) => {
       && max_excursion_humidity.value === template.max_excursion_humidity
       && shock_threshold.value === template.shock_threshold
       && light_threshold.value === template.light_threshold
+      && supressTempAlerts.value === _.includes(template.alerts_to_suppress, 'temperature')
+      && supressHumidityAlerts.value === _.includes(template.alerts_to_suppress, 'humidity')
+      && supressShockAlerts.value === _.includes(template.alerts_to_suppress, 'shock')
+      && supressLightAlerts.value === _.includes(template.alerts_to_suppress, 'light')
     ) || (!template && (!originCustodian || !destinationCustodian || _.isEmpty(items)))
   );
 
@@ -548,6 +584,10 @@ const CreateShipment = ({ history, location }) => {
         max_excursion_humidity.setValue(value.max_excursion_humidity);
         shock_threshold.setValue(value.shock_threshold);
         light_threshold.setValue(value.light_threshold);
+        supressTempAlerts.setValue(_.includes(value.alerts_to_suppress, 'temperature'));
+        supressHumidityAlerts.setValue(_.includes(value.alerts_to_suppress, 'humidity'));
+        supressShockAlerts.setValue(_.includes(value.alerts_to_suppress, 'shock'));
+        supressLightAlerts.setValue(_.includes(value.alerts_to_suppress, 'light'));
       }
     } else {
       setSaveAsName('');
@@ -570,6 +610,12 @@ const CreateShipment = ({ history, location }) => {
       min_excursion_humidity: parseInt(min_excursion_humidity.value, 10),
       shock_threshold: shock_threshold.value,
       light_threshold: light_threshold.value,
+      alerts_to_suppress: _.without([
+        supressTempAlerts.value ? 'temperature' : '',
+        supressHumidityAlerts.value ? 'humidity' : '',
+        supressShockAlerts.value ? 'shock' : '',
+        supressLightAlerts.value ? 'light' : '',
+      ], ''),
       organization_uuid: organization.organization_uuid,
     };
     if (_.isEmpty(tmplt)) {
@@ -609,6 +655,12 @@ const CreateShipment = ({ history, location }) => {
       min_excursion_humidity: parseInt(min_excursion_humidity.value, 10),
       shock_threshold: shock_threshold.value,
       light_threshold: light_threshold.value,
+      alerts_to_suppress: _.without([
+        supressTempAlerts.value ? 'temperature' : '',
+        supressHumidityAlerts.value ? 'humidity' : '',
+        supressShockAlerts.value ? 'shock' : '',
+        supressLightAlerts.value ? 'light' : '',
+      ], ''),
       organization_uuid: organization.organization_uuid,
     };
 
@@ -673,6 +725,10 @@ const CreateShipment = ({ history, location }) => {
       && !max_excursion_humidity.hasChanged()
       && !shock_threshold.hasChanged()
       && !light_threshold.hasChanged()
+      && !supressTempAlerts.hasChanged()
+      && !supressHumidityAlerts.hasChanged()
+      && !supressShockAlerts.hasChanged()
+      && !supressLightAlerts.hasChanged()
       && !shipmentName.hasChanged()
       && !purchaseOrderNumber.hasChanged()
       && !billOfLading.hasChanged()
@@ -729,6 +785,12 @@ const CreateShipment = ({ history, location }) => {
       min_excursion_humidity: parseInt(min_excursion_humidity.value, 10),
       shock_threshold: parseInt(shock_threshold.value, 10),
       light_threshold: parseInt(light_threshold.value, 10),
+      alerts_to_suppress: _.without([
+        supressTempAlerts.value ? 'temperature' : '',
+        supressHumidityAlerts.value ? 'humidity' : '',
+        supressShockAlerts.value ? 'shock' : '',
+        supressLightAlerts.value ? 'light' : '',
+      ], ''),
       note: note.value,
       transmission_time: parseInt(transmissionInterval.value, 10),
       measurement_time: parseInt(measurementInterval.value, 10),
@@ -1276,10 +1338,25 @@ const CreateShipment = ({ history, location }) => {
               )}
               <Grid item xs={12} sm={5.75} lg={3.83} mt={isMobile() ? 2.5 : 0}>
                 <div className="createShipmentFieldset">
-                  <Typography variant="body1" component="div" fontWeight={700}>
-                    TEMPERATURE
-                  </Typography>
-                  <Typography mt={2} className="createShipmentAlertSettingText">
+                  <Grid container alignItems="center">
+                    <Grid item xs={10}>
+                      <Typography variant="body1" fontWeight={700}>TEMPERATURE</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Tooltip title="Suppress Temperature Alerts" placement="bottom">
+                        <FormControlLabel
+                          control={(
+                            <Switch
+                              color="primary"
+                              checked={supressTempAlerts.value}
+                              onChange={(e) => supressTempAlerts.setValue(e.target.checked)}
+                            />
+                          )}
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
+                  <Typography mt={2} mb={0.95} className="createShipmentAlertSettingText">
                     <span className="createShipmentHighest">HIGHEST</span>
                     {' safe temperature'}
                   </Typography>
@@ -1309,7 +1386,7 @@ const CreateShipment = ({ history, location }) => {
                     value={max_excursion_temp.value}
                     onChange={(e) => max_excursion_temp.setValue(_.toString(e.target.value))}
                   />
-                  <Typography mt={3} className="createShipmentAlertSettingText">
+                  <Typography mt={3} mb={0.95} className="createShipmentAlertSettingText">
                     <span className="createShipmentLowest">LOWEST</span>
                     {' safe temperature'}
                   </Typography>
@@ -1343,10 +1420,25 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
               <Grid item xs={12} sm={5.75} lg={3.83}>
                 <div className="createShipmentFieldset">
-                  <Typography variant="body1" component="div" fontWeight={700}>
-                    HUMIDITY
-                  </Typography>
-                  <Typography mt={2} className="createShipmentAlertSettingText">
+                  <Grid container alignItems="center">
+                    <Grid item xs={10}>
+                      <Typography variant="body1" fontWeight={700}>HUMIDITY</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Tooltip title="Suppress Humidity Alerts" placement="bottom">
+                        <FormControlLabel
+                          control={(
+                            <Switch
+                              color="primary"
+                              checked={supressHumidityAlerts.value}
+                              onChange={(e) => supressHumidityAlerts.setValue(e.target.checked)}
+                            />
+                          )}
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
+                  <Typography mt={2} mb={0.95} className="createShipmentAlertSettingText">
                     <span className="createShipmentHighest">HIGHEST</span>
                     {' safe humidity'}
                   </Typography>
@@ -1367,7 +1459,7 @@ const CreateShipment = ({ history, location }) => {
                     value={max_excursion_humidity.value}
                     onChange={(e) => max_excursion_humidity.setValue(_.toString(e.target.value))}
                   />
-                  <Typography mt={3} className="createShipmentAlertSettingText">
+                  <Typography mt={3} mb={0.95} className="createShipmentAlertSettingText">
                     <span className="createShipmentLowest">LOWEST</span>
                     {' safe humidity'}
                   </Typography>
@@ -1395,10 +1487,27 @@ const CreateShipment = ({ history, location }) => {
                   <Typography variant="body1" component="div" fontWeight={700}>
                     SHOCK & LIGHT
                   </Typography>
-                  <Typography mt={2} className="createShipmentAlertSettingText">
-                    <span className="createShipmentHighest">MAX</span>
-                    {' shock'}
-                  </Typography>
+                  <Grid container alignItems="center" mt={2}>
+                    <Grid item xs={10}>
+                      <Typography className="createShipmentAlertSettingText">
+                        <span className="createShipmentHighest">MAX</span>
+                        {' shock'}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Tooltip title="Suppress Shock Alerts" placement="bottom">
+                        <FormControlLabel
+                          control={(
+                            <Switch
+                              color="primary"
+                              checked={supressShockAlerts.value}
+                              onChange={(e) => supressShockAlerts.setValue(e.target.checked)}
+                            />
+                          )}
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
                   <TextField
                     variant="outlined"
                     fullWidth
@@ -1416,10 +1525,27 @@ const CreateShipment = ({ history, location }) => {
                     value={shock_threshold.value}
                     onChange={(e) => shock_threshold.setValue(_.toString(e.target.value))}
                   />
-                  <Typography mt={3} className="createShipmentAlertSettingText">
-                    <span className="createShipmentHighest">MAX</span>
-                    {' light'}
-                  </Typography>
+                  <Grid container alignItems="center" mt={3}>
+                    <Grid item xs={10}>
+                      <Typography className="createShipmentAlertSettingText">
+                        <span className="createShipmentHighest">MAX</span>
+                        {' light'}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Tooltip title="Suppress Light Alerts" placement="bottom">
+                        <FormControlLabel
+                          control={(
+                            <Switch
+                              color="primary"
+                              checked={supressLightAlerts.value}
+                              onChange={(e) => supressLightAlerts.setValue(e.target.checked)}
+                            />
+                          )}
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
                   <TextField
                     variant="outlined"
                     fullWidth
@@ -1856,7 +1982,7 @@ const CreateShipment = ({ history, location }) => {
                     >
                       <MenuItem value="">Select</MenuItem>
                       {!_.isEmpty(TIVE_GATEWAY_TIMES) && _.map(
-                        _.filter(TIVE_GATEWAY_TIMES, (t) => t.value <= transmissionInterval.value),
+                        _.filter(TIVE_GATEWAY_TIMES, (t) => (_.includes(gatewayType.value, 'ProofTracker') ? t.value === transmissionInterval.value : t.value <= transmissionInterval.value)),
                         (time, index) => (
                           <MenuItem key={`${time.value}-${index}`} value={time.value}>
                             {time.label}
