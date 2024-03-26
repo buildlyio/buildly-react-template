@@ -171,28 +171,24 @@ const CreateShipment = ({ history, location }) => {
   );
 
   const supressTempAlerts = useInput(
-    (!_.isEmpty(editData) && _.includes(editData.alerts_to_suppress, 'temperature'))
-    || (organization && _.includes(organization.alerts_to_suppress, 'temperature'))
-    || (template && _.includes(template.alerts_to_suppress, 'temperature'))
-    || false,
+    (!_.isEmpty(editData) && !_.includes(editData.alerts_to_suppress, 'temperature'))
+    || (_.isEmpty(editData) && template && !_.includes(template.alerts_to_suppress, 'temperature'))
+    || (_.isEmpty(editData) && organization && !_.includes(organization.alerts_to_suppress, 'temperature')),
   );
   const supressHumidityAlerts = useInput(
-    (!_.isEmpty(editData) && _.includes(editData.alerts_to_suppress, 'humidity'))
-    || (organization && _.includes(organization.alerts_to_suppress, 'humidity'))
-    || (template && _.includes(template.alerts_to_suppress, 'humidity'))
-    || false,
+    (!_.isEmpty(editData) && !_.includes(editData.alerts_to_suppress, 'humidity'))
+    || (_.isEmpty(editData) && template && !_.includes(template.alerts_to_suppress, 'humidity'))
+    || (_.isEmpty(editData) && organization && !_.includes(organization.alerts_to_suppress, 'humidity')),
   );
   const supressShockAlerts = useInput(
-    (!_.isEmpty(editData) && _.includes(editData.alerts_to_suppress, 'shock'))
-    || (organization && _.includes(organization.alerts_to_suppress, 'shock'))
-    || (template && _.includes(template.alerts_to_suppress, 'shock'))
-    || false,
+    (!_.isEmpty(editData) && !_.includes(editData.alerts_to_suppress, 'shock'))
+    || (_.isEmpty(editData) && template && !_.includes(template.alerts_to_suppress, 'shock'))
+    || (_.isEmpty(editData) && organization && !_.includes(organization.alerts_to_suppress, 'shock')),
   );
   const supressLightAlerts = useInput(
-    (!_.isEmpty(editData) && _.includes(editData.alerts_to_suppress, 'light'))
-    || (organization && _.includes(organization.alerts_to_suppress, 'light'))
-    || (template && _.includes(template.alerts_to_suppress, 'light'))
-    || false,
+    (!_.isEmpty(editData) && !_.includes(editData.alerts_to_suppress, 'light'))
+    || (_.isEmpty(editData) && template && !_.includes(template.alerts_to_suppress, 'light'))
+    || (_.isEmpty(editData) && organization && !_.includes(organization.alerts_to_suppress, 'light')),
   );
 
   const shipmentName = useInput((!_.isEmpty(editData) && editData.order_number) || '');
@@ -558,10 +554,10 @@ const CreateShipment = ({ history, location }) => {
       && max_excursion_humidity.value === template.max_excursion_humidity
       && shock_threshold.value === template.shock_threshold
       && light_threshold.value === template.light_threshold
-      && supressTempAlerts.value === _.includes(template.alerts_to_suppress, 'temperature')
-      && supressHumidityAlerts.value === _.includes(template.alerts_to_suppress, 'humidity')
-      && supressShockAlerts.value === _.includes(template.alerts_to_suppress, 'shock')
-      && supressLightAlerts.value === _.includes(template.alerts_to_suppress, 'light')
+      && supressTempAlerts.value === !_.includes(template.alerts_to_suppress, 'temperature')
+      && supressHumidityAlerts.value === !_.includes(template.alerts_to_suppress, 'humidity')
+      && supressShockAlerts.value === !_.includes(template.alerts_to_suppress, 'shock')
+      && supressLightAlerts.value === !_.includes(template.alerts_to_suppress, 'light')
     ) || (!template && (!originCustodian || !destinationCustodian || _.isEmpty(items)))
   );
 
@@ -584,10 +580,10 @@ const CreateShipment = ({ history, location }) => {
         max_excursion_humidity.setValue(value.max_excursion_humidity);
         shock_threshold.setValue(value.shock_threshold);
         light_threshold.setValue(value.light_threshold);
-        supressTempAlerts.setValue(_.includes(value.alerts_to_suppress, 'temperature'));
-        supressHumidityAlerts.setValue(_.includes(value.alerts_to_suppress, 'humidity'));
-        supressShockAlerts.setValue(_.includes(value.alerts_to_suppress, 'shock'));
-        supressLightAlerts.setValue(_.includes(value.alerts_to_suppress, 'light'));
+        supressTempAlerts.setValue(!_.includes(value.alerts_to_suppress, 'temperature'));
+        supressHumidityAlerts.setValue(!_.includes(value.alerts_to_suppress, 'humidity'));
+        supressShockAlerts.setValue(!_.includes(value.alerts_to_suppress, 'shock'));
+        supressLightAlerts.setValue(!_.includes(value.alerts_to_suppress, 'light'));
       }
     } else {
       setSaveAsName('');
@@ -611,10 +607,10 @@ const CreateShipment = ({ history, location }) => {
       shock_threshold: shock_threshold.value,
       light_threshold: light_threshold.value,
       alerts_to_suppress: _.without([
-        supressTempAlerts.value ? 'temperature' : '',
-        supressHumidityAlerts.value ? 'humidity' : '',
-        supressShockAlerts.value ? 'shock' : '',
-        supressLightAlerts.value ? 'light' : '',
+        !supressTempAlerts.value ? 'temperature' : '',
+        !supressHumidityAlerts.value ? 'humidity' : '',
+        !supressShockAlerts.value ? 'shock' : '',
+        !supressLightAlerts.value ? 'light' : '',
       ], ''),
       organization_uuid: organization.organization_uuid,
     };
@@ -656,10 +652,10 @@ const CreateShipment = ({ history, location }) => {
       shock_threshold: shock_threshold.value,
       light_threshold: light_threshold.value,
       alerts_to_suppress: _.without([
-        supressTempAlerts.value ? 'temperature' : '',
-        supressHumidityAlerts.value ? 'humidity' : '',
-        supressShockAlerts.value ? 'shock' : '',
-        supressLightAlerts.value ? 'light' : '',
+        !supressTempAlerts.value ? 'temperature' : '',
+        !supressHumidityAlerts.value ? 'humidity' : '',
+        !supressShockAlerts.value ? 'shock' : '',
+        !supressLightAlerts.value ? 'light' : '',
       ], ''),
       organization_uuid: organization.organization_uuid,
     };
@@ -786,10 +782,10 @@ const CreateShipment = ({ history, location }) => {
       shock_threshold: parseInt(shock_threshold.value, 10),
       light_threshold: parseInt(light_threshold.value, 10),
       alerts_to_suppress: _.without([
-        supressTempAlerts.value ? 'temperature' : '',
-        supressHumidityAlerts.value ? 'humidity' : '',
-        supressShockAlerts.value ? 'shock' : '',
-        supressLightAlerts.value ? 'light' : '',
+        !supressTempAlerts.value ? 'temperature' : '',
+        !supressHumidityAlerts.value ? 'humidity' : '',
+        !supressShockAlerts.value ? 'shock' : '',
+        !supressLightAlerts.value ? 'light' : '',
       ], ''),
       note: note.value,
       transmission_time: parseInt(transmissionInterval.value, 10),
@@ -1343,7 +1339,7 @@ const CreateShipment = ({ history, location }) => {
                       <Typography variant="body1" fontWeight={700}>TEMPERATURE</Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Tooltip title="Suppress Temperature Alerts" placement="bottom">
+                      <Tooltip title="Temperature Alerts" placement="bottom">
                         <FormControlLabel
                           control={(
                             <Switch
@@ -1425,7 +1421,7 @@ const CreateShipment = ({ history, location }) => {
                       <Typography variant="body1" fontWeight={700}>HUMIDITY</Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Tooltip title="Suppress Humidity Alerts" placement="bottom">
+                      <Tooltip title="Humidity Alerts" placement="bottom">
                         <FormControlLabel
                           control={(
                             <Switch
@@ -1495,7 +1491,7 @@ const CreateShipment = ({ history, location }) => {
                       </Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Tooltip title="Suppress Shock Alerts" placement="bottom">
+                      <Tooltip title="Shock Alerts" placement="bottom">
                         <FormControlLabel
                           control={(
                             <Switch
@@ -1533,7 +1529,7 @@ const CreateShipment = ({ history, location }) => {
                       </Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Tooltip title="Suppress Light Alerts" placement="bottom">
+                      <Tooltip title="Light Alerts" placement="bottom">
                         <FormControlLabel
                           control={(
                             <Switch

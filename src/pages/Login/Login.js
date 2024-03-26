@@ -7,9 +7,14 @@ import {
   Grid,
   Card,
   CardContent,
+  Checkbox,
+  InputAdornment,
+  IconButton,
   Typography,
   Container,
+  FormControlLabel,
 } from '@mui/material';
+import { Visibility as VisibilityIcon, VisibilityOff as VisibilityOffIcon } from '@mui/icons-material';
 import logo from '@assets/tp-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import Loader from '@components/Loader/Loader';
@@ -23,9 +28,11 @@ import { useLoginMutation } from '@react-query/mutations/authUser/loginMutation'
 import './LoginStyles.css';
 
 const Login = ({ history }) => {
-  const username = useInput('', { required: true });
+  const email = useInput(localStorage.getItem('email') || '', { required: true });
   const password = useInput('', { required: true });
   const [error, setError] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [isChecked, setChecked] = useState(!!localStorage.getItem('email') || false);
   const location = useLocation();
 
   const { displayAlert } = useAlert();
@@ -50,25 +57,19 @@ const Login = ({ history }) => {
     }
   }, []);
 
-  /**
-   * Submit the form to the backend and attempts to authenticate
-   * @param {Event} event the default submit event
-   */
   const handleSubmit = (event) => {
     event.preventDefault();
     const loginFormValue = {
-      username: username.value,
+      username: email.value,
       password: password.value,
     };
+    if (isChecked) {
+      localStorage.setItem('email', email.value);
+    } else {
+      localStorage.removeItem('email');
+    }
     loginMutation(loginFormValue);
   };
-
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
 
   const handleBlur = (e, validation, input) => {
     const validateObj = validators(validation, input);
@@ -91,7 +92,7 @@ const Login = ({ history }) => {
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(error);
-    if (!username.value || !password.value) {
+    if (!email.value || !password.value) {
       return true;
     }
     let errorExists = false;
@@ -132,19 +133,15 @@ const Login = ({ history }) => {
                 margin="normal"
                 required
                 fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
-                error={error.username && error.username.error}
-                helperText={
-                  error && error.username
-                    ? error.username.message
-                    : ''
-                }
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
+                error={error.email && error.email.error}
+                helperText={error && error.email ? error.email.message : ''}
                 className="loginTextField"
-                onBlur={(e) => handleBlur(e, 'required', username)}
-                {...username.bind}
+                onBlur={(e) => handleBlur(e, 'required', email)}
+                {...email.bind}
               />
               <TextField
                 variant="outlined"
@@ -153,7 +150,7 @@ const Login = ({ history }) => {
                 fullWidth
                 name="password"
                 label="Password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="current-password"
                 error={error.password && error.password.error}
@@ -165,6 +162,18 @@ const Login = ({ history }) => {
                 className="loginTextField"
                 onBlur={(e) => handleBlur(e, 'required', password)}
                 {...password.bind}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        onMouseDown={(e) => e.preventDefault()}
+                      >
+                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <Button
                 type="submit"
@@ -176,23 +185,26 @@ const Login = ({ history }) => {
               >
                 Sign in
               </Button>
-              <Grid container>
-                <Grid item xs>
+              <Grid container alignItems="center">
+                <Grid item xs={7}>
+                  <FormControlLabel
+                    control={(
+                      <Checkbox
+                        checked={isChecked}
+                        onChange={() => setChecked(!isChecked)}
+                        color="primary"
+                      />
+                    )}
+                    label="Remember Email"
+                  />
+                </Grid>
+                <Grid item xs={5} style={{ textAlign: 'end' }}>
                   <Link
                     to={routes.RESET_PASSWORD}
                     variant="body2"
                     color="primary"
                   >
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link
-                    to={routes.REGISTER}
-                    variant="body2"
-                    color="primary"
-                  >
-                    Don't have an account? Register
+                    Forgot Password?
                   </Link>
                 </Grid>
               </Grid>

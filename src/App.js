@@ -16,6 +16,7 @@ import { oauthService } from '@modules/oauth/oauth.service';
 import Login from '@pages/Login/Login';
 import Register from '@pages/Register/Register';
 import EmailForm from '@pages/ResetPassword/EmailForm';
+import Verification from '@pages/ResetPassword/Verification';
 import NewPasswordForm from '@pages/ResetPassword/NewPasswordForm';
 import { PrivateRoute } from '@routes/Private.route';
 import { routes } from '@routes/routesConstants';
@@ -48,6 +49,10 @@ const App = () => (
             <Route
               path={routes.RESET_PASSWORD}
               component={EmailForm}
+            />
+            <Route
+              path={routes.VERIFICATION}
+              component={Verification}
             />
             <Route
               path={routes.RESET_PASSWORD_CONFIRM}

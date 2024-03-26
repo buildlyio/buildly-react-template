@@ -9,7 +9,10 @@ import {
   Typography,
   Container,
   Grid,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
+import { Visibility as VisibilityIcon, VisibilityOff as VisibilityOffIcon } from '@mui/icons-material';
 import logo from '@assets/tp-logo.png';
 import Copyright from '@components/Copyright/Copyright';
 import Loader from '@components/Loader/Loader';
@@ -21,22 +24,26 @@ import { useResetPasswordConfirmMutation } from '@react-query/mutations/authUser
 import './ResetPasswordStyles.css';
 
 const NewPassword = ({ history, location }) => {
-  const password = useInput('', { required: true });
+  const [password, setPassword] = useState('');
   const re_password = useInput('', {
     required: true,
     confirm: true,
-    matchField: password,
   });
   const [formError, setFormError] = useState({});
+  const [validations, setValidations] = useState({
+    length: false,
+    upperCase: false,
+    lowerCase: false,
+    digit: false,
+    special: false,
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { displayAlert } = useAlert();
 
   const { mutate: resetPasswordConfirmMutation, isLoading: isResetPasswordConfirm } = useResetPasswordConfirmMutation(history, routes.LOGIN, displayAlert);
 
-  /**
-   * Submit the form to the backend and attempts to change password
-   * @param {Event} event the default submit event
-   */
   const handleSubmit = (event) => {
     event.preventDefault();
     if (location.pathname.includes(routes.RESET_PASSWORD_CONFIRM)) {
@@ -46,7 +53,7 @@ const NewPassword = ({ history, location }) => {
       );
       const restPathArr = restPath.split('/');
       const registerFormValue = {
-        new_password1: password.value,
+        new_password1: password,
         new_password2: re_password.value,
         uid: restPathArr[1],
         token: restPathArr[2],
@@ -55,15 +62,8 @@ const NewPassword = ({ history, location }) => {
     }
   };
 
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
-
   const handleBlur = (e, validation, input) => {
-    const validateObj = validators(validation, input);
+    const validateObj = validators(validation, { ...input, password });
     const prevState = { ...formError };
     if (validateObj && validateObj.error) {
       setFormError({
@@ -83,7 +83,10 @@ const NewPassword = ({ history, location }) => {
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (!password.value || !re_password.value) {
+    if (!password || !re_password.value) {
+      return true;
+    }
+    if (validations.length !== true || validations.upperCase !== true || validations.lowerCase !== true || validations.digit !== true || validations.special !== true) {
       return true;
     }
     let errorExists = false;
@@ -93,6 +96,22 @@ const NewPassword = ({ history, location }) => {
       }
     });
     return errorExists;
+  };
+
+  const validatePassword = (value) => {
+    const lengthRegex = /^.{10,}$/;
+    const uppercaseRegex = /[A-Z]/;
+    const lowercaseRegex = /[a-z]/;
+    const digitRegex = /\d/;
+    const specialCharacterRegex = /[!@#$%^&*]/;
+
+    setValidations({
+      length: lengthRegex.test(value),
+      upperCase: uppercaseRegex.test(value),
+      lowerCase: lowercaseRegex.test(value),
+      digit: digitRegex.test(value),
+      special: specialCharacterRegex.test(value),
+    });
   };
 
   return (
@@ -126,22 +145,62 @@ const NewPassword = ({ history, location }) => {
                 fullWidth
                 name="password"
                 label="New Password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="current-password"
                 className="resetPasswordTextField"
-                error={
-                  formError.password
-                  && formError.password.error
-                }
-                helperText={
-                  formError.password
-                    ? formError.password.message
-                    : ''
-                }
-                onBlur={(e) => handleBlur(e, 'required', password)}
-                {...password.bind}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  validatePassword(e.target.value);
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        onMouseDown={(e) => e.preventDefault()}
+                      >
+                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
+              <Typography
+                mt={-3}
+                className={validations.length === true
+                  ? 'resetPasswordValidText'
+                  : 'resetPasswordInvalidText'}
+              >
+                {validations.length === true ? '✓' : '✗'}
+                {' '}
+                10-alphanumeric character length
+              </Typography>
+              <Typography className={validations.upperCase === true && validations.lowerCase === true
+                ? 'resetPasswordValidText'
+                : 'resetPasswordInvalidText'}
+              >
+                {validations.upperCase === true && validations.lowerCase === true ? '✓' : '✗'}
+                {' '}
+                Uppercase and lowercase letters
+              </Typography>
+              <Typography className={validations.digit === true
+                ? 'resetPasswordValidText'
+                : 'resetPasswordInvalidText'}
+              >
+                {validations.digit === true ? '✓' : '✗'}
+                {' '}
+                At least 1 digit number
+              </Typography>
+              <Typography className={validations.special === true
+                ? 'resetPasswordValidText'
+                : 'resetPasswordInvalidText'}
+              >
+                {validations.special === true ? '✓' : '✗'}
+                {' '}
+                At least 1 special character (!@#$%^&*, etc.)
+              </Typography>
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -150,7 +209,7 @@ const NewPassword = ({ history, location }) => {
                 id="re_password"
                 label="Confirm Password"
                 name="re_password"
-                type="password"
+                type={showConfirmPassword ? 'text' : 'password'}
                 autoComplete="re_password"
                 className="resetPasswordTextField"
                 error={
@@ -164,6 +223,18 @@ const NewPassword = ({ history, location }) => {
                 }
                 onBlur={(e) => handleBlur(e, 'confirm', re_password)}
                 {...re_password.bind}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onMouseDown={(e) => e.preventDefault()}
+                      >
+                        {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <Button
                 type="submit"

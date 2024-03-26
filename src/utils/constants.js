@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import moment from 'moment-timezone';
 import _ from 'lodash';
@@ -761,7 +762,9 @@ export const processReportsAndMarkers = (
 
         const temperature = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_temp_fah
-          : _.round(report_entry.report_temp_cel, 2);
+          : report_entry.report_temp_cel
+            ? _.round(report_entry.report_temp_cel, 2)
+            : report_entry.report_temp_cel;
         const probe = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_probe_fah
           : _.round(report_entry.report_probe_cel, 2);
@@ -1115,8 +1118,8 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
       },
     },
     {
-      name: 'light',
-      label: 'LIGHT (LUX)',
+      name: 'shock',
+      label: 'SHOCK (G)',
       options: {
         sort: true,
         sortThirdClickReset: true,
@@ -1129,8 +1132,8 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
       },
     },
     {
-      name: 'shock',
-      label: 'SHOCK (G)',
+      name: 'light',
+      label: 'LIGHT (LUX)',
       options: {
         sort: true,
         sortThirdClickReset: true,

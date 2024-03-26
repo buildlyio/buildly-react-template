@@ -122,7 +122,7 @@ const Reporting = () => {
 
   const { data: sensorReportData, isLoading: isLoadingSensorReports, isFetching: isFetchingSensorReports } = useQuery(
     ['sensorReports', selectedShipment, shipmentFilter],
-    () => getSensorReportQuery(encodeURIComponent(selectedShipment.partner_shipment_id), displayAlert),
+    () => getSensorReportQuery(encodeURIComponent(selectedShipment.partner_shipment_id), null, displayAlert),
     {
       enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
       refetchOnWindowFocus: false,

@@ -28,7 +28,7 @@ import MapComponent from '@components/MapComponent/MapComponent';
 import { getUser } from '@context/User.context';
 import { routes } from '@routes/routesConstants';
 import { getIcon, getShipmentFormattedRow, shipmentColumns } from '@utils/constants';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { getShipmentsQuery } from '@react-query/queries/shipments/getShipmentsQuery';
 import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
 import { getItemQuery } from '@react-query/queries/items/getItemQuery';
@@ -48,6 +48,7 @@ const Shipment = ({ history }) => {
 
   const { displayAlert } = useAlert();
   const { data } = useStore();
+  const queryClient = useQueryClient();
 
   let isShipmentDataAvailable = false;
 
@@ -118,14 +119,27 @@ const Shipment = ({ history }) => {
     },
   );
 
-  const { data: sensorReportData, isLoading: isLoadingSensorReports, isFetching: isFetchingSensorReports } = useQuery(
+  const { data: reportData1, isLoading: isLoadingReports1, isFetching: isFetchingReports1 } = useQuery(
     ['sensorReports', shipmentData, shipmentFilter],
-    () => getSensorReportQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null))), displayAlert),
+    () => getSensorReportQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null))), 10, displayAlert),
     {
-      enabled: isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      enabled: _.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
       refetchOnWindowFocus: false,
     },
   );
+
+  const { data: reportData2, isLoading: isLoadingReports2, isFetching: isFetchingReports2 } = useQuery(
+    ['sensorReports', shipmentData, shipmentFilter],
+    () => getSensorReportQuery(encodeURIComponent(selectedShipment.partner_shipment_id), null, displayAlert),
+    {
+      enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const sensorReportData = selectedShipment ? reportData2 : reportData1;
+  const isLoadingSensorReports = selectedShipment ? isLoadingReports2 : isLoadingReports1;
+  const isFetchingSensorReports = selectedShipment ? isFetchingReports2 : isFetchingReports1;
 
   const HeaderElements = () => (
     <Tabs
@@ -452,7 +466,9 @@ const Shipment = ({ history }) => {
 
         const temperature = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_temp_fah
-          : _.round(report_entry.report_temp_cel, 2);
+          : report_entry.report_temp_cel
+            ? _.round(report_entry.report_temp_cel, 2)
+            : report_entry.report_temp_cel;
         const probe = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_probe_fah
           : _.round(report_entry.report_probe_cel, 2);
