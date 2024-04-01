@@ -43,6 +43,7 @@
     "react-google-maps": "^9.4.5",
     "react-hot-loader": "^4.6.3",
     "react-i18next": "^10.11.0",
+    "react-push-notification": "^1.5.4",
     "react-query": "^3.39.3",
     "react-router-dom": "5.3.4",
     "react-select": "^5.7.4",

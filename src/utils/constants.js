@@ -244,6 +244,15 @@ export const custodianColumns = [
     },
   },
   {
+    name: 'type',
+    label: 'Custodian Type',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
     name: 'location',
     label: 'Location',
     options: {
@@ -287,12 +296,10 @@ export const getCustodianFormattedRow = (data, contactInfo, type = []) => {
         && `${contactInfoItem.country},`} ${contactInfoItem.postal_code
         && `${contactInfoItem.postal_code}`}`;
       let editedData = { ...rowItem, location };
-
       const custType = _.find(type, { url: rowItem.custodian_type });
       if (custType) {
         editedData = { ...editedData, type: custType.name };
       }
-
       customizedRow = [...customizedRow, editedData];
     });
 
@@ -1333,7 +1340,7 @@ export const gatewayColumns = (timezone, dateFormat) => ([
   },
   {
     name: 'custodian',
-    label: 'Custodian',
+    label: 'Shipper',
     options: {
       sort: true,
       sortThirdClickReset: true,

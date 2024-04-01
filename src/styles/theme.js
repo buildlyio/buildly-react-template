@@ -52,7 +52,7 @@ const theme = extendTheme({
     },
   },
   typography: {
-    fontFamily: 'Roboto',
+    fontFamily: 'IBM Plex Sans',
     fontWeight: 400,
     color: '#000000 !important',
     button: {

@@ -1359,7 +1359,7 @@ const CreateShipment = ({ history, location }) => {
                   <TextField
                     variant="outlined"
                     fullWidth
-                    disabled={cannotEdit}
+                    disabled={cannotEdit || !supressTempAlerts.value}
                     type="number"
                     className="createShipmentNumberInput"
                     id="max_excursion_temp"
@@ -1389,7 +1389,7 @@ const CreateShipment = ({ history, location }) => {
                   <TextField
                     variant="outlined"
                     fullWidth
-                    disabled={cannotEdit}
+                    disabled={cannotEdit || !supressTempAlerts.value}
                     type="number"
                     className="createShipmentNumberInput"
                     id="min_excursion_temp"
@@ -1441,7 +1441,7 @@ const CreateShipment = ({ history, location }) => {
                   <TextField
                     variant="outlined"
                     fullWidth
-                    disabled={cannotEdit}
+                    disabled={cannotEdit || !supressHumidityAlerts.value}
                     type="number"
                     className="createShipmentNumberInput"
                     id="max_excursion_humidity"
@@ -1462,7 +1462,7 @@ const CreateShipment = ({ history, location }) => {
                   <TextField
                     variant="outlined"
                     fullWidth
-                    disabled={cannotEdit}
+                    disabled={cannotEdit || !supressHumidityAlerts.value}
                     type="number"
                     className="createShipmentNumberInput"
                     id="min_excursion_humidity"
@@ -1507,7 +1507,7 @@ const CreateShipment = ({ history, location }) => {
                   <TextField
                     variant="outlined"
                     fullWidth
-                    disabled={cannotEdit}
+                    disabled={cannotEdit || !supressShockAlerts.value}
                     type="number"
                     className="createShipmentNumberInput"
                     id="shock_threshold"
@@ -1545,7 +1545,7 @@ const CreateShipment = ({ history, location }) => {
                   <TextField
                     variant="outlined"
                     fullWidth
-                    disabled={cannotEdit}
+                    disabled={cannotEdit || !supressLightAlerts.value}
                     type="number"
                     className="createShipmentNumberInput"
                     id="light_threshold"
