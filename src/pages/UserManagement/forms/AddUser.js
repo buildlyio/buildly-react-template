@@ -72,7 +72,7 @@ const AddUser = ({ open, setOpen }) => {
     } else {
       setRolesData([]);
     }
-  }, [organization_name.value]);
+  }, [organization_name.value, coregroupData]);
 
   const discardFormData = () => {
     setUserEmails([]);
