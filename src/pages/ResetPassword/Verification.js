@@ -19,7 +19,7 @@ import { routes } from '@routes/routesConstants';
 
 const Verification = ({ location }) => {
   const [isDisabled, setIsDisabled] = useState(true);
-  const [countdown, setCountdown] = useState(120);
+  const [countdown, setCountdown] = useState(300);
   const [attempts, setAttempts] = useState(3);
 
   const { displayAlert } = useAlert();
