@@ -761,10 +761,14 @@ export const processReportsAndMarkers = (
 
         const temperature = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_temp_fah
-          : _.round(report_entry.report_temp_cel, 2);
+          : report_entry.report_temp_cel
+            ? _.round(report_entry.report_temp_cel, 2)
+            : report_entry.report_temp_cel;
         const probe = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_probe_fah
-          : _.round(report_entry.report_probe_cel, 2);
+          : report_entry.report_probe_cel
+            ? _.round(report_entry.report_probe_cel, 2)
+            : report_entry.report_probe_cel;
 
         const preAlerts = _.orderBy(
           _.filter(alerts, (alert) => _.lte(_.toNumber(alert.report_id), report.id)),

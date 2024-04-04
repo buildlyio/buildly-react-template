@@ -452,10 +452,14 @@ const Shipment = ({ history }) => {
 
         const temperature = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_temp_fah
-          : _.round(report_entry.report_temp_cel, 2);
+          : report_entry.report_temp_cel
+            ? _.round(report_entry.report_temp_cel, 2)
+            : report_entry.report_temp_cel;
         const probe = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_probe_fah
-          : _.round(report_entry.report_probe_cel, 2);
+          : report_entry.report_probe_cel
+            ? _.round(report_entry.report_probe_cel, 2)
+            : report_entry.report_probe_cel;
         const shock = report_entry.report_shock && _.round(report_entry.report_shock, 2);
         const light = report_entry.report_light && _.round(report_entry.report_light, 2);
 
