@@ -23,13 +23,13 @@ export const useAddGatewayMutation = (
         await queryClient.invalidateQueries({
           queryKey: ['gateways', organization],
         });
-        displayAlert('success', 'Successfully added gateway');
+        displayAlert('success', 'Successfully added tracker');
         if (history && redirectTo) {
           history.push(redirectTo);
         }
       },
       onError: () => {
-        displayAlert('error', 'Error in creating gateway');
+        displayAlert('error', 'Error in creating tracker');
       },
     },
   );

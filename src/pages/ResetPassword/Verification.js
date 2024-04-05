@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Button,
   Card,
@@ -6,7 +7,6 @@ import {
   Container,
   CssBaseline,
   Grid,
-  Link,
   Typography,
 } from '@mui/material';
 import './ResetPasswordStyles.css';
@@ -52,10 +52,10 @@ const Verification = ({ location }) => {
       setAttempts(attempts - 1);
     }
     setIsDisabled(true);
-    setCountdown(120);
+    setCountdown(300);
     setTimeout(() => {
       setIsDisabled(false);
-    }, 120000);
+    }, 300000);
   };
 
   const formatTime = (seconds) => {

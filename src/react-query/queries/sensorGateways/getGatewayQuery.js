@@ -13,7 +13,7 @@ export const getGatewayQuery = async (organization, displayAlert) => {
     );
     return data;
   } catch (error) {
-    displayAlert('error', "Couldn't load gateways due to some error!");
+    displayAlert('error', "Couldn't load trackers due to some error!");
     return [];
   }
 };

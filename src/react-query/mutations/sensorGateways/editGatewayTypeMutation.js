@@ -18,13 +18,13 @@ export const useEditGatewayTypeMutation = (history, redirectTo, displayAlert) =>
         await queryClient.invalidateQueries({
           queryKey: ['gatewayTypes'],
         });
-        displayAlert('success', 'Gateway type successfully edited!');
+        displayAlert('success', 'Tracker type successfully edited!');
         if (history && redirectTo) {
           history.push(redirectTo);
         }
       },
       onError: () => {
-        displayAlert('error', "Couldn't edit gateway type!");
+        displayAlert('error', "Couldn't edit tracker type!");
       },
     },
   );

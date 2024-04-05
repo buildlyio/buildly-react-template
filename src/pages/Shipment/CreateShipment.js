@@ -790,6 +790,8 @@ const CreateShipment = ({ history, location }) => {
       note: note.value,
       transmission_time: parseInt(transmissionInterval.value, 10),
       measurement_time: parseInt(measurementInterval.value, 10),
+      start_location: startingLocation,
+      end_location: endingLocation,
     };
     const startCustodyForm = {
       ...startCustody,

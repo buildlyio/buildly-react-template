@@ -184,7 +184,7 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
                 platform_type: data.data.platform_name,
                 gateway: updateGateway.imei_number,
                 transmission_interval: _.isEqual(_.toLower(data.data.status), 'planned') ? 5 : data.data.transmission_time,
-                measurement_interval: _.isEqual(_.toLower(shipment.data.status), 'planned') ? 5 : data.data.measurement_time,
+                measurement_interval: _.isEqual(_.toLower(data.data.status), 'planned') ? 5 : data.data.measurement_time,
               };
               await httpService.makeRequest(
                 'post',

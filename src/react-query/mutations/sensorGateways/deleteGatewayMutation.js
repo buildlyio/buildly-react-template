@@ -16,10 +16,10 @@ export const useDeleteGatewayMutation = (organization, displayAlert) => {
         await queryClient.invalidateQueries({
           queryKey: ['gateways', organization],
         });
-        displayAlert('success', 'Gateway deleted successfully!');
+        displayAlert('success', 'Tracker deleted successfully!');
       },
       onError: () => {
-        displayAlert('error', 'Error in deleting gateway!');
+        displayAlert('error', 'Error in deleting Tracker!');
       },
     },
   );

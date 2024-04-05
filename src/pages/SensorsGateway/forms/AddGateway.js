@@ -74,8 +74,8 @@ const AddGateway = ({
 
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? 'Save' : 'Add Gateway';
-  const formTitle = editPage ? 'Edit Gateway' : 'Add Gateway';
+  const buttonText = editPage ? 'Save' : 'Add Tracker';
+  const formTitle = editPage ? 'Edit Tracker' : 'Add Tracker';
 
   const organization = getUser().organization.organization_uuid;
 
@@ -228,7 +228,7 @@ const AddGateway = ({
                   fullWidth
                   id="gateway_name"
                   required
-                  label="Gateway Name"
+                  label="Tracker Name"
                   name="gateway_name"
                   autoComplete="gateway_name"
                   error={
@@ -248,7 +248,7 @@ const AddGateway = ({
             <Card variant="outlined" className="gatewayCardItems">
               <CardContent>
                 <Typography variant="h6" gutterBottom mt={1} mb={isMobile() ? 0 : 1.65}>
-                  Gateway Info
+                  Tracker Info
                 </Typography>
                 <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid
@@ -264,7 +264,7 @@ const AddGateway = ({
                       required
                       id="gateway_type"
                       select
-                      label="Gateway Type"
+                      label="Tracker Type"
                       error={
                         formError.gateway_type
                         && formError.gateway_type.error
@@ -305,7 +305,7 @@ const AddGateway = ({
                       required
                       id="gateway_status"
                       select
-                      label="Gateway Status"
+                      label="Tracker Status"
                       error={
                         formError.gateway_status
                         && formError.gateway_status.error
@@ -437,7 +437,7 @@ const AddGateway = ({
                           _.orderBy(
                             _.filter(custodianList, ['custodian_type', 'https://demo-custodian.tpath.io/custodian_type/1/']),
                             ['name'],
-                            ['asc']
+                            ['asc'],
                           ),
                           (item, index) => (
                             <MenuItem

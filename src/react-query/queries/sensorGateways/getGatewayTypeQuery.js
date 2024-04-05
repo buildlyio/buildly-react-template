@@ -13,7 +13,7 @@ export const getGatewayTypeQuery = async (displayAlert) => {
     );
     return data;
   } catch (error) {
-    displayAlert('error', "Couldn't load gateway types due to some error!");
+    displayAlert('error', "Couldn't load tracker types due to some error!");
     return [];
   }
 };

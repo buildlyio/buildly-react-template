@@ -21,7 +21,8 @@ import { useInviteMutation } from '@react-query/mutations/authUser/inviteMutatio
 const AddUser = ({ open, setOpen }) => {
   const { displayAlert } = useAlert();
   const user = getUser();
-  let isSuperAdmin = false;
+  const isSuperAdmin = checkForGlobalAdmin(user);
+  const { organization_uuid } = user.organization;
 
   const [openConfirmModal, setConfirmModal] = useState(false);
   const [emailData, setEmailData] = useState([]);
@@ -31,10 +32,6 @@ const AddUser = ({ open, setOpen }) => {
 
   const organization_name = useInput('', { required: true });
   const user_role = useInput('', { required: true });
-
-  if (user) {
-    isSuperAdmin = checkForGlobalAdmin(user);
-  }
 
   const { data: coreuserData, isLoading: isLoadingCoreuser } = useQuery(
     ['users'],
@@ -62,17 +59,17 @@ const AddUser = ({ open, setOpen }) => {
   }, [coreuserData]);
 
   useEffect(() => {
-    if (!_.isEmpty(organization_name.value)) {
-      const selectedOrg = _.filter(orgData, (org) => org.name === organization_name.value);
-      const orgGroups = _.filter(coregroupData, (item) => item.organization === selectedOrg[0].organization_uuid);
-      setRolesData(orgGroups);
-    } else if (!isSuperAdmin) {
-      const orgGroups = _.filter(coregroupData, (item) => item.organization === user.organization.organization_uuid);
-      setRolesData(orgGroups);
+    if (isSuperAdmin) {
+      if (!_.isEmpty(organization_name.value)) {
+        const selectedOrg = _.filter(orgData, (org) => org.name === organization_name.value);
+        setRolesData(_.filter(coregroupData, (item) => item.organization === selectedOrg[0].organization_uuid));
+      } else {
+        setRolesData([]);
+      }
     } else {
-      setRolesData([]);
+      setRolesData(_.filter(coregroupData, (item) => item.organization === organization_uuid));
     }
-  }, [organization_name.value, coregroupData]);
+  }, [coregroupData, organization_name.value]);
 
   const discardFormData = () => {
     setUserEmails([]);

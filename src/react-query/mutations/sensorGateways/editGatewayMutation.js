@@ -23,13 +23,13 @@ export const useEditGatewayMutation = (
         await queryClient.invalidateQueries({
           queryKey: ['gateways', organization],
         });
-        displayAlert('success', 'Gateway successfully edited!');
+        displayAlert('success', 'Tracker successfully edited!');
         if (history && redirectTo) {
           history.push(redirectTo);
         }
       },
       onError: () => {
-        displayAlert('error', "Couldn't edit gateway due to some error!");
+        displayAlert('error', "Couldn't edit tracker sdue to some error!");
       },
     },
   );

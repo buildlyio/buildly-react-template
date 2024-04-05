@@ -128,7 +128,12 @@ const Shipment = ({ history }) => {
     },
   );
 
-  const { data: reportData2, isLoading: isLoadingReports2, isFetching: isFetchingReports2 } = useQuery(
+  const {
+    data: reportData2,
+    isLoading: isLoadingReports2,
+    isFetching: isFetchingReports2,
+    refetch: refetchReports2,
+  } = useQuery(
     ['sensorReports', shipmentData, shipmentFilter],
     () => getSensorReportQuery(encodeURIComponent(selectedShipment.partner_shipment_id), null, displayAlert),
     {
@@ -182,8 +187,9 @@ const Shipment = ({ history }) => {
   }, [sensorAlertData, sensorReportData, data]);
 
   useEffect(() => {
-    if (selectedShipment) {
+    if (!_.isEmpty(selectedShipment)) {
       setLoading(true);
+      refetchReports2();
     }
     if (expandedRows) {
       setTimeout(() => {
@@ -471,7 +477,9 @@ const Shipment = ({ history }) => {
             : report_entry.report_temp_cel;
         const probe = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
           ? report_entry.report_probe_fah
-          : _.round(report_entry.report_probe_cel, 2);
+          : report_entry.report_probe_cel
+            ? _.round(report_entry.report_probe_cel, 2)
+            : report_entry.report_probe_cel;
         const shock = report_entry.report_shock && _.round(report_entry.report_shock, 2);
         const light = report_entry.report_light && _.round(report_entry.report_light, 2);
 

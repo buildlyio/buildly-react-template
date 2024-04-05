@@ -40,7 +40,7 @@ const Login = ({ history }) => {
 
   const { mutate: resetPasswordCheckMutation, isLoading: isPasswordCheck } = useResetPasswordCheckMutation(history, routes.RESET_PASSWORD_CONFIRM, routes.LOGIN, displayAlert);
 
-  const { mutate: loginMutation, isLoading: islogin } = useLoginMutation(history, (location.state && location.state.from) || routes.SHIPMENT, displayAlert, timezone);
+  const { mutate: loginMutation, isLoading: islogin, isError: isLoginError } = useLoginMutation(history, (location.state && location.state.from) || routes.SHIPMENT, displayAlert, timezone);
 
   useEffect(() => {
     if (location.pathname.includes(routes.RESET_PASSWORD_CONFIRM)) {
@@ -137,7 +137,7 @@ const Login = ({ history }) => {
                 label="Email"
                 name="email"
                 autoComplete="email"
-                error={error.email && error.email.error}
+                error={isLoginError || (error.email && error.email.error)}
                 helperText={error && error.email ? error.email.message : ''}
                 className="loginTextField"
                 onBlur={(e) => handleBlur(e, 'required', email)}
@@ -153,7 +153,7 @@ const Login = ({ history }) => {
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="current-password"
-                error={error.password && error.password.error}
+                error={isLoginError || (error.password && error.password.error)}
                 helperText={
                   error && error.password
                     ? error.password.message
@@ -175,6 +175,11 @@ const Login = ({ history }) => {
                   ),
                 }}
               />
+              {isLoginError && (
+                <Typography className="loginErrorText">
+                  Incorrect email or password. Try again!
+                </Typography>
+              )}
               <Button
                 type="submit"
                 fullWidth
