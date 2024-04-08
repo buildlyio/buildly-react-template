@@ -213,14 +213,17 @@ const TopBar = ({
               value={organization}
               onChange={handleOrganizationChange}
             >
-              {_.map(orgData, (org) => (
-                <MenuItem
-                  key={`organization-${org.id}`}
-                  value={org.name || ''}
-                >
-                  {org.name}
-                </MenuItem>
-              ))}
+              {_.map(
+                _.filter(orgData, (org) => org.organization_type === 2),
+                (org) => (
+                  <MenuItem
+                    key={`organization-${org.id}`}
+                    value={org.name || ''}
+                  >
+                    {org.name}
+                  </MenuItem>
+                ),
+              )}
             </TextField>
           )}
           <IconButton
