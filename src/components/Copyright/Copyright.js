@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, Typography } from '@mui/material';
-import { AppContext } from '../../context/App.context';
+import { AppContext } from '@context/App.context';
 
 const Copyright = () => {
   const { title } = useContext(AppContext);
@@ -8,12 +8,13 @@ const Copyright = () => {
   return (
     <Typography
       variant="body2"
-      color="textSecondary"
       align="center"
+      mt={8}
+      mb={1}
     >
       {'Copyright © '}
       <Link
-        color="inherit"
+        color="primary"
         href="https://xparent.io/"
         target="_blank"
         sx={{

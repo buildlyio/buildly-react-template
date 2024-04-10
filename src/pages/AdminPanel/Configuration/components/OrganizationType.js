@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
-import { connect } from 'react-redux';
-import {
-  getOrgTypes,
-  deleteOrgType,
-} from '../../../../redux/authuser/actions/authuser.actions';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../ConfigurationConstants';
+import _ from 'lodash';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { getColumns } from '@utils/constants';
 import AddOrganizationType from '../forms/AddOrganizationType';
+import { useQuery } from 'react-query';
+import { getOrganizationTypeQuery } from '@react-query/queries/authUser/getOrganizationTypeQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useDeleteOrganizationTypeMutation } from '@react-query/mutations/authUser/deleteOrganizationTypeMutation';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '@zustand/timezone/timezoneStore';
 
-const OrganizationType = ({
-  dispatch,
-  loading,
-  orgTypes,
-  redirectTo,
-  history,
-  timezone,
-}) => {
+const OrganizationType = ({ redirectTo, history }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const organization = getUser().organization.organization_uuid;
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
 
   const addPath = redirectTo
     ? `${redirectTo}/org-type`
@@ -29,17 +29,17 @@ const OrganizationType = ({
     ? `${redirectTo}/org-type`
     : `${routes.CONFIGURATION}/org-type/edit`;
 
-  useEffect(() => {
-    if (
-      !loading
-      && (
-        !orgTypes
-        || (orgTypes && orgTypes.length === 0)
-      )
-    ) {
-      dispatch(getOrgTypes());
-    }
-  }, [orgTypes]);
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: organizationTypesData, isLoading: isLoadingOrganizationTypes } = useQuery(
+    ['organizationTypes'],
+    () => getOrganizationTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -60,17 +60,27 @@ const OrganizationType = ({
     setDeleteModal(true);
   };
 
+  const { mutate: deleteOrganizationTypeMutation, isLoading: isDeletingOrganizationType } = useDeleteOrganizationTypeMutation(displayAlert);
+
   const handleDeleteModal = () => {
-    dispatch(deleteOrgType(deleteId));
+    deleteOrganizationTypeMutation(deleteId);
     setDeleteModal(false);
   };
 
   return (
     <DataTableWrapper
       noSpace
-      loading={loading}
-      rows={orgTypes || []}
-      columns={getColumns(timezone)}
+      loading={isLoadingUnits || isLoadingOrganizationTypes || isDeletingOrganizationType}
+      rows={organizationTypesData || []}
+      columns={getColumns(
+        data,
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '',
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+          : '',
+      )}
       filename="OrganizationType"
       addButtonHeading="Organization Type"
       onAddButtonClick={onAddButtonClick}
@@ -88,10 +98,4 @@ const OrganizationType = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-  ...state.optionsReducer,
-});
-
-export default connect(mapStateToProps)(OrganizationType);
+export default OrganizationType;

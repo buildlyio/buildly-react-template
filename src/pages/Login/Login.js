@@ -1,76 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Button,
   CssBaseline,
   TextField,
-  Link,
   Grid,
-  Box,
   Card,
-  CircularProgress,
   CardContent,
+  Checkbox,
+  InputAdornment,
+  IconButton,
   Typography,
   Container,
+  FormControlLabel,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { useInput } from '../../hooks/useInput';
-import {
-  login,
-  resetPasswordCheck,
-} from '../../redux/authuser/actions/authuser.actions';
-import { validators } from '../../utils/validators';
-import logo from '../../assets/tp-logo.png';
-import { routes } from '../../routes/routesConstants';
-import Copyright from '../../components/Copyright/Copyright';
+import { Visibility as VisibilityIcon, VisibilityOff as VisibilityOffIcon } from '@mui/icons-material';
+import logo from '@assets/tp-logo.png';
+import Copyright from '@components/Copyright/Copyright';
+import Loader from '@components/Loader/Loader';
+import useAlert from '@hooks/useAlert';
+import { useInput } from '@hooks/useInput';
+import useTimezone from '@hooks/useTimezone';
+import { routes } from '@routes/routesConstants';
+import { validators } from '@utils/validators';
+import { useResetPasswordCheckMutation } from '@react-query/mutations/authUser/resetPasswordCheckMutation';
+import { useLoginMutation } from '@react-query/mutations/authUser/loginMutation';
+import './LoginStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    paddingTop: theme.spacing(8),
-  },
-  paper: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(2),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  logo: {
-    maxWidth: '20rem',
-    width: '100%',
-    marginBottom: theme.spacing(3),
-  },
-  textField: {
-    minHeight: '5rem',
-    margin: theme.spacing(1, 0),
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  loadingWrapper: {
-    margin: theme.spacing(1),
-    position: 'relative',
-  },
-}));
-
-const Login = ({ dispatch, loading, history }) => {
-  const classes = useStyles();
-  const username = useInput('', { required: true });
+const Login = ({ history }) => {
+  const email = useInput(localStorage.getItem('email') || '', { required: true });
   const password = useInput('', { required: true });
   const [error, setError] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [isChecked, setChecked] = useState(!!localStorage.getItem('email') || false);
+  const location = useLocation();
+
+  const { displayAlert } = useAlert();
+  const { timezone } = useTimezone();
+
+  const { mutate: resetPasswordCheckMutation, isLoading: isPasswordCheck } = useResetPasswordCheckMutation(history, routes.RESET_PASSWORD_CONFIRM, routes.LOGIN, displayAlert);
+
+  const { mutate: loginMutation, isLoading: islogin, isError: isLoginError } = useLoginMutation(history, (location.state && location.state.from) || routes.SHIPMENT, displayAlert, timezone);
 
   useEffect(() => {
     if (location.pathname.includes(routes.RESET_PASSWORD_CONFIRM)) {
@@ -83,29 +53,23 @@ const Login = ({ dispatch, loading, history }) => {
         uid: restPathArr[1],
         token: restPathArr[2],
       };
-      dispatch(resetPasswordCheck(resetCheckValues, history));
+      resetPasswordCheckMutation(resetCheckValues);
     }
   }, []);
 
-  /**
-   * Submit the form to the backend and attempts to authenticate
-   * @param {Event} event the default submit event
-   */
   const handleSubmit = (event) => {
     event.preventDefault();
     const loginFormValue = {
-      username: username.value,
+      username: email.value,
       password: password.value,
     };
-    dispatch(login(loginFormValue, history));
+    if (isChecked) {
+      localStorage.setItem('email', email.value);
+    } else {
+      localStorage.removeItem('email');
+    }
+    loginMutation(loginFormValue);
   };
-
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
 
   const handleBlur = (e, validation, input) => {
     const validateObj = validators(validation, input);
@@ -128,7 +92,7 @@ const Login = ({ dispatch, loading, history }) => {
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(error);
-    if (!username.value || !password.value) {
+    if (!email.value || !password.value) {
       return true;
     }
     let errorExists = false;
@@ -144,22 +108,23 @@ const Login = ({ dispatch, loading, history }) => {
     <Container
       component="main"
       maxWidth="xs"
-      className={classes.container}
+      className="loginContainer"
     >
+      {(isPasswordCheck || islogin) && <Loader open={isPasswordCheck || islogin} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
-          <div className={classes.paper}>
+          <div className="loginPaper">
             <img
               src={logo}
-              className={classes.logo}
+              className="loginLogo"
               alt="Company logo"
             />
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
             <form
-              className={classes.form}
+              className="loginForm"
               noValidate
               onSubmit={handleSubmit}
             >
@@ -168,19 +133,15 @@ const Login = ({ dispatch, loading, history }) => {
                 margin="normal"
                 required
                 fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
-                error={error.username && error.username.error}
-                helperText={
-                  error && error.username
-                    ? error.username.message
-                    : ''
-                }
-                className={classes.textField}
-                onBlur={(e) => handleBlur(e, 'required', username)}
-                {...username.bind}
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
+                error={isLoginError || (error.email && error.email.error)}
+                helperText={error && error.email ? error.email.message : ''}
+                className="loginTextField"
+                onBlur={(e) => handleBlur(e, 'required', email)}
+                {...email.bind}
               />
               <TextField
                 variant="outlined"
@@ -189,54 +150,66 @@ const Login = ({ dispatch, loading, history }) => {
                 fullWidth
                 name="password"
                 label="Password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="current-password"
-                error={error.password && error.password.error}
+                error={isLoginError || (error.password && error.password.error)}
                 helperText={
                   error && error.password
                     ? error.password.message
                     : ''
                 }
-                className={classes.textField}
+                className="loginTextField"
                 onBlur={(e) => handleBlur(e, 'required', password)}
                 {...password.bind}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        onMouseDown={(e) => e.preventDefault()}
+                      >
+                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
-              <div className={classes.loadingWrapper}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  disabled={loading || submitDisabled()}
-                >
-                  Sign in
-                </Button>
-                {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
+              {isLoginError && (
+                <Typography className="loginErrorText">
+                  Incorrect email or password. Try again!
+                </Typography>
+              )}
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                style={{ marginTop: 8, marginBottom: 16 }}
+                disabled={isPasswordCheck || islogin || submitDisabled()}
+              >
+                Sign in
+              </Button>
+              <Grid container alignItems="center">
+                <Grid item xs={7}>
+                  <FormControlLabel
+                    control={(
+                      <Checkbox
+                        checked={isChecked}
+                        onChange={() => setChecked(!isChecked)}
+                        color="primary"
+                      />
+                    )}
+                    label="Remember Email"
                   />
-                )}
-              </div>
-              <Grid container>
-                <Grid item xs>
-                  <Link
-                    href={routes.RESET_PASSWORD}
-                    variant="body2"
-                    color="secondary"
-                  >
-                    Forgot password?
-                  </Link>
                 </Grid>
-                <Grid item>
+                <Grid item xs={5} style={{ textAlign: 'end' }}>
                   <Link
-                    href={routes.REGISTER}
+                    to={routes.RESET_PASSWORD}
                     variant="body2"
-                    color="secondary"
+                    color="primary"
                   >
-                    Don't have an account? Register
+                    Forgot Password?
                   </Link>
                 </Grid>
               </Grid>
@@ -244,16 +217,9 @@ const Login = ({ dispatch, loading, history }) => {
           </div>
         </CardContent>
       </Card>
-      <Box mt={8} mb={1}>
-        <Copyright />
-      </Box>
+      <Copyright />
     </Container>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(Login);
+export default Login;

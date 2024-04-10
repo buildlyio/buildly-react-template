@@ -1,27 +1,25 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
-import { connect } from 'react-redux';
-import {
-  getProductType,
-  deleteProductType,
-} from '../../../../redux/items/actions/items.actions';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { UserContext } from '../../../../context/User.context';
-import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../ConfigurationConstants';
+import _ from 'lodash';
+import { useQuery } from 'react-query';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import useAlert from '@hooks/useAlert';
+import { getProductTypeQuery } from '@react-query/queries/items/getProductTypeQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useDeleteProductTypeMutation } from '@react-query/mutations/items/deleteProductTypeMutation';
+import { routes } from '@routes/routesConstants';
+import { getColumns } from '@utils/constants';
+import { useStore } from '@zustand/timezone/timezoneStore';
 import AddProductType from '../forms/AddProductType';
 
-const ProductType = ({
-  dispatch,
-  loading,
-  productType,
-  redirectTo,
-  history,
-  timezone,
-}) => {
-  const organization = useContext(UserContext).organization.organization_uuid;
+const ProductType = ({ redirectTo, history }) => {
+  const organization = getUser().organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
 
   const addPath = redirectTo
     ? `${redirectTo}/product-type`
@@ -31,11 +29,17 @@ const ProductType = ({
     ? `${redirectTo}/product-type`
     : `${routes.CONFIGURATION}/product-type/edit`;
 
-  useEffect(() => {
-    if (!loading && !productType) {
-      dispatch(getProductType(organization));
-    }
-  }, [productType]);
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: productTypesData, isLoading: isLoadingProductTypes } = useQuery(
+    ['productTypes', organization],
+    () => getProductTypeQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -56,17 +60,27 @@ const ProductType = ({
     setDeleteModal(true);
   };
 
+  const { mutate: deleteProductTypeMutation, isLoading: isDeletingProductType } = useDeleteProductTypeMutation(organization, displayAlert);
+
   const handleDeleteModal = () => {
-    dispatch(deleteProductType(deleteId));
+    deleteProductTypeMutation(deleteId);
     setDeleteModal(false);
   };
 
   return (
     <DataTableWrapper
       noSpace
-      loading={loading}
-      rows={productType || []}
-      columns={getColumns(timezone)}
+      loading={isLoadingUnits || isLoadingProductTypes || isDeletingProductType}
+      rows={productTypesData || []}
+      columns={getColumns(
+        data,
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '',
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+          : '',
+      )}
       filename="ProductType"
       addButtonHeading="Product Type"
       onAddButtonClick={onAddButtonClick}
@@ -84,10 +98,4 @@ const ProductType = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.itemsReducer,
-  ...state.optionsReducer,
-});
-
-export default connect(mapStateToProps)(ProductType);
+export default ProductType;

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   Grid,
@@ -7,32 +6,31 @@ import {
   MenuItem,
   Button,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import {
-  clearData,
-  getExportData,
-} from '../../../../redux/importExport/actions/importExport.actions';
+import Loader from '@components/Loader/Loader';
+import { isDesktop2 } from '@utils/mediaQuery';
+import { useQuery, useQueryClient } from 'react-query';
+import { getExportDataQuery } from '@react-query/queries/importExport/getExportDataQuery';
+import useAlert from '@hooks/useAlert';
+import '../../AdminPanelStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '90%',
-    margin: 'auto',
-    marginTop: theme.spacing(1),
-  },
-  button: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-}));
-
-const ExportData = ({ dispatch, exportData }) => {
-  const classes = useStyles();
+const ExportData = () => {
   const [exportTable, setExportTable] = useState('');
   const [exportType, setExportType] = useState('');
   const [ready, setReady] = useState(false);
 
+  const { displayAlert } = useAlert();
+  const queryClient = useQueryClient();
+
+  const { data: exportData, isLoading: isLoadingExportData } = useQuery(
+    ['exportData'],
+    () => getExportDataQuery(exportTable, exportType, displayAlert),
+    {
+      enabled: ready,
+      refetchOnWindowFocus: false,
+    },
+  );
+
   useEffect(() => {
-    dispatch(clearData());
     setReady(false);
   }, []);
 
@@ -56,83 +54,77 @@ const ExportData = ({ dispatch, exportData }) => {
         }
       }
       setReady(false);
+      queryClient.invalidateQueries({
+        queryKey: ['exportData'],
+      });
     }
   }, [exportData, ready]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(getExportData(exportTable, exportType));
     setReady(true);
   };
 
   return (
-    <form
-      className={classes.root}
-      noValidate
-      onSubmit={handleSubmit}
-    >
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            required
-            id="exportTable"
-            label="Data to export"
-            select
-            value={exportTable}
-            onChange={(e) => {
-              dispatch(clearData());
-              setExportTable(e.target.value);
-            }}
-          >
-            <MenuItem value="">--------</MenuItem>
-            <MenuItem value="item">Items</MenuItem>
-            <MenuItem value="product">Products</MenuItem>
-          </TextField>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            required
-            id="exportType"
-            label="Export As"
-            select
-            value={exportType}
-            onChange={(e) => {
-              dispatch(clearData());
-              setExportType(e.target.value);
-            }}
-          >
-            <MenuItem value="">--------</MenuItem>
-            <MenuItem value="csv">CSV</MenuItem>
-          </TextField>
-        </Grid>
-        <Grid container spacing={2} justifyContent="center">
-          <Grid item xs={6} sm={4}>
-            <Button
-              type="submit"
+    <div>
+      {isLoadingExportData && <Loader open={isLoadingExportData} />}
+      <form
+        className="adminPanelFormRoot"
+        noValidate
+        onSubmit={handleSubmit}
+      >
+        <Grid container spacing={isDesktop2() ? 2 : 0}>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
               fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.button}
-              disabled={!exportTable || !exportType}
+              required
+              id="exportTable"
+              label="Data to export"
+              select
+              value={exportTable}
+              onChange={(e) => setExportTable(e.target.value)}
             >
-              Export
-            </Button>
+              <MenuItem value="">--------</MenuItem>
+              <MenuItem value="item">Items</MenuItem>
+              <MenuItem value="product">Products</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              required
+              id="exportType"
+              label="Export As"
+              select
+              value={exportType}
+              onChange={(e) => setExportType(e.target.value)}
+            >
+              <MenuItem value="">--------</MenuItem>
+              <MenuItem value="csv">CSV</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid container spacing={2} justifyContent="center">
+            <Grid item xs={7} sm={6} md={4}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className="adminPanelSubmit"
+                disabled={isLoadingExportData || !exportTable || !exportType}
+              >
+                Export
+              </Button>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </form>
+      </form>
+    </div>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.importExportReducer,
-});
-
-export default connect(mapStateToProps)(ExportData);
+export default ExportData;

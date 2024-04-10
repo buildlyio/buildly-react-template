@@ -1,0 +1,33 @@
+.loginContainer {
+  padding-top: 64px;
+}
+
+.loginPaper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loginForm {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.loginLogo {
+  max-width: 20rem;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.loginTextField {
+  min-height: 5rem;
+  margin: 8px 0px;
+}
+
+.loginErrorText {
+  text-align: center;
+  color: var(--color-palette-error-main);
+  font-size: 14px;
+  margin-top: -23px;
+  margin-bottom: 2px;
+}

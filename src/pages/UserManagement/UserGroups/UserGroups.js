@@ -1,202 +1,133 @@
-import React, { useState, useContext } from 'react';
-import {
-  Button,
-  IconButton,
-  Menu,
-  MenuItem,
-  Switch,
-  Box,
-} from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import {
-  MoreHoriz,
-  Add as AddIcon,
-} from '@mui/icons-material';
-import { InlineEditor } from '../../../components/InlineEditor/InlineEditor';
-import { PermissionsTable } from '../../../components/PermissionsTable/PermissionsTable';
-import { UserContext } from '../../../context/User.context';
-import Crud from '../../../modules/crud/Crud';
+import React, { useEffect, useState } from 'react';
+import _ from 'lodash';
+import { Switch } from '@mui/material';
+import { useQuery } from 'react-query';
+import useAlert from '@hooks/useAlert';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getCoregroupQuery } from '@react-query/queries/coregroup/getCoregroupQuery';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { getGroupsFormattedRow } from '@utils/constants';
+import { useEditCoregroupMutation } from '@react-query/mutations/coregroup/editCoregroupMutation';
 
-const useStyles = makeStyles((theme) => ({
-  addButton: {
-    marginBottom: '1.5em',
-  },
-}));
-
-/**
- * Manage user groups
- */
 const UserGroups = () => {
-  const classes = useStyles();
-  // state to toggle actions menus
-  const [menu, setMenu] = useState({ row: null, element: null });
-  const user = useContext(UserContext);
+  const { displayAlert } = useAlert();
+  const [rows, setRows] = useState([]);
 
-  const permissionCellTemplate = (row, crud, operation) => (
-    <Switch
-      size="small"
-      color="primary"
-      disabled={
-          user.core_groups[0].id === row.id
-          || !row.organization
-        }
-      checked={row.permissions[operation]}
-      onChange={() => {
-        row.permissions[operation] = !row.permissions[operation];
-        crud.updateItem(row);
-      }}
-    />
+  const { data: coregroupData, isLoading: isLoadingCoregroup } = useQuery(
+    ['coregroups'],
+    () => getCoregroupQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
-  /**
-   * Clears authentication and redirects to the login screen.
-   */
-  const addGroup = (crud) => {
-    const item = {
-      name: 'custom',
-    };
-    crud.createItem(item);
-  };
-
-  const actionsTemplate = (row, crud) => {
-    const handleMenuClick = (event) => {
-      setMenu({ row, element: event.currentTarget });
-    };
-
-    const handleMenuItemClick = (action) => {
-      if (action === 'delete') {
-        crud.deleteItem(menu.row);
-      }
-      setMenu({ row: null, element: null });
-    };
-
-    const handleMenuClose = () => {
-      setMenu({ row: null, element: null });
-    };
-
-    return (
-      <>
-        <IconButton
-          aria-label="more"
-          aria-controls={`groupActions${row.id}`}
-          aria-haspopup="true"
-          disabled={
-            user.core_groups[0].id === row.id
-            || !row.organization
-          }
-          onClick={handleMenuClick}
-        >
-          <MoreHoriz />
-        </IconButton>
-        <Menu
-          id={`groupActions${row.id}`}
-          anchorEl={menu.element}
-          keepMounted
-          open={(menu.row && (menu.row.id === row.id)) || false}
-          onClose={handleMenuClose}
-        >
-          {row.actions.map((option) => (
-            <MenuItem
-              key={`groupActions${row.id}:${option.value}`}
-              onClick={() => handleMenuItemClick(option.value)}
-            >
-              {option.label}
-            </MenuItem>
-          ))}
-        </Menu>
-      </>
-    );
-  };
-
-  const update = (crud, row, value) => {
-    row.name = value;
-    crud.updateItem(row);
-  };
-
-  const nameTemplate = (row, crud) => (
-    <InlineEditor
-      tag="body1"
-      id={row.id}
-      disabled={!row.organization}
-      value={row.name}
-      placeholder="Group type"
-      onChange={(event) => update(crud, row, event)}
-    />
+  const { data: organizations, isLoading: isLoadingOrganizations } = useQuery(
+    ['organizations'],
+    () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
+
+  const { mutate: editGroupMutation, isLoading: isEditingGroup } = useEditCoregroupMutation(displayAlert);
+
+  useEffect(() => {
+    if (!_.isEmpty(coregroupData) && !_.isEmpty(organizations)) {
+      const grps = getGroupsFormattedRow(coregroupData, organizations);
+      setRows(_.filter(grps, (g) => !_.isEqual(g.id, 1)));
+    }
+  }, [coregroupData, organizations]);
+
+  const updatePermissions = (e, group) => {
+    const editData = {
+      id: group.id,
+      permissions: {
+        ...group.permissions,
+        [e.target.name]: e.target.checked,
+      },
+    };
+
+    editGroupMutation(editData);
+  };
 
   return (
-    <Box>
-      <Crud
-        deleteAction="DELETE_COREGROUP"
-        updateAction="UPDATE_COREGROUP"
-        createAction="CREATE_COREGROUP"
-        loadAction="LOAD_DATA_COREGROUP"
-        reducer="coreGroupReducer"
-      >
-        {
-          (crud) => {
-            if (crud.getData()) {
-              crud.getData().forEach((row) => {
-                row.actions = [{ value: 'delete', label: 'Delete' }];
-              });
-            }
-
-            return (
-              <>
-                <Button
-                  className={classes.addButton}
-                  color="primary"
-                  variant="contained"
-                  onClick={() => addGroup(crud)}
-                >
-                  <AddIcon />
-                  {' '}
-                  Add Group
-                </Button>
-                <PermissionsTable
-                  columns={[
-                    {
-                      label: 'Group type',
-                      prop: 'name',
-                      flex: '1',
-                      template: (row) => nameTemplate(row, crud),
-                    },
-                    {
-                      label: 'Create',
-                      prop: 'Create',
-                      template: (row) => permissionCellTemplate(row, crud, 'create'),
-                    },
-                    {
-                      label: 'Read',
-                      prop: 'Read',
-                      template: (row) => permissionCellTemplate(row, crud, 'read'),
-                    },
-                    {
-                      label: 'Update',
-                      prop: 'Update',
-                      template: (row) => permissionCellTemplate(row, crud, 'update'),
-                    },
-                    {
-                      label: 'Delete',
-                      prop: 'Delete',
-                      flex: '2',
-                      template: (row) => permissionCellTemplate(row, crud, 'delete'),
-                    },
-                    {
-                      label: 'Actions',
-                      prop: 'options',
-                      flex: '1',
-                      template: (row) => actionsTemplate(row, crud),
-                    },
-                  ]}
-                  rows={crud.getData()}
-                />
-              </>
-            );
-          }
-        }
-      </Crud>
-    </Box>
+    <div>
+      <DataTableWrapper
+        hideAddButton
+        centerLabel
+        filename="User Groups"
+        tableHeader="User Groups"
+        loading={isLoadingCoregroup || isLoadingOrganizations || isEditingGroup}
+        rows={rows || []}
+        columns={[
+          {
+            name: 'display_permission_name',
+            label: 'Group Type',
+            options: {
+              sort: true,
+              sortThirdClickReset: true,
+              filter: true,
+            },
+          },
+          {
+            name: 'Create',
+            options: {
+              sort: true,
+              sortThirdClickReset: true,
+              filter: true,
+              setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
+              customBodyRenderLite: (dataIndex) => {
+                const coregroup = rows[dataIndex];
+                return (
+                  <Switch name="create" checked={coregroup.permissions.create} onChange={(e) => updatePermissions(e, coregroup)} />
+                );
+              },
+            },
+          },
+          {
+            name: 'Read',
+            options: {
+              sort: true,
+              sortThirdClickReset: true,
+              filter: true,
+              setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
+              customBodyRenderLite: (dataIndex) => {
+                const coregroup = rows[dataIndex];
+                return (
+                  <Switch name="read" checked={coregroup.permissions.read} onChange={(e) => updatePermissions(e, coregroup)} />
+                );
+              },
+            },
+          },
+          {
+            name: 'Update',
+            options: {
+              sort: true,
+              sortThirdClickReset: true,
+              filter: true,
+              setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
+              customBodyRenderLite: (dataIndex) => {
+                const coregroup = rows[dataIndex];
+                return (
+                  <Switch name="update" checked={coregroup.permissions.update} onChange={(e) => updatePermissions(e, coregroup)} />
+                );
+              },
+            },
+          },
+          {
+            name: 'Delete',
+            options: {
+              sort: true,
+              sortThirdClickReset: true,
+              filter: true,
+              setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
+              customBodyRenderLite: (dataIndex) => {
+                const coregroup = rows[dataIndex];
+                return (
+                  <Switch name="delete" checked={coregroup.permissions.delete} onChange={(e) => updatePermissions(e, coregroup)} />
+                );
+              },
+            },
+          },
+        ]}
+      />
+    </div>
   );
 };
 

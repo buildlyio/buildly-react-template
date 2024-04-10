@@ -4,55 +4,20 @@ import _ from 'lodash';
 import {
   Divider,
   Drawer,
-  Hidden,
   List,
   ListItem,
   ListItemText,
   useTheme,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { isMobile } from '../../utils/mediaQuery';
+import { isMobile } from '@utils/mediaQuery';
 import { NAVIGATION_ITEMS } from './NavBarConstants';
+import './NavBarStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  drawer: {
-    [theme.breakpoints.up('md')]: {
-      width: 240,
-      flexShrink: 0,
-    },
-    backgroundColor: theme.palette.common.drawer,
-  },
-  toolbar: theme.mixins.toolbar,
-  drawerPaper: {
-    width: 240,
-    backgroundColor: theme.palette.background.dark,
-    color: theme.palette.secondary.main,
-  },
-  active: {
-    backgroundColor: '#887C5E !important',
-    borderRightColor: theme.palette.primary.main,
-    borderRightWidth: 10,
-    borderRightStyle: 'solid',
-    fontWeight: 'bold',
-  },
-  navLink: {
-    display: 'block',
-    textDecoration: 'none',
-    color: theme.palette.secondary.main,
-  },
-  navItems: {
-    padding: theme.spacing(3, 4),
-    textAlign: 'left',
-  },
-}));
-
-/**
- * Component for the side navigation.
- */
-const NavBar = ({ navHidden, setNavHidden }) => {
-  const classes = useStyles();
+const NavBar = ({ navHidden, setNavHidden, data }) => {
   const theme = useTheme();
   const isMobileDevice = isMobile();
+
+  const isAdmin = false;
 
   const handleListItemClick = (event, index, item) => {
     if (isMobileDevice) {
@@ -62,7 +27,7 @@ const NavBar = ({ navHidden, setNavHidden }) => {
 
   const drawer = (
     <div>
-      <div className={classes.toolbar} />
+      <div className="navbarToolbar" />
       <List>
         {_.map(NAVIGATION_ITEMS, (item, index) => (
           <React.Fragment
@@ -70,13 +35,13 @@ const NavBar = ({ navHidden, setNavHidden }) => {
           >
             <NavLink
               to={item.link}
-              activeClassName={classes.active}
+              activeClassName="navbarActive"
               title={item.name}
-              className={classes.navLink}
+              className="navbarNavLink"
             >
               <ListItem
                 button
-                className={classes.navItems}
+                className="navbarNavItems"
                 onClick={(event) => {
                   handleListItemClick(event, index, item);
                 }}
@@ -97,7 +62,7 @@ const NavBar = ({ navHidden, setNavHidden }) => {
 
   return (
     <nav
-      className={classes.drawer}
+      className="navbarDrawer"
       aria-label="mailbox folders"
     >
       <Drawer
@@ -110,7 +75,7 @@ const NavBar = ({ navHidden, setNavHidden }) => {
         open={navHidden}
         onClose={handleDrawerToggle}
         classes={{
-          paper: classes.drawerPaper,
+          paper: 'navbarDrawerPaper',
         }}
         ModalProps={{
           keepMounted: true, // Better open performance on mobile.
@@ -126,7 +91,7 @@ const NavBar = ({ navHidden, setNavHidden }) => {
       </Drawer>
       <Drawer
         classes={{
-          paper: classes.drawerPaper,
+          paper: 'navbarDrawerPaper',
         }}
         variant="permanent"
         open

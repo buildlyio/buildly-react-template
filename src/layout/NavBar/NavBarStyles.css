@@ -1,0 +1,62 @@
+.navbarDrawer {
+  background-color: var(--color-palette-background-dark);
+}
+
+.navbarToolbar {
+  min-height: 56px;
+}
+
+.navbarDrawerPaper {
+  width: 240px;
+  background-color: var(--color-palette-background-default);
+  color: var(--color-palette-primary-main);
+}
+
+.navbarActive {
+  background-color: var(--color-palette-primary-light);
+  font-weight: bold;
+  color: var(--color-palette-primary-dark) !important;
+}
+
+.navbarActive:hover {
+  background-color: var(--color-palette-primary-light) !important;
+}
+
+.navbarNavLink {
+  display: block;
+  text-decoration: none;
+  color: var(--color-palette-primary-main);
+}
+
+.navbarNavLink:hover {
+  background-color: var(--color-palette-secondary-main);
+}
+
+.navbarNavLink:hover .MuiListItemIcon-root,
+.navbarNavLink:hover .MuiListItemText-primary {
+  color: var(--color-palette-primary-dark);
+}
+
+.navbarNavItems {
+  padding: 24px 32px;
+  text-align: left;
+}
+
+@media screen and (min-width: 0px) and (orientation: landscape) {
+  .navbarToolbar {
+    min-height: 48px;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .navbarToolbar {
+    min-height: 64px;
+  }
+}
+
+@media screen and (min-width: 960px) {
+  .navbarDrawer {
+    width: 240px;
+    flex-shrink: 0;
+  }
+}

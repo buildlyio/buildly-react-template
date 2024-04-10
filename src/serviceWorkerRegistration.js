@@ -1,8 +1,7 @@
 const showRefreshUI = (registration) => {
   //   registration.waiting.postMessage('force-activate');
-  if (confirm('New version available. Refresh?')) {
-    window.location.reload();
-  }
+  alert('New version available for the application. It will automatically reload the page to move to the latest version of the application.');
+  window.location.reload(true);
 };
 
 const onNewServiceWorker = (registration, callback) => {
@@ -44,6 +43,7 @@ const registerServiceWorker = () => {
 
         onNewServiceWorker(registration, () => {
           showRefreshUI(registration);
+          window.localStorage.removeItem('isWhatsNewShown');
         });
       }).catch((registrationError) => {
         console.log('SW registration failed: ', registrationError);

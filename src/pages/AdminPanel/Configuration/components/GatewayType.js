@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
-import { connect } from 'react-redux';
-import {
-  getGatewayType,
-  deleteGatewayType,
-} from '../../../../redux/sensorsGateway/actions/sensorsGateway.actions';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../ConfigurationConstants';
+import _ from 'lodash';
+import { useQuery } from 'react-query';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import useAlert from '@hooks/useAlert';
+import { getGatewayTypeQuery } from '@react-query/queries/sensorGateways/getGatewayTypeQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useDeleteGatewayTypeMutation } from '@react-query/mutations/sensorGateways/deleteGatewayTypeMutation';
+import { routes } from '@routes/routesConstants';
+import { getColumns } from '@utils/constants';
+import { useStore } from '@zustand/timezone/timezoneStore';
 import AddGatewayType from '../forms/AddGatewayType';
 
-const GatewayType = ({
-  dispatch,
-  loading,
-  gatewayTypeList,
-  redirectTo,
-  history,
-  timezone,
-}) => {
+const GatewayType = ({ redirectTo, history }) => {
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const organization = getUser().organization.organization_uuid;
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
 
   const addPath = redirectTo
     ? `${redirectTo}/gateway-type`
@@ -29,11 +29,17 @@ const GatewayType = ({
     ? `${redirectTo}/gateway-type`
     : `${routes.CONFIGURATION}/gateway-type/edit`;
 
-  useEffect(() => {
-    if (!loading && !gatewayTypeList) {
-      dispatch(getGatewayType());
-    }
-  }, [gatewayTypeList]);
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: gatewayTypesData, isLoading: isLoadingGatewayTypes } = useQuery(
+    ['gatewayTypes'],
+    () => getGatewayTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -54,26 +60,36 @@ const GatewayType = ({
     setDeleteModal(true);
   };
 
+  const { mutate: deleteGatewayTypeMutation, isLoading: isDeletingGatewayType } = useDeleteGatewayTypeMutation(displayAlert);
+
   const handleDeleteModal = () => {
-    dispatch(deleteGatewayType(deleteId));
+    deleteGatewayTypeMutation(deleteId);
     setDeleteModal(false);
   };
 
   return (
     <DataTableWrapper
       noSpace
-      loading={loading}
-      rows={gatewayTypeList || []}
-      columns={getColumns(timezone)}
-      filename="GatewayType"
-      addButtonHeading="Gateway Type"
+      loading={isLoadingUnits || isLoadingGatewayTypes || isDeletingGatewayType}
+      rows={gatewayTypesData || []}
+      columns={getColumns(
+        data,
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '',
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+          : '',
+      )}
+      filename="TrackerType"
+      addButtonHeading="Tracker Type"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openDeleteModal={openDeleteModal}
       setDeleteModal={setDeleteModal}
       handleDeleteModal={handleDeleteModal}
-      deleteModalTitle="Are you sure you want to Delete this Gateway Type?"
+      deleteModalTitle="Are you sure you want to Delete this Tracker Type?"
       tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddGatewayType} />
@@ -82,10 +98,4 @@ const GatewayType = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.sensorsGatewayReducer,
-  ...state.optionsReducer,
-});
-
-export default connect(mapStateToProps)(GatewayType);
+export default GatewayType;

@@ -1,0 +1,31 @@
+.gatewayCardItems {
+  margin-top: 32px;
+}
+
+.gatewayInputWithTooltip {
+  display: flex;
+  align-items: center;
+}
+
+.gatewaySubmit {
+  margin: 24px 0px 16px;
+  border-radius: 18px;
+}
+
+.gatewayFormContainer {
+  width: 100%;
+  margin-top: 8px;
+}
+
+@media screen and (min-width: 600px) {
+  .gatewayFormContainer {
+    width: 70% !important;
+    margin: auto;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .gatewaySubmit2 {
+    margin-top: -30px;
+  }
+}

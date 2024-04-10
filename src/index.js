@@ -1,17 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
 import App from './App';
 import './i18n';
-import configureStore from './redux/store';
 import registerServiceWorker from './serviceWorkerRegistration';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
-const store = configureStore();
+const queryClient = new QueryClient();
 
 ReactDOM.render(
-  <Provider store={store}>
+  <QueryClientProvider client={queryClient}>
     <App />
-  </Provider>, document.getElementById('root'),
+    {!window.env.production && <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />}
+  </QueryClientProvider>,
+  document.getElementById('root'),
 );
 
 registerServiceWorker();

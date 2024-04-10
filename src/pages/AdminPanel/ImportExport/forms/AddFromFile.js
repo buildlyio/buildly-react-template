@@ -1,47 +1,27 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
   Grid,
   TextField,
   MenuItem,
   Button,
-  CircularProgress,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
-import {
-  addFromFile,
-} from '../../../../redux/importExport/actions/importExport.actions';
+import Loader from '@components/Loader/Loader';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isDesktop2 } from '@utils/mediaQuery';
+import { useAddFromFileMutation } from '@react-query/mutations/importExport/addFromFileMutation';
+import useAlert from '@hooks/useAlert';
+import '../../AdminPanelStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '90%',
-    margin: 'auto',
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  loadingWrapper: {
-    position: 'relative',
-  },
-}));
-
-const AddFromFile = ({ loading, dispatch }) => {
-  const classes = useStyles();
+const AddFromFile = () => {
   const uploadType = useInput('', { required: true });
   const [uploadFile, setUploadFile] = useState(null);
   const [formError, setFormError] = useState({});
+
+  const { displayAlert } = useAlert();
+
+  const { mutate: addFromFileMutation, isLoading: isAddingFromFile } = useAddFromFileMutation(uploadType.value, displayAlert);
 
   /**
    * Submit The form and add/edit custodian type
@@ -49,12 +29,10 @@ const AddFromFile = ({ loading, dispatch }) => {
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-
     const formData = new FormData();
     formData.append('file', uploadFile, uploadFile.name);
     formData.append('model', uploadType.value);
-
-    dispatch(addFromFile(uploadType.value, formData));
+    addFromFileMutation(formData);
   };
 
   /**
@@ -98,81 +76,72 @@ const AddFromFile = ({ loading, dispatch }) => {
   };
 
   return (
-    <form
-      className={classes.form}
-      encType="multipart/form-data"
-      noValidate
-      onSubmit={handleSubmit}
-    >
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            required
-            id="uploadType"
-            label="Upload Type"
-            select
-            error={
-              formError.uploadType
-              && formError.uploadType.error
-            }
-            helperText={
-              formError.uploadType
-                ? formError.uploadType.message
-                : ''
-            }
-            onBlur={(e) => handleBlur(e, 'required', uploadType)}
-            {...uploadType.bind}
-          >
-            <MenuItem value="">--------</MenuItem>
-            <MenuItem value="item">Items</MenuItem>
-            <MenuItem value="product">Products</MenuItem>
-          </TextField>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            required
-            id="uploadFile"
-            label="Upload File"
-            type="file"
-            InputLabelProps={{ shrink: true }}
-            onChange={(e) => setUploadFile(e.target.files[0])}
-          />
-        </Grid>
-        <Grid container spacing={2} justifyContent="center">
-          <Grid item xs={6} sm={4}>
-            <div className={classes.loadingWrapper}>
+    <div>
+      {isAddingFromFile && <Loader open={isAddingFromFile} />}
+      <form
+        className="adminPanelFormRoot"
+        encType="multipart/form-data"
+        noValidate
+        onSubmit={handleSubmit}
+      >
+        <Grid container spacing={isDesktop2() ? 2 : 0}>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              required
+              id="uploadType"
+              label="Upload Type"
+              select
+              error={
+                formError.uploadType
+                && formError.uploadType.error
+              }
+              helperText={
+                formError.uploadType
+                  ? formError.uploadType.message
+                  : ''
+              }
+              onBlur={(e) => handleBlur(e, 'required', uploadType)}
+              {...uploadType.bind}
+            >
+              <MenuItem value="">--------</MenuItem>
+              <MenuItem value="item">Items</MenuItem>
+              <MenuItem value="product">Products</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              required
+              id="uploadFile"
+              label="Upload File"
+              type="file"
+              InputLabelProps={{ shrink: true }}
+              onChange={(e) => setUploadFile(e.target.files[0])}
+            />
+          </Grid>
+          <Grid container spacing={2} justifyContent="center">
+            <Grid item xs={7} sm={6} md={4}>
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 color="primary"
-                className={classes.submit}
-                disabled={loading || submitDisabled()}
+                className="adminPanelSubmit"
+                disabled={isAddingFromFile || submitDisabled()}
               >
                 Upload
               </Button>
-              {loading && (
-                <CircularProgress
-                  size={24}
-                  className={classes.buttonProgress}
-                />
-              )}
-            </div>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </form>
+      </form>
+    </div>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-});
-
-export default connect(mapStateToProps)(AddFromFile);
+export default AddFromFile;

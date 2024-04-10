@@ -5,39 +5,7 @@ import {
   ListItemText,
   Divider,
 } from '@mui/material';
-
-import { withStyles } from '@mui/styles';
-
-const StyledMenu = withStyles({
-  paper: {
-    border: '1px solid #d3d4d5',
-  },
-})((props) => (
-  <Menu
-    elevation={0}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'right',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'right',
-    }}
-    {...props}
-  />
-));
-
-const StyledMenuItem = withStyles((theme) => ({
-  root: {
-    '&:focus': {
-      '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-        color: theme.palette.secondary.main,
-      },
-    },
-    padding: theme.spacing(2),
-    textAlign: 'center',
-  },
-}))(MenuItem);
+import './TopBarStyles.css';
 
 const AdminMenu = ({
   settingEl,
@@ -50,21 +18,30 @@ const AdminMenu = ({
   };
 
   return (
-    <StyledMenu
+    <Menu
       id="customized-admin"
       anchorEl={settingEl}
       keepMounted
       open={!!settingEl}
       onClose={handleClose}
+      elevation={0}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
     >
-      <StyledMenuItem onClick={handleAdminPanelClick}>
+      <MenuItem onClick={handleAdminPanelClick} className="topbarAdminMenuRoot">
         <ListItemText primary="Admin Panel" />
-      </StyledMenuItem>
+      </MenuItem>
       <Divider />
-      <StyledMenuItem onClick={handleUserManagementClick}>
+      <MenuItem onClick={handleUserManagementClick} className="topbarAdminMenuRoot">
         <ListItemText primary="User Management" />
-      </StyledMenuItem>
-    </StyledMenu>
+      </MenuItem>
+    </Menu>
   );
 };
 

@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
-import { connect } from 'react-redux';
-import {
-  getCustodianType,
-  deleteCustodianType,
-} from '../../../../redux/custodian/actions/custodian.actions';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import { routes } from '../../../../routes/routesConstants';
-import { getColumns } from '../ConfigurationConstants';
+import _ from 'lodash';
+import { useQuery } from 'react-query';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import useAlert from '@hooks/useAlert';
+import { getCustodianTypeQuery } from '@react-query/queries/custodians/getCustodianTypeQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useDeleteCustodianTypeMutation } from '@react-query/mutations/custodians/deleteCustodianTypeMutation';
+import { routes } from '@routes/routesConstants';
+import { getColumns } from '@utils/constants';
+import { useStore } from '@zustand/timezone/timezoneStore';
 import AddCustodianType from '../forms/AddCustodianType';
 
-const CustodianType = ({
-  dispatch,
-  loading,
-  custodianTypeList,
-  redirectTo,
-  history,
-  timezone,
-}) => {
+const CustodianType = ({ redirectTo, history }) => {
+  const organization = getUser().organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
 
   const addPath = redirectTo
     ? `${redirectTo}/custodian-type`
@@ -29,11 +29,17 @@ const CustodianType = ({
     ? `${redirectTo}/custodian-type`
     : `${routes.CONFIGURATION}/custodian-type/edit`;
 
-  useEffect(() => {
-    if (!loading && !custodianTypeList) {
-      dispatch(getCustodianType());
-    }
-  }, [custodianTypeList]);
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: custodianTypesData, isLoading: isLoadingCustodianTypes } = useQuery(
+    ['custodianTypes'],
+    () => getCustodianTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -54,17 +60,27 @@ const CustodianType = ({
     setDeleteModal(true);
   };
 
+  const { mutate: deleteCustodianTypeMutation, isLoading: isDeletingCustodianType } = useDeleteCustodianTypeMutation(displayAlert);
+
   const handleDeleteModal = () => {
-    dispatch(deleteCustodianType(deleteId));
+    deleteCustodianTypeMutation(deleteId);
     setDeleteModal(false);
   };
 
   return (
     <DataTableWrapper
       noSpace
-      loading={loading}
-      rows={custodianTypeList || []}
-      columns={getColumns(timezone)}
+      loading={isLoadingUnits || isLoadingCustodianTypes || isDeletingCustodianType}
+      rows={custodianTypesData || []}
+      columns={getColumns(
+        data,
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '',
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+          : '',
+      )}
       filename="CustodianType"
       addButtonHeading="Custodian Type"
       onAddButtonClick={onAddButtonClick}
@@ -82,10 +98,4 @@ const CustodianType = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.custodianReducer,
-  ...state.optionsReducer,
-});
-
-export default connect(mapStateToProps)(CustodianType);
+export default CustodianType;

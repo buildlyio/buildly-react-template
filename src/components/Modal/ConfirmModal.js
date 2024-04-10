@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Typography,
 } from '@mui/material';
 
 const ConfirmModal = ({
@@ -13,6 +14,8 @@ const ConfirmModal = ({
   submitAction,
   title,
   submitText,
+  msg1,
+  msg2,
 }) => {
   const handleClose = () => {
     setOpen(false);
@@ -29,12 +32,16 @@ const ConfirmModal = ({
         <DialogTitle id="alert-dialog-title">
           {title}
         </DialogTitle>
-        <DialogContent />
+        <DialogContent>
+          {msg1 && (<Typography variant="body1" textAlign="center" width="100%">{msg1}</Typography>)}
+          {msg2 && (<Typography variant="body1" textAlign="center" width="100%">{msg2}</Typography>)}
+        </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button variant="outlined" onClick={handleClose} color="primary">
             Cancel
           </Button>
           <Button
+            variant="contained"
             onClick={submitAction}
             color="primary"
             autoFocus

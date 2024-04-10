@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Geocode from 'react-geocode';
 import {
   withScriptjs,
   withGoogleMap,
@@ -9,16 +10,24 @@ import {
   Polygon,
   Circle,
 } from 'react-google-maps';
-import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
+import MarkerClusterer from 'react-google-maps/lib/components/addons/MarkerClusterer';
 import _ from 'lodash';
+import { Grid, useTheme } from '@mui/material';
 import {
-  REPORT_TYPES,
+  AccessTime as ClockIcon,
+  BatteryFull as BatteryFullIcon,
+  Battery80 as Battery80Icon,
+  Battery50 as Battery50Icon,
+  CalendarToday as CalendarIcon,
+} from '@mui/icons-material';
+import {
+  MARKER_DATA,
   getIcon,
-} from '../../pages/Reporting/ReportingConstants';
+} from '@utils/constants';
 
 export const MapComponent = (props) => {
   const {
-    markers, setSelectedMarker, geofence, shipmentFilter,
+    markers, setSelectedMarker, geofence, unitOfMeasure,
   } = props;
   const [center, setCenter] = useState({
     lat: 47.606209,
@@ -28,29 +37,28 @@ export const MapComponent = (props) => {
   const [polygon, setPolygon] = useState({});
 
   useEffect(() => {
-    if (
-      markers
-      && markers.length
-      && _.last(markers).lat
-      && _.last(markers).lng
-    ) {
+    setMapCenter();
+  }, [unitOfMeasure]);
+
+  useEffect(() => {
+    if (!_.isEmpty(markers) && markers[0].lat && markers[0].lng) {
       setCenter({
-        lat: _.last(markers).lat,
-        lng: _.last(markers).lng,
+        lat: markers[0].lat,
+        lng: markers[0].lng,
       });
-      setShowInfoIndex(markers[markers.length - 1]);
+      setShowInfoIndex(markers[0]);
       if (setSelectedMarker) {
-        setSelectedMarker(markers[markers.length - 1]);
+        setSelectedMarker(markers[0]);
       }
     }
 
-    if (markers && !markers.length) {
-      setCenter({ lat: 47.606209, lng: -122.332069 });
+    if (_.isEmpty(markers)) {
+      setMapCenter();
     }
   }, [markers]);
 
   useEffect(() => {
-    if (geofence && geofence.coordinates.length) {
+    if (geofence && !_.isEmpty(geofence.coordinates)) {
       const coordinates = geofence.coordinates[0];
       const polygonPoints = [];
       _.forEach(coordinates, (coordinate) => {
@@ -62,6 +70,26 @@ export const MapComponent = (props) => {
       setPolygon(polygonPoints);
     }
   }, [geofence]);
+
+  const setMapCenter = () => {
+    const address = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
+      && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure;
+
+    if (address) {
+      Geocode.setApiKey(window.env.GEO_CODE_API);
+      Geocode.setLanguage('en');
+      Geocode.fromAddress(address).then(
+        (response) => {
+          const { lat, lng } = response.results[0].geometry.location;
+          setCenter({ lat, lng });
+        },
+        (error) => {
+          // eslint-disable-next-line no-console
+          console.error(error);
+        },
+      );
+    }
+  };
 
   const onMarkerDrag = (e, onMarkerDragAction) => {
     if (onMarkerDragAction) {
@@ -80,11 +108,13 @@ export const MapComponent = (props) => {
   return (
     <RenderedMap
       {...props}
+      theme={useTheme()}
       onMarkerDrag={onMarkerDrag}
       center={center}
       polygon={polygon}
       showInfoIndex={showInfoIndex}
       onMarkerSelect={onMarkerSelect}
+      unitOfMeasure={unitOfMeasure}
     />
   );
 };
@@ -92,113 +122,174 @@ export const MapComponent = (props) => {
 const RenderedMap = withScriptjs(
   withGoogleMap((props) => (
     <GoogleMap zoom={props.zoom} center={props.center}>
-      {props.isMarkerShown
-      && props.markers
-      && _.map(
+      {!props.isMarkerShown && props.allMarkers && !_.isEmpty(props.allMarkers)
+        && _.map(props.allMarkers, (shipMarkers, idx) => (
+          <MarkerClusterer
+            key={idx}
+            averageCenter
+            enableRetinaIcons
+            zoomOnClick={false}
+            gridSize={60}
+            title={!_.isEmpty(shipMarkers) ? _.first(shipMarkers).shipment.name : ''}
+            onClick={(e) => {
+              props.clusterClick(!_.isEmpty(shipMarkers) && _.first(shipMarkers).shipment, true);
+            }}
+            styles={[
+              {
+                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                height: 53,
+                width: 53,
+                anchor: [0, 0],
+                textSize: 0.001,
+              },
+              {
+                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                height: 56,
+                width: 56,
+                anchor: [0, 0],
+                textSize: 0.001,
+              },
+              {
+                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                height: 66,
+                width: 66,
+                anchor: [0, 0],
+                textSize: 0.001,
+              },
+              {
+                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                height: 78,
+                width: 78,
+                anchor: [0, 0],
+                textSize: 0.001,
+              },
+              {
+                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                height: 90,
+                width: 90,
+                anchor: [0, 0],
+                textSize: 0.001,
+              },
+            ]}
+          >
+            {_.map(shipMarkers, (marker, inx) => (
+              <Marker key={`${marker.lat}-${marker.lng}-${inx}`} position={{ lat: marker.lat, lng: marker.lng }} />
+            ))}
+          </MarkerClusterer>
+        ))}
+      {props.isMarkerShown && props.markers && _.map(
         props.markers,
         (mark, index) => (mark.label ? (
           <Marker
             key={index}
             position={{ lat: mark.lat, lng: mark.lng }}
+            zIndex={mark.color !== 'green' && 1000}
             icon={{
               path:
                 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
               fillColor: `${mark.color}`,
               fillOpacity: 1,
-              strokeColor: 'white',
+              strokeColor: props.theme.palette.background.dark,
               scale: 1.4,
               anchor: { x: 12, y: 24 },
             }}
-            label={`${index + 1}`}
             onClick={() => props.onMarkerSelect(mark)}
           >
-            {props.showInfoIndex === mark && (
-            <InfoWindow
-              onCloseClick={() => {
-                props.onMarkerSelect(null);
-              }}
-            >
-              {mark.label === 'Clustered' ? (
-                <div
-                  style={{
-                    color: 'black',
-                    display: 'flex',
-                    justifyContent: 'flex-wrap',
-                    flexWrap: 'wrap',
-                    flexDirection: 'column',
-                    height: '80px',
-                    width: '200px',
-                  }}
-                >
-                  {_.map(REPORT_TYPES, (item, idx) => (
-                    <div
-                      key={`iconItem${idx}${item.id}`}
+            {_.isEqual(props.showInfoIndex, mark) && (
+              <InfoWindow onCloseClick={() => props.onMarkerSelect(null)}>
+                {_.isEqual(mark.label, 'Clustered')
+                  ? (
+                    <Grid
+                      container
+                      spacing={1}
                       style={{
-                        boxSizing: 'border-box',
-                        maxWidth: '55%',
-                        padding: '0.5em',
-                        display: 'flex',
-                        alignItems: 'center',
+                        height: props.theme.spacing(13),
+                        width: props.theme.spacing(38),
+                        color: props.theme.palette.background.dark,
+                        fontSize: props.theme.spacing(1.25),
                       }}
+                      alignItems="center"
                     >
-                      {getIcon(item, 'black')}
-                      {' '}
-                        &nbsp;
-                      {mark[item.id] ? (
-                        <span>
-                          {`: ${mark[item.id]} ${item.unit}`}
-                        </span>
-                      ) : (
-                        <span> : NA</span>
-                      )}
+                      {_.map(MARKER_DATA(props.unitOfMeasure), (item, idx) => (
+                        <Grid
+                          item
+                          xs={6}
+                          key={`${item.id}-${idx}`}
+                          style={{ display: 'flex', alignItems: 'center' }}
+                        >
+                          {_.find(mark.allAlerts, { id: item.id })
+                            ? getIcon(_.find(mark.allAlerts, { id: item.id }))
+                            : getIcon({ id: item.id, color: 'inherit' })}
+                          {!_.isEqual(mark[item.id], null) && !_.isEqual(mark[item.id], undefined) ? (
+                            <div
+                              style={{
+                                marginLeft: props.theme.spacing(0.5),
+                                color: _.find(mark.allAlerts, { id: item.id })
+                                  ? _.find(mark.allAlerts, { id: item.id }).color
+                                  : 'inherit',
+                              }}
+                            >
+                              {` ${_.toString(_.round(_.toNumber(mark[item.id]), 2))} ${item.unit}`}
+                            </div>
+                          ) : null}
+                        </Grid>
+                      ))}
+                      <Grid item xs={12} style={{ borderTop: `1px solid ${props.theme.palette.background.light}`, marginTop: props.theme.spacing(1.5) }}>
+                        <Grid container spacing={1}>
+                          <Grid item xs={5} style={{ display: 'flex', alignItems: 'center' }}>
+                            <CalendarIcon />
+                            <div style={{ marginLeft: props.theme.spacing(0.5) }}>{mark.date}</div>
+                          </Grid>
+                          <Grid item xs={5} style={{ display: 'flex', alignItems: 'center' }}>
+                            <ClockIcon />
+                            <div style={{ marginLeft: props.theme.spacing(0.5) }}>{mark.time}</div>
+                          </Grid>
+                          <Grid item xs={2} style={{ display: 'flex', alignItems: 'center' }}>
+                            {mark.battery && _.gte(_.toNumber(mark.battery), 90) && (
+                              <BatteryFullIcon htmlColor={props.theme.palette.success.main} />
+                            )}
+                            {mark.battery && _.lt(_.toNumber(mark.battery), 90) && _.gte(_.toNumber(mark.battery), 60) && (
+                              <Battery80Icon htmlColor={props.theme.palette.warning.main} />
+                            )}
+                            {mark.battery && _.lt(_.toNumber(mark.battery), 60) && (
+                              <Battery50Icon htmlColor={props.theme.palette.error.main} />
+                            )}
+                            {!mark.battery && (
+                              <BatteryFullIcon />
+                            )}
+                            <div>{!_.isEqual(mark.battery, null) && !_.isEqual(mark.battery, undefined) ? `${mark.battery}%` : ''}</div>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  ) : (
+                    <div style={{ color: props.theme.palette.background.default }}>
+                      {mark.label}
                     </div>
-                  ))}
-                  <div
-                    style={{
-                      boxSizing: 'border-box',
-                      padding: '0.5em',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    {getIcon({ id: 'time' }, 'black')}
-                    {' '}
-                    <span>
-                      {` : ${mark.timestamp}`}
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ color: 'black' }}>
-                  {mark.label}
-                </div>
-              )}
-            </InfoWindow>
+                  )}
+              </InfoWindow>
             )}
           </Marker>
         ) : (
           <Marker
             draggable={mark.draggable}
             key={
-                mark.lat && mark.lng
-                  ? `marker${index}:${mark.lat},${mark.lng}`
-                  : `marker${index}`
-              }
+              mark.lat && mark.lng
+                ? `marker${index}:${mark.lat},${mark.lng}`
+                : `marker${index}`
+            }
             position={
-                mark.lat && mark.lng
-                  ? { lat: mark.lat, lng: mark.lng }
-                  : props.center
-              }
+              mark.lat && mark.lng
+                ? { lat: mark.lat, lng: mark.lng }
+                : props.center
+            }
             onDragEnd={(e) => {
               props.onMarkerDrag(e, mark.onMarkerDrag);
             }}
           />
         )),
       )}
-      {props.isMarkerShown
-      && props.markers.length > 0
-      && props.showPath
-      && (
+      {props.isMarkerShown && !_.isEmpty(props.markers) && props.showPath && (
         <Polyline
           path={_.map(props.markers, (marker) => ({
             lat: marker.lat,
@@ -206,29 +297,26 @@ const RenderedMap = withScriptjs(
           }))}
           geodesic
           options={{
-            strokeColor: '#424242',
+            strokeColor: props.theme.palette.background.dark,
             strokeOpacity: 0.75,
             strokeWeight: 1,
           }}
         />
       )}
-      {props.isMarkerShown
-      && props.markers
-      && props.polygon.length > 0
-      && _.map(
+      {props.isMarkerShown && props.markers && !_.isEmpty(props.polygon) && _.map(
         props.markers,
         (mark, index) => (mark.radius ? (
           <Marker
             key={
-            mark.lat && mark.lng
-              ? `marker${index}:${mark.lat},${mark.lng}`
-              : `marker${index}`
-          }
+              mark.lat && mark.lng
+                ? `marker${index}:${mark.lat},${mark.lng}`
+                : `marker${index}`
+            }
             position={
-            mark.lat && mark.lng
-              ? { lat: mark.lat, lng: mark.lng }
-              : props.center
-          }
+              mark.lat && mark.lng
+                ? { lat: mark.lat, lng: mark.lng }
+                : props.center
+            }
           >
             <Circle
               defaultCenter={{
@@ -237,51 +325,53 @@ const RenderedMap = withScriptjs(
               }}
               radius={mark.radius * 1000}
               options={{
-                strokeColor: '#ff0000',
+                strokeColor: props.theme.palette.error.main,
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
-                fillColor: '#ff0000',
+                fillColor: props.theme.palette.error.main,
                 fillOpacity: 0.35,
               }}
             />
             <InfoWindow>
-              <div style={{ color: 'black' }}>
-                {`Geofence of ${mark.radius} miles`}
+              <div style={{ color: props.theme.palette.background.dark }}>
+                {`Geofence of ${mark.radius} ${_.toLower(
+                  _.find(props.unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance'))
+                    ? _.find(props.unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance')).unit_of_measure
+                    : '',
+                )}`}
               </div>
             </InfoWindow>
           </Marker>
         ) : (
           <Marker
             key={
-            mark.lat && mark.lng
-              ? `marker${index}:${mark.lat},${mark.lng}`
-              : `marker${index}`
-          }
+              mark.lat && mark.lng
+                ? `marker${index}:${mark.lat},${mark.lng}`
+                : `marker${index}`
+            }
             position={
-            mark.lat && mark.lng
-              ? { lat: mark.lat, lng: mark.lng }
-              : props.center
-          }
+              mark.lat && mark.lng
+                ? { lat: mark.lat, lng: mark.lng }
+                : props.center
+            }
           >
             <InfoWindow>
-              <div style={{ color: 'black' }}>
+              <div style={{ color: props.theme.palette.background.dark }}>
                 Configure radius for geofence
               </div>
             </InfoWindow>
           </Marker>
         )),
       )}
-      {props.polygon
-      && props.polygon.length > 0
-      && (
+      {!_.isEmpty(props.polygon) && (
         <Polygon
           path={props.polygon}
           editable={false}
           options={{
-            strokeColor: '#424242',
+            strokeColor: props.theme.palette.background.dark,
             strokeOpacity: 0.8,
             strokeWeight: 2,
-            fillColor: '#424242',
+            fillColor: props.theme.palette.background.dark,
             fillOpacity: 0.35,
             polygonKey: 1,
           }}
@@ -290,3 +380,5 @@ const RenderedMap = withScriptjs(
     </GoogleMap>
   )),
 );
+
+export default MapComponent;

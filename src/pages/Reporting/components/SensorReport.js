@@ -5,86 +5,50 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import DataTableWrapper from '../../../components/DataTableWrapper/DataTableWrapper';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import {
   SENSOR_REPORT_COLUMNS,
-} from '../ReportingConstants';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(1),
-  },
-  tooltip: {
-    background: theme.palette.background.dark,
-    width: '100%',
-    display: 'flex',
-    minHeight: '40px',
-    alignItems: 'center',
-  },
-  title: {
-    flex: 1,
-    padding: theme.spacing(1, 2),
-    textTransform: 'uppercase',
-    fontSize: 18,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  leftHeader: {
-    '& span': {
-      textAlign: 'left',
-    },
-  },
-}));
+} from '@utils/constants';
+import '../ReportingStyles.css';
 
 const SensorReport = ({
-  loading,
-  aggregateReport,
+  sensorReport,
   shipmentName,
   selectedMarker,
+  unitOfMeasure,
+  timezone,
 }) => {
-  const classes = useStyles();
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
 
   const columns = _.map(
-    SENSOR_REPORT_COLUMNS,
+    SENSOR_REPORT_COLUMNS(unitOfMeasure, timezone),
     (column) => ({
       ...column,
       options: {
         ...column.options,
         setCellHeaderProps: () => ({
-          className: classes.leftHeader,
+          className: 'reportingSensorLeftHeader',
         }),
       },
     }),
   );
 
   useEffect(() => {
-    if (aggregateReport) {
-      const sortedData = _.orderBy(
-        aggregateReport,
-        (item) => moment(item.timestamp),
-        ['desc'],
-      );
-      setRows(sortedData);
-    } else {
-      setRows([]);
-    }
-  }, [aggregateReport]);
+    const sortedData = _.orderBy(
+      sensorReport,
+      (item) => moment(item.timestamp),
+      ['desc'],
+    );
+    setRows(sortedData);
+  }, [sensorReport]);
 
   useEffect(() => {
     if (selectedMarker) {
-      const selectedIndex = _.map(
-        _.keys(
-          _.pickBy(
-            rows,
-            { lat: selectedMarker.lat, lng: selectedMarker.lng },
-          ),
-        ),
-        Number,
-      );
-      setSelected(selectedIndex);
+      const highlightIndex = _.findIndex(rows, {
+        lat: selectedMarker.lat, lng: selectedMarker.lng,
+      });
+      setSelected([highlightIndex]);
     } else {
       setSelected([]);
     }
@@ -105,26 +69,24 @@ const SensorReport = ({
   };
 
   return (
-    <Grid className={classes.root} container spacing={2}>
+    <Grid className="reportingSensorRoot" container spacing={2}>
       <Grid item xs={12}>
-        <div className={classes.tooltip}>
+        <div className="reportingSensorTooltip">
           <Typography
-            className={classes.title}
+            className="reportingSensorReportTitle"
             variant="h5"
           >
             {shipmentName
-            && `Sensor Report - Shipment: ${shipmentName}`}
+              ? `Sensor Report - Shipment: ${shipmentName}`
+              : 'Sensor Report'}
           </Typography>
         </div>
         <DataTableWrapper
-          noCustomTheme
           noSpace
-          loading={loading}
+          hideAddButton
+          filename="SensorReportData"
           rows={rows}
           columns={columns}
-          filename="AggregateReportData"
-          tableHeight="500px"
-          hideAddButton
           selectable={{
             rows: 'multiple',
             rowsHeader: false,
@@ -132,6 +94,15 @@ const SensorReport = ({
           }}
           selected={selected}
           customSort={customSort}
+          extraOptions={{
+            customToolbar: () => (
+              <Typography variant="caption" className="reportingSensorTableTitle">
+                <span style={{ fontStyle: 'italic', fontWeight: '700' }}>bold/italic alerts</span>
+                {' '}
+                indicates alerts outside of selected transmission
+              </Typography>
+            ),
+          }}
         />
       </Grid>
     </Grid>

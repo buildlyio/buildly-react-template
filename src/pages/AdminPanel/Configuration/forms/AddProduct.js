@@ -1,66 +1,23 @@
-import React, { useState, useContext } from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
 import _ from 'lodash';
-import {
-  useTheme,
-  useMediaQuery,
-  Grid,
-  Button,
-  TextField,
-  CircularProgress,
-  MenuItem,
-} from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import FormModal from '../../../../components/Modal/FormModal';
-import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
-import {
-  addProduct,
-  editProduct,
-} from '../../../../redux/items/actions/items.actions';
-import { UserContext } from '../../../../context/User.context';
+import { Grid, Button, TextField } from '@mui/material';
+import Loader from '@components/Loader/Loader';
+import FormModal from '@components/Modal/FormModal';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isDesktop } from '@utils/mediaQuery';
+import { useAddProductMutation } from '@react-query/mutations/items/addProductMutation';
+import { useEditProductMutation } from '@react-query/mutations/items/editProductMutation';
+import useAlert from '@hooks/useAlert';
+import '../../AdminPanelStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  loadingWrapper: {
-    position: 'relative',
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-}));
-
-const AddProduct = ({
-  history,
-  location,
-  loading,
-  dispatch,
-  unitsOfMeasure,
-}) => {
-  const classes = useStyles();
-  const organization = useContext(UserContext).organization.organization_uuid;
+const AddProduct = ({ history, location }) => {
+  const organization = getUser().organization.organization_uuid;
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
+
+  const { displayAlert } = useAlert();
 
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -81,16 +38,10 @@ const AddProduct = ({
   const grossWeight = useInput((editData && editData.gross_weight) || 0, {
     required: true,
   });
-  const unit = useInput((editData && editData.unit_of_measure) || '', {
-    required: true,
-  });
   const [formError, setFormError] = useState({});
 
   const buttonText = editPage ? 'Save' : 'Add Product';
   const formTitle = editPage ? 'Edit Product' : 'Add Product';
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   const closeFormModal = () => {
     const dataHasChanged = (
@@ -98,7 +49,6 @@ const AddProduct = ({
       || description.hasChanged()
       || value.hasChanged()
       || grossWeight.hasChanged()
-      || unit.hasChanged()
     );
 
     if (dataHasChanged) {
@@ -119,6 +69,10 @@ const AddProduct = ({
     }
   };
 
+  const { mutate: addProductMutation, isLoading: isAddingProduct } = useAddProductMutation(organization, history, location.state.from, displayAlert);
+
+  const { mutate: editProductMutation, isLoading: isEditingProduct } = useEditProductMutation(organization, history, location.state.from, displayAlert);
+
   /**
    * Submit The form and add/edit custodian type
    * @param {Event} event the default submit event
@@ -132,22 +86,17 @@ const AddProduct = ({
       description: description.value,
       value: value.value,
       gross_weight: grossWeight.value,
-      unit_of_measure: unit.value,
       organization_uuid: organization,
       edit_date: currentDateTime,
     };
     if (editPage) {
-      dispatch(editProduct(data));
+      editProductMutation(data);
     } else {
       data = {
         ...data,
         create_date: currentDateTime,
       };
-      dispatch(addProduct(data));
-    }
-    setFormModal(false);
-    if (location && location.state) {
-      history.push(location.state.from);
+      addProductMutation(data);
     }
   };
 
@@ -184,7 +133,6 @@ const AddProduct = ({
       || !description.value
       || !value.value
       || !grossWeight.value
-      || !unit.value
     ) {
       return true;
     }
@@ -204,18 +152,19 @@ const AddProduct = ({
           open={openFormModal}
           handleClose={closeFormModal}
           title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth="md"
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {(isAddingProduct || isEditingProduct) && (
+            <Loader open={isAddingProduct || isEditingProduct} />
+          )}
           <form
-            className={classes.form}
+            className="adminPanelFormContainer"
             noValidate
             onSubmit={handleSubmit}
           >
-            <Grid container spacing={isDesktop ? 2 : 0}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -300,66 +249,27 @@ const AddProduct = ({
                   {...grossWeight.bind}
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  required
-                  id="unit"
-                  label="Unit of Measure"
-                  select
-                  error={formError.unit && formError.unit.error}
-                  helperText={
-                    formError.unit ? formError.unit.message : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', unit)}
-                  {...unit.bind}
-                >
-                  <MenuItem value="">--------</MenuItem>
-                  {unitsOfMeasure
-                  && _.map(
-                    unitsOfMeasure,
-                    (unitVal, index) => (
-                      <MenuItem
-                        key={`unit-${index}`}
-                        value={`${unitVal.url}`}
-                      >
-                        {`${unitVal.name}`}
-                      </MenuItem>
-                    ),
-                  )}
-                </TextField>
-              </Grid>
               <Grid container spacing={2} justifyContent="center">
-                <Grid item xs={6} sm={4}>
-                  <div className={classes.loadingWrapper}>
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      className={classes.submit}
-                      disabled={loading || submitDisabled()}
-                    >
-                      {buttonText}
-                    </Button>
-                    {loading && (
-                      <CircularProgress
-                        size={24}
-                        className={classes.buttonProgress}
-                      />
-                    )}
-                  </div>
-                </Grid>
-                <Grid item xs={6} sm={4}>
+                <Grid item xs={6} sm={5.15} md={4}>
                   <Button
-                    type="button"
+                    type="submit"
                     fullWidth
                     variant="contained"
                     color="primary"
+                    className="adminPanelSubmit"
+                    disabled={isAddingProduct || isEditingProduct || submitDisabled()}
+                  >
+                    {buttonText}
+                  </Button>
+                </Grid>
+                <Grid item xs={6} sm={5.15} md={4}>
+                  <Button
+                    type="button"
+                    fullWidth
+                    variant="outlined"
+                    color="primary"
                     onClick={discardFormData}
-                    className={classes.submit}
+                    className="adminPanelSubmit"
                   >
                     Cancel
                   </Button>
@@ -373,9 +283,4 @@ const AddProduct = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.itemsReducer,
-});
-
-export default connect(mapStateToProps)(AddProduct);
+export default AddProduct;

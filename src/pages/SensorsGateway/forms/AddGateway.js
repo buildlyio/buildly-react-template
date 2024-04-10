@@ -1,99 +1,56 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
-  useTheme,
   Button,
   TextField,
-  CircularProgress,
   Grid,
   MenuItem,
-  useMediaQuery,
   Card,
   CardContent,
   Typography,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import DatePickerComponent from '../../../components/DatePicker/DatePicker';
-import { MapComponent } from '../../../components/MapComponent/MapComponent';
-import FormModal from '../../../components/Modal/FormModal';
-import CustomizedTooltips from '../../../components/ToolTip/ToolTip';
-import { UserContext } from '../../../context/User.context';
-import { useInput } from '../../../hooks/useInput';
-import {
-  addGateway,
-  editGateway,
-} from '../../../redux/sensorsGateway/actions/sensorsGateway.actions';
-import { validators } from '../../../utils/validators';
-import { getCustodianFormattedRow } from '../../../pages/Custodians/CustodianConstants';
-import { GATEWAY_STATUS } from '../Constants';
-
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  loadingWrapper: {
-    position: 'relative',
-  },
-  cardItems: {
-    marginTop: theme.spacing(4),
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-  inputWithTooltip: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-}));
+import DatePickerComponent from '@components/DatePicker/DatePicker';
+import Loader from '@components/Loader/Loader';
+import MapComponent from '@components/MapComponent/MapComponent';
+import FormModal from '@components/Modal/FormModal';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isMobile, isDesktop } from '@utils/mediaQuery';
+import { getCustodianFormattedRow, GATEWAY_STATUS } from '@utils/constants';
+import { useAddGatewayMutation } from '@react-query/mutations/sensorGateways/addGatewayMutation';
+import { useEditGatewayMutation } from '@react-query/mutations/sensorGateways/editGatewayMutation';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '@zustand/timezone/timezoneStore';
+import '../GatewayStyles.css';
 
 const AddGateway = ({
-  dispatch,
-  loading,
   history,
   location,
-  gatewayTypeList,
-  gatewayOptions,
-  timezone,
   viewOnly,
-  custodianData,
-  contactInfo,
 }) => {
-  const classes = useStyles();
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
 
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
+
   const redirectTo = location.state && location.state.from;
+  const {
+    gatewayTypesData, unitData, custodianData, contactInfo,
+  } = location.state || {};
+
   const editPage = location.state && location.state.type === 'edit';
-  const editData = (
-    location.state
-    && location.state.type === 'edit'
-    && location.state.data
-  ) || {};
+  const editData = (location.state && location.state.type === 'edit' && location.state.data) || {};
 
   const gateway_name = useInput(editData.name || '', {
     required: true,
   });
   const gateway_type = useInput(editData.gateway_type || '', {
+    required: true,
+  });
+  const gateway_status = useInput(editData.gateway_status || '', {
     required: true,
   });
   const [activation_date, handleDateChange] = useState(
@@ -103,40 +60,27 @@ const AddGateway = ({
   const battery_level = useInput(
     editData.last_known_battery_level || '',
   );
+  const mac_address = useInput(editData.mac_address || '');
   const [custodianList, setCustodianList] = useState([]);
   const [custodian_uuid, setcustodian_uuid] = useState(
     (editData && editData.custodian_uuid) || '',
   );
-  const mac_address = useInput(editData.mac_address || '');
   const [last_known_location, setLastLocation] = useState(
     (editData
-    && editData.last_known_location
-    && editData.last_known_location[0])
+      && editData.last_known_location
+      && editData.last_known_location[0])
     || '',
   );
-  const gateway_status = useInput(editData.gateway_status || '', {
-    required: true,
-  });
+
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? 'Save' : 'Add Gateway';
-  const formTitle = editPage ? 'Edit Gateway' : 'Add Gateway';
+  const buttonText = editPage ? 'Save' : 'Add Tracker';
+  const formTitle = editPage ? 'Edit Tracker' : 'Add Tracker';
 
-  const [gatewayMetaData, setGatewayMetaData] = useState({});
-  const organization = useContext(UserContext).organization.organization_uuid;
-
-  useEffect(() => {
-    if (gatewayOptions && gatewayOptions.actions) {
-      setGatewayMetaData(gatewayOptions.actions.POST);
-    }
-  }, [gatewayOptions]);
+  const organization = getUser().organization.organization_uuid;
 
   useEffect(() => {
-    if (
-      custodianData
-      && contactInfo
-      && custodianData.length
-    ) {
+    if (!_.isEmpty(custodianData) && contactInfo) {
       setCustodianList(getCustodianFormattedRow(
         custodianData,
         contactInfo,
@@ -174,10 +118,10 @@ const AddGateway = ({
     }
   };
 
-  /**
-   * Submit The form and add/edit custodian
-   * @param {Event} event the default submit event
-   */
+  const { mutate: addGatewayMutation, isLoading: isAddingGateway } = useAddGatewayMutation(organization, history, redirectTo, displayAlert);
+
+  const { mutate: editGatewayMutation, isLoading: isEditingGateway } = useEditGatewayMutation(organization, history, redirectTo, displayAlert);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const gatewayFormValues = {
@@ -190,7 +134,7 @@ const AddGateway = ({
       last_known_battery_level: battery_level.value,
       ...(editPage && editData && { id: editData.id }),
       mac_address: mac_address.value,
-      custodian_uuid,
+      custodian_uuid: custodian_uuid || null,
       last_known_location: [
         last_known_location === '' ? 'null, null' : last_known_location,
       ],
@@ -198,18 +142,11 @@ const AddGateway = ({
       organization_uuid: organization,
     };
     if (editPage) {
-      dispatch(editGateway(gatewayFormValues, history, redirectTo));
+      editGatewayMutation(gatewayFormValues);
     } else {
-      dispatch(addGateway(gatewayFormValues, history, redirectTo));
+      addGatewayMutation(gatewayFormValues);
     }
   };
-
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
 
   const handleBlur = (e, validation, input, parentId) => {
     const validateObj = validators(validation, input);
@@ -235,7 +172,7 @@ const AddGateway = ({
     if (!gateway_type.value || !gateway_name.value) {
       return true;
     }
-    if (editData.shipment_ids.length > 0) {
+    if (!_.isEmpty(editData.shipment_ids)) {
       return true;
     }
     let errorExists = false;
@@ -264,9 +201,6 @@ const AddGateway = ({
     }
   };
 
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
-
   const setLastKnownLocation = (value) => {
     setLastLocation(value);
   };
@@ -278,26 +212,23 @@ const AddGateway = ({
           open={openFormModal}
           handleClose={closeFormModal}
           title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth="md"
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
-          <form
-            className={classes.form}
-            noValidate
-            onSubmit={handleSubmit}
-          >
-            <Grid container spacing={isDesktop ? 2 : 0}>
-              <Grid className={classes.inputWithTooltip} item xs={12}>
+          {(isAddingGateway || isEditingGateway) && (
+            <Loader open={isAddingGateway || isEditingGateway} />
+          )}
+          <form className="gatewayFormContainer" noValidate onSubmit={handleSubmit}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
+              <Grid className="gatewayInputWithTooltip" item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
                   fullWidth
                   id="gateway_name"
                   required
-                  label="Gateway Name"
+                  label="Tracker Name"
                   name="gateway_name"
                   autoComplete="gateway_name"
                   error={
@@ -312,31 +243,18 @@ const AddGateway = ({
                   onBlur={(e) => handleBlur(e, 'required', gateway_name)}
                   {...gateway_name.bind}
                 />
-                {gatewayMetaData.name
-                && gatewayMetaData.name.help_text
-                && (
-                  <CustomizedTooltips
-                    toolTipText={
-                      gatewayMetaData.name.help_text
-                    }
-                  />
-                )}
               </Grid>
             </Grid>
-            <Card variant="outlined" className={classes.cardItems}>
+            <Card variant="outlined" className="gatewayCardItems">
               <CardContent>
-                <Typography
-                  className={classes.dashboardHeading}
-                  variant="body1"
-                >
-                  Gateway Info
+                <Typography variant="h6" gutterBottom mt={1} mb={isMobile() ? 0 : 1.65}>
+                  Tracker Info
                 </Typography>
-                <Grid container spacing={isDesktop ? 2 : 0}>
+                <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="gatewayInputWithTooltip"
                     item
                     xs={12}
-                    md={6}
                     sm={6}
                   >
                     <TextField
@@ -346,7 +264,7 @@ const AddGateway = ({
                       required
                       id="gateway_type"
                       select
-                      label="Gateway Type"
+                      label="Tracker Type"
                       error={
                         formError.gateway_type
                         && formError.gateway_type.error
@@ -360,9 +278,9 @@ const AddGateway = ({
                       {...gateway_type.bind}
                     >
                       <MenuItem value="">Select</MenuItem>
-                      {gatewayTypeList
+                      {gatewayTypesData
                         && _.map(
-                          gatewayTypeList,
+                          gatewayTypesData,
                           (item, index) => (
                             <MenuItem
                               key={`gatewayType${index}:${item.id}`}
@@ -373,21 +291,11 @@ const AddGateway = ({
                           ),
                         )}
                     </TextField>
-                    {gatewayMetaData.gateway_type
-                    && gatewayMetaData.gateway_type.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          gatewayMetaData.gateway_type.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="gatewayInputWithTooltip"
                     item
                     xs={12}
-                    md={6}
                     sm={6}
                   >
                     <TextField
@@ -397,7 +305,7 @@ const AddGateway = ({
                       required
                       id="gateway_status"
                       select
-                      label="Gateway Status"
+                      label="Tracker Status"
                       error={
                         formError.gateway_status
                         && formError.gateway_status.error
@@ -429,39 +337,28 @@ const AddGateway = ({
                           ),
                         )}
                     </TextField>
-                    {gatewayMetaData.gateway_status
-                    && gatewayMetaData.gateway_status.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          gatewayMetaData.gateway_status.help_text
-                        }
-                      />
-                    )}
                   </Grid>
-                  <Grid item xs={12} md={6} sm={6}>
+                  <Grid item xs={12} sm={6}>
                     <DatePickerComponent
                       label="Activated"
                       selectedDate={
                         moment(activation_date)
-                          .tz(timezone)
-                          .format('l')
+                          .tz(data)
                       }
                       handleDateChange={handleDateChange}
-                      helpText={
-                        gatewayMetaData.activation_date
-                        && gatewayMetaData.activation_date.help_text
-                          ? gatewayMetaData.activation_date.help_text
+                      dateFormat={
+                        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
                           : ''
                       }
                     />
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="gatewayInputWithTooltip"
                     item
                     xs={12}
-                    md={6}
                     sm={6}
+                    mt={isMobile() ? 0.75 : 0}
                   >
                     <TextField
                       variant="outlined"
@@ -473,21 +370,11 @@ const AddGateway = ({
                       autoComplete="sim_card_id"
                       {...sim_card_id.bind}
                     />
-                    {gatewayMetaData.sim_card_id
-                    && gatewayMetaData.sim_card_id.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          gatewayMetaData.sim_card_id.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="gatewayInputWithTooltip"
                     item
                     xs={12}
-                    md={6}
                     sm={6}
                   >
                     <TextField
@@ -500,21 +387,11 @@ const AddGateway = ({
                       autoComplete="battery_level"
                       {...battery_level.bind}
                     />
-                    {gatewayMetaData.last_known_battery_level
-                    && gatewayMetaData.last_known_battery_level.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          gatewayMetaData.last_known_battery_level.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="gatewayInputWithTooltip"
                     item
                     xs={12}
-                    md={6}
                     sm={6}
                   >
                     <TextField
@@ -527,69 +404,54 @@ const AddGateway = ({
                       autoComplete="mac_address"
                       {...mac_address.bind}
                     />
-                    {gatewayMetaData.mac_address
-                    && gatewayMetaData.mac_address.help_text
-                    && (
-                      <CustomizedTooltips
-                        toolTipText={
-                          gatewayMetaData.mac_address.help_text
-                        }
-                      />
-                    )}
                   </Grid>
                   <Grid
-                    className={classes.inputWithTooltip}
+                    className="gatewayInputWithTooltip"
                     item
                     xs={12}
                   >
                     <TextField
                       variant="outlined"
                       margin="normal"
-                      id="custodian_uuid"
+                      id="shipper_uuid"
                       select
                       fullWidth
-                      required
-                      label="Custodian"
+                      label="Shipper"
                       disabled={viewOnly}
                       error={
-                    formError.custodian_uuid
-                    && formError.custodian_uuid.error
-                  }
+                        formError.shipper_uuid
+                        && formError.shipper_uuid.error
+                      }
                       helperText={
-                    formError.custodian_uuid
-                      ? formError.custodian_uuid.message
-                      : ''
-                  }
-                      onBlur={(e) => handleBlur(e, 'required', custodian_uuid, 'custodian_uuid')}
+                        formError.shipper_uuid
+                          ? formError.shipper_uuid.message
+                          : ''
+                      }
+                      onBlur={(e) => handleBlur(e, 'required', custodian_uuid, 'shipper_uuid')}
                       value={custodian_uuid}
                       onChange={onInputChange}
                     >
                       <MenuItem value="">Select</MenuItem>
                       {custodianList
-                    && _.map(
-                      _.orderBy(custodianList, ['name'], ['asc']),
-                      (item, index) => (
-                        <MenuItem
-                          key={`custodian${index}:${item.id}`}
-                          value={item.custodian_uuid}
-                        >
-                          {item.name}
-                        </MenuItem>
-                      ),
-                    )}
+                        && _.map(
+                          _.orderBy(
+                            _.filter(custodianList, ['custodian_type', 'https://demo-custodian.tpath.io/custodian_type/1/']),
+                            ['name'],
+                            ['asc'],
+                          ),
+                          (item, index) => (
+                            <MenuItem
+                              key={`custodian${index}:${item.id}`}
+                              value={item.custodian_uuid}
+                            >
+                              {item.name}
+                            </MenuItem>
+                          ),
+                        )}
                     </TextField>
-                    {gatewayMetaData.custodian_uuid
-                && gatewayMetaData.custodian_uuid.help_text
-                && (
-                  <CustomizedTooltips
-                    toolTipText={
-                      gatewayMetaData.custodian_uuid.help_text
-                    }
-                  />
-                )}
                   </Grid>
                   <Grid item xs={12}>
-                    <div className={classes.inputWithTooltip}>
+                    <div className="gatewayInputWithTooltip">
                       <TextField
                         variant="outlined"
                         margin="normal"
@@ -600,15 +462,6 @@ const AddGateway = ({
                         autoComplete="last_known_location"
                         value={last_known_location}
                       />
-                      {gatewayMetaData.last_known_location
-                      && gatewayMetaData.last_known_location.help_text
-                      && (
-                        <CustomizedTooltips
-                          toolTipText={
-                            gatewayMetaData.last_known_location.help_text
-                          }
-                        />
-                      )}
                     </div>
                     <MapComponent
                       isMarkerShown
@@ -617,22 +470,27 @@ const AddGateway = ({
                       loadingElement={
                         <div style={{ height: '100%' }} />
                       }
-                      containerElement={
-                        <div style={{ height: '200px' }} />
-                      }
+                      containerElement={(
+                        <div style={{
+                          height: '200px',
+                          marginTop: isMobile() ? '10px' : '30px',
+                          marginBottom: '14px',
+                        }}
+                        />
+                      )}
                       mapElement={
                         <div style={{ height: '100%' }} />
                       }
                       markers={[
                         {
                           lat: last_known_location
-                          && parseFloat(
-                            last_known_location.split(',')[0],
-                          ),
+                            && parseFloat(
+                              last_known_location.split(',')[0],
+                            ),
                           lng: last_known_location
-                          && parseFloat(
-                            last_known_location.split(',')[1],
-                          ),
+                            && parseFloat(
+                              last_known_location.split(',')[1],
+                            ),
                           onMarkerDrag: setLastKnownLocation,
                           draggable: true,
                         },
@@ -642,36 +500,27 @@ const AddGateway = ({
                 </Grid>
               </CardContent>
             </Card>
-
             <Grid container spacing={2} justifyContent="center">
-              <Grid item xs={6} sm={4}>
-                <div className={classes.loadingWrapper}>
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                    disabled={loading || submitDisabled()}
-                  >
-                    {buttonText}
-                  </Button>
-                  {loading && (
-                    <CircularProgress
-                      size={24}
-                      className={classes.buttonProgress}
-                    />
-                  )}
-                </div>
-              </Grid>
-              <Grid item xs={6} sm={4}>
+              <Grid item xs={12} sm={4} mt={-2}>
                 <Button
-                  type="button"
+                  type="submit"
                   fullWidth
                   variant="contained"
                   color="primary"
+                  className="gatewaySubmit"
+                  disabled={isAddingGateway || isEditingGateway || submitDisabled()}
+                >
+                  {buttonText}
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={4} mt={-2} className="gatewaySubmit2">
+                <Button
+                  type="button"
+                  fullWidth
+                  variant="outlined"
+                  color="primary"
                   onClick={discardFormData}
-                  className={classes.submit}
+                  className="gatewaySubmit"
                 >
                   Cancel
                 </Button>
@@ -684,16 +533,4 @@ const AddGateway = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.sensorsGatewayReducer,
-  ...state.optionsReducer,
-  ...state.custodianReducer,
-  loading: (
-    state.sensorsGatewayReducer.loading
-    || state.optionsReducer.loading
-    || state.custodianReducer.loading
-  ),
-});
-
-export default connect(mapStateToProps)(AddGateway);
+export default AddGateway;

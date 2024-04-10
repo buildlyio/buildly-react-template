@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
@@ -15,134 +15,202 @@ import {
   ToggleButtonGroup,
   CardContent,
   Card,
+  useTheme,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import {
   ViewComfy as ViewComfyIcon,
   ViewCompact as ViewCompactIcon,
 } from '@mui/icons-material';
-import GraphComponent from '../../components/GraphComponent/GraphComponent';
-import Loader from '../../components/Loader/Loader';
-import { MapComponent } from '../../components/MapComponent/MapComponent';
-import CustomizedTooltips from '../../components/ToolTip/ToolTip';
-import { UserContext } from '../../context/User.context';
-import {
-  getCustodians,
-  getCustodianType,
-  getContact,
-  getCustody,
-} from '../../redux/custodian/actions/custodian.actions';
-import {
-  getSensors,
-  getSensorType,
-} from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
-import {
-  getShipmentDetails,
-  getReportAndAlerts,
-} from '../../redux/shipment/actions/shipment.actions';
-import {
-  getUnitsOfMeasure,
-} from '../../redux/items/actions/items.actions';
-import AlertsReport from './components/AlertsReport';
-import SensorReport from './components/SensorReport';
+import GraphComponent from '@components/GraphComponent/GraphComponent';
+import Loader from '@components/Loader/Loader';
+import MapComponent from '@components/MapComponent/MapComponent';
+import { getUser } from '@context/User.context';
 import {
   getShipmentOverview,
   SHIPMENT_OVERVIEW_COLUMNS,
-  SHIPMENT_OVERVIEW_TOOL_TIP,
   REPORT_TYPES,
   getIcon,
-} from './ReportingConstants';
+  processReportsAndMarkers,
+} from '@utils/constants';
+import AlertsReport from './components/AlertsReport';
+import SensorReport from './components/SensorReport';
+import { useQuery } from 'react-query';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
+import { getContactQuery } from '@react-query/queries/custodians/getContactQuery';
+import { getShipmentsQuery } from '@react-query/queries/shipments/getShipmentsQuery';
+import { getAllGatewayQuery } from '@react-query/queries/sensorGateways/getAllGatewayQuery';
+import { getCustodyQuery } from '@react-query/queries/custodians/getCustodyQuery';
+import { getSensorReportQuery } from '@react-query/queries/sensorGateways/getSensorReportQuery';
+import { getSensorAlertQuery } from '@react-query/queries/sensorGateways/getSensorAlertQuery';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '@zustand/timezone/timezoneStore';
+import './ReportingStyles.css';
+import { isDesktop2 } from '@utils/mediaQuery';
 
-const useStyles = makeStyles((theme) => ({
-  dashboardHeading: {
-    fontWeight: 'bold',
-    marginBottom: '0.5em',
-  },
-  tileHeading: {
-    flex: 1,
-    padding: theme.spacing(1, 2),
-    textTransform: 'uppercase',
-    fontSize: 18,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  switchViewSection: {
-    background: theme.palette.background.dark,
-    width: '100%',
-    display: 'flex',
-    minHeight: '40px',
-    alignItems: 'center',
-  },
-  iconBar: {
-    '& svg': {
-      margin: '0 auto',
-    },
-  },
-  infoSection: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: theme.spacing(2),
-    flexDirection: 'column',
-    height: '100px',
-  },
-  infoContainer: {
-    height: '525px',
-    overflowX: 'auto',
-    backgroundColor: theme.palette.common.darkGrey2,
-  },
-  reportContainer: {
-    marginTop: theme.spacing(4),
-    marginBottom: theme.spacing(3),
-    backgroundColor: theme.palette.common.darkGrey2,
-  },
-  selectInput: {
-    marginLeft: theme.spacing(1),
-  },
-}));
+const Reporting = () => {
+  const location = useLocation();
+  const theme = useTheme();
+  const organization = getUser().organization.organization_uuid;
 
-const Reporting = ({
-  dispatch,
-  loading,
-  aggregateReportData,
-  shipmentData,
-  custodianData,
-  custodyData,
-  sensorData,
-  contactInfo,
-  unitsOfMeasure,
-  timezone,
-  allAlerts,
-  socket,
-}) => {
-  const classes = useStyles();
-  const organization = useContext(UserContext).organization.organization_uuid;
+  const [locShipmentID, setLocShipmentID] = useState('');
   const [tileView, setTileView] = useState(true);
   const [shipmentFilter, setShipmentFilter] = useState('Active');
   const [selectedGraph, setSelectedGraph] = useState('temperature');
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [shipmentOverview, setShipmentOverview] = useState([]);
-  const [isMapLoaded, setMapLoaded] = useState(true);
+  const [reports, setReports] = useState([]);
+  const [allGraphs, setAllGraphs] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState({});
-  const [formattedShipmentData, setFormattedShipmentData] = useState([]);
+  const [isLoading, setLoading] = useState(false);
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
+
+  let isShipmentDataAvailable = false;
+
+  const { data: shipmentData, isLoading: isLoadingShipments, isFetching: isFetchingShipments } = useQuery(
+    ['shipments', shipmentFilter, locShipmentID, organization],
+    () => getShipmentsQuery(organization, (shipmentFilter === 'Active' ? 'Planned,En route,Arrived' : shipmentFilter), displayAlert, locShipmentID),
+    { refetchOnWindowFocus: false },
+  );
+
+  isShipmentDataAvailable = !_.isEmpty(shipmentData) && !isLoadingShipments && !isFetchingShipments;
+
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
+    ['custodians', organization],
+    () => getCustodianQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: contactInfo, isLoading: isLoadingContact } = useQuery(
+    ['contact', organization],
+    () => getContactQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: allGatewayData, isLoading: isLoadingAllGateways, isFetching: isFetchingAllGateways } = useQuery(
+    ['allGateways'],
+    () => getAllGatewayQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: custodyData, isLoading: isLoadingCustodies } = useQuery(
+    ['custodies', shipmentData, shipmentFilter],
+    () => getCustodyQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'shipment_uuid'), null))), displayAlert),
+    {
+      enabled: isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'shipment_uuid'), null)))),
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const { data: sensorAlertData, isLoading: isLoadingSensorAlerts, isFetching: isFetchingSensorAlerts } = useQuery(
+    ['sensorAlerts', selectedShipment, shipmentFilter],
+    () => getSensorAlertQuery(encodeURIComponent(selectedShipment.partner_shipment_id), displayAlert),
+    {
+      enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const { data: sensorReportData, isLoading: isLoadingSensorReports, isFetching: isFetchingSensorReports } = useQuery(
+    ['sensorReports', selectedShipment, shipmentFilter],
+    () => getSensorReportQuery(encodeURIComponent(selectedShipment.partner_shipment_id), null, displayAlert),
+    {
+      enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      refetchOnWindowFocus: false,
+    },
+  );
 
   useEffect(() => {
-    if (socket) {
-      socket.onmessage = (message) => {
-        const msg = JSON.parse(message.data);
-        if (msg.command === 'reload_data') {
-          handleShipmentSelection();
-        }
-      };
+    if (location.search) {
+      setLocShipmentID(_.split(_.split(location.search, '?shipment=')[1], '&status=')[0]);
+    } else {
+      setLocShipmentID('');
     }
-  }, []);
+  }, [location.search]);
+
+  useEffect(() => {
+    if (shipmentData && custodianData && custodyData && contactInfo) {
+      const overview = getShipmentOverview(
+        shipmentData,
+        custodianData,
+        custodyData,
+        contactInfo,
+        allGatewayData,
+      );
+      if (!_.isEmpty(overview)) {
+        setShipmentOverview(overview);
+        if (selectedShipment) {
+          const selected = _.find(overview, { id: selectedShipment.id });
+          setSelectedShipment(selected);
+        }
+        if (locShipmentID) {
+          const locShip = _.find(overview, { partner_shipment_id: locShipmentID });
+          setSelectedShipment(locShip);
+          setShipmentFilter(_.includes(['Planned', 'En route', 'Arrived'], locShip.status) ? 'Active' : locShip.status);
+        }
+      }
+    }
+  }, [shipmentData, custodianData, custodyData, contactInfo, allGatewayData, locShipmentID]);
+
+  useEffect(() => {
+    const alerts = _.filter(
+      sensorAlertData,
+      (alert) => alert.parameter_type !== 'location' && selectedShipment && alert.shipment_id === selectedShipment.partner_shipment_id,
+    );
+    if (selectedShipment) {
+      if (!_.isEmpty(sensorReportData)) {
+        const { sensorReportInfo, markersToSet, graphs } = processReportsAndMarkers(
+          sensorReportData,
+          alerts,
+          data,
+          unitData,
+          theme.palette.error.main,
+          theme.palette.info.main,
+          selectedShipment,
+        );
+        setReports(sensorReportInfo);
+        setAllGraphs(graphs);
+        setMarkers(markersToSet);
+      } else {
+        setReports([]);
+        setAllGraphs([]);
+        setMarkers([]);
+      }
+    }
+  }, [sensorReportData, sensorAlertData, selectedShipment]);
+
+  useEffect(() => {
+    if (selectedShipment) {
+      setLoading(true);
+    }
+    if (markers && allGraphs && reports) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    }
+  }, [selectedShipment, markers, allGraphs, reports]);
 
   const getShipmentValue = (value) => {
     let returnValue;
     if (selectedShipment[value] !== null) {
       if (moment(selectedShipment[value], true).isValid()) {
+        const dateFormat = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '';
+        const timeFormat = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+          : '';
         returnValue = moment(selectedShipment[value])
-          .tz(timezone).format('MMMM DD, YYYY hh:mm:ss a');
+          .tz(data).format(`${dateFormat} ${timeFormat}`);
       } else if (typeof (selectedShipment[value]) !== 'object') {
         if (value === 'had_alert') {
           returnValue = selectedShipment[value]
@@ -159,177 +227,80 @@ const Reporting = ({
   };
 
   const handleShipmentSelection = (shipment) => {
+    history.replaceState(null, '', location.pathname);
+    location.search = '';
+    setLocShipmentID('');
     setSelectedShipment(shipment);
-    if (shipment.partner_shipment_id) {
-      dispatch(getReportAndAlerts(shipment.partner_shipment_id));
-    }
   };
 
   const makeFilterSelection = (value) => {
+    history.replaceState(null, '', location.pathname);
+    location.search = '';
+    setLocShipmentID('');
+    isShipmentDataAvailable = false;
     setShipmentFilter(value);
     setSelectedShipment(null);
+    setReports([]);
+    setAllGraphs([]);
     setMarkers([]);
   };
 
-  useEffect(() => {
-    if (!shipmentData || shipmentFilter === 'Active') {
-      const aggregate = !aggregateReportData;
-      const custody = !custodyData;
-      dispatch(getShipmentDetails(
-        organization,
-        'Planned,Enroute',
-        null,
-        aggregate,
-        custody,
-        'get',
-      ));
-    } else {
-      const completedShipments = _.filter(shipmentData, (shipment) => shipment.type === 'Completed');
-      // const cancelledShipments =
-      // _.filter(shipmentData, (shipment) => shipment.type === 'Cancelled');
-
-      if (!completedShipments.length || shipmentFilter === 'Completed') {
-        dispatch(getShipmentDetails(
-          organization,
-          'Completed',
-          null,
-          true,
-          true,
-          'get',
-        ));
-      }
-      // if (!cancelledShipments.length) {
-      //   dispatch(getShipmentDetails(
-      //     organization,
-      //     'Cancelled',
-      //     null,
-      //     true,
-      //     true,
-      //     'get',
-      //   ));
-      // }
-      const UUIDS = _.map(shipmentData, 'shipment_uuid');
-      const encodedUUIDs = encodeURIComponent(UUIDS);
-      if (encodedUUIDs) {
-        dispatch(getCustody(encodedUUIDs));
-      }
-    }
-    if (!custodianData) {
-      dispatch(getCustodians(organization));
-      dispatch(getCustodianType());
-      dispatch(getContact(organization));
-    }
-    // if (!custodyData) {
-    //   dispatch(getCustody());
-    // }
-    if (!sensorData) {
-      dispatch(getSensors(organization));
-      dispatch(getSensorType());
-    }
-    if (!unitsOfMeasure) {
-      dispatch(getUnitsOfMeasure());
-    }
-  }, [shipmentFilter]);
-
-  useEffect(() => {
-    if (selectedShipment && selectedShipment.markers_to_set) {
-      setMarkers(selectedShipment.markers_to_set);
-    }
-  }, [selectedShipment, shipmentOverview]);
-
-  useEffect(() => {
-    if (markers && markers.length > 0) {
-      setTimeout(() => setMapLoaded(true), 1000);
-    }
-  });
-
-  useEffect(() => {
-    if (aggregateReportData
-      && shipmentData
-      && allAlerts
-      && custodianData
-      && custodyData
-      && contactInfo) {
-      const overview = getShipmentOverview(
-        shipmentData,
-        custodianData,
-        custodyData,
-        aggregateReportData,
-        allAlerts,
-        contactInfo,
-        timezone,
-      );
-      if (overview.length > 0) {
-        setShipmentOverview(overview);
-        if (selectedShipment) {
-          const selected = _.find(overview, { id: selectedShipment.id });
-          setSelectedShipment(selected);
-        }
-      }
-    }
-  }, [aggregateReportData, allAlerts]);
-
-  useEffect(() => {
-    if (shipmentData) {
-      let shipmentList = [];
-      _.forEach(shipmentData, (shipment) => {
-        const editedShipment = shipment;
-
-        switch (_.lowerCase(shipment.status)) {
-          case 'planned':
-          case 'enroute':
-            editedShipment.type = 'Active';
-            break;
-
-          case 'completed':
-            editedShipment.type = 'Completed';
-            break;
-
-          case 'cancelled':
-            editedShipment.type = 'Cancelled';
-            break;
-
-          default:
-            break;
-        }
-        shipmentList = [...shipmentList, editedShipment];
-      });
-      setFormattedShipmentData(_.orderBy(shipmentList,
-        (shipment) => moment(shipment.estimated_time_of_departure)
-          && moment(shipment.create_date),
-        ['desc']));
-    }
-  }, [shipmentData]);
-
   return (
     <Box mt={5} mb={5}>
-      {loading && <Loader open={loading} />}
-      <Typography className={classes.dashboardHeading} variant="h4">
+      {(isLoadingShipments
+        || isLoadingUnits
+        || isLoadingCustodians
+        || isLoadingContact
+        || isLoadingAllGateways
+        || isLoadingCustodies
+        || isLoadingSensorAlerts
+        || isLoadingSensorReports
+        || isLoading
+        || isFetchingShipments
+        || isFetchingAllGateways
+        || isFetchingSensorAlerts
+        || isFetchingSensorReports)
+        && (
+          <Loader open={isLoadingShipments
+            || isLoadingUnits
+            || isLoadingCustodians
+            || isLoadingContact
+            || isLoadingAllGateways
+            || isLoadingCustodies
+            || isLoadingSensorAlerts
+            || isLoadingSensorReports
+            || isLoading
+            || isFetchingShipments
+            || isFetchingAllGateways
+            || isFetchingSensorAlerts
+            || isFetchingSensorReports}
+          />
+        )}
+      <Typography className="reportingDashboardHeading" variant="h4">
         Reporting
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md={tileView ? 6 : 12}>
-          <div className={classes.switchViewSection}>
+          <div className="reportingSwitchViewSection">
             <Typography
-              className={classes.tileHeading}
+              className="reportingSectionTitleHeading"
               variant="h5"
             >
               {selectedShipment
-              && selectedShipment.name
-              && `Map View - Shipment: ${selectedShipment.name}`}
-              <CustomizedTooltips
-                toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
-              />
+                && selectedShipment.name
+                && `Map View - Shipment: ${selectedShipment.name}`}
+              {!selectedShipment && 'Map View'}
             </Typography>
             <IconButton
               onClick={() => setTileView(!tileView)}
-              color="default"
+              color="inherit"
               aria-label="menu"
               sx={{
                 display: {
                   xs: 'none',
                   md: 'block',
                 },
+                marginTop: 0.7,
               }}
             >
               {!tileView
@@ -338,27 +309,28 @@ const Reporting = ({
             </IconButton>
           </div>
           <MapComponent
-            isMarkerShown={isMapLoaded}
+            isMarkerShown={!_.isEmpty(markers)}
             showPath
             markers={markers}
             googleMapURL={window.env.MAP_API_URL}
-            zoom={12}
+            zoom={_.isEmpty(markers) ? 4 : 12}
             setSelectedMarker={setSelectedMarker}
             loadingElement={
               <div style={{ height: '100%' }} />
             }
             containerElement={
-              <div style={{ height: '550px' }} />
+              <div style={{ height: '625px' }} />
             }
             mapElement={
               <div style={{ height: '100%' }} />
             }
+            unitOfMeasure={unitData}
           />
         </Grid>
         <Grid item xs={12} md={tileView ? 6 : 12}>
-          <div className={classes.switchViewSection}>
+          <div className="reportingSwitchViewSection">
             <ToggleButtonGroup
-              color="primary"
+              color="secondary"
               value={shipmentFilter}
               exclusive
               fullWidth
@@ -370,7 +342,6 @@ const Reporting = ({
                 onClick={(event, value) => makeFilterSelection(value)}
               >
                 Active
-
               </ToggleButton>
               <ToggleButton
                 value="Completed"
@@ -379,11 +350,26 @@ const Reporting = ({
                 onClick={(event, value) => makeFilterSelection(value)}
               >
                 Completed
-
+              </ToggleButton>
+              <ToggleButton
+                value="Battery Depleted"
+                size="medium"
+                selected={shipmentFilter === 'Battery Depleted'}
+                onClick={(event, value) => makeFilterSelection(value)}
+              >
+                Battery Depleted
+              </ToggleButton>
+              <ToggleButton
+                value="Damaged"
+                size="medium"
+                selected={shipmentFilter === 'Damaged'}
+                onClick={(event, value) => makeFilterSelection(value)}
+              >
+                Damaged
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
-          <div className={classes.switchViewSection}>
+          <div className="reportingSwitchViewSection2">
             <TextField
               variant="outlined"
               margin="normal"
@@ -391,36 +377,35 @@ const Reporting = ({
               id="shipment-name"
               select
               required
-              className={classes.selectInput}
+              className="reportingSelectInput"
               label="Shipment Name"
               value={
                 selectedShipment
                   ? selectedShipment.id
                   : ''
               }
+              sx={{
+                marginRight: isDesktop2() ? 0 : 1,
+              }}
               onChange={(e) => {
-                const selected = _.find(formattedShipmentData, { id: e.target.value });
+                const selected = _.find(shipmentOverview, { id: e.target.value });
                 handleShipmentSelection(selected);
               }}
             >
               <MenuItem value="">Select</MenuItem>
-              {formattedShipmentData
-              && formattedShipmentData.length > 0
-              && _.map(
-                _.filter(formattedShipmentData, { type: shipmentFilter }),
-                (shipment, index) => (
-                  <MenuItem
-                    key={index}
-                    value={shipment.id}
-                  >
-                    {shipment.name}
-                  </MenuItem>
-                ),
-              )}
+              {shipmentOverview && !_.isEmpty(shipmentOverview)
+                && _.map(
+                  _.filter(shipmentOverview, { type: shipmentFilter }),
+                  (shipment, index) => (
+                    <MenuItem
+                      key={index}
+                      value={shipment.id}
+                    >
+                      {shipment.name}
+                    </MenuItem>
+                  ),
+                )}
             </TextField>
-            <CustomizedTooltips
-              toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
-            />
             <IconButton
               onClick={() => setTileView(!tileView)}
               color="default"
@@ -430,6 +415,7 @@ const Reporting = ({
                   xs: 'none',
                   md: 'block',
                 },
+                marginTop: 0.75,
               }}
             >
               {!tileView
@@ -437,7 +423,7 @@ const Reporting = ({
                 : <ViewComfyIcon />}
             </IconButton>
           </div>
-          <div className={classes.infoContainer}>
+          <div className="reportingInfoContainer">
             <Card>
               <CardContent>
                 <Grid container>
@@ -447,36 +433,35 @@ const Reporting = ({
                       (column, index) => (
                         <Grid
                           item
-                          className={classes.infoSection}
-                          xs={10}
+                          className="reportingInfoSection"
+                          xs={12}
+                          sm={6}
                           md={6}
                           key={`col${index}:${column.name}`}
                         >
                           <Typography variant="h6">
                             {column.label}
                           </Typography>
-                          {column.name === 'custody_info'
-                      && selectedShipment[column.name]
-                            ? _.map(
-                              selectedShipment[column.name],
-                              (value, idx) => (
-                                <div
-                                  key={`custody_info_${idx}`}
-                                  style={{
-                                    marginBottom: 10,
-                                    color: value.custody_type === 'Current'
-                                      ? '#EBC645'
-                                      : '#ffffff',
-                                  }}
-                                >
-                                  <Typography variant="body1">
-                                    {`Custody Type: ${value.custody_type}`}
-                                  </Typography>
-                                  <Typography variant="body1">
-                                    {`Custodian Address: ${selectedShipment.contact_info[idx].address}`}
-                                  </Typography>
-                                </div>
-                              ),
+                          {column.name === 'custody_info' && selectedShipment[column.name]
+                            ? (
+                              <div
+                                key="custody_info_last"
+                                style={{
+                                  marginBottom: 10,
+                                  color: theme.palette.background.dark,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {`Name: ${_.find(selectedShipment[column.name], { has_current_custody: true })
+                                    ? _.find(selectedShipment[column.name], { has_current_custody: true }).custodian_name
+                                    : 'N/A'}`}
+                                </Typography>
+                                <Typography variant="body1">
+                                  {`Custodian Address: ${selectedShipment.contact_info[_.findIndex(selectedShipment[column.name], { has_current_custody: true })]
+                                    ? selectedShipment.contact_info[_.findIndex(selectedShipment[column.name], { has_current_custody: true })].address
+                                    : 'N/A'}`}
+                                </Typography>
+                              </div>
                             ) : (
                               <Typography variant="body1">
                                 {getShipmentValue(column.name)}
@@ -490,7 +475,7 @@ const Reporting = ({
                         variant="h6"
                         align="center"
                       >
-                        {SHIPMENT_OVERVIEW_TOOL_TIP}
+                        Select a shipment to view reporting data
                       </Typography>
                     )}
                 </Grid>
@@ -499,48 +484,51 @@ const Reporting = ({
           </div>
         </Grid>
       </Grid>
-      <Grid container className={classes.reportContainer}>
-        <div className={classes.switchViewSection}>
+      <Grid container className="reportingContainer" sx={{ marginTop: _.isEmpty(selectedShipment) ? 4 : -1 }}>
+        <div className="reportingSwitchViewSection">
           <Typography
-            className={classes.tileHeading}
+            className="reportingSectionTitleHeading"
             variant="h5"
           >
             {selectedShipment
-            && selectedShipment.name
-            && `Graph View - Shipment: ${selectedShipment.name}`}
-            <CustomizedTooltips
-              toolTipText={SHIPMENT_OVERVIEW_TOOL_TIP}
-            />
+              && selectedShipment.name
+              && `Graph View - Shipment: ${selectedShipment.name}`}
+            {!selectedShipment && 'Graph View'}
           </Typography>
         </div>
-        <Grid item xs={1} md={1}>
+        <Grid item xs={2} sm={1.1} md={1}>
           <List
             component="nav"
             aria-label="main graph-type"
-            className={classes.iconBar}
+            className="reportingGraphIconBar"
           >
-            {_.map(REPORT_TYPES, (item, index) => (
-              <React.Fragment
+            {_.map(REPORT_TYPES(unitData), (item, index) => (
+              <ListItem
                 key={`iconItem${index}${item.id}`}
+                button
+                selected={selectedGraph === item.id}
+                onClick={() => setSelectedGraph(item.id)}
+                style={{ margin: '12px 0' }}
               >
-                <ListItem
-                  button
-                  selected={selectedGraph === item.id}
-                  onClick={() => setSelectedGraph(item.id)}
-                >
-                  {getIcon(item, 'white')}
-                </ListItem>
-              </React.Fragment>
+                {getIcon({ ...item, color: theme.palette.background.dark })}
+              </ListItem>
             ))}
           </List>
         </Grid>
-        <Grid item xs={10} md={10}>
-          {selectedShipment
-          && selectedShipment[selectedGraph]
+        <Grid item xs={10} sm={10.9} md={11}>
+          {selectedShipment && selectedGraph && allGraphs && !_.isEmpty(allGraphs) && allGraphs[selectedGraph]
             ? (
               <GraphComponent
-                data={selectedShipment[selectedGraph]}
+                data={allGraphs[selectedGraph]}
                 selectedGraph={selectedGraph}
+                unitOfMeasure={unitData}
+                minTemp={allGraphs.minTemp}
+                maxTemp={allGraphs.maxTemp}
+                minHumidity={allGraphs.minHumidity}
+                maxHumidity={allGraphs.maxHumidity}
+                shockThreshold={allGraphs.shockThreshold}
+                lightThreshold={allGraphs.lightThreshold}
+                timeGap={selectedShipment.measurement_time || 5}
               />
             )
             : (
@@ -548,49 +536,35 @@ const Reporting = ({
                 variant="h6"
                 align="center"
               >
-                {SHIPMENT_OVERVIEW_TOOL_TIP}
+                Select a shipment to view reporting data
               </Typography>
             )}
         </Grid>
       </Grid>
       <SensorReport
-        loading={loading}
-        aggregateReport={selectedShipment && selectedShipment.sensor_report}
+        sensorReport={reports}
         alerts={_.filter(
-          allAlerts,
+          sensorAlertData,
           { shipment_id: selectedShipment && selectedShipment.partner_shipment_id },
         )}
         shipmentName={selectedShipment && selectedShipment.name}
         selectedMarker={selectedShipment && selectedMarker}
+        unitOfMeasure={unitData}
+        timezone={data}
       />
       <AlertsReport
-        loading={loading}
+        sensorReport={reports}
         alerts={_.filter(
-          allAlerts,
+          sensorAlertData,
           { shipment_id: selectedShipment && selectedShipment.partner_shipment_id },
         )}
         shipmentName={selectedShipment && selectedShipment.name}
-        timezone={timezone}
+        timezone={data}
+        unitOfMeasure={unitData}
+        shouldScroll={!!locShipmentID}
       />
     </Box>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.shipmentReducer,
-  ...state.sensorsGatewayReducer,
-  ...state.custodianReducer,
-  ...state.itemsReducer,
-  ...state.optionsReducer,
-  socket: state.alertReducer.socket,
-  loading: (
-    state.shipmentReducer.loading
-    || state.sensorsGatewayReducer.loading
-    || state.custodianReducer.loading
-    || state.itemsReducer.loading
-    || state.optionsReducer.loading
-  ),
-});
-
-export default connect(mapStateToProps)(Reporting);
+export default Reporting;

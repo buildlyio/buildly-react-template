@@ -1,526 +1,468 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useEffect, useContext } from 'react';
-import { connect } from 'react-redux';
-import { Route } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
 import Geocode from 'react-geocode';
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { routes } from '../../routes/routesConstants';
-import { MapComponent } from '../../components/MapComponent/MapComponent';
 import {
-  Button,
-  useTheme,
-  useMediaQuery,
-  Grid,
-  TextField,
-  Typography,
-  Box,
-  MenuItem,
-  FormControl,
-  FormLabel,
-  Divider,
   Autocomplete,
-  Chip,
+  Box,
+  Button,
   Checkbox,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  IconButton,
   InputAdornment,
-  CircularProgress,
+  MenuItem,
+  Stack,
+  Switch,
+  TextField,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
-  CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
+  BatteryFull as BatteryFullIcon,
+  Battery80 as Battery80Icon,
+  Battery50 as Battery50Icon,
+  BoltOutlined as ShockIcon,
+  DisabledByDefault as CancelIcon,
   CheckBox as CheckBoxIcon,
-  Thermostat as TempIcon,
-  Opacity as HumidIcon,
+  CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
+  Close as CloseIcon,
+  LightModeOutlined as LightIcon,
   LocationOn as LocationIcon,
-  Add as AddIcon,
+  Opacity as HumidityIcon,
+  Thermostat as TemperatureIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
 } from '@mui/icons-material';
-import { makeStyles } from '@mui/styles';
-import Loader from '../../components/Loader/Loader';
-import { UserContext } from '../../context/User.context';
-import { checkForGlobalAdmin } from '../../utils/utilMethods';
-import DatePickerComponent from '../../components/DatePicker/DatePicker';
-import TimePickerComponent from '../../components/TimePicker/TimePicker';
-import { useInput } from '../../hooks/useInput';
+import ConfirmModal from '@components/Modal/ConfirmModal';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import DatePickerComponent from '@components/DatePicker/DatePicker';
+import Loader from '@components/Loader/Loader';
+import MapComponent from '@components/MapComponent/MapComponent';
+import { getUser } from '@context/User.context';
+import { useInput } from '@hooks/useInput';
+import { routes } from '@routes/routesConstants';
 import {
-  getCustodians,
-  getCustodianType,
-  getContact,
-} from '../../redux/custodian/actions/custodian.actions';
+  getCustodianFormattedRow,
+  getItemFormattedRow,
+  getTemplateFormattedRow,
+  itemColumns,
+  templateColumns,
+} from '@utils/constants';
 import {
-  getItems,
-  getItemType,
-  getUnitsOfMeasure,
-} from '../../redux/items/actions/items.actions';
-import {
-  getGateways,
-  getGatewayType,
-  getSensors,
-  getSensorType,
-  editGateway,
-} from '../../redux/sensorsGateway/actions/sensorsGateway.actions';
-import {
-  getShipmentDetails,
-  editShipment,
-  addShipment,
-  saveShipmentFormData,
-} from '../../redux/shipment/actions/shipment.actions';
-import {
-  SENSOR_PLATFORM,
-  TRANSPORT_MODE,
-  CARRIER,
-} from '../../utils/mock';
-import { validators } from '../../utils/validators';
-import {
-  getAvailableGateways,
-} from '../../pages/SensorsGateway/Constants';
-import { getCustodianFormattedRow } from '../../pages/Custodians/CustodianConstants';
-import AddCustodians from '../Custodians/forms/AddCustodians';
+  ADMIN_SHIPMENT_STATUS,
+  CREATE_SHIPMENT_STATUS,
+  USER_SHIPMENT_STATUS,
+  TIVE_GATEWAY_TIMES,
+  UOM_TEMPERATURE_CHOICES,
+} from '@utils/mock';
+import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
+import { validators } from '@utils/validators';
+import { useQuery } from 'react-query';
+import { getShipmentTemplatesQuery } from '@react-query/queries/shipments/getShipmentTemplatesQuery';
+import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
+import { getCustodianTypeQuery } from '@react-query/queries/custodians/getCustodianTypeQuery';
+import { getContactQuery } from '@react-query/queries/custodians/getContactQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getItemQuery } from '@react-query/queries/items/getItemQuery';
+import { getItemTypeQuery } from '@react-query/queries/items/getItemTypeQuery';
+import { getGatewayQuery } from '@react-query/queries/sensorGateways/getGatewayQuery';
+import { getGatewayTypeQuery } from '@react-query/queries/sensorGateways/getGatewayTypeQuery';
+import { getCustodyQuery } from '@react-query/queries/custodians/getCustodyQuery';
+import { useDeleteCustodyMutation } from '@react-query/mutations/custodians/deleteCustodyMutation';
+import { useAddShipmentTemplateMutation } from '@react-query/mutations/shipments/addShipmentTemplateMutation';
+import { useEditShipmentTemplateMutation } from '@react-query/mutations/shipments/editShipmentTemplateMutation';
+import { useDeleteShipmentTemplateMutation } from '@react-query/mutations/shipments/deleteShipmentTemplateMutation';
+import { useAddShipmentMutation } from '@react-query/mutations/shipments/addShipmentMutation';
+import { useEditShipmentMutation } from '@react-query/mutations/shipments/editShipmentMutation';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '@zustand/timezone/timezoneStore';
+import './ShipmentStyles.css';
+import { isMobile } from '@utils/mediaQuery';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-  },
-  dashboardHeading: {
-    fontWeight: 'bold',
-    marginBottom: '0.5em',
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-  fieldset: {
-    border: '1px solid #EBC645',
-    padding: '2rem',
-    borderRadius: '1rem',
-    width: '80%',
-    marginTop: '1rem',
-  },
-  legend: {
-    fontSize: '0.8rem',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(2),
-  },
-  submit: {
-    borderRadius: '18px',
-    fontSize: '14px',
-  },
-  addButton: {
-    marginTop: '1rem',
-    color: '#EBC645',
-    background: '#3B3A3A',
-    borderRadius: '0',
-    padding: '1rem 0',
-  },
-  buttonContainer: {
-    width: '80%',
-    margin: theme.spacing(2, 0),
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  loadingWrapper: {
-    position: 'relative',
-  },
-  inputWithTooltip: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  asterisk: {
-    fontSize: '1.5rem',
-    color: theme.palette.primary.main,
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
-  },
-  divider: {
-    width: '100%',
-    marginTop: '10px',
-    borderWidth: '1px',
-    borderColor: theme.palette.primary.main,
-  },
-  autoComplete: {
-    marginTop: '0px',
-    width: '100%',
-  },
-  envInput: {
-    margin: '1rem 0 0 0',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  flexContainer: {
-    display: 'flex', justifyContent: 'space-around', flexDirection: 'row',
-  },
-  smallInput: {
-    width: '20%',
-    marginLeft: '16px',
-    flex: '1',
-  },
-}));
-
-const CreateShipment = (props) => {
-  const {
-    shipmentFormData,
-    history,
-    loading,
-    dispatch,
-    location,
-    unitsOfMeasure,
-    timezone,
-    gatewayData,
-    itemData,
-    custodianData,
-    contactInfo,
-    gatewayTypeList,
-    sensorData,
-    shipmentData,
-    custodyData,
-    aggregateReportData,
-  } = props;
-  const classes = useStyles();
-  const user = useContext(UserContext);
+const CreateShipment = ({ history, location }) => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+  const user = getUser();
+  const organization = user && user.organization;
+  const isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
 
-  const editPage = location.state && location.state.type === 'edit';
-  const editData = location.state && location.state.data;
-  const copyData = (location.state
-    && location.state.type === 'copy'
-    && location.state.data) || {};
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
 
-  // For non-admins the forms becomes view-only once the shipment status is no longer just planned
-  const viewOnly = !checkForGlobalAdmin(user)
-    && editPage
-    && editData
-    && editData.status
-    && _.lowerCase(editData.status) !== 'planned';
+  const editData = (location.state && location.state.ship) || {};
+  const formTitle = location.state && location.state.ship ? 'Update Shipment' : 'Create Shipment';
 
-  const today = new Date();
-  const { organization } = useContext(UserContext);
-  const { organization_uuid, name } = organization;
+  const [template, setTemplate] = useState('');
+  const [templateName, setTemplateName] = useState('');
+  const [templateRows, setTemplateRows] = useState([]);
+  const [saveAsName, setSaveAsName] = useState('');
+  const [confirmReplace, setConfirmReplace] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showTemplateDT, setShowTemplateDT] = useState(false);
 
-  const addCustodianPath = `${routes.CUSTODIANS}/add`;
-
-  const [shipment_name, setShipmentName] = useState(
-    (editData && editData.name) || '',
-  );
-
-  const org_name = useInput(
-    name.replace(/[^A-Z0-9]/g, ''),
-  );
-  const purchase_order_number = useInput(
-    (editData && editData.purchase_order_number) || '',
-  );
-  const [origin, setOrigin] = useState('');
-  const [dest, setDestination] = useState('');
-
-  const order_number = useInput(
-    (editData && editData.order_number) || '',
-  );
-  const shipper_number = useInput(
-    (editData && editData.shipper_number) || '',
-  );
-  const carrier = useInput(
-    (editData && editData.carrier) || '',
-  );
-  const mode_type = useInput(
-    (editData && editData.transport_mode) || '',
-  );
-  const [scheduled_departure, handleDepartureDateChange] = useState(
-    (editData && editData.estimated_time_of_departure)
-    || new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0, 0),
-  );
-  const [scheduled_arrival, handleArrivalDateChange] = useState(
-    (editData && editData.estimated_time_of_arrival)
-    || new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0, 0),
-  );
-  const min_excursion_temp = useInput(
-    (editData && editData.min_excursion_temp) || '0',
-  );
-  const max_excursion_temp = useInput(
-    (editData && editData.max_excursion_temp) || '100',
-  );
-  const min_excursion_humidity = useInput(
-    (editData && editData.min_excursion_humidity) || '0',
-  );
-  const max_excursion_humidity = useInput(
-    (editData && editData.max_excursion_humidity) || '100',
-  );
-
-  let latLongChanged = false;
+  const [confirmLeave, setConfirmLeave] = useState(false);
+  const [triggerExit, setTriggerExit] = useState({ onOk: false, path: '' });
 
   const [custodianList, setCustodianList] = useState([]);
-  const [start_of_custody, setStartCustody] = useState(
-    (editData && editData.start_of_custody) || '',
+  const [originCustodian, setOriginCustodian] = useState('');
+  const [originAbb, setOriginAbb] = useState('');
+  const [startingAddress, setStartingAddress] = useState('');
+  const [startingLocation, setStartingLocation] = useState('');
+
+  const [destinationCustodian, setDestinationCustodian] = useState('');
+  const [destinationAbb, setDestinationAbb] = useState('');
+  const [endingAddress, setEndingAddress] = useState('');
+  const [endingLocation, setEndingLocation] = useState('');
+
+  const [departureDateTime, setDepartureDateTime] = useState(
+    (!_.isEmpty(editData) && editData.estimated_time_of_departure)
+    || moment(),
   );
-  const [end_of_custody, setEndCustody] = useState(
-    (editData && editData.end_of_custody) || '',
+  const [arrivalDateTime, setArrivalDateTime] = useState(
+    (!_.isEmpty(editData) && editData.estimated_time_of_arrival)
+    || moment().add(1, 'day'),
   );
-  const [start_of_custody_location, setStartLocation] = useState(
-    (editData && editData.start_of_custody_location) || '',
+  const status = useInput((!_.isEmpty(editData) && editData.status) || 'Planned');
+  const cannotEdit = !_.isEmpty(editData) && _.includes(_.map(ADMIN_SHIPMENT_STATUS, 'value'), editData.status);
+
+  const [items, setItems] = useState((!_.isEmpty(editData) && editData.items) || []);
+  const [itemRows, setItemRows] = useState([]);
+
+  const min_excursion_temp = useInput(
+    (!_.isEmpty(editData) && editData.min_excursion_temp)
+    || (organization && organization.default_min_temperature)
+    || 0,
   );
-  const [end_of_custody_location, setEndLocation] = useState(
-    (editData && editData.end_of_custody_location) || '',
+  const max_excursion_temp = useInput(
+    (!_.isEmpty(editData) && editData.max_excursion_temp)
+    || (organization && organization.default_max_temperature)
+    || 100,
   );
-  const [start_of_custody_address, setStartAddress] = useState(
-    (editData && editData.start_of_custody_location) || '',
+  const min_excursion_humidity = useInput(
+    (!_.isEmpty(editData) && editData.min_excursion_humidity)
+    || (organization && organization.default_min_humidity)
+    || 0,
   );
-  const [end_of_custody_address, setEndAddress] = useState(
-    (editData && editData.end_of_custody_location) || '',
+  const max_excursion_humidity = useInput(
+    (!_.isEmpty(editData) && editData.max_excursion_humidity)
+    || (organization && organization.default_max_humidity)
+    || 100,
+  );
+  const shock_threshold = useInput(
+    (!_.isEmpty(editData) && editData.shock_threshold)
+    || (organization && organization.default_shock)
+    || 4,
+  );
+  const light_threshold = useInput(
+    (!_.isEmpty(editData) && editData.light_threshold)
+    || (organization && organization.default_light)
+    || 5,
   );
 
-  const [itemIds, setItemIds] = useState(
-    (editData && editData.items) || [],
+  const supressTempAlerts = useInput(
+    (!_.isEmpty(editData) && !_.includes(editData.alerts_to_suppress, 'temperature'))
+    || (_.isEmpty(editData) && template && !_.includes(template.alerts_to_suppress, 'temperature'))
+    || (_.isEmpty(editData) && organization && !_.includes(organization.alerts_to_suppress, 'temperature')),
+  );
+  const supressHumidityAlerts = useInput(
+    (!_.isEmpty(editData) && !_.includes(editData.alerts_to_suppress, 'humidity'))
+    || (_.isEmpty(editData) && template && !_.includes(template.alerts_to_suppress, 'humidity'))
+    || (_.isEmpty(editData) && organization && !_.includes(organization.alerts_to_suppress, 'humidity')),
+  );
+  const supressShockAlerts = useInput(
+    (!_.isEmpty(editData) && !_.includes(editData.alerts_to_suppress, 'shock'))
+    || (_.isEmpty(editData) && template && !_.includes(template.alerts_to_suppress, 'shock'))
+    || (_.isEmpty(editData) && organization && !_.includes(organization.alerts_to_suppress, 'shock')),
+  );
+  const supressLightAlerts = useInput(
+    (!_.isEmpty(editData) && !_.includes(editData.alerts_to_suppress, 'light'))
+    || (_.isEmpty(editData) && template && !_.includes(template.alerts_to_suppress, 'light'))
+    || (_.isEmpty(editData) && organization && !_.includes(organization.alerts_to_suppress, 'light')),
   );
 
-  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+  const shipmentName = useInput((!_.isEmpty(editData) && editData.order_number) || '');
+  const purchaseOrderNumber = useInput((!_.isEmpty(editData) && editData.purchase_order_number) || '');
+  const billOfLading = useInput((!_.isEmpty(editData) && editData.bill_of_lading) || '');
+  const [files, setFiles] = useState([]);
+  const [attachedFiles, setAttachedFiles] = useState(
+    (!_.isEmpty(editData) && editData.uploaded_pdf) || [],
+  );
+  const [showNote, setShowNote] = useState(!_.isEmpty(editData) && !!editData.note);
+  const [showAddCustodian, setShowAddCustodian] = useState(false);
+  const note = useInput((!_.isEmpty(editData) && editData.note) || '');
+  const [additionalCustodians, setAdditionalCustocations] = useState([]);
+
+  const gatewayType = useInput((!_.isEmpty(editData) && editData.platform_name) || 'Tive');
+  const [availableGateways, setAvailableGateways] = useState([]);
+  const gateway = useInput('');
+  const transmissionInterval = useInput(
+    (!_.isEmpty(editData) && editData.transmission_time)
+    || (organization && organization.default_transmission_interval)
+    || 20,
+  );
+  const measurementInterval = useInput(
+    (!_.isEmpty(editData) && editData.measurement_time)
+    || (organization && organization.default_measurement_interval)
+    || 20,
+  );
+
+  const [formError, setFormError] = useState({});
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  let formEdited = false;
+
+  const uncheckedIcon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-  const [gatewayIds, setGatewayIds] = useState(
-    (editData && editData.gateway_ids) || [],
-  );
-  const [platform_name, setPlatformName] = useState(
-    (editData && editData.platform_name) || 'tive',
-  );
-  const [formError, setFormError] = useState({});
-
-  const [gatewayOptions, setGatewayOptions] = useState([]);
-
-  const [uom_temp, setUomTemp] = useState(
-    (editData && editData.uom_temp) || '',
-  );
-  const [uom_weight, setUomWeight] = useState(
-    (editData && editData.uom_weight) || '',
-  );
-  const [uom_distance, setUomDistance] = useState(
-    (editData && editData.uom_distance) || '',
+  const { data: shipmentTemplateData, isLoading: isLoadingShipmentTemplates } = useQuery(
+    ['shipmentTemplates', organization.organization_uuid],
+    () => getShipmentTemplatesQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
-  let formTitle;
-  if (!editPage) {
-    formTitle = 'Create Shipment';
-  } else if (viewOnly) {
-    formTitle = 'View Shipment';
-  } else {
-    formTitle = 'Edit Shipment';
-  }
+  const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
+    ['custodians', organization.organization_uuid],
+    () => getCustodianQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: custodianTypesData, isLoading: isLoadingCustodianTypes } = useQuery(
+    ['custodianTypes'],
+    () => getCustodianTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: contactInfo, isLoading: isLoadingContact } = useQuery(
+    ['contact', organization.organization_uuid],
+    () => getContactQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization.organization_uuid],
+    () => getUnitQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: itemData, isLoading: isLoadingItems } = useQuery(
+    ['items', organization.organization_uuid],
+    () => getItemQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: itemTypesData, isLoading: isLoadingItemTypes } = useQuery(
+    ['itemTypes', organization.organization_uuid],
+    () => getItemTypeQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
+    ['gateways', organization.organization_uuid],
+    () => getGatewayQuery(organization.organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: gatewayTypesData, isLoading: isLoadingGatewayTypes } = useQuery(
+    ['gatewayTypes'],
+    () => getGatewayTypeQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: custodyData, isLoading: isLoadingCustodies } = useQuery(
+    ['custodies'],
+    () => getCustodyQuery(encodeURIComponent(editData.shipment_uuid), displayAlert),
+    {
+      enabled: !_.isEmpty(editData),
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const { mutate: deleteCustodyMutation, isLoading: isDeletingCustody } = useDeleteCustodyMutation(displayAlert);
+
+  const { mutate: addShipmentTemplateMutation, isLoading: isAddingShipmentTemplate } = useAddShipmentTemplateMutation(organization.organization_uuid, displayAlert);
+
+  const { mutate: editShipmentTemplateMutation, isLoading: isEditingShipmentTemplate } = useEditShipmentTemplateMutation(organization.organization_uuid, displayAlert);
+
+  const { mutate: deleteShipmentTemplateMutation, isLoading: isDeletingShipmentTemplate } = useDeleteShipmentTemplateMutation(organization.organization_uuid, displayAlert);
+
+  const { mutate: addShipmentMutation, isLoading: isAddingShipment } = useAddShipmentMutation(organization.organization_uuid, history, routes.SHIPMENT, displayAlert);
+
+  const { mutate: editShipmentMutation, isLoading: isEditingShipment } = useEditShipmentMutation(organization.organization_uuid, history, routes.SHIPMENT, displayAlert);
 
   useEffect(() => {
-    if (!shipmentData) {
-      const getUpdatedSensorData = !aggregateReportData;
-      const getUpdatedCustody = !custodyData;
-      dispatch(getShipmentDetails(
-        organization_uuid,
-        'Planned,Enroute',
-        null,
-        getUpdatedSensorData,
-        getUpdatedCustody,
-        'get',
+    if (!_.isEmpty(editData)) {
+      const origin = _.find(custodianList, { name: editData.origin });
+      const destination = _.find(custodianList, { name: editData.destination });
+      const carriers = _.map(editData.carriers, (carrier) => (
+        _.find(custodianList, { name: carrier }) || carrier
       ));
+
+      // Set origin and destination custodians
+      if (origin) {
+        setOriginCustodian(origin.url);
+        setOriginAbb(getAbbreviation(origin.abbrevation));
+        setStartingAddress(origin.location);
+        getLatLong(origin.location, 'start');
+      }
+
+      if (destination) {
+        setDestinationCustodian(destination.url);
+        setDestinationAbb(getAbbreviation(destination.abbrevation));
+        setEndingAddress(destination.location);
+        getLatLong(destination.location, 'end');
+      }
+
+      if (carriers) {
+        setAdditionalCustocations(carriers);
+      }
+
+      if (!_.isEmpty(editData.gateway_imei)) {
+        const gateways = _.filter(gatewayData, {
+          imei_number: _.toNumber(editData.gateway_imei[0]),
+        });
+        gateway.setValue(_.find(gateways, {
+          imei_number: _.toNumber(editData.gateway_imei[0]),
+        }));
+        setAvailableGateways(gateways);
+      }
     }
-    if (!custodianData) {
-      dispatch(getCustodians(organization_uuid));
-      dispatch(getCustodianType());
-      dispatch(getContact(organization_uuid));
-    }
-    if (!itemData) {
-      dispatch(getItems(organization_uuid));
-      dispatch(getItemType(organization_uuid));
-    }
-    if (!gatewayData) {
-      dispatch(getGateways(organization_uuid));
-      dispatch(getGatewayType());
-    }
-    if (!unitsOfMeasure) {
-      dispatch(getUnitsOfMeasure());
-    }
-    if (!sensorData) {
-      dispatch(getSensors(organization_uuid));
-      dispatch(getSensorType());
-    }
-  }, []);
+  }, [editData, custodianList, gatewayTypesData, gatewayData]);
 
   useEffect(() => {
-    if (editData && editData.start_of_custody_location) {
-      getAddress(
-        editData.start_of_custody_location,
-        'start',
-      );
+    if (!_.isEmpty(custodianData) && !_.isEmpty(contactInfo)) {
+      setCustodianList(getCustodianFormattedRow(custodianData, contactInfo, custodianTypesData));
     }
-    if (editData && editData.end_of_custody_location) {
-      getAddress(
-        editData.end_of_custody_location,
-        'end',
-      );
-    }
-  }, [editData]);
+  }, [custodianData, contactInfo, custodianTypesData]);
 
   useEffect(() => {
-    if (
-      custodianData
-      && contactInfo
-      && custodianData.length
-    ) {
-      setCustodianList(getCustodianFormattedRow(
-        custodianData,
-        contactInfo,
-        custodyData,
-      ));
-    }
-
-    if (
-      gatewayData
-      && gatewayData.length
-      && gatewayTypeList
-      && gatewayTypeList.length
-      && shipmentData
-      && shipmentData.length
-    ) {
-      const opts = getAvailableGateways(
-        gatewayData,
-        platform_name
-          ? _.lowerCase(platform_name)
-          : 'tive',
-        gatewayTypeList,
-        shipmentData,
-        null,
-      );
-      setGatewayOptions(opts);
-    }
-  }, [custodianData, contactInfo, gatewayData,
-    itemData, platform_name, gatewayTypeList,
-    shipmentData, start_of_custody]);
-
-  useEffect(() => {
-    if (unitsOfMeasure && unitsOfMeasure.length) {
-      _.forEach(unitsOfMeasure, (unit) => {
-        if (
-          _.includes(
-            _.lowerCase(unit.supported_class),
-            'temp',
-          ) && unit.is_default_for_class
-        ) {
-          setUomTemp(unit.url);
-        } else if (
-          _.includes(
-            _.lowerCase(unit.supported_class),
-            'distance',
-          ) && unit.is_default_for_class
-        ) {
-          setUomDistance(unit.url);
-        } else if (
-          _.includes(
-            _.lowerCase(unit.supported_class),
-            'weight',
-          ) && unit.is_default_for_class
-        ) {
-          setUomWeight(unit.url);
+    if (!_.isEmpty(itemData)) {
+      let selectedRows = [];
+      _.forEach(itemData, (item) => {
+        if (_.includes(items, item.url)) {
+          selectedRows = [...selectedRows, item];
         }
       });
-    }
-  }, [unitsOfMeasure]);
 
-  const updateShipmentFormData = () => {
-    const updateGateway = _.find(gatewayData, { gateway_uuid: gatewayIds[0] });
-    const imei_number = updateGateway ? [updateGateway.imei_number] : [];
-    setShipmentName(`${org_name.value}-${order_number.value}-${origin}-${dest}`);
-    const shipmentFormValue = {
-      ...copyData,
-      name: shipment_name,
-      purchase_order_number: purchase_order_number.value,
-      order_number: order_number.value,
-      shipper_number: shipper_number.value,
-      carrier: carrier.value ? [carrier.value] : [],
-      transport_mode: mode_type.value,
-      status: (editData && editData.status) || 'Planned',
-      estimated_time_of_arrival: scheduled_arrival,
-      estimated_time_of_departure: scheduled_departure,
-      ...(editData && { id: editData.id }),
-      items: (editData && editData.items) || itemIds,
-      gateway_ids: (editData && editData.gateway_ids) || gatewayIds,
-      gateway_imei: (editData && editData.gateway_imei)
-        || imei_number,
-      uom_distance,
-      uom_temp,
-      uom_weight,
-      organization_uuid,
-      platform_name,
-      max_excursion_temp: parseInt(max_excursion_temp.value, 10),
-      min_excursion_temp: parseInt(min_excursion_temp.value, 10),
-      max_excursion_humidity: parseInt(max_excursion_humidity.value, 10),
-      min_excursion_humidity: parseInt(min_excursion_humidity.value, 10),
+      const rows = getItemFormattedRow(selectedRows, itemTypesData, unitData);
+      setItemRows(rows);
+    }
+  }, [itemData, itemTypesData, unitData, items]);
+
+  useEffect(() => {
+    const custodian = _.find(custodianData, { url: originCustodian });
+    const gt = _.find(gatewayTypesData, { name: gatewayType.value });
+
+    if (custodian && gt) {
+      const gateways = !_.isEmpty(editData) && !_.isEmpty(editData.gateway_imei)
+        ? _.filter(gatewayData, {
+          imei_number: _.toNumber(editData.gateway_imei[0]),
+        })
+        : _.filter(gatewayData, {
+          custodian_uuid: custodian.custodian_uuid,
+          gateway_type: gt.url,
+          gateway_status: 'available',
+        });
+      setAvailableGateways(gateways);
+    }
+  }, [gatewayData, gatewayType.value, originCustodian]);
+
+  useEffect(() => {
+    if (saveAsName) {
+      handleTemplateChange(_.find(shipmentTemplateData, { name: saveAsName }) || '');
+    } else if (template) {
+      handleTemplateChange(_.find(shipmentTemplateData, { id: template.id }) || '');
+    }
+  }, [shipmentTemplateData]);
+
+  useEffect(() => {
+    setTemplateRows(getTemplateFormattedRow(shipmentTemplateData, custodianData, itemData));
+  }, [shipmentTemplateData, custodianData, itemData]);
+
+  formEdited = (
+    !!(_.isEmpty(editData) && (
+      originCustodian || destinationCustodian || !_.isEmpty(items) || shipmentName.value
+    )) || !!(!_.isEmpty(editData) && (
+      !_.isEqual(
+        moment(editData.estimated_time_of_departure).toISOString(),
+        moment(departureDateTime).toISOString(),
+      ) || !_.isEqual(
+        moment(editData.estimated_time_of_arrival).toISOString(),
+        moment(arrivalDateTime).toISOString(),
+      ) || status.hasChanged()
+      || !_.isEqual(editData.items, items)
+      || min_excursion_temp.hasChanged()
+      || max_excursion_temp.hasChanged()
+      || min_excursion_humidity.hasChanged()
+      || max_excursion_humidity.hasChanged()
+      || shock_threshold.hasChanged()
+      || light_threshold.hasChanged()
+      || supressTempAlerts.hasChanged()
+      || supressHumidityAlerts.hasChanged()
+      || supressShockAlerts.hasChanged()
+      || supressLightAlerts.hasChanged()
+      || shipmentName.hasChanged()
+      || purchaseOrderNumber.hasChanged()
+      || billOfLading.hasChanged()
+      || !_.isEmpty(files)
+      || note.hasChanged()
+      || !_.isEqual(additionalCustodians, _.map(editData.carriers, (carrier) => (
+        _.find(custodianList, { name: carrier }) || carrier
+      )))
+      || gatewayType.hasChanged()
+      || !_.isEqual(editData.transmission_time, transmissionInterval.value)
+      || !_.isEqual(editData.measurement_time, measurementInterval.value)
+      || (
+        _.find(custodianList, { name: editData.origin })
+        && !_.isEqual(originCustodian, _.find(custodianList, { name: editData.origin }).url)
+      ) || (
+        _.find(custodianList, { name: editData.destination })
+        && !_.isEqual(destinationCustodian, _.find(custodianList, {
+          name: editData.destination,
+        }).url)
+      ) || (editData.uploaded_pdf && !_.isEqual(attachedFiles, editData.uploaded_pdf))
+    ))
+  );
+
+  const handleGoToIntendedPage = useCallback(
+    (loc) => history.push(loc),
+    [history],
+  );
+
+  useEffect(() => {
+    if (triggerExit.onOk) {
+      handleGoToIntendedPage(triggerExit.path);
+    }
+
+    const unblock = history.block((loc) => {
+      let trgObj = { ...triggerExit, path: loc.pathname };
+      if ((loc.pathname !== routes.CREATE_SHIPMENT) && formEdited && !formSubmitted) {
+        setConfirmLeave(true);
+      } else {
+        trgObj = { ...trgObj, onOk: true };
+      }
+
+      setTriggerExit(trgObj);
+      if (triggerExit.onOk) {
+        return true;
+      }
+      return false;
+    });
+
+    return () => {
+      unblock();
     };
-    dispatch(saveShipmentFormData(shipmentFormValue));
-  };
-
-  const getLatLong = (address, pointer) => {
-    if (pointer === 'start') {
-      latLongChanged = true;
-      setStartAddress(address);
-    } else if (pointer === 'end') {
-      latLongChanged = true;
-      setEndAddress(address);
-    }
-    if (
-      (pointer === 'start'
-        && address !== start_of_custody_address
-        && address !== '')
-      || (pointer === 'end'
-        && address !== end_of_custody_address
-        && address !== '')
-    ) {
-      latLongChanged = true;
-      Geocode.setApiKey(window.env.GEO_CODE_API);
-      Geocode.setLanguage('en');
-      Geocode.fromAddress(address).then(
-        (response) => {
-          const { lat, lng } = response.results[0].geometry.location;
-          if (pointer === 'start') {
-            setStartLocation(`${lat},${lng}`);
-          } else if (pointer === 'end') {
-            setEndLocation(`${lat},${lng}`);
-          }
-        },
-        (error) => {
-          // eslint-disable-next-line no-console
-          console.error(error);
-        },
-      );
-    }
-  };
-
-  const getAddress = (latLong, pointer) => {
-    Geocode.setApiKey(window.env.GEO_CODE_API);
-    Geocode.setLanguage('en');
-    const latlong = latLong.split(',');
-    Geocode.fromLatLng(latlong[0], latlong[1]).then(
-      (response) => {
-        const { results } = response;
-        const establishment = _.find(
-          results,
-          (item) => _.includes(item.types, 'establishment'),
-        );
-        const premise = _.find(
-          results,
-          (item) => _.includes(item.types, 'premise'),
-        );
-        const filteredResult = establishment || premise || results[0];
-        if (pointer === 'start') {
-          setStartAddress(filteredResult.formatted_address);
-        } else if (pointer === 'end') {
-          setEndAddress(filteredResult.formatted_address);
-        }
-      },
-      (error) => {
-        // eslint-disable-next-line no-console
-        console.error(error);
-      },
-    );
-  };
+  }, [handleGoToIntendedPage, history, triggerExit.onOk, triggerExit.path,
+    formEdited, formSubmitted]);
 
   const handleBlur = (e, validation, input, parentId) => {
     const validateObj = validators(validation, input);
@@ -539,1088 +481,1771 @@ const CreateShipment = (props) => {
         },
       });
     }
-    updateShipmentFormData();
+  };
+
+  const getAbbreviation = (name) => name.replace(/[^A-Z0-9]/g, '');
+
+  const getLatLong = (address, position) => {
+    Geocode.setApiKey(window.env.GEO_CODE_API);
+    Geocode.setLanguage('en');
+    Geocode.fromAddress(address).then(
+      (response) => {
+        const { lat, lng } = response.results[0].geometry.location;
+        switch (position) {
+          case 'start':
+            setStartingLocation(`${lat},${lng}`);
+            break;
+          case 'end':
+            setEndingLocation(`${lat},${lng}`);
+            break;
+          default:
+            break;
+        }
+      },
+      (error) => {
+        // eslint-disable-next-line no-console
+        console.error(error);
+      },
+    );
   };
 
   const onInputChange = (value, type, custody) => {
     switch (type) {
-      case 'item':
-        if (value.length > itemIds.length) {
-          setItemIds([...itemIds, _.last(value).url]);
-        } else if (value.length < itemIds.length) { setItemIds(value); }
-        break;
       case 'custodian':
         if (value) {
-          if (custodianList.length > 0) {
-            let selectedCustodian = '';
-            _.forEach(custodianList, (list) => {
-              if (list.url === value) {
-                selectedCustodian = list;
-              }
-            });
-            if (custody === 'start') {
-              setStartCustody(value);
-              setOrigin(selectedCustodian.name.replace(/[^A-Z0-9]/g, ''));
-              getLatLong(selectedCustodian.location, 'start');
-            } else if (custody === 'end') {
-              setEndCustody(value);
-              setDestination(selectedCustodian.name.replace(/[^A-Z0-9]/g, ''));
-              getLatLong(selectedCustodian.location, 'end');
-            }
+          const selectedCustodian = _.find(custodianList, { url: value });
+          const storage = _.isEqual(selectedCustodian.type, 'Warehouse');
+          if (custody === 'start') {
+            setOriginCustodian(value);
+            setOriginAbb(getAbbreviation(selectedCustodian.abbrevation));
+            setStartingAddress(selectedCustodian.location);
+            getLatLong(selectedCustodian.location, 'start');
+          } else if (custody === 'end') {
+            setDestinationCustodian(value);
+            setDestinationAbb(getAbbreviation(selectedCustodian.abbrevation));
+            setEndingAddress(selectedCustodian.location);
+            getLatLong(selectedCustodian.location, 'end');
           }
         }
         break;
-      case 'gateway':
-        if (value.length > gatewayIds.length) {
-          setGatewayIds([...gatewayIds, _.last(value).gateway_uuid]);
-        } else if (value.length < gatewayIds.length) { setGatewayIds(value); }
+
+      case 'item':
+        if (_.size(value) > _.size(items)) {
+          setItems([...items, _.last(value).url]);
+        } else {
+          setItems(value);
+        }
         break;
+
       default:
         break;
     }
   };
 
-  const submitDisabled = () => {
-    const errorKeys = Object.keys(formError);
-    if (!shipment_name || !mode_type.value || !order_number.value || !platform_name
-      || !min_excursion_temp.value || !max_excursion_temp.value
-      || !min_excursion_humidity.value || !max_excursion_humidity.value
-      || !start_of_custody || !end_of_custody
-      || (!itemIds.length || itemData === null)
-      || (!gatewayIds.length || gatewayData === null)) {
-      return true;
-    }
+  const saveTemplateDisabled = () => (
+    (!!template
+      && originCustodian === template.origin_custodian
+      && destinationCustodian === template.destination_custodian
+      && _.isEqual(items, template.items)
+      && status.value === template.status
+      && min_excursion_temp.value === template.min_excursion_temp
+      && max_excursion_temp.value === template.max_excursion_temp
+      && min_excursion_humidity.value === template.min_excursion_humidity
+      && max_excursion_humidity.value === template.max_excursion_humidity
+      && shock_threshold.value === template.shock_threshold
+      && light_threshold.value === template.light_threshold
+      && supressTempAlerts.value === !_.includes(template.alerts_to_suppress, 'temperature')
+      && supressHumidityAlerts.value === !_.includes(template.alerts_to_suppress, 'humidity')
+      && supressShockAlerts.value === !_.includes(template.alerts_to_suppress, 'shock')
+      && supressLightAlerts.value === !_.includes(template.alerts_to_suppress, 'light')
+    ) || (!template && (!originCustodian || !destinationCustodian || _.isEmpty(items)))
+  );
 
-    let errorExists = false;
-    _.forEach(errorKeys, (key) => {
-      if (formError[key].error) {
-        errorExists = true;
+  const handleTemplateChange = (value) => {
+    if (!_.isEqual(value, 'all')) {
+      setTemplate(value);
+      setTemplateName('');
+      if (value) {
+        const oCustodian = _.find(custodianList, { url: value.origin_custodian });
+        const dCustodian = _.find(custodianList, { url: value.destination_custodian });
+        const storage = _.isEqual(oCustodian, dCustodian) && _.isEqual(dCustodian.type, 'Warehouse');
+
+        onInputChange(value.origin_custodian, 'custodian', 'start');
+        onInputChange(value.destination_custodian, 'custodian', 'end');
+        setItems(value.items);
+        status.setValue(value.status);
+        min_excursion_temp.setValue(value.min_excursion_temp);
+        max_excursion_temp.setValue(value.max_excursion_temp);
+        min_excursion_humidity.setValue(value.min_excursion_humidity);
+        max_excursion_humidity.setValue(value.max_excursion_humidity);
+        shock_threshold.setValue(value.shock_threshold);
+        light_threshold.setValue(value.light_threshold);
+        supressTempAlerts.setValue(!_.includes(value.alerts_to_suppress, 'temperature'));
+        supressHumidityAlerts.setValue(!_.includes(value.alerts_to_suppress, 'humidity'));
+        supressShockAlerts.setValue(!_.includes(value.alerts_to_suppress, 'shock'));
+        supressLightAlerts.setValue(!_.includes(value.alerts_to_suppress, 'light'));
       }
-    });
-    return errorExists;
+    } else {
+      setSaveAsName('');
+      setShowTemplateDT(true);
+    }
   };
 
-  /**
-   * Submit The form
-   * @param {Event} event the default submit event
-   */
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const updateGateway = _.find(gatewayData, { gateway_uuid: gatewayIds[0] });
-    const imei_number = updateGateway ? [updateGateway.imei_number] : [];
-    setShipmentName(`${org_name.value}-${order_number.value}-${origin}-${dest}`);
-    const shipmentFormValue = {
-      ...copyData,
-      name: shipment_name,
-      purchase_order_number: purchase_order_number.value,
-      order_number: order_number.value,
-      shipper_number: shipper_number.value,
-      carrier: carrier.value ? [carrier.value] : [],
-      transport_mode: mode_type.value,
-      status: (editData && editData.status) || 'Planned',
-      estimated_time_of_arrival: scheduled_arrival,
-      estimated_time_of_departure: scheduled_departure,
-      ...(editData && { id: editData.id }),
-      items: (editData && editData.items) || itemIds,
-      gateway_ids: (editData && editData.gateway_ids) || gatewayIds,
-      gateway_imei: (editData && editData.gateway_imei)
-        || imei_number,
-      uom_distance,
-      uom_temp,
-      uom_weight,
-      organization_uuid,
-      platform_name,
+  const saveAsTemplate = () => {
+    const tmplt = _.find(shipmentTemplateData, { name: saveAsName }) || {};
+    const templateFormValue = {
+      ...tmplt,
+      name: saveAsName,
+      origin_custodian: originCustodian,
+      destination_custodian: destinationCustodian,
+      items,
+      status: status.value,
       max_excursion_temp: parseInt(max_excursion_temp.value, 10),
       min_excursion_temp: parseInt(min_excursion_temp.value, 10),
       max_excursion_humidity: parseInt(max_excursion_humidity.value, 10),
       min_excursion_humidity: parseInt(min_excursion_humidity.value, 10),
+      shock_threshold: shock_threshold.value,
+      light_threshold: light_threshold.value,
+      alerts_to_suppress: _.without([
+        !supressTempAlerts.value ? 'temperature' : '',
+        !supressHumidityAlerts.value ? 'humidity' : '',
+        !supressShockAlerts.value ? 'shock' : '',
+        !supressLightAlerts.value ? 'light' : '',
+      ], ''),
+      organization_uuid: organization.organization_uuid,
+    };
+    if (_.isEmpty(tmplt)) {
+      addShipmentTemplateMutation(templateFormValue);
+      setShowTemplateDT(false);
+    } else {
+      setConfirmReplace(true);
+    }
+  };
+
+  const saveTemplateName = () => {
+    const exists = _.find(shipmentTemplateData, { name: templateName });
+    if (exists) {
+      setConfirmReplace(true);
+    } else {
+      const tmp = { ...template, name: templateName };
+      editShipmentTemplateMutation(tmp);
+      setTemplateName('');
+      setTemplate(tmp);
+    }
+  };
+
+  const replaceTemplate = () => {
+    const tmplt = (templateName && _.find(shipmentTemplateData, { name: templateName }))
+      || (saveAsName && _.find(shipmentTemplateData, { name: saveAsName }))
+      || {};
+    const newTemplate = {
+      ...tmplt,
+      name: templateName || saveAsName,
+      origin_custodian: originCustodian,
+      destination_custodian: destinationCustodian,
+      items,
+      status: status.value,
+      max_excursion_temp: parseInt(max_excursion_temp.value, 10),
+      min_excursion_temp: parseInt(min_excursion_temp.value, 10),
+      max_excursion_humidity: parseInt(max_excursion_humidity.value, 10),
+      min_excursion_humidity: parseInt(min_excursion_humidity.value, 10),
+      shock_threshold: shock_threshold.value,
+      light_threshold: light_threshold.value,
+      alerts_to_suppress: _.without([
+        !supressTempAlerts.value ? 'temperature' : '',
+        !supressHumidityAlerts.value ? 'humidity' : '',
+        !supressShockAlerts.value ? 'shock' : '',
+        !supressLightAlerts.value ? 'light' : '',
+      ], ''),
+      organization_uuid: organization.organization_uuid,
+    };
+
+    if (template && (
+      !_.isEqual(template.name, templateName) && !_.isEqual(template.name, saveAsName)
+    )) {
+      deleteShipmentTemplateMutation(template.id);
+    }
+    editShipmentTemplateMutation(newTemplate);
+    setConfirmReplace(false);
+    setTemplateName('');
+    setTemplate(newTemplate);
+    if (saveAsName) {
+      setSaveAsName('');
+      setShowTemplateDT(false);
+    }
+  };
+
+  const fileChange = (event) => {
+    const maxAllowedSize = 2 * 1024 * 1024;
+    let error = false;
+
+    _.forEach(event.target.files, (attachedFile) => {
+      if (attachedFile) {
+        switch (true) {
+          case (attachedFile.type !== 'application/pdf'):
+            error = error || true;
+            // eslint-disable-next-line no-alert
+            alert('Only PDF files are allowed for upload.');
+            break;
+
+          case (attachedFile.size > maxAllowedSize):
+            error = error || true;
+            // eslint-disable-next-line no-alert
+            alert('File size is more that 2MB. Please upload another file.');
+            break;
+
+          default:
+            break;
+        }
+      }
+    });
+    if (!error) {
+      setFiles([...files, ...event.target.files]);
+    }
+  };
+
+  const submitDisabled = () => (
+    (_.isEmpty(editData) && (
+      !originCustodian
+      || !destinationCustodian
+      || _.isEmpty(items)
+      || !shipmentName.value
+    )) || (!_.isEmpty(editData) && (
+      _.isEqual(editData.estimated_time_of_departure, departureDateTime)
+      && _.isEqual(editData.estimated_time_of_arrival, arrivalDateTime)
+      && !status.hasChanged()
+      && _.isEqual(editData.items, items)
+      && !min_excursion_temp.hasChanged()
+      && !max_excursion_temp.hasChanged()
+      && !min_excursion_humidity.hasChanged()
+      && !max_excursion_humidity.hasChanged()
+      && !shock_threshold.hasChanged()
+      && !light_threshold.hasChanged()
+      && !supressTempAlerts.hasChanged()
+      && !supressHumidityAlerts.hasChanged()
+      && !supressShockAlerts.hasChanged()
+      && !supressLightAlerts.hasChanged()
+      && !shipmentName.hasChanged()
+      && !purchaseOrderNumber.hasChanged()
+      && !billOfLading.hasChanged()
+      && _.isEmpty(files)
+      && !note.hasChanged()
+      && _.isEqual(additionalCustodians, _.map(editData.carriers, (carrier) => (
+        _.find(custodianList, { name: carrier }) || carrier
+      )))
+      && _.isEqual(editData.transmission_time, transmissionInterval.value)
+      && _.isEqual(editData.measurement_time, measurementInterval.value)
+      && (!_.isEmpty(editData.gateway_imei)
+        || (_.isEmpty(editData.gateway_imei) && (!gateway.value || !gatewayType.value))
+      ) && (
+        _.find(custodianList, { name: editData.origin })
+        && _.isEqual(originCustodian, _.find(custodianList, { name: editData.origin }).url)
+      ) && (
+        _.find(custodianList, { name: editData.destination })
+        && _.isEqual(destinationCustodian, _.find(custodianList, {
+          name: editData.destination,
+        }).url)
+      ) && _.isEqual(attachedFiles, editData.uploaded_pdf)
+    ))
+  );
+
+  const handleSubmit = (event, draft) => {
+    event.preventDefault();
+    const shipName = `${organization.abbrevation}-${shipmentName.value}-${originAbb}-${destinationAbb}`;
+    const UOMDISTANCE = _.find(unitData, (unit) => (
+      _.toLower(unit.unit_of_measure_for) === 'distance'
+    ));
+    const uom_distance = UOMDISTANCE ? UOMDISTANCE.unit_of_measure : '';
+    const startCustody = (
+      !_.isEmpty(editData) && _.find(custodyData, (custody) => custody.first_custody)
+    ) || {};
+    const endCustody = (
+      !_.isEmpty(editData) && _.find(custodyData, (custody) => custody.last_custody)
+    ) || {};
+    const updateGateway = gateway.value;
+
+    const shipmentFormValue = {
+      ...editData,
+      name: shipName,
+      purchase_order_number: purchaseOrderNumber.value,
+      order_number: shipmentName.value,
+      status: status.value,
+      estimated_time_of_arrival: arrivalDateTime,
+      estimated_time_of_departure: departureDateTime,
+      items,
+      organization_uuid: organization.organization_uuid,
+      platform_name: gatewayType.value,
+      max_excursion_temp: parseInt(max_excursion_temp.value, 10),
+      min_excursion_temp: parseInt(min_excursion_temp.value, 10),
+      max_excursion_humidity: parseInt(max_excursion_humidity.value, 10),
+      min_excursion_humidity: parseInt(min_excursion_humidity.value, 10),
+      shock_threshold: parseInt(shock_threshold.value, 10),
+      light_threshold: parseInt(light_threshold.value, 10),
+      alerts_to_suppress: _.without([
+        !supressTempAlerts.value ? 'temperature' : '',
+        !supressHumidityAlerts.value ? 'humidity' : '',
+        !supressShockAlerts.value ? 'shock' : '',
+        !supressLightAlerts.value ? 'light' : '',
+      ], ''),
+      note: note.value,
+      transmission_time: parseInt(transmissionInterval.value, 10),
+      measurement_time: parseInt(measurementInterval.value, 10),
+      start_location: startingLocation,
+      end_location: endingLocation,
     };
     const startCustodyForm = {
-      // start_of_custody: new Date(),
-      // end_of_custody: new Date(),
-      custodian: [start_of_custody],
-      start_of_custody_location: start_of_custody_location || null,
-      end_of_custody_location: start_of_custody_location || null,
+      ...startCustody,
+      custodian: [originCustodian],
+      location: startingLocation,
       has_current_custody: true,
       first_custody: true,
       last_custody: false,
       radius: organization.radius || 10,
-      shipment_name,
+      shipment_name: shipName,
+      load_id: '1',
+      unit_of_measure: uom_distance,
     };
     const endCustodyForm = {
-      // start_of_custody: new Date(),
-      // end_of_custody: new Date(),
-      custodian: [end_of_custody],
-      start_of_custody_location: end_of_custody_location || null,
-      end_of_custody_location: end_of_custody_location || null,
+      ...endCustody,
+      custodian: [destinationCustodian],
+      location: endingLocation,
       has_current_custody: false,
       first_custody: false,
       last_custody: true,
       radius: organization.radius || 10,
-      shipment_name,
+      shipment_name: shipName,
+      load_id: `${_.size(additionalCustodians) + 2}`,
+      unit_of_measure: uom_distance,
     };
+    const carriers = _.map(additionalCustodians, (addCust, index) => ({
+      ...((
+        !_.isEmpty(editData) && _.find(_.filter(custodyData, { first_custody: false, last_custody: false }), { load_id: `${index + 2}` })
+      ) || {}),
+      custodian: [addCust.url],
+      location: addCust.location,
+      has_current_custody: false,
+      first_custody: false,
+      last_custody: false,
+      radius: organization.radius || 10,
+      shipment_name: shipName,
+      load_id: `${index + 2}`,
+      unit_of_measure: uom_distance,
+    }));
 
-    const shipment_payload = {
+    if (_.size(editData.carriers) > _.size(additionalCustodians)) {
+      const carrierCustodies = _.without(_.map(carriers, 'custody_uuid'), ['', null, undefined]);
+      const removeCustodies = _.filter(custodyData, (cust) => (
+        !_.includes(carrierCustodies, cust.custody_uuid)
+        && !cust.first_custody && !cust.last_custody
+      ));
+      _.forEach(removeCustodies, (cust) => deleteCustodyMutation(cust.id));
+    }
+
+    let savePayload = {
       shipment: shipmentFormValue,
       start_custody: startCustodyForm,
       end_custody: endCustodyForm,
-      gateway: updateGateway,
+      files,
+      carriers,
+      fujitsuVerification: organization.enable_fujitsu_verification,
     };
-    if (editPage && editData) {
-      if (shipmentFormValue.gateway_ids.length > 0) {
-        let gateway_status = null;
-        let shipment_ids = [];
 
-        let attachedGateway = null;
-        attachedGateway = _.filter(
-          gatewayData, (gateway) => gateway.gateway_uuid === shipmentFormValue.gateway_ids[0],
-        );
+    if (!draft && (
+      (_.isEqual('available', updateGateway.gateway_status) && _.isEqual([], updateGateway.shipment_ids))
+      || _.includes(_.map(ADMIN_SHIPMENT_STATUS, 'value'), status.value)
+    )) {
+      savePayload = { ...savePayload, updateGateway };
+    }
 
-        if (shipmentFormValue.status === 'Completed' || shipmentFormValue.status === 'Cancelled') {
-          gateway_status = 'available';
-        } else if (shipmentFormValue.status === 'Enroute' && shipmentFormValue.gateway_ids.length > 0) {
-          gateway_status = 'assigned';
-          shipment_ids = [shipmentFormValue.id];
+    if (!_.isEqual(editData.uploaded_pdf, attachedFiles)) {
+      let pdfs = [];
+      let links = [];
+      let deleteFiles = [];
+
+      _.forEach(editData.uploaded_pdf, (f, index) => {
+        const found = _.includes(attachedFiles, f);
+        if (found) {
+          pdfs = [...pdfs, f];
+          links = [...links, editData.uploaded_pdf_link[index]];
+        } else {
+          deleteFiles = [...deleteFiles, f];
         }
+      });
 
-        if (gateway_status === null) {
-          gateway_status = attachedGateway[0].gateway_status;
-        }
+      savePayload = {
+        ...savePayload,
+        shipment: {
+          ...shipmentFormValue,
+          uploaded_pdf: pdfs,
+          uploaded_pdf_link: links,
+        },
+        deleteFiles,
+      };
+    }
 
-        dispatch(
-          editShipment(
-            shipment_payload,
-            history,
-            `${routes.SHIPMENT}/edit/:${editData.id}`,
-            organization_uuid,
-            attachedGateway[0],
-          ),
-        );
-        dispatch(
-          editGateway({
-            ...attachedGateway[0],
-            gateway_status,
-            shipment_ids,
-          }),
-        );
-      } else {
-        dispatch(
-          editShipment(
-            shipment_payload,
-            history,
-            `${routes.SHIPMENT}/edit/:${editData.id}`,
-            organization_uuid,
-            null,
-          ),
-        );
-      }
+    setFormSubmitted(true);
+
+    if (_.isEmpty(editData)) {
+      addShipmentMutation(savePayload);
     } else {
-      dispatch(addShipment(shipment_payload, history, null, organization_uuid));
+      editShipmentMutation(savePayload);
     }
   };
 
   return (
-    <Box mt={5} mb={5}>
-      {loading && <Loader open={loading} />}
-      <Box mb={3} mt={2} display="flex" alignItems="center" justifyContent="space-between">
-        <Typography
-          className={classes.dashboardHeading}
-          variant="h4"
-        >
-          {formTitle}
-        </Typography>
-      </Box>
-      <form
-        className={classes.form}
-        noValidate
-        onSubmit={handleSubmit}
-      >
-        <Box mb={2}>
-          <Grid container spacing={2}>
-            <FormControl
-              component="fieldset"
-              variant="outlined"
-              color="primary"
-              className={classes.fieldset}
-            >
-              <FormLabel
-                component="legend"
-                className={classes.legend}
-              >
-                Shipment details
-              </FormLabel>
-              <Grid container spacing={2}>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  sx={{ padding: '8px' }}
+    <Box mt={5} mb={5} className="createShipmentRoot">
+      {(isLoadingShipmentTemplates
+        || isLoadingCustodians
+        || isLoadingCustodianTypes
+        || isLoadingContact
+        || isLoadingUnits
+        || isLoadingItems
+        || isLoadingItemTypes
+        || isLoadingGateways
+        || isLoadingGatewayTypes
+        || isLoadingCustodies
+        || isAddingShipmentTemplate
+        || isEditingShipmentTemplate
+        || isDeletingShipmentTemplate
+        || isAddingShipment
+        || isEditingShipment
+        || isDeletingCustody)
+        && (
+          <Loader open={isLoadingShipmentTemplates
+            || isLoadingCustodians
+            || isLoadingCustodianTypes
+            || isLoadingContact
+            || isLoadingUnits
+            || isLoadingItems
+            || isLoadingItemTypes
+            || isLoadingGateways
+            || isLoadingGatewayTypes
+            || isLoadingCustodies
+            || isAddingShipmentTemplate
+            || isEditingShipmentTemplate
+            || isDeletingShipmentTemplate
+            || isAddingShipment
+            || isEditingShipment
+            || isDeletingCustody}
+          />
+        )}
+      <Grid container spacing={2} alignItems="center" justifyContent="center">
+        <Grid item xs={8}>
+          <Typography variant="h5">
+            {formTitle}
+          </Typography>
+        </Grid>
+        <Grid item xs={4}>
+          <TextField
+            variant="outlined"
+            id="template"
+            select
+            fullWidth
+            placeholder="Select..."
+            label="Templates"
+            value={template}
+            onChange={(e) => handleTemplateChange(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            SelectProps={{ displayEmpty: true }}
+            disabled={cannotEdit}
+          >
+            <MenuItem value="">Select</MenuItem>
+            {!_.isEmpty(shipmentTemplateData) && _.map(shipmentTemplateData, (tmp) => (
+              <MenuItem key={tmp.template_uuid} value={tmp}>
+                {tmp.name}
+              </MenuItem>
+            ))}
+            <MenuItem value="all">
+              <Typography style={{ color: theme.palette.primary.main, textDecoration: 'underline' }}>
+                See all templates...
+              </Typography>
+            </MenuItem>
+          </TextField>
+        </Grid>
+      </Grid>
+      {!!template && (
+        <Grid container className="createShipmentNameContainer">
+          <Grid item xs={6} md={8} className="createShipmentNameHeader">
+            <Typography variant="body1" fontWeight={800}>
+              Template name
+            </Typography>
+          </Grid>
+          <Grid item xs={6} md={4} className="createShipmentNameHeader">
+            <Typography variant="body1" fontWeight={800}>
+              Actions
+            </Typography>
+          </Grid>
+          <Grid item xs={6} md={8} className="createShipmentNameData">
+            {!templateName && (
+              <Typography component="div" style={{ padding: `${theme.spacing(1)} 0` }}>
+                {template.name}
+              </Typography>
+            )}
+            {templateName && (
+              <TextField
+                variant="outlined"
+                id="template-name"
+                fullWidth
+                placeholder="32 characters maximum"
+                value={templateName}
+                onChange={(e) => setTemplateName(e.target.value)}
+                helperText="There is a 32-character limit on template names"
+                inputProps={{ maxLength: 32 }}
+                disabled={cannotEdit}
+              />
+            )}
+          </Grid>
+          <Grid item xs={6} md={4} className="createShipmentNameData">
+            {!templateName && (
+              <div>
+                <IconButton
+                  style={{
+                    border: `1px solid ${theme.palette.primary.main}`,
+                    borderRadius: theme.spacing(1),
+                  }}
+                  disabled={cannotEdit}
+                  onClick={(e) => setTemplateName(template.name)}
                 >
-                  <Grid container spacing={isDesktop ? 2 : 0}>
-                    {/* <Grid item xs={12}>
-                      <Button
-                        type="button"
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        className={classes.submit}
-                        disabled={show_start_custody}
-                        onClick={() => setShowStartCustody(true)}
-                      >
-                        <AddIcon />
-                        {' '}
-                        Add Shipment Origin
-                      </Button>
-                    </Grid> */}
-                    {/* { show_start_custody && ( */}
-                    <Grid item xs={12} className={classes.inputWithTooltip}>
-                      <TextField
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        required
-                        disabled={viewOnly}
-                        select
-                        id="start_of_custody"
-                        label="Origin Company"
-                        onBlur={(e) => handleBlur(e, 'required', start_of_custody, 'start_of_custody')}
-                        value={start_of_custody}
-                        onChange={(event) => onInputChange(event.target.value, 'custodian', 'start')}
-                      >
-                        <MenuItem value="">Select</MenuItem>
-                        {custodianList
-                    && _.map(
-                      _.orderBy(custodianList, ['name'], ['asc']),
-                      (item, index) => (
-                        <MenuItem
-                          key={`custodian${index}:${item.id}`}
-                          value={item.url}
-                        >
-                          {item.name}
+                  <EditIcon htmlColor={theme.palette.primary.main} />
+                </IconButton>
+                <IconButton
+                  style={{
+                    border: `1px solid ${theme.palette.primary.main}`,
+                    borderRadius: theme.spacing(1),
+                    marginLeft: theme.spacing(2),
+                  }}
+                  disabled={cannotEdit}
+                  onClick={(e) => setConfirmDelete(true)}
+                >
+                  <DeleteIcon htmlColor={theme.palette.primary.main} />
+                </IconButton>
+              </div>
+            )}
+            {templateName && (
+              <div>
+                <Button
+                  type="button"
+                  variant="outlined"
+                  disabled={cannotEdit}
+                  onClick={(e) => setTemplateName('')}
+                  className="createShipmentActionButtons2"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  variant="contained"
+                  style={{ padding: `${theme.spacing(1.75)} ${theme.spacing(5)}` }}
+                  disabled={_.isEqual(template.name, templateName) || cannotEdit}
+                  onClick={saveTemplateName}
+                >
+                  Save
+                </Button>
+              </div>
+            )}
+          </Grid>
+        </Grid>
+      )}
+      <form className="createShipmentForm" noValidate>
+        <Box mt={2}>
+          <FormControl fullWidth component="fieldset" variant="outlined" className="createShipmentFieldset">
+            <FormLabel component="legend" className="createShipmentLegend">
+              Shipment Details
+            </FormLabel>
+            <Grid container spacing={isDesktop ? 4 : 0}>
+              <Grid item xs={12} sm={6}>
+                <Grid container spacing={2}>
+                  <Grid item xs={8}>
+                    <TextField
+                      variant="outlined"
+                      id="origin-custodian"
+                      select
+                      fullWidth
+                      placeholder="Select..."
+                      label="Origin Custodian"
+                      onBlur={(e) => handleBlur(e, 'required', originCustodian, 'origin-custodian')}
+                      value={originCustodian}
+                      onChange={(e) => onInputChange(e.target.value, 'custodian', 'start')}
+                      InputLabelProps={{ shrink: true }}
+                      SelectProps={{ displayEmpty: true }}
+                      disabled={cannotEdit}
+                    >
+                      <MenuItem value="">Select</MenuItem>
+                      {!_.isEmpty(custodianList) && _.map(custodianList, (cust) => (
+                        <MenuItem key={cust.custodian_uuid} value={cust.url}>
+                          {cust.name}
                         </MenuItem>
-                      ),
-                    )}
-                      </TextField>
-                      <span className={classes.asterisk}>*</span>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        required
-                        disabled
-                        id="start_of_custody_address"
-                        label="Origin Address"
-                        name="start_of_custody_address"
-                        autoComplete="start_of_custody_address"
-                        value={start_of_custody_address}
-                        onChange={(e) => getLatLong(e.target.value, 'start')}
-                        InputProps={{
-                          endAdornment: <InputAdornment position="end"><LocationIcon style={{ color: '#fff' }} /></InputAdornment>,
-                        }}
-                      />
-                      <MapComponent
-                        isMarkerShown
-                        googleMapURL={window.env.MAP_API_URL}
-                        zoom={10}
-                        loadingElement={
-                          <div style={{ height: '100%' }} />
-                  }
-                        containerElement={
-                          <div style={{ height: '200px', marginTop: '10px' }} />
-                  }
-                        mapElement={
-                          <div style={{ height: '100%' }} />
-                  }
-                        markers={[
-                          {
-                            lat: start_of_custody_location
-                      && parseFloat(start_of_custody_location.split(',')[0]),
-                            lng: start_of_custody_location
-                      && parseFloat(start_of_custody_location.split(',')[1]),
-                            radius: organization.radius,
-                          },
-                        ]}
-                        geofence={
-                    editData
-                    && editData.start_of_custody_location_geofence
-                  }
-                      />
-                    </Grid>
-                    {/* ) } */}
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <TextField
+                      variant="outlined"
+                      id="origin-custodian-abbreviation"
+                      label="ID"
+                      disabled
+                      value={originAbb}
+                    />
+                  </Grid>
+                  <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
+                  <Grid item xs={11}>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      disabled
+                      id="starting-address"
+                      label="Starting Address"
+                      name="starting-address"
+                      autoComplete="starting-address"
+                      value={startingAddress}
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end"><LocationIcon /></InputAdornment>,
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
+                  <Grid item xs={11}>
+                    <MapComponent
+                      isMarkerShown
+                      googleMapURL={window.env.MAP_API_URL}
+                      zoom={10}
+                      loadingElement={<div style={{ height: '100%' }} />}
+                      containerElement={<div style={{ height: '300px', marginTop: '10px' }} />}
+                      mapElement={<div style={{ height: '100%' }} />}
+                      markers={[
+                        {
+                          lat: startingLocation && _.includes(startingLocation, ',') && parseFloat(startingLocation.split(',')[0]),
+                          lng: startingLocation && _.includes(startingLocation, ',') && parseFloat(startingLocation.split(',')[1]),
+                          radius: (organization && organization.radius) || 0,
+                        },
+                      ]}
+                      unitOfMeasure={unitData}
+                    />
                   </Grid>
                 </Grid>
-
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  sx={{ padding: '8px' }}
-                >
-                  <Grid container spacing={isDesktop ? 2 : 0}>
-                    {/* <Grid item xs={12}>
-                      <Button
-                        type="button"
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        className={classes.submit}
-                        required
-                        disabled={show_end_custody}
-                        onClick={() => setShowEndCustody(true)}
-                      >
-                        <AddIcon />
-                        {' '}
-                        Add Shipment Destination
-                      </Button>
-                    </Grid>
-                    {show_end_custody && ( */}
-                    <Grid item xs={12} className={classes.inputWithTooltip}>
-                      <TextField
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        required
-                        disabled={viewOnly}
-                        select
-                        id="end_of_custody"
-                        label="Destination Company"
-                        onBlur={(e) => handleBlur(e, 'required', end_of_custody, 'end_of_custody')}
-                        value={end_of_custody}
-                        onChange={(event) => onInputChange(event.target.value, 'custodian', 'end')}
-                      >
-                        <MenuItem value="">Select</MenuItem>
-                        {custodianList
-                    && _.map(
-                      _.orderBy(custodianList, ['name'], ['asc']),
-                      (item, index) => (
-                        <MenuItem
-                          key={`custodian${index}:${item.id}`}
-                          value={item.url}
-                        >
-                          {item.name}
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Grid container spacing={2} mt={isMobile() ? 1.5 : -2}>
+                  <Grid item xs={8}>
+                    <TextField
+                      variant="outlined"
+                      id="destination-custodian"
+                      select
+                      fullWidth
+                      placeholder="Select..."
+                      label="Destination Custodian"
+                      onBlur={(e) => handleBlur(e, 'required', destinationCustodian, 'destination-custodian')}
+                      value={destinationCustodian}
+                      onChange={(e) => onInputChange(e.target.value, 'custodian', 'end')}
+                      InputLabelProps={{ shrink: true }}
+                      SelectProps={{ displayEmpty: true }}
+                      disabled={cannotEdit}
+                    >
+                      <MenuItem value="">Select</MenuItem>
+                      {!_.isEmpty(custodianList) && _.map(custodianList, (cust) => (
+                        <MenuItem key={cust.custodian_uuid} value={cust.url}>
+                          {cust.name}
                         </MenuItem>
-                      ),
-                    )}
-                      </TextField>
-                      <span className={classes.asterisk}>*</span>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        required
-                        id="end_of_custody_address"
-                        label="Destination Address"
-                        name="end_of_custody_address"
-                        disabled
-                        autoComplete="end_of_custody_address"
-                        value={end_of_custody_address}
-                        onChange={(e) => getLatLong(e.target.value, 'end')}
-                        InputProps={{
-                          endAdornment: <InputAdornment position="end"><LocationIcon style={{ color: '#fff' }} /></InputAdornment>,
-                        }}
-                      />
-                      <MapComponent
-                        isMarkerShown
-                        googleMapURL={window.env.MAP_API_URL}
-                        zoom={10}
-                        loadingElement={
-                          <div style={{ height: '100%' }} />
-                  }
-                        containerElement={
-                          <div style={{ height: '200px', marginTop: '10px' }} />
-                  }
-                        mapElement={
-                          <div style={{ height: '100%' }} />
-                  }
-                        markers={[
-                          {
-                            lat: end_of_custody_location
-                      && parseFloat(end_of_custody_location.split(',')[0]),
-                            lng: end_of_custody_location
-                      && parseFloat(end_of_custody_location.split(',')[1]),
-                            radius: organization.radius,
-                          },
-                        ]}
-                        geofence={
-                    editData
-                    && editData.end_of_custody_location_geofence
-                  }
-                      />
-                    </Grid>
-                    {/* ) } */}
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <TextField
+                      variant="outlined"
+                      id="destination-custodian-abbreviation"
+                      label="ID"
+                      disabled
+                      value={destinationAbb}
+                    />
+                  </Grid>
+                  <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
+                  <Grid item xs={11}>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      disabled
+                      id="ending-address"
+                      label="Ending Address"
+                      name="ending-address"
+                      autoComplete="ending-address"
+                      value={endingAddress}
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end"><LocationIcon /></InputAdornment>,
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
+                  <Grid item xs={11}>
+                    <MapComponent
+                      isMarkerShown
+                      googleMapURL={window.env.MAP_API_URL}
+                      zoom={10}
+                      loadingElement={<div style={{ height: '100%' }} />}
+                      containerElement={<div style={{ height: '300px', marginTop: '10px' }} />}
+                      mapElement={<div style={{ height: '100%' }} />}
+                      markers={[
+                        {
+                          lat: endingLocation && _.includes(endingLocation, ',') && parseFloat(endingLocation.split(',')[0]),
+                          lng: endingLocation && _.includes(endingLocation, ',') && parseFloat(endingLocation.split(',')[1]),
+                          radius: (organization && organization.radius) || 0,
+                        },
+                      ]}
+                      unitOfMeasure={unitData}
+                    />
                   </Grid>
                 </Grid>
-                <Divider
-                  orientation="horizontal"
-                  light
-                  className={classes.divider}
+              </Grid>
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 1.5 : -2.5} className="createShipmentAdjustSpacing">
+                <DatePickerComponent
+                  label="Shipment start"
+                  selectedDate={moment(departureDateTime).tz(data)}
+                  disabled={cannotEdit}
+                  hasTime
+                  handleDateChange={(value) => {
+                    setDepartureDateTime(value);
+                    setArrivalDateTime(value);
+                  }}
+                  dateFormat={
+                    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                      : ''
+                  }
+                  timeFormat={
+                    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                      : ''
+                  }
                 />
               </Grid>
-              <Grid container spacing={2}>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  sx={{ padding: '8px' }}
-                >
-                  <Grid container spacing={isDesktop ? 2 : 0}>
-                    <Grid
-                      item
-                      xs={12}
-                      className={classes.inputWithTooltip}
-                    >
-                      <TextField
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        required
-                        id="mode_type"
-                        select
-                        label="Transportation type"
-                        disabled={viewOnly}
-                        onBlur={(e) => handleBlur(e, 'required', mode_type, 'mode_type')}
-                        {...mode_type.bind}
-                      >
-                        <MenuItem value="">Select</MenuItem>
-                        {TRANSPORT_MODE
-                      && _.map(
-                        _.orderBy(TRANSPORT_MODE, ['value'], ['asc']),
-                        (item, index) => (
-                          <MenuItem
-                            key={`transportMode${index}:${item.value}`}
-                            value={item.value}
-                          >
-                            {item.label}
-                          </MenuItem>
-                        ),
-                      )}
-                      </TextField>
-                      <span className={classes.asterisk}>*</span>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      className={classes.inputWithTooltip}
-                    >
-                      <Autocomplete
-                        multiple
-                        id="items-outlined"
-                        disabled={viewOnly}
-                        disableCloseOnSelect
-                        fullWidth
-                        className={classes.autoComplete}
-                        options={
-                    (
-                      itemData
-                      && _.orderBy(
-                        itemData,
-                        ['name'],
-                        ['asc'],
-                      )
-                    ) || []
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 0 : -2.5} className={isMobile() ? 'createShipmentAdjustSpacing' : ''}>
+                <DatePickerComponent
+                  label="Shipment end"
+                  selectedDate={moment(arrivalDateTime).tz(data)}
+                  disabled={cannotEdit}
+                  hasTime
+                  handleDateChange={setArrivalDateTime}
+                  dateFormat={
+                    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                      : ''
                   }
-                        getOptionLabel={(option) => (
-                          option
-                    && option.name
-                        )}
-                        isOptionEqualToValue={(option, value) => (
-                          option.url === value
-                        )}
-                        value={itemIds}
-                        onChange={(event, newValue) => onInputChange(newValue, 'item', null)}
-                        renderTags={(value, getTagProps) => (
-                          _.map(value, (option, index) => (
-                            <Chip
-                              variant="default"
-                              key={`item-${index}:${option}`}
-                              label={
-                                !_.isEmpty(itemData) && _.find(itemData, { url: option })
-                                  ? _.find(itemData, { url: option }).name
-                                  : ''
-                              }
-                              {...getTagProps({ index })}
-                            />
-                          ))
-                        )}
-                        // eslint-disable-next-line no-shadow
-                        renderOption={(props, option, { selected }) => (
-                          <li {...props} key={`item-${option.id}-${option.name}`}>
-                            <Checkbox
-                              icon={icon}
-                              checkedIcon={checkedIcon}
-                              style={{ marginRight: 8, color: '#fff' }}
-                              checked={selected}
-                            />
-                            {option.name}
-                          </li>
-                        )}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            disabled={viewOnly}
-                            variant="outlined"
-                            label="Product to be shipped"
-                            placeholder="Select a product"
-                          />
-                        )}
-                      />
-                      <span className={classes.asterisk}>*</span>
-                    </Grid>
-
-                  </Grid>
-
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  sx={{ padding: '8px' }}
+                  timeFormat={
+                    _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                      ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                      : ''
+                  }
+                />
+              </Grid>
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 2 : 0}>
+                <TextField
+                  variant="outlined"
+                  id="status"
+                  select
+                  fullWidth
+                  placeholder="Select..."
+                  label="Shipment Status"
+                  onBlur={(e) => handleBlur(e, 'required', status, 'status')}
+                  InputLabelProps={{ shrink: true }}
+                  SelectProps={{ displayEmpty: true }}
+                  {...status.bind}
+                  disabled={cannotEdit && !isAdmin}
                 >
-                  <Grid container spacing={isDesktop ? 2 : 0}>
-                    <Grid item xs={6}>
-                      <Grid
-                        item
-                        xs={12}
-                        className={classes.inputWithTooltip}
-                      >
-                        <TextField
-                          variant="outlined"
-                          margin="normal"
-                          fullWidth
-                          required
-                          id="max_excursion_temp"
-                          label="Temp warning: HIGH"
-                          name="max_excursion_temp"
-                          autoComplete="max_excursion_temp"
-                          value={max_excursion_temp}
-                          disabled={viewOnly}
-                          onBlur={(e) => handleBlur(e, 'required', max_excursion_temp, 'max_excursion_temp')}
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end"><TempIcon style={{ color: '#fff' }} /></InputAdornment>,
-                          }}
-                          {...max_excursion_temp.bind}
-                        />
-                        <span className={classes.asterisk}>*</span>
-                      </Grid>
-                      <Grid
-                        item
-                        xs={12}
-                        className={classes.envInput}
-                      >
-                        <TextField
-                          variant="outlined"
-                          margin="normal"
-                          fullWidth
-                          id="min_excursion_temp"
-                          label="Temp warning: LOW"
-                          required
-                          name="min_excursion_temp"
-                          autoComplete="min_excursion_temp"
-                          value={min_excursion_temp}
-                          disabled={viewOnly}
-                          onBlur={(e) => handleBlur(e, 'required', min_excursion_temp, 'min_excursion_temp')}
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end"><TempIcon style={{ color: '#fff' }} /></InputAdornment>,
-                          }}
-                          {...min_excursion_temp.bind}
-                        />
-                        <span className={classes.asterisk}>*</span>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Grid
-                        item
-                        xs={12}
-                        className={classes.inputWithTooltip}
-                      >
-                        <TextField
-                          variant="outlined"
-                          margin="normal"
-                          fullWidth
-                          id="max_excursion_humidity"
-                          label="Humidity warning: HIGH"
-                          required
-                          name="max_excursion_humidity"
-                          autoComplete="max_excursion_humidity"
-                          value={max_excursion_humidity}
-                          disabled={viewOnly}
-                          onBlur={(e) => handleBlur(e, 'required', max_excursion_humidity, 'max_excursion_humidity')}
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end"><HumidIcon style={{ color: '#fff' }} /></InputAdornment>,
-                          }}
-                          {...max_excursion_humidity.bind}
-                        />
-                        <span className={classes.asterisk}>*</span>
-                      </Grid>
-                      <Grid
-                        item
-                        xs={12}
-                        className={classes.envInput}
-                      >
-                        <TextField
-                          variant="outlined"
-                          margin="normal"
-                          fullWidth
-                          required
-                          id="min_excursion_humidity"
-                          label="Humidity warning: LOW"
-                          name="min_excursion_humidity"
-                          autoComplete="min_excursion_humidity"
-                          value={min_excursion_humidity}
-                          disabled={viewOnly}
-                          onBlur={(e) => handleBlur(e, 'required', min_excursion_humidity, 'min_excursion_humidity')}
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end"><HumidIcon style={{ color: '#fff' }} /></InputAdornment>,
-                          }}
-                          {...min_excursion_humidity.bind}
-                        />
-                        <span className={classes.asterisk}>*</span>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-
-                </Grid>
-                <Grid item xs={10} sm={8} />
-                {/* <Grid
-                  item
-                  xs={2}
-                  sm={4}
-                  display="flex"
-                  alignItems="flex-end"
-                  justifyContent="flex-end"
-                >
-                  <Button
-                    variant="contained"
-                    className={classes.addButton}
-                    size="medium"
-                    fullWidth
-                    disableElevation
-                  >
-                    Save as Template
-                  </Button>
-                </Grid> */}
+                  <MenuItem value="">Select</MenuItem>
+                  {_.isEmpty(editData) && _.map(CREATE_SHIPMENT_STATUS, (st, idx) => (
+                    <MenuItem key={`${idx}-${st.label}`} value={st.value}>
+                      {st.label}
+                    </MenuItem>
+                  ))}
+                  {!cannotEdit && !isAdmin && _.map(USER_SHIPMENT_STATUS, (st, idx) => (
+                    <MenuItem key={`${idx}-${st.label}`} value={st.value}>
+                      {st.label}
+                    </MenuItem>
+                  ))}
+                  {((cannotEdit && isAdmin) || (!_.isEmpty(editData) && !cannotEdit && isAdmin))
+                    && _.map([...CREATE_SHIPMENT_STATUS, ...ADMIN_SHIPMENT_STATUS], (st, idx) => (
+                      <MenuItem key={`${idx}-${st.label}`} value={st.value}>
+                        {st.label}
+                      </MenuItem>
+                    ))}
+                </TextField>
               </Grid>
-            </FormControl>
-
-            <FormControl
-              component="fieldset"
-              variant="outlined"
-              color="primary"
-              className={classes.fieldset}
-            >
-              <FormLabel
-                component="legend"
-                className={classes.legend}
-              >
-                Additional information
-              </FormLabel>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6} sx={{ padding: '8px' }}>
-                  <Grid container spacing={isDesktop ? 2 : 0} display="flex" justifyItems="space-between" flexDirection="row">
-                    <Grid item xs={2} sm={4}>
-                      <TextField
-                        variant="outlined"
-                        margin="normal"
-                        id="org_name"
-                        name="org_name"
-                        autoComplete="org_name"
-                        disabled
-                        onBlur={(e) => handleBlur(e, 'required', org_name, 'org_name')}
-                        {...org_name.bind}
+              <Grid item xs={1} className="createShipmentOuterAsterisk" mt={isMobile() ? -1.75 : 0}>*</Grid>
+              <Grid item xs={11} sm={11.5} mt={isMobile() ? 2 : 0} mb={isMobile() ? 2 : 0}>
+                <Autocomplete
+                  multiple
+                  id="items-multiple"
+                  disabled={cannotEdit}
+                  disableCloseOnSelect
+                  filterSelectedOptions
+                  options={_.orderBy(itemData, ['name'], ['asc'])}
+                  getOptionLabel={(option) => option && option.name}
+                  isOptionEqualToValue={(option, value) => (
+                    !value || (value && (option.url === value))
+                  )}
+                  value={items}
+                  onChange={(event, newValue) => onInputChange(newValue, 'item', null)}
+                  renderTags={(value, getTagProps) => (
+                    _.map(value, (option, index) => (
+                      <Chip
+                        variant="default"
+                        label={
+                          !_.isEmpty(itemData) && _.find(itemData, { url: option })
+                            ? _.find(itemData, { url: option }).name
+                            : ''
+                        }
+                        {...getTagProps({ index })}
                       />
-
-                    </Grid>
-                    <Grid item xs={10} sm={8} className={classes.inputWithTooltip}>
-                      <TextField
-                        variant="outlined"
-                        required
-                        margin="normal"
-                        fullWidth
-                        id="order_number"
-                        label="Order Number"
-                        name="order_number"
-                        autoComplete="order_number"
-                        disabled={viewOnly}
-                        onBlur={(e) => handleBlur(e, 'required', order_number, 'order_number')}
-                        {...order_number.bind}
+                    ))
+                  )}
+                  renderOption={(props, option, { selected }) => (
+                    <li {...props}>
+                      <Checkbox
+                        icon={uncheckedIcon}
+                        checkedIcon={checkedIcon}
+                        style={{ marginRight: 8 }}
+                        checked={selected}
                       />
-                      <span className={classes.asterisk}>*</span>
-                    </Grid>
-
-                  </Grid>
-
-                </Grid>
+                      {option.name}
+                    </li>
+                  )}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="Items to be shipped"
+                      placeholder="Select..."
+                    />
+                  )}
+                />
               </Grid>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6} sx={{ padding: '8px' }}>
-                  <Grid container spacing={isDesktop ? 2 : 0}>
-                    <Grid item xs={12}>
-                      <TextField
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        id="purchase_order_number"
-                        label="Purchase Order Number"
-                        name="purchase_order_number"
-                        autoComplete="purchase_order_number"
-                        disabled={viewOnly}
-                        {...purchase_order_number.bind}
-                      />
-                      <Grid item xs={12} display="flex" justifyContent="space-between">
-                        <DatePickerComponent
-                          label="Pick-up Date"
-                          fullWidth
-                          required
-                          selectedDate={
-                        moment(scheduled_departure).tz(timezone)
-                          .format('MMMM DD, YYYY HH:mm:ss')
-                      }
-                          handleDateChange={handleDepartureDateChange}
-                          disabled={viewOnly}
-                        />
-                        <TimePickerComponent
-                          label="Pick-up Time"
-                          fullWidth
-                          required
-                          selectedTime={
-                        moment(scheduled_departure).tz(timezone)
-                          .format('MMMM DD, YYYY HH:mm:ss')
-                      }
-                          handleTimeChange={handleDepartureDateChange}
-                          disabled={viewOnly}
-                        />
-                      </Grid>
-
-                      <TextField
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        required
-                        id="carrier"
-                        select
-                        label="Carrier"
-                        disabled={viewOnly}
-                        onBlur={(e) => handleBlur(e, 'required', carrier, 'carrier')}
-                        {...carrier.bind}
-                      >
-                        <MenuItem value="">Select</MenuItem>
-                        {CARRIER
-                      && _.map(
-                        _.orderBy(CARRIER, ['value'], ['asc']),
-                        (item, index) => (
-                          <MenuItem
-                            key={`carrier${index}:${item.value}`}
-                            value={item.value}
-                          >
-                            {item.label}
-                          </MenuItem>
-                        ),
-                      )}
-                      </TextField>
-                    </Grid>
-
-                  </Grid>
-                </Grid>
-                <Grid item xs={12} sm={6} sx={{ padding: '8px' }}>
-                  <Grid
-                    container
-                    spacing={isDesktop ? 2 : 0}
-                  >
-                    <Grid item xs={12}>
-                      <TextField
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        id="shipper_number"
-                        label="Shipper Number"
-                        name="shipper_number"
-                        autoComplete="shipper_number"
-                        disabled={viewOnly}
-                        {...shipper_number.bind}
-                      />
-                      <Grid item xs={12} display="flex" justifyContent="space-between">
-                        <DatePickerComponent
-                          label="Drop-off Date"
-                          fullWidth
-                          required
-                          selectedDate={
-                        moment(scheduled_arrival).tz(timezone)
-                          .format('MMMM DD, YYYY HH:mm:ss')
-                      }
-                          handleDateChange={handleArrivalDateChange}
-                          disabled={viewOnly}
-                        />
-                        <TimePickerComponent
-                          label="Drop-off Time"
-                          fullWidth
-                          required
-                          selectedTime={
-                        moment(scheduled_arrival).tz(timezone)
-                          .format('MMMM DD, YYYY HH:mm:ss')
-                      }
-                          handleTimeChange={handleArrivalDateChange}
-                          disabled={viewOnly}
-                        />
-                      </Grid>
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        className={classes.addButton}
-                        size="large"
-                        disableElevation
-                        onClick={() => {
-                          history.push(addCustodianPath, {
-                            from: routes.CREATE_SHIPMENT,
-                          });
-                        }}
-                      >
-                        <AddIcon />
-                        {' '}
-                        Add Custodian
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </FormControl>
-
-            <FormControl
-              component="fieldset"
-              variant="outlined"
-              color="primary"
-              className={classes.fieldset}
-            >
-              <FormLabel
-                component="legend"
-                className={classes.legend}
-              >
-                Gateway
-              </FormLabel>
-              <Grid container spacing={2}>
-                <Grid item xs={6} className={classes.inputWithTooltip}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="platform_name"
-                    select
-                    label="Gateway Platform"
-                    disabled={
-                        viewOnly
-                      }
-                    value={platform_name}
-                    onChange={(e) => setPlatformName(e.target.value)}
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {SENSOR_PLATFORM
-                      && _.map(
-                        _.orderBy(SENSOR_PLATFORM, ['value'], ['asc']),
-                        (item, index) => (
-                          <MenuItem
-                            key={`sensorPlatform${index}:${item.value}`}
-                            value={item.value}
-                          >
-                            {item.label}
-                          </MenuItem>
-                        ),
-                      )}
-                  </TextField>
-                  <span className={classes.asterisk}>*</span>
-                </Grid>
-                <Grid item xs={6} className={classes.inputWithTooltip}>
-                  <Autocomplete
-                    multiple
-                    id="gateways-outlined"
-                    fullWidth
-                    disableCloseOnSelect
-                    options={gatewayOptions}
-                    getOptionLabel={(option) => (
-                      option
-                    && option.name
-                    )}
-                    isOptionEqualToValue={(option, value) => (
-                      option.gateway_uuid === value
-                    )}
-                    filterSelectedOptions
-                    value={gatewayIds}
-                    onChange={(event, newValue) => onInputChange(newValue, 'gateway', null)}
-                    renderTags={(value, getTagProps) => (
-                      _.map(value, (option, index) => (
-                        <Chip
-                          variant="default"
-                          label={
-                            !_.isEmpty(gatewayData) && _.find(gatewayData, { gateway_uuid: option })
-                              ? _.find(gatewayData, { gateway_uuid: option }).name
-                              : ''
-                          }
-                          {...getTagProps({ index })}
-                        />
-                      ))
-                    )}
-                    // eslint-disable-next-line no-shadow
-                    renderOption={(props, option, { selected }) => (
-                      <li {...props} key={`gateway-${option.id}-${option.name}`}>
-                        <Checkbox
-                          icon={icon}
-                          checkedIcon={checkedIcon}
-                          style={{ marginRight: 8, color: '#fff' }}
-                          checked={selected}
-                        />
-                        {option.name}
-                      </li>
-                    )}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        disabled={viewOnly}
-                        label="Gateway Label"
-                        variant="outlined"
-                        placeholder="Select a Gateway"
-                      />
+              <Grid item xs={1} sm={0.5} className="createShipmentOuterAsterisk" mt={isMobile() ? -2 : 0}>*</Grid>
+              {!_.isEmpty(itemRows) && (
+                <Grid item xs={11.5} pt={0}>
+                  <DataTableWrapper
+                    hideAddButton
+                    noOptionsIcon
+                    noSpace
+                    rows={itemRows}
+                    columns={itemColumns(
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency'))
+                        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'currency')).unit_of_measure
+                        : '',
                     )}
                   />
-                  <span className={classes.asterisk}>*</span>
                 </Grid>
+              )}
+              <Grid item xs={12} sm={5.75} lg={3.83} mt={isMobile() ? 2.5 : 0}>
+                <div className="createShipmentFieldset">
+                  <Grid container alignItems="center">
+                    <Grid item xs={10}>
+                      <Typography variant="body1" fontWeight={700}>TEMPERATURE</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Tooltip title="Temperature Alerts" placement="bottom">
+                        <FormControlLabel
+                          control={(
+                            <Switch
+                              color="primary"
+                              checked={supressTempAlerts.value}
+                              onChange={(e) => supressTempAlerts.setValue(e.target.checked)}
+                            />
+                          )}
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
+                  <Typography mt={2} mb={0.95} className="createShipmentAlertSettingText">
+                    <span className="createShipmentHighest">HIGHEST</span>
+                    {' safe temperature'}
+                  </Typography>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    disabled={cannotEdit || !supressTempAlerts.value}
+                    type="number"
+                    className="createShipmentNumberInput"
+                    id="max_excursion_temp"
+                    name="max_excursion_temp"
+                    autoComplete="max_excursion_temp"
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start"><TemperatureIcon /></InputAdornment>,
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          {
+                            _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                              && _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
+                              ? <span>&#8457;</span>
+                              : <span>&#8451;</span>
+                          }
+                        </InputAdornment>
+                      ),
+                    }}
+                    onBlur={(e) => handleBlur(e, 'required', max_excursion_temp, 'max_excursion_temp')}
+                    value={max_excursion_temp.value}
+                    onChange={(e) => max_excursion_temp.setValue(_.toString(e.target.value))}
+                  />
+                  <Typography mt={3} mb={0.95} className="createShipmentAlertSettingText">
+                    <span className="createShipmentLowest">LOWEST</span>
+                    {' safe temperature'}
+                  </Typography>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    disabled={cannotEdit || !supressTempAlerts.value}
+                    type="number"
+                    className="createShipmentNumberInput"
+                    id="min_excursion_temp"
+                    name="min_excursion_temp"
+                    autoComplete="min_excursion_temp"
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start"><TemperatureIcon /></InputAdornment>,
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          {
+                            _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature'))
+                              && _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure === UOM_TEMPERATURE_CHOICES[0]
+                              ? <span>&#8457;</span>
+                              : <span>&#8451;</span>
+                          }
+                        </InputAdornment>
+                      ),
+                    }}
+                    onBlur={(e) => handleBlur(e, 'required', min_excursion_temp, 'min_excursion_temp')}
+                    value={min_excursion_temp.value}
+                    onChange={(e) => min_excursion_temp.setValue(_.toString(e.target.value))}
+                  />
+                </div>
               </Grid>
-            </FormControl>
-
-            <Grid container spacing={2} marginTop="0.5rem">
-              <Grid item xs={0} sm={5} />
-              <Grid item xs={12} sm={4} className={classes.flexContainer}>
-                <TextField
-                  variant="outlined"
-                  required
-                  margin="normal"
-                  id="org_name"
-                  name="org_name"
-                  autoComplete="org_name"
-                  disabled
-                  onBlur={(e) => handleBlur(e, 'required', org_name, 'org_name')}
-                  {...org_name.bind}
-                  style={{
-                    width: '20%',
+              <Grid item xs={12} sm={5.75} lg={3.83}>
+                <div className="createShipmentFieldset">
+                  <Grid container alignItems="center">
+                    <Grid item xs={10}>
+                      <Typography variant="body1" fontWeight={700}>HUMIDITY</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Tooltip title="Humidity Alerts" placement="bottom">
+                        <FormControlLabel
+                          control={(
+                            <Switch
+                              color="primary"
+                              checked={supressHumidityAlerts.value}
+                              onChange={(e) => supressHumidityAlerts.setValue(e.target.checked)}
+                            />
+                          )}
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
+                  <Typography mt={2} mb={0.95} className="createShipmentAlertSettingText">
+                    <span className="createShipmentHighest">HIGHEST</span>
+                    {' safe humidity'}
+                  </Typography>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    disabled={cannotEdit || !supressHumidityAlerts.value}
+                    type="number"
+                    className="createShipmentNumberInput"
+                    id="max_excursion_humidity"
+                    name="max_excursion_humidity"
+                    autoComplete="max_excursion_humidity"
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start"><HumidityIcon /></InputAdornment>,
+                      endAdornment: <InputAdornment position="start">%</InputAdornment>,
+                    }}
+                    onBlur={(e) => handleBlur(e, 'required', max_excursion_humidity, 'max_excursion_humidity')}
+                    value={max_excursion_humidity.value}
+                    onChange={(e) => max_excursion_humidity.setValue(_.toString(e.target.value))}
+                  />
+                  <Typography mt={3} mb={0.95} className="createShipmentAlertSettingText">
+                    <span className="createShipmentLowest">LOWEST</span>
+                    {' safe humidity'}
+                  </Typography>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    disabled={cannotEdit || !supressHumidityAlerts.value}
+                    type="number"
+                    className="createShipmentNumberInput"
+                    id="min_excursion_humidity"
+                    name="min_excursion_humidity"
+                    autoComplete="min_excursion_humidity"
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start"><HumidityIcon /></InputAdornment>,
+                      endAdornment: <InputAdornment position="start">%</InputAdornment>,
+                    }}
+                    onBlur={(e) => handleBlur(e, 'required', min_excursion_humidity, 'min_excursion_humidity')}
+                    value={min_excursion_humidity.value}
+                    onChange={(e) => min_excursion_humidity.setValue(_.toString(e.target.value))}
+                  />
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={5.75} lg={3.83}>
+                <div className="createShipmentFieldset">
+                  <Typography variant="body1" component="div" fontWeight={700}>
+                    SHOCK & LIGHT
+                  </Typography>
+                  <Grid container alignItems="center" mt={2}>
+                    <Grid item xs={10}>
+                      <Typography className="createShipmentAlertSettingText">
+                        <span className="createShipmentHighest">MAX</span>
+                        {' shock'}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Tooltip title="Shock Alerts" placement="bottom">
+                        <FormControlLabel
+                          control={(
+                            <Switch
+                              color="primary"
+                              checked={supressShockAlerts.value}
+                              onChange={(e) => supressShockAlerts.setValue(e.target.checked)}
+                            />
+                          )}
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    disabled={cannotEdit || !supressShockAlerts.value}
+                    type="number"
+                    className="createShipmentNumberInput"
+                    id="shock_threshold"
+                    name="shock_threshold"
+                    autoComplete="shock_threshold"
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start"><ShockIcon /></InputAdornment>,
+                      endAdornment: <InputAdornment position="start">G</InputAdornment>,
+                    }}
+                    onBlur={(e) => handleBlur(e, 'required', shock_threshold, 'shock_threshold')}
+                    value={shock_threshold.value}
+                    onChange={(e) => shock_threshold.setValue(_.toString(e.target.value))}
+                  />
+                  <Grid container alignItems="center" mt={3}>
+                    <Grid item xs={10}>
+                      <Typography className="createShipmentAlertSettingText">
+                        <span className="createShipmentHighest">MAX</span>
+                        {' light'}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Tooltip title="Light Alerts" placement="bottom">
+                        <FormControlLabel
+                          control={(
+                            <Switch
+                              color="primary"
+                              checked={supressLightAlerts.value}
+                              onChange={(e) => supressLightAlerts.setValue(e.target.checked)}
+                            />
+                          )}
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    disabled={cannotEdit || !supressLightAlerts.value}
+                    type="number"
+                    className="createShipmentNumberInput"
+                    id="light_threshold"
+                    name="light_threshold"
+                    autoComplete="light_threshold"
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start"><LightIcon /></InputAdornment>,
+                      endAdornment: <InputAdornment position="start">lumens</InputAdornment>,
+                    }}
+                    onBlur={(e) => handleBlur(e, 'required', light_threshold, 'light_threshold')}
+                    value={light_threshold.value}
+                    onChange={(e) => light_threshold.setValue(_.toString(e.target.value))}
+                  />
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={11.5} textAlign="end">
+                <Button
+                  type="button"
+                  variant="contained"
+                  color="primary"
+                  disabled={isLoadingShipmentTemplates
+                    || isAddingShipmentTemplate
+                    || isEditingShipmentTemplate
+                    || isDeletingShipmentTemplate
+                    || saveTemplateDisabled()
+                    || cannotEdit}
+                  onClick={(e) => {
+                    const name = !!_.find(itemRows, { url: items[0] })
+                      && `${originAbb}-${destinationAbb}-${_.find(itemRows, { url: items[0] }).name}`;
+                    setSaveAsName(name);
+                    setShowTemplateDT(true);
                   }}
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  id="order_number"
-                  label="ORDER #"
-                  name="order_number"
-                  autoComplete="order_number"
-                  disabled
-                  onBlur={(e) => handleBlur(e, 'required', order_number, 'order_number')}
-                  {...order_number.bind}
-                  style={{
-                    flex: '2',
-                    width: '20%',
-                    marginLeft: '16px',
-                  }}
-                  className={classes.smallInput}
-                />
-                <TextField
-                  variant="outlined"
-                  required
-                  margin="normal"
-                  id="origin"
-                  label="ORIG"
-                  name="origin"
-                  disabled
-                  value={origin}
-                  className={classes.smallInput}
-                />
-                <TextField
-                  variant="outlined"
-                  required
-                  margin="normal"
-                  id="dest"
-                  label="DEST"
-                  name="dest"
-                  disabled
-                  value={dest}
-                  className={classes.smallInput}
-                />
+                >
+                  Save as Template
+                </Button>
               </Grid>
             </Grid>
+          </FormControl>
+          <FormControl fullWidth component="fieldset" variant="outlined" className="createShipmentFieldset">
+            <FormLabel component="legend" className="createShipmentLegend">
+              Order Information
+            </FormLabel>
+            <Grid container spacing={isDesktop ? 4 : 0}>
+              <Grid item xs={2}>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  disabled
+                  id="org-abbreviation"
+                  name="org-abbreviation"
+                  autoComplete="org-abbreviation"
+                  value={organization && organization.abbrevation}
+                />
+              </Grid>
+              <Grid item xs={8.5} sm={9.5} ml={isMobile() ? 2 : 0}>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  disabled={cannotEdit}
+                  id="shipment-name"
+                  name="shipment-name"
+                  label="Shipment Name"
+                  autoComplete="shipment-name"
+                  onBlur={(e) => handleBlur(e, 'required', shipmentName, 'shipment-name')}
+                  {...shipmentName.bind}
+                />
+              </Grid>
+              <Grid item xs={0.5} className="createShipmentOuterAsterisk" mt={isMobile() ? -4 : 0}>*</Grid>
+              <Grid item xs={5.25} sm={5.75} mt={isMobile() ? 2 : 0}>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  disabled={cannotEdit}
+                  id="purchase-order-number"
+                  name="purchase-order-number"
+                  label="Purchase Order Number"
+                  autoComplete="purchase-order-number"
+                  {...purchaseOrderNumber.bind}
+                />
+              </Grid>
+              <Grid item xs={5.25} sm={5.75} mt={isMobile() ? 2 : 0} ml={isMobile() ? 2 : 0}>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  disabled={cannotEdit}
+                  id="bill-of-lading"
+                  name="bill-of-lading"
+                  label="Bill Of Lading"
+                  autoComplete="bill-of-lading"
+                  {...billOfLading.bind}
+                />
+              </Grid>
+              <Grid item xs={8} md={9} lg={9.6} mt={isMobile() ? 1 : 0}>
+                <FormControl style={{ height: 64 }} fullWidth component="fieldset" variant="outlined" className="createShipmentAttachedFiles">
+                  <FormLabel component="legend" className="createShipmentLegend">
+                    Attached Files
+                  </FormLabel>
+                  <Stack direction="row" spacing={1} mt={-1}>
+                    {!_.isEmpty(files) && _.map(files, (file, idx) => (
+                      <Chip
+                        key={`${file.name}-${idx}`}
+                        variant="outlined"
+                        label={file.name}
+                        onDelete={(e) => setFiles(_.filter(files, (f, index) => (index !== idx)))}
+                      />
+                    ))}
+                    {!_.isEmpty(attachedFiles) && _.map(attachedFiles, (pdf, idx) => (
+                      <Chip
+                        key={`${pdf}-${idx}`}
+                        variant="outlined"
+                        label={pdf}
+                        onDelete={(e) => setAttachedFiles(_.filter(attachedFiles, (f, index) => (
+                          index !== idx
+                        )))}
+                      />
+                    ))}
+                  </Stack>
+                </FormControl>
+              </Grid>
+              <Grid item xs={3.5} md={2.5} lg={2} className="createShipmentFileButton" mt={isMobile() ? -3 : 0}>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  type="file"
+                  id="attach-files"
+                  name="attach-files"
+                  InputLabelProps={{ shrink: true }}
+                  inputProps={{ multiple: true }}
+                  onChange={fileChange}
+                  style={{ width: '128px', overflow: 'hidden' }}
+                />
+              </Grid>
+              <Grid item xs={12} mt={isMobile() ? 2 : 0}>
+                {!showNote && (
+                  <Button
+                    type="button"
+                    variant="contained"
+                    color="primary"
+                    disabled={cannotEdit}
+                    onClick={(e) => setShowNote(true)}
+                  >
+                    + Add a note
+                  </Button>
+                )}
+                {showNote && (
+                  <Grid container spacing={2}>
+                    <Grid item xs={10} sm={11.5}>
+                      <TextField
+                        variant="outlined"
+                        multiline
+                        fullWidth
+                        disabled={cannotEdit}
+                        maxRows={4}
+                        id="note"
+                        name="note"
+                        label="Note"
+                        autoComplete="note"
+                        {...note.bind}
+                      />
+                    </Grid>
+                    <Grid item xs={1} sm={0.5}>
+                      <Button
+                        type="button"
+                        disabled={cannotEdit}
+                        onClick={(e) => {
+                          note.setValue('');
+                          setShowNote(false);
+                        }}
+                      >
+                        <CancelIcon fontSize="large" className="createShipmentCancel" />
+                      </Button>
+                    </Grid>
+                  </Grid>
+                )}
+              </Grid>
+              {!_.isEmpty(additionalCustodians)
+                && _.map(additionalCustodians, (addCust, index) => (
+                  <Grid item xs={12} key={`${index}-${addCust.custodian_uuid}`}>
+                    <Grid container spacing={4} mt={0}>
+                      <Grid item xs={6} sm={5} lg={5.5}>
+                        <TextField
+                          id={`add-cust-${addCust.custodian_uuid}`}
+                          select
+                          fullWidth
+                          disabled={cannotEdit}
+                          placeholder="Select..."
+                          label={`Custodian ${index + 1}`}
+                          value={addCust}
+                          onChange={(e) => {
+                            const newList = _.map(
+                              additionalCustodians,
+                              (cust, idx) => (idx === index ? e.target.value : cust),
+                            );
+                            setAdditionalCustocations(newList);
+                          }}
+                          InputLabelProps={{ shrink: true }}
+                          SelectProps={{ displayEmpty: true }}
+                        >
+                          <MenuItem value="">Select</MenuItem>
+                          {!_.isEmpty(custodianList)
+                            && _.map(_.without(
+                              custodianList,
+                              _.find(custodianList, { url: originCustodian }),
+                              ..._.without(additionalCustodians, addCust),
+                              _.find(custodianList, { url: destinationCustodian }),
+                            ), (cust) => (
+                              <MenuItem key={cust.custodian_uuid} value={cust}>
+                                {cust.name}
+                              </MenuItem>
+                            ))}
+                        </TextField>
+                      </Grid>
+                      <Grid item xs={6} sm={2.5}>
+                        <TextField
+                          variant="outlined"
+                          id={`add-cust-abb-${addCust.custodian_uuid}`}
+                          label="ID"
+                          fullWidth
+                          disabled
+                          value={addCust.abbrevation}
+                        />
+                      </Grid>
+                      <Grid item xs={6} sm={3.5}>
+                        <TextField
+                          variant="outlined"
+                          id={`add-cust-type-${addCust.custodian_uuid}`}
+                          label="Custodian Type"
+                          fullWidth
+                          disabled
+                          value={addCust.type}
+                        />
+                      </Grid>
+                      <Grid item xs={6} sm={0.5}>
+                        <Button
+                          type="button"
+                          disabled={cannotEdit}
+                          onClick={(e) => {
+                            const newList = _.filter(
+                              additionalCustodians,
+                              (cust, idx) => (idx !== index),
+                            );
+                            setAdditionalCustocations(newList);
+                          }}
+                        >
+                          <CancelIcon fontSize="large" className="createShipmentCancel" />
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                ))}
+              <Grid item xs={11.5} mt={isMobile() ? 2 : 0}>
+                {showAddCustodian && (
+                  <TextField
+                    variant="outlined"
+                    id="additional-custodian"
+                    select
+                    fullWidth
+                    disabled={cannotEdit}
+                    placeholder="Select..."
+                    label="Add carriers/warehouses"
+                    onChange={(e) => {
+                      setAdditionalCustocations([...additionalCustodians, e.target.value]);
+                      setShowAddCustodian(false);
+                    }}
+                    InputLabelProps={{ shrink: true }}
+                    SelectProps={{ displayEmpty: true }}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {!_.isEmpty(custodianList)
+                      && _.map(_.without(
+                        custodianList,
+                        _.find(custodianList, { url: originCustodian }),
+                        ...additionalCustodians,
+                        _.find(custodianList, { url: destinationCustodian }),
+                      ), (cust) => (
+                        <MenuItem key={cust.custodian_uuid} value={cust}>
+                          {cust.name}
+                        </MenuItem>
+                      ))}
+                  </TextField>
+                )}
+                {!showAddCustodian && (
+                  <Button
+                    type="button"
+                    variant="contained"
+                    color="primary"
+                    disabled={cannotEdit}
+                    onClick={(e) => setShowAddCustodian(true)}
+                  >
+                    + Add carriers/warehouses
+                  </Button>
+                )}
+              </Grid>
+            </Grid>
+          </FormControl>
+          <FormControl fullWidth component="fieldset" variant="outlined" className="createShipmentFieldset">
+            <FormLabel component="legend" className="createShipmentLegend">
+              Tracker
+            </FormLabel>
+            <Grid container spacing={isDesktop ? 4 : 0}>
+              <Grid item xs={5} sm={5.5}>
+                <TextField
+                  id="gateway-type"
+                  select
+                  fullWidth
+                  placeholder="Select..."
+                  label="Tracker platform"
+                  onBlur={(e) => handleBlur(e, 'required', gatewayType, 'gateway-type')}
+                  disabled={
+                    (!_.isEmpty(editData)
+                      && !_.isEmpty(editData.gateway_imei)
+                      && !!_.find(gatewayData, { imei_number: _.toNumber(editData.gateway_imei[0]) }))
+                    || cannotEdit
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  SelectProps={{ displayEmpty: true }}
+                  {...gatewayType.bind}
+                >
+                  <MenuItem value="">Select</MenuItem>
+                  {!_.isEmpty(gatewayTypesData) && _.map(gatewayTypesData, (gtype) => (
+                    <MenuItem key={gtype.id} value={gtype.name}>
+                      {_.upperFirst(gtype.name)}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={1} sm={0.5} className="createShipmentOuterAsterisk" mt={isMobile() ? -3.5 : 0}>*</Grid>
+              <Grid item xs={5} sm={5.75} ml={isMobile() ? 2 : 0}>
+                <TextField
+                  id="gateway"
+                  select
+                  fullWidth
+                  placeholder="Select..."
+                  label="Tracker identifier"
+                  onBlur={(e) => handleBlur(e, 'required', gateway, 'gateway')}
+                  disabled={
+                    (!_.isEmpty(editData)
+                      && !_.isEmpty(editData.gateway_imei)
+                      && !!_.find(gatewayData, { imei_number: _.toNumber(editData.gateway_imei[0]) }))
+                    || cannotEdit
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  SelectProps={{ displayEmpty: true }}
+                  {...gateway.bind}
+                >
+                  <MenuItem value="">Select</MenuItem>
+                  {!_.isEmpty(availableGateways) && _.map(availableGateways, (avgt) => (
+                    <MenuItem key={avgt.gateway_uuid} value={avgt}>
+                      {avgt.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <Typography variant="caption" component="div" fontStyle="italic" color={theme.palette.background.light} mt={1}>
+                  Note: If no trackers appear in the drop down list, please verify that the
+                  tracker is Available and associated to the origin custodian.
+                </Typography>
+              </Grid>
+            </Grid>
+            {gateway && gateway.value && (
+              <Grid item xs={11.5} className="createShipmentGatewayDetails">
+                <Typography variant="body1" component="div">
+                  Battery Level:
+                </Typography>
+                {gateway.value.last_known_battery_level
+                  && _.gte(_.toNumber(gateway.value.last_known_battery_level), 90)
+                  && (
+                    <BatteryFullIcon htmlColor={theme.palette.success.main} />
+                  )}
+                {gateway.value.last_known_battery_level
+                  && _.lt(_.toNumber(gateway.value.last_known_battery_level), 90)
+                  && _.gte(_.toNumber(gateway.value.last_known_battery_level), 60)
+                  && (
+                    <Battery80Icon htmlColor={theme.palette.warning.main} />
+                  )}
+                {gateway.value.last_known_battery_level
+                  && _.lt(_.toNumber(gateway.value.last_known_battery_level), 60)
+                  && (
+                    <Battery50Icon htmlColor={theme.palette.error.main} />
+                  )}
+                {!gateway.value.last_known_battery_level && (
+                  <BatteryFullIcon />
+                )}
+                <Typography variant="body1" component="div">
+                  {gateway.value.last_known_battery_level ? `${gateway.value.last_known_battery_level}%` : 'N/A'}
+                </Typography>
+              </Grid>
+            )}
+            {gateway && gateway.value && (
+              <Grid item xs={12}>
+                <Grid container spacing={4}>
+                  <Grid item xs={6} />
+                  <Grid item xs={2.75}>
+                    <TextField
+                      id="transmission-interval"
+                      select
+                      fullWidth
+                      disabled={cannotEdit}
+                      placeholder="Select..."
+                      label="Transmission interval"
+                      onBlur={(e) => handleBlur(e, 'required', transmissionInterval, 'transmission-interval')}
+                      InputLabelProps={{ shrink: true }}
+                      SelectProps={{ displayEmpty: true }}
+                      value={transmissionInterval.value}
+                      onChange={(e) => {
+                        transmissionInterval.setValue(e.target.value);
+                        measurementInterval.setValue(e.target.value);
+                      }}
+                    >
+                      <MenuItem value="">Select</MenuItem>
+                      {!_.isEmpty(TIVE_GATEWAY_TIMES)
+                        && _.map(TIVE_GATEWAY_TIMES, (time, index) => (
+                          <MenuItem key={`${time.value}-${index}`} value={time.value}>
+                            {time.label}
+                          </MenuItem>
+                        ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={2.75}>
+                    <TextField
+                      id="measurement-interval"
+                      select
+                      fullWidth
+                      disabled={cannotEdit}
+                      placeholder="Select..."
+                      label="Measurement interval"
+                      onBlur={(e) => handleBlur(e, 'required', measurementInterval, 'measurement-interval')}
+                      InputLabelProps={{ shrink: true }}
+                      SelectProps={{ displayEmpty: true }}
+                      {...measurementInterval.bind}
+                    >
+                      <MenuItem value="">Select</MenuItem>
+                      {!_.isEmpty(TIVE_GATEWAY_TIMES) && _.map(
+                        _.filter(TIVE_GATEWAY_TIMES, (t) => (_.includes(gatewayType.value, 'ProofTracker') ? t.value === transmissionInterval.value : t.value <= transmissionInterval.value)),
+                        (time, index) => (
+                          <MenuItem key={`${time.value}-${index}`} value={time.value}>
+                            {time.label}
+                          </MenuItem>
+                        ),
+                      )}
+                    </TextField>
+                  </Grid>
+                </Grid>
+              </Grid>
+            )}
+          </FormControl>
+          <Grid container spacing={2}>
+            <Grid item xs={6} sm={3}>
+              <Typography className="createShipmentFinalName">ID</Typography>
+              <TextField
+                variant="outlined"
+                id="org-id-final"
+                fullWidth
+                disabled
+                className="createShipmentFinalNameDisplay"
+                value={organization && organization.abbrevation}
+              />
+            </Grid>
+            <Grid item xs={6} sm={5}>
+              <Typography className="createShipmentFinalName">SHIPMENT NAME</Typography>
+              <TextField
+                variant="outlined"
+                id="shipment-name-final"
+                fullWidth
+                disabled
+                className="createShipmentFinalNameDisplay"
+                value={shipmentName.value}
+              />
+            </Grid>
+            <Grid item xs={6} sm={2} mt={isMobile() ? -3 : 0}>
+              <Typography className="createShipmentFinalName">ORIGIN</Typography>
+              <TextField
+                variant="outlined"
+                id="origin-final"
+                fullWidth
+                disabled
+                className="createShipmentFinalNameDisplay"
+                value={originAbb}
+              />
+            </Grid>
+            <Grid item xs={6} sm={2} mt={isMobile() ? -3 : 0}>
+              <Typography className="createShipmentFinalName">DEST</Typography>
+              <TextField
+                variant="outlined"
+                id="dest-final"
+                fullWidth
+                disabled
+                className="createShipmentFinalNameDisplay"
+                value={destinationAbb}
+              />
+            </Grid>
           </Grid>
-          <Grid
-            container
-            spacing={2}
-            className={classes.buttonContainer}
-          >
-            <Grid item xs={12} sm={6}>
+          <Grid container spacing={4}>
+            <Grid item xs={12} mt={1}>
+              <Typography variant="caption" component="div" textAlign="center" fontStyle="italic" color={theme.palette.background.light}>
+                This is your automated shipment number.
+                It is automatically generated from the form above.
+              </Typography>
+            </Grid>
+            <Grid item xs={0.5} />
+            <Grid item xs={5.5} mt={5} ml={isMobile() ? -1.5 : 0}>
               <Button
                 type="button"
-                fullWidth
                 variant="outlined"
-                color="primary"
-                className={classes.submit}
+                fullWidth
+                onClick={(e) => history.push(routes.SHIPMENT)}
+                className="createShipmentActionButtons"
               >
                 Cancel
               </Button>
-
             </Grid>
-            <Grid item xs={12} sm={6}>
-              {viewOnly ? (
+            <Grid item xs={5.5} mt={5}>
+              {!gateway.value && (
                 <Button
-                  type="button"
-                  fullWidth
+                  type="submit"
                   variant="contained"
-                  color="primary"
-                  className={classes.submit}
+                  fullWidth
+                  disabled={isAddingShipment
+                    || isEditingShipment
+                    || isDeletingCustody
+                    || submitDisabled()
+                    || cannotEdit}
+                  onClick={(e) => handleSubmit(e, true)}
+                  className="createShipmentActionButtons"
                 >
-                  Done
+                  Save as Draft
                 </Button>
-              ) : (
-                <div className={classes.loadingWrapper}>
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                    disabled={loading || submitDisabled()}
-                  >
-                    Save Shipment
-                  </Button>
-                  {loading && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
-                  )}
-                </div>
               )}
+              {gateway.value && (
+                <Button
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  disabled={isAddingShipment
+                    || isEditingShipment
+                    || isDeletingCustody
+                    || submitDisabled()}
+                  onClick={(e) => handleSubmit(e, false)}
+                  className="createShipmentActionButtons"
+                >
+                  {_.isEmpty(editData) ? 'Create a shipment' : 'Update shipment'}
+                </Button>
+              )}
+            </Grid>
+            <Grid item xs={0.5} />
+          </Grid>
+          <Grid container spacing={4}>
+            <Grid item xs={12} mt={2}>
+              <Typography variant="caption" component="div" textAlign="center" fontStyle="italic" color={theme.palette.background.light}>
+                You must fill out all required fields to create an active shipment
+              </Typography>
             </Grid>
           </Grid>
         </Box>
-
       </form>
-      <Route path={addCustodianPath} component={AddCustodians} />
-
+      <div>
+        <Dialog
+          open={showTemplateDT}
+          onClose={(e) => setShowTemplateDT(false)}
+          aria-labelledby="save-template-title"
+          aria-describedby="save-template-description"
+          className="createShipmentSaveTemplateModal"
+        >
+          {(isAddingShipmentTemplate
+            || isEditingShipmentTemplate
+            || isDeletingShipmentTemplate)
+            && (
+              <Loader open={isAddingShipmentTemplate
+                || isEditingShipmentTemplate
+                || isDeletingShipmentTemplate}
+              />
+            )}
+          <DialogTitle id="save-template-title">
+            {!saveAsName && 'All Templates'}
+            {saveAsName && 'Save template as...'}
+            <IconButton
+              aria-label="save-template-close"
+              className="createShipmentCloseButton"
+              onClick={(e) => setShowTemplateDT(false)}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <DataTableWrapper
+              hideAddButton
+              noOptionsIcon
+              noSpace
+              rows={templateRows}
+              columns={[
+                {
+                  name: 'name',
+                  label: 'Template Name',
+                  options: {
+                    sort: true,
+                    sortThirdClickReset: true,
+                    filter: true,
+                    setCellProps: () => ({ style: { textDecoration: !saveAsName && 'underline', textDecoractionColor: !saveAsName && theme.palette.background.light } }),
+                  },
+                },
+                ...templateColumns(
+                  data,
+                  _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                    : '',
+                ),
+              ]}
+              extraOptions={{
+                rowHover: true,
+                onRowClick: (rowData) => {
+                  if (saveAsName) {
+                    setSaveAsName(rowData[0]);
+                    setConfirmReplace(true);
+                  } else {
+                    handleTemplateChange(_.find(shipmentTemplateData, { name: rowData[0] }) || '');
+                    setShowTemplateDT(false);
+                  }
+                },
+                setRowProps: (row, dataIndex, rowIndex) => ({
+                  style: { cursor: 'pointer' },
+                }),
+              }}
+            />
+          </DialogContent>
+          {saveAsName && (
+            <DialogActions>
+              <Grid container spacing={2} className="createShipmentModalActionButtons">
+                <Grid item xs={6}>
+                  <TextField
+                    variant="outlined"
+                    id="template-name"
+                    fullWidth
+                    label="Template Name"
+                    placeholder="32 characters maximum"
+                    value={saveAsName}
+                    onChange={(e) => setSaveAsName(e.target.value)}
+                    helperText="There is a 32-character limit on template names"
+                    inputProps={{ maxLength: 32 }}
+                  />
+                </Grid>
+                <Grid item xs={2}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    fullWidth
+                    style={{ height: '72.4%' }}
+                    onClick={(e) => setShowTemplateDT(false)}
+                  >
+                    Cancel
+                  </Button>
+                </Grid>
+                <Grid item xs={2}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    style={{ height: '72.4%' }}
+                    onClick={saveAsTemplate}
+                  >
+                    Save
+                  </Button>
+                </Grid>
+              </Grid>
+            </DialogActions>
+          )}
+        </Dialog>
+      </div>
+      <ConfirmModal
+        open={confirmReplace}
+        setOpen={setConfirmReplace}
+        submitAction={replaceTemplate}
+        title={`"${templateName || saveAsName}" already exists. Do you want to replace it?`}
+        msg1="A template with the same name already exists."
+        msg2="Replacing it will overwrite its current contents."
+        submitText={templateName || saveAsName ? 'Replace template' : 'Rename template'}
+      />
+      <ConfirmModal
+        open={confirmDelete}
+        setOpen={setConfirmDelete}
+        submitAction={(e) => {
+          deleteShipmentTemplateMutation(template.id);
+          setConfirmDelete(false);
+        }}
+        title={`Are you sure you want to delete the template "${template.name}"?`}
+        msg1="This action cannot be undone."
+        submitText="Delete template"
+      />
+      <ConfirmModal
+        open={confirmLeave}
+        setOpen={setConfirmLeave}
+        submitAction={(e) => {
+          setTriggerExit((obj) => ({ ...obj, onOk: true }));
+          setConfirmLeave(false);
+        }}
+        title="Your changes are unsaved and will be discarded. Are you sure you want to leave?"
+        submitText="Yes"
+      />
     </Box>
-
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.shipmentReducer,
-  ...state.itemsReducer,
-  ...state.custodianReducer,
-  ...state.optionsReducer,
-  ...state.sensorsGatewayReducer,
-  loading: (
-    state.shipmentReducer.loading
-    || state.itemsReducer.loading
-    || state.custodianReducer.loading
-    || state.optionsReducer.loading
-    || state.sensorsGatewayReducer.loading
-  ),
-});
-
-export default connect(mapStateToProps)(CreateShipment);
+export default CreateShipment;

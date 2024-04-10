@@ -1,62 +1,21 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
-import {
-  useTheme,
-  useMediaQuery,
-  Grid,
-  Button,
-  TextField,
-  CircularProgress,
-} from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import FormModal from '../../../../components/Modal/FormModal';
-import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
-import {
-  addGatewayType,
-  editGatewayType,
-} from '../../../../redux/sensorsGateway/actions/sensorsGateway.actions';
+import { Grid, Button, TextField } from '@mui/material';
+import Loader from '@components/Loader/Loader';
+import FormModal from '@components/Modal/FormModal';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isDesktop } from '@utils/mediaQuery';
+import { useAddGatewayTypeMutation } from '@react-query/mutations/sensorGateways/addGatewayTypeMutation';
+import { useEditGatewayTypeMutation } from '@react-query/mutations/sensorGateways/editGatewayTypeMutation';
+import useAlert from '@hooks/useAlert';
+import '../../AdminPanelStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  loadingWrapper: {
-    position: 'relative',
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-}));
-
-const AddGatewayType = ({
-  history,
-  location,
-  loading,
-  dispatch,
-}) => {
-  const classes = useStyles();
+const AddGatewayType = ({ history, location }) => {
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
+
+  const { displayAlert } = useAlert();
 
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -70,11 +29,8 @@ const AddGatewayType = ({
   });
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? 'Save' : 'Add Gateway Type';
-  const formTitle = editPage ? 'Edit Gateway Type' : 'Add Gateway Type';
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+  const buttonText = editPage ? 'Save' : 'Add Tracker Type';
+  const formTitle = editPage ? 'Edit Tracker Type' : 'Add Tracker Type';
 
   const closeFormModal = () => {
     if (name.hasChanged()) {
@@ -95,10 +51,10 @@ const AddGatewayType = ({
     }
   };
 
-  /**
-   * Submit The form and add/edit custodian type
-   * @param {Event} event the default submit event
-   */
+  const { mutate: addGatewayTypeMutation, isLoading: isAddingGatewayType } = useAddGatewayTypeMutation(history, location.state.from, displayAlert);
+
+  const { mutate: editGatewayTypeMutation, isLoading: isEditingGatewayType } = useEditGatewayTypeMutation(history, location.state.from, displayAlert);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const currentDateTime = new Date();
@@ -108,26 +64,15 @@ const AddGatewayType = ({
       edit_date: currentDateTime,
     };
     if (editPage) {
-      dispatch(editGatewayType(data));
+      editGatewayTypeMutation(data);
     } else {
       data = {
         ...data,
         create_date: currentDateTime,
       };
-      dispatch(addGatewayType(data));
-    }
-    setFormModal(false);
-    if (location && location.state) {
-      history.push(location.state.from);
+      addGatewayTypeMutation(data);
     }
   };
-
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
 
   const handleBlur = (e, validation, input, parentId) => {
     const validateObj = validators(validation, input);
@@ -169,18 +114,19 @@ const AddGatewayType = ({
           open={openFormModal}
           handleClose={closeFormModal}
           title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth="md"
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {(isAddingGatewayType || isEditingGatewayType) && (
+            <Loader open={isAddingGatewayType || isEditingGatewayType} />
+          )}
           <form
-            className={classes.form}
+            className="adminPanelFormContainer"
             noValidate
             onSubmit={handleSubmit}
           >
-            <Grid container spacing={isDesktop ? 2 : 0}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -188,7 +134,7 @@ const AddGatewayType = ({
                   fullWidth
                   required
                   id="name"
-                  label="Gateway Type"
+                  label="Tracker Type"
                   name="name"
                   autoComplete="name"
                   error={formError.name && formError.name.error}
@@ -200,34 +146,26 @@ const AddGatewayType = ({
                 />
               </Grid>
               <Grid container spacing={2} justifyContent="center">
-                <Grid item xs={6} sm={4}>
-                  <div className={classes.loadingWrapper}>
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      className={classes.submit}
-                      disabled={loading || submitDisabled()}
-                    >
-                      {buttonText}
-                    </Button>
-                    {loading && (
-                      <CircularProgress
-                        size={24}
-                        className={classes.buttonProgress}
-                      />
-                    )}
-                  </div>
-                </Grid>
-                <Grid item xs={6} sm={4}>
+                <Grid item xs={6} sm={5.15} md={4}>
                   <Button
-                    type="button"
+                    type="submit"
                     fullWidth
                     variant="contained"
                     color="primary"
+                    className="adminPanelSubmit"
+                    disabled={isAddingGatewayType || isEditingGatewayType || submitDisabled()}
+                  >
+                    {buttonText}
+                  </Button>
+                </Grid>
+                <Grid item xs={6} sm={5.15} md={4}>
+                  <Button
+                    type="button"
+                    fullWidth
+                    variant="outlined"
+                    color="primary"
                     onClick={discardFormData}
-                    className={classes.submit}
+                    className="adminPanelSubmit"
                   >
                     Cancel
                   </Button>
@@ -241,9 +179,4 @@ const AddGatewayType = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.sensorsGatewayReducer,
-});
-
-export default connect(mapStateToProps)(AddGatewayType);
+export default AddGatewayType;

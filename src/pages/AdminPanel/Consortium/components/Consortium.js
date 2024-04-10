@@ -1,45 +1,54 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
-import { connect } from 'react-redux';
-import DataTableWrapper from '../../../../components/DataTableWrapper/DataTableWrapper';
-import {
-  loadAllOrgs,
-} from '../../../../redux/authuser/actions/authuser.actions';
-import {
-  getAllConsortiums,
-  deleteConsortium,
-} from '../../../../redux/consortium/actions/consortium.actions';
-import { routes } from '../../../../routes/routesConstants';
-import { getConsortiumColumns } from '../ConsortiumConstant';
+import _ from 'lodash';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import { routes } from '@routes/routesConstants';
+import { getConsortiumColumns } from '@utils/constants';
 import AddConsortium from '../forms/AddConsortium';
+import { useQuery } from 'react-query';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { getAllConsortiumQuery } from '@react-query/queries/consortium/getAllConsotiumQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { useDeleteConsortiumMutation } from '@react-query/mutations/consortium/deleteConsortiumMutation';
+import useAlert from '@hooks/useAlert';
+import { useStore } from '@zustand/timezone/timezoneStore';
 
-const Consortium = ({
-  dispatch,
-  loading,
-  allConsortiums,
-  history,
-  redirectTo,
-  timezone,
-  allOrgs,
-}) => {
+const Consortium = ({ history, redirectTo }) => {
+  const user = getUser();
+  const organization = user.organization.organization_uuid;
+
+  const { displayAlert } = useAlert();
+  const { data } = useStore();
+
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
   const addPath = redirectTo || `${routes.CONSORTIUM}/add`;
   const editPath = redirectTo || `${routes.CONSORTIUM}/edit`;
 
-  useEffect(() => {
-    if (!allOrgs) {
-      dispatch(loadAllOrgs());
-    }
-    if (!allConsortiums) {
-      dispatch(getAllConsortiums());
-    }
-  }, []);
+  const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
+    ['organizations'],
+    () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: consortiumData, isLoading: isLoadingConsortiums } = useQuery(
+    ['consortiums'],
+    () => getAllConsortiumQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization],
+    () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
       from: redirectTo || routes.CONSORTIUM,
+      orgData,
     });
   };
 
@@ -48,6 +57,7 @@ const Consortium = ({
       type: 'edit',
       from: redirectTo || routes.CONSORTIUM,
       data: item,
+      orgData,
     });
   };
 
@@ -56,17 +66,27 @@ const Consortium = ({
     setDeleteModal(true);
   };
 
+  const { mutate: deleteConsortiumMutation, isLoading: isDeletingConsortium } = useDeleteConsortiumMutation(displayAlert);
+
   const handleDeleteModal = () => {
-    dispatch(deleteConsortium(deleteId));
+    deleteConsortiumMutation(deleteId);
     setDeleteModal(false);
   };
 
   return (
     <DataTableWrapper
       noSpace
-      loading={loading}
-      rows={allConsortiums || []}
-      columns={getConsortiumColumns(timezone)}
+      loading={isLoadingOrgs || isLoadingConsortiums || isLoadingUnits || isDeletingConsortium}
+      rows={consortiumData || []}
+      columns={getConsortiumColumns(
+        data,
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+          : '',
+        _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+          : '',
+      )}
       filename="Consortiums"
       addButtonHeading="Consortium"
       onAddButtonClick={onAddButtonClick}
@@ -83,11 +103,4 @@ const Consortium = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.consortiumReducer,
-  ...state.optionsReducer,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(Consortium);
+export default Consortium;

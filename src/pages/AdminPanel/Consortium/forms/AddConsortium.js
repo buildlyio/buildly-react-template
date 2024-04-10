@@ -1,65 +1,29 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
-  useTheme,
-  useMediaQuery,
   Grid,
   Button,
   TextField,
-  CircularProgress,
   Chip,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { Autocomplete } from '@mui/material';
-import FormModal from '../../../../components/Modal/FormModal';
-import { useInput } from '../../../../hooks/useInput';
-import { validators } from '../../../../utils/validators';
-import {
-  createConsortium,
-  editConsortium,
-} from '../../../../redux/consortium/actions/consortium.actions';
+import Loader from '@components/Loader/Loader';
+import FormModal from '@components/Modal/FormModal';
+import { useInput } from '@hooks/useInput';
+import { validators } from '@utils/validators';
+import { isDesktop } from '@utils/mediaQuery';
+import { useAddConsortiumMutation } from '@react-query/mutations/consortium/addConsortiumMutation';
+import { useEditConsortiumMutation } from '@react-query/mutations/consortium/editConsortiumMutation';
+import useAlert from '@hooks/useAlert';
+import '../../AdminPanelStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-    [theme.breakpoints.up('sm')]: {
-      width: '70%',
-      margin: 'auto',
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: '18px',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  loadingWrapper: {
-    position: 'relative',
-  },
-  formTitle: {
-    fontWeight: 'bold',
-    marginTop: '1em',
-    textAlign: 'center',
-  },
-}));
-
-const AddConsortium = ({
-  history,
-  location,
-  loading,
-  dispatch,
-  allOrgs,
-}) => {
-  const classes = useStyles();
+const AddConsortium = ({ history, location }) => {
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
+
+  const { displayAlert } = useAlert();
+
+  const { orgData } = location.state || {};
 
   const editPage = location.state && location.state.type === 'edit';
   const editData = (
@@ -78,9 +42,6 @@ const AddConsortium = ({
 
   const buttonText = editPage ? 'Save' : 'Add Consortium';
   const formTitle = editPage ? 'Edit Consortium' : 'Add Consortium';
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   const closeFormModal = () => {
     if (name.hasChanged()) {
@@ -101,6 +62,10 @@ const AddConsortium = ({
     }
   };
 
+  const { mutate: addConsortiumMutation, isLoading: isAddingConsortium } = useAddConsortiumMutation(history, location.state.from, displayAlert);
+
+  const { mutate: editConsortiumMutation, isLoading: isEditingConsortium } = useEditConsortiumMutation(history, location.state.from, displayAlert);
+
   /**
    * Submit The form and add/edit custodian type
    * @param {Event} event the default submit event
@@ -115,17 +80,13 @@ const AddConsortium = ({
       edit_date: currentDateTime,
     };
     if (editPage) {
-      dispatch(editConsortium(data));
+      editConsortiumMutation(data);
     } else {
       data = {
         ...data,
         create_date: currentDateTime,
       };
-      dispatch(createConsortium(data));
-    }
-    setFormModal(false);
-    if (location && location.state) {
-      history.push(location.state.from);
+      addConsortiumMutation(data);
     }
   };
 
@@ -174,11 +135,9 @@ const AddConsortium = ({
       case (value.length > orgs.length):
         setOrgs([...orgs, _.last(value).organization_uuid]);
         break;
-
       case (value.length < orgs.length):
         setOrgs(value);
         break;
-
       default:
         break;
     }
@@ -191,18 +150,19 @@ const AddConsortium = ({
           open={openFormModal}
           handleClose={closeFormModal}
           title={formTitle}
-          titleClass={classes.formTitle}
-          maxWidth="md"
           openConfirmModal={openConfirmModal}
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
+          {(isAddingConsortium || isEditingConsortium) && (
+            <Loader open={isAddingConsortium || isEditingConsortium} />
+          )}
           <form
-            className={classes.form}
+            className="adminPanelFormContainer"
             noValidate
             onSubmit={handleSubmit}
           >
-            <Grid container spacing={isDesktop ? 2 : 0}>
+            <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -227,12 +187,12 @@ const AddConsortium = ({
                   multiple
                   filterSelectedOptions
                   id="orgs"
-                  options={allOrgs}
+                  options={orgData}
                   getOptionLabel={(option) => (
                     option && option.name
                   )}
                   isOptionEqualToValue={(option, value) => (
-                    option.organization_uuid === value
+                    !value || (value && (option.organization_uuid === value))
                   )}
                   value={orgs}
                   onChange={(e, newValue) => onInputChange(newValue)}
@@ -241,8 +201,8 @@ const AddConsortium = ({
                       <Chip
                         variant="default"
                         label={
-                          !_.isEmpty(allOrgs) && _.find(allOrgs, { organization_uuid: option })
-                            ? _.find(allOrgs, { organization_uuid: option }).name
+                          !_.isEmpty(orgData) && _.find(orgData, { organization_uuid: option })
+                            ? _.find(orgData, { organization_uuid: option }).name
                             : ''
                         }
                         {...getTagProps({ index })}
@@ -262,33 +222,25 @@ const AddConsortium = ({
               </Grid>
               <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={6} sm={4}>
-                  <div className={classes.loadingWrapper}>
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      className={classes.submit}
-                      disabled={loading || submitDisabled()}
-                    >
-                      {buttonText}
-                    </Button>
-                    {loading && (
-                      <CircularProgress
-                        size={24}
-                        className={classes.buttonProgress}
-                      />
-                    )}
-                  </div>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className="adminPanelSubmit"
+                    disabled={isAddingConsortium || isEditingConsortium || submitDisabled()}
+                  >
+                    {buttonText}
+                  </Button>
                 </Grid>
                 <Grid item xs={6} sm={4}>
                   <Button
                     type="button"
                     fullWidth
-                    variant="contained"
+                    variant="outlined"
                     color="primary"
                     onClick={discardFormData}
-                    className={classes.submit}
+                    className="adminPanelSubmit"
                   >
                     Cancel
                   </Button>
@@ -302,10 +254,4 @@ const AddConsortium = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.consortiumReducer,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(AddConsortium);
+export default AddConsortium;
