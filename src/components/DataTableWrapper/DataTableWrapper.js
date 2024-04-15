@@ -138,6 +138,9 @@ const DataTableWrapper = ({
       body: {
         noMatch: 'No data to display',
       },
+      pagination: {
+        jumpToPage: 'Go To Page',
+      },
     },
     setRowProps: (row, dataIndex, rowIndex) => !customTheme && ({
       className: 'dataTableBody',
