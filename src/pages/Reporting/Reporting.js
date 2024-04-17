@@ -529,6 +529,8 @@ const Reporting = () => {
                 shockThreshold={allGraphs.shockThreshold}
                 lightThreshold={allGraphs.lightThreshold}
                 timeGap={selectedShipment.measurement_time || 5}
+                minColor={theme.palette.info.main}
+                maxColor={theme.palette.error.main}
               />
             )
             : (
