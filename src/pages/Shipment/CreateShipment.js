@@ -142,32 +142,32 @@ const CreateShipment = ({ history, location }) => {
   const [itemRows, setItemRows] = useState([]);
 
   const min_excursion_temp = useInput(
-    (!_.isEmpty(editData) && _.orderBy(editData.min_excursion_temp, 'set_at')[0].value)
+    (!_.isEmpty(editData) && _.orderBy(editData.min_excursion_temp, 'set_at', 'desc')[0].value)
     || (organization && organization.default_min_temperature)
     || 0,
   );
   const max_excursion_temp = useInput(
-    (!_.isEmpty(editData) && _.orderBy(editData.max_excursion_temp, 'set_at')[0].value)
+    (!_.isEmpty(editData) && _.orderBy(editData.max_excursion_temp, 'set_at', 'desc')[0].value)
     || (organization && organization.default_max_temperature)
     || 100,
   );
   const min_excursion_humidity = useInput(
-    (!_.isEmpty(editData) && _.orderBy(editData.min_excursion_humidity, 'set_at')[0].value)
+    (!_.isEmpty(editData) && _.orderBy(editData.min_excursion_humidity, 'set_at', 'desc')[0].value)
     || (organization && organization.default_min_humidity)
     || 0,
   );
   const max_excursion_humidity = useInput(
-    (!_.isEmpty(editData) && _.orderBy(editData.max_excursion_humidity, 'set_at')[0].value)
+    (!_.isEmpty(editData) && _.orderBy(editData.max_excursion_humidity, 'set_at', 'desc')[0].value)
     || (organization && organization.default_max_humidity)
     || 100,
   );
   const shock_threshold = useInput(
-    (!_.isEmpty(editData) && _.orderBy(editData.shock_threshold, 'set_at')[0].value)
+    (!_.isEmpty(editData) && _.orderBy(editData.shock_threshold, 'set_at', 'desc')[0].value)
     || (organization && organization.default_shock)
     || 4,
   );
   const light_threshold = useInput(
-    (!_.isEmpty(editData) && _.orderBy(editData.light_threshold, 'set_at')[0].value)
+    (!_.isEmpty(editData) && _.orderBy(editData.light_threshold, 'set_at', 'desc')[0].value)
     || (organization && organization.default_light)
     || 5,
   );
