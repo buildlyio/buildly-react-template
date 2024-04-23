@@ -866,10 +866,12 @@ const CreateShipment = ({ history, location }) => {
       files,
       carriers,
       fujitsuVerification: organization.enable_fujitsu_verification,
+      isWarehouse: !!(_.find(destinationList, { url: destinationCustodian }) && (_.toLower(_.find(destinationList, { url: destinationCustodian }).type) === 'warehouse')),
     };
 
     if (!draft && (
       (_.isEqual('available', updateGateway.gateway_status) && _.isEqual([], updateGateway.shipment_ids))
+      || status.hasChanged()
       || _.includes(_.map(ADMIN_SHIPMENT_STATUS, 'value'), status.value)
     )) {
       savePayload = { ...savePayload, updateGateway };

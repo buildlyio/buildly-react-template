@@ -1544,6 +1544,7 @@ export const gatewayColumns = (timezone, dateFormat) => ([
       customBodyRender: (value) => (
         value && value !== '-' ? _.join(value, ', ') : value
       ),
+      setCellProps: () => ({ style: { maxWidth: '200px', wordWrap: 'break-word' } }),
     },
   },
   {
