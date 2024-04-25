@@ -28,7 +28,7 @@ import MapComponent from '@components/MapComponent/MapComponent';
 import { getUser } from '@context/User.context';
 import { routes } from '@routes/routesConstants';
 import { getIcon, getShipmentFormattedRow, shipmentColumns } from '@utils/constants';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { getShipmentsQuery } from '@react-query/queries/shipments/getShipmentsQuery';
 import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
 import { getItemQuery } from '@react-query/queries/items/getItemQuery';
@@ -48,7 +48,6 @@ const Shipment = ({ history }) => {
 
   const { displayAlert } = useAlert();
   const { data } = useStore();
-  const queryClient = useQueryClient();
 
   let isShipmentDataAvailable = false;
 
@@ -182,7 +181,7 @@ const Shipment = ({ history }) => {
 
   useEffect(() => {
     if (selectedShipment) {
-      processMarkers(selectedShipment);
+      processMarkers(selectedShipment, true);
     }
   }, [sensorAlertData, sensorReportData, data]);
 
@@ -541,7 +540,7 @@ const Shipment = ({ history }) => {
     }
 
     if (setExpanded) {
-      const rowIndex = _.findIndex(rows, shipment);
+      const rowIndex = _.findIndex(rows, (item) => item.id === shipment.id, 0);
       setExpandedRows([rowIndex]);
       setSteps(_.orderBy(newSteps, 'id'));
     }

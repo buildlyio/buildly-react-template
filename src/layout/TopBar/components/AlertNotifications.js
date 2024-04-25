@@ -33,6 +33,7 @@ import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { getAlertNotificationsColumns } from '@utils/constants';
 import { oauthService } from '@modules/oauth/oauth.service';
 import moment from 'moment-timezone';
+import { useStore } from '@zustand/timezone/timezoneStore';
 
 const Transition = forwardRef((props, ref) => <Slide direction="left" ref={ref} {...props} />);
 
@@ -47,6 +48,7 @@ const AlertNotifications = ({
   const [notifications, setNotifications] = useState([]);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
   const appTitle = useContext(AppContext).title;
+  const { data: timeZone } = useStore();
 
   useEffect(() => {
     if (!_.isEmpty(user)) {
@@ -82,7 +84,7 @@ const AlertNotifications = ({
           duration: window.env.hide_notification,
           title: appTitle,
           subtitle: '',
-          message: `${value.alert_message} | ${moment(value.create_date).fromNow()}`,
+          message: `Shipment: ${value.shipment_name} | ${value.alert_message} ${moment(value.alert_time).tz(timeZone).toString()}`,
           onClick: (event) => {
             setOpen(true);
             const viewedNoti = getViewedNotifications();

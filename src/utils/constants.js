@@ -1241,7 +1241,7 @@ export const MARKER_DATA = (unitOfMeasure) => ([
   { id: 'light', unit: 'LUX' },
 ]);
 
-export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
+export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone, dateFormat, timeFormat) => {
   const getCellStyle = (tableMeta) => ({
     fontWeight: (
       _.some(
@@ -1265,6 +1265,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value) => (
           !_.isEmpty(value)
             ? (
@@ -1287,6 +1288,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => (
           <div style={getCellStyle(tableMeta)}>
             {value}
@@ -1301,7 +1303,10 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
-        setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
+        setCellProps: () => ({
+          style: { maxWidth: '300px', wordWrap: 'break-word' },
+          className: 'reportingSensorLeftHeader',
+        }),
       },
     },
     {
@@ -1311,6 +1316,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => (
           <div style={getCellStyle(tableMeta)}>
             {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
@@ -1325,6 +1331,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => (
           <div style={getCellStyle(tableMeta)}>
             {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
@@ -1339,6 +1346,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => (
           <div style={getCellStyle(tableMeta)}>
             {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
@@ -1353,6 +1361,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => (
           <div style={getCellStyle(tableMeta)}>
             {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
@@ -1367,6 +1376,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => (
           <div style={getCellStyle(tableMeta)}>
             {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
@@ -1382,6 +1392,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sortThirdClickReset: true,
         filter: true,
         display: false,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value) => (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : ''),
       },
     },
@@ -1393,6 +1404,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sortThirdClickReset: true,
         filter: true,
         display: false,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value) => (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : ''),
       },
     },
@@ -1404,6 +1416,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sortThirdClickReset: true,
         filter: true,
         display: false,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value) => (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : ''),
       },
     },

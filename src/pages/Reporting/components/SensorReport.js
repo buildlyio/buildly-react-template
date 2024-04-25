@@ -6,9 +6,7 @@ import {
   Typography,
 } from '@mui/material';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
-import {
-  SENSOR_REPORT_COLUMNS,
-} from '@utils/constants';
+import { SENSOR_REPORT_COLUMNS } from '@utils/constants';
 import '../ReportingStyles.css';
 
 const SensorReport = ({
@@ -20,19 +18,6 @@ const SensorReport = ({
 }) => {
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
-
-  const columns = _.map(
-    SENSOR_REPORT_COLUMNS(unitOfMeasure, timezone),
-    (column) => ({
-      ...column,
-      options: {
-        ...column.options,
-        setCellHeaderProps: () => ({
-          className: 'reportingSensorLeftHeader',
-        }),
-      },
-    }),
-  );
 
   useEffect(() => {
     const sortedData = _.orderBy(
@@ -86,7 +71,16 @@ const SensorReport = ({
           hideAddButton
           filename="SensorReportData"
           rows={rows}
-          columns={columns}
+          columns={SENSOR_REPORT_COLUMNS(
+            unitOfMeasure,
+            timezone,
+            _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+              ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+              : '',
+            _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+              ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+              : '',
+          )}
           selectable={{
             rows: 'multiple',
             rowsHeader: false,

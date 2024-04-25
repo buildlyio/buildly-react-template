@@ -66,7 +66,7 @@ const Reporting = () => {
   const [isLoading, setLoading] = useState(false);
 
   const { displayAlert } = useAlert();
-  const { data } = useStore();
+  const { data: timeZone } = useStore();
 
   let isShipmentDataAvailable = false;
 
@@ -115,7 +115,7 @@ const Reporting = () => {
     ['sensorAlerts', selectedShipment, shipmentFilter],
     () => getSensorAlertQuery(encodeURIComponent(selectedShipment.partner_shipment_id), displayAlert),
     {
-      enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(selectedShipment.partner_shipment_id),
       refetchOnWindowFocus: false,
     },
   );
@@ -124,7 +124,7 @@ const Reporting = () => {
     ['sensorReports', selectedShipment, shipmentFilter],
     () => getSensorReportQuery(encodeURIComponent(selectedShipment.partner_shipment_id), null, displayAlert),
     {
-      enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(selectedShipment.partner_shipment_id),
       refetchOnWindowFocus: false,
     },
   );
@@ -171,7 +171,7 @@ const Reporting = () => {
         const { sensorReportInfo, markersToSet, graphs } = processReportsAndMarkers(
           sensorReportData,
           alerts,
-          data,
+          timeZone,
           unitData,
           theme.palette.error.main,
           theme.palette.info.main,
@@ -186,7 +186,7 @@ const Reporting = () => {
         setMarkers([]);
       }
     }
-  }, [sensorReportData, sensorAlertData, selectedShipment]);
+  }, [sensorReportData, sensorAlertData, selectedShipment, timeZone]);
 
   useEffect(() => {
     if (selectedShipment) {
@@ -210,7 +210,7 @@ const Reporting = () => {
           ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
           : '';
         returnValue = moment(selectedShipment[value])
-          .tz(data).format(`${dateFormat} ${timeFormat}`);
+          .tz(timeZone).format(`${dateFormat} ${timeFormat}`);
       } else if (typeof (selectedShipment[value]) !== 'object') {
         if (value === 'had_alert') {
           returnValue = selectedShipment[value]
@@ -552,7 +552,7 @@ const Reporting = () => {
         shipmentName={selectedShipment && selectedShipment.name}
         selectedMarker={selectedShipment && selectedMarker}
         unitOfMeasure={unitData}
-        timezone={data}
+        timezone={timeZone}
       />
       <AlertsReport
         sensorReport={reports}
@@ -561,7 +561,7 @@ const Reporting = () => {
           { shipment_id: selectedShipment && selectedShipment.partner_shipment_id },
         )}
         shipmentName={selectedShipment && selectedShipment.name}
-        timezone={data}
+        timezone={timeZone}
         unitOfMeasure={unitData}
         shouldScroll={!!locShipmentID}
       />
