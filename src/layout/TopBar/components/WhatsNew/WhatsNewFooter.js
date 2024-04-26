@@ -8,8 +8,7 @@ export default function WhatsNewFooter({ buttonClick }) {
     <Grid container flexDirection="column" alignItems="center" justifyContent="center">
       <Grid item xs={8}>
         <Typography className="whatsNewDialogReferenceText">
-          To reference this page again, click on the profile icon and then click on
-          the "What's New?" section.
+          Click on the 'Whats New?' section listed under the profile icon
         </Typography>
       </Grid>
       <Button
