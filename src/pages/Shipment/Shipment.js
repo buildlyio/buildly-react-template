@@ -118,14 +118,32 @@ const Shipment = ({ history }) => {
     },
   );
 
-  const { data: sensorReportData, isLoading: isLoadingSensorReports, isFetching: isFetchingSensorReports } = useQuery(
+  const { data: reportData1, isLoading: isLoadingReports1, isFetching: isFetchingReports1 } = useQuery(
     ['sensorReports', shipmentData, shipmentFilter],
-    () => getSensorReportQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null))), displayAlert),
+    () => getSensorReportQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null))), 10, displayAlert),
     {
-      enabled: isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      enabled: _.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
       refetchOnWindowFocus: false,
     },
   );
+
+  const {
+    data: reportData2,
+    isLoading: isLoadingReports2,
+    isFetching: isFetchingReports2,
+    refetch: refetchReports2,
+  } = useQuery(
+    ['sensorReports', shipmentData, shipmentFilter],
+    () => getSensorReportQuery(encodeURIComponent(selectedShipment.partner_shipment_id), null, displayAlert),
+    {
+      enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const sensorReportData = selectedShipment ? reportData2 : reportData1;
+  const isLoadingSensorReports = selectedShipment ? isLoadingReports2 : isLoadingReports1;
+  const isFetchingSensorReports = selectedShipment ? isFetchingReports2 : isFetchingReports1;
 
   const HeaderElements = () => (
     <Tabs
@@ -163,13 +181,14 @@ const Shipment = ({ history }) => {
 
   useEffect(() => {
     if (selectedShipment) {
-      processMarkers(selectedShipment);
+      processMarkers(selectedShipment, true);
     }
   }, [sensorAlertData, sensorReportData, data]);
 
   useEffect(() => {
-    if (selectedShipment) {
+    if (!_.isEmpty(selectedShipment)) {
       setLoading(true);
+      refetchReports2();
     }
     if (expandedRows) {
       setTimeout(() => {
@@ -521,7 +540,7 @@ const Shipment = ({ history }) => {
     }
 
     if (setExpanded) {
-      const rowIndex = _.findIndex(rows, shipment);
+      const rowIndex = _.findIndex(rows, (item) => item.id === shipment.id, 0);
       setExpandedRows([rowIndex]);
       setSteps(_.orderBy(newSteps, 'id'));
     }

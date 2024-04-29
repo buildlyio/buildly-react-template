@@ -18,13 +18,13 @@ export const useAddGatewayTypeMutation = (history, redirectTo, displayAlert) => 
         await queryClient.invalidateQueries({
           queryKey: ['gatewayTypes'],
         });
-        displayAlert('success', 'Successfully added gateway type');
+        displayAlert('success', 'Successfully added tracker type');
         if (history && redirectTo) {
           history.push(redirectTo);
         }
       },
       onError: () => {
-        displayAlert('error', 'Error in creating gateway type');
+        displayAlert('error', 'Error in creating tracker type');
       },
     },
   );

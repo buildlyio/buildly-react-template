@@ -43,6 +43,7 @@ const registerServiceWorker = () => {
 
         onNewServiceWorker(registration, () => {
           showRefreshUI(registration);
+          window.localStorage.removeItem('isWhatsNewShown');
         });
       }).catch((registrationError) => {
         console.log('SW registration failed: ', registrationError);

@@ -14,13 +14,16 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   FormLabel,
   Grid,
   IconButton,
   InputAdornment,
   MenuItem,
   Stack,
+  Switch,
   TextField,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -111,7 +114,9 @@ const CreateShipment = ({ history, location }) => {
   const [confirmLeave, setConfirmLeave] = useState(false);
   const [triggerExit, setTriggerExit] = useState({ onOk: false, path: '' });
 
-  const [custodianList, setCustodianList] = useState([]);
+  const [originList, setOriginList] = useState([]);
+  const [destinationList, setDestinationList] = useState([]);
+  const [carrierList, setCarrierList] = useState([]);
   const [originCustodian, setOriginCustodian] = useState('');
   const [originAbb, setOriginAbb] = useState('');
   const [startingAddress, setStartingAddress] = useState('');
@@ -124,11 +129,11 @@ const CreateShipment = ({ history, location }) => {
 
   const [departureDateTime, setDepartureDateTime] = useState(
     (!_.isEmpty(editData) && editData.estimated_time_of_departure)
-    || moment().startOf('day').hour(12).minute(0),
+    || moment(),
   );
   const [arrivalDateTime, setArrivalDateTime] = useState(
     (!_.isEmpty(editData) && editData.estimated_time_of_arrival)
-    || moment().startOf('day').hour(12).minute(0),
+    || moment().add(1, 'day'),
   );
   const status = useInput((!_.isEmpty(editData) && editData.status) || 'Planned');
   const cannotEdit = !_.isEmpty(editData) && _.includes(_.map(ADMIN_SHIPMENT_STATUS, 'value'), editData.status);
@@ -137,34 +142,55 @@ const CreateShipment = ({ history, location }) => {
   const [itemRows, setItemRows] = useState([]);
 
   const min_excursion_temp = useInput(
-    (!_.isEmpty(editData) && editData.min_excursion_temp)
+    (!_.isEmpty(editData) && _.orderBy(editData.min_excursion_temp, 'set_at', 'desc')[0].value)
     || (organization && organization.default_min_temperature)
     || 0,
   );
   const max_excursion_temp = useInput(
-    (!_.isEmpty(editData) && editData.max_excursion_temp)
+    (!_.isEmpty(editData) && _.orderBy(editData.max_excursion_temp, 'set_at', 'desc')[0].value)
     || (organization && organization.default_max_temperature)
     || 100,
   );
   const min_excursion_humidity = useInput(
-    (!_.isEmpty(editData) && editData.min_excursion_humidity)
+    (!_.isEmpty(editData) && _.orderBy(editData.min_excursion_humidity, 'set_at', 'desc')[0].value)
     || (organization && organization.default_min_humidity)
     || 0,
   );
   const max_excursion_humidity = useInput(
-    (!_.isEmpty(editData) && editData.max_excursion_humidity)
+    (!_.isEmpty(editData) && _.orderBy(editData.max_excursion_humidity, 'set_at', 'desc')[0].value)
     || (organization && organization.default_max_humidity)
     || 100,
   );
   const shock_threshold = useInput(
-    (!_.isEmpty(editData) && editData.shock_threshold)
+    (!_.isEmpty(editData) && _.orderBy(editData.shock_threshold, 'set_at', 'desc')[0].value)
     || (organization && organization.default_shock)
     || 4,
   );
   const light_threshold = useInput(
-    (!_.isEmpty(editData) && editData.light_threshold)
+    (!_.isEmpty(editData) && _.orderBy(editData.light_threshold, 'set_at', 'desc')[0].value)
     || (organization && organization.default_light)
     || 5,
+  );
+
+  const supressTempAlerts = useInput(
+    (!_.isEmpty(editData) && !_.includes(editData.alerts_to_suppress, 'temperature'))
+    || (_.isEmpty(editData) && template && !_.includes(template.alerts_to_suppress, 'temperature'))
+    || (_.isEmpty(editData) && organization && !_.includes(organization.alerts_to_suppress, 'temperature')),
+  );
+  const supressHumidityAlerts = useInput(
+    (!_.isEmpty(editData) && !_.includes(editData.alerts_to_suppress, 'humidity'))
+    || (_.isEmpty(editData) && template && !_.includes(template.alerts_to_suppress, 'humidity'))
+    || (_.isEmpty(editData) && organization && !_.includes(organization.alerts_to_suppress, 'humidity')),
+  );
+  const supressShockAlerts = useInput(
+    (!_.isEmpty(editData) && !_.includes(editData.alerts_to_suppress, 'shock'))
+    || (_.isEmpty(editData) && template && !_.includes(template.alerts_to_suppress, 'shock'))
+    || (_.isEmpty(editData) && organization && !_.includes(organization.alerts_to_suppress, 'shock')),
+  );
+  const supressLightAlerts = useInput(
+    (!_.isEmpty(editData) && !_.includes(editData.alerts_to_suppress, 'light'))
+    || (_.isEmpty(editData) && template && !_.includes(template.alerts_to_suppress, 'light'))
+    || (_.isEmpty(editData) && organization && !_.includes(organization.alerts_to_suppress, 'light')),
   );
 
   const shipmentName = useInput((!_.isEmpty(editData) && editData.order_number) || '');
@@ -277,10 +303,10 @@ const CreateShipment = ({ history, location }) => {
 
   useEffect(() => {
     if (!_.isEmpty(editData)) {
-      const origin = _.find(custodianList, { name: editData.origin });
-      const destination = _.find(custodianList, { name: editData.destination });
+      const origin = _.find(originList, { name: editData.origin });
+      const destination = _.find(destinationList, { name: editData.destination });
       const carriers = _.map(editData.carriers, (carrier) => (
-        _.find(custodianList, { name: carrier }) || carrier
+        _.find(carrierList, { name: carrier }) || carrier
       ));
 
       // Set origin and destination custodians
@@ -312,11 +338,14 @@ const CreateShipment = ({ history, location }) => {
         setAvailableGateways(gateways);
       }
     }
-  }, [editData, custodianList, gatewayTypesData, gatewayData]);
+  }, [editData, originList, destinationList, carrierList, gatewayTypesData, gatewayData]);
 
   useEffect(() => {
     if (!_.isEmpty(custodianData) && !_.isEmpty(contactInfo)) {
-      setCustodianList(getCustodianFormattedRow(custodianData, contactInfo, custodianTypesData));
+      const custodianList = getCustodianFormattedRow(custodianData, contactInfo, custodianTypesData);
+      setOriginList(_.filter(custodianList, (cl) => _.isEqual(_.toLower(cl.type), 'shipper')));
+      setDestinationList(_.filter(custodianList, (cl) => _.includes(['receiver', 'warehouse'], _.toLower(cl.type))));
+      setCarrierList(_.filter(custodianList, (cl) => !_.includes(['shipper', 'receiver', 'warehouse'], _.toLower(cl.type))));
     }
   }, [custodianData, contactInfo, custodianTypesData]);
 
@@ -382,23 +411,27 @@ const CreateShipment = ({ history, location }) => {
       || max_excursion_humidity.hasChanged()
       || shock_threshold.hasChanged()
       || light_threshold.hasChanged()
+      || supressTempAlerts.hasChanged()
+      || supressHumidityAlerts.hasChanged()
+      || supressShockAlerts.hasChanged()
+      || supressLightAlerts.hasChanged()
       || shipmentName.hasChanged()
       || purchaseOrderNumber.hasChanged()
       || billOfLading.hasChanged()
       || !_.isEmpty(files)
       || note.hasChanged()
       || !_.isEqual(additionalCustodians, _.map(editData.carriers, (carrier) => (
-        _.find(custodianList, { name: carrier }) || carrier
+        _.find(carrierList, { name: carrier }) || carrier
       )))
       || gatewayType.hasChanged()
       || !_.isEqual(editData.transmission_time, transmissionInterval.value)
       || !_.isEqual(editData.measurement_time, measurementInterval.value)
       || (
-        _.find(custodianList, { name: editData.origin })
-        && !_.isEqual(originCustodian, _.find(custodianList, { name: editData.origin }).url)
+        _.find(originList, { name: editData.origin })
+        && !_.isEqual(originCustodian, _.find(originList, { name: editData.origin }).url)
       ) || (
-        _.find(custodianList, { name: editData.destination })
-        && !_.isEqual(destinationCustodian, _.find(custodianList, {
+        _.find(destinationList, { name: editData.destination })
+        && !_.isEqual(destinationCustodian, _.find(destinationList, {
           name: editData.destination,
         }).url)
       ) || (editData.uploaded_pdf && !_.isEqual(attachedFiles, editData.uploaded_pdf))
@@ -485,14 +518,15 @@ const CreateShipment = ({ history, location }) => {
     switch (type) {
       case 'custodian':
         if (value) {
-          const selectedCustodian = _.find(custodianList, { url: value });
-          const storage = _.isEqual(selectedCustodian.type, 'Warehouse');
+          let selectedCustodian = '';
           if (custody === 'start') {
+            selectedCustodian = _.find(originList, { url: value });
             setOriginCustodian(value);
             setOriginAbb(getAbbreviation(selectedCustodian.abbrevation));
             setStartingAddress(selectedCustodian.location);
             getLatLong(selectedCustodian.location, 'start');
           } else if (custody === 'end') {
+            selectedCustodian = _.find(destinationList, { url: value });
             setDestinationCustodian(value);
             setDestinationAbb(getAbbreviation(selectedCustodian.abbrevation));
             setEndingAddress(selectedCustodian.location);
@@ -526,6 +560,10 @@ const CreateShipment = ({ history, location }) => {
       && max_excursion_humidity.value === template.max_excursion_humidity
       && shock_threshold.value === template.shock_threshold
       && light_threshold.value === template.light_threshold
+      && supressTempAlerts.value === !_.includes(template.alerts_to_suppress, 'temperature')
+      && supressHumidityAlerts.value === !_.includes(template.alerts_to_suppress, 'humidity')
+      && supressShockAlerts.value === !_.includes(template.alerts_to_suppress, 'shock')
+      && supressLightAlerts.value === !_.includes(template.alerts_to_suppress, 'light')
     ) || (!template && (!originCustodian || !destinationCustodian || _.isEmpty(items)))
   );
 
@@ -534,9 +572,8 @@ const CreateShipment = ({ history, location }) => {
       setTemplate(value);
       setTemplateName('');
       if (value) {
-        const oCustodian = _.find(custodianList, { url: value.origin_custodian });
-        const dCustodian = _.find(custodianList, { url: value.destination_custodian });
-        const storage = _.isEqual(oCustodian, dCustodian) && _.isEqual(dCustodian.type, 'Warehouse');
+        const oCustodian = _.find(originList, { url: value.origin_custodian });
+        const dCustodian = _.find(destinationList, { url: value.destination_custodian });
 
         onInputChange(value.origin_custodian, 'custodian', 'start');
         onInputChange(value.destination_custodian, 'custodian', 'end');
@@ -548,6 +585,10 @@ const CreateShipment = ({ history, location }) => {
         max_excursion_humidity.setValue(value.max_excursion_humidity);
         shock_threshold.setValue(value.shock_threshold);
         light_threshold.setValue(value.light_threshold);
+        supressTempAlerts.setValue(!_.includes(value.alerts_to_suppress, 'temperature'));
+        supressHumidityAlerts.setValue(!_.includes(value.alerts_to_suppress, 'humidity'));
+        supressShockAlerts.setValue(!_.includes(value.alerts_to_suppress, 'shock'));
+        supressLightAlerts.setValue(!_.includes(value.alerts_to_suppress, 'light'));
       }
     } else {
       setSaveAsName('');
@@ -570,6 +611,12 @@ const CreateShipment = ({ history, location }) => {
       min_excursion_humidity: parseInt(min_excursion_humidity.value, 10),
       shock_threshold: shock_threshold.value,
       light_threshold: light_threshold.value,
+      alerts_to_suppress: _.without([
+        !supressTempAlerts.value ? 'temperature' : '',
+        !supressHumidityAlerts.value ? 'humidity' : '',
+        !supressShockAlerts.value ? 'shock' : '',
+        !supressLightAlerts.value ? 'light' : '',
+      ], ''),
       organization_uuid: organization.organization_uuid,
     };
     if (_.isEmpty(tmplt)) {
@@ -609,6 +656,12 @@ const CreateShipment = ({ history, location }) => {
       min_excursion_humidity: parseInt(min_excursion_humidity.value, 10),
       shock_threshold: shock_threshold.value,
       light_threshold: light_threshold.value,
+      alerts_to_suppress: _.without([
+        !supressTempAlerts.value ? 'temperature' : '',
+        !supressHumidityAlerts.value ? 'humidity' : '',
+        !supressShockAlerts.value ? 'shock' : '',
+        !supressLightAlerts.value ? 'light' : '',
+      ], ''),
       organization_uuid: organization.organization_uuid,
     };
 
@@ -673,24 +726,28 @@ const CreateShipment = ({ history, location }) => {
       && !max_excursion_humidity.hasChanged()
       && !shock_threshold.hasChanged()
       && !light_threshold.hasChanged()
+      && !supressTempAlerts.hasChanged()
+      && !supressHumidityAlerts.hasChanged()
+      && !supressShockAlerts.hasChanged()
+      && !supressLightAlerts.hasChanged()
       && !shipmentName.hasChanged()
       && !purchaseOrderNumber.hasChanged()
       && !billOfLading.hasChanged()
       && _.isEmpty(files)
       && !note.hasChanged()
       && _.isEqual(additionalCustodians, _.map(editData.carriers, (carrier) => (
-        _.find(custodianList, { name: carrier }) || carrier
+        _.find(carrierList, { name: carrier }) || carrier
       )))
       && _.isEqual(editData.transmission_time, transmissionInterval.value)
       && _.isEqual(editData.measurement_time, measurementInterval.value)
       && (!_.isEmpty(editData.gateway_imei)
         || (_.isEmpty(editData.gateway_imei) && (!gateway.value || !gatewayType.value))
       ) && (
-        _.find(custodianList, { name: editData.origin })
-        && _.isEqual(originCustodian, _.find(custodianList, { name: editData.origin }).url)
+        _.find(originList, { name: editData.origin })
+        && _.isEqual(originCustodian, _.find(originList, { name: editData.origin }).url)
       ) && (
-        _.find(custodianList, { name: editData.destination })
-        && _.isEqual(destinationCustodian, _.find(custodianList, {
+        _.find(destinationList, { name: editData.destination })
+        && _.isEqual(destinationCustodian, _.find(destinationList, {
           name: editData.destination,
         }).url)
       ) && _.isEqual(attachedFiles, editData.uploaded_pdf)
@@ -711,6 +768,7 @@ const CreateShipment = ({ history, location }) => {
       !_.isEmpty(editData) && _.find(custodyData, (custody) => custody.last_custody)
     ) || {};
     const updateGateway = gateway.value;
+    const setAt = moment().valueOf();
 
     const shipmentFormValue = {
       ...editData,
@@ -723,15 +781,35 @@ const CreateShipment = ({ history, location }) => {
       items,
       organization_uuid: organization.organization_uuid,
       platform_name: gatewayType.value,
-      max_excursion_temp: parseInt(max_excursion_temp.value, 10),
-      min_excursion_temp: parseInt(min_excursion_temp.value, 10),
-      max_excursion_humidity: parseInt(max_excursion_humidity.value, 10),
-      min_excursion_humidity: parseInt(min_excursion_humidity.value, 10),
-      shock_threshold: parseInt(shock_threshold.value, 10),
-      light_threshold: parseInt(light_threshold.value, 10),
+      max_excursion_temp: [
+        { value: parseInt(max_excursion_temp.value, 10), set_at: setAt },
+      ],
+      min_excursion_temp: [
+        { value: parseInt(min_excursion_temp.value, 10), set_at: setAt },
+      ],
+      max_excursion_humidity: [
+        { value: parseInt(max_excursion_humidity.value, 10), set_at: setAt },
+      ],
+      min_excursion_humidity: [
+        { value: parseInt(min_excursion_humidity.value, 10), set_at: setAt },
+      ],
+      shock_threshold: [
+        { value: parseInt(shock_threshold.value, 10), set_at: setAt },
+      ],
+      light_threshold: [
+        { value: parseInt(light_threshold.value, 10), set_at: setAt },
+      ],
+      alerts_to_suppress: _.without([
+        !supressTempAlerts.value ? 'temperature' : '',
+        !supressHumidityAlerts.value ? 'humidity' : '',
+        !supressShockAlerts.value ? 'shock' : '',
+        !supressLightAlerts.value ? 'light' : '',
+      ], ''),
       note: note.value,
       transmission_time: parseInt(transmissionInterval.value, 10),
       measurement_time: parseInt(measurementInterval.value, 10),
+      start_location: startingLocation,
+      end_location: endingLocation,
     };
     const startCustodyForm = {
       ...startCustody,
@@ -788,10 +866,12 @@ const CreateShipment = ({ history, location }) => {
       files,
       carriers,
       fujitsuVerification: organization.enable_fujitsu_verification,
+      isWarehouse: !!(_.find(destinationList, { url: destinationCustodian }) && (_.toLower(_.find(destinationList, { url: destinationCustodian }).type) === 'warehouse')),
     };
 
     if (!draft && (
       (_.isEqual('available', updateGateway.gateway_status) && _.isEqual([], updateGateway.shipment_ids))
+      || status.hasChanged()
       || _.includes(_.map(ADMIN_SHIPMENT_STATUS, 'value'), status.value)
     )) {
       savePayload = { ...savePayload, updateGateway };
@@ -828,6 +908,18 @@ const CreateShipment = ({ history, location }) => {
     if (_.isEmpty(editData)) {
       addShipmentMutation(savePayload);
     } else {
+      savePayload = {
+        ...savePayload,
+        shipment: {
+          ...savePayload.shipment,
+          min_excursion_temp: min_excursion_temp.hasChanged() ? [...editData.min_excursion_temp, ...savePayload.shipment.min_excursion_temp] : editData.min_excursion_temp,
+          max_excursion_temp: max_excursion_temp.hasChanged() ? [...editData.max_excursion_temp, ...savePayload.shipment.max_excursion_temp] : editData.max_excursion_temp,
+          min_excursion_humidity: min_excursion_humidity.hasChanged() ? [...editData.min_excursion_humidity, ...savePayload.shipment.min_excursion_humidity] : editData.min_excursion_humidity,
+          max_excursion_humidity: max_excursion_humidity.hasChanged() ? [...editData.max_excursion_humidity, ...savePayload.shipment.max_excursion_humidity] : editData.max_excursion_humidity,
+          shock_threshold: shock_threshold.hasChanged() ? [...editData.shock_threshold, ...savePayload.shipment.shock_threshold] : editData.shock_threshold,
+          light_threshold: light_threshold.hasChanged() ? [...editData.light_threshold, ...savePayload.shipment.light_threshold] : editData.light_threshold,
+        },
+      };
       editShipmentMutation(savePayload);
     }
   };
@@ -1011,7 +1103,7 @@ const CreateShipment = ({ history, location }) => {
                       disabled={cannotEdit}
                     >
                       <MenuItem value="">Select</MenuItem>
-                      {!_.isEmpty(custodianList) && _.map(custodianList, (cust) => (
+                      {!_.isEmpty(originList) && _.map(originList, (cust) => (
                         <MenuItem key={cust.custodian_uuid} value={cust.url}>
                           {cust.name}
                         </MenuItem>
@@ -1082,7 +1174,7 @@ const CreateShipment = ({ history, location }) => {
                       disabled={cannotEdit}
                     >
                       <MenuItem value="">Select</MenuItem>
-                      {!_.isEmpty(custodianList) && _.map(custodianList, (cust) => (
+                      {!_.isEmpty(destinationList) && _.map(destinationList, (cust) => (
                         <MenuItem key={cust.custodian_uuid} value={cust.url}>
                           {cust.name}
                         </MenuItem>
@@ -1276,17 +1368,32 @@ const CreateShipment = ({ history, location }) => {
               )}
               <Grid item xs={12} sm={5.75} lg={3.83} mt={isMobile() ? 2.5 : 0}>
                 <div className="createShipmentFieldset">
-                  <Typography variant="body1" component="div" fontWeight={700}>
-                    TEMPERATURE
-                  </Typography>
-                  <Typography mt={2} className="createShipmentAlertSettingText">
+                  <Grid container alignItems="center">
+                    <Grid item xs={10}>
+                      <Typography variant="body1" fontWeight={700}>TEMPERATURE</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Tooltip title="Temperature Alerts" placement="bottom">
+                        <FormControlLabel
+                          control={(
+                            <Switch
+                              color="primary"
+                              checked={supressTempAlerts.value}
+                              onChange={(e) => supressTempAlerts.setValue(e.target.checked)}
+                            />
+                          )}
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
+                  <Typography mt={2} mb={0.95} className="createShipmentAlertSettingText">
                     <span className="createShipmentHighest">HIGHEST</span>
                     {' safe temperature'}
                   </Typography>
                   <TextField
                     variant="outlined"
                     fullWidth
-                    disabled={cannotEdit}
+                    disabled={cannotEdit || !supressTempAlerts.value}
                     type="number"
                     className="createShipmentNumberInput"
                     id="max_excursion_temp"
@@ -1309,14 +1416,14 @@ const CreateShipment = ({ history, location }) => {
                     value={max_excursion_temp.value}
                     onChange={(e) => max_excursion_temp.setValue(_.toString(e.target.value))}
                   />
-                  <Typography mt={3} className="createShipmentAlertSettingText">
+                  <Typography mt={3} mb={0.95} className="createShipmentAlertSettingText">
                     <span className="createShipmentLowest">LOWEST</span>
                     {' safe temperature'}
                   </Typography>
                   <TextField
                     variant="outlined"
                     fullWidth
-                    disabled={cannotEdit}
+                    disabled={cannotEdit || !supressTempAlerts.value}
                     type="number"
                     className="createShipmentNumberInput"
                     id="min_excursion_temp"
@@ -1343,17 +1450,32 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
               <Grid item xs={12} sm={5.75} lg={3.83}>
                 <div className="createShipmentFieldset">
-                  <Typography variant="body1" component="div" fontWeight={700}>
-                    HUMIDITY
-                  </Typography>
-                  <Typography mt={2} className="createShipmentAlertSettingText">
+                  <Grid container alignItems="center">
+                    <Grid item xs={10}>
+                      <Typography variant="body1" fontWeight={700}>HUMIDITY</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Tooltip title="Humidity Alerts" placement="bottom">
+                        <FormControlLabel
+                          control={(
+                            <Switch
+                              color="primary"
+                              checked={supressHumidityAlerts.value}
+                              onChange={(e) => supressHumidityAlerts.setValue(e.target.checked)}
+                            />
+                          )}
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
+                  <Typography mt={2} mb={0.95} className="createShipmentAlertSettingText">
                     <span className="createShipmentHighest">HIGHEST</span>
                     {' safe humidity'}
                   </Typography>
                   <TextField
                     variant="outlined"
                     fullWidth
-                    disabled={cannotEdit}
+                    disabled={cannotEdit || !supressHumidityAlerts.value}
                     type="number"
                     className="createShipmentNumberInput"
                     id="max_excursion_humidity"
@@ -1367,14 +1489,14 @@ const CreateShipment = ({ history, location }) => {
                     value={max_excursion_humidity.value}
                     onChange={(e) => max_excursion_humidity.setValue(_.toString(e.target.value))}
                   />
-                  <Typography mt={3} className="createShipmentAlertSettingText">
+                  <Typography mt={3} mb={0.95} className="createShipmentAlertSettingText">
                     <span className="createShipmentLowest">LOWEST</span>
                     {' safe humidity'}
                   </Typography>
                   <TextField
                     variant="outlined"
                     fullWidth
-                    disabled={cannotEdit}
+                    disabled={cannotEdit || !supressHumidityAlerts.value}
                     type="number"
                     className="createShipmentNumberInput"
                     id="min_excursion_humidity"
@@ -1395,14 +1517,31 @@ const CreateShipment = ({ history, location }) => {
                   <Typography variant="body1" component="div" fontWeight={700}>
                     SHOCK & LIGHT
                   </Typography>
-                  <Typography mt={2} className="createShipmentAlertSettingText">
-                    <span className="createShipmentHighest">MAX</span>
-                    {' shock'}
-                  </Typography>
+                  <Grid container alignItems="center" mt={2}>
+                    <Grid item xs={10}>
+                      <Typography className="createShipmentAlertSettingText">
+                        <span className="createShipmentHighest">MAX</span>
+                        {' shock'}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Tooltip title="Shock Alerts" placement="bottom">
+                        <FormControlLabel
+                          control={(
+                            <Switch
+                              color="primary"
+                              checked={supressShockAlerts.value}
+                              onChange={(e) => supressShockAlerts.setValue(e.target.checked)}
+                            />
+                          )}
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
                   <TextField
                     variant="outlined"
                     fullWidth
-                    disabled={cannotEdit}
+                    disabled={cannotEdit || !supressShockAlerts.value}
                     type="number"
                     className="createShipmentNumberInput"
                     id="shock_threshold"
@@ -1416,14 +1555,31 @@ const CreateShipment = ({ history, location }) => {
                     value={shock_threshold.value}
                     onChange={(e) => shock_threshold.setValue(_.toString(e.target.value))}
                   />
-                  <Typography mt={3} className="createShipmentAlertSettingText">
-                    <span className="createShipmentHighest">MAX</span>
-                    {' light'}
-                  </Typography>
+                  <Grid container alignItems="center" mt={3}>
+                    <Grid item xs={10}>
+                      <Typography className="createShipmentAlertSettingText">
+                        <span className="createShipmentHighest">MAX</span>
+                        {' light'}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Tooltip title="Light Alerts" placement="bottom">
+                        <FormControlLabel
+                          control={(
+                            <Switch
+                              color="primary"
+                              checked={supressLightAlerts.value}
+                              onChange={(e) => supressLightAlerts.setValue(e.target.checked)}
+                            />
+                          )}
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
                   <TextField
                     variant="outlined"
                     fullWidth
-                    disabled={cannotEdit}
+                    disabled={cannotEdit || !supressLightAlerts.value}
                     type="number"
                     className="createShipmentNumberInput"
                     id="light_threshold"
@@ -1623,12 +1779,12 @@ const CreateShipment = ({ history, location }) => {
                           SelectProps={{ displayEmpty: true }}
                         >
                           <MenuItem value="">Select</MenuItem>
-                          {!_.isEmpty(custodianList)
+                          {!_.isEmpty(carrierList)
                             && _.map(_.without(
-                              custodianList,
-                              _.find(custodianList, { url: originCustodian }),
+                              carrierList,
+                              _.find(carrierList, { url: originCustodian }),
                               ..._.without(additionalCustodians, addCust),
-                              _.find(custodianList, { url: destinationCustodian }),
+                              _.find(carrierList, { url: destinationCustodian }),
                             ), (cust) => (
                               <MenuItem key={cust.custodian_uuid} value={cust}>
                                 {cust.name}
@@ -1692,12 +1848,12 @@ const CreateShipment = ({ history, location }) => {
                     SelectProps={{ displayEmpty: true }}
                   >
                     <MenuItem value="">Select</MenuItem>
-                    {!_.isEmpty(custodianList)
+                    {!_.isEmpty(carrierList)
                       && _.map(_.without(
-                        custodianList,
-                        _.find(custodianList, { url: originCustodian }),
+                        carrierList,
+                        _.find(carrierList, { url: originCustodian }),
                         ...additionalCustodians,
-                        _.find(custodianList, { url: destinationCustodian }),
+                        _.find(carrierList, { url: destinationCustodian }),
                       ), (cust) => (
                         <MenuItem key={cust.custodian_uuid} value={cust}>
                           {cust.name}
@@ -1856,7 +2012,7 @@ const CreateShipment = ({ history, location }) => {
                     >
                       <MenuItem value="">Select</MenuItem>
                       {!_.isEmpty(TIVE_GATEWAY_TIMES) && _.map(
-                        _.filter(TIVE_GATEWAY_TIMES, (t) => t.value <= transmissionInterval.value),
+                        _.filter(TIVE_GATEWAY_TIMES, (t) => (_.includes(gatewayType.value, 'ProofTracker') ? t.value === transmissionInterval.value : t.value <= transmissionInterval.value)),
                         (time, index) => (
                           <MenuItem key={`${time.value}-${index}`} value={time.value}>
                             {time.label}

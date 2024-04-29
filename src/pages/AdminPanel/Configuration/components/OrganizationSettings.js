@@ -103,10 +103,12 @@ const OrganizationSettings = () => {
   const defaultMeasurementInterval = useInput(
     (organizationData && organizationData.default_measurement_interval) || 20,
   );
-  const supressTempAlerts = useInput((organizationData && _.includes(organizationData.alerts_to_supress, 'temperature')) || false);
-  const supressHumidityAlerts = useInput((organizationData && _.includes(organizationData.alerts_to_supress, 'humidity')) || false);
-  const supressShockAlerts = useInput((organizationData && _.includes(organizationData.alerts_to_supress, 'shock')) || false);
-  const supressLightAlerts = useInput((organizationData && _.includes(organizationData.alerts_to_supress, 'light')) || false);
+
+  const supressTempAlerts = useInput(!_.includes(organizationData.alerts_to_suppress, 'temperature'));
+  const supressHumidityAlerts = useInput(!_.includes(organizationData.alerts_to_suppress, 'humidity'));
+  const supressShockAlerts = useInput(!_.includes(organizationData.alerts_to_suppress, 'shock'));
+  const supressLightAlerts = useInput(!_.includes(organizationData.alerts_to_suppress, 'light'));
+
   const country = useInput(_.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
     ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
     : 'United States');
@@ -217,7 +219,6 @@ const OrganizationSettings = () => {
     timezone.reset();
   };
 
-  // Check if any changes done to be saved
   const submitDisabled = () => (
     allowImportExport.hasChanged()
     || radius.hasChanged()
@@ -249,10 +250,6 @@ const OrganizationSettings = () => {
 
   const { mutate: editUnitMutation, isLoading: isEditingUnit } = useEditUnitMutation(organization, displayAlert);
 
-  /**
-   * Submit The form and add/edit custodian type
-   * @param {Event} event the default submit event
-   */
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -289,11 +286,11 @@ const OrganizationSettings = () => {
         default_light: defaultLight.value,
         default_transmission_interval: defaultTransmissionInterval.value,
         default_measurement_interval: defaultMeasurementInterval.value,
-        alerts_to_supress: _.without([
-          supressTempAlerts.value ? 'temperature' : '',
-          supressHumidityAlerts.value ? 'humidity' : '',
-          supressShockAlerts.value ? 'shock' : '',
-          supressLightAlerts.value ? 'light' : '',
+        alerts_to_suppress: _.without([
+          !supressTempAlerts.value ? 'temperature' : '',
+          !supressHumidityAlerts.value ? 'humidity' : '',
+          !supressShockAlerts.value ? 'shock' : '',
+          !supressLightAlerts.value ? 'light' : '',
         ], ''),
       };
       if (distance.hasChanged()) {
@@ -390,7 +387,7 @@ const OrganizationSettings = () => {
         </Grid> */}
         <Grid container spacing={2} mb={2}>
           <Grid item xs={12}>
-            <Typography variant="subtitle1" fontWeight={700}>Suppress Alert Email Settings:</Typography>
+            <Typography variant="subtitle1" fontWeight={700}>Alert Settings:</Typography>
           </Grid>
           <Grid item xs={6} alignSelf="center">
             <FormControlLabel
@@ -398,7 +395,7 @@ const OrganizationSettings = () => {
               label={(
                 <div className="adminPanelOrgIconContainer">
                   <TemperatureIcon className="adminPanelOrgIcons" />
-                  Suppress Temperature Alert Emails
+                  Temperature Alerts
                 </div>
               )}
               control={<Switch checked={supressTempAlerts.value} color="primary" onChange={(e) => supressTempAlerts.setValue(e.target.checked)} />}
@@ -410,7 +407,7 @@ const OrganizationSettings = () => {
               label={(
                 <div className="adminPanelOrgIconContainer">
                   <HumidityIcon className="adminPanelOrgIcons" />
-                  Suppress Humidity Alert Emails
+                  Humidity Alerts
                 </div>
               )}
               control={<Switch checked={supressHumidityAlerts.value} color="primary" onChange={(e) => supressHumidityAlerts.setValue(e.target.checked)} />}
@@ -422,7 +419,7 @@ const OrganizationSettings = () => {
               label={(
                 <div className="adminPanelOrgIconContainer">
                   <ShockIcon className="adminPanelOrgIcons" />
-                  Suppress Shock Alert Emails
+                  Shock Alerts
                 </div>
               )}
               control={<Switch checked={supressShockAlerts.value} color="primary" onChange={(e) => supressShockAlerts.setValue(e.target.checked)} />}
@@ -434,7 +431,7 @@ const OrganizationSettings = () => {
               label={(
                 <div className="adminPanelOrgIconContainer">
                   <LightIcon className="adminPanelOrgIcons" />
-                  Suppress Light Alert Emails
+                  Light Alerts
                 </div>
               )}
               control={<Switch checked={supressLightAlerts.value} color="primary" onChange={(e) => supressLightAlerts.setValue(e.target.checked)} />}

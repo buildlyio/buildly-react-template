@@ -20,18 +20,14 @@ import { validators } from '@utils/validators';
 import { useResetPasswordMutation } from '@react-query/mutations/authUser/resetPasswordMutation';
 import './ResetPasswordStyles.css';
 
-const EmailForm = () => {
+const EmailForm = ({ history }) => {
   const email = useInput('', { required: true });
   const [error, setError] = useState({});
 
   const { displayAlert } = useAlert();
 
-  const { mutate: resetPasswordMutation, isLoading: isResetPassword } = useResetPasswordMutation(displayAlert);
+  const { mutate: resetPasswordMutation, isLoading: isResetPassword } = useResetPasswordMutation(displayAlert, setError, history);
 
-  /**
-   * Submit the form to the backend and attempts to authenticate
-   * @param {Event} event the default submit event
-   */
   const handleSubmit = (event) => {
     event.preventDefault();
     const loginFormValue = {
@@ -39,13 +35,6 @@ const EmailForm = () => {
     };
     resetPasswordMutation(loginFormValue);
   };
-
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
 
   const handleBlur = (e, validation, input) => {
     const validateObj = validators(validation, input);

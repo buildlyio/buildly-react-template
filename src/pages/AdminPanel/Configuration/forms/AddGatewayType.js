@@ -29,8 +29,8 @@ const AddGatewayType = ({ history, location }) => {
   });
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? 'Save' : 'Add Gateway Type';
-  const formTitle = editPage ? 'Edit Gateway Type' : 'Add Gateway Type';
+  const buttonText = editPage ? 'Save' : 'Add Tracker Type';
+  const formTitle = editPage ? 'Edit Tracker Type' : 'Add Tracker Type';
 
   const closeFormModal = () => {
     if (name.hasChanged()) {
@@ -55,10 +55,6 @@ const AddGatewayType = ({ history, location }) => {
 
   const { mutate: editGatewayTypeMutation, isLoading: isEditingGatewayType } = useEditGatewayTypeMutation(history, location.state.from, displayAlert);
 
-  /**
-   * Submit The form and add/edit custodian type
-   * @param {Event} event the default submit event
-   */
   const handleSubmit = (event) => {
     event.preventDefault();
     const currentDateTime = new Date();
@@ -77,13 +73,6 @@ const AddGatewayType = ({ history, location }) => {
       addGatewayTypeMutation(data);
     }
   };
-
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
 
   const handleBlur = (e, validation, input, parentId) => {
     const validateObj = validators(validation, input);
@@ -145,7 +134,7 @@ const AddGatewayType = ({ history, location }) => {
                   fullWidth
                   required
                   id="name"
-                  label="Gateway Type"
+                  label="Tracker Type"
                   name="name"
                   autoComplete="name"
                   error={formError.name && formError.name.error}

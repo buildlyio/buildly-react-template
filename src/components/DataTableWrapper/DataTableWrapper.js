@@ -104,6 +104,8 @@ const DataTableWrapper = ({
     filter: !noOptionsIcon,
     filterType: 'multiselect',
     responsive: 'standard',
+    pagination: true,
+    jumpToPage: true,
     tableBodyHeight: tableHeight || '',
     selectableRows: selectable && selectable.rows
       ? selectable.rows
@@ -135,6 +137,9 @@ const DataTableWrapper = ({
     textLabels: {
       body: {
         noMatch: 'No data to display',
+      },
+      pagination: {
+        jumpToPage: 'Go To Page',
       },
     },
     setRowProps: (row, dataIndex, rowIndex) => !customTheme && ({

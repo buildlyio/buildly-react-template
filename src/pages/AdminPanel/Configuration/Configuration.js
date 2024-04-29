@@ -78,7 +78,7 @@ const Configuration = (props) => {
               id="gateway-type-header"
             >
               <Typography variant="h5">
-                Gateway Type
+                Tracker Type
               </Typography>
             </AccordionSummary>
             <AccordionDetails>

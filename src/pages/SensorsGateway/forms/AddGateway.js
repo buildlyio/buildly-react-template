@@ -74,8 +74,8 @@ const AddGateway = ({
 
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? 'Save' : 'Add Gateway';
-  const formTitle = editPage ? 'Edit Gateway' : 'Add Gateway';
+  const buttonText = editPage ? 'Save' : 'Add Tracker';
+  const formTitle = editPage ? 'Edit Tracker' : 'Add Tracker';
 
   const organization = getUser().organization.organization_uuid;
 
@@ -122,10 +122,6 @@ const AddGateway = ({
 
   const { mutate: editGatewayMutation, isLoading: isEditingGateway } = useEditGatewayMutation(organization, history, redirectTo, displayAlert);
 
-  /**
-   * Submit The form and add/edit custodian
-   * @param {Event} event the default submit event
-   */
   const handleSubmit = (event) => {
     event.preventDefault();
     const gatewayFormValues = {
@@ -151,13 +147,6 @@ const AddGateway = ({
       addGatewayMutation(gatewayFormValues);
     }
   };
-
-  /**
-   * Handle input field blur event
-   * @param {Event} e Event
-   * @param {String} validation validation type if any
-   * @param {Object} input input field
-   */
 
   const handleBlur = (e, validation, input, parentId) => {
     const validateObj = validators(validation, input);
@@ -239,7 +228,7 @@ const AddGateway = ({
                   fullWidth
                   id="gateway_name"
                   required
-                  label="Gateway Name"
+                  label="Tracker Name"
                   name="gateway_name"
                   autoComplete="gateway_name"
                   error={
@@ -259,7 +248,7 @@ const AddGateway = ({
             <Card variant="outlined" className="gatewayCardItems">
               <CardContent>
                 <Typography variant="h6" gutterBottom mt={1} mb={isMobile() ? 0 : 1.65}>
-                  Gateway Info
+                  Tracker Info
                 </Typography>
                 <Grid container spacing={isDesktop() ? 2 : 0}>
                   <Grid
@@ -275,7 +264,7 @@ const AddGateway = ({
                       required
                       id="gateway_type"
                       select
-                      label="Gateway Type"
+                      label="Tracker Type"
                       error={
                         formError.gateway_type
                         && formError.gateway_type.error
@@ -316,7 +305,7 @@ const AddGateway = ({
                       required
                       id="gateway_status"
                       select
-                      label="Gateway Status"
+                      label="Tracker Status"
                       error={
                         formError.gateway_status
                         && formError.gateway_status.error
@@ -424,28 +413,32 @@ const AddGateway = ({
                     <TextField
                       variant="outlined"
                       margin="normal"
-                      id="custodian_uuid"
+                      id="shipper_uuid"
                       select
                       fullWidth
-                      label="Custodian"
+                      label="Shipper"
                       disabled={viewOnly}
                       error={
-                        formError.custodian_uuid
-                        && formError.custodian_uuid.error
+                        formError.shipper_uuid
+                        && formError.shipper_uuid.error
                       }
                       helperText={
-                        formError.custodian_uuid
-                          ? formError.custodian_uuid.message
+                        formError.shipper_uuid
+                          ? formError.shipper_uuid.message
                           : ''
                       }
-                      onBlur={(e) => handleBlur(e, 'required', custodian_uuid, 'custodian_uuid')}
+                      onBlur={(e) => handleBlur(e, 'required', custodian_uuid, 'shipper_uuid')}
                       value={custodian_uuid}
                       onChange={onInputChange}
                     >
                       <MenuItem value="">Select</MenuItem>
                       {custodianList
                         && _.map(
-                          _.orderBy(custodianList, ['name'], ['asc']),
+                          _.orderBy(
+                            _.filter(custodianList, ['custodian_type', 'https://demo-custodian.tpath.io/custodian_type/1/']),
+                            ['name'],
+                            ['asc'],
+                          ),
                           (item, index) => (
                             <MenuItem
                               key={`custodian${index}:${item.id}`}

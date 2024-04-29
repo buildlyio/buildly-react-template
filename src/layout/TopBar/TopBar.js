@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTimezoneSelect, allTimezones } from 'react-timezone-select';
 import _ from 'lodash';
 import {
@@ -30,15 +30,15 @@ import { useQuery } from 'react-query';
 import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
 import { useUpdateUserMutation } from '@react-query/mutations/authUser/updateUserMutation';
 import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getVersionNotesQuery } from '@react-query/queries/notifications/getVersionNotesQuery';
 import AccountSettings from './components/AccountSettings';
 import AlertNotifications from './components/AlertNotifications';
+import WhatsNewModal from './components/WhatsNew/WhatsNewModal';
+import WhatsNewSlider from './components/WhatsNew/WhatsNewSlider';
 import AdminMenu from './AdminMenu';
 import AccountMenu from './AccountMenu';
 import './TopBarStyles.css';
 
-/**
- * Component for the top bar header.
- */
 const TopBar = ({
   navHidden,
   setNavHidden,
@@ -49,6 +49,8 @@ const TopBar = ({
   const [organization, setOrganization] = useState(null);
   const { options: tzOptions } = useTimezoneSelect({ labelStyle: 'original', timezones: allTimezones });
   const [showAccountSettings, setShowAccountSettings] = useState(false);
+  const [showWhatsNewModal, setShowWhatsNewModal] = useState(false);
+  const [showWhatsNewSlider, setShowWhatsNewSlider] = useState(false);
   const [hideAlertBadge, setHideAlertBadge] = useState(true);
   const [showAlertNotifications, setShowAlertNotifications] = useState(false);
 
@@ -56,6 +58,9 @@ const TopBar = ({
   let isAdmin = false;
   let isSuperAdmin = false;
   let org_uuid = user.organization.organization_uuid;
+
+  // eslint-disable-next-line no-undef
+  const ver = VERSION;
 
   const { displayAlert } = useAlert();
   const { data, setTimezone } = useStore();
@@ -69,6 +74,14 @@ const TopBar = ({
     org_uuid = user.organization.organization_uuid;
   }
 
+  useEffect(() => {
+    if (!_.isEmpty(localStorage.getItem('isWhatsNewShown'))) {
+      setShowWhatsNewModal(false);
+    } else {
+      setShowWhatsNewModal(true);
+    }
+  }, []);
+
   const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
     ['organizations'],
     () => getAllOrganizationQuery(displayAlert),
@@ -80,6 +93,12 @@ const TopBar = ({
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', org_uuid],
     () => getUnitQuery(org_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: versionNotesData, isLoading: isLoadingVersionNotes } = useQuery(
+    ['versionNotes'],
+    () => getVersionNotesQuery(ver, displayAlert),
     { refetchOnWindowFocus: false },
   );
 
@@ -118,6 +137,11 @@ const TopBar = ({
     setAnchorEl(null);
   };
 
+  const handleWhatsNewClick = () => {
+    setShowWhatsNewSlider(true);
+    setAnchorEl(null);
+  };
+
   const handleAboutClick = () => {
     history.push(routes.ABOUT_PLATFORM);
     setAnchorEl(null);
@@ -140,7 +164,7 @@ const TopBar = ({
 
   return (
     <AppBar position="fixed" className="topbarAppBar">
-      {(isLoadingOrgs || isUpdateUser || isLoadingUnits) && <Loader open={isLoadingOrgs || isUpdateUser || isLoadingUnits} />}
+      {(isLoadingOrgs || isUpdateUser || isLoadingUnits || isLoadingVersionNotes) && <Loader open={isLoadingOrgs || isUpdateUser || isLoadingUnits || isLoadingVersionNotes} />}
       <Toolbar>
         <IconButton
           edge="start"
@@ -189,14 +213,17 @@ const TopBar = ({
               value={organization}
               onChange={handleOrganizationChange}
             >
-              {_.map(orgData, (org) => (
-                <MenuItem
-                  key={`organization-${org.id}`}
-                  value={org.name || ''}
-                >
-                  {org.name}
-                </MenuItem>
-              ))}
+              {_.map(
+                _.filter(orgData, (org) => org.organization_type === 2),
+                (org) => (
+                  <MenuItem
+                    key={`organization-${org.id}`}
+                    value={org.name || ''}
+                  >
+                    {org.name}
+                  </MenuItem>
+                ),
+              )}
             </TextField>
           )}
           <IconButton
@@ -243,6 +270,7 @@ const TopBar = ({
             user={user}
             organizationName={organization}
             handleAccountSettingsClick={handleAccountSettingsClick}
+            handleWhatsNewClick={handleWhatsNewClick}
             handleAboutClick={handleAboutClick}
             handlePrivacyClick={handlePrivacyClick}
             handleLogoutClick={handleLogoutClick}
@@ -250,6 +278,8 @@ const TopBar = ({
         </div>
       </Toolbar>
       <AccountSettings open={showAccountSettings} setOpen={setShowAccountSettings} />
+      <WhatsNewModal open={showWhatsNewModal} setOpen={setShowWhatsNewModal} data={versionNotesData} />
+      <WhatsNewSlider open={showWhatsNewSlider} setOpen={setShowWhatsNewSlider} data={versionNotesData} />
       <AlertNotifications
         open={showAlertNotifications}
         setOpen={setShowAlertNotifications}

@@ -81,15 +81,15 @@ const GatewayType = ({ redirectTo, history }) => {
           ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
           : '',
       )}
-      filename="GatewayType"
-      addButtonHeading="Gateway Type"
+      filename="TrackerType"
+      addButtonHeading="Tracker Type"
       onAddButtonClick={onAddButtonClick}
       editAction={editType}
       deleteAction={deleteType}
       openDeleteModal={openDeleteModal}
       setDeleteModal={setDeleteModal}
       handleDeleteModal={handleDeleteModal}
-      deleteModalTitle="Are you sure you want to Delete this Gateway Type?"
+      deleteModalTitle="Are you sure you want to Delete this Tracker Type?"
       tableHeight="300px"
     >
       <Route path={`${addPath}`} component={AddGatewayType} />

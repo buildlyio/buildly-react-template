@@ -124,8 +124,8 @@ const Gateway = ({ history, redirectTo }) => {
       <DataTableWrapper
         hideAddButton
         centerLabel
-        filename="GatewayData"
-        tableHeader="Gateway"
+        filename="TrackerData"
+        tableHeader="Trackers"
         loading={
           isLoadingGateways || isLoadingGatewayTypes || isLoadingCustodians || isLoadingContact || isLoadingShipments || isLoadingUnits || isDeletingGateway
         }
@@ -142,14 +142,14 @@ const Gateway = ({ history, redirectTo }) => {
             ).unit_of_measure
             : '',
         )}
-        addButtonHeading="Add Gateway"
+        addButtonHeading="Add Tracker"
         onAddButtonClick={onAddButtonClick}
         editAction={editGatewayAction}
         deleteAction={deleteGatewayAction}
         openDeleteModal={openDeleteModal}
         setDeleteModal={setDeleteModal}
         handleDeleteModal={handleDeleteModal}
-        deleteModalTitle="Are you sure you want to delete this Gateway?"
+        deleteModalTitle="Are you sure you want to delete this Tracker?"
       >
         <Route path={`${addPath}`} component={AddGateway} />
         <Route path={`${editPath}/:id`} component={AddGateway} />

@@ -15,6 +15,7 @@ const AccountMenu = ({
   user,
   handleLogoutClick,
   handleAccountSettingsClick,
+  handleWhatsNewClick,
   handleAboutClick,
   handlePrivacyClick,
   organizationName,
@@ -62,6 +63,10 @@ const AccountMenu = ({
         <Divider />
         <MenuItem onClick={handleAccountSettingsClick} className="topbarAdminMenuRoot">
           <ListItemText primary="Account & Settings" />
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleWhatsNewClick} className="topbarAdminMenuRoot">
+          <ListItemText primary="What's New?" />
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleAboutClick} className="topbarAdminMenuRoot">

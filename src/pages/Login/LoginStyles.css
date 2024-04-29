@@ -23,3 +23,11 @@
   min-height: 5rem;
   margin: 8px 0px;
 }
+
+.loginErrorText {
+  text-align: center;
+  color: var(--color-palette-error-main);
+  font-size: 14px;
+  margin-top: -23px;
+  margin-bottom: 2px;
+}
