@@ -10,8 +10,6 @@ import {
   Typography,
   Container,
   Grid,
-  FormControlLabel,
-  Switch,
   InputAdornment,
   IconButton,
 } from '@mui/material';
@@ -21,7 +19,7 @@ import Copyright from '@components/Copyright/Copyright';
 import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
 import { routes } from '@routes/routesConstants';
-import { isMobile, isTablet } from '@utils/mediaQuery';
+import { isTablet } from '@utils/mediaQuery';
 import { validators } from '@utils/validators';
 import { useQuery } from 'react-query';
 import { inviteTokenCheckQuery } from '@react-query/queries/authUser/inviteTokenCheckQuery';
@@ -31,16 +29,17 @@ import './RegisterStyles.css';
 
 const Register = ({ history }) => {
   const { displayAlert } = useAlert();
-
   const [inviteToken, setInviteToken] = useState('');
 
   const first_name = useInput('', { required: true });
-  const email = useInput('', { required: true });
   const last_name = useInput('');
-  const [password, setPassword] = useState('');
+  const username = useInput('', { required: true });
+  const email = useInput('', { required: true });
+  const password = useInput('', { required: true });
   const re_password = useInput('', {
     required: true,
     confirm: true,
+    matchField: password,
   });
   const [validations, setValidations] = useState({
     length: false,
@@ -52,8 +51,6 @@ const Register = ({ history }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const organization_name = useInput('', { required: true });
-  const [geoOptions, setGeoOptions] = useState({ email: true, sms: false, whatsApp: false });
-  const [envOptions, setEnvOptions] = useState({ email: true, sms: false, whatsApp: false });
   const [formError, setFormError] = useState({});
 
   const { data: inviteTokenCheckData, isLoading: isLoadingInviteTokenCheck } = useQuery(
@@ -65,9 +62,7 @@ const Register = ({ history }) => {
   useEffect(() => {
     const urlObject = new URL(window.location);
     const token = urlObject.searchParams.get('token');
-    if (_.isEmpty(token)) {
-      history.push(routes.LOGIN);
-    } else {
+    if (!_.isEmpty(token)) {
       setInviteToken(token);
     }
   }, []);
@@ -83,28 +78,27 @@ const Register = ({ history }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const registerFormValue = {
-      username: email.value,
+    let registerFormValue = {
+      username: username.value,
       email: email.value,
       password,
       organization_name: organization_name.value,
       first_name: first_name.value,
       last_name: last_name.value,
-      geo_alert_preferences: geoOptions,
-      env_alert_preferences: envOptions,
-      user_role: inviteTokenCheckData.user_role,
-      invitation_token: inviteToken,
     };
+
+    if (inviteToken) {
+      registerFormValue = {
+        ...registerFormValue,
+        invitation_token: inviteToken,
+      };
+    }
+
     registerMutation(registerFormValue);
   };
 
   const handleBlur = (e, validation, input) => {
-    let validateObj;
-    if (validation === 'confirm') {
-      validateObj = validators(validation, { ...input, password });
-    } else {
-      validateObj = validators(validation, input);
-    }
+    const validateObj = validators(validation, input);
     const prevState = { ...formError };
     if (validateObj && validateObj.error) {
       setFormError({
@@ -127,6 +121,7 @@ const Register = ({ history }) => {
     if (
       !first_name.value
       || !last_name.value
+      || !username.value
       || !email.value
       || !password
       || !re_password.value
@@ -239,7 +234,18 @@ const Register = ({ history }) => {
                 </Grid>
               </Grid>
               <Grid container spacing={isTablet() ? 0 : 3}>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    label="Username"
+                    type="text"
+                    className="registerTextField"
+                    {...username.bind}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -247,8 +253,21 @@ const Register = ({ history }) => {
                     label="Email"
                     type="email"
                     className="registerTextField"
-                    disabled
+                    disabled={!!inviteToken}
                     {...email.bind}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={isTablet() ? 0 : 3}>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    label="Organization Name"
+                    className="registerTextField"
+                    disabled={!!inviteToken}
+                    {...organization_name.bind}
                   />
                 </Grid>
               </Grid>
@@ -265,9 +284,9 @@ const Register = ({ history }) => {
                     id="password"
                     autoComplete="current-password"
                     className="registerTextField"
-                    value={password}
+                    value={password.value}
                     onChange={(e) => {
-                      setPassword(e.target.value);
+                      password.setValue(e.target.value);
                       validatePassword(e.target.value);
                     }}
                     InputProps={{
@@ -358,94 +377,6 @@ const Register = ({ history }) => {
                 {' '}
                 At least 1 special character (!@#$%^&*, etc.)
               </Typography>
-              <Grid container spacing={isTablet() ? 0 : 3}>
-                <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    label="Organization Name"
-                    className="registerTextField"
-                    disabled
-                    {...organization_name.bind}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container spacing={isMobile() ? 0 : 3}>
-                <Grid item xs={12}>
-                  <Typography variant="body1" fontWeight={700}>Shipment Status Change Alerts:</Typography>
-                  <Typography variant="caption">Enabling these alerts will send notifications of departure and arrival activity of your shipments.</Typography>
-                </Grid>
-                <Grid item xs={6} sm={4} alignSelf="center">
-                  <Typography variant="body1" fontWeight={500}>Email Alerts:</Typography>
-                </Grid>
-                <Grid item xs={6} sm={8} alignSelf="center">
-                  <FormControlLabel
-                    labelPlacement="end"
-                    label={geoOptions && geoOptions.email ? 'ON' : 'OFF'}
-                    control={<Switch checked={geoOptions && geoOptions.email} color="primary" onChange={(e) => setGeoOptions({ ...geoOptions, email: e.target.checked })} />}
-                  />
-                </Grid>
-                <Grid item xs={6} sm={4} alignSelf="center">
-                  <Typography variant="body1" fontWeight={500}>SMS text Alerts:</Typography>
-                </Grid>
-                <Grid item xs={6} sm={8} alignSelf="center">
-                  <FormControlLabel
-                    labelPlacement="end"
-                    label="Available in a future release"
-                    control={<Switch checked={false} color="primary" disabled onChange={(e) => setGeoOptions({ ...geoOptions, sms: e.target.checked })} />}
-                  />
-                </Grid>
-                <Grid item xs={6} sm={4} alignSelf="center">
-                  <Typography variant="body1" fontWeight={500}>WhatsApp Alerts:</Typography>
-                </Grid>
-                <Grid item xs={6} sm={8} alignSelf="center">
-                  <FormControlLabel
-                    labelPlacement="end"
-                    label="Available in a future release"
-                    control={<Switch checked={false} color="primary" disabled onChange={(e) => setGeoOptions({ ...geoOptions, whatsApp: e.target.checked })} />}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container spacing={isMobile() ? 0 : 3} mt={3}>
-                <Grid item xs={12}>
-                  <Typography variant="body1" fontWeight={700}>Environmental Alerts:</Typography>
-                  <Typography variant="caption">
-                    Enabling these alerts will send notifications about excursions of your settings for
-                    temperature, humidity, shock, tilt, and light exposure of your shipments.
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} sm={4} alignSelf="center">
-                  <Typography variant="body1" fontWeight={500}>Email Alerts:</Typography>
-                </Grid>
-                <Grid item xs={6} sm={8} alignSelf="center">
-                  <FormControlLabel
-                    labelPlacement="end"
-                    label={envOptions && envOptions.email ? 'ON' : 'OFF'}
-                    control={<Switch checked={envOptions && envOptions.email} color="primary" onChange={(e) => setEnvOptions({ ...envOptions, email: e.target.checked })} />}
-                  />
-                </Grid>
-                <Grid item xs={6} sm={4} alignSelf="center">
-                  <Typography variant="body1" fontWeight={500}>SMS text Alerts:</Typography>
-                </Grid>
-                <Grid item xs={6} sm={8} alignSelf="center">
-                  <FormControlLabel
-                    labelPlacement="end"
-                    label="Available in a future release"
-                    control={<Switch checked={false} color="primary" disabled onChange={(e) => setEnvOptions({ ...envOptions, sms: e.target.checked })} />}
-                  />
-                </Grid>
-                <Grid item xs={6} sm={4} alignSelf="center">
-                  <Typography variant="body1" fontWeight={500}>WhatsApp Alerts:</Typography>
-                </Grid>
-                <Grid item xs={6} sm={8} alignSelf="center">
-                  <FormControlLabel
-                    labelPlacement="end"
-                    label="Available in a future release"
-                    control={<Switch checked={false} color="primary" disabled onChange={(e) => setEnvOptions({ ...envOptions, whatsApp: e.target.checked })} />}
-                  />
-                </Grid>
-              </Grid>
               <Button
                 type="submit"
                 fullWidth

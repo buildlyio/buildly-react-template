@@ -6,7 +6,6 @@ export const useLoginMutation = (
   history,
   redirectTo,
   displayAlert,
-  timezone,
 ) => useMutation(
   async (loginData) => {
     const token = await oauthService.authenticateWithPasswordFlow(loginData);
@@ -25,7 +24,6 @@ export const useLoginMutation = (
   },
   {
     onSuccess: async (data) => {
-      await timezone(data.data.user_timezone);
       history.push(redirectTo);
     },
   },

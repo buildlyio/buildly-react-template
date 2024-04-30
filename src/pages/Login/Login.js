@@ -27,18 +27,17 @@ import { useLoginMutation } from '@react-query/mutations/authUser/loginMutation'
 import './LoginStyles.css';
 
 const Login = ({ history }) => {
-  const email = useInput(localStorage.getItem('email') || '', { required: true });
+  const username = useInput('', { required: true });
   const password = useInput('', { required: true });
   const [error, setError] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setChecked] = useState(!!localStorage.getItem('email') || false);
   const location = useLocation();
 
   const { displayAlert } = useAlert();
 
   const { mutate: resetPasswordCheckMutation, isLoading: isPasswordCheck } = useResetPasswordCheckMutation(history, routes.RESET_PASSWORD_CONFIRM, routes.LOGIN, displayAlert);
 
-  const { mutate: loginMutation, isLoading: islogin, isError: isLoginError } = useLoginMutation(history, (location.state && location.state.from) || routes.SHIPMENT, displayAlert);
+  const { mutate: loginMutation, isLoading: islogin, isError: isLoginError } = useLoginMutation(history, (location.state && location.state.from) || routes.DASHBOARD, displayAlert);
 
   useEffect(() => {
     if (location.pathname.includes(routes.RESET_PASSWORD_CONFIRM)) {
@@ -58,14 +57,9 @@ const Login = ({ history }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const loginFormValue = {
-      username: email.value,
+      username: username.value,
       password: password.value,
     };
-    if (isChecked) {
-      localStorage.setItem('email', email.value);
-    } else {
-      localStorage.removeItem('email');
-    }
     loginMutation(loginFormValue);
   };
 
@@ -90,7 +84,7 @@ const Login = ({ history }) => {
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(error);
-    if (!email.value || !password.value) {
+    if (!username.value || !password.value) {
       return true;
     }
     let errorExists = false;
@@ -131,15 +125,15 @@ const Login = ({ history }) => {
                 margin="normal"
                 required
                 fullWidth
-                id="email"
-                label="Email"
-                name="email"
-                autoComplete="email"
-                error={isLoginError || (error.email && error.email.error)}
-                helperText={error && error.email ? error.email.message : ''}
+                id="usrename"
+                label="Username"
+                name="username"
+                autoComplete="username"
+                error={isLoginError || (error.username && error.username.error)}
+                helperText={error && error.username ? error.username.message : ''}
                 className="loginTextField"
-                onBlur={(e) => handleBlur(e, 'required', email)}
-                {...email.bind}
+                onBlur={(e) => handleBlur(e, 'required', username)}
+                {...username.bind}
               />
               <TextField
                 variant="outlined"
@@ -175,7 +169,7 @@ const Login = ({ history }) => {
               />
               {isLoginError && (
                 <Typography className="loginErrorText">
-                  Incorrect email or password. Try again!
+                  Incorrect username or password. Try again!
                 </Typography>
               )}
               <Button
@@ -189,25 +183,22 @@ const Login = ({ history }) => {
                 Sign in
               </Button>
               <Grid container alignItems="center">
-                <Grid item xs={7}>
-                  <FormControlLabel
-                    control={(
-                      <Checkbox
-                        checked={isChecked}
-                        onChange={() => setChecked(!isChecked)}
-                        color="primary"
-                      />
-                    )}
-                    label="Remember Email"
-                  />
-                </Grid>
-                <Grid item xs={5} style={{ textAlign: 'end' }}>
+                <Grid item xs={5} style={{ textAlign: 'start' }}>
                   <Link
                     to={routes.RESET_PASSWORD}
                     variant="body2"
                     color="primary"
                   >
                     Forgot Password?
+                  </Link>
+                </Grid>
+                <Grid item xs={7} style={{ textAlign: 'end' }}>
+                  <Link
+                    to={routes.REGISTER}
+                    variant="body2"
+                    color="primary"
+                  >
+                    Don't have an account? Register
                   </Link>
                 </Grid>
               </Grid>

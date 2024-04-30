@@ -11,7 +11,7 @@ import { hasGlobalAdminRights } from '@utils/permissions';
 import { routes } from '@routes/routesConstants';
 import Users from './Users/Users';
 import UserGroups from './UserGroups/UserGroups';
-import AddUser from './forms/AddUser';
+import InviteUser from './forms/InviteUser';
 
 const UserManagement = () => {
   const history = useHistory();
@@ -43,17 +43,6 @@ const UserManagement = () => {
 
   return (
     <Box mt={5} mb={3}>
-      {isSuperAdmin
-        && (
-          <Button
-            type="button"
-            variant="contained"
-            color="primary"
-            onClick={() => setShowAddOrganization(true)}
-          >
-            + Add Organization
-          </Button>
-        )}
       <Button
         type="button"
         variant="contained"
@@ -61,7 +50,7 @@ const UserManagement = () => {
         onClick={() => setShowAddUser(true)}
         style={{ marginLeft: isSuperAdmin ? '20px' : '0px' }}
       >
-        + Add Users
+        + Invite Users
       </Button>
       <Box mb={3} mt={2}>
         <Tabs value={view} onChange={viewTabClicked}>
@@ -72,7 +61,7 @@ const UserManagement = () => {
       </Box>
       <Route path={routes.CURRENT_USERS} component={Users} />
       <Route path={routes.USER_GROUPS} component={UserGroups} />
-      <AddUser open={showAddUser} setOpen={setShowAddUser} />
+      <InviteUser open={showAddUser} setOpen={setShowAddUser} />
     </Box>
   );
 };

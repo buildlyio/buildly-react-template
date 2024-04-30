@@ -3,7 +3,7 @@ import { Route, Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { Container } from '@mui/material';
 import { UserContext, getUser } from '@context/User.context';
-import TopBar from '../TopBar/TopBar';;
+import TopBar from '../TopBar/TopBar';
 import UserManagement from '@pages/UserManagement/UserManagement';
 import { routes } from '@routes/routesConstants';
 import { hasAdminRights, hasGlobalAdminRights } from '@utils/permissions';
@@ -18,7 +18,6 @@ const ContainerDashboard = ({ location, history }) => {
   if (_.includes(location.pathname, 'profile')) {
     subNavItems = [
       { label: 'Dashboard', value: 'dashboard' },
-      { label: 'Custodians', value: 'custodians' },
     ];
   }
 

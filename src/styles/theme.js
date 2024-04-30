@@ -14,6 +14,7 @@ const theme = extendTheme({
         background: {
           default: '#FFFFFF',
           light: '#BEBEBA',
+          light2: '#D3D4D5',
           dark: '#383636',
         },
         primary: {
@@ -21,6 +22,18 @@ const theme = extendTheme({
         },
         secondary: {
           main: '#F0CE7F',
+        },
+        success: {
+          main: '#009900',
+        },
+        info: {
+          main: '#0099CC',
+        },
+        warning: {
+          main: '#FFCC33',
+        },
+        error: {
+          main: '#FF0033',
         },
       },
     },

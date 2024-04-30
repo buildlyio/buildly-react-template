@@ -85,9 +85,7 @@ const Verification = ({ location }) => {
             </Typography>
             <Typography variant="body" gutterBottom textAlign="center">
               An email has been sent for verification. Click on the link in the email to change
-              your 'Password'. If no email was received, check your junk/spam mail and add
-              'alerts@app.tpath.io' to your safe sender list (check with your email provider
-              on the proper method to enable this).
+              your 'Password'. Please check your junk/spam mail as well.
             </Typography>
             <Button
               type="submit"
