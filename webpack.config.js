@@ -4,6 +4,8 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const { GenerateSW } = require('workbox-webpack-plugin');
+const packageJSON = require('./package.json');
 
 module.exports = (env, argv) => {
   const fileCopy = env.build === 'local'
@@ -78,7 +80,7 @@ module.exports = (env, argv) => {
     },
     resolve: {
       extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
-      modules: [path.resolve(__dirname, './src'), 'node_modules'],
+      modules: [path.resolve(__dirname, './src'), 'node_modules', path.resolve('node_modules')],
       alias: {
         '@assets': path.resolve(__dirname, './src/assets'),
         '@components': path.resolve(__dirname, './src/components'),
@@ -87,10 +89,11 @@ module.exports = (env, argv) => {
         '@layout': path.resolve(__dirname, './src/layout'),
         '@modules': path.resolve(__dirname, './src/modules'),
         '@pages': path.resolve(__dirname, './src/pages'),
-        '@redux': path.resolve(__dirname, './src/redux'),
+        '@react-query': path.resolve(__dirname, './src/react-query'),
         '@routes': path.resolve(__dirname, './src/routes'),
         '@styles': path.resolve(__dirname, './src/styles'),
         '@utils': path.resolve(__dirname, './src/utils'),
+        '@zustand': path.resolve(__dirname, './src/zustand'),
       },
     },
     output: {
@@ -107,12 +110,21 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
+      new webpack.DefinePlugin({
+        VERSION: JSON.stringify(packageJSON.version),
+      }),
       new HtmlWebPackPlugin({
         template: './src/index.html',
         filename: './index.html',
         favicon: './src/assets/favicon.ico',
+        hash: true,
       }),
       fileCopy,
+      new GenerateSW({
+        maximumFileSizeToCacheInBytes: 200000000,
+        clientsClaim: true,
+        skipWaiting: true,
+      }),
     ],
   };
 

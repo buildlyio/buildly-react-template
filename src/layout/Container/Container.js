@@ -1,52 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Route, Redirect } from 'react-router-dom';
+import _ from 'lodash';
+import { Container } from '@mui/material';
 import { UserContext, getUser } from '@context/User.context';
-import TopBar from '@layout/TopBar/TopBar';
-import Profile from '@pages/Profile/Profile';
+import TopBar from '../TopBar/TopBar';;
 import UserManagement from '@pages/UserManagement/UserManagement';
-import MatContainer from '@mui/material/Container';
-import makeStyles from '@mui/styles/makeStyles';
 import { routes } from '@routes/routesConstants';
+import { hasAdminRights, hasGlobalAdminRights } from '@utils/permissions';
+import { isMobile } from '@utils/mediaQuery';
+import './ContainerStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    height: '100%',
-    [theme.breakpoints.up('sm')]: {
-      display: 'flex',
-    },
-  },
-  content: {
-    flexGrow: 1,
-    height: '100%',
-    paddingTop: '6em',
-  },
-}));
+const ContainerDashboard = ({ location, history }) => {
+  const userData = getUser();
+  const [navHidden, setNavHidden] = useState(false);
+  let subNavItems = [];
 
-/**
- * Container for the app layout when the user is authenticated.
- */
-const Container = ({ location, history }) => {
-  const classes = useStyles();
+  if (_.includes(location.pathname, 'profile')) {
+    subNavItems = [
+      { label: 'Dashboard', value: 'dashboard' },
+      { label: 'Custodians', value: 'custodians' },
+    ];
+  }
 
   return (
-    <div className={classes.root}>
+    <div className="containerRoot">
       <UserContext.Provider value={getUser()}>
         <TopBar
+          navHidden={navHidden}
+          setNavHidden={setNavHidden}
+          options={subNavItems}
           location={location}
           history={history}
         />
-        <MatContainer className={classes.content}>
+        <Container
+          className={`containerContent ${!isMobile() && 'containerContentMaxWidth'}`}
+        >
           <Route
             exact
             path={routes.APP}
             render={() => <Redirect to={routes.DASHBOARD} />}
           />
-          <Route path={routes.DASHBOARD} component={Profile} />
-          <Route path={routes.USER_MANAGEMENT} component={UserManagement} />
-        </MatContainer>
+          {(hasAdminRights(userData)
+            || hasGlobalAdminRights(userData))
+            && (
+              <Route
+                path={routes.USER_MANAGEMENT}
+                component={UserManagement}
+              />
+            )}
+        </Container>
       </UserContext.Provider>
     </div>
   );
 };
 
-export default Container;
+export default ContainerDashboard;

@@ -1,208 +1,182 @@
-/* eslint-disable import/no-named-as-default-member */
-/* eslint-disable import/no-named-as-default */
-/* eslint-disable no-shadow */
-/* eslint-disable no-param-reassign */
-/* eslint-disable react/destructuring-assignment */
-import React, { useState, useEffect, useContext } from 'react';
-import { UserContext } from '@context/User.context';
-import { StyledTable } from '@components/StyledTable/StyledTable';
-import Crud from '@modules/crud/Crud';
-import { getCoregroups } from '@redux/coregroup/coregroup.actions';
-import { connect } from 'react-redux';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import MoreHoriz from '@mui/icons-material/MoreHoriz';
-import Box from '@mui/material/Box';
-import makeStyles from '@mui/styles/makeStyles';
-import { rem } from 'polished';
-import { Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import _ from 'lodash';
+import { useQuery } from 'react-query';
+import {
+  VerifiedUser as ActivateIcon,
+  VerifiedUserOutlined as DeactivateIcon,
+  Delete as DeleteIcon,
+} from '@mui/icons-material';
+import { IconButton, MenuItem, Select } from '@mui/material';
+import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import { getUser } from '@context/User.context';
+import useAlert from '@hooks/useAlert';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { useEditCoreuserMutation } from '@react-query/mutations/coreuser/editCoreuserMutation';
+import { getCoregroupQuery } from '@react-query/queries/coregroup/getCoregroupQuery';
+import { getCoreuserQuery } from '@react-query/queries/coreuser/getCoreuserQuery';
+import { getGroupsFormattedRow, getUserFormattedRows, userColumns } from '@utils/constants';
+import '../UserManagementStyles.css';
+import { useDeleteCoreuserMutation } from 'react-query/mutations/coreuser/deleteCoreuserMutation';
 
-const useStyles = makeStyles((theme) => ({
-  btnPermission: {
-    fontSize: rem(10),
-  },
-  table: {
-    marginTop: theme.spacing(2),
-  },
-  textDisabled: {
-    color: '#aaaaaa',
-  },
-}));
+const Users = () => {
+  const user = getUser();
 
-/**
- * Current users list
- */
-function Users({
-  location, history, data, dispatch,
-}) {
-  const classes = useStyles();
-  // state to toggle actions menus
-  const [menu, setMenu] = useState({ row: null, element: null });
-  const [coregroupsLoaded, setCoregroupsLoaded] = useState(false);
-  const [permissions, setPermissions] = useState([]);
-  const user = useContext(UserContext);
+  const { displayAlert } = useAlert();
+  const [rows, setRows] = useState([]);
+  const [groups, setGroups] = useState([]);
+
+  const { data: coreuserData, isLoading: isLoadingCoreuser } = useQuery(
+    ['users'],
+    () => getCoreuserQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: coregroupData, isLoading: isLoadingCoregroup } = useQuery(
+    ['coregroup'],
+    () => getCoregroupQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: organizations, isLoading: isLoadingOrganizations } = useQuery(
+    ['organizations'],
+    () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { mutate: editUserMutation, isLoading: isEditingUser } = useEditCoreuserMutation(displayAlert);
+
+  const { mutate: deleteUserMutation, isLoading: isDeletingUser } = useDeleteCoreuserMutation(displayAlert);
 
   useEffect(() => {
-    if (!coregroupsLoaded) {
-      dispatch(getCoregroups());
-      setCoregroupsLoaded(true);
-    } else {
-      // define permissions
-      setPermissions(data.map((coregroup) => ({ label: coregroup.name, value: coregroup.id })));
-    }
-  }, [data]);
+    if (!_.isEmpty(coreuserData)) {
+      const formattedUsers = getUserFormattedRows(coreuserData);
+      const signedInUser = _.remove(formattedUsers, { id: user.id });
 
-  // table templates
-  // eslint-disable-next-line consistent-return
-  const permissionsTemplate = (row, crud, classes) => {
-    if (coregroupsLoaded) {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const [active, setActive] = useState(row.core_groups[0]
-        // eslint-disable-next-line no-mixed-operators
-        && row.core_groups[0].id || row.core_groups[0]);
-      return (
-        <ButtonGroup disableElevation color="primary" size="small" disabled={!row.is_active || user.core_user_uuid === row.core_user_uuid}>
-          {permissions.map((permission, index) => (
-            <Button
-              className={classes.btnPermission}
-              key={`btnGroup${index}`}
-              variant={permission.value === active ? 'contained' : 'outlined'}
-              onClick={() => {
-                setActive(permission.value);
-                crud.updateItem({ id: row.id, core_groups: [permission.value] });
-              }}
-            >
-              {permission.label}
-            </Button>
-          ))}
-        </ButtonGroup>
-      );
+      setRows([...signedInUser, ...formattedUsers]);
     }
+  }, [coreuserData]);
+
+  useEffect(() => {
+    if (!_.isEmpty(coregroupData) && !_.isEmpty(organizations)) {
+      setGroups(getGroupsFormattedRow(coregroupData, organizations));
+    }
+  }, [coregroupData, organizations]);
+
+  const activateDeactivateUser = (coreuser) => {
+    const editData = { id: coreuser.id, is_active: !coreuser.is_active };
+    editUserMutation(editData);
   };
 
-  const actionsTemplate = (row, crud) => {
-    const handleMenuClick = (event) => {
-      setMenu({ row, element: event.currentTarget });
-    };
+  const deleteUser = (coreuser) => {
+    const deleteData = { id: coreuser.id };
+    deleteUserMutation(deleteData);
+  };
 
-    const handleMenuItemClick = (action) => {
-      if (action === 'delete') {
-        crud.deleteItem(menu.row);
-      } else if (action === 'deactivate') {
-        crud.updateItem({ id: menu.row.id, is_active: false });
-      } else {
-        crud.updateItem({ id: menu.row.id, is_active: true });
-      }
-      setMenu({ row: null, element: null });
-    };
-
-    const handleMenuClose = () => {
-      setMenu({ row: null, element: null });
-    };
-
-    return (
-      <>
-        <IconButton
-          disabled={user.core_user_uuid === row.core_user_uuid}
-          aria-label="more"
-          aria-controls={`userActions${row.id}`}
-          aria-haspopup="true"
-          onClick={handleMenuClick}
-          size="large"
-        >
-          <MoreHoriz />
-        </IconButton>
-        <Menu
-          id={`userActions${row.id}`}
-          anchorEl={menu.element}
-          keepMounted
-          open={Boolean(menu.row && (menu.row.id === row.id))}
-          onClose={handleMenuClose}
-        >
-          {row.actions.filter(
-            (option) => !(option.value === 'delete' && row.is_active),
-          ).map((option) => (
-            <MenuItem
-              key={`userActions${row.id}:${option.value}`}
-              onClick={() => handleMenuItemClick(option.value)}
-            >
-              {option.label}
-            </MenuItem>
-          ))}
-        </Menu>
-      </>
-    );
+  const updatePermissions = (e, coreuser) => {
+    const editData = { id: coreuser.id, core_groups: [e.target.value] };
+    editUserMutation(editData);
   };
 
   return (
-    <Box>
-      <Crud
-        deleteAction="DELETE_COREUSER"
-        updateAction="UPDATE_COREUSER"
-        createAction="CREATE_COREUSER"
-        loadAction="LOAD_DATA_COREUSER"
-        reducer="coreuserReducer"
-      >
-        { (crud) => {
-          if (crud.getData()) {
-            crud.getData().forEach((row) => {
-              if (row.is_active) {
-                row.actions = [
-                  { value: 'deactivate', label: 'Deactivate' },
-                  { value: 'delete', label: 'Delete' },
-                ];
-              } else {
-                row.actions = [
-                  { value: 'activate', label: 'Activate' },
-                  { value: 'delete', label: 'Delete' },
-                ];
-              }
-            });
-          }
-          return (
-            <StyledTable
-              className={classes.table}
-              columns={[
-                {
-                  label: 'Full name',
-                  prop: 'name',
-                  template: (row) => (
-                    <Typography variant="body1" className={row.is_active ? '' : classes.textDisabled}>
-                      {row.first_name}
-                      {' '}
-                      {row.last_name}
-                    </Typography>
-                  ),
-                },
-                {
-                  label: 'Email',
-                  prop: 'email',
-                  template: (row) => (
-                    <Typography variant="body2" className={row.is_active ? '' : classes.textDisabled}>
-                      {' '}
-                      {row.email}
-                    </Typography>
-                  ),
-                },
-                { label: 'Last activity', prop: 'activity', template: (row) => (<Typography variant="caption" className={classes.textDisabled}>Today</Typography>) },
-                { label: 'Permissions', prop: 'permission', template: (row) => permissionsTemplate(row, crud, classes) },
-                { label: 'Actions', prop: 'options', template: (row) => actionsTemplate(row, crud) },
-              ]}
-              rows={crud.getData()}
-              // eslint-disable-next-line no-nested-ternary
-              sortFn={(a, b) => (a.core_user_uuid === user.core_user_uuid
-                ? -1 : b.core_user_uuid === user.core_user_uuid ? 1 : 0)}
-            />
-          );
+    <div>
+      <DataTableWrapper
+        hideAddButton
+        centerLabel
+        filename="Users"
+        tableHeader="Users"
+        loading={isLoadingCoreuser
+          || isLoadingCoregroup
+          || isLoadingOrganizations
+          || isEditingUser
+          || isDeletingUser}
+        rows={rows || []}
+        columns={[
+          ...userColumns(),
+          {
+            name: 'Permissions',
+            options: {
+              sort: true,
+              sortThirdClickReset: true,
+              filter: true,
+              setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
+              customBodyRenderLite: (dataIndex) => {
+                const coreuser = rows[dataIndex];
+                return (
+                  <Select
+                    fullWidth
+                    id="coreuser-permissions"
+                    disabled={_.isEqual(user.id, coreuser.id) || !coreuser.is_active}
+                    value={coreuser.core_groups[0].id}
+                    onChange={(e) => updatePermissions(e, coreuser)}
+                  >
+                    {_.map(groups, (cg) => (
+                      <MenuItem key={`coregorup-${cg.id}`} value={cg.id}>
+                        {cg.display_permission_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                );
+              },
+            },
+          },
+          {
+            name: 'Activate/Deactivate User',
+            options: {
+              filter: false,
+              sort: false,
+              empty: true,
+              setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
+              customBodyRenderLite: (dataIndex) => {
+                const coreuser = rows[dataIndex];
+                return (
+                  <div className="usersIconDiv">
+                    <IconButton
+                      disabled={_.isEqual(user.id, coreuser.id)}
+                      className="usersIconButton"
+                      onClick={(e) => activateDeactivateUser(coreuser)}
+                    >
+                      {coreuser.is_active ? <ActivateIcon titleAccess="Deactivate" /> : <DeactivateIcon titleAccess="Activate" />}
+                    </IconButton>
+                  </div>
+                );
+              },
+            },
+          },
+          {
+            name: 'Delete User',
+            options: {
+              filter: false,
+              sort: false,
+              empty: true,
+              setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
+              customBodyRenderLite: (dataIndex) => {
+                const coreuser = rows[dataIndex];
+                return (
+                  <div className="usersIconDiv">
+                    {coreuser.is_active ? null : (
+                      <IconButton
+                        className="usersIconButton"
+                        onClick={(e) => deleteUser(coreuser)}
+                      >
+                        <DeleteIcon titleAccess="Delete" />
+                      </IconButton>
+                    )}
+                  </div>
+                );
+              },
+            },
+          },
+        ]}
+        extraOptions={{
+          setRowProps: (row, dataIndex, rowIndex) => {
+            const coreuser = rows[dataIndex];
+            const style = { backgroundColor: '#BEBEBA' };
+            return !coreuser.is_active || _.isEqual(user.id, coreuser.id) ? { style } : {};
+          },
         }}
-      </Crud>
-    </Box>
+      />
+    </div>
   );
-}
+};
 
-const mapStateToProps = (state, ownProps) => ({ ...state.coregroupReducer, ...ownProps });
-
-export default connect(mapStateToProps)(Users);
+export default Users;
