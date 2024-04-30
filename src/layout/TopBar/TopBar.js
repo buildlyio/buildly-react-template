@@ -1,77 +1,128 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import GroupIcon from '@mui/icons-material/Group';
-import logo from '@assets/topbar-logo.png';
-import { logout } from '@redux/authuser/authuser.actions';
+import React, { useState } from 'react';
+import _ from 'lodash';
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+} from '@mui/material';
+import {
+  AccountCircle,
+  Menu as MenuIcon,
+  Settings as SettingsIcon,
+} from '@mui/icons-material';
+import logo from '@assets/buildly-logo.png';
+import { getUser } from '@context/User.context';
+import { oauthService } from '@modules/oauth/oauth.service';
 import { routes } from '@routes/routesConstants';
+import { hasAdminRights, hasGlobalAdminRights } from '@utils/permissions';
+import AdminMenu from './AdminMenu';
+import AccountMenu from './AccountMenu';
+import './TopBarStyles.css';
 
-const useStyles = makeStyles((theme) => ({
-  appBar: {
-    backgroundColor: '#2A3744',
-    zIndex: theme.zIndex.drawer + 1,
-  },
-  logo: {
-    maxWidth: 50,
-    objectFit: 'contain',
-  },
-  menuRight: {
-    marginLeft: 'auto',
-  },
-  menuIcon: {
-    color: '#fff',
-  },
-  paper: {
-    border: '1px solid',
-  },
-}));
-
-/**
- * Component for the top bar header.
- */
 const TopBar = ({
+  navHidden,
+  setNavHidden,
   history,
-  location,
-  dispatch,
 }) => {
-  const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [settingEl, setSettingEl] = useState(null);
+  const [organization, setOrganization] = useState(null);
+
+  const user = getUser();
+  let isAdmin = false;
+  let isSuperAdmin = false;
+  let org_uuid = user.organization.organization_uuid;
+
+  // eslint-disable-next-line no-undef
+  const ver = VERSION;
+
+  if (user) {
+    if (!organization) {
+      setOrganization(user.organization.name);
+    }
+    isAdmin = hasAdminRights(user) || hasGlobalAdminRights(user);
+    isSuperAdmin = hasGlobalAdminRights(user);
+    org_uuid = user.organization.organization_uuid;
+  }
+
+  const settingMenu = (event) => {
+    setSettingEl(event.currentTarget);
+  };
+
+  const handleUserManagementClick = () => {
+    history.push(`${routes.USER_MANAGEMENT}/current-users`);
+    setSettingEl(null);
+  };
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleLogoutClick = () => {
-    dispatch(logout());
+    oauthService.logout();
     history.push('/');
   };
 
   return (
-    <AppBar position="fixed" className={classes.appBar}>
-      <Toolbar>
-        <Link to={routes.DASHBOARD}>
-          <img src={logo} className={classes.logo} alt="Company text logo" />
-        </Link>
+    <AppBar position="fixed" className="topbarAppBar">
 
-        <div className={classes.menuRight}>
-          <Link to={routes.USER_MANAGEMENT}>
-            <IconButton aria-label="user-management" color="inherit">
-              <GroupIcon fontSize="large" className={classes.menuIcon} />
+      <Toolbar>
+        <IconButton
+          edge="start"
+          className="topbarMenuButton"
+          onClick={() => setNavHidden(!navHidden)}
+          aria-label="menu"
+          sx={{
+            display: {
+              xs: 'block',
+              md: 'none',
+            },
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+        <img
+          src={logo}
+          className="topbarLogo"
+          alt="Company text logo"
+        />
+        <div className="topbarMenuRight">
+          {isAdmin && (
+            <IconButton
+              aria-label="admin section"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={settingMenu}
+              color="primary"
+            >
+              <SettingsIcon fontSize="large" />
             </IconButton>
-          </Link>
-          <IconButton aria-label="logout" color="inherit" onClick={handleLogoutClick}>
-            <ExitToAppIcon fontSize="large" className={classes.menuIcon} />
+          )}
+          <AdminMenu
+            settingEl={settingEl}
+            setSettingEl={setSettingEl}
+            handleUserManagementClick={handleUserManagementClick}
+          />
+          <IconButton
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={handleMenu}
+            color="primary"
+          >
+            <AccountCircle fontSize="large" />
           </IconButton>
+          <AccountMenu
+            anchorEl={anchorEl}
+            setAnchorEl={setAnchorEl}
+            user={user}
+            organizationName={organization}
+            handleLogoutClick={handleLogoutClick}
+          />
         </div>
       </Toolbar>
     </AppBar>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  ...state.authReducer,
-});
-
-export default connect(mapStateToProps)(TopBar);
+export default TopBar;

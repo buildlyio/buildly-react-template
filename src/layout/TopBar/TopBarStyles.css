@@ -1,0 +1,44 @@
+.topbarAppBar {
+  background-color: var(--color-palette-background-default);
+  z-index: 1201;
+  height: 64px;
+  overflow-x: auto;
+}
+
+.topbarMenuButton {
+  margin-right: 16px;
+}
+
+.topbarLogo {
+  max-height: 64px !important;
+  background-size: contain;
+}
+
+.topbarMenuRight {
+  margin-left: auto;
+  display: flex;
+}
+
+.topbarAdminMenuRoot {
+  padding: 16px;
+  text-align: center;
+}
+
+.topbarAdminMenuRoot:hover {
+  background-color: var(--color-palette-primary-light);
+}
+
+.topbarAdminMenuRoot:hover .MuiListItemIcon-root .MuiListItemText-primary {
+  color: var(--color-palette-primary-dark);
+}
+
+.MuiMenu-paper {
+  border: 1px solid var(--color-palette-background-light2);
+}
+
+@media screen and (max-width: 600px) {
+  .topbarAppBar {
+    height: 56px;
+    overflow-x: auto;
+  }
+}
