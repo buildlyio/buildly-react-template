@@ -435,7 +435,7 @@ const AddGateway = ({
                       {custodianList
                         && _.map(
                           _.orderBy(
-                            _.filter(custodianList, ['custodian_type', 'https://demo-custodian.tpath.io/custodian_type/1/']),
+                            _.filter(custodianList, ['custodian_type', `${window.env.CUSTODIAN_URL}custodian_type/1/`]),
                             ['name'],
                             ['asc'],
                           ),
