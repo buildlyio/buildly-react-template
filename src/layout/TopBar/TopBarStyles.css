@@ -101,6 +101,50 @@
   height: 50px;
 }
 
+.accountSettingPhoneInputContainer {
+  margin-top: 30px;
+  border-radius: 4px !important;
+  border: 1px solid var(--color-palette-background-light) !important;
+}
+
+.accountSettingPhoneInputContainerFocused {
+  margin-top: 30px;
+  border-radius: 4px;
+  border: 2px solid var(--color-palette-primary-main);
+}
+
+.accountSettingFlagDropdown {
+  border: 0px !important;
+  border-right: 1px solid var(--color-palette-background-light) !important;
+}
+
+.accountSettingFlagDropdown .selected-flag {
+  padding: 0 12px !important;
+  width: 48px !important;
+}
+
+.accountSettingPhoneInput {
+  width: 100% !important;
+  height: 56px !important;
+  border: 0px !important;
+  font-family: "IBM Plex Sans" !important;
+  font-size: 16px !important;
+  padding-left: 62px !important;
+}
+
+.accountSettingPhoneInputFocused {
+  width: 100% !important;
+  height: 54px !important;
+  border: 0px !important;
+  font-family: "IBM Plex Sans" !important;
+  font-size: 16px !important;
+  padding-left: 62px !important;
+}
+
+.accountSettingPhoneInputContainer:hover {
+  border: 1px solid var(--color-palette-background-black) !important;
+}
+
 @media screen and (min-width: 960px) {
   .accountSettingsDialog .MuiDialog-container {
     position: fixed;
