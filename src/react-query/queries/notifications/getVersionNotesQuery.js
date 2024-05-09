@@ -4,7 +4,7 @@ export const getVersionNotesQuery = async (versionNumber, displayAlert) => {
   try {
     const response = await httpService.makeRequestWithoutHeaders(
       'get',
-      `https://demo-notification.tpath.io/version_notes/?version_number=v${versionNumber}`,
+      `${window.env.NOTIFICATION_URL}version_notes/?version_number=v${versionNumber}`,
     );
     return response.data;
   } catch (error) {
