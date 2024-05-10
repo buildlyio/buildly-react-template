@@ -19,6 +19,7 @@ export default function WhatsNewModal({ open, setOpen, data }) {
       fullWidth
       fullScreen={false}
       aria-labelledby="whats-new"
+      className="whatsNewDialogContainer"
     >
       <WhatsNewHeader />
       <DialogContent className="whatsNewDialogContent">

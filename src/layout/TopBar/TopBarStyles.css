@@ -168,6 +168,10 @@
 }
 
 /* What's New css */
+.whatsNewDialogContainer .MuiPaper-root.MuiDialog-paper {
+  max-width: max-content;
+}
+
 .whatsNewTitleContainer {
   border-bottom: 4px solid var(--color-palette-background-light);
   padding: 10px 20px;
