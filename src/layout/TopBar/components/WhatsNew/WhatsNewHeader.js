@@ -4,7 +4,7 @@ import { Grid, IconButton, Typography } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import '../../TopBarStyles.css';
 
-export default function WhatsNewHeader({ closeIcon, closeOnClick }) {
+const WhatsNewHeader = ({ closeIcon, closeOnClick }) => {
   // eslint-disable-next-line no-undef
   const ver = VERSION;
 
@@ -29,4 +29,6 @@ export default function WhatsNewHeader({ closeIcon, closeOnClick }) {
       </Grid>
     </Grid>
   );
-}
+};
+
+export default WhatsNewHeader;
