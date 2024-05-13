@@ -122,7 +122,7 @@ const Shipment = ({ history }) => {
     ['sensorReports', shipmentData, shipmentFilter],
     () => getSensorReportQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null))), 10, displayAlert),
     {
-      enabled: _.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      enabled: _.isEmpty(selectedShipment) && _.isEmpty(expandedRows) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
       refetchOnWindowFocus: false,
     },
   );
@@ -136,7 +136,7 @@ const Shipment = ({ history }) => {
     ['sensorReports', shipmentData, shipmentFilter],
     () => getSensorReportQuery(encodeURIComponent(selectedShipment.partner_shipment_id), null, displayAlert),
     {
-      enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      enabled: !_.isEmpty(selectedShipment) && !_.isEmpty(expandedRows) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
       refetchOnWindowFocus: false,
     },
   );
@@ -546,8 +546,8 @@ const Shipment = ({ history }) => {
     }
 
     setSelectedShipment(shipment);
-    setMarkers(markersToSet);
-    setSelectedMarker(markersToSet[0]);
+    setMarkers(_.orderBy(markersToSet, [(obj) => moment(`${obj.date} ${obj.time}`)], ['desc']));
+    setSelectedMarker(markers[0]);
   };
 
   const filterTabClicked = async (event, filter) => {
