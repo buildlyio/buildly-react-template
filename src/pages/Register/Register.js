@@ -141,7 +141,7 @@ const Register = ({ history }) => {
       || !organization_name.value
       || (geoOptions.whatsApp && !whatsappNumber)
       || (envOptions.whatsApp && !whatsappNumber)
-      || whatsappNumber.length < 11
+      || ((geoOptions.whatsApp || envOptions.whatsApp) && whatsappNumber && whatsappNumber.length < 11)
     ) {
       return true;
     }
