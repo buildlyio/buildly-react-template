@@ -59,9 +59,6 @@ const TopBar = ({
   let isSuperAdmin = false;
   let org_uuid = user.organization.organization_uuid;
 
-  // eslint-disable-next-line no-undef
-  const ver = VERSION;
-
   const { displayAlert } = useAlert();
   const { data, setTimezone } = useStore();
 
@@ -98,7 +95,7 @@ const TopBar = ({
 
   const { data: versionNotesData, isLoading: isLoadingVersionNotes } = useQuery(
     ['versionNotes'],
-    () => getVersionNotesQuery(ver, displayAlert),
+    () => getVersionNotesQuery(window.env.DISPLAY_VERSION, displayAlert),
     { refetchOnWindowFocus: false },
   );
 

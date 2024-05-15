@@ -17,7 +17,9 @@
 
   <body>
     <div id="root"></div>
-    <script type="text/javascript" src="/environment.js"></script>
+    <script type="text/javascript">
+      fetch('/environment.json').then((response) => response.json()).then((env) => { window.env = env; });
+    </script>
     <!-- Start of transparentpath Zendesk Widget script -->
     <script
       id="ze-snippet"
