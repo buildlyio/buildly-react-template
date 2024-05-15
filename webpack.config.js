@@ -89,10 +89,9 @@ module.exports = (env, argv) => {
       },
     },
     output: {
-      filename: '[name].[hash].js',
-      chunkFilename: '[name].[hash].bundle.js',
       path: path.resolve(__dirname, 'dist/'),
       publicPath: '/',
+      filename: 'bundle.js',
     },
     devServer: {
       contentBase: path.join(__dirname, 'public/'),
@@ -115,22 +114,6 @@ module.exports = (env, argv) => {
         skipWaiting: true,
       }),
     ],
-    optimization: {
-      runtimeChunk: 'single',
-      splitChunks: {
-        name: (module, chunks, cacheGroupKey) => {
-          const allChunksNames = chunks.map((chunk) => chunk.name).join('-');
-          return allChunksNames;
-        },
-        cacheGroups: {
-          reactVendor: {
-            test: /[\\/]node_modules[\\/](react|react-dom|react-router-dom)[\\/]/,
-            name: 'vendor-react',
-            chunks: 'all',
-          },
-        },
-      },
-    },
   };
 
   if (env && env.build === 'local') {
@@ -159,6 +142,17 @@ module.exports = (env, argv) => {
       sideEffects: true,
       usedExports: true,
       concatenateModules: true,
+      splitChunks: {
+        cacheGroups: {
+          commons: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            chunks: 'all',
+          },
+        },
+        minSize: 30000,
+        maxAsyncRequests: 3,
+      },
       noEmitOnErrors: true,
       minimize: true,
       removeAvailableModules: true,
