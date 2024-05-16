@@ -1,3 +1,16 @@
+.shipmentMaxColor {
+  color: var(--color-palette-error-main);
+}
+
+.shipmentMinColor {
+  color: var(--color-palette-info-main);
+}
+
+.shipmentGridTimeCenter {
+  align-content: center;
+  text-align: center;
+}
+
 .shipmentTitle {
   padding: 16px;
   background-color: var(--color-palette-primary-light);

@@ -135,6 +135,14 @@ const CreateShipment = ({ history, location }) => {
     (!_.isEmpty(editData) && editData.estimated_time_of_arrival)
     || moment().add(1, 'day'),
   );
+  const [actualDepartureDateTime, setActualDepartureDateTime] = useState(
+    (!_.isEmpty(editData) && editData.actual_time_of_departure)
+    || null,
+  );
+  const [actualArrivalDateTime, setActualArrivalDateTime] = useState(
+    (!_.isEmpty(editData) && editData.actual_time_of_arrival)
+    || null,
+  );
   const status = useInput((!_.isEmpty(editData) && editData.status) || 'Planned');
   const cannotEdit = !_.isEmpty(editData) && _.includes(_.map(ADMIN_SHIPMENT_STATUS, 'value'), editData.status);
 
@@ -1229,7 +1237,7 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
               <Grid item xs={11} sm={5.5} mt={isMobile() ? 1.5 : -2.5} className="createShipmentAdjustSpacing">
                 <DatePickerComponent
-                  label="Shipment start"
+                  label="Estimated Shipment Start"
                   selectedDate={moment(departureDateTime).tz(data)}
                   disabled={cannotEdit}
                   hasTime
@@ -1251,7 +1259,7 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
               <Grid item xs={11} sm={5.5} mt={isMobile() ? 0 : -2.5} className={isMobile() ? 'createShipmentAdjustSpacing' : ''}>
                 <DatePickerComponent
-                  label="Shipment end"
+                  label="Estimated Shipment End"
                   selectedDate={moment(arrivalDateTime).tz(data)}
                   disabled={cannotEdit}
                   hasTime
@@ -1268,6 +1276,46 @@ const CreateShipment = ({ history, location }) => {
                   }
                 />
               </Grid>
+              {actualDepartureDateTime && (
+                <Grid item xs={11} sm={5.5} mt={isMobile() ? 1.5 : -2.5} className="createShipmentAdjustSpacing">
+                  <DatePickerComponent
+                    label="Actual Shipment Start"
+                    selectedDate={moment(actualDepartureDateTime).tz(data)}
+                    disabled
+                    hasTime
+                    dateFormat={
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                        : ''
+                    }
+                    timeFormat={
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                        : ''
+                    }
+                  />
+                </Grid>
+              )}
+              {actualArrivalDateTime && (
+                <Grid item xs={11} sm={5.5} mt={isMobile() ? 0 : -2.5} className={isMobile() ? 'createShipmentAdjustSpacing' : ''}>
+                  <DatePickerComponent
+                    label="Actual Shipment Arrival"
+                    selectedDate={moment(actualArrivalDateTime).tz(data)}
+                    disabled
+                    hasTime
+                    dateFormat={
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                        : ''
+                    }
+                    timeFormat={
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                        : ''
+                    }
+                  />
+                </Grid>
+              )}
               <Grid item xs={11} sm={5.5} mt={isMobile() ? 2 : 0}>
                 <TextField
                   variant="outlined"

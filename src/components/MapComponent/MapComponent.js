@@ -27,17 +27,18 @@ import {
 
 export const MapComponent = (props) => {
   const {
-    markers, setSelectedMarker, geofence, unitOfMeasure,
+    markers, setSelectedMarker, geofence, unitOfMeasure, allMarkers, zoom,
   } = props;
   const [center, setCenter] = useState({
     lat: 47.606209,
     lng: -122.332069,
   });
+  const [mapZoom, setMapZoom] = useState(zoom);
   const [showInfoIndex, setShowInfoIndex] = useState({});
   const [polygon, setPolygon] = useState({});
 
   useEffect(() => {
-    setMapCenter();
+    setMapCenter('');
   }, [unitOfMeasure]);
 
   useEffect(() => {
@@ -46,6 +47,7 @@ export const MapComponent = (props) => {
         lat: markers[0].lat,
         lng: markers[0].lng,
       });
+      setMapZoom(zoom);
       setShowInfoIndex(markers[0]);
       if (setSelectedMarker) {
         setSelectedMarker(markers[0]);
@@ -53,9 +55,15 @@ export const MapComponent = (props) => {
     }
 
     if (_.isEmpty(markers)) {
-      setMapCenter();
+      if (_.isEmpty(allMarkers)) {
+        setMapCenter('');
+        setMapZoom(4);
+      } else {
+        setMapCenter('Algeria');
+        setMapZoom(2.5);
+      }
     }
-  }, [markers]);
+  }, [markers, allMarkers]);
 
   useEffect(() => {
     if (geofence && !_.isEmpty(geofence.coordinates)) {
@@ -71,9 +79,12 @@ export const MapComponent = (props) => {
     }
   }, [geofence]);
 
-  const setMapCenter = () => {
-    const address = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
-      && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure;
+  const setMapCenter = (mapCenter) => {
+    let address = mapCenter;
+    if (_.isEmpty(address)) {
+      address = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
+        && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure;
+    }
 
     if (address) {
       Geocode.setApiKey(window.env.GEO_CODE_API);
@@ -111,6 +122,7 @@ export const MapComponent = (props) => {
       theme={useTheme()}
       onMarkerDrag={onMarkerDrag}
       center={center}
+      mapZoom={mapZoom}
       polygon={polygon}
       showInfoIndex={showInfoIndex}
       onMarkerSelect={onMarkerSelect}
@@ -121,7 +133,7 @@ export const MapComponent = (props) => {
 
 const RenderedMap = withScriptjs(
   withGoogleMap((props) => (
-    <GoogleMap zoom={props.zoom} center={props.center}>
+    <GoogleMap zoom={props.mapZoom} center={props.center}>
       {!props.isMarkerShown && props.allMarkers && !_.isEmpty(props.allMarkers)
         && _.map(props.allMarkers, (shipMarkers, idx) => (
           <MarkerClusterer

@@ -1763,15 +1763,6 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       filter: true,
     },
   },
-  {
-    name: 'battery_levels',
-    label: 'Tracker Battery Level (%)',
-    options: {
-      sort: true,
-      sortThirdClickReset: true,
-      filter: true,
-    },
-  },
 ]);
 
 export const getShipmentFormattedRow = (
