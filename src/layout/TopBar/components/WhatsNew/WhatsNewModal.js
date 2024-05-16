@@ -6,7 +6,7 @@ import WhatsNewHeader from './WhatsNewHeader';
 import WhatsNewContent from './WhatsNewContent';
 import WhatsNewFooter from './WhatsNewFooter';
 
-export default function WhatsNewModal({ open, setOpen, data }) {
+const WhatsNewModal = ({ open, setOpen, data }) => {
   const closeWhatsNew = () => {
     setOpen(false);
     localStorage.setItem('isWhatsNewShown', true);
@@ -19,6 +19,7 @@ export default function WhatsNewModal({ open, setOpen, data }) {
       fullWidth
       fullScreen={false}
       aria-labelledby="whats-new"
+      className="whatsNewDialogContainer"
     >
       <WhatsNewHeader />
       <DialogContent className="whatsNewDialogContent">
@@ -27,4 +28,6 @@ export default function WhatsNewModal({ open, setOpen, data }) {
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default WhatsNewModal;

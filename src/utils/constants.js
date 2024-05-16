@@ -751,10 +751,22 @@ export const processReportsAndMarkers = (
   let batteryData = [];
   let pressureData = [];
   let probeData = [];
+  let minTempData = [];
+  let maxTempData = [];
+  let minHumidityData = [];
+  let maxHumidityData = [];
+  let shockThresholdData = [];
+  let lightThresholdData = [];
   let markersToSet = [];
   const dateFormat = _.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'date'))).unit_of_measure;
   const timeFormat = _.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'time'))).unit_of_measure;
   const tempMeasure = _.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))).unit_of_measure;
+  const minExcursionTempArray = _.orderBy(selectedShipment.min_excursion_temp, 'set_at');
+  const maxExcursionTempArray = _.orderBy(selectedShipment.max_excursion_temp, 'set_at');
+  const minExcursionHumArray = _.orderBy(selectedShipment.min_excursion_humidity, 'set_at');
+  const maxExcursionHumArray = _.orderBy(selectedShipment.max_excursion_humidity, 'set_at');
+  const maxShockArray = _.orderBy(selectedShipment.shock_threshold, 'set_at');
+  const maxLightArray = _.orderBy(selectedShipment.light_threshold, 'set_at');
 
   if (!_.isEmpty(sensorReports)) {
     _.forEach(sensorReports, (report) => {
@@ -777,6 +789,158 @@ export const processReportsAndMarkers = (
           : report_entry.report_probe_cel
             ? _.round(report_entry.report_probe_cel, 2)
             : report_entry.report_probe_cel;
+
+        // setup date for graph for boundaries
+        let finalMinTempValue = minExcursionTempArray[0].value;
+        let finalMaxTempValue = maxExcursionTempArray[0].value;
+        let finalMinHumValue = minExcursionHumArray[0].value;
+        let finalMaxHumValue = maxExcursionHumArray[0].value;
+        let finalShockValue = maxShockArray[0].value;
+        let finalLightValue = maxLightArray[0].value;
+
+        if (_.size(minExcursionTempArray) > 1) {
+          _.forEach(minExcursionTempArray, (data, index) => {
+            if (index >= 1) {
+              if (
+                (_.nth(minExcursionTempArray, index - 1).set_at < moment(report.activation_date).valueOf())
+                && (moment(report.activation_date).valueOf() < data.set_at)
+              ) {
+                finalMinTempValue = _.nth(minExcursionTempArray, index - 1).value;
+              }
+
+              if (moment(report.activation_date).valueOf() === data.set_at) {
+                finalMinTempValue = data.value;
+              }
+
+              if (
+                (moment(report.activation_date).valueOf() > data.set_at)
+                && _.isEqual((index + 1), _.size(minExcursionTempArray))
+              ) {
+                finalMinTempValue = data.value;
+              }
+            }
+          });
+        }
+
+        if (_.size(maxExcursionTempArray) > 1) {
+          _.forEach(maxExcursionTempArray, (data, index) => {
+            if (index >= 1) {
+              if (
+                (_.nth(maxExcursionTempArray, index - 1).set_at < moment(report.activation_date).valueOf())
+                && (moment(report.activation_date).valueOf() < data.set_at)
+              ) {
+                finalMaxTempValue = _.nth(maxExcursionTempArray, index - 1).value;
+              }
+
+              if (moment(report.activation_date).valueOf() === data.set_at) {
+                finalMaxTempValue = data.value;
+              }
+
+              if (
+                (moment(report.activation_date).valueOf() > data.set_at)
+                && _.isEqual((index + 1), _.size(maxExcursionTempArray))
+              ) {
+                finalMaxTempValue = data.value;
+              }
+            }
+          });
+        }
+
+        if (_.size(minExcursionHumArray) > 1) {
+          _.forEach(minExcursionHumArray, (data, index) => {
+            if (index >= 1) {
+              if (
+                (_.nth(minExcursionHumArray, index - 1).set_at < moment(report.activation_date).valueOf())
+                && (moment(report.activation_date).valueOf() < data.set_at)
+              ) {
+                finalMinHumValue = _.nth(minExcursionHumArray, index - 1).value;
+              }
+
+              if (moment(report.activation_date).valueOf() === data.set_at) {
+                finalMinHumValue = data.value;
+              }
+
+              if (
+                (moment(report.activation_date).valueOf() > data.set_at)
+                && _.isEqual((index + 1), _.size(minExcursionHumArray))
+              ) {
+                finalMinHumValue = data.value;
+              }
+            }
+          });
+        }
+
+        if (_.size(maxExcursionHumArray) > 1) {
+          _.forEach(maxExcursionHumArray, (data, index) => {
+            if (index >= 1) {
+              if (
+                (_.nth(maxExcursionHumArray, index - 1).set_at < moment(report.activation_date).valueOf())
+                && (moment(report.activation_date).valueOf() < data.set_at)
+              ) {
+                finalMaxHumValue = _.nth(maxExcursionHumArray, index - 1).value;
+              }
+
+              if (moment(report.activation_date).valueOf() === data.set_at) {
+                finalMaxHumValue = data.value;
+              }
+
+              if (
+                (moment(report.activation_date).valueOf() > data.set_at)
+                && _.isEqual((index + 1), _.size(maxExcursionHumArray))
+              ) {
+                finalMaxHumValue = data.value;
+              }
+            }
+          });
+        }
+
+        if (_.size(maxShockArray) > 1) {
+          _.forEach(maxShockArray, (data, index) => {
+            if (index >= 1) {
+              if (
+                (_.nth(maxShockArray, index - 1).set_at < moment(report.activation_date).valueOf())
+                && (moment(report.activation_date).valueOf() < data.set_at)
+              ) {
+                finalShockValue = _.nth(maxShockArray, index - 1).value;
+              }
+
+              if (moment(report.activation_date).valueOf() === data.set_at) {
+                finalShockValue = data.value;
+              }
+
+              if (
+                (moment(report.activation_date).valueOf() > data.set_at)
+                && _.isEqual((index + 1), _.size(maxShockArray))
+              ) {
+                finalShockValue = data.value;
+              }
+            }
+          });
+        }
+
+        if (_.size(maxLightArray) > 1) {
+          _.forEach(maxLightArray, (data, index) => {
+            if (index >= 1) {
+              if (
+                (_.nth(maxLightArray, index - 1).set_at < moment(report.activation_date).valueOf())
+                && (moment(report.activation_date).valueOf() < data.set_at)
+              ) {
+                finalLightValue = _.nth(maxLightArray, index - 1).value;
+              }
+
+              if (moment(report.activation_date).valueOf() === data.set_at) {
+                finalLightValue = data.value;
+              }
+
+              if (
+                (moment(report.activation_date).valueOf() > data.set_at)
+                && _.isEqual((index + 1), _.size(maxLightArray))
+              ) {
+                finalLightValue = data.value;
+              }
+            }
+          });
+        }
 
         const preAlerts = _.orderBy(
           _.filter(alerts, (alert) => _.lte(_.toNumber(alert.report_id), report.id)),
@@ -973,6 +1137,48 @@ export const processReportsAndMarkers = (
               y: probe,
             },
           ];
+          minTempData = [
+            ...minTempData,
+            {
+              x: dateTime,
+              y: finalMinTempValue,
+            },
+          ];
+          maxTempData = [
+            ...maxTempData,
+            {
+              x: dateTime,
+              y: finalMaxTempValue,
+            },
+          ];
+          minHumidityData = [
+            ...minHumidityData,
+            {
+              x: dateTime,
+              y: finalMinHumValue,
+            },
+          ];
+          maxHumidityData = [
+            ...maxHumidityData,
+            {
+              x: dateTime,
+              y: finalMaxHumValue,
+            },
+          ];
+          shockThresholdData = [
+            ...shockThresholdData,
+            {
+              x: dateTime,
+              y: finalShockValue,
+            },
+          ];
+          lightThresholdData = [
+            ...lightThresholdData,
+            {
+              x: dateTime,
+              y: finalLightValue,
+            },
+          ];
         }
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -997,12 +1203,12 @@ export const processReportsAndMarkers = (
       battery: batteryData,
       pressure: pressureData,
       probe: probeData,
-      minTemp: { y: selectedShipment.min_excursion_temp, color: minColor },
-      maxTemp: { y: selectedShipment.max_excursion_temp, color: maxColor },
-      minHumidity: { y: selectedShipment.min_excursion_humidity, color: minColor },
-      maxHumidity: { y: selectedShipment.max_excursion_humidity, color: maxColor },
-      shockThreshold: { y: selectedShipment.shock_threshold, color: maxColor },
-      lightThreshold: { y: selectedShipment.light_threshold, color: maxColor },
+      minTemp: minTempData,
+      maxTemp: maxTempData,
+      minHumidity: minHumidityData,
+      maxHumidity: maxHumidityData,
+      shockThreshold: shockThresholdData,
+      lightThreshold: lightThresholdData,
     },
   };
 };
@@ -1035,7 +1241,7 @@ export const MARKER_DATA = (unitOfMeasure) => ([
   { id: 'light', unit: 'LUX' },
 ]);
 
-export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
+export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone, dateFormat, timeFormat) => {
   const getCellStyle = (tableMeta) => ({
     fontWeight: (
       _.some(
@@ -1059,6 +1265,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value) => (
           !_.isEmpty(value)
             ? (
@@ -1081,6 +1288,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => (
           <div style={getCellStyle(tableMeta)}>
             {value}
@@ -1095,7 +1303,10 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
-        setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
+        setCellProps: () => ({
+          style: { maxWidth: '300px', wordWrap: 'break-word' },
+          className: 'reportingSensorLeftHeader',
+        }),
       },
     },
     {
@@ -1105,6 +1316,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => (
           <div style={getCellStyle(tableMeta)}>
             {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
@@ -1119,6 +1331,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => (
           <div style={getCellStyle(tableMeta)}>
             {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
@@ -1133,6 +1346,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => (
           <div style={getCellStyle(tableMeta)}>
             {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
@@ -1147,6 +1361,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => (
           <div style={getCellStyle(tableMeta)}>
             {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
@@ -1161,6 +1376,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => (
           <div style={getCellStyle(tableMeta)}>
             {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
@@ -1176,6 +1392,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sortThirdClickReset: true,
         filter: true,
         display: false,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value) => (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : ''),
       },
     },
@@ -1187,6 +1404,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sortThirdClickReset: true,
         filter: true,
         display: false,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value) => (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : ''),
       },
     },
@@ -1198,6 +1416,7 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone) => {
         sortThirdClickReset: true,
         filter: true,
         display: false,
+        setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value) => (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : ''),
       },
     },
@@ -1338,6 +1557,7 @@ export const gatewayColumns = (timezone, dateFormat) => ([
       customBodyRender: (value) => (
         value && value !== '-' ? _.join(value, ', ') : value
       ),
+      setCellProps: () => ({ style: { maxWidth: '200px', wordWrap: 'break-word' } }),
     },
   },
   {
@@ -1667,7 +1887,16 @@ export const getShipmentFormattedRow = (
     }
 
     if (!_.isEmpty(sensorReports)) {
-      const reports = _.take(_.orderBy(_.filter(sensorReports, { shipment_id: editedShipment.partner_shipment_id }), 'create_date', 'desc'), 10);
+      const reports = _.take(
+        _.orderBy(
+          _.filter(sensorReports, { shipment_id: editedShipment.partner_shipment_id }),
+          [
+            (obj) => moment(obj.activation_date),
+          ],
+          ['desc'],
+        ),
+        10,
+      );
       editedShipment.allMarkers = _.map(reports, (report) => ({
         lat: report.report_entry.report_latitude || '*',
         lng: report.report_entry.report_longitude || '*',

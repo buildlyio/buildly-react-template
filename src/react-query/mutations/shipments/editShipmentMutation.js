@@ -9,7 +9,7 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
   return useMutation(
     async (shipmentData) => {
       const {
-        start_custody, end_custody, files, carriers, updateGateway, deleteFiles,
+        start_custody, end_custody, files, carriers, updateGateway, deleteFiles, isWarehouse,
       } = shipmentData;
       let shipmentPayload = shipmentData.shipment;
       let uploadFile = null;
@@ -179,12 +179,12 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
               `${window.env.API_URL}sensors/gateway/${gatewayPayload.id}`,
               gatewayPayload,
             );
-            if (_.includes(['planned', 'en route'], _.toLower(data.data.status))) {
+            if (_.includes(['planned', 'en route', 'arrived'], _.toLower(data.data.status))) {
               const configurePayload = {
                 platform_type: data.data.platform_name,
                 gateway: updateGateway.imei_number,
-                transmission_interval: _.isEqual(_.toLower(data.data.status), 'planned') ? 5 : data.data.transmission_time,
-                measurement_interval: _.isEqual(_.toLower(data.data.status), 'planned') ? 5 : data.data.measurement_time,
+                transmission_interval: _.isEqual(_.toLower(data.data.status), 'planned') || (_.isEqual(_.toLower(data.data.status), 'arrived') && !isWarehouse) ? 5 : data.data.transmission_time,
+                measurement_interval: _.isEqual(_.toLower(data.data.status), 'planned') || (_.isEqual(_.toLower(data.data.status), 'arrived') && !isWarehouse) ? 5 : data.data.measurement_time,
               };
               await httpService.makeRequest(
                 'post',

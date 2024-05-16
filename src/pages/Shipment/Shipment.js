@@ -28,7 +28,7 @@ import MapComponent from '@components/MapComponent/MapComponent';
 import { getUser } from '@context/User.context';
 import { routes } from '@routes/routesConstants';
 import { getIcon, getShipmentFormattedRow, shipmentColumns } from '@utils/constants';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { getShipmentsQuery } from '@react-query/queries/shipments/getShipmentsQuery';
 import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
 import { getItemQuery } from '@react-query/queries/items/getItemQuery';
@@ -48,7 +48,6 @@ const Shipment = ({ history }) => {
 
   const { displayAlert } = useAlert();
   const { data } = useStore();
-  const queryClient = useQueryClient();
 
   let isShipmentDataAvailable = false;
 
@@ -123,7 +122,7 @@ const Shipment = ({ history }) => {
     ['sensorReports', shipmentData, shipmentFilter],
     () => getSensorReportQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null))), 10, displayAlert),
     {
-      enabled: _.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      enabled: _.isEmpty(selectedShipment) && _.isEmpty(expandedRows) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
       refetchOnWindowFocus: false,
     },
   );
@@ -137,7 +136,7 @@ const Shipment = ({ history }) => {
     ['sensorReports', shipmentData, shipmentFilter],
     () => getSensorReportQuery(encodeURIComponent(selectedShipment.partner_shipment_id), null, displayAlert),
     {
-      enabled: !_.isEmpty(selectedShipment) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
+      enabled: !_.isEmpty(selectedShipment) && !_.isEmpty(expandedRows) && isShipmentDataAvailable && !_.isEmpty(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null)))),
       refetchOnWindowFocus: false,
     },
   );
@@ -182,7 +181,7 @@ const Shipment = ({ history }) => {
 
   useEffect(() => {
     if (selectedShipment) {
-      processMarkers(selectedShipment);
+      processMarkers(selectedShipment, true);
     }
   }, [sensorAlertData, sensorReportData, data]);
 
@@ -541,14 +540,14 @@ const Shipment = ({ history }) => {
     }
 
     if (setExpanded) {
-      const rowIndex = _.findIndex(rows, shipment);
+      const rowIndex = _.findIndex(rows, (item) => item.id === shipment.id, 0);
       setExpandedRows([rowIndex]);
       setSteps(_.orderBy(newSteps, 'id'));
     }
 
     setSelectedShipment(shipment);
-    setMarkers(markersToSet);
-    setSelectedMarker(markersToSet[0]);
+    setMarkers(_.orderBy(markersToSet, [(obj) => moment(`${obj.date} ${obj.time}`)], ['desc']));
+    setSelectedMarker(markers[0]);
   };
 
   const filterTabClicked = async (event, filter) => {

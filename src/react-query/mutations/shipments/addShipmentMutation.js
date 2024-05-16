@@ -9,7 +9,7 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
   return useMutation(
     async (shipmentData) => {
       const {
-        start_custody, end_custody, files, carriers, updateGateway,
+        start_custody, end_custody, files, carriers, updateGateway, isWarehouse,
       } = shipmentData;
       let shipmentPayload = shipmentData.shipment;
       let uploadFile = null;
@@ -119,8 +119,8 @@ export const useAddShipmentMutation = (organization, history, redirectTo, displa
               const configureGatewayPayload = {
                 platform_type: shipment.data.platform_name,
                 gateway: updateGateway.imei_number,
-                transmission_interval: _.isEqual(_.toLower(shipment.data.status), 'planned') ? 5 : shipment.data.transmission_time,
-                measurement_interval: _.isEqual(_.toLower(shipment.data.status), 'planned') ? 5 : shipment.data.measurement_time,
+                transmission_interval: _.isEqual(_.toLower(shipment.data.status), 'planned') || (_.isEqual(_.toLower(shipment.data.status), 'arrived') && !isWarehouse) ? 5 : shipment.data.transmission_time,
+                measurement_interval: _.isEqual(_.toLower(shipment.data.status), 'planned') || (_.isEqual(_.toLower(shipment.data.status), 'arrived') && !isWarehouse) ? 5 : shipment.data.measurement_time,
               };
               await httpService.makeRequest(
                 'patch',
