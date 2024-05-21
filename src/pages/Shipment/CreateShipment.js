@@ -1276,8 +1276,8 @@ const CreateShipment = ({ history, location }) => {
                   }
                 />
               </Grid>
-              {actualDepartureDateTime && (
-                <Grid item xs={11} sm={5.5} mt={isMobile() ? 1.5 : -2.5} className="createShipmentAdjustSpacing">
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 1.5 : -2.5} className="createShipmentAdjustSpacing">
+                {actualDepartureDateTime && (
                   <DatePickerComponent
                     label="Actual Shipment Start"
                     selectedDate={moment(actualDepartureDateTime).tz(data)}
@@ -1294,10 +1294,10 @@ const CreateShipment = ({ history, location }) => {
                         : ''
                     }
                   />
-                </Grid>
-              )}
-              {actualArrivalDateTime && (
-                <Grid item xs={11} sm={5.5} mt={isMobile() ? 0 : -2.5} className={isMobile() ? 'createShipmentAdjustSpacing' : ''}>
+                )}
+              </Grid>
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 0 : -2.5} className={isMobile() ? 'createShipmentAdjustSpacing' : ''}>
+                {actualArrivalDateTime && (
                   <DatePickerComponent
                     label="Actual Shipment Arrival"
                     selectedDate={moment(actualArrivalDateTime).tz(data)}
@@ -1314,8 +1314,8 @@ const CreateShipment = ({ history, location }) => {
                         : ''
                     }
                   />
-                </Grid>
-              )}
+                )}
+              </Grid>
               <Grid item xs={11} sm={5.5} mt={isMobile() ? 2 : 0}>
                 <TextField
                   variant="outlined"
@@ -1336,17 +1336,22 @@ const CreateShipment = ({ history, location }) => {
                       {st.label}
                     </MenuItem>
                   ))}
-                  {!cannotEdit && !isAdmin && _.map(USER_SHIPMENT_STATUS, (st, idx) => (
+                  {!_.isEmpty(editData) && !cannotEdit && !isAdmin && _.map(USER_SHIPMENT_STATUS, (st, idx) => (
                     <MenuItem key={`${idx}-${st.label}`} value={st.value}>
                       {st.label}
                     </MenuItem>
                   ))}
-                  {((cannotEdit && isAdmin) || (!_.isEmpty(editData) && !cannotEdit && isAdmin))
+                  {!_.isEmpty(editData) && ((cannotEdit && !isAdmin) || (!cannotEdit && isAdmin))
                     && _.map([...CREATE_SHIPMENT_STATUS, ...ADMIN_SHIPMENT_STATUS], (st, idx) => (
                       <MenuItem key={`${idx}-${st.label}`} value={st.value}>
                         {st.label}
                       </MenuItem>
                     ))}
+                  {!_.isEmpty(editData) && cannotEdit && isAdmin && _.map([...ADMIN_SHIPMENT_STATUS], (st, idx) => (
+                    <MenuItem key={`${idx}-${st.label}`} value={st.value}>
+                      {st.label}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </Grid>
               <Grid item xs={1} className="createShipmentOuterAsterisk" mt={isMobile() ? -1.75 : 0}>*</Grid>
@@ -2147,8 +2152,7 @@ const CreateShipment = ({ history, location }) => {
                   disabled={isAddingShipment
                     || isEditingShipment
                     || isDeletingCustody
-                    || submitDisabled()
-                    || cannotEdit}
+                    || submitDisabled()}
                   onClick={(e) => handleSubmit(e, true)}
                   className="createShipmentActionButtons"
                 >
