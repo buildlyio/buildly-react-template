@@ -34,15 +34,27 @@ export const CREATE_SHIPMENT_STATUS = [
   { value: 'En route', label: 'En route' },
   { value: 'Arrived', label: 'Arrived' },
 ];
+
 export const USER_SHIPMENT_STATUS = [
   { value: 'Planned', label: 'Planned' },
   { value: 'En route', label: 'En route' },
   { value: 'Arrived', label: 'Arrived' },
   { value: 'Cancelled', label: 'Cancelled' },
 ];
+
 export const ADMIN_SHIPMENT_STATUS = [
   { value: 'Cancelled', label: 'Cancelled' },
   { value: 'Completed', label: 'Completed' },
   { value: 'Damaged', label: 'Damaged' },
   { value: 'Battery Depleted', label: 'Battery Depleted' },
+];
+
+export const LANGUAGES = [
+  { value: 'en', label: 'English' },
+  { value: 'pt', label: 'Portuguese (Brazil)' },
+  { value: 'es', label: 'Spanish' },
+  { value: 'de', label: 'German' },
+  { value: 'fr', label: 'French' },
+  { value: 'ja', label: 'Japanese' },
+  { value: 'it', label: 'Italian' },
 ];

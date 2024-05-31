@@ -124,7 +124,7 @@ module.exports = (env, argv) => {
     webpackConfig.plugins = [
       ...webpackConfig.plugins,
       new CopyPlugin([
-        { from: '.env.development.local', to: 'environment.json' },
+        { from: '.env.development.local', to: 'environment.js' },
       ]),
     ];
   }

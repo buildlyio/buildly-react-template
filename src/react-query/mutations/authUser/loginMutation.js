@@ -16,11 +16,6 @@ export const useLoginMutation = (
       `${window.env.API_URL}coreuser/me/`,
     );
     oauthService.setOauthUser(user, { loginData });
-    await httpService.makeRequest(
-      'post',
-      `${window.env.API_URL}shipment/create_default_unit_of_measures/`,
-      { organization: user.data.organization.organization_uuid },
-    );
     const coreuser = await httpService.makeRequest(
       'get',
       `${window.env.API_URL}coreuser/`,

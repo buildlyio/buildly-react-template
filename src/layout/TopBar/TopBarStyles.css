@@ -29,6 +29,19 @@
   padding: 8px 28px 8px 16px;
 }
 
+.VIpgJd-ZVi9od-ORHb-OEVmcd {
+  display: none;
+}
+
+.topBarOrgSelectInput {
+  padding: 0;
+  margin-left: auto;
+}
+
+.MuiSelect-outlined>.topBarOrgSelectInput {
+  display: none;
+}
+
 .topbarAdminMenuRoot {
   padding: 16px;
   text-align: center;
@@ -73,10 +86,12 @@
   -webkit-appearance: none;
   margin: 0;
 }
+
 .accountSettingsNumberInput input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 .accountSettingsNumberInput input[type="number"] {
   -moz-appearance: textfield;
 }
@@ -200,15 +215,15 @@
   overflow-y: auto;
 }
 
-.whatsNewDialogContent > div > #banners {
+.whatsNewDialogContent>div>#banners {
   display: none;
 }
 
-.whatsNewDialogContent > div > #contents {
+.whatsNewDialogContent>div>#contents {
   padding: 0;
 }
 
-.whatsNewDialogContent > div > #contents > .doc-content {
+.whatsNewDialogContent>div>#contents>.doc-content {
   background: transparent;
   max-width: 100%;
   padding: 0 24px;

@@ -13,6 +13,7 @@ import Users from './Users/Users';
 import UserGroups from './UserGroups/UserGroups';
 import AddOrganization from './forms/AddOrganization';
 import AddUser from './forms/AddUser';
+import AddResellers from './forms/AddResellers';
 
 const UserManagement = () => {
   const history = useHistory();
@@ -26,6 +27,7 @@ const UserManagement = () => {
   const [view, setView] = useState(viewPath);
   const [showAddOrganization, setShowAddOrganization] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
+  const [showAddResellers, setShowAddResellers] = useState(false);
 
   const user = getUser();
   let isSuperAdmin = false;
@@ -64,6 +66,18 @@ const UserManagement = () => {
       >
         + Add Users
       </Button>
+      {isSuperAdmin
+        && (
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={() => setShowAddResellers(true)}
+            style={{ marginLeft: '20px' }}
+          >
+            + Create/Update Reseller Org.
+          </Button>
+        )}
       <Box mb={3} mt={2}>
         <Tabs value={view} onChange={viewTabClicked}>
           {subNav.map((itemProps, index) => (
@@ -75,6 +89,7 @@ const UserManagement = () => {
       <Route path={routes.USER_GROUPS} component={UserGroups} />
       <AddOrganization open={showAddOrganization} setOpen={setShowAddOrganization} />
       <AddUser open={showAddUser} setOpen={setShowAddUser} />
+      <AddResellers open={showAddResellers} setOpen={setShowAddResellers} />
     </Box>
   );
 };

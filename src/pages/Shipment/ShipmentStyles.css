@@ -157,10 +157,12 @@
   -webkit-appearance: none;
   margin: 0px;
 }
+
 .createShipmentNumberInput input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0px;
 }
+
 .createShipmentNumberInput input[type="number"] {
   -moz-appearance: textfield;
 }
@@ -232,6 +234,12 @@
 .createShipmentActionButtons2 {
   padding: 14px 32px;
   margin-right: 16px;
+}
+
+.createShipmentGuidanceList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  list-style-type: disc;
 }
 
 @media screen and (max-width: 620px) {

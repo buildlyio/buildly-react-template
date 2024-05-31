@@ -5,11 +5,19 @@ import { getUser } from '@context/User.context';
 import FormModal from '@components/Modal/FormModal';
 import Loader from '@components/Loader/Loader';
 import {
-  Button, Grid, MenuItem, TextField,
+  Button,
+  Grid,
+  IconButton,
+  Menu,
+  MenuItem,
+  TextField,
 } from '@mui/material';
+import {
+  ArrowRight as ArrowRightIcon,
+} from '@mui/icons-material';
 import { isDesktop } from '@utils/mediaQuery';
 import { validators } from '@utils/validators';
-import { checkForGlobalAdmin } from '@utils/utilMethods';
+import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
 import useAlert from '@hooks/useAlert';
 import { useInput } from '@hooks/useInput';
 import '../UserManagementStyles.css';
@@ -22,6 +30,7 @@ const AddUser = ({ open, setOpen }) => {
   const { displayAlert } = useAlert();
   const user = getUser();
   const isSuperAdmin = checkForGlobalAdmin(user);
+  const isAdmin = checkForAdmin(user);
   const { organization_uuid } = user.organization;
 
   const [openConfirmModal, setConfirmModal] = useState(false);
@@ -29,6 +38,10 @@ const AddUser = ({ open, setOpen }) => {
   const [userEmails, setUserEmails] = useState([]);
   const [rolesData, setRolesData] = useState([]);
   const [formError, setFormError] = useState({});
+  const [submenuAnchorEl, setSubmenuAnchorEl] = useState(null);
+  const [submenuOrg, setSubmenuOrg] = useState(null);
+  const [displayOrgs, setDisplayOrgs] = useState(null);
+  const [mainMenuOpen, setMainMenuOpen] = useState(false);
 
   const organization_name = useInput('', { required: true });
   const user_role = useInput('', { required: true });
@@ -50,6 +63,21 @@ const AddUser = ({ open, setOpen }) => {
     () => getCoregroupQuery(displayAlert),
     { refetchOnWindowFocus: false },
   );
+
+  useEffect(() => {
+    if (orgData && !_.isEmpty(orgData)) {
+      const producerOrgs = orgData.filter((org) => org.organization_type === 2);
+      const resellerOrgs = producerOrgs.filter((org) => org.is_reseller);
+      const resellerCustomerOrgIds = resellerOrgs.reduce((ids, org) => {
+        if (org.reseller_customer_orgs) {
+          return ids.concat(org.reseller_customer_orgs);
+        }
+        return ids;
+      }, []);
+      const customerOrgs = orgData.filter((org) => resellerCustomerOrgIds.includes(org.id));
+      setDisplayOrgs([...producerOrgs, ...customerOrgs]);
+    }
+  }, [orgData]);
 
   useEffect(() => {
     if (coreuserData) {
@@ -159,6 +187,22 @@ const AddUser = ({ open, setOpen }) => {
     }
   };
 
+  const handleSubmenuClick = (event, org) => {
+    event.stopPropagation();
+    setSubmenuAnchorEl(event.currentTarget);
+    setSubmenuOrg(org);
+  };
+
+  const handleSubmenuClose = () => {
+    setSubmenuAnchorEl(null);
+  };
+
+  const handleSubmenuSelect = (org) => {
+    organization_name.setValue(org.name);
+    handleSubmenuClose();
+    setMainMenuOpen(false);
+  };
+
   return (
     <div>
       <FormModal
@@ -205,30 +249,55 @@ const AddUser = ({ open, setOpen }) => {
                 value={userEmails.toString()}
               />
             </Grid>
-            {isSuperAdmin && (
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  select
-                  id="organization_name"
-                  name="organization_name"
-                  label="Organization Name"
-                  autoComplete="organization_name"
-                  {...organization_name.bind}
+            {(isSuperAdmin || (isAdmin && user.organization.is_reseller && !_.isEmpty(user.organization.reseller_customer_orgs))) && (
+              <>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    select
+                    SelectProps={{
+                      open: mainMenuOpen,
+                    }}
+                    id="organization_name"
+                    name="organization_name"
+                    label="Organization Name"
+                    autoComplete="organization_name"
+                    {...organization_name.bind}
+                    onClick={(e) => setMainMenuOpen(!mainMenuOpen)}
+                  >
+                    {displayOrgs && !_.isEmpty(displayOrgs) && displayOrgs.map((org) => (
+                      <MenuItem key={org.id} value={org.name} style={{ display: org.organization_type === 1 && 'none' }}>
+                        {org.name}
+                        {org.reseller_customer_orgs && (
+                          <IconButton
+                            onClick={(event) => handleSubmenuClick(event, org)}
+                            className="topBarOrgSelectInput"
+                          >
+                            <ArrowRightIcon />
+                          </IconButton>
+                        )}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Menu
+                  anchorEl={submenuAnchorEl}
+                  open={Boolean(submenuAnchorEl)}
+                  onClose={handleSubmenuClose}
                 >
-                  <MenuItem value="">Select</MenuItem>
-                  {_.map(orgData, (org) => (
-                    <MenuItem
-                      key={`organization-${org.id}`}
-                      value={org.name || ''}
-                    >
-                      {org.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
+                  {submenuOrg && !_.isEmpty(submenuOrg.reseller_customer_orgs)
+                    && orgData.filter((org) => submenuOrg.reseller_customer_orgs.includes(org.organization_uuid)).map((org) => (
+                      <MenuItem
+                        key={org.organization_uuid}
+                        onClick={() => handleSubmenuSelect(org)}
+                      >
+                        {org.name}
+                      </MenuItem>
+                    ))}
+                </Menu>
+              </>
             )}
             <Grid item xs={12}>
               <TextField
