@@ -40,6 +40,7 @@ import { getSensorAlertQuery } from '@react-query/queries/sensorGateways/getSens
 import useAlert from '@hooks/useAlert';
 import { useStore } from '@zustand/timezone/timezoneStore';
 import './ShipmentStyles.css';
+import { TIVE_GATEWAY_TIMES } from '@utils/mock';
 
 const Shipment = ({ history }) => {
   const muiTheme = useTheme();
@@ -568,13 +569,39 @@ const Shipment = ({ history }) => {
       && marker.light !== null && marker.light !== undefined
       && marker.battery !== null && marker.battery !== undefined
     );
+    const maxTemp = selectedShipment && _.orderBy(selectedShipment.max_excursion_temp, 'set_at', 'desc')[0];
+    const minTemp = selectedShipment && _.orderBy(selectedShipment.min_excursion_temp, 'set_at', 'desc')[0];
+    const maxHum = selectedShipment && _.orderBy(selectedShipment.max_excursion_humidity, 'set_at', 'desc')[0];
+    const minHum = selectedShipment && _.orderBy(selectedShipment.min_excursion_humidity, 'set_at', 'desc')[0];
+    const maxShock = selectedShipment && _.orderBy(selectedShipment.shock_threshold, 'set_at', 'desc')[0];
+    const maxLight = selectedShipment && _.orderBy(selectedShipment.light_threshold, 'set_at', 'desc')[0];
 
     return isValidData && (
       <>
-        <Typography>{`Temp: ${marker.temperature}`}</Typography>
-        <Typography>{`Humidity: ${marker.humidity}`}</Typography>
-        <Typography>{`Shock: ${marker.shock}`}</Typography>
-        <Typography>{`Light: ${marker.light}`}</Typography>
+        <Typography>
+          Temp(
+          <span className="shipmentMaxColor">{maxTemp.value}</span>
+          /
+          <span className="shipmentMinColor">{minTemp.value}</span>
+          {`): ${marker.temperature}`}
+        </Typography>
+        <Typography>
+          Humidity(
+          <span className="shipmentMaxColor">{maxHum.value}</span>
+          /
+          <span className="shipmentMinColor">{minHum.value}</span>
+          {`): ${marker.humidity}`}
+        </Typography>
+        <Typography>
+          Shock(
+          <span className="shipmentMaxColor">{maxShock.value}</span>
+          {`): ${marker.shock}`}
+        </Typography>
+        <Typography>
+          Light(
+          <span className="shipmentMaxColor">{maxLight.value}</span>
+          {`): ${marker.light}`}
+        </Typography>
         <Typography>{`Battery: ${marker.battery}`}</Typography>
       </>
     );
@@ -588,24 +615,49 @@ const Shipment = ({ history }) => {
       || marker.light === null || marker.light === undefined
       || marker.battery === null || marker.battery === undefined
     );
+    const maxTemp = selectedShipment && _.orderBy(selectedShipment.max_excursion_temp, 'set_at', 'desc')[0];
+    const minTemp = selectedShipment && _.orderBy(selectedShipment.min_excursion_temp, 'set_at', 'desc')[0];
+    const maxHum = selectedShipment && _.orderBy(selectedShipment.max_excursion_humidity, 'set_at', 'desc')[0];
+    const minHum = selectedShipment && _.orderBy(selectedShipment.min_excursion_humidity, 'set_at', 'desc')[0];
+    const maxShock = selectedShipment && _.orderBy(selectedShipment.shock_threshold, 'set_at', 'desc')[0];
+    const maxLight = selectedShipment && _.orderBy(selectedShipment.light_threshold, 'set_at', 'desc')[0];
 
     return hasInvalidData && (
       <Grid item xs={12}>
         <Typography fontWeight={700} fontStyle="italic">
           Irregular Transmission:
         </Typography>
-        {renderSensorValue('Temp', marker.temperature)}
-        {renderSensorValue('Humidity', marker.humidity)}
-        {renderSensorValue('Shock', marker.shock)}
-        {renderSensorValue('Light', marker.light)}
+        {renderSensorValue('Temp', marker.temperature, maxTemp.value, minTemp.value)}
+        {renderSensorValue('Humidity', marker.humidity, maxHum.value, minHum.value)}
+        {renderSensorValue('Shock', marker.shock, maxShock.value)}
+        {renderSensorValue('Light', marker.light, maxLight.value)}
         {renderSensorValue('Battery', marker.battery)}
       </Grid>
     );
   };
 
-  const renderSensorValue = (label, value) => (
+  const renderSensorValue = (label, value, max = null, min = null) => (
     !_.isEqual(value, null) && !_.isEqual(value, undefined) && (
-      <Typography>{`${label}: ${value}`}</Typography>
+      <Typography>
+        {label}
+        {max && min && (
+          <>
+            (
+            <span className="shipmentMaxColor">{max}</span>
+            /
+            <span className="shipmentMinColor">{min}</span>
+            )
+          </>
+        )}
+        {max && !min && (
+          <>
+            (
+            <span className="shipmentMaxColor">{max}</span>
+            )
+          </>
+        )}
+        {`: ${value}`}
+      </Typography>
     )
   );
 
@@ -659,7 +711,7 @@ const Shipment = ({ history }) => {
             showPath
             markers={markers}
             googleMapURL={window.env.MAP_API_URL}
-            zoom={_.isEmpty(markers) ? 4 : 12}
+            zoom={_.isEmpty(markers) ? 2.5 : 12}
             setSelectedMarker={setSelectedMarker}
             loadingElement={
               <div style={{ height: '100%' }} />
@@ -730,6 +782,42 @@ const Shipment = ({ history }) => {
                   ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
                   : '',
               ),
+              {
+                name: 'battery_levels',
+                label: 'Tracker Battery Level (%) with Intervals',
+                options: {
+                  sort: true,
+                  sortThirdClickReset: true,
+                  filter: true,
+                  customBodyRenderLite: (dataIndex) => {
+                    const ship = rows[dataIndex];
+                    const tTime = _.find(TIVE_GATEWAY_TIMES, { value: ship.transmission_time });
+                    const mTime = _.find(TIVE_GATEWAY_TIMES, { value: ship.measurement_time });
+
+                    return (
+                      <Grid container spacing={1}>
+                        <Grid item xs={4} className="shipmentGridTimeCenter">
+                          <Typography variant="body1">
+                            {ship.battery_levels}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={8}>
+                          <Typography variant="body1">
+                            T:
+                            {' '}
+                            {tTime ? tTime.short_label : 'N/A'}
+                          </Typography>
+                          <Typography variant="body1">
+                            M:
+                            {' '}
+                            {mTime ? mTime.short_label : 'N/A'}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    );
+                  },
+                },
+              },
             ]}
             extraOptions={{
               expandableRows: true,

@@ -1,3 +1,16 @@
+.shipmentMaxColor {
+  color: var(--color-palette-error-main);
+}
+
+.shipmentMinColor {
+  color: var(--color-palette-info-main);
+}
+
+.shipmentGridTimeCenter {
+  align-content: center;
+  text-align: center;
+}
+
 .shipmentTitle {
   padding: 16px;
   background-color: var(--color-palette-primary-light);
@@ -144,10 +157,12 @@
   -webkit-appearance: none;
   margin: 0px;
 }
+
 .createShipmentNumberInput input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0px;
 }
+
 .createShipmentNumberInput input[type="number"] {
   -moz-appearance: textfield;
 }
@@ -219,6 +234,12 @@
 .createShipmentActionButtons2 {
   padding: 14px 32px;
   margin-right: 16px;
+}
+
+.createShipmentGuidanceList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  list-style-type: disc;
 }
 
 @media screen and (max-width: 620px) {

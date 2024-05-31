@@ -1,0 +1,50 @@
+name: Build and Push Docker Image to Dev
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  PROJECT_ID: spry-bricolage-298920
+  REGION: us
+  IMAGE_NAME: us-docker.pkg.dev/spry-bricolage-298920/gcr.io/dev/react-ui
+
+jobs:
+  build:
+    name: Build and Push to GCR
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Checkout"
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    - id: "auth"
+      uses: "google-github-actions/auth@v1"
+      with:
+        credentials_json: "${{ secrets.GCR_JSON_KEY }}"
+
+    - name: "Set up Cloud SDK"
+      uses: "google-github-actions/setup-gcloud@v1"
+
+    - name: "Use gcloud CLI"
+      run: "gcloud info"
+
+    - name: yarn install, build and test
+      run: |
+        yarn install
+        yarn run build:dev
+
+    - name: "Docker auth"
+      run: |-
+        gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+    - name: Build docker image
+      run: docker build -t $IMAGE_NAME:latest .
+
+    - name: Push to Google Artifact Registry
+      run: docker push $IMAGE_NAME:latest

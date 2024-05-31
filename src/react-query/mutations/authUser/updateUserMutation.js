@@ -27,10 +27,16 @@ export const useUpdateUserMutation = (
       `${window.env.API_URL}coreuser/`,
     );
     oauthService.setCurrentCoreUser(coreuser, user);
+    return updateUserData;
   },
   {
-    onSuccess: () => {
+    onSuccess: (data) => {
       if (history) {
+        // This window reload is for localization as it is working only when we reload the window.
+        if (data.user_language) {
+          alert('Detected language change. So need to reload the website.');
+          window.location.reload(true);
+        }
         const route = window.location.pathname;
         history.push('/');
         history.push(route);

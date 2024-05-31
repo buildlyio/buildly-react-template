@@ -22,6 +22,7 @@ import Loader from '@components/Loader/Loader';
 import { useInput } from '@hooks/useInput';
 import {
   DATE_DISPLAY_CHOICES,
+  LANGUAGES,
   TIME_DISPLAY_CHOICES,
   TIVE_GATEWAY_TIMES,
   UOM_DISTANCE_CHOICES,
@@ -134,6 +135,10 @@ const OrganizationSettings = () => {
   const timezone = useInput(_.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time zone'))
     ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time zone')).unit_of_measure
     : 'America/Los_Angeles');
+  const language = useInput(_.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language')).unit_of_measure
+    : 'English');
+
   const [countryList, setCountryList] = useState([]);
   const [currencyList, setCurrencyList] = useState([]);
 
@@ -190,6 +195,11 @@ const OrganizationSettings = () => {
         ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time zone')).unit_of_measure
         : 'America/Los_Angeles',
     );
+    language.setValue(
+      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language'))
+        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language')).unit_of_measure
+        : 'English',
+    );
   }, [unitData]);
 
   const resetValues = () => {
@@ -217,6 +227,7 @@ const OrganizationSettings = () => {
     temp.reset();
     weight.reset();
     timezone.reset();
+    language.reset();
   };
 
   const submitDisabled = () => (
@@ -244,6 +255,7 @@ const OrganizationSettings = () => {
     || temp.hasChanged()
     || weight.hasChanged()
     || timezone.hasChanged()
+    || language.hasChanged()
   );
 
   const { mutate: updateOrganizationMutation, isLoading: isUpdatingOrganization } = useUpdateOrganizationMutation(displayAlert);
@@ -347,6 +359,12 @@ const OrganizationSettings = () => {
         case 'time zone':
           if (timezone.hasChanged()) {
             uom = { ...uom, unit_of_measure: timezone.value };
+            editUnitMutation(uom);
+          }
+          break;
+        case 'language':
+          if (language.hasChanged()) {
+            uom = { ...uom, unit_of_measure: language.value };
             editUnitMutation(uom);
           }
           break;
@@ -872,6 +890,28 @@ const OrganizationSettings = () => {
             {_.map(tzOptions, (tzOption, index) => (
               <MenuItem key={`${tzOption.value}-${index}`} value={tzOption.value}>
                 {tzOption.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            select
+            id="language"
+            name="language"
+            label="Default Language"
+            autoComplete="language"
+            value={language.value}
+            onChange={(e) => {
+              language.setValue(e.target.value);
+            }}
+          >
+            {_.map(LANGUAGES, (item, index) => (
+              <MenuItem key={`${item.value}-${index}`} value={item.label}>
+                {item.label}
               </MenuItem>
             ))}
           </TextField>

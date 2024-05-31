@@ -25,6 +25,7 @@ import { isDesktop } from '@utils/mediaQuery';
 import { validators } from '@utils/validators';
 import {
   DATE_DISPLAY_CHOICES,
+  LANGUAGES,
   TIME_DISPLAY_CHOICES,
   TIVE_GATEWAY_TIMES,
   UOM_DISTANCE_CHOICES,
@@ -78,6 +79,7 @@ const AddOrganization = ({
   const temp = useInput('Fahrenheit');
   const weight = useInput('Pounds');
   const timezone = useInput('America/Los_Angeles');
+  const language = useInput('English');
   const supressTempAlerts = useInput(true);
   const supressHumidityAlerts = useInput(true);
   const supressShockAlerts = useInput(true);
@@ -179,6 +181,7 @@ const AddOrganization = ({
     temp.reset();
     weight.reset();
     timezone.reset();
+    language.reset();
     supressTempAlerts.reset();
     supressHumidityAlerts.reset();
     supressShockAlerts.reset();
@@ -210,6 +213,7 @@ const AddOrganization = ({
       || temp.hasChanged()
       || weight.hasChanged()
       || timezone.hasChanged()
+      || language.hasChanged()
       || supressTempAlerts.hasChanged()
       || supressHumidityAlerts.hasChanged()
       || supressShockAlerts.hasChanged()
@@ -290,6 +294,7 @@ const AddOrganization = ({
       || temp.hasChanged()
       || weight.hasChanged()
       || timezone.hasChanged()
+      || language.hasChanged()
       || supressTempAlerts.hasChanged()
       || supressHumidityAlerts.hasChanged()
       || supressShockAlerts.hasChanged()
@@ -326,6 +331,7 @@ const AddOrganization = ({
         temperature: temp.value,
         weight: weight.value,
         org_timezone: timezone.value,
+        org_language: language.value,
       };
       inviteMutation(data);
     }
@@ -834,6 +840,28 @@ const AddOrganization = ({
                 {_.map(tzOptions, (tzOption, index) => (
                   <MenuItem key={`${tzOption.value}-${index}`} value={tzOption.value}>
                     {tzOption.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                select
+                id="language"
+                name="language"
+                label="Default Language"
+                autoComplete="language"
+                value={language.value}
+                onChange={(e) => {
+                  language.setValue(e.target.value);
+                }}
+              >
+                {_.map(LANGUAGES, (item, index) => (
+                  <MenuItem key={`${item.value}-${index}`} value={item.label}>
+                    {item.label}
                   </MenuItem>
                 ))}
               </TextField>

@@ -13,7 +13,6 @@ import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQ
 import { getContactQuery } from '@react-query/queries/custodians/getContactQuery';
 import { getShipmentsQuery } from '@react-query/queries/shipments/getShipmentsQuery';
 import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
-import { useDeleteGatewayMutation } from '@react-query/mutations/sensorGateways/deleteGatewayMutation';
 import useAlert from '@hooks/useAlert';
 import { useStore } from '@zustand/timezone/timezoneStore';
 
@@ -25,8 +24,6 @@ const Gateway = ({ history, redirectTo }) => {
   const { data } = useStore();
 
   const [rows, setRows] = useState([]);
-  const [openDeleteModal, setDeleteModal] = useState(false);
-  const [deleteGatewayId, setDeleteGatewayId] = useState('');
 
   const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
     ['gateways', organization],
@@ -97,18 +94,6 @@ const Gateway = ({ history, redirectTo }) => {
     });
   };
 
-  const deleteGatewayAction = (item) => {
-    setDeleteGatewayId(item.id);
-    setDeleteModal(true);
-  };
-
-  const { mutate: deleteGatewayMutation, isLoading: isDeletingGateway } = useDeleteGatewayMutation(organization, displayAlert);
-
-  const handleDeleteModal = () => {
-    setDeleteModal(false);
-    deleteGatewayMutation(deleteGatewayId);
-  };
-
   const onAddButtonClick = () => {
     history.push(addPath, {
       from: redirectTo || routes.TRACKERS,
@@ -127,7 +112,7 @@ const Gateway = ({ history, redirectTo }) => {
         filename="TrackerData"
         tableHeader="Trackers"
         loading={
-          isLoadingGateways || isLoadingGatewayTypes || isLoadingCustodians || isLoadingContact || isLoadingShipments || isLoadingUnits || isDeletingGateway
+          isLoadingGateways || isLoadingGatewayTypes || isLoadingCustodians || isLoadingContact || isLoadingShipments || isLoadingUnits
         }
         rows={rows || []}
         columns={gatewayColumns(
@@ -145,11 +130,6 @@ const Gateway = ({ history, redirectTo }) => {
         addButtonHeading="Add Tracker"
         onAddButtonClick={onAddButtonClick}
         editAction={editGatewayAction}
-        deleteAction={deleteGatewayAction}
-        openDeleteModal={openDeleteModal}
-        setDeleteModal={setDeleteModal}
-        handleDeleteModal={handleDeleteModal}
-        deleteModalTitle="Are you sure you want to delete this Tracker?"
       >
         <Route path={`${addPath}`} component={AddGateway} />
         <Route path={`${editPath}/:id`} component={AddGateway} />

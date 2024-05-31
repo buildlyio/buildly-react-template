@@ -135,6 +135,14 @@ const CreateShipment = ({ history, location }) => {
     (!_.isEmpty(editData) && editData.estimated_time_of_arrival)
     || moment().add(1, 'day'),
   );
+  const [actualDepartureDateTime, setActualDepartureDateTime] = useState(
+    (!_.isEmpty(editData) && editData.actual_time_of_departure)
+    || null,
+  );
+  const [actualArrivalDateTime, setActualArrivalDateTime] = useState(
+    (!_.isEmpty(editData) && editData.actual_time_of_arrival)
+    || null,
+  );
   const status = useInput((!_.isEmpty(editData) && editData.status) || 'Planned');
   const cannotEdit = !_.isEmpty(editData) && _.includes(_.map(ADMIN_SHIPMENT_STATUS, 'value'), editData.status);
 
@@ -1229,7 +1237,7 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
               <Grid item xs={11} sm={5.5} mt={isMobile() ? 1.5 : -2.5} className="createShipmentAdjustSpacing">
                 <DatePickerComponent
-                  label="Shipment start"
+                  label="Estimated Shipment Start"
                   selectedDate={moment(departureDateTime).tz(data)}
                   disabled={cannotEdit}
                   hasTime
@@ -1251,7 +1259,7 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
               <Grid item xs={11} sm={5.5} mt={isMobile() ? 0 : -2.5} className={isMobile() ? 'createShipmentAdjustSpacing' : ''}>
                 <DatePickerComponent
-                  label="Shipment end"
+                  label="Estimated Shipment End"
                   selectedDate={moment(arrivalDateTime).tz(data)}
                   disabled={cannotEdit}
                   hasTime
@@ -1267,6 +1275,46 @@ const CreateShipment = ({ history, location }) => {
                       : ''
                   }
                 />
+              </Grid>
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 1.5 : -2.5} className="createShipmentAdjustSpacing">
+                {actualDepartureDateTime && (
+                  <DatePickerComponent
+                    label="Actual Shipment Start"
+                    selectedDate={moment(actualDepartureDateTime).tz(data)}
+                    disabled
+                    hasTime
+                    dateFormat={
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                        : ''
+                    }
+                    timeFormat={
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                        : ''
+                    }
+                  />
+                )}
+              </Grid>
+              <Grid item xs={11} sm={5.5} mt={isMobile() ? 0 : -2.5} className={isMobile() ? 'createShipmentAdjustSpacing' : ''}>
+                {actualArrivalDateTime && (
+                  <DatePickerComponent
+                    label="Actual Shipment Arrival"
+                    selectedDate={moment(actualArrivalDateTime).tz(data)}
+                    disabled
+                    hasTime
+                    dateFormat={
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+                        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+                        : ''
+                    }
+                    timeFormat={
+                      _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+                        ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+                        : ''
+                    }
+                  />
+                )}
               </Grid>
               <Grid item xs={11} sm={5.5} mt={isMobile() ? 2 : 0}>
                 <TextField
@@ -1288,17 +1336,22 @@ const CreateShipment = ({ history, location }) => {
                       {st.label}
                     </MenuItem>
                   ))}
-                  {!cannotEdit && !isAdmin && _.map(USER_SHIPMENT_STATUS, (st, idx) => (
+                  {!_.isEmpty(editData) && !cannotEdit && !isAdmin && _.map(USER_SHIPMENT_STATUS, (st, idx) => (
                     <MenuItem key={`${idx}-${st.label}`} value={st.value}>
                       {st.label}
                     </MenuItem>
                   ))}
-                  {((cannotEdit && isAdmin) || (!_.isEmpty(editData) && !cannotEdit && isAdmin))
+                  {!_.isEmpty(editData) && ((cannotEdit && !isAdmin) || (!cannotEdit && isAdmin))
                     && _.map([...CREATE_SHIPMENT_STATUS, ...ADMIN_SHIPMENT_STATUS], (st, idx) => (
                       <MenuItem key={`${idx}-${st.label}`} value={st.value}>
                         {st.label}
                       </MenuItem>
                     ))}
+                  {!_.isEmpty(editData) && cannotEdit && isAdmin && _.map([...ADMIN_SHIPMENT_STATUS], (st, idx) => (
+                    <MenuItem key={`${idx}-${st.label}`} value={st.value}>
+                      {st.label}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </Grid>
               <Grid item xs={1} className="createShipmentOuterAsterisk" mt={isMobile() ? -1.75 : 0}>*</Grid>
@@ -1939,87 +1992,108 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
             </Grid>
             {gateway && gateway.value && (
-              <Grid item xs={11.5} className="createShipmentGatewayDetails">
-                <Typography variant="body1" component="div">
-                  Battery Level:
-                </Typography>
-                {gateway.value.last_known_battery_level
-                  && _.gte(_.toNumber(gateway.value.last_known_battery_level), 90)
-                  && (
-                    <BatteryFullIcon htmlColor={theme.palette.success.main} />
-                  )}
-                {gateway.value.last_known_battery_level
-                  && _.lt(_.toNumber(gateway.value.last_known_battery_level), 90)
-                  && _.gte(_.toNumber(gateway.value.last_known_battery_level), 60)
-                  && (
-                    <Battery80Icon htmlColor={theme.palette.warning.main} />
-                  )}
-                {gateway.value.last_known_battery_level
-                  && _.lt(_.toNumber(gateway.value.last_known_battery_level), 60)
-                  && (
-                    <Battery50Icon htmlColor={theme.palette.error.main} />
-                  )}
-                {!gateway.value.last_known_battery_level && (
-                  <BatteryFullIcon />
-                )}
-                <Typography variant="body1" component="div">
-                  {gateway.value.last_known_battery_level ? `${gateway.value.last_known_battery_level}%` : 'N/A'}
-                </Typography>
-              </Grid>
-            )}
-            {gateway && gateway.value && (
-              <Grid item xs={12}>
-                <Grid container spacing={4}>
-                  <Grid item xs={6} />
-                  <Grid item xs={2.75}>
-                    <TextField
-                      id="transmission-interval"
-                      select
-                      fullWidth
-                      disabled={cannotEdit}
-                      placeholder="Select..."
-                      label="Transmission interval"
-                      onBlur={(e) => handleBlur(e, 'required', transmissionInterval, 'transmission-interval')}
-                      InputLabelProps={{ shrink: true }}
-                      SelectProps={{ displayEmpty: true }}
-                      value={transmissionInterval.value}
-                      onChange={(e) => {
-                        transmissionInterval.setValue(e.target.value);
-                        measurementInterval.setValue(e.target.value);
-                      }}
-                    >
-                      <MenuItem value="">Select</MenuItem>
-                      {!_.isEmpty(TIVE_GATEWAY_TIMES)
-                        && _.map(TIVE_GATEWAY_TIMES, (time, index) => (
-                          <MenuItem key={`${time.value}-${index}`} value={time.value}>
-                            {time.label}
-                          </MenuItem>
-                        ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={2.75}>
-                    <TextField
-                      id="measurement-interval"
-                      select
-                      fullWidth
-                      disabled={cannotEdit}
-                      placeholder="Select..."
-                      label="Measurement interval"
-                      onBlur={(e) => handleBlur(e, 'required', measurementInterval, 'measurement-interval')}
-                      InputLabelProps={{ shrink: true }}
-                      SelectProps={{ displayEmpty: true }}
-                      {...measurementInterval.bind}
-                    >
-                      <MenuItem value="">Select</MenuItem>
-                      {!_.isEmpty(TIVE_GATEWAY_TIMES) && _.map(
-                        _.filter(TIVE_GATEWAY_TIMES, (t) => (_.includes(gatewayType.value, 'ProofTracker') ? t.value === transmissionInterval.value : t.value <= transmissionInterval.value)),
-                        (time, index) => (
-                          <MenuItem key={`${time.value}-${index}`} value={time.value}>
-                            {time.label}
-                          </MenuItem>
-                        ),
+              <Grid container spacing={4}>
+                <Grid item xs={6}>
+                  <Typography variant="body1" component="div">
+                    Transmission/Measurement interval setting general guidance (may vary depending upon battery level, type, and conditions):
+                  </Typography>
+                  <Typography>
+                    <ul className="createShipmentGuidanceList">
+                      <li>5 minutes = &lt;1 week</li>
+                      <li>10 minutes = &lt;2 weeks</li>
+                      <li>20 minutes = &lt;3 weeks</li>
+                      <li>30 minutes = &lt;1 month</li>
+                      <li>1 hour = &lt;2 months</li>
+                      <li>2 hours = &lt;3 months</li>
+                      <li>6 hours = &lt;4 months</li>
+                      <li>12 hours = &lt;6 months</li>
+                    </ul>
+                  </Typography>
+                  <Typography variant="caption" component="div" fontStyle="italic" color={theme.palette.background.light}>
+                    Note: numbers above based on 100% battery charge, non-lithium battery, in 0C-10C (32F-50F)temperature environment.
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Grid item xs={12} className="createShipmentGatewayDetails">
+                    <Typography variant="body1" component="div">
+                      Battery Level:
+                    </Typography>
+                    {gateway.value.last_known_battery_level
+                      && _.gte(_.toNumber(gateway.value.last_known_battery_level), 90)
+                      && (
+                        <BatteryFullIcon htmlColor={theme.palette.success.main} />
                       )}
-                    </TextField>
+                    {gateway.value.last_known_battery_level
+                      && _.lt(_.toNumber(gateway.value.last_known_battery_level), 90)
+                      && _.gte(_.toNumber(gateway.value.last_known_battery_level), 60)
+                      && (
+                        <Battery80Icon htmlColor={theme.palette.warning.main} />
+                      )}
+                    {gateway.value.last_known_battery_level
+                      && _.lt(_.toNumber(gateway.value.last_known_battery_level), 60)
+                      && (
+                        <Battery50Icon htmlColor={theme.palette.error.main} />
+                      )}
+                    {!gateway.value.last_known_battery_level && (
+                      <BatteryFullIcon />
+                    )}
+                    <Typography variant="body1" component="div">
+                      {gateway.value.last_known_battery_level ? `${gateway.value.last_known_battery_level}%` : 'N/A'}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={11}>
+                    <Grid container spacing={4}>
+                      <Grid item xs={6}>
+                        <TextField
+                          id="transmission-interval"
+                          select
+                          fullWidth
+                          disabled={cannotEdit}
+                          placeholder="Select..."
+                          label="Transmission interval"
+                          onBlur={(e) => handleBlur(e, 'required', transmissionInterval, 'transmission-interval')}
+                          InputLabelProps={{ shrink: true }}
+                          SelectProps={{ displayEmpty: true }}
+                          value={transmissionInterval.value}
+                          onChange={(e) => {
+                            transmissionInterval.setValue(e.target.value);
+                            measurementInterval.setValue(e.target.value);
+                          }}
+                        >
+                          <MenuItem value="">Select</MenuItem>
+                          {!_.isEmpty(TIVE_GATEWAY_TIMES)
+                            && _.map(TIVE_GATEWAY_TIMES, (time, index) => (
+                              <MenuItem key={`${time.value}-${index}`} value={time.value}>
+                                {time.label}
+                              </MenuItem>
+                            ))}
+                        </TextField>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <TextField
+                          id="measurement-interval"
+                          select
+                          fullWidth
+                          disabled={cannotEdit}
+                          placeholder="Select..."
+                          label="Measurement interval"
+                          onBlur={(e) => handleBlur(e, 'required', measurementInterval, 'measurement-interval')}
+                          InputLabelProps={{ shrink: true }}
+                          SelectProps={{ displayEmpty: true }}
+                          {...measurementInterval.bind}
+                        >
+                          <MenuItem value="">Select</MenuItem>
+                          {!_.isEmpty(TIVE_GATEWAY_TIMES) && _.map(
+                            _.filter(TIVE_GATEWAY_TIMES, (t) => (_.includes(gatewayType.value, 'ProofTracker') ? t.value === transmissionInterval.value : t.value <= transmissionInterval.value)),
+                            (time, index) => (
+                              <MenuItem key={`${time.value}-${index}`} value={time.value}>
+                                {time.label}
+                              </MenuItem>
+                            ),
+                          )}
+                        </TextField>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
@@ -2099,8 +2173,7 @@ const CreateShipment = ({ history, location }) => {
                   disabled={isAddingShipment
                     || isEditingShipment
                     || isDeletingCustody
-                    || submitDisabled()
-                    || cannotEdit}
+                    || submitDisabled()}
                   onClick={(e) => handleSubmit(e, true)}
                   className="createShipmentActionButtons"
                 >
