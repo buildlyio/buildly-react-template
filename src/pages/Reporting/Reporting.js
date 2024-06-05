@@ -550,9 +550,9 @@ const Reporting = () => {
           { shipment_id: selectedShipment && selectedShipment.partner_shipment_id },
         )}
         shipmentName={selectedShipment && selectedShipment.name}
+        selectedShipment={selectedShipment}
         selectedMarker={selectedShipment && selectedMarker}
         unitOfMeasure={unitData}
-        timezone={timeZone}
       />
       <AlertsReport
         sensorReport={reports}

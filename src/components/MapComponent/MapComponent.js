@@ -42,7 +42,7 @@ export const MapComponent = (props) => {
   }, [unitOfMeasure]);
 
   useEffect(() => {
-    if (!_.isEmpty(markers) && markers[0].lat && markers[0].lng) {
+    if (!_.isEmpty(markers) && markers[0] && markers[0].lat && markers[0].lng) {
       setCenter({
         lat: markers[0].lat,
         lng: markers[0].lng,
@@ -53,14 +53,21 @@ export const MapComponent = (props) => {
         setSelectedMarker(markers[0]);
       }
     }
-
     if (_.isEmpty(markers)) {
-      if (_.isEmpty(allMarkers)) {
+      if (!_.isEmpty(allMarkers)) {
+        const allMarkerItems = [].concat(...allMarkers);
+        const countries = allMarkerItems.map((item) => item && item.country);
+        const uniqueCountries = [...new Set(countries)];
+        if (uniqueCountries.length === 1) {
+          setMapCenter(uniqueCountries[0]);
+          setMapZoom(4);
+        } else {
+          setMapCenter('Algeria');
+          setMapZoom(2.5);
+        }
+      } else {
         setMapCenter('');
         setMapZoom(4);
-      } else {
-        setMapCenter('Algeria');
-        setMapZoom(2.5);
       }
     }
   }, [markers, allMarkers]);
