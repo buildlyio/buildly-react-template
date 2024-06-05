@@ -67,3 +67,12 @@ export const uomDistanceUpdate = (currentUom, radius) => {
 
   return convertedRadius;
 };
+
+export const extractCountry = (address) => {
+  const countryRegex = /(?:^|,)\s*([A-Za-z\s]+)$/;
+  const matches = address.match(countryRegex);
+  if (matches && matches[1]) {
+    return matches[1].trim();
+  }
+  return null;
+};

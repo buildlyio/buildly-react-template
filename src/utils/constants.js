@@ -2,7 +2,9 @@
 import React from 'react';
 import moment from 'moment-timezone';
 import _ from 'lodash';
-import { SvgIcon, Tooltip, Typography } from '@mui/material';
+import {
+  SvgIcon, Tooltip, Typography, Grid,
+} from '@mui/material';
 import {
   AccessTime as AccessTimeIcon,
   BatteryStdOutlined as BatteryIcon,
@@ -11,7 +13,8 @@ import {
   LightModeOutlined as LightIcon,
   OpacityOutlined as HumidIcon,
 } from '@mui/icons-material';
-import { numberWithCommas } from './utilMethods';
+import { extractCountry, numberWithCommas } from './utilMethods';
+import { TIVE_GATEWAY_TIMES } from '@utils/mock';
 
 const showValue = (value, timezone, dateFormat, timeFormat) => (
   value && value !== '-'
@@ -1241,7 +1244,7 @@ export const MARKER_DATA = (unitOfMeasure) => ([
   { id: 'light', unit: 'LUX' },
 ]);
 
-export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone, dateFormat, timeFormat) => {
+export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, selectedShipment) => {
   const getCellStyle = (tableMeta) => ({
     fontWeight: (
       _.some(
@@ -1371,17 +1374,31 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, timezone, dateFormat, timeF
     },
     {
       name: 'battery',
-      label: 'BATTERY (%)',
+      label: 'BATTERY (%) WITH INTERVALS',
       options: {
         sort: true,
         sortThirdClickReset: true,
         filter: true,
         setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
-        customBodyRender: (value, tableMeta) => (
-          <div style={getCellStyle(tableMeta)}>
-            {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
-          </div>
-        ),
+        customBodyRender: (value, tableMeta) => {
+          const tTime = _.find(TIVE_GATEWAY_TIMES, { value: selectedShipment.transmission_time });
+          const mTime = _.find(TIVE_GATEWAY_TIMES, { value: selectedShipment.measurement_time });
+          return (
+            <Grid container spacing={1}>
+              <Grid item xs={4} style={{ alignContent: 'center', textAlign: 'center' }}>
+                <div style={getCellStyle(tableMeta)}>
+                  {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? _.round(_.toNumber(value), 2) : '')}
+                </div>
+              </Grid>
+              {!_.isEqual(value, null) && !_.isEqual(value, undefined) && (
+                <Grid item xs={8}>
+                  <Typography variant="body1">{`T: ${tTime ? tTime.short_label : 'N/A'}`}</Typography>
+                  <Typography variant="body1">{`M: ${mTime ? mTime.short_label : 'N/A'}`}</Typography>
+                </Grid>
+              )}
+            </Grid>
+          );
+        },
       },
     },
     {
@@ -1891,6 +1908,7 @@ export const getShipmentFormattedRow = (
       editedShipment.allMarkers = _.map(reports, (report) => ({
         lat: report.report_entry.report_latitude || '*',
         lng: report.report_entry.report_longitude || '*',
+        country: extractCountry(report.report_entry.report_location || ''),
         shipment: editedShipment,
       }));
 

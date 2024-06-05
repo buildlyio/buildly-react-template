@@ -2010,7 +2010,7 @@ const CreateShipment = ({ history, location }) => {
                     </ul>
                   </Typography>
                   <Typography variant="caption" component="div" fontStyle="italic" color={theme.palette.background.light}>
-                    Note: numbers above based on 100% battery charge, non-lithium battery, in 0C-10C (32F-50F)temperature environment.
+                    Note: numbers above based on 100% battery charge, non-lithium battery, in 0C-10C (32F-50F) temperature environment.
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>

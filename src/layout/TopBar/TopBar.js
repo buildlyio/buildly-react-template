@@ -61,7 +61,7 @@ const TopBar = ({
   const [hideAlertBadge, setHideAlertBadge] = useState(true);
   const [showAlertNotifications, setShowAlertNotifications] = useState(false);
   const [displayOrgs, setDisplayOrgs] = useState(null);
-  const [language, setLanguage] = useState(user.user_language);
+  const [language, setLanguage] = useState(null);
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
 
   let isAdmin = false;
@@ -74,6 +74,9 @@ const TopBar = ({
   if (user) {
     if (!organization) {
       setOrganization(user.organization.name);
+    }
+    if (!language) {
+      setLanguage(user.user_language);
     }
     isAdmin = checkForAdmin(user);
     isSuperAdmin = checkForGlobalAdmin(user);
@@ -108,24 +111,36 @@ const TopBar = ({
     { refetchOnWindowFocus: false },
   );
 
-  useEffect(() => {
-    const isReloaded = sessionStorage.getItem('isReloaded');
-    const domain = window.location.hostname;
-    let cookieString;
-    if (user && user.user_language) {
-      setLanguage(user.user_language);
-      const lng = LANGUAGES.find((item) => item.label === user.user_language);
-      cookieString = `googtrans=/en/${lng.value};path=/;domain=${domain}`;
+  const setGoogleTrans = () => {
+    // remove cookies
+    document.cookie = 'googtrans=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
+    if (!_.isEqual(document.cookie.search('googtrans'), -1)) {
+      // remove cookies
+      document.cookie = 'googtrans=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      document.cookie = 'googtrans=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Domain=.tpath.io';
+
+      // set new googtrans cookies
+      const googtransLng = document.cookie.split('googtrans')[1].split(';')[0].split('/')[2];
+      const lng = LANGUAGES.find((item) => item.value === googtransLng);
+      if (user && lng && !_.isEqual(user.user_language, lng.label)) {
+        const newLng = LANGUAGES.find((item) => item.label === user.user_language);
+        document.cookie = `googtrans=/auto/${newLng.value}; Path=/; Domain=${window.location.hostname}`;
+        // eslint-disable-next-line no-alert
+        alert('Detected language change. So need to reload the website.');
+        window.location.reload();
+      }
+    } else if (user && user.user_language) {
+      const newLng = LANGUAGES.find((item) => item.label === user.user_language);
+      document.cookie = `googtrans=/auto/${newLng.value}; Path=/; Domain=${window.location.hostname}`;
     } else {
-      setLanguage('English');
-      cookieString = `googtrans=/en/en;path=/;domain=${domain}`;
+      document.cookie = `googtrans=/auto/en; Path=/; Domain=${window.location.hostname}`;
     }
-    document.cookie = cookieString;
-    if (!isReloaded && !_.isEmpty(user.user_language) && user.user_language !== 'English') {
-      sessionStorage.setItem('isReloaded', 'true');
-      window.location.reload(true);
-    }
-  }, []);
+  };
+
+  useEffect(() => {
+    setGoogleTrans();
+  }, [language]);
 
   const filterAndSetDisplayOrgs = (orgs) => {
     if (orgs) {
@@ -171,10 +186,6 @@ const TopBar = ({
     const selected_language = e.target.value;
     if (language !== selected_language) {
       setLanguage(selected_language);
-      const lng = LANGUAGES.find((item) => item.label === selected_language);
-      const domain = window.location.hostname;
-      const cookieString = `googtrans=/en/${lng.value};path=/;domain=${domain}`;
-      document.cookie = cookieString;
       const updateData = {
         id: user.id,
         organization_uuid: user.organization.organization_uuid,
