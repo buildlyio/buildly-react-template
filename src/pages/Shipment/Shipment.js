@@ -578,30 +578,30 @@ const Shipment = ({ history }) => {
 
     return isValidData && (
       <>
-        <Typography>
-          Temp(
-          <span className="shipmentMaxColor">{maxTemp.value}</span>
-          /
-          <span className="shipmentMinColor">{minTemp.value}</span>
-          {`): ${marker.temperature}`}
-        </Typography>
-        <Typography>
-          Humidity(
-          <span className="shipmentMaxColor">{maxHum.value}</span>
-          /
-          <span className="shipmentMinColor">{minHum.value}</span>
-          {`): ${marker.humidity}`}
-        </Typography>
-        <Typography>
-          Shock(
-          <span className="shipmentMaxColor">{maxShock.value}</span>
-          {`): ${marker.shock}`}
-        </Typography>
-        <Typography>
-          Light(
-          <span className="shipmentMaxColor">{maxLight.value}</span>
-          {`): ${marker.light}`}
-        </Typography>
+        <Grid container flex>
+          <Typography>Temp (</Typography>
+          <Typography className="shipmentMaxColor">{maxTemp.value}</Typography>
+          <Typography>/</Typography>
+          <Typography className="shipmentMinColor">{minTemp.value}</Typography>
+          <Typography>{`): ${marker.temperature}`}</Typography>
+        </Grid>
+        <Grid container flex>
+          <Typography>Humidity (</Typography>
+          <Typography className="shipmentMaxColor">{maxHum.value}</Typography>
+          <Typography>/</Typography>
+          <Typography className="shipmentMinColor">{minHum.value}</Typography>
+          <Typography>{`): ${marker.humidity}`}</Typography>
+        </Grid>
+        <Grid container flex>
+          <Typography>Shock (</Typography>
+          <Typography className="shipmentMaxColor">{maxTemp.value}</Typography>
+          <Typography>{`): ${marker.shock}`}</Typography>
+        </Grid>
+        <Grid container flex>
+          <Typography>Light (</Typography>
+          <Typography className="shipmentMaxColor">{maxTemp.value}</Typography>
+          <Typography>{`): ${marker.light}`}</Typography>
+        </Grid>
         <Typography>{`Battery: ${marker.battery}`}</Typography>
       </>
     );
@@ -627,10 +627,10 @@ const Shipment = ({ history }) => {
         <Typography fontWeight={700} fontStyle="italic">
           Irregular Transmission:
         </Typography>
-        {renderSensorValue('Temp', marker.temperature, maxTemp.value, minTemp.value)}
-        {renderSensorValue('Humidity', marker.humidity, maxHum.value, minHum.value)}
-        {renderSensorValue('Shock', marker.shock, maxShock.value)}
-        {renderSensorValue('Light', marker.light, maxLight.value)}
+        {renderSensorValue('Temp ', marker.temperature, maxTemp.value, minTemp.value)}
+        {renderSensorValue('Humidity ', marker.humidity, maxHum.value, minHum.value)}
+        {renderSensorValue('Shock ', marker.shock, maxShock.value)}
+        {renderSensorValue('Light ', marker.light, maxLight.value)}
         {renderSensorValue('Battery', marker.battery)}
       </Grid>
     );
@@ -638,26 +638,25 @@ const Shipment = ({ history }) => {
 
   const renderSensorValue = (label, value, max = null, min = null) => (
     !_.isEqual(value, null) && !_.isEqual(value, undefined) && (
-      <Typography>
-        {label}
+      <Grid container flex>
+        <Typography>{label}</Typography>
+        {(max || min) && (
+          <Typography>(</Typography>
+        )}
+        {max && (
+          <Typography className="shipmentMaxColor">{max}</Typography>
+        )}
         {max && min && (
-          <>
-            (
-            <span className="shipmentMaxColor">{max}</span>
-            /
-            <span className="shipmentMinColor">{min}</span>
-            )
-          </>
+          <Typography>/</Typography>
         )}
-        {max && !min && (
-          <>
-            (
-            <span className="shipmentMaxColor">{max}</span>
-            )
-          </>
+        {min && (
+          <Typography className="shipmentMinColor">{min}</Typography>
         )}
-        {`: ${value}`}
-      </Typography>
+        {(max || min) && (
+          <Typography>)</Typography>
+        )}
+        <Typography>{`: ${value}`}</Typography>
+      </Grid>
     )
   );
 
@@ -784,7 +783,7 @@ const Shipment = ({ history }) => {
               ),
               {
                 name: 'battery_levels',
-                label: 'Tracker Battery Level (%) with Intervals',
+                label: 'Battery (%) with Intervals',
                 options: {
                   sort: true,
                   sortThirdClickReset: true,

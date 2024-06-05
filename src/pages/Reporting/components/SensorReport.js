@@ -12,9 +12,9 @@ import '../ReportingStyles.css';
 const SensorReport = ({
   sensorReport,
   shipmentName,
+  selectedShipment,
   selectedMarker,
   unitOfMeasure,
-  timezone,
 }) => {
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -73,13 +73,7 @@ const SensorReport = ({
           rows={rows}
           columns={SENSOR_REPORT_COLUMNS(
             unitOfMeasure,
-            timezone,
-            _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-              ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
-              : '',
-            _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-              ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
-              : '',
+            selectedShipment,
           )}
           selectable={{
             rows: 'multiple',
