@@ -594,12 +594,12 @@ const Shipment = ({ history }) => {
         </Grid>
         <Grid container flex>
           <Typography>Shock (</Typography>
-          <Typography className="shipmentMaxColor">{maxTemp.value}</Typography>
+          <Typography className="shipmentMaxColor">{maxShock.value}</Typography>
           <Typography>{`): ${marker.shock}`}</Typography>
         </Grid>
         <Grid container flex>
           <Typography>Light (</Typography>
-          <Typography className="shipmentMaxColor">{maxTemp.value}</Typography>
+          <Typography className="shipmentMaxColor">{maxLight.value}</Typography>
           <Typography>{`): ${marker.light}`}</Typography>
         </Grid>
         <Typography>{`Battery: ${marker.battery}`}</Typography>
