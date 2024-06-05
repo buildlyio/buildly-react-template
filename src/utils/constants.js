@@ -1381,8 +1381,8 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, selectedShipment) => {
         filter: true,
         setCellHeaderProps: () => ({ className: 'reportingSensorLeftHeader' }),
         customBodyRender: (value, tableMeta) => {
-          const tTime = _.find(TIVE_GATEWAY_TIMES, { value: selectedShipment.transmission_time });
-          const mTime = _.find(TIVE_GATEWAY_TIMES, { value: selectedShipment.measurement_time });
+          const tTime = _.find(TIVE_GATEWAY_TIMES, { value: selectedShipment ? selectedShipment.transmission_time : '' });
+          const mTime = _.find(TIVE_GATEWAY_TIMES, { value: selectedShipment ? selectedShipment.measurement_time : '' });
           return (
             <Grid container spacing={1}>
               <Grid item xs={4} style={{ alignContent: 'center', textAlign: 'center' }}>
