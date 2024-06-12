@@ -4,29 +4,40 @@
   margin: 0px;
   margin-top: 16px;
 }
+
 .datePickerRoot .MuiFormControl-root {
   width: 100%;
 }
 
 .popperSx .MuiPaper-root {
-  border: 1px solid var(--color-palette-background-black);
+  border: 0px;
   padding: 2px;
   margin-top: 1px;
-  background-color: var(--color-palette-background-dark3);
+  background-color: var(--color-palette-background-default);
 }
 
 .popperSx .MuiCalendarPicker-root {
-  background-color: var(--color-palette-primary-dark2);
-}
-
-.popperSx .PrivatePickersSlideTransition-root {
+  background-color: var(--color-palette-primary-default);
 }
 
 .popperSx .MuiPickersDay-dayWithMargin {
-  color: var(--color-palette-background-light3);
-  background-color: var(--color-palette-primary-dark3);
+  color: var(--color-palette-background-black);
+  background-color: var(--color-palette-background-default);
+}
+
+.popperSx .MuiPickersDay-dayWithMargin:hover {
+  background-color: var(--color-palette-background-light4);
+}
+
+.popperSx .Mui-selected {
+  color: var(--color-palette-background-default);
+  background-color: var(--color-palette-primary-main) !important;
+}
+
+.popperSx .Mui-selected:hover {
+  background-color: var(--color-palette-primary-dark) !important;
 }
 
 .popperSx .MuiTabs-root {
-  background-color: var(--color-palette-background-dark4);
+  background-color: var(--color-palette-background-black);
 }
