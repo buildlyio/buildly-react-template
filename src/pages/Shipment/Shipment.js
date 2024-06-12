@@ -11,11 +11,11 @@ import {
   FormLabel,
   Grid,
   Stack,
-  Tab,
   TableCell,
   TableRow,
-  Tabs,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
   Tooltip,
   Typography,
   useTheme,
@@ -51,13 +51,6 @@ const Shipment = ({ history }) => {
   const { data } = useStore();
 
   let isShipmentDataAvailable = false;
-
-  const subNav = [
-    { label: 'Active', value: 'Active' },
-    { label: 'Completed', value: 'Completed' },
-    { label: 'Battery Depleted', value: 'Battery Depleted' },
-    { label: 'Damaged', value: 'Damaged' },
-  ];
 
   const [shipmentFilter, setShipmentFilter] = useState('Active');
   const [rows, setRows] = useState([]);
@@ -145,22 +138,6 @@ const Shipment = ({ history }) => {
   const sensorReportData = selectedShipment ? reportData2 : reportData1;
   const isLoadingSensorReports = selectedShipment ? isLoadingReports2 : isLoadingReports1;
   const isFetchingSensorReports = selectedShipment ? isFetchingReports2 : isFetchingReports1;
-
-  const HeaderElements = () => (
-    <Tabs
-      value={shipmentFilter}
-      onChange={filterTabClicked}
-      className="shipmentTabs"
-    >
-      {_.map(subNav, (itemProps, index) => (
-        <Tab
-          {...itemProps}
-          key={`tab${index}:${itemProps.value}`}
-          className="shipmentTab"
-        />
-      ))}
-    </Tabs>
-  );
 
   useEffect(() => {
     const formattedRows = getShipmentFormattedRow(
@@ -697,7 +674,7 @@ const Shipment = ({ history }) => {
       </Button>
       <Grid container>
         <Grid item xs={12}>
-          <div className="shipmentTitle">
+          <div className={selectedShipment ? 'shipmentTitle notranslate' : 'shipmentTitle'}>
             <Typography variant="h6">
               {selectedShipment ? selectedShipment.name : 'All shipments'}
             </Typography>
@@ -724,6 +701,49 @@ const Shipment = ({ history }) => {
             clusterClick={processMarkers}
             unitOfMeasure={unitData}
           />
+        </Grid>
+        <Grid item xs={12} className="shipmentDataTableHeader">
+          <ToggleButtonGroup
+            color="secondary"
+            value={shipmentFilter}
+          >
+            <ToggleButton
+              value="Active"
+              size="medium"
+              selected={shipmentFilter === 'Active'}
+              className="shipmentDataTableHeaderItem"
+              onClick={(event, value) => filterTabClicked(event, value)}
+            >
+              Active
+            </ToggleButton>
+            <ToggleButton
+              value="Completed"
+              size="medium"
+              selected={shipmentFilter === 'Completed'}
+              className="shipmentDataTableHeaderItem"
+              onClick={(event, value) => filterTabClicked(event, value)}
+            >
+              Completed
+            </ToggleButton>
+            <ToggleButton
+              value="Battery Depleted"
+              size="medium"
+              selected={shipmentFilter === 'Battery Depleted'}
+              className="shipmentDataTableHeaderItem"
+              onClick={(event, value) => filterTabClicked(event, value)}
+            >
+              Battery Depleted
+            </ToggleButton>
+            <ToggleButton
+              value="Damaged"
+              size="medium"
+              selected={shipmentFilter === 'Damaged'}
+              className="shipmentDataTableHeaderItem"
+              onClick={(event, value) => filterTabClicked(event, value)}
+            >
+              Damaged
+            </ToggleButton>
+          </ToggleButtonGroup>
         </Grid>
         <Grid item xs={12} className="shipmentDataTable">
           <DataTableWrapper
@@ -763,7 +783,7 @@ const Shipment = ({ history }) => {
                   filter: true,
                   customBodyRenderLite: (dataIndex) => (
                     <Typography
-                      className="shipmentName"
+                      className="shipmentName notranslate"
                       onClick={(e) => {
                         history.push(routes.CREATE_SHIPMENT, {
                           ship: _.omit(rows[dataIndex], ['type', 'itemNames', 'tracker', 'battery_levels', 'alerts', 'allMarkers']),
@@ -822,7 +842,11 @@ const Shipment = ({ history }) => {
               expandableRows: true,
               expandableRowsHeader: false,
               expandableRowsOnClick: true,
-              customToolbar: () => (<HeaderElements style={{ right: '180%' }} />),
+              download: false,
+              filter: false,
+              print: false,
+              search: false,
+              viewColumns: false,
               setRowProps: (row, dataIndex, rowIndex) => ({
                 style: { color: _.isEqual(row[2], 'Planned') ? muiTheme.palette.background.light : 'inherit' },
               }),
@@ -850,7 +874,6 @@ const Shipment = ({ history }) => {
                         <CustomizedSteppers steps={steps} />
                       </TableCell>
                     </TableRow>
-
                     <TableRow>
                       <TableCell colSpan={colSpan}>
                         <Grid container spacing={2}>
@@ -864,7 +887,6 @@ const Shipment = ({ history }) => {
                                   {ship.order_number}
                                 </Typography>
                               </Grid>
-
                               <Grid item xs={12}>
                                 <Typography fontWeight={700}>
                                   Items:
@@ -873,7 +895,6 @@ const Shipment = ({ history }) => {
                                   <Typography key={`${item}-${idx}`}>{item}</Typography>
                                 ))}
                               </Grid>
-
                               <Grid item xs={12}>
                                 <Typography fontWeight={700}>
                                   Status:
@@ -884,7 +905,6 @@ const Shipment = ({ history }) => {
                               </Grid>
                             </Grid>
                           </Grid>
-
                           <Grid item xs={2}>
                             <Grid container rowGap={1}>
                               {_.map(ship.carriers, (carr, idx) => (
@@ -897,7 +917,6 @@ const Shipment = ({ history }) => {
                                   </Typography>
                                 </Grid>
                               ))}
-
                               <Grid item xs={12}>
                                 <Typography fontWeight={700}>
                                   Receiver:
@@ -908,7 +927,6 @@ const Shipment = ({ history }) => {
                               </Grid>
                             </Grid>
                           </Grid>
-
                           <Grid item xs={2}>
                             {!_.isEmpty(markers) && markers[0] && (
                               <Grid container rowGap={1}>
@@ -923,7 +941,6 @@ const Shipment = ({ history }) => {
                               </Grid>
                             )}
                           </Grid>
-
                           <Grid item xs={2}>
                             {!_.isEmpty(markers) && markers[0] && (
                               <Grid container rowGap={1}>
@@ -940,7 +957,6 @@ const Shipment = ({ history }) => {
                               </Grid>
                             )}
                           </Grid>
-
                           <Grid item xs={4} alignItems="end" justifyContent="end">
                             <Grid container rowGap={1}>
                               <Grid item xs={12}>
@@ -957,7 +973,6 @@ const Shipment = ({ history }) => {
                                   value={ship.note || ''}
                                 />
                               </Grid>
-
                               <Grid item xs={12}>
                                 <FormControl
                                   fullWidth
@@ -973,7 +988,6 @@ const Shipment = ({ history }) => {
                                   <FormLabel component="legend" className="shipmentLegend">
                                     Attached Files
                                   </FormLabel>
-
                                   <Stack direction="row" spacing={1}>
                                     {!_.isEmpty(ship.uploaded_pdf)
                                       && _.map(ship.uploaded_pdf, (file, idx) => (

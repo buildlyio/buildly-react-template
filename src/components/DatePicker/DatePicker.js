@@ -7,6 +7,22 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TextField } from '@mui/material';
 import './DatePickerStyles.css';
 
+const popperProps = {
+  className: 'popperSx',
+  popperOptions: {
+    modifiers: [
+      {
+        name: 'preventTranslation',
+        enabled: true,
+        phase: 'write',
+        fn: ({ state }) => {
+          state.elements.popper.setAttribute('translate', 'no');
+        },
+      },
+    ],
+  },
+};
+
 const DatePickerComponent = ({
   selectedDate,
   handleDateChange,
@@ -32,10 +48,10 @@ const DatePickerComponent = ({
           value={selectedDate}
           onChange={(value, keyInput) => handleDateChange(value.$d)}
           inputFormat={`${dateFormat} ${timeFormat}`}
-          PopperProps={{
-            sx: 'popperSx',
-          }}
-          renderInput={(props) => <TextField {...props} />}
+          PopperProps={popperProps}
+          renderInput={(props) => (
+            <TextField {...props} />
+          )}
         />
       ) : (
         <DatePicker
@@ -54,10 +70,10 @@ const DatePickerComponent = ({
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}
-          PopperProps={{
-            sx: 'popperSx',
-          }}
-          renderInput={(props) => <TextField {...props} />}
+          PopperProps={popperProps}
+          renderInput={(props) => (
+            <TextField {...props} />
+          )}
         />
       )}
     </LocalizationProvider>

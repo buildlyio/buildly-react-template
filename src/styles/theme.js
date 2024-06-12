@@ -16,6 +16,7 @@ const theme = extendTheme({
           light: '#BEBEBA',
           light2: '#D3D4D5',
           light3: '#E5E4E2',
+          light4: '#0000000A',
           dark: '#383636',
           dark2: '#00000080',
           dark3: '#78787833',

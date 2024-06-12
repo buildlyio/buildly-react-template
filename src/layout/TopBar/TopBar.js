@@ -9,6 +9,7 @@ import {
   Menu,
   MenuItem,
   Badge,
+  Typography,
 } from '@mui/material';
 import {
   AccountCircle,
@@ -131,8 +132,15 @@ const TopBar = ({
         window.location.reload();
       }
     } else if (user && user.user_language) {
+      const isReloaded = sessionStorage.getItem('isReloaded');
       const newLng = LANGUAGES.find((item) => item.label === user.user_language);
       document.cookie = `googtrans=/auto/${newLng.value}; Path=/; Domain=${window.location.hostname}`;
+      if (!isReloaded && user.user_language !== 'English') {
+        sessionStorage.setItem('isReloaded', 'true');
+        // eslint-disable-next-line no-alert
+        alert('Detected language change. So need to reload the website. It might take a little while for this.');
+        window.location.reload(true);
+      }
     } else {
       document.cookie = `googtrans=/auto/en; Path=/; Domain=${window.location.hostname}`;
     }
@@ -312,11 +320,13 @@ const TopBar = ({
           </TextField>
           {(isSuperAdmin || (isAdmin && !_.isEmpty(JSON.parse(localStorage.getItem('adminOrgs'))))) && (
             <TextField
-              className="topbarTimezone"
+              className="topbarTimezone notranslate"
               variant="outlined"
               fullWidth
               id="org"
-              label="Organization"
+              label={(
+                <Typography className="translate">Organization</Typography>
+              )}
               select
               value={organization}
               onChange={handleOrganizationChange}
@@ -326,7 +336,7 @@ const TopBar = ({
               onClick={(e) => setMainMenuOpen(!mainMenuOpen)}
             >
               {!_.isEmpty(displayOrgs) && displayOrgs.map((org) => (
-                <MenuItem key={org.id} value={org.name} style={{ display: org.organization_type === 1 && 'none' }}>
+                <MenuItem className="notranslate" key={org.id} value={org.name} style={{ display: org.organization_type === 1 && 'none' }}>
                   {org.name}
                   {org.reseller_customer_orgs && (
                     <IconButton

@@ -142,60 +142,72 @@ const RenderedMap = withScriptjs(
   withGoogleMap((props) => (
     <GoogleMap zoom={props.mapZoom} center={props.center}>
       {!props.isMarkerShown && props.allMarkers && !_.isEmpty(props.allMarkers)
-        && _.map(props.allMarkers, (shipMarkers, idx) => (
-          <MarkerClusterer
-            key={idx}
-            averageCenter
-            enableRetinaIcons
-            zoomOnClick={false}
-            gridSize={60}
-            title={!_.isEmpty(shipMarkers) ? _.first(shipMarkers).shipment.name : ''}
-            onClick={(e) => {
-              props.clusterClick(!_.isEmpty(shipMarkers) && _.first(shipMarkers).shipment, true);
-            }}
-            styles={[
-              {
-                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
-                height: 53,
-                width: 53,
-                anchor: [0, 0],
-                textSize: 0.001,
-              },
-              {
-                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
-                height: 56,
-                width: 56,
-                anchor: [0, 0],
-                textSize: 0.001,
-              },
-              {
-                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
-                height: 66,
-                width: 66,
-                anchor: [0, 0],
-                textSize: 0.001,
-              },
-              {
-                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
-                height: 78,
-                width: 78,
-                anchor: [0, 0],
-                textSize: 0.001,
-              },
-              {
-                url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
-                height: 90,
-                width: 90,
-                anchor: [0, 0],
-                textSize: 0.001,
-              },
-            ]}
-          >
-            {_.map(shipMarkers, (marker, inx) => (
-              <Marker key={`${marker.lat}-${marker.lng}-${inx}`} position={{ lat: marker.lat, lng: marker.lng }} />
-            ))}
-          </MarkerClusterer>
-        ))}
+        && _.map(props.allMarkers, (shipMarkers, idx) => {
+          const uniqueShipmentMarkers = !_.isEmpty(shipMarkers) ? _.size(_.uniqBy(shipMarkers, (item) => item.lat)) : 0;
+          return (
+            <MarkerClusterer
+              key={idx}
+              averageCenter
+              enableRetinaIcons
+              zoomOnClick={false}
+              gridSize={60}
+              onClick={(e) => {
+                props.clusterClick(!_.isEmpty(shipMarkers) && _.first(shipMarkers).shipment, true);
+              }}
+              styles={[
+                {
+                  url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                  height: 53,
+                  width: 53,
+                  anchor: [0, 0],
+                  textSize: 12,
+                  textColor: '#FFF',
+                },
+                {
+                  url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                  height: 56,
+                  width: 56,
+                  anchor: [0, 0],
+                  textSize: 12,
+                  textColor: '#FFF',
+                },
+                {
+                  url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                  height: 66,
+                  width: 66,
+                  anchor: [0, 0],
+                  textSize: 12,
+                  textColor: '#FFF',
+                },
+                {
+                  url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                  height: 78,
+                  width: 78,
+                  anchor: [0, 0],
+                  textSize: 12,
+                  textColor: '#FFF',
+                },
+                {
+                  url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
+                  height: 90,
+                  width: 90,
+                  anchor: [0, 0],
+                  textSize: 12,
+                  textColor: '#FFF',
+                },
+              ]}
+              calculator={() => ({
+                text: uniqueShipmentMarkers.toString(),
+                index: 1,
+                title: !_.isEmpty(shipMarkers) ? _.first(shipMarkers).shipment.name : '',
+              })}
+            >
+              {_.map(shipMarkers, (marker, inx) => (
+                <Marker visible={false} key={`${marker.lat}-${marker.lng}-${inx}`} position={{ lat: marker.lat, lng: marker.lng }} />
+              ))}
+            </MarkerClusterer>
+          );
+        })}
       {props.isMarkerShown && props.markers && _.map(
         props.markers,
         (mark, index) => (mark.label ? (
