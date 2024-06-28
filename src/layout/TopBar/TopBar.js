@@ -49,6 +49,9 @@ const TopBar = ({
   history,
 }) => {
   const user = getUser();
+  const isAdmin = checkForAdmin(user);
+  const isSuperAdmin = checkForGlobalAdmin(user);
+  const org_uuid = user.organization.organization_uuid;
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [settingEl, setSettingEl] = useState(null);
@@ -65,10 +68,6 @@ const TopBar = ({
   const [language, setLanguage] = useState(null);
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
 
-  let isAdmin = false;
-  let isSuperAdmin = false;
-  let org_uuid = user.organization.organization_uuid;
-
   const { displayAlert } = useAlert();
   const { data, setTimezone } = useStore();
 
@@ -77,11 +76,12 @@ const TopBar = ({
       setOrganization(user.organization.name);
     }
     if (!language) {
-      setLanguage(user.user_language);
+      if (!_.isEmpty(user.user_language)) {
+        setLanguage(user.user_language);
+      } else {
+        setLanguage('English');
+      }
     }
-    isAdmin = checkForAdmin(user);
-    isSuperAdmin = checkForGlobalAdmin(user);
-    org_uuid = user.organization.organization_uuid;
   }
 
   useEffect(() => {
@@ -98,8 +98,6 @@ const TopBar = ({
     { refetchOnWindowFocus: false },
   );
 
-  const { mutate: updateUserMutation, isLoading: isUpdateUser } = useUpdateUserMutation(history, displayAlert);
-
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', org_uuid],
     () => getUnitQuery(org_uuid, displayAlert),
@@ -111,6 +109,8 @@ const TopBar = ({
     () => getVersionNotesQuery(window.env.DISPLAY_VERSION, displayAlert),
     { refetchOnWindowFocus: false },
   );
+
+  const { mutate: updateUserMutation, isLoading: isUpdateUser } = useUpdateUserMutation(history, displayAlert);
 
   const setGoogleTrans = () => {
     // remove cookies
