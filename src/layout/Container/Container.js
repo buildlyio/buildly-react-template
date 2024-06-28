@@ -24,14 +24,6 @@ import CookieConsent from '@components/CookieConsent/CookieConsent';
 const ContainerDashboard = ({ location, history }) => {
   const userData = getUser();
   const [navHidden, setNavHidden] = useState(false);
-  let subNavItems = [];
-
-  if (_.includes(location.pathname, 'profile')) {
-    subNavItems = [
-      { label: 'Dashboard', value: 'dashboard' },
-      { label: 'Custodians', value: 'custodians' },
-    ];
-  }
 
   return (
     <div className="containerRoot">
@@ -39,8 +31,6 @@ const ContainerDashboard = ({ location, history }) => {
         <TopBar
           navHidden={navHidden}
           setNavHidden={setNavHidden}
-          options={subNavItems}
-          location={location}
           history={history}
         />
         <NavBar
