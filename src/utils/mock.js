@@ -49,6 +49,13 @@ export const ADMIN_SHIPMENT_STATUS = [
   { value: 'Battery Depleted', label: 'Battery Depleted' },
 ];
 
+export const INCOMPLETED_SHIPMENT_STATUS = [
+  { value: 'Planned', label: 'Planned' },
+  { value: 'En route', label: 'En route' },
+  { value: 'Arrived', label: 'Arrived' },
+  { value: 'Completed', label: 'Completed' },
+];
+
 export const LANGUAGES = [
   { value: 'en', label: 'English' },
   { value: 'pt', label: 'Portuguese (Brazil)' },

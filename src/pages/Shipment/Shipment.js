@@ -348,7 +348,7 @@ const Shipment = ({ history }) => {
       titleColor: 'inherit',
       label: 'Shipment completed',
       content: _.isEqual(shipment.status, 'Completed')
-        ? moment(shipment.edit_date).tz(data).format(`${dateFormat} ${timeFormat}`)
+        ? moment(shipment.actual_time_of_completion || shipment.edit_date).tz(data).format(`${dateFormat} ${timeFormat}`)
         : moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').tz(data).format(`${dateFormat} ${timeFormat}`),
       caption: !_.isEqual(shipment.status, 'Completed') ? '(Estimated Time)' : '(Actual Time)',
       active: _.isEqual(shipment.status, 'Completed'),
@@ -356,7 +356,7 @@ const Shipment = ({ history }) => {
       info: false,
       completed: shipment.last_fujitsu_verification_datetime && _.lte(
         _.isEqual(shipment.status, 'Completed')
-          ? moment(shipment.edit_date).unix()
+          ? moment(shipment.actual_time_of_completion || shipment.edit_date).unix()
           : moment(shipment.actual_time_of_arrival || shipment.estimated_time_of_arrival).add(24, 'h').unix(),
         moment(shipment.last_fujitsu_verification_datetime).unix(),
       ),
