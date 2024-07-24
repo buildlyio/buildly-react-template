@@ -31,6 +31,7 @@ const AddResellers = ({ open, setOpen }) => {
   const resellerOrganization = useInput({}, { required: true });
   const selectedResellerOrganization = useInput({}, { required: true });
   const resellerCustomerOrganization = useInput([], { required: true });
+  const alreadyCustomerOrgs = useInput([]);
 
   const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
     ['organizations'],
@@ -45,17 +46,22 @@ const AddResellers = ({ open, setOpen }) => {
   );
 
   useEffect(() => {
-    if (open === true) {
+    if (open && !!open) {
       queryClient.invalidateQueries({ queryKey: ['organizations'] });
     }
   }, [open]);
 
   useEffect(() => {
+    const alreadyCustomers = _.omit(_.map(_.flatMap(_.filter(orgData, (org) => org.is_reseller), (o) => o.reseller_customer_orgs)), null);
+    alreadyCustomerOrgs.setValue(alreadyCustomers);
+  }, [orgData]);
+
+  useEffect(() => {
     if (!_.isEmpty(orgData) && !_.isEmpty(selectedResellerOrganization.value) && !_.isEmpty(selectedResellerOrganization.value.reseller_customer_orgs)) {
-      const selectedOrgs = orgData.filter((org) => selectedResellerOrganization.value.reseller_customer_orgs.includes(org.organization_uuid));
+      const selectedOrgs = _.filter(orgData, (org) => _.includes(selectedResellerOrganization.value.reseller_customer_orgs, org.organization_uuid));
       resellerCustomerOrganization.setValue(selectedOrgs);
     }
-  }, [selectedResellerOrganization.value]);
+  }, [selectedResellerOrganization.value, orgData]);
 
   const discardFormData = () => {
     resellerOrganization.clear();
@@ -148,13 +154,13 @@ const AddResellers = ({ open, setOpen }) => {
                   label="Select Reseller Organization"
                   value={resellerOrganization.value.name || ''}
                   onChange={(e) => {
-                    const selectedOrg = !_.isEmpty(orgData) && orgData.find((org) => org.name === e.target.value);
+                    const selectedOrg = !_.isEmpty(orgData) && orgData.find((org) => _.isEqual(org.name, e.target.value));
                     resellerOrganization.setValue(selectedOrg);
                   }}
                 >
                   <MenuItem value="">Select</MenuItem>
                   {!_.isEmpty(orgData) && _.map(
-                    _.filter(orgData, (org) => org.organization_type === 2 && org.is_reseller !== true),
+                    _.filter(orgData, (org) => _.isEqual(org.organization_type, 2) && !org.is_reseller),
                     (org) => (
                       <MenuItem
                         key={`organization-${org.id}`}
@@ -197,7 +203,7 @@ const AddResellers = ({ open, setOpen }) => {
             </Grid>
           </>
         )}
-        {!_.isEmpty(orgData) && !_.isEmpty(orgData.filter((org) => org.is_reseller === true)) && (
+        {!_.isEmpty(orgData) && !_.isEmpty(orgData.filter((org) => org.is_reseller)) && (
           <Grid container spacing={6}>
             <Grid item xs={12} sm={6}>
               <Typography variant="body1" className="addResellerTitle">
@@ -212,14 +218,14 @@ const AddResellers = ({ open, setOpen }) => {
                 label="Select Reseller Organization"
                 value={selectedResellerOrganization.value.name || ''}
                 onChange={(e) => {
-                  const selectedOrg = !_.isEmpty(orgData) && orgData.find((org) => org.name === e.target.value);
+                  const selectedOrg = !_.isEmpty(orgData) && orgData.find((org) => _.isEqual(org.name, e.target.value));
                   resellerCustomerOrganization.setValue([]);
                   selectedResellerOrganization.setValue(selectedOrg);
                 }}
               >
                 <MenuItem value="">Select</MenuItem>
                 {!_.isEmpty(orgData) && _.map(
-                  _.filter(orgData, (org) => org.organization_type === 2 && org.is_reseller === true),
+                  _.filter(orgData, (org) => _.isEqual(org.organization_type, 2) && org.is_reseller),
                   (org) => (
                     <MenuItem
                       key={`organization-${org.id}`}
@@ -255,7 +261,7 @@ const AddResellers = ({ open, setOpen }) => {
                         onClick={(e) => {
                           const newList = _.filter(
                             resellerCustomerOrganization.value,
-                            (cust, idx) => (idx !== index),
+                            (cust, idx) => (!_.isEqual(idx, index)),
                           );
                           resellerCustomerOrganization.setValue(newList);
                         }}
@@ -276,13 +282,13 @@ const AddResellers = ({ open, setOpen }) => {
                       id="resellerCustomerOrganization"
                       label="Select Reseller Customer Organization"
                       onChange={(e) => {
-                        const selectedOrg = !_.isEmpty(orgData) && orgData.find((org) => org.name === e.target.value);
+                        const selectedOrg = !_.isEmpty(orgData) && orgData.find((org) => _.isEqual(org.name, e.target.value));
                         resellerCustomerOrganization.setValue([...resellerCustomerOrganization.value, selectedOrg]);
                         setAddResellerCustomerOpen(false);
                       }}
                     >
                       <MenuItem value="">Select</MenuItem>
-                      {!_.isEmpty(orgData) && !_.isEmpty(custodianData) && _.map(orgData.filter((org) => org.organization_type === 1 && custodianData.some((custodian) => custodian.custody_org_uuid === org.organization_uuid) && !resellerCustomerOrganization.value.includes(org)),
+                      {!_.isEmpty(orgData) && _.map(_.filter(orgData, (o) => !o.is_reseller && !_.includes(alreadyCustomerOrgs.value, o.organization_uuid)),
                         (org) => (
                           <MenuItem
                             key={`organization-${org.id}`}
