@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
-import { Grid, Button, TextField } from '@mui/material';
+import {
+  Grid,
+  Button,
+  TextField,
+  Typography,
+} from '@mui/material';
 import Loader from '@components/Loader/Loader';
 import FormModal from '@components/Modal/FormModal';
 import { useInput } from '@hooks/useInput';
@@ -129,12 +134,15 @@ const AddGatewayType = ({ history, location }) => {
             <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField
+                  className="notranslate"
                   variant="outlined"
                   margin="normal"
                   fullWidth
                   required
                   id="name"
-                  label="Tracker Type"
+                  label={(
+                    <Typography className="translate">Tracker Type</Typography>
+                  )}
                   name="name"
                   autoComplete="name"
                   error={formError.name && formError.name.error}

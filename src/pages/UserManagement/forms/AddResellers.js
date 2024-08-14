@@ -146,12 +146,15 @@ const AddResellers = ({ open, setOpen }) => {
             <Grid container>
               <Grid item xs={12} sm={7}>
                 <TextField
+                  className="notranslate"
                   variant="outlined"
                   margin="normal"
                   fullWidth
                   select
                   id="resellerOrganization"
-                  label="Select Reseller Organization"
+                  label={(
+                    <Typography className="translate">Select Reseller Organization</Typography>
+                  )}
                   value={resellerOrganization.value.name || ''}
                   onChange={(e) => {
                     const selectedOrg = !_.isEmpty(orgData) && orgData.find((org) => _.isEqual(org.name, e.target.value));
@@ -165,6 +168,7 @@ const AddResellers = ({ open, setOpen }) => {
                       <MenuItem
                         key={`organization-${org.id}`}
                         value={org.name || ''}
+                        className="notranslate"
                       >
                         {org.name}
                       </MenuItem>
@@ -210,12 +214,15 @@ const AddResellers = ({ open, setOpen }) => {
                 Select Reseller Organization
               </Typography>
               <TextField
+                className="notranslate"
                 variant="outlined"
                 margin="normal"
                 fullWidth
                 select
                 id="selectedResellerOrganization"
-                label="Select Reseller Organization"
+                label={(
+                  <Typography className="translate">Select Reseller Organization</Typography>
+                )}
                 value={selectedResellerOrganization.value.name || ''}
                 onChange={(e) => {
                   const selectedOrg = !_.isEmpty(orgData) && orgData.find((org) => _.isEqual(org.name, e.target.value));
@@ -230,6 +237,7 @@ const AddResellers = ({ open, setOpen }) => {
                     <MenuItem
                       key={`organization-${org.id}`}
                       value={org.name || ''}
+                      className="notranslate"
                     >
                       {org.name}
                     </MenuItem>
@@ -246,12 +254,15 @@ const AddResellers = ({ open, setOpen }) => {
                   <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={10.8}>
                       <TextField
+                        className="notranslate"
                         variant="outlined"
                         margin="normal"
                         fullWidth
                         contentEditable={false}
                         id={`reseller-customer-${index}`}
-                        label={`Reseller Customer Organization ${index + 1}`}
+                        label={(
+                          <Typography className="translate">{`Reseller Customer Organization ${index + 1}`}</Typography>
+                        )}
                         value={item.name}
                       />
                     </Grid>
@@ -275,12 +286,15 @@ const AddResellers = ({ open, setOpen }) => {
                 <Grid container alignItems="center" justifyContent="space-between">
                   <Grid item xs={10.8}>
                     <TextField
+                      className="notranslate"
                       variant="outlined"
                       margin="normal"
                       fullWidth
                       select
                       id="resellerCustomerOrganization"
-                      label="Select Reseller Customer Organization"
+                      label={(
+                        <Typography className="translate">Select Reseller Customer Organization</Typography>
+                      )}
                       onChange={(e) => {
                         const selectedOrg = !_.isEmpty(orgData) && orgData.find((org) => _.isEqual(org.name, e.target.value));
                         resellerCustomerOrganization.setValue([...resellerCustomerOrganization.value, selectedOrg]);
@@ -293,6 +307,7 @@ const AddResellers = ({ open, setOpen }) => {
                           <MenuItem
                             key={`organization-${org.id}`}
                             value={org.name || ''}
+                            className="notranslate"
                           >
                             {org.name}
                           </MenuItem>

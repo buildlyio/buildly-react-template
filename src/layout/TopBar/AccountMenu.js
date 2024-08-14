@@ -56,7 +56,9 @@ const AccountMenu = ({
           </Typography>
           {organizationName && (
             <Typography variant="body1">
-              {`Works at: ${organizationName}`}
+              Works at:
+              {' '}
+              <span className="notranslate">{organizationName}</span>
             </Typography>
           )}
         </Box>

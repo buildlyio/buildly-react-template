@@ -225,17 +225,17 @@ const Shipment = ({ history }) => {
     if (!_.isEmpty(filteredAlerts)) {
       const alerts = _.filter(filteredAlerts, (alert) => !alert.recovered_alert_id);
       const arrivedAlerts = _.filter(alerts, (alert) => {
-        const createDate = new Date(alert.create_date).getTime();
+        const createDate = moment(alert.create_date).unix();
         return (
-          createDate >= (new Date(shipment.actual_time_of_departure).getTime() || new Date(shipment.estimated_time_of_departure).getTime())
-          && createDate <= (new Date(shipment.actual_time_of_arrival).getTime() || new Date(shipment.estimated_time_of_arrival).getTime())
+          createDate >= (moment(shipment.actual_time_of_departure).unix() || moment(shipment.estimated_time_of_departure).unix())
+          && createDate <= (moment(shipment.actual_time_of_arrival).unix() || moment(shipment.estimated_time_of_arrival).unix())
         );
       });
       const activeAlerts = _.filter(alerts, (alert) => {
-        const createDate = new Date(alert.create_date).getTime();
+        const createDate = moment(alert.create_date).unix();
         return !(
-          createDate >= (new Date(shipment.actual_time_of_departure).getTime() || new Date(shipment.estimated_time_of_departure).getTime())
-          && createDate <= (new Date(shipment.actual_time_of_arrival).getTime() || new Date(shipment.estimated_time_of_arrival).getTime())
+          createDate >= (moment(shipment.actual_time_of_departure).unix() || moment(shipment.estimated_time_of_departure).unix())
+          && createDate <= (moment(shipment.actual_time_of_arrival).unix() || moment(shipment.estimated_time_of_arrival).unix())
         );
       });
       if (_.isEmpty(shipment.actual_time_of_arrival)) {
@@ -892,14 +892,14 @@ const Shipment = ({ history }) => {
                                   Items:
                                 </Typography>
                                 {_.map(_.split(ship.itemNames, ','), (item, idx) => (
-                                  <Typography key={`${item}-${idx}`}>{item}</Typography>
+                                  <Typography className="notranslate" key={`${item}-${idx}`}>{item}</Typography>
                                 ))}
                               </Grid>
                               <Grid item xs={12}>
                                 <Typography fontWeight={700}>
                                   Status:
                                 </Typography>
-                                <Typography>
+                                <Typography className="notranslate">
                                   {ship.type}
                                 </Typography>
                               </Grid>
@@ -912,7 +912,7 @@ const Shipment = ({ history }) => {
                                   <Typography fontWeight={700}>
                                     {`Logistics company ${idx + 1}:`}
                                   </Typography>
-                                  <Typography>
+                                  <Typography className="notranslate">
                                     {carr}
                                   </Typography>
                                 </Grid>
@@ -921,7 +921,7 @@ const Shipment = ({ history }) => {
                                 <Typography fontWeight={700}>
                                   Receiver:
                                 </Typography>
-                                <Typography>
+                                <Typography className="notranslate">
                                   {ship.destination}
                                 </Typography>
                               </Grid>

@@ -258,13 +258,16 @@ const AddGateway = ({
                     sm={6}
                   >
                     <TextField
+                      className="notranslate"
                       variant="outlined"
                       margin="normal"
                       fullWidth
                       required
                       id="gateway_type"
                       select
-                      label="Tracker Type"
+                      label={(
+                        <Typography className="translate">Tracker Type</Typography>
+                      )}
                       error={
                         formError.gateway_type
                         && formError.gateway_type.error
@@ -283,6 +286,7 @@ const AddGateway = ({
                           gatewayTypesData,
                           (item, index) => (
                             <MenuItem
+                              className="notranslate"
                               key={`gatewayType${index}:${item.id}`}
                               value={item.url}
                             >

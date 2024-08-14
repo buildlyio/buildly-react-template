@@ -237,12 +237,15 @@ const AddCustodians = ({ history, location }) => {
                 sm={6}
               >
                 <TextField
+                  className="notranslate"
                   variant="outlined"
                   margin="normal"
                   required
                   fullWidth
                   id="company"
-                  label="Company Name"
+                  label={(
+                    <Typography className="translate">Company Name</Typography>
+                  )}
                   name="company"
                   autoComplete="company"
                   error={formError.company && formError.company.error}

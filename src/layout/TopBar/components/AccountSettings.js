@@ -145,7 +145,7 @@ const AccountSettings = ({ open, setOpen }) => {
             <Typography variant="body1" fontWeight={500}>Company:</Typography>
           </Grid>
           <Grid item xs={6} sm={8}>
-            <Typography variant="body1" fontWeight={500}>{user && user.organization && user.organization.name}</Typography>
+            <Typography variant="body1" fontWeight={500} className="notranslate">{user && user.organization && user.organization.name}</Typography>
           </Grid>
           <Grid item xs={6} sm={4}>
             <Typography variant="body1" fontWeight={500}>Email:</Typography>

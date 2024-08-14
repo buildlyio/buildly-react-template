@@ -1,11 +1,58 @@
 /* Reporting Main Styles */
+.reportingDashboardContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
 .reportingDashboardHeading {
   font-weight: bold;
   margin-bottom: 0.5em;
 }
 
+.reportingDashboardButton {
+  height: 40px;
+}
+
+.reportingDashboardButtonIcon {
+  margin-top: 0;
+  margin-left: 5px;
+}
+
 .reportingContainer {
+  margin-top: 20px;
   margin-bottom: 24px;
+}
+
+.reportingContainer2 {
+  margin-top: 20px;
+  margin-bottom: 24px;
+  position: absolute;
+  top: -999px;
+}
+
+@media screen and (max-width: 600px) {
+  .reportingContainer2 {
+    width: 95%;
+  }
+}
+
+@media screen and (min-width: 601px) and (max-width: 960px) {
+  .reportingContainer2 {
+    width: 92%;
+  }
+}
+
+@media screen and (min-width: 961px) and (max-width: 1280px) {
+  .reportingContainer2 {
+    width: 75%;
+  }
+}
+
+@media screen and (min-width: 1281px) {
+  .reportingContainer2 {
+    width: 75%;
+  }
 }
 
 .reportingSwitchViewSection {
@@ -59,6 +106,15 @@
   margin: 0px auto;
 }
 
+.reportingGraphIconBar2 {
+  background-color: var(--color-palette-primary-light);
+  height: 100%;
+}
+
+.reportingGraphIconBar2 svg {
+  margin-left: 15%;
+}
+
 .reportingSelectInput {
   margin-left: 8px;
 }
@@ -91,10 +147,14 @@
 }
 
 .reportingSensorTableTitle {
-  color: var(--color-palette-background-default);
   position: absolute;
+  color: var(--color-palette-background-default);
   left: 10px;
   bottom: 5px;
+}
+
+.reportingSensorTableExcelDownload {
+  order: 99;
 }
 
 /* Alert Component Styles */
@@ -118,4 +178,60 @@
   font-size: 18px;
   display: flex;
   align-items: center;
+}
+
+/* Reporting Detail Table Styles */
+.reportingDetailTableContainer {
+  margin-top: 20px;
+  border: 1px solid var(--color-palette-background-black);
+}
+
+.reportingDetailTableHeader {
+  color: var(--color-palette-background-default);
+}
+
+.reportingDetailTableHeader #itemText {
+  padding: 5px;
+  background-color: var(--color-palette-primary-dark) !important;
+}
+
+.reportingDetailTableHeader > * {
+  border: 1px solid var(--color-palette-background-black);
+}
+
+.reportingDetailTableContainer
+  .reportingDetailTableBody:nth-child(even)
+  #itemText {
+  background-color: var(--color-palette-background-light2);
+  padding: 5px;
+}
+
+.reportingDetailTableContainer
+  .reportingDetailTableBody:nth-child(odd)
+  #itemText {
+  background-color: var(--color-palette-background-light5);
+  padding: 5px;
+}
+
+.reportingDetailTableContainer .reportingDetailTableBody > * {
+  border: 1px solid var(--color-palette-background-black);
+}
+
+.reportingRedText {
+  color: var(--color-palette-error-main);
+}
+
+.reportingGreenText {
+  color: var(--color-palette-success-main);
+}
+
+/* Generate Report Section Styles */
+.generateReportFormContainer {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.generateReportButton {
+  margin: 24px 0px 16px;
+  border-radius: 18px;
 }

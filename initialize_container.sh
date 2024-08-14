@@ -17,6 +17,7 @@ RESULT+='", "DISPLAY_VERSION": "'$DISPLAY_VERSION
 RESULT+='", "session_timeout": '$SESSION_TIMEOUT
 RESULT+=', "hide_notification": '$HIDE_NOTIFICATION
 RESULT+=', "production": '$PRODUCTION
+RESULT+='", "EMAIL_REPORT_URL": "'$EMAIL_REPORT_URL
 RESULT+='}'
 
 PATH=`ls dist/`
